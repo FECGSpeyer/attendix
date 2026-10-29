@@ -26,6 +26,7 @@ import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
+import '../../data/rd_dates.dart';
 
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
 /// for Spieler). Kommend / Vergangen, filters, and for Spieler the answer
@@ -413,7 +414,7 @@ class _DateBox extends StatelessWidget {
     var bottom = start == null ? '–' : '${start.day}';
     final days = durationDays ?? 1;
     if (start != null && days > 1) {
-      final end = start.add(Duration(days: days - 1));
+      final end = rdAddDays(start, days - 1);
       top = '${wd(start)}–${wd(end)}';
       bottom = '${start.day}–${end.day}';
     }
@@ -555,8 +556,7 @@ class _LeaderEventCard extends StatelessWidget {
 /// box shows them).
 String _dayWord(AppLocalizations l10n, DateTime start) {
   final now = DateTime.now();
-  final today = DateTime(now.year, now.month, now.day);
-  final diff = DateTime(start.year, start.month, start.day).difference(today).inDays;
+  final diff = rdDaysBetween(now, start);
   if (diff <= 0) return l10n.redesignTodayDayToday;
   if (diff == 1) return l10n.redesignTodayDayTomorrow;
   return '';

@@ -16,6 +16,7 @@ import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/today/rd_player_today.dart' show RdOwnAnswerSection;
+import '../../data/rd_dates.dart';
 
 /// The own Termin with [id] (person_attendances id) in [data], or null.
 CrossTenantPersonAttendance? rdFindOwnEvent(SignoutData data, String id) {
@@ -106,7 +107,7 @@ class RdOwnEventPage extends ConsumerWidget {
         ? ''
         : days > 1
             ? '${DateFormat.MMMMEEEEd(locale).format(start)} – '
-                '${DateFormat.MMMMEEEEd(locale).format(start.add(Duration(days: days - 1)))}'
+                '${DateFormat.MMMMEEEEd(locale).format(rdAddDays(start, days - 1))}'
             : DateFormat.MMMMEEEEd(locale).format(start);
     final time = [att.startTime ?? '', att.endTime ?? ''].where((s) => s.isNotEmpty).join(' – ');
     final meta = [date, time].where((s) => s.isNotEmpty).join(' · ');

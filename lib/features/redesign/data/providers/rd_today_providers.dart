@@ -8,6 +8,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../rd_dates.dart';
 
 /// REDESIGN: data of "Heute". Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new queries, no writes).
@@ -146,7 +147,7 @@ List<Attendance> rdThisWeek(
   int limit = 3,
 }) {
   final today = now ?? DateTime.now();
-  final end = DateTime(today.year, today.month, today.day).add(const Duration(days: 8));
+  final end = rdAddDays(today, 8);
   return upcoming
       .where((a) {
         final d = EventListUtils.parse(a.date);

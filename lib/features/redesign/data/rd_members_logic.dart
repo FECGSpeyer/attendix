@@ -4,6 +4,7 @@ import '../../../data/models/person/person.dart';
 import '../../../data/models/player_absence/player_absence.dart';
 import '../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show sortPersonsByGroup, mainGroupIdOf;
+import 'rd_dates.dart';
 
 /// REDESIGN: pure logic of the Mitglieder tab (canvas "Menschen",
 /// "PersonDetail").
@@ -107,7 +108,7 @@ int? rdDaysToBirthday(String? birthday, {DateTime? now}) {
   var next = DateTime(today.year, b.month, b.day);
   // 29 February in other years: 1 March (DateTime rolls over).
   if (next.isBefore(today)) next = DateTime(today.year + 1, b.month, b.day);
-  return next.difference(today).inDays;
+  return rdDaysBetween(today, next);
 }
 
 /// The planned absence of [personId] running today, else the next one
@@ -119,7 +120,7 @@ PlayerAbsence? rdCurrentAbsence(
   int aheadDays = 7,
 }) {
   final today = _key(_day(now ?? DateTime.now()));
-  final limit = _key(_day(now ?? DateTime.now()).add(Duration(days: aheadDays)));
+  final limit = _key(rdAddDays(now ?? DateTime.now(), aheadDays));
   PlayerAbsence? next;
   for (final a in absences) {
     if (a.personId != personId) continue;

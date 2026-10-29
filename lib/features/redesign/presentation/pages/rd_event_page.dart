@@ -32,6 +32,7 @@ import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart';
+import '../../data/rd_dates.dart';
 
 /// Tabs of a Termin in the new design.
 enum RdEventTab { overview, record }
@@ -760,7 +761,7 @@ class _Header extends StatelessWidget {
     final date = start == null
         ? ''
         : days > 1
-            ? '${day(start)} – ${day(start.add(Duration(days: days - 1)))}'
+            ? '${day(start)} – ${day(rdAddDays(start, days - 1))}'
             : day(start);
     final meta = [date, info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
     final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);

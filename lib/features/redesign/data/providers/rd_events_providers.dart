@@ -7,6 +7,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import 'rd_today_providers.dart';
+import '../rd_dates.dart';
 
 /// REDESIGN: data of the "Termine" tab. Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new tables, no writes).
@@ -96,7 +97,7 @@ List<RdEventSection<T>> rdGroupEvents<T>(
     final d = EventListUtils.parse(dateOf(item));
     if (d == null) continue;
     final day = DateTime(d.year, d.month, d.day);
-    final diff = day.difference(today).inDays;
+    final diff = rdDaysBetween(today, day);
     // Upcoming: running multi-day Termine that started earlier count as
     // this week too.
     final inWeek = past ? (diff >= -7 && diff <= 0) : diff < 7;

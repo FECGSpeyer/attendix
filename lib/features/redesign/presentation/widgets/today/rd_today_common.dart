@@ -6,6 +6,7 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../l10n/l10n.dart';
 import '../rd_widgets.dart';
+import '../../../data/rd_dates.dart';
 
 /// REDESIGN: shared pieces of the "Heute" cards.
 
@@ -13,8 +14,7 @@ DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
 
 /// "Heute", "Morgen" or "Do., 30. Okt.".
 String rdRelativeDay(AppLocalizations l10n, DateTime start, {DateTime? now}) {
-  final today = _day(now ?? DateTime.now());
-  final diff = _day(start).difference(today).inDays;
+  final diff = rdDaysBetween(now ?? DateTime.now(), start);
   if (diff <= 0) return l10n.redesignTodayDayToday;
   if (diff == 1) return l10n.redesignTodayDayTomorrow;
   return DateFormat.MMMEd(currentIntlLocale()).format(start);

@@ -28,6 +28,7 @@ import '../../data/rd_create_logic.dart';
 import '../widgets/event/rd_create_sheets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../data/rd_dates.dart';
 
 /// REDESIGN: "Neuer Termin" (canvas "TerminAnlegen"). Vorlagen from the
 /// group's earlier Termine, Art, Titel, Datum, Zeit, Ort, Abmeldeschluss,
@@ -54,7 +55,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
   int _durationDays = 1;
   RdDeadline _deadline = RdDeadline.none;
   RdRepeat _repeat = RdRepeat.once;
-  late DateTime _until = _date.add(const Duration(days: 42));
+  late DateTime _until = rdAddDays(_date, 42);
   bool _skipHolidays = false;
   List<DateTime> _customDates = const [];
   List<SongHistoryEntry> _songs = const [];
@@ -155,7 +156,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       context,
       start: _date,
       repeat: _repeat,
-      until: _until.isAfter(_date) ? _until : _date.add(const Duration(days: 42)),
+      until: _until.isAfter(_date) ? _until : rdAddDays(_date, 42),
       skipHolidays: _skipHolidays,
       holidays: holidays,
     );

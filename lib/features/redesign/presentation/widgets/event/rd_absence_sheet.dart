@@ -12,6 +12,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../people/presentation/widgets/planned_absences.dart' show AbsenceInput;
 import '../../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../rd_widgets.dart';
+import '../../../data/rd_dates.dart';
 
 /// Own upcoming Termine of the current group between [from] and [until]
 /// (both days included); what an absence in that period will excuse.
@@ -329,7 +330,7 @@ class _MonthGrid extends StatelessWidget {
                 Expanded(
                   child: Center(
                     child: Text(
-                      DateFormat.E(locale).format(monday.add(Duration(days: i))).replaceAll('.', ''),
+                      DateFormat.E(locale).format(rdAddDays(monday, i)).replaceAll('.', ''),
                       style: RdType.meta(p, size: 12),
                     ),
                   ),

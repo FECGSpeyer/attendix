@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.22.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Mehrtägige Termine über die Zeitumstellung: Ablaufpläne zeigen wieder den richtigen Tag",
+        "🐛 Neues Design (Beta): Tage bis zum Geburtstag, „Heute“/„Morgen“ und Wochentage stimmen auch rund um die Zeitumstellung"
+      ]
+    },
+    {
       "version": "0.22.0",
       "date": "29.10.2026",
       "changes": [
