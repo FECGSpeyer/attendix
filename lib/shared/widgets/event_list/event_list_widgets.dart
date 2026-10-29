@@ -34,6 +34,37 @@ Color? eventPageBackground(BuildContext context) {
   return theme.colorScheme.surface;
 }
 
+/// ATT_SPACING: Ionic type metrics of the Termin pages (`ev-*` classes).
+/// iOS: 1rem = 17px (`html { font: -apple-system-body }`) and CSS
+/// `line-height: normal` of the system font (SF Pro: (1950 + 494) / 2048 ≈
+/// 1.193) instead of the Material body height 1.43, which made every line
+/// ~4pt taller than Ionic. md keeps 1rem = 16px and the theme line height.
+class EvMetrics {
+  EvMetrics._();
+
+  /// CSS `line-height: normal` of SF Pro.
+  static const double iosLineHeight = 1.193;
+
+  /// `value` rem in logical pixels (17 on iOS, 16 on md).
+  static double rem(BuildContext context, double value) =>
+      value * (useIosLook(context) ? IonIos.rem : 16);
+
+  /// Line height factor for texts with CSS `line-height: normal`; null keeps
+  /// the inherited (Material) height on md.
+  static double? lineHeight(BuildContext context) =>
+      useIosLook(context) ? iosLineHeight : null;
+
+  /// `--ion-color-medium`: Ionic 9 #636469 (dark #989aa2) on iOS.
+  static Color medium(BuildContext context) => useIosLook(context)
+      ? IonIos.medium(Theme.of(context).brightness)
+      : AppColors.medium;
+
+  /// `.list-ios.list-inset { margin: 16px }` – it outranks the app's
+  /// `ion-list.ev-list { margin-top: 6px; margin-bottom: 0 }` (specificity
+  /// 0,2,0 vs 0,1,1), so iOS inset Termin lists keep 16pt above and below.
+  static const EdgeInsets iosListMargin = EdgeInsets.all(16);
+}
+
 /// Date tile with weekday and day ("DI" / "20") – Ionic `.ev-tile`:
 /// 46x50, radius 12, primary 13 % background with primary-shade text;
 /// highlighted types are solid primary, past Termine are faded (0.7).
@@ -89,9 +120,10 @@ class EventDateTile extends StatelessWidget {
           Text(
             EventListUtils.weekday(date).toUpperCase(),
             style: TextStyle(
-              fontSize: 10.9,
+              // ATT_SPACING: .68rem, letter-spacing .06em
+              fontSize: EvMetrics.rem(context, 0.68),
               height: 1,
-              letterSpacing: 0.65,
+              letterSpacing: EvMetrics.rem(context, 0.68) * 0.06,
               color: foreground ?? fg,
               fontWeight: FontWeight.w600,
             ),
@@ -99,7 +131,8 @@ class EventDateTile extends StatelessWidget {
           Text(
             EventListUtils.day(date),
             style: TextStyle(
-              fontSize: large ? 24 : 20,
+              // ATT_SPACING: 1.25rem (today card 1.5rem)
+              fontSize: EvMetrics.rem(context, large ? 1.5 : 1.25),
               height: 1.15,
               color: foreground ?? fg,
               fontWeight: FontWeight.w700,
@@ -199,7 +232,13 @@ class EventChip extends StatelessWidget {
           Flexible(
             child: Text(
               label,
-              style: TextStyle(fontSize: 12, fontWeight: FontWeight.w500, color: fg),
+              // ATT_SPACING: .75rem
+              style: TextStyle(
+                fontSize: EvMetrics.rem(context, 0.75),
+                height: EvMetrics.lineHeight(context),
+                fontWeight: FontWeight.w500,
+                color: fg,
+              ),
               overflow: TextOverflow.ellipsis,
               maxLines: 2,
             ),
@@ -243,14 +282,24 @@ class EventSectionHeader extends StatelessWidget {
           Flexible(
             child: Text(
               title,
-              style: const TextStyle(fontSize: 21.6, fontWeight: FontWeight.w700),
+              // ATT_SPACING: h2 1.35rem bold, line-height normal
+              style: TextStyle(
+                fontSize: EvMetrics.rem(context, 1.35),
+                height: EvMetrics.lineHeight(context),
+                fontWeight: FontWeight.w700,
+              ),
             ),
           ),
           if (count != null) ...[
             const SizedBox(width: 8),
             Text(
               '$count',
-              style: const TextStyle(color: AppColors.medium, fontSize: 15.2),
+              // `.ev-section__count`: .95rem medium
+              style: TextStyle(
+                color: EvMetrics.medium(context),
+                fontSize: EvMetrics.rem(context, 0.95),
+                height: EvMetrics.lineHeight(context),
+              ),
             ),
           ],
           if (trailing != null) ...[const Spacer(), trailing!],
@@ -272,11 +321,13 @@ class EventMonthHeader extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(20, 14, 20, 0),
       child: Text(
         label.toUpperCase(),
-        style: const TextStyle(
-          fontSize: 12.8,
-          letterSpacing: 0.64,
+        // ATT_SPACING: .8rem semibold, letter-spacing .05em
+        style: TextStyle(
+          fontSize: EvMetrics.rem(context, 0.8),
+          height: EvMetrics.lineHeight(context),
+          letterSpacing: EvMetrics.rem(context, 0.8) * 0.05,
           fontWeight: FontWeight.w600,
-          color: AppColors.medium,
+          color: EvMetrics.medium(context),
         ),
       ),
     );
@@ -302,27 +353,46 @@ class EventListCard extends StatelessWidget {
 
   /// IOS_ATT_PAGES: on the white Termin pages (Meine Termine, Übersicht,
   /// Termine) Ionic renders `ion-list inset ev-list` without a card:
-  /// transparent list (ionic-theme-ios26 structured list), white items on
-  /// the white page, inset lines starting at the label. iOS: 20 px side
-  /// margin. PARITY_R3 md: `.list-md.list-inset` – 16 px side margin, 2 px
-  /// radius, items in the item colour (white; #1e1e1e on the #121212 dark
-  /// page).
+  /// transparent list (ionic-theme-ios27 `ion-list.list-inset.ios`), white
+  /// items on the white page, inset lines starting at the label.
+  /// ATT_SPACING iOS: core `.list-ios.list-inset` margin 16 on all sides
+  /// ([EvMetrics.iosListMargin]). PARITY_R3 md: `.list-md.list-inset` –
+  /// 16 px side margin, 2 px radius, items in the item colour (white;
+  /// #1e1e1e on the #121212 dark page).
   final bool plain;
 
-  static bool _isPlain(Widget w) => w is EventSummaryRow || w is EventMoreLink;
+  static bool _isPlain(Widget w) =>
+      w is EventSummaryRow || w is EventMoreLink || w is EventSummary;
+
+  /// ATT_SPACING: the item's inner border (0.55pt) lies inside its
+  /// `--min-height`, so a line never adds height – Ionic rows are exactly
+  /// 64pt apart.
+  static Widget _withBottomLine(Widget child) => Stack(
+        children: [
+          child,
+          const Positioned(
+            left: 0,
+            right: 0,
+            bottom: 0,
+            child: Divider(height: 0.5, thickness: 0.5, indent: 74),
+          ),
+        ],
+      );
 
   @override
   Widget build(BuildContext context) {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
-      if (i > 0 && dividers && !_isPlain(children[i]) && !_isPlain(children[i - 1])) {
-        rows.add(const Divider(height: 0.5, thickness: 0.5, indent: 74));
-      }
-      rows.add(children[i]);
+      final next = i + 1 < children.length ? children[i + 1] : null;
+      final line = dividers &&
+          next != null &&
+          !_isPlain(children[i]) &&
+          !_isPlain(next);
+      rows.add(line ? _withBottomLine(children[i]) : children[i]);
     }
     if (plain && useIosLook(context)) {
       return Padding(
-        padding: const EdgeInsets.fromLTRB(20, 6, 20, 0),
+        padding: EvMetrics.iosListMargin,
         child: Column(mainAxisSize: MainAxisSize.min, children: rows),
       );
     }
@@ -338,7 +408,10 @@ class EventListCard extends StatelessWidget {
       );
     }
     return Card(
-      margin: const EdgeInsets.fromLTRB(16, 6, 16, 0),
+      // ATT_SPACING: iOS `.list-ios.list-inset` margin 16 (see above)
+      margin: useIosLook(context)
+          ? EvMetrics.iosListMargin
+          : const EdgeInsets.fromLTRB(16, 6, 16, 0),
       clipBehavior: Clip.antiAlias,
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(10)),
       child: Column(mainAxisSize: MainAxisSize.min, children: rows),
@@ -382,6 +455,13 @@ class EventRow extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // ATT_SPACING: `ion-list.ev-list ion-label h2` 1rem semibold and the
+    // label `p` .875rem (iOS: `--ion-color-step-400` #999), both with
+    // `line-height: normal`; h2 margin-bottom 2 and p margin-top 2 collapse
+    // to 2. Ionic: 17pt / 14.875pt on the iPhone → rows of 64 (title + one
+    // line) and 80 (Übersicht: title + meta + tenant line).
+    final ios = useIosLook(context);
+    final lineHeight = EvMetrics.lineHeight(context);
     final content = ConstrainedBox(
       constraints: const BoxConstraints(minHeight: 64),
       child: Padding(
@@ -406,7 +486,11 @@ class EventRow extends StatelessWidget {
                         Flexible(
                           child: Text(
                             title,
-                            style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                            style: TextStyle(
+                              fontWeight: FontWeight.w600,
+                              fontSize: EvMetrics.rem(context, 1),
+                              height: lineHeight,
+                            ),
                           ),
                         ),
                         if (titleSuffix != null) ...[const SizedBox(width: 6), titleSuffix!],
@@ -417,7 +501,13 @@ class EventRow extends StatelessWidget {
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           subtitle!,
-                          style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                          style: TextStyle(
+                            color: ios
+                                ? IonIos.labelP(Theme.of(context).brightness)
+                                : AppColors.medium,
+                            fontSize: EvMetrics.rem(context, 0.875),
+                            height: lineHeight,
+                          ),
                         ),
                       ),
                     ...extra,
@@ -531,8 +621,9 @@ class EventTodayCard extends StatelessWidget {
                       children: [
                         Text(
                           title,
-                          style: const TextStyle(
-                            fontSize: 18.4,
+                          // ATT_SPACING: 1.15rem, line-height 1.25
+                          style: TextStyle(
+                            fontSize: EvMetrics.rem(context, 1.15),
                             height: 1.25,
                             fontWeight: FontWeight.w700,
                           ),
@@ -542,7 +633,11 @@ class EventTodayCard extends StatelessWidget {
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(
                               meta!,
-                              style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                              style: TextStyle(
+                                color: EvMetrics.medium(context),
+                                fontSize: EvMetrics.rem(context, 0.875),
+                                height: EvMetrics.lineHeight(context),
+                              ),
                             ),
                           ),
                         ...extraHeader,
@@ -567,7 +662,11 @@ class EventTodayCard extends StatelessWidget {
                       Expanded(
                         child: Text(
                           place!,
-                          style: const TextStyle(color: AppColors.medium, fontSize: 14),
+                          style: TextStyle(
+                            color: EvMetrics.medium(context),
+                            fontSize: EvMetrics.rem(context, 0.875),
+                            height: EvMetrics.lineHeight(context),
+                          ),
                         ),
                       ),
                     ],
@@ -618,7 +717,11 @@ class EventTodayCard extends StatelessWidget {
                   style: TextButton.styleFrom(
                     padding: const EdgeInsets.only(top: 10, bottom: 0),
                     minimumSize: const Size.fromHeight(34),
-                    textStyle: const TextStyle(fontWeight: FontWeight.w600, fontSize: 16),
+                    textStyle: TextStyle(
+                      fontWeight: FontWeight.w600,
+                      fontSize: EvMetrics.rem(context, 1), // ATT_SPACING
+                      height: EvMetrics.lineHeight(context),
+                    ),
                   ),
                   child: Text(moreLabel ?? context.l10n.signoutMoreOptions),
                 ),
@@ -694,6 +797,13 @@ class EventSummary extends StatelessWidget {
   /// color, late count on the right, 14px rounded squares per Termin.
   @override
   Widget build(BuildContext context) {
+    // ATT_SPACING: value 1.5rem bold, labels .875rem medium, line-height
+    // normal (iOS 25.5pt / 14.875pt).
+    final label = TextStyle(
+      color: EvMetrics.medium(context),
+      fontSize: EvMetrics.rem(context, 0.875),
+      height: EvMetrics.lineHeight(context),
+    );
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       mainAxisSize: MainAxisSize.min,
@@ -706,19 +816,17 @@ class EventSummary extends StatelessWidget {
             children: [
               Text(
                 '$percentage%',
-                style: const TextStyle(fontSize: 24, fontWeight: FontWeight.w700),
+                style: TextStyle(
+                  fontSize: EvMetrics.rem(context, 1.5),
+                  height: EvMetrics.lineHeight(context),
+                  fontWeight: FontWeight.w700,
+                ),
               ),
               const SizedBox(width: 6),
-              Text(
-                context.l10n.signoutAttendance,
-                style: const TextStyle(color: AppColors.medium, fontSize: 14),
-              ),
+              Text(context.l10n.signoutAttendance, style: label),
               if (lateCount > 0) ...[
                 const Spacer(),
-                Text(
-                  context.l10n.signoutLateCount(lateCount),
-                  style: const TextStyle(color: AppColors.medium, fontSize: 14),
-                ),
+                Text(context.l10n.signoutLateCount(lateCount), style: label),
               ],
             ],
           ),
@@ -765,10 +873,13 @@ class EventMoreLink extends StatelessWidget {
         child: Center(
           child: Text(
             label,
-            style: const TextStyle(
+            // ATT_SPACING: `font: inherit` – 1rem (17pt on iOS), normal
+            // line height.
+            style: TextStyle(
               color: AppColors.primary,
               fontWeight: FontWeight.w600,
-              fontSize: 16,
+              fontSize: EvMetrics.rem(context, 1),
+              height: EvMetrics.lineHeight(context),
             ),
           ),
         ),
@@ -953,7 +1064,15 @@ class EventSummaryRow extends StatelessWidget {
       child: Row(
         children: [
           Expanded(
-            child: Text(label, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+            // ATT_SPACING: `.ev-summary__label` .875rem medium
+            child: Text(
+              label,
+              style: TextStyle(
+                fontSize: EvMetrics.rem(context, 0.875),
+                height: EvMetrics.lineHeight(context),
+                color: EvMetrics.medium(context),
+              ),
+            ),
           ),
           const SizedBox(width: 12),
           pill,

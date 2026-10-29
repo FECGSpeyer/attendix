@@ -21,11 +21,17 @@ class IonToolbarSegment<T> extends StatelessWidget {
     required this.items,
     required this.value,
     required this.onChanged,
+    this.trackPadding = 0,
   });
 
   final List<IonSegmentItem<T>> items;
   final T? value;
   final ValueChanged<T>? onChanged;
+
+  /// ATT_SPACING: page CSS `ion-segment { padding: 8px }` (Übersicht) – iOS
+  /// pads the grey track around the buttons: 48 + 2 × 8 = 64pt high and
+  /// 16pt wider, still centred in the 74pt toolbar (68 + 2 × 3).
+  final double trackPadding;
 
   /// Height of the toolbar row that holds the segment.
   static double toolbarHeight(BuildContext context) =>
@@ -112,20 +118,27 @@ class IonToolbarSegment<T> extends StatelessWidget {
       );
     }
 
-    return Center(
-      child: Padding(
-        padding: const EdgeInsets.symmetric(horizontal: 16),
-        child: Container(
-          height: _height,
-          decoration: BoxDecoration(
-            color: track,
-            borderRadius: BorderRadius.circular(_radius),
-          ),
-          // Equal segment widths, sized by the widest label.
-          child: IntrinsicWidth(
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              children: [for (final i in items) Expanded(child: segment(i))],
+    // ATT_SPACING: fill the toolbar row so the track is centred in it like
+    // Ionic (3pt toolbar padding + (68 − track) / 2). AppBar.bottom does not
+    // stretch its child, which put the track at the bottom edge (≈18pt low).
+    return SizedBox(
+      height: toolbarHeight(context),
+      child: Center(
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 16),
+          child: Container(
+            height: _height + 2 * trackPadding,
+            padding: EdgeInsets.all(trackPadding),
+            decoration: BoxDecoration(
+              color: track,
+              borderRadius: BorderRadius.circular(_radius),
+            ),
+            // Equal segment widths, sized by the widest label.
+            child: IntrinsicWidth(
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [for (final i in items) Expanded(child: segment(i))],
+              ),
             ),
           ),
         ),

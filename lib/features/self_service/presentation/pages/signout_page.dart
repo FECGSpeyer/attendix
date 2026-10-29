@@ -345,8 +345,13 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     return names.take(3).join(', ');
   }
 
-  /// Ionic `.greet`: 48px avatar, h1 1.35rem bold, meta line 14px medium.
+  /// Ionic `.greet`: 48px avatar, h1 1.35rem bold, meta line .875rem
+  /// medium, margin-top 2. ATT_SPACING: iOS 22.95pt / 14.875pt with CSS
+  /// `line-height: normal` – the text block (≈47pt) stays within the 48pt
+  /// avatar row like Ionic instead of 53pt with the Material 1.43 height.
   Widget _buildGreeting(Person player, SignoutData data, {bool useDutyView = false}) {
+    final lineHeight = EvMetrics.lineHeight(context);
+    final medium = EvMetrics.medium(context);
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 12, 20, 0),
       child: Row(
@@ -368,11 +373,18 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               children: [
                 Text(
                   context.l10n.signoutGreeting(player.firstName),
-                  style: const TextStyle(fontSize: 21.6, fontWeight: FontWeight.w700),
+                  style: TextStyle(
+                    fontSize: EvMetrics.rem(context, 1.35),
+                    height: lineHeight,
+                    fontWeight: FontWeight.w700,
+                  ),
                 ),
                 const SizedBox(height: 2),
                 DefaultTextStyle.merge(
-                  style: const TextStyle(fontSize: 14),
+                  style: TextStyle(
+                    fontSize: EvMetrics.rem(context, 0.875),
+                    height: lineHeight,
+                  ),
                   child: Wrap(
                   spacing: 10,
                   runSpacing: 4,
@@ -393,7 +405,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                         ],
                       ),
                     if (useDutyView)
-                      Text(context.l10n.signoutYourDutyRoster, style: const TextStyle(color: AppColors.medium))
+                      Text(context.l10n.signoutYourDutyRoster, style: TextStyle(color: medium))
                     else if (data.percentage > 0)
                       Text(
                         context.l10n.signoutAttendancePercent(data.percentage),
@@ -404,7 +416,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                       ),
                     if (data.lateCount > 0)
                       Text(context.l10n.signoutLateCount(data.lateCount),
-                          style: const TextStyle(color: AppColors.medium)),
+                          style: TextStyle(color: medium)),
                   ],
                 ),
                 ),
@@ -631,14 +643,23 @@ class _GreetTile extends StatelessWidget {
                 child: Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
+                    // ATT_SPACING: .875rem semibold / .75rem medium
                     Text(title,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(fontWeight: FontWeight.w600, fontSize: 14)),
+                        style: TextStyle(
+                          fontWeight: FontWeight.w600,
+                          fontSize: EvMetrics.rem(context, 0.875),
+                          height: EvMetrics.lineHeight(context),
+                        )),
                     Text(subtitle,
                         maxLines: 1,
                         overflow: TextOverflow.ellipsis,
-                        style: const TextStyle(color: AppColors.medium, fontSize: 12)),
+                        style: TextStyle(
+                          color: EvMetrics.medium(context),
+                          fontSize: EvMetrics.rem(context, 0.75),
+                          height: EvMetrics.lineHeight(context),
+                        )),
                   ],
                 ),
               ),
