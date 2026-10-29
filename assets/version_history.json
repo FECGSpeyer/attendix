@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.22.5",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Erfassen bleibt richtig, auch wenn du einen Termin verlässt und gleich wieder öffnest, während noch gespeichert wird",
+        "🐛 Neues Design (Beta): Schlägt das Speichern fehl, zeigt die Liste wieder den zuletzt gespeicherten Status"
+      ]
+    },
+    {
       "version": "0.22.4",
       "date": "29.10.2026",
       "changes": [

@@ -296,12 +296,15 @@ void main() {
     final source = File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
     expect(source, isNot(contains('updatePersonAttendance(')));
     expect(source, isNot(contains('.from(')));
-    // Serialised per person (_serial), see "Rückgängig during a slow write";
+    // Serialised per row, see "Rückgängig during a slow write";
     // bound when the user acted, see "leaving the page".
     expect(source, contains('writer.status('));
     expect(source, contains('() => writer.write('));
     expect(RegExp(r'PersonAttendanceWriter\(ref\)').allMatches(source), hasLength(3));
-    expect(RegExp(r'await _serial\(').allMatches(source), hasLength(2));
+    // One queue per row for the whole session (RdWriteQueue), see
+    // "opening the Termin again".
+    expect(RegExp(r'await queue\.run\(|await _queue\.run\(').allMatches(source), hasLength(2));
+    expect(source, contains('_queue = ref.read(rdWriteQueueProvider)'));
   });
 
   testWidgets('Überblick: answers, empty register, sign-outs, notes', (tester) async {
@@ -431,6 +434,62 @@ void main() {
     expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 1}']);
     expect(find.text('1 da'), findsOneWidget);
     expect(find.textContaining('Netzwerk weg'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a failing newest write rolls back to the stored status, not an in-between one',
+      (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()
+      ..gate = Completer<void>()
+      ..failAt = 1;
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    Future<void> tap(String label) async {
+      await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel(label)));
+      await _settle(tester);
+    }
+
+    // neutral → anwesend (slow, saved) → abwesend (skipped) → anwesend (fails)
+    await tap('Anwesend');
+    await tap('Abwesend');
+    await tap('Anwesend');
+    h.gate!.complete();
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 1}']);
+    // "Anwesend" is what is stored, never the unsaved "Abwesend".
+    expect(find.text('1 da'), findsOneWidget);
+    expect(find.textContaining('Netzwerk weg'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
+  });
+
+  testWidgets('opening the Termin again: a newer choice wins over a queued Rückgängig', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()..gate = Completer<void>();
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
+    await _settle(tester);
+    await tester.tap(find.text('Rückgängig'));
+    await _settle(tester);
+
+    // Leave and open the Termin again while both writes still wait.
+    final router = GoRouter.of(tester.element(find.byType(RdEventPage)));
+    router.go('/termine');
+    await _settle(tester);
+    router.go('/termine/21');
+    await _settle(tester);
+    await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Abwesend')));
+    await _settle(tester);
+
+    h.gate!.complete();
+    await _settle(tester);
+    // The left page's "Rückgängig" is superseded; "Abwesend" is written last.
+    expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 4}']);
     expect(tester.takeException(), isNull);
   });
 

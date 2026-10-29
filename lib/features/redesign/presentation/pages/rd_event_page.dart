@@ -28,6 +28,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../../data/rd_write_queue.dart';
 import '../widgets/event/rd_pult_view.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
@@ -78,6 +79,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   /// Writes in flight per person (from the tap on, so a refetch that
   /// arrives meanwhile cannot show the old status again).
   final Map<int, int> _saving = {};
+  late final RdWriteQueue _queue;
   Set<int>? _rowPersonIds;
 
   ProviderSubscription<AsyncValue<List<PersonAttendance>>>? _rowsSub;
@@ -107,6 +109,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   @override
   void initState() {
     super.initState();
+    _queue = ref.read(rdWriteQueueProvider);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       // Fresh rows from the database (other devices, autoDispose cache).
@@ -152,6 +155,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
           _statuses[personId] = pa.status;
           _notes[personId] = pa.notes;
         }
+        if (pa.id case final rowId? when !_queue.isBusy(rowId)) _queue.markStored(rowId, pa.status);
       }
       _rowPersonIds = {for (final pa in rows) if (pa.personId != null) pa.personId!};
     });
@@ -163,21 +167,6 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
   void _hold(int personId) => _saving[personId] = (_saving[personId] ?? 0) + 1;
 
-  /// Last pending write per person: status, undo and note writes of one
-  /// person run one after the other, so a slow earlier write can never land
-  /// after (and overwrite) a later one such as "Rückgängig".
-  final Map<int, Future<void>> _queues = {};
-
-  Future<T> _serial<T>(int personId, Future<T> Function() task) {
-    final before = _queues[personId] ?? Future<void>.value();
-    final done = Completer<void>();
-    _queues[personId] = done.future;
-    return before.then((_) => task()).whenComplete(() {
-      done.complete();
-      if (identical(_queues[personId], done.future)) _queues.remove(personId);
-    });
-  }
-
   void _release(int personId) {
     final left = (_saving[personId] ?? 1) - 1;
     if (left <= 0) {
@@ -187,41 +176,37 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
   }
 
-  /// Change number per person: every local status change takes the next
-  /// one. A write only runs and only rolls back while its change is still
-  /// the person's newest, so a slow or failing older write can neither
-  /// overwrite a newer choice nor reset it.
-  final Map<int, int> _revs = {};
-
-  int _nextRev(int personId) => _revs[personId] = (_revs[personId] ?? 0) + 1;
-
-  /// Writes one status ([rev] from [_nextRev] when it was set); reverts and
-  /// reports when it could not be saved. [writer] is bound when the user
-  /// acted, so a write still waiting in [_serial] completes after the page
-  /// was left.
+  /// Writes one status; reverts and reports when it could not be saved.
+  /// [writer] is bound and the change number ([rev], else taken now) is
+  /// taken when the user acted: the write waits in [RdWriteQueue] behind
+  /// earlier writes of the row (also of a page that was left) and still
+  /// completes after this page was left.
   Future<bool> _write(
     PersonAttendanceWriter writer,
     int personId,
     AttendanceStatus status,
     AttendanceStatus previous, {
-    required int rev,
+    int? rev,
     bool refresh = true,
   }) async {
-    bool newest() => _revs[personId] == rev;
-    void revert() {
-      if (mounted && newest()) setState(() => _statuses[personId] = previous);
-    }
-
     final paId = _paIds[personId];
     if (paId == null) {
-      revert();
+      if (mounted) setState(() => _statuses[personId] = previous);
       return false;
     }
+    final queue = _queue;
+    final change = rev ?? queue.nextRev(paId);
+    bool newest() => queue.isNewest(paId, change);
+    // Back to what is stored, not to an in-between choice never written.
+    void revert() {
+      if (mounted && newest()) setState(() => _statuses[personId] = queue.stored(paId) ?? previous);
+    }
+
     _hold(personId);
     try {
-      final result = await _serial(
-        personId,
-        // A newer change of this person follows in the queue and wins.
+      final result = await queue.run(
+        paId,
+        // A newer change of this row follows in the queue and wins.
         () async => newest()
             ? writer.status(
                 attendanceId: _id,
@@ -236,6 +221,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         revert();
         return false;
       }
+      queue.markStored(paId, status);
       return true;
     } catch (e) {
       // A superseded write failing changes nothing: the newer one follows.
@@ -266,7 +252,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   /// Bound to the moment of the tap: it finishes after the page was left.
   Future<void> _writeMany(Map<int, AttendanceStatus> targets, Map<int, AttendanceStatus> previous) async {
     final writer = PersonAttendanceWriter(ref);
-    final revs = {for (final id in targets.keys) id: _nextRev(id)};
+    final revs = {
+      for (final id in targets.keys)
+        if (_paIds[id] case final paId?) id: _queue.nextRev(paId),
+    };
     setState(() => _bulkWrites++);
     try {
       final entries = targets.entries.toList();
@@ -280,7 +269,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               e.key,
               e.value,
               previous[e.key] ?? AttendanceStatus.neutral,
-              rev: revs[e.key]!,
+              rev: revs[e.key],
               refresh: false,
             ),
         ]);
@@ -318,7 +307,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ? l10n.redesignEventToastReset(member.name)
         : l10n.redesignEventToastSet(member.name, ionicStatusLabel(status));
     _showToast(text, undo: _Undo(text, {member.id: previous}));
-    _write(PersonAttendanceWriter(ref), member.id, status, previous, rev: _nextRev(member.id));
+    _write(PersonAttendanceWriter(ref), member.id, status, previous);
   }
 
   void _allOpenPresent(List<RdMember> open) {
@@ -373,8 +362,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final writer = PersonAttendanceWriter(ref);
     _hold(member.id);
     try {
-      final result = await _serial(
-        member.id,
+      final result = await _queue.run(
+        paId,
         () => writer.write(
           attendanceId: _id,
           personAttendanceId: paId,
