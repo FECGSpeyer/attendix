@@ -22,6 +22,11 @@ class PlanningDraftStore {
 
   static int _lastRevision = 0;
 
+  /// SOL_FIX28: source of the preferences (replaced in tests by a store
+  /// whose writes fail).
+  @visibleForTesting
+  static Future<SharedPreferences> Function() preferences = SharedPreferences.getInstance;
+
   /// Key of the draft of plan [planKey] of Termin [attId] for [userId] in
   /// [tenantId]: `planning_draft_<userId>_<tenantId>_<attId>_<plan>`; null
   /// (no draft) without signed-in user or tenant.
@@ -45,6 +50,10 @@ class PlanningDraftStore {
   /// Stores [data] under [key] with a new revision and returns it; null when
   /// nothing was stored. [allowed] is checked right before the write (e.g.
   /// the account is still signed in). Never throws.
+  ///
+  /// SOL_FIX28: a non-null result is a confirmed write: `setString` returned
+  /// true and nothing threw. A refused or failed write returns null, so the
+  /// caller never claims a draft that does not exist.
   static Future<int?> write(
     String? key,
     Map<String, dynamic> data, {
@@ -54,10 +63,11 @@ class PlanningDraftStore {
     // Assigned synchronously: writes to one key keep their call order.
     final rev = nextRevision();
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await preferences();
       if (!allowed()) return null;
-      await prefs.setString(key, jsonEncode({...data, 'rev': rev}));
-      return rev;
+      final stored = await prefs.setString(key, jsonEncode({...data, 'rev': rev}));
+      if (!stored) debugPrint('[PlanningDraft] write not confirmed');
+      return stored ? rev : null;
     } catch (e) {
       debugPrint('[PlanningDraft] write failed: $e');
       return null;
@@ -68,7 +78,7 @@ class PlanningDraftStore {
   static Future<({int? rev, Map<String, dynamic> data})?> read(String? key) async {
     if (key == null) return null;
     try {
-      final raw = (await SharedPreferences.getInstance()).getString(key);
+      final raw = (await preferences()).getString(key);
       if (raw == null) return null;
       final data = Map<String, dynamic>.from(jsonDecode(raw) as Map);
       final rev = data.remove('rev');
@@ -83,7 +93,7 @@ class PlanningDraftStore {
   static Future<void> removeIfRevision(String? key, int? rev) async {
     if (key == null) return;
     try {
-      final prefs = await SharedPreferences.getInstance();
+      final prefs = await preferences();
       final raw = prefs.getString(key);
       if (raw == null) return;
       Object? stored;
@@ -103,7 +113,7 @@ class PlanningDraftStore {
 /// Called on sign-out and account switch. Never throws.
 Future<void> clearPlanningDrafts() async {
   try {
-    final prefs = await SharedPreferences.getInstance();
+    final prefs = await PlanningDraftStore.preferences();
     final keys = prefs.getKeys().where((k) => k.startsWith(PlanningDraftStore.prefix)).toList();
     for (final k in keys) {
       await prefs.remove(k);

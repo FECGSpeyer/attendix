@@ -6783,6 +6783,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get planningFlutterDraftLost => 'Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren';
+
+  @override
   String get planningFlutterDraftRestored => 'Nicht gespeicherte Änderungen wiederhergestellt';
 
   @override
