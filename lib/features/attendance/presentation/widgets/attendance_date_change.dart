@@ -203,7 +203,11 @@ Future<bool> promptAttendanceDateChange(
         );
       }
       writeSession.ensureCurrent();
-      await repo.updateShiftAssignmentsForAttendance(attendanceId);
+      await repo.updateShiftAssignmentsForAttendance(
+        attendanceId,
+        isSessionCurrent: writeSession.isCurrent,
+        actingUserId: writeSession.userId,
+      );
     }
 
     if (context.mounted) {

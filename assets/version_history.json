@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.12.3",
+      "date": "29.10.2026",
+      "changes": [
+        "🔒 Schichten nach Datums- oder Zeitänderung werden nur unter dem Konto gespeichert, das die Änderung gemacht hat"
+      ]
+    },
+    {
       "version": "0.12.2",
       "date": "29.10.2026",
       "changes": [

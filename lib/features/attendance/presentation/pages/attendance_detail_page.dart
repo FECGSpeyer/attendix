@@ -2326,6 +2326,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   Future<void> _selectStartTime() async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    // #232: session of the acting user, captured before the first await.
+    final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
 
@@ -2359,7 +2361,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
       // shift computation for everyone in this Termin.
       if (timeStr != previous) {
-        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        await repo.updateShiftAssignmentsForAttendance(
+          widget.attendanceId,
+          isSessionCurrent: writeSession.isCurrent,
+          actingUserId: writeSession.userId,
+        );
         ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       }
 
@@ -2375,6 +2381,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   Future<void> _selectEndTime() async {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    // #232: session of the acting user, captured before the first await.
+    final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
     if (attendance == null) return;
 
@@ -2408,7 +2416,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
       // shift computation for everyone in this Termin.
       if (timeStr != previous) {
-        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        await repo.updateShiftAssignmentsForAttendance(
+          widget.attendanceId,
+          isSessionCurrent: writeSession.isCurrent,
+          actingUserId: writeSession.userId,
+        );
         ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       }
 

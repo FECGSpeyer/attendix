@@ -394,7 +394,16 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// time window of a Termin changed, re-run the shift computation for every
   /// person of the Termin (see [ShiftUtils.shiftUpdatesForAttendance]).
   /// Skips past Termine and all-day types.
-  Future<void> updateShiftAssignmentsForAttendance(int attendanceId) async {
+  ///
+  /// #232: [isSessionCurrent] / [actingUserId] come from the write session
+  /// captured when the user acted. Every status write re-checks it right
+  /// before the mutation (via [updatePersonAttendance]), so an account or
+  /// tenant switch during the loop stops the remaining writes.
+  Future<void> updateShiftAssignmentsForAttendance(
+    int attendanceId, {
+    bool Function()? isSessionCurrent,
+    String? actingUserId,
+  }) async {
     try {
       final att = await supabase
           .from('attendance')
@@ -463,7 +472,12 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         shifts: shifts,
       );
       for (final u in updates) {
-        await updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+        await updatePersonAttendance(
+          u.id,
+          {'status': u.status.value, 'notes': u.notes},
+          isSessionCurrent: isSessionCurrent,
+          actingUserId: actingUserId,
+        );
       }
     } catch (e, stack) {
       handleError(e, stack, 'updateShiftAssignmentsForAttendance');
