@@ -34,7 +34,11 @@
         "planDeletedDraftLost": "Plan wurde inzwischen gelöscht – Änderungen gehen verloren",
         "planChanged": "Plan wurde inzwischen geändert",
         "planChangedDraftSaved": "Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert",
-        "planChangedDraftLost": "Plan wurde inzwischen geändert – Änderungen gehen verloren"
+        "planChangedDraftLost": "Plan wurde inzwischen geändert – Änderungen gehen verloren",
+        "conflictDraftTitle": "Entwurf nicht übernommen",
+        "conflictDraftMessage": "Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.",
+        "conflictDraftApply": "Entwurf übernehmen",
+        "conflictDraftDiscard": "Verwerfen"
       }
     },
     "orgFields": {
@@ -88,7 +92,11 @@
         "planDeletedDraftLost": "The plan was deleted in the meantime – changes are lost",
         "planChanged": "The plan was changed in the meantime",
         "planChangedDraftSaved": "The plan was changed in the meantime – changes kept as a draft",
-        "planChangedDraftLost": "The plan was changed in the meantime – changes are lost"
+        "planChangedDraftLost": "The plan was changed in the meantime – changes are lost",
+        "conflictDraftTitle": "Draft not applied",
+        "conflictDraftMessage": "An older draft was not applied because of a conflict.",
+        "conflictDraftApply": "Apply draft",
+        "conflictDraftDiscard": "Discard"
       }
     },
     "orgFields": {

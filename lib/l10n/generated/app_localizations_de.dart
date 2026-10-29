@@ -6783,6 +6783,18 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get planningFlutterConflictDraftApply => 'Entwurf übernehmen';
+
+  @override
+  String get planningFlutterConflictDraftDiscard => 'Verwerfen';
+
+  @override
+  String get planningFlutterConflictDraftMessage => 'Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.';
+
+  @override
+  String get planningFlutterConflictDraftTitle => 'Entwurf nicht übernommen';
+
+  @override
   String get planningFlutterDraftLost => 'Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren';
 
   @override

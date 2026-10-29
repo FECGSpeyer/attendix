@@ -11879,6 +11879,30 @@ abstract class AppLocalizations {
   /// **'Programmblock: {name} ({min} min)'**
   String planningFlutterBlockEntry(Object name, Object min);
 
+  /// planning.flutter.conflictDraftApply
+  ///
+  /// In de, this message translates to:
+  /// **'Entwurf übernehmen'**
+  String get planningFlutterConflictDraftApply;
+
+  /// planning.flutter.conflictDraftDiscard
+  ///
+  /// In de, this message translates to:
+  /// **'Verwerfen'**
+  String get planningFlutterConflictDraftDiscard;
+
+  /// planning.flutter.conflictDraftMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.'**
+  String get planningFlutterConflictDraftMessage;
+
+  /// planning.flutter.conflictDraftTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Entwurf nicht übernommen'**
+  String get planningFlutterConflictDraftTitle;
+
   /// planning.flutter.draftLost
   ///
   /// In de, this message translates to:

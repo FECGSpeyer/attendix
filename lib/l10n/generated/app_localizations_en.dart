@@ -6789,6 +6789,18 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get planningFlutterConflictDraftApply => 'Apply draft';
+
+  @override
+  String get planningFlutterConflictDraftDiscard => 'Discard';
+
+  @override
+  String get planningFlutterConflictDraftMessage => 'An older draft was not applied because of a conflict.';
+
+  @override
+  String get planningFlutterConflictDraftTitle => 'Draft not applied';
+
+  @override
   String get planningFlutterDraftLost => 'Run sheet could not be saved – changes are lost';
 
   @override
