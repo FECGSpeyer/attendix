@@ -6,6 +6,7 @@ import '../../../core/providers/attendance_detail_providers.dart';
 import '../../../core/providers/attendance_providers.dart';
 import '../../../core/providers/realtime_providers.dart';
 import '../../../core/services/offline_queue_service.dart';
+import '../../../data/repositories/attendance_repository.dart';
 
 /// Outcome of [writePersonAttendance].
 enum PersonAttendanceWrite {
@@ -37,33 +38,13 @@ Future<PersonAttendanceWrite> writePersonAttendance(
   required String personAttendanceId,
   required Map<String, dynamic> updates,
   VoidCallback? beforeWrite,
-}) async {
-  // UI_TENANT_HOIST: bind the repository before the first await.
-  final repo = ref.read(attendanceRepositoryWithTenantProvider);
-  final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
-  final writeSession = offlineQueue.captureWriteSession();
-  if (await offlineQueue.enqueueIfOffline(
-    personAttendanceId,
-    updates,
-    attendanceId: attendanceId,
-    session: writeSession,
-  )) {
-    return PersonAttendanceWrite.queued;
-  }
-
-  if (!repo.hasTenantId || !await repo.validatePersonAttendanceTenant(personAttendanceId)) {
-    return PersonAttendanceWrite.notAllowed;
-  }
-
-  beforeWrite?.call();
-  await repo.updatePersonAttendance(
-    personAttendanceId,
-    updates,
-    isSessionCurrent: writeSession.isCurrent,
-    actingUserId: writeSession.userId,
-  );
-  return PersonAttendanceWrite.saved;
-}
+}) =>
+    PersonAttendanceWriter(ref).write(
+      attendanceId: attendanceId,
+      personAttendanceId: personAttendanceId,
+      updates: updates,
+      beforeWrite: beforeWrite,
+    );
 
 /// Writes a person's [status] for Termin [attendanceId] via
 /// [writePersonAttendance]; after a direct write [refreshAfterStatusWrite]
@@ -75,18 +56,94 @@ Future<PersonAttendanceWrite> writePersonStatus(
   required AttendanceStatus status,
   VoidCallback? beforeWrite,
   bool refresh = true,
-}) async {
-  final result = await writePersonAttendance(
-    ref,
-    attendanceId: attendanceId,
-    personAttendanceId: personAttendanceId,
-    updates: {'status': status.value},
-    beforeWrite: beforeWrite,
-  );
-  if (refresh && result == PersonAttendanceWrite.saved) {
-    refreshAfterStatusWrite(ref, attendanceId);
+}) =>
+    PersonAttendanceWriter(ref).status(
+      attendanceId: attendanceId,
+      personAttendanceId: personAttendanceId,
+      status: status,
+      beforeWrite: beforeWrite,
+      refresh: refresh,
+    );
+
+/// [writePersonAttendance] split in two: the repository, the offline queue,
+/// the write session and the provider container are bound when the user
+/// acts (synchronously, from a mounted widget); the writes can run later,
+/// also after the page was left (queued writes of the new design's
+/// recording view, e.g. "Rückgängig" behind a slow write).
+class PersonAttendanceWriter {
+  PersonAttendanceWriter(WidgetRef ref)
+      // UI_TENANT_HOIST: bind the repository before the first await.
+      : _repo = ref.read(attendanceRepositoryWithTenantProvider),
+        _offlineQueue = ref.read(offlineQueueNotifierProvider.notifier),
+        _container = ProviderScope.containerOf(ref.context, listen: false) {
+    _writeSession = _offlineQueue.captureWriteSession();
   }
-  return result;
+
+  final AttendanceRepository _repo;
+  final OfflineQueueNotifier _offlineQueue;
+  final ProviderContainer _container;
+  late final OfflineWriteSession _writeSession;
+
+  /// See [writePersonAttendance].
+  Future<PersonAttendanceWrite> write({
+    required int attendanceId,
+    required String personAttendanceId,
+    required Map<String, dynamic> updates,
+    VoidCallback? beforeWrite,
+  }) async {
+    final repo = _repo;
+    final offlineQueue = _offlineQueue;
+    final writeSession = _writeSession;
+    if (await offlineQueue.enqueueIfOffline(
+      personAttendanceId,
+      updates,
+      attendanceId: attendanceId,
+      session: writeSession,
+    )) {
+      return PersonAttendanceWrite.queued;
+    }
+
+    if (!repo.hasTenantId || !await repo.validatePersonAttendanceTenant(personAttendanceId)) {
+      return PersonAttendanceWrite.notAllowed;
+    }
+
+    beforeWrite?.call();
+    await repo.updatePersonAttendance(
+      personAttendanceId,
+      updates,
+      isSessionCurrent: writeSession.isCurrent,
+      actingUserId: writeSession.userId,
+    );
+    return PersonAttendanceWrite.saved;
+  }
+
+  /// See [writePersonStatus].
+  Future<PersonAttendanceWrite> status({
+    required int attendanceId,
+    required String personAttendanceId,
+    required AttendanceStatus status,
+    VoidCallback? beforeWrite,
+    bool refresh = true,
+  }) async {
+    final result = await write(
+      attendanceId: attendanceId,
+      personAttendanceId: personAttendanceId,
+      updates: {'status': status.value},
+      beforeWrite: beforeWrite,
+    );
+    if (refresh && result == PersonAttendanceWrite.saved) {
+      refreshStatuses(attendanceId);
+    }
+    return result;
+  }
+
+  /// [refreshAfterStatusWrite] without the widget.
+  void refreshStatuses(int attendanceId) {
+    _container.invalidate(realtimeAttendanceListProvider);
+    if (_container.read(attendanceTypeForAttendanceProvider(attendanceId)).valueOrNull?.dutyMode ?? false) {
+      _container.invalidate(personAttendancesForAttendanceProvider(attendanceId));
+    }
+  }
 }
 
 /// Refreshes what depends on the statuses of Termin [attendanceId]: the

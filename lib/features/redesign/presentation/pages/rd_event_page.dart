@@ -12,6 +12,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
@@ -39,8 +40,8 @@ enum RdEventTab { overview, record }
 
 /// REDESIGN: a Termin for Dirigent and Helfer (canvas D4 "Überblick", D5
 /// "Anwesenheit" with Rückgängig). Statuses and notes are written through
-/// the Termin page's write path ([writePersonStatus],
-/// [writePersonAttendance]); everything else stays on the full Termin page
+/// the Termin page's write path ([PersonAttendanceWriter], as in
+/// [writePersonStatus] and [writePersonAttendance]); everything else stays on the full Termin page
 /// ("Alle Details").
 class RdEventPage extends ConsumerStatefulWidget {
   const RdEventPage({
@@ -186,16 +187,29 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
   }
 
-  /// Writes one status; reverts and reports when it could not be saved.
+  /// Change number per person: every local status change takes the next
+  /// one. A write only runs and only rolls back while its change is still
+  /// the person's newest, so a slow or failing older write can neither
+  /// overwrite a newer choice nor reset it.
+  final Map<int, int> _revs = {};
+
+  int _nextRev(int personId) => _revs[personId] = (_revs[personId] ?? 0) + 1;
+
+  /// Writes one status ([rev] from [_nextRev] when it was set); reverts and
+  /// reports when it could not be saved. [writer] is bound when the user
+  /// acted, so a write still waiting in [_serial] completes after the page
+  /// was left.
   Future<bool> _write(
+    PersonAttendanceWriter writer,
     int personId,
     AttendanceStatus status,
     AttendanceStatus previous, {
+    required int rev,
     bool refresh = true,
   }) async {
-    // Only when nothing newer was set meanwhile (e.g. "Rückgängig").
+    bool newest() => _revs[personId] == rev;
     void revert() {
-      if (mounted && _statuses[personId] == status) setState(() => _statuses[personId] = previous);
+      if (mounted && newest()) setState(() => _statuses[personId] = previous);
     }
 
     final paId = _paIds[personId];
@@ -207,46 +221,72 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     try {
       final result = await _serial(
         personId,
-        () => writePersonStatus(
-          ref,
-          attendanceId: _id,
-          personAttendanceId: paId,
-          status: status,
-          refresh: refresh,
-        ),
+        // A newer change of this person follows in the queue and wins.
+        () async => newest()
+            ? writer.status(
+                attendanceId: _id,
+                personAttendanceId: paId,
+                status: status,
+                refresh: refresh,
+              )
+            : null,
       );
+      if (result == null) return false;
       if (result == PersonAttendanceWrite.notAllowed) {
         revert();
         return false;
       }
       return true;
     } catch (e) {
+      // A superseded write failing changes nothing: the newer one follows.
+      if (!newest()) return false;
       revert();
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
-      }
+      _showWriteError((l10n) => l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       return false;
     } finally {
       _release(personId);
     }
   }
 
+  /// Error toast; after the page was left (a queued write failed) on the
+  /// app's root messenger.
+  void _showWriteError(String Function(AppLocalizations l10n) message) {
+    if (mounted) {
+      ToastHelper.showError(context, message(context.l10n));
+      return;
+    }
+    rootScaffoldMessengerKey.currentState?.showSnackBar(SnackBar(
+      content: Text(message(l10nWithoutContext), style: const TextStyle(color: Colors.white)),
+      backgroundColor: Colors.red,
+      behavior: SnackBarBehavior.floating,
+    ));
+  }
+
   /// Writes several statuses, a few at a time, and refreshes the list once.
+  /// Bound to the moment of the tap: it finishes after the page was left.
   Future<void> _writeMany(Map<int, AttendanceStatus> targets, Map<int, AttendanceStatus> previous) async {
+    final writer = PersonAttendanceWriter(ref);
+    final revs = {for (final id in targets.keys) id: _nextRev(id)};
     setState(() => _bulkWrites++);
     try {
       final entries = targets.entries.toList();
       var saved = false;
       for (var i = 0; i < entries.length; i += 6) {
-        if (!mounted) return;
         final chunk = entries.skip(i).take(6);
         final results = await Future.wait([
           for (final e in chunk)
-            _write(e.key, e.value, previous[e.key] ?? AttendanceStatus.neutral, refresh: false),
+            _write(
+              writer,
+              e.key,
+              e.value,
+              previous[e.key] ?? AttendanceStatus.neutral,
+              rev: revs[e.key]!,
+              refresh: false,
+            ),
         ]);
         saved = saved || results.any((ok) => ok);
       }
-      if (saved && mounted) refreshAfterStatusWrite(ref, _id);
+      if (saved) writer.refreshStatuses(_id);
     } finally {
       if (mounted) setState(() => _bulkWrites--);
     }
@@ -278,7 +318,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ? l10n.redesignEventToastReset(member.name)
         : l10n.redesignEventToastSet(member.name, ionicStatusLabel(status));
     _showToast(text, undo: _Undo(text, {member.id: previous}));
-    _write(member.id, status, previous);
+    _write(PersonAttendanceWriter(ref), member.id, status, previous, rev: _nextRev(member.id));
   }
 
   void _allOpenPresent(List<RdMember> open) {
@@ -330,12 +370,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
     String? previousNote;
     var direct = false;
+    final writer = PersonAttendanceWriter(ref);
     _hold(member.id);
     try {
       final result = await _serial(
         member.id,
-        () => writePersonAttendance(
-          ref,
+        () => writer.write(
           attendanceId: _id,
           personAttendanceId: paId,
           updates: {'notes': note},
@@ -359,10 +399,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
           );
       }
     } catch (e) {
-      if (mounted) {
-        if (direct) setState(() => _notes[member.id] = previousNote);
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
-      }
+      if (direct && mounted) setState(() => _notes[member.id] = previousNote);
+      _showWriteError((l10n) => l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     } finally {
       _release(member.id);
     }

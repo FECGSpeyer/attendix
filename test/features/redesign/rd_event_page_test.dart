@@ -96,6 +96,9 @@ class _Harness {
   /// When set, every write waits for it after it was recorded.
   Completer<void>? gate;
 
+  /// Index in [writes] of a write that fails (after [gate]).
+  int? failAt;
+
   Widget app({RdEventTab tab = RdEventTab.overview, bool split = false}) {
     when(() => repo.hasTenantId).thenReturn(true);
     when(() => repo.validatePersonAttendanceTenant(any())).thenAnswer((_) async => valid);
@@ -107,8 +110,10 @@ class _Harness {
         )).thenAnswer((inv) async {
       final id = inv.positionalArguments[0] as String;
       final updates = Map<String, dynamic>.from(inv.positionalArguments[1] as Map);
+      final n = writes.length;
       writes.add('$id $updates');
       await gate?.future;
+      if (n == failAt) throw Exception('Netzwerk weg');
       return TestFactories.createPersonAttendance(id: id, attendanceId: 21);
     });
 
@@ -291,9 +296,11 @@ void main() {
     final source = File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
     expect(source, isNot(contains('updatePersonAttendance(')));
     expect(source, isNot(contains('.from(')));
-    // Serialised per person (_serial), see "Rückgängig during a slow write".
-    expect(source, contains('() => writePersonStatus('));
-    expect(source, contains('() => writePersonAttendance('));
+    // Serialised per person (_serial), see "Rückgängig during a slow write";
+    // bound when the user acted, see "leaving the page".
+    expect(source, contains('writer.status('));
+    expect(source, contains('() => writer.write('));
+    expect(RegExp(r'PersonAttendanceWriter\(ref\)').allMatches(source), hasLength(3));
     expect(RegExp(r'await _serial\(').allMatches(source), hasLength(2));
   });
 
@@ -370,6 +377,76 @@ void main() {
     expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 0}']);
     expect(find.text('0 da'), findsOneWidget);
     expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('leaving the page while Rückgängig waits still writes it', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()..gate = Completer<void>();
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
+    await _settle(tester);
+    await tester.tap(find.text('Rückgängig'));
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}']);
+
+    // Tab switch: the page is disposed with the undo still queued.
+    GoRouter.of(tester.element(find.byType(RdEventPage))).go('/termine');
+    await _settle(tester);
+    expect(find.byType(RdEventPage), findsNothing);
+
+    h.gate!.complete();
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 0}']);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('a late failure of an older write never resets a newer choice', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()
+      ..gate = Completer<void>()
+      ..failAt = 0;
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    Future<void> tap(String label) async {
+      await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel(label)));
+      await _settle(tester);
+    }
+
+    // neutral → anwesend (slow, fails) → abwesend → anwesend
+    await tap('Anwesend');
+    await tap('Abwesend');
+    await tap('Anwesend');
+    expect(h.writes, ['pa-2 {status: 1}']);
+    expect(find.text('1 da'), findsOneWidget);
+
+    h.gate!.complete();
+    await _settle(tester);
+    // The failed first write does not roll back, the superseded "abwesend"
+    // is skipped, the newest choice is written.
+    expect(h.writes, ['pa-2 {status: 1}', 'pa-2 {status: 1}']);
+    expect(find.text('1 da'), findsOneWidget);
+    expect(find.textContaining('Netzwerk weg'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('the newest write failing rolls back and reports', (tester) async {
+    _size(tester, const Size(393, 852));
+    final h = _Harness()..failAt = 0;
+    await tester.pumpWidget(h.app(tab: RdEventTab.record));
+    await _settle(tester);
+
+    final anna = find.byKey(const ValueKey('rd-record-2'));
+    await tester.tap(find.descendant(of: anna, matching: find.bySemanticsLabel('Anwesend')));
+    await _settle(tester);
+    expect(h.writes, ['pa-2 {status: 1}']);
+    expect(find.text('0 da'), findsOneWidget);
+    expect(find.textContaining('Netzwerk weg'), findsOneWidget);
+    await tester.pump(const Duration(seconds: 5));
   });
 
   testWidgets('Anwesenheit: all open as present, then undo', (tester) async {
