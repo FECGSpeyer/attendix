@@ -171,6 +171,26 @@ void main() {
         expect(e.group(1), contains('session: writeSession'));
       }
     });
+
+    // REDESIGN: status and note writes of the Termin page and the new
+    // design's recording view share one write path.
+    test('the shared person_attendances write path is guarded too', () {
+      final shared = _read(
+          'lib/features/attendance/presentation/person_attendance_writes.dart');
+      final writes = RegExp(r'repo\.updatePersonAttendance\(([^;]*);').allMatches(shared).toList();
+      expect(writes, hasLength(1));
+      expect(writes.single.group(1), contains('isSessionCurrent: writeSession.isCurrent'));
+      expect(writes.single.group(1), contains('actingUserId: writeSession.userId'));
+      final enqueues = RegExp(r'enqueueIfOffline\(([^;]*?)\)\)').allMatches(shared).toList();
+      expect(enqueues, hasLength(1));
+      expect(enqueues.single.group(1), contains('session: writeSession'));
+      expect(shared, contains('validatePersonAttendanceTenant(personAttendanceId)'));
+
+      final page = _read(
+          'lib/features/attendance/presentation/pages/attendance_detail_page.dart');
+      expect(page, contains('await writePersonStatus('));
+      expect(page, contains('await writePersonAttendance('));
+    });
   });
 
   group('offline queue: unreadable queue is never overwritten', () {

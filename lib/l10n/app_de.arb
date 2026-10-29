@@ -7061,6 +7061,26 @@
       "count": {}
     }
   },
+  "peopleFlutterContactCall": "Anrufen",
+  "@peopleFlutterContactCall": {
+    "description": "people.flutter.contact.call"
+  },
+  "peopleFlutterContactMail": "E-Mail",
+  "@peopleFlutterContactMail": {
+    "description": "people.flutter.contact.mail"
+  },
+  "peopleFlutterContactMailHint": "E-Mail schreiben",
+  "@peopleFlutterContactMailHint": {
+    "description": "people.flutter.contact.mailHint"
+  },
+  "peopleFlutterContactTelegramHint": "Per Telegram schreiben",
+  "@peopleFlutterContactTelegramHint": {
+    "description": "people.flutter.contact.telegramHint"
+  },
+  "peopleFlutterContactWhatsAppHint": "Per WhatsApp schreiben",
+  "@peopleFlutterContactWhatsAppHint": {
+    "description": "people.flutter.contact.whatsAppHint"
+  },
   "peopleFlutterCreateAnyway": "Trotzdem erstellen",
   "@peopleFlutterCreateAnyway": {
     "description": "people.flutter.createAnyway"
@@ -10150,6 +10170,1816 @@
       "count": {}
     }
   },
+  "redesignAbsenceAffects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
+  "@redesignAbsenceAffects": {
+    "description": "redesign.absence.affects",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignAbsenceChooseEnd": "Tippe auf den letzten Tag.",
+  "@redesignAbsenceChooseEnd": {
+    "description": "redesign.absence.chooseEnd"
+  },
+  "redesignAbsenceChooseStart": "Tippe auf den ersten Tag.",
+  "@redesignAbsenceChooseStart": {
+    "description": "redesign.absence.chooseStart"
+  },
+  "redesignAbsenceNextMonth": "Nächster Monat",
+  "@redesignAbsenceNextMonth": {
+    "description": "redesign.absence.nextMonth"
+  },
+  "redesignAbsencePause": "Pausieren",
+  "@redesignAbsencePause": {
+    "description": "redesign.absence.pause"
+  },
+  "redesignAbsencePauseButton": "Pausieren …",
+  "@redesignAbsencePauseButton": {
+    "description": "redesign.absence.pauseButton"
+  },
+  "redesignAbsencePauseHint": "Wenn du länger nicht kannst, kannst du dich pausieren. Die Leitung sieht dann, dass du gerade nicht dabei bist.",
+  "@redesignAbsencePauseHint": {
+    "description": "redesign.absence.pauseHint"
+  },
+  "redesignAbsencePeriod": "Zeitraum",
+  "@redesignAbsencePeriod": {
+    "description": "redesign.absence.period"
+  },
+  "redesignAbsencePrevMonth": "Voriger Monat",
+  "@redesignAbsencePrevMonth": {
+    "description": "redesign.absence.prevMonth"
+  },
+  "redesignAbsenceRange": "Zeitraum abwesend",
+  "@redesignAbsenceRange": {
+    "description": "redesign.absence.range"
+  },
+  "redesignAbsenceReason": "Grund",
+  "@redesignAbsenceReason": {
+    "description": "redesign.absence.reason"
+  },
+  "redesignAbsenceReasonHint": "z. B. Urlaub",
+  "@redesignAbsenceReasonHint": {
+    "description": "redesign.absence.reasonHint"
+  },
+  "redesignAbsenceReset": "Zeitraum zurücksetzen",
+  "@redesignAbsenceReset": {
+    "description": "redesign.absence.reset"
+  },
+  "redesignAbsenceSubmit": "Abwesenheit eintragen",
+  "@redesignAbsenceSubmit": {
+    "description": "redesign.absence.submit"
+  },
+  "redesignAbsenceTitle": "Abwesenheit",
+  "@redesignAbsenceTitle": {
+    "description": "redesign.absence.title"
+  },
+  "redesignAdminTitle": "Verwaltung",
+  "@redesignAdminTitle": {
+    "description": "redesign.adminTitle"
+  },
+  "redesignAppearanceAppIcon": "App-Symbol",
+  "@redesignAppearanceAppIcon": {
+    "description": "redesign.appearance.appIcon"
+  },
+  "redesignAppearanceAppIconFollow": "App-Symbol in Farbwelt",
+  "@redesignAppearanceAppIconFollow": {
+    "description": "redesign.appearance.appIconFollow"
+  },
+  "redesignAppearanceAppIconHint": "Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.",
+  "@redesignAppearanceAppIconHint": {
+    "description": "redesign.appearance.appIconHint"
+  },
+  "redesignAppearanceAutoHint": "Automatisch folgt der Einstellung deines Geräts.",
+  "@redesignAppearanceAutoHint": {
+    "description": "redesign.appearance.autoHint"
+  },
+  "redesignAppearanceBrightness": "Hell oder dunkel",
+  "@redesignAppearanceBrightness": {
+    "description": "redesign.appearance.brightness"
+  },
+  "redesignAppearanceDeviceOnly": "Diese Einstellungen gelten nur auf diesem Gerät.",
+  "@redesignAppearanceDeviceOnly": {
+    "description": "redesign.appearance.deviceOnly"
+  },
+  "redesignAppearanceModeAuto": "Automatisch",
+  "@redesignAppearanceModeAuto": {
+    "description": "redesign.appearance.modeAuto"
+  },
+  "redesignAppearanceModeDark": "Dunkel",
+  "@redesignAppearanceModeDark": {
+    "description": "redesign.appearance.modeDark"
+  },
+  "redesignAppearanceModeLight": "Hell",
+  "@redesignAppearanceModeLight": {
+    "description": "redesign.appearance.modeLight"
+  },
+  "redesignAppearancePreview": "Vorschau der gewählten Farbwelt",
+  "@redesignAppearancePreview": {
+    "description": "redesign.appearance.preview"
+  },
+  "redesignAppearancePreviewTitle": "Probe",
+  "@redesignAppearancePreviewTitle": {
+    "description": "redesign.appearance.previewTitle"
+  },
+  "redesignAppearanceStageAlwaysDark": "Bühne ist immer dunkel.",
+  "@redesignAppearanceStageAlwaysDark": {
+    "description": "redesign.appearance.stageAlwaysDark"
+  },
+  "redesignAppearanceTitle": "Darstellung",
+  "@redesignAppearanceTitle": {
+    "description": "redesign.appearance.title"
+  },
+  "redesignAppearanceWorld": "Farbwelt",
+  "@redesignAppearanceWorld": {
+    "description": "redesign.appearance.world"
+  },
+  "redesignAppearanceWorldClear": "Klar",
+  "@redesignAppearanceWorldClear": {
+    "description": "redesign.appearance.worldClear"
+  },
+  "redesignAppearanceWorldClearHint": "Schwarz auf Weiß, höchster Kontrast",
+  "@redesignAppearanceWorldClearHint": {
+    "description": "redesign.appearance.worldClearHint"
+  },
+  "redesignAppearanceWorldConcertHall": "Konzertsaal",
+  "@redesignAppearanceWorldConcertHall": {
+    "description": "redesign.appearance.worldConcertHall"
+  },
+  "redesignAppearanceWorldConcertHallHint": "Warm, mit Serifen-Überschriften",
+  "@redesignAppearanceWorldConcertHallHint": {
+    "description": "redesign.appearance.worldConcertHallHint"
+  },
+  "redesignAppearanceWorldNightBlue": "Nachtblau",
+  "@redesignAppearanceWorldNightBlue": {
+    "description": "redesign.appearance.worldNightBlue"
+  },
+  "redesignAppearanceWorldNightBlueHint": "Kräftig und rund",
+  "@redesignAppearanceWorldNightBlueHint": {
+    "description": "redesign.appearance.worldNightBlueHint"
+  },
+  "redesignAppearanceWorldPetrol": "Petrol",
+  "@redesignAppearanceWorldPetrol": {
+    "description": "redesign.appearance.worldPetrol"
+  },
+  "redesignAppearanceWorldPetrolHint": "Ruhig und klar (Standard)",
+  "@redesignAppearanceWorldPetrolHint": {
+    "description": "redesign.appearance.worldPetrolHint"
+  },
+  "redesignAppearanceWorldStage": "Bühne",
+  "@redesignAppearanceWorldStage": {
+    "description": "redesign.appearance.worldStage"
+  },
+  "redesignAppearanceWorldStageHint": "Immer dunkel, für Abende und Proben",
+  "@redesignAppearanceWorldStageHint": {
+    "description": "redesign.appearance.worldStageHint"
+  },
+  "redesignApplicantOtherGroup": "Andere Gruppe beitreten",
+  "@redesignApplicantOtherGroup": {
+    "description": "redesign.applicant.otherGroup"
+  },
+  "redesignApplicantTitle": "Bewerbung",
+  "@redesignApplicantTitle": {
+    "description": "redesign.applicant.title"
+  },
+  "redesignApplicantWaiting": "Deine Anmeldung wird geprüft",
+  "@redesignApplicantWaiting": {
+    "description": "redesign.applicant.waiting"
+  },
+  "redesignApplicantWaitingFor": "Deine Anmeldung bei {group} wird geprüft",
+  "@redesignApplicantWaitingFor": {
+    "description": "redesign.applicant.waitingFor",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignCommonAll": "Alle",
+  "@redesignCommonAll": {
+    "description": "redesign.common.all"
+  },
+  "redesignCommonCancel": "Abbrechen",
+  "@redesignCommonCancel": {
+    "description": "redesign.common.cancel"
+  },
+  "redesignCommonDone": "Fertig",
+  "@redesignCommonDone": {
+    "description": "redesign.common.done"
+  },
+  "redesignCommonRetry": "Erneut versuchen",
+  "@redesignCommonRetry": {
+    "description": "redesign.common.retry"
+  },
+  "redesignCreateChooseType": "Art wählen",
+  "@redesignCreateChooseType": {
+    "description": "redesign.create.chooseType"
+  },
+  "redesignCreateDate": "Datum",
+  "@redesignCreateDate": {
+    "description": "redesign.create.date"
+  },
+  "redesignCreateDays": "{count, plural, one {1 Tag} other {{count} Tage}}",
+  "@redesignCreateDays": {
+    "description": "redesign.create.days",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateDeadline": "Abmeldeschluss",
+  "@redesignCreateDeadline": {
+    "description": "redesign.create.deadline"
+  },
+  "redesignCreateDeadline24h": "24 Std. vorher",
+  "@redesignCreateDeadline24h": {
+    "description": "redesign.create.deadline24h"
+  },
+  "redesignCreateDeadline2d": "2 Tage vorher",
+  "@redesignCreateDeadline2d": {
+    "description": "redesign.create.deadline2d"
+  },
+  "redesignCreateDeadlineHint": "Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.",
+  "@redesignCreateDeadlineHint": {
+    "description": "redesign.create.deadlineHint"
+  },
+  "redesignCreateDeadlineNone": "Keiner",
+  "@redesignCreateDeadlineNone": {
+    "description": "redesign.create.deadlineNone"
+  },
+  "redesignCreateDeadlineWeek": "1 Woche vorher",
+  "@redesignCreateDeadlineWeek": {
+    "description": "redesign.create.deadlineWeek"
+  },
+  "redesignCreateDiscard": "Verwerfen",
+  "@redesignCreateDiscard": {
+    "description": "redesign.create.discard"
+  },
+  "redesignCreateDiscardBody": "Deine Eingaben gehen verloren.",
+  "@redesignCreateDiscardBody": {
+    "description": "redesign.create.discardBody"
+  },
+  "redesignCreateDiscardTitle": "Termin verwerfen?",
+  "@redesignCreateDiscardTitle": {
+    "description": "redesign.create.discardTitle"
+  },
+  "redesignCreateDuration": "Dauer",
+  "@redesignCreateDuration": {
+    "description": "redesign.create.duration"
+  },
+  "redesignCreateDuty": "Benötigt am {weekday}",
+  "@redesignCreateDuty": {
+    "description": "redesign.create.duty",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateDutyCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignCreateDutyCount": {
+    "description": "redesign.create.dutyCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateEnd": "Ende",
+  "@redesignCreateEnd": {
+    "description": "redesign.create.end"
+  },
+  "redesignCreateFewer": "Weniger",
+  "@redesignCreateFewer": {
+    "description": "redesign.create.fewer"
+  },
+  "redesignCreateFewerDays": "Einen Tag weniger",
+  "@redesignCreateFewerDays": {
+    "description": "redesign.create.fewerDays"
+  },
+  "redesignCreateHolidayHits": "{count, plural, one {1 Termin fällt in Ferien oder auf einen Feiertag} other {{count} Termine fallen in Ferien oder auf Feiertage}}",
+  "@redesignCreateHolidayHits": {
+    "description": "redesign.create.holidayHits",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateInvited": "Wer ist eingeladen?",
+  "@redesignCreateInvited": {
+    "description": "redesign.create.invited"
+  },
+  "redesignCreateInvitedAll": "Alle · {count}",
+  "@redesignCreateInvitedAll": {
+    "description": "redesign.create.invitedAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateInvitedGroups": "{groups} · {count}",
+  "@redesignCreateInvitedGroups": {
+    "description": "redesign.create.invitedGroups",
+    "placeholders": {
+      "groups": {},
+      "count": {}
+    }
+  },
+  "redesignCreateInvitedHint": "Festgelegt durch die Art",
+  "@redesignCreateInvitedHint": {
+    "description": "redesign.create.invitedHint"
+  },
+  "redesignCreateKeepEditing": "Weiter bearbeiten",
+  "@redesignCreateKeepEditing": {
+    "description": "redesign.create.keepEditing"
+  },
+  "redesignCreateLaterHint": "Infotext, Anhang, Checkliste und Ablauf bearbeitest du danach im Termin.",
+  "@redesignCreateLaterHint": {
+    "description": "redesign.create.laterHint"
+  },
+  "redesignCreateMore": "Mehr",
+  "@redesignCreateMore": {
+    "description": "redesign.create.more"
+  },
+  "redesignCreateMoreDates": "Weitere Daten",
+  "@redesignCreateMoreDates": {
+    "description": "redesign.create.moreDates"
+  },
+  "redesignCreateMoreDatesNone": "Keine",
+  "@redesignCreateMoreDatesNone": {
+    "description": "redesign.create.moreDatesNone"
+  },
+  "redesignCreateMoreDays": "Einen Tag mehr",
+  "@redesignCreateMoreDays": {
+    "description": "redesign.create.moreDays"
+  },
+  "redesignCreateNoPermission": "Du darfst keine Termine anlegen.",
+  "@redesignCreateNoPermission": {
+    "description": "redesign.create.noPermission"
+  },
+  "redesignCreateNoTypes": "Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.",
+  "@redesignCreateNoTypes": {
+    "description": "redesign.create.noTypes"
+  },
+  "redesignCreatePlace": "Ort",
+  "@redesignCreatePlace": {
+    "description": "redesign.create.place"
+  },
+  "redesignCreatePlaceHint": "z. B. Probenraum, Musterstr. 1",
+  "@redesignCreatePlaceHint": {
+    "description": "redesign.create.placeHint"
+  },
+  "redesignCreateRepeatBiweekly": "Alle 2 Wochen bis {date}",
+  "@redesignCreateRepeatBiweekly": {
+    "description": "redesign.create.repeatBiweekly",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignCreateRepeatBiweeklyOption": "Alle 2 Wochen",
+  "@redesignCreateRepeatBiweeklyOption": {
+    "description": "redesign.create.repeatBiweeklyOption"
+  },
+  "redesignCreateRepeatCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignCreateRepeatCount": {
+    "description": "redesign.create.repeatCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateRepeatCustom": "{count, plural, one {1 weiterer Tag} other {{count} weitere Tage}}",
+  "@redesignCreateRepeatCustom": {
+    "description": "redesign.create.repeatCustom",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateRepeatCustomOption": "Einzelne Tage",
+  "@redesignCreateRepeatCustomOption": {
+    "description": "redesign.create.repeatCustomOption"
+  },
+  "redesignCreateRepeatHoliday": "Ferien oder Feiertag",
+  "@redesignCreateRepeatHoliday": {
+    "description": "redesign.create.repeatHoliday"
+  },
+  "redesignCreateRepeatMax": "Höchstens {count} Termine auf einmal.",
+  "@redesignCreateRepeatMax": {
+    "description": "redesign.create.repeatMax",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignCreateRepeatOnce": "Einmalig",
+  "@redesignCreateRepeatOnce": {
+    "description": "redesign.create.repeatOnce"
+  },
+  "redesignCreateRepeatPick": "Tage im Kalender wählen",
+  "@redesignCreateRepeatPick": {
+    "description": "redesign.create.repeatPick"
+  },
+  "redesignCreateRepeatSkipHolidays": "Ferien und Feiertage auslassen",
+  "@redesignCreateRepeatSkipHolidays": {
+    "description": "redesign.create.repeatSkipHolidays"
+  },
+  "redesignCreateRepeatUntil": "Bis",
+  "@redesignCreateRepeatUntil": {
+    "description": "redesign.create.repeatUntil"
+  },
+  "redesignCreateRepeatWeekly": "Jeden {weekday} bis {date}",
+  "@redesignCreateRepeatWeekly": {
+    "description": "redesign.create.repeatWeekly",
+    "placeholders": {
+      "weekday": {},
+      "date": {}
+    }
+  },
+  "redesignCreateRepeatWeeklyOption": "Jede Woche",
+  "@redesignCreateRepeatWeeklyOption": {
+    "description": "redesign.create.repeatWeeklyOption"
+  },
+  "redesignCreateSongs": "Werke",
+  "@redesignCreateSongs": {
+    "description": "redesign.create.songs"
+  },
+  "redesignCreateSongsCount": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignCreateSongsCount": {
+    "description": "redesign.create.songsCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSongsNone": "Keine",
+  "@redesignCreateSongsNone": {
+    "description": "redesign.create.songsNone"
+  },
+  "redesignCreateStart": "Beginn",
+  "@redesignCreateStart": {
+    "description": "redesign.create.start"
+  },
+  "redesignCreateSubmit": "Anlegen",
+  "@redesignCreateSubmit": {
+    "description": "redesign.create.submit"
+  },
+  "redesignCreateSubmitMany": "{count, plural, one {Termin anlegen} other {{count} Termine anlegen}}",
+  "@redesignCreateSubmitMany": {
+    "description": "redesign.create.submitMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSummaryBiweekly": "alle 2 Wochen am {weekday}",
+  "@redesignCreateSummaryBiweekly": {
+    "description": "redesign.create.summaryBiweekly",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateSummaryCount": "{count, plural, one {Es wird 1 Termin angelegt} other {Es werden {count} Termine angelegt}}",
+  "@redesignCreateSummaryCount": {
+    "description": "redesign.create.summaryCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignCreateSummaryRange": "{from} bis {until}",
+  "@redesignCreateSummaryRange": {
+    "description": "redesign.create.summaryRange",
+    "placeholders": {
+      "from": {},
+      "until": {}
+    }
+  },
+  "redesignCreateSummaryWeekly": "jeden {weekday}",
+  "@redesignCreateSummaryWeekly": {
+    "description": "redesign.create.summaryWeekly",
+    "placeholders": {
+      "weekday": {}
+    }
+  },
+  "redesignCreateTemplate": "Vorlage",
+  "@redesignCreateTemplate": {
+    "description": "redesign.create.template"
+  },
+  "redesignCreateTemplateHint": "Füllt Art, Titel, Zeit und Ort vor. Alles bleibt änderbar.",
+  "@redesignCreateTemplateHint": {
+    "description": "redesign.create.templateHint"
+  },
+  "redesignCreateTime": "Zeit",
+  "@redesignCreateTime": {
+    "description": "redesign.create.time"
+  },
+  "redesignCreateTitle": "Neuer Termin",
+  "@redesignCreateTitle": {
+    "description": "redesign.create.title"
+  },
+  "redesignCreateTitleLabel": "Titel",
+  "@redesignCreateTitleLabel": {
+    "description": "redesign.create.titleLabel"
+  },
+  "redesignCreateType": "Art",
+  "@redesignCreateType": {
+    "description": "redesign.create.type"
+  },
+  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
+  "@redesignEventAllDone": {
+    "description": "redesign.event.allDone",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventAllOpenPresent": "Alle Offenen als anwesend",
+  "@redesignEventAllOpenPresent": {
+    "description": "redesign.event.allOpenPresent"
+  },
+  "redesignEventAnswers": "Rückmeldungen",
+  "@redesignEventAnswers": {
+    "description": "redesign.event.answers"
+  },
+  "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
+  "@redesignEventBusyLeave": {
+    "description": "redesign.event.busyLeave"
+  },
+  "redesignEventCountAbsent": "{count} fehlt",
+  "@redesignEventCountAbsent": {
+    "description": "redesign.event.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountExcused": "{count} entsch.",
+  "@redesignEventCountExcused": {
+    "description": "redesign.event.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountLate": "{count} später",
+  "@redesignEventCountLate": {
+    "description": "redesign.event.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountNoAnswer": "{count} ohne Antwort",
+  "@redesignEventCountNoAnswer": {
+    "description": "redesign.event.countNoAnswer",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountOpen": "{count} offen",
+  "@redesignEventCountOpen": {
+    "description": "redesign.event.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountPresent": "{count} da",
+  "@redesignEventCountPresent": {
+    "description": "redesign.event.countPresent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventDetails": "Alle Details",
+  "@redesignEventDetails": {
+    "description": "redesign.event.details"
+  },
+  "redesignEventInvited": "{count} eingeladen",
+  "@redesignEventInvited": {
+    "description": "redesign.event.invited",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventKeyboardHint": "Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig",
+  "@redesignEventKeyboardHint": {
+    "description": "redesign.event.keyboardHint"
+  },
+  "redesignEventMore": "Alle Details und Bearbeiten",
+  "@redesignEventMore": {
+    "description": "redesign.event.more"
+  },
+  "redesignEventMoreHint": "Ablauf, Checkliste, Werke und Notizen",
+  "@redesignEventMoreHint": {
+    "description": "redesign.event.moreHint"
+  },
+  "redesignEventMoreStatus": "Weitere Status und Notiz für {name}",
+  "@redesignEventMoreStatus": {
+    "description": "redesign.event.moreStatus",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventNeutralHint": "zählt nicht",
+  "@redesignEventNeutralHint": {
+    "description": "redesign.event.neutralHint"
+  },
+  "redesignEventNoMatch": "Niemand passt zur Suche.",
+  "@redesignEventNoMatch": {
+    "description": "redesign.event.noMatch"
+  },
+  "redesignEventNoPersons": "Für diesen Termin sind noch keine Personen eingetragen.",
+  "@redesignEventNoPersons": {
+    "description": "redesign.event.noPersons"
+  },
+  "redesignEventNotFound": "Dieser Termin wurde nicht gefunden.",
+  "@redesignEventNotFound": {
+    "description": "redesign.event.notFound"
+  },
+  "redesignEventNote": "Notiz für diesen Termin",
+  "@redesignEventNote": {
+    "description": "redesign.event.note"
+  },
+  "redesignEventNoteHint": "z. B. Grund oder Uhrzeit",
+  "@redesignEventNoteHint": {
+    "description": "redesign.event.noteHint"
+  },
+  "redesignEventRegisterEmpty": "{group}: 0 von {count} da.",
+  "@redesignEventRegisterEmpty": {
+    "description": "redesign.event.registerEmpty",
+    "placeholders": {
+      "group": {},
+      "count": {}
+    }
+  },
+  "redesignEventRegisterNames": "{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}",
+  "@redesignEventRegisterNames": {
+    "description": "redesign.event.registerNames",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "names": {}
+    }
+  },
+  "redesignEventSaving": "Wird gespeichert …",
+  "@redesignEventSaving": {
+    "description": "redesign.event.saving"
+  },
+  "redesignEventSearch": "Person suchen",
+  "@redesignEventSearch": {
+    "description": "redesign.event.search"
+  },
+  "redesignEventSearchClose": "Suche schließen",
+  "@redesignEventSearchClose": {
+    "description": "redesign.event.searchClose"
+  },
+  "redesignEventSearchHint": "Name",
+  "@redesignEventSearchHint": {
+    "description": "redesign.event.searchHint"
+  },
+  "redesignEventSignouts": "Abmeldungen",
+  "@redesignEventSignouts": {
+    "description": "redesign.event.signouts"
+  },
+  "redesignEventStatus": "Status",
+  "@redesignEventStatus": {
+    "description": "redesign.event.status"
+  },
+  "redesignEventTabOverview": "Überblick",
+  "@redesignEventTabOverview": {
+    "description": "redesign.event.tabOverview"
+  },
+  "redesignEventTabRecord": "Anwesenheit",
+  "@redesignEventTabRecord": {
+    "description": "redesign.event.tabRecord"
+  },
+  "redesignEventToastReset": "{name}: zurückgesetzt",
+  "@redesignEventToastReset": {
+    "description": "redesign.event.toastReset",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventToastSet": "{name}: {status}",
+  "@redesignEventToastSet": {
+    "description": "redesign.event.toastSet",
+    "placeholders": {
+      "name": {},
+      "status": {}
+    }
+  },
+  "redesignEventUndo": "Rückgängig",
+  "@redesignEventUndo": {
+    "description": "redesign.event.undo"
+  },
+  "redesignEventUndone": "Rückgängig gemacht",
+  "@redesignEventUndone": {
+    "description": "redesign.event.undone"
+  },
+  "redesignEventsAbsent": "Abwesend …",
+  "@redesignEventsAbsent": {
+    "description": "redesign.events.absent"
+  },
+  "redesignEventsCreateFirst": "Ersten Termin anlegen",
+  "@redesignEventsCreateFirst": {
+    "description": "redesign.events.createFirst"
+  },
+  "redesignEventsEmpty": "Noch keine Termine. Leg die erste Probe an.",
+  "@redesignEventsEmpty": {
+    "description": "redesign.events.empty"
+  },
+  "redesignEventsLastWeek": "Letzte 7 Tage",
+  "@redesignEventsLastWeek": {
+    "description": "redesign.events.lastWeek"
+  },
+  "redesignEventsNew": "Neuer Termin",
+  "@redesignEventsNew": {
+    "description": "redesign.events.new"
+  },
+  "redesignEventsNo": "Abmelden",
+  "@redesignEventsNo": {
+    "description": "redesign.events.no"
+  },
+  "redesignEventsNoMatch": "Keine Termine passen zur Suche.",
+  "@redesignEventsNoMatch": {
+    "description": "redesign.events.noMatch"
+  },
+  "redesignEventsNoPast": "Noch keine vergangenen Termine.",
+  "@redesignEventsNoPast": {
+    "description": "redesign.events.noPast"
+  },
+  "redesignEventsPast": "Vergangen",
+  "@redesignEventsPast": {
+    "description": "redesign.events.past"
+  },
+  "redesignEventsPastAverage": "Vergangen · Ø {percent} %",
+  "@redesignEventsPastAverage": {
+    "description": "redesign.events.pastAverage",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsPastOwn": "Vergangen · {percent} % da",
+  "@redesignEventsPastOwn": {
+    "description": "redesign.events.pastOwn",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsPercentPresent": "{percent} % anwesend",
+  "@redesignEventsPercentPresent": {
+    "description": "redesign.events.percentPresent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsSearch": "Termine durchsuchen",
+  "@redesignEventsSearch": {
+    "description": "redesign.events.search"
+  },
+  "redesignEventsSearchClose": "Suche schließen",
+  "@redesignEventsSearchClose": {
+    "description": "redesign.events.searchClose"
+  },
+  "redesignEventsSearchHint": "Titel oder Ort",
+  "@redesignEventsSearchHint": {
+    "description": "redesign.events.searchHint"
+  },
+  "redesignEventsShowAll": "Wieder alle Termine zeigen",
+  "@redesignEventsShowAll": {
+    "description": "redesign.events.showAll"
+  },
+  "redesignEventsUpcoming": "Kommend",
+  "@redesignEventsUpcoming": {
+    "description": "redesign.events.upcoming"
+  },
+  "redesignEventsWaiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
+  "@redesignEventsWaiting": {
+    "description": "redesign.events.waiting",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventsYes": "Dabei",
+  "@redesignEventsYes": {
+    "description": "redesign.events.yes"
+  },
+  "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
+  "@redesignGroupsLoadFailed": {
+    "description": "redesign.groups.loadFailed"
+  },
+  "redesignGroupsManage": "Gruppen verwalten",
+  "@redesignGroupsManage": {
+    "description": "redesign.groups.manage"
+  },
+  "redesignGroupsSwitchFailed": "Wechsel fehlgeschlagen. Bitte versuche es erneut.",
+  "@redesignGroupsSwitchFailed": {
+    "description": "redesign.groups.switchFailed"
+  },
+  "redesignGroupsSwitchHint": "Gruppe: {name}. Tippen zum Wechseln",
+  "@redesignGroupsSwitchHint": {
+    "description": "redesign.groups.switchHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignGroupsTitle": "Gruppe wechseln",
+  "@redesignGroupsTitle": {
+    "description": "redesign.groups.title"
+  },
+  "redesignManageAreaCommunication": "Kommunikation",
+  "@redesignManageAreaCommunication": {
+    "description": "redesign.manage.areaCommunication"
+  },
+  "redesignManageAreaData": "Auswertung & Daten",
+  "@redesignManageAreaData": {
+    "description": "redesign.manage.areaData"
+  },
+  "redesignManageAreaEvents": "Termine & Planung",
+  "@redesignManageAreaEvents": {
+    "description": "redesign.manage.areaEvents"
+  },
+  "redesignManageAreaGroup": "Gruppe",
+  "@redesignManageAreaGroup": {
+    "description": "redesign.manage.areaGroup"
+  },
+  "redesignManageAreaMembers": "Mitglieder & Rollen",
+  "@redesignManageAreaMembers": {
+    "description": "redesign.manage.areaMembers"
+  },
+  "redesignManageAreaWorks": "Werke, Register & Dateien",
+  "@redesignManageAreaWorks": {
+    "description": "redesign.manage.areaWorks"
+  },
+  "redesignManageClassic": "Alle Einstellungen (bisherige Ansicht)",
+  "@redesignManageClassic": {
+    "description": "redesign.manage.classic"
+  },
+  "redesignManageFooter": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
+  "@redesignManageFooter": {
+    "description": "redesign.manage.footer",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignManageGeneralHint": "Name, Saison, Gründe, Anmeldung",
+  "@redesignManageGeneralHint": {
+    "description": "redesign.manage.generalHint"
+  },
+  "redesignManageGeneralTitle": "Allgemeine Einstellungen",
+  "@redesignManageGeneralTitle": {
+    "description": "redesign.manage.generalTitle"
+  },
+  "redesignManageMissingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
+  "@redesignManageMissingHint": {
+    "description": "redesign.manage.missingHint"
+  },
+  "redesignManageNoMatch": "Keine Einstellung passt zur Suche.",
+  "@redesignManageNoMatch": {
+    "description": "redesign.manage.noMatch"
+  },
+  "redesignManagePending": "{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}",
+  "@redesignManagePending": {
+    "description": "redesign.manage.pending",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignManagePendingTitle": "Freigaben",
+  "@redesignManagePendingTitle": {
+    "description": "redesign.manage.pendingTitle"
+  },
+  "redesignManageRecent": "Zuletzt geöffnet",
+  "@redesignManageRecent": {
+    "description": "redesign.manage.recent"
+  },
+  "redesignManageSearch": "Einstellung suchen",
+  "@redesignManageSearch": {
+    "description": "redesign.manage.search"
+  },
+  "redesignManageSearchLabel": "Verwaltung durchsuchen",
+  "@redesignManageSearchLabel": {
+    "description": "redesign.manage.searchLabel"
+  },
+  "redesignMeAbsence": "Abwesenheit eintragen",
+  "@redesignMeAbsence": {
+    "description": "redesign.me.absence"
+  },
+  "redesignMeAccount": "Konto",
+  "@redesignMeAccount": {
+    "description": "redesign.me.account"
+  },
+  "redesignMeAdmin": "Verwaltung",
+  "@redesignMeAdmin": {
+    "description": "redesign.me.admin"
+  },
+  "redesignMeAdminHint": "Mitglieder, Termintypen, Rechte und mehr",
+  "@redesignMeAdminHint": {
+    "description": "redesign.me.adminHint"
+  },
+  "redesignMeAllSettings": "Alle Einstellungen",
+  "@redesignMeAllSettings": {
+    "description": "redesign.me.allSettings"
+  },
+  "redesignMeApp": "App",
+  "@redesignMeApp": {
+    "description": "redesign.me.app"
+  },
+  "redesignMeBeta": "Neues Design (Beta)",
+  "@redesignMeBeta": {
+    "description": "redesign.me.beta"
+  },
+  "redesignMeBetaHint": "Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.",
+  "@redesignMeBetaHint": {
+    "description": "redesign.me.betaHint"
+  },
+  "redesignMeCalendar": "Kalender abonnieren",
+  "@redesignMeCalendar": {
+    "description": "redesign.me.calendar"
+  },
+  "redesignMeFeedback": "Feedback geben",
+  "@redesignMeFeedback": {
+    "description": "redesign.me.feedback"
+  },
+  "redesignMeForMe": "Für mich",
+  "@redesignMeForMe": {
+    "description": "redesign.me.forMe"
+  },
+  "redesignMeGroups": "Meine Gruppen",
+  "@redesignMeGroups": {
+    "description": "redesign.me.groups"
+  },
+  "redesignMeGroupsCount": "{count} Gruppen",
+  "@redesignMeGroupsCount": {
+    "description": "redesign.me.groupsCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMeHelp": "Hilfe",
+  "@redesignMeHelp": {
+    "description": "redesign.me.help"
+  },
+  "redesignMeLogout": "Abmelden",
+  "@redesignMeLogout": {
+    "description": "redesign.me.logout"
+  },
+  "redesignMeNotifications": "Benachrichtigungen",
+  "@redesignMeNotifications": {
+    "description": "redesign.me.notifications"
+  },
+  "redesignMeWhatsNew": "Neu in dieser Version",
+  "@redesignMeWhatsNew": {
+    "description": "redesign.me.whatsNew"
+  },
+  "redesignMembersAbsentFrom": "abwesend ab {date}",
+  "@redesignMembersAbsentFrom": {
+    "description": "redesign.members.absentFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersAbsentUntil": "abwesend bis {date}",
+  "@redesignMembersAbsentUntil": {
+    "description": "redesign.members.absentUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersActive": "Aktiv · {count}",
+  "@redesignMembersActive": {
+    "description": "redesign.members.active",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersAdd": "Person hinzufügen",
+  "@redesignMembersAdd": {
+    "description": "redesign.members.add"
+  },
+  "redesignMembersAverage": "Ø {percent} %",
+  "@redesignMembersAverage": {
+    "description": "redesign.members.average",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignMembersBirthdayIn": "Geburtstag in {count} Tagen",
+  "@redesignMembersBirthdayIn": {
+    "description": "redesign.members.birthdayIn",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersBirthdayToday": "Geburtstag heute",
+  "@redesignMembersBirthdayToday": {
+    "description": "redesign.members.birthdayToday"
+  },
+  "redesignMembersBirthdayTomorrow": "Geburtstag morgen",
+  "@redesignMembersBirthdayTomorrow": {
+    "description": "redesign.members.birthdayTomorrow"
+  },
+  "redesignMembersEmpty": "Noch keine Mitglieder.",
+  "@redesignMembersEmpty": {
+    "description": "redesign.members.empty"
+  },
+  "redesignMembersEmptyPaused": "Niemand ist pausiert.",
+  "@redesignMembersEmptyPaused": {
+    "description": "redesign.members.emptyPaused"
+  },
+  "redesignMembersEmptyPending": "Niemand wartet auf Freigabe.",
+  "@redesignMembersEmptyPending": {
+    "description": "redesign.members.emptyPending"
+  },
+  "redesignMembersLeader": "Stimmführung",
+  "@redesignMembersLeader": {
+    "description": "redesign.members.leader"
+  },
+  "redesignMembersLow": "unter 50 %",
+  "@redesignMembersLow": {
+    "description": "redesign.members.low"
+  },
+  "redesignMembersNoMatch": "Niemand passt zur Suche.",
+  "@redesignMembersNoMatch": {
+    "description": "redesign.members.noMatch"
+  },
+  "redesignMembersPaused": "Pausiert · {count}",
+  "@redesignMembersPaused": {
+    "description": "redesign.members.paused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersPausedUntil": "pausiert bis {date}",
+  "@redesignMembersPausedUntil": {
+    "description": "redesign.members.pausedUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersPending": "Wartet · {count}",
+  "@redesignMembersPending": {
+    "description": "redesign.members.pending",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersPendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
+  "@redesignMembersPendingHint": {
+    "description": "redesign.members.pendingHint"
+  },
+  "redesignMembersPercent": "{percent} %",
+  "@redesignMembersPercent": {
+    "description": "redesign.members.percent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignMembersSearch": "Name, Instrument, Register",
+  "@redesignMembersSearch": {
+    "description": "redesign.members.search"
+  },
+  "redesignMembersSearchLabel": "Mitglieder suchen",
+  "@redesignMembersSearchLabel": {
+    "description": "redesign.members.searchLabel"
+  },
+  "redesignMembersSection": "{title} · {count}",
+  "@redesignMembersSection": {
+    "description": "redesign.members.section",
+    "placeholders": {
+      "title": {},
+      "count": {}
+    }
+  },
+  "redesignMembersStats": "Auswertung",
+  "@redesignMembersStats": {
+    "description": "redesign.members.stats"
+  },
+  "redesignOwnInfos": "Infos zum Termin",
+  "@redesignOwnInfos": {
+    "description": "redesign.own.infos"
+  },
+  "redesignOwnMore": "Mehr",
+  "@redesignOwnMore": {
+    "description": "redesign.own.more"
+  },
+  "redesignOwnNotFound": "Dieser Termin ist nicht mehr in deiner Liste.",
+  "@redesignOwnNotFound": {
+    "description": "redesign.own.notFound"
+  },
+  "redesignOwnRoute": "Route",
+  "@redesignOwnRoute": {
+    "description": "redesign.own.route"
+  },
+  "redesignPersonAbsence": "Abwesend",
+  "@redesignPersonAbsence": {
+    "description": "redesign.person.absence"
+  },
+  "redesignPersonAbsenceRange": "{from} bis {until}",
+  "@redesignPersonAbsenceRange": {
+    "description": "redesign.person.absenceRange",
+    "placeholders": {
+      "from": {},
+      "until": {}
+    }
+  },
+  "redesignPersonAllTermine": "Alle Termine ansehen",
+  "@redesignPersonAllTermine": {
+    "description": "redesign.person.allTermine"
+  },
+  "redesignPersonArchive": "Archivieren",
+  "@redesignPersonArchive": {
+    "description": "redesign.person.archive"
+  },
+  "redesignPersonAttendance": "Anwesenheit",
+  "@redesignPersonAttendance": {
+    "description": "redesign.person.attendance"
+  },
+  "redesignPersonBirthday": "Geburtstag",
+  "@redesignPersonBirthday": {
+    "description": "redesign.person.birthday"
+  },
+  "redesignPersonEdit": "Bearbeiten",
+  "@redesignPersonEdit": {
+    "description": "redesign.person.edit"
+  },
+  "redesignPersonInDays": "in {count} Tagen",
+  "@redesignPersonInDays": {
+    "description": "redesign.person.inDays",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPersonJoined": "Dabei seit",
+  "@redesignPersonJoined": {
+    "description": "redesign.person.joined"
+  },
+  "redesignPersonLastTermine": "Letzte {count} Termine, neuester rechts",
+  "@redesignPersonLastTermine": {
+    "description": "redesign.person.lastTermine",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPersonNoTermine": "Noch keine vergangenen Termine.",
+  "@redesignPersonNoTermine": {
+    "description": "redesign.person.noTermine"
+  },
+  "redesignPersonNotFound": "Diese Person gibt es hier nicht mehr.",
+  "@redesignPersonNotFound": {
+    "description": "redesign.person.notFound"
+  },
+  "redesignPersonNotes": "Notiz",
+  "@redesignPersonNotes": {
+    "description": "redesign.person.notes"
+  },
+  "redesignPersonOfTermine": "{attended} von {total} Terminen",
+  "@redesignPersonOfTermine": {
+    "description": "redesign.person.ofTermine",
+    "placeholders": {
+      "attended": {},
+      "total": {}
+    }
+  },
+  "redesignPersonOverall": "Gesamt",
+  "@redesignPersonOverall": {
+    "description": "redesign.person.overall"
+  },
+  "redesignPersonPause": "Pausieren",
+  "@redesignPersonPause": {
+    "description": "redesign.person.pause"
+  },
+  "redesignPersonPaused": "Pausiert",
+  "@redesignPersonPaused": {
+    "description": "redesign.person.paused"
+  },
+  "redesignPersonPausedOpen": "ohne Enddatum",
+  "@redesignPersonPausedOpen": {
+    "description": "redesign.person.pausedOpen"
+  },
+  "redesignPersonPending": "Wartet auf Freigabe.",
+  "@redesignPersonPending": {
+    "description": "redesign.person.pending"
+  },
+  "redesignPersonPercent": "{percent} %",
+  "@redesignPersonPercent": {
+    "description": "redesign.person.percent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignPersonResume": "Wieder aktiv",
+  "@redesignPersonResume": {
+    "description": "redesign.person.resume"
+  },
+  "redesignPersonReview": "Prüfen und freigeben",
+  "@redesignPersonReview": {
+    "description": "redesign.person.review"
+  },
+  "redesignPersonSince": "seit {year}",
+  "@redesignPersonSince": {
+    "description": "redesign.person.since",
+    "placeholders": {
+      "year": {}
+    }
+  },
+  "redesignPersonSinceDate": "seit {date}",
+  "@redesignPersonSinceDate": {
+    "description": "redesign.person.sinceDate",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignPersonToday": "heute",
+  "@redesignPersonToday": {
+    "description": "redesign.person.today"
+  },
+  "redesignPersonTomorrow": "morgen",
+  "@redesignPersonTomorrow": {
+    "description": "redesign.person.tomorrow"
+  },
+  "redesignPultAllOpen": "Alle Offenen da",
+  "@redesignPultAllOpen": {
+    "description": "redesign.pult.allOpen"
+  },
+  "redesignPultBack": "Termin",
+  "@redesignPultBack": {
+    "description": "redesign.pult.back"
+  },
+  "redesignPultDone": "Fertig",
+  "@redesignPultDone": {
+    "description": "redesign.pult.done"
+  },
+  "redesignPultGroupCount": "{present} / {total} da",
+  "@redesignPultGroupCount": {
+    "description": "redesign.pult.groupCount",
+    "placeholders": {
+      "present": {},
+      "total": {}
+    }
+  },
+  "redesignPultHint": "Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status",
+  "@redesignPultHint": {
+    "description": "redesign.pult.hint"
+  },
+  "redesignPultOpen": "Pultmodus",
+  "@redesignPultOpen": {
+    "description": "redesign.pult.open"
+  },
+  "redesignPultOpenHint": "Große Kacheln zum Antippen, gut für das Tablet am Pult",
+  "@redesignPultOpenHint": {
+    "description": "redesign.pult.openHint"
+  },
+  "redesignPultStatusOpen": "offen",
+  "@redesignPultStatusOpen": {
+    "description": "redesign.pult.statusOpen"
+  },
+  "redesignPultTitle": "{title} · Pultmodus",
+  "@redesignPultTitle": {
+    "description": "redesign.pult.title",
+    "placeholders": {
+      "title": {}
+    }
+  },
+  "redesignSignoutCannot": "Ich kann nicht",
+  "@redesignSignoutCannot": {
+    "description": "redesign.signout.cannot"
+  },
+  "redesignSignoutLater": "Ich komme später",
+  "@redesignSignoutLater": {
+    "description": "redesign.signout.later"
+  },
+  "redesignSignoutOther": "Anderer Grund",
+  "@redesignSignoutOther": {
+    "description": "redesign.signout.other"
+  },
+  "redesignSignoutOtherHint": "Kurz beschreiben (mindestens 5 Zeichen)",
+  "@redesignSignoutOtherHint": {
+    "description": "redesign.signout.otherHint"
+  },
+  "redesignSignoutPrivacy": "Deinen Grund sieht nur die Leitung.",
+  "@redesignSignoutPrivacy": {
+    "description": "redesign.signout.privacy"
+  },
+  "redesignSignoutReason": "Grund",
+  "@redesignSignoutReason": {
+    "description": "redesign.signout.reason"
+  },
+  "redesignSignoutSubmit": "Abmelden",
+  "@redesignSignoutSubmit": {
+    "description": "redesign.signout.submit"
+  },
+  "redesignSignoutSubmitLate": "Verspätung melden",
+  "@redesignSignoutSubmitLate": {
+    "description": "redesign.signout.submitLate"
+  },
+  "redesignSplitEventsEmpty": "Wähle links einen Termin aus.",
+  "@redesignSplitEventsEmpty": {
+    "description": "redesign.split.eventsEmpty"
+  },
+  "redesignSplitMembersEmpty": "Wähle links eine Person aus.",
+  "@redesignSplitMembersEmpty": {
+    "description": "redesign.split.membersEmpty"
+  },
+  "redesignStatusAbsent": "Abwesend",
+  "@redesignStatusAbsent": {
+    "description": "redesign.status.absent"
+  },
+  "redesignStatusExcused": "Entschuldigt",
+  "@redesignStatusExcused": {
+    "description": "redesign.status.excused"
+  },
+  "redesignStatusLate": "Verspätet",
+  "@redesignStatusLate": {
+    "description": "redesign.status.late"
+  },
+  "redesignStatusLater": "Kommt später",
+  "@redesignStatusLater": {
+    "description": "redesign.status.later"
+  },
+  "redesignStatusOpen": "Offen",
+  "@redesignStatusOpen": {
+    "description": "redesign.status.open"
+  },
+  "redesignStatusYes": "Zugesagt",
+  "@redesignStatusYes": {
+    "description": "redesign.status.yes"
+  },
+  "redesignTabEvents": "Termine",
+  "@redesignTabEvents": {
+    "description": "redesign.tab.events"
+  },
+  "redesignTabMe": "Ich",
+  "@redesignTabMe": {
+    "description": "redesign.tab.me"
+  },
+  "redesignTabMembers": "Mitglieder",
+  "@redesignTabMembers": {
+    "description": "redesign.tab.members"
+  },
+  "redesignTabToday": "Heute",
+  "@redesignTabToday": {
+    "description": "redesign.tab.today"
+  },
+  "redesignTabWorks": "Werke",
+  "@redesignTabWorks": {
+    "description": "redesign.tab.works"
+  },
+  "redesignTodayAllEvents": "Alle Termine",
+  "@redesignTodayAllEvents": {
+    "description": "redesign.today.allEvents"
+  },
+  "redesignTodayAnswerChildren": "Zu- und absagen",
+  "@redesignTodayAnswerChildren": {
+    "description": "redesign.today.answerChildren"
+  },
+  "redesignTodayAnswered": "Alle geantwortet",
+  "@redesignTodayAnswered": {
+    "description": "redesign.today.answered"
+  },
+  "redesignTodayAnsweredLater": "Du hast gemeldet, dass du später kommst.",
+  "@redesignTodayAnsweredLater": {
+    "description": "redesign.today.answeredLater"
+  },
+  "redesignTodayAnsweredNo": "Du bist abgemeldet.",
+  "@redesignTodayAnsweredNo": {
+    "description": "redesign.today.answeredNo"
+  },
+  "redesignTodayAnsweredYes": "Schön, du bist dabei.",
+  "@redesignTodayAnsweredYes": {
+    "description": "redesign.today.answeredYes"
+  },
+  "redesignTodayAttention": "Braucht deine Aufmerksamkeit",
+  "@redesignTodayAttention": {
+    "description": "redesign.today.attention"
+  },
+  "redesignTodayBirthday": "Geburtstag: {name} ({day})",
+  "@redesignTodayBirthday": {
+    "description": "redesign.today.birthday",
+    "placeholders": {
+      "name": {},
+      "day": {}
+    }
+  },
+  "redesignTodayBirthdayMore": "Geburtstag: {name} ({day}) +{count}",
+  "@redesignTodayBirthdayMore": {
+    "description": "redesign.today.birthdayMore",
+    "placeholders": {
+      "name": {},
+      "day": {},
+      "count": {}
+    }
+  },
+  "redesignTodayCountAbsent": "{count} abwesend",
+  "@redesignTodayCountAbsent": {
+    "description": "redesign.today.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountExcused": "{count} entschuldigt",
+  "@redesignTodayCountExcused": {
+    "description": "redesign.today.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountLater": "{count} später",
+  "@redesignTodayCountLater": {
+    "description": "redesign.today.countLater",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountOpen": "{count} offen",
+  "@redesignTodayCountOpen": {
+    "description": "redesign.today.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountYes": "{count} zugesagt",
+  "@redesignTodayCountYes": {
+    "description": "redesign.today.countYes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCritical": "{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}",
+  "@redesignTodayCritical": {
+    "description": "redesign.today.critical",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayCriticalHint": "Unter der Anwesenheitsgrenze",
+  "@redesignTodayCriticalHint": {
+    "description": "redesign.today.criticalHint"
+  },
+  "redesignTodayDayToday": "Heute",
+  "@redesignTodayDayToday": {
+    "description": "redesign.today.dayToday"
+  },
+  "redesignTodayDayTomorrow": "Morgen",
+  "@redesignTodayDayTomorrow": {
+    "description": "redesign.today.dayTomorrow"
+  },
+  "redesignTodayDutyQuestion": "Du bist eingeteilt. Bestätigst du?",
+  "@redesignTodayDutyQuestion": {
+    "description": "redesign.today.dutyQuestion"
+  },
+  "redesignTodayGreeting": "Hallo {name}",
+  "@redesignTodayGreeting": {
+    "description": "redesign.today.greeting",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTodayInHours": "{count, plural, one {in {count} Std.} other {in {count} Std.}}",
+  "@redesignTodayInHours": {
+    "description": "redesign.today.inHours",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayInMinutes": "{count, plural, one {in {count} Min.} other {in {count} Min.}}",
+  "@redesignTodayInMinutes": {
+    "description": "redesign.today.inMinutes",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayLater": "Ich komme später …",
+  "@redesignTodayLater": {
+    "description": "redesign.today.later"
+  },
+  "redesignTodayLoadFailed": "Das konnte nicht geladen werden.",
+  "@redesignTodayLoadFailed": {
+    "description": "redesign.today.loadFailed"
+  },
+  "redesignTodayLoading": "Wird geladen …",
+  "@redesignTodayLoading": {
+    "description": "redesign.today.loading"
+  },
+  "redesignTodayMore": "Mehr zum Termin",
+  "@redesignTodayMore": {
+    "description": "redesign.today.more"
+  },
+  "redesignTodayMySection": "Meine Stimme",
+  "@redesignTodayMySection": {
+    "description": "redesign.today.mySection"
+  },
+  "redesignTodayMySectionHint": "Anwesenheit deiner Stimmgruppe",
+  "@redesignTodayMySectionHint": {
+    "description": "redesign.today.mySectionHint"
+  },
+  "redesignTodayNextEvent": "Nächster Termin",
+  "@redesignTodayNextEvent": {
+    "description": "redesign.today.nextEvent"
+  },
+  "redesignTodayNo": "Kann nicht",
+  "@redesignTodayNo": {
+    "description": "redesign.today.no"
+  },
+  "redesignTodayNoAfterAll": "Doch absagen",
+  "@redesignTodayNoAfterAll": {
+    "description": "redesign.today.noAfterAll"
+  },
+  "redesignTodayNoChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
+  "@redesignTodayNoChildren": {
+    "description": "redesign.today.noChildren"
+  },
+  "redesignTodayNoDone": "Abgemeldet",
+  "@redesignTodayNoDone": {
+    "description": "redesign.today.noDone"
+  },
+  "redesignTodayNoMember": "Du bist in dieser Gruppe nicht als Mitglied eingetragen.",
+  "@redesignTodayNoMember": {
+    "description": "redesign.today.noMember"
+  },
+  "redesignTodayNoUpcoming": "Gerade stehen keine Termine an.",
+  "@redesignTodayNoUpcoming": {
+    "description": "redesign.today.noUpcoming"
+  },
+  "redesignTodayNotPart": "Du bist für diesen Termin nicht eingeteilt.",
+  "@redesignTodayNotPart": {
+    "description": "redesign.today.notPart"
+  },
+  "redesignTodayNothingElse": "Danach ist noch nichts geplant.",
+  "@redesignTodayNothingElse": {
+    "description": "redesign.today.nothingElse"
+  },
+  "redesignTodayNotifications": "Benachrichtigungen",
+  "@redesignTodayNotifications": {
+    "description": "redesign.today.notifications"
+  },
+  "redesignTodayNotificationsUnread": "{count, plural, one {Benachrichtigungen, {count} ungelesen} other {Benachrichtigungen, {count} ungelesen}}",
+  "@redesignTodayNotificationsUnread": {
+    "description": "redesign.today.notificationsUnread",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayOtherReason": "Anderer Grund …",
+  "@redesignTodayOtherReason": {
+    "description": "redesign.today.otherReason"
+  },
+  "redesignTodayPending": "{count, plural, one {{count} neue Anmeldung} other {{count} neue Anmeldungen}}",
+  "@redesignTodayPending": {
+    "description": "redesign.today.pending",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayPendingHint": "Prüfen und freischalten",
+  "@redesignTodayPendingHint": {
+    "description": "redesign.today.pendingHint"
+  },
+  "redesignTodayQuestion": "Bist du dabei?",
+  "@redesignTodayQuestion": {
+    "description": "redesign.today.question"
+  },
+  "redesignTodayRecord": "Anwesenheit erfassen",
+  "@redesignTodayRecord": {
+    "description": "redesign.today.record"
+  },
+  "redesignTodayRunning": "läuft",
+  "@redesignTodayRunning": {
+    "description": "redesign.today.running"
+  },
+  "redesignTodaySignouts": "{count, plural, one {{count} Abmeldung für den nächsten Termin} other {{count} Abmeldungen für den nächsten Termin}}",
+  "@redesignTodaySignouts": {
+    "description": "redesign.today.signouts",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodaySignoutsHint": "Gründe ansehen",
+  "@redesignTodaySignoutsHint": {
+    "description": "redesign.today.signoutsHint"
+  },
+  "redesignTodayThisWeek": "Diese Woche",
+  "@redesignTodayThisWeek": {
+    "description": "redesign.today.thisWeek"
+  },
+  "redesignTodayUpNext": "Als Nächstes",
+  "@redesignTodayUpNext": {
+    "description": "redesign.today.upNext"
+  },
+  "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
+  "@redesignTodayWeekEmpty": {
+    "description": "redesign.today.weekEmpty"
+  },
+  "redesignTodayWhyNot": "Warum kannst du nicht?",
+  "@redesignTodayWhyNot": {
+    "description": "redesign.today.whyNot"
+  },
+  "redesignTodayYes": "Bin dabei",
+  "@redesignTodayYes": {
+    "description": "redesign.today.yes"
+  },
+  "redesignTodayYesAfterAll": "Doch dabei",
+  "@redesignTodayYesAfterAll": {
+    "description": "redesign.today.yesAfterAll"
+  },
+  "redesignTodayYesDone": "Zugesagt",
+  "@redesignTodayYesDone": {
+    "description": "redesign.today.yesDone"
+  },
+  "redesignTodayYourAnswer": "Deine Zusage",
+  "@redesignTodayYourAnswer": {
+    "description": "redesign.today.yourAnswer"
+  },
+  "redesignWorkAllFiles": "Alle Dateien",
+  "@redesignWorkAllFiles": {
+    "description": "redesign.work.allFiles"
+  },
+  "redesignWorkAllParts": "Alle Stimmen",
+  "@redesignWorkAllParts": {
+    "description": "redesign.work.allParts"
+  },
+  "redesignWorkEdit": "Bearbeiten",
+  "@redesignWorkEdit": {
+    "description": "redesign.work.edit"
+  },
+  "redesignWorkFileCount": "{count, plural, one {1 Datei} other {{count} Dateien}}",
+  "@redesignWorkFileCount": {
+    "description": "redesign.work.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkLastPlayed": "Zuletzt gespielt",
+  "@redesignWorkLastPlayed": {
+    "description": "redesign.work.lastPlayed"
+  },
+  "redesignWorkLastSung": "Zuletzt gesungen",
+  "@redesignWorkLastSung": {
+    "description": "redesign.work.lastSung"
+  },
+  "redesignWorkLink": "Link",
+  "@redesignWorkLink": {
+    "description": "redesign.work.link"
+  },
+  "redesignWorkLyrics": "Liedtext",
+  "@redesignWorkLyrics": {
+    "description": "redesign.work.lyrics"
+  },
+  "redesignWorkNever": "Noch nie",
+  "@redesignWorkNever": {
+    "description": "redesign.work.never"
+  },
+  "redesignWorkNoFiles": "Zu diesem Werk gibt es noch keine Dateien.",
+  "@redesignWorkNoFiles": {
+    "description": "redesign.work.noFiles"
+  },
+  "redesignWorkNoPart": "Für deine Stimme gibt es noch keine Noten.",
+  "@redesignWorkNoPart": {
+    "description": "redesign.work.noPart"
+  },
+  "redesignWorkNormalSpeed": "Normal abspielen",
+  "@redesignWorkNormalSpeed": {
+    "description": "redesign.work.normalSpeed"
+  },
+  "redesignWorkNotFound": "Dieses Werk gibt es hier nicht mehr.",
+  "@redesignWorkNotFound": {
+    "description": "redesign.work.notFound"
+  },
+  "redesignWorkNumber": "Nr. {number}",
+  "@redesignWorkNumber": {
+    "description": "redesign.work.number",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignWorkOpen": "Öffnen",
+  "@redesignWorkOpen": {
+    "description": "redesign.work.open"
+  },
+  "redesignWorkPause": "Anhalten",
+  "@redesignWorkPause": {
+    "description": "redesign.work.pause"
+  },
+  "redesignWorkPlanned": "Geplant",
+  "@redesignWorkPlanned": {
+    "description": "redesign.work.planned"
+  },
+  "redesignWorkPlay": "Abspielen",
+  "@redesignWorkPlay": {
+    "description": "redesign.work.play"
+  },
+  "redesignWorkRecording": "Aufnahme",
+  "@redesignWorkRecording": {
+    "description": "redesign.work.recording"
+  },
+  "redesignWorkRecordingFrom": "Aufnahme vom {date}",
+  "@redesignWorkRecordingFrom": {
+    "description": "redesign.work.recordingFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorkScore": "Partitur",
+  "@redesignWorkScore": {
+    "description": "redesign.work.score"
+  },
+  "redesignWorkShare": "Teilen",
+  "@redesignWorkShare": {
+    "description": "redesign.work.share"
+  },
+  "redesignWorkSlower": "Langsamer abspielen",
+  "@redesignWorkSlower": {
+    "description": "redesign.work.slower"
+  },
+  "redesignWorkYourPart": "Deine Stimme",
+  "@redesignWorkYourPart": {
+    "description": "redesign.work.yourPart"
+  },
+  "redesignWorksAdd": "Werk hinzufügen",
+  "@redesignWorksAdd": {
+    "description": "redesign.works.add"
+  },
+  "redesignWorksAll": "Alle · {count}",
+  "@redesignWorksAll": {
+    "description": "redesign.works.all",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignWorksAudio": "Audio",
+  "@redesignWorksAudio": {
+    "description": "redesign.works.audio"
+  },
+  "redesignWorksCurrent": "Gerade geprobt",
+  "@redesignWorksCurrent": {
+    "description": "redesign.works.current"
+  },
+  "redesignWorksEmpty": "Noch keine Werke.",
+  "@redesignWorksEmpty": {
+    "description": "redesign.works.empty"
+  },
+  "redesignWorksFiles": "Dateien",
+  "@redesignWorksFiles": {
+    "description": "redesign.works.files"
+  },
+  "redesignWorksFilesLabel": "Dateien der Gruppe",
+  "@redesignWorksFilesLabel": {
+    "description": "redesign.works.filesLabel"
+  },
+  "redesignWorksFilter": "Filter & Ansicht",
+  "@redesignWorksFilter": {
+    "description": "redesign.works.filter"
+  },
+  "redesignWorksFilterActive": "Filter aktiv",
+  "@redesignWorksFilterActive": {
+    "description": "redesign.works.filterActive"
+  },
+  "redesignWorksMore": "Mehr",
+  "@redesignWorksMore": {
+    "description": "redesign.works.more"
+  },
+  "redesignWorksNoMatch": "Kein Werk passt zur Suche.",
+  "@redesignWorksNoMatch": {
+    "description": "redesign.works.noMatch"
+  },
+  "redesignWorksPdf": "PDF",
+  "@redesignWorksPdf": {
+    "description": "redesign.works.pdf"
+  },
+  "redesignWorksResetFilter": "Filter zurücksetzen",
+  "@redesignWorksResetFilter": {
+    "description": "redesign.works.resetFilter"
+  },
+  "redesignWorksSearch": "Titel, Komponist, Nummer",
+  "@redesignWorksSearch": {
+    "description": "redesign.works.search"
+  },
+  "redesignWorksSearchLabel": "Werke suchen",
+  "@redesignWorksSearchLabel": {
+    "description": "redesign.works.searchLabel"
+  },
   "registerCreate": "Instanz jetzt erstellen",
   "@registerCreate": {
     "description": "register.create"
@@ -13147,6 +14977,14 @@
   "songsFlutterPdfLoading": "PDF wird geladen...",
   "@songsFlutterPdfLoading": {
     "description": "songs.flutter.pdfLoading"
+  },
+  "songsFlutterPdfPagedMode": "Seitenweise blättern",
+  "@songsFlutterPdfPagedMode": {
+    "description": "songs.flutter.pdfPagedMode"
+  },
+  "songsFlutterPdfScrollMode": "Durchgehend scrollen",
+  "@songsFlutterPdfScrollMode": {
+    "description": "songs.flutter.pdfScrollMode"
   },
   "songsFlutterPreviousPage": "Vorherige Seite",
   "@songsFlutterPreviousPage": {

@@ -241,6 +241,18 @@ class SelfServiceEventActions {
       lateReasons: lateReasons,
     );
     if (reason == null || !context.mounted) return;
+    await submitSignout(context, att, reason, isLate: isLate);
+  }
+
+  /// Saves an Absage / Verspätung with [reason] and reports the outcome
+  /// (shared by the reason sheet and the new design's sign-out sheet).
+  Future<void> submitSignout(
+    BuildContext context,
+    CrossTenantPersonAttendance att,
+    String reason, {
+    required bool isLate,
+  }) async {
+    if (att.id == null) return;
     final ok = await signOut(att, reason, isLate);
     if (!context.mounted) return;
     if (ok) {
@@ -442,7 +454,16 @@ class SelfServiceEventActions {
       ],
     );
     if (selected == null || !context.mounted) return;
+    await runAction(context, att, selected);
+  }
 
+  /// Runs one entry of the action sheet (also offered as rows on the new
+  /// design's Termin page).
+  Future<void> runAction(
+    BuildContext context,
+    CrossTenantPersonAttendance att,
+    SelfServiceActionType selected,
+  ) async {
     switch (selected) {
       case SelfServiceActionType.signIn:
       case SelfServiceActionType.undoSignout:

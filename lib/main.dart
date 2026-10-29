@@ -11,6 +11,7 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
 import 'core/providers/locale_provider.dart'; // I18N_INFRA
+import 'core/providers/redesign_providers.dart'; // REDESIGN
 import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart'; // LINKS_STARTUP
 import 'core/services/app_update_service.dart';
@@ -22,9 +23,11 @@ import 'core/services/public_plan_draft_storage.dart'
 import 'core/services/planning_draft_store.dart' show clearPlanningDrafts; // SOL_FIX27
 import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import 'core/theme/app_theme.dart';
+import 'core/theme/redesign/rd_theme.dart'; // REDESIGN
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
 import 'core/services/teams/teams_service.dart'; // TEAMS
+import 'core/services/app_icon_service.dart'; // REDESIGN
 import 'core/providers/push_providers.dart'; // PUSH
 import 'l10n/l10n.dart'; // I18N_INFRA
 import 'shared/widgets/dialogs/ion_modal.dart'; // PARITY_R3
@@ -48,6 +51,8 @@ void main() async {
     await initializeDateFormatting(intlLocales[lang]!, null);
   }
   final initialLanguage = await loadInitialLanguage();
+  // REDESIGN: "Neues Design (Beta)", Farbwelt and hell/dunkel of this device
+  final initialRedesign = await loadInitialRedesignSettings();
 
   // Load environment variables
   try {
@@ -73,6 +78,7 @@ void main() async {
     ProviderScope(
       overrides: [
         initialLanguageProvider.overrideWithValue(initialLanguage), // I18N_INFRA
+        initialRedesignSettingsProvider.overrideWithValue(initialRedesign), // REDESIGN
       ],
       child: const AttendixApp(),
     ),
@@ -103,6 +109,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
       // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
       if (mounted) ref.read(liveActivityBootstrapProvider);
+      // REDESIGN: home screen icon of the Farbwelt (iOS; native skips a no-op)
+      if (mounted) {
+        unawaited(AppIconService.setIcon(ref.read(redesignSettingsProvider).appIconName));
+      }
       // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
       final teams = ref.read(teamsServiceProvider);
       unawaited(teams.init().then((_) {
@@ -142,6 +152,7 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     final updateAvailable = ref.watch(appUpdateAvailableProvider);
     final updateService = ref.read(appUpdateServiceProvider);
     final locale = ref.watch(localeProvider); // I18N_INFRA
+    final redesign = ref.watch(redesignSettingsProvider); // REDESIGN
 
     // Show update snackbar when available (only once)
     if (updateAvailable && !updateService.wasDialogShown) {
@@ -156,9 +167,15 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     return MaterialApp.router(
       title: 'Attendix',
       debugShowCheckedModeBanner: false,
-      theme: AppTheme.light,
-      darkTheme: AppTheme.dark,
-      themeMode: ref.watch(teamsThemeModeProvider) ?? ThemeMode.system, // TEAMS
+      // REDESIGN: the new design brings its Farbwelt and hell/dunkel choice
+      theme: redesign.enabled
+          ? buildRdTheme(redesign.world, Brightness.light)
+          : AppTheme.light,
+      darkTheme: redesign.enabled
+          ? buildRdTheme(redesign.world, Brightness.dark)
+          : AppTheme.dark,
+      themeMode: ref.watch(teamsThemeModeProvider) ?? // TEAMS
+          (redesign.enabled ? redesign.themeMode : ThemeMode.system),
       routerConfig: router,
       scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
       // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /

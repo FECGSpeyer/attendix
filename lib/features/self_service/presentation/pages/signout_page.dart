@@ -52,36 +52,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
   bool _showAllPast = false;
   bool _showOtherTermine = false; // DUTY: "Weitere Termine" in the Dienstplan view
 
-  SelfServiceEventActions _actions(Tenant? tenant, Person? player) {
-    final notifier = ref.read(signoutNotifierProvider.notifier);
-    final canAccessFiles = ref.read(canAccessFilesProvider);
-    return SelfServiceEventActions(
-      absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
-      lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
-      showAllAttendances: tenant?.showAllAttendances ?? false,
-      signIn: (att, note) async {
-        // UX_SELF: "Zusagen" on a duty I was assigned to confirms it (Ionic signin).
-        if (att.isDutyRequested && att.attendanceId != null) {
-          // SOL_FIX35: confirmDutyAction reports success or failure itself
-          // (Ionic confirmDuty: only "Dienst bestätigt"), so no second toast.
-          await confirmDutyAction(context, ref, att.id!, att.attendanceId!);
-          return null;
-        }
-        return notifier.signIn(att, notes: note);
-      },
-      signOut: (att, reason, isLate) =>
-          notifier.signOut([att.id!], reason, isLate: isLate),
-      updateNote: (att, note) => notifier.updateNote(att.id!, note),
-      saveRegistrationAnswers: (att, answers) =>
-          notifier.saveRegistrationAnswers(att.id!, answers),
-      openPlan: (att) => showPlanViewerSheet(
-        context,
-        attendance: att,
-        playerInstrumentId: player?.instrument,
-      ),
-      canAccessFiles: (_) => canAccessFiles,
-    );
-  }
+  SelfServiceEventActions _actions(Tenant? tenant, Person? player) =>
+      signoutEventActions(context, ref, tenant: tenant, player: player);
 
   /// INTEGRATION: opens the Termin of an /open-attendance deep link once the
   /// data is loaded (Ionic consumePendingAttendanceId).
@@ -690,4 +662,45 @@ class _GreetTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Sign in/out flows of "Meine Termine" for [tenant] and [player].
+///
+/// REDESIGN: shared with "Heute" of the new design, so both call the same
+/// repository functions with the same rules (duties, registration fields,
+/// reasons, deadlines).
+SelfServiceEventActions signoutEventActions(
+  BuildContext context,
+  WidgetRef ref, {
+  required Tenant? tenant,
+  required Person? player,
+}) {
+  final notifier = ref.read(signoutNotifierProvider.notifier);
+  final canAccessFiles = ref.read(canAccessFilesProvider);
+  return SelfServiceEventActions(
+    absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+    showAllAttendances: tenant?.showAllAttendances ?? false,
+    signIn: (att, note) async {
+      // UX_SELF: "Zusagen" on a duty I was assigned to confirms it (Ionic signin).
+      if (att.isDutyRequested && att.attendanceId != null) {
+        // SOL_FIX35: confirmDutyAction reports success or failure itself
+        // (Ionic confirmDuty: only "Dienst bestätigt"), so no second toast.
+        await confirmDutyAction(context, ref, att.id!, att.attendanceId!);
+        return null;
+      }
+      return notifier.signIn(att, notes: note);
+    },
+    signOut: (att, reason, isLate) =>
+        notifier.signOut([att.id!], reason, isLate: isLate),
+    updateNote: (att, note) => notifier.updateNote(att.id!, note),
+    saveRegistrationAnswers: (att, answers) =>
+        notifier.saveRegistrationAnswers(att.id!, answers),
+    openPlan: (att) => showPlanViewerSheet(
+      context,
+      attendance: att,
+      playerInstrumentId: player?.instrument,
+    ),
+    canAccessFiles: (_) => canAccessFiles,
+  );
 }

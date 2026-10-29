@@ -1,6 +1,179 @@
 {
   "versions": [
     {
+      "version": "0.22.7",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Dienste ohne eigene Einteilung stehen nicht mehr zum Zusagen in der Liste, du übernimmst sie unter „Offene Dienste“",
+        "✨ Neues Design (Beta): „Bitte bestätigen“ und „Offene Dienste“ in Heute und Termine",
+        "🐛 Neues Design (Beta): Vergangene Termine lassen sich wie in „Meine Termine“ nicht mehr ändern, nur entschuldigte behalten ihre Aktionen",
+        "🐛 Neues Design (Beta): „Gruppe wechseln“ und „Gruppen verwalten“ fragen vorher nach ungespeicherten Eingaben"
+      ]
+    },
+    {
+      "version": "0.22.6",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): „Gruppe wechseln“ bleibt offen, bis der Wechsel fertig ist",
+        "🐛 Neues Design (Beta): Wird beim Anlegen der Start einer Serie über die Zeitumstellung verschoben, bleibt der letzte Termin erhalten"
+      ]
+    },
+    {
+      "version": "0.22.5",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Erfassen bleibt richtig, auch wenn du einen Termin verlässt und gleich wieder öffnest, während noch gespeichert wird",
+        "🐛 Neues Design (Beta): Schlägt das Speichern fehl, zeigt die Liste wieder den zuletzt gespeicherten Status"
+      ]
+    },
+    {
+      "version": "0.22.4",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Rückgängig beim Erfassen wird auch gespeichert, wenn du die Seite gleich danach verlässt",
+        "🐛 Neues Design (Beta): Ein verspäteter Speicherfehler setzt eine neuere Auswahl nicht mehr zurück"
+      ]
+    },
+    {
+      "version": "0.22.3",
+      "date": "29.10.2026",
+      "changes": [
+        "🔧 PDFs öffnen im bisherigen Design wieder wie gewohnt, die neue PDF-Ansicht gibt es nur im neuen Design (Beta)",
+        "🔒 Neues Design (Beta): Notizen zu Personen sehen nur Dirigenten und Verantwortliche",
+        "🐛 Neues Design (Beta): Schnelles Rückgängig beim Erfassen überholt keine laufende Speicherung mehr",
+        "🐛 Neues Design (Beta): Beim Tabwechsel fragt „Neuer Termin“ vor dem Verwerfen von Eingaben",
+        "🐛 Neues Design (Beta): Links auf Mitglieder und Werke öffnen nach dem Anmelden die richtige Gruppe"
+      ]
+    },
+    {
+      "version": "0.22.2",
+      "date": "29.10.2026",
+      "changes": [
+        "🔧 Das bisherige Design bleibt in allen Funktionen wie die Ionic-App; Neues gibt es nur im neuen Design (Beta, Einstellungen › System)"
+      ]
+    },
+    {
+      "version": "0.22.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Mehrtägige Termine über die Zeitumstellung: Ablaufpläne zeigen wieder den richtigen Tag",
+        "🐛 Neues Design (Beta): Tage bis zum Geburtstag, „Heute“/„Morgen“ und Wochentage stimmen auch rund um die Zeitumstellung"
+      ]
+    },
+    {
+      "version": "0.22.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Das Logo der bisherigen App ist zurück: als App-Symbol und in der App",
+        "✨ Neues Design (Beta): Logo in jeder Farbwelt, auf dem iPhone wechselt auch das App-Symbol mit (Ich › Darstellung)",
+        "✨ Neues Design (Beta): Anwesenheit am Desktop mit der Tastatur erfassen (A, V, F, Pfeiltasten, ⌘Z)"
+      ]
+    },
+    {
+      "version": "0.21.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): „Teilen“ auf der Werk-Seite öffnet das Teilen-Menü (WhatsApp, Telegram, Kopieren …)",
+        "✨ Neues Design (Beta): Auf Tablet quer und Desktop stehen Termine und Mitglieder als Liste links, der gewählte Eintrag rechts"
+      ]
+    },
+    {
+      "version": "0.20.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Pultmodus beim Erfassen mit großen Kacheln pro Register, antippen = da, nochmal antippen = zurück",
+        "✨ Neues Design (Beta): Im Pultmodus gedrückt halten für weitere Status und Notiz, „Alle Offenen da“ mit Rückgängig",
+        "✨ Neues Design (Beta): PDF-Ansicht startet auf dem Tablet seitenweise, auf dem Handy durchgehend"
+      ]
+    },
+    {
+      "version": "0.19.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Verwaltung unter „Ich“ mit sechs Bereichen statt einer langen Liste",
+        "✨ Neues Design (Beta): Einstellungen direkt suchen, mit „Zuletzt geöffnet“",
+        "✨ Neues Design (Beta): Wartende Freigaben stehen oben in der Verwaltung",
+        "🐛 Neues Design (Beta): Dirigenten sehen auf der Werk-Seite die Partitur oder alle Stimmen statt „keine Noten“"
+      ]
+    },
+    {
+      "version": "0.18.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): PDFs öffnen im Vollbild und lassen sich durch alle Seiten scrollen, mit zwei Fingern zoomen",
+        "✨ Neues Design (Beta): PDF-Ansicht mit Umschalter auf seitenweises Blättern (senkrecht wischen oder oben bzw. unten tippen)"
+      ]
+    },
+    {
+      "version": "0.18.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Werke“ mit Suche nach Titel, Komponist und Nummer, „Gerade geprobt“ und Kategorien",
+        "✨ Neues Design (Beta): Werk-Seite mit deiner Stimme zum Öffnen, allen Stimmen, Partitur und „Zuletzt gespielt“",
+        "✨ Neues Design (Beta): Aufnahme direkt auf der Werk-Seite abspielen, auch langsamer mit 0,8×"
+      ]
+    },
+    {
+      "version": "0.17.1",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Seitlich wischen wechselt zwischen Kommend und Vergangen bzw. Aktiv, Pausiert und Wartet",
+        "💄 Neues Design (Beta): Die Markierung im Umschalter gleitet mit"
+      ]
+    },
+    {
+      "version": "0.17.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Mitglieder“ mit Aktiv, Pausiert und Wartet, Suche und Registern mit Ø-Anwesenheit",
+        "✨ Neues Design (Beta): Geburtstage, Abwesenheiten und niedrige Anwesenheit direkt in der Mitgliederliste",
+        "✨ Neues Design (Beta): Personen-Seite mit Kontakt, Anwesenheit der letzten Termine, Pausieren und Archivieren"
+      ]
+    },
+    {
+      "version": "0.16.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Die Statusleiste zeigt wieder farbig, wie viele zugesagt, entschuldigt und offen sind"
+      ]
+    },
+    {
+      "version": "0.16.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): „Neuer Termin“ mit Vorlagen aus euren letzten Terminen, Ort-Vorschlägen und Abmeldeschluss",
+        "✨ Neues Design (Beta): Termine wöchentlich oder alle zwei Wochen anlegen, mit Vorschau und Ferien-Hinweis",
+        "♻️ Termine anlegen nutzt im alten und neuen Design denselben Speicherweg"
+      ]
+    },
+    {
+      "version": "0.15.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Termine“ mit Kommend und Vergangen, Filter nach Art, Suche und Zusagen direkt in der Liste",
+        "✨ Neues Design (Beta): Termin-Überblick mit Rückmeldungen, leeren Registern und Abmeldungen",
+        "✨ Neues Design (Beta): Anwesenheit erfassen mit großen Knöpfen, „Alle Offenen anwesend“ und Rückgängig",
+        "✨ Neues Design (Beta): eigene Termin-Seite für Spieler, neues Abmelden und Abwesenheit mit Kalender"
+      ]
+    },
+    {
+      "version": "0.14.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta) zum Ausprobieren: unter Einstellungen › System einschalten, gilt nur auf diesem Gerät",
+        "✨ Neue Startseite „Heute“: nächster Termin mit Zusagen, Zusage oder Abmeldung mit einem Tipp, Hinweise für Dirigenten",
+        "✨ Feste Tabs Heute, Termine, Mitglieder, Werke und Ich; auf Tablet und Computer mit Seitenleiste",
+        "🎨 Fünf Farbwelten (Petrol, Konzertsaal, Nachtblau, Klar, Bühne) mit Hell, Dunkel oder Automatisch unter Ich › Darstellung"
+      ]
+    },
+    {
+      "version": "0.13.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Personen per Anrufen, WhatsApp, Telegram oder E-Mail kontaktieren"
+      ]
+    },
+    {
       "version": "0.12.2",
       "date": "29.10.2026",
       "changes": [

@@ -82,6 +82,16 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
   List<AudioQueueItem> _queue = const [];
   int _queueIndex = -1;
 
+  /// REDESIGN: playback speed (Werk page "0,8×" to practise along); kept
+  /// for the following tracks.
+  double _speed = 1.0;
+  double get speed => _speed;
+
+  Future<void> setSpeed(double speed) async {
+    _speed = speed;
+    await _player?.setSpeed(speed);
+  }
+
   /// Incremented on every track change to ignore stale URL resolutions.
   int _loadToken = 0;
 
@@ -206,6 +216,7 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
 
     try {
       final loadedDuration = await player.setUrl(url);
+      if (_speed != 1.0) await player.setSpeed(_speed);
 
       // Race guard: a newer playFromUrl call may have superseded us
       // while setUrl was loading. If so, _player no longer points to

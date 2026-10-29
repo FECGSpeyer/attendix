@@ -111,7 +111,9 @@
         "printFileFailed": "Datei konnte nicht gedruckt werden",
         "downloadFileFailed": "Datei konnte nicht heruntergeladen werden",
         "telegramSent": "Datei per Telegram gesendet",
-        "fileDownloadFailed": "Datei konnte nicht heruntergeladen werden: {name}"
+        "fileDownloadFailed": "Datei konnte nicht heruntergeladen werden: {name}",
+        "pdfPagedMode": "Seitenweise blättern",
+        "pdfScrollMode": "Durchgehend scrollen"
       }
     }
   },
@@ -227,7 +229,9 @@
         "printFileFailed": "File could not be printed",
         "downloadFileFailed": "File could not be downloaded",
         "telegramSent": "File sent via Telegram",
-        "fileDownloadFailed": "File could not be downloaded: {name}"
+        "fileDownloadFailed": "File could not be downloaded: {name}",
+        "pdfPagedMode": "Turn page by page",
+        "pdfScrollMode": "Scroll continuously"
       }
     }
   }

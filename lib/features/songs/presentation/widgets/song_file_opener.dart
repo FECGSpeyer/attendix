@@ -1,19 +1,28 @@
 import 'package:flutter/material.dart';
 
+import '../../../../core/router/redesign_routes.dart'; // REDESIGN
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../utils/song_utils.dart';
+import 'pdf_viewer_page.dart';
 import 'pdf_viewer_sheet.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Open a song file: PDFs and images in the in-app viewers, everything else
 /// externally (Ionic `Utils.openFileNative`).
+///
+/// REDESIGN: the full-screen PDF viewer (scrolling, page mode) belongs to
+/// the new design; the normal app keeps its viewer.
 Future<void> openSongFile(BuildContext context, SongFile file) async {
   if (file.url.isEmpty) return;
   if (SongUtils.isPdf(file)) {
-    await showPdfViewerSheet(context, url: file.url, fileName: file.fileName);
+    if (RedesignRoutes.active) {
+      await showPdfViewer(context, url: file.url, fileName: file.fileName);
+    } else {
+      await showPdfViewerSheet(context, url: file.url, fileName: file.fileName);
+    }
   } else if (SongUtils.isImage(file)) {
     await showImageViewerSheet(context, url: file.url, fileName: file.fileName);
   } else {

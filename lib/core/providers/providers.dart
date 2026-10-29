@@ -60,3 +60,5 @@ export 'demo_providers.dart';
 export 'locale_provider.dart';
 // LIVE_ACTIVITY
 export 'live_activity_providers.dart';
+// REDESIGN: new design (Beta)
+export 'redesign_providers.dart';

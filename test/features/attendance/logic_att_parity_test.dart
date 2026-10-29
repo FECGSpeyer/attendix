@@ -108,8 +108,12 @@ void main() {
   });
 
   group('source parity', () {
+    // REDESIGN: the create writes are shared with the new design
+    // (attendance_create_writes.dart).
     final create = File('lib/features/attendance/presentation/pages/attendance_create_page.dart')
-        .readAsStringSync();
+            .readAsStringSync() +
+        File('lib/features/attendance/presentation/attendance_create_writes.dart')
+            .readAsStringSync();
     // ASTRA_SIGNOUT_TOPICS: the date change of the Termin page is shared
     // with the Teamorganisation (attendance_date_change.dart).
     final detail = File('lib/features/attendance/presentation/pages/attendance_detail_page.dart')
@@ -129,7 +133,7 @@ void main() {
     test('create: Ionic columns (local noon ISO, no legacy type, duration 1)', () {
       expect(create, contains('normalizedDate.toUtc().toIso8601String()'));
       expect(create, isNot(contains("'type': type.name")));
-      expect(create, contains("'duration_days': type.allDay == true ? _durationDays : 1"));
+      expect(create, contains("'duration_days': type.allDay == true ? input.durationDays : 1"));
       expect(create, contains("dueDate?.toUtc().toIso8601String()"));
       expect(create, isNot(contains('practiceStart')));
     });

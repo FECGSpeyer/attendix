@@ -122,6 +122,12 @@ const List<String> _tenantScopedRoots = [
   '/dashboard',
   '/songs-tab',
   '/org-plans-tab',
+  // REDESIGN: the tabs of the new design (with their subpages)
+  '/heute',
+  '/termine',
+  '/mitglieder',
+  '/werke',
+  '/ich',
 ];
 
 /// Whether [path] is an in-app route that belongs to a tenant.

@@ -108,6 +108,24 @@ import 'attendance_detail_guard.dart'; // LEFTOVERS
 import 'route_access.dart'; // PARITY_R7
 import '../../l10n/l10n.dart';
 import '../../shared/widgets/adaptive/ion_button_label.dart';
+// REDESIGN: new design (Beta)
+import '../providers/redesign_providers.dart';
+import 'redesign_routes.dart';
+import '../../features/redesign/presentation/shell/rd_shell.dart';
+import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_page.dart';
+import '../../features/redesign/presentation/pages/rd_works_page.dart';
+import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
+import '../../features/redesign/presentation/pages/rd_event_page.dart';
+import '../../features/redesign/presentation/pages/rd_events_page.dart';
+import '../../features/redesign/presentation/pages/rd_me_page.dart';
+import '../../features/redesign/presentation/pages/rd_members_page.dart';
+import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_page.dart';
+import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
+import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
+import '../../features/redesign/presentation/pages/rd_manage_page.dart';
+import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -386,6 +404,18 @@ final routerProvider = Provider<GoRouter>((ref) {
         final role = ref.read(currentRoleProvider);
         final location = state.matchedLocation;
 
+        // REDESIGN: "Heute" and "Ich" only exist while the new design is on.
+        if (!RedesignRoutes.active && RedesignRoutes.isRedesignRoute(location)) {
+          return homeRouteFor(
+            role,
+            ref.read(currentTenantIdProvider),
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
+        }
+        // REDESIGN: who may open the Termine of the new design.
+        final redesignTarget = RedesignRoutes.roleRedirect(location, role);
+        if (redesignTarget != null) return redesignTarget;
+
         // PARITY_R7: all role/tenant checks in one pure function (tested).
         final tenant = ref.read(currentTenantProvider);
         final roleTarget = roleRouteRedirect(
@@ -532,8 +562,161 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Main app shell with tabs
       ShellRoute(
-        builder: (context, state, child) => MainShell(child: child),
+        // REDESIGN: the new shell (fixed tabs) while the Beta is on.
+        builder: (context, state, child) => _AppShell(child: child),
         routes: [
+          // REDESIGN: "Heute", "Termine", "Mitglieder", "Werke", "Ich" and "Ich › Darstellung" (Beta)
+          GoRoute(
+            path: RedesignRoutes.today,
+            name: 'redesignToday',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdTodayPage(),
+              state: state,
+            ),
+          ),
+          GoRoute(
+            path: RedesignRoutes.events,
+            name: 'redesignEvents',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: rdUseSplit(context)
+                  ? RdSplitView(
+                      list: const RdEventsPage(),
+                      detail: null,
+                      selectedId: null,
+                      emptyText: context.l10n.redesignSplitEventsEmpty,
+                    )
+                  : const RdEventsPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: 'neu',
+                name: 'redesignEventCreate',
+                builder: (context, state) => const RdEventCreatePage(),
+              ),
+              GoRoute(
+                path: 'meine/:paId',
+                name: 'redesignOwnEvent',
+                builder: (context, state) => RdOwnEventPage(
+                  personAttendanceId: state.pathParameters['paId'] ?? '',
+                ),
+              ),
+              GoRoute(
+                path: ':id',
+                name: 'redesignEvent',
+                pageBuilder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  final detail = id == null
+                      ? null
+                      : RdEventPage(
+                          key: ValueKey('rd-event-$id'),
+                          attendanceId: id,
+                          initialTab: state.uri.queryParameters['tab'] == 'anwesenheit'
+                              ? RdEventTab.record
+                              : RdEventTab.overview,
+                        );
+                  // Wide screens: list and Termin side by side; one page
+                  // for every Termin, so the list keeps its state.
+                  if (rdUseSplit(context)) {
+                    return NoTransitionPage<void>(
+                      key: const ValueKey('rd-events-split'),
+                      child: RdSplitView(
+                        list: const RdEventsPage(),
+                        detail: detail,
+                        selectedId: id,
+                        emptyText: context.l10n.redesignSplitEventsEmpty,
+                      ),
+                    );
+                  }
+                  return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdEventsPage());
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: RedesignRoutes.members,
+            name: 'redesignMembers',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: rdUseSplit(context)
+                  ? RdSplitView(
+                      list: const RdMembersPage(),
+                      detail: null,
+                      selectedId: null,
+                      emptyText: context.l10n.redesignSplitMembersEmpty,
+                    )
+                  : const RdMembersPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: 'redesignPerson',
+                pageBuilder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  final detail = id == null ? null : RdPersonPage(key: ValueKey('rd-person-$id'), personId: id);
+                  if (rdUseSplit(context)) {
+                    return NoTransitionPage<void>(
+                      key: const ValueKey('rd-members-split'),
+                      child: RdSplitView(
+                        list: const RdMembersPage(),
+                        detail: detail,
+                        selectedId: id,
+                        emptyText: context.l10n.redesignSplitMembersEmpty,
+                      ),
+                    );
+                  }
+                  return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdMembersPage());
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: RedesignRoutes.works,
+            name: 'redesignWorks',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdWorksPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: 'redesignWork',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (id == null) return const RdWorksPage();
+                  return RdWorkPage(key: ValueKey('rd-work-$id'), songId: id);
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: RedesignRoutes.me,
+            name: 'redesignMe',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdMePage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: 'darstellung',
+                name: 'redesignAppearance',
+                builder: (context, state) => const RdAppearancePage(),
+              ),
+              GoRoute(
+                path: 'verwaltung',
+                name: 'redesignManage',
+                builder: (context, state) => const RdManagePage(),
+                routes: [
+                  GoRoute(
+                    path: ':area',
+                    builder: (context, state) => RdManageAreaPage(
+                      area: RdManageArea.fromKey(state.pathParameters['area']),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
           // People/Players
           GoRoute(
             path: '/people',
@@ -1129,4 +1312,18 @@ class AppRoutes {
   static const String shifts = 'shifts';
   static const String shiftDetail = 'shiftDetail';
   static const String tenantDetail = 'tenantDetail';
+}
+
+/// REDESIGN: old tab shell, or the new one while "Neues Design (Beta)" is on.
+class _AppShell extends ConsumerWidget {
+  const _AppShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(redesignEnabledProvider)
+        ? RdShell(child: child)
+        : MainShell(child: child);
+  }
 }

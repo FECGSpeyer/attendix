@@ -135,7 +135,7 @@ void main() {
 
   group('D12 song history date', () {
     test('history entries get the picked day (YYYY-MM-DD)', () {
-      final src = _read('lib/features/attendance/presentation/pages/attendance_create_page.dart');
+      final src = _read('lib/features/attendance/presentation/attendance_create_writes.dart');
       expect(src, contains("attendanceId, DateFormat('yyyy-MM-dd').format(date))"));
     });
   });

@@ -5391,6 +5391,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get peopleFlutterContactCall => 'Call';
+
+  @override
+  String get peopleFlutterContactMail => 'Email';
+
+  @override
+  String get peopleFlutterContactMailHint => 'Write an email';
+
+  @override
+  String get peopleFlutterContactTelegramHint => 'Message on Telegram';
+
+  @override
+  String get peopleFlutterContactWhatsAppHint => 'Message on WhatsApp';
+
+  @override
   String get peopleFlutterCreateAnyway => 'Create anyway';
 
   @override
@@ -7708,6 +7723,1430 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignAbsenceAffects(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'This affects $count events',
+      one: 'This affects 1 event',
+      zero: 'You have no events in this period.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignAbsenceChooseEnd => 'Tap the last day.';
+
+  @override
+  String get redesignAbsenceChooseStart => 'Tap the first day.';
+
+  @override
+  String get redesignAbsenceNextMonth => 'Next month';
+
+  @override
+  String get redesignAbsencePause => 'Pause';
+
+  @override
+  String get redesignAbsencePauseButton => 'Pause …';
+
+  @override
+  String get redesignAbsencePauseHint => 'If you can\'t come for a longer time, you can pause yourself. The leaders then see that you are currently not taking part.';
+
+  @override
+  String get redesignAbsencePeriod => 'Period';
+
+  @override
+  String get redesignAbsencePrevMonth => 'Previous month';
+
+  @override
+  String get redesignAbsenceRange => 'Away for a period';
+
+  @override
+  String get redesignAbsenceReason => 'Reason';
+
+  @override
+  String get redesignAbsenceReasonHint => 'e.g. holiday';
+
+  @override
+  String get redesignAbsenceReset => 'Reset period';
+
+  @override
+  String get redesignAbsenceSubmit => 'Enter absence';
+
+  @override
+  String get redesignAbsenceTitle => 'Absence';
+
+  @override
+  String get redesignAdminTitle => 'Administration';
+
+  @override
+  String get redesignAppearanceAppIcon => 'App icon';
+
+  @override
+  String get redesignAppearanceAppIconFollow => 'App icon in colour theme';
+
+  @override
+  String get redesignAppearanceAppIconHint => 'The icon on your home screen changes with the colour theme.';
+
+  @override
+  String get redesignAppearanceAutoHint => 'Automatic follows your device setting.';
+
+  @override
+  String get redesignAppearanceBrightness => 'Light or dark';
+
+  @override
+  String get redesignAppearanceDeviceOnly => 'These settings apply to this device only.';
+
+  @override
+  String get redesignAppearanceModeAuto => 'Automatic';
+
+  @override
+  String get redesignAppearanceModeDark => 'Dark';
+
+  @override
+  String get redesignAppearanceModeLight => 'Light';
+
+  @override
+  String get redesignAppearancePreview => 'Preview of the chosen colour theme';
+
+  @override
+  String get redesignAppearancePreviewTitle => 'Rehearsal';
+
+  @override
+  String get redesignAppearanceStageAlwaysDark => 'Stage is always dark.';
+
+  @override
+  String get redesignAppearanceTitle => 'Appearance';
+
+  @override
+  String get redesignAppearanceWorld => 'Colour theme';
+
+  @override
+  String get redesignAppearanceWorldClear => 'Clear';
+
+  @override
+  String get redesignAppearanceWorldClearHint => 'Black on white, highest contrast';
+
+  @override
+  String get redesignAppearanceWorldConcertHall => 'Concert hall';
+
+  @override
+  String get redesignAppearanceWorldConcertHallHint => 'Warm, with serif headings';
+
+  @override
+  String get redesignAppearanceWorldNightBlue => 'Night blue';
+
+  @override
+  String get redesignAppearanceWorldNightBlueHint => 'Bold and round';
+
+  @override
+  String get redesignAppearanceWorldPetrol => 'Petrol';
+
+  @override
+  String get redesignAppearanceWorldPetrolHint => 'Calm and clear (default)';
+
+  @override
+  String get redesignAppearanceWorldStage => 'Stage';
+
+  @override
+  String get redesignAppearanceWorldStageHint => 'Always dark, for evenings and rehearsals';
+
+  @override
+  String get redesignApplicantOtherGroup => 'Join another group';
+
+  @override
+  String get redesignApplicantTitle => 'Application';
+
+  @override
+  String get redesignApplicantWaiting => 'Your registration is being reviewed';
+
+  @override
+  String redesignApplicantWaitingFor(Object group) {
+    return 'Your registration with $group is being reviewed';
+  }
+
+  @override
+  String get redesignCommonAll => 'All';
+
+  @override
+  String get redesignCommonCancel => 'Cancel';
+
+  @override
+  String get redesignCommonDone => 'Done';
+
+  @override
+  String get redesignCommonRetry => 'Try again';
+
+  @override
+  String get redesignCreateChooseType => 'Choose type';
+
+  @override
+  String get redesignCreateDate => 'Date';
+
+  @override
+  String redesignCreateDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '1 day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateDeadline => 'Sign-out deadline';
+
+  @override
+  String get redesignCreateDeadline24h => '24 h before';
+
+  @override
+  String get redesignCreateDeadline2d => '2 days before';
+
+  @override
+  String get redesignCreateDeadlineHint => 'After that, members can no longer sign in or out themselves.';
+
+  @override
+  String get redesignCreateDeadlineNone => 'None';
+
+  @override
+  String get redesignCreateDeadlineWeek => '1 week before';
+
+  @override
+  String get redesignCreateDiscard => 'Discard';
+
+  @override
+  String get redesignCreateDiscardBody => 'Your input will be lost.';
+
+  @override
+  String get redesignCreateDiscardTitle => 'Discard event?';
+
+  @override
+  String get redesignCreateDuration => 'Duration';
+
+  @override
+  String redesignCreateDuty(Object weekday) {
+    return 'Needed on $weekday';
+  }
+
+  @override
+  String redesignCreateDutyCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateEnd => 'End';
+
+  @override
+  String get redesignCreateFewer => 'Fewer';
+
+  @override
+  String get redesignCreateFewerDays => 'One day less';
+
+  @override
+  String redesignCreateHolidayHits(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events fall on holidays',
+      one: '1 event falls on a holiday',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateInvited => 'Who is invited?';
+
+  @override
+  String redesignCreateInvitedAll(Object count) {
+    return 'Everyone · $count';
+  }
+
+  @override
+  String redesignCreateInvitedGroups(Object groups, Object count) {
+    return '$groups · $count';
+  }
+
+  @override
+  String get redesignCreateInvitedHint => 'Set by the type';
+
+  @override
+  String get redesignCreateKeepEditing => 'Keep editing';
+
+  @override
+  String get redesignCreateLaterHint => 'Edit info text, attachment, checklist and schedule in the event afterwards.';
+
+  @override
+  String get redesignCreateMore => 'More';
+
+  @override
+  String get redesignCreateMoreDates => 'More dates';
+
+  @override
+  String get redesignCreateMoreDatesNone => 'None';
+
+  @override
+  String get redesignCreateMoreDays => 'One day more';
+
+  @override
+  String get redesignCreateNoPermission => 'You may not create events.';
+
+  @override
+  String get redesignCreateNoTypes => 'There is no event type yet. Create one in the settings first.';
+
+  @override
+  String get redesignCreatePlace => 'Place';
+
+  @override
+  String get redesignCreatePlaceHint => 'e.g. rehearsal room, 1 Main St';
+
+  @override
+  String redesignCreateRepeatBiweekly(Object date) {
+    return 'Every 2 weeks until $date';
+  }
+
+  @override
+  String get redesignCreateRepeatBiweeklyOption => 'Every 2 weeks';
+
+  @override
+  String redesignCreateRepeatCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateRepeatCustom(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count more days',
+      one: '1 more day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateRepeatCustomOption => 'Single days';
+
+  @override
+  String get redesignCreateRepeatHoliday => 'Holiday';
+
+  @override
+  String redesignCreateRepeatMax(Object count) {
+    return 'At most $count events at once.';
+  }
+
+  @override
+  String get redesignCreateRepeatOnce => 'Once';
+
+  @override
+  String get redesignCreateRepeatPick => 'Pick days in the calendar';
+
+  @override
+  String get redesignCreateRepeatSkipHolidays => 'Skip holidays';
+
+  @override
+  String get redesignCreateRepeatUntil => 'Until';
+
+  @override
+  String redesignCreateRepeatWeekly(Object weekday, Object date) {
+    return 'Every $weekday until $date';
+  }
+
+  @override
+  String get redesignCreateRepeatWeeklyOption => 'Every week';
+
+  @override
+  String get redesignCreateSongs => 'Pieces';
+
+  @override
+  String redesignCreateSongsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces',
+      one: '1 piece',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignCreateSongsNone => 'None';
+
+  @override
+  String get redesignCreateStart => 'Start';
+
+  @override
+  String get redesignCreateSubmit => 'Create';
+
+  @override
+  String redesignCreateSubmitMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Create $count events',
+      one: 'Create event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateSummaryBiweekly(Object weekday) {
+    return 'every 2 weeks on $weekday';
+  }
+
+  @override
+  String redesignCreateSummaryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events will be created',
+      one: '1 event will be created',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignCreateSummaryRange(Object from, Object until) {
+    return '$from to $until';
+  }
+
+  @override
+  String redesignCreateSummaryWeekly(Object weekday) {
+    return 'every $weekday';
+  }
+
+  @override
+  String get redesignCreateTemplate => 'Template';
+
+  @override
+  String get redesignCreateTemplateHint => 'Fills in type, title, time and place. Everything stays editable.';
+
+  @override
+  String get redesignCreateTime => 'Time';
+
+  @override
+  String get redesignCreateTitle => 'New event';
+
+  @override
+  String get redesignCreateTitleLabel => 'Title';
+
+  @override
+  String get redesignCreateType => 'Type';
+
+  @override
+  String redesignEventAllDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people marked present',
+      one: '1 person marked present',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventAllOpenPresent => 'Mark all open as present';
+
+  @override
+  String get redesignEventAnswers => 'Responses';
+
+  @override
+  String get redesignEventBusyLeave => 'Please wait until everything is saved.';
+
+  @override
+  String redesignEventCountAbsent(Object count) {
+    return '$count missing';
+  }
+
+  @override
+  String redesignEventCountExcused(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String redesignEventCountLate(Object count) {
+    return '$count late';
+  }
+
+  @override
+  String redesignEventCountNoAnswer(Object count) {
+    return '$count without answer';
+  }
+
+  @override
+  String redesignEventCountOpen(Object count) {
+    return '$count open';
+  }
+
+  @override
+  String redesignEventCountPresent(Object count) {
+    return '$count there';
+  }
+
+  @override
+  String get redesignEventDetails => 'All details';
+
+  @override
+  String redesignEventInvited(Object count) {
+    return '$count invited';
+  }
+
+  @override
+  String get redesignEventKeyboardHint => 'Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo';
+
+  @override
+  String get redesignEventMore => 'All details and editing';
+
+  @override
+  String get redesignEventMoreHint => 'Schedule, checklist, works and notes';
+
+  @override
+  String redesignEventMoreStatus(Object name) {
+    return 'More statuses and note for $name';
+  }
+
+  @override
+  String get redesignEventNeutralHint => 'does not count';
+
+  @override
+  String get redesignEventNoMatch => 'Nobody matches your search.';
+
+  @override
+  String get redesignEventNoPersons => 'No people have been added to this event yet.';
+
+  @override
+  String get redesignEventNotFound => 'This event could not be found.';
+
+  @override
+  String get redesignEventNote => 'Note for this event';
+
+  @override
+  String get redesignEventNoteHint => 'e.g. reason or time';
+
+  @override
+  String redesignEventRegisterEmpty(Object group, Object count) {
+    return '$group: 0 of $count there.';
+  }
+
+  @override
+  String redesignEventRegisterNames(num count, Object names) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$names have signed out.',
+      one: '$names has signed out.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventSaving => 'Saving …';
+
+  @override
+  String get redesignEventSearch => 'Search person';
+
+  @override
+  String get redesignEventSearchClose => 'Close search';
+
+  @override
+  String get redesignEventSearchHint => 'Name';
+
+  @override
+  String get redesignEventSignouts => 'Sign-outs';
+
+  @override
+  String get redesignEventStatus => 'Status';
+
+  @override
+  String get redesignEventTabOverview => 'Overview';
+
+  @override
+  String get redesignEventTabRecord => 'Attendance';
+
+  @override
+  String redesignEventToastReset(Object name) {
+    return '$name: reset';
+  }
+
+  @override
+  String redesignEventToastSet(Object name, Object status) {
+    return '$name: $status';
+  }
+
+  @override
+  String get redesignEventUndo => 'Undo';
+
+  @override
+  String get redesignEventUndone => 'Undone';
+
+  @override
+  String get redesignEventsAbsent => 'Away …';
+
+  @override
+  String get redesignEventsCreateFirst => 'Create first event';
+
+  @override
+  String get redesignEventsEmpty => 'No events yet. Create the first rehearsal.';
+
+  @override
+  String get redesignEventsLastWeek => 'Last 7 days';
+
+  @override
+  String get redesignEventsNew => 'New event';
+
+  @override
+  String get redesignEventsNo => 'Sign out';
+
+  @override
+  String get redesignEventsNoMatch => 'No events match your search.';
+
+  @override
+  String get redesignEventsNoPast => 'No past events yet.';
+
+  @override
+  String get redesignEventsPast => 'Past';
+
+  @override
+  String redesignEventsPastAverage(Object percent) {
+    return 'Past · Ø $percent %';
+  }
+
+  @override
+  String redesignEventsPastOwn(Object percent) {
+    return 'Past · $percent % attended';
+  }
+
+  @override
+  String redesignEventsPercentPresent(Object percent) {
+    return '$percent % present';
+  }
+
+  @override
+  String get redesignEventsSearch => 'Search events';
+
+  @override
+  String get redesignEventsSearchClose => 'Close search';
+
+  @override
+  String get redesignEventsSearchHint => 'Title or place';
+
+  @override
+  String get redesignEventsShowAll => 'Show all events again';
+
+  @override
+  String get redesignEventsUpcoming => 'Upcoming';
+
+  @override
+  String redesignEventsWaiting(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events are waiting for your answer',
+      one: '1 event is waiting for your answer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventsYes => 'I\'m in';
+
+  @override
+  String get redesignGroupsLoadFailed => 'Your groups could not be loaded.';
+
+  @override
+  String get redesignGroupsManage => 'Manage groups';
+
+  @override
+  String get redesignGroupsSwitchFailed => 'Switching failed. Please try again.';
+
+  @override
+  String redesignGroupsSwitchHint(Object name) {
+    return 'Group: $name. Tap to switch';
+  }
+
+  @override
+  String get redesignGroupsTitle => 'Switch group';
+
+  @override
+  String get redesignManageAreaCommunication => 'Communication';
+
+  @override
+  String get redesignManageAreaData => 'Statistics & data';
+
+  @override
+  String get redesignManageAreaEvents => 'Events & planning';
+
+  @override
+  String get redesignManageAreaGroup => 'Group';
+
+  @override
+  String get redesignManageAreaMembers => 'Members & roles';
+
+  @override
+  String get redesignManageAreaWorks => 'Works, sections & files';
+
+  @override
+  String get redesignManageClassic => 'All settings (previous view)';
+
+  @override
+  String redesignManageFooter(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'All $count previous entries sit in these areas and can be reached directly via the search.',
+      one: 'The previous entry sits in these areas and can be reached directly via the search.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManageGeneralHint => 'Name, season, reasons, registration';
+
+  @override
+  String get redesignManageGeneralTitle => 'General settings';
+
+  @override
+  String get redesignManageMissingHint => 'Members with an e-mail but no access';
+
+  @override
+  String get redesignManageNoMatch => 'No setting matches the search.';
+
+  @override
+  String redesignManagePending(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people are waiting for approval',
+      one: '1 person is waiting for approval',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManagePendingTitle => 'Approvals';
+
+  @override
+  String get redesignManageRecent => 'Recently opened';
+
+  @override
+  String get redesignManageSearch => 'Search settings';
+
+  @override
+  String get redesignManageSearchLabel => 'Search administration';
+
+  @override
+  String get redesignMeAbsence => 'Report absence';
+
+  @override
+  String get redesignMeAccount => 'Account';
+
+  @override
+  String get redesignMeAdmin => 'Administration';
+
+  @override
+  String get redesignMeAdminHint => 'Members, event types, permissions and more';
+
+  @override
+  String get redesignMeAllSettings => 'All settings';
+
+  @override
+  String get redesignMeApp => 'App';
+
+  @override
+  String get redesignMeBeta => 'New design (beta)';
+
+  @override
+  String get redesignMeBetaHint => 'On this device only. You can switch it off any time.';
+
+  @override
+  String get redesignMeCalendar => 'Subscribe to calendar';
+
+  @override
+  String get redesignMeFeedback => 'Send feedback';
+
+  @override
+  String get redesignMeForMe => 'For me';
+
+  @override
+  String get redesignMeGroups => 'My groups';
+
+  @override
+  String redesignMeGroupsCount(Object count) {
+    return '$count groups';
+  }
+
+  @override
+  String get redesignMeHelp => 'Help';
+
+  @override
+  String get redesignMeLogout => 'Log out';
+
+  @override
+  String get redesignMeNotifications => 'Notifications';
+
+  @override
+  String get redesignMeWhatsNew => 'New in this version';
+
+  @override
+  String redesignMembersAbsentFrom(Object date) {
+    return 'away from $date';
+  }
+
+  @override
+  String redesignMembersAbsentUntil(Object date) {
+    return 'away until $date';
+  }
+
+  @override
+  String redesignMembersActive(Object count) {
+    return 'Active · $count';
+  }
+
+  @override
+  String get redesignMembersAdd => 'Add person';
+
+  @override
+  String redesignMembersAverage(Object percent) {
+    return 'Ø $percent %';
+  }
+
+  @override
+  String redesignMembersBirthdayIn(Object count) {
+    return 'Birthday in $count days';
+  }
+
+  @override
+  String get redesignMembersBirthdayToday => 'Birthday today';
+
+  @override
+  String get redesignMembersBirthdayTomorrow => 'Birthday tomorrow';
+
+  @override
+  String get redesignMembersEmpty => 'No members yet.';
+
+  @override
+  String get redesignMembersEmptyPaused => 'Nobody is paused.';
+
+  @override
+  String get redesignMembersEmptyPending => 'Nobody is waiting for approval.';
+
+  @override
+  String get redesignMembersLeader => 'Section leader';
+
+  @override
+  String get redesignMembersLow => 'below 50 %';
+
+  @override
+  String get redesignMembersNoMatch => 'Nobody matches the search.';
+
+  @override
+  String redesignMembersPaused(Object count) {
+    return 'Paused · $count';
+  }
+
+  @override
+  String redesignMembersPausedUntil(Object date) {
+    return 'paused until $date';
+  }
+
+  @override
+  String redesignMembersPending(Object count) {
+    return 'Waiting · $count';
+  }
+
+  @override
+  String get redesignMembersPendingHint => 'Tap a person to review and approve them.';
+
+  @override
+  String redesignMembersPercent(Object percent) {
+    return '$percent %';
+  }
+
+  @override
+  String get redesignMembersSearch => 'Name, instrument, section';
+
+  @override
+  String get redesignMembersSearchLabel => 'Search members';
+
+  @override
+  String redesignMembersSection(Object title, Object count) {
+    return '$title · $count';
+  }
+
+  @override
+  String get redesignMembersStats => 'Statistics';
+
+  @override
+  String get redesignOwnInfos => 'Event info';
+
+  @override
+  String get redesignOwnMore => 'More';
+
+  @override
+  String get redesignOwnNotFound => 'This event is no longer in your list.';
+
+  @override
+  String get redesignOwnRoute => 'Directions';
+
+  @override
+  String get redesignPersonAbsence => 'Away';
+
+  @override
+  String redesignPersonAbsenceRange(Object from, Object until) {
+    return '$from to $until';
+  }
+
+  @override
+  String get redesignPersonAllTermine => 'Show all events';
+
+  @override
+  String get redesignPersonArchive => 'Archive';
+
+  @override
+  String get redesignPersonAttendance => 'Attendance';
+
+  @override
+  String get redesignPersonBirthday => 'Birthday';
+
+  @override
+  String get redesignPersonEdit => 'Edit';
+
+  @override
+  String redesignPersonInDays(Object count) {
+    return 'in $count days';
+  }
+
+  @override
+  String get redesignPersonJoined => 'Member since';
+
+  @override
+  String redesignPersonLastTermine(Object count) {
+    return 'Last $count events, newest on the right';
+  }
+
+  @override
+  String get redesignPersonNoTermine => 'No past events yet.';
+
+  @override
+  String get redesignPersonNotFound => 'This person is no longer here.';
+
+  @override
+  String get redesignPersonNotes => 'Note';
+
+  @override
+  String redesignPersonOfTermine(Object attended, Object total) {
+    return '$attended of $total events';
+  }
+
+  @override
+  String get redesignPersonOverall => 'Overall';
+
+  @override
+  String get redesignPersonPause => 'Pause';
+
+  @override
+  String get redesignPersonPaused => 'Paused';
+
+  @override
+  String get redesignPersonPausedOpen => 'no end date';
+
+  @override
+  String get redesignPersonPending => 'Waiting for approval.';
+
+  @override
+  String redesignPersonPercent(Object percent) {
+    return '$percent %';
+  }
+
+  @override
+  String get redesignPersonResume => 'Active again';
+
+  @override
+  String get redesignPersonReview => 'Review and approve';
+
+  @override
+  String redesignPersonSince(Object year) {
+    return 'since $year';
+  }
+
+  @override
+  String redesignPersonSinceDate(Object date) {
+    return 'since $date';
+  }
+
+  @override
+  String get redesignPersonToday => 'today';
+
+  @override
+  String get redesignPersonTomorrow => 'tomorrow';
+
+  @override
+  String get redesignPultAllOpen => 'All open present';
+
+  @override
+  String get redesignPultBack => 'Event';
+
+  @override
+  String get redesignPultDone => 'Done';
+
+  @override
+  String redesignPultGroupCount(Object present, Object total) {
+    return '$present / $total present';
+  }
+
+  @override
+  String get redesignPultHint => 'Tap = present · tap again = back · press and hold = more statuses';
+
+  @override
+  String get redesignPultOpen => 'Stand mode';
+
+  @override
+  String get redesignPultOpenHint => 'Big tiles to tap, made for the tablet on the stand';
+
+  @override
+  String get redesignPultStatusOpen => 'open';
+
+  @override
+  String redesignPultTitle(Object title) {
+    return '$title · Stand mode';
+  }
+
+  @override
+  String get redesignSignoutCannot => 'I can\'t come';
+
+  @override
+  String get redesignSignoutLater => 'I\'ll be late';
+
+  @override
+  String get redesignSignoutOther => 'Other reason';
+
+  @override
+  String get redesignSignoutOtherHint => 'Describe briefly (at least 5 characters)';
+
+  @override
+  String get redesignSignoutPrivacy => 'Only the leaders see your reason.';
+
+  @override
+  String get redesignSignoutReason => 'Reason';
+
+  @override
+  String get redesignSignoutSubmit => 'Sign out';
+
+  @override
+  String get redesignSignoutSubmitLate => 'Report delay';
+
+  @override
+  String get redesignSplitEventsEmpty => 'Choose an event on the left.';
+
+  @override
+  String get redesignSplitMembersEmpty => 'Choose a person on the left.';
+
+  @override
+  String get redesignStatusAbsent => 'Absent';
+
+  @override
+  String get redesignStatusExcused => 'Excused';
+
+  @override
+  String get redesignStatusLate => 'Late';
+
+  @override
+  String get redesignStatusLater => 'Coming later';
+
+  @override
+  String get redesignStatusOpen => 'Open';
+
+  @override
+  String get redesignStatusYes => 'Attending';
+
+  @override
+  String get redesignTabEvents => 'Events';
+
+  @override
+  String get redesignTabMe => 'Me';
+
+  @override
+  String get redesignTabMembers => 'Members';
+
+  @override
+  String get redesignTabToday => 'Today';
+
+  @override
+  String get redesignTabWorks => 'Works';
+
+  @override
+  String get redesignTodayAllEvents => 'All events';
+
+  @override
+  String get redesignTodayAnswerChildren => 'Answer for my children';
+
+  @override
+  String get redesignTodayAnswered => 'All answered';
+
+  @override
+  String get redesignTodayAnsweredLater => 'You said you will come later.';
+
+  @override
+  String get redesignTodayAnsweredNo => 'You signed out.';
+
+  @override
+  String get redesignTodayAnsweredYes => 'Great, you are coming.';
+
+  @override
+  String get redesignTodayAttention => 'Needs your attention';
+
+  @override
+  String redesignTodayBirthday(Object name, Object day) {
+    return 'Birthday: $name ($day)';
+  }
+
+  @override
+  String redesignTodayBirthdayMore(Object name, Object day, Object count) {
+    return 'Birthday: $name ($day) +$count';
+  }
+
+  @override
+  String redesignTodayCountAbsent(Object count) {
+    return '$count absent';
+  }
+
+  @override
+  String redesignTodayCountExcused(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String redesignTodayCountLater(Object count) {
+    return '$count later';
+  }
+
+  @override
+  String redesignTodayCountOpen(Object count) {
+    return '$count open';
+  }
+
+  @override
+  String redesignTodayCountYes(Object count) {
+    return '$count attending';
+  }
+
+  @override
+  String redesignTodayCritical(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count members often missing',
+      one: '$count member often missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignTodayCriticalHint => 'Below the attendance limit';
+
+  @override
+  String get redesignTodayDayToday => 'Today';
+
+  @override
+  String get redesignTodayDayTomorrow => 'Tomorrow';
+
+  @override
+  String get redesignTodayDutyQuestion => 'You have been assigned. Do you confirm?';
+
+  @override
+  String redesignTodayGreeting(Object name) {
+    return 'Hi $name';
+  }
+
+  @override
+  String redesignTodayInHours(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in $count h',
+      one: 'in $count h',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignTodayInMinutes(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'in $count min',
+      one: 'in $count min',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignTodayLater => 'I\'ll be late …';
+
+  @override
+  String get redesignTodayLoadFailed => 'This could not be loaded.';
+
+  @override
+  String get redesignTodayLoading => 'Loading …';
+
+  @override
+  String get redesignTodayMore => 'More about this event';
+
+  @override
+  String get redesignTodayMySection => 'My section';
+
+  @override
+  String get redesignTodayMySectionHint => 'Attendance of your section';
+
+  @override
+  String get redesignTodayNextEvent => 'Next event';
+
+  @override
+  String get redesignTodayNo => 'Can\'t make it';
+
+  @override
+  String get redesignTodayNoAfterAll => 'Sign out';
+
+  @override
+  String get redesignTodayNoChildren => 'No children are linked to your account yet.';
+
+  @override
+  String get redesignTodayNoDone => 'Signed out';
+
+  @override
+  String get redesignTodayNoMember => 'You are not listed as a member of this group.';
+
+  @override
+  String get redesignTodayNoUpcoming => 'There are no upcoming events.';
+
+  @override
+  String get redesignTodayNotPart => 'You are not part of this event.';
+
+  @override
+  String get redesignTodayNothingElse => 'Nothing else is planned yet.';
+
+  @override
+  String get redesignTodayNotifications => 'Notifications';
+
+  @override
+  String redesignTodayNotificationsUnread(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Notifications, $count unread',
+      one: 'Notifications, $count unread',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignTodayOtherReason => 'Other reason …';
+
+  @override
+  String redesignTodayPending(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new registrations',
+      one: '$count new registration',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignTodayPendingHint => 'Review and approve';
+
+  @override
+  String get redesignTodayQuestion => 'Are you coming?';
+
+  @override
+  String get redesignTodayRecord => 'Take attendance';
+
+  @override
+  String get redesignTodayRunning => 'now';
+
+  @override
+  String redesignTodaySignouts(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count sign-outs for the next event',
+      one: '$count sign-out for the next event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignTodaySignoutsHint => 'See reasons';
+
+  @override
+  String get redesignTodayThisWeek => 'This week';
+
+  @override
+  String get redesignTodayUpNext => 'Up next';
+
+  @override
+  String get redesignTodayWeekEmpty => 'Nothing else this week.';
+
+  @override
+  String get redesignTodayWhyNot => 'Why can\'t you make it?';
+
+  @override
+  String get redesignTodayYes => 'I\'m coming';
+
+  @override
+  String get redesignTodayYesAfterAll => 'Coming after all';
+
+  @override
+  String get redesignTodayYesDone => 'Attending';
+
+  @override
+  String get redesignTodayYourAnswer => 'Your answer';
+
+  @override
+  String get redesignWorkAllFiles => 'All files';
+
+  @override
+  String get redesignWorkAllParts => 'All parts';
+
+  @override
+  String get redesignWorkEdit => 'Edit';
+
+  @override
+  String redesignWorkFileCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkLastPlayed => 'Last played';
+
+  @override
+  String get redesignWorkLastSung => 'Last sung';
+
+  @override
+  String get redesignWorkLink => 'Link';
+
+  @override
+  String get redesignWorkLyrics => 'Lyrics';
+
+  @override
+  String get redesignWorkNever => 'Never';
+
+  @override
+  String get redesignWorkNoFiles => 'There are no files for this work yet.';
+
+  @override
+  String get redesignWorkNoPart => 'There is no sheet music for your part yet.';
+
+  @override
+  String get redesignWorkNormalSpeed => 'Play at normal speed';
+
+  @override
+  String get redesignWorkNotFound => 'This work no longer exists here.';
+
+  @override
+  String redesignWorkNumber(Object number) {
+    return 'No. $number';
+  }
+
+  @override
+  String get redesignWorkOpen => 'Open';
+
+  @override
+  String get redesignWorkPause => 'Pause';
+
+  @override
+  String get redesignWorkPlanned => 'Planned';
+
+  @override
+  String get redesignWorkPlay => 'Play';
+
+  @override
+  String get redesignWorkRecording => 'Recording';
+
+  @override
+  String redesignWorkRecordingFrom(Object date) {
+    return 'Recording from $date';
+  }
+
+  @override
+  String get redesignWorkScore => 'Score';
+
+  @override
+  String get redesignWorkShare => 'Share';
+
+  @override
+  String get redesignWorkSlower => 'Play slower';
+
+  @override
+  String get redesignWorkYourPart => 'Your part';
+
+  @override
+  String get redesignWorksAdd => 'Add work';
+
+  @override
+  String redesignWorksAll(Object count) {
+    return 'All · $count';
+  }
+
+  @override
+  String get redesignWorksAudio => 'Audio';
+
+  @override
+  String get redesignWorksCurrent => 'In rehearsal';
+
+  @override
+  String get redesignWorksEmpty => 'No works yet.';
+
+  @override
+  String get redesignWorksFiles => 'Files';
+
+  @override
+  String get redesignWorksFilesLabel => 'Files of the group';
+
+  @override
+  String get redesignWorksFilter => 'Filter & view';
+
+  @override
+  String get redesignWorksFilterActive => 'Filter active';
+
+  @override
+  String get redesignWorksMore => 'More';
+
+  @override
+  String get redesignWorksNoMatch => 'No work matches the search.';
+
+  @override
+  String get redesignWorksPdf => 'PDF';
+
+  @override
+  String get redesignWorksResetFilter => 'Reset filter';
+
+  @override
+  String get redesignWorksSearch => 'Title, composer, number';
+
+  @override
+  String get redesignWorksSearchLabel => 'Search works';
+
+  @override
   String get registerCreate => 'Create instance now';
 
   @override
@@ -9969,6 +11408,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterPdfLoading => 'Loading PDF...';
+
+  @override
+  String get songsFlutterPdfPagedMode => 'Turn page by page';
+
+  @override
+  String get songsFlutterPdfScrollMode => 'Scroll continuously';
 
   @override
   String get songsFlutterPreviousPage => 'Previous page';

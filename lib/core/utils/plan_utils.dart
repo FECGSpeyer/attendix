@@ -350,7 +350,8 @@ class PlanUtils {
   static String dayLabel(PlanAttendance att, int day) {
     final d = _date(att.date);
     if (d == null) return l10nWithoutContext.coreFlutterPlanDayN(day + 1);
-    final date = d.add(Duration(days: day));
+    // DST: Duration(days: n) from local midnight can end at 23:00 the day before.
+    final date = DateTime(d.year, d.month, d.day + day);
     final String weekday;
     if (currentLanguage() == 'de') {
       const weekdays = ['Mo', 'Di', 'Mi', 'Do', 'Fr', 'Sa', 'So'];
@@ -375,7 +376,7 @@ class PlanUtils {
   static DateTime? planDate(PlanAttendance att, int index, [List<Plan>? plans]) {
     final d = _date(att.date);
     if (d == null) return null;
-    return d.add(Duration(days: planDay(att, plans ?? allPlans(att), index) ?? 0));
+    return DateTime(d.year, d.month, d.day + (planDay(att, plans ?? allPlans(att), index) ?? 0));
   }
 
   /// Index of the plan for today, falling back to the first plan.
