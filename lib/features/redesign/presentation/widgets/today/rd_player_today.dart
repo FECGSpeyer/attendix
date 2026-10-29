@@ -6,14 +6,15 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/self_service_providers.dart';
 import '../../../../../core/providers/signout_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
-import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../data/providers/rd_today_providers.dart' show rdStartOf;
+import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
 
@@ -43,7 +44,7 @@ class RdPlayerToday extends ConsumerWidget {
           l10n.redesignTodayUpNext,
           action: RdLinkButton(
             label: l10n.redesignCommonAll,
-            onPressed: () => context.go('/signout'),
+            onPressed: () => context.go(RedesignRoutes.events),
           ),
         ),
         if (data == null)
@@ -59,7 +60,9 @@ class RdPlayerToday extends ConsumerWidget {
                   title: att.eventTitle,
                   meta: att.eventMeta(),
                   trailing: actions.isOwn(att) ? rdOwnStatusPill(l10n, att.status) : null,
-                  onTap: () => actions.presentActions(context, att),
+                  onTap: () => att.id != null && actions.isOwn(att)
+                      ? context.push(RedesignRoutes.ownEvent(att.id!))
+                      : actions.presentActions(context, att),
                 ),
             ],
           ),
@@ -83,10 +86,22 @@ class RdPlayerToday extends ConsumerWidget {
 
 /// Own answer for the next Termin (Spieler; Helfer below their Termin card).
 class RdOwnAnswerSection extends ConsumerStatefulWidget {
-  const RdOwnAnswerSection({super.key, this.showHeader = true});
+  const RdOwnAnswerSection({
+    super.key,
+    this.showHeader = true,
+    this.attendance,
+    this.showEvent = true,
+  });
 
   /// "Deine Zusage" above the card (Helfer).
   final bool showHeader;
+
+  /// The Termin to answer; null: the next one (Heute).
+  final CrossTenantPersonAttendance? attendance;
+
+  /// Eyebrow, title and time in the card (not on the Termin's own page,
+  /// which shows them above; there the card has no "Mehr zum Termin").
+  final bool showEvent;
 
   @override
   ConsumerState<RdOwnAnswerSection> createState() => _RdOwnAnswerSectionState();
@@ -112,14 +127,8 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
     CrossTenantPersonAttendance att,
     String reason,
   ) async {
-    final ok = await actions.signOut(att, reason, false);
-    if (!mounted) return;
-    setState(() => _choosingReason = false);
-    if (ok) {
-      ToastHelper.showSuccess(context, context.l10n.signoutThanksSignout);
-    } else {
-      ToastHelper.showError(context, context.l10n.signoutFlutterSignoutFailed);
-    }
+    await actions.submitSignout(context, att, reason, isLate: false);
+    if (mounted) setState(() => _choosingReason = false);
   }
 
   @override
@@ -131,6 +140,14 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
 
     final Widget body;
     final data = dataAsync.valueOrNull;
+    final given = widget.attendance;
+    if (given != null) {
+      return _card(
+        context,
+        given,
+        signoutEventActions(context, ref, tenant: tenant, player: player),
+      );
+    }
     if (data == null) {
       body = dataAsync.hasError
           ? RdInfoCard(
@@ -201,27 +218,32 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Row(
-            children: [
-              Expanded(
-                child: RdEyebrow(
-                  '${l10n.redesignTodayNextEvent}'
-                  '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+          if (widget.showEvent) ...[
+            Row(
+              children: [
+                Expanded(
+                  child: RdEyebrow(
+                    '${l10n.redesignTodayNextEvent}'
+                    '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                  ),
                 ),
-              ),
-              if (countdown != null) RdPill(countdown, tone: RdTone.primary),
+                if (countdown != null) RdPill(countdown, tone: RdTone.primary),
+              ],
+            ),
+            const SizedBox(height: 8),
+            Semantics(
+              header: true,
+              child: Text(att.eventTitle, style: RdType.cardTitle(p)),
+            ),
+            if (meta.isNotEmpty) ...[
+              const SizedBox(height: 4),
+              Text(meta, style: RdType.meta(p, size: 15)),
             ],
-          ),
-          const SizedBox(height: 8),
-          Semantics(
-            header: true,
-            child: Text(att.eventTitle, style: RdType.cardTitle(p)),
-          ),
-          if (meta.isNotEmpty) ...[
-            const SizedBox(height: 4),
-            Text(meta, style: RdType.meta(p, size: 15)),
+            const SizedBox(height: 16),
+          ] else if (countdown != null) ...[
+            RdPill(countdown, tone: RdTone.primary),
+            const SizedBox(height: 10),
           ],
-          const SizedBox(height: 16),
           Text(question, style: RdType.body(p).copyWith(fontWeight: FontWeight.w600)),
           if (att.notes != null && att.notes!.isNotEmpty && qa != null && !qa.present) ...[
             const SizedBox(height: 4),
@@ -236,14 +258,18 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
           ],
           const SizedBox(height: 12),
           if (qa != null) ..._answerButtons(context, att, actions, qa, busy),
-          const SizedBox(height: 4),
-          Align(
-            alignment: Alignment.centerLeft,
-            child: RdLinkButton(
-              label: l10n.redesignTodayMore,
-              onPressed: () => actions.presentActions(context, att, hideQuickActions: qa != null),
+          if (widget.showEvent) ...[
+            const SizedBox(height: 4),
+            Align(
+              alignment: Alignment.centerLeft,
+              child: RdLinkButton(
+                label: l10n.redesignTodayMore,
+                onPressed: () => att.id != null
+                    ? context.push(RedesignRoutes.ownEvent(att.id!))
+                    : actions.presentActions(context, att, hideQuickActions: qa != null),
+              ),
             ),
-          ),
+          ],
         ],
       ),
     );
@@ -280,7 +306,7 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
               onTap: busy
                   ? null
                   : () => _run(() async {
-                        await actions.quickSignout(context, att, isLate: false);
+                        await showRdSignoutSheet(context, att: att, actions: actions);
                         if (mounted) setState(() => _choosingReason = false);
                       }),
             ),
@@ -327,7 +353,9 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
           padding: const EdgeInsets.only(top: 6),
           child: RdLinkButton(
             label: l10n.redesignTodayLater,
-            onPressed: busy ? () {} : () => _run(() => actions.quickSignout(context, att, isLate: true)),
+            onPressed: busy
+                ? () {}
+                : () => _run(() => showRdSignoutSheet(context, att: att, actions: actions, late: true)),
           ),
         ),
     ];

@@ -50,8 +50,19 @@ Future<void> selfServiceReportAbsence(
     useSafeArea: true,
     builder: (_) => SelfServiceAbsenceSheet(showLongAbsenceHint: canSelfPause),
   );
-  if (input == null || !context.mounted || player.id == null) return;
+  if (input == null || !context.mounted) return;
+  await saveSelfServiceAbsence(context, ref, player, input);
+}
 
+/// Saves an own absence and reports the outcome (shared by the absence
+/// sheet and the new design's absence sheet).
+Future<void> saveSelfServiceAbsence(
+  BuildContext context,
+  WidgetRef ref,
+  Person player,
+  AbsenceInput input,
+) async {
+  if (player.id == null) return;
   final count = await ref.read(playerAbsenceNotifierProvider.notifier).addAbsence(
         personId: player.id!,
         fromDate: input.fromDate,

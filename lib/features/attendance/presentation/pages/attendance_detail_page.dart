@@ -64,6 +64,7 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 import '../widgets/attendance_date_change.dart'; // ASTRA_SIGNOUT_TOPICS
+import '../person_attendance_writes.dart'; // REDESIGN: shared write path
 export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays; // ASTRA_SIGNOUT_TOPICS
 
 /// Attendance detail/taking page
@@ -817,65 +818,48 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
   /// Update notes for a specific person
   Future<void> _updatePersonNote(int personId, String? notes) async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
       ToastHelper.showError(context, context.l10n.attendanceFlutterNoEntry);
       return;
     }
 
-    // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
-    // SOL_FIX12: a write that could not be queued is reported, never
-    // treated as saved.
-    // SOL_FIX13: the session captured here also guards the direct write.
-    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
-    final writeSession = offlineQueue.captureWriteSession();
+    // INTEGRATION / SOL_FIX12 / SOL_FIX13: shared write path (offline queue
+    // like every Ionic updatePersonAttendance, tenant check, session guard);
+    // a write that could not be queued is reported, never treated as saved.
+    String? previousNote;
+    var direct = false;
     try {
-      if (await offlineQueue.enqueueIfOffline(
-          personAttendanceId, {'notes': notes ?? ''},
-          attendanceId: widget.attendanceId, session: writeSession)) {
-        if (mounted) setState(() => _personNotes[personId] = notes);
-        return;
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
-      }
-      return;
-    }
-
-    final isValid = await _validatePersonAttendanceTenant(repo, personAttendanceId);
-    if (!isValid) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
-      }
-      return;
-    }
-
-    // Show the note immediately; the provider listener is guarded via
-    // _savingPersonIds so a stale refetch cannot overwrite it.
-    final previousNote = _personNotes[personId];
-    if (mounted) setState(() => _personNotes[personId] = notes);
-    _savingPersonIds.add(personId);
-
-    try {
-      await repo.updatePersonAttendance(
-        personAttendanceId,
-        {'notes': notes ?? ''},
-        isSessionCurrent: writeSession.isCurrent,
-        actingUserId: writeSession.userId,
+      final result = await writePersonAttendance(
+        ref,
+        attendanceId: widget.attendanceId,
+        personAttendanceId: personAttendanceId,
+        updates: {'notes': notes ?? ''},
+        // Show the note immediately; the provider listener is guarded via
+        // _savingPersonIds so a stale refetch cannot overwrite it.
+        beforeWrite: () {
+          direct = true;
+          previousNote = _personNotes[personId];
+          if (mounted) setState(() => _personNotes[personId] = notes);
+          _savingPersonIds.add(personId);
+        },
       );
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? context.l10n.attendanceNoteAdded : context.l10n.attendanceFlutterNoteDeleted);
+      if (!mounted) return;
+      switch (result) {
+        case PersonAttendanceWrite.queued:
+          setState(() => _personNotes[personId] = notes);
+        case PersonAttendanceWrite.notAllowed:
+          ToastHelper.showError(context, context.l10n.attendanceFlutterNoPermission);
+        case PersonAttendanceWrite.saved:
+          ToastHelper.showSuccess(context, notes?.isNotEmpty == true ? context.l10n.attendanceNoteAdded : context.l10n.attendanceFlutterNoteDeleted);
       }
     } catch (e) {
       if (mounted) {
-        setState(() => _personNotes[personId] = previousNote);
+        if (direct) setState(() => _personNotes[personId] = previousNote);
         ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
       }
     } finally {
-      _savingPersonIds.remove(personId);
+      if (direct) _savingPersonIds.remove(personId);
     }
   }
 
@@ -2599,75 +2583,43 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     AttendanceStatus status, {
     AttendanceStatus? previousStatus,
   }) async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    void revert() {
+      if (mounted && previousStatus != null) {
+        setState(() {
+          _localStatuses[personId] = previousStatus;
+        });
+      }
+    }
+
     final personAttendanceId = _personAttendanceIds[personId];
     if (personAttendanceId == null) {
-      if (mounted && previousStatus != null) {
-        setState(() {
-          _localStatuses[personId] = previousStatus;
-        });
-      }
+      revert();
       return;
     }
 
-    // PROFILE_OFFLINE: queue the change while offline (Ionic OfflineQueueService)
-    // SOL_FIX12: a write that could not be queued reverts and is reported.
-    // SOL_FIX13: the session captured here also guards the direct write.
-    final offlineQueue = ref.read(offlineQueueNotifierProvider.notifier);
-    final writeSession = offlineQueue.captureWriteSession();
+    // PROFILE_OFFLINE / SOL_FIX12 / SOL_FIX13: shared write path (offline
+    // queue, tenant check, session guard); a write that could not be queued
+    // or saved reverts and is reported.
+    var direct = false;
     try {
-      if (await offlineQueue.enqueueIfOffline(
-          personAttendanceId, {'status': status.value},
-          attendanceId: widget.attendanceId, session: writeSession)) {
-        return;
-      }
-    } catch (e) {
-      if (mounted) {
-        if (previousStatus != null) {
-          setState(() => _localStatuses[personId] = previousStatus);
-        }
-        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
-      }
-      return;
-    }
-
-    final isValid = await _validatePersonAttendanceTenant(repo, personAttendanceId);
-    if (!isValid) {
-      if (mounted && previousStatus != null) {
-        setState(() {
-          _localStatuses[personId] = previousStatus;
-        });
-      }
-      return;
-    }
-
-    _savingPersonIds.add(personId);
-    try {
-      await repo.updatePersonAttendance(
-        personAttendanceId,
-        {'status': status.value},
-        isSessionCurrent: writeSession.isCurrent,
-        actingUserId: writeSession.userId,
+      final result = await writePersonStatus(
+        ref,
+        attendanceId: widget.attendanceId,
+        personAttendanceId: personAttendanceId,
+        status: status,
+        beforeWrite: () {
+          direct = true;
+          _savingPersonIds.add(personId);
+        },
       );
-
-      // Invalidate list provider so percentage updates when navigating back
-      ref.invalidate(realtimeAttendanceListProvider);
-
-      // DUTY: status changes also change the assignment (synced in the repository)
-      if (ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull?.dutyMode ?? false) {
-        ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-      }
+      if (result == PersonAttendanceWrite.notAllowed) revert();
     } catch (e) {
+      revert();
       if (mounted) {
-        if (previousStatus != null) {
-          setState(() {
-            _localStatuses[personId] = previousStatus;
-          });
-        }
         ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       }
     } finally {
-      _savingPersonIds.remove(personId);
+      if (direct) _savingPersonIds.remove(personId);
     }
   }
 }

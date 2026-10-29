@@ -30,8 +30,8 @@ class RdDestination {
 /// role sees more than in the old design:
 ///
 /// * Heute and Ich: everyone.
-/// * Termine: Termin list for roles with the attendance tab, the parents
-///   portal for parents, "Meine Termine" for everyone else.
+/// * Termine: the new Termin list (leaders see the group's Termine, everyone
+///   else their own), the parents portal for parents.
 /// * Mitglieder: people list for conductors, the members list where the
 ///   group shows it to players and helpers; never for parents.
 /// * Werke: where the Werke tab is allowed today and the group has works.
@@ -55,14 +55,8 @@ List<RdDestination> rdDestinationsFor(
   );
   if (role.isApplicant) return const [today, me];
 
-  final String eventsRoute;
-  if (role.canSeeAttendanceTab) {
-    eventsRoute = '/attendance';
-  } else if (role.isParent) {
-    eventsRoute = '/parents';
-  } else {
-    eventsRoute = '/signout';
-  }
+  // Parents answer for their children in the parents portal.
+  final eventsRoute = role.isParent ? '/parents' : RedesignRoutes.events;
 
   String? membersRoute;
   if (role.canSeePeopleTab) {
@@ -104,7 +98,8 @@ RdTab rdTabForLocation(String location) {
   bool under(String root) => location == root || location.startsWith('$root/');
 
   if (under(RedesignRoutes.today) || under('/home-dashboard')) return RdTab.today;
-  if (under('/attendance') ||
+  if (under(RedesignRoutes.events) ||
+      under('/attendance') ||
       under('/signout') ||
       under('/parents') ||
       under('/overview') ||

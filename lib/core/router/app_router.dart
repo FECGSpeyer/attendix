@@ -113,7 +113,10 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_event_page.dart';
+import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
+import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 
 /// Listenable that notifies when auth state changes
@@ -401,6 +404,9 @@ final routerProvider = Provider<GoRouter>((ref) {
             ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
           );
         }
+        // REDESIGN: who may open the Termine of the new design.
+        final redesignTarget = RedesignRoutes.roleRedirect(location, role);
+        if (redesignTarget != null) return redesignTarget;
 
         // PARITY_R7: all role/tenant checks in one pure function (tested).
         final tenant = ref.read(currentTenantProvider);
@@ -551,7 +557,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         // REDESIGN: the new shell (fixed tabs) while the Beta is on.
         builder: (context, state, child) => _AppShell(child: child),
         routes: [
-          // REDESIGN: "Heute", "Ich" and "Ich › Darstellung" (Beta)
+          // REDESIGN: "Heute", "Termine", "Ich" and "Ich › Darstellung" (Beta)
           GoRoute(
             path: RedesignRoutes.today,
             name: 'redesignToday',
@@ -559,6 +565,38 @@ final routerProvider = Provider<GoRouter>((ref) {
               child: const RdTodayPage(),
               state: state,
             ),
+          ),
+          GoRoute(
+            path: RedesignRoutes.events,
+            name: 'redesignEvents',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdEventsPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: 'meine/:paId',
+                name: 'redesignOwnEvent',
+                builder: (context, state) => RdOwnEventPage(
+                  personAttendanceId: state.pathParameters['paId'] ?? '',
+                ),
+              ),
+              GoRoute(
+                path: ':id',
+                name: 'redesignEvent',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (id == null) return const RdEventsPage();
+                  return RdEventPage(
+                    key: ValueKey('rd-event-$id'),
+                    attendanceId: id,
+                    initialTab: state.uri.queryParameters['tab'] == 'anwesenheit'
+                        ? RdEventTab.record
+                        : RdEventTab.overview,
+                  );
+                },
+              ),
+            ],
           ),
           GoRoute(
             path: RedesignRoutes.me,

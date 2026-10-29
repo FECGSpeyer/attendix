@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.15.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Termine“ mit Kommend und Vergangen, Filter nach Art, Suche und Zusagen direkt in der Liste",
+        "✨ Neues Design (Beta): Termin-Überblick mit Rückmeldungen, leeren Registern und Abmeldungen",
+        "✨ Neues Design (Beta): Anwesenheit erfassen mit großen Knöpfen, „Alle Offenen anwesend“ und Rückgängig",
+        "✨ Neues Design (Beta): eigene Termin-Seite für Spieler, neues Abmelden und Abwesenheit mit Kalender"
+      ]
+    },
+    {
       "version": "0.14.0",
       "date": "29.10.2026",
       "changes": [

@@ -7,6 +7,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/dashboard_providers.dart';
 import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
+import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -73,7 +74,7 @@ class RdLeaderToday extends ConsumerWidget {
             icon: Icons.event_available_outlined,
             action: RdOutlineButton(
               label: l10n.redesignTodayAllEvents,
-              onPressed: () => context.go('/attendance'),
+              onPressed: () => context.go(RedesignRoutes.events),
             ),
           )
         else
@@ -89,7 +90,7 @@ class RdLeaderToday extends ConsumerWidget {
           trailing: isLead ? _birthdayLine(context, ref) : null,
           action: RdLinkButton(
             label: l10n.redesignCommonAll,
-            onPressed: () => context.go('/attendance'),
+            onPressed: () => context.go(RedesignRoutes.events),
           ),
         ),
         if (week.isEmpty)
@@ -187,7 +188,7 @@ class _NextEventCard extends ConsumerWidget {
               child: RdPrimaryButton(
                 label: l10n.redesignTodayRecord,
                 icon: Icons.checklist_rounded,
-                onPressed: () => context.push('/attendance/$id'),
+                onPressed: () => context.push(RedesignRoutes.event(id, record: true)),
               ),
             ),
         ],
@@ -245,7 +246,7 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodaySignouts(excused),
           subtitle: l10n.redesignTodaySignoutsHint,
           trailing: RdCountBadge(excused, tone: RdTone.excused),
-          onTap: () => context.push('/attendance/$nextId'),
+          onTap: () => context.push(RedesignRoutes.event(nextId)),
         ),
     ];
     if (rows.isEmpty) return const SizedBox.shrink();
@@ -278,8 +279,8 @@ class _WeekRow extends ConsumerWidget {
       title: info.title,
       meta: [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · '),
       onTap: id != null && canOpen
-          ? () => context.push('/attendance/$id')
-          : () => context.go('/attendance'),
+          ? () => context.push(RedesignRoutes.event(id))
+          : () => context.go(RedesignRoutes.events),
     );
   }
 }

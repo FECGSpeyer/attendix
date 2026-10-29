@@ -808,11 +808,15 @@ class RdPage extends StatelessWidget {
     this.onRefresh,
     this.padding = const EdgeInsets.fromLTRB(20, 12, 20, 32),
     this.maxWidth = 720,
+    this.floatingActionButton,
   });
 
   final List<Widget> children;
   final Future<void> Function()? onRefresh;
   final EdgeInsets padding;
+
+  /// "Neuer Termin" etc.
+  final Widget? floatingActionButton;
 
   /// Content width on tablets and desktops.
   final double maxWidth;
@@ -846,6 +850,7 @@ class RdPage extends StatelessWidget {
     return Scaffold(
       backgroundColor: p.bg,
       body: SafeArea(bottom: false, child: list),
+      floatingActionButton: floatingActionButton,
     );
   }
 }
@@ -877,7 +882,14 @@ class RdBackLink extends StatelessWidget {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   Icon(Icons.chevron_left, size: 26, color: p.link),
-                  Text(label, style: TextStyle(fontSize: 17, color: p.link)),
+                  Flexible(
+                    child: Text(
+                      label,
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(fontSize: 17, color: p.link),
+                    ),
+                  ),
                 ],
               ),
             ),

@@ -13487,6 +13487,96 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// redesign.absence.affects
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}'**
+  String redesignAbsenceAffects(num count);
+
+  /// redesign.absence.chooseEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe auf den letzten Tag.'**
+  String get redesignAbsenceChooseEnd;
+
+  /// redesign.absence.chooseStart
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe auf den ersten Tag.'**
+  String get redesignAbsenceChooseStart;
+
+  /// redesign.absence.nextMonth
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Monat'**
+  String get redesignAbsenceNextMonth;
+
+  /// redesign.absence.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Pausieren'**
+  String get redesignAbsencePause;
+
+  /// redesign.absence.pauseButton
+  ///
+  /// In de, this message translates to:
+  /// **'Pausieren …'**
+  String get redesignAbsencePauseButton;
+
+  /// redesign.absence.pauseHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn du länger nicht kannst, kannst du dich pausieren. Die Leitung sieht dann, dass du gerade nicht dabei bist.'**
+  String get redesignAbsencePauseHint;
+
+  /// redesign.absence.period
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get redesignAbsencePeriod;
+
+  /// redesign.absence.prevMonth
+  ///
+  /// In de, this message translates to:
+  /// **'Voriger Monat'**
+  String get redesignAbsencePrevMonth;
+
+  /// redesign.absence.range
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum abwesend'**
+  String get redesignAbsenceRange;
+
+  /// redesign.absence.reason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund'**
+  String get redesignAbsenceReason;
+
+  /// redesign.absence.reasonHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Urlaub'**
+  String get redesignAbsenceReasonHint;
+
+  /// redesign.absence.reset
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum zurücksetzen'**
+  String get redesignAbsenceReset;
+
+  /// redesign.absence.submit
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit eintragen'**
+  String get redesignAbsenceSubmit;
+
+  /// redesign.absence.title
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit'**
+  String get redesignAbsenceTitle;
+
   /// redesign.adminTitle
   ///
   /// In de, this message translates to:
@@ -13667,6 +13757,330 @@ abstract class AppLocalizations {
   /// **'Erneut versuchen'**
   String get redesignCommonRetry;
 
+  /// redesign.event.allDone
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}'**
+  String redesignEventAllDone(num count);
+
+  /// redesign.event.allOpenPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Offenen als anwesend'**
+  String get redesignEventAllOpenPresent;
+
+  /// redesign.event.answers
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldungen'**
+  String get redesignEventAnswers;
+
+  /// redesign.event.busyLeave
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte warte, bis alles gespeichert ist.'**
+  String get redesignEventBusyLeave;
+
+  /// redesign.event.countAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'{count} fehlt'**
+  String redesignEventCountAbsent(Object count);
+
+  /// redesign.event.countExcused
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entsch.'**
+  String redesignEventCountExcused(Object count);
+
+  /// redesign.event.countLate
+  ///
+  /// In de, this message translates to:
+  /// **'{count} später'**
+  String redesignEventCountLate(Object count);
+
+  /// redesign.event.countNoAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ohne Antwort'**
+  String redesignEventCountNoAnswer(Object count);
+
+  /// redesign.event.countOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignEventCountOpen(Object count);
+
+  /// redesign.event.countPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{count} da'**
+  String redesignEventCountPresent(Object count);
+
+  /// redesign.event.details
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Details'**
+  String get redesignEventDetails;
+
+  /// redesign.event.invited
+  ///
+  /// In de, this message translates to:
+  /// **'{count} eingeladen'**
+  String redesignEventInvited(Object count);
+
+  /// redesign.event.more
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Details und Bearbeiten'**
+  String get redesignEventMore;
+
+  /// redesign.event.moreHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf, Checkliste, Werke und Notizen'**
+  String get redesignEventMoreHint;
+
+  /// redesign.event.moreStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Status und Notiz für {name}'**
+  String redesignEventMoreStatus(Object name);
+
+  /// redesign.event.neutralHint
+  ///
+  /// In de, this message translates to:
+  /// **'zählt nicht'**
+  String get redesignEventNeutralHint;
+
+  /// redesign.event.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passt zur Suche.'**
+  String get redesignEventNoMatch;
+
+  /// redesign.event.noPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin sind noch keine Personen eingetragen.'**
+  String get redesignEventNoPersons;
+
+  /// redesign.event.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Termin wurde nicht gefunden.'**
+  String get redesignEventNotFound;
+
+  /// redesign.event.note
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz für diesen Termin'**
+  String get redesignEventNote;
+
+  /// redesign.event.noteHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. Grund oder Uhrzeit'**
+  String get redesignEventNoteHint;
+
+  /// redesign.event.registerEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'{group}: 0 von {count} da.'**
+  String redesignEventRegisterEmpty(Object group, Object count);
+
+  /// redesign.event.registerNames
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}'**
+  String redesignEventRegisterNames(num count, Object names);
+
+  /// redesign.event.saving
+  ///
+  /// In de, this message translates to:
+  /// **'Wird gespeichert …'**
+  String get redesignEventSaving;
+
+  /// redesign.event.search
+  ///
+  /// In de, this message translates to:
+  /// **'Person suchen'**
+  String get redesignEventSearch;
+
+  /// redesign.event.searchClose
+  ///
+  /// In de, this message translates to:
+  /// **'Suche schließen'**
+  String get redesignEventSearchClose;
+
+  /// redesign.event.searchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignEventSearchHint;
+
+  /// redesign.event.signouts
+  ///
+  /// In de, this message translates to:
+  /// **'Abmeldungen'**
+  String get redesignEventSignouts;
+
+  /// redesign.event.status
+  ///
+  /// In de, this message translates to:
+  /// **'Status'**
+  String get redesignEventStatus;
+
+  /// redesign.event.tabOverview
+  ///
+  /// In de, this message translates to:
+  /// **'Überblick'**
+  String get redesignEventTabOverview;
+
+  /// redesign.event.tabRecord
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get redesignEventTabRecord;
+
+  /// redesign.event.toastReset
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: zurückgesetzt'**
+  String redesignEventToastReset(Object name);
+
+  /// redesign.event.toastSet
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: {status}'**
+  String redesignEventToastSet(Object name, Object status);
+
+  /// redesign.event.undo
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig'**
+  String get redesignEventUndo;
+
+  /// redesign.event.undone
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig gemacht'**
+  String get redesignEventUndone;
+
+  /// redesign.events.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend …'**
+  String get redesignEventsAbsent;
+
+  /// redesign.events.createFirst
+  ///
+  /// In de, this message translates to:
+  /// **'Ersten Termin anlegen'**
+  String get redesignEventsCreateFirst;
+
+  /// redesign.events.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Termine. Leg die erste Probe an.'**
+  String get redesignEventsEmpty;
+
+  /// redesign.events.lastWeek
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte 7 Tage'**
+  String get redesignEventsLastWeek;
+
+  /// redesign.events.new
+  ///
+  /// In de, this message translates to:
+  /// **'Neuer Termin'**
+  String get redesignEventsNew;
+
+  /// redesign.events.no
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignEventsNo;
+
+  /// redesign.events.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Termine passen zur Suche.'**
+  String get redesignEventsNoMatch;
+
+  /// redesign.events.noPast
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine vergangenen Termine.'**
+  String get redesignEventsNoPast;
+
+  /// redesign.events.past
+  ///
+  /// In de, this message translates to:
+  /// **'Vergangen'**
+  String get redesignEventsPast;
+
+  /// redesign.events.pastAverage
+  ///
+  /// In de, this message translates to:
+  /// **'Vergangen · Ø {percent} %'**
+  String redesignEventsPastAverage(Object percent);
+
+  /// redesign.events.pastOwn
+  ///
+  /// In de, this message translates to:
+  /// **'Vergangen · {percent} % da'**
+  String redesignEventsPastOwn(Object percent);
+
+  /// redesign.events.percentPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} % anwesend'**
+  String redesignEventsPercentPresent(Object percent);
+
+  /// redesign.events.search
+  ///
+  /// In de, this message translates to:
+  /// **'Termine durchsuchen'**
+  String get redesignEventsSearch;
+
+  /// redesign.events.searchClose
+  ///
+  /// In de, this message translates to:
+  /// **'Suche schließen'**
+  String get redesignEventsSearchClose;
+
+  /// redesign.events.searchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Titel oder Ort'**
+  String get redesignEventsSearchHint;
+
+  /// redesign.events.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder alle Termine zeigen'**
+  String get redesignEventsShowAll;
+
+  /// redesign.events.upcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Kommend'**
+  String get redesignEventsUpcoming;
+
+  /// redesign.events.waiting
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}'**
+  String redesignEventsWaiting(num count);
+
+  /// redesign.events.yes
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei'**
+  String get redesignEventsYes;
+
   /// redesign.groups.loadFailed
   ///
   /// In de, this message translates to:
@@ -13798,6 +14212,78 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Neu in dieser Version'**
   String get redesignMeWhatsNew;
+
+  /// redesign.own.infos
+  ///
+  /// In de, this message translates to:
+  /// **'Infos zum Termin'**
+  String get redesignOwnInfos;
+
+  /// redesign.own.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get redesignOwnMore;
+
+  /// redesign.own.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Dieser Termin ist nicht mehr in deiner Liste.'**
+  String get redesignOwnNotFound;
+
+  /// redesign.own.route
+  ///
+  /// In de, this message translates to:
+  /// **'Route'**
+  String get redesignOwnRoute;
+
+  /// redesign.signout.cannot
+  ///
+  /// In de, this message translates to:
+  /// **'Ich kann nicht'**
+  String get redesignSignoutCannot;
+
+  /// redesign.signout.later
+  ///
+  /// In de, this message translates to:
+  /// **'Ich komme später'**
+  String get redesignSignoutLater;
+
+  /// redesign.signout.other
+  ///
+  /// In de, this message translates to:
+  /// **'Anderer Grund'**
+  String get redesignSignoutOther;
+
+  /// redesign.signout.otherHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kurz beschreiben (mindestens 5 Zeichen)'**
+  String get redesignSignoutOtherHint;
+
+  /// redesign.signout.privacy
+  ///
+  /// In de, this message translates to:
+  /// **'Deinen Grund sieht nur die Leitung.'**
+  String get redesignSignoutPrivacy;
+
+  /// redesign.signout.reason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund'**
+  String get redesignSignoutReason;
+
+  /// redesign.signout.submit
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignSignoutSubmit;
+
+  /// redesign.signout.submitLate
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätung melden'**
+  String get redesignSignoutSubmitLate;
 
   /// redesign.status.absent
   ///

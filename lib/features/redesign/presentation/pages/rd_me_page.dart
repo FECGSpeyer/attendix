@@ -24,6 +24,7 @@ import '../../../profile/presentation/widgets/profile_helpers.dart';
 import '../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
 import '../rd_actions.dart';
+import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
@@ -82,7 +83,7 @@ class RdMePage extends ConsumerWidget {
               RdListRow(
                 leading: const RdRowIcon(Icons.event_busy_outlined),
                 title: l10n.redesignMeAbsence,
-                onTap: () => selfServiceReportAbsence(
+                onTap: () => showRdAbsenceSheet(
                   context,
                   ref,
                   player,

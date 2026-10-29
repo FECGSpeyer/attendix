@@ -7723,6 +7723,60 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String redesignAbsenceAffects(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'This affects $count events',
+      one: 'This affects 1 event',
+      zero: 'You have no events in this period.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignAbsenceChooseEnd => 'Tap the last day.';
+
+  @override
+  String get redesignAbsenceChooseStart => 'Tap the first day.';
+
+  @override
+  String get redesignAbsenceNextMonth => 'Next month';
+
+  @override
+  String get redesignAbsencePause => 'Pause';
+
+  @override
+  String get redesignAbsencePauseButton => 'Pause …';
+
+  @override
+  String get redesignAbsencePauseHint => 'If you can\'t come for a longer time, you can pause yourself. The leaders then see that you are currently not taking part.';
+
+  @override
+  String get redesignAbsencePeriod => 'Period';
+
+  @override
+  String get redesignAbsencePrevMonth => 'Previous month';
+
+  @override
+  String get redesignAbsenceRange => 'Away for a period';
+
+  @override
+  String get redesignAbsenceReason => 'Reason';
+
+  @override
+  String get redesignAbsenceReasonHint => 'e.g. holiday';
+
+  @override
+  String get redesignAbsenceReset => 'Reset period';
+
+  @override
+  String get redesignAbsenceSubmit => 'Enter absence';
+
+  @override
+  String get redesignAbsenceTitle => 'Absence';
+
+  @override
   String get redesignAdminTitle => 'Administration';
 
   @override
@@ -7815,6 +7869,220 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCommonRetry => 'Try again';
 
   @override
+  String redesignEventAllDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people marked present',
+      one: '1 person marked present',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventAllOpenPresent => 'Mark all open as present';
+
+  @override
+  String get redesignEventAnswers => 'Responses';
+
+  @override
+  String get redesignEventBusyLeave => 'Please wait until everything is saved.';
+
+  @override
+  String redesignEventCountAbsent(Object count) {
+    return '$count missing';
+  }
+
+  @override
+  String redesignEventCountExcused(Object count) {
+    return '$count excused';
+  }
+
+  @override
+  String redesignEventCountLate(Object count) {
+    return '$count late';
+  }
+
+  @override
+  String redesignEventCountNoAnswer(Object count) {
+    return '$count without answer';
+  }
+
+  @override
+  String redesignEventCountOpen(Object count) {
+    return '$count open';
+  }
+
+  @override
+  String redesignEventCountPresent(Object count) {
+    return '$count there';
+  }
+
+  @override
+  String get redesignEventDetails => 'All details';
+
+  @override
+  String redesignEventInvited(Object count) {
+    return '$count invited';
+  }
+
+  @override
+  String get redesignEventMore => 'All details and editing';
+
+  @override
+  String get redesignEventMoreHint => 'Schedule, checklist, works and notes';
+
+  @override
+  String redesignEventMoreStatus(Object name) {
+    return 'More statuses and note for $name';
+  }
+
+  @override
+  String get redesignEventNeutralHint => 'does not count';
+
+  @override
+  String get redesignEventNoMatch => 'Nobody matches your search.';
+
+  @override
+  String get redesignEventNoPersons => 'No people have been added to this event yet.';
+
+  @override
+  String get redesignEventNotFound => 'This event could not be found.';
+
+  @override
+  String get redesignEventNote => 'Note for this event';
+
+  @override
+  String get redesignEventNoteHint => 'e.g. reason or time';
+
+  @override
+  String redesignEventRegisterEmpty(Object group, Object count) {
+    return '$group: 0 of $count there.';
+  }
+
+  @override
+  String redesignEventRegisterNames(num count, Object names) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$names have signed out.',
+      one: '$names has signed out.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventSaving => 'Saving …';
+
+  @override
+  String get redesignEventSearch => 'Search person';
+
+  @override
+  String get redesignEventSearchClose => 'Close search';
+
+  @override
+  String get redesignEventSearchHint => 'Name';
+
+  @override
+  String get redesignEventSignouts => 'Sign-outs';
+
+  @override
+  String get redesignEventStatus => 'Status';
+
+  @override
+  String get redesignEventTabOverview => 'Overview';
+
+  @override
+  String get redesignEventTabRecord => 'Attendance';
+
+  @override
+  String redesignEventToastReset(Object name) {
+    return '$name: reset';
+  }
+
+  @override
+  String redesignEventToastSet(Object name, Object status) {
+    return '$name: $status';
+  }
+
+  @override
+  String get redesignEventUndo => 'Undo';
+
+  @override
+  String get redesignEventUndone => 'Undone';
+
+  @override
+  String get redesignEventsAbsent => 'Away …';
+
+  @override
+  String get redesignEventsCreateFirst => 'Create first event';
+
+  @override
+  String get redesignEventsEmpty => 'No events yet. Create the first rehearsal.';
+
+  @override
+  String get redesignEventsLastWeek => 'Last 7 days';
+
+  @override
+  String get redesignEventsNew => 'New event';
+
+  @override
+  String get redesignEventsNo => 'Sign out';
+
+  @override
+  String get redesignEventsNoMatch => 'No events match your search.';
+
+  @override
+  String get redesignEventsNoPast => 'No past events yet.';
+
+  @override
+  String get redesignEventsPast => 'Past';
+
+  @override
+  String redesignEventsPastAverage(Object percent) {
+    return 'Past · Ø $percent %';
+  }
+
+  @override
+  String redesignEventsPastOwn(Object percent) {
+    return 'Past · $percent % attended';
+  }
+
+  @override
+  String redesignEventsPercentPresent(Object percent) {
+    return '$percent % present';
+  }
+
+  @override
+  String get redesignEventsSearch => 'Search events';
+
+  @override
+  String get redesignEventsSearchClose => 'Close search';
+
+  @override
+  String get redesignEventsSearchHint => 'Title or place';
+
+  @override
+  String get redesignEventsShowAll => 'Show all events again';
+
+  @override
+  String get redesignEventsUpcoming => 'Upcoming';
+
+  @override
+  String redesignEventsWaiting(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events are waiting for your answer',
+      one: '1 event is waiting for your answer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignEventsYes => 'I\'m in';
+
+  @override
   String get redesignGroupsLoadFailed => 'Your groups could not be loaded.';
 
   @override
@@ -7883,6 +8151,42 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignMeWhatsNew => 'New in this version';
+
+  @override
+  String get redesignOwnInfos => 'Event info';
+
+  @override
+  String get redesignOwnMore => 'More';
+
+  @override
+  String get redesignOwnNotFound => 'This event is no longer in your list.';
+
+  @override
+  String get redesignOwnRoute => 'Directions';
+
+  @override
+  String get redesignSignoutCannot => 'I can\'t come';
+
+  @override
+  String get redesignSignoutLater => 'I\'ll be late';
+
+  @override
+  String get redesignSignoutOther => 'Other reason';
+
+  @override
+  String get redesignSignoutOtherHint => 'Describe briefly (at least 5 characters)';
+
+  @override
+  String get redesignSignoutPrivacy => 'Only the leaders see your reason.';
+
+  @override
+  String get redesignSignoutReason => 'Reason';
+
+  @override
+  String get redesignSignoutSubmit => 'Sign out';
+
+  @override
+  String get redesignSignoutSubmitLate => 'Report delay';
 
   @override
   String get redesignStatusAbsent => 'Absent';

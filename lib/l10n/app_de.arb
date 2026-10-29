@@ -10170,6 +10170,71 @@
       "count": {}
     }
   },
+  "redesignAbsenceAffects": "{count, plural, =0 {In diesem Zeitraum hast du keine Termine.} one {Das betrifft 1 Termin} other {Das betrifft {count} Termine}}",
+  "@redesignAbsenceAffects": {
+    "description": "redesign.absence.affects",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignAbsenceChooseEnd": "Tippe auf den letzten Tag.",
+  "@redesignAbsenceChooseEnd": {
+    "description": "redesign.absence.chooseEnd"
+  },
+  "redesignAbsenceChooseStart": "Tippe auf den ersten Tag.",
+  "@redesignAbsenceChooseStart": {
+    "description": "redesign.absence.chooseStart"
+  },
+  "redesignAbsenceNextMonth": "Nächster Monat",
+  "@redesignAbsenceNextMonth": {
+    "description": "redesign.absence.nextMonth"
+  },
+  "redesignAbsencePause": "Pausieren",
+  "@redesignAbsencePause": {
+    "description": "redesign.absence.pause"
+  },
+  "redesignAbsencePauseButton": "Pausieren …",
+  "@redesignAbsencePauseButton": {
+    "description": "redesign.absence.pauseButton"
+  },
+  "redesignAbsencePauseHint": "Wenn du länger nicht kannst, kannst du dich pausieren. Die Leitung sieht dann, dass du gerade nicht dabei bist.",
+  "@redesignAbsencePauseHint": {
+    "description": "redesign.absence.pauseHint"
+  },
+  "redesignAbsencePeriod": "Zeitraum",
+  "@redesignAbsencePeriod": {
+    "description": "redesign.absence.period"
+  },
+  "redesignAbsencePrevMonth": "Voriger Monat",
+  "@redesignAbsencePrevMonth": {
+    "description": "redesign.absence.prevMonth"
+  },
+  "redesignAbsenceRange": "Zeitraum abwesend",
+  "@redesignAbsenceRange": {
+    "description": "redesign.absence.range"
+  },
+  "redesignAbsenceReason": "Grund",
+  "@redesignAbsenceReason": {
+    "description": "redesign.absence.reason"
+  },
+  "redesignAbsenceReasonHint": "z. B. Urlaub",
+  "@redesignAbsenceReasonHint": {
+    "description": "redesign.absence.reasonHint"
+  },
+  "redesignAbsenceReset": "Zeitraum zurücksetzen",
+  "@redesignAbsenceReset": {
+    "description": "redesign.absence.reset"
+  },
+  "redesignAbsenceSubmit": "Abwesenheit eintragen",
+  "@redesignAbsenceSubmit": {
+    "description": "redesign.absence.submit"
+  },
+  "redesignAbsenceTitle": "Abwesenheit",
+  "@redesignAbsenceTitle": {
+    "description": "redesign.absence.title"
+  },
   "redesignAdminTitle": "Verwaltung",
   "@redesignAdminTitle": {
     "description": "redesign.adminTitle"
@@ -10293,6 +10358,282 @@
   "@redesignCommonRetry": {
     "description": "redesign.common.retry"
   },
+  "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
+  "@redesignEventAllDone": {
+    "description": "redesign.event.allDone",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventAllOpenPresent": "Alle Offenen als anwesend",
+  "@redesignEventAllOpenPresent": {
+    "description": "redesign.event.allOpenPresent"
+  },
+  "redesignEventAnswers": "Rückmeldungen",
+  "@redesignEventAnswers": {
+    "description": "redesign.event.answers"
+  },
+  "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
+  "@redesignEventBusyLeave": {
+    "description": "redesign.event.busyLeave"
+  },
+  "redesignEventCountAbsent": "{count} fehlt",
+  "@redesignEventCountAbsent": {
+    "description": "redesign.event.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountExcused": "{count} entsch.",
+  "@redesignEventCountExcused": {
+    "description": "redesign.event.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountLate": "{count} später",
+  "@redesignEventCountLate": {
+    "description": "redesign.event.countLate",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountNoAnswer": "{count} ohne Antwort",
+  "@redesignEventCountNoAnswer": {
+    "description": "redesign.event.countNoAnswer",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountOpen": "{count} offen",
+  "@redesignEventCountOpen": {
+    "description": "redesign.event.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventCountPresent": "{count} da",
+  "@redesignEventCountPresent": {
+    "description": "redesign.event.countPresent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventDetails": "Alle Details",
+  "@redesignEventDetails": {
+    "description": "redesign.event.details"
+  },
+  "redesignEventInvited": "{count} eingeladen",
+  "@redesignEventInvited": {
+    "description": "redesign.event.invited",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignEventMore": "Alle Details und Bearbeiten",
+  "@redesignEventMore": {
+    "description": "redesign.event.more"
+  },
+  "redesignEventMoreHint": "Ablauf, Checkliste, Werke und Notizen",
+  "@redesignEventMoreHint": {
+    "description": "redesign.event.moreHint"
+  },
+  "redesignEventMoreStatus": "Weitere Status und Notiz für {name}",
+  "@redesignEventMoreStatus": {
+    "description": "redesign.event.moreStatus",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventNeutralHint": "zählt nicht",
+  "@redesignEventNeutralHint": {
+    "description": "redesign.event.neutralHint"
+  },
+  "redesignEventNoMatch": "Niemand passt zur Suche.",
+  "@redesignEventNoMatch": {
+    "description": "redesign.event.noMatch"
+  },
+  "redesignEventNoPersons": "Für diesen Termin sind noch keine Personen eingetragen.",
+  "@redesignEventNoPersons": {
+    "description": "redesign.event.noPersons"
+  },
+  "redesignEventNotFound": "Dieser Termin wurde nicht gefunden.",
+  "@redesignEventNotFound": {
+    "description": "redesign.event.notFound"
+  },
+  "redesignEventNote": "Notiz für diesen Termin",
+  "@redesignEventNote": {
+    "description": "redesign.event.note"
+  },
+  "redesignEventNoteHint": "z. B. Grund oder Uhrzeit",
+  "@redesignEventNoteHint": {
+    "description": "redesign.event.noteHint"
+  },
+  "redesignEventRegisterEmpty": "{group}: 0 von {count} da.",
+  "@redesignEventRegisterEmpty": {
+    "description": "redesign.event.registerEmpty",
+    "placeholders": {
+      "group": {},
+      "count": {}
+    }
+  },
+  "redesignEventRegisterNames": "{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}",
+  "@redesignEventRegisterNames": {
+    "description": "redesign.event.registerNames",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "names": {}
+    }
+  },
+  "redesignEventSaving": "Wird gespeichert …",
+  "@redesignEventSaving": {
+    "description": "redesign.event.saving"
+  },
+  "redesignEventSearch": "Person suchen",
+  "@redesignEventSearch": {
+    "description": "redesign.event.search"
+  },
+  "redesignEventSearchClose": "Suche schließen",
+  "@redesignEventSearchClose": {
+    "description": "redesign.event.searchClose"
+  },
+  "redesignEventSearchHint": "Name",
+  "@redesignEventSearchHint": {
+    "description": "redesign.event.searchHint"
+  },
+  "redesignEventSignouts": "Abmeldungen",
+  "@redesignEventSignouts": {
+    "description": "redesign.event.signouts"
+  },
+  "redesignEventStatus": "Status",
+  "@redesignEventStatus": {
+    "description": "redesign.event.status"
+  },
+  "redesignEventTabOverview": "Überblick",
+  "@redesignEventTabOverview": {
+    "description": "redesign.event.tabOverview"
+  },
+  "redesignEventTabRecord": "Anwesenheit",
+  "@redesignEventTabRecord": {
+    "description": "redesign.event.tabRecord"
+  },
+  "redesignEventToastReset": "{name}: zurückgesetzt",
+  "@redesignEventToastReset": {
+    "description": "redesign.event.toastReset",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventToastSet": "{name}: {status}",
+  "@redesignEventToastSet": {
+    "description": "redesign.event.toastSet",
+    "placeholders": {
+      "name": {},
+      "status": {}
+    }
+  },
+  "redesignEventUndo": "Rückgängig",
+  "@redesignEventUndo": {
+    "description": "redesign.event.undo"
+  },
+  "redesignEventUndone": "Rückgängig gemacht",
+  "@redesignEventUndone": {
+    "description": "redesign.event.undone"
+  },
+  "redesignEventsAbsent": "Abwesend …",
+  "@redesignEventsAbsent": {
+    "description": "redesign.events.absent"
+  },
+  "redesignEventsCreateFirst": "Ersten Termin anlegen",
+  "@redesignEventsCreateFirst": {
+    "description": "redesign.events.createFirst"
+  },
+  "redesignEventsEmpty": "Noch keine Termine. Leg die erste Probe an.",
+  "@redesignEventsEmpty": {
+    "description": "redesign.events.empty"
+  },
+  "redesignEventsLastWeek": "Letzte 7 Tage",
+  "@redesignEventsLastWeek": {
+    "description": "redesign.events.lastWeek"
+  },
+  "redesignEventsNew": "Neuer Termin",
+  "@redesignEventsNew": {
+    "description": "redesign.events.new"
+  },
+  "redesignEventsNo": "Abmelden",
+  "@redesignEventsNo": {
+    "description": "redesign.events.no"
+  },
+  "redesignEventsNoMatch": "Keine Termine passen zur Suche.",
+  "@redesignEventsNoMatch": {
+    "description": "redesign.events.noMatch"
+  },
+  "redesignEventsNoPast": "Noch keine vergangenen Termine.",
+  "@redesignEventsNoPast": {
+    "description": "redesign.events.noPast"
+  },
+  "redesignEventsPast": "Vergangen",
+  "@redesignEventsPast": {
+    "description": "redesign.events.past"
+  },
+  "redesignEventsPastAverage": "Vergangen · Ø {percent} %",
+  "@redesignEventsPastAverage": {
+    "description": "redesign.events.pastAverage",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsPastOwn": "Vergangen · {percent} % da",
+  "@redesignEventsPastOwn": {
+    "description": "redesign.events.pastOwn",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsPercentPresent": "{percent} % anwesend",
+  "@redesignEventsPercentPresent": {
+    "description": "redesign.events.percentPresent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignEventsSearch": "Termine durchsuchen",
+  "@redesignEventsSearch": {
+    "description": "redesign.events.search"
+  },
+  "redesignEventsSearchClose": "Suche schließen",
+  "@redesignEventsSearchClose": {
+    "description": "redesign.events.searchClose"
+  },
+  "redesignEventsSearchHint": "Titel oder Ort",
+  "@redesignEventsSearchHint": {
+    "description": "redesign.events.searchHint"
+  },
+  "redesignEventsShowAll": "Wieder alle Termine zeigen",
+  "@redesignEventsShowAll": {
+    "description": "redesign.events.showAll"
+  },
+  "redesignEventsUpcoming": "Kommend",
+  "@redesignEventsUpcoming": {
+    "description": "redesign.events.upcoming"
+  },
+  "redesignEventsWaiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
+  "@redesignEventsWaiting": {
+    "description": "redesign.events.waiting",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignEventsYes": "Dabei",
+  "@redesignEventsYes": {
+    "description": "redesign.events.yes"
+  },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
     "description": "redesign.groups.loadFailed"
@@ -10386,6 +10727,54 @@
   "redesignMeWhatsNew": "Neu in dieser Version",
   "@redesignMeWhatsNew": {
     "description": "redesign.me.whatsNew"
+  },
+  "redesignOwnInfos": "Infos zum Termin",
+  "@redesignOwnInfos": {
+    "description": "redesign.own.infos"
+  },
+  "redesignOwnMore": "Mehr",
+  "@redesignOwnMore": {
+    "description": "redesign.own.more"
+  },
+  "redesignOwnNotFound": "Dieser Termin ist nicht mehr in deiner Liste.",
+  "@redesignOwnNotFound": {
+    "description": "redesign.own.notFound"
+  },
+  "redesignOwnRoute": "Route",
+  "@redesignOwnRoute": {
+    "description": "redesign.own.route"
+  },
+  "redesignSignoutCannot": "Ich kann nicht",
+  "@redesignSignoutCannot": {
+    "description": "redesign.signout.cannot"
+  },
+  "redesignSignoutLater": "Ich komme später",
+  "@redesignSignoutLater": {
+    "description": "redesign.signout.later"
+  },
+  "redesignSignoutOther": "Anderer Grund",
+  "@redesignSignoutOther": {
+    "description": "redesign.signout.other"
+  },
+  "redesignSignoutOtherHint": "Kurz beschreiben (mindestens 5 Zeichen)",
+  "@redesignSignoutOtherHint": {
+    "description": "redesign.signout.otherHint"
+  },
+  "redesignSignoutPrivacy": "Deinen Grund sieht nur die Leitung.",
+  "@redesignSignoutPrivacy": {
+    "description": "redesign.signout.privacy"
+  },
+  "redesignSignoutReason": "Grund",
+  "@redesignSignoutReason": {
+    "description": "redesign.signout.reason"
+  },
+  "redesignSignoutSubmit": "Abmelden",
+  "@redesignSignoutSubmit": {
+    "description": "redesign.signout.submit"
+  },
+  "redesignSignoutSubmitLate": "Verspätung melden",
+  "@redesignSignoutSubmitLate": {
+    "description": "redesign.signout.submitLate"
   },
   "redesignStatusAbsent": "Abwesend",
   "@redesignStatusAbsent": {

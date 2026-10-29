@@ -21,20 +21,20 @@ void main() {
     test('Dirigent, Verantwortlich, Beobachter: all five tabs', () {
       for (final role in [Role.admin, Role.responsible, Role.viewer]) {
         expect(_tabs(role), RdTab.values, reason: role.name);
-        expect(_route(role, RdTab.events), '/attendance');
+        expect(_route(role, RdTab.events), '/termine');
         expect(_route(role, RdTab.members), '/people');
       }
     });
 
     test('Helfer: Termin list, members only when the group shows them', () {
-      expect(_route(Role.helper, RdTab.events), '/attendance');
+      expect(_route(Role.helper, RdTab.events), '/termine');
       expect(_route(Role.helper, RdTab.members), '/members');
       expect(_tabs(Role.helper, members: false), isNot(contains(RdTab.members)));
     });
 
-    test('Spieler and Stimmführer: "Meine Termine"', () {
+    test('Spieler and Stimmführer: the new Termin list', () {
       for (final role in [Role.player, Role.voiceLeader]) {
-        expect(_route(role, RdTab.events), '/signout', reason: role.name);
+        expect(_route(role, RdTab.events), '/termine', reason: role.name);
         expect(_tabs(role, members: false),
             [RdTab.today, RdTab.events, RdTab.works, RdTab.me]);
       }
@@ -65,6 +65,7 @@ void main() {
   group('rdTabForLocation', () {
     test('detail pages keep their tab', () {
       expect(rdTabForLocation('/heute'), RdTab.today);
+      expect(rdTabForLocation('/termine'), RdTab.events);
       expect(rdTabForLocation('/attendance/12'), RdTab.events);
       expect(rdTabForLocation('/signout'), RdTab.events);
       expect(rdTabForLocation('/parents'), RdTab.events);
@@ -89,6 +90,7 @@ void main() {
     test('recognises the routes of the new design', () {
       expect(RedesignRoutes.isRedesignRoute('/heute'), isTrue);
       expect(RedesignRoutes.isRedesignRoute('/ich/darstellung'), isTrue);
+      expect(RedesignRoutes.isRedesignRoute('/termine'), isTrue);
       expect(RedesignRoutes.isRedesignRoute('/ichbin'), isFalse);
       expect(RedesignRoutes.isRedesignRoute('/settings'), isFalse);
     });
