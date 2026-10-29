@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
 import '../../core/utils/event_list_utils.dart';
+import '../../core/utils/paged_query.dart'; // SOL_FIX37
 import '../models/attendance/attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
@@ -325,23 +326,28 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       // SEC: person_attendances has no tenantId column – the inner join on
       // attendance is filtered by tenantId so only Termine of this tenant
       // are returned.
-      var query = supabase
-          .from('person_attendances')
-          .select(
-              '*, attendance:attendance_id!inner($kSignoutAttendanceColumns, '
-              'attType:type_id($kSignoutAttendanceTypeColumns))')
-          .eq('person_id', personId)
-          .eq('attendance.tenantId', currentTenantId);
-      if (since != null) {
-        query = query.gt('attendance.date', since);
-      }
-      final response = await query;
+      // SOL_FIX37: paged in a stable order, so a long history never pushes
+      // rows (upcoming Termine, quota) past the PostgREST row limit.
+      final response = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        var query = supabase
+            .from('person_attendances')
+            .select(
+                '*, attendance:attendance_id!inner($kSignoutAttendanceColumns, '
+                'attType:type_id($kSignoutAttendanceTypeColumns))')
+            .eq('person_id', personId)
+            .eq('attendance.tenantId', currentTenantId);
+        if (since != null) {
+          query = query.gt('attendance.date', since);
+        }
+        final page = await query.order('id', ascending: true).range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
 
-      return (response as List)
+      return response
           .where((json) => json['attendance'] != null)
           .map((json) => _fromRows(
                 json['attendance'] as Map<String, dynamic>,
-                json as Map<String, dynamic>,
+                json,
                 tenantId: currentTenantId,
                 tenantName: tenantName,
                 // Ionic getPersonAttendances: attType without hide_name

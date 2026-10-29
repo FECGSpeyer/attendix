@@ -101,12 +101,18 @@ class PublicPlanRepository extends BaseRepository {
       final data = Map<String, dynamic>.fromEntries(
         planColumns.entries.where((e) => e.key == 'plan' || e.key == 'extra_plans'),
       );
-      await supabase
+      // SOL_FIX37: a share revoked meanwhile updates no row – report it as
+      // a save error instead of a silent success.
+      final rows = await supabase
           .from('attendance')
           .update(data)
           .eq('id', id)
           .eq('share_key', key)
-          .eq('share_edit_key', editKey);
+          .eq('share_edit_key', editKey)
+          .select('id');
+      if ((rows as List).isEmpty) {
+        throw StateError('shared plan of attendance $id is no longer editable');
+      }
     } catch (e, stack) {
       handleError(e, stack, 'updateSharedAttendancePlan');
       rethrow;
@@ -162,11 +168,16 @@ class PublicPlanRepository extends BaseRepository {
     String? endTime,
   }) async {
     try {
-      await supabase
+      // SOL_FIX37: see updateSharedAttendancePlan.
+      final rows = await supabase
           .from('shared_plans')
           .update(sharedPlanUpdateData(fields: fields, title: title, time: time, endTime: endTime))
           .eq('id', key)
-          .eq('edit_key', editKey);
+          .eq('edit_key', editKey)
+          .select('id');
+      if ((rows as List).isEmpty) {
+        throw StateError('shared plan $key is no longer editable');
+      }
     } catch (e, stack) {
       handleError(e, stack, 'updateSharedPlan');
       rethrow;
