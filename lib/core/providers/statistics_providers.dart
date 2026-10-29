@@ -44,16 +44,15 @@ class StatisticsDateRangeNotifier extends StateNotifier<StatisticsDateRange> {
     state = StatisticsDateRange(start: range.start, end: range.end);
   }
 
-  /// Reset to season start if available, otherwise 180 days
+  /// Reset to season start if available, otherwise 2023-01-01.
+  /// P10_ATTENDANCE: Ionic stats `filterStartDate = getCurrentAttDate()`
+  /// = `tenant.seasonStart || '2023-01-01'`, end = today.
   void resetToDefault({String? seasonStart}) {
-    if (seasonStart != null) {
-      final parsed = DateTime.tryParse(seasonStart);
-      if (parsed != null) {
-        state = StatisticsDateRange(start: parsed, end: DateTime.now());
-        return;
-      }
-    }
-    state = StatisticsDateRange.defaultRange();
+    final parsed = seasonStart == null ? null : DateTime.tryParse(seasonStart);
+    state = StatisticsDateRange(
+      start: parsed ?? DateTime(2023, 1, 1),
+      end: DateTime.now(),
+    );
   }
 }
 
