@@ -18,6 +18,10 @@ import '../../../data/models/plan/plan.dart';
 ///   [newerCommit]. The later editor is what the user saw and edited last,
 ///   so its write wins; the skipped edit is kept as a local draft only when
 ///   it differs from what the later editor stored.
+/// - **Writes build on the newest stored row** (SOL_FIX28, [latestSince]):
+///   an editor whose copy of the Termin is older than the newest commit
+///   builds its write on that commit, so it replaces only the plan it edited
+///   and never resets another editor's stored plan with its stale copy.
 class PlanningWriteSync {
   PlanningWriteSync._();
 
@@ -70,6 +74,11 @@ class PlanningWriteSync {
     final newer = writers.entries.any((e) => e.key > instance && e.value > sinceSeq);
     return newer ? _lastRow[key] : null;
   }
+
+  /// SOL_FIX28: the newest stored row under [key] when it was committed after
+  /// sequence number [sinceSeq] (by any editor instance, also a disposed
+  /// one); null when the caller already knows the newest commit.
+  static PlanAttendance? latestSince(String key, int sinceSeq) => seq(key) > sinceSeq ? _lastRow[key] : null;
 
   @visibleForTesting
   static void reset() {

@@ -257,12 +257,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       // is still replaced after every write that finishes after dispose).
       final att = _att;
       if (att?.id != attId) return;
+      // SOL_FIX28: on top of the newest stored row of the Termin.
+      final base = _writeBase(attId, att!, planIndex);
       final saved = await repo.updateAttendancePlanFields(
-          attId, _planUpdate(att!, planIndex, time: time, fields: fields, title: title));
+          attId, _planUpdate(base.att, base.index, time: time, fields: fields, title: title));
       _markWritten(attId, saved);
       await PlanningDraftStore.removeIfRevision(draftKey, rev);
-    }).catchError((Object _) {
-      _showDetachedError(l10nWithoutContext.planningFlutterDraftSavedLocally);
+    }).catchError((Object _) async {
+      // SOL_FIX28: "Entwurf lokal gesichert" only for a confirmed draft;
+      // otherwise the edit is really lost and the user is told so.
+      final kept = await draftRev != null;
+      _showDetachedError(kept
+          ? l10nWithoutContext.planningFlutterDraftSavedLocally
+          : l10nWithoutContext.planningFlutterDraftLost);
     }));
   }
 
@@ -288,12 +295,51 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   /// SOL_FIX27: plan of [att] that [planKey] ([_planKeyOf]) names.
   static Plan? _planByKey(PlanAttendance att, String planKey) {
+    final i = _indexOfPlanKey(att, planKey);
+    return i == null ? null : PlanUtils.allPlans(att)[i];
+  }
+
+  /// SOL_FIX28: position of the plan of [att] that [planKey] names (by id,
+  /// else by position); null when there is none.
+  static int? _indexOfPlanKey(PlanAttendance att, String planKey) {
     final plans = PlanUtils.allPlans(att);
-    final byId = plans.where((p) => p.id == planKey).firstOrNull;
-    if (byId != null) return byId;
+    final byId = plans.indexWhere((p) => p.id == planKey);
+    if (byId >= 0) return byId;
     final index = RegExp(r'^i(\d+)$').firstMatch(planKey)?.group(1);
     final i = index == null ? null : int.tryParse(index);
-    return i != null && i < plans.length ? plans[i] : null;
+    return i != null && i < plans.length ? i : null;
+  }
+
+  /// SOL_FIX28: row and plan position a write of plan [planIndex] of the
+  /// editor's copy [own] builds on. When an editor instance (this one
+  /// excluded) stored Termin [attId] after the last commit this editor knows,
+  /// the write builds on that newest stored row ([PlanningWriteSync.
+  /// latestSince]): the edited plan is found there by id (else position) and
+  /// only it is replaced, every other plan stays as stored. Without a newer
+  /// commit (or when the plan no longer exists there) the editor's own copy.
+  ({PlanAttendance att, int index}) _writeBase(int attId, PlanAttendance own, int planIndex) {
+    final latest =
+        PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
+    if (latest == null || latest.id != attId) return (att: own, index: planIndex);
+    final index = _indexOfPlanKey(latest, _planKeyOf(own, planIndex));
+    if (index != null) return (att: latest, index: index);
+    if (PlanUtils.allPlans(latest).isEmpty && PlanUtils.allPlans(own).isEmpty) return (att: latest, index: 0);
+    return (att: own, index: planIndex);
+  }
+
+  /// SOL_FIX28: takes over the newest row another editor instance stored for
+  /// Termin [attId] (when this editor has not seen it yet), so a plan
+  /// operation (add / rename / day / move / delete), which writes the whole
+  /// plan list, builds on it instead of the editor's stale copy.
+  void _adoptLatest(int attId) {
+    final key = PlanningWriteSync.keyFor(_tenantId, attId);
+    final latest = PlanningWriteSync.latestSince(key, _knownSeq[attId] ?? 0);
+    if (latest == null || latest.id != attId) return;
+    final own = _att;
+    final index = own == null ? null : _indexOfPlanKey(latest, _planKeyOf(own, _planIndex));
+    _knownSeq[attId] = PlanningWriteSync.seq(key);
+    _replaceAtt(latest);
+    if (index != null && index != _planIndex && mounted) setState(() => _planIndex = index);
   }
 
   /// SOL_FIX27: draft key of the account [userId] in the editor's tenant
@@ -705,7 +751,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final loadGen = _loadGen;
     final editGen = _editGen;
     final title = _titleController.text.trim();
-    final update = _planUpdate(att!, _planIndex, time: _time, fields: _fields, title: title);
+    // SOL_FIX28: built on the newest stored row of the Termin (another
+    // editor instance may have stored another plan meanwhile): only the open
+    // plan is replaced.
+    final base = _writeBase(attId, att!, _planIndex);
+    final update = _planUpdate(base.att, base.index, time: _time, fields: _fields, title: title);
     try {
       final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, update);
       // SOL_FIX23: every successful write is a change (caches on close).
@@ -713,6 +763,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _replaceAtt(saved);
       // Baseline / dirty only for the snapshot that was really stored.
       if (loadGen == _loadGen) {
+        // SOL_FIX28: the open plan's position in the stored row.
+        if (mounted && base.index != _planIndex) setState(() => _planIndex = base.index);
         _savedTitle = title;
         if (editGen == _editGen) _dirty = false;
         // SOL_FIX26: the restored draft is stored now.
@@ -865,7 +917,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         ],
       ),
     );
-    if (choice == null) return;
+    if (choice == null || !mounted || _att == null) return;
+    _adoptLatest(_attId!); // SOL_FIX28
     final copy = choice == 'copy';
     final current = _att!;
     final plans = PlanUtils.withDays(current, PlanUtils.allPlans(current));
@@ -900,17 +953,17 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
-    final index = _planIndex;
+    final shownIndex = _planIndex;
     final action = await showPlanActionSheet<String>(
       context,
-      title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, index, plans)),
-      subtitle: context.l10n.planningFlutterPlanPosition(index + 1, plans.length),
+      title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, shownIndex, plans)),
+      subtitle: context.l10n.planningFlutterPlanPosition(shownIndex + 1, plans.length),
       actions: [
         PlanSheetAction('rename', context.l10n.planningRename, icon: Icons.edit_outlined),
         if (PlanUtils.dayOptions(att).isNotEmpty)
           PlanSheetAction('day', context.l10n.planningAssignOtherDay, icon: Icons.event),
-        if (index > 0) PlanSheetAction('left', context.l10n.planningMoveLeft, icon: Icons.chevron_left),
-        if (index < plans.length - 1)
+        if (shownIndex > 0) PlanSheetAction('left', context.l10n.planningMoveLeft, icon: Icons.chevron_left),
+        if (shownIndex < plans.length - 1)
           PlanSheetAction('right', context.l10n.planningMoveRight, icon: Icons.chevron_right),
         PlanSheetAction('delete', context.l10n.planningDeletePlan, icon: Icons.delete_outline, destructive: true),
       ],
@@ -918,9 +971,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (action == null || !mounted) return;
     // SOL_FIX24: an invalid open plan does not block: rename / day / move
     // keep the editor (and its pending edits), delete removes the plan.
-    if (!await _flushSaves(blockInvalid: false) || !mounted) return;
+    if (!await _flushSaves(blockInvalid: false) || !mounted || _att == null) return;
+    // SOL_FIX28: build on the newest stored row; the open plan keeps its
+    // position there.
+    _adoptLatest(_attId!);
+    final index = _planIndex;
     final current = _att!;
     final list = PlanUtils.withDays(current, PlanUtils.allPlans(current));
+    if (index >= list.length) return;
     try {
       switch (action) {
         case 'rename':
@@ -957,6 +1015,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         case 'left':
         case 'right':
           final to = index + (action == 'left' ? -1 : 1);
+          if (to < 0 || to >= list.length) return;
           final tmp = list[index];
           list[index] = list[to];
           list[to] = tmp;

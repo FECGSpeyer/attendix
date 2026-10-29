@@ -27,7 +27,8 @@
         "unshareAction": "Freigabe aufheben",
         "noEvents": "Keine Termine vorhanden",
         "draftSavedLocally": "Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert",
-        "draftRestored": "Nicht gespeicherte Änderungen wiederhergestellt"
+        "draftRestored": "Nicht gespeicherte Änderungen wiederhergestellt",
+        "draftLost": "Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren"
       }
     },
     "orgFields": {
@@ -74,7 +75,8 @@
         "unshareAction": "Stop sharing",
         "noEvents": "No events available",
         "draftSavedLocally": "Run sheet could not be saved – draft kept on this device",
-        "draftRestored": "Unsaved changes restored"
+        "draftRestored": "Unsaved changes restored",
+        "draftLost": "Run sheet could not be saved – changes are lost"
       }
     },
     "orgFields": {

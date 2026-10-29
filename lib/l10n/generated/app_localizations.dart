@@ -11879,6 +11879,12 @@ abstract class AppLocalizations {
   /// **'Programmblock: {name} ({min} min)'**
   String planningFlutterBlockEntry(Object name, Object min);
 
+  /// planning.flutter.draftLost
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren'**
+  String get planningFlutterDraftLost;
+
   /// planning.flutter.draftRestored
   ///
   /// In de, this message translates to:
