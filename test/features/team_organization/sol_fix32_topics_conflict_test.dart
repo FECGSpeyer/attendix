@@ -56,4 +56,22 @@ void main() {
     expect(body, contains('if (response == null)'));
     expect(body, contains('throw StateError'));
   });
+
+  test('SOL_FIX33: spontaneous point aborts on a deleted plan', () {
+    final src = File('lib/features/team_organization/presentation/pages/protocol_page.dart')
+        .readAsStringSync();
+    expect(src, contains('fresh.plan == null && current.plan != null'));
+    expect(src, isNot(contains('if (fresh != null) current = _attendance!.copyWith(plan: fresh.plan);')));
+  });
+
+  test('SOL_FIX33: topic writes refresh the plan caches', () {
+    for (final path in [
+      'lib/features/team_organization/presentation/pages/protocol_page.dart',
+      'lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart',
+    ]) {
+      final src = File(path).readAsStringSync();
+      expect(src, contains('ref.invalidate(planAttendancesProvider);'), reason: path);
+      expect(src, contains('ref.invalidate(orgPlansProvider);'), reason: path);
+    }
+  });
 }

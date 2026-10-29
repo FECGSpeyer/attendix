@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
@@ -209,6 +210,10 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
               removeIds: removeIds,
             );
       ref.invalidate(upcomingProtocolAttendancesProvider);
+      // SOL_FIX33: plan caches follow every topic write, so a planning
+      // editor opened afterwards starts from the stored topics.
+      ref.invalidate(planAttendancesProvider);
+      ref.invalidate(orgPlansProvider);
       if (!mounted) return;
       final added = selections.length;
       final removed = removeIds.length;

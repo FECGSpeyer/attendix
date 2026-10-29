@@ -11,6 +11,7 @@ import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
@@ -591,10 +592,18 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
             defaultDuration: duration < 1 ? 1 : duration,
           ));
       var current = _attendance!;
+      ProtocolAttendance? fresh;
       try {
-        final fresh = await _repo.getAttendance(widget.attendanceId);
-        if (fresh != null) current = _attendance!.copyWith(plan: fresh.plan);
+        fresh = await _repo.getAttendance(widget.attendanceId);
       } catch (_) {}
+      if (fresh != null) {
+        // SOL_FIX33: a plan deleted meanwhile is a conflict – never write
+        // the old plan back (`copyWith(plan: null)` keeps it).
+        if (fresh.plan == null && current.plan != null) {
+          throw StateError('plan of attendance ${widget.attendanceId} was deleted');
+        }
+        current = _attendance!.copyWith(plan: fresh.plan);
+      }
       final plan = current.plan ??
           {'time': _planStart ?? DateFormat('HH:mm').format(DateTime.now()), 'end': current.endTime ?? '', 'fields': []};
       final field = buildAgendaField(item, duration < 1 ? 1 : duration);
@@ -608,6 +617,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         _activeId = fieldId(field);
       });
       ref.invalidate(upcomingProtocolAttendancesProvider);
+      // SOL_FIX33: the planning editor reloads the plan with the new topic.
+      ref.invalidate(planAttendancesProvider);
+      ref.invalidate(orgPlansProvider);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolPointFailed);
     }
