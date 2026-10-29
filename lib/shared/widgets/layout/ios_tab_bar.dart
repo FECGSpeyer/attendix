@@ -11,15 +11,17 @@ class IosTabBarItem {
   final String label;
 }
 
-/// IOS_LOOK: `ion-tab-bar` in the Ionic iOS 26 theme (as configured in
-/// Ionic tabs.page.scss): a floating Liquid Glass pill at the bottom left
-/// (16pt from the edge, `max(10, safe-area-bottom − 12)` above the bottom),
-/// 60pt high (56pt buttons + 2pt padding) with 40pt corners, leaving 72pt on
-/// the right for the page's `ion-fab` (see [TabBarFab]), which sits in the
-/// same row, vertically centred with the bar.
-/// Tabs show a 26pt icon over a 10pt label (scaled down instead of
-/// truncated, e.g. "Meine Termine"); the selected tab gets a soft grey pill
-/// and the primary colour, the others use the text colour.
+/// IOS_LOOK: `ion-tab-bar` in the Ionic iOS theme (IOS27_SWEEP:
+/// @rdlabo/ionic-theme-ios27 1.1.0 plus the app's tabs.page.scss): a
+/// floating Liquid Glass pill at the bottom left (16pt from the edge,
+/// `max(10, safe-area-bottom − 12)` above the bottom), 62pt high (54pt
+/// buttons + 4pt padding) with 31pt corners, leaving room on the right for
+/// the page's `ion-fab` (see [TabBarFab]), which sits in the same row,
+/// vertically centred with the bar.
+/// Tabs show a 26pt icon over a 0.59rem (10pt) label, 7pt from the top
+/// (labels are scaled down instead of truncated, e.g. "Meine Termine"); the
+/// selected tab gets a 27pt-radius pill and the primary colour, the others
+/// use `--ion-text-color-step-50` (#0d0d0d; dark: the text colour).
 class IosTabBar extends StatelessWidget {
   const IosTabBar({
     super.key,
@@ -32,8 +34,64 @@ class IosTabBar extends StatelessWidget {
   final int selectedIndex;
   final ValueChanged<int> onSelected;
 
-  /// `min-height: 56px` + `padding: 2px` (content-box).
-  static const double barHeight = 60;
+  /// ios27 `height: 54px` + `padding: 4px` (content-box).
+  static const double barHeight = 62;
+
+  /// ios27 `border-radius: 31px`.
+  static const double barRadius = 31;
+
+  /// ios27 `padding: 4px`.
+  static const double barPadding = 4;
+
+  /// ios27 `ion-tab-button { height: 54px; border-radius: 27px }`.
+  static const double buttonRadius = 27;
+
+  /// ios27 `ion-tab-button { font-size: .59rem }` (1rem = 17px).
+  static const double labelFontSize = 0.59 * 17;
+
+  /// Outer width of the bar (content width + 2 × [barPadding]) for
+  /// [tabCount] tabs on a screen [screenWidth] wide:
+  /// - ios27: `calc(100% - (18px + safe-left) - (18px + safe-right) - 75px)`,
+  ///   max 471px; exactly two tabs 180px;
+  /// - ≥ 5 tabs: the app's tabs.page.scss `calc(100% - (18px + safe-left) * 2
+  ///   - 60px - 12px)`, max 474px;
+  /// - from 768px (iPad) the compact platter: max 180 / 266 / 328 / 406px
+  ///   for 2 / 3 / 4 / 5 tabs.
+  static double barWidthFor({
+    required double screenWidth,
+    required int tabCount,
+    EdgeInsets safeArea = EdgeInsets.zero,
+  }) {
+    double content;
+    double max;
+    if (tabCount == 2) {
+      content = 180;
+      max = 180;
+    } else if (tabCount >= 5) {
+      content = screenWidth - (18 + safeArea.left) * 2 - 72;
+      max = 474;
+    } else {
+      content = screenWidth - (18 + safeArea.left) - (18 + safeArea.right) - 75;
+      max = 471;
+    }
+    if (screenWidth >= 768) {
+      const ipad = {2: 180.0, 3: 266.0, 4: 328.0, 5: 406.0};
+      max = ipad[tabCount] ?? max;
+    }
+    return content.clamp(0.0, max).toDouble() + 2 * barPadding;
+  }
+
+  /// ios27 tab bar background: `rgba(glass, .53)`; dark
+  /// `color-mix(color-mix(glass 92%, text) 40%, transparent)` ≈ #4D4D4D at
+  /// 40 %.
+  static Color background(Brightness b) => b == Brightness.dark
+      ? const Color(0xFF4D4D4D).withValues(alpha: 0.4)
+      : Colors.white.withValues(alpha: 0.53);
+
+  /// ios27 `--color` of the tabs: `--ion-text-color-step-50` (#0d0d0d) in
+  /// light mode, the text colour in dark mode.
+  static Color unselectedColor(Brightness b) =>
+      b == Brightness.dark ? Colors.white : const Color(0xFF0D0D0D);
 
   /// Right edge of the tab bar row (`ion-fab` `right: 16px + safe-right`).
   static double fabRight(BuildContext context) =>
@@ -44,26 +102,28 @@ class IosTabBar extends StatelessWidget {
       (MediaQuery.paddingOf(context).bottom - 12).clamp(10.0, double.infinity);
 
   /// IOS_SHELL2: room the floating bar takes at the bottom of the page
-  /// (Ionic iOS 26 `ion-content.content-fullscreen`
-  /// `--padding-bottom: calc(60px + floating-safe-area-bottom)`). Pages scroll
-  /// under the bar; [MainShell] hands this to them as MediaQuery bottom
-  /// padding.
+  /// (ionic-theme-ios27 `ion-content.content-fullscreen`
+  /// `--padding-bottom: calc(60px + floating-safe-area-bottom)` – 60, not
+  /// the 62pt bar height). Pages scroll under the bar; [MainShell] hands
+  /// this to them as MediaQuery bottom padding.
+  static const double contentPadding = 60;
+
   static double contentInset(BuildContext context) =>
-      barHeight + bottomOffset(context);
+      contentPadding + bottomOffset(context);
 
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final b = theme.brightness;
     final padding = MediaQuery.paddingOf(context);
-    final width = MediaQuery.sizeOf(context).width;
-    // calc(100% - (18px + safe-left) * 2 - 60px - 12px), max 474px
-    final barWidth = (width - (18 + padding.left) * 2 - 72)
-        .clamp(180.0, 474.0)
-        .toDouble();
+    final barWidth = barWidthFor(
+      screenWidth: MediaQuery.sizeOf(context).width,
+      tabCount: items.length,
+      safeArea: padding,
+    );
     final bottom = bottomOffset(context);
     final primary = theme.colorScheme.primary;
-    final text = theme.colorScheme.onSurface;
+    final text = unselectedColor(b);
 
     return SizedBox(
       height: barHeight + bottom + 6,
@@ -74,10 +134,15 @@ class IosTabBar extends StatelessWidget {
             bottom: bottom,
             width: barWidth,
             height: barHeight,
+            // ios27: blur(6px) saturate(180%) brightness(1.05); dark
+            // saturate(150%) brightness(1.23) (saturation not emulated).
             child: IosGlassSurface(
-              borderRadius: const BorderRadius.all(Radius.circular(40)),
+              borderRadius:
+                  const BorderRadius.all(Radius.circular(barRadius)),
               blur: 6,
-              padding: const EdgeInsets.all(2),
+              color: background(b),
+              backdropBrightness: b == Brightness.dark ? 1.23 : 1.05,
+              padding: const EdgeInsets.all(barPadding),
               child: Row(
                 children: [
                   for (var i = 0; i < items.length; i++)
@@ -132,16 +197,19 @@ class _TabButton extends StatelessWidget {
           duration: const Duration(milliseconds: 140),
           decoration: BoxDecoration(
             color: selected ? pill : Colors.transparent,
-            borderRadius: BorderRadius.circular(32),
+            borderRadius: BorderRadius.circular(IosTabBar.buttonRadius),
           ),
-          padding: const EdgeInsets.symmetric(horizontal: 3),
+          // ion-tab-button (ios) --padding-start/end 2px; ios27
+          // icon-top layout: --padding-top 7px, content from the top.
+          padding: const EdgeInsets.fromLTRB(2, 7, 2, 0),
           child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.start,
             children: [
               Icon(item.icon, size: 26, color: color),
               const SizedBox(height: 2),
               // Ionic shows long labels ("Meine Termine") in full: shrink
-              // the 10pt label to the button width instead of an ellipsis.
+              // the 0.59rem label to the button width instead of an
+              // ellipsis.
               FittedBox(
                 fit: BoxFit.scaleDown,
                 child: Text(
@@ -149,10 +217,9 @@ class _TabButton extends StatelessWidget {
                   maxLines: 1,
                   softWrap: false,
                   style: TextStyle(
-                    fontSize: 10,
+                    fontSize: IosTabBar.labelFontSize,
                     height: 1.2,
                     fontWeight: FontWeight.w500,
-                    letterSpacing: -0.1,
                     color: color,
                   ),
                 ),

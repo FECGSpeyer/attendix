@@ -374,8 +374,10 @@ class IosAlertCard extends StatelessWidget {
     final theme = Theme.of(context);
     final b = theme.brightness;
     final textColor = theme.colorScheme.onSurface;
-    final messageColor =
-        b == Brightness.dark ? const Color(0xFF999999) : const Color(0xFF666666);
+    // IOS27_SWEEP: ios27 `.alert-message` colour
+    // `var(--ion-text-color-step-600, var(--ion-color-step-400, #999))` –
+    // #999999 in light mode, the app's dark step-400 #666666.
+    final messageColor = iosAlertMessageColor(b);
     final mq = MediaQuery.of(context);
     final cardWidth = widthFor(
       title: _plainText(title),
@@ -477,9 +479,12 @@ class IosAlertCard extends StatelessWidget {
                 width: cardWidth,
                 child: Material(
                   type: MaterialType.transparency,
+                  // IOS27_SWEEP: `api.glass-overlay-surface` – rgba(glass,
+                  // .67) (dark .52), 0.5pt rgba(text, .18) border,
+                  // 0 12px 32px shadow, blur 20.
                   child: IosGlassSurface(
                     borderRadius: const BorderRadius.all(Radius.circular(36)),
-                    opacity: b == Brightness.dark ? 0.86 : 0.9,
+                    overlay: true,
                     blur: 20,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
@@ -543,7 +548,16 @@ class _IosAlertButtonGroup extends StatelessWidget {
   }
 }
 
+/// IOS27_SWEEP: secondary text of iOS alerts and action sheets
+/// (`.alert-message`, `.action-sheet-sub-title`): #999999, dark #666666.
+Color iosAlertMessageColor(Brightness b) =>
+    b == Brightness.dark ? const Color(0xFF666666) : const Color(0xFF999999);
+
 /// Grey full-width pill button of an iOS alert / action sheet.
+/// IOS27_SWEEP: ionic-theme-ios27 `glass-background-overlay-button` –
+/// step-200 (#cccccc, dark #333333), radius 24, min-height 48, 17pt labels
+/// in the text colour; `role: 'destructive'` in
+/// `--ios-theme-destructive-color` (#ea292d, dark #ff686b).
 class IosAlertButton extends StatelessWidget {
   const IosAlertButton({
     super.key,
@@ -564,6 +578,9 @@ class IosAlertButton extends StatelessWidget {
 
   /// Ionic iOS 26/27 theme `.alert-button { padding: 12px }`.
   static const double _hPadding = 12;
+
+  /// ios27 `border-radius: 24px` (half of the 48pt min-height).
+  static double radiusFor(double minHeight) => minHeight < 48 ? minHeight / 2 : 24;
 
   TextStyle _labelStyle(Color? color) => TextStyle(
         fontSize: 17,
@@ -592,9 +609,9 @@ class IosAlertButton extends StatelessWidget {
     final theme = Theme.of(context);
     final b = theme.brightness;
     final color =
-        destructive ? theme.colorScheme.error : theme.colorScheme.onSurface;
+        destructive ? IosGlass.destructive(b) : theme.colorScheme.onSurface;
     final enabled = onPressed != null;
-    final radius = BorderRadius.circular(minHeight / 2);
+    final radius = BorderRadius.circular(radiusFor(minHeight));
     return Opacity(
       opacity: enabled ? 1 : 0.4,
       child: Material(
@@ -602,6 +619,8 @@ class IosAlertButton extends StatelessWidget {
         borderRadius: radius,
         child: InkWell(
           borderRadius: radius,
+          splashFactory: NoSplash.splashFactory,
+          highlightColor: IosGlass.overlayButtonActivated(b),
           onTap: onPressed == null
               ? null
               : () {

@@ -34,7 +34,7 @@ void main() {
           Colors.white);
     });
 
-    test('iOS: no ripple / hover / focus highlight, popovers radius 24', () {
+    test('iOS: no ripple / hover / focus highlight, popovers radius 34', () {
       final ios = AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS);
       expect(ios.splashFactory, NoSplash.splashFactory);
       expect(ios.hoverColor, Colors.transparent);
@@ -42,7 +42,7 @@ void main() {
       expect(ios.popupMenuTheme.position, PopupMenuPosition.under);
       expect(
         (ios.popupMenuTheme.shape! as RoundedRectangleBorder).borderRadius,
-        BorderRadius.circular(24),
+        BorderRadius.circular(34), // IOS27_SWEEP
       );
     });
 

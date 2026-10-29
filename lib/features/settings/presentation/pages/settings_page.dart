@@ -128,6 +128,13 @@ class SettingsPage extends ConsumerWidget {
         // slot="start"`. iOS: left aligned glass button, no title (with
         // several tenants TenantSwitcherTitle draws the capsule itself,
         // UX_AUTH); elsewhere UX_AUTH alignment.
+        // AUDIT_R4: md `ion-toolbar color="light"` – the page colour
+        // (#f4f5f8; dark --ion-color-light #222428), not white.
+        backgroundColor: ios
+            ? null
+            : (Theme.of(context).brightness == Brightness.dark
+                ? AppColors.iosPageDark
+                : AppColors.light),
         centerTitle: ios ? false : TenantSwitcherTitle.centerTitle(ref),
         titleSpacing: ios ? 12 : null,
         title: ios && TenantSwitcherTitle.centerTitle(ref) == null

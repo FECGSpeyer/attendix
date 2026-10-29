@@ -4,11 +4,13 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
+import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
 import 'adaptive_platform.dart';
 
-/// PARITY_R5: top offset (below the safe area) of an iOS nested popover
-/// that does not fit to the left of its parent.
-const double kIosNestedPopoverTop = 12;
+/// AUDIT_R4: vertical offset of an iOS nested popover below the top of
+/// its trigger row (ionic-theme-utils 0.1.1 `calculateWindowAdjustment`:
+/// `top = triggerTop + POPOVER_IOS_BODY_MARGIN`).
+const double kIosNestedPopoverTop = 8;
 
 /// One entry of [showAppPopoverMenu] (an `ion-item button` inside the
 /// `ion-list lines="none"` of an `ion-popover`).
@@ -150,8 +152,12 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   @override
   final String barrierLabel;
 
+  /// AUDIT_R4: Ionic md dims the page behind a popover
+  /// (`--backdrop-opacity: var(--ion-backdrop-opacity, .32)`); the ios27
+  /// theme sets `--backdrop-opacity: 0`.
   @override
-  Color? get barrierColor => Colors.transparent;
+  Color? get barrierColor =>
+      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
 
   @override
   bool get barrierDismissible => true;
@@ -322,11 +328,15 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
           .toDouble();
       var subTop = rowRect.top;
       if (ios && left - sw < _margin) {
-        // PARITY_R5: no room on the left (phone) – Ionic iOS lays the
-        // nested popover over the parent, right-aligned with it, at the
-        // top of the screen (iPhone audit: x 181–381, y 12 on 393pt).
-        subLeft = math.max(_margin, left + w - sw);
-        subTop = MediaQuery.paddingOf(context).top + kIosNestedPopoverTop;
+        // AUDIT_R4: no room on the left (phone). ionic-theme-utils 0.1.1
+        // (`calculateWindowAdjustment`, side="start") then puts the nested
+        // popover at the trigger row's left edge, 8pt below the row top:
+        // it overlays only the upper part of the parent, whose lower
+        // entries stay readable (the parent keeps its width and labels).
+        subLeft = rowRect.left
+            .clamp(_margin, math.max(_margin, size.width - sw - _margin))
+            .toDouble();
+        subTop = rowRect.top + kIosNestedPopoverTop;
       }
       children.add(
         Positioned(
@@ -396,11 +406,10 @@ class _PopoverCard extends StatelessWidget {
       );
     }
     if (ios) {
-      return IosGlassSurface(
-        // IOS_THEME2: ionic-theme-ios26 popover radius 24.
-        borderRadius: const BorderRadius.all(Radius.circular(24)),
-        opacity: 0.9,
-        blur: 20,
+      // IOS27_SWEEP: ionic-theme-ios27 popover – radius 34, rgba(glass,
+      // .42) over blur(12px) brightness(1.35).
+      return IosGlassSurface.popover(
+        brightness: Theme.of(context).brightness,
         child: Material(type: MaterialType.transparency, child: list),
       );
     }
@@ -469,7 +478,7 @@ class _PopoverRow extends StatelessWidget {
       // No ripple on iOS, grey press highlight; nothing highlighted
       // initially (no focus / initial value).
       splashFactory: ios ? NoSplash.splashFactory : null,
-      highlightColor: ios ? IosGlass.overlayButton(theme.brightness) : null,
+      highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
       canRequestFocus: false,
       onTap: onTap,
       child: ConstrainedBox(
@@ -487,16 +496,18 @@ class _PopoverRow extends StatelessWidget {
                   mainAxisSize: MainAxisSize.min,
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
-                    Text(label, style: TextStyle(fontSize: 16, color: fg)),
+                    // IOS27_SWEEP: ion-item 1rem = 17pt on the iPhone
+                    Text(label,
+                        style: TextStyle(fontSize: ios ? 17 : 16, color: fg)),
                     if (subtitle != null)
                       Padding(
                         padding: const EdgeInsets.only(top: 2),
                         child: Text(
                           subtitle!,
                           style: TextStyle(
-                            fontSize: ios ? 13 : 14,
+                            fontSize: ios ? IonIos.pFontSize : 14,
                             color: ios
-                                ? AppColors.medium
+                                ? IonIos.labelP(theme.brightness)
                                 : (theme.brightness == Brightness.dark
                                     ? const Color(0xFF999999)
                                     : const Color(0xFF666666)),
@@ -508,14 +519,15 @@ class _PopoverRow extends StatelessWidget {
               ),
               if (chevron) ...[
                 const SizedBox(width: 6),
-                Icon(
-                  Icons.chevron_right,
-                  size: ios ? 22 : 20,
-                  // Ionic detail icon: iOS medium; md text colour at .25.
-                  color: ios
-                      ? AppColors.medium.withValues(alpha: 0.6)
-                      : onSurface.withValues(alpha: 0.25),
-                ),
+                if (ios)
+                  const IonDetailChevron()
+                else
+                  Icon(
+                    Icons.chevron_right,
+                    size: 20,
+                    // Ionic md detail icon: text colour at .25.
+                    color: onSurface.withValues(alpha: 0.25),
+                  ),
               ],
             ],
           ),

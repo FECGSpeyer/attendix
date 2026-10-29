@@ -568,8 +568,13 @@ class _IosUpdateToast extends StatelessWidget {
       padding: const EdgeInsets.fromLTRB(16, 0, 16, gap),
       child: SizedBox(
         height: height,
+        // IOS27_SWEEP: ion-toast glass overlay (rgba(glass, .67), 0.5pt
+        // rgba(text, .18) border, .06 shadow), app radius 24 (global.scss).
         child: IosGlassSurface(
           borderRadius: const BorderRadius.all(Radius.circular(24)),
+          overlay: true,
+          blur: 20,
+          shadowOpacity: 0.06,
           padding: const EdgeInsets.only(left: 16, right: 4),
           child: Row(
             children: [

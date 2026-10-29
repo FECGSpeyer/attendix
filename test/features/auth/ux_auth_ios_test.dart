@@ -111,8 +111,8 @@ void main() {
     });
   });
 
-  group('Inset list metrics (iOS 26 theme vs MD)', () {
-    testWidgets('iOS: 20 px margin / 28 px radius, MD: 16 / 16',
+  group('Inset list metrics (iOS 27 theme vs MD)', () {
+    testWidgets('iOS: 16 px margin / 28 px radius, MD: 16 / 16',
         (tester) async {
       late double iosMargin, iosRadius, mdMargin, mdRadius;
       await tester.pumpWidget(app(Builder(builder: (context) {
@@ -126,7 +126,7 @@ void main() {
         return const SizedBox();
       }), platform: TargetPlatform.android));
       await tester.pumpAndSettle();
-      expect([iosMargin, iosRadius], [20, 28]);
+      expect([iosMargin, iosRadius], [16, 28]); // IOS27_SWEEP
       expect([mdMargin, mdRadius], [16, 16]);
     });
   });

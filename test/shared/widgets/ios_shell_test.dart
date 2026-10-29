@@ -46,7 +46,7 @@ void main() {
     expect(find.ancestor(
             of: find.text('Meine Termine'), matching: find.byType(FittedBox)),
         findsOneWidget);
-    expect(IosTabBar.barHeight, 60);
+    expect(IosTabBar.barHeight, 62); // IOS27_SWEEP: 54 + 2 × 4
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   Widget shell({required VoidCallback onFab}) => MaterialApp(
@@ -80,7 +80,7 @@ void main() {
     await tester.pumpAndSettle();
 
     final rect = tester.getRect(find.byType(FloatingActionButton));
-    // bar: bottom 10, 60 high → centre 40 above the screen bottom
+    // bar: bottom 10, 62 high → centre 41 above the screen bottom
     expect(852 - rect.center.dy, closeTo(10 + IosTabBar.barHeight / 2, 0.5));
     expect(393 - rect.right, closeTo(16, 0.5));
     await tester.tap(find.byType(FloatingActionButton));

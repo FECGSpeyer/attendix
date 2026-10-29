@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
-import 'app_dialog.dart' show IosAlertButton;
+import 'app_dialog.dart' show IosAlertButton, iosAlertMessageColor;
 
 /// One button of [showAppActionSheet] (Ionic `ActionSheetButton`).
 class AppActionSheetAction<T> {
@@ -40,9 +40,11 @@ class AppActionSheetAction<T> {
 
 /// IOS_LOOK: `ion-action-sheet`.
 ///
-/// - iOS: the Ionic iOS 26 action sheet – a floating frosted card with the
-///   (centred, grey) title/sub-title, grey pill buttons (destructive = red)
-///   and the "Abbrechen" button separated below them.
+/// - iOS (IOS27_SWEEP, ionic-theme-ios27): a floating glass card (12pt
+///   from the screen edges, radius 36, 16pt padding) with the start-aligned
+///   17pt semibold title in the text colour (sub-title 16pt grey), grey
+///   48pt pill buttons (17pt medium, destructive = #ea292d) 8pt apart and
+///   the semibold "Abbrechen" button 8pt below them.
 /// - elsewhere: a Material bottom sheet like the Ionic md action sheet
 ///   (title, icon + label rows, cancel row last).
 ///
@@ -118,12 +120,10 @@ class _IosActionSheet<T> extends StatelessWidget {
     final mq = MediaQuery.of(context);
     // --ios26-floating-safe-area-bottom: max(10px, safe-area-bottom - 12px)
     final bottom = (mq.padding.bottom - 12).clamp(10.0, double.infinity);
-    final grey = theme.brightness == Brightness.dark
-        ? const Color(0xFF999999)
-        : const Color(0xFF666666);
+    final grey = iosAlertMessageColor(theme.brightness);
 
     Widget button(AppActionSheetAction<T> a) => IosAlertButton(
-          minHeight: 52,
+          minHeight: 48,
           bold: false,
           destructive: a.destructive,
           icon: a.icon == null ? null : Icon(a.icon),
@@ -139,36 +139,40 @@ class _IosActionSheet<T> extends StatelessWidget {
       child: Material(
         type: MaterialType.transparency,
         child: IosGlassSurface(
-          borderRadius: const BorderRadius.all(Radius.circular(32)),
-          opacity: theme.brightness == Brightness.dark ? 0.86 : 0.9,
+          borderRadius: const BorderRadius.all(Radius.circular(36)),
+          overlay: true,
           blur: 20,
-          padding: const EdgeInsets.fromLTRB(10, 10, 10, 10),
+          padding: const EdgeInsets.all(16),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
               if (title != null || message != null)
                 Padding(
-                  padding: const EdgeInsets.fromLTRB(14, 8, 14, 14),
+                  // ios27 `.action-sheet-title { padding: 6px 14px 20px }`
+                  padding: const EdgeInsets.fromLTRB(14, 6, 14, 20),
                   child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
                       if (title != null)
                         Text(
                           title!,
-                          textAlign: TextAlign.center,
+                          textAlign: TextAlign.start,
                           style: TextStyle(
-                            fontSize: 13,
+                            fontSize: 17,
+                            height: 1.21,
                             fontWeight: FontWeight.w600,
-                            color: grey,
+                            color: theme.colorScheme.onSurface,
                           ),
                         ),
                       if (message != null)
                         Padding(
-                          padding: EdgeInsets.only(top: title != null ? 6 : 0),
+                          padding: EdgeInsets.only(top: title != null ? 8 : 0),
                           child: Text(
                             message!,
-                            textAlign: TextAlign.center,
-                            style: TextStyle(fontSize: 13, color: grey),
+                            textAlign: TextAlign.start,
+                            style: TextStyle(
+                                fontSize: 0.94 * 17, height: 1.19, color: grey),
                           ),
                         ),
                     ],
@@ -187,7 +191,7 @@ class _IosActionSheet<T> extends StatelessWidget {
                       if (cancelLabel != null && cancelDestructive) ...[
                         const SizedBox(height: 8),
                         IosAlertButton(
-                          minHeight: 52,
+                          minHeight: 48,
                           bold: false,
                           destructive: true,
                           onPressed: () => Navigator.of(context).pop(),
@@ -199,9 +203,11 @@ class _IosActionSheet<T> extends StatelessWidget {
                 ),
               ),
               if (cancelLabel != null && !cancelDestructive) ...[
-                const SizedBox(height: 12),
+                // ios27 `.action-sheet-cancel { margin-top: 8px }` below the
+                // group's last button.
+                const SizedBox(height: 8),
                 IosAlertButton(
-                  minHeight: 52,
+                  minHeight: 48,
                   onPressed: () => Navigator.of(context).pop(),
                   child: Text(cancelLabel!),
                 ),

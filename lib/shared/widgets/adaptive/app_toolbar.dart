@@ -5,9 +5,12 @@ import 'package:flutter/material.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
 
-/// IOS_LOOK: header buttons of an `ion-toolbar` in the Ionic iOS 26 theme:
+/// IOS_LOOK: header buttons of an `ion-toolbar` in the Ionic iOS theme:
 /// all `ion-button`s of one `ion-buttons` slot share one 44pt Liquid Glass
 /// capsule with black icons. Elsewhere the children are a plain [Row].
+/// IOS27_SWEEP: ionic-theme-ios27 `theme-buttons` – icon-only buttons 44pt
+/// with a 1.4rem (23.8pt) icon, text buttons 1.05rem (17.85pt) medium with
+/// 12pt padding.
 ///
 /// Use it as the only entry of `AppBar.actions` (or as `leading`):
 /// `actions: [ToolbarButtonGroup(children: [IconButton(...), ...])]`.
@@ -35,7 +38,7 @@ class ToolbarButtonGroup extends StatelessWidget {
                 foregroundColor: fg,
                 minimumSize: const Size(44, 44),
                 padding: const EdgeInsets.symmetric(horizontal: 10),
-                iconSize: 22,
+                iconSize: IonToolbarButtonMetrics.iconSize,
               ),
             ),
             child: TextButtonTheme(
@@ -43,9 +46,10 @@ class ToolbarButtonGroup extends StatelessWidget {
                 style: TextButton.styleFrom(
                   foregroundColor: fg,
                   minimumSize: const Size(44, 44),
-                  padding: const EdgeInsets.symmetric(horizontal: 14),
+                  padding: const EdgeInsets.symmetric(horizontal: 12),
                   textStyle: const TextStyle(
-                      fontSize: 17, fontWeight: FontWeight.w500),
+                      fontSize: IonToolbarButtonMetrics.textSize,
+                      fontWeight: FontWeight.w500),
                 ),
               ),
               child: Row(mainAxisSize: MainAxisSize.min, children: children),
@@ -55,6 +59,19 @@ class ToolbarButtonGroup extends StatelessWidget {
       ),
     );
   }
+}
+
+/// IOS27_SWEEP: ionic-theme-ios27 toolbar button metrics (1rem = 17px on
+/// the iPhone, Ionic `--ion-dynamic-font: -apple-system-body`).
+abstract final class IonToolbarButtonMetrics {
+  /// Icon-only `ion-button` / `ion-back-button`: 44 × 44.
+  static const double size = 44;
+
+  /// `.button-has-icon-only ion-icon { font-size: 1.4rem }`.
+  static const double iconSize = 23.8;
+
+  /// `ion-button { font-size: 1.05rem }` (text buttons).
+  static const double textSize = 17.85;
 }
 
 /// IOS_LOOK: close button of an `ion-modal` header (`ion-buttons slot="end"`
@@ -92,7 +109,8 @@ class IonCloseButton extends StatelessWidget {
   }
 }
 
-/// A 36–44pt round icon in the iOS 26 look – used for the back chevron and
+/// A 44pt round icon in the iOS look (IOS27_SWEEP: ios27 back button
+/// `--min-width/--min-height: 44px`) – used for the back chevron and
 /// close buttons. [filled] gives the light-grey modal close style, otherwise
 /// the Liquid Glass circle of the toolbar back button.
 class IosCircleIcon extends StatelessWidget {
@@ -100,7 +118,7 @@ class IosCircleIcon extends StatelessWidget {
     super.key,
     required this.icon,
     this.filled = false,
-    this.size = 40,
+    this.size = IonToolbarButtonMetrics.size,
     this.iconSize = 22,
   });
 
@@ -147,6 +165,11 @@ class IosCircleIcon extends StatelessWidget {
 /// --min-height: 64px }`). The same value as [kIosCardModalToolbarHeight].
 const double kIonModalToolbarHeight = 64;
 
+/// IOS27_SWEEP: iOS `ion-title` font size, `min(1.0625rem, 20.4px)` with
+/// the iPhone root font of 17px (`-apple-system-body`) = 18.06pt, weight
+/// 600.
+const double kIonTitleFontSize = 18.0625;
+
 /// PARITY_R5: `toolbarHeight` for an [AppBar] inside a sheet / card modal:
 /// [kIonModalToolbarHeight] on iOS, null (theme default) elsewhere. Without
 /// it an app bar in a bottom sheet would get the page toolbar height of
@@ -189,7 +212,16 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
       decoration: BoxDecoration(
         border: showDivider
             ? Border(
-                bottom: BorderSide(color: theme.dividerColor, width: 0.5))
+                bottom: BorderSide(
+                  // IOS27_SWEEP: ion-toolbar (ios) --border-color
+                  // step-150 → rgba(0,0,0,.2); dark #404040.
+                  color: useIosLook(context)
+                      ? (theme.brightness == Brightness.dark
+                          ? const Color(0xFF404040)
+                          : const Color(0x33000000))
+                      : theme.dividerColor,
+                  width: 0.5,
+                ))
             : null,
       ),
       child: NavigationToolbar(
@@ -199,7 +231,8 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
           maxLines: 1,
           overflow: TextOverflow.ellipsis,
           style: TextStyle(
-            fontSize: 17,
+            // IOS27_SWEEP: ion-title min(1.0625rem, 20.4px) = 18.06pt
+            fontSize: kIonTitleFontSize,
             fontWeight: FontWeight.w600,
             color: theme.colorScheme.onSurface,
           ),

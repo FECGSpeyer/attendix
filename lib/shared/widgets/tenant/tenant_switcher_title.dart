@@ -316,16 +316,14 @@ class _IosTenantPopoverContent extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    // ion-list lines="none" on the glass popover
-    final itemBackground = dark ? const Color(0xFF1C1C1D) : Colors.white;
+    // IOS27_SWEEP: ionic-theme-ios27 popover glass (radius 34); the
+    // `ion-list` / `ion-item` inside it are transparent.
     return Material(
       type: MaterialType.transparency,
-      child: IosGlassSurface(
-        borderRadius: const BorderRadius.all(Radius.circular(24)),
-        blur: 2,
+      child: IosGlassSurface.popover(
+        brightness: theme.brightness,
         child: ColoredBox(
-          color: itemBackground.withValues(alpha: 0.86),
+          color: Colors.transparent,
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(vertical: 6),
             child: Column(

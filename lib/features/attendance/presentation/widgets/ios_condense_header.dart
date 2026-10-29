@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon; // PARITY_R5
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
 
 /// UX_ATT: true when the page should render Ionic's iOS mode (iPhone app and
 /// Flutter web in iPhone Safari). Elsewhere the Material (Ionic md) look stays.
@@ -54,7 +54,8 @@ class CondenseHeaderController {
   }
 }
 
-/// Large iOS title (`ion-title size="large"`: 34 px bold, 16 px inset).
+/// Large iOS title (`ion-title size="large"`: min(2.125rem, 61.2px) =
+/// 36.125pt bold, no letter spacing, 16pt inset; IOS27_SWEEP).
 class IosLargeTitle extends StatelessWidget {
   const IosLargeTitle(this.title, {super.key});
 
@@ -63,16 +64,14 @@ class IosLargeTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.fromLTRB(16, 4, 16, 6),
+      // same box as the shared IonLargeTitle (title padding 2 / 4 +
+      // toolbar padding-bottom 3)
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 7),
       child: Text(
         title,
         maxLines: 1,
         overflow: TextOverflow.ellipsis,
-        style: TextStyle(
-          fontSize: 34,
-          height: 1.2,
-          fontWeight: FontWeight.w700,
-          letterSpacing: 0.37,
+        style: IonIos.largeTitle.copyWith(
           color: Theme.of(context).colorScheme.onSurface,
         ),
       ),

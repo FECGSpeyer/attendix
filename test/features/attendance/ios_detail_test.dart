@@ -8,6 +8,7 @@ import 'package:attendix/features/attendance/presentation/widgets/attendance_det
 import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart';
 import 'package:attendix/features/attendance/presentation/widgets/attendance_detail/status_chip.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonDetailChevron;
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -184,7 +185,8 @@ void main() {
       await tester.tap(find.byIcon(Icons.more_vert));
       await tester.pumpAndSettle();
       expect(find.byType(PopupMenuItem<String>), findsNothing);
-      expect(find.byIcon(Icons.chevron_right), findsOneWidget);
+      // IOS27_SWEEP: the ios27 detail chevron (IonDetailChevron)
+      expect(find.byType(IonDetailChevron), findsOneWidget);
       await tester.tap(find.text('Legende'));
       await tester.pumpAndSettle();
       expect(result, 'legend');
