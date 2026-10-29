@@ -26,6 +26,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
@@ -1010,66 +1011,38 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   }
 
   Widget _buildSearch() {
-    if (ionIsIos(context)) {
-      return Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: IonSearchbar(
-                  controller: _searchController,
-                  hint: context.l10n.filesSearchPlaceholder,
-                  onChanged: (_) {},
-                ),
+    // PARITY_R9: Ionic `.search-row` – the searchbar (host padding 8 on
+    // both platforms: iOS ios27 glass, md white with shadow) next to the
+    // help button; "Suche zurücksetzen" below while a term is entered.
+    final ios = ionIsIos(context);
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          children: [
+            Expanded(
+              child: IonSearchbar(
+                controller: _searchController,
+                hint: context.l10n.filesSearchPlaceholder,
+                onChanged: (_) {},
+                padding: ios ? const EdgeInsets.all(8) : IonMd.searchbarPadding,
               ),
-              Padding(
-                padding: const EdgeInsets.only(right: 8),
-                child: IconButton(
-                  icon: const Icon(CupertinoIcons.question_circle, color: AppColors.medium),
-                  onPressed: _showSearchHelp,
-                ),
-              ),
-            ],
-          ),
-          if (_hasSearchTerm)
-            Padding(
-              padding: const EdgeInsets.only(left: 8),
-              child: TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
             ),
-        ],
-      );
-    }
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingS),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Row(
-            children: [
-              Expanded(
-                child: TextField(
-                  controller: _searchController,
-                  decoration: InputDecoration(
-                    hintText: context.l10n.filesSearchPlaceholder,
-                    prefixIcon: const Icon(Icons.search),
-                    isDense: true,
-                    suffixIcon: _hasSearchTerm
-                        ? IconButton(icon: const Icon(Icons.clear), onPressed: _searchController.clear)
-                        : null,
-                  ),
-                ),
-              ),
-              IconButton(
-                icon: const Icon(Icons.help_outline, color: AppColors.medium),
+            Padding(
+              padding: EdgeInsets.only(right: ios ? 8 : 4),
+              child: IconButton(
+                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline, color: AppColors.medium),
                 onPressed: _showSearchHelp,
               ),
-            ],
+            ),
+          ],
+        ),
+        if (_hasSearchTerm)
+          Padding(
+            padding: const EdgeInsets.only(left: 8),
+            child: TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
           ),
-          if (_hasSearchTerm)
-            TextButton(onPressed: _searchController.clear, child: IonButtonLabel(context.l10n.filesResetSearch)),
-        ],
-      ),
+      ],
     );
   }
 
@@ -1172,9 +1145,13 @@ class _EmptyCard extends StatelessWidget {
     if (ios) {
       // IOS_FORMS2: Ionic iOS ion-card here renders flat (no shadow) with
       // the message in the text colour at 17pt.
+      // PARITY_R9: ios27 `ion-card-content` – padding 16 20, 1rem (17pt)
+      // text with line-height 1.29 (`p { font-size: inherit }`).
       return Container(
+        key: const ValueKey('files-empty-card'),
+        width: double.infinity,
         margin: const EdgeInsets.all(AppDimensions.paddingM),
-        padding: const EdgeInsets.all(AppDimensions.paddingL),
+        padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 16),
         decoration: BoxDecoration(
           color: IonIos.itemBackground(context),
           borderRadius: BorderRadius.circular(IonIos.groupRadius),
@@ -1192,7 +1169,8 @@ class _EmptyCard extends StatelessWidget {
             Text(
               text,
               textAlign: TextAlign.center,
-              style: TextStyle(fontSize: 17, color: IonIos.text(context)),
+              style: TextStyle(
+                  fontSize: 17, height: 1.29, color: IonIos.text(context)),
             ),
           ],
         ),

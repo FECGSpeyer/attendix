@@ -938,28 +938,32 @@ class IonToggleItem extends StatelessWidget {
   }
 }
 
-/// Ionic `ion-searchbar` in a toolbar. iOS (ios26): 60pt row, glass field
-/// (44pt, radius 20, 72 % white, soft shadow) with the search icon 12pt in;
-/// md: the app's filled Material field.
+/// Ionic `ion-searchbar` (by default in a toolbar).
+/// PARITY_R9: iOS delegates to the shared ionic-theme-ios27 searchbar
+/// ([ion.IonSearchbar]: white glass pill with the fine 0.5pt ring, 44pt,
+/// radius 22) so every iOS searchbar of the app looks the same; in a
+/// toolbar (`toolbar-searchbar`) toolbar padding 8 + host padding 8 +
+/// input-container margin 4 put the field 20pt from the edges in a 60pt
+/// row. md: the shared [IonMdSearchbar] (white, shadow, no border).
 class IonSearchbar extends StatelessWidget {
   const IonSearchbar({
     super.key,
     required this.controller,
     required this.hint,
     required this.onChanged,
+    this.padding,
   });
 
   final TextEditingController controller;
   final String hint;
   final ValueChanged<String> onChanged;
 
+  /// Host padding around the field; defaults to the toolbar placement
+  /// (iOS 20 / 8, md [IonMd.searchbarToolbarPadding]).
+  final EdgeInsetsGeometry? padding;
+
   @override
   Widget build(BuildContext context) {
-    void clear() {
-      controller.clear();
-      onChanged('');
-    }
-
     if (!ionIsIos(context)) {
       // MD_SWEEP: the shared Ionic md searchbar in a toolbar (7 / 3 host
       // padding).
@@ -967,76 +971,16 @@ class IonSearchbar extends StatelessWidget {
         controller: controller,
         hintText: hint,
         onChanged: onChanged,
-        padding: IonMd.searchbarToolbarPadding,
+        padding: padding ?? IonMd.searchbarToolbarPadding,
       );
     }
-    final dark = Theme.of(context).brightness == Brightness.dark;
-    final grey = dark ? const Color(0xFF8E8E93) : const Color(0xFF8A8A8E);
-    return SizedBox(
-      height: 60,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 8, 8, 8),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: dark
-                ? const Color(0xFF2C2C2E).withValues(alpha: 0.72)
-                : Colors.white.withValues(alpha: 0.72),
-            borderRadius: BorderRadius.circular(20),
-            border: Border(
-              top: BorderSide(
-                color: dark ? Colors.white12 : Colors.white,
-                width: 0.5,
-              ),
-            ),
-            boxShadow: [
-              BoxShadow(
-                color: dark
-                    ? Colors.black.withValues(alpha: 0.5)
-                    : const Color(0xFFDCDCDC).withValues(alpha: 0.82),
-                blurRadius: 10,
-              ),
-            ],
-          ),
-          child: ValueListenableBuilder<TextEditingValue>(
-            valueListenable: controller,
-            builder: (context, value, _) => Row(
-              children: [
-                const SizedBox(width: 12),
-                Icon(CupertinoIcons.search, size: 20, color: grey),
-                const SizedBox(width: 8),
-                Expanded(
-                  child: TextField(
-                    controller: controller,
-                    onChanged: onChanged,
-                    style: TextStyle(fontSize: 16, color: IonIos.text(context)),
-                    decoration: InputDecoration(
-                      hintText: hint,
-                      hintStyle: TextStyle(fontSize: 16, color: grey),
-                      border: InputBorder.none,
-                      enabledBorder: InputBorder.none,
-                      focusedBorder: InputBorder.none,
-                      filled: false,
-                      isDense: true,
-                      contentPadding: EdgeInsets.zero,
-                    ),
-                  ),
-                ),
-                if (value.text.isNotEmpty)
-                  GestureDetector(
-                    onTap: clear,
-                    child: Padding(
-                      padding: const EdgeInsets.symmetric(horizontal: 10),
-                      child: Icon(
-                        CupertinoIcons.clear_circled_solid,
-                        size: 18,
-                        color: grey,
-                      ),
-                    ),
-                  ),
-              ],
-            ),
-          ),
-        ),
+    return Padding(
+      padding:
+          padding ?? const EdgeInsets.symmetric(horizontal: 20, vertical: 8),
+      child: ion.IonSearchbar(
+        controller: controller,
+        hintText: hint,
+        onChanged: onChanged,
       ),
     );
   }

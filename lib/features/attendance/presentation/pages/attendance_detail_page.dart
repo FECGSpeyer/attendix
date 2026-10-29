@@ -50,6 +50,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos; // PARITY_R3
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
@@ -377,11 +378,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (useIosLook(context)) {
       return BorderRadius.circular(IonIos.groupRadius);
     }
-    final shape = Theme.of(context).cardTheme.shape;
-    if (shape is RoundedRectangleBorder && shape.borderRadius is BorderRadius) {
-      return shape.borderRadius as BorderRadius;
-    }
-    return BorderRadius.circular(12);
+    // PARITY_R9: md – the md-ion-list-inset item-group radius (16), not
+    // the md ion-card radius (4) of the card theme.
+    return BorderRadius.circular(IonMd.groupRadius);
   }
 
   @override

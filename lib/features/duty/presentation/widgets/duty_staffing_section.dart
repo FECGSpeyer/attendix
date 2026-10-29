@@ -16,6 +16,8 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // PARITY_R9
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
@@ -57,8 +59,13 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final l10n = context.l10n;
     final neededText = l10n.attendanceNeeded(_required);
 
+    // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
+    // ion-card – md shows a flat block with radius 16 and no shadow.
+    final ios = useIosLook(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
+      elevation: ios ? null : 0,
+      shape: ios ? null : IonMd.insetGroupShape,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
