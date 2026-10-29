@@ -13,9 +13,21 @@ Systematischer Vergleich aller Ionic Services mit Flutter Repositories.
 
 Analysiere die Ionic Services und Flutter Repositories und erstelle ein detailliertes Method-Mapping.
 
-**Output:** JSON mit `services`, `methods`, `missingServices`, `overallScore`
+**Output:** JSON mit `services`, `methods`, `missingServices`, `overallScore`, `ionicSourceAvailable`
 
 ---
+
+## Voraussetzung: Ionic-Quelle (optional)
+
+Die Ionic-Quelle (`[IONIC_PATH]`, siehe `MIGRATION.md`) liegt **nicht** in diesem
+Repository und ist nur auf einem lokalen Rechner mit Checkout von
+`FECGSpeyer/attendance` vorhanden. Prüfe zuerst, ob `[IONIC_PATH]` existiert:
+
+- **Vorhanden:** Vergleich wie unten beschrieben.
+- **Nicht vorhanden** (z. B. Cloud-Session, Sol-/Codex-Review ohne Netz): keinen
+  Ionic-Vergleich behaupten. Nur die Flutter-Seite auswerten und im Ergebnis
+  ausdrücklich `"ionicSourceAvailable": false` setzen. Das ist kein Befund und
+  kein Fehler.
 
 ## Scan-Methode
 
