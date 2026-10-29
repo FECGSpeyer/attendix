@@ -3,8 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
+import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../people/people_list_utils.dart';
 
 /// Model for a grouped member list
 class MembersGroup {
@@ -17,6 +19,34 @@ class MembersGroup {
     required this.groupName,
     required this.members,
   });
+}
+
+/// Ionic members.page → Utils.getModifiedPlayersForList without a main
+/// group: groups by sort_order, then name (players without a known group
+/// first); inside a group by player sort_order, then last name.
+List<MembersGroup> buildMembersGroups(List<Person> players, List<Group> groups) {
+  final sorted = sortPeopleByGroup(
+    players,
+    [for (final g in groups) g.copyWith(maingroup: false)],
+  );
+  final names = {for (final g in groups) g.id: g.name};
+
+  final result = <MembersGroup>[];
+  for (final p in sorted) {
+    final known = names.containsKey(p.instrument);
+    final groupId = known ? p.instrument! : -1;
+    if (result.isEmpty || result.last.groupId != groupId) {
+      result.add(MembersGroup(
+        groupId: groupId,
+        groupName: known
+            ? names[p.instrument]!
+            : l10nWithoutContext.peopleNoGroupAssigned,
+        members: [],
+      ));
+    }
+    result.last.members.add(p);
+  }
+  return result;
 }
 
 /// Provider for all active members grouped by instrument
@@ -32,49 +62,7 @@ final membersGroupedProvider = FutureProvider<List<MembersGroup>>((ref) async {
   // Get all active players (getPlayers defaults: pending=false, left=null)
   final players = await playerRepo.getPlayers();
 
-  // Sort players: isLeader desc, then lastName asc (preserved from original query)
-  players.sort((a, b) {
-    final leaderCmp = (b.isLeader ? 1 : 0).compareTo(a.isLeader ? 1 : 0);
-    if (leaderCmp != 0) return leaderCmp;
-    return a.lastName.toLowerCase().compareTo(b.lastName.toLowerCase());
-  });
-
-  // Sort groups: maingroup desc, then name asc (preserved from original query)
-  final sortedGroups = [...groups]..sort((a, b) {
-    final aMain = a.maingroup ?? false;
-    final bMain = b.maingroup ?? false;
-    final mainCmp = (bMain ? 1 : 0).compareTo(aMain ? 1 : 0);
-    if (mainCmp != 0) return mainCmp;
-    return a.name.toLowerCase().compareTo(b.name.toLowerCase());
-  });
-
-  // Group players by instrument
-  final List<MembersGroup> result = [];
-
-  for (final group in sortedGroups) {
-    final groupId = group.id;
-    if (groupId == null) continue;
-    final groupName = group.name;
-    final groupMembers = players.where((p) => p.instrument == groupId).toList();
-
-    if (groupMembers.isNotEmpty) {
-      result.add(MembersGroup(
-        groupId: groupId,
-        groupName: groupName,
-        members: groupMembers,
-      ));
-    }
-  }
-
-  // Ionic recalculateGroupHeaders: players without a (known) group are shown
-  // under "Ohne Gruppe" instead of being dropped.
-  final knownIds = sortedGroups.map((g) => g.id).whereType<int>().toSet();
-  final ungrouped = players.where((p) => !knownIds.contains(p.instrument)).toList();
-  if (ungrouped.isNotEmpty) {
-    result.add(MembersGroup(groupId: -1, groupName: l10nWithoutContext.peopleNoGroupAssigned, members: ungrouped));
-  }
-
-  return result;
+  return buildMembersGroups(players, groups);
 });
 
 /// Provider for total member count

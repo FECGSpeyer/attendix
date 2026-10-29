@@ -103,6 +103,46 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     });
   }
 
+  /// Ionic person.page `hasChanges` for a new person: something was entered.
+  bool get _hasInput =>
+      _pickedImage != null ||
+      [
+        _firstNameController,
+        _lastNameController,
+        _emailController,
+        _phoneController,
+        _notesController,
+        _rangeController,
+        _instrumentsController,
+        _testResultController,
+        _otherExerciseController,
+      ].any((c) => c.text.trim().isNotEmpty);
+
+  /// Ionic dismiss(): with changes ask "Änderungen verwerfen?" first.
+  Future<void> _close() async {
+    if (_hasInput) {
+      final discard = await showAppDialog<bool>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(ctx.l10n.personDiscardChanges),
+          content: Text(ctx.l10n.personDiscardChangesMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, false),
+              child: Text(ctx.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, true),
+              child: Text(ctx.l10n.commonYes),
+            ),
+          ],
+        ),
+      );
+      if (discard != true) return;
+    }
+    if (mounted) context.pop();
+  }
+
   String get _nameKey =>
       '${_firstNameController.text.trim()}|${_lastNameController.text.trim()}';
 
@@ -270,7 +310,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           IconButton(
             tooltip: context.l10n.commonClose,
             icon: const Icon(Icons.close),
-            onPressed: () => context.pop(),
+            onPressed: _close,
           ),
         ],
       ),

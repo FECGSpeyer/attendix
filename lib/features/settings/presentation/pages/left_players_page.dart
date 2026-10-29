@@ -109,7 +109,15 @@ class LeftPlayersPage extends ConsumerWidget {
                 return _LeftPlayerItem(
                   player: player,
                   onReactivate: () => _reactivatePlayer(context, ref, player),
-                  onViewDetails: () => context.push('/people/${player.id}'),
+                  // P10_PEOPLE: the person page can reactivate (Ionic
+                  // hasLeft modal) → reload the list afterwards.
+                  onViewDetails: () async {
+                    // Capture the container: the page may be disposed when
+                    // the push returns (e.g. tab switch replaced the stack).
+                    final container = ProviderScope.containerOf(context);
+                    await context.push('/people/${player.id}');
+                    container.invalidate(leftPlayersProvider);
+                  },
                 );
               },
             ),

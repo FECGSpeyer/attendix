@@ -334,7 +334,9 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('person_attendances')
-          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, tenantId)')
+          // PARITY_R10: type name/hide_name for the Ionic absence title
+          // (Utils.getTypeTitle: typeInfo, else the type name unless hidden).
+          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, tenantId, attType:type_id(name, hide_name))')
           .inFilter('person_id', personIds)
           .inFilter('status', [2, 4, 5])
           .eq('attendance.tenantId', currentTenantId);

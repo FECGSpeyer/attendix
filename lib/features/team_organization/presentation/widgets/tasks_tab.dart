@@ -36,6 +36,11 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     setState(() => _optimistic[id] = next);
     try {
       await ref.read(teamTaskNotifierProvider.notifier).update(id, {'status': next});
+      // P10_SONGS_ORG: keep the optimistic status until the reloaded list
+      // carries it (otherwise the old status flickers back meanwhile).
+      try {
+        await ref.read(teamTasksProvider.future);
+      } catch (_) {}
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.tasksStatusFailed);
     } finally {

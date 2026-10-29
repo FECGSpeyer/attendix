@@ -1889,9 +1889,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 fields: _fields)
             : _exportPage(att, _planIndex, current),
       ],
-      extraActions: [
-        if (_fields.isNotEmpty && plans.length > 1)
+      // P10_SELF_PLAN: Ionic showOptions – PDF exportieren, (alle Pläne),
+      // 2x A5, Telegram …, then "Registerprobenplan erstellen"; no image.
+      pdfLabel: context.l10n.planningExportPdf,
+      pdf2xLabel: context.l10n.planningExportPdfA5,
+      withImage: false,
+      afterPdfActions: [
+        if (plans.length > 1)
           PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
+      ],
+      trailingActions: [
         if (showSectional)
           PlanSheetAction('sectional', context.l10n.planningCreateSectionalPlan, icon: Icons.groups),
       ],

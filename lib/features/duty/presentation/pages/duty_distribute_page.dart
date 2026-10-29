@@ -321,8 +321,19 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
             ),
         ],
       ),
-      body: _loading
-          ? const Center(child: AppSpinner())
+      // P10_SELF_PLAN: Ionic loading messages "Verteile Dienste…" /
+      // "Teile ein…".
+      body: _loading || _saving
+          ? Center(
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  const AppSpinner(),
+                  const SizedBox(height: 12),
+                  Text(_saving ? context.l10n.dutyAssigning : context.l10n.dutyDistributing),
+                ],
+              ),
+            )
           : _preview
               ? _buildPreview()
               : _buildRules(),
