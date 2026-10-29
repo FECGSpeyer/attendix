@@ -5,7 +5,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../utils/song_utils.dart';
-import 'pdf_viewer_sheet.dart';
+import 'pdf_viewer_page.dart';
 import '../../../../l10n/l10n.dart';
 
 /// Open a song file: PDFs and images in the in-app viewers, everything else
@@ -13,7 +13,7 @@ import '../../../../l10n/l10n.dart';
 Future<void> openSongFile(BuildContext context, SongFile file) async {
   if (file.url.isEmpty) return;
   if (SongUtils.isPdf(file)) {
-    await showPdfViewerSheet(context, url: file.url, fileName: file.fileName);
+    await showPdfViewer(context, url: file.url, fileName: file.fileName);
   } else if (SongUtils.isImage(file)) {
     await showImageViewerSheet(context, url: file.url, fileName: file.fileName);
   } else {

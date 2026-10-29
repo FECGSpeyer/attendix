@@ -8362,6 +8362,73 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String get redesignManageAreaCommunication => 'Kommunikation';
+
+  @override
+  String get redesignManageAreaData => 'Auswertung & Daten';
+
+  @override
+  String get redesignManageAreaEvents => 'Termine & Planung';
+
+  @override
+  String get redesignManageAreaGroup => 'Gruppe';
+
+  @override
+  String get redesignManageAreaMembers => 'Mitglieder & Rollen';
+
+  @override
+  String get redesignManageAreaWorks => 'Werke, Register & Dateien';
+
+  @override
+  String get redesignManageClassic => 'Alle Einstellungen (bisherige Ansicht)';
+
+  @override
+  String redesignManageFooter(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Alle $count bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.',
+      one: 'Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManageGeneralHint => 'Name, Saison, Gründe, Anmeldung';
+
+  @override
+  String get redesignManageGeneralTitle => 'Allgemeine Einstellungen';
+
+  @override
+  String get redesignManageMissingHint => 'Mitglieder mit E-Mail, aber ohne Zugang';
+
+  @override
+  String get redesignManageNoMatch => 'Keine Einstellung passt zur Suche.';
+
+  @override
+  String redesignManagePending(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen warten auf Freigabe',
+      one: '1 Person wartet auf Freigabe',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManagePendingTitle => 'Freigaben';
+
+  @override
+  String get redesignManageRecent => 'Zuletzt geöffnet';
+
+  @override
+  String get redesignManageSearch => 'Einstellung suchen';
+
+  @override
+  String get redesignManageSearchLabel => 'Verwaltung durchsuchen';
+
+  @override
   String get redesignMeAbsence => 'Abwesenheit eintragen';
 
   @override
@@ -11286,6 +11353,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterPdfLoading => 'PDF wird geladen...';
+
+  @override
+  String get songsFlutterPdfPagedMode => 'Seitenweise blättern';
+
+  @override
+  String get songsFlutterPdfScrollMode => 'Durchgehend scrollen';
 
   @override
   String get songsFlutterPreviousPage => 'Vorherige Seite';

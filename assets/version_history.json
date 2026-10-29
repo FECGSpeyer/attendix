@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.18.1",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 PDFs öffnen im Vollbild und lassen sich durch alle Seiten scrollen, mit zwei Fingern zoomen",
+        "✨ PDF-Ansicht: Umschalter auf seitenweises Blättern (senkrecht wischen oder oben bzw. unten tippen)"
+      ]
+    },
+    {
       "version": "0.18.0",
       "date": "29.10.2026",
       "changes": [

@@ -385,6 +385,25 @@
         "link": "Link",
         "notFound": "Dieses Werk gibt es hier nicht mehr.",
         "noFiles": "Zu diesem Werk gibt es noch keine Dateien."
+      },
+      "manage": {
+        "search": "Einstellung suchen",
+        "searchLabel": "Verwaltung durchsuchen",
+        "pending": "{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}",
+        "areaMembers": "Mitglieder & Rollen",
+        "areaEvents": "Termine & Planung",
+        "areaWorks": "Werke, Register & Dateien",
+        "areaData": "Auswertung & Daten",
+        "areaCommunication": "Kommunikation",
+        "areaGroup": "Gruppe",
+        "footer": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
+        "noMatch": "Keine Einstellung passt zur Suche.",
+        "classic": "Alle Einstellungen (bisherige Ansicht)",
+        "pendingTitle": "Freigaben",
+        "generalTitle": "Allgemeine Einstellungen",
+        "generalHint": "Name, Saison, Gründe, Anmeldung",
+        "recent": "Zuletzt geöffnet",
+        "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang"
       }
     }
   },
@@ -774,6 +793,25 @@
         "link": "Link",
         "notFound": "This work no longer exists here.",
         "noFiles": "There are no files for this work yet."
+      },
+      "manage": {
+        "search": "Search settings",
+        "searchLabel": "Search administration",
+        "pending": "{count, plural, one {1 person is waiting for approval} other {{count} people are waiting for approval}}",
+        "areaMembers": "Members & roles",
+        "areaEvents": "Events & planning",
+        "areaWorks": "Works, sections & files",
+        "areaData": "Statistics & data",
+        "areaCommunication": "Communication",
+        "areaGroup": "Group",
+        "footer": "{count, plural, one {The previous entry sits in these areas and can be reached directly via the search.} other {All {count} previous entries sit in these areas and can be reached directly via the search.}}",
+        "noMatch": "No setting matches the search.",
+        "classic": "All settings (previous view)",
+        "pendingTitle": "Approvals",
+        "generalTitle": "General settings",
+        "generalHint": "Name, season, reasons, registration",
+        "recent": "Recently opened",
+        "missingHint": "Members with an e-mail but no access"
       }
     }
   }

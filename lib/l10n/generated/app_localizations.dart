@@ -14483,6 +14483,108 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.manage.areaCommunication
+  ///
+  /// In de, this message translates to:
+  /// **'Kommunikation'**
+  String get redesignManageAreaCommunication;
+
+  /// redesign.manage.areaData
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung & Daten'**
+  String get redesignManageAreaData;
+
+  /// redesign.manage.areaEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Termine & Planung'**
+  String get redesignManageAreaEvents;
+
+  /// redesign.manage.areaGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get redesignManageAreaGroup;
+
+  /// redesign.manage.areaMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder & Rollen'**
+  String get redesignManageAreaMembers;
+
+  /// redesign.manage.areaWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Werke, Register & Dateien'**
+  String get redesignManageAreaWorks;
+
+  /// redesign.manage.classic
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Einstellungen (bisherige Ansicht)'**
+  String get redesignManageClassic;
+
+  /// redesign.manage.footer
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}'**
+  String redesignManageFooter(num count);
+
+  /// redesign.manage.generalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Name, Saison, Gründe, Anmeldung'**
+  String get redesignManageGeneralHint;
+
+  /// redesign.manage.generalTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Allgemeine Einstellungen'**
+  String get redesignManageGeneralTitle;
+
+  /// redesign.manage.missingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder mit E-Mail, aber ohne Zugang'**
+  String get redesignManageMissingHint;
+
+  /// redesign.manage.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Einstellung passt zur Suche.'**
+  String get redesignManageNoMatch;
+
+  /// redesign.manage.pending
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}'**
+  String redesignManagePending(num count);
+
+  /// redesign.manage.pendingTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Freigaben'**
+  String get redesignManagePendingTitle;
+
+  /// redesign.manage.recent
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt geöffnet'**
+  String get redesignManageRecent;
+
+  /// redesign.manage.search
+  ///
+  /// In de, this message translates to:
+  /// **'Einstellung suchen'**
+  String get redesignManageSearch;
+
+  /// redesign.manage.searchLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Verwaltung durchsuchen'**
+  String get redesignManageSearchLabel;
+
   /// redesign.me.absence
   ///
   /// In de, this message translates to:
@@ -19606,6 +19708,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'PDF wird geladen...'**
   String get songsFlutterPdfLoading;
+
+  /// songs.flutter.pdfPagedMode
+  ///
+  /// In de, this message translates to:
+  /// **'Seitenweise blättern'**
+  String get songsFlutterPdfPagedMode;
+
+  /// songs.flutter.pdfScrollMode
+  ///
+  /// In de, this message translates to:
+  /// **'Durchgehend scrollen'**
+  String get songsFlutterPdfScrollMode;
 
   /// songs.flutter.previousPage
   ///

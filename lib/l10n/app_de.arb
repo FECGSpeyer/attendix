@@ -10975,6 +10975,84 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignManageAreaCommunication": "Kommunikation",
+  "@redesignManageAreaCommunication": {
+    "description": "redesign.manage.areaCommunication"
+  },
+  "redesignManageAreaData": "Auswertung & Daten",
+  "@redesignManageAreaData": {
+    "description": "redesign.manage.areaData"
+  },
+  "redesignManageAreaEvents": "Termine & Planung",
+  "@redesignManageAreaEvents": {
+    "description": "redesign.manage.areaEvents"
+  },
+  "redesignManageAreaGroup": "Gruppe",
+  "@redesignManageAreaGroup": {
+    "description": "redesign.manage.areaGroup"
+  },
+  "redesignManageAreaMembers": "Mitglieder & Rollen",
+  "@redesignManageAreaMembers": {
+    "description": "redesign.manage.areaMembers"
+  },
+  "redesignManageAreaWorks": "Werke, Register & Dateien",
+  "@redesignManageAreaWorks": {
+    "description": "redesign.manage.areaWorks"
+  },
+  "redesignManageClassic": "Alle Einstellungen (bisherige Ansicht)",
+  "@redesignManageClassic": {
+    "description": "redesign.manage.classic"
+  },
+  "redesignManageFooter": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
+  "@redesignManageFooter": {
+    "description": "redesign.manage.footer",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignManageGeneralHint": "Name, Saison, Gründe, Anmeldung",
+  "@redesignManageGeneralHint": {
+    "description": "redesign.manage.generalHint"
+  },
+  "redesignManageGeneralTitle": "Allgemeine Einstellungen",
+  "@redesignManageGeneralTitle": {
+    "description": "redesign.manage.generalTitle"
+  },
+  "redesignManageMissingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
+  "@redesignManageMissingHint": {
+    "description": "redesign.manage.missingHint"
+  },
+  "redesignManageNoMatch": "Keine Einstellung passt zur Suche.",
+  "@redesignManageNoMatch": {
+    "description": "redesign.manage.noMatch"
+  },
+  "redesignManagePending": "{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}",
+  "@redesignManagePending": {
+    "description": "redesign.manage.pending",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignManagePendingTitle": "Freigaben",
+  "@redesignManagePendingTitle": {
+    "description": "redesign.manage.pendingTitle"
+  },
+  "redesignManageRecent": "Zuletzt geöffnet",
+  "@redesignManageRecent": {
+    "description": "redesign.manage.recent"
+  },
+  "redesignManageSearch": "Einstellung suchen",
+  "@redesignManageSearch": {
+    "description": "redesign.manage.search"
+  },
+  "redesignManageSearchLabel": "Verwaltung durchsuchen",
+  "@redesignManageSearchLabel": {
+    "description": "redesign.manage.searchLabel"
+  },
   "redesignMeAbsence": "Abwesenheit eintragen",
   "@redesignMeAbsence": {
     "description": "redesign.me.absence"
@@ -14832,6 +14910,14 @@
   "songsFlutterPdfLoading": "PDF wird geladen...",
   "@songsFlutterPdfLoading": {
     "description": "songs.flutter.pdfLoading"
+  },
+  "songsFlutterPdfPagedMode": "Seitenweise blättern",
+  "@songsFlutterPdfPagedMode": {
+    "description": "songs.flutter.pdfPagedMode"
+  },
+  "songsFlutterPdfScrollMode": "Durchgehend scrollen",
+  "@songsFlutterPdfScrollMode": {
+    "description": "songs.flutter.pdfScrollMode"
   },
   "songsFlutterPreviousPage": "Vorherige Seite",
   "@songsFlutterPreviousPage": {

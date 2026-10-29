@@ -8368,6 +8368,73 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupsTitle => 'Switch group';
 
   @override
+  String get redesignManageAreaCommunication => 'Communication';
+
+  @override
+  String get redesignManageAreaData => 'Statistics & data';
+
+  @override
+  String get redesignManageAreaEvents => 'Events & planning';
+
+  @override
+  String get redesignManageAreaGroup => 'Group';
+
+  @override
+  String get redesignManageAreaMembers => 'Members & roles';
+
+  @override
+  String get redesignManageAreaWorks => 'Works, sections & files';
+
+  @override
+  String get redesignManageClassic => 'All settings (previous view)';
+
+  @override
+  String redesignManageFooter(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'All $count previous entries sit in these areas and can be reached directly via the search.',
+      one: 'The previous entry sits in these areas and can be reached directly via the search.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManageGeneralHint => 'Name, season, reasons, registration';
+
+  @override
+  String get redesignManageGeneralTitle => 'General settings';
+
+  @override
+  String get redesignManageMissingHint => 'Members with an e-mail but no access';
+
+  @override
+  String get redesignManageNoMatch => 'No setting matches the search.';
+
+  @override
+  String redesignManagePending(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people are waiting for approval',
+      one: '1 person is waiting for approval',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignManagePendingTitle => 'Approvals';
+
+  @override
+  String get redesignManageRecent => 'Recently opened';
+
+  @override
+  String get redesignManageSearch => 'Search settings';
+
+  @override
+  String get redesignManageSearchLabel => 'Search administration';
+
+  @override
   String get redesignMeAbsence => 'Report absence';
 
   @override
@@ -11292,6 +11359,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterPdfLoading => 'Loading PDF...';
+
+  @override
+  String get songsFlutterPdfPagedMode => 'Turn page by page';
+
+  @override
+  String get songsFlutterPdfScrollMode => 'Scroll continuously';
 
   @override
   String get songsFlutterPreviousPage => 'Previous page';
