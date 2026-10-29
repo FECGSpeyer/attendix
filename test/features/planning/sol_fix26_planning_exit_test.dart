@@ -3,7 +3,9 @@
 // that fails keeps the edit as a local draft that is restored on reopening.
 import 'dart:async';
 
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/features/planning/data/planning_write_sync.dart';
 import 'package:attendix/core/providers/branding_providers.dart';
 import 'package:attendix/core/providers/dashboard_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -116,6 +118,7 @@ void main() {
         showSongsTabProvider.overrideWithValue(false),
         showOrgPlansTabProvider.overrideWithValue(false),
         userTenantsProvider.overrideWith((ref) async => const []),
+        currentAuthUserIdProvider.overrideWith((ref) => 'u1'), // SOL_FIX27
       ],
     );
     addTearDown(c.dispose);
@@ -168,7 +171,10 @@ void main() {
   Future<List<String>> draftKeys() async =>
       (await SharedPreferences.getInstance()).getKeys().where((k) => k.startsWith('planning_draft_')).toList();
 
-  setUp(() => SharedPreferences.setMockInitialValues({}));
+  setUp(() {
+    SharedPreferences.setMockInitialValues({});
+    PlanningWriteSync.reset();
+  });
 
   testWidgets('item 1: a direct route change after a finished autosave refreshes the caches', (tester) async {
     await openInShell(tester);
@@ -215,7 +221,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.byKey(const Key('attendance')), findsOneWidget);
     expect(db.waiting, 1, reason: 'a write is running');
-    expect(await draftKeys(), ['planning_draft_1_7_i0'], reason: 'draft kept before the write');
+    expect(await draftKeys(), ['planning_draft_u1_1_7_i0'], reason: 'draft kept before the write');
 
     // Every queued write fails (the title's focus-loss autosave, if it
     // started, and the write queued by dispose).
@@ -269,7 +275,7 @@ void main() {
 
   testWidgets('item 3: a draft equal to the stored plan is dropped silently', (tester) async {
     SharedPreferences.setMockInitialValues({
-      'planning_draft_1_7_i0':
+      'planning_draft_u1_1_7_i0':
           '{"time":"18:00","title":"Probe","fields":[{"id":"a","name":"Einspielen","time":"30"}]}',
     });
     await openInShell(tester);
@@ -281,7 +287,7 @@ void main() {
 
   testWidgets('item 3: drafts are tenant-scoped', (tester) async {
     SharedPreferences.setMockInitialValues({
-      'planning_draft_2_7_i0': '{"time":"18:00","title":"Fremd","fields":[]}',
+      'planning_draft_u1_2_7_i0': '{"time":"18:00","title":"Fremd","fields":[]}',
     });
     await openInShell(tester);
     await tester.pumpAndSettle();

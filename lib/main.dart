@@ -19,6 +19,7 @@ import 'core/services/attendance_detail_cache.dart'
     show clearOfflineReadCaches, shouldClearOfflineReadCaches; // SOL_FIX7
 import 'core/services/public_plan_draft_storage.dart'
     show clearPublicPlanDrafts; // SOL_FIX12
+import 'core/services/planning_draft_store.dart' show clearPlanningDrafts; // SOL_FIX27
 import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
 import 'core/theme/app_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -130,6 +131,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
           // SOL_FIX12: the previous account's Ablaufplanung draft (plan id +
           // edit key) must not reach the next account.
           unawaited(clearPublicPlanDrafts(previous?.valueOrNull?.id));
+          // SOL_FIX27: Ablaufplan editor drafts of the previous account.
+          unawaited(clearPlanningDrafts());
         }
         unawaited(
             ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
