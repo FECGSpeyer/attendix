@@ -144,6 +144,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null) return;
     final prefs = await SharedPreferences.getInstance();
+    // A tenant switch during the awaits must not apply A's options to B.
+    if (!_stillTenant(tenant.id)) return;
     final saved = prefs.getStringList('viewOpts_${tenant.id}');
     final savedSort = prefs.getString('sortOpt_${tenant.id}');
     if (savedSort != null && mounted) setState(() => _sortOption = savedSort);
@@ -152,7 +154,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     final savedFilterAdd = prefs.getString('filterOptAdd_${tenant.id}');
     if (savedFilter != null && savedFilter != 'all' && mounted) {
       if (savedFilter == 'otherInstance') {
-        await _restoreOtherInstanceFilter(savedFilterAdd);
+        await _restoreOtherInstanceFilter(savedFilterAdd, tenant.id);
+        if (!_stillTenant(tenant.id)) return;
       } else if (savedFilter.startsWith('extra:')) {
         if (savedFilterAdd != null && savedFilterAdd.isNotEmpty) {
           setState(() {
@@ -172,6 +175,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       setState(() => _viewOptions = opts);
     }
   }
+
+  /// Whether the page is still mounted for the tenant [tenantId] that an
+  /// async restore started in.
+  bool _stillTenant(int? tenantId) =>
+      mounted && ref.read(currentTenantProvider)?.id == tenantId;
 
   Future<void> _saveViewOptions() async {
     final tenant = ref.read(currentTenantProvider);
@@ -202,7 +210,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   /// Re-applies a remembered "Mitglied anderer Instanz" filter (Ionic
   /// onFilterChanged(implicit) with the stored instance name).
-  Future<void> _restoreOtherInstanceFilter(String? name) async {
+  Future<void> _restoreOtherInstanceFilter(String? name, int? tenantId) async {
     if (name == null || name.isEmpty) return;
     // Read the tenant-bound repository before the first await.
     final crossTenantPersonRepo =
@@ -216,7 +224,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       final linkedIds = await ref.read(linkedTenantIdsProvider.future);
       final ids = await crossTenantPersonRepo
           .getUserIdsInTenant(tenant!.id!, linkedTenantIds: linkedIds);
-      if (!mounted) return;
+      if (!_stillTenant(tenantId)) return;
       setState(() {
         _filterOption = 'otherInstance';
         _otherInstanceUserIds = ids;

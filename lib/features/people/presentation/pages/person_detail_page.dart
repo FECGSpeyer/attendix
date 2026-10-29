@@ -1476,6 +1476,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     try {
       await ref.read(playerNotifierProvider.notifier).reactivatePlayer(widget.person);
       ref.invalidate(realtimePlayersProvider);
+      // The page reads left/hasLeft from this cache: reopening must show the
+      // active person, not the read-only archive view.
+      if (widget.person.id != null) ref.invalidate(personProvider(widget.person.id!));
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.personReactivated);
       context.pop();
