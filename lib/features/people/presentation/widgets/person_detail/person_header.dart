@@ -1,8 +1,6 @@
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:image_picker/image_picker.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/constants/table_names.dart';
@@ -18,6 +16,8 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
+import '../../../../../core/providers/player_providers.dart'; // ASTRA_PHOTO
+import '../person_image_picker.dart'; // ASTRA_PHOTO
 
 /// UX_PEOPLE: Ionic person.page `.profile-header`: 120px avatar with white
 /// ring and shadow, camera badge when editable, name (h1) with a pencil
@@ -211,14 +211,12 @@ class PersonHeader extends ConsumerWidget {
   }
 
   Future<void> _replacePhoto(BuildContext context, WidgetRef ref) async {
+    // Bind the tenant-scoped repository before the first await (tenant switch).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    final supabase = ref.read(supabaseClientProvider);
+    final tenant = ref.read(currentTenantProvider);
     try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: ImageSource.gallery,
-        maxWidth: 800,
-        maxHeight: 800,
-        imageQuality: 80,
-      );
+      final image = await ref.read(personImagePickerProvider)();
 
       if (image == null) return;
 
@@ -228,7 +226,7 @@ class PersonHeader extends ConsumerWidget {
       final bytes = await image.readAsBytes();
 
       // Check file size (max 2MB)
-      if (bytes.length > 2 * 1024 * 1024) {
+      if (bytes.length > kPersonImageMaxBytes) {
         if (context.mounted) {
           ToastHelper.showError(context, context.l10n.personPhotoTooLarge);
         }
@@ -236,25 +234,17 @@ class PersonHeader extends ConsumerWidget {
       }
 
       if (DemoGuard.blocked()) return; // DEMO_GUARD
-      final supabase = ref.read(supabaseClientProvider);
-      final tenant = ref.read(currentTenantProvider);
       final personId = person.id;
 
       if (personId == null || tenant == null) return;
 
       // DB_REVIEW_REST (M4): Ionic ImageService.updateImage – key `<id>`,
       // upsert, plain public URL in player.img (no tenant folder).
+      // ASTRA_PHOTO: upload + img update shared via PlayerRepository.updateImage.
       final storagePath = profileImageStoragePath(personId);
       final legacyPath = profileImagePathFromUrl(person.img);
 
-      await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
-            storagePath,
-            bytes,
-            fileOptions: const FileOptions(
-              contentType: 'image/jpeg',
-              upsert: true,
-            ),
-          );
+      final publicUrl = await repo.updateImage(personId, bytes);
 
       // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
       if (legacyPath != null && legacyPath != storagePath) {
@@ -265,21 +255,10 @@ class PersonHeader extends ConsumerWidget {
         } catch (_) {}
       }
 
-      final publicUrl = supabase.storage
-          .from(SupabaseBuckets.profiles)
-          .getPublicUrl(storagePath);
-
       // Same URL after a replace: drop the cached image so it reloads.
       try {
         await CachedNetworkImage.evictFromCache(publicUrl);
       } catch (_) {}
-
-      // Update player record
-      await supabase
-          .from('player')
-          .update({'img': publicUrl})
-          .eq('id', personId)
-          .eq('tenantId', tenant.id!);
 
       ref.invalidate(personProvider(personId));
       ref.invalidate(realtimePlayersProvider);

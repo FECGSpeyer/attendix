@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:typed_data';
 
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -21,6 +22,7 @@ import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
+import '../widgets/person_image_picker.dart'; // ASTRA_PHOTO
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
@@ -69,6 +71,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
   /// Data adopted from a matched person that has no form field here
   String? _adoptedImg;
+
+  /// ASTRA_PHOTO: Passbild picked while creating (Ionic keeps it as a data
+  /// URL in player.img and uploads it after the insert).
+  Uint8List? _pickedImage;
 
   // PEOPLE2: full create form like Ionic person.page (create mode)
   final _rangeController = TextEditingController();
@@ -292,6 +298,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             _CreateProfileHeader(
               firstName: _firstNameController,
               lastName: _lastNameController,
+              imageBytes: _pickedImage,
+              imageUrl: _adoptedImg,
+              onTap: _onProfileImageTap,
             ),
 
             // First Name
@@ -827,6 +836,82 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     ];
   }
 
+  bool get _hasImage =>
+      _pickedImage != null || (_adoptedImg?.isNotEmpty ?? false);
+
+  /// ASTRA_PHOTO: Ionic onProfileImageClick – no picture: open the file
+  /// chooser right away; with a picture: replace or remove it (Ionic viewer
+  /// actions `person.replace` / `common.remove`).
+  Future<void> _onProfileImageTap() async {
+    if (!_hasImage) {
+      await _pickImage();
+      return;
+    }
+    final action = await showAppActionSheet<String>(
+      context,
+      actions: [
+        AppActionSheetAction(
+          value: 'replace',
+          icon: Icons.photo_camera_outlined,
+          label: context.l10n.personReplace,
+        ),
+        AppActionSheetAction(
+          value: 'remove',
+          icon: Icons.delete_outline,
+          label: context.l10n.commonRemove,
+          destructive: true,
+        ),
+      ],
+    );
+    if (!mounted) return;
+    switch (action) {
+      case 'replace':
+        await _pickImage();
+      case 'remove':
+        await _removeImage();
+    }
+  }
+
+  /// Ionic onImageSelect (new person): max 2 MB, kept locally until save.
+  Future<void> _pickImage() async {
+    try {
+      final image = await ref.read(personImagePickerProvider)();
+      if (image == null) return;
+      final bytes = await image.readAsBytes();
+      if (!mounted) return;
+      if (bytes.length > kPersonImageMaxBytes) {
+        ToastHelper.showError(context, context.l10n.personPhotoTooLarge);
+        return;
+      }
+      setState(() {
+        _pickedImage = bytes;
+        _adoptedImg = null; // Ionic overwrites player.img with the data URL
+      });
+    } catch (_) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.personPhotoLoadFailed);
+      }
+    }
+  }
+
+  /// Ionic removeImgFromViewer (new person): confirm, then reset locally.
+  Future<void> _removeImage() async {
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: context.l10n.personRemovePhoto,
+      message: context.l10n.personRemovePhotoMessage,
+      confirmText: context.l10n.commonRemove,
+      cancelText: context.l10n.commonCancel,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    setState(() {
+      _pickedImage = null;
+      _adoptedImg = null;
+    });
+    ToastHelper.showSuccess(context, context.l10n.personPhotoRemoved);
+  }
+
   Future<void> _pickBirthday() async {
     final now = DateTime.now();
     final picked = await showAppDatePicker(
@@ -910,6 +995,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         person,
         register: person.email != null && person.email!.isNotEmpty,
         role: _isMainGroup ? Role.responsible : Role.player,
+        // ASTRA_PHOTO: uploaded after the insert; a failure keeps the person.
+        imageBytes: _pickedImage,
       );
       ref.read(trackingServiceProvider).track(TrackingEvent.playerAdded, properties: {'instrumentId': person.instrument});
 
@@ -935,37 +1022,104 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 }
 
 /// UX_PEOPLE: Ionic person.page `.profile-header` while creating: 120px
-/// placeholder avatar with ring and shadow, the typed name below (h1).
+/// avatar with ring and shadow, the typed name below (h1).
+/// ASTRA_PHOTO: tappable like Ionic `.profile-avatar-wrapper.editable` with
+/// the camera badge; shows the picked (or adopted) Passbild as preview.
 class _CreateProfileHeader extends StatelessWidget {
-  const _CreateProfileHeader({required this.firstName, required this.lastName});
+  const _CreateProfileHeader({
+    required this.firstName,
+    required this.lastName,
+    required this.onTap,
+    this.imageBytes,
+    this.imageUrl,
+  });
 
   final TextEditingController firstName;
   final TextEditingController lastName;
+  final VoidCallback onTap;
+  final Uint8List? imageBytes;
+  final String? imageUrl;
 
   @override
   Widget build(BuildContext context) {
     final dark = Theme.of(context).brightness == Brightness.dark;
+    final ringColor = dark ? Colors.black : Colors.white;
+    final placeholder = Container(
+      color: dark ? const Color(0xFF222428) : AppColors.light,
+      alignment: Alignment.bottomCenter,
+      child: Icon(
+        Icons.person,
+        size: 104,
+        color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
+      ),
+    );
+    final Widget avatar;
+    if (imageBytes != null) {
+      avatar = Image.memory(
+        imageBytes!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => placeholder,
+      );
+    } else if (imageUrl != null && imageUrl!.isNotEmpty) {
+      avatar = Image.network(
+        imageUrl!,
+        fit: BoxFit.cover,
+        errorBuilder: (_, __, ___) => placeholder,
+      );
+    } else {
+      avatar = placeholder;
+    }
     return Padding(
       padding: const EdgeInsets.fromLTRB(0, 24, 16, 12),
       child: Column(
         children: [
-          Container(
-            width: 120,
-            height: 120,
-            clipBehavior: Clip.antiAlias,
-            decoration: BoxDecoration(
-              shape: BoxShape.circle,
-              color: dark ? const Color(0xFF222428) : AppColors.light,
-              border: Border.all(color: dark ? Colors.black : Colors.white, width: 3),
-              boxShadow: const [
-                BoxShadow(color: Color(0x2E000000), offset: Offset(0, 4), blurRadius: 16),
-              ],
-            ),
-            alignment: Alignment.bottomCenter,
-            child: Icon(
-              Icons.person,
-              size: 104,
-              color: dark ? const Color(0xFF555555) : const Color(0xFFC5C5C5),
+          Semantics(
+            button: true,
+            label: context.l10n.peoplePassportPhoto,
+            child: GestureDetector(
+              key: const Key('person_create_avatar'),
+              onTap: onTap,
+              child: SizedBox(
+                width: 120,
+                height: 120,
+                child: Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    Container(
+                      width: 120,
+                      height: 120,
+                      clipBehavior: Clip.antiAlias,
+                      decoration: BoxDecoration(
+                        shape: BoxShape.circle,
+                        border: Border.all(color: ringColor, width: 3),
+                        boxShadow: const [
+                          BoxShadow(
+                              color: Color(0x2E000000),
+                              offset: Offset(0, 4),
+                              blurRadius: 16),
+                        ],
+                      ),
+                      child: ClipOval(child: avatar),
+                    ),
+                    // Ionic .profile-avatar-badge (camera) when editable
+                    Positioned(
+                      right: 2,
+                      bottom: 2,
+                      child: Container(
+                        width: 34,
+                        height: 34,
+                        decoration: BoxDecoration(
+                          color: AppColors.primary,
+                          shape: BoxShape.circle,
+                          border: Border.all(color: ringColor, width: 3),
+                        ),
+                        child: const Icon(Icons.camera_alt,
+                            size: 16, color: Colors.white),
+                      ),
+                    ),
+                  ],
+                ),
+              ),
             ),
           ),
           ListenableBuilder(

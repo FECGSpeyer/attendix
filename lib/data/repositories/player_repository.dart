@@ -1,7 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
+import '../../core/constants/table_names.dart' show SupabaseBuckets; // ASTRA_PHOTO
+import '../../core/utils/profile_image_path.dart'; // ASTRA_PHOTO
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
 import '../models/shift/shift_plan.dart';
@@ -302,10 +305,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// reactivated (`left = null`, fields overwritten) instead of inserting a
   /// duplicate. Non-pending persons are added to every Termin since their
   /// join date.
+  ///
+  /// ASTRA_PHOTO: [imageBytes] is a picture chosen while creating (Ionic keeps
+  /// it as a data URL). Like Ionic it is uploaded right after a fresh insert,
+  /// before the Termine are filled; a failed upload is only logged and never
+  /// loses the created person. A reactivated row gets no upload (Ionic returns
+  /// before the upload in that branch).
   Future<Person> addPlayer(
     Person player, {
     required bool register,
     required Role role,
+    Uint8List? imageBytes,
   }) async {
     ensureNotDemo('addPlayer'); // DEMO_GUARD
     var person = player;
@@ -351,12 +361,52 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       }
     } else {
       result = await createPlayer(person);
+      final resultId = result.id;
+      if (imageBytes != null && resultId != null) {
+        try {
+          final url = await updateImage(resultId, imageBytes);
+          result = result.copyWith(img: url);
+        } catch (e, stack) {
+          // Ionic addPlayer: console.error('Error uploading image', …) only.
+          debugPrint('addPlayer: image upload failed: $e\n$stack');
+        }
+      }
     }
 
     if (!person.pending) {
       await addPlayerToAttendancesByDate(result);
     }
     return result;
+  }
+
+  /// ASTRA_PHOTO: Ionic ImageService.updateImage – upload the picture to the
+  /// `profiles` bucket under the bare player id (upsert) and store its plain
+  /// public URL in `player.img`. Returns the public URL.
+  Future<String> updateImage(int playerId, Uint8List bytes) async {
+    ensureNotDemo('updateImage'); // DEMO_GUARD
+    try {
+      final storagePath = profileImageStoragePath(playerId);
+      await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
+            storagePath,
+            bytes,
+            fileOptions: const FileOptions(
+              contentType: 'image/jpeg',
+              upsert: true,
+            ),
+          );
+      final publicUrl = supabase.storage
+          .from(SupabaseBuckets.profiles)
+          .getPublicUrl(storagePath);
+      await supabase
+          .from('player')
+          .update({'img': publicUrl})
+          .eq('id', playerId)
+          .eq('tenantId', currentTenantId);
+      return publicUrl;
+    } catch (e, stack) {
+      handleError(e, stack, 'updateImage');
+      rethrow;
+    }
   }
 
   /// DB_FIX: insert / reactivate payload like Ionic addPlayer:
