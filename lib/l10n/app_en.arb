@@ -1964,6 +1964,8 @@
   "planningFillRequired": "Please fill in all required fields.",
   "planningFirstEvent": "This is currently the first event",
   "planningFlutterBlockEntry": "Programme block: {name} ({min} min)",
+  "planningFlutterDraftRestored": "Unsaved changes restored",
+  "planningFlutterDraftSavedLocally": "Run sheet could not be saved – draft kept on this device",
   "planningFlutterErrorWith": "Error: {error}",
   "planningFlutterExportFailed": "Export failed: {error}",
   "planningFlutterFieldEntry": "Field: {name} ({min} min)",

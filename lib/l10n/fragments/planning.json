@@ -25,7 +25,9 @@
         "shareFailedWith": "Fehler beim Teilen: {error}",
         "planPosition": "{index} von {total}",
         "unshareAction": "Freigabe aufheben",
-        "noEvents": "Keine Termine vorhanden"
+        "noEvents": "Keine Termine vorhanden",
+        "draftSavedLocally": "Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert",
+        "draftRestored": "Nicht gespeicherte Änderungen wiederhergestellt"
       }
     },
     "orgFields": {
@@ -70,7 +72,9 @@
         "shareFailedWith": "Error while sharing: {error}",
         "planPosition": "{index} of {total}",
         "unshareAction": "Stop sharing",
-        "noEvents": "No events available"
+        "noEvents": "No events available",
+        "draftSavedLocally": "Run sheet could not be saved – draft kept on this device",
+        "draftRestored": "Unsaved changes restored"
       }
     },
     "orgFields": {

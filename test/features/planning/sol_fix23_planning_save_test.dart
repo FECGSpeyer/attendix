@@ -274,6 +274,10 @@ void main() {
       expect(titleField('Zweiter'), findsOneWidget);
       expect(db.calls, hasLength(2));
       expect(planOf(db.calls.last)['title'], 'Erster');
+      // SOL_FIX26: dispose refreshes the caches after the write chain.
+      await tester.pumpWidget(const SizedBox());
+      await tester.pump(const Duration(milliseconds: 10));
+      await tester.pump(const Duration(milliseconds: 10));
     });
   });
 
@@ -307,13 +311,15 @@ void main() {
       expect(body.indexOf('_dirty = false'), greaterThan(write));
       expect(body.indexOf('_savedTitle = title'), greaterThan(write));
       expect(body, contains('if (editGen == _editGen) _dirty = false;'));
-      expect(body.indexOf('_hasChanges = true'), greaterThan(write));
+      // SOL_FIX26: `_markWritten` sets `_hasChanges` (and the cache flag).
+      expect(body.indexOf('_markWritten(att.id!)'), greaterThan(write));
     });
 
     test('all attendance writes of the editor go through the chain', () {
       // SOL_FIX25: + the write of pending edits queued by dispose().
       expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(4));
-      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(4));
+      // SOL_FIX26: + the cache invalidation queued by dispose().
+      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(5));
     });
   });
 }
