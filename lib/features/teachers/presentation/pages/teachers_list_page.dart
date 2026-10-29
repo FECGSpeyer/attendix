@@ -18,6 +18,21 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
 
+/// Validation of the teacher form, per mode exactly as in Ionic:
+/// - create (teachers.page `addTeacher`): `String(name).length < 3 ||
+///   instruments.length === 0` → toast `teachers.fillAll`.
+/// - edit (teacher.page `editTeacher`): no validation at all, so existing
+///   entries without instrument can still be saved.
+@visibleForTesting
+bool isTeacherFormValid({
+  required bool isNew,
+  required String name,
+  required Iterable<int> instruments,
+}) {
+  if (!isNew) return true;
+  return name.length >= 3 && instruments.isNotEmpty;
+}
+
 /// Teacher list (Ionic teachers.page): "Lehrer", rows with name, instrument
 /// names and a "n Spieler" badge; FAB opens the "Lehrer hinzufügen" sheet,
 /// tapping a row opens "Lehrer bearbeiten".
@@ -317,8 +332,11 @@ class _TeacherFormState extends State<_TeacherForm> {
   }
 
   void _submit() {
-    // Ionic teachers.page addTeacher: name (≥ 3 chars) and instruments required
-    if (_nameController.text.trim().length < 3 || _selectedInstruments.isEmpty) {
+    if (!isTeacherFormValid(
+      isNew: _isNew,
+      name: _nameController.text,
+      instruments: _selectedInstruments,
+    )) {
       ToastHelper.showError(context, context.l10n.teachersFillAll);
       return;
     }
