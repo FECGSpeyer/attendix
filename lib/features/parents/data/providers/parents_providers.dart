@@ -93,11 +93,7 @@ class ChildPersonAttendance {
     return DateTime.now().isAfter(deadlineDate);
   }
 
-  bool get attended {
-    return status == AttendanceStatus.present ||
-        status == AttendanceStatus.late ||
-        status == AttendanceStatus.lateExcused;
-  }
+  bool get attended => status.countsAsPresent;
 
   bool get hasPlan {
     if (!sharePlan || plan == null) return false;
