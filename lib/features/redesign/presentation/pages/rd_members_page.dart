@@ -20,8 +20,8 @@ import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
 /// REDESIGN: tab "Mitglieder" for Dirigent and Beobachter (canvas
-/// "Menschen"): Aktiv / Pausiert / Wartet, search, registers with Ø
-/// attendance, birthdays and absences in the rows.
+/// "Menschen"): Aktiv / Pausiert / Wartet (also by swiping the list),
+/// search, registers with Ø attendance, birthdays and absences in the rows.
 class RdMembersPage extends ConsumerStatefulWidget {
   const RdMembersPage({super.key});
 
@@ -32,6 +32,9 @@ class RdMembersPage extends ConsumerStatefulWidget {
 class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   RdMembersFilter _filter = RdMembersFilter.active;
   String _query = '';
+
+  /// Thumb of Aktiv / Pausiert / Wartet while swiping the list.
+  double? _swipePos;
   final _search = TextEditingController();
 
   @override
@@ -80,6 +83,11 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     final active = people.where((x) => !x.paused).toList();
     final paused = people.where((x) => x.paused).toList();
     final filter = _filter == RdMembersFilter.pending && pending.isEmpty ? RdMembersFilter.active : _filter;
+    final filters = [
+      RdMembersFilter.active,
+      RdMembersFilter.paused,
+      if (pending.isNotEmpty) RdMembersFilter.pending,
+    ];
     final shown = switch (filter) {
       RdMembersFilter.active => active,
       RdMembersFilter.paused => paused,
@@ -152,12 +160,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       ),
       const SizedBox(height: 12),
       RdSegmented<RdMembersFilter>(
-        values: [
-          RdMembersFilter.active,
-          RdMembersFilter.paused,
-          if (pending.isNotEmpty) RdMembersFilter.pending,
-        ],
+        values: filters,
         selected: filter,
+        position: _swipePos,
         labelOf: (f) => switch (f) {
           RdMembersFilter.active => l10n.redesignMembersActive(active.length),
           RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
@@ -168,10 +173,11 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       const SizedBox(height: 16),
     ];
 
+    final body = <Widget>[];
     if (peopleAsync.isLoading && people.isEmpty) {
-      children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (peopleAsync.hasError && people.isEmpty) {
-      children.add(RdInfoCard(
+      body.add(RdInfoCard(
         text: l10n.redesignTodayLoadFailed,
         icon: Icons.cloud_off_outlined,
         action: RdOutlineButton(
@@ -180,7 +186,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ),
       ));
     } else if (filtered.isEmpty) {
-      children.add(RdInfoCard(
+      body.add(RdInfoCard(
         icon: Icons.people_outline,
         text: _query.trim().isNotEmpty
             ? l10n.redesignMembersNoMatch
@@ -192,14 +198,14 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       ));
     } else {
       if (filter == RdMembersFilter.pending) {
-        children.add(Padding(
+        body.add(Padding(
           padding: const EdgeInsets.fromLTRB(4, 0, 4, 12),
           child: Text(l10n.redesignMembersPendingHint, style: RdType.meta(p, size: 13)),
         ));
       }
       for (final s in filtered) {
-        children.add(_SectionHeader(section: s));
-        children.add(RdGroupedList(children: [
+        body.add(_SectionHeader(section: s));
+        body.add(RdGroupedList(children: [
           for (final person in s.people)
             _MemberRow(
               person: person,
@@ -215,9 +221,17 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
                       ),
             ),
         ]));
-        children.add(const SizedBox(height: 18));
+        body.add(const SizedBox(height: 18));
       }
     }
+
+    children.add(RdSwipeSwitch<RdMembersFilter>(
+      values: filters,
+      selected: filter,
+      onChanged: (f) => setState(() => _filter = f),
+      onDrag: (pos) => setState(() => _swipePos = pos),
+      child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
+    ));
 
     return RdPage(
       onRefresh: () async {

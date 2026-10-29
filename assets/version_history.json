@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.17.1",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Seitlich wischen wechselt zwischen Kommend und Vergangen bzw. Aktiv, Pausiert und Wartet",
+        "💄 Neues Design (Beta): Die Markierung im Umschalter gleitet mit"
+      ]
+    },
+    {
       "version": "0.17.0",
       "date": "29.10.2026",
       "changes": [

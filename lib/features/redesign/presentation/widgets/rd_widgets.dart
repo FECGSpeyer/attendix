@@ -685,7 +685,9 @@ String rdInitialsOf(String name) {
   return (parts.first[0] + parts[1][0]).toUpperCase();
 }
 
-/// Segmented control with equal parts (Hell / Dunkel / Automatisch).
+/// Segmented control with equal parts (Hell / Dunkel / Automatisch). The
+/// white thumb slides to the selected part and, while a [RdSwipeSwitch]
+/// is dragged, follows the finger ([position]).
 class RdSegmented<T> extends StatelessWidget {
   const RdSegmented({
     super.key,
@@ -695,6 +697,7 @@ class RdSegmented<T> extends StatelessWidget {
     required this.onChanged,
     this.enabled = true,
     this.semanticLabel,
+    this.position,
   });
 
   final List<T> values;
@@ -704,9 +707,17 @@ class RdSegmented<T> extends StatelessWidget {
   final bool enabled;
   final String? semanticLabel;
 
+  /// Fractional index of the thumb while swiping (null: [selected]).
+  final double? position;
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
+    final n = values.length;
+    final selectedIndex = values.indexOf(selected).clamp(0, n - 1);
+    final thumb = (position ?? selectedIndex.toDouble()).clamp(0.0, n - 1.0);
+    final highlighted = thumb.round();
+    final animate = position == null && !MediaQuery.disableAnimationsOf(context);
     return Semantics(
       label: semanticLabel,
       container: true,
@@ -718,51 +729,226 @@ class RdSegmented<T> extends StatelessWidget {
             color: p.track,
             borderRadius: BorderRadius.circular(14),
           ),
-          child: Row(
-            children: [
-              for (final v in values)
-                Expanded(
-                  child: Semantics(
-                    button: true,
-                    selected: v == selected,
-                    enabled: enabled,
-                    child: GestureDetector(
-                      onTap: enabled ? () => onChanged(v) : null,
-                      behavior: HitTestBehavior.opaque,
-                      child: AnimatedContainer(
-                        duration: const Duration(milliseconds: 150),
-                        height: 44,
-                        alignment: Alignment.center,
-                        decoration: BoxDecoration(
-                          color: v == selected ? p.surface : Colors.transparent,
-                          borderRadius: BorderRadius.circular(10),
-                          boxShadow: v == selected
-                              ? const [
-                                  BoxShadow(
-                                    color: Color(0x1F000000),
-                                    blurRadius: 2,
-                                    offset: Offset(0, 1),
-                                  ),
-                                ]
-                              : null,
-                        ),
-                        child: Text(
-                          labelOf(v),
-                          style: TextStyle(
-                            fontSize: 15,
-                            fontWeight:
-                                v == selected ? FontWeight.w700 : FontWeight.w500,
-                            color: v == selected ? p.text : p.text2,
+          child: LayoutBuilder(
+            builder: (context, c) {
+              final width = c.maxWidth / n;
+              return Stack(
+                children: [
+                  AnimatedPositioned(
+                    duration: animate ? const Duration(milliseconds: 200) : Duration.zero,
+                    curve: Curves.easeOutCubic,
+                    left: thumb * width,
+                    top: 0,
+                    bottom: 0,
+                    width: width,
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        color: p.surface,
+                        borderRadius: BorderRadius.circular(10),
+                        boxShadow: const [
+                          BoxShadow(
+                            color: Color(0x1F000000),
+                            blurRadius: 2,
+                            offset: Offset(0, 1),
                           ),
-                        ),
+                        ],
                       ),
                     ),
                   ),
-                ),
-            ],
+                  Row(
+                    children: [
+                      for (var i = 0; i < n; i++)
+                        Expanded(
+                          child: Semantics(
+                            button: true,
+                            selected: i == selectedIndex,
+                            enabled: enabled,
+                            child: GestureDetector(
+                              onTap: enabled ? () => onChanged(values[i]) : null,
+                              behavior: HitTestBehavior.opaque,
+                              child: SizedBox(
+                                height: 44,
+                                child: Center(
+                                  child: Text(
+                                    labelOf(values[i]),
+                                    style: TextStyle(
+                                      fontSize: 15,
+                                      fontWeight: i == highlighted ? FontWeight.w700 : FontWeight.w500,
+                                      color: i == highlighted ? p.text : p.text2,
+                                    ),
+                                  ),
+                                ),
+                              ),
+                            ),
+                          ),
+                        ),
+                    ],
+                  ),
+                ],
+              );
+            },
           ),
         ),
       ),
+    );
+  }
+}
+
+/// Horizontal swipe between the parts of a [RdSegmented] (Kommend /
+/// Vergangen, Aktiv / Pausiert). The content follows the finger; past a
+/// quarter of the width or with a fling it switches to the neighbour and
+/// the new content slides in from that side. The segmented control stays
+/// the main way: this is a shortcut for one-handed use. Swipes starting at
+/// the left screen edge are left to the system back gesture.
+class RdSwipeSwitch<T> extends StatefulWidget {
+  const RdSwipeSwitch({
+    super.key,
+    required this.values,
+    required this.selected,
+    required this.onChanged,
+    required this.child,
+    this.onDrag,
+  });
+
+  final List<T> values;
+  final T selected;
+  final ValueChanged<T> onChanged;
+  final Widget child;
+
+  /// Fractional index while dragging (for [RdSegmented.position]), null
+  /// once the swipe ends.
+  final ValueChanged<double?>? onDrag;
+
+  @override
+  State<RdSwipeSwitch<T>> createState() => _RdSwipeSwitchState<T>();
+}
+
+class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerProviderStateMixin {
+  static const _edge = 24.0;
+
+  late final AnimationController _anim;
+  double _dx = 0;
+  double _from = 0;
+  double _to = 0;
+  double _width = 1;
+  bool _tracking = false;
+  bool _switching = false;
+
+  /// Index this switch selected itself (its slide-in already runs).
+  int? _switchedTo;
+
+  int get _index => widget.values.indexOf(widget.selected);
+
+  @override
+  void initState() {
+    super.initState();
+    _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 180))
+      ..addListener(() => setState(() => _dx = _from + (_to - _from) * Curves.easeOutCubic.transform(_anim.value)));
+  }
+
+  @override
+  void didUpdateWidget(covariant RdSwipeSwitch<T> old) {
+    super.didUpdateWidget(old);
+    // A tap on the segmented control: slide the new content in briefly.
+    final before = old.values.indexOf(old.selected);
+    if (_switchedTo != null && _switchedTo == _index) {
+      _switchedTo = null;
+      return;
+    }
+    if (!_switching && !_tracking && before != _index && before >= 0 && _index >= 0) {
+      _slide(from: (_index > before ? 1 : -1) * _width * 0.25, to: 0);
+    }
+  }
+
+  @override
+  void dispose() {
+    _anim.dispose();
+    super.dispose();
+  }
+
+  Future<void> _slide({required double from, required double to}) async {
+    if (MediaQuery.disableAnimationsOf(context)) {
+      setState(() => _dx = to);
+      return;
+    }
+    _from = from;
+    _to = to;
+    _dx = from;
+    try {
+      await _anim.forward(from: 0).orCancel;
+    } on TickerCanceled {
+      // Disposed or restarted.
+    }
+  }
+
+  void _start(DragStartDetails d) {
+    _tracking = d.globalPosition.dx > _edge && !_switching;
+    if (_tracking) _anim.stop();
+  }
+
+  void _update(DragUpdateDetails d) {
+    if (!_tracking) return;
+    final i = _index;
+    final next = _dx + d.delta.dx;
+    // Rubber band where there is no neighbour.
+    final blocked = (next < 0 && i >= widget.values.length - 1) || (next > 0 && i <= 0);
+    setState(() => _dx = blocked ? _dx + d.delta.dx * 0.25 : next);
+    widget.onDrag?.call((i - _dx / _width).clamp(0.0, widget.values.length - 1.0));
+  }
+
+  Future<void> _end(DragEndDetails d) async {
+    if (!_tracking) return;
+    _tracking = false;
+    final i = _index;
+    final v = d.primaryVelocity ?? 0;
+    var target = i;
+    if ((_dx < -_width * 0.25 || v < -400) && i < widget.values.length - 1) target = i + 1;
+    if ((_dx > _width * 0.25 || v > 400) && i > 0) target = i - 1;
+    if (target == i) {
+      widget.onDrag?.call(null);
+      await _slide(from: _dx, to: 0);
+      return;
+    }
+    final dir = target > i ? -1.0 : 1.0;
+    _switching = true;
+    await _slide(from: _dx, to: dir * _width);
+    if (!mounted) return;
+    widget.onDrag?.call(null);
+    _switchedTo = target;
+    widget.onChanged(widget.values[target]);
+    _switching = false;
+    await _slide(from: -dir * _width * 0.4, to: 0);
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return LayoutBuilder(
+      builder: (context, c) {
+        _width = c.maxWidth.isFinite && c.maxWidth > 0 ? c.maxWidth : MediaQuery.sizeOf(context).width;
+        final fade = (1 - (_dx.abs() / _width) * 0.6).clamp(0.0, 1.0);
+        return GestureDetector(
+          behavior: HitTestBehavior.opaque,
+          // Screen readers use the segmented control.
+          excludeFromSemantics: true,
+          onHorizontalDragStart: _start,
+          onHorizontalDragUpdate: _update,
+          onHorizontalDragEnd: _end,
+          onHorizontalDragCancel: () {
+            if (!_tracking) return;
+            _tracking = false;
+            widget.onDrag?.call(null);
+            _slide(from: _dx, to: 0);
+          },
+          // Short lists: the empty space below still takes the swipe.
+          child: ConstrainedBox(
+            constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.55),
+            child: Opacity(
+              opacity: fade,
+              child: Transform.translate(offset: Offset(_dx, 0), child: widget.child),
+            ),
+          ),
+        );
+      },
     );
   }
 }

@@ -42,6 +42,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   bool _searching = false;
   String _query = '';
   bool _onlyOpen = false;
+
+  /// Thumb of Kommend / Vergangen while swiping the list.
+  double? _swipePos;
   final _search = TextEditingController();
 
   @override
@@ -190,80 +193,97 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               ? l10n.redesignEventsPast
               : l10n.redesignEventsPastAverage(average.round()),
         ),
-        if (types.length > 1) ...[
-          const SizedBox(height: 12),
-          SingleChildScrollView(
-            scrollDirection: Axis.horizontal,
-            child: Row(
-              children: [
-                RdChoiceChip(
-                  label: l10n.redesignCommonAll,
-                  selected: _type == null,
-                  onTap: () => setState(() => _type = null),
+        _swipe(Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (types.length > 1) ...[
+              const SizedBox(height: 12),
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: Row(
+                  children: [
+                    RdChoiceChip(
+                      label: l10n.redesignCommonAll,
+                      selected: _type == null,
+                      onTap: () => setState(() => _type = null),
+                    ),
+                    for (final t in types) ...[
+                      const SizedBox(width: 8),
+                      RdChoiceChip(
+                        label: t.name,
+                        selected: _type == t.id,
+                        onTap: () => setState(() => _type = _type == t.id ? null : t.id),
+                      ),
+                    ],
+                  ],
                 ),
-                for (final t in types) ...[
-                  const SizedBox(width: 8),
-                  RdChoiceChip(
-                    label: t.name,
-                    selected: _type == t.id,
-                    onTap: () => setState(() => _type = _type == t.id ? null : t.id),
-                  ),
-                ],
-              ],
-            ),
-          ),
-        ],
-        const SizedBox(height: 8),
-        if (sections.isEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: RdInfoCard(
-              text: all.isEmpty
-                  ? l10n.redesignEventsEmpty
-                  : _query.isNotEmpty || _type != null
-                      ? l10n.redesignEventsNoMatch
-                      : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
-              icon: Icons.event_available_outlined,
-              // Canvas "Leere Termine": straight to the first Termin.
-              action: all.isEmpty && ref.watch(canCreateAttendanceProvider)
-                  ? RdPrimaryButton(
-                      label: l10n.redesignEventsCreateFirst,
-                      icon: Icons.add,
-                      onPressed: () => context.push(RedesignRoutes.newEvent),
-                    )
-                  : null,
-            ),
-          ),
-        for (final section in sections) ...[
-          _SectionLabel(section: section, past: _past),
-          for (final a in section.items)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _LeaderEventCard(
-                attendance: a,
-                type: typeById[a.typeId],
-                counts: a.id == null ? null : counts[a.id],
-                past: _past,
-                onTap: a.id != null && canOpen ? () => context.push(RedesignRoutes.event(a.id!)) : null,
               ),
-            ),
-        ],
+            ],
+            const SizedBox(height: 8),
+            if (sections.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: RdInfoCard(
+                  text: all.isEmpty
+                      ? l10n.redesignEventsEmpty
+                      : _query.isNotEmpty || _type != null
+                          ? l10n.redesignEventsNoMatch
+                          : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
+                  icon: Icons.event_available_outlined,
+                  // Canvas "Leere Termine": straight to the first Termin.
+                  action: all.isEmpty && ref.watch(canCreateAttendanceProvider)
+                      ? RdPrimaryButton(
+                          label: l10n.redesignEventsCreateFirst,
+                          icon: Icons.add,
+                          onPressed: () => context.push(RedesignRoutes.newEvent),
+                        )
+                      : null,
+                ),
+              ),
+            for (final section in sections) ...[
+              _SectionLabel(section: section, past: _past),
+              for (final a in section.items)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _LeaderEventCard(
+                    attendance: a,
+                    type: typeById[a.typeId],
+                    counts: a.id == null ? null : counts[a.id],
+                    past: _past,
+                    onTap: a.id != null && canOpen ? () => context.push(RedesignRoutes.event(a.id!)) : null,
+                  ),
+                ),
+            ],
+          ],
+        )),
       ],
     );
   }
+
+  void _setPast(bool past) => setState(() {
+        _past = past;
+        _onlyOpen = false;
+      });
 
   Widget _segments(BuildContext context, {required String pastLabel}) {
     final l10n = context.l10n;
     return RdSegmented<bool>(
       values: const [false, true],
       selected: _past,
+      position: _swipePos,
       labelOf: (past) => past ? pastLabel : l10n.redesignEventsUpcoming,
-      onChanged: (v) => setState(() {
-        _past = v;
-        _onlyOpen = false;
-      }),
+      onChanged: _setPast,
     );
   }
+
+  /// Swipe between Kommend and Vergangen (the segments stay the main way).
+  Widget _swipe(Widget child) => RdSwipeSwitch<bool>(
+        values: const [false, true],
+        selected: _past,
+        onChanged: _setPast,
+        onDrag: (pos) => setState(() => _swipePos = pos),
+        child: child,
+      );
 
   // ---------------------------------------------------------------------------
   // Spieler, Stimmführer
@@ -306,38 +326,43 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         _segments(context, pastLabel: l10n.redesignEventsPastOwn(data.percentage)),
-        if (!_past && openCount > 0) ...[
-          const SizedBox(height: 12),
-          _WaitingBanner(
-            count: openCount,
-            active: _onlyOpen,
-            onTap: () => setState(() => _onlyOpen = !_onlyOpen),
-          ),
-        ],
-        const SizedBox(height: 8),
-        if (sections.isEmpty)
-          Padding(
-            padding: const EdgeInsets.only(top: 12),
-            child: RdInfoCard(
-              text: _query.isNotEmpty
-                  ? l10n.redesignEventsNoMatch
-                  : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
-              icon: Icons.event_available_outlined,
-            ),
-          ),
-        for (final section in sections) ...[
-          _SectionLabel(section: section, past: _past),
-          for (final att in section.items)
-            Padding(
-              padding: const EdgeInsets.only(bottom: 10),
-              child: _PlayerEventCard(
-                key: ValueKey('rd-own-${att.id ?? att.attendanceId}'),
-                att: att,
-                actions: actions,
-                showAnswer: !_past && waiting(att),
+        _swipe(Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (!_past && openCount > 0) ...[
+              const SizedBox(height: 12),
+              _WaitingBanner(
+                count: openCount,
+                active: _onlyOpen,
+                onTap: () => setState(() => _onlyOpen = !_onlyOpen),
               ),
-            ),
-        ],
+            ],
+            const SizedBox(height: 8),
+            if (sections.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: RdInfoCard(
+                  text: _query.isNotEmpty
+                      ? l10n.redesignEventsNoMatch
+                      : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
+                  icon: Icons.event_available_outlined,
+                ),
+              ),
+            for (final section in sections) ...[
+              _SectionLabel(section: section, past: _past),
+              for (final att in section.items)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: _PlayerEventCard(
+                    key: ValueKey('rd-own-${att.id ?? att.attendanceId}'),
+                    att: att,
+                    actions: actions,
+                    showAnswer: !_past && waiting(att),
+                  ),
+                ),
+            ],
+          ],
+        )),
       ],
     );
   }

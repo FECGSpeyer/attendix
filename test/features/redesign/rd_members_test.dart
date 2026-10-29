@@ -316,6 +316,18 @@ void main() {
       expect(find.text('Anna Berg'), findsNothing);
     });
 
+    testWidgets('swiping the list switches Aktiv and Pausiert', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      await tester.timedDrag(find.text('Ben Clas'), const Offset(-250, 0), const Duration(milliseconds: 600));
+      await _settle(tester);
+      expect(find.text('Dora Ernst'), findsOneWidget);
+      expect(find.text('Ben Clas'), findsNothing);
+      await tester.timedDrag(find.text('Dora Ernst'), const Offset(250, 0), const Duration(milliseconds: 600));
+      await _settle(tester);
+      expect(find.text('Ben Clas'), findsOneWidget);
+    });
+
     testWidgets('search filters by group and shows a hint without match', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo()));
       await _settle(tester);

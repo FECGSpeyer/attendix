@@ -247,6 +247,49 @@ void main() {
     expect(find.text('page termin 23'), findsOneWidget);
   });
 
+  testWidgets('Dirigent: swiping the list switches Kommend and Vergangen', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    // While dragging, the thumb of the segments follows the finger.
+    final gesture = await tester.startGesture(tester.getCenter(find.text('Konzert')));
+    for (var i = 0; i < 8; i++) {
+      await gesture.moveBy(const Offset(-20, 0));
+      await tester.pump(const Duration(milliseconds: 100));
+    }
+    final thumb = tester.widget<AnimatedPositioned>(
+      find.descendant(of: find.byType(RdSegmented<bool>), matching: find.byType(AnimatedPositioned)),
+    );
+    expect(thumb.left, greaterThan(0));
+    await gesture.up();
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+    expect(find.text('Gesamtprobe'), findsNothing);
+
+    // Past the last segment it bounces back.
+    await tester.timedDrag(find.text('Vorbei'), const Offset(-200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    // From the left screen edge it is the system back gesture.
+    final y = tester.getCenter(find.text('Vorbei')).dy;
+    await tester.timedDragFrom(Offset(8, y), const Offset(200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    // A short slow drag snaps back.
+    await tester.timedDrag(find.text('Vorbei'), const Offset(50, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Vorbei'), findsOneWidget);
+
+    await tester.timedDrag(find.text('Vorbei'), const Offset(200, 0), const Duration(milliseconds: 600));
+    await _settle(tester);
+    expect(find.text('Gesamtprobe'), findsOneWidget);
+    expect(find.text('Vorbei'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Dirigent: type chips and search filter the list', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(
