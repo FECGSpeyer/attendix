@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/group_providers.dart'; // P10_ATTENDANCE
 import '../../../../../core/providers/plan_providers.dart';
+import '../../../../../core/providers/song_providers.dart'; // P10_ATTENDANCE
+import '../../../../../core/providers/tenant_providers.dart'; // P10_ATTENDANCE
 import '../../../../../core/providers/team_org_providers.dart'; // PROTOCOL
 import '../../../../../core/services/plan_export_service.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -11,6 +14,7 @@ import '../../../../../data/models/plan/plan.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
+import '../../../../songs/presentation/utils/song_utils.dart'; // P10_ATTENDANCE
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
@@ -30,6 +34,7 @@ class PlanAccordion extends ConsumerStatefulWidget {
     required this.onSharePlanChanged,
     this.onCreate,
     this.onSendViaTelegram,
+    this.onEditPlan,
     this.initiallyExpanded = false,
   });
 
@@ -39,6 +44,11 @@ class PlanAccordion extends ConsumerStatefulWidget {
   final void Function(bool) onSharePlanChanged;
   final VoidCallback? onCreate;
   final VoidCallback? onSendViaTelegram;
+
+  /// P10_ATTENDANCE: Ionic editPlan() opens the editor on the plan shown
+  /// in the accordion (`initialPlanIndex: this.planIndex`). Falls back to
+  /// [onEdit] / [onCreate] when not set.
+  final void Function(int planIndex)? onEditPlan;
   final bool initiallyExpanded;
 
   @override
@@ -136,8 +146,26 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     );
   }
 
+  /// P10_ATTENDANCE: Ionic `getMissingGroups(field.songId)` – red line
+  /// under songs of the plan (not for "general" tenants).
+  String? _missingGroups(PlanField field) {
+    if (field.songId == null || ref.read(currentTenantProvider)?.type == 'general') return null;
+    final songs = ref.read(songsProvider).valueOrNull ?? const [];
+    final ids = songs.where((s) => s.id == field.songId).firstOrNull?.instrumentIds;
+    if (ids == null || ids.isEmpty) return null;
+    final text = SongUtils.missingInstrumentsText(
+      ids,
+      ref.read(groupsProvider).valueOrNull ?? const [],
+      ref.read(groupCategoriesProvider).valueOrNull ?? const [],
+    );
+    return text.isEmpty ? null : text;
+  }
+
   @override
   Widget build(BuildContext context) {
+    // P10_ATTENDANCE: keep the data of the missing-groups line loaded
+    ref.watch(songsProvider);
+    ref.watch(groupCategoriesProvider);
     final att = _planAttendance();
     final plans = PlanUtils.allPlans(att);
     if (_planIndex < 0 || _planIndex >= plans.length) {
@@ -146,6 +174,16 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     final plan = plans.isEmpty ? null : plans[_planIndex];
     final hasPlan = plan != null && plan.fields.isNotEmpty;
     final date = plan == null ? null : PlanUtils.planDate(att, _planIndex, plans) ?? DateTime.tryParse(att.date);
+    // P10_ATTENDANCE: Ionic isPlanLiveNow() → live mode (active slot +
+    // countdown) from 5 min before the start until 15 min after the end.
+    final liveMode = plan != null &&
+        hasPlanFields(plan) &&
+        PlanUtils.isLiveNow(date?.toLocal(), plan.time, plan.fields);
+    // Ionic todayPlanChip: the chip of today's plan gets the "Heute" mark.
+    final todayIndex = plans.length > 1 ? todayChipIndex(att, plans) : -1;
+    void edit() => widget.onEditPlan != null
+        ? widget.onEditPlan!(plans.isEmpty ? 0 : _planIndex)
+        : widget.onEdit();
     // PROTOCOL: Tagesordnung of protocol types ("Themen aufnehmen", TOP → Thema)
     final protocolType = ref.watch(protocolTypeByIdProvider(widget.attendance.typeId));
     final hasProtocol = protocolType?.enableProtocol ?? false;
@@ -174,19 +212,22 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             ListTile(
               dense: true,
               title: Text(context.l10n.attendanceCreateRunSheet, style: primaryStyle),
-              onTap: widget.onCreate ?? widget.onEdit,
+              onTap: widget.onEditPlan != null ? edit : (widget.onCreate ?? widget.onEdit),
             ),
           ] else ...[
             if (plans.length > 1)
               PlanChips(
                 labels: [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)],
                 selected: _planIndex,
+                todayIndex: todayIndex,
                 onSelected: (i) => setState(() => _planIndex = i),
               ),
             PlanViewList(
               plan: plan,
               date: date,
               showStartEnd: true,
+              liveMode: liveMode,
+              fieldWarning: _missingGroups,
               onFieldTap: hasProtocol && plan.fields.any((f) => f.agendaItemId != null)
                   ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId)
                   : null,
@@ -195,7 +236,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
             ListTile(
               dense: true,
               title: Text(context.l10n.attendanceEditRunSheet, style: primaryStyle),
-              onTap: widget.onEdit,
+              onTap: edit,
             ),
             ListTile(
               dense: true,
@@ -209,4 +250,18 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         ],
     );
   }
+}
+
+/// P10_ATTENDANCE: Ionic `isPlanLiveNow` needs a time and at least one field.
+bool hasPlanFields(Plan plan) => plan.time.isNotEmpty && plan.fields.isNotEmpty;
+
+/// P10_ATTENDANCE: Ionic `todayPlanChip` – index of today's plan when that
+/// plan's day is today, otherwise -1.
+int todayChipIndex(PlanAttendance att, List<Plan> plans, [DateTime? now]) {
+  final n = now ?? DateTime.now();
+  final index = PlanUtils.todayPlanIndex(att, n);
+  if (index < 0 || index >= plans.length) return -1;
+  final day = PlanUtils.planDate(att, index, plans)?.toLocal();
+  if (day == null) return -1;
+  return DateUtils.isSameDay(day, n) ? index : -1;
 }

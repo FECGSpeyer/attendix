@@ -171,7 +171,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   Widget build(BuildContext context) {
     final typesAsync = ref.watch(visibleAttendanceTypesProvider);
     final isAllDay = _selectedType?.allDay == true;
-    final showSongs = _selectedType?.manageSongs == true;
+    // P10_ATTENDANCE: Ionic showSongsSelection(): !isGeneral && manage_songs
+    final showSongs = showSongsForType(_selectedType, ref.watch(currentTenantProvider)?.type);
     final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
     final ios = isIosLook(context); // IOS_FORMS2
 

@@ -1,6 +1,7 @@
 /// Pure helpers for the performance history page (Ionic history.page.ts).
 library;
 
+import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
 
 /// All plans of a Termin: `plan` plus `extra_plans` (Ionic `allPlans`).
@@ -62,3 +63,9 @@ int countRehearsalsForSong(
 
 /// Plural label for the rehearsal badge (Ionic `history.rehearsals`).
 String rehearsalsLabel(int count) => l10nWithoutContext.historyRehearsals(count);
+
+/// P10_ATTENDANCE: Ionic history `historyEntry.person_id =
+/// activeConductors[0].id` – the first conductor who has not left (same
+/// filter as the conductor dropdown, so the value is always an item).
+int? defaultHistoryConductorId(List<Person> conductors) =>
+    conductors.where((c) => c.left == null).firstOrNull?.id;

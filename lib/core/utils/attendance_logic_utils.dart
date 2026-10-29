@@ -1,5 +1,6 @@
 import 'package:intl/intl.dart';
 
+import '../../data/models/attendance/attendance.dart' show AttendanceType; // P10_ATTENDANCE
 import '../../data/models/player_absence/player_absence.dart';
 import '../constants/enums.dart';
 
@@ -108,3 +109,9 @@ typedef HistoryEntryKey = ({int songId, int? personId, String? otherConductor});
   }
   return (delete: [for (final r in rest) r.id], update: update, insert: insert);
 }
+
+/// P10_ATTENDANCE: Ionic `showSongsSelection()` / `manageSongs && !isGeneral`:
+/// the Werke section only for types with `manage_songs`, never for
+/// "general" tenants.
+bool showSongsForType(AttendanceType? type, String? tenantType) =>
+    (type?.manageSongs ?? false) && tenantType != 'general';

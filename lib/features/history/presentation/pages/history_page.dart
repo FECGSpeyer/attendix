@@ -13,6 +13,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
+import '../../../../data/models/person/person.dart'; // P10_ATTENDANCE
 import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -261,7 +262,21 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     final conductorsAsync = ref.read(conductorsProvider);
 
     final songs = songsAsync.valueOrNull ?? [];
-    final conductors = conductorsAsync.valueOrNull ?? [];
+    // P10_ATTENDANCE: wait for the conductors so the default can be set.
+    final List<Person> conductors;
+    final cached = conductorsAsync.valueOrNull;
+    if (cached != null) {
+      conductors = cached;
+    } else {
+      List<Person> loaded;
+      try {
+        loaded = await ref.read(conductorsProvider.future);
+      } catch (_) {
+        loaded = const [];
+      }
+      if (!mounted) return;
+      conductors = loaded;
+    }
 
     if (songs.isEmpty) {
       ToastHelper.showWarning(context, context.l10n.historyNoneFound);
@@ -269,7 +284,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     }
 
     final selectedSongIds = <int>{};
-    int? selectedConductorId;
+    // P10_ATTENDANCE: Ionic preselects the first active conductor
+    // (historyEntry.person_id = activeConductors[0].id).
+    int? selectedConductorId = defaultHistoryConductorId(conductors);
     String? otherConductor;
     DateTime selectedDate = DateTime.now();
 

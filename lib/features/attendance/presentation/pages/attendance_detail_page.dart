@@ -619,7 +619,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
               // UX_ATT: Ionic shows the Checkliste only once it has items;
               // an empty one is started via the menu ("Checkliste starten").
               final hasChecklist = canViewChecklist && _localChecklist.isNotEmpty;
-              final hasSongs = attendanceType?.manageSongs ?? false;
+              // P10_ATTENDANCE: Ionic `manageSongs && !isGeneral`
+              final hasSongs = showSongsForType(
+                  attendanceType, ref.watch(currentTenantProvider)?.type);
+              final canAccessFiles = ref.watch(canAccessFilesProvider);
 
               return CustomScrollView(
                 slivers: [
@@ -646,7 +649,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                               ref.invalidate(attendanceDetailProvider(widget.attendanceId));
                             } catch (e) {
                               if (mounted) {
-                                ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+                                ToastHelper.showError(this.context, this.context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
                               }
                             }
                           },
@@ -660,9 +663,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onOpenNavigation: attendance.place?.isNotEmpty == true
                               ? () => openEventNavigation(context, attendance.place!)
                               : null,
-                          onChooseFilesFolder: _chooseFilesFolder,
-                          onRemoveFilesFolder: _removeFilesFolder,
-                          onOpenFilesFolder: attendance.filesFolder?.isNotEmpty == true
+                          // P10_ATTENDANCE: Ionic `@if (db.canAccessFiles())`
+                          onChooseFilesFolder: canAccessFiles ? _chooseFilesFolder : null,
+                          onRemoveFilesFolder: canAccessFiles ? _removeFilesFolder : null,
+                          onOpenFilesFolder: canAccessFiles && attendance.filesFolder?.isNotEmpty == true
                               ? () => openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
                           // ATT_DETAIL
@@ -720,6 +724,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           // state lives with the accordion like Ionic's.
                           onCreate: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
                           onEdit: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                          // P10_ATTENDANCE: Ionic editPlan(initialPlanIndex: planIndex)
+                          onEditPlan: (i) => context.push<bool>(
+                              '/planning?attendanceId=${widget.attendanceId}${i > 0 ? '&plan=$i' : ''}'),
                           onExportPdf: _exportPlanPdf,
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
@@ -1644,6 +1651,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       });
 
       await _saveChecklist();
+      if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.attendanceChecklistRestored);
     }
   }
@@ -2464,6 +2472,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
             .firstOrNull
             ?.fullName ??
         '';
+    if (!mounted) return;
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: context.l10n.attendanceRemovePerson,
