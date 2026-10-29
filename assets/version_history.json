@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.22.7",
+      "date": "29.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Dienste ohne eigene Einteilung stehen nicht mehr zum Zusagen in der Liste, übernommen werden sie wie bisher über den Dienstplan",
+        "🐛 Neues Design (Beta): Vergangene Termine lassen sich wie in „Meine Termine“ nicht mehr ändern, nur entschuldigte behalten ihre Aktionen",
+        "🐛 Neues Design (Beta): „Gruppe wechseln“ fragt vorher nach ungespeicherten Eingaben"
+      ]
+    },
+    {
       "version": "0.22.6",
       "date": "29.10.2026",
       "changes": [

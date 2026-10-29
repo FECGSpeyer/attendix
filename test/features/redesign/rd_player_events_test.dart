@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/player_absence_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
@@ -6,7 +8,9 @@ import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/repositories/sign_in_out_repository.dart';
+import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_own_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_absence_sheet.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_signout_sheet.dart';
@@ -55,8 +59,12 @@ CrossTenantPersonAttendance _own(
   AttendanceStatus status, {
   String? place,
   int tenantId = 7,
+  AttendanceType? type,
+  String? dutyState,
 }) =>
     CrossTenantPersonAttendance(
+      attendanceType: type,
+      dutyState: dutyState,
       id: id,
       attendanceId: int.parse(id),
       status: status,
@@ -124,6 +132,55 @@ void main() {
       expect(split.answer, isNot(contains(SelfServiceActionType.signOut)));
       expect(split.answer, contains(SelfServiceActionType.signInWithNote));
       expect(split.info, [SelfServiceActionType.openNavigation]);
+    });
+  });
+
+  group('past and duty Termine', () {
+    test('past: no answer actions, only an excused one keeps them (like "Meine Termine")', () {
+      final actions = _actions([]);
+      final present =
+          rdOwnEventActions(actions, _own('4', _day(-2), AttendanceStatus.present, place: 'Saal'), past: true);
+      expect(present.answer, isEmpty);
+      expect(present.info, [SelfServiceActionType.openNavigation]);
+      final excused = rdOwnEventActions(actions, _own('5', _day(-2), AttendanceStatus.excused), past: true);
+      expect(excused.answer, contains(SelfServiceActionType.undoSignout));
+
+      final data = SignoutData(
+        upcoming: [_own('6', _day(2), AttendanceStatus.neutral)],
+        past: [_own('4', _day(-2), AttendanceStatus.present)],
+      );
+      expect(rdIsPastOwnEvent(data, rdFindOwnEvent(data, '4')!), isTrue);
+      expect(rdIsPastOwnEvent(data, rdFindOwnEvent(data, '6')!), isFalse);
+    });
+
+    test('duty Termine without an own assignment are not listed for an answer', () async {
+      final duty = TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true);
+      final container = ProviderContainer(overrides: [
+        signoutDataProvider.overrideWith((ref) async => SignoutData(
+              upcoming: [
+                _own('7', _day(2), AttendanceStatus.neutral, type: duty),
+                _own('8', _day(3), AttendanceStatus.neutral, type: duty, dutyState: 'confirmed'),
+                _own('9', _day(4), AttendanceStatus.neutral),
+              ],
+              past: [_own('10', _day(-4), AttendanceStatus.neutral, type: duty)],
+            )),
+      ]);
+      addTearDown(container.dispose);
+      final data = await container.read(rdSignoutDataProvider.future);
+      expect(data.allUpcoming.map((a) => a.id), ['8', '9']);
+      expect(data.past, isEmpty);
+    });
+
+    test('every list of the new design uses the filtered Termine', () {
+      for (final path in [
+        'lib/features/redesign/presentation/pages/rd_events_page.dart',
+        'lib/features/redesign/presentation/pages/rd_own_event_page.dart',
+        'lib/features/redesign/presentation/widgets/today/rd_player_today.dart',
+      ]) {
+        final source = File(path).readAsStringSync();
+        expect(source, isNot(contains('ref.watch(signoutDataProvider)')), reason: path);
+        expect(source, contains('ref.watch(rdSignoutDataProvider)'), reason: path);
+      }
     });
   });
 

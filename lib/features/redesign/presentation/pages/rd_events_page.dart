@@ -77,7 +77,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
           ref.read(attendanceRefetchCounter.notifier).state++;
         } else {
           ref.invalidate(signoutDataProvider);
-          await ref.read(signoutDataProvider.future).catchError((_) => const SignoutData());
+          await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
         }
       },
       floatingActionButton: canCreate
@@ -296,7 +296,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
   Widget _playerBody(BuildContext context) {
     final l10n = context.l10n;
-    final async = ref.watch(signoutDataProvider);
+    final async = ref.watch(rdSignoutDataProvider);
     final data = async.valueOrNull;
     if (data == null) {
       return async.hasError

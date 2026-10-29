@@ -10,6 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart'
     show profileRoleName;
 import 'rd_widgets.dart';
@@ -111,6 +112,13 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     }
     setState(() => _switchingTo = tenant.id);
     final container = ProviderScope.containerOf(context, listen: false);
+    // Like a tab switch (SOL_FIX25): a page with unsaved input or a running
+    // save is asked first and can keep the current group.
+    final guards = container.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) {
+      if (mounted) setState(() => _switchingTo = null);
+      return;
+    }
     final prefs = container.read(userPreferencesNotifierProvider.notifier);
     try {
       await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);

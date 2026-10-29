@@ -5,6 +5,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
@@ -12,6 +13,15 @@ import '../rd_dates.dart';
 
 /// REDESIGN: data of "Heute". Only reads through the existing
 /// `…RepositoryWithTenantProvider`s (no new queries, no writes).
+
+/// The own Termine as "Meine Termine" lists them (Ionic `applyDutyView`):
+/// duty Termine without an own assignment are left out, they are taken over
+/// through the duty process (`duty_take`), never answered with "Dabei".
+/// Refresh by invalidating [signoutDataProvider].
+final rdSignoutDataProvider = FutureProvider<SignoutData>((ref) async {
+  final data = await ref.watch(signoutDataProvider.future);
+  return applySignoutDutyView(data, useDutyView: false);
+});
 
 /// Answers for one Termin, split like the "Heute" card
 /// ("24 zugesagt · 3 entschuldigt · 2 später · 5 offen").

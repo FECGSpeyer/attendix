@@ -13,7 +13,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../../../data/providers/rd_today_providers.dart' show rdStartOf;
+import '../../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider, rdStartOf;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -29,7 +29,7 @@ class RdPlayerToday extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final data = ref.watch(signoutDataProvider).valueOrNull;
+    final data = ref.watch(rdSignoutDataProvider).valueOrNull;
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final next = data?.upcoming.take(4).toList() ?? const <CrossTenantPersonAttendance>[];
@@ -134,7 +134,7 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final dataAsync = ref.watch(signoutDataProvider);
+    final dataAsync = ref.watch(rdSignoutDataProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final tenant = ref.watch(currentTenantProvider);
 

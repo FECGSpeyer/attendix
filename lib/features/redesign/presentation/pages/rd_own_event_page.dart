@@ -5,6 +5,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -26,12 +27,21 @@ CrossTenantPersonAttendance? rdFindOwnEvent(SignoutData data, String id) {
   return null;
 }
 
+/// Whether [att] is one of the past Termine of [data].
+bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
+    data.past.any((a) => a.id == att.id);
+
 /// Entries of the Termin action sheet that the answer card does not
 /// already offer as buttons, split into "Mehr" (answer) and infos.
+///
+/// A [past] Termin has no answer card; like the past rows of "Meine
+/// Termine" only an excused one keeps its answer actions (Ionic opens the
+/// action sheet there and nowhere else).
 ({List<SelfServiceActionType> answer, List<SelfServiceActionType> info}) rdOwnEventActions(
   SelfServiceEventActions actions,
-  CrossTenantPersonAttendance att,
-) {
+  CrossTenantPersonAttendance att, {
+  bool past = false,
+}) {
   const infoTypes = {
     SelfServiceActionType.showPlan,
     SelfServiceActionType.showDescription,
@@ -45,12 +55,14 @@ CrossTenantPersonAttendance? rdFindOwnEvent(SignoutData data, String id) {
     SelfServiceActionType.signOut,
     SelfServiceActionType.enterLate,
   };
-  final hasCard = actions.quickActions(att) != null;
+  final hasCard = !past && actions.quickActions(att) != null;
+  final canAnswer = !past || att.isExcusedStatus;
   final all = actions.buildActions(att).map((a) => a.type).toList();
   return (
     answer: [
-      for (final t in all)
-        if (!infoTypes.contains(t) && !(hasCard && cardTypes.contains(t))) t,
+      if (canAnswer)
+        for (final t in all)
+          if (!infoTypes.contains(t) && !(hasCard && cardTypes.contains(t))) t,
     ],
     info: [for (final t in all) if (infoTypes.contains(t)) t],
   );
@@ -69,7 +81,7 @@ class RdOwnEventPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
-    final async = ref.watch(signoutDataProvider);
+    final async = ref.watch(rdSignoutDataProvider);
     final data = async.valueOrNull;
     final att = data == null ? null : rdFindOwnEvent(data, personAttendanceId);
 
@@ -98,7 +110,8 @@ class RdOwnEventPage extends ConsumerWidget {
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
-    final split = rdOwnEventActions(actions, att);
+    final past = rdIsPastOwnEvent(data!, att);
+    final split = rdOwnEventActions(actions, att, past: past);
     final typeName = att.attendanceType?.name ?? '';
     final start = EventListUtils.parse(att.date);
     final locale = currentIntlLocale();
@@ -143,7 +156,7 @@ class RdOwnEventPage extends ConsumerWidget {
         Text(meta, style: RdType.meta(p, size: 15)),
       ],
       const SizedBox(height: 18),
-      if (actions.isOwn(att))
+      if (actions.isOwn(att) && !past)
         RdOwnAnswerSection(
           key: ValueKey('rd-own-answer-${att.id}'),
           attendance: att,
@@ -165,7 +178,7 @@ class RdOwnEventPage extends ConsumerWidget {
     return RdPage(
       onRefresh: () async {
         ref.invalidate(signoutDataProvider);
-        await ref.read(signoutDataProvider.future).catchError((_) => const SignoutData());
+        await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
       },
       children: children,
     );

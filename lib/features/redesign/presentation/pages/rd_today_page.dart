@@ -10,6 +10,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
@@ -52,7 +53,7 @@ class RdTodayPage extends ConsumerWidget {
     if (!role.isConductor) {
       ref.invalidate(currentSelfServicePlayerProvider);
       ref.invalidate(signoutDataProvider);
-      await ref.read(signoutDataProvider.future).catchError((_) => const SignoutData());
+      await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
     }
   }
 
