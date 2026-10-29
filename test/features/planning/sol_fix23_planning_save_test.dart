@@ -311,8 +311,9 @@ void main() {
     });
 
     test('all attendance writes of the editor go through the chain', () {
-      expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(3));
-      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(3));
+      // SOL_FIX25: + the write of pending edits queued by dispose().
+      expect(RegExp(r'updateAttendancePlanFields\(').allMatches(src), hasLength(4));
+      expect(RegExp(r'_serialised\(').allMatches(src), hasLength(4));
     });
   });
 }

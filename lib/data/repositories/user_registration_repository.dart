@@ -104,13 +104,14 @@ class UserRegistrationRepository extends BaseRepository
     required Role role,
     int? tenantId,
     bool selfRegister = false,
+    int? personId,
   }) async {
     ensureNotDemo('registerUser'); // DEMO_GUARD
     final normalizedEmail = email.toLowerCase().trim();
     final targetTenantId = tenantId ?? currentTenantId;
 
-    final existing =
-        await getAppIdByEmail(normalizedEmail, targetTenantId, role: role);
+    final existing = await getAppIdByEmail(normalizedEmail, targetTenantId,
+        role: role, personId: personId);
 
     if (existing != null) {
       final (userId, alreadyThere) = existing;
@@ -285,8 +286,12 @@ class UserRegistrationRepository extends BaseRepository
   /// cross-tenant (like Ionic) — it detects whether the person already has an
   /// account in ANY instance. Only the user id / role is used; all writes are
   /// scoped to [tenantId].
+  ///
+  /// SOL_FIX25: with [personId], an account that is already linked to that
+  /// very person (e.g. an archived / transferred person that kept its
+  /// `appId`) is not a duplicate: it is reused as `alreadyThere`.
   Future<(String, bool)?> getAppIdByEmail(String email, int tenantId,
-      {Role? role}) async {
+      {Role? role, int? personId}) async {
     final List rows;
     try {
       rows = await supabase
@@ -330,11 +335,19 @@ class UserRegistrationRepository extends BaseRepository
       try {
         linked = await supabase
             .from(table)
-            .select('firstName, lastName')
+            .select(table == 'player' ? 'id, firstName, lastName' : 'firstName, lastName')
             .eq('tenantId', tenantId)
             .eq('appId', userId);
       } catch (_) {
         throw AccountFlowException(l10nWithoutContext.dbLoadUserFailed);
+      }
+
+      // SOL_FIX25: the linked person is the one being (re)registered →
+      // reuse its existing link instead of aborting as a duplicate.
+      if (personId != null &&
+          table == 'player' &&
+          linked.any((row) => (row as Map<String, dynamic>)['id'] == personId)) {
+        return (userId, true);
       }
 
       if (linked.isNotEmpty) {
@@ -423,6 +436,7 @@ class UserRegistrationRepository extends BaseRepository
       email: email,
       name: person.firstName,
       role: role,
+      personId: person.id,
     );
 
     try {
