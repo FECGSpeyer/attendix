@@ -24,6 +24,11 @@ import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_SHEETS
 class NotificationBell extends ConsumerWidget {
   const NotificationBell({super.key});
 
+  /// REDESIGN: opens the notification centre from another button (the
+  /// bell on "Heute" of the new design).
+  static Future<void> open(BuildContext context, WidgetRef ref) =>
+      const NotificationBell()._open(context, ref);
+
   Future<void> _open(BuildContext context, WidgetRef ref) async {
     var allTenants = false;
     List<UserNotification> list;

@@ -13487,6 +13487,714 @@ abstract class AppLocalizations {
   /// **'Ohne Ergebnis: {count}'**
   String protocolWithoutOutcome(Object count);
 
+  /// redesign.adminTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Verwaltung'**
+  String get redesignAdminTitle;
+
+  /// redesign.appearance.autoHint
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch folgt der Einstellung deines Geräts.'**
+  String get redesignAppearanceAutoHint;
+
+  /// redesign.appearance.brightness
+  ///
+  /// In de, this message translates to:
+  /// **'Hell oder dunkel'**
+  String get redesignAppearanceBrightness;
+
+  /// redesign.appearance.deviceOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Einstellungen gelten nur auf diesem Gerät.'**
+  String get redesignAppearanceDeviceOnly;
+
+  /// redesign.appearance.modeAuto
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch'**
+  String get redesignAppearanceModeAuto;
+
+  /// redesign.appearance.modeDark
+  ///
+  /// In de, this message translates to:
+  /// **'Dunkel'**
+  String get redesignAppearanceModeDark;
+
+  /// redesign.appearance.modeLight
+  ///
+  /// In de, this message translates to:
+  /// **'Hell'**
+  String get redesignAppearanceModeLight;
+
+  /// redesign.appearance.preview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau der gewählten Farbwelt'**
+  String get redesignAppearancePreview;
+
+  /// redesign.appearance.previewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Probe'**
+  String get redesignAppearancePreviewTitle;
+
+  /// redesign.appearance.stageAlwaysDark
+  ///
+  /// In de, this message translates to:
+  /// **'Bühne ist immer dunkel.'**
+  String get redesignAppearanceStageAlwaysDark;
+
+  /// redesign.appearance.title
+  ///
+  /// In de, this message translates to:
+  /// **'Darstellung'**
+  String get redesignAppearanceTitle;
+
+  /// redesign.appearance.world
+  ///
+  /// In de, this message translates to:
+  /// **'Farbwelt'**
+  String get redesignAppearanceWorld;
+
+  /// redesign.appearance.worldClear
+  ///
+  /// In de, this message translates to:
+  /// **'Klar'**
+  String get redesignAppearanceWorldClear;
+
+  /// redesign.appearance.worldClearHint
+  ///
+  /// In de, this message translates to:
+  /// **'Schwarz auf Weiß, höchster Kontrast'**
+  String get redesignAppearanceWorldClearHint;
+
+  /// redesign.appearance.worldConcertHall
+  ///
+  /// In de, this message translates to:
+  /// **'Konzertsaal'**
+  String get redesignAppearanceWorldConcertHall;
+
+  /// redesign.appearance.worldConcertHallHint
+  ///
+  /// In de, this message translates to:
+  /// **'Warm, mit Serifen-Überschriften'**
+  String get redesignAppearanceWorldConcertHallHint;
+
+  /// redesign.appearance.worldNightBlue
+  ///
+  /// In de, this message translates to:
+  /// **'Nachtblau'**
+  String get redesignAppearanceWorldNightBlue;
+
+  /// redesign.appearance.worldNightBlueHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kräftig und rund'**
+  String get redesignAppearanceWorldNightBlueHint;
+
+  /// redesign.appearance.worldPetrol
+  ///
+  /// In de, this message translates to:
+  /// **'Petrol'**
+  String get redesignAppearanceWorldPetrol;
+
+  /// redesign.appearance.worldPetrolHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ruhig und klar (Standard)'**
+  String get redesignAppearanceWorldPetrolHint;
+
+  /// redesign.appearance.worldStage
+  ///
+  /// In de, this message translates to:
+  /// **'Bühne'**
+  String get redesignAppearanceWorldStage;
+
+  /// redesign.appearance.worldStageHint
+  ///
+  /// In de, this message translates to:
+  /// **'Immer dunkel, für Abende und Proben'**
+  String get redesignAppearanceWorldStageHint;
+
+  /// redesign.applicant.otherGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Gruppe beitreten'**
+  String get redesignApplicantOtherGroup;
+
+  /// redesign.applicant.title
+  ///
+  /// In de, this message translates to:
+  /// **'Bewerbung'**
+  String get redesignApplicantTitle;
+
+  /// redesign.applicant.waiting
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anmeldung wird geprüft'**
+  String get redesignApplicantWaiting;
+
+  /// redesign.applicant.waitingFor
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anmeldung bei {group} wird geprüft'**
+  String redesignApplicantWaitingFor(Object group);
+
+  /// redesign.common.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get redesignCommonAll;
+
+  /// redesign.common.cancel
+  ///
+  /// In de, this message translates to:
+  /// **'Abbrechen'**
+  String get redesignCommonCancel;
+
+  /// redesign.common.done
+  ///
+  /// In de, this message translates to:
+  /// **'Fertig'**
+  String get redesignCommonDone;
+
+  /// redesign.common.retry
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut versuchen'**
+  String get redesignCommonRetry;
+
+  /// redesign.groups.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Gruppen konnten nicht geladen werden.'**
+  String get redesignGroupsLoadFailed;
+
+  /// redesign.groups.manage
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen verwalten'**
+  String get redesignGroupsManage;
+
+  /// redesign.groups.switchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Wechsel fehlgeschlagen. Bitte versuche es erneut.'**
+  String get redesignGroupsSwitchFailed;
+
+  /// redesign.groups.switchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe: {name}. Tippen zum Wechseln'**
+  String redesignGroupsSwitchHint(Object name);
+
+  /// redesign.groups.title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe wechseln'**
+  String get redesignGroupsTitle;
+
+  /// redesign.me.absence
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesenheit eintragen'**
+  String get redesignMeAbsence;
+
+  /// redesign.me.account
+  ///
+  /// In de, this message translates to:
+  /// **'Konto'**
+  String get redesignMeAccount;
+
+  /// redesign.me.admin
+  ///
+  /// In de, this message translates to:
+  /// **'Verwaltung'**
+  String get redesignMeAdmin;
+
+  /// redesign.me.adminHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder, Termintypen, Rechte und mehr'**
+  String get redesignMeAdminHint;
+
+  /// redesign.me.allSettings
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Einstellungen'**
+  String get redesignMeAllSettings;
+
+  /// redesign.me.app
+  ///
+  /// In de, this message translates to:
+  /// **'App'**
+  String get redesignMeApp;
+
+  /// redesign.me.beta
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Design (Beta)'**
+  String get redesignMeBeta;
+
+  /// redesign.me.betaHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.'**
+  String get redesignMeBetaHint;
+
+  /// redesign.me.calendar
+  ///
+  /// In de, this message translates to:
+  /// **'Kalender abonnieren'**
+  String get redesignMeCalendar;
+
+  /// redesign.me.feedback
+  ///
+  /// In de, this message translates to:
+  /// **'Feedback geben'**
+  String get redesignMeFeedback;
+
+  /// redesign.me.forMe
+  ///
+  /// In de, this message translates to:
+  /// **'Für mich'**
+  String get redesignMeForMe;
+
+  /// redesign.me.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Gruppen'**
+  String get redesignMeGroups;
+
+  /// redesign.me.groupsCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Gruppen'**
+  String redesignMeGroupsCount(Object count);
+
+  /// redesign.me.help
+  ///
+  /// In de, this message translates to:
+  /// **'Hilfe'**
+  String get redesignMeHelp;
+
+  /// redesign.me.logout
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignMeLogout;
+
+  /// redesign.me.notifications
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen'**
+  String get redesignMeNotifications;
+
+  /// redesign.me.whatsNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu in dieser Version'**
+  String get redesignMeWhatsNew;
+
+  /// redesign.status.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend'**
+  String get redesignStatusAbsent;
+
+  /// redesign.status.excused
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigt'**
+  String get redesignStatusExcused;
+
+  /// redesign.status.late
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet'**
+  String get redesignStatusLate;
+
+  /// redesign.status.later
+  ///
+  /// In de, this message translates to:
+  /// **'Kommt später'**
+  String get redesignStatusLater;
+
+  /// redesign.status.open
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get redesignStatusOpen;
+
+  /// redesign.status.yes
+  ///
+  /// In de, this message translates to:
+  /// **'Zugesagt'**
+  String get redesignStatusYes;
+
+  /// redesign.tab.events
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get redesignTabEvents;
+
+  /// redesign.tab.me
+  ///
+  /// In de, this message translates to:
+  /// **'Ich'**
+  String get redesignTabMe;
+
+  /// redesign.tab.members
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder'**
+  String get redesignTabMembers;
+
+  /// redesign.tab.today
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get redesignTabToday;
+
+  /// redesign.tab.works
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignTabWorks;
+
+  /// redesign.today.allEvents
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Termine'**
+  String get redesignTodayAllEvents;
+
+  /// redesign.today.answerChildren
+  ///
+  /// In de, this message translates to:
+  /// **'Zu- und absagen'**
+  String get redesignTodayAnswerChildren;
+
+  /// redesign.today.answered
+  ///
+  /// In de, this message translates to:
+  /// **'Alle geantwortet'**
+  String get redesignTodayAnswered;
+
+  /// redesign.today.answeredLater
+  ///
+  /// In de, this message translates to:
+  /// **'Du hast gemeldet, dass du später kommst.'**
+  String get redesignTodayAnsweredLater;
+
+  /// redesign.today.answeredNo
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist abgemeldet.'**
+  String get redesignTodayAnsweredNo;
+
+  /// redesign.today.answeredYes
+  ///
+  /// In de, this message translates to:
+  /// **'Schön, du bist dabei.'**
+  String get redesignTodayAnsweredYes;
+
+  /// redesign.today.attention
+  ///
+  /// In de, this message translates to:
+  /// **'Braucht deine Aufmerksamkeit'**
+  String get redesignTodayAttention;
+
+  /// redesign.today.birthday
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag: {name} ({day})'**
+  String redesignTodayBirthday(Object name, Object day);
+
+  /// redesign.today.birthdayMore
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag: {name} ({day}) +{count}'**
+  String redesignTodayBirthdayMore(Object name, Object day, Object count);
+
+  /// redesign.today.countAbsent
+  ///
+  /// In de, this message translates to:
+  /// **'{count} abwesend'**
+  String redesignTodayCountAbsent(Object count);
+
+  /// redesign.today.countExcused
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entschuldigt'**
+  String redesignTodayCountExcused(Object count);
+
+  /// redesign.today.countLater
+  ///
+  /// In de, this message translates to:
+  /// **'{count} später'**
+  String redesignTodayCountLater(Object count);
+
+  /// redesign.today.countOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignTodayCountOpen(Object count);
+
+  /// redesign.today.countYes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} zugesagt'**
+  String redesignTodayCountYes(Object count);
+
+  /// redesign.today.critical
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}'**
+  String redesignTodayCritical(num count);
+
+  /// redesign.today.criticalHint
+  ///
+  /// In de, this message translates to:
+  /// **'Unter der Anwesenheitsgrenze'**
+  String get redesignTodayCriticalHint;
+
+  /// redesign.today.dayToday
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get redesignTodayDayToday;
+
+  /// redesign.today.dayTomorrow
+  ///
+  /// In de, this message translates to:
+  /// **'Morgen'**
+  String get redesignTodayDayTomorrow;
+
+  /// redesign.today.dutyQuestion
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist eingeteilt. Bestätigst du?'**
+  String get redesignTodayDutyQuestion;
+
+  /// redesign.today.greeting
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {name}'**
+  String redesignTodayGreeting(Object name);
+
+  /// redesign.today.inHours
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {in {count} Std.} other {in {count} Std.}}'**
+  String redesignTodayInHours(num count);
+
+  /// redesign.today.inMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {in {count} Min.} other {in {count} Min.}}'**
+  String redesignTodayInMinutes(num count);
+
+  /// redesign.today.later
+  ///
+  /// In de, this message translates to:
+  /// **'Ich komme später …'**
+  String get redesignTodayLater;
+
+  /// redesign.today.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das konnte nicht geladen werden.'**
+  String get redesignTodayLoadFailed;
+
+  /// redesign.today.loading
+  ///
+  /// In de, this message translates to:
+  /// **'Wird geladen …'**
+  String get redesignTodayLoading;
+
+  /// redesign.today.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zum Termin'**
+  String get redesignTodayMore;
+
+  /// redesign.today.mySection
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Stimme'**
+  String get redesignTodayMySection;
+
+  /// redesign.today.mySectionHint
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit deiner Stimmgruppe'**
+  String get redesignTodayMySectionHint;
+
+  /// redesign.today.nextEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Termin'**
+  String get redesignTodayNextEvent;
+
+  /// redesign.today.no
+  ///
+  /// In de, this message translates to:
+  /// **'Kann nicht'**
+  String get redesignTodayNo;
+
+  /// redesign.today.noAfterAll
+  ///
+  /// In de, this message translates to:
+  /// **'Doch absagen'**
+  String get redesignTodayNoAfterAll;
+
+  /// redesign.today.noChildren
+  ///
+  /// In de, this message translates to:
+  /// **'Es sind noch keine Kinder mit deinem Konto verknüpft.'**
+  String get redesignTodayNoChildren;
+
+  /// redesign.today.noDone
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get redesignTodayNoDone;
+
+  /// redesign.today.noMember
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist in dieser Gruppe nicht als Mitglied eingetragen.'**
+  String get redesignTodayNoMember;
+
+  /// redesign.today.noUpcoming
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade stehen keine Termine an.'**
+  String get redesignTodayNoUpcoming;
+
+  /// redesign.today.notPart
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist für diesen Termin nicht eingeteilt.'**
+  String get redesignTodayNotPart;
+
+  /// redesign.today.nothingElse
+  ///
+  /// In de, this message translates to:
+  /// **'Danach ist noch nichts geplant.'**
+  String get redesignTodayNothingElse;
+
+  /// redesign.today.notifications
+  ///
+  /// In de, this message translates to:
+  /// **'Benachrichtigungen'**
+  String get redesignTodayNotifications;
+
+  /// redesign.today.notificationsUnread
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Benachrichtigungen, {count} ungelesen} other {Benachrichtigungen, {count} ungelesen}}'**
+  String redesignTodayNotificationsUnread(num count);
+
+  /// redesign.today.otherReason
+  ///
+  /// In de, this message translates to:
+  /// **'Anderer Grund …'**
+  String get redesignTodayOtherReason;
+
+  /// redesign.today.pending
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} neue Anmeldung} other {{count} neue Anmeldungen}}'**
+  String redesignTodayPending(num count);
+
+  /// redesign.today.pendingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen und freischalten'**
+  String get redesignTodayPendingHint;
+
+  /// redesign.today.question
+  ///
+  /// In de, this message translates to:
+  /// **'Bist du dabei?'**
+  String get redesignTodayQuestion;
+
+  /// redesign.today.record
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit erfassen'**
+  String get redesignTodayRecord;
+
+  /// redesign.today.running
+  ///
+  /// In de, this message translates to:
+  /// **'läuft'**
+  String get redesignTodayRunning;
+
+  /// redesign.today.signouts
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Abmeldung für den nächsten Termin} other {{count} Abmeldungen für den nächsten Termin}}'**
+  String redesignTodaySignouts(num count);
+
+  /// redesign.today.signoutsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gründe ansehen'**
+  String get redesignTodaySignoutsHint;
+
+  /// redesign.today.thisWeek
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Woche'**
+  String get redesignTodayThisWeek;
+
+  /// redesign.today.upNext
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes'**
+  String get redesignTodayUpNext;
+
+  /// redesign.today.weekEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Woche kommt sonst nichts.'**
+  String get redesignTodayWeekEmpty;
+
+  /// redesign.today.whyNot
+  ///
+  /// In de, this message translates to:
+  /// **'Warum kannst du nicht?'**
+  String get redesignTodayWhyNot;
+
+  /// redesign.today.yes
+  ///
+  /// In de, this message translates to:
+  /// **'Bin dabei'**
+  String get redesignTodayYes;
+
+  /// redesign.today.yesAfterAll
+  ///
+  /// In de, this message translates to:
+  /// **'Doch dabei'**
+  String get redesignTodayYesAfterAll;
+
+  /// redesign.today.yesDone
+  ///
+  /// In de, this message translates to:
+  /// **'Zugesagt'**
+  String get redesignTodayYesDone;
+
+  /// redesign.today.yourAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Zusage'**
+  String get redesignTodayYourAnswer;
+
   /// register.create
   ///
   /// In de, this message translates to:

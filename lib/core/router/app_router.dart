@@ -108,6 +108,13 @@ import 'attendance_detail_guard.dart'; // LEFTOVERS
 import 'route_access.dart'; // PARITY_R7
 import '../../l10n/l10n.dart';
 import '../../shared/widgets/adaptive/ion_button_label.dart';
+// REDESIGN: new design (Beta)
+import '../providers/redesign_providers.dart';
+import 'redesign_routes.dart';
+import '../../features/redesign/presentation/shell/rd_shell.dart';
+import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_me_page.dart';
+import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -386,6 +393,15 @@ final routerProvider = Provider<GoRouter>((ref) {
         final role = ref.read(currentRoleProvider);
         final location = state.matchedLocation;
 
+        // REDESIGN: "Heute" and "Ich" only exist while the new design is on.
+        if (!RedesignRoutes.active && RedesignRoutes.isRedesignRoute(location)) {
+          return homeRouteFor(
+            role,
+            ref.read(currentTenantIdProvider),
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
+        }
+
         // PARITY_R7: all role/tenant checks in one pure function (tested).
         final tenant = ref.read(currentTenantProvider);
         final roleTarget = roleRouteRedirect(
@@ -532,8 +548,33 @@ final routerProvider = Provider<GoRouter>((ref) {
 
       // Main app shell with tabs
       ShellRoute(
-        builder: (context, state, child) => MainShell(child: child),
+        // REDESIGN: the new shell (fixed tabs) while the Beta is on.
+        builder: (context, state, child) => _AppShell(child: child),
         routes: [
+          // REDESIGN: "Heute", "Ich" and "Ich › Darstellung" (Beta)
+          GoRoute(
+            path: RedesignRoutes.today,
+            name: 'redesignToday',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdTodayPage(),
+              state: state,
+            ),
+          ),
+          GoRoute(
+            path: RedesignRoutes.me,
+            name: 'redesignMe',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdMePage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: 'darstellung',
+                name: 'redesignAppearance',
+                builder: (context, state) => const RdAppearancePage(),
+              ),
+            ],
+          ),
           // People/Players
           GoRoute(
             path: '/people',
@@ -1110,4 +1151,18 @@ class AppRoutes {
   static const String shifts = 'shifts';
   static const String shiftDetail = 'shiftDetail';
   static const String tenantDetail = 'tenantDetail';
+}
+
+/// REDESIGN: old tab shell, or the new one while "Neues Design (Beta)" is on.
+class _AppShell extends ConsumerWidget {
+  const _AppShell({required this.child});
+
+  final Widget child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    return ref.watch(redesignEnabledProvider)
+        ? RdShell(child: child)
+        : MainShell(child: child);
+  }
 }

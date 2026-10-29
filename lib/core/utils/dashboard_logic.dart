@@ -5,6 +5,7 @@ import '../../data/models/church/church.dart';
 import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../constants/enums.dart';
+import '../router/redesign_routes.dart'; // REDESIGN
 import 'attendance_percentage_utils.dart';
 import 'dashboard_utils.dart';
 
@@ -49,10 +50,15 @@ bool shouldUseDashboardHome(Role role, int? tenantId, Map<String, dynamic>? meta
 }
 
 /// Start route after login / tenant selection (Ionic `LoginGuard` / `routeAfterAuth`).
+///
+/// REDESIGN: with the new design (Beta) switched on every role starts on
+/// "Heute".
 String homeRouteFor(Role role, int? tenantId, Map<String, dynamic>? metadata) =>
-    shouldUseDashboardHome(role, tenantId, metadata)
-        ? '/home-dashboard'
-        : role.defaultRoute;
+    RedesignRoutes.active
+        ? RedesignRoutes.today
+        : shouldUseDashboardHome(role, tenantId, metadata)
+            ? '/home-dashboard'
+            : role.defaultRoute;
 
 /// Cards that can be configured: "Meine Aufgaben" only exists with Teamorganisation.
 List<DashboardCardConfig> configurableDashboardCards(

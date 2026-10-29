@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.14.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta) zum Ausprobieren: unter Einstellungen › System einschalten, gilt nur auf diesem Gerät",
+        "✨ Neue Startseite „Heute“: nächster Termin mit Zusagen, Zusage oder Abmeldung mit einem Tipp, Hinweise für Dirigenten",
+        "✨ Feste Tabs Heute, Termine, Mitglieder, Werke und Ich; auf Tablet und Computer mit Seitenleiste",
+        "🎨 Fünf Farbwelten (Petrol, Konzertsaal, Nachtblau, Klar, Bühne) mit Hell, Dunkel oder Automatisch unter Ich › Darstellung"
+      ]
+    },
+    {
       "version": "0.13.0",
       "date": "29.10.2026",
       "changes": [

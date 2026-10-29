@@ -10170,6 +10170,544 @@
       "count": {}
     }
   },
+  "redesignAdminTitle": "Verwaltung",
+  "@redesignAdminTitle": {
+    "description": "redesign.adminTitle"
+  },
+  "redesignAppearanceAutoHint": "Automatisch folgt der Einstellung deines Geräts.",
+  "@redesignAppearanceAutoHint": {
+    "description": "redesign.appearance.autoHint"
+  },
+  "redesignAppearanceBrightness": "Hell oder dunkel",
+  "@redesignAppearanceBrightness": {
+    "description": "redesign.appearance.brightness"
+  },
+  "redesignAppearanceDeviceOnly": "Diese Einstellungen gelten nur auf diesem Gerät.",
+  "@redesignAppearanceDeviceOnly": {
+    "description": "redesign.appearance.deviceOnly"
+  },
+  "redesignAppearanceModeAuto": "Automatisch",
+  "@redesignAppearanceModeAuto": {
+    "description": "redesign.appearance.modeAuto"
+  },
+  "redesignAppearanceModeDark": "Dunkel",
+  "@redesignAppearanceModeDark": {
+    "description": "redesign.appearance.modeDark"
+  },
+  "redesignAppearanceModeLight": "Hell",
+  "@redesignAppearanceModeLight": {
+    "description": "redesign.appearance.modeLight"
+  },
+  "redesignAppearancePreview": "Vorschau der gewählten Farbwelt",
+  "@redesignAppearancePreview": {
+    "description": "redesign.appearance.preview"
+  },
+  "redesignAppearancePreviewTitle": "Probe",
+  "@redesignAppearancePreviewTitle": {
+    "description": "redesign.appearance.previewTitle"
+  },
+  "redesignAppearanceStageAlwaysDark": "Bühne ist immer dunkel.",
+  "@redesignAppearanceStageAlwaysDark": {
+    "description": "redesign.appearance.stageAlwaysDark"
+  },
+  "redesignAppearanceTitle": "Darstellung",
+  "@redesignAppearanceTitle": {
+    "description": "redesign.appearance.title"
+  },
+  "redesignAppearanceWorld": "Farbwelt",
+  "@redesignAppearanceWorld": {
+    "description": "redesign.appearance.world"
+  },
+  "redesignAppearanceWorldClear": "Klar",
+  "@redesignAppearanceWorldClear": {
+    "description": "redesign.appearance.worldClear"
+  },
+  "redesignAppearanceWorldClearHint": "Schwarz auf Weiß, höchster Kontrast",
+  "@redesignAppearanceWorldClearHint": {
+    "description": "redesign.appearance.worldClearHint"
+  },
+  "redesignAppearanceWorldConcertHall": "Konzertsaal",
+  "@redesignAppearanceWorldConcertHall": {
+    "description": "redesign.appearance.worldConcertHall"
+  },
+  "redesignAppearanceWorldConcertHallHint": "Warm, mit Serifen-Überschriften",
+  "@redesignAppearanceWorldConcertHallHint": {
+    "description": "redesign.appearance.worldConcertHallHint"
+  },
+  "redesignAppearanceWorldNightBlue": "Nachtblau",
+  "@redesignAppearanceWorldNightBlue": {
+    "description": "redesign.appearance.worldNightBlue"
+  },
+  "redesignAppearanceWorldNightBlueHint": "Kräftig und rund",
+  "@redesignAppearanceWorldNightBlueHint": {
+    "description": "redesign.appearance.worldNightBlueHint"
+  },
+  "redesignAppearanceWorldPetrol": "Petrol",
+  "@redesignAppearanceWorldPetrol": {
+    "description": "redesign.appearance.worldPetrol"
+  },
+  "redesignAppearanceWorldPetrolHint": "Ruhig und klar (Standard)",
+  "@redesignAppearanceWorldPetrolHint": {
+    "description": "redesign.appearance.worldPetrolHint"
+  },
+  "redesignAppearanceWorldStage": "Bühne",
+  "@redesignAppearanceWorldStage": {
+    "description": "redesign.appearance.worldStage"
+  },
+  "redesignAppearanceWorldStageHint": "Immer dunkel, für Abende und Proben",
+  "@redesignAppearanceWorldStageHint": {
+    "description": "redesign.appearance.worldStageHint"
+  },
+  "redesignApplicantOtherGroup": "Andere Gruppe beitreten",
+  "@redesignApplicantOtherGroup": {
+    "description": "redesign.applicant.otherGroup"
+  },
+  "redesignApplicantTitle": "Bewerbung",
+  "@redesignApplicantTitle": {
+    "description": "redesign.applicant.title"
+  },
+  "redesignApplicantWaiting": "Deine Anmeldung wird geprüft",
+  "@redesignApplicantWaiting": {
+    "description": "redesign.applicant.waiting"
+  },
+  "redesignApplicantWaitingFor": "Deine Anmeldung bei {group} wird geprüft",
+  "@redesignApplicantWaitingFor": {
+    "description": "redesign.applicant.waitingFor",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignCommonAll": "Alle",
+  "@redesignCommonAll": {
+    "description": "redesign.common.all"
+  },
+  "redesignCommonCancel": "Abbrechen",
+  "@redesignCommonCancel": {
+    "description": "redesign.common.cancel"
+  },
+  "redesignCommonDone": "Fertig",
+  "@redesignCommonDone": {
+    "description": "redesign.common.done"
+  },
+  "redesignCommonRetry": "Erneut versuchen",
+  "@redesignCommonRetry": {
+    "description": "redesign.common.retry"
+  },
+  "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
+  "@redesignGroupsLoadFailed": {
+    "description": "redesign.groups.loadFailed"
+  },
+  "redesignGroupsManage": "Gruppen verwalten",
+  "@redesignGroupsManage": {
+    "description": "redesign.groups.manage"
+  },
+  "redesignGroupsSwitchFailed": "Wechsel fehlgeschlagen. Bitte versuche es erneut.",
+  "@redesignGroupsSwitchFailed": {
+    "description": "redesign.groups.switchFailed"
+  },
+  "redesignGroupsSwitchHint": "Gruppe: {name}. Tippen zum Wechseln",
+  "@redesignGroupsSwitchHint": {
+    "description": "redesign.groups.switchHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignGroupsTitle": "Gruppe wechseln",
+  "@redesignGroupsTitle": {
+    "description": "redesign.groups.title"
+  },
+  "redesignMeAbsence": "Abwesenheit eintragen",
+  "@redesignMeAbsence": {
+    "description": "redesign.me.absence"
+  },
+  "redesignMeAccount": "Konto",
+  "@redesignMeAccount": {
+    "description": "redesign.me.account"
+  },
+  "redesignMeAdmin": "Verwaltung",
+  "@redesignMeAdmin": {
+    "description": "redesign.me.admin"
+  },
+  "redesignMeAdminHint": "Mitglieder, Termintypen, Rechte und mehr",
+  "@redesignMeAdminHint": {
+    "description": "redesign.me.adminHint"
+  },
+  "redesignMeAllSettings": "Alle Einstellungen",
+  "@redesignMeAllSettings": {
+    "description": "redesign.me.allSettings"
+  },
+  "redesignMeApp": "App",
+  "@redesignMeApp": {
+    "description": "redesign.me.app"
+  },
+  "redesignMeBeta": "Neues Design (Beta)",
+  "@redesignMeBeta": {
+    "description": "redesign.me.beta"
+  },
+  "redesignMeBetaHint": "Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.",
+  "@redesignMeBetaHint": {
+    "description": "redesign.me.betaHint"
+  },
+  "redesignMeCalendar": "Kalender abonnieren",
+  "@redesignMeCalendar": {
+    "description": "redesign.me.calendar"
+  },
+  "redesignMeFeedback": "Feedback geben",
+  "@redesignMeFeedback": {
+    "description": "redesign.me.feedback"
+  },
+  "redesignMeForMe": "Für mich",
+  "@redesignMeForMe": {
+    "description": "redesign.me.forMe"
+  },
+  "redesignMeGroups": "Meine Gruppen",
+  "@redesignMeGroups": {
+    "description": "redesign.me.groups"
+  },
+  "redesignMeGroupsCount": "{count} Gruppen",
+  "@redesignMeGroupsCount": {
+    "description": "redesign.me.groupsCount",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMeHelp": "Hilfe",
+  "@redesignMeHelp": {
+    "description": "redesign.me.help"
+  },
+  "redesignMeLogout": "Abmelden",
+  "@redesignMeLogout": {
+    "description": "redesign.me.logout"
+  },
+  "redesignMeNotifications": "Benachrichtigungen",
+  "@redesignMeNotifications": {
+    "description": "redesign.me.notifications"
+  },
+  "redesignMeWhatsNew": "Neu in dieser Version",
+  "@redesignMeWhatsNew": {
+    "description": "redesign.me.whatsNew"
+  },
+  "redesignStatusAbsent": "Abwesend",
+  "@redesignStatusAbsent": {
+    "description": "redesign.status.absent"
+  },
+  "redesignStatusExcused": "Entschuldigt",
+  "@redesignStatusExcused": {
+    "description": "redesign.status.excused"
+  },
+  "redesignStatusLate": "Verspätet",
+  "@redesignStatusLate": {
+    "description": "redesign.status.late"
+  },
+  "redesignStatusLater": "Kommt später",
+  "@redesignStatusLater": {
+    "description": "redesign.status.later"
+  },
+  "redesignStatusOpen": "Offen",
+  "@redesignStatusOpen": {
+    "description": "redesign.status.open"
+  },
+  "redesignStatusYes": "Zugesagt",
+  "@redesignStatusYes": {
+    "description": "redesign.status.yes"
+  },
+  "redesignTabEvents": "Termine",
+  "@redesignTabEvents": {
+    "description": "redesign.tab.events"
+  },
+  "redesignTabMe": "Ich",
+  "@redesignTabMe": {
+    "description": "redesign.tab.me"
+  },
+  "redesignTabMembers": "Mitglieder",
+  "@redesignTabMembers": {
+    "description": "redesign.tab.members"
+  },
+  "redesignTabToday": "Heute",
+  "@redesignTabToday": {
+    "description": "redesign.tab.today"
+  },
+  "redesignTabWorks": "Werke",
+  "@redesignTabWorks": {
+    "description": "redesign.tab.works"
+  },
+  "redesignTodayAllEvents": "Alle Termine",
+  "@redesignTodayAllEvents": {
+    "description": "redesign.today.allEvents"
+  },
+  "redesignTodayAnswerChildren": "Zu- und absagen",
+  "@redesignTodayAnswerChildren": {
+    "description": "redesign.today.answerChildren"
+  },
+  "redesignTodayAnswered": "Alle geantwortet",
+  "@redesignTodayAnswered": {
+    "description": "redesign.today.answered"
+  },
+  "redesignTodayAnsweredLater": "Du hast gemeldet, dass du später kommst.",
+  "@redesignTodayAnsweredLater": {
+    "description": "redesign.today.answeredLater"
+  },
+  "redesignTodayAnsweredNo": "Du bist abgemeldet.",
+  "@redesignTodayAnsweredNo": {
+    "description": "redesign.today.answeredNo"
+  },
+  "redesignTodayAnsweredYes": "Schön, du bist dabei.",
+  "@redesignTodayAnsweredYes": {
+    "description": "redesign.today.answeredYes"
+  },
+  "redesignTodayAttention": "Braucht deine Aufmerksamkeit",
+  "@redesignTodayAttention": {
+    "description": "redesign.today.attention"
+  },
+  "redesignTodayBirthday": "Geburtstag: {name} ({day})",
+  "@redesignTodayBirthday": {
+    "description": "redesign.today.birthday",
+    "placeholders": {
+      "name": {},
+      "day": {}
+    }
+  },
+  "redesignTodayBirthdayMore": "Geburtstag: {name} ({day}) +{count}",
+  "@redesignTodayBirthdayMore": {
+    "description": "redesign.today.birthdayMore",
+    "placeholders": {
+      "name": {},
+      "day": {},
+      "count": {}
+    }
+  },
+  "redesignTodayCountAbsent": "{count} abwesend",
+  "@redesignTodayCountAbsent": {
+    "description": "redesign.today.countAbsent",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountExcused": "{count} entschuldigt",
+  "@redesignTodayCountExcused": {
+    "description": "redesign.today.countExcused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountLater": "{count} später",
+  "@redesignTodayCountLater": {
+    "description": "redesign.today.countLater",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountOpen": "{count} offen",
+  "@redesignTodayCountOpen": {
+    "description": "redesign.today.countOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCountYes": "{count} zugesagt",
+  "@redesignTodayCountYes": {
+    "description": "redesign.today.countYes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignTodayCritical": "{count, plural, one {{count} Mitglied fehlt oft} other {{count} Mitglieder fehlen oft}}",
+  "@redesignTodayCritical": {
+    "description": "redesign.today.critical",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayCriticalHint": "Unter der Anwesenheitsgrenze",
+  "@redesignTodayCriticalHint": {
+    "description": "redesign.today.criticalHint"
+  },
+  "redesignTodayDayToday": "Heute",
+  "@redesignTodayDayToday": {
+    "description": "redesign.today.dayToday"
+  },
+  "redesignTodayDayTomorrow": "Morgen",
+  "@redesignTodayDayTomorrow": {
+    "description": "redesign.today.dayTomorrow"
+  },
+  "redesignTodayDutyQuestion": "Du bist eingeteilt. Bestätigst du?",
+  "@redesignTodayDutyQuestion": {
+    "description": "redesign.today.dutyQuestion"
+  },
+  "redesignTodayGreeting": "Hallo {name}",
+  "@redesignTodayGreeting": {
+    "description": "redesign.today.greeting",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTodayInHours": "{count, plural, one {in {count} Std.} other {in {count} Std.}}",
+  "@redesignTodayInHours": {
+    "description": "redesign.today.inHours",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayInMinutes": "{count, plural, one {in {count} Min.} other {in {count} Min.}}",
+  "@redesignTodayInMinutes": {
+    "description": "redesign.today.inMinutes",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayLater": "Ich komme später …",
+  "@redesignTodayLater": {
+    "description": "redesign.today.later"
+  },
+  "redesignTodayLoadFailed": "Das konnte nicht geladen werden.",
+  "@redesignTodayLoadFailed": {
+    "description": "redesign.today.loadFailed"
+  },
+  "redesignTodayLoading": "Wird geladen …",
+  "@redesignTodayLoading": {
+    "description": "redesign.today.loading"
+  },
+  "redesignTodayMore": "Mehr zum Termin",
+  "@redesignTodayMore": {
+    "description": "redesign.today.more"
+  },
+  "redesignTodayMySection": "Meine Stimme",
+  "@redesignTodayMySection": {
+    "description": "redesign.today.mySection"
+  },
+  "redesignTodayMySectionHint": "Anwesenheit deiner Stimmgruppe",
+  "@redesignTodayMySectionHint": {
+    "description": "redesign.today.mySectionHint"
+  },
+  "redesignTodayNextEvent": "Nächster Termin",
+  "@redesignTodayNextEvent": {
+    "description": "redesign.today.nextEvent"
+  },
+  "redesignTodayNo": "Kann nicht",
+  "@redesignTodayNo": {
+    "description": "redesign.today.no"
+  },
+  "redesignTodayNoAfterAll": "Doch absagen",
+  "@redesignTodayNoAfterAll": {
+    "description": "redesign.today.noAfterAll"
+  },
+  "redesignTodayNoChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
+  "@redesignTodayNoChildren": {
+    "description": "redesign.today.noChildren"
+  },
+  "redesignTodayNoDone": "Abgemeldet",
+  "@redesignTodayNoDone": {
+    "description": "redesign.today.noDone"
+  },
+  "redesignTodayNoMember": "Du bist in dieser Gruppe nicht als Mitglied eingetragen.",
+  "@redesignTodayNoMember": {
+    "description": "redesign.today.noMember"
+  },
+  "redesignTodayNoUpcoming": "Gerade stehen keine Termine an.",
+  "@redesignTodayNoUpcoming": {
+    "description": "redesign.today.noUpcoming"
+  },
+  "redesignTodayNotPart": "Du bist für diesen Termin nicht eingeteilt.",
+  "@redesignTodayNotPart": {
+    "description": "redesign.today.notPart"
+  },
+  "redesignTodayNothingElse": "Danach ist noch nichts geplant.",
+  "@redesignTodayNothingElse": {
+    "description": "redesign.today.nothingElse"
+  },
+  "redesignTodayNotifications": "Benachrichtigungen",
+  "@redesignTodayNotifications": {
+    "description": "redesign.today.notifications"
+  },
+  "redesignTodayNotificationsUnread": "{count, plural, one {Benachrichtigungen, {count} ungelesen} other {Benachrichtigungen, {count} ungelesen}}",
+  "@redesignTodayNotificationsUnread": {
+    "description": "redesign.today.notificationsUnread",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayOtherReason": "Anderer Grund …",
+  "@redesignTodayOtherReason": {
+    "description": "redesign.today.otherReason"
+  },
+  "redesignTodayPending": "{count, plural, one {{count} neue Anmeldung} other {{count} neue Anmeldungen}}",
+  "@redesignTodayPending": {
+    "description": "redesign.today.pending",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodayPendingHint": "Prüfen und freischalten",
+  "@redesignTodayPendingHint": {
+    "description": "redesign.today.pendingHint"
+  },
+  "redesignTodayQuestion": "Bist du dabei?",
+  "@redesignTodayQuestion": {
+    "description": "redesign.today.question"
+  },
+  "redesignTodayRecord": "Anwesenheit erfassen",
+  "@redesignTodayRecord": {
+    "description": "redesign.today.record"
+  },
+  "redesignTodayRunning": "läuft",
+  "@redesignTodayRunning": {
+    "description": "redesign.today.running"
+  },
+  "redesignTodaySignouts": "{count, plural, one {{count} Abmeldung für den nächsten Termin} other {{count} Abmeldungen für den nächsten Termin}}",
+  "@redesignTodaySignouts": {
+    "description": "redesign.today.signouts",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignTodaySignoutsHint": "Gründe ansehen",
+  "@redesignTodaySignoutsHint": {
+    "description": "redesign.today.signoutsHint"
+  },
+  "redesignTodayThisWeek": "Diese Woche",
+  "@redesignTodayThisWeek": {
+    "description": "redesign.today.thisWeek"
+  },
+  "redesignTodayUpNext": "Als Nächstes",
+  "@redesignTodayUpNext": {
+    "description": "redesign.today.upNext"
+  },
+  "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
+  "@redesignTodayWeekEmpty": {
+    "description": "redesign.today.weekEmpty"
+  },
+  "redesignTodayWhyNot": "Warum kannst du nicht?",
+  "@redesignTodayWhyNot": {
+    "description": "redesign.today.whyNot"
+  },
+  "redesignTodayYes": "Bin dabei",
+  "@redesignTodayYes": {
+    "description": "redesign.today.yes"
+  },
+  "redesignTodayYesAfterAll": "Doch dabei",
+  "@redesignTodayYesAfterAll": {
+    "description": "redesign.today.yesAfterAll"
+  },
+  "redesignTodayYesDone": "Zugesagt",
+  "@redesignTodayYesDone": {
+    "description": "redesign.today.yesDone"
+  },
+  "redesignTodayYourAnswer": "Deine Zusage",
+  "@redesignTodayYourAnswer": {
+    "description": "redesign.today.yourAnswer"
+  },
   "registerCreate": "Instanz jetzt erstellen",
   "@registerCreate": {
     "description": "register.create"
