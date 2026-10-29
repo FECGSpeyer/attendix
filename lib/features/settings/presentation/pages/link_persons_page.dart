@@ -43,8 +43,10 @@ PersonLike _toPersonLike(Person p) => PersonLike(
 // MatchReason values are already localized (core l10n).
 String _reasonLabel(AppLocalizations l10n, String reason) => reason;
 
+/// Ionic `[a.id, b.id].sort().join('-')`: JS sorts the ids as strings
+/// (PARITY_R10: e.g. 9 and 10 → "10-9").
 String linkGroupKey(int a, int b) {
-  final ids = [a, b]..sort();
+  final ids = ['$a', '$b']..sort();
   return ids.join('-');
 }
 
