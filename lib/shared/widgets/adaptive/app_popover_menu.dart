@@ -629,7 +629,12 @@ class _PopoverRow extends StatelessWidget {
                       // IOS27_SWEEP: ion-item 1rem = 17pt on the iPhone
                       Text(
                         label,
-                        style: TextStyle(fontSize: ios ? 17 : 16, color: fg),
+                        style: TextStyle(
+                          fontSize: ios ? 17 : 16,
+                          // iOS: CSS `line-height: normal` (≈1.2) – 60pt two-line rows.
+                          height: ios ? 1.2 : null,
+                          color: fg,
+                        ),
                       ),
                       if (subtitle != null)
                         Padding(
