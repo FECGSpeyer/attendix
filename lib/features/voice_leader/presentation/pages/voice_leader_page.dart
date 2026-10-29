@@ -4,6 +4,7 @@ import 'package:intl/intl.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/voice_leader_providers.dart';
@@ -24,6 +25,14 @@ class VoiceLeaderPage extends ConsumerWidget {
   Widget build(BuildContext context, WidgetRef ref) {
     final membersAsync = ref.watch(voiceGroupMembersProvider);
     final groupNameAsync = ref.watch(voiceGroupNameProvider);
+    // PARITY_R10: Ionic shows the "Einteilung" badge only when the tenant
+    // defines the `einteilung` extra field.
+    final hasEinteilungField = ref.watch(currentTenantProvider
+        .select((t) => t?.additionalFields?.any((f) => f.id == 'einteilung') ?? false));
+    // PARITY_R10: Ionic loadGroupMembers — no own player profile → toast
+    // "Kein Spielerprofil gefunden." (shown here as the empty state).
+    final noProfile = ref.watch(currentPlayerProvider
+        .select((p) => p.hasValue && p.value == null));
 
     return Scaffold(
       backgroundColor: ionLightColor(context),
@@ -61,6 +70,17 @@ class VoiceLeaderPage extends ConsumerWidget {
             ],
           ),
           data: (members) {
+            if (noProfile) {
+              return ListView(
+                physics: const AlwaysScrollableScrollPhysics(),
+                children: [
+                  IonNoData(
+                    icon: Icons.person_off_outlined,
+                    label: context.l10n.voiceLeaderNoProfile,
+                  ),
+                ],
+              );
+            }
             final groupName = groupNameAsync.valueOrNull ??
                 context.l10n.voiceLeaderFlutterVoiceGroup;
 
@@ -103,6 +123,7 @@ class VoiceLeaderPage extends ConsumerWidget {
                         for (var i = 0; i < members.length; i++)
                           _MemberTile(
                             member: members[i],
+                            showEinteilung: hasEinteilungField,
                             last: i == members.length - 1,
                           ),
                       ],
@@ -161,7 +182,13 @@ class _GroupHeader extends StatelessWidget {
 /// Ionic `.person-item`: avatar (48px), bold name with "SF"/Einteilung
 /// badges, mail/phone links and the upcoming absences.
 class _MemberTile extends StatelessWidget {
-  const _MemberTile({required this.member, required this.last});
+  const _MemberTile({
+    required this.member,
+    required this.last,
+    this.showEinteilung = false,
+  });
+
+  final bool showEinteilung;
 
   final VoiceGroupMember member;
   final bool last;
@@ -203,7 +230,7 @@ class _MemberTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final person = member.person;
     final absences = member.upcomingAbsences;
-    final einteilung = person.additionalFields?['einteilung'];
+    final einteilung = showEinteilung ? (person.additionalFields?['einteilung']) : null;
     final hasEmail = person.email != null && person.email!.isNotEmpty;
     final hasPhone = person.phone != null && person.phone!.isNotEmpty;
     final dateFormat = DateFormat(dateFmt(DateFmtKind.dayMonth));
