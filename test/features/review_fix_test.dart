@@ -54,7 +54,8 @@ void main() {
       expect(canMutateAttendanceDetail(Role.responsible), isTrue);
       expect(canMutateAttendanceDetail(Role.viewer), isFalse);
       expect(canMutateAttendanceDetail(Role.helper), isFalse);
-      expect(canMutateAttendanceDetail(Role.voiceLeaderHelper), isFalse);
+      // Ionic isHelper = role === HELPER only (Leon 2026-10-29: wie Ionic).
+      expect(canMutateAttendanceDetail(Role.voiceLeaderHelper), isTrue);
       expect(canMutateAttendanceDetail(Role.player), isFalse);
     });
   });

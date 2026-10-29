@@ -108,6 +108,9 @@ void main() {
       expect(canViewAttendanceChecklistFor(Role.helper, helperPerm), isFalse);
       expect(canViewAttendanceChecklistFor(Role.helper, null), isFalse);
       expect(canViewAttendanceChecklistFor(Role.admin, null), isTrue);
+      // Ionic isHelper = role === HELPER: Stimmführer-Helfer sieht beides.
+      expect(canViewAttendanceNotesFor(Role.voiceLeaderHelper, null), isTrue);
+      expect(canViewAttendanceChecklistFor(Role.voiceLeaderHelper, null), isTrue);
     });
 
     test('Gruppen-Einschränkung nur für Helfer ohne "Alle Gruppen"', () {

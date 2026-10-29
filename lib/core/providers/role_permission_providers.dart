@@ -91,14 +91,19 @@ bool canCreateAttendanceFor(Role role, TenantRolePermission? perm, {bool permiss
 }
 
 /// Pure Logik: Darf die Rolle Spielernotizen in der Anwesenheit sehen?
+///
+/// Ionic attendance.page: `!isHelper || canViewNotes` with
+/// `isHelper = role === HELPER`, so a Stimmführer-Helfer always sees them.
 bool canViewAttendanceNotesFor(Role role, TenantRolePermission? perm) {
-  if (!role.isHelperRole) return true;
+  if (role != Role.helper) return true;
   return perm?.playerNotesView ?? false;
 }
 
 /// Pure Logik: Darf die Rolle die Checkliste in der Anwesenheit sehen?
+///
+/// Ionic attendance.page: `!isHelper || canViewChecklist` (HELPER only).
 bool canViewAttendanceChecklistFor(Role role, TenantRolePermission? perm) {
-  if (!role.isHelperRole) return true;
+  if (role != Role.helper) return true;
   return perm?.checklistView ?? false;
 }
 

@@ -609,7 +609,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           p.id!: '${sortDisplayValueOf(p, _sort, sortField, _registrationAnswers, churches)}'
                               ' · ${p.groupName ?? context.l10n.attendanceNoGroup}',
                     };
-              final isHelper = ref.watch(effectiveRoleProvider).isHelperRole;
+              // Ionic attendance.page `isHelper = role === HELPER`.
+              final isHelper = ref.watch(effectiveRoleProvider) == Role.helper;
               final visibleNotes = canViewNotes
                   ? _personNotes
                   : {
@@ -2683,9 +2684,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
 /// Whether [role] may use the mutating attendance-detail actions (add
 /// persons, checklist, reminder, photo, description). Viewers are read-only
-/// and helpers only set statuses.
+/// and helpers only set statuses. Ionic attendance.page gates these with
+/// `isHelper = role === HELPER`, so a Stimmführer-Helfer may use them.
 bool canMutateAttendanceDetail(Role role) =>
-    role.canEdit && !role.isHelperRole;
+    role.canEdit && role != Role.helper;
 
 /// IOS_DETAIL: "Beschreibung & Anhang bearbeiten" – Ionic shows it on the
 /// attendance page for every role that edits Termine (Helfer included, like
