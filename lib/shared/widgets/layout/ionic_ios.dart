@@ -9,6 +9,7 @@ import '../adaptive/adaptive_platform.dart';
 import '../adaptive/app_toolbar.dart'
     show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
 import 'ion_modal_handle.dart' show kIonModalSheetRadius; // PARITY_R5
+import 'ionic_md.dart'; // MD_SWEEP
 
 /// Page building blocks that mirror Ionic components as they render in
 /// **iOS mode** (iPhone app and iPhone Safari PWA, @rdlabo ionic-theme-ios26)
@@ -25,12 +26,15 @@ bool isIosLook(BuildContext context) => useIosLook(context);
 /// PARITY_R5: background of an `ion-content` without `color` (pages with
 /// plain `ion-list`s or white inset lists, e.g. Team-Organisation, Export,
 /// Lehrer, Gruppen): `--ion-background-color` – white, iOS dark #000, md
-/// dark the theme page (#121212). Pages with `ion-content color="light"`
-/// keep the scaffold default (#f4f5f8).
+/// dark #121212 (MD_SWEEP: the md scaffold default is the `color="light"`
+/// #222428 now). Pages with `ion-content color="light"` keep the scaffold
+/// default (#f4f5f8).
 Color? ionPlainContentBackground(BuildContext context) {
   final theme = Theme.of(context);
   if (theme.brightness == Brightness.dark) {
-    return useIosLook(context) ? AppColors.iosPlainPageDark : null;
+    return useIosLook(context)
+        ? AppColors.iosPlainPageDark
+        : AppColors.mdPageDark;
   }
   return theme.colorScheme.surface;
 }
@@ -488,7 +492,7 @@ class IonLargeTitle extends StatelessWidget {
 /// glass pill (radius 22, [IonSearchbarGlass]), the 23.4pt magnifier 12pt
 /// from the start in the text colour, 18pt text (1.0625rem) with the
 /// placeholder at 40 % and – once there is text – the clear ✕ in its own
-/// 44pt glass circle 11pt to the right. Material: the dense outlined field.
+/// 44pt glass circle 11pt to the right. md: [IonMdSearchbar] (MD_SWEEP).
 class IonSearchbar extends StatelessWidget {
   const IonSearchbar({
     super.key,
@@ -522,21 +526,14 @@ class IonSearchbar extends StatelessWidget {
       builder: (context, value, _) {
         final hasText = value.text.isNotEmpty;
         if (!isIosLook(context)) {
-          return TextField(
+          // MD_SWEEP: the Ionic md searchbar (white, shadow, no border);
+          // the caller keeps its host padding.
+          return IonMdSearchbar(
             controller: controller,
-            decoration: InputDecoration(
-              hintText: hintText,
-              prefixIcon: const Icon(Icons.search),
-              isDense: true,
-              suffixIcon:
-                  hasText
-                      ? IconButton(
-                        icon: const Icon(Icons.clear),
-                        onPressed: _clear,
-                      )
-                      : null,
-            ),
+            hintText: hintText,
             onChanged: onChanged,
+            onClear: onClear,
+            padding: EdgeInsets.zero,
           );
         }
         final text = Theme.of(context).colorScheme.onSurface;
@@ -666,13 +663,13 @@ class IonListHeader extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = isIosLook(context);
+    // MD_SWEEP: md-ion-list-inset header label – 16px semibold
+    // medium-tint, line-height 1.29rem.
     final style =
         ios
             ? IonIos.listHeaderStyle(context, color: color)
-            : Theme.of(context).textTheme.labelLarge?.copyWith(
-              color: color ?? AppColors.medium,
-              fontWeight: FontWeight.w600,
-            );
+            : IonMd.insetListHeaderStyle(Theme.of(context).brightness,
+                color: color);
     final row = Row(
       children: [
         Expanded(child: Text(label, style: style)),
@@ -684,9 +681,16 @@ class IonListHeader extends StatelessWidget {
       ],
     );
     if (!ios) {
-      return Padding(
-        padding: EdgeInsets.fromLTRB(20, 16, trailing == null ? 20 : 8, 4),
-        child: row,
+      // MD_SWEEP: 45px header, label margin 8 4 4, 36px from the edge
+      // (list margin 16 + header padding 16 + label margin 4).
+      return ConstrainedBox(
+        constraints:
+            const BoxConstraints(minHeight: IonMd.listHeaderMinHeight),
+        child: Padding(
+          padding: EdgeInsets.fromLTRB(IonMd.insetListHeaderStart, 8,
+              trailing == null ? 20 : 8, 4),
+          child: Align(alignment: Alignment.centerLeft, child: row),
+        ),
       );
     }
     return ConstrainedBox(
@@ -736,7 +740,11 @@ class IonInsetList extends StatelessWidget {
   final BoxBorder? border;
 
   static double radiusOf(BuildContext context, {bool grouped = true}) {
-    if (!isIosLook(context)) return 12;
+    // MD_SWEEP: md-ion-list-inset groups radius 16, a plain md inset list
+    // the core 2px.
+    if (!isIosLook(context)) {
+      return grouped ? IonMd.groupRadius : IonMd.listRadius;
+    }
     return grouped ? IonIos.groupRadius : IonIos.listRadius;
   }
 
@@ -746,7 +754,9 @@ class IonInsetList extends StatelessWidget {
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
       if (i > 0) {
-        rows.add(Divider(height: 0.5, thickness: 0.5, indent: dividerIndent));
+        // MD_SWEEP: md item lines are 1px.
+        final w = isIosLook(context) ? 0.5 : IonMd.lineWidth;
+        rows.add(Divider(height: w, thickness: w, indent: dividerIndent));
       }
       rows.add(children[i]);
     }
@@ -806,18 +816,26 @@ class IonItem extends StatelessWidget {
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: ios ? IonIos.itemMinHeight : 48),
         child: Padding(
+          // MD_SWEEP: md ion-label margin 10 top / bottom.
           padding: EdgeInsets.fromLTRB(
             16,
-            8,
+            ios ? 8 : IonMd.labelMargin,
             ios
                 ? IonIos.itemPaddingEnd +
                     (chevron ? IonIos.detailIconMarginEnd : 0)
-                : 16,
-            8,
+                : IonMd.itemPaddingEnd,
+            ios ? 8 : IonMd.labelMargin,
           ),
           child: Row(
             children: [
-              if (leading != null) ...[leading!, const SizedBox(width: 16)],
+              // MD_SWEEP: md start icons keep 32px to the label.
+              if (leading != null) ...[
+                leading!,
+                SizedBox(
+                    width: !ios && leading is Icon
+                        ? IonMd.startIconGap
+                        : IonMd.startGap),
+              ],
               Expanded(
                 child: Column(
                   mainAxisSize: MainAxisSize.min,
@@ -841,9 +859,11 @@ class IonItem extends StatelessWidget {
                                   fontSize: IonIos.pFontSize,
                                   color: IonIos.labelP(b),
                                 )
-                              : const TextStyle(
-                                  fontSize: 14,
-                                  color: AppColors.medium,
+                              // MD_SWEEP: ion-label p 14/20 step-600.
+                              : TextStyle(
+                                  fontSize: IonMd.pFontSize,
+                                  height: IonMd.pLineHeight,
+                                  color: IonMd.labelP(b),
                                 ),
                           child: subtitle!,
                         ),
@@ -888,9 +908,13 @@ class IonSheetHeader extends StatelessWidget {
       overflow: TextOverflow.ellipsis,
       textAlign: ios ? TextAlign.center : TextAlign.start,
       style: TextStyle(
-        fontSize: ios ? kIonTitleFontSize : 20,
+        fontSize: ios ? kIonTitleFontSize : IonMd.titleFontSize,
         fontWeight: ios ? FontWeight.w600 : FontWeight.w500,
-        color: Theme.of(context).colorScheme.onSurface,
+        // MD_SWEEP: md ion-title – toolbar colour, .0125em tracking.
+        letterSpacing: ios ? null : IonMd.titleLetterSpacing,
+        color: ios
+            ? Theme.of(context).colorScheme.onSurface
+            : IonMd.toolbarText(Theme.of(context).brightness),
       ),
     );
     final header = Container(
@@ -932,7 +956,13 @@ class IonSheetHeader extends StatelessWidget {
               )
             : Row(
                 children: [
-                  if (start.isEmpty) const SizedBox(width: 16) else ...start,
+                  // MD_SWEEP: ion-title padding-start 20.
+                  if (start.isEmpty)
+                    const SizedBox(width: IonMd.titleSpacing)
+                  else ...[
+                    const SizedBox(width: IonMd.toolbarButtonsMargin),
+                    ...start,
+                  ],
                   Expanded(child: titleWidget),
                   ...end,
                   const SizedBox(width: 4),

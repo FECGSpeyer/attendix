@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
+import '../layout/ionic_md.dart' show IonMd; // MD_SWEEP
 import 'app_dialog.dart' show IosAlertButton, iosAlertMessageColor;
 
 /// One button of [showAppActionSheet] (Ionic `ActionSheetButton`).
@@ -237,64 +238,109 @@ class _MaterialActionSheet<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final theme = Theme.of(context);
-    final grey = theme.colorScheme.onSurface.withValues(alpha: 0.54);
-    return SafeArea(
-      child: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.stretch,
-          children: [
-            if (title != null || message != null)
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 20, 16, 12),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    if (title != null)
-                      Text(title!,
-                          style: TextStyle(fontSize: 16, color: grey)),
-                    if (message != null)
-                      Padding(
-                        padding: const EdgeInsets.only(top: 4),
-                        child: Text(message!,
-                            style: TextStyle(fontSize: 14, color: grey)),
-                      ),
+    // MD_SWEEP: Ionic md `ion-action-sheet` – `--background:
+    // var(--ion-background-color)` (#fff, dark #121212); title 16px in
+    // rgba(text, .54) (padding 20 16 17, min-height 60), sub-title 14px
+    // 16px below; 52px buttons (padding 12 16) with 16px step-850 labels
+    // and 24px rgba(text, .54) icons 32px before the label. md has no
+    // destructive colour (`role: 'destructive'` only styles iOS) and no
+    // extra padding above / below the button groups.
+    final b = Theme.of(context).brightness;
+    final grey = IonMd.text(b).withValues(alpha: 0.54);
+    final buttonColor = IonMd.step850(b);
+
+    Widget button({
+      required String label,
+      IconData? icon,
+      Color? color,
+      String? subtitle,
+      bool enabled = true,
+      required VoidCallback onTap,
+    }) {
+      return InkWell(
+        onTap: enabled ? onTap : null,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 52),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 12),
+            child: Opacity(
+              opacity: enabled ? 1 : 0.38,
+              child: Row(
+                children: [
+                  if (icon != null) ...[
+                    Icon(icon, size: 24, color: color ?? grey),
+                    const SizedBox(width: IonMd.startIconGap),
                   ],
-                ),
-              )
-            else
-              const SizedBox(height: 8),
-            for (final a in actions)
-              ListTile(
-                enabled: a.enabled,
-                leading: a.icon == null
-                    ? null
-                    : Icon(a.icon,
-                        color: a.destructive
-                            ? theme.colorScheme.error
-                            : a.color),
-                title: Text(
-                  a.label,
-                  style: a.destructive
-                      ? TextStyle(color: theme.colorScheme.error)
-                      : (a.color != null ? TextStyle(color: a.color) : null),
-                ),
-                subtitle: a.subtitle == null ? null : Text(a.subtitle!),
-                onTap: () => Navigator.of(context).pop(a.value),
+                  Expanded(
+                    child: Column(
+                      mainAxisSize: MainAxisSize.min,
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        Text(label,
+                            style: TextStyle(
+                                fontSize: 16, color: color ?? buttonColor)),
+                        if (subtitle != null)
+                          Text(subtitle,
+                              style: TextStyle(
+                                  fontSize: IonMd.pFontSize,
+                                  color: IonMd.labelP(b))),
+                      ],
+                    ),
+                  ),
+                ],
               ),
-            if (cancelLabel != null)
-              ListTile(
-                title: Text(
-                  cancelLabel!,
-                  style: cancelDestructive
-                      ? TextStyle(color: theme.colorScheme.error)
-                      : null,
+            ),
+          ),
+        ),
+      );
+    }
+
+    return Material(
+      color: IonMd.background(b),
+      child: SafeArea(
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (title != null || message != null)
+                ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 60),
+                  child: Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 20, 16, 17),
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.start,
+                      children: [
+                        if (title != null)
+                          Text(title!,
+                              style: TextStyle(fontSize: 16, color: grey)),
+                        if (message != null)
+                          Padding(
+                            padding:
+                                EdgeInsets.only(top: title != null ? 16 : 0),
+                            child: Text(message!,
+                                style: TextStyle(fontSize: 14, color: grey)),
+                          ),
+                      ],
+                    ),
+                  ),
                 ),
-                onTap: () => Navigator.of(context).pop(),
-              ),
-            const SizedBox(height: 8),
-          ],
+              for (final a in actions)
+                button(
+                  label: a.label,
+                  icon: a.icon,
+                  color: a.destructive ? null : a.color,
+                  subtitle: a.subtitle,
+                  enabled: a.enabled,
+                  onTap: () => Navigator.of(context).pop(a.value),
+                ),
+              if (cancelLabel != null)
+                button(
+                  label: cancelLabel!,
+                  onTap: () => Navigator.of(context).pop(),
+                ),
+            ],
+          ),
         ),
       ),
     );

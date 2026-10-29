@@ -5,6 +5,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
 import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../shared/widgets/layout/ionic_md.dart'; // MD_SWEEP
 
 /// PARITY_R8: md settings list header label (`.9rem` of the md inset
 /// list = 14.4px; the screenshot audit measures Ionic md at 14px).
@@ -221,13 +222,26 @@ class SettingsListSection extends StatelessWidget {
               ),
             ),
           if (children.isNotEmpty)
+            // MD_SWEEP: md-ion-list-inset `ion-item-group` – radius 16,
+            // item background, no shadow; 1px inset lines from the label
+            // (16 + 24 icon + 32 = 72 for items with a start icon).
             Card(
               margin: EdgeInsets.zero,
+              elevation: 0,
+              color: IonMd.itemBackground(theme.brightness),
+              shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(IonMd.groupRadius)),
               clipBehavior: Clip.antiAlias,
               child: Column(
                 children: [
                   for (var i = 0; i < children.length; i++) ...[
-                    if (i > 0) Divider(height: 1, indent: dividerIndent ?? 56),
+                    if (i > 0)
+                      Divider(
+                        height: IonMd.lineWidth,
+                        thickness: IonMd.lineWidth,
+                        indent: dividerIndent ??
+                            (icons ? 72 : IonMd.itemPaddingStart),
+                      ),
                     children[i],
                   ],
                 ],
@@ -360,7 +374,12 @@ class IonDetailChevron extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!ionIsIos(context)) {
-      return Icon(Icons.chevron_right, color: color ?? AppColors.medium);
+      // MD_SWEEP: md `.item-detail-icon` – chevron-forward 1.25em (20px)
+      // in the text colour at `--detail-icon-opacity: .25`.
+      return Icon(Icons.chevron_right,
+          size: 20,
+          color: (color ?? IonMd.text(Theme.of(context).brightness))
+              .withValues(alpha: 0.25));
     }
     return Icon(
       CupertinoIcons.chevron_forward,
@@ -422,7 +441,9 @@ class SettingsListTile extends StatelessWidget {
         onColor ??
         iconColor ??
         color ??
-        (ios ? IonIos.text(context) : AppColors.medium);
+        (ios
+            ? IonIos.text(context)
+            : IonMd.iconColor(Theme.of(context).brightness)); // MD_SWEEP
     final showChevron = detail && onTap != null;
     final tile = ListTile(
       leading:
@@ -446,12 +467,16 @@ class SettingsListTile extends StatelessWidget {
           subtitle != null
               ? Text(
                 subtitle!,
+                // MD_SWEEP: md ion-label p 14 / 20, step-600.
                 style: TextStyle(
-                  fontSize: ios ? 14 : 13,
+                  fontSize: 14,
+                  height: ios ? null : IonMd.pLineHeight,
                   color:
                       background != null
                           ? Colors.white70
-                          : (ios ? IonIos.labelP(context) : AppColors.medium),
+                          : (ios
+                              ? IonIos.labelP(context)
+                              : IonMd.labelP(Theme.of(context).brightness)),
                 ),
               )
               : null,
@@ -462,7 +487,7 @@ class SettingsListTile extends StatelessWidget {
                 children: [
                   if (trailing != null) trailing!,
                   if (showChevron) ...[
-                    if (trailing != null) SizedBox(width: ios ? 8 : 4),
+                    if (trailing != null) SizedBox(width: ios ? 8 : 8),
                     IonDetailChevron(color: fg),
                   ],
                 ],
@@ -512,12 +537,17 @@ class IonBadge extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final ios = ionIsIos(context);
     return Container(
-      constraints: const BoxConstraints(minWidth: 26),
-      padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 3),
+      // MD_SWEEP: badge.md.css – padding 3 4 4 4, min-width 10, radius 4.
+      constraints: BoxConstraints(minWidth: ios ? 26 : 10),
+      padding: ios
+          ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
+          : IonMd.badgePadding,
       decoration: BoxDecoration(
         color: color,
-        borderRadius: BorderRadius.circular(ionIsIos(context) ? 10 : 4),
+        borderRadius:
+            BorderRadius.circular(ios ? 10 : IonMd.badgeRadius),
       ),
       child: Text(
         text,
@@ -571,11 +601,16 @@ class IonNote extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
+    // MD_SWEEP: an md `ion-note` in an item is .6875rem (item.md.css
+    // `::slotted(ion-note)`) in step-600.
     return Text(
       text,
       style: TextStyle(
-        fontSize: ios ? 16 : 14,
-        color: color ?? (ios ? IonIos.note(context) : AppColors.medium),
+        fontSize: ios ? 16 : IonMd.itemNoteFontSize,
+        color: color ??
+            (ios
+                ? IonIos.note(context)
+                : IonMd.note(Theme.of(context).brightness)),
       ),
     );
   }
@@ -926,28 +961,13 @@ class IonSearchbar extends StatelessWidget {
     }
 
     if (!ionIsIos(context)) {
-      return Padding(
-        padding: const EdgeInsets.fromLTRB(
-          AppDimensions.paddingM,
-          0,
-          AppDimensions.paddingM,
-          AppDimensions.paddingS,
-        ),
-        child: ValueListenableBuilder<TextEditingValue>(
-          valueListenable: controller,
-          builder: (context, value, _) => TextField(
-            controller: controller,
-            decoration: InputDecoration(
-              hintText: hint,
-              prefixIcon: const Icon(Icons.search),
-              isDense: true,
-              suffixIcon: value.text.isEmpty
-                  ? null
-                  : IconButton(icon: const Icon(Icons.clear), onPressed: clear),
-            ),
-            onChanged: onChanged,
-          ),
-        ),
+      // MD_SWEEP: the shared Ionic md searchbar in a toolbar (7 / 3 host
+      // padding).
+      return IonMdSearchbar(
+        controller: controller,
+        hintText: hint,
+        onChanged: onChanged,
+        padding: IonMd.searchbarToolbarPadding,
       );
     }
     final dark = Theme.of(context).brightness == Brightness.dark;

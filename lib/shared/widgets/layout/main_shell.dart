@@ -18,6 +18,7 @@ import '../debug/debug_role_fab.dart';
 import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
 import 'ios_tab_bar.dart'; // IOS_LOOK
 import 'root_back_button_scope.dart'; // NATIVE_MISC
+import 'ionic_md.dart' show IonMd; // MD_SWEEP
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -355,10 +356,10 @@ bool isKeyboardOpen(BuildContext context) =>
     MediaQuery.viewInsetsOf(context).bottom > 0;
 
 /// IOS_SHELL2: Ionic md `ion-tab-bar` (desktop / Android): 56px high, page
-/// background (#fff, dark #1f1f1f) with a 0.55px top hairline; the tab
+/// background (#fff, dark #1f1f1f) with a 1px top border; the tab
 /// buttons are at most 168px wide (`ion-tab-button` max-width), so on wide
 /// screens they cluster in the centre and on phones they fill the width.
-/// 22px icon over a 12px label, unselected `--ion-color-step-600`, selected
+/// 22px icon over a 12px label, unselected `--ion-color-step-650`, selected
 /// primary; no tooltips (Ionic has none).
 class _MdTabBar extends StatelessWidget {
   const _MdTabBar({
@@ -377,9 +378,10 @@ class _MdTabBar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
-    final dark = theme.brightness == Brightness.dark;
-    final background = dark ? const Color(0xFF1F1F1F) : Colors.white;
-    final unselected = dark ? const Color(0xFFA0A0A0) : const Color(0xFF666666);
+    // MD_SWEEP: unselected `--ion-color-step-650` (#595959, md dark
+    // #acacac); 1px top border rgba(0,0,0,.07) / dark #222222.
+    final background = IonMd.tabBarBackground(theme.brightness);
+    final unselected = IonMd.step650(theme.brightness);
     final primary = theme.colorScheme.primary;
     final base = NavigationBarTheme.of(context);
     return DecoratedBox(
@@ -387,10 +389,8 @@ class _MdTabBar extends StatelessWidget {
         color: background,
         border: Border(
           top: BorderSide(
-            color: dark
-                ? Colors.white.withValues(alpha: 0.12)
-                : Colors.black.withValues(alpha: 0.07),
-            width: 0.55,
+            color: IonMd.tabBarBorder(theme.brightness),
+            width: 1,
           ),
         ),
       ),

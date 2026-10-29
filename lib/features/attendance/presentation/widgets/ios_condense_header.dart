@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMdSearchbar; // MD_SWEEP
 
 /// UX_ATT: true when the page should render Ionic's iOS mode (iPhone app and
 /// Flutter web in iPhone Safari). Elsewhere the Material (Ionic md) look stays.
@@ -143,6 +144,14 @@ class IonSearchbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = isIosLook(context);
+    // MD_SWEEP: the shared Ionic md searchbar (content host padding 8).
+    if (!ios) {
+      return IonMdSearchbar(
+        controller: controller,
+        hintText: hintText,
+        onChanged: onChanged,
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     return ValueListenableBuilder<TextEditingValue>(
       valueListenable: controller,

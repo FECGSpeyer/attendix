@@ -7,6 +7,7 @@ import 'package:flutter/services.dart';
 import '../../shared/widgets/adaptive/adaptive_platform.dart' show IosGlass;
 import '../../shared/widgets/adaptive/app_toolbar.dart'
     show IosCircleIcon, IonToolbarButtonMetrics, kIonTitleFontSize;
+import '../../shared/widgets/layout/ionic_md.dart' show IonMd; // MD_SWEEP
 import 'app_colors.dart';
 
 /// App theme configuration.
@@ -62,9 +63,13 @@ class AppTheme {
     final isDark = brightness == Brightness.dark;
     // IOS_THEME2: iOS dark = black page with #1c1c1d rows / cards (as on
     // the iPhone); md dark = Ionic md #121212 page, #1e1e1e items / cards.
+    // MD_SWEEP: the scaffold default is the `ion-content color="light"`
+    // page (62 of 86 Ionic pages): #f4f5f8, dark `--ion-color-light`
+    // #222428 in md too; plain pages use [ionPlainContentBackground]
+    // (#fff / md dark #121212).
     final background = ios
         ? (isDark ? AppColors.iosPageDark : AppColors.iosPageLight)
-        : (isDark ? AppColors.mdPageDark : AppColors.backgroundLight);
+        : (isDark ? AppColors.lightOnDark : AppColors.backgroundLight);
     final surface = ios && isDark
         ? AppColors.iosItemDark
         : (isDark ? AppColors.mdItemDark : AppColors.surfaceLight);
@@ -81,17 +86,23 @@ class AppTheme {
             ? AppColors.iosToolbarBorderDark
             : AppColors.iosToolbarBorderLight)
         : (isDark ? AppColors.mdBorderDark : AppColors.dividerLight);
-    final textPrimary = ios && !isDark
+    // MD_SWEEP: md `--ion-text-color` is unset in light mode → black.
+    final textPrimary = !isDark
         ? AppColors.iosTextLight
-        : (isDark ? AppColors.textPrimaryDark : AppColors.textPrimaryLight);
+        : AppColors.textPrimaryDark;
     // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
     // step-100 }` – #e8e8e8, dark #1a1a1a item lines.
+    // MD_SWEEP: md item lines `--ion-border-color` – rgba(0,0,0,.13),
+    // dark #222222.
     final divider = ios
         ? (isDark ? AppColors.iosListLineDark : AppColors.iosListLineLight)
-        : (isDark ? AppColors.dividerDark : AppColors.dividerLight);
+        : IonMd.line(brightness);
     final inputFill =
         isDark ? AppColors.inputFillDark : AppColors.inputFillLight;
-    final medium = isDark ? AppColors.mediumOnDark : AppColors.medium;
+    // MD_SWEEP: Ionic 9 light `--ion-color-medium` #636469 (md too).
+    final medium = isDark
+        ? AppColors.mediumOnDark
+        : (ios ? AppColors.medium : AppColors.iosMediumLight);
     // IOS27_SWEEP: Ionic 9 `ion-label p` (`--ion-color-step-400`).
     final labelP =
         isDark ? AppColors.iosLabelPDark : AppColors.iosLabelPLight;
@@ -103,9 +114,7 @@ class AppTheme {
     // Toolbar / header button colour: iOS 26 theme renders clear toolbar
     // buttons in the text colour; IOS_THEME2: Ionic md toolbar buttons are
     // black / grey too (toolbar colour), not primary.
-    final barIcon = ios
-        ? textPrimary
-        : (isDark ? Colors.white : const Color(0xFF424242));
+    final barIcon = ios ? textPrimary : IonMd.toolbarText(brightness);
     // IOS_THEME2: Ionic iOS has no ripple, no hover / focus highlight on
     // items (ios26: --background-hover/focused-opacity 0); a touch shows
     // the activated grey (`--background-activated` text colour at .12).
@@ -164,24 +173,51 @@ class AppTheme {
     );
 
     final radius8 = BorderRadius.circular(8);
-    final radius10 = BorderRadius.circular(10);
     // IOS27_SWEEP: ion-button (ionic-theme-ios27 `theme-button`):
     // `--border-radius: 24px`, 1.05rem (17.85pt) medium label, 12pt
     // padding, host `min-height: 3.1em` (55.35pt).
+    // MD_SWEEP: ion-button md – radius 4, 36px min height, padding
+    // 8 / 1.1em, .875rem medium with `letter-spacing: .06em`.
     final OutlinedBorder buttonShape = ios
         ? RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(AppTheme.iosButtonRadius))
-        : RoundedRectangleBorder(borderRadius: radius10);
-    final buttonPadding = ios
-        ? const EdgeInsets.symmetric(horizontal: 12)
-        : const EdgeInsets.symmetric(horizontal: 24, vertical: 14);
+        : RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(IonMd.buttonRadius));
+    final buttonPadding =
+        ios ? const EdgeInsets.symmetric(horizontal: 12) : IonMd.buttonPadding;
     final buttonText = ios
         ? const TextStyle(
             fontSize: IonToolbarButtonMetrics.textSize,
             fontWeight: FontWeight.w500)
-        : null;
-    final Size? buttonMinSize =
-        ios ? const Size(64, AppTheme.iosButtonMinHeight) : null;
+        : TextStyle(
+            fontFamily: web ? webFontFamily : null,
+            fontSize: IonMd.buttonFontSize,
+            fontWeight: FontWeight.w500,
+            letterSpacing: IonMd.buttonLetterSpacing);
+    final Size buttonMinSize = ios
+        ? const Size(64, AppTheme.iosButtonMinHeight)
+        : const Size(64, IonMd.buttonMinHeight);
+    // MD_SWEEP: md hover / focus overlays – solid buttons white .08 / .24,
+    // clear / outline primary .04 / .12; no pressed tint (ripple only).
+    WidgetStateProperty<Color?>? mdOverlay(Color c, double hover, double focus) =>
+        ios
+            ? null
+            : WidgetStateProperty.resolveWith((states) {
+                if (states.contains(WidgetState.focused)) {
+                  return c.withValues(alpha: focus);
+                }
+                if (states.contains(WidgetState.hovered)) {
+                  return c.withValues(alpha: hover);
+                }
+                if (states.contains(WidgetState.pressed)) {
+                  return c.withValues(alpha: 0.12);
+                }
+                return null;
+              });
+    final mdSolidOverlay = mdOverlay(Colors.white, 0.08, 0.24);
+    final mdClearOverlay = mdOverlay(AppColors.primary, 0.04, 0.12);
+    // md `ion-label p` / note colours.
+    final mdLabelP = IonMd.labelP(brightness);
 
     return ThemeData(
       useMaterial3: true,
@@ -235,21 +271,36 @@ class AppTheme {
         scrolledUnderElevation: ios ? 0 : 4,
         shadowColor: ios ? null : Colors.black.withValues(alpha: 0.5),
         centerTitle: ios,
+        // MD_SWEEP: ion-title padding-inline 20 and ion-buttons margin 4:
+        // the title starts 20px in on pages without a back button (Flutter
+        // 3.29 has no theme leadingWidth, so with a back button it sits at
+        // 56 + 20 instead of Ionic's 72); the end buttons keep 4px from the
+        // edge.
+        titleSpacing: ios ? null : IonMd.titleSpacing,
+        actionsPadding: ios
+            ? null
+            : const EdgeInsets.only(right: IonMd.toolbarButtonsMargin),
         backgroundColor: ios ? Colors.transparent : bar,
         surfaceTintColor: Colors.transparent,
         foregroundColor: textPrimary,
         iconTheme: IconThemeData(color: barIcon),
-        actionsIconTheme: IconThemeData(color: barIcon),
+        // MD_SWEEP: icon-only toolbar buttons: 1.8em of the 14px button.
+        actionsIconTheme: IconThemeData(
+            color: barIcon, size: ios ? null : IonMd.toolbarIconSize),
         systemOverlayStyle:
             isDark ? SystemUiOverlayStyle.light : SystemUiOverlayStyle.dark,
         shape: ios
             ? Border(bottom: BorderSide(color: barBorder, width: 0.5))
             : null,
         titleTextStyle: TextStyle(
-          color: textPrimary,
+          fontFamily: web ? webFontFamily : null,
+          // MD_SWEEP: md ion-title inherits the toolbar colour (#424242,
+          // dark #fff), 1.25rem medium, `letter-spacing: .0125em`.
+          color: ios ? textPrimary : IonMd.toolbarText(brightness),
           // IOS27_SWEEP: ion-title min(1.0625rem, 20.4px) = 18.06pt
-          fontSize: ios ? kIonTitleFontSize : 20,
+          fontSize: ios ? kIonTitleFontSize : IonMd.titleFontSize,
           fontWeight: ios ? FontWeight.w600 : FontWeight.w500,
+          letterSpacing: ios ? null : IonMd.titleLetterSpacing,
         ),
       ),
       // ion-back-button: iOS 26 Liquid Glass circle with a black chevron
@@ -264,23 +315,50 @@ class AppTheme {
             : null,
       ),
       // ion-list inset / ion-card: rounded sections without border.
+      // MD_SWEEP: md ion-card – radius 4, margin 10, md elevation-2
+      // shadow (`0 3px 1px -2px …`).
       cardTheme: CardThemeData(
-        elevation: 0,
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+        elevation: ios ? 0 : IonMd.cardElevation,
+        shadowColor: ios ? null : Colors.black,
+        margin: ios ? null : const EdgeInsets.all(IonMd.cardMargin),
+        shape: RoundedRectangleBorder(
+            borderRadius:
+                BorderRadius.circular(ios ? 12 : IonMd.cardRadius)),
         color: cardColor,
         surfaceTintColor: Colors.transparent,
       ),
       // ion-item (iOS): 17pt label, 14pt grey paragraph.
+      // MD_SWEEP: md ion-item – 48px min height, 16px padding, label
+      // margin 10, 16px label in the text colour, `p` 14/20 step-600,
+      // start icons rgba(text, .54) 24px with a 32px gap (the 40px leading
+      // slot + 16 puts every label at 72 like Ionic), no vertical padding.
       listTileTheme: ListTileThemeData(
-        contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
-        iconColor: medium,
-        titleTextStyle:
-            ios ? TextStyle(fontSize: 17, color: textPrimary) : null,
+        contentPadding: ios
+            ? const EdgeInsets.symmetric(horizontal: 16, vertical: 4)
+            : const EdgeInsets.symmetric(horizontal: IonMd.itemPaddingStart),
+        minTileHeight: ios ? null : IonMd.itemMinHeight,
+        minVerticalPadding: ios ? null : IonMd.labelMargin,
+        minLeadingWidth: ios ? null : 40,
+        horizontalTitleGap: ios ? null : IonMd.startGap,
+        iconColor: ios ? medium : IonMd.iconColor(brightness),
+        titleTextStyle: ios
+            ? TextStyle(fontSize: 17, color: textPrimary)
+            : TextStyle(
+                fontFamily: web ? webFontFamily : null,
+                fontSize: IonMd.itemFontSize,
+                color: textPrimary),
         // IOS27_SWEEP: ion-label p .875rem (14.875pt), step-400.
-        subtitleTextStyle:
-            ios ? TextStyle(fontSize: 0.875 * 17, color: labelP) : null,
+        subtitleTextStyle: ios
+            ? TextStyle(fontSize: 0.875 * 17, color: labelP)
+            : TextStyle(
+                fontFamily: web ? webFontFamily : null,
+                fontSize: IonMd.pFontSize,
+                height: IonMd.pLineHeight,
+                color: mdLabelP),
       ),
-      dividerTheme: DividerThemeData(color: divider, thickness: 0.5, space: 1),
+      // MD_SWEEP: md item lines are 1px.
+      dividerTheme: DividerThemeData(
+          color: divider, thickness: ios ? 0.5 : IonMd.lineWidth, space: 1),
       inputDecorationTheme: InputDecorationTheme(
         filled: true,
         fillColor: inputFill,
@@ -308,7 +386,9 @@ class AppTheme {
       ),
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
-          elevation: 0,
+          // MD_SWEEP: md solid ion-button has the elevation-2 shadow.
+          elevation: ios ? 0 : 2,
+          shadowColor: ios ? null : Colors.black,
           padding: buttonPadding,
           minimumSize: buttonMinSize,
           shape: buttonShape,
@@ -318,17 +398,19 @@ class AppTheme {
           // Ionic: a disabled ion-button keeps its colour at opacity 0.5.
           disabledBackgroundColor: disabledPrimary,
           disabledForegroundColor: Colors.white,
-        ),
+        ).copyWith(overlayColor: mdSolidOverlay),
       ),
       filledButtonTheme: FilledButtonThemeData(
         style: FilledButton.styleFrom(
+          elevation: ios ? null : 2,
+          shadowColor: ios ? null : Colors.black,
           padding: buttonPadding,
           minimumSize: buttonMinSize,
           shape: buttonShape,
           textStyle: buttonText,
           disabledBackgroundColor: disabledPrimary,
           disabledForegroundColor: Colors.white,
-        ),
+        ).copyWith(overlayColor: mdSolidOverlay),
       ),
       outlinedButtonTheme: OutlinedButtonThemeData(
         style: OutlinedButton.styleFrom(
@@ -336,18 +418,25 @@ class AppTheme {
           minimumSize: buttonMinSize,
           shape: buttonShape,
           textStyle: buttonText,
-          side: const BorderSide(color: AppColors.primary),
-        ),
+          foregroundColor: ios ? null : AppColors.primary,
+          // MD_SWEEP: md outline buttons have a 2px border.
+          side: BorderSide(color: AppColors.primary, width: ios ? 1 : 2),
+        ).copyWith(overlayColor: mdClearOverlay),
       ),
       textButtonTheme: TextButtonThemeData(
         style: TextButton.styleFrom(
           foregroundColor: AppColors.primary,
-          padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
+          // MD_SWEEP: md clear ion-button – same box as a solid one.
+          padding: ios
+              ? const EdgeInsets.symmetric(horizontal: 16, vertical: 8)
+              : IonMd.buttonPadding,
+          minimumSize: ios ? null : buttonMinSize,
+          shape: ios ? null : buttonShape,
           // IOS27_SWEEP: ion-button 1.05rem
           textStyle: ios
               ? const TextStyle(fontSize: IonToolbarButtonMetrics.textSize)
-              : null,
-        ),
+              : buttonText,
+        ).copyWith(overlayColor: mdClearOverlay),
       ),
       // ion-fab-button: md round primary; IOS27_SWEEP ionic-theme-ios27:
       // 61pt glass circle `rgba(glass, .72)` (dark `glass.dark-fill` .5)
@@ -374,11 +463,19 @@ class AppTheme {
                   width: AppTheme.iosFabSize, height: AppTheme.iosFabSize),
               iconSize: 28,
             )
-          : const FloatingActionButtonThemeData(
+          // MD_SWEEP: md ion-fab-button – 56px primary circle, elevation-6
+          // shadow (activated 12), white hover .08 / focus .24, 24px icon.
+          : FloatingActionButtonThemeData(
               backgroundColor: AppColors.primary,
               foregroundColor: Colors.white,
-              elevation: 2,
-              shape: CircleBorder(),
+              elevation: 6,
+              focusElevation: 6,
+              hoverElevation: 6,
+              highlightElevation: 12,
+              hoverColor: Colors.white.withValues(alpha: 0.08),
+              focusColor: Colors.white.withValues(alpha: 0.24),
+              iconSize: 24,
+              shape: const CircleBorder(),
             ),
       bottomNavigationBarTheme: BottomNavigationBarThemeData(
         backgroundColor: bar,
@@ -394,22 +491,29 @@ class AppTheme {
         backgroundColor: bar,
         surfaceTintColor: Colors.transparent,
         elevation: 0,
-        height: 58,
+        // MD_SWEEP: md ion-tab-bar 56px, 22px icons, 12px regular labels
+        // (`letter-spacing: .03em`), unselected step-650.
+        height: ios ? 58 : IonMd.tabBarHeight,
         indicatorColor: Colors.transparent,
         labelBehavior: NavigationDestinationLabelBehavior.alwaysShow,
         iconTheme: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return IconThemeData(
-            size: 26,
-            color: selected ? AppColors.primary : medium,
+            size: ios ? 26 : IonMd.tabIconSize,
+            color: selected
+                ? AppColors.primary
+                : (ios ? medium : IonMd.step650(brightness)),
           );
         }),
         labelTextStyle: WidgetStateProperty.resolveWith((states) {
           final selected = states.contains(WidgetState.selected);
           return TextStyle(
-            fontSize: 10,
-            fontWeight: FontWeight.w500,
-            color: selected ? AppColors.primary : medium,
+            fontSize: ios ? 10 : IonMd.tabLabelSize,
+            fontWeight: ios ? FontWeight.w500 : FontWeight.w400,
+            letterSpacing: ios ? null : IonMd.tabLetterSpacing,
+            color: selected
+                ? AppColors.primary
+                : (ios ? medium : IonMd.step650(brightness)),
           );
         }),
       ),
@@ -457,13 +561,26 @@ class AppTheme {
       ),
       // ion-toggle (iOS): primary track when on, white thumb; off track
       // rgba(text, .23) in the iOS 26 theme.
+      // MD_SWEEP: md ion-toggle colours – handle white (checked primary),
+      // track rgba(text, .39) (checked primary at .5). Flutter 3.29 has no
+      // theme switch for the M2 36 × 14 track, so the M3 shape stays.
       switchTheme: SwitchThemeData(
         thumbColor: WidgetStateProperty.resolveWith(
-          (states) =>
-              states.contains(WidgetState.disabled) ? null : Colors.white,
+          (states) {
+            if (states.contains(WidgetState.disabled)) return null;
+            if (!ios && states.contains(WidgetState.selected)) {
+              return AppColors.primary;
+            }
+            return Colors.white;
+          },
         ),
         trackColor: WidgetStateProperty.resolveWith((states) {
           if (states.contains(WidgetState.disabled)) return null;
+          if (!ios) {
+            return states.contains(WidgetState.selected)
+                ? AppColors.primary.withValues(alpha: 0.5)
+                : textPrimary.withValues(alpha: 0.39);
+          }
           if (states.contains(WidgetState.selected)) return AppColors.primary;
           if (ios) {
             // ionic-theme-ios26: rgba(text, .23)
@@ -478,9 +595,11 @@ class AppTheme {
       ),
       // ion-checkbox: iOS round (22pt), md square.
       checkboxTheme: CheckboxThemeData(
+        // MD_SWEEP: md 18px box, radius size × .125, 2px rgba(text, .6).
         shape: ios
             ? const CircleBorder()
-            : RoundedRectangleBorder(borderRadius: BorderRadius.circular(4)),
+            : RoundedRectangleBorder(
+                borderRadius: BorderRadius.circular(18 * 0.125)),
         // IOS27_SWEEP: core iOS checkbox border `rgba(text, .23)`,
         // 0.125rem on the 1.375rem box – the same proportion (1.6pt) on
         // Flutter's 18pt box.
@@ -493,20 +612,35 @@ class AppTheme {
                         width: 1.6,
                       ),
               )
-            : null,
+            : WidgetStateBorderSide.resolveWith(
+                (states) => states.contains(WidgetState.selected)
+                    ? const BorderSide(color: AppColors.primary, width: 2)
+                    : BorderSide(
+                        color: textPrimary.withValues(alpha: 0.6), width: 2),
+              ),
         fillColor: ios
             ? WidgetStateProperty.resolveWith(
                 (states) => states.contains(WidgetState.selected)
                     ? AppColors.primary
                     : Colors.transparent,
               )
-            : null,
+            : WidgetStateProperty.resolveWith(
+                (states) => states.contains(WidgetState.selected)
+                    ? AppColors.primary
+                    : Colors.transparent,
+              ),
       ),
+      // MD_SWEEP: md ion-radio – rgba(text, .6) ring, primary when checked.
       radioTheme: ios
           ? const RadioThemeData(
               fillColor: WidgetStatePropertyAll(AppColors.primary),
             )
-          : null,
+          : RadioThemeData(
+              fillColor: WidgetStateProperty.resolveWith((states) =>
+                  states.contains(WidgetState.selected)
+                      ? AppColors.primary
+                      : textPrimary.withValues(alpha: 0.6)),
+            ),
       progressIndicatorTheme: const ProgressIndicatorThemeData(
         color: AppColors.primary,
       ),
@@ -523,13 +657,20 @@ class AppTheme {
               shape:
                   RoundedRectangleBorder(borderRadius: BorderRadius.circular(16)),
             )
+          // MD_SWEEP: md ion-chip – rgba(text, .12) / .87 text, radius 16,
+          // 12 × 6 padding (4 + 8 label padding), 14px, 32px high.
           : ChipThemeData(
-              backgroundColor: inputFill,
-              labelStyle: const TextStyle(fontSize: 14),
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+              backgroundColor: textPrimary.withValues(alpha: 0.12),
+              labelStyle: TextStyle(
+                  fontSize: IonMd.chipFontSize,
+                  color: textPrimary.withValues(alpha: 0.87)),
+              padding: const EdgeInsets.symmetric(horizontal: 4, vertical: 6),
+              labelPadding: const EdgeInsets.symmetric(horizontal: 8),
+              iconTheme: IconThemeData(
+                  size: 20, color: textPrimary.withValues(alpha: 0.54)),
               side: BorderSide.none,
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(20)),
+                  borderRadius: BorderRadius.circular(IonMd.chipRadius)),
             ),
       // ion-toast (global.scss `--border-radius: 24px` over the ios27 28px;
       // IOS27_SWEEP: ios27 glass overlay rim `rgba(text, .18)`, core iOS
@@ -563,18 +704,36 @@ class AppTheme {
                 ),
               ),
             )
+          // MD_SWEEP: md ion-toast – #333 (dark #d0d0d0) with step-50 text,
+          // radius 4, 14px / 20px, elevation 6, 8px from the edges.
           : SnackBarThemeData(
               behavior: SnackBarBehavior.floating,
+              backgroundColor: IonMd.toastBackground(brightness),
+              contentTextStyle: TextStyle(
+                  fontFamily: web ? webFontFamily : null,
+                  fontSize: 14,
+                  height: 20 / 14,
+                  color: IonMd.toastText(brightness)),
+              actionTextColor: AppColors.primary,
+              elevation: 6,
+              insetPadding: const EdgeInsets.all(8),
               shape: RoundedRectangleBorder(
-                  borderRadius: BorderRadius.circular(24)),
+                  borderRadius: BorderRadius.circular(IonMd.alertRadius)),
             ),
       // ion-alert: rounded, untinted (iOS alerts: AppAlertDialog).
       dialogTheme: DialogThemeData(
-        backgroundColor: ios && isDark ? AppColors.iosModalDark : cardColor,
+        // MD_SWEEP: md ion-alert `--background: var(--ion-background-color)`
+        // (#fff, dark #121212), radius 4, elevation 24, backdrop .32.
+        backgroundColor: ios
+            ? (isDark ? AppColors.iosModalDark : cardColor)
+            : IonMd.background(brightness),
         surfaceTintColor: Colors.transparent,
+        elevation: ios ? null : 24,
+        shadowColor: ios ? null : Colors.black,
+        barrierColor: ios ? null : IonMd.backdrop,
         // IOS27_SWEEP: ion-alert `.alert-wrapper` radius 36.
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ios ? 36 : 16)),
+            borderRadius: BorderRadius.circular(ios ? 36 : IonMd.alertRadius)),
       ),
       // IOS_THEME2: ion-popover – iOS 26 radius 24, md radius 4; opens
       // below its trigger (no row under the pointer gets highlighted).
@@ -582,6 +741,9 @@ class AppTheme {
         color: ios && isDark ? AppColors.iosModalDark : cardColor,
         surfaceTintColor: Colors.transparent,
         position: PopupMenuPosition.under,
+        // MD_SWEEP: md ion-popover shadow (elevation 8).
+        elevation: ios ? null : 8,
+        shadowColor: ios ? null : Colors.black,
         // IOS27_SWEEP: ios27 popover `::part(content)` radius 34; rows are
         // ion-items (1rem = 17pt).
         shape: RoundedRectangleBorder(
@@ -598,6 +760,8 @@ class AppTheme {
         backgroundColor: ios && isDark ? AppColors.iosModalDark : cardColor,
         surfaceTintColor: Colors.transparent,
         showDragHandle: false,
+        // MD_SWEEP: md ion-modal backdrop .32.
+        modalBarrierColor: ios ? null : IonMd.backdrop,
         clipBehavior: ios ? Clip.antiAlias : null,
         dragHandleColor: ios
             ? (isDark ? const Color(0xFF404040) : const Color(0xFFC8C7CC))
@@ -610,6 +774,31 @@ class AppTheme {
               )
             : const RoundedRectangleBorder(),
       ),
+      // MD_SWEEP: md ion-searchbar – white (dark #121212) 42px field,
+      // radius 2, elevation-2 shadow, no border, step-850 text.
+      searchBarTheme: ios
+          ? null
+          : SearchBarThemeData(
+              elevation: const WidgetStatePropertyAll(2),
+              shadowColor: const WidgetStatePropertyAll(Colors.black),
+              backgroundColor:
+                  WidgetStatePropertyAll(IonMd.searchbarBackground(brightness)),
+              surfaceTintColor:
+                  const WidgetStatePropertyAll(Colors.transparent),
+              side: const WidgetStatePropertyAll(BorderSide.none),
+              shape: const WidgetStatePropertyAll(RoundedRectangleBorder(
+                  borderRadius: BorderRadius.all(
+                      Radius.circular(IonMd.searchbarRadius)))),
+              constraints: const BoxConstraints(
+                  minHeight: IonMd.searchbarHeight, minWidth: 0),
+              textStyle: WidgetStatePropertyAll(TextStyle(
+                  fontSize: IonMd.searchbarFontSize,
+                  color: IonMd.searchbarText(brightness))),
+              hintStyle: WidgetStatePropertyAll(TextStyle(
+                  fontSize: IonMd.searchbarFontSize,
+                  color: IonMd.searchbarText(brightness)
+                      .withValues(alpha: IonMd.placeholderOpacity))),
+            ),
       expansionTileTheme: const ExpansionTileThemeData(
         shape: Border(),
         collapsedShape: Border(),

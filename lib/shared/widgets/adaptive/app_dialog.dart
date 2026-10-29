@@ -27,7 +27,9 @@ Future<T?> showAppDialog<T>({
     context: context,
     builder: builder,
     barrierDismissible: barrierDismissible,
-    barrierColor: barrierColor ?? (ios ? const Color(0x33000000) : null),
+    // MD_SWEEP: md overlays dim with `--backdrop-opacity: .32`.
+    barrierColor:
+        barrierColor ?? (ios ? const Color(0x33000000) : const Color(0x52000000)),
     barrierLabel: barrierLabel,
     useSafeArea: useSafeArea,
     useRootNavigator: useRootNavigator,
@@ -130,8 +132,9 @@ class AppAlertDialog extends StatelessWidget {
             TextStyle(
               fontSize: 16,
               height: 1.4,
+              // MD_SWEEP: step-550 – #737373, md dark #949494.
               color: theme.brightness == Brightness.dark
-                  ? const Color(0xFF8C8C8C)
+                  ? const Color(0xFF949494)
                   : const Color(0xFF737373),
             ),
         semanticLabel: semanticLabel,

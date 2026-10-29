@@ -303,6 +303,12 @@ class IonSegment<T> extends StatelessWidget {
       );
       child = Opacity(opacity: enabled ? 1 : 0.3, child: child);
       child = InkWell(
+        // MD_SWEEP: md segment-button hover primary .04, focus .12, no
+        // pressed tint – the ripple in the label colour.
+        hoverColor: primary.withValues(alpha: 0.04),
+        focusColor: primary.withValues(alpha: 0.12),
+        highlightColor: Colors.transparent,
+        splashColor: color.withValues(alpha: 0.16),
         onTap: enabled && !checked ? () => onChanged!(item.value) : null,
         child: child,
       );

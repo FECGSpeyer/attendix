@@ -19,6 +19,7 @@ import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
     show IonIos, IonDetailChevron, IonSearchbar; // IOS27_SWEEP
 import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import 'package:attendix/shared/widgets/layout/ionic_md.dart'; // MD_SWEEP
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -91,11 +92,10 @@ class IonText {
         color: ios27.IonIos.note(Theme.of(context).brightness),
       );
     }
+    // MD_SWEEP: md ion-note `--color: step-600` (#666666, dark #a0a0a0).
     return TextStyle(
-      fontSize: 14,
-      color: _isDark(context)
-          ? const Color(0xFF8C8C8C)
-          : const Color(0xFFA6A6A6),
+      fontSize: IonMd.noteFontSize,
+      color: IonMd.note(Theme.of(context).brightness),
     );
   }
 }
@@ -157,11 +157,20 @@ class IonItemDivider extends StatelessWidget {
         ? AppColors.getContrastColor(color!)
         : (ios
             ? (dark ? const Color(0xFFD9D9D9) : const Color(0xFF262626))
-            : const Color(0xFF999999));
+            // MD_SWEEP: md divider text step-400 (#999999, dark #717171).
+            : IonMd.dividerText(Theme.of(context).brightness));
     return Container(
       width: double.infinity,
       constraints: BoxConstraints(minHeight: ios ? 28 : 30),
-      color: background,
+      // MD_SWEEP: md ion-item-divider has a 1px bottom border.
+      decoration: BoxDecoration(
+        color: background,
+        border: ios
+            ? null
+            : Border(
+                bottom: BorderSide(
+                    color: ionLineColor(context), width: IonMd.lineWidth)),
+      ),
       alignment: Alignment.centerLeft,
       padding: ios
           ? const EdgeInsets.fromLTRB(16, 4, 8, 4)
@@ -252,9 +261,13 @@ class IonItem extends StatelessWidget {
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
     final minHeight = ios ? 44.0 : 48.0;
+    // MD_SWEEP: md items use `--ion-item-background` (#fff, dark #1e1e1e).
     final bg = selected
         ? AppColors.primary.withValues(alpha: 0.1)
-        : (background ?? ionContentBackground(context));
+        : (background ??
+            (ios
+                ? ionContentBackground(context)
+                : IonMd.itemBackground(Theme.of(context).brightness)));
 
     final inner = Container(
       constraints: BoxConstraints(minHeight: minHeight),
@@ -286,10 +299,12 @@ class IonItem extends StatelessWidget {
             if (ios)
               const ios27.IonDetailChevron()
             else
+              // MD_SWEEP: md detail icon – 20px, text colour at .25.
               Icon(
                 Icons.chevron_right,
-                size: 22,
-                color: AppColors.medium.withValues(alpha: 0.8),
+                size: 20,
+                color: IonMd.text(Theme.of(context).brightness)
+                    .withValues(alpha: 0.25),
               ),
           ],
         ],
@@ -314,7 +329,11 @@ class IonItem extends StatelessWidget {
                   padding: const EdgeInsets.symmetric(vertical: 2),
                   child: start!,
                 ),
-                const SizedBox(width: 16),
+                // MD_SWEEP: md start icons keep 32px to the label.
+                SizedBox(
+                    width: !ios && start is Icon
+                        ? IonMd.startIconGap
+                        : IonMd.startGap),
               ],
               Expanded(child: inner),
             ],
@@ -374,8 +393,6 @@ class IonSearchbar extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final ios = ionIsIos(context);
-    final dark = _isDark(context);
-    final textColor = Theme.of(context).colorScheme.onSurface;
 
     if (ios) {
       return Padding(
@@ -387,76 +404,13 @@ class IonSearchbar extends StatelessWidget {
         ),
       );
     }
-    final BoxDecoration decoration;
-    {
-      decoration = BoxDecoration(
-        color: dark ? const Color(0xFF1E1E1E) : Colors.white,
-        borderRadius: BorderRadius.circular(2),
-        boxShadow: const [
-          BoxShadow(
-            color: Color(0x33000000),
-            offset: Offset(0, 2),
-            blurRadius: 2,
-            spreadRadius: -2,
-          ),
-          BoxShadow(color: Color(0x24000000), offset: Offset(0, 1), blurRadius: 5),
-        ],
-      );
-    }
-
-    return Padding(
-      padding: padding ??
-          (ios
-              ? const EdgeInsets.symmetric(horizontal: 8, vertical: 6)
-              : const EdgeInsets.fromLTRB(8, 8, 8, 8)),
-      child: Container(
-        height: ios ? 44 : 44,
-        decoration: decoration,
-        child: ValueListenableBuilder<TextEditingValue>(
-          valueListenable: controller,
-          builder: (context, value, _) => TextField(
-            controller: controller,
-            onChanged: onChanged,
-            textAlignVertical: TextAlignVertical.center,
-            style: TextStyle(fontSize: ios ? 17 : 16, color: textColor),
-            decoration: InputDecoration(
-              isDense: true,
-              filled: false,
-              border: InputBorder.none,
-              enabledBorder: InputBorder.none,
-              focusedBorder: InputBorder.none,
-              contentPadding: EdgeInsets.zero,
-              hintText: placeholder,
-              hintStyle: TextStyle(
-                fontSize: ios ? 17 : 16,
-                color: textColor.withValues(alpha: ios ? 0.55 : 0.5),
-              ),
-              prefixIcon: Icon(
-                ios ? CupertinoIcons.search : Icons.search,
-                size: ios ? 22 : 21,
-                color: ios ? textColor : const Color(0xFF8C8C8C),
-              ),
-              prefixIconConstraints:
-                  BoxConstraints(minWidth: ios ? 40 : 52, minHeight: 44),
-              suffixIcon: value.text.isEmpty
-                  ? null
-                  : IconButton(
-                      icon: Icon(
-                        ios ? CupertinoIcons.clear_circled_solid : Icons.close,
-                        size: ios ? 20 : 22,
-                        color: ios
-                            ? textColor.withValues(alpha: 0.45)
-                            : const Color(0xFF8C8C8C),
-                      ),
-                      onPressed: () {
-                        controller.clear();
-                        onChanged('');
-                      },
-                    ),
-            ),
-          ),
-        ),
-      ),
+    // MD_SWEEP: the shared Ionic md searchbar (white / #121212, radius 2,
+    // elevation-2 shadow, 42px, 21px step-600 icon, step-850 text).
+    return IonMdSearchbar(
+      controller: controller,
+      hintText: placeholder,
+      onChanged: onChanged,
+      padding: padding ?? IonMd.searchbarPadding,
     );
   }
 }
@@ -704,7 +658,10 @@ class IonAccordion extends StatelessWidget {
                     child: Icon(
                       ios ? CupertinoIcons.chevron_down : Icons.expand_more,
                       size: ios ? 1.6 * ios27.IonIos.rem : 24,
-                      color: headerColor != null || ios ? fg : AppColors.medium,
+                      // MD_SWEEP: md item icon rgba(text, .54).
+                      color: headerColor != null || ios
+                          ? fg
+                          : IonMd.iconColor(Theme.of(context).brightness),
                     ),
                   ),
                 ],
@@ -821,10 +778,12 @@ class IonFieldRow extends StatelessWidget {
                 if (tap != null && trailing == null && !editable)
                   ios
                       ? const ios27.IonDetailChevron()
+                      // MD_SWEEP: md detail icon – 20px, text at .25.
                       : Icon(
                           Icons.chevron_right,
-                          size: 18,
-                          color: AppColors.medium.withValues(alpha: 0.6),
+                          size: 20,
+                          color: IonMd.text(Theme.of(context).brightness)
+                              .withValues(alpha: 0.25),
                         ),
               ],
             ),

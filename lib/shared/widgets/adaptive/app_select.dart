@@ -154,12 +154,26 @@ Future<AppSelection<T>?> showAppSelect<T>({
         Rect.fromLTWH(anchor.left, anchor.bottom, anchor.width, 0),
         Offset.zero & overlay.size,
       ),
+      // MD_SWEEP: md select popover – 250px wide, 8px list padding, the
+      // checked option tinted `rgba(primary, .08)` (radios hidden).
+      constraints: const BoxConstraints.tightFor(width: 250),
+      menuPadding: const EdgeInsets.symmetric(vertical: 8),
       items: [
         for (final o in options)
           PopupMenuItem<AppSelection<T>>(
             value: AppSelection<T>(o.value),
             enabled: o.enabled,
-            child: o.child ?? Text(o.label!),
+            padding: EdgeInsets.zero,
+            child: Container(
+              constraints: const BoxConstraints(minHeight: 48),
+              width: double.infinity,
+              alignment: Alignment.centerLeft,
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              color: o.value == value
+                  ? Theme.of(context).colorScheme.primary.withValues(alpha: 0.08)
+                  : null,
+              child: o.child ?? Text(o.label!),
+            ),
           ),
       ],
     );

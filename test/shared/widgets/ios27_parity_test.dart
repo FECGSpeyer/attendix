@@ -143,9 +143,10 @@ void main() {
 
     test('md look keeps its own values', () {
       final md = AppTheme.forPlatform(_light, TargetPlatform.android);
-      expect(md.chipTheme.shape, isNot(
-          predicate((s) => s is RoundedRectangleBorder &&
-              s.borderRadius == BorderRadius.circular(16))));
+      // MD_SWEEP: chip.md.css is radius 16 as well; md differs in the
+      // rgba(text, .12) fill instead.
+      expect(md.chipTheme.backgroundColor,
+          Colors.black.withValues(alpha: 0.12));
       expect(md.floatingActionButtonTheme.sizeConstraints?.minWidth,
           isNot(61));
     });
