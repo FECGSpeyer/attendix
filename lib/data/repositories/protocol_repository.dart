@@ -217,7 +217,12 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
           .select('plan')
           .maybeSingle();
 
-      final stored = response?['plan'];
+      // SOL_FIX32: no row updated (Termin deleted meanwhile) is a failure,
+      // so the caller keeps the input instead of reporting success.
+      if (response == null) {
+        throw StateError('attendance $attendanceId not found');
+      }
+      final stored = response['plan'];
       return stored is Map ? Map<String, dynamic>.from(stored) : plan;
     } catch (e, stack) {
       handleError(e, stack, 'updateAttendancePlan');

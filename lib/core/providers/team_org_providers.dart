@@ -418,11 +418,19 @@ Future<Map<String, dynamic>> addTopicsToAttendance(
   List<String> removeIds = const [],
 }) async {
   var current = attendance;
+  ProtocolAttendance? fresh;
   try {
-    final fresh = await repo.getAttendance(attendance.id);
-    if (fresh != null) current = attendance.copyWith(plan: fresh.plan);
+    fresh = await repo.getAttendance(attendance.id);
   } catch (_) {
     // fall back to the loaded plan
+  }
+  if (fresh != null) {
+    // SOL_FIX32: a plan deleted since the picker opened is a conflict –
+    // `copyWith(plan: null)` would keep (and write back) the old plan.
+    if (fresh.plan == null && attendance.plan != null) {
+      throw StateError('plan of attendance ${attendance.id} was deleted');
+    }
+    current = attendance.copyWith(plan: fresh.plan);
   }
   final plan = planWithTopics(current, type, selections, removeIds: removeIds);
   return await repo.updateAttendancePlan(attendance.id, plan) ?? plan;
