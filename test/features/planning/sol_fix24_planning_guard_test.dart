@@ -291,10 +291,11 @@ void main() {
   group('source', () {
     test('every multi-plan write runs while the page is blocked', () {
       final src = File('lib/features/planning/presentation/pages/planning_page.dart').readAsStringSync();
-      final calls = RegExp(r'_savePlans\(current, ').allMatches(src).toList();
+      // SOL_FIX29: the plan list operations write via `_writePlanOp`.
+      final calls = RegExp(r'await _writePlanOp\(attId, ').allMatches(src).toList();
       expect(calls, hasLength(5), reason: 'add, rename, day, move, delete');
       for (final m in calls) {
-        final before = src.substring(m.start - 80, m.start);
+        final before = src.substring(m.start - 200, m.start);
         expect(before, contains('_whileBusy('), reason: src.substring(m.start, m.start + 40));
       }
     });

@@ -22,6 +22,10 @@ import '../../../data/models/plan/plan.dart';
 ///   an editor whose copy of the Termin is older than the newest commit
 ///   builds its write on that commit, so it replaces only the plan it edited
 ///   and never resets another editor's stored plan with its stale copy.
+/// - **Loaded copies** (SOL_FIX29, [refreshedSeq]): a Termin row an editor
+///   got from the (cached) Termin list reflects the commits up to the last
+///   cache refresh ([markCachesRefreshed]). A newer commit is adopted
+///   together with its sequence number when the Termin is loaded.
 class PlanningWriteSync {
   PlanningWriteSync._();
 
@@ -34,6 +38,10 @@ class PlanningWriteSync {
 
   /// Per key: the row returned by the newest commit.
   static final Map<String, PlanAttendance> _lastRow = {};
+
+  /// SOL_FIX29: per key the sequence number when the Termin caches were last
+  /// refreshed after commits.
+  static final Map<String, int> _refreshed = {};
 
   /// Number of a new editor instance (later instances get larger numbers).
   static int newInstance() => ++_instances;
@@ -80,8 +88,19 @@ class PlanningWriteSync {
   /// one); null when the caller already knows the newest commit.
   static PlanAttendance? latestSince(String key, int sinceSeq) => seq(key) > sinceSeq ? _lastRow[key] : null;
 
+  /// SOL_FIX29: the Termin caches (`planAttendancesProvider` & co.) were
+  /// invalidated: every row loaded from them afterwards reflects every
+  /// commit made so far (of every Termin).
+  static void markCachesRefreshed() => _refreshed.addAll(_seq);
+
+  /// SOL_FIX29: newest commit under [key] that a row loaded from the Termin
+  /// caches is known to reflect (0 when the caches were never refreshed
+  /// after a commit). Commits after it may be missing in such a row.
+  static int refreshedSeq(String key) => _refreshed[key] ?? 0;
+
   @visibleForTesting
   static void reset() {
+    _refreshed.clear();
     _tails.clear();
     _seq.clear();
     _writers.clear();

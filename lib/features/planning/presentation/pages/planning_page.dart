@@ -50,6 +50,12 @@ final planSongsProvider = FutureProvider<List<Song>>((ref) async {
   return repo.getSongs();
 });
 
+/// SOL_FIX29: a plan list operation: gets the newest stored row, its plan
+/// list (days written out, may be changed in place) and the position of the
+/// plan the operation acts on (null when adding); returns the new list and
+/// the position of the plan to open, or null for "no change".
+typedef _PlanListOp = ({List<Plan> plans, int open})? Function(PlanAttendance att, List<Plan> plans, int? index);
+
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
 ///
 /// Supports several plans per Termin (`attendance.extra_plans`), Programmblöcke,
@@ -259,8 +265,17 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       if (att?.id != attId) return;
       // SOL_FIX28: on top of the newest stored row of the Termin.
       final base = _writeBase(attId, att!, planIndex);
+      final baseIndex = base.index;
+      if (baseIndex == null) {
+        // SOL_FIX29: the plan was deleted meanwhile: never restore it. The
+        // edit stays as the local draft written above (when confirmed).
+        _showDetachedError(await draftRev != null
+            ? l10nWithoutContext.planningFlutterPlanDeletedDraftSaved
+            : l10nWithoutContext.planningFlutterPlanDeletedDraftLost);
+        return;
+      }
       final saved = await repo.updateAttendancePlanFields(
-          attId, _planUpdate(base.att, base.index, time: time, fields: fields, title: title));
+          attId, _planUpdate(base.att, baseIndex, time: time, fields: fields, title: title));
       _markWritten(attId, saved);
       await PlanningDraftStore.removeIfRevision(draftKey, rev);
     }).catchError((Object _) async {
@@ -316,30 +331,91 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// the write builds on that newest stored row ([PlanningWriteSync.
   /// latestSince]): the edited plan is found there by id (else position) and
   /// only it is replaced, every other plan stays as stored. Without a newer
-  /// commit (or when the plan no longer exists there) the editor's own copy.
-  ({PlanAttendance att, int index}) _writeBase(int attId, PlanAttendance own, int planIndex) {
+  /// commit the editor's own copy.
+  ///
+  /// SOL_FIX29: when the edited plan no longer exists in the newest stored
+  /// row (another editor deleted it), the result is that row with a null
+  /// index: a conflict. The caller writes nothing (the old row would restore
+  /// the deleted plan and reset every other change made since) and keeps
+  /// the edit as a local draft.
+  ({PlanAttendance att, int? index}) _writeBase(int attId, PlanAttendance own, int planIndex) {
     final latest =
         PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
     if (latest == null || latest.id != attId) return (att: own, index: planIndex);
     final index = _indexOfPlanKey(latest, _planKeyOf(own, planIndex));
     if (index != null) return (att: latest, index: index);
     if (PlanUtils.allPlans(latest).isEmpty && PlanUtils.allPlans(own).isEmpty) return (att: latest, index: 0);
-    return (att: own, index: planIndex);
+    return (att: latest, index: null);
+  }
+
+  /// SOL_FIX29: takes over [latest], the newest stored row of Termin [attId]
+  /// (returned by [PlanningWriteSync.latestSince] right before, so row and
+  /// sequence number are adopted together), and shows one of its plans: the
+  /// plan at the open position, else the last one, else the empty editor.
+  /// Used when the open plan was deleted by another editor meanwhile.
+  void _reloadLatest(int attId, PlanAttendance latest) {
+    _knownSeq[attId] = PlanningWriteSync.seq(PlanningWriteSync.keyFor(_tenantId, attId));
+    _replaceAtt(latest);
+    if (!mounted || _attId != attId) return;
+    final plans = PlanUtils.allPlans(latest);
+    if (plans.isEmpty) {
+      _clearEditor(latest);
+      return;
+    }
+    final index = _planIndex.clamp(0, plans.length - 1);
+    setState(() => _planIndex = index);
+    _loadPlan(latest, plans[index]);
+  }
+
+  /// SOL_FIX29: the plan [planKey] of Termin [attId] was deleted by another
+  /// editor meanwhile. Keeps [draft] (the edits of that plan that could not
+  /// be written, if any) as a confirmed local draft and tells the user.
+  Future<void> _planDeletedMeanwhile(int attId, String planKey, Map<String, dynamic>? draft) async {
+    if (draft == null) {
+      if (mounted) ToastHelper.showWarning(context, context.l10n.planningFlutterPlanDeleted);
+      return;
+    }
+    final userId = _userId;
+    final rev = await PlanningDraftStore.write(_draftKey(attId, planKey, userId), draft,
+        allowed: () => _authUserId() == userId);
+    if (!mounted) {
+      _showDetachedError(rev != null
+          ? l10nWithoutContext.planningFlutterPlanDeletedDraftSaved
+          : l10nWithoutContext.planningFlutterPlanDeletedDraftLost);
+    } else if (rev != null) {
+      ToastHelper.showWarning(context, context.l10n.planningFlutterPlanDeletedDraftSaved);
+    } else {
+      ToastHelper.showError(context, context.l10n.planningFlutterPlanDeletedDraftLost);
+    }
   }
 
   /// SOL_FIX28: takes over the newest row another editor instance stored for
   /// Termin [attId] (when this editor has not seen it yet), so a plan
   /// operation (add / rename / day / move / delete), which writes the whole
   /// plan list, builds on it instead of the editor's stale copy.
-  void _adoptLatest(int attId) {
+  ///
+  /// SOL_FIX29: false when the open plan was deleted there meanwhile: the
+  /// editor then shows the newest row ([_reloadLatest]), pending edits of the
+  /// deleted plan are kept as a draft and the operation must not continue.
+  bool _adoptLatest(int attId) {
     final key = PlanningWriteSync.keyFor(_tenantId, attId);
     final latest = PlanningWriteSync.latestSince(key, _knownSeq[attId] ?? 0);
-    if (latest == null || latest.id != attId) return;
+    if (latest == null || latest.id != attId) return true;
     final own = _att;
-    final index = own == null ? null : _indexOfPlanKey(latest, _planKeyOf(own, _planIndex));
+    final planKey = _planKeyOf(own, _planIndex);
+    final index = own == null ? null : _indexOfPlanKey(latest, planKey);
+    if (index == null && PlanUtils.allPlans(own).isNotEmpty) {
+      final draft = _hasPendingChanges
+          ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
+          : null;
+      _reloadLatest(attId, latest);
+      unawaited(_planDeletedMeanwhile(attId, planKey, draft));
+      return false;
+    }
     _knownSeq[attId] = PlanningWriteSync.seq(key);
     _replaceAtt(latest);
     if (index != null && index != _planIndex && mounted) setState(() => _planIndex = index);
+    return true;
   }
 
   /// SOL_FIX27: draft key of the account [userId] in the editor's tenant
@@ -472,13 +548,23 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _disposeRepo = ref.read(planRepositoryWithTenantProvider);
     _tenantId = ref.read(currentTenantIdProvider); // SOL_FIX26
     _userId = ref.read(currentAuthUserIdProvider); // SOL_FIX27
+    // SOL_FIX29: the cached rows hold the commits up to the last cache
+    // refresh; newer commits are adopted when a Termin is loaded.
+    for (final a in _attendances) {
+      if (a.id != null) _knownSeq[a.id!] = PlanningWriteSync.refreshedSeq(PlanningWriteSync.keyFor(_tenantId, a.id!));
+    }
     PlanAttendance? att;
     final requestedId = widget.attendanceId;
     if (requestedId != null) {
       att = _attendances.where((a) => a.id == requestedId).firstOrNull;
       // SOL_FIX2: a Termin outside the loaded season is loaded by id
       // (tenant-filtered); never edit another Termin instead.
-      att ??= await _loadRequestedAttendance(requestedId);
+      if (att == null) {
+        // SOL_FIX29: fetched now, so it holds every commit made before.
+        final seqBefore = PlanningWriteSync.seq(PlanningWriteSync.keyFor(_tenantId, requestedId));
+        att = await _loadRequestedAttendance(requestedId);
+        if (att != null) _knownSeq[requestedId] = seqBefore;
+      }
       if (!mounted) return;
       if (att == null) {
         setState(() => _requestedNotFound = true);
@@ -535,9 +621,26 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return _typeOf(att)?.isDefaultOrgPlan ?? false;
   }
 
-  void _loadAttendance(PlanAttendance att, {int? planIndex}) {
+  void _loadAttendance(PlanAttendance loaded, {int? planIndex}) {
     // SOL_FIX27: the commits this editor has seen of the Termin.
-    if (att.id != null) _knownSeq[att.id!] = PlanningWriteSync.seq(PlanningWriteSync.keyFor(_tenantId, att.id!));
+    // SOL_FIX29: row and sequence number are adopted together: when another
+    // editor instance stored the Termin after the commit this editor's copy
+    // holds (e.g. while another Termin was open), the newest stored row is
+    // loaded and only then its sequence number recorded. A stale copy is
+    // never marked as current.
+    var att = loaded;
+    final attId = att.id;
+    if (attId != null) {
+      final key = PlanningWriteSync.keyFor(_tenantId, attId);
+      final latest = PlanningWriteSync.latestSince(key, _knownSeq[attId] ?? 0);
+      if (latest != null && latest.id == attId) {
+        att = latest;
+        _knownSeq[attId] = PlanningWriteSync.seq(key);
+        _attendances = [for (final a in _attendances) a.id == attId ? latest : a];
+      } else {
+        _knownSeq[attId] ??= PlanningWriteSync.seq(key);
+      }
+    }
     final plans = PlanUtils.allPlans(att);
     // SOL_FIX22: `?plan=-1` (or too large) falls back to the first plan.
     final index = PlanUtils.validPlanIndex(planIndex, plans.length) ?? 0;
@@ -742,6 +845,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<bool> _writeOpenPlan(int attId) async {
     if (!mounted || !_hasPendingChanges) return true;
+    // SOL_FIX29: read before the first await (tenant of this editor).
+    final repo = ref.read(planRepositoryWithTenantProvider);
     // Built when the write starts: `_att` is the latest persisted row (it is
     // replaced after every write), plus the current editor state.
     final att = _att;
@@ -755,16 +860,27 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // editor instance may have stored another plan meanwhile): only the open
     // plan is replaced.
     final base = _writeBase(attId, att!, _planIndex);
-    final update = _planUpdate(base.att, base.index, time: _time, fields: _fields, title: title);
+    final baseIndex = base.index;
+    if (baseIndex == null) {
+      // SOL_FIX29: the open plan was deleted by another editor meanwhile:
+      // nothing is written, the edit is kept as a local draft and the editor
+      // shows the newest stored row.
+      final planKey = _planKeyOf(att, _planIndex);
+      final draft = _draftData(time: _time, fields: _fields, title: title);
+      _reloadLatest(attId, base.att);
+      await _planDeletedMeanwhile(attId, planKey, draft);
+      return true;
+    }
+    final update = _planUpdate(base.att, baseIndex, time: _time, fields: _fields, title: title);
     try {
-      final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, update);
+      final saved = await repo.updateAttendancePlanFields(att.id!, update);
       // SOL_FIX23: every successful write is a change (caches on close).
       _markWritten(att.id!, saved);
       _replaceAtt(saved);
       // Baseline / dirty only for the snapshot that was really stored.
       if (loadGen == _loadGen) {
         // SOL_FIX28: the open plan's position in the stored row.
-        if (mounted && base.index != _planIndex) setState(() => _planIndex = base.index);
+        if (mounted && baseIndex != _planIndex) setState(() => _planIndex = baseIndex);
         _savedTitle = title;
         if (editGen == _editGen) _dirty = false;
         // SOL_FIX26: the restored draft is stored now.
@@ -782,13 +898,43 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
-  Future<void> _savePlans(PlanAttendance att, List<Plan> plans) async {
-    final saved = await _serialised(att.id!, () => ref
-        .read(planRepositoryWithTenantProvider)
-        .updateAttendancePlanFields(att.id!, PlanUtils.splitPlans(plans)));
-    _markWritten(att.id!, saved);
-    _replaceAtt(saved);
-  }
+  /// SOL_FIX29: runs the plan list operation [op] (add / rename / day / move
+  /// / delete) INSIDE the queued write step of Termin [attId], applied to the
+  /// newest stored row at that moment (another editor instance may have
+  /// stored the Termin while this editor's dialog was open), and stores the
+  /// resulting plan list. [planKey] names the plan the operation acts on (by
+  /// id, else position, see [_planKeyOf]); null for adding a plan.
+  ///
+  /// Returns the position of the plan to open in the stored row, or null when
+  /// nothing was written: [op] made no change, or the plan [planKey] was
+  /// deleted meanwhile (the editor then shows the newest row and the user is
+  /// told, see [_planDeletedMeanwhile]).
+  Future<int?> _writePlanOp(int attId, String? planKey, _PlanListOp op) => _serialised(attId, () async {
+        final repo = ref.read(planRepositoryWithTenantProvider);
+        final latest =
+            PlanningWriteSync.latestSince(PlanningWriteSync.keyFor(_tenantId, attId), _knownSeq[attId] ?? 0);
+        final own = _att;
+        final base = latest != null && latest.id == attId ? latest : own;
+        if (base == null || base.id != attId) return null;
+        int? index;
+        if (planKey != null) {
+          index = _indexOfPlanKey(base, planKey);
+          if (index == null) {
+            final draft = mounted && _attId == attId && _hasPendingChanges && _planKeyOf(own, _planIndex) == planKey
+                ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
+                : null;
+            _reloadLatest(attId, base);
+            await _planDeletedMeanwhile(attId, planKey, draft);
+            return null;
+          }
+        }
+        final result = op(base, PlanUtils.withDays(base, PlanUtils.allPlans(base)), index);
+        if (result == null) return null;
+        final saved = await repo.updateAttendancePlanFields(attId, PlanUtils.splitPlans(result.plans));
+        _markWritten(attId, saved);
+        _replaceAtt(saved);
+        return result.open;
+      });
 
   void _replaceAtt(PlanAttendance saved) {
     final updated = [for (final a in _attendances) a.id == saved.id ? saved : a];
@@ -836,6 +982,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _container.invalidate(planAttendanceByIdProvider(id));
       }
       _container.invalidate(orgPlansProvider);
+      // SOL_FIX29: rows loaded from the caches from now on hold every commit.
+      PlanningWriteSync.markCachesRefreshed();
     } catch (_) {
       // Container already disposed (app closed): nothing to refresh.
     }
@@ -918,15 +1066,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ),
     );
     if (choice == null || !mounted || _att == null) return;
-    _adoptLatest(_attId!); // SOL_FIX28
+    final attId = _attId!;
+    if (!_adoptLatest(attId)) return; // SOL_FIX28 / SOL_FIX29
     final copy = choice == 'copy';
     final current = _att!;
-    final plans = PlanUtils.withDays(current, PlanUtils.allPlans(current));
     final type = _typeOf(current);
     final time = copy ? _time : PlanUtils.formatTime(type?.startTime ?? current.startTime ?? _time);
     final newPlan = Plan(
       id: PlanUtils.uuid(),
-      day: PlanUtils.nextFreeDay(current, plans),
       time: time.isEmpty ? _time : time,
       // Ionic: `dayjs().hour(..).minute(..).format('YYYY-MM-DDTHH:mm')`
       end: copy ? _end : PlanUtils.computeEndIso(time.isEmpty ? _time : time, const []),
@@ -935,14 +1082,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           : const [],
       title: copy && _titleController.text.trim().isNotEmpty ? _titleController.text.trim() : null,
     );
-    plans.add(newPlan);
     try {
       // SOL_FIX24: no edits between the write and loading the new plan.
       await _whileBusy(() async {
-        await _savePlans(current, plans);
-        if (!mounted) return;
-        setState(() => _planIndex = plans.length - 1);
-        _loadPlan(_att!, newPlan);
+        // SOL_FIX29: appended to the newest stored plan list (day: the next
+        // free day there).
+        final open = await _writePlanOp(attId, null, (att, plans, _) {
+          plans.add(newPlan.copyWith(day: PlanUtils.nextFreeDay(att, plans)));
+          return (plans: plans, open: plans.length - 1);
+        });
+        if (open == null || !mounted || _att == null) return;
+        setState(() => _planIndex = open);
+        _loadPlan(_att!, PlanUtils.allPlans(_att)[open]);
       });
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
@@ -972,13 +1123,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     // SOL_FIX24: an invalid open plan does not block: rename / day / move
     // keep the editor (and its pending edits), delete removes the plan.
     if (!await _flushSaves(blockInvalid: false) || !mounted || _att == null) return;
-    // SOL_FIX28: build on the newest stored row; the open plan keeps its
-    // position there.
-    _adoptLatest(_attId!);
-    final index = _planIndex;
+    final attId = _attId!;
+    // SOL_FIX29: the plan the sheet was opened for (its id, else position).
+    final planKey = _planKeyOf(att, shownIndex);
+    // SOL_FIX28: show the newest stored row in the dialogs; the open plan
+    // keeps its position there. SOL_FIX29: stop when it was deleted.
+    if (!_adoptLatest(attId)) return;
     final current = _att!;
+    final index = _indexOfPlanKey(current, planKey);
+    if (index == null) return;
     final list = PlanUtils.withDays(current, PlanUtils.allPlans(current));
-    if (index >= list.length) return;
+    // SOL_FIX29: every change below is applied to the newest stored row
+    // INSIDE the queued write ([_writePlanOp]), so a plan another editor
+    // stored while a dialog was open is never reset by this copy.
     try {
       switch (action) {
         case 'rename':
@@ -991,9 +1148,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             hint: auto,
             allowEmpty: true,
           );
-          if (label == null) return;
-          list[index] = list[index].copyWith(label: label.isEmpty ? null : label);
-          await _whileBusy(() => _savePlans(current, list));
+          if (label == null || !mounted) return;
+          await _whileBusy(() async {
+            final open = await _writePlanOp(attId, planKey, (att, plans, i) {
+              plans[i!] = plans[i].copyWith(label: label.isEmpty ? null : label);
+              return (plans: plans, open: i);
+            });
+            if (open != null && mounted && open != _planIndex) setState(() => _planIndex = open);
+          });
         case 'day':
           final options = PlanUtils.dayOptions(current);
           final day = await showPlanActionSheet<int>(
@@ -1004,24 +1166,28 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                 PlanSheetAction(o.day, o.label, icon: list[index].day == o.day ? Icons.check : null),
             ],
           );
-          if (day == null) return;
-          final moved = list[index].copyWith(day: day);
-          list[index] = moved;
-          list.sort((a, b) => (a.day ?? 0).compareTo(b.day ?? 0));
+          if (day == null || !mounted) return;
           await _whileBusy(() async {
-            await _savePlans(current, list);
-            if (mounted) setState(() => _planIndex = list.indexOf(moved));
+            final open = await _writePlanOp(attId, planKey, (att, plans, i) {
+              final moved = plans[i!].copyWith(day: day);
+              plans[i] = moved;
+              plans.sort((a, b) => (a.day ?? 0).compareTo(b.day ?? 0));
+              return (plans: plans, open: plans.indexWhere((p) => identical(p, moved)));
+            });
+            if (open != null && mounted) setState(() => _planIndex = open);
           });
         case 'left':
         case 'right':
-          final to = index + (action == 'left' ? -1 : 1);
-          if (to < 0 || to >= list.length) return;
-          final tmp = list[index];
-          list[index] = list[to];
-          list[to] = tmp;
           await _whileBusy(() async {
-            await _savePlans(current, list);
-            if (mounted) setState(() => _planIndex = to);
+            final open = await _writePlanOp(attId, planKey, (att, plans, i) {
+              final to = i! + (action == 'left' ? -1 : 1);
+              if (to < 0 || to >= plans.length) return null;
+              final tmp = plans[i];
+              plans[i] = plans[to];
+              plans[to] = tmp;
+              return (plans: plans, open: to);
+            });
+            if (open != null && mounted) setState(() => _planIndex = open);
           });
         case 'delete':
           final ok = await showPlanConfirm(
@@ -1031,18 +1197,19 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             confirmText: context.l10n.commonDelete,
             destructive: true,
           );
-          if (!ok) return;
-          list.removeAt(index);
+          if (!ok || !mounted) return;
           await _whileBusy(() async {
-            await _savePlans(current, list);
-            if (!mounted) return;
-            if (list.isEmpty) {
+            final open = await _writePlanOp(attId, planKey, (att, plans, i) {
+              plans.removeAt(i!);
+              return (plans: plans, open: plans.isEmpty ? -1 : i.clamp(0, plans.length - 1));
+            });
+            if (open == null || !mounted) return;
+            if (open < 0) {
               // SOL_FIX22: last plan deleted → empty editor, nothing pending.
               _clearEditor(_att ?? current);
-            } else {
-              final newIndex = index.clamp(0, list.length - 1);
-              setState(() => _planIndex = newIndex);
-              _loadPlan(_att!, list[newIndex]);
+            } else if (_att != null) {
+              setState(() => _planIndex = open);
+              _loadPlan(_att!, PlanUtils.allPlans(_att)[open]);
             }
           });
       }

@@ -6834,6 +6834,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planningFlutterPdfA4 => 'PDF (A4)';
 
   @override
+  String get planningFlutterPlanDeleted => 'The plan was deleted in the meantime';
+
+  @override
+  String get planningFlutterPlanDeletedDraftLost => 'The plan was deleted in the meantime – changes are lost';
+
+  @override
+  String get planningFlutterPlanDeletedDraftSaved => 'The plan was deleted in the meantime – changes kept as a draft';
+
+  @override
   String planningFlutterPlanPosition(Object index, Object total) {
     return '$index of $total';
   }

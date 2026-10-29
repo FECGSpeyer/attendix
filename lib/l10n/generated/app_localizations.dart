@@ -11957,6 +11957,24 @@ abstract class AppLocalizations {
   /// **'PDF (A4)'**
   String get planningFlutterPdfA4;
 
+  /// planning.flutter.planDeleted
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen gelöscht'**
+  String get planningFlutterPlanDeleted;
+
+  /// planning.flutter.planDeletedDraftLost
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen gelöscht – Änderungen gehen verloren'**
+  String get planningFlutterPlanDeletedDraftLost;
+
+  /// planning.flutter.planDeletedDraftSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen gelöscht – Änderungen als Entwurf gesichert'**
+  String get planningFlutterPlanDeletedDraftSaved;
+
   /// planning.flutter.planPosition
   ///
   /// In de, this message translates to:
