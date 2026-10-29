@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
-import 'ion_badge_text.dart'; // PARITY_R8
 import '../../../l10n/l10n.dart';
 
 /// A badge that displays a percentage value with color coding
@@ -51,11 +50,11 @@ class PercentageBadge extends StatelessWidget {
     if (!showBackground) {
       return Text(
         text,
-        style: ionBadgeFont(TextStyle(
+        style: TextStyle(
           color: _color,
           fontSize: effectiveFontSize,
           fontWeight: FontWeight.bold,
-        )), // PARITY_R8
+        ),
       );
     }
 
@@ -70,11 +69,11 @@ class PercentageBadge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: ionBadgeFont(TextStyle(
+        style: TextStyle(
           color: _color,
           fontSize: effectiveFontSize,
           fontWeight: FontWeight.bold,
-        )), // PARITY_R8
+        ),
       ),
     );
   }

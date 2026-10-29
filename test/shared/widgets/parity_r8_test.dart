@@ -1,6 +1,5 @@
 // PARITY_R8: screenshot audit round 6 (iPhone, 393pt) – nested popover of
 // the attendance detail ⋮ menu.
-import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/theme/app_colors.dart';
@@ -14,7 +13,6 @@ import 'package:attendix/features/profile/presentation/widgets/profile_hero_card
 import 'package:attendix/features/settings/presentation/widgets/settings_list.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
-import 'package:attendix/shared/widgets/display/ion_badge_text.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -166,34 +164,12 @@ void main() {
       ]) {
         final style = badgeStyle(tester, t);
         expect(style.fontWeight, FontWeight.w700, reason: '$t');
-        // native: the system font (real bold); no web badge font
-        expect(style.fontFamily, isNot(kIonBadgeFontFamily), reason: '$t');
+        // WEB_FONTS: no badge-only font family any more; the real 700 on
+        // the web comes from the app-wide bundled Roboto (theme).
+        expect(style.fontFamily, isNot('IonBadge'), reason: '$t');
       }
     });
   }
-
-  testWidgets('web: badge labels use the bundled real-bold font',
-      (tester) async {
-    debugIonBadgeUseWebFont = true;
-    addTearDown(() => debugIonBadgeUseWebFont = null);
-    await tester.pumpWidget(_app(badges(), TargetPlatform.iOS));
-    for (final t in [AttendanceStatusBadge, StatusCountBadge, planning.IonBadge]) {
-      final style = badgeStyle(tester, t);
-      expect(style.fontFamily, kIonBadgeFontFamily, reason: '$t');
-      expect(style.fontWeight, FontWeight.w700, reason: '$t');
-    }
-  });
-
-  test('IonBadge font is bundled (weight 700)', () {
-    final pubspec = File('pubspec.yaml').readAsStringSync();
-    expect(pubspec, contains('family: $kIonBadgeFontFamily'));
-    expect(pubspec, contains('asset: assets/fonts/IonBadge-Bold.ttf'));
-    expect(File('assets/fonts/IonBadge-Bold.ttf').existsSync(), isTrue);
-    // non-bold text never switches to the bold-only font
-    debugIonBadgeUseWebFont = true;
-    addTearDown(() => debugIonBadgeUseWebFont = null);
-    expect(ionBadgeFont(const TextStyle(fontSize: 13)).fontFamily, isNull);
-  });
 
   // ------------------------------------------------------------ Mehr (md)
 

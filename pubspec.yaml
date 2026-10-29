@@ -123,14 +123,28 @@ flutter:
     - assets/certificates/urkunde-vorkurs.jpg
     - .env.app
 
-  # PARITY_R8: real bold glyphs for ion-badge labels on the web. CanvasKit
-  # only ships Roboto Regular and fakes bold (renders ≈500 instead of
-  # Ionic's 700). Roboto Bold (Apache 2.0, assets/fonts/IonBadge-Bold.LICENSE.txt),
-  # subset to Latin; used on the web only (see ionBadgeTextStyle).
+  # WEB_FONTS: Roboto with real 400/500/600/700 weights (+ 400 italic), as
+  # Ionic md renders it. Flutter web (CanvasKit) otherwise downloads Roboto
+  # Regular only and fakes every heavier weight (semibold / bold looked
+  # ≈500). Because the family is named `Roboto`, the web engine also uses it
+  # as its global fallback font instead of fetching Roboto from gstatic.
+  # Source: @fontsource/roboto 5.3.0 "latin" subset (Basic Latin + Latin-1,
+  # €, typographic quotes / dashes), woff converted to TTF with fonttools.
+  # Licence: SIL OFL 1.1, assets/fonts/Roboto-OFL.txt. The web theme sets
+  # this family (AppTheme.webFontFamily); native iOS keeps SF.
   fonts:
-    - family: IonBadge
+    - family: Roboto
       fonts:
-        - asset: assets/fonts/IonBadge-Bold.ttf
+        - asset: assets/fonts/Roboto-Regular.ttf
+          weight: 400
+        - asset: assets/fonts/Roboto-Italic.ttf
+          weight: 400
+          style: italic
+        - asset: assets/fonts/Roboto-Medium.ttf
+          weight: 500
+        - asset: assets/fonts/Roboto-SemiBold.ttf
+          weight: 600
+        - asset: assets/fonts/Roboto-Bold.ttf
           weight: 700
 
 # App Icon Configuration
