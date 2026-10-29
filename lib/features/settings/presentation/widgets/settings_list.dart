@@ -4,6 +4,11 @@ import 'package:flutter/material.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+
+/// PARITY_R8: md settings list header label (`.9rem` of the md inset
+/// list = 14.4px; the screenshot audit measures Ionic md at 14px).
+const double kMdSettingsHeaderFontSize = 14.4;
 
 // UX_SETTINGS (WAVE 8): the settings lane renders Ionic **iOS mode** on
 // iOS (iPhone app and iPhone Safari) and keeps the Material (Ionic md) look
@@ -182,10 +187,12 @@ class SettingsListSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (title != null)
-            // AUDIT_R4: ionic-theme-ios27 md-ion-list-inset (structured
-            // list on md): `ion-list-header` min-height 45 with the label
-            // centred, label 1rem (16px) semibold, line-height 1.29rem,
+            // AUDIT_R4: md-ion-list-inset (structured list on md):
+            // `ion-list-header` min-height 45 with the label centred,
             // margin 8 4 4, colour medium-tint; header padding-start 16.
+            // PARITY_R8: the label as Ionic md renders it (audit: 14px) –
+            // md-ion-list-inset `font-size: .9rem` (14.4px), normal line
+            // height, `.category-list` weight 600; `.header-icon` 1.2rem.
             ConstrainedBox(
               constraints: const BoxConstraints(minHeight: 45),
               child: Padding(
@@ -193,15 +200,14 @@ class SettingsListSection extends StatelessWidget {
                 child: Row(
                   children: [
                     if (icon != null) ...[
-                      Icon(icon, size: 18, color: AppColors.primary),
+                      Icon(icon, size: 19.2, color: AppColors.primary),
                       const SizedBox(width: 8),
                     ],
                     Expanded(
                       child: Text(
                         title!,
                         style: TextStyle(
-                          fontSize: 16,
-                          height: 1.29,
+                          fontSize: kMdSettingsHeaderFontSize,
                           fontWeight: FontWeight.w600,
                           color: theme.brightness == Brightness.dark
                               ? const Color(0xFFA2A4AB)
@@ -516,12 +522,7 @@ class IonBadge extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: textColor,
-          fontSize: 13,
-          height: 1,
-          fontWeight: FontWeight.bold,
-        ),
+        style: ionBadgeTextStyle(color: textColor), // PARITY_R8
       ),
     );
   }

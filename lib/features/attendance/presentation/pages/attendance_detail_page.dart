@@ -63,6 +63,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -524,6 +525,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       // ATT_DETAIL: badge with the number of active status filters
                       icon: Badge(
                         isLabelVisible: _statusFilter.isNotEmpty,
+                        // PARITY_R8: Ionic `ion-badge color="primary"
+                        // class="filter-badge"` – 10px bold (700).
+                        backgroundColor: AppColors.primary,
+                        textColor: Colors.white,
+                        textStyle: ionBadgeTextStyle(fontSize: 10, height: null),
                         label: Text('${_statusFilter.length}'),
                         child: Icon(
                           Icons.more_vert,

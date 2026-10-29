@@ -6,6 +6,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// PARITY_R3: Ionic `StatusInfoComponent` (⋮ → Status-Übersicht), a sheet
 /// modal with breakpoints [0, 0.5, 0.75] (initial 0.5).
@@ -215,12 +216,9 @@ class StatusCountBadge extends StatelessWidget {
       child: Text(
         '$count',
         textAlign: TextAlign.center,
-        style: TextStyle(
-          color: blackText ? Colors.black : Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
-          height: 1.0,
-        ),
+        // PARITY_R8: real bold (700) also on the web
+        style: ionBadgeTextStyle(
+            color: blackText ? Colors.black : Colors.white),
       ),
     );
   }

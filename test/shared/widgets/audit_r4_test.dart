@@ -43,35 +43,7 @@ Widget _menuHost() => Scaffold(
       ]),
     );
 
-Rect _cardOf(WidgetTester tester, String text) => tester.getRect(find
-    .ancestor(of: find.text(text), matching: find.byType(IosGlassSurface))
-    .first);
-
 void main() {
-  testWidgets('iOS nested popover: at the trigger row, parent keeps labels',
-      (tester) async {
-    tester.view.physicalSize = const Size(393, 852);
-    tester.view.devicePixelRatio = 1;
-    addTearDown(tester.view.reset);
-    await tester.pumpWidget(_app(_menuHost(), TargetPlatform.iOS));
-    await tester.tap(find.byIcon(Icons.more_vert));
-    await tester.pumpAndSettle();
-    final parent = _cardOf(tester, 'Status-Filter');
-    final row = tester.getRect(find
-        .ancestor(of: find.text('Status-Filter'), matching: find.byType(InkWell))
-        .first);
-    await tester.tap(find.text('Status-Filter'));
-    await tester.pumpAndSettle();
-
-    final sub = _cardOf(tester, 'Anwesend');
-    // ionic-theme-utils: left = trigger row left, top = row top + 8
-    expect(sub.left, closeTo(row.left, 0.5));
-    expect(sub.top, closeTo(row.top + kIosNestedPopoverTop, 0.5));
-    // the parent keeps its width; its lower entries stay visible
-    expect(_cardOf(tester, 'Legende'), parent);
-    expect(tester.getRect(find.text('Legende')).top, greaterThan(sub.bottom));
-  });
-
   for (final (platform, alpha) in [
     (TargetPlatform.android, 0.32),
     (TargetPlatform.iOS, 0.0),

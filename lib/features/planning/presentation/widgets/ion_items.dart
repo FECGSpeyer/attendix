@@ -8,6 +8,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart'
     show IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27
     show IonIos, IonDetailChevron, IonSearchbar, IonLargeTitle; // IOS27_SWEEP
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
 // components as rendered in iOS mode (the app on an iPhone). They are used by
@@ -166,14 +167,13 @@ class IonBadge extends StatelessWidget {
         decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
         child: Text(
           label,
+          // PARITY_R8: ion-badge is bold (700) in both modes
           style: isIonIos(context)
-              ? TextStyle(
+              ? ionBadgeTextStyle(
                   color: textColor ?? contrastOf(color),
                   fontSize: 0.8125 * ios27.IonIos.rem,
-                  fontWeight: FontWeight.w700,
-                  height: 1,
                 )
-              : TextStyle(color: textColor ?? contrastOf(color), fontSize: 13, fontWeight: FontWeight.w600, height: 1.1),
+              : ionBadgeTextStyle(color: textColor ?? contrastOf(color), height: 1.1),
         ),
       );
 }

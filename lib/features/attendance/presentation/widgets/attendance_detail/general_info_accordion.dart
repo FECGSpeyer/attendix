@@ -8,6 +8,7 @@ import '../../../../../core/utils/date_helper.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import 'attendance_accordion.dart';
+import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle
@@ -179,7 +180,8 @@ class _GeneralInfoAccordionState extends State<GeneralInfoAccordion> {
               ),
               child: Text(
                 widget.attendanceType!.name,
-                style: const TextStyle(color: Colors.white, fontWeight: FontWeight.w600, fontSize: 13),
+                // PARITY_R8: ion-badge is bold (700), was 600
+                style: ionBadgeTextStyle(color: Colors.white, height: null),
               ),
             ),
           ),

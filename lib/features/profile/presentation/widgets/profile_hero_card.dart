@@ -12,6 +12,10 @@ import '../../../../shared/widgets/display/avatar.dart';
 import 'master_data_sheet.dart';
 import 'profile_helpers.dart';
 
+/// PARITY_R8: md gap below the hero card – `.hero-card` margin-bottom 8 +
+/// the md `ion-list[inset]` margin-top 16.
+const double kMdHeroCardGap = 24;
+
 /// Profile card at the top of the "Mehr" tab (Ionic settings hero-card).
 ///
 /// Shows Passbild, name, role and chips for birthday, phone and the extra
@@ -55,7 +59,10 @@ class ProfileHeroCard extends ConsumerWidget {
     // 52pt avatar, 1.15rem bold name, 0.85rem medium role, medium chevron.
     final ios = theme.platform == TargetPlatform.iOS;
     return Padding(
-      padding: EdgeInsets.only(bottom: ios ? 8 : AppDimensions.paddingM),
+      // PARITY_R8: md – the hero card's 8px margin-bottom plus the 16px
+      // margin-top of the next md inset list (audit: 48 vs 40 to the
+      // "Werke & Proben" header).
+      padding: EdgeInsets.only(bottom: ios ? 8 : kMdHeroCardGap),
       child: Card(
         margin: EdgeInsets.zero,
         clipBehavior: Clip.antiAlias,

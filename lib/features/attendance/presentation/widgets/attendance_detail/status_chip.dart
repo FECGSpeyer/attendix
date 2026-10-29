@@ -4,6 +4,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
+import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 // UX_ATT: Ionic attendance page status badges and click cycle.
 
@@ -123,11 +124,9 @@ class AttendanceStatusBadge extends StatelessWidget {
           applyHeightToFirstAscent: false,
           applyHeightToLastDescent: false,
         ),
-        style: TextStyle(
+        // PARITY_R8: real bold (700) also on the web
+        style: ionBadgeTextStyle(
           color: badge.color == AppColors.warning ? Colors.black : Colors.white,
-          fontSize: 13,
-          fontWeight: FontWeight.bold,
-          height: 1.0,
         ),
       ),
     );

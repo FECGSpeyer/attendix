@@ -24,6 +24,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground; // IOS_PAGES3
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
+import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
 
 /// Statistics Page with Charts
 ///
@@ -324,10 +325,10 @@ class _IonBadge extends StatelessWidget {
       decoration: BoxDecoration(color: color, borderRadius: BorderRadius.circular(10)),
       child: Text(
         text,
-        style: TextStyle(
+        // PARITY_R8: real bold (700) also on the web
+        style: ionBadgeTextStyle(
           color: color == AppColors.warning ? Colors.black : Colors.white,
-          fontWeight: FontWeight.bold,
-          fontSize: 13,
+          height: null,
         ),
       ),
     );
