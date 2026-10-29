@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.11.0",
+      "date": "29.10.2026",
+      "changes": [
+        "🎨 iPhone: Abstände, Schriftgrößen, Menüs, Suchfelder und Seitenwechsel wie in der bisherigen App",
+        "🖥️ Desktop: Buttons, Karten, Tableiste, Suchfelder, Dialoge und Hinweise wie in der bisherigen App",
+        "🔒 Seiten nur noch für die Rollen sichtbar, die sie auch bisher sehen durften",
+        "🐛 Ablaufplan: Änderungen gehen beim Wechseln, Schließen oder bei Verbindungsfehlern nicht mehr verloren",
+        "⚡ Termine-Liste lädt schneller"
+      ]
+    },
+    {
       "version": "0.10.0",
       "date": "28.10.2026",
       "changes": [
