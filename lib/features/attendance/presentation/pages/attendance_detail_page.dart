@@ -2161,7 +2161,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
     if (!mounted || action == null) return;
     if (action == 'song') {
-      GoRouter.of(context).push('/songs/${entry.songId}');
+      // ASTRA_UX: the in-app song page, not the public share route /songs/:key.
+      GoRouter.of(context).push('/settings/songs/${entry.songId}');
       return;
     }
     await _changeConductor(index);
