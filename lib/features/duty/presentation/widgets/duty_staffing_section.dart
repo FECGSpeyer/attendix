@@ -6,6 +6,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -20,6 +21,24 @@ import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosL
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+
+/// ASTRA_DUTY_GROUPS: Ionic attendance.page.ts builds the Besetzung block from
+/// `this.players`, i.e. the person rows after the helper group filter of
+/// `initializeAttObjects` (helpers without `attendance_all_groups` only see
+/// their own group). Same [AttendanceGroupScope] as the participant list of
+/// the attendance detail page (loading/error/no group = nobody).
+List<PersonAttendance> dutyStaffingPlayers(List<PersonAttendance> rows, AttendanceGroupScope scope) =>
+    scope.isAll ? rows : rows.where((p) => scope.allowsGroup(p.instrument)).toList();
+
+/// ASTRA_DUTY_GROUPS: note shown under a person who cannot do the duty. Uses
+/// the note permission of the participant list (canViewAttendanceNotesFor,
+/// Ionic `player_notes_view`): without it a note is masked as
+/// "Notiz hinzugefügt". Ionic's own duty block prints `pa.notes` unmasked;
+/// Flutter deliberately applies the stricter list rule here.
+String? dutyStaffingNote(String? notes, {required bool canViewNotes, required String noteAddedLabel}) {
+  if (notes == null || notes.isEmpty) return null;
+  return canViewNotes ? notes : noteAddedLabel;
+}
 
 /// "Besetzung" block on the attendance detail page for Termine of duty types.
 class DutyStaffingSection extends ConsumerStatefulWidget {
@@ -47,8 +66,12 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
 
   @override
   Widget build(BuildContext context) {
-    final players = ref.watch(filteredPersonAttendancesForAttendanceProvider(_attendanceId)).valueOrNull ??
+    final allRows = ref.watch(filteredPersonAttendancesForAttendanceProvider(_attendanceId)).valueOrNull ??
         const <PersonAttendance>[];
+    // ASTRA_DUTY_GROUPS: same group scope + note permission as the list.
+    final groupScope = resolvedGroupScope(ref.watch(attendanceGroupScopeProvider));
+    final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
+    final players = dutyStaffingPlayers(allRows, groupScope);
     final canManage = ref.watch(canManageDutyProvider);
     final myPersonId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.id;
 
@@ -167,7 +190,11 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
               ListTile(
                 dense: true,
                 title: Text(pa.fullName),
-                subtitle: (pa.notes ?? '').isNotEmpty ? Text(pa.notes!) : null,
+                subtitle: switch (dutyStaffingNote(pa.notes,
+                    canViewNotes: canViewNotes, noteAddedLabel: l10n.attendanceNoteAdded)) {
+                  final note? => Text(note),
+                  null => null,
+                },
                 trailing: DutyPill(
                   text: (pa.dutyState ?? '').isNotEmpty ? l10n.attendanceDeclined : l10n.attendanceSignedOut,
                   color: AppColors.medium,
@@ -226,6 +253,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     setState(() => _busy = true);
     try {
       final repo = ref.read(dutyRepositoryWithTenantProvider);
+      final canViewNotes = ref.read(canViewAttendanceNotesProvider);
       final types = ref.read(attendanceTypesProvider).valueOrNull ?? [widget.attendanceType];
       final candidates = players.where((p) => !occupiesDuty(p) && p.id != null).toList();
       final date = DateTime.tryParse(widget.attendance.date)?.toLocal() ?? DateTime.now();
@@ -262,7 +290,9 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 unavailability, pa.personId!, widget.attendance.date, widget.attendance.typeId);
         var note = '';
         if (isCancelled(pa)) {
-          note = (pa.notes ?? '').isNotEmpty ? l10n.attendanceCannotWithNote(pa.notes!) : l10n.signoutCannot;
+          final visible = dutyStaffingNote(pa.notes,
+              canViewNotes: canViewNotes, noteAddedLabel: l10n.attendanceNoteAdded); // ASTRA_DUTY_GROUPS
+          note = visible != null ? l10n.attendanceCannotWithNote(visible) : l10n.signoutCannot;
         } else if (rule != null) {
           note = rule.reason.isNotEmpty
               ? l10n.attendanceRegularlyUnavailableWithReason(rule.reason)
