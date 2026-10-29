@@ -6828,6 +6828,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFlutterPdfA4 => 'PDF (A4)';
 
   @override
+  String get planningFlutterPlanChanged => 'Plan wurde inzwischen geändert';
+
+  @override
+  String get planningFlutterPlanChangedDraftLost => 'Plan wurde inzwischen geändert – Änderungen gehen verloren';
+
+  @override
+  String get planningFlutterPlanChangedDraftSaved => 'Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert';
+
+  @override
   String get planningFlutterPlanDeleted => 'Plan wurde inzwischen gelöscht';
 
   @override

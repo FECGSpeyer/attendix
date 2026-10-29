@@ -11957,6 +11957,24 @@ abstract class AppLocalizations {
   /// **'PDF (A4)'**
   String get planningFlutterPdfA4;
 
+  /// planning.flutter.planChanged
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen geändert'**
+  String get planningFlutterPlanChanged;
+
+  /// planning.flutter.planChangedDraftLost
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen geändert – Änderungen gehen verloren'**
+  String get planningFlutterPlanChangedDraftLost;
+
+  /// planning.flutter.planChangedDraftSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert'**
+  String get planningFlutterPlanChangedDraftSaved;
+
   /// planning.flutter.planDeleted
   ///
   /// In de, this message translates to:
