@@ -356,7 +356,14 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
 
           final current = categorized.current;
           final upcomingGroups = EventListUtils.groupByMonth(categorized.upcoming, (a) => a.date);
-          final past = categorized.past;
+          // ASTRA_UX1: Ionic isConductor || isHelper (admin, responsible,
+          // helper, voice-leader helper). A viewer (Beobachter) gets Ionic's
+          // viewerAttendances instead: the next Termin plus the past ones in
+          // one "Termine" list, without upcoming section, taps or deletion.
+          final staff = role.canAddAttendance;
+          final past = staff
+              ? categorized.past
+              : [if (current != null) current, ...categorized.past];
           final pastPreview = _showAllPast
               ? past
               : past.take(EventListUtils.pastPreviewCount).toList();
@@ -424,7 +431,9 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           // on list rows only for the Dirigent; icon-only trash option that
           // also fires on a full swipe (ion-item-option expandable / ionSwipe).
           Widget slidable(Attendance att, Widget child, {bool helperToo = false}) {
-            final allowed = helperToo ? role.canAddAttendance : role.isConductor;
+            // ASTRA_UX1: Ionic isConductor = admin or responsible only;
+            // the viewer role never gets the delete action.
+            final allowed = helperToo ? role.canAddAttendance : (role.isAdmin || role.isResponsible);
             if (!allowed) return child;
             return Slidable(
               key: ValueKey('att-${att.id}'),
@@ -511,7 +520,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                     ),
                   ],
 
-                  if (categorized.upcoming.isNotEmpty) ...[
+                  if (staff && categorized.upcoming.isNotEmpty) ...[
                     EventSectionHeader(title: context.l10n.signoutUpcoming, count: categorized.upcoming.length),
                     for (final group in upcomingGroups) ...[
                       EventMonthHeader(label: group.label),
@@ -557,7 +566,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                   ],
 
                   if (past.isNotEmpty) ...[
-                    EventSectionHeader(title: context.l10n.signoutPast, count: past.length),
+                    EventSectionHeader(
+                        title: staff ? context.l10n.signoutPast : context.l10n.attListEvents, count: past.length),
                     EventListCard(plain: true, children: [
                       // UX_ATT: Ionic ev-summary "Durchschnitt" + pill inside the list
                       EventSummaryRow(
@@ -578,7 +588,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                                 .join(' · '),
                             past: true,
                             highlight: highlightedTypeIds.contains(att.typeId),
-                            onTap: () => _navigateToDetail(att.id!),
+                            // Ionic [button]="isConductor || isHelper"
+                            onTap: staff ? () => _navigateToDetail(att.id!) : null,
                             trailing: [percentPill(att)],
                           ),
                         ),

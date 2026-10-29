@@ -838,17 +838,8 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       return;
     }
 
-    // BL-007: Validate that end time is after start time
-    if (_startTime != null && _endTime != null) {
-      final startMinutes = _startTime!.hour * 60 + _startTime!.minute;
-      final endMinutes = _endTime!.hour * 60 + _endTime!.minute;
-      if (endMinutes <= startMinutes) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.attendanceFlutterEndAfterStart)),
-        );
-        return;
-      }
-    }
+    // ASTRA_UX3: no start/end check – like Ionic, Termine may run past
+    // midnight (e.g. type times 22:00–01:00).
 
     if (DemoGuard.blocked()) return; // DEMO_GUARD
 
