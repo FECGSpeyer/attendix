@@ -404,7 +404,12 @@ class _MdTabBar extends StatelessWidget {
           ),
         ),
       ),
-      child: Center(
+      // PARITY_R9: `box-sizing: content-box` – the 1px border sits above
+      // the 56px bar, so the hairline runs across the full width instead of
+      // being painted over by the centred tab cluster.
+      child: Padding(
+        padding: const EdgeInsets.only(top: 1),
+        child: Center(
         heightFactor: 1,
         child: ConstrainedBox(
           constraints: BoxConstraints(
@@ -449,6 +454,7 @@ class _MdTabBar extends StatelessWidget {
             ),
           ),
         ),
+      ),
       ),
     );
   }

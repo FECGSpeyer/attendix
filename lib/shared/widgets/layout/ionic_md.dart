@@ -138,6 +138,14 @@ class IonMd {
   /// an inset list.
   static const double groupRadius = 16;
 
+  /// PARITY_R9: shape of an `ion-item-group` in an md inset list – a flat
+  /// block (no md card shadow) with the [groupRadius]. Use it with
+  /// `Card(elevation: 0, shape: IonMd.insetGroupShape)` for sections that
+  /// are item-groups in Ionic, not `ion-card`s.
+  static const ShapeBorder insetGroupShape = RoundedRectangleBorder(
+    borderRadius: BorderRadius.all(Radius.circular(groupRadius)),
+  );
+
   /// Ionic core `.list-md.list-inset` radius (inset list without group).
   static const double listRadius = 2;
 

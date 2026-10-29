@@ -4,11 +4,13 @@ import '../../../../../core/constants/app_constants.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../../../../../shared/widgets/adaptive/ion_icons.dart';
 import '../../../../../shared/widgets/layout/ionic_ios.dart';
+import '../../../../../shared/widgets/layout/ionic_md.dart';
 
 /// IOS_DETAIL: one `ion-accordion` of the attendance detail page (an
 /// `ion-item-group` inside Ionic's inset list).
 ///
-/// Material keeps the Card + [ExpansionTile] look. iOS (Ionic iOS mode):
+/// Material: a flat md inset item-group (radius 16, no shadow) with an
+/// [ExpansionTile]. iOS (Ionic iOS mode):
 /// 52 pt header row, 17 pt label, white header also while expanded and a
 /// black chevron that turns on open.
 ///
@@ -69,12 +71,17 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
         horizontal: AppDimensions.paddingM,
         vertical: AppDimensions.paddingXS,
       ),
+      // PARITY_R9: the accordion is an `ion-item-group` of Ionic's inset
+      // list, not an ion-card: md shows a flat white block with the
+      // md-ion-list-inset group radius (16) and no shadow.
+      elevation: ios ? null : 0,
+      color: ios ? null : scheme.surface,
       shape: ios
           ? const RoundedRectangleBorder(
               borderRadius:
                   BorderRadius.all(Radius.circular(IonIos.groupRadius)),
             )
-          : null,
+          : IonMd.insetGroupShape,
       // AUDIT_R4: the ion-item-group of the inset list clips its content
       // (structured list radius 28), so on iOS every accordion – also those
       // asking for Clip.none (run sheet, checklist) – keeps round corners

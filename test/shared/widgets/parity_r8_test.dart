@@ -104,7 +104,9 @@ void main() {
       expect(parent.width, 200);
       expect(sub.left, closeTo(parent.left, 0.5));
       expect(sub.top, closeTo(safeTop + kIosNestedPopoverTop, 0.5));
-      expect(sub.top, lessThan(parent.top));
+      // PARITY_R9: the parent opens over its ⋮ trigger (ios27 "replace"
+      // popover), so the nested popover starts just below its top edge.
+      expect(sub.top, greaterThan(parent.top));
 
       // The parent keeps its place and size; Übersicht and Legende stay
       // visible (hit-testable) below the nested popover.
@@ -132,6 +134,29 @@ void main() {
       expect(glass.borderRadius, const BorderRadius.all(Radius.circular(34)));
     });
   }
+
+  testWidgets('PARITY_R9 iOS main menu opens over its ⋮ trigger',
+      (tester) async {
+    final parent = await openMenu(tester);
+    final trigger = tester.getRect(find.byType(IconButton).first);
+    // ionic-theme-utils calculateWindowAdjustment(isReplace): top =
+    // trigger.top, right-aligned with the trigger but kept 8pt
+    // (POPOVER_IOS_BODY_MARGIN) inside the pane.
+    expect(parent.top, closeTo(trigger.top, 0.5));
+    expect(parent.right, closeTo(trigger.right.clamp(0, 393 - 8), 0.5));
+  });
+
+  testWidgets('PARITY_R9 md menu stays below its trigger', (tester) async {
+    tester.view.physicalSize = const Size(1280, 800);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app(_menuHost(), TargetPlatform.android));
+    final trigger = tester.getRect(find.byIcon(Icons.more_vert));
+    await tester.tap(find.byIcon(Icons.more_vert));
+    await tester.pumpAndSettle();
+    expect(tester.getRect(find.text('Status-Filter')).top,
+        greaterThan(trigger.bottom));
+  });
 
   testWidgets('iOS parent menu is glass again without a nested popover',
       (tester) async {

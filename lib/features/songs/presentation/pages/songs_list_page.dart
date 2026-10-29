@@ -406,9 +406,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
             // PARITY_R7: Ionic iOS – the quick links and the "N Werke" header
             // sit in one `ion-list inset` (margin-top 16) whose
             // `ion-item-group` keeps margin-bottom 16 (global.scss) even when
-            // empty: ≈60pt from the searchbar to the header text (was ≈40).
+            // empty. PARITY_R9: measured against Ionic in iPhone emulation
+            // the header text sits ≈46pt below the searchbar (Ionic y 236),
+            // so without quick links the gap is 6 (was 20 → ≈60pt, y 251).
             if (isIosLook(context))
-              SliverToBoxAdapter(child: SizedBox(height: showQuickLinks ? 12 : 20)),
+              SliverToBoxAdapter(child: SizedBox(height: showQuickLinks ? 12 : kIosSongsHeaderGap)),
             SliverToBoxAdapter(
               child: _QuickLinks(
                 showCurrent: showCurrentLink,
@@ -498,6 +500,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     );
   }
 }
+
+/// PARITY_R9: iOS gap between the searchbar row and the "N Werke" list
+/// header when no quick links are shown (Ionic: header text ≈46pt below
+/// the searchbar).
+@visibleForTesting
+const double kIosSongsHeaderGap = 6;
 
 /// Ionic `ion-segment [scrollable]="true" mode="md"`: horizontally
 /// scrollable md segment buttons ("Alle" + categories) with an underline,

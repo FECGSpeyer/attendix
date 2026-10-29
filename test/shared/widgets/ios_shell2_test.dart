@@ -197,6 +197,32 @@ void main() {
     expect(find.byType(IosTabBar), findsNothing);
   });
 
+  testWidgets('PARITY_R9 md: tab bar background and hairline span the full width',
+      (tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+    final boxes = find.ancestor(
+        of: find.byType(NavigationBar), matching: find.byType(DecoratedBox));
+    final bar = tester.widgetList<DecoratedBox>(boxes).firstWhere((b) {
+      final d = b.decoration;
+      return d is BoxDecoration && d.border != null;
+    });
+    final rect = tester.getRect(find.byWidget(bar));
+    expect(rect.left, 0);
+    expect(rect.width, 1440);
+    final deco = bar.decoration as BoxDecoration;
+    expect(deco.color, Colors.white);
+    expect((deco.border! as Border).top.width, 1);
+    // content-box border: the hairline sits above the 56px bar, so the
+    // centred tab cluster does not paint over it.
+    final nav = tester.getRect(find.byType(NavigationBar));
+    expect(nav.top, rect.top + 1);
+    expect(nav.height, 56);
+  });
+
   group('source', () {
     test('every showModalBottomSheet uses the root navigator', () {
       final offenders = <String>[];

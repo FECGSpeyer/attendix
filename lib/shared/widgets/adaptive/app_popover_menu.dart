@@ -266,7 +266,13 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
           .clamp(_margin, math.max(_margin, size.width - w - _margin))
           .toDouble();
     }
-    final top = anchor.bottom + (ios ? 6 : 0);
+    // PARITY_R9: ionic-theme-utils `iosPopoverEnterAnimation` (the app's
+    // `popoverEnter` on iOS) treats an `ion-button` trigger as a morphing
+    // "replace" surface: `calculateWindowAdjustment(…, isReplace)` puts the
+    // top at `trigger.top + trigger.height - trigger.height`, i.e. the menu
+    // opens over its trigger (Ionic iPhone emulation: ⋮ and menu top y 16).
+    // md (`popover.md`, side bottom): directly below the trigger.
+    final top = ios ? anchor.top : anchor.bottom;
     final maxHeight = math.max(
       120.0,
       size.height - top - widget.bottomPadding - _margin,

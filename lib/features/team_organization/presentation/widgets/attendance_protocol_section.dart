@@ -10,6 +10,8 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // PARITY_R9
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 
@@ -96,8 +98,13 @@ class AttendanceProtocolSection extends ConsumerWidget {
     final tasks = ref.watch(tasksForAttendanceProvider(attendanceId)).valueOrNull ?? const <TeamTask>[];
     final published = protocol?.status == 'published';
 
+    // PARITY_R9: an `ion-item-group` of Ionic's inset list, not an
+    // ion-card – md shows a flat block with radius 16 and no shadow.
+    final ios = useIosLook(context);
     return Card(
       margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
+      elevation: ios ? null : 0,
+      shape: ios ? null : IonMd.insetGroupShape,
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
