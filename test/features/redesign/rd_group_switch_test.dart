@@ -80,6 +80,7 @@ void main() {
       initialLocation: '/termine',
       routes: [
         GoRoute(path: '/heute', builder: (_, __) => const Scaffold(body: Text('page heute'))),
+        GoRoute(path: '/tenants', builder: (_, __) => const Scaffold(body: Text('page tenants'))),
         GoRoute(
           path: '/termine',
           builder: (context, __) => Scaffold(
@@ -117,6 +118,14 @@ void main() {
     expect(saved, isEmpty);
     expect(find.text('Gruppe wechseln'), findsOneWidget);
     expect(find.text('page heute'), findsNothing);
+
+    // "Gruppen verwalten" asks the same way.
+    await tester.tap(find.text('Gruppen verwalten'));
+    await _settle(tester);
+    expect(asked, 2);
+    expect(find.text('page tenants'), findsNothing);
+    expect(find.text('Gruppe wechseln'), findsOneWidget);
+    asked = 1;
 
     answer = true;
     await tester.tap(find.text('Jugendchor'));

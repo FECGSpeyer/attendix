@@ -135,6 +135,18 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
     }
   }
 
+  /// "Gruppen verwalten": like a tab switch, a page with unsaved input or a
+  /// running save is asked first.
+  Future<void> _manage() async {
+    final navigator = Navigator.of(context);
+    final sheet = ModalRoute.of(context);
+    final router = GoRouter.of(context);
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (sheet != null && sheet.isCurrent) navigator.pop();
+    router.go('/tenants');
+  }
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -218,13 +230,7 @@ class _RdGroupSwitchSheetState extends ConsumerState<_RdGroupSwitchSheet> {
                     child: RdOutlineButton(
                       label: l10n.redesignGroupsManage,
                       icon: Icons.apps,
-                      onPressed: _switchingTo != null
-                          ? null
-                          : () {
-                              final router = GoRouter.of(context);
-                              Navigator.of(context).pop();
-                              router.go('/tenants');
-                            },
+                      onPressed: _switchingTo != null ? null : _manage,
                     ),
                   ),
                 ],
