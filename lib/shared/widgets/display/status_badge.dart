@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/theme/app_colors.dart'; // IOS_THEME2
-import 'ion_badge_text.dart'; // PARITY_R8
 import '../../../l10n/l10n.dart';
 
 /// Badge variant styles
@@ -166,11 +165,11 @@ class _FilledBadge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: ionBadgeFont(TextStyle(
+        style: TextStyle(
           color: Colors.white,
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-        )), // PARITY_R8
+        ),
       ),
     );
   }
@@ -200,11 +199,11 @@ class _OutlinedBadge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: ionBadgeFont(TextStyle(
+        style: TextStyle(
           color: color,
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-        )), // PARITY_R8
+        ),
       ),
     );
   }
@@ -233,11 +232,11 @@ class _SubtleBadge extends StatelessWidget {
       ),
       child: Text(
         text,
-        style: ionBadgeFont(TextStyle(
+        style: TextStyle(
           color: color,
           fontSize: fontSize,
           fontWeight: FontWeight.bold,
-        )), // PARITY_R8
+        ),
       ),
     );
   }

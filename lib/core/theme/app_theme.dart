@@ -41,11 +41,24 @@ class AppTheme {
   /// Dark theme
   static ThemeData get dark => forPlatform(Brightness.dark, defaultTargetPlatform);
 
-  /// Theme for [brightness] on [platform] (iOS → Ionic iOS mode).
-  static ThemeData forPlatform(Brightness brightness, TargetPlatform platform) =>
-      _build(brightness, ios: platform == TargetPlatform.iOS);
+  /// WEB_FONTS: font family of the bundled Roboto (400/500/600/700 + 400
+  /// italic, see pubspec.yaml / assets/fonts/Roboto-OFL.txt).
+  static const String webFontFamily = 'Roboto';
 
-  static ThemeData _build(Brightness brightness, {required bool ios}) {
+  /// Theme for [brightness] on [platform] (iOS → Ionic iOS mode). [web] is
+  /// [kIsWeb] unless a test overrides it.
+  static ThemeData forPlatform(
+    Brightness brightness,
+    TargetPlatform platform, {
+    bool web = kIsWeb,
+  }) =>
+      _build(brightness, ios: platform == TargetPlatform.iOS, web: web);
+
+  static ThemeData _build(
+    Brightness brightness, {
+    required bool ios,
+    required bool web,
+  }) {
     final isDark = brightness == Brightness.dark;
     // IOS_THEME2: iOS dark = black page with #1c1c1d rows / cards (as on
     // the iPhone); md dark = Ionic md #121212 page, #1e1e1e items / cards.
@@ -173,6 +186,17 @@ class AppTheme {
     return ThemeData(
       useMaterial3: true,
       brightness: brightness,
+      // WEB_FONTS: on the web every text uses the bundled Roboto with real
+      // weights (Ionic md: `--ion-font-family: "Roboto", ...`); CanvasKit
+      // has no system fonts and would fake 500–700 from Roboto Regular.
+      // Web in iOS mode (iPhone Safari) uses Roboto as well: Ionic iOS asks
+      // for -apple-system (SF), which Flutter web cannot reach and SF may
+      // not be bundled (Apple licence); Roboto is the closest font we can
+      // ship and is in Ionic's own iOS fallback chain ("Roboto",
+      // sans-serif). Cupertino widgets (`CupertinoSystemText`) end up in
+      // Roboto too, as the web engine's global fallback. Native builds keep
+      // their platform fonts (iOS: SF, Android: Roboto via Typography).
+      fontFamily: web ? webFontFamily : null,
       colorScheme: colorScheme,
       scaffoldBackgroundColor: background,
       canvasColor: surface,
