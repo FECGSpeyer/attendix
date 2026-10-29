@@ -103,6 +103,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// SOL_FIX23: a close is waiting for the pending writes.
   bool _closing = false;
 
+  /// SOL_FIX24: [_editGen] when the open plan was loaded. Only edits made
+  /// after that (not the auto-created default plan) block leaving the plan
+  /// while it is invalid.
+  int _loadEditGen = 0;
+
+  /// SOL_FIX24: a multi-step plan operation (add / rename / move / delete a
+  /// plan, Tagesordnung picker) is writing and reloading the editor. The page
+  /// is blocked meanwhile, so no edit can be made that the reload would drop.
+  bool _busy = false;
+
   @override
   void dispose() {
     _saveTimer?.cancel();
@@ -204,6 +214,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       _loadPlan(att, plans[index]);
     } else {
       _loadGen++;
+      _loadEditGen = _editGen;
       final tenant = ref.read(currentTenantProvider);
       final isPractice = att.type == 'uebung';
       final start = (att.startTime?.isNotEmpty ?? false)
@@ -227,6 +238,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final history = _history;
     _saveTimer?.cancel();
     _loadGen++;
+    _loadEditGen = _editGen;
     _dirty = false;
     setState(() {
       _titleController.text = plan.title ?? _defaultTitle(att);
@@ -251,6 +263,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   void _clearEditor(PlanAttendance att) {
     _saveTimer?.cancel();
     _loadGen++;
+    _loadEditGen = _editGen;
     _dirty = false;
     setState(() {
       _planIndex = 0;
@@ -345,15 +358,42 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return _serialised(_writeOpenPlan);
   }
 
+  /// SOL_FIX24: the user edited the open plan since it was loaded.
+  bool get _hasUserEdits => _editGen != _loadEditGen || _titleController.text.trim() != _savedTitle;
+
   /// SOL_FIX23: waits for running writes and stores everything still pending
   /// (also edits made while a write ran). Plan / Termin switches and close
   /// only continue when this returns true.
-  Future<bool> _flushSaves() async {
-    do {
+  ///
+  /// SOL_FIX24: Ionic only stores a valid plan (`saveOpenPlan` → `validate`)
+  /// and never coerces an empty minutes field, so invalid edits would be
+  /// dropped silently on leaving. With [blockInvalid] an invalid plan with
+  /// user edits shows the Ionic validation toast and returns false, so the
+  /// user can fix it first.
+  Future<bool> _flushSaves({bool blockInvalid = true}) async {
+    while (true) {
       if (!await _save()) return false;
       if (!mounted) return true;
-    } while (_hasPendingChanges && _att?.id != null && _validate());
-    return true;
+      if (!_hasPendingChanges || _att?.id == null) return true;
+      if (!_validate()) {
+        if (!blockInvalid || !_hasUserEdits) return true;
+        _validate(showToast: true);
+        return false;
+      }
+    }
+  }
+
+  /// SOL_FIX24: runs [task] with the page blocked (overlay, no focus, no
+  /// close) so the editor cannot change while [task] writes and reloads it.
+  Future<T> _whileBusy<T>(Future<T> Function() task) async {
+    _saveTimer?.cancel();
+    FocusManager.instance.primaryFocus?.unfocus();
+    setState(() => _busy = true);
+    try {
+      return await task();
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
   }
 
   Future<bool> _writeOpenPlan() async {
@@ -526,9 +566,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     );
     plans.add(newPlan);
     try {
-      await _savePlans(current, plans);
-      setState(() => _planIndex = plans.length - 1);
-      _loadPlan(_att!, newPlan);
+      // SOL_FIX24: no edits between the write and loading the new plan.
+      await _whileBusy(() async {
+        await _savePlans(current, plans);
+        if (!mounted) return;
+        setState(() => _planIndex = plans.length - 1);
+        _loadPlan(_att!, newPlan);
+      });
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
     }
@@ -554,7 +598,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ],
     );
     if (action == null || !mounted) return;
-    if (!await _flushSaves() || !mounted) return;
+    // SOL_FIX24: an invalid open plan does not block: rename / day / move
+    // keep the editor (and its pending edits), delete removes the plan.
+    if (!await _flushSaves(blockInvalid: false) || !mounted) return;
     final current = _att!;
     final list = PlanUtils.withDays(current, PlanUtils.allPlans(current));
     try {
@@ -571,7 +617,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           );
           if (label == null) return;
           list[index] = list[index].copyWith(label: label.isEmpty ? null : label);
-          await _savePlans(current, list);
+          await _whileBusy(() => _savePlans(current, list));
         case 'day':
           final options = PlanUtils.dayOptions(current);
           final day = await showPlanActionSheet<int>(
@@ -586,16 +632,20 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           final moved = list[index].copyWith(day: day);
           list[index] = moved;
           list.sort((a, b) => (a.day ?? 0).compareTo(b.day ?? 0));
-          await _savePlans(current, list);
-          setState(() => _planIndex = list.indexOf(moved));
+          await _whileBusy(() async {
+            await _savePlans(current, list);
+            if (mounted) setState(() => _planIndex = list.indexOf(moved));
+          });
         case 'left':
         case 'right':
           final to = index + (action == 'left' ? -1 : 1);
           final tmp = list[index];
           list[index] = list[to];
           list[to] = tmp;
-          await _savePlans(current, list);
-          setState(() => _planIndex = to);
+          await _whileBusy(() async {
+            await _savePlans(current, list);
+            if (mounted) setState(() => _planIndex = to);
+          });
         case 'delete':
           final ok = await showPlanConfirm(
             context,
@@ -606,15 +656,18 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           );
           if (!ok) return;
           list.removeAt(index);
-          await _savePlans(current, list);
-          if (list.isEmpty) {
-            // SOL_FIX22: last plan deleted → empty editor, nothing pending.
-            _clearEditor(_att ?? current);
-          } else {
-            final newIndex = index.clamp(0, list.length - 1);
-            setState(() => _planIndex = newIndex);
-            _loadPlan(_att!, list[newIndex]);
-          }
+          await _whileBusy(() async {
+            await _savePlans(current, list);
+            if (!mounted) return;
+            if (list.isEmpty) {
+              // SOL_FIX22: last plan deleted → empty editor, nothing pending.
+              _clearEditor(_att ?? current);
+            } else {
+              final newIndex = index.clamp(0, list.length - 1);
+              setState(() => _planIndex = newIndex);
+              _loadPlan(_att!, list[newIndex]);
+            }
+          });
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.planningFlutterSaveFailedWith(friendlyErrorMessage(e)));
@@ -928,10 +981,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final att = _att;
     if (att?.id == null) return;
     if (!await _flushSaves() || !mounted) return;
-    ProtocolAttendance? protocolAtt;
-    try {
-      protocolAtt = await protocolRepo.getAttendance(att!.id!);
-    } catch (_) {}
+    // SOL_FIX24: no edits while the protocol row loads (the picker then
+    // stores the editor state and the editor reloads the stored plan).
+    var protocolAtt = await _whileBusy<ProtocolAttendance?>(() async {
+      try {
+        return await protocolRepo.getAttendance(att!.id!);
+      } catch (_) {
+        return null;
+      }
+    });
     if (protocolAtt == null || !mounted) return;
     final title = _titleController.text.trim();
     if (_fields.isNotEmpty) {
@@ -965,7 +1023,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
-    if (!await _flushSaves() || !mounted) return;
+    // SOL_FIX24: sharing keeps the editor, so an invalid plan does not block.
+    if (!await _flushSaves(blockInvalid: false) || !mounted) return;
     final action = await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningShareLink,
@@ -1038,8 +1097,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// Ionic `showOptions`: export entries only with fields (validated on
   /// click), the Registerprobenplan always for choir / orchestra.
   Future<void> _showOptions() async {
-    // Exports use the editor state, so they also work when the write failed.
-    await _flushSaves();
+    // Exports use the editor state, so they also work when the write failed
+    // (SOL_FIX24: or the plan is invalid; the export validates on click).
+    await _flushSaves(blockInvalid: false);
     if (!mounted) return;
     final att = _att;
     final tenant = ref.read(currentTenantProvider);
@@ -1146,7 +1206,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
-        if (didPop || _closing) return;
+        if (didPop || _closing || _busy) return;
         // SOL_FIX23: close waits for running writes and stays open when a
         // write failed (toast shown, changes kept for a retry).
         _closing = true;
@@ -1156,7 +1216,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         _invalidateOnExit();
         if (context.mounted) Navigator.of(context).pop(_hasChanges);
       },
-      child: Scaffold(
+      // SOL_FIX24: blocked while a multi-step plan operation runs.
+      child: Stack(children: [
+        ExcludeFocus(
+          excluding: _busy,
+          child: AbsorbPointer(
+            absorbing: _busy,
+            child: Scaffold(
         // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
         appBar: AppBar(
           automaticallyImplyLeading: false,
@@ -1250,6 +1316,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           ),
         ),
       ),
+          ),
+        ),
+        if (_busy)
+          const Positioned.fill(
+            key: ValueKey('planning-busy'),
+            child: ColoredBox(color: Colors.black26, child: Center(child: AppSpinner())),
+          ),
+      ]),
     );
   }
 
