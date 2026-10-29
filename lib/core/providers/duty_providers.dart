@@ -214,6 +214,8 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
     ref.invalidate(dutyTermineByIdProvider);
     ref.invalidate(myDutyOverviewProvider);
     ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+    // SOL_FIX35: duty and Termin status share the person_attendances rows.
+    ref.invalidate(signoutDataProvider);
     if (attendanceId != null) {
       ref.invalidate(personAttendancesForAttendanceProvider(attendanceId));
       ref.invalidate(attendanceDetailProvider(attendanceId));

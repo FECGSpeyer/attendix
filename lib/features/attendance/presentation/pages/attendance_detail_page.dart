@@ -2238,14 +2238,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     try {
       if (!repo.hasTenantId) return;
       final normalized = DateTime(picked.year, picked.month, picked.day, 12);
-      final days = DateUtils.dateOnly(normalized).difference(DateUtils.dateOnly(current)).inDays;
+      final days = calendarDayDifference(current, normalized);
       final normalizedIso = normalized.toUtc().toIso8601String();
 
       // Deadline and checklist due dates move along with the Termin.
       String? shift(String? value) {
         if (value == null || value.isEmpty) return value;
         final d = DateTime.tryParse(value);
-        return d == null ? value : d.add(Duration(days: days)).toIso8601String();
+        return d == null ? value : shiftByCalendarDays(d, days).toIso8601String();
       }
 
       final checklist = attendance.checklist
@@ -2798,4 +2798,21 @@ bool realtimeDutyStateChanged(Map<String, dynamic> newRecord, List<PersonAttenda
   if (row == null) return false;
   final incoming = newRecord['duty_state']?.toString();
   return (incoming ?? '') != (row.dutyState ?? '');
+}
+
+/// SOL_FIX35: whole calendar days between the local dates of [from] and
+/// [to]. Computed on UTC date values, so a DST change in between (e.g.
+/// 29.03.→30.03.2026 in Europe/Berlin, only 23 hours) still counts 1.
+int calendarDayDifference(DateTime from, DateTime to) {
+  final a = from.isUtc ? from.toLocal() : from;
+  final b = to.isUtc ? to.toLocal() : to;
+  return DateTime.utc(b.year, b.month, b.day).difference(DateTime.utc(a.year, a.month, a.day)).inDays;
+}
+
+/// SOL_FIX35: moves [value] by [days] calendar days keeping its local wall
+/// time across DST changes; a UTC value stays UTC.
+DateTime shiftByCalendarDays(DateTime value, int days) {
+  final l = value.isUtc ? value.toLocal() : value;
+  final moved = DateTime(l.year, l.month, l.day + days, l.hour, l.minute, l.second, l.millisecond, l.microsecond);
+  return value.isUtc ? moved.toUtc() : moved;
 }

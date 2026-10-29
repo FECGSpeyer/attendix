@@ -202,6 +202,10 @@ class SignoutNotifier extends Notifier<AsyncValue<void>> {
   void _refresh() {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(allPersonAttendancesAcrossTenantsProvider);
+    // SOL_FIX35: a sign-out also changes the duty cards of that Termin.
+    ref.invalidate(upcomingDutyTermineProvider);
+    ref.invalidate(dutyTermineByIdProvider);
+    ref.invalidate(myDutyOverviewProvider);
   }
 
   Future<bool> _run(Future<void> Function() action) async {

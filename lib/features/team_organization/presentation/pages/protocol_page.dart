@@ -584,30 +584,35 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       if (mounted) ToastHelper.showWarning(context, context.l10n.agendaEnterTitle);
       return;
     }
+    if (!mounted) return;
     // SOL_FIX34: captured before the awaits – the caches are refreshed
     // after a successful write even if the page was closed meanwhile.
     final container = ProviderScope.containerOf(context, listen: false);
     try {
       var current = _attendance!;
-      ProtocolAttendance? fresh;
-      try {
-        fresh = await _repo.getAttendance(widget.attendanceId);
-      } catch (_) {}
-      if (fresh != null) {
-        // SOL_FIX33: a plan deleted meanwhile is a conflict – never write
-        // the old plan back (`copyWith(plan: null)` keeps it). Checked
-        // before the topic is created, so no orphan topic is left behind.
-        if (fresh.plan == null && current.plan != null) {
-          throw StateError('plan of attendance ${widget.attendanceId} was deleted');
-        }
-        current = current.copyWith(plan: fresh.plan);
+      // SOL_FIX35: a failed read or a Termin deleted meanwhile aborts
+      // before the topic is created, so no unlinked topic is left behind.
+      final fresh = await _repo.getAttendance(widget.attendanceId);
+      if (fresh == null) {
+        throw StateError('attendance ${widget.attendanceId} not found');
       }
-      final item = await container.read(agendaItemNotifierProvider.notifier).create(AgendaItem(
-            title: title,
-            status: 'open',
-            priority: 'medium',
-            defaultDuration: duration < 1 ? 1 : duration,
-          ));
+      // SOL_FIX33: a plan deleted meanwhile is a conflict – never write
+      // the old plan back (`copyWith(plan: null)` keeps it). Checked
+      // before the topic is created, so no orphan topic is left behind.
+      if (fresh.plan == null && current.plan != null) {
+        throw StateError('plan of attendance ${widget.attendanceId} was deleted');
+      }
+      current = current.copyWith(plan: fresh.plan);
+      // SOL_FIX35: the repository bound to this Termin's tenant, never the
+      // global notifier – a tenant switch meanwhile must not create the
+      // topic in another tenant than the plan it is linked into.
+      final item = await _agendaRepo.createAgendaItem(AgendaItem(
+        title: title,
+        status: 'open',
+        priority: 'medium',
+        defaultDuration: duration < 1 ? 1 : duration,
+      ));
+      container.invalidate(agendaItemsProvider);
       // Ionic insertSpontaneousTopic keeps the plan's `end` as it is.
       final plan = current.plan ??
           {'time': _planStart ?? DateFormat('HH:mm').format(DateTime.now()), 'end': current.endTime ?? '', 'fields': []};

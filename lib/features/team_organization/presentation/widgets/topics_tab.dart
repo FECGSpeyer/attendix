@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/team_org/team_org.dart';
@@ -122,10 +123,16 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     if (action == 'open' && agendaId != null) {
       context.push('/settings/agenda-items/$agendaId');
     } else if (action == 'remove' && agendaId != null) {
+      // SOL_FIX35: captured before the await – plan and organisation caches
+      // are refreshed even if the tab was closed meanwhile, so a later
+      // planning editor never writes the removed topic back.
+      final container = ProviderScope.containerOf(context, listen: false);
       try {
         await addTopicsToAttendance(protocolRepo, att, type, const [],
             removeIds: [agendaId]);
-        ref.invalidate(upcomingProtocolAttendancesProvider);
+        container.invalidate(upcomingProtocolAttendancesProvider);
+        container.invalidate(planAttendancesProvider);
+        container.invalidate(orgPlansProvider);
         if (mounted) ToastHelper.showInfo(context, context.l10n.teamOrgRemovedStays);
       } catch (_) {
         if (mounted) ToastHelper.showError(context, context.l10n.teamOrgRemoveFailed);

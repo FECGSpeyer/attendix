@@ -63,7 +63,7 @@ void main() {
     expect(src, contains('fresh.plan == null && current.plan != null'));
     // SOL_FIX34: the conflict is checked before the topic is created.
     expect(src.indexOf('fresh.plan == null && current.plan != null'),
-        lessThan(src.indexOf('agendaItemNotifierProvider.notifier).create(')));
+        lessThan(src.indexOf('_agendaRepo.createAgendaItem(')));
     expect(src, isNot(contains('if (fresh != null) current = _attendance!.copyWith(plan: fresh.plan);')));
   });
 

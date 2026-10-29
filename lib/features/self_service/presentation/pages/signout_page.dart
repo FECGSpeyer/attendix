@@ -62,8 +62,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       signIn: (att, note) async {
         // UX_SELF: "Zusagen" on a duty I was assigned to confirms it (Ionic signin).
         if (att.isDutyRequested && att.attendanceId != null) {
+          // SOL_FIX35: confirmDutyAction reports success or failure itself
+          // (Ionic confirmDuty: only "Dienst bestätigt"), so no second toast.
           await confirmDutyAction(context, ref, att.id!, att.attendanceId!);
-          return true;
+          return null;
         }
         return notifier.signIn(att, notes: note);
       },

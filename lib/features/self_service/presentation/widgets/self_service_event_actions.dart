@@ -60,7 +60,9 @@ class SelfServiceEventActions {
 
   final List<String> absenceReasons;
   final List<String> lateReasons;
-  final Future<bool> Function(CrossTenantPersonAttendance att, String note) signIn;
+  /// `null`: the callback already reported the outcome itself (duty
+  /// confirmation, SOL_FIX35), so no sign-in toast follows.
+  final Future<bool?> Function(CrossTenantPersonAttendance att, String note) signIn;
   final Future<bool> Function(CrossTenantPersonAttendance att, String reason, bool isLate) signOut;
   final Future<bool> Function(CrossTenantPersonAttendance att, String note) updateNote;
   final Future<bool> Function(CrossTenantPersonAttendance att, Map<String, dynamic> answers)?
@@ -252,7 +254,7 @@ class SelfServiceEventActions {
 
   Future<void> _signIn(BuildContext context, CrossTenantPersonAttendance att, String note) async {
     final ok = await signIn(att, note);
-    if (!context.mounted) return;
+    if (ok == null || !context.mounted) return;
     if (ok) {
       ToastHelper.showSuccess(context, context.l10n.signoutGladYouCome);
     } else {

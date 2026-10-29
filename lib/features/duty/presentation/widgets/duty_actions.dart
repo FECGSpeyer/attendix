@@ -63,19 +63,21 @@ class DutyPill extends StatelessWidget {
   }
 }
 
-Future<void> confirmDutyAction(
+/// Returns whether the confirmation was saved (SOL_FIX35).
+Future<bool> confirmDutyAction(
   BuildContext context,
   WidgetRef ref,
   String personAttendanceId,
   int attendanceId,
 ) async {
   final ok = await ref.read(dutyNotifierProvider.notifier).confirm(personAttendanceId, attendanceId);
-  if (!context.mounted) return;
+  if (!context.mounted) return ok;
   if (ok) {
     ToastHelper.showSuccess(context, context.l10n.signoutDutyConfirmed);
   } else {
     ToastHelper.showError(context, context.l10n.svcConfirmFailed);
   }
+  return ok;
 }
 
 /// "Kann nicht": asks for an optional reason, cancels and informs the team.
