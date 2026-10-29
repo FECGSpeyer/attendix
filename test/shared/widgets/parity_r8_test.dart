@@ -14,6 +14,7 @@ import 'package:attendix/features/settings/presentation/widgets/settings_list.da
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/adaptive.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 Widget _app(Widget home, TargetPlatform platform) => MaterialApp(
@@ -85,6 +86,17 @@ void main() {
     await tester.pumpAndSettle();
     return tester.getRect(_glassOf('Status-Filter'));
   }
+
+  testWidgets('iOS popover rows: Ionic label box (≈94pt beside a chevron)',
+      (tester) async {
+    await openMenu(tester);
+    final label = tester.renderObject<RenderParagraph>(find.text('Status-Filter'));
+    // 200 − 16 padding − 27.2 icon − 16 − 8 label margin − 8 − 21.25
+    // chevron − 10 (inner-padding-end 16, chevron margin −6).
+    expect(label.constraints.maxWidth, closeTo(93.55, 0.5));
+    final icon = tester.getSize(find.byIcon(Icons.filter_list).first);
+    expect(icon.width, closeTo(27.2, 0.01));
+  });
 
   for (final trigger in ['Status-Filter', 'Ansicht']) {
     testWidgets('iOS nested popover ($trigger): top right, parent readable',
