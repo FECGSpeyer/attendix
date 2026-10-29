@@ -170,10 +170,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
           ),
           FilledButton(
             onPressed: () {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(context).pop(name);
-              }
+              // P10_SONGS_ORG: Ionic closes the alert and shows a danger
+              // toast when the name is empty.
+              Navigator.of(context).pop(controller.text.trim());
             },
             child: Text(context.l10n.attendanceAdd),
           ),
@@ -181,6 +180,10 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       ),
     );
 
+    if (result != null && result.isEmpty && context.mounted) {
+      ToastHelper.showError(context, context.l10n.songsCategoryNameEmpty);
+      return;
+    }
     if (result != null && mounted) {
       final created = await ref.read(songCategoryNotifierProvider.notifier).add(result);
       if (created != null && context.mounted) {
@@ -212,10 +215,9 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
           ),
           FilledButton(
             onPressed: () {
-              final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(context).pop(name);
-              }
+              // P10_SONGS_ORG: Ionic closes the alert and shows a danger
+              // toast when the name is empty.
+              Navigator.of(context).pop(controller.text.trim());
             },
             child: Text(context.l10n.commonSave),
           ),
@@ -223,6 +225,10 @@ class _SongCategoriesSheetState extends ConsumerState<SongCategoriesSheet> {
       ),
     );
 
+    if (result != null && result.isEmpty && context.mounted) {
+      ToastHelper.showError(context, context.l10n.songsCategoryNameEmpty);
+      return;
+    }
     if (result != null && category.id != null && mounted) {
       final ok = await ref
           .read(songCategoryNotifierProvider.notifier)

@@ -3,6 +3,7 @@ import 'dart:typed_data';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import '../../core/services/pdf_branding.dart';
 import '../../l10n/l10n.dart';
 import 'tiptap_delta.dart';
 
@@ -29,6 +30,7 @@ class ProtocolPdfData {
     this.sections = const [],
     this.generalNotes,
     this.otherTasks = const [],
+    this.branding,
   });
 
   final String title;
@@ -39,9 +41,13 @@ class ProtocolPdfData {
   final List<ProtocolPdfSection> sections;
   final Map<String, dynamic>? generalNotes;
   final List<String> otherTasks;
+
+  /// P10_SONGS_ORG: Ionic `branding` (logo/text header on the first page).
+  final PdfBranding? branding;
 }
 
 const _accent = PdfColor.fromInt(0xFF438E96);
+const _taskColor = PdfColor.fromInt(0xFF3B7D84); // Ionic [59, 125, 132]
 
 /// Builds the protocol as A4 PDF (port of Ionic protocol-pdf.ts).
 Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
@@ -92,11 +98,16 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
             style: const pw.TextStyle(fontSize: 8)),
       ),
       build: (context) => [
-        pw.Text(data.title, style: pw.TextStyle(fontSize: 18, fontWeight: pw.FontWeight.bold, color: _accent)),
-        if (data.subtitle.isNotEmpty) pw.Text(data.subtitle, style: const pw.TextStyle(fontSize: 11)),
+        // P10_SONGS_ORG: Ionic Utils.addBrandingHeader (logo/text, title,
+        // subtitle, accent rule).
+        buildPdfBrandingHeader(
+          branding: data.branding,
+          title: data.title,
+          subtitle: data.subtitle,
+          accentColor: _accent,
+        ),
         if (data.status != null)
           pw.Text(data.status!, style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
-        pw.Divider(color: _accent),
         if (data.present.isNotEmpty) ...[
           label(l10n.protocolPresentList(data.present.length)),
           pw.Text(data.present.join(', '), style: const pw.TextStyle(fontSize: 10)),
@@ -117,8 +128,16 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
           if (s.meta != null && s.meta!.isNotEmpty)
             pw.Text(s.meta!, style: const pw.TextStyle(fontSize: 9, color: PdfColors.grey700)),
           pw.SizedBox(height: 3),
-          ...docWidgets(s.doc),
-          for (final t in s.tasks) pw.Text('-> $t', style: const pw.TextStyle(fontSize: 10)),
+          if (docToLines(s.doc).isNotEmpty)
+            ...docWidgets(s.doc)
+          else
+            pw.Text(l10n.protocolNoNotes,
+                style: pw.TextStyle(fontSize: 9.5, fontStyle: pw.FontStyle.italic, color: PdfColors.grey500)),
+          for (final t in s.tasks)
+            pw.Padding(
+              padding: const pw.EdgeInsets.only(left: 6),
+              child: pw.Text(l10n.protocolTaskRef(t), style: const pw.TextStyle(fontSize: 10, color: _taskColor)),
+            ),
         ],
         if (data.generalNotes != null && !isDocEmpty(data.generalNotes)) ...[
           label(l10n.protocolGeneralNotes),
@@ -126,7 +145,7 @@ Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
         ],
         if (data.otherTasks.isNotEmpty) ...[
           label(l10n.protocolFurtherTasks),
-          for (final t in data.otherTasks) pw.Text('-> $t', style: const pw.TextStyle(fontSize: 10)),
+          for (final t in data.otherTasks) pw.Text('• $t', style: const pw.TextStyle(fontSize: 10)),
         ],
       ],
     ),

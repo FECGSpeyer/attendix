@@ -10,7 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/branding_providers.dart'; // P10_SONGS_ORG
 import '../../../../core/providers/team_org_providers.dart';
+import '../../../../core/services/pdf_branding.dart'; // P10_SONGS_ORG
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -542,7 +544,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       final tasks = await _taskRepo.getTasksForAttendance(widget.attendanceId);
       if (mounted) setState(() => _tasks = tasks);
     } catch (_) {
-      if (mounted) setState(() => _tasks = [..._tasks, task]);
+      // P10_SONGS_ORG: Ionic keeps the local list (the task is already in
+      // it – adding it again duplicated the row).
     }
   }
 
@@ -576,7 +579,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       ),
     );
     final title = titleCtrl.text.trim();
-    final duration = int.tryParse(durationCtrl.text.trim()) ?? defaultDuration;
+    // Ionic: Math.max(1, parseInt(duration) || defaultDuration) – 0 or an
+    // empty field falls back to the type's default.
+    final parsed = int.tryParse(durationCtrl.text.trim());
+    final duration = (parsed == null || parsed == 0) ? defaultDuration : parsed;
     titleCtrl.dispose();
     durationCtrl.dispose();
     if (ok != true) return;
@@ -712,7 +718,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   // ── PDF ────────────────────────────────────────────────────
 
-  ProtocolPdfData _buildPdfData() {
+  ProtocolPdfData _buildPdfData({PdfBranding? branding}) {
     final map = _taskSectionMap;
     final l10n = l10nWithoutContext;
     final dueFmt = DateFormat(dateFmt());
@@ -752,13 +758,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       sections: sections,
       generalNotes: _currentDoc(protocolGeneralSectionId),
       otherTasks: other.map(taskText).toList(),
+      branding: branding, // P10_SONGS_ORG: Ionic buildTenantBranding
     );
   }
 
   Future<void> _sharePdf() async {
     try {
       await _flushAll();
-      final bytes = await createProtocolPdf(_buildPdfData());
+      final branding = await resolvePdfBranding(ref);
+      final bytes = await createProtocolPdf(_buildPdfData(branding: branding));
       final d = DateTime.tryParse(_attendance?.date ?? '')?.toLocal();
       final name = l10nWithoutContext
           .protocolFileName(_title, d != null ? DateFormat('yyyy-MM-dd').format(d) : '')
@@ -985,7 +993,8 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       String? pdfPath;
       if (sendPdf) {
         try {
-          final bytes = await createProtocolPdf(_buildPdfData());
+          final branding = await resolvePdfBranding(ref);
+          final bytes = await createProtocolPdf(_buildPdfData(branding: branding));
           final upload = await _repo.uploadPdf(widget.attendanceId, bytes);
           pdfUrl = upload.url;
           pdfPath = upload.path;

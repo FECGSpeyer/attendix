@@ -53,6 +53,7 @@ class _LeaderTopics extends ConsumerStatefulWidget {
 class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
   int? _chosenAttendanceId;
   bool _showDone = false;
+  bool _creatingAttendance = false; // P10_SONGS_ORG: Ionic creatingAttendance
   final Set<String> _deciding = {};
 
   ProtocolType? _typeOf(ProtocolAttendance att, List<ProtocolType> types) {
@@ -112,10 +113,16 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
 
   /// "Termin anlegen" (Ionic `createAttendance`): quick-create and select it.
   Future<void> _createAttendance() async {
-    final id = await promptCreateProtocolAttendance(context, ref);
-    if (id == null || !mounted) return;
-    setState(() => _chosenAttendanceId = id);
-    ref.invalidate(upcomingProtocolAttendancesProvider);
+    if (_creatingAttendance) return;
+    setState(() => _creatingAttendance = true);
+    try {
+      final id = await promptCreateProtocolAttendance(context, ref);
+      if (id == null || !mounted) return;
+      setState(() => _chosenAttendanceId = id);
+      ref.invalidate(upcomingProtocolAttendancesProvider);
+    } finally {
+      if (mounted) setState(() => _creatingAttendance = false);
+    }
   }
 
   Future<void> _topAction(PlanField top, ProtocolAttendance att, ProtocolType? type) async {
@@ -456,6 +463,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
                       ListTile(
                         leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
                         title: Text(l10n.teamOrgCreateEvent, style: const TextStyle(color: AppColors.primary)),
+                        enabled: !_creatingAttendance,
                         onTap: _createAttendance,
                       ),
                     ],
