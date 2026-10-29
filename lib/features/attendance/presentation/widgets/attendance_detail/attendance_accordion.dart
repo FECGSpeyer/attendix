@@ -75,7 +75,11 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
                   BorderRadius.all(Radius.circular(IonIos.groupRadius)),
             )
           : null,
-      clipBehavior: widget.clipBehavior,
+      // AUDIT_R4: the ion-item-group of the inset list clips its content
+      // (structured list radius 28), so on iOS every accordion – also those
+      // asking for Clip.none (run sheet, checklist) – keeps round corners
+      // when the header or rows paint their background.
+      clipBehavior: ios ? Clip.antiAlias : widget.clipBehavior,
       child: PageStorage(
         bucket: _bucket,
         child: ios

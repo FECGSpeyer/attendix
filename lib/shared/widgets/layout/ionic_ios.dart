@@ -468,8 +468,10 @@ class IonLargeTitle extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!enabled || !isIosLook(context)) return const SizedBox.shrink();
     return Padding(
-      // IOS27_SWEEP: toolbar padding 4/3 + title-large padding 12 / 2 / 4.
-      padding: const EdgeInsets.fromLTRB(16, 5, 16, 7),
+      // IOS27_SWEEP / AUDIT_R4: the condense header's first toolbar has
+      // padding-top 0 (core header.ios + ios27), so: toolbar padding-start
+      // 4 + title-large padding 12, top 0 + 2, bottom 4 + toolbar 3.
+      padding: const EdgeInsets.fromLTRB(16, 2, 16, 7),
       child: Text(
         title,
         maxLines: 2,

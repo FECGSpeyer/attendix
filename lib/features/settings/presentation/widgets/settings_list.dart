@@ -182,30 +182,36 @@ class SettingsListSection extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
           if (title != null)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(
-                AppDimensions.paddingS,
-                AppDimensions.paddingXS,
-                AppDimensions.paddingS,
-                AppDimensions.paddingXS,
-              ),
-              child: Row(
-                children: [
-                  if (icon != null) ...[
-                    Icon(icon, size: 18, color: AppColors.primary),
-                    const SizedBox(width: 6),
-                  ],
-                  Expanded(
-                    child: Text(
-                      title!,
-                      style: theme.textTheme.titleSmall?.copyWith(
-                        color: AppColors.medium,
-                        fontWeight: FontWeight.w600,
+            // AUDIT_R4: ionic-theme-ios27 md-ion-list-inset (structured
+            // list on md): `ion-list-header` min-height 45 with the label
+            // centred, label 1rem (16px) semibold, line-height 1.29rem,
+            // margin 8 4 4, colour medium-tint; header padding-start 16.
+            ConstrainedBox(
+              constraints: const BoxConstraints(minHeight: 45),
+              child: Padding(
+                padding: const EdgeInsets.fromLTRB(20, 8, 4, 4),
+                child: Row(
+                  children: [
+                    if (icon != null) ...[
+                      Icon(icon, size: 18, color: AppColors.primary),
+                      const SizedBox(width: 8),
+                    ],
+                    Expanded(
+                      child: Text(
+                        title!,
+                        style: TextStyle(
+                          fontSize: 16,
+                          height: 1.29,
+                          fontWeight: FontWeight.w600,
+                          color: theme.brightness == Brightness.dark
+                              ? const Color(0xFFA2A4AB)
+                              : const Color(0xFF737478),
+                        ),
                       ),
                     ),
-                  ),
-                  if (headerAction != null) headerAction!,
-                ],
+                    if (headerAction != null) headerAction!,
+                  ],
+                ),
               ),
             ),
           if (children.isNotEmpty)
@@ -247,7 +253,8 @@ class SettingsListSection extends StatelessWidget {
 }
 
 /// Ionic iOS `ion-list-header` inside an inset list: 40pt high, label
-/// (0.9rem, semibold, medium-tint) at the bottom, optional primary icon.
+/// (ios27: 1rem = 17pt, semibold, line-height 1.29rem, `rgba(medium, .75)`
+/// – dark `.93`) at the bottom, optional primary icon.
 class IonListHeader extends StatelessWidget {
   const IonListHeader({super.key, required this.title, this.icon, this.action});
 
@@ -275,14 +282,8 @@ class IonListHeader extends StatelessWidget {
               const SizedBox(width: 8),
             ],
             Expanded(
-              child: Text(
-                title,
-                style: const TextStyle(
-                  fontSize: 14.4,
-                  fontWeight: FontWeight.w600,
-                  color: IonIos.mediumTint,
-                ),
-              ),
+              // IOS27_SWEEP: shared ios27 inset list header style
+              child: Text(title, style: ion.IonIos.listHeaderStyle(context)),
             ),
             // ion-list-header ion-button: small, bottom aligned.
             if (action != null)

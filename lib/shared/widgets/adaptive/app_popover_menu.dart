@@ -7,9 +7,10 @@ import '../../../l10n/l10n.dart';
 import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
 import 'adaptive_platform.dart';
 
-/// PARITY_R5: top offset (below the safe area) of an iOS nested popover
-/// that does not fit to the left of its parent.
-const double kIosNestedPopoverTop = 12;
+/// AUDIT_R4: vertical offset of an iOS nested popover below the top of
+/// its trigger row (ionic-theme-utils 0.1.1 `calculateWindowAdjustment`:
+/// `top = triggerTop + POPOVER_IOS_BODY_MARGIN`).
+const double kIosNestedPopoverTop = 8;
 
 /// One entry of [showAppPopoverMenu] (an `ion-item button` inside the
 /// `ion-list lines="none"` of an `ion-popover`).
@@ -151,8 +152,12 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   @override
   final String barrierLabel;
 
+  /// AUDIT_R4: Ionic md dims the page behind a popover
+  /// (`--backdrop-opacity: var(--ion-backdrop-opacity, .32)`); the ios27
+  /// theme sets `--backdrop-opacity: 0`.
   @override
-  Color? get barrierColor => Colors.transparent;
+  Color? get barrierColor =>
+      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
 
   @override
   bool get barrierDismissible => true;
@@ -323,11 +328,15 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
           .toDouble();
       var subTop = rowRect.top;
       if (ios && left - sw < _margin) {
-        // PARITY_R5: no room on the left (phone) – Ionic iOS lays the
-        // nested popover over the parent, right-aligned with it, at the
-        // top of the screen (iPhone audit: x 181–381, y 12 on 393pt).
-        subLeft = math.max(_margin, left + w - sw);
-        subTop = MediaQuery.paddingOf(context).top + kIosNestedPopoverTop;
+        // AUDIT_R4: no room on the left (phone). ionic-theme-utils 0.1.1
+        // (`calculateWindowAdjustment`, side="start") then puts the nested
+        // popover at the trigger row's left edge, 8pt below the row top:
+        // it overlays only the upper part of the parent, whose lower
+        // entries stay readable (the parent keeps its width and labels).
+        subLeft = rowRect.left
+            .clamp(_margin, math.max(_margin, size.width - sw - _margin))
+            .toDouble();
+        subTop = rowRect.top + kIosNestedPopoverTop;
       }
       children.add(
         Positioned(
