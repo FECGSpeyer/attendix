@@ -584,13 +584,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       if (mounted) ToastHelper.showWarning(context, context.l10n.agendaEnterTitle);
       return;
     }
+    // SOL_FIX34: captured before the awaits – the caches are refreshed
+    // after a successful write even if the page was closed meanwhile.
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
-      final item = await ref.read(agendaItemNotifierProvider.notifier).create(AgendaItem(
-            title: title,
-            status: 'open',
-            priority: 'medium',
-            defaultDuration: duration < 1 ? 1 : duration,
-          ));
       var current = _attendance!;
       ProtocolAttendance? fresh;
       try {
@@ -598,17 +595,29 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       } catch (_) {}
       if (fresh != null) {
         // SOL_FIX33: a plan deleted meanwhile is a conflict – never write
-        // the old plan back (`copyWith(plan: null)` keeps it).
+        // the old plan back (`copyWith(plan: null)` keeps it). Checked
+        // before the topic is created, so no orphan topic is left behind.
         if (fresh.plan == null && current.plan != null) {
           throw StateError('plan of attendance ${widget.attendanceId} was deleted');
         }
-        current = _attendance!.copyWith(plan: fresh.plan);
+        current = current.copyWith(plan: fresh.plan);
       }
+      final item = await container.read(agendaItemNotifierProvider.notifier).create(AgendaItem(
+            title: title,
+            status: 'open',
+            priority: 'medium',
+            defaultDuration: duration < 1 ? 1 : duration,
+          ));
+      // Ionic insertSpontaneousTopic keeps the plan's `end` as it is.
       final plan = current.plan ??
           {'time': _planStart ?? DateFormat('HH:mm').format(DateTime.now()), 'end': current.endTime ?? '', 'fields': []};
       final field = buildAgendaField(item, duration < 1 ? 1 : duration);
       final fields = insertAgendaFields(current.fields, [field]);
       final stored = await _repo.updateAttendancePlan(widget.attendanceId, {...plan, 'fields': fields});
+      container.invalidate(upcomingProtocolAttendancesProvider);
+      // SOL_FIX33: the planning editor reloads the plan with the new topic.
+      container.invalidate(planAttendancesProvider);
+      container.invalidate(orgPlansProvider);
       if (!mounted) return;
       setState(() {
         _attendance = _attendance!.copyWith(plan: stored ?? {...plan, 'fields': fields});
@@ -616,10 +625,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         _updateLive();
         _activeId = fieldId(field);
       });
-      ref.invalidate(upcomingProtocolAttendancesProvider);
-      // SOL_FIX33: the planning editor reloads the plan with the new topic.
-      ref.invalidate(planAttendancesProvider);
-      ref.invalidate(orgPlansProvider);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolPointFailed);
     }

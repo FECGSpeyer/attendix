@@ -61,6 +61,9 @@ void main() {
     final src = File('lib/features/team_organization/presentation/pages/protocol_page.dart')
         .readAsStringSync();
     expect(src, contains('fresh.plan == null && current.plan != null'));
+    // SOL_FIX34: the conflict is checked before the topic is created.
+    expect(src.indexOf('fresh.plan == null && current.plan != null'),
+        lessThan(src.indexOf('agendaItemNotifierProvider.notifier).create(')));
     expect(src, isNot(contains('if (fresh != null) current = _attendance!.copyWith(plan: fresh.plan);')));
   });
 
@@ -70,8 +73,9 @@ void main() {
       'lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart',
     ]) {
       final src = File(path).readAsStringSync();
-      expect(src, contains('ref.invalidate(planAttendancesProvider);'), reason: path);
-      expect(src, contains('ref.invalidate(orgPlansProvider);'), reason: path);
+      expect(src, contains('container.invalidate(planAttendancesProvider);'), reason: path);
+      expect(src, contains('container.invalidate(orgPlansProvider);'), reason: path);
+      expect(src, contains('ProviderScope.containerOf(context, listen: false)'), reason: path);
     }
   });
 }

@@ -198,22 +198,25 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
     final removeIds = _removals.map((r) => r.item.id!).toList();
     if ((selections.isEmpty && removeIds.isEmpty) || _saving) return;
     setState(() => _saving = true);
+    // SOL_FIX34: captured before the await – the caches are refreshed after
+    // a successful write even if the sheet was closed meanwhile.
+    final container = ProviderScope.containerOf(context, listen: false);
     try {
       final save = widget.save;
       final plan = save != null
           ? await save(selections, removeIds)
           : await addTopicsToAttendance(
-              ref.read(protocolRepositoryWithTenantProvider),
+              container.read(protocolRepositoryWithTenantProvider),
               widget.attendance,
               widget.type,
               selections,
               removeIds: removeIds,
             );
-      ref.invalidate(upcomingProtocolAttendancesProvider);
+      container.invalidate(upcomingProtocolAttendancesProvider);
       // SOL_FIX33: plan caches follow every topic write, so a planning
       // editor opened afterwards starts from the stored topics.
-      ref.invalidate(planAttendancesProvider);
-      ref.invalidate(orgPlansProvider);
+      container.invalidate(planAttendancesProvider);
+      container.invalidate(orgPlansProvider);
       if (!mounted) return;
       final added = selections.length;
       final removed = removeIds.length;
