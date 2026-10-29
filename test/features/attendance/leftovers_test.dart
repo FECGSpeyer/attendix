@@ -46,7 +46,7 @@ void main() {
 
     test('router passes the resolved create permission', () {
       final src = File('lib/core/router/app_router.dart').readAsStringSync();
-      expect(src, contains('canCreate: ref.read(canCreateAttendanceProvider)'));
+      expect(src, contains('canCreateAttendance: ref.read(canCreateAttendanceProvider)')); // PARITY_R7
     });
 
     test('list and unrelated routes are not touched', () {
@@ -57,7 +57,7 @@ void main() {
 
     test('router applies the rule before the generic route table', () {
       final src = File('lib/core/router/app_router.dart').readAsStringSync();
-      final rule = src.indexOf('attendanceDetailRedirect(\n          location,\n          role,');
+      final rule = src.indexOf('attendanceDetailRedirect(\n    location,\n    role,'); // PARITY_R7: roleRouteRedirect
       final table = src.indexOf('for (final entry in _protectedRoutes.entries)');
       expect(rule, greaterThan(0));
       expect(table, greaterThan(rule), reason: 'first match wins');

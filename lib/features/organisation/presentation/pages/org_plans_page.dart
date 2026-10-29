@@ -21,6 +21,7 @@ import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTIN
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding; // PARITY_R7
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -228,6 +229,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           await ref.read(orgPlansProvider.future).catchError((_) => <OrgPlanEntry>[]);
         },
         child: ListView(
+          // PARITY_R7: list end 16pt above the floating tab bar (Ionic
+          // ion-content padding-bottom), like the other tab root pages.
+          padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16)),
           children: [
             const IonContentTopInset(), // IOS_R6
             IonLargeTitle(context.l10n.plansOrgPlans),

@@ -1,3 +1,4 @@
+import 'package:flutter/cupertino.dart' show CupertinoIcons; // PARITY_R7
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -187,13 +188,15 @@ IconData helpCategoryIcon(String ionIcon) {
     'rocket-outline' => Icons.rocket_launch_outlined,
     'checkmark-done-outline' => Icons.done_all,
     'people-outline' => Icons.people_outline,
-    'list-outline' => Icons.list_alt_outlined,
-    'musical-notes-outline' => Icons.music_note_outlined,
+    // PARITY_R7: closest glyphs to the Ionicons (bulleted list, two beamed
+    // notes, people in a circle, three dots in a circle).
+    'list-outline' => Icons.format_list_bulleted,
+    'musical-notes-outline' => CupertinoIcons.music_note_2,
     'person-circle-outline' => Icons.account_circle_outlined,
     'settings-outline' => Icons.settings_outlined,
-    'people-circle-outline' => Icons.groups_outlined,
+    'people-circle-outline' => Icons.supervised_user_circle_outlined,
     'headset-outline' => Icons.headset_mic_outlined,
-    'ellipsis-horizontal-circle-outline' => Icons.more_horiz,
+    'ellipsis-horizontal-circle-outline' => Icons.pending_outlined,
     _ => Icons.help_outline,
   };
 }
