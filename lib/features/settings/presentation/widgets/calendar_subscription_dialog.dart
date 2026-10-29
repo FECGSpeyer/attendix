@@ -70,7 +70,11 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
         // IOS_FORMS1: ion-alert message `settings.calendarMessage` (text +
         // link in one grey 15pt block); the checkbox input sits in its own
         // group below a hairline (iOS).
-        contentPadding: useIosLook(ctx) ? EdgeInsets.zero : null,
+        // md: the checkbox group spans the full alert width (Ionic
+        // `.alert-checkbox-group`), so the message carries the 24px inset.
+        contentPadding: useIosLook(ctx) || personal
+            ? EdgeInsets.zero
+            : null,
         content: useIosLook(ctx)
             ? Column(
                 mainAxisSize: MainAxisSize.min,
@@ -95,14 +99,21 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
             // 280px`, the long link wraps anywhere instead of widening the
             // alert); from 768px `--max-width: min(100vw - 96px, 560px)`.
             : SizedBox(
-                width: mdCalendarAlertContentWidth(MediaQuery.sizeOf(ctx).width),
+                width: mdCalendarAlertContentWidth(MediaQuery.sizeOf(ctx).width) +
+                    (personal ? 48 : 0),
                 child: Column(
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  SelectableText(_htmlMessage(ctx.l10n.settingsCalendarMessage(link))),
+                  if (personal)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(24, 0, 24, 20),
+                      child: SelectableText(
+                          _htmlMessage(ctx.l10n.settingsCalendarMessage(link))),
+                    )
+                  else
+                    SelectableText(_htmlMessage(ctx.l10n.settingsCalendarMessage(link))),
                   if (personal) ...[
-                    const SizedBox(height: 16),
                     _MdAlertCheckbox(
                       label: ctx.l10n.settingsHideCancelled,
                       value: hideExcused,
@@ -180,20 +191,26 @@ class _MdAlertCheckbox extends StatelessWidget {
         onTap: () => onChanged(!value),
         child: ConstrainedBox(
           constraints: const BoxConstraints(minHeight: 48),
+          // Ionic md: 16px box at x 26, label from x 56 (padding 13/24).
           child: Row(
             children: [
+              const SizedBox(width: 19),
               Checkbox(
                 value: value,
                 onChanged: (v) => onChanged(v ?? false),
                 materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+                visualDensity: VisualDensity.compact,
               ),
-              const SizedBox(width: 8),
+              const SizedBox(width: 5),
               Expanded(
-                child: Text(
-                  label,
-                  style: TextStyle(
-                    fontSize: 16,
-                    color: Theme.of(context).colorScheme.onSurface,
+                child: Padding(
+                  padding: const EdgeInsets.fromLTRB(0, 13, 24, 13),
+                  child: Text(
+                    label,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: Theme.of(context).colorScheme.onSurface,
+                    ),
                   ),
                 ),
               ),
