@@ -19,6 +19,7 @@ import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
 import 'ios_tab_bar.dart'; // IOS_LOOK
 import 'root_back_button_scope.dart'; // NATIVE_MISC
 import 'ionic_md.dart' show IonMd; // MD_SWEEP
+import 'route_leave_guard.dart'; // SOL_FIX25
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -179,10 +180,19 @@ class MainShell extends ConsumerWidget {
   }
 
   /// Navigate to destination at index
-  void _onItemTapped(BuildContext context, int index, List<_NavDestination> destinations) {
-    if (index >= 0 && index < destinations.length) {
-      context.go(destinations[index].route);
-    }
+  ///
+  /// SOL_FIX25: `context.go` replaces the page without asking its
+  /// `PopScope`, so the open page's leave guards (e.g. the Ablaufplan editor
+  /// flushing its pending writes) run first; a guard that says stay keeps
+  /// the page.
+  Future<void> _onItemTapped(BuildContext context, WidgetRef ref, int index,
+      List<_NavDestination> destinations) async {
+    if (index < 0 || index >= destinations.length) return;
+    final route = destinations[index].route;
+    final guards = ref.read(routeLeaveGuardRegistryProvider);
+    if (guards.hasGuards && !await guards.canLeave()) return;
+    if (!context.mounted) return;
+    context.go(route);
   }
 
   /// IOS_SHELL2: Ionic iOS 26 tabs. The pages fill the whole screen and
@@ -269,7 +279,7 @@ class MainShell extends ConsumerWidget {
               child: IosTabBar(
                 selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
                 onSelected: (index) =>
-                    _onItemTapped(context, index, destinations),
+                    _onItemTapped(context, ref, index, destinations),
                 items: [
                   for (final d in destinations)
                     IosTabBarItem(icon: d.icon, label: d.label),
@@ -340,7 +350,7 @@ class MainShell extends ConsumerWidget {
           ? null
           : _MdTabBar(
               selectedIndex: selectedIndex.clamp(0, destinations.length - 1),
-              onSelected: (index) => _onItemTapped(context, index, destinations),
+              onSelected: (index) => _onItemTapped(context, ref, index, destinations),
               destinations: destinations,
             ),
       ),

@@ -85,11 +85,38 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   bool _refreshing = false;
   AppLifecycleListener? _lifecycle;
 
-  PublicPlanRepository get _repo => ref.read(publicPlanRepositoryProvider);
+  /// SOL_FIX25: read once while mounted; [dispose] (unwatch) and writes
+  /// that finish after dispose must not use `ref`.
+  late final PublicPlanRepository _repo = ref.read(publicPlanRepositoryProvider);
+
+  /// SOL_FIX25: edit link writes run one after another (a write starts only
+  /// when the previous one finished) and each builds its payload from the
+  /// current full state when it starts, so an older state can never be
+  /// written last.
+  Future<bool> _writeChain = Future<bool>.value(true);
+
+  /// SOL_FIX25: a write is queued but has not started yet; further edits
+  /// join it (it reads the newest state when it starts).
+  bool _writeQueued = false;
+
+  /// SOL_FIX25: writes queued or running.
+  int _pendingWrites = 0;
+
+  /// SOL_FIX25: the editor holds edits that are not stored yet (also after
+  /// a failed write, so the next switch retries instead of dropping them).
+  bool _dirty = false;
+
+  /// SOL_FIX25: bumped on every edit; a finished write only clears
+  /// [_dirty] when nothing was edited since it started.
+  int _editGen = 0;
+
+  /// SOL_FIX25: a plan switch is waiting for the pending writes.
+  bool _switching = false;
 
   @override
   void initState() {
     super.initState();
+    _repo; // SOL_FIX25: capture the repository while mounted.
     // SOL_FIX10: registered BEFORE the initial fetch, so a hide/show while
     // the plan is still loading is not missed.
     _lifecycle = AppLifecycleListener(
@@ -240,11 +267,26 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     final att = _att;
     if (!mounted || att == null || row['plan'] == null) return;
     try {
-      _applyFreshAttendance(PlanAttendance.fromJson({
+      final fresh = PlanAttendance.fromJson({
         ...att.toJson(),
         'plan': row['plan'],
         'extra_plans': row['extra_plans'],
-      }));
+      });
+      // SOL_FIX25: while own edits are pending (or being written) the echo
+      // of an older write must not reset the editor: only the base row (the
+      // other plans) is taken over; the next write stores the editor on top.
+      if (_dirty || _pendingWrites > 0) {
+        setState(() {
+          _att = fresh;
+          final plans = PlanUtils.allPlans(fresh);
+          _labels = plans.length > 1
+              ? [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(fresh, i, plans)]
+              : const [];
+          _planIndex = _planIndex.clamp(0, plans.length - 1);
+        });
+        return;
+      }
+      _applyFreshAttendance(fresh);
     } catch (_) {}
   }
 
@@ -306,6 +348,11 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
     if (!mounted) return;
     try {
       final updated = SharedPlan.fromJson({..._shared!.toJson(), ...row});
+      // SOL_FIX25: an echo of an older own write never resets pending edits.
+      if (_dirty || _pendingWrites > 0) {
+        _shared = updated;
+        return;
+      }
       setState(() {
         _shared = updated;
         if (updated.planTitle?.isNotEmpty ?? false) _title = updated.planTitle!;
@@ -322,7 +369,21 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
 
   Plan get _plan => Plan(time: _time, end: _end, fields: _fields, title: _title);
 
-  void _selectPlan(int index) {
+  /// SOL_FIX25: in edit mode a plan switch waits until every pending edit
+  /// of the open plan is stored; a failed write keeps the open plan (and its
+  /// edits) instead of loading another plan over them.
+  Future<void> _selectPlan(int index) async {
+    if (index == _planIndex || _switching) return;
+    if (_editMode && (_dirty || _pendingWrites > 0)) {
+      _switching = true;
+      final bool ok;
+      try {
+        ok = await _flushSaves();
+      } finally {
+        _switching = false;
+      }
+      if (!ok || !mounted) return;
+    }
     setState(() {
       _planIndex = index;
       _applyAttendancePlan();
@@ -334,18 +395,62 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
   // Edit mode
   // ---------------------------------------------------------------------------
 
-  Future<void> _save() async {
-    final key = widget.shareKey!;
-    final editKey = widget.editKey!;
+  /// SOL_FIX25: marks the editor dirty and queues a write behind the running
+  /// one. True when the newest state (as of the write's start) was stored.
+  Future<bool> _save() {
+    _dirty = true;
+    _editGen++;
+    _recomputeEnd();
+    return _queueWrite();
+  }
+
+  Future<bool> _queueWrite() {
+    // A queued write that has not started yet picks up this state too.
+    if (_writeQueued) return _writeChain;
+    _writeQueued = true;
+    _pendingWrites++;
+    final next = _writeChain.then((_) async {
+      _writeQueued = false;
+      try {
+        return await _writeNow();
+      } finally {
+        _pendingWrites--;
+      }
+    });
+    _writeChain = next;
+    return next;
+  }
+
+  /// SOL_FIX25: waits until every edit is stored; false when a write failed
+  /// (running writes are awaited first, a failed one is not retried here).
+  Future<bool> _flushSaves() async {
+    while (_dirty || _pendingWrites > 0) {
+      final ok = _pendingWrites > 0 ? await _writeChain : await _queueWrite();
+      if (!ok || !mounted) return false;
+    }
+    return true;
+  }
+
+  /// REVIEW_FIX3: same stored format as planning_page (Ionic calculateEnd:
+  /// "YYYY-MM-DDTHH:mm").
+  /// SOL_FIX12: an ad-hoc plan's end is based on its own date (a bare
+  /// "HH:mm" start must not fall back to today).
+  void _recomputeEnd() {
     final start = PlanUtils.parseTimeToMinutes(_time);
-    // REVIEW_FIX3: same stored format as planning_page (Ionic calculateEnd:
-    // "YYYY-MM-DDTHH:mm").
-    // SOL_FIX12: an ad-hoc plan's end is based on its own date (a bare
-    // "HH:mm" start must not fall back to today).
     final endBase = _shared != null && _att == null && !_time.contains('T') && _date.isNotEmpty
         ? '${_date.length >= 10 ? _date.substring(0, 10) : _date}T${PlanUtils.formatTime(_time)}'
         : _time;
     if (start != null) _end = PlanUtils.computeEndIso(endBase, _fields);
+  }
+
+  /// SOL_FIX25: one write, built from the current full state when it starts
+  /// (`_att` = latest stored row incl. the other plans, plus the editor).
+  Future<bool> _writeNow() async {
+    if (!_dirty) return true;
+    final key = widget.shareKey!;
+    final editKey = widget.editKey!;
+    final editGen = _editGen;
+    _recomputeEnd();
     try {
       final att = _att;
       if (att?.id != null) {
@@ -365,13 +470,18 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
           update = {'plan': edited.toJson()};
         }
         await _repo.updateSharedAttendancePlan(att!.id!, key, editKey, update);
-        _att = PlanAttendance.fromJson({...att.toJson(), ...update});
+        // The stored row; other fields of `_att` may have changed meanwhile
+        // (realtime), the plan columns are exactly what was written.
+        _att = PlanAttendance.fromJson({...(_att ?? att).toJson(), ...update});
       } else if (_shared != null) {
         // SOL_FIX12: the recomputed end is persisted together with time + fields.
         await _repo.updateSharedPlan(key, editKey, fields: _fields, title: _title, time: _time, endTime: _end);
       }
+      if (editGen == _editGen) _dirty = false;
+      return true;
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+      return false;
     }
   }
 
@@ -564,7 +674,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
                     startTime: PlanUtils.formatTime(_time),
                     onChanged: (f) {
                       setState(() => _fields = PlanUtils.normalizeGroups(f));
-                      _save();
+                      unawaited(_save());
                     },
                   ),
                   if (_end.isNotEmpty)

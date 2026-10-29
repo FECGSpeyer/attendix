@@ -33,6 +33,8 @@ import '../../../../core/providers/branding_providers.dart'; // MISC2
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/route_leave_guard.dart'; // SOL_FIX25
+import '../../../../data/repositories/plan_repository.dart'; // SOL_FIX25
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -113,11 +115,100 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// is blocked meanwhile, so no edit can be made that the reload would drop.
   bool _busy = false;
 
+  /// SOL_FIX25: captured while mounted, so the shell's leave guard can be
+  /// removed and pending edits can still be written in [dispose] (no `ref`).
+  late final RouteLeaveGuardRegistry _leaveGuards;
+  late final ProviderContainer _container;
+  PlanRepository? _disposeRepo;
+
+  @override
+  void initState() {
+    super.initState();
+    _leaveGuards = ref.read(routeLeaveGuardRegistryProvider);
+    _leaveGuards.add(_onLeave);
+    _container = ProviderScope.containerOf(context, listen: false);
+    _disposeRepo = ref.read(planRepositoryWithTenantProvider);
+  }
+
   @override
   void dispose() {
+    _leaveGuards.remove(_onLeave);
     _saveTimer?.cancel();
+    _flushOnDispose();
     _titleController.dispose();
     super.dispose();
+  }
+
+  /// SOL_FIX25: shell tab switch (`context.go`, no `PopScope`): like the
+  /// close button, wait for running writes and store pending edits; stay on
+  /// the page while busy, when a write failed or the plan is invalid.
+  Future<bool> _onLeave() async {
+    if (!mounted) return true;
+    if (_closing || _busy) return false;
+    _closing = true;
+    final bool ok;
+    try {
+      ok = await _flushSaves();
+    } finally {
+      _closing = false;
+    }
+    if (ok && mounted) _invalidateOnExit();
+    return ok;
+  }
+
+  /// SOL_FIX25: the page goes away without the close / leave flow (deep
+  /// link, browser back, tenant switch): queue the pending edits behind the
+  /// running writes instead of dropping them. Uses only what was captured
+  /// while mounted. Like Ionic `saveOpenPlan`, an invalid plan is not stored.
+  void _flushOnDispose() {
+    final attId = _attId;
+    final repo = _disposeRepo;
+    if (attId == null || repo == null || !_hasPendingChanges) return;
+    final time = _time;
+    final fields = [..._fields];
+    final title = _titleController.text.trim();
+    final planIndex = _planIndex;
+    if (PlanUtils.validate(time, fields) != PlanValidation.ok) return;
+    final container = _container;
+    unawaited(_serialised(() async {
+      // Built when the write starts: `_att` is the latest persisted row (it
+      // is still replaced after every write that finishes after dispose).
+      final att = _att;
+      if (att?.id != attId) return;
+      await repo.updateAttendancePlanFields(
+          attId, _planUpdate(att!, planIndex, time: time, fields: fields, title: title));
+      try {
+        container.invalidate(planAttendancesProvider);
+        container.invalidate(attendanceDetailProvider(attId));
+        container.invalidate(planAttendanceByIdProvider(attId));
+        container.invalidate(orgPlansProvider);
+      } catch (_) {
+        // Container already disposed (app closed): nothing to refresh.
+      }
+    }).catchError((Object _) {}));
+  }
+
+  /// Update of the `attendance` row that stores plan [planIndex] of [att]
+  /// with the given editor state (Ionic `updateAttendance` /
+  /// `splitPlans`).
+  static Map<String, dynamic> _planUpdate(
+    PlanAttendance att,
+    int planIndex, {
+    required String time,
+    required List<PlanField> fields,
+    required String title,
+  }) {
+    final plans = PlanUtils.allPlans(att);
+    final base = planIndex < plans.length ? plans[planIndex] : const Plan();
+    final current = base.copyWith(
+      time: time,
+      end: PlanUtils.computeEndIso(time, fields),
+      fields: fields,
+      title: title.isEmpty ? null : title,
+    );
+    if (plans.length < 2) return {'plan': current.toJson()};
+    plans[planIndex] = current;
+    return PlanUtils.splitPlans(plans);
   }
 
   PlanAttendance? get _att => _attendances.where((a) => a.id == _attId).firstOrNull;
@@ -137,6 +228,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   Future<void> _init(List<PlanAttendance> attendances) async {
     _loaded = true;
     _attendances = [...attendances];
+    // SOL_FIX25: the repository (tenant) the Termine were loaded with.
+    _disposeRepo = ref.read(planRepositoryWithTenantProvider);
     PlanAttendance? att;
     final requestedId = widget.attendanceId;
     if (requestedId != null) {
@@ -404,24 +497,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (att?.id == null || !_validate()) return true;
     final loadGen = _loadGen;
     final editGen = _editGen;
-    final plans = PlanUtils.allPlans(att);
     final title = _titleController.text.trim();
-    final base = _planIndex < plans.length ? plans[_planIndex] : const Plan();
-    final current = base.copyWith(
-      time: _time,
-      end: _end,
-      fields: _fields,
-      title: title.isEmpty ? null : title,
-    );
-    final Map<String, dynamic> update;
-    if (plans.length < 2) {
-      update = {'plan': current.toJson()};
-    } else {
-      plans[_planIndex] = current;
-      update = PlanUtils.splitPlans(plans);
-    }
+    final update = _planUpdate(att!, _planIndex, time: _time, fields: _fields, title: title);
     try {
-      final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att!.id!, update);
+      final saved = await ref.read(planRepositoryWithTenantProvider).updateAttendancePlanFields(att.id!, update);
       // SOL_FIX23: every successful write is a change (caches on close).
       _hasChanges = true;
       _replaceAtt(saved);
@@ -446,10 +525,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   void _replaceAtt(PlanAttendance saved) {
-    if (!mounted) return;
-    setState(() {
-      _attendances = [for (final a in _attendances) a.id == saved.id ? saved : a];
-    });
+    final updated = [for (final a in _attendances) a.id == saved.id ? saved : a];
+    // SOL_FIX25: also after dispose, so a write queued by [dispose] is built
+    // from the latest persisted row.
+    if (!mounted) {
+      _attendances = updated;
+      return;
+    }
+    setState(() => _attendances = updated);
   }
 
   Future<void> _updateFlags(Map<String, dynamic> updates) async {

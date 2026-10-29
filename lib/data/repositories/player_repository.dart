@@ -571,13 +571,21 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     // LOGIC_PEOPLE: Ionic db.activatePlayer — (re)create the account when an
     // e-mail is set, history 'Person wieder aktiviert', left = null, then add
     // the person to upcoming Termine (with shift / extra-field filters).
+    //
+    // SOL_FIX25: a person that kept its account link (e.g. transferred to
+    // another tenant: archived here with `appId`) reuses that link when the
+    // account still has access to this tenant; registering again would find
+    // this very person as a duplicate and abort before `left` is reset.
     var person = player;
     if ((player.email ?? '').trim().isNotEmpty) {
-      final appId = await _registration().createPlayerAccount(
-        player,
-        mainGroupId: await _mainGroupId(),
-      );
-      person = person.copyWith(appId: appId);
+      final linked = await _existingAccountLink(player);
+      if (linked == null) {
+        final appId = await _registration().createPlayerAccount(
+          player,
+          mainGroupId: await _mainGroupId(),
+        );
+        person = person.copyWith(appId: appId);
+      }
     }
 
     try {
@@ -605,6 +613,25 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     await addToUpcomingAttendances(person);
+  }
+
+  /// SOL_FIX25: [player]'s `appId` when that account still has access to
+  /// this tenant (`tenantUsers` row), otherwise null.
+  Future<String?> _existingAccountLink(Person player) async {
+    final appId = player.appId;
+    if (appId == null || appId.isEmpty) return null;
+    try {
+      final rows = await supabase
+          .from('tenantUsers')
+          .select('userId')
+          .eq('tenantId', currentTenantId)
+          .eq('userId', appId)
+          .limit(1);
+      return (rows as List).isNotEmpty ? appId : null;
+    } catch (e, stack) {
+      handleError(e, stack, '_existingAccountLink');
+      rethrow;
+    }
   }
 
   /// Registration repository bound to the current tenant.
