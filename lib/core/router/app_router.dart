@@ -117,7 +117,9 @@ import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
+import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 
 /// Listenable that notifies when auth state changes
@@ -558,7 +560,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         // REDESIGN: the new shell (fixed tabs) while the Beta is on.
         builder: (context, state, child) => _AppShell(child: child),
         routes: [
-          // REDESIGN: "Heute", "Termine", "Ich" and "Ich › Darstellung" (Beta)
+          // REDESIGN: "Heute", "Termine", "Mitglieder", "Ich" and "Ich › Darstellung" (Beta)
           GoRoute(
             path: RedesignRoutes.today,
             name: 'redesignToday',
@@ -600,6 +602,25 @@ final routerProvider = Provider<GoRouter>((ref) {
                         ? RdEventTab.record
                         : RdEventTab.overview,
                   );
+                },
+              ),
+            ],
+          ),
+          GoRoute(
+            path: RedesignRoutes.members,
+            name: 'redesignMembers',
+            pageBuilder: (context, state) => AppPageTransitions.none(
+              child: const RdMembersPage(),
+              state: state,
+            ),
+            routes: [
+              GoRoute(
+                path: ':id',
+                name: 'redesignPerson',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  if (id == null) return const RdMembersPage();
+                  return RdPersonPage(key: ValueKey('rd-person-$id'), personId: id);
                 },
               ),
             ],

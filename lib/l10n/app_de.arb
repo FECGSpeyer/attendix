@@ -11046,6 +11046,129 @@
   "@redesignMeWhatsNew": {
     "description": "redesign.me.whatsNew"
   },
+  "redesignMembersAbsentFrom": "abwesend ab {date}",
+  "@redesignMembersAbsentFrom": {
+    "description": "redesign.members.absentFrom",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersAbsentUntil": "abwesend bis {date}",
+  "@redesignMembersAbsentUntil": {
+    "description": "redesign.members.absentUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersActive": "Aktiv · {count}",
+  "@redesignMembersActive": {
+    "description": "redesign.members.active",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersAdd": "Person hinzufügen",
+  "@redesignMembersAdd": {
+    "description": "redesign.members.add"
+  },
+  "redesignMembersAverage": "Ø {percent} %",
+  "@redesignMembersAverage": {
+    "description": "redesign.members.average",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignMembersBirthdayIn": "Geburtstag in {count} Tagen",
+  "@redesignMembersBirthdayIn": {
+    "description": "redesign.members.birthdayIn",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersBirthdayToday": "Geburtstag heute",
+  "@redesignMembersBirthdayToday": {
+    "description": "redesign.members.birthdayToday"
+  },
+  "redesignMembersBirthdayTomorrow": "Geburtstag morgen",
+  "@redesignMembersBirthdayTomorrow": {
+    "description": "redesign.members.birthdayTomorrow"
+  },
+  "redesignMembersEmpty": "Noch keine Mitglieder.",
+  "@redesignMembersEmpty": {
+    "description": "redesign.members.empty"
+  },
+  "redesignMembersEmptyPaused": "Niemand ist pausiert.",
+  "@redesignMembersEmptyPaused": {
+    "description": "redesign.members.emptyPaused"
+  },
+  "redesignMembersEmptyPending": "Niemand wartet auf Freigabe.",
+  "@redesignMembersEmptyPending": {
+    "description": "redesign.members.emptyPending"
+  },
+  "redesignMembersLeader": "Stimmführung",
+  "@redesignMembersLeader": {
+    "description": "redesign.members.leader"
+  },
+  "redesignMembersLow": "unter 50 %",
+  "@redesignMembersLow": {
+    "description": "redesign.members.low"
+  },
+  "redesignMembersNoMatch": "Niemand passt zur Suche.",
+  "@redesignMembersNoMatch": {
+    "description": "redesign.members.noMatch"
+  },
+  "redesignMembersPaused": "Pausiert · {count}",
+  "@redesignMembersPaused": {
+    "description": "redesign.members.paused",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersPausedUntil": "pausiert bis {date}",
+  "@redesignMembersPausedUntil": {
+    "description": "redesign.members.pausedUntil",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignMembersPending": "Wartet · {count}",
+  "@redesignMembersPending": {
+    "description": "redesign.members.pending",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignMembersPendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
+  "@redesignMembersPendingHint": {
+    "description": "redesign.members.pendingHint"
+  },
+  "redesignMembersPercent": "{percent} %",
+  "@redesignMembersPercent": {
+    "description": "redesign.members.percent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignMembersSearch": "Name, Instrument, Register",
+  "@redesignMembersSearch": {
+    "description": "redesign.members.search"
+  },
+  "redesignMembersSearchLabel": "Mitglieder suchen",
+  "@redesignMembersSearchLabel": {
+    "description": "redesign.members.searchLabel"
+  },
+  "redesignMembersSection": "{title} · {count}",
+  "@redesignMembersSection": {
+    "description": "redesign.members.section",
+    "placeholders": {
+      "title": {},
+      "count": {}
+    }
+  },
+  "redesignMembersStats": "Auswertung",
+  "@redesignMembersStats": {
+    "description": "redesign.members.stats"
+  },
   "redesignOwnInfos": "Infos zum Termin",
   "@redesignOwnInfos": {
     "description": "redesign.own.infos"
@@ -11061,6 +11184,133 @@
   "redesignOwnRoute": "Route",
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
+  },
+  "redesignPersonAbsence": "Abwesend",
+  "@redesignPersonAbsence": {
+    "description": "redesign.person.absence"
+  },
+  "redesignPersonAbsenceRange": "{from} bis {until}",
+  "@redesignPersonAbsenceRange": {
+    "description": "redesign.person.absenceRange",
+    "placeholders": {
+      "from": {},
+      "until": {}
+    }
+  },
+  "redesignPersonAllTermine": "Alle Termine ansehen",
+  "@redesignPersonAllTermine": {
+    "description": "redesign.person.allTermine"
+  },
+  "redesignPersonArchive": "Archivieren",
+  "@redesignPersonArchive": {
+    "description": "redesign.person.archive"
+  },
+  "redesignPersonAttendance": "Anwesenheit",
+  "@redesignPersonAttendance": {
+    "description": "redesign.person.attendance"
+  },
+  "redesignPersonBirthday": "Geburtstag",
+  "@redesignPersonBirthday": {
+    "description": "redesign.person.birthday"
+  },
+  "redesignPersonEdit": "Bearbeiten",
+  "@redesignPersonEdit": {
+    "description": "redesign.person.edit"
+  },
+  "redesignPersonInDays": "in {count} Tagen",
+  "@redesignPersonInDays": {
+    "description": "redesign.person.inDays",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPersonJoined": "Dabei seit",
+  "@redesignPersonJoined": {
+    "description": "redesign.person.joined"
+  },
+  "redesignPersonLastTermine": "Letzte {count} Termine, neuester rechts",
+  "@redesignPersonLastTermine": {
+    "description": "redesign.person.lastTermine",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPersonNoTermine": "Noch keine vergangenen Termine.",
+  "@redesignPersonNoTermine": {
+    "description": "redesign.person.noTermine"
+  },
+  "redesignPersonNotFound": "Diese Person gibt es hier nicht mehr.",
+  "@redesignPersonNotFound": {
+    "description": "redesign.person.notFound"
+  },
+  "redesignPersonNotes": "Notiz",
+  "@redesignPersonNotes": {
+    "description": "redesign.person.notes"
+  },
+  "redesignPersonOfTermine": "{attended} von {total} Terminen",
+  "@redesignPersonOfTermine": {
+    "description": "redesign.person.ofTermine",
+    "placeholders": {
+      "attended": {},
+      "total": {}
+    }
+  },
+  "redesignPersonOverall": "Gesamt",
+  "@redesignPersonOverall": {
+    "description": "redesign.person.overall"
+  },
+  "redesignPersonPause": "Pausieren",
+  "@redesignPersonPause": {
+    "description": "redesign.person.pause"
+  },
+  "redesignPersonPaused": "Pausiert",
+  "@redesignPersonPaused": {
+    "description": "redesign.person.paused"
+  },
+  "redesignPersonPausedOpen": "ohne Enddatum",
+  "@redesignPersonPausedOpen": {
+    "description": "redesign.person.pausedOpen"
+  },
+  "redesignPersonPending": "Wartet auf Freigabe.",
+  "@redesignPersonPending": {
+    "description": "redesign.person.pending"
+  },
+  "redesignPersonPercent": "{percent} %",
+  "@redesignPersonPercent": {
+    "description": "redesign.person.percent",
+    "placeholders": {
+      "percent": {}
+    }
+  },
+  "redesignPersonResume": "Wieder aktiv",
+  "@redesignPersonResume": {
+    "description": "redesign.person.resume"
+  },
+  "redesignPersonReview": "Prüfen und freigeben",
+  "@redesignPersonReview": {
+    "description": "redesign.person.review"
+  },
+  "redesignPersonSince": "seit {year}",
+  "@redesignPersonSince": {
+    "description": "redesign.person.since",
+    "placeholders": {
+      "year": {}
+    }
+  },
+  "redesignPersonSinceDate": "seit {date}",
+  "@redesignPersonSinceDate": {
+    "description": "redesign.person.sinceDate",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignPersonToday": "heute",
+  "@redesignPersonToday": {
+    "description": "redesign.person.today"
+  },
+  "redesignPersonTomorrow": "morgen",
+  "@redesignPersonTomorrow": {
+    "description": "redesign.person.tomorrow"
   },
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {

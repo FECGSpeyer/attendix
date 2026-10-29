@@ -63,7 +63,7 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
         builder: (context, state, child) => RdShell(child: child),
         routes: [
           GoRoute(path: '/heute', builder: (_, __) => const RdTodayPage()),
-          for (final path in ['/attendance', '/signout', '/people', '/members', '/songs-tab', '/ich'])
+          for (final path in ['/attendance', '/signout', '/people', '/mitglieder', '/members', '/songs-tab', '/ich'])
             GoRoute(path: path, builder: (_, __) => Scaffold(body: Text('page $path'))),
         ],
       ),

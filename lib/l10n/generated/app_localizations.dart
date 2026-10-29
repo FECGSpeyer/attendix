@@ -14585,6 +14585,144 @@ abstract class AppLocalizations {
   /// **'Neu in dieser Version'**
   String get redesignMeWhatsNew;
 
+  /// redesign.members.absentFrom
+  ///
+  /// In de, this message translates to:
+  /// **'abwesend ab {date}'**
+  String redesignMembersAbsentFrom(Object date);
+
+  /// redesign.members.absentUntil
+  ///
+  /// In de, this message translates to:
+  /// **'abwesend bis {date}'**
+  String redesignMembersAbsentUntil(Object date);
+
+  /// redesign.members.active
+  ///
+  /// In de, this message translates to:
+  /// **'Aktiv · {count}'**
+  String redesignMembersActive(Object count);
+
+  /// redesign.members.add
+  ///
+  /// In de, this message translates to:
+  /// **'Person hinzufügen'**
+  String get redesignMembersAdd;
+
+  /// redesign.members.average
+  ///
+  /// In de, this message translates to:
+  /// **'Ø {percent} %'**
+  String redesignMembersAverage(Object percent);
+
+  /// redesign.members.birthdayIn
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag in {count} Tagen'**
+  String redesignMembersBirthdayIn(Object count);
+
+  /// redesign.members.birthdayToday
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag heute'**
+  String get redesignMembersBirthdayToday;
+
+  /// redesign.members.birthdayTomorrow
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag morgen'**
+  String get redesignMembersBirthdayTomorrow;
+
+  /// redesign.members.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Mitglieder.'**
+  String get redesignMembersEmpty;
+
+  /// redesign.members.emptyPaused
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand ist pausiert.'**
+  String get redesignMembersEmptyPaused;
+
+  /// redesign.members.emptyPending
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand wartet auf Freigabe.'**
+  String get redesignMembersEmptyPending;
+
+  /// redesign.members.leader
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmführung'**
+  String get redesignMembersLeader;
+
+  /// redesign.members.low
+  ///
+  /// In de, this message translates to:
+  /// **'unter 50 %'**
+  String get redesignMembersLow;
+
+  /// redesign.members.noMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passt zur Suche.'**
+  String get redesignMembersNoMatch;
+
+  /// redesign.members.paused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausiert · {count}'**
+  String redesignMembersPaused(Object count);
+
+  /// redesign.members.pausedUntil
+  ///
+  /// In de, this message translates to:
+  /// **'pausiert bis {date}'**
+  String redesignMembersPausedUntil(Object date);
+
+  /// redesign.members.pending
+  ///
+  /// In de, this message translates to:
+  /// **'Wartet · {count}'**
+  String redesignMembersPending(Object count);
+
+  /// redesign.members.pendingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Tippe auf eine Person, um sie zu prüfen und freizugeben.'**
+  String get redesignMembersPendingHint;
+
+  /// redesign.members.percent
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} %'**
+  String redesignMembersPercent(Object percent);
+
+  /// redesign.members.search
+  ///
+  /// In de, this message translates to:
+  /// **'Name, Instrument, Register'**
+  String get redesignMembersSearch;
+
+  /// redesign.members.searchLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder suchen'**
+  String get redesignMembersSearchLabel;
+
+  /// redesign.members.section
+  ///
+  /// In de, this message translates to:
+  /// **'{title} · {count}'**
+  String redesignMembersSection(Object title, Object count);
+
+  /// redesign.members.stats
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung'**
+  String get redesignMembersStats;
+
   /// redesign.own.infos
   ///
   /// In de, this message translates to:
@@ -14608,6 +14746,162 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Route'**
   String get redesignOwnRoute;
+
+  /// redesign.person.absence
+  ///
+  /// In de, this message translates to:
+  /// **'Abwesend'**
+  String get redesignPersonAbsence;
+
+  /// redesign.person.absenceRange
+  ///
+  /// In de, this message translates to:
+  /// **'{from} bis {until}'**
+  String redesignPersonAbsenceRange(Object from, Object until);
+
+  /// redesign.person.allTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Termine ansehen'**
+  String get redesignPersonAllTermine;
+
+  /// redesign.person.archive
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren'**
+  String get redesignPersonArchive;
+
+  /// redesign.person.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit'**
+  String get redesignPersonAttendance;
+
+  /// redesign.person.birthday
+  ///
+  /// In de, this message translates to:
+  /// **'Geburtstag'**
+  String get redesignPersonBirthday;
+
+  /// redesign.person.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignPersonEdit;
+
+  /// redesign.person.inDays
+  ///
+  /// In de, this message translates to:
+  /// **'in {count} Tagen'**
+  String redesignPersonInDays(Object count);
+
+  /// redesign.person.joined
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei seit'**
+  String get redesignPersonJoined;
+
+  /// redesign.person.lastTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte {count} Termine, neuester rechts'**
+  String redesignPersonLastTermine(Object count);
+
+  /// redesign.person.noTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine vergangenen Termine.'**
+  String get redesignPersonNoTermine;
+
+  /// redesign.person.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Person gibt es hier nicht mehr.'**
+  String get redesignPersonNotFound;
+
+  /// redesign.person.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz'**
+  String get redesignPersonNotes;
+
+  /// redesign.person.ofTermine
+  ///
+  /// In de, this message translates to:
+  /// **'{attended} von {total} Terminen'**
+  String redesignPersonOfTermine(Object attended, Object total);
+
+  /// redesign.person.overall
+  ///
+  /// In de, this message translates to:
+  /// **'Gesamt'**
+  String get redesignPersonOverall;
+
+  /// redesign.person.pause
+  ///
+  /// In de, this message translates to:
+  /// **'Pausieren'**
+  String get redesignPersonPause;
+
+  /// redesign.person.paused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausiert'**
+  String get redesignPersonPaused;
+
+  /// redesign.person.pausedOpen
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Enddatum'**
+  String get redesignPersonPausedOpen;
+
+  /// redesign.person.pending
+  ///
+  /// In de, this message translates to:
+  /// **'Wartet auf Freigabe.'**
+  String get redesignPersonPending;
+
+  /// redesign.person.percent
+  ///
+  /// In de, this message translates to:
+  /// **'{percent} %'**
+  String redesignPersonPercent(Object percent);
+
+  /// redesign.person.resume
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder aktiv'**
+  String get redesignPersonResume;
+
+  /// redesign.person.review
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen und freigeben'**
+  String get redesignPersonReview;
+
+  /// redesign.person.since
+  ///
+  /// In de, this message translates to:
+  /// **'seit {year}'**
+  String redesignPersonSince(Object year);
+
+  /// redesign.person.sinceDate
+  ///
+  /// In de, this message translates to:
+  /// **'seit {date}'**
+  String redesignPersonSinceDate(Object date);
+
+  /// redesign.person.today
+  ///
+  /// In de, this message translates to:
+  /// **'heute'**
+  String get redesignPersonToday;
+
+  /// redesign.person.tomorrow
+  ///
+  /// In de, this message translates to:
+  /// **'morgen'**
+  String get redesignPersonTomorrow;
 
   /// redesign.signout.cannot
   ///

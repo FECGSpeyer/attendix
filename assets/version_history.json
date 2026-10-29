@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.17.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Tab „Mitglieder“ mit Aktiv, Pausiert und Wartet, Suche und Registern mit Ø-Anwesenheit",
+        "✨ Neues Design (Beta): Geburtstage, Abwesenheiten und niedrige Anwesenheit direkt in der Mitgliederliste",
+        "✨ Neues Design (Beta): Personen-Seite mit Kontakt, Anwesenheit der letzten Termine, Pausieren und Archivieren"
+      ]
+    },
+    {
       "version": "0.16.1",
       "date": "29.10.2026",
       "changes": [

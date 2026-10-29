@@ -238,7 +238,7 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodayCritical(critical),
           subtitle: l10n.redesignTodayCriticalHint,
           trailing: RdCountBadge(critical, tone: RdTone.absent),
-          onTap: () => context.go('/people'),
+          onTap: () => context.go(RedesignRoutes.members),
         ),
       if (excused > 0 && nextId != null)
         RdListRow(

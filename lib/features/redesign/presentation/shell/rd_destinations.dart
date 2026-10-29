@@ -19,8 +19,8 @@ class RdDestination {
 
   final RdTab tab;
 
-  /// Where the tab leads. Termine and Mitglieder reuse the existing pages
-  /// (and with them all existing access rules).
+  /// Where the tab leads. New pages mirror the access rules of the old ones
+  /// (`RedesignRoutes.roleRedirect`).
   final String route;
   final IconData icon;
   final IconData selectedIcon;
@@ -32,8 +32,8 @@ class RdDestination {
 /// * Heute and Ich: everyone.
 /// * Termine: the new Termin list (leaders see the group's Termine, everyone
 ///   else their own), the parents portal for parents.
-/// * Mitglieder: people list for conductors, the members list where the
-///   group shows it to players and helpers; never for parents.
+/// * Mitglieder: the new Mitglieder list for conductors, the members list
+///   where the group shows it to players and helpers; never for parents.
 /// * Werke: where the Werke tab is allowed today and the group has works.
 /// * Applicants only get Heute (waiting page) and Ich.
 List<RdDestination> rdDestinationsFor(
@@ -60,7 +60,7 @@ List<RdDestination> rdDestinationsFor(
 
   String? membersRoute;
   if (role.canSeePeopleTab) {
-    membersRoute = '/people';
+    membersRoute = RedesignRoutes.members;
   } else if ((role.canSeeMembersTab || role == Role.none) && showMembersList) {
     membersRoute = '/members';
   }
@@ -106,7 +106,7 @@ RdTab rdTabForLocation(String location) {
       under('/planning')) {
     return RdTab.events;
   }
-  if (under('/people') || under('/members')) return RdTab.members;
+  if (under(RedesignRoutes.members) || under('/people') || under('/members')) return RdTab.members;
   if (under('/songs-tab') || under('/settings/songs') || under('/settings/files')) {
     return RdTab.works;
   }

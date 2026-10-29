@@ -26,6 +26,13 @@ class RedesignRoutes {
   static String ownEvent(String personAttendanceId) =>
       '$events/meine/${Uri.encodeComponent(personAttendanceId)}';
 
+  /// Tab "Mitglieder" of the new design (roles that see the old people
+  /// tab; players keep `/members`).
+  static const String members = '/mitglieder';
+
+  /// A person of the new design.
+  static String person(int id) => '$members/$id';
+
   /// Tab "Ich".
   static const String me = '/ich';
 
@@ -40,9 +47,11 @@ class RedesignRoutes {
   static bool isRedesignRoute(String location) =>
       location == today ||
       location == events ||
+      location == members ||
       location == me ||
       location.startsWith('$today/') ||
       location.startsWith('$events/') ||
+      location.startsWith('$members/') ||
       location.startsWith('$me/');
 
   /// Role checks of the new design's routes (the router runs them after the
@@ -52,7 +61,12 @@ class RedesignRoutes {
   /// * A Termin opens only for roles that may open it in the old design
   ///   (`Role.canAddAttendance`, like `/attendance/:id`); an own Termin
   ///   (`/termine/meine/…`) for everyone else too.
+  /// * Mitglieder and its persons only for roles with the old people tab
+  ///   (`Role.canSeePeopleTab`, like `/people`).
   static String? roleRedirect(String location, Role role) {
+    if (location == members || location.startsWith('$members/')) {
+      return role.canSeePeopleTab ? null : today;
+    }
     final isEvents = location == events || location.startsWith('$events/');
     if (!isEvents) return null;
     if (role.isParent) return '/parents';

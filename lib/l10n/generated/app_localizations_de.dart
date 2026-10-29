@@ -8415,6 +8415,95 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeWhatsNew => 'Neu in dieser Version';
 
   @override
+  String redesignMembersAbsentFrom(Object date) {
+    return 'abwesend ab $date';
+  }
+
+  @override
+  String redesignMembersAbsentUntil(Object date) {
+    return 'abwesend bis $date';
+  }
+
+  @override
+  String redesignMembersActive(Object count) {
+    return 'Aktiv · $count';
+  }
+
+  @override
+  String get redesignMembersAdd => 'Person hinzufügen';
+
+  @override
+  String redesignMembersAverage(Object percent) {
+    return 'Ø $percent %';
+  }
+
+  @override
+  String redesignMembersBirthdayIn(Object count) {
+    return 'Geburtstag in $count Tagen';
+  }
+
+  @override
+  String get redesignMembersBirthdayToday => 'Geburtstag heute';
+
+  @override
+  String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
+
+  @override
+  String get redesignMembersEmpty => 'Noch keine Mitglieder.';
+
+  @override
+  String get redesignMembersEmptyPaused => 'Niemand ist pausiert.';
+
+  @override
+  String get redesignMembersEmptyPending => 'Niemand wartet auf Freigabe.';
+
+  @override
+  String get redesignMembersLeader => 'Stimmführung';
+
+  @override
+  String get redesignMembersLow => 'unter 50 %';
+
+  @override
+  String get redesignMembersNoMatch => 'Niemand passt zur Suche.';
+
+  @override
+  String redesignMembersPaused(Object count) {
+    return 'Pausiert · $count';
+  }
+
+  @override
+  String redesignMembersPausedUntil(Object date) {
+    return 'pausiert bis $date';
+  }
+
+  @override
+  String redesignMembersPending(Object count) {
+    return 'Wartet · $count';
+  }
+
+  @override
+  String get redesignMembersPendingHint => 'Tippe auf eine Person, um sie zu prüfen und freizugeben.';
+
+  @override
+  String redesignMembersPercent(Object percent) {
+    return '$percent %';
+  }
+
+  @override
+  String get redesignMembersSearch => 'Name, Instrument, Register';
+
+  @override
+  String get redesignMembersSearchLabel => 'Mitglieder suchen';
+
+  @override
+  String redesignMembersSection(Object title, Object count) {
+    return '$title · $count';
+  }
+
+  @override
+  String get redesignMembersStats => 'Auswertung';
+
+  @override
   String get redesignOwnInfos => 'Infos zum Termin';
 
   @override
@@ -8425,6 +8514,98 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignOwnRoute => 'Route';
+
+  @override
+  String get redesignPersonAbsence => 'Abwesend';
+
+  @override
+  String redesignPersonAbsenceRange(Object from, Object until) {
+    return '$from bis $until';
+  }
+
+  @override
+  String get redesignPersonAllTermine => 'Alle Termine ansehen';
+
+  @override
+  String get redesignPersonArchive => 'Archivieren';
+
+  @override
+  String get redesignPersonAttendance => 'Anwesenheit';
+
+  @override
+  String get redesignPersonBirthday => 'Geburtstag';
+
+  @override
+  String get redesignPersonEdit => 'Bearbeiten';
+
+  @override
+  String redesignPersonInDays(Object count) {
+    return 'in $count Tagen';
+  }
+
+  @override
+  String get redesignPersonJoined => 'Dabei seit';
+
+  @override
+  String redesignPersonLastTermine(Object count) {
+    return 'Letzte $count Termine, neuester rechts';
+  }
+
+  @override
+  String get redesignPersonNoTermine => 'Noch keine vergangenen Termine.';
+
+  @override
+  String get redesignPersonNotFound => 'Diese Person gibt es hier nicht mehr.';
+
+  @override
+  String get redesignPersonNotes => 'Notiz';
+
+  @override
+  String redesignPersonOfTermine(Object attended, Object total) {
+    return '$attended von $total Terminen';
+  }
+
+  @override
+  String get redesignPersonOverall => 'Gesamt';
+
+  @override
+  String get redesignPersonPause => 'Pausieren';
+
+  @override
+  String get redesignPersonPaused => 'Pausiert';
+
+  @override
+  String get redesignPersonPausedOpen => 'ohne Enddatum';
+
+  @override
+  String get redesignPersonPending => 'Wartet auf Freigabe.';
+
+  @override
+  String redesignPersonPercent(Object percent) {
+    return '$percent %';
+  }
+
+  @override
+  String get redesignPersonResume => 'Wieder aktiv';
+
+  @override
+  String get redesignPersonReview => 'Prüfen und freigeben';
+
+  @override
+  String redesignPersonSince(Object year) {
+    return 'seit $year';
+  }
+
+  @override
+  String redesignPersonSinceDate(Object date) {
+    return 'seit $date';
+  }
+
+  @override
+  String get redesignPersonToday => 'heute';
+
+  @override
+  String get redesignPersonTomorrow => 'morgen';
 
   @override
   String get redesignSignoutCannot => 'Ich kann nicht';

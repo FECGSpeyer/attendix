@@ -22,7 +22,7 @@ void main() {
       for (final role in [Role.admin, Role.responsible, Role.viewer]) {
         expect(_tabs(role), RdTab.values, reason: role.name);
         expect(_route(role, RdTab.events), '/termine');
-        expect(_route(role, RdTab.members), '/people');
+        expect(_route(role, RdTab.members), '/mitglieder');
       }
     });
 
@@ -70,6 +70,7 @@ void main() {
       expect(rdTabForLocation('/signout'), RdTab.events);
       expect(rdTabForLocation('/parents'), RdTab.events);
       expect(rdTabForLocation('/people/3'), RdTab.members);
+      expect(rdTabForLocation('/mitglieder/3'), RdTab.members);
       expect(rdTabForLocation('/members'), RdTab.members);
       expect(rdTabForLocation('/songs-tab'), RdTab.works);
       expect(rdTabForLocation('/settings/songs/4'), RdTab.works);
