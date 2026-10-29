@@ -10239,6 +10239,18 @@
   "@redesignAdminTitle": {
     "description": "redesign.adminTitle"
   },
+  "redesignAppearanceAppIcon": "App-Symbol",
+  "@redesignAppearanceAppIcon": {
+    "description": "redesign.appearance.appIcon"
+  },
+  "redesignAppearanceAppIconFollow": "App-Symbol in Farbwelt",
+  "@redesignAppearanceAppIconFollow": {
+    "description": "redesign.appearance.appIconFollow"
+  },
+  "redesignAppearanceAppIconHint": "Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.",
+  "@redesignAppearanceAppIconHint": {
+    "description": "redesign.appearance.appIconHint"
+  },
   "redesignAppearanceAutoHint": "Automatisch folgt der Einstellung deines Geräts.",
   "@redesignAppearanceAutoHint": {
     "description": "redesign.appearance.autoHint"

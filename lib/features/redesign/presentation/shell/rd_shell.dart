@@ -19,6 +19,7 @@ import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../data/rd_manage_logic.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/rd_group_switch.dart';
+import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_destinations.dart';
 
@@ -286,6 +287,10 @@ class _RdRail extends StatelessWidget {
       ),
       unselectedLabelTextStyle: TextStyle(fontSize: 12, color: p.text2),
       groupAlignment: -0.85,
+      leading: const Padding(
+        padding: EdgeInsets.only(top: 8, bottom: 4),
+        child: RdLogo(size: 36, semanticLabel: 'Attendix'),
+      ),
       destinations: [
         for (final d in destinations)
           NavigationRailDestination(
@@ -408,6 +413,20 @@ class _RdSidebar extends ConsumerWidget {
                   onTap: () => RdShell.navigate(context, ref, RedesignRoutes.manage),
                 ),
               ],
+              const Spacer(),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    const RdLogo(size: 28),
+                    const SizedBox(width: 10),
+                    Text(
+                      'Attendix',
+                      style: TextStyle(fontSize: 14, fontWeight: FontWeight.w600, color: p.text2),
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

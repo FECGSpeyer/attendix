@@ -24,6 +24,16 @@ enum RdFarbwelt {
 
   /// Letter on the canvas boards (A–E).
   String get letter => const ['A', 'B', 'C', 'D', 'E'][index];
+
+  /// iOS alternate app icon (an AppIcon… set in ios/Runner/Assets.xcassets);
+  /// null: the default icon, which is Petrol (the Ionic app's icon).
+  String? get appIconName => switch (this) {
+        RdFarbwelt.petrol => null,
+        RdFarbwelt.konzertsaal => 'AppIconKonzertsaal',
+        RdFarbwelt.nachtblau => 'AppIconNachtblau',
+        RdFarbwelt.klar => 'AppIconKlar',
+        RdFarbwelt.buehne => 'AppIconBuehne',
+      };
 }
 
 /// Colour tokens and shapes of one Farbwelt in one brightness.

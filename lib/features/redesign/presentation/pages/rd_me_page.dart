@@ -28,6 +28,7 @@ import '../rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
 import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
+import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
@@ -200,7 +201,9 @@ class RdMePage extends ConsumerWidget {
             ),
           ],
         ),
-        const SizedBox(height: 16),
+        const SizedBox(height: 20),
+        const Center(child: RdLogo(size: 44)),
+        const SizedBox(height: 8),
         Center(
           child: Text(
             'Attendix ${AppConstants.appVersion}',

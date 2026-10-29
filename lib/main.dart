@@ -27,6 +27,7 @@ import 'core/theme/redesign/rd_theme.dart'; // REDESIGN
 import 'core/utils/toast_helper.dart';
 import 'features/auth/data/auth_link_listener.dart'; // AUTH
 import 'core/services/teams/teams_service.dart'; // TEAMS
+import 'core/services/app_icon_service.dart'; // REDESIGN
 import 'core/providers/push_providers.dart'; // PUSH
 import 'l10n/l10n.dart'; // I18N_INFRA
 import 'shared/widgets/dialogs/ion_modal.dart'; // PARITY_R3
@@ -108,6 +109,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
       // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
       if (mounted) ref.read(liveActivityBootstrapProvider);
+      // REDESIGN: home screen icon of the Farbwelt (iOS; native skips a no-op)
+      if (mounted) {
+        unawaited(AppIconService.setIcon(ref.read(redesignSettingsProvider).appIconName));
+      }
       // TEAMS: silent Microsoft SSO inside a Teams tab, once detection is done
       final teams = ref.read(teamsServiceProvider);
       unawaited(teams.init().then((_) {

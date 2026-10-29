@@ -4,9 +4,11 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/services/app_icon_service.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
 
 /// Name of a Farbwelt ("Petrol", "Konzertsaal" …).
@@ -34,9 +36,13 @@ String rdModeName(AppLocalizations l10n, RdBrightnessMode mode) => switch (mode)
     };
 
 /// REDESIGN: Ich › Darstellung (canvas E2): Farbwelt and hell/dunkel,
-/// stored on this device only.
+/// stored on this device only. Each Farbwelt shows the logo in its colours;
+/// on iOS the home screen icon can follow it.
 class RdAppearancePage extends ConsumerWidget {
-  const RdAppearancePage({super.key});
+  const RdAppearancePage({super.key, this.showAppIcon});
+
+  /// Tests: show the app icon switch off iOS.
+  final bool? showAppIcon;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -65,7 +71,7 @@ class RdAppearancePage extends ConsumerWidget {
           children: [
             for (final world in RdFarbwelt.values)
               RdListRow(
-                leading: _Swatches(world),
+                leading: RdLogo(world: world, size: 36),
                 title: rdWorldName(l10n, world),
                 subtitle: _worldHint(l10n, world),
                 selected: world == settings.world,
@@ -95,47 +101,32 @@ class RdAppearancePage extends ConsumerWidget {
             style: RdType.meta(p, size: 13),
           ),
         ),
+        if (showAppIcon ?? AppIconService.isSupported) ...[
+          const SizedBox(height: 24),
+          RdGroupLabel(l10n.redesignAppearanceAppIcon),
+          RdGroupedList(
+            children: [
+              RdListRow(
+                leading: RdLogo(world: settings.appIcon ? settings.world : RdFarbwelt.petrol, size: 36),
+                title: l10n.redesignAppearanceAppIconFollow,
+                subtitle: l10n.redesignAppearanceAppIconHint,
+                showChevron: false,
+                trailing: Switch.adaptive(
+                  value: settings.appIcon,
+                  activeTrackColor: p.primary,
+                  onChanged: notifier.setAppIcon,
+                ),
+                onTap: () => notifier.setAppIcon(!settings.appIcon),
+              ),
+            ],
+          ),
+        ],
         const SizedBox(height: 24),
         Padding(
           padding: const EdgeInsets.symmetric(horizontal: 4),
           child: Text(l10n.redesignAppearanceDeviceOnly, style: RdType.meta(p, size: 13)),
         ),
       ],
-    );
-  }
-}
-
-/// Three dots: primary, soft, background of [world].
-class _Swatches extends StatelessWidget {
-  const _Swatches(this.world);
-
-  final RdFarbwelt world;
-
-  @override
-  Widget build(BuildContext context) {
-    final line = context.rd.line;
-    return ExcludeSemantics(
-      child: SizedBox(
-        width: 54,
-        height: 22,
-        child: Stack(
-          children: [
-            for (final (i, c) in rdSwatches(world).indexed)
-              Positioned(
-                left: i * 16.0,
-                child: Container(
-                  width: 22,
-                  height: 22,
-                  decoration: BoxDecoration(
-                    color: c,
-                    shape: BoxShape.circle,
-                    border: Border.all(color: line, width: 1.5),
-                  ),
-                ),
-              ),
-          ],
-        ),
-      ),
     );
   }
 }

@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.22.0",
+      "date": "29.10.2026",
+      "changes": [
+        "✨ Das Logo der bisherigen App ist zurück: als App-Symbol und in der App",
+        "✨ Neues Design (Beta): Logo in jeder Farbwelt, auf dem iPhone wechselt auch das App-Symbol mit (Ich › Darstellung)",
+        "✨ Neues Design (Beta): Anwesenheit am Desktop mit der Tastatur erfassen (A, V, F, Pfeiltasten, ⌘Z)"
+      ]
+    },
+    {
       "version": "0.21.0",
       "date": "29.10.2026",
       "changes": [

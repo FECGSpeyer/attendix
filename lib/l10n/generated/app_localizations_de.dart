@@ -7774,6 +7774,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAdminTitle => 'Verwaltung';
 
   @override
+  String get redesignAppearanceAppIcon => 'App-Symbol';
+
+  @override
+  String get redesignAppearanceAppIconFollow => 'App-Symbol in Farbwelt';
+
+  @override
+  String get redesignAppearanceAppIconHint => 'Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.';
+
+  @override
   String get redesignAppearanceAutoHint => 'Automatisch folgt der Einstellung deines Geräts.';
 
   @override

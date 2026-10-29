@@ -22,9 +22,47 @@ import UIKit
     }
     LiveActivityTokenReporter.shared.start()
     // LIVE_ACTIVITY end
+    // APP_ICON: home screen icon in the Farbwelt of the new design
+    if let registrar = flutterEngine.registrar(forPlugin: "AppIconPlugin") {
+      AppIconPlugin.register(with: registrar)
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
+
+// APP_ICON: switches the home screen icon (de.attendix/app_icon). The icons
+// are alternate App Icon sets in Assets.xcassets (AppIconKonzertsaal …, build
+// setting ASSETCATALOG_COMPILER_ALTERNATE_APPICON_NAMES); nil is the default
+// icon. Dart side: lib/core/services/app_icon_service.dart.
+public class AppIconPlugin: NSObject, FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    let channel = FlutterMethodChannel(
+      name: "de.attendix/app_icon", binaryMessenger: registrar.messenger())
+    registrar.addMethodCallDelegate(AppIconPlugin(), channel: channel)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard call.method == "set" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    let name = call.arguments as? String
+    let app = UIApplication.shared
+    guard app.supportsAlternateIcons else {
+      result(false)
+      return
+    }
+    // iOS shows a notice after every change: skip when nothing changes.
+    if app.alternateIconName == name {
+      result(true)
+      return
+    }
+    app.setAlternateIconName(name) { error in
+      DispatchQueue.main.async { result(error == nil) }
+    }
+  }
+}
+// APP_ICON end
 
 // SCENE: iOS 27 SDK requires UIScene lifecycle adoption (apps without it trap
 // on launch in _UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption).

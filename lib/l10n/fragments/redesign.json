@@ -133,7 +133,10 @@
         "modeDark": "Dunkel",
         "autoHint": "Automatisch folgt der Einstellung deines Geräts.",
         "stageAlwaysDark": "Bühne ist immer dunkel.",
-        "deviceOnly": "Diese Einstellungen gelten nur auf diesem Gerät."
+        "deviceOnly": "Diese Einstellungen gelten nur auf diesem Gerät.",
+        "appIcon": "App-Symbol",
+        "appIconFollow": "App-Symbol in Farbwelt",
+        "appIconHint": "Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt."
       },
       "events": {
         "upcoming": "Kommend",
@@ -557,7 +560,10 @@
         "modeDark": "Dark",
         "autoHint": "Automatic follows your device setting.",
         "stageAlwaysDark": "Stage is always dark.",
-        "deviceOnly": "These settings apply to this device only."
+        "deviceOnly": "These settings apply to this device only.",
+        "appIcon": "App icon",
+        "appIconFollow": "App icon in colour theme",
+        "appIconHint": "The icon on your home screen changes with the colour theme."
       },
       "events": {
         "upcoming": "Upcoming",

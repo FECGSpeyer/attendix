@@ -20,7 +20,10 @@ import 'register_page.dart';
 import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
 import '../../../../core/services/teams/teams_service.dart'; // TEAMS
 import '../../../../l10n/l10n.dart';
+import '../../../../core/providers/redesign_providers.dart'; // LOGO
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/display/attendix_logo.dart'; // LOGO
+import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors; // LOGO
 import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart'; // I18N_INFRA
 import '../widgets/reset_password_dialog.dart';
@@ -34,6 +37,12 @@ class LoginPage extends ConsumerStatefulWidget {
 }
 
 class _LoginPageState extends ConsumerState<LoginPage> {
+  /// LOGO: original colours, or those of the Farbwelt when the new design is on.
+  AttendixLogoColors _logoColors() {
+    final settings = ref.watch(redesignSettingsProvider);
+    return settings.enabled ? rdLogoColors(settings.world) : AttendixLogoColors.original;
+  }
+
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
@@ -598,14 +607,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                               ],
                             ),
                             clipBehavior: Clip.antiAlias,
-                            child: Image.asset(
-                              'assets/images/logo.png',
-                              fit: BoxFit.cover,
-                              errorBuilder: (_, __, ___) => const Icon(
-                                Icons.people_outline,
-                                size: 64,
-                                color: AppColors.primary,
-                              ),
+                            // LOGO: the Ionic logo as a vector; in the new
+                            // design in the colours of the Farbwelt.
+                            child: AttendixLogo(
+                              size: 115,
+                              radius: 0,
+                              colors: _logoColors(),
                             ),
                           ),
                         ),

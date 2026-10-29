@@ -13583,6 +13583,24 @@ abstract class AppLocalizations {
   /// **'Verwaltung'**
   String get redesignAdminTitle;
 
+  /// redesign.appearance.appIcon
+  ///
+  /// In de, this message translates to:
+  /// **'App-Symbol'**
+  String get redesignAppearanceAppIcon;
+
+  /// redesign.appearance.appIconFollow
+  ///
+  /// In de, this message translates to:
+  /// **'App-Symbol in Farbwelt'**
+  String get redesignAppearanceAppIconFollow;
+
+  /// redesign.appearance.appIconHint
+  ///
+  /// In de, this message translates to:
+  /// **'Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.'**
+  String get redesignAppearanceAppIconHint;
+
   /// redesign.appearance.autoHint
   ///
   /// In de, this message translates to:

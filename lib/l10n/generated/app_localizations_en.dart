@@ -7780,6 +7780,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAdminTitle => 'Administration';
 
   @override
+  String get redesignAppearanceAppIcon => 'App icon';
+
+  @override
+  String get redesignAppearanceAppIconFollow => 'App icon in colour theme';
+
+  @override
+  String get redesignAppearanceAppIconHint => 'The icon on your home screen changes with the colour theme.';
+
+  @override
   String get redesignAppearanceAutoHint => 'Automatic follows your device setting.';
 
   @override
