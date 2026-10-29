@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
+import '../router/route_access.dart' show canOpenSongsTab;
 import 'debug_providers.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -79,11 +80,20 @@ class OptionalTabsNotifier extends Notifier<OptionalTabs> {
 final optionalTabsNotifierProvider =
     NotifierProvider<OptionalTabsNotifier, OptionalTabs>(OptionalTabsNotifier.new);
 
-/// Ionic: `showSongsTabSignal() && tenant.type !== 'general' && role !== APPLICANT`.
-final showSongsTabProvider = Provider<bool>((ref) {
+/// Whether the current role/tenant may have the optional "Werke" tab at all
+/// (tab and its "Als Tab anzeigen" toggle). Ionic tabs.page:
+/// `tenant.type !== 'general' && role !== APPLICANT`; SOL_FIX22: bound to the
+/// `/songs-tab` route guard (`canOpenSongsTab`), which also denies parents.
+final songsTabAllowedProvider = Provider<bool>((ref) {
   final tenant = ref.watch(currentTenantProvider);
   final role = ref.watch(effectiveRoleProvider);
-  if (tenant == null || tenant.type == 'general' || role.isApplicant) return false;
+  return tenant != null && tenant.type != 'general' && canOpenSongsTab(role);
+});
+
+/// Ionic: `showSongsTabSignal() && tenant.type !== 'general' && role !== APPLICANT`
+/// (plus the route guard's parent rule, see [songsTabAllowedProvider]).
+final showSongsTabProvider = Provider<bool>((ref) {
+  if (!ref.watch(songsTabAllowedProvider)) return false;
   return ref.watch(optionalTabsNotifierProvider).songs;
 });
 

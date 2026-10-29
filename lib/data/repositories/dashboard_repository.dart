@@ -1,5 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../core/utils/paged_query.dart';
+
 import '../models/attendance/attendance.dart';
 import '../models/dashboard/dashboard_event.dart';
 import '../models/dashboard/dashboard_models.dart';
@@ -25,18 +27,26 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
         )''';
 
   /// All non-pending persons of the tenant INCLUDING archived ones
-  /// (Ionic `getPlayers(true)`). Cards filter `left` themselves.
+  /// (Ionic `getPlayers(true)`). Archived persons are needed for the
+  /// "Mitgliederänderungen" card (`left`); birthdays and absences filter
+  /// `left` themselves, exactly like the Ionic cards.
+  ///
+  /// SOL_FIX22: paginated (PostgREST max-rows) with a stable order by id, so
+  /// no person is missing above the row limit.
   Future<List<Person>> getAllPersons() async {
     try {
-      final response = await supabase
-          .from('player')
-          .select('*')
-          .eq('tenantId', currentTenantId)
-          .isFilter('pending', false);
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('player')
+            .select('*')
+            .eq('tenantId', currentTenantId)
+            .isFilter('pending', false)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
 
-      return (response as List)
-          .map((e) => Person.fromJson(e as Map<String, dynamic>))
-          .toList();
+      return rows.map(Person.fromJson).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getAllPersons');
       rethrow;
