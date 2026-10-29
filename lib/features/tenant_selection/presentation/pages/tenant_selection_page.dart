@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/router/go_replace.dart';
+
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -114,13 +116,14 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
           container.read(userPreferencesNotifierProvider.notifier);
 
       // Navigate FIRST (also when the router already replaced this page)
-      router.go(
+      goReplacingHistory(
+        router,
         homeRouteFor(
           role,
           savedTenant.id,
           container.read(supabaseAuthProvider).currentUser?.userMetadata,
         ),
-      ); // DASHBOARD
+      ); // DASHBOARD, NAV_REPLACE
 
       // Auth sync AFTER navigation (fire and forget, notifier captured above)
       prefsNotifier.updateCurrentTenantId(savedTenant.id!);
@@ -191,7 +194,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // Navigate FIRST - before auth sync can cause rebuilds
     // IOS_SETTINGS2: Ionic `modal?.dismiss()` before navigating.
     sheetNavigator?.pop();
-    router.go(home);
+    goReplacingHistory(router, home); // NAV_REPLACE
 
     // Auth sync AFTER navigation (fire and forget, notifier captured above)
     prefsNotifier.updateCurrentTenantId(tenant.id!);

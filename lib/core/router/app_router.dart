@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/supabase_config.dart';
+import '../utils/dashboard_logic.dart' show homeRouteFor; // NAV_REPLACE
+import '../providers/user_preferences_provider.dart' show userPreferencesProvider; // NAV_REPLACE
 import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';
 import '../providers/role_permission_providers.dart'; // SOL_FIX2
@@ -318,7 +320,21 @@ final routerProvider = Provider<GoRouter>((ref) {
           return '/terms';
         }
         // SONGS: resume a shared file link opened while signed out
-        return PendingFileLink.consume() ?? '/tenants';
+        final pending = PendingFileLink.consume();
+        if (pending != null) return pending;
+        // NAV_REPLACE: browser Back onto /login with an instance already
+        // open returns to its start page (Ionic replaces the login/tenant
+        // steps), not to the instance selection.
+        if (ref.read(currentTenantIdProvider) != null &&
+            !ref.read(isRoleLoadingProvider) &&
+            !ref.read(userPreferencesProvider).wantInstanceSelection) {
+          return homeRouteFor(
+            ref.read(currentRoleProvider),
+            ref.read(currentTenantIdProvider),
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
+        }
+        return '/tenants';
       }
 
       // LEGAL_HELP: Terms consent gate (Ionic TermsGuard) — logged-in users
