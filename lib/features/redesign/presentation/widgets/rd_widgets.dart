@@ -827,12 +827,17 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
   static const _edge = 24.0;
 
   late final AnimationController _anim;
-  double _dx = 0;
+
+  /// Horizontal offset of the content. A notifier instead of setState so a
+  /// drag frame only moves the cached layer of the content (RepaintBoundary)
+  /// instead of rebuilding and repainting the whole list.
+  final _dx = ValueNotifier<double>(0);
   double _from = 0;
   double _to = 0;
   double _width = 1;
   bool _tracking = false;
   bool _switching = false;
+  double? _lastDrag;
 
   /// Index this switch selected itself (its slide-in already runs).
   int? _switchedTo;
@@ -843,7 +848,7 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
   void initState() {
     super.initState();
     _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 180))
-      ..addListener(() => setState(() => _dx = _from + (_to - _from) * Curves.easeOutCubic.transform(_anim.value)));
+      ..addListener(() => _dx.value = _from + (_to - _from) * Curves.easeOutCubic.transform(_anim.value));
   }
 
   @override
@@ -863,17 +868,27 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
   @override
   void dispose() {
     _anim.dispose();
+    _dx.dispose();
     super.dispose();
+  }
+
+  /// Reports the thumb position, but only when it changed visibly, so the
+  /// page above does not rebuild for sub-pixel moves.
+  void _reportDrag(double? pos) {
+    if (pos != null && _lastDrag != null && (pos - _lastDrag!).abs() < 0.005) return;
+    if (pos == null && _lastDrag == null) return;
+    _lastDrag = pos;
+    widget.onDrag?.call(pos);
   }
 
   Future<void> _slide({required double from, required double to}) async {
     if (MediaQuery.disableAnimationsOf(context)) {
-      setState(() => _dx = to);
+      _dx.value = to;
       return;
     }
     _from = from;
     _to = to;
-    _dx = from;
+    _dx.value = from;
     try {
       await _anim.forward(from: 0).orCancel;
     } on TickerCanceled {
@@ -889,33 +904,35 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
   void _update(DragUpdateDetails d) {
     if (!_tracking) return;
     final i = _index;
-    final next = _dx + d.delta.dx;
+    final dx = _dx.value;
+    final next = dx + d.delta.dx;
     // Rubber band where there is no neighbour.
     final blocked = (next < 0 && i >= widget.values.length - 1) || (next > 0 && i <= 0);
-    setState(() => _dx = blocked ? _dx + d.delta.dx * 0.25 : next);
-    widget.onDrag?.call((i - _dx / _width).clamp(0.0, widget.values.length - 1.0));
+    _dx.value = blocked ? dx + d.delta.dx * 0.25 : next;
+    _reportDrag((i - _dx.value / _width).clamp(0.0, widget.values.length - 1.0));
   }
 
   Future<void> _end(DragEndDetails d) async {
     if (!_tracking) return;
     _tracking = false;
     final i = _index;
+    final dx = _dx.value;
     final v = d.primaryVelocity ?? 0;
     var target = i;
-    if ((_dx < -_width * 0.25 || v < -400) && i < widget.values.length - 1) target = i + 1;
-    if ((_dx > _width * 0.25 || v > 400) && i > 0) target = i - 1;
+    if ((dx < -_width * 0.25 || v < -400) && i < widget.values.length - 1) target = i + 1;
+    if ((dx > _width * 0.25 || v > 400) && i > 0) target = i - 1;
     if (target == i) {
-      widget.onDrag?.call(null);
-      await _slide(from: _dx, to: 0);
+      _reportDrag(null);
+      await _slide(from: dx, to: 0);
       return;
     }
     final dir = target > i ? -1.0 : 1.0;
     _switching = true;
-    await _slide(from: _dx, to: dir * _width);
+    await _slide(from: dx, to: dir * _width);
     if (!mounted) return;
-    widget.onDrag?.call(null);
     _switchedTo = target;
     widget.onChanged(widget.values[target]);
+    _reportDrag(null);
     _switching = false;
     await _slide(from: -dir * _width * 0.4, to: 0);
   }
@@ -925,7 +942,6 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
     return LayoutBuilder(
       builder: (context, c) {
         _width = c.maxWidth.isFinite && c.maxWidth > 0 ? c.maxWidth : MediaQuery.sizeOf(context).width;
-        final fade = (1 - (_dx.abs() / _width) * 0.6).clamp(0.0, 1.0);
         return GestureDetector(
           behavior: HitTestBehavior.opaque,
           // Screen readers use the segmented control.
@@ -936,15 +952,23 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
           onHorizontalDragCancel: () {
             if (!_tracking) return;
             _tracking = false;
-            widget.onDrag?.call(null);
-            _slide(from: _dx, to: 0);
+            _reportDrag(null);
+            _slide(from: _dx.value, to: 0);
           },
           // Short lists: the empty space below still takes the swipe.
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.55),
-            child: Opacity(
-              opacity: fade,
-              child: Transform.translate(offset: Offset(_dx, 0), child: widget.child),
+            child: ValueListenableBuilder<double>(
+              valueListenable: _dx,
+              // Painted once, then only moved and faded as a layer.
+              child: RepaintBoundary(child: widget.child),
+              builder: (context, dx, child) {
+                final fade = (1 - (dx.abs() / _width) * 0.6).clamp(0.0, 1.0);
+                return Opacity(
+                  opacity: fade,
+                  child: Transform.translate(offset: Offset(dx, 0), child: child),
+                );
+              },
             ),
           ),
         );
