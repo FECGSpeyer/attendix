@@ -40,4 +40,26 @@ void main() {
       expect(main, contains('PlatformDispatcher.instance.onError'));
     });
   });
+
+  test('redact removes e-mails, ids and quoted values from database errors', () {
+    final text = ErrorReporter.redact(
+      'duplicate key: Key (email)=(leon@example.de) already exists for 1b9d6bcd-bbfd-4b2d-9b5d-ab8dfbbd4bed',
+    );
+    expect(text, isNot(contains('leon@example.de')));
+    expect(text, isNot(contains('1b9d6bcd')));
+    expect(text, contains('Key (email)=(<value>)'));
+    expect(ErrorReporter.redact('mail an a.b+c@x.org'), 'mail an <email>');
+  });
+
+  test('scrub redacts exception values', () {
+    final event = SentryEvent(
+      exceptions: [SentryException(type: 'PostgrestException', value: 'Key (email)=(a@b.de) exists')],
+    );
+    final out = ErrorReporter.scrub(event, Hint())!;
+    expect(out.exceptions!.single.value, 'Key (email)=(<value>) exists');
+  });
+
+  test('web offline errors are expected', () {
+    expect(ErrorReporter.isExpected(Exception('ClientException: Failed to fetch')), isTrue);
+  });
 }

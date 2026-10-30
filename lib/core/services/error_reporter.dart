@@ -3,6 +3,8 @@ import 'dart:async';
 import 'package:flutter/foundation.dart';
 import 'package:sentry/sentry.dart';
 
+import '../utils/error_message.dart' show isNetworkError;
+
 /// Production error monitoring.
 ///
 /// Sends unexpected errors to Sentry when `SENTRY_DSN` is set in `.env.app`.
@@ -52,13 +54,32 @@ class ErrorReporter {
     event.request = null;
     event.breadcrumbs = null;
     event.serverName = null;
+    // Database errors quote the offending values (`Key (email)=(…)`).
+    for (final exception in event.exceptions ?? const <SentryException>[]) {
+      final value = exception.value;
+      if (value != null) exception.value = redact(value);
+    }
+    final message = event.message;
+    if (message != null) event.message = SentryMessage(redact(message.formatted));
     return event;
   }
+
+  static final _email = RegExp(r'[\w.+-]+@[\w-]+(\.[\w-]+)+');
+  static final _uuid = RegExp(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
+  static final _quotedValue = RegExp(r'=\([^)]*\)');
+
+  /// Removes e-mail addresses, ids and quoted column values from [text].
+  @visibleForTesting
+  static String redact(String text) => text
+      .replaceAll(_email, '<email>')
+      .replaceAll(_uuid, '<uuid>')
+      .replaceAll(_quotedValue, '=(<value>)');
 
   /// Network failures happen all the time on mobile (offline, tunnel,
   /// Wi-Fi switch) and say nothing about a bug, so they are not sent.
   @visibleForTesting
   static bool isExpected(Object error) {
+    if (isNetworkError(error)) return true;
     final text = error.toString();
     return text.contains('SocketException') ||
         text.contains('ClientException') ||

@@ -109,12 +109,24 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
 
   Future<void> _togglePush(NotificationConfig config, bool enabled) async {
     setState(() => _config = config.copyWith(pushEnabled: enabled));
-    await ref.read(pushServiceProvider).togglePush(enabled);
+    try {
+      await ref.read(pushServiceProvider).togglePush(enabled);
+    } catch (_) {
+      if (!mounted) return;
+      setState(() => _config = config);
+      ToastHelper.showError(context, context.l10n.notifFlutterUpdateFailed);
+    }
   }
 
   Future<void> _toggleLiveActivity(NotificationConfig config, bool enabled) async {
     await _update(config.copyWith(liveActivity: enabled));
-    await ref.read(liveActivityServiceProvider).setEnabled(enabled);
+    // Only follow when the setting was stored (_update rolls back on error).
+    if (_config?.liveActivity != enabled) return;
+    try {
+      await ref.read(liveActivityServiceProvider).setEnabled(enabled);
+    } catch (_) {
+      // The stored setting wins; the next app start syncs the activities.
+    }
   }
 
   Future<void> _connectTelegram() async {

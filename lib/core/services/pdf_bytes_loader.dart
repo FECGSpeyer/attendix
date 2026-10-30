@@ -28,8 +28,16 @@ class PdfBytesLoader {
 
   static Future<Uint8List> load(String url) async {
     if (_useFileCache) {
-      final file = await _cache.getSingleFile(url);
-      return file.readAsBytes();
+      try {
+        final file = await _cache.getSingleFile(url);
+        return file.readAsBytes();
+      } catch (_) {
+        // Offline after the copy's HTTP max-age: getSingleFile tries to
+        // download again and fails, so fall back to the stale copy.
+        final cached = await _cache.getFileFromCache(url);
+        if (cached != null) return cached.file.readAsBytes();
+        rethrow;
+      }
     }
     final response = await http.get(Uri.parse(url));
     if (response.statusCode != 200) {

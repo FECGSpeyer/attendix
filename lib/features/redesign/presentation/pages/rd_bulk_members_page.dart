@@ -14,6 +14,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/player_repository.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../people/presentation/widgets/pause_person_sheet.dart' show buildPauseHistoryText;
 import '../../../settings/presentation/pages/pending_players_page.dart' show showPendingPersonsSheet;
 import '../../data/rd_members_logic.dart';
 import '../widgets/manage/rd_manage_entries.dart' show rdManagePendingProvider;
@@ -104,6 +105,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     // Bound before the first await (tenant switch safety).
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
+    final mainGroup = ref.read(mainGroupProvider.future);
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
     final groupId = await showModalBottomSheet<int>(
       context: context,
@@ -130,7 +132,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     );
     if (groupId == null || !mounted) return;
     final names = {for (final g in groups) g.id: g.name};
-    final mainId = (await ref.read(mainGroupProvider.future))?.id;
+    final mainId = (await mainGroup)?.id;
     if (!mounted) return;
     await _run(boundRepo: repo, persons.where((p) => p.instrument != groupId).toList(), (repo, p) async {
       // Same history entry as the person page (Instrumentenwechsel).
@@ -159,6 +161,11 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
 
   Future<void> _pause(List<Person> persons) async {
     final l10n = context.l10n;
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    // Already paused members keep their pause (no second entry).
+    final targets = persons.where((p) => !p.paused).toList();
+    if (targets.isEmpty) return;
     final controller = TextEditingController();
     final reason = await showDialog<String>(
       context: context,
@@ -180,11 +187,13 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     );
     controller.dispose();
     if (reason == null || reason.isEmpty) return;
-    await _run(persons, (repo, p) => repo.pausePlayer(p, null, reason));
+    await _run(boundRepo: repo, targets, (repo, p) => repo.pausePlayer(p, null, buildPauseHistoryText(reason)));
   }
 
   Future<void> _archive(List<Person> persons) async {
     final l10n = context.l10n;
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showDialog<bool>(
       context: context,
       builder: (ctx) => AlertDialog(
@@ -201,7 +210,7 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     );
     if (confirmed != true) return;
     final today = DateTime.now().toIso8601String();
-    await _run(persons, (repo, p) => repo.archivePlayer(p, today, null));
+    await _run(boundRepo: repo, persons, (repo, p) => repo.archivePlayer(p, today, null));
   }
 
   @override
