@@ -674,17 +674,39 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: RedesignRoutes.works,
             name: 'redesignWorks',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const RdWorksPage(),
+              child: rdUseSplit(context)
+                  ? RdSplitView(
+                      list: const RdWorksPage(),
+                      detail: null,
+                      selectedId: null,
+                      emptyText: context.l10n.redesignSplitWorksEmpty,
+                      emptyIcon: Icons.library_music_outlined,
+                    )
+                  : const RdWorksPage(),
               state: state,
             ),
             routes: [
               GoRoute(
                 path: ':id',
                 name: 'redesignWork',
-                builder: (context, state) {
+                pageBuilder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  if (id == null) return const RdWorksPage();
-                  return RdWorkPage(key: ValueKey('rd-work-$id'), songId: id);
+                  final detail = id == null ? null : RdWorkPage(key: ValueKey('rd-work-$id'), songId: id);
+                  // Wide screens: list and Werk side by side (files are
+                  // edited on the right while the list stays).
+                  if (rdUseSplit(context)) {
+                    return NoTransitionPage<void>(
+                      key: const ValueKey('rd-works-split'),
+                      child: RdSplitView(
+                        list: const RdWorksPage(),
+                        detail: detail,
+                        selectedId: id,
+                        emptyText: context.l10n.redesignSplitWorksEmpty,
+                        emptyIcon: Icons.library_music_outlined,
+                      ),
+                    );
+                  }
+                  return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdWorksPage());
                 },
               ),
             ],

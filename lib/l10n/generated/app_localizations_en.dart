@@ -8363,6 +8363,149 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventsYes => 'I\'m in';
 
   @override
+  String redesignFilesActions(Object name) {
+    return 'Actions for $name';
+  }
+
+  @override
+  String get redesignFilesColName => 'Name';
+
+  @override
+  String get redesignFilesColPart => 'Part';
+
+  @override
+  String get redesignFilesColType => 'Type';
+
+  @override
+  String redesignFilesConflictMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files have the same name or the same part as existing files:',
+      one: '1 file has the same name or the same part as an existing file:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignFilesConflictTitle => 'Already there';
+
+  @override
+  String get redesignFilesDelete => 'Delete';
+
+  @override
+  String redesignFilesDeletedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files deleted',
+      one: '1 file deleted',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignFilesDeletedOne(Object name) {
+    return '“$name” deleted';
+  }
+
+  @override
+  String get redesignFilesDismiss => 'Dismiss';
+
+  @override
+  String get redesignFilesDone => 'Done';
+
+  @override
+  String get redesignFilesDownload => 'Download';
+
+  @override
+  String get redesignFilesDownloadAll => 'All as ZIP';
+
+  @override
+  String get redesignFilesDownloadZip => 'Download as ZIP';
+
+  @override
+  String get redesignFilesDropHint => 'Drag files here or choose “Upload”.';
+
+  @override
+  String redesignFilesDropOverlay(Object name) {
+    return 'Release to upload them to “$name”';
+  }
+
+  @override
+  String get redesignFilesFailed => 'Failed';
+
+  @override
+  String get redesignFilesKeepBoth => 'Keep both';
+
+  @override
+  String get redesignFilesOpen => 'Open';
+
+  @override
+  String get redesignFilesOtherCategory => 'Other …';
+
+  @override
+  String redesignFilesQueueDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files uploaded',
+      one: '1 file uploaded',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignFilesQueueTitle(Object done, Object total) {
+    return 'Uploading: $done of $total';
+  }
+
+  @override
+  String get redesignFilesRename => 'Rename';
+
+  @override
+  String get redesignFilesReplace => 'Replace';
+
+  @override
+  String get redesignFilesRestored => 'Restored';
+
+  @override
+  String redesignFilesSaveFailed(Object error) {
+    return 'Saving failed: $error';
+  }
+
+  @override
+  String get redesignFilesSelectAll => 'Select all';
+
+  @override
+  String redesignFilesSelected(Object count) {
+    return '$count selected';
+  }
+
+  @override
+  String get redesignFilesShortcuts => 'Keyboard shortcuts';
+
+  @override
+  String redesignFilesShortcutsHelp(Object mod) {
+    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename';
+  }
+
+  @override
+  String get redesignFilesTitle => 'Files';
+
+  @override
+  String get redesignFilesUpload => 'Upload';
+
+  @override
+  String get redesignFilesUploading => 'Uploading …';
+
+  @override
+  String get redesignFilesWaiting => 'Waiting';
+
+  @override
+  String get redesignFilesZipPreparing => 'Creating ZIP …';
+
+  @override
   String get redesignGroupsLoadFailed => 'Your groups could not be loaded.';
 
   @override
@@ -8752,6 +8895,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignSplitMembersEmpty => 'Choose a person on the left.';
+
+  @override
+  String get redesignSplitWorksEmpty => 'Choose a work on the left.';
 
   @override
   String get redesignStatusAbsent => 'Absent';
