@@ -1,11 +1,18 @@
 {
   "versions": [
     {
-      "version": "0.22.11",
+      "version": "0.23.2",
       "date": "30.10.2026",
       "changes": [
         "🐛 Neues Design (Beta): Die Karte „Nächster Termin“ auf „Heute“ zeigt jetzt deinen eigenen Termin, auch wenn am selben Tag ein Termin stattfindet, für den du nicht eingeteilt bist. Nach einer Absage steht dort „Du bist abgemeldet“ mit „Doch dabei“ statt „nicht eingeteilt“",
-        "🐛 Termine mit gleicher Uhrzeit springen nach dem Neuladen nicht mehr in der Reihenfolge, deine eigenen stehen zuerst"
+        "🐛 Termine am selben Tag werden nach Uhrzeit sortiert und springen nach dem Neuladen nicht mehr, bei gleicher Uhrzeit stehen deine eigenen zuerst"
+      ]
+    },
+    {
+      "version": "0.23.0",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ iPhone-App: Vom linken Bildschirmrand wischen geht eine Seite zurück, z. B. von der Spielerseite zur Liste (bei ungespeicherten Änderungen gesperrt)"
       ]
     },
     {
