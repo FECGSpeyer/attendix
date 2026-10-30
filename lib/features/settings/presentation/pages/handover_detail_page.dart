@@ -143,7 +143,7 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
           sourceTenantName: sourceTenant?.longName ?? '',
           stayInInstance: data.stayInInstance,
         );
-        if (result != PlayerRepository.handoverSuccess) failed.add(person);
+        if (result != HandoverResult.success) failed.add(person);
       }
 
       ref.read(trackingServiceProvider).track(

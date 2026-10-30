@@ -49,6 +49,9 @@ final _playerRepositoryForAccountProvider =
 const String kDefaultPersonImage =
     'https://ionicframework.com/docs/img/demos/avatar.svg';
 
+/// Result of [PlayerRepository.handoverPlayer] for a single player.
+enum HandoverResult { success, duplicate, error }
+
 /// Repository for player/person operations
 class PlayerRepository extends BaseRepository with TenantAwareRepository {
   PlayerRepository(super.ref);
@@ -1425,11 +1428,6 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
   // ============= HANDOVER METHODS =============
 
-  /// Result of a handover operation for a single player
-  static const int handoverSuccess = 0;
-  static const int handoverDuplicate = 1;
-  static const int handoverError = 2;
-
   /// Check if a player already exists in the target tenant.
   ///
   /// LOGIC_PEOPLE: Ionic db.personExistsInTenant — e-mail (ilike, trimmed),
@@ -1500,8 +1498,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// `left`), so a failed insert never archives the source. The source keeps
   /// its appId like in Ionic.
   ///
-  /// Returns handoverSuccess, handoverDuplicate, or handoverError
-  Future<int> handoverPlayer({
+  /// Returns [HandoverResult.success], [HandoverResult.duplicate] or
+  /// [HandoverResult.error].
+  Future<HandoverResult> handoverPlayer({
     required Person player,
     required int targetTenantId,
     required int? targetGroupId,
@@ -1521,7 +1520,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       // Check for duplicates
       final exists = await playerExistsInTenant(player, targetTenantId);
       if (exists) {
-        return handoverDuplicate;
+        return HandoverResult.duplicate;
       }
 
       final now = DateTime.now();
@@ -1643,11 +1642,11 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', player.id!)
           .eq('tenantId', currentTenantId);
 
-      return handoverSuccess;
+      return HandoverResult.success;
     } catch (e) {
       if (e is DemoModeException) rethrow;
       debugPrint('handoverPlayer failed: $e');
-      return handoverError;
+      return HandoverResult.error;
     }
   }
 
@@ -1684,11 +1683,11 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       );
 
       switch (result) {
-        case handoverSuccess:
+        case HandoverResult.success:
           results['success'] = results['success']! + 1;
-        case handoverDuplicate:
+        case HandoverResult.duplicate:
           results['duplicate'] = results['duplicate']! + 1;
-        case handoverError:
+        case HandoverResult.error:
           results['error'] = results['error']! + 1;
       }
     }

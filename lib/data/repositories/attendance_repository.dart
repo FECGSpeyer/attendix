@@ -13,6 +13,7 @@ import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
+import '../../core/utils/status_utils.dart';
 
 /// Provider for AttendanceRepository
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
@@ -431,7 +432,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             ShiftAttendanceRow(
               id: r['id'].toString(),
               personId: (r['person_id'] as num).toInt(),
-              status: _parseStatus(r['status']),
+              status: parseAttendanceStatus(r['status']),
               notes: r['notes'] as String?,
             ),
       ];
@@ -852,7 +853,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       id: data['id']?.toString(),
       attendanceId: data['attendance_id'],
       personId: data['person_id'],
-      status: _parseStatus(data['status']),
+      status: parseAttendanceStatus(data['status']),
       notes: data['notes'],
       date: attendanceData?['date'],
       title: attendanceData?['typeInfo'],
@@ -1120,25 +1121,4 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   }
   // END ATT_DETAIL
 
-  AttendanceStatus _parseStatus(dynamic status) {
-    if (status == null) return AttendanceStatus.neutral;
-    if (status is AttendanceStatus) return status;
-
-    // Handle integer values (as stored in database)
-    if (status is int) {
-      return AttendanceStatus.fromValue(status);
-    }
-
-    // Handle string values (enum names or integer strings)
-    final statusStr = status.toString();
-    final intValue = int.tryParse(statusStr);
-    if (intValue != null) {
-      return AttendanceStatus.fromValue(intValue);
-    }
-
-    return AttendanceStatus.values.firstWhere(
-      (s) => s.name.toLowerCase() == statusStr.toLowerCase(),
-      orElse: () => AttendanceStatus.neutral,
-    );
-  }
 }
