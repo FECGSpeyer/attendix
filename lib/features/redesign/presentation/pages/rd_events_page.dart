@@ -641,6 +641,12 @@ class _PlayerEventCardState extends ConsumerState<_PlayerEventCard> {
                     ),
                     if (meta.isNotEmpty)
                       Text(meta, style: RdType.meta(p, size: 13)),
+                    // Ionic: hint of the instance below Termine without the person.
+                    if (!own)
+                      Text(
+                        rdNotMemberInfo(ref.watch(currentTenantProvider)),
+                        style: RdType.meta(p, size: 13).copyWith(fontStyle: FontStyle.italic),
+                      ),
                   ],
                 ),
               ),
