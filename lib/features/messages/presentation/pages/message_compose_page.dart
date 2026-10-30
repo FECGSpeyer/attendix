@@ -151,11 +151,13 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       final counts = await ref
           .read(messageRepositoryWithTenantProvider)
           .getRecipientCounts(groupIds: _groupIds, push: _push, email: _email);
-      if (mounted && request == _countsRequest)
+      if (mounted && request == _countsRequest) {
         setState(() => _counts = counts);
+      }
     } catch (_) {
-      if (mounted && request == _countsRequest)
+      if (mounted && request == _countsRequest) {
         setState(() => _countsError = true);
+      }
     }
   }
 

@@ -51,7 +51,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/language_picker_tile.dart';
 import '../widgets/redesign_beta_tile.dart'; // REDESIGN
 import '../../../../core/providers/push_providers.dart'; // PUSH
-import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
+// IOS_SHELL
 import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
 import '../../../history/presentation/pages/history_page.dart' show showHistoryModal; // IOS_FORMS2
 // PARITY_R5

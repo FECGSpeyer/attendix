@@ -389,6 +389,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
       // Ionic: column headers are the translated labels (fieldLabel); the
       // values are still resolved by the German field id.
+      if (!mounted) return;
       final l10n = context.l10n;
       final headerFields = [for (final f in _selectedFields) exportFieldLabel(f, l10n)];
       final idByHeader = {

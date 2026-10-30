@@ -45,7 +45,7 @@ void main() {
     }
 
     test('finds all WithTenant providers', () {
-      expect(withTenant.length, greaterThanOrEqualTo(33));
+      expect(withTenant.length, greaterThanOrEqualTo(32)); // meeting repository removed (#21)
     });
 
     test('every WithTenant provider returns its bound per-tenant instance', () {

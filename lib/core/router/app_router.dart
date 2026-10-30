@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/supabase_config.dart';
-import '../utils/dashboard_logic.dart' show homeRouteFor; // NAV_REPLACE
 import '../providers/user_preferences_provider.dart' show userPreferencesProvider; // NAV_REPLACE
 import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';

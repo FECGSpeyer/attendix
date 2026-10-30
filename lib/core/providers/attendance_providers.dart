@@ -237,7 +237,7 @@ final averageAttendancePercentProvider = Provider<double?>((ref) {
   return sum / pastAttendances.length;
 });
 
-/// Provider for batch attendance percentages: Map<personId, percentage>
+/// Provider for batch attendance percentages: `Map<personId, percentage>`
 ///
 /// Watches [attendanceRefetchCounter] so realtime changes to
 /// person_attendances automatically trigger a refetch.

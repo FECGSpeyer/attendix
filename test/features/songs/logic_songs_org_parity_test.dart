@@ -180,6 +180,7 @@ void main() {
   });
 
   test('meeting_created is not tracked (not an Ionic event)', () {
-    expect(_read('lib/core/providers/meeting_providers.dart'), isNot(contains('meetingCreated')));
+    // The frozen `meetings` table and its repository were removed (#21).
+    expect(File('lib/core/providers/meeting_providers.dart').existsSync(), isFalse);
   });
 }

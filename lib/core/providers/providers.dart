@@ -1,5 +1,6 @@
 /// Core providers barrel file
 /// Export all providers from a single location
+library;
 
 export 'tenant_providers.dart';
 export 'player_providers.dart';
@@ -9,7 +10,6 @@ export 'song_providers.dart';
 export 'song_filter_providers.dart';
 export 'holiday_providers.dart';
 export 'conductor_providers.dart';
-export 'meeting_providers.dart';
 export 'shift_providers.dart';
 export 'cross_tenant_providers.dart';
 export 'feedback_providers.dart';

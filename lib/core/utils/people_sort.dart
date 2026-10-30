@@ -1,4 +1,5 @@
 /// LOGIC_PEOPLE: sort helpers for the people list (Ionic list.page).
+library;
 
 /// Approximation of JS `String.localeCompare` for German names:
 /// case-insensitive, umlauts sort with their base letter (ä→a, ö→o, ü→u,

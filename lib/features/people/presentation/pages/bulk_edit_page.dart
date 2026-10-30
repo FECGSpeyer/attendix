@@ -235,8 +235,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
       );
       Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ToastHelper.showError(context, context.l10n.peopleSaveFailed);
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -556,8 +557,9 @@ class _ValueEditor extends StatelessWidget {
               lastDate: DateTime(2100),
               locale: Locale(currentLanguage()),
             );
-            if (picked != null)
+            if (picked != null) {
               onChanged(DateFormat('yyyy-MM-dd').format(picked));
+            }
           },
           child: Text(
             current != null
