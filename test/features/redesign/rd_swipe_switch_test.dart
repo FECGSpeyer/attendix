@@ -75,6 +75,7 @@ void main() {
     final thumb = positions.skip(released).whereType<double>().toList();
     expect(thumb.length, greaterThan(5));
     expect(thumb.last, closeTo(1, 0.01));
+    expect(paints, 2, reason: 'only the new page is painted, the old one keeps its layer');
     for (var i = 1; i < thumb.length; i++) {
       expect(thumb[i], greaterThan(thumb[i - 1]), reason: 'the thumb never stands still');
     }
