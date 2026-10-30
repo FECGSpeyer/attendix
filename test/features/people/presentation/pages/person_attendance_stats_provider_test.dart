@@ -123,7 +123,7 @@ void main() {
             'lib/features/people/presentation/pages/person_detail_page.dart')
         .readAsStringSync();
     expect(source, contains('final canEdit = isAdmin && !hasLeft;'));
-    expect(source, contains('onPressed: _activatePerson'));
+    expect(source, contains('(isAdmin ? (_activatePerson, Icons.undo'));
     // Stats query (now in PlayerRepository) stays tenant-bound via the
     // inner-joined attendance.
     expect(source, contains('repo.getPersonAttendanceStatsRows(personId)'));

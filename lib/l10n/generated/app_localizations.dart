@@ -15401,6 +15401,12 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignPersonEdit;
 
+  /// redesign.person.history
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get redesignPersonHistory;
+
   /// redesign.person.inDays
   ///
   /// In de, this message translates to:

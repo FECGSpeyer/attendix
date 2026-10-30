@@ -2551,6 +2551,7 @@
   "redesignPersonAttendance": "Attendance",
   "redesignPersonBirthday": "Birthday",
   "redesignPersonEdit": "Edit",
+  "redesignPersonHistory": "History",
   "redesignPersonInDays": "in {count} days",
   "redesignPersonJoined": "Member since",
   "redesignPersonLastTermine": "Last {count} events, newest on the right",

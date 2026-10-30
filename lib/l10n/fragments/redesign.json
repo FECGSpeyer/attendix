@@ -345,7 +345,8 @@
         "archive": "Archivieren",
         "notFound": "Diese Person gibt es hier nicht mehr.",
         "pending": "Wartet auf Freigabe.",
-        "review": "Prüfen und freigeben"
+        "review": "Prüfen und freigeben",
+        "history": "Verlauf"
       },
       "works": {
         "files": "Dateien",
@@ -869,7 +870,8 @@
         "archive": "Archive",
         "notFound": "This person is no longer here.",
         "pending": "Waiting for approval.",
-        "review": "Review and approve"
+        "review": "Review and approve",
+        "history": "History"
       },
       "works": {
         "files": "Files",

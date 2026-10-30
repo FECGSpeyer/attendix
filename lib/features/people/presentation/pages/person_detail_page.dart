@@ -31,6 +31,7 @@ import '../widgets/pause_person_sheet.dart';
 import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -1697,6 +1698,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final hasLeft = widget.person.left != null;
     final canEdit = isAdmin && !hasLeft;
     final openSection = _currentSection(canEdit);
+    // Beta-Skin: sections as cards, the FAB's action in the header.
+    final rd = context.rdSkin;
 
     AllgemeinAccordion allgemein(AllgemeinPart part, String key) =>
         AllgemeinAccordion(
@@ -1719,6 +1722,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           otherOrchestras: _draft.otherOrchestras,
         );
 
+    // Ionic FAB: save (changes) / approve sheet (pending) / key (create
+    // account when e-mail but no account) / "..." more menu.
+    final (VoidCallback?, IconData, String?)? fabAction = hasLeft
+        ? (isAdmin ? (_activatePerson, Icons.undo, context.l10n.personReactivatePerson) : null)
+        : _hasChanges
+            ? (_isSaving ? null : _saveChanges, Icons.save_outlined, context.l10n.commonSave)
+            : !canEdit
+                ? null
+                : widget.person.pending
+                    ? (_showPendingActions, Icons.more_horiz, null)
+                    : person.appId == null && (person.email?.isNotEmpty ?? false)
+                        ? (() => _createAccount(person), Icons.key_outlined, context.l10n.personFlutterCreateAccount)
+                        : (_showMoreActions, Icons.more_horiz, context.l10n.personFlutterMore);
+
     return PopScope(
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, result) async {
@@ -1740,7 +1757,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       },
       child: Scaffold(
         // UX_PEOPLE: Ionic `ion-content.modalBackground` (white / black)
-        backgroundColor: ionContentBackground(context),
+        backgroundColor: rd?.bg ?? ionContentBackground(context),
         // Ionic person.page header: "Person bearbeiten" / "Person genehmigen",
         // red toolbar for Problemfälle, close button at the end; actions
         // live in the FAB.
@@ -1754,6 +1771,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           backgroundColor: person.isCritical ? AppColors.danger : null,
           foregroundColor: person.isCritical ? Colors.white : null,
           actions: [
+            if (rd != null && fabAction != null)
+              _hasChanges
+                  ? TextButton(
+                      key: const Key('person_detail_save'),
+                      style: person.isCritical ? TextButton.styleFrom(foregroundColor: Colors.white) : null,
+                      onPressed: fabAction.$1,
+                      child: Text(context.l10n.commonSave),
+                    )
+                  : IconButton(
+                      tooltip: fabAction.$3 ?? context.l10n.personFlutterMore,
+                      color: person.isCritical ? Colors.white : null,
+                      onPressed: fabAction.$1,
+                      icon: Icon(fabAction.$2),
+                    ),
             IconButton(
               tooltip: context.l10n.commonClose,
               icon: Icon(
@@ -1779,7 +1810,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
             // Ionic: Vorname | Nachname inputs while editing the name
             if (canEdit && _editingName) ...[
-              allgemein(AllgemeinPart.names, 'names'),
+              ...ionBetaGroup(context, [allgemein(AllgemeinPart.names, 'names')], inset: false),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: 16),
                 child: TextButton.icon(
@@ -1802,7 +1833,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               ),
 
             // Ionic: "Notizen" textarea (existingPlayer && isAdmin)
-            if (canEdit) allgemein(AllgemeinPart.notes, 'notes'),
+            if (canEdit) ...ionBetaGroup(context, [allgemein(AllgemeinPart.notes, 'notes')], inset: false),
 
             // Problem Person Accordion (Ionic: !readOnly && isCritical)
             if (canEdit)
@@ -1904,39 +1935,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ),
         // Ionic FAB: save (changes) / approve sheet (pending) / key (create
         // account when e-mail but no account) / "..." more menu.
-        floatingActionButton: TabBarFab.wrap(hasLeft
-            ? (isAdmin
-                ? IonFabButton(
-                    onPressed: _activatePerson,
-                    tooltip: context.l10n.personReactivatePerson,
-                    icon: Icons.undo,
-                  )
-                : null)
-            : _hasChanges
-            ? IonFabButton(
-                onPressed: _isSaving ? null : _saveChanges,
-                tooltip: context.l10n.commonSave,
-                icon: Icons.save_outlined,
-              )
-            : !canEdit
-                ? null
-                : widget.person.pending
-                    ? IonFabButton(
-                        onPressed: _showPendingActions,
-                        icon: Icons.more_horiz,
-                      )
-                    : person.appId == null &&
-                            (person.email?.isNotEmpty ?? false)
-                        ? IonFabButton(
-                            onPressed: () => _createAccount(person),
-                            tooltip: context.l10n.personFlutterCreateAccount,
-                            icon: Icons.key_outlined,
-                          )
-                        : IonFabButton(
-                            onPressed: _showMoreActions,
-                            tooltip: context.l10n.personFlutterMore,
-                            icon: Icons.more_horiz,
-                          )),
+        floatingActionButton: rd != null || fabAction == null
+            ? null
+            : TabBarFab.wrap(IonFabButton(
+                onPressed: fabAction.$1,
+                tooltip: fabAction.$3,
+                icon: fabAction.$2,
+              )),
       ),
     );
   }
