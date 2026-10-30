@@ -8,6 +8,7 @@ import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/services/song_file_service.dart';
+import 'package:attendix/core/services/zip_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
@@ -446,6 +447,26 @@ void main() {
       await tester.pumpWidget(_app(Role.admin, _FakeFiles(), song: const Song(id: 5, name: 'Leer')));
       await _settle(tester);
       expect(find.text('Dateien hierher ziehen oder „Hochladen“ wählen.'), findsOneWidget);
+    });
+  });
+
+  group('names', () {
+    test('storage names: Ionic format, never a taken one, also when all 900 are taken', () {
+      expect(SongFileService.encodeFilename('Stimme 1 (Fl).pdf', 123), 'Stimme-1-Fl_123.pdf');
+      final all = {for (var n = 100; n < 1000; n++) SongFileService.encodeFilename('a.pdf', n)};
+      expect(SongFileService.freeStorageName('a.pdf', all), 'a_1000.pdf');
+      final almost = {...all}..remove('a_555.pdf');
+      expect(SongFileService.freeStorageName('a.pdf', almost), 'a_555.pdf');
+      expect(SongFileService.freeStorageName('a.pdf', const {}), matches(RegExp(r'^a_[1-9]\d\d\.pdf$')));
+    });
+
+    test('ZIP: equal file names get " (2)", " (3)"', () {
+      final used = <String>{};
+      expect(ZipService.uniqueArchiveName('Stimme.pdf', used), 'Stimme.pdf');
+      expect(ZipService.uniqueArchiveName('Stimme.pdf', used), 'Stimme (2).pdf');
+      expect(ZipService.uniqueArchiveName('stimme.PDF', used), 'stimme (3).PDF');
+      expect(ZipService.uniqueArchiveName('README', used), 'README');
+      expect(ZipService.uniqueArchiveName('README', used), 'README (2)');
     });
   });
 

@@ -332,6 +332,32 @@ void main() {
       expect(find.text('Kein Werk passt zur Suche.'), findsOneWidget);
     });
 
+    testWidgets('the search survives a new copy of the list (split view)', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.player));
+      await _settle(tester);
+      await tester.enterText(find.byType(TextField), 'mozart');
+      await _settle(tester);
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdWorksPage)));
+      expect(container.read(rdWorksQueryProvider), 'mozart');
+
+      // A second list (as the split builds on the first opened Werk).
+      await tester.pumpWidget(UncontrolledProviderScope(
+        container: container,
+        child: MaterialApp(
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+          home: const RdWorksPage(key: ValueKey('second')),
+        ),
+      ));
+      await _settle(tester);
+      expect(find.widgetWithText(TextField, 'mozart'), findsOneWidget);
+      expect(find.text('Ave verum corpus'), findsOneWidget);
+      expect(find.text('Abendlied'), findsNothing);
+    });
+
     testWidgets('a row and a current card open the work', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.player));

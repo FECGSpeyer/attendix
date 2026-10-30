@@ -30,6 +30,10 @@ import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 /// categories as chips, the works with PDF / Audio badges. Filter, view,
 /// categories, import, PDF catalogue and the share link sit behind "Mehr";
 /// the group folders behind "Dateien".
+/// Search text of the Werke list, shared by every copy of the list (the
+/// split view builds a new one when the first Werk opens).
+final rdWorksQueryProvider = StateProvider<String>((ref) => '');
+
 class RdWorksPage extends ConsumerStatefulWidget {
   const RdWorksPage({super.key});
 
@@ -38,8 +42,11 @@ class RdWorksPage extends ConsumerStatefulWidget {
 }
 
 class _RdWorksPageState extends ConsumerState<RdWorksPage> {
-  String _query = '';
-  final _search = TextEditingController();
+  late final _search = TextEditingController(text: ref.read(rdWorksQueryProvider));
+
+  String get _query => ref.read(rdWorksQueryProvider);
+
+  void _setQuery(String value) => ref.read(rdWorksQueryProvider.notifier).state = value;
 
   @override
   void dispose() {
@@ -122,6 +129,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final p = context.rd;
     final l10n = context.l10n;
     ref.watch(songsRealtimeProvider);
+    ref.watch(rdWorksQueryProvider);
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
     final async = ref.watch(songsListDataProvider(null));
@@ -161,7 +169,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       const SizedBox(height: 12),
       TextField(
         controller: _search,
-        onChanged: (v) => setState(() => _query = v),
+        onChanged: _setQuery,
         textInputAction: TextInputAction.search,
         decoration: InputDecoration(
           hintText: l10n.redesignWorksSearch,
@@ -171,10 +179,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               : IconButton(
                   icon: Icon(Icons.close, color: p.text2),
                   tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                  onPressed: () => setState(() {
+                  onPressed: () {
                     _search.clear();
-                    _query = '';
-                  }),
+                    _setQuery('');
+                  },
                 ),
           filled: true,
           fillColor: p.surface,

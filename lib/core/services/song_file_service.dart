@@ -49,8 +49,9 @@ class SongFileService {
     return result.files.firstOrNull;
   }
 
-  /// Generate a safe filename
-  String _encodeFilename(String filename) {
+  /// Generate a safe filename (`name_<suffix>.ext`, Ionic format)
+  @visibleForTesting
+  static String encodeFilename(String filename, Object suffix) {
     final ext = filename.split('.').last;
     String name = filename.substring(0, filename.length - ext.length - 1);
 
@@ -62,12 +63,26 @@ class SongFileService {
         .replaceAll(RegExp(r'-+'), '-') // Multiple hyphens to single
         .replaceAll(RegExp(r'^-+|-+$'), ''); // Trim hyphens
 
-    // Add random number
-    final randomNumber = 100 + _random.nextInt(900);
-    return '${name}_$randomNumber.$ext';
+    return '${name}_$suffix.$ext';
   }
 
   static final _random = Random();
+
+  /// A storage name for [fileName] not in [taken]: first a random number
+  /// 100–999 (as Ionic), then every other one of them, then longer numbers.
+  /// Never returns a taken name.
+  @visibleForTesting
+  static String freeStorageName(String fileName, Set<Object?> taken, [Random? random]) {
+    final first = 100 + (random ?? _random).nextInt(900);
+    for (var i = 0; i < 900; i++) {
+      final id = encodeFilename(fileName, 100 + (first - 100 + i) % 900);
+      if (!taken.contains(id)) return id;
+    }
+    for (var n = 1000;; n++) {
+      final id = encodeFilename(fileName, n);
+      if (!taken.contains(id)) return id;
+    }
+  }
 
   /// A storage name for [fileName] that no file of the song uses yet. The
   /// upload overwrites (`upsert`), so an equal name would replace that
@@ -85,11 +100,7 @@ class SongFileService {
       for (final f in (song?['files'] as List?) ?? const [])
         if (f is Map) ...[f['storageName'], f['fileName']],
     };
-    var fileId = _encodeFilename(fileName);
-    for (var i = 0; i < 50 && taken.contains(fileId); i++) {
-      fileId = _encodeFilename(fileName);
-    }
-    return fileId;
+    return freeStorageName(fileName, taken);
   }
 
   /// Writes of one song's `files` list read it, change it and write it back,
