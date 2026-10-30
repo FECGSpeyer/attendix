@@ -33,7 +33,8 @@ class RdMemberSection {
 }
 
 /// Persons in group order, split into registers (group categories) or,
-/// without categories, groups. Leaders first like the old list.
+/// without categories, groups. Inside a register the groups stay
+/// together; leaders come first within their own group.
 List<RdMemberSection> rdMemberSections(
   List<Person> persons, {
   required List<Group> groups,
@@ -75,11 +76,21 @@ List<RdMemberSection> rdMemberSections(
   ];
 }
 
-/// Leaders on top, otherwise the given order (stable).
-List<Person> _leadersFirst(List<Person> people) => [
-      ...people.where((p) => p.isLeader),
-      ...people.where((p) => !p.isLeader),
-    ];
+/// Leaders on top of their own group, otherwise the given order (stable).
+/// [people] is in group order, so a register keeps Violine 1 before
+/// Violine 2 instead of collecting all leaders at its top.
+List<Person> _leadersFirst(List<Person> people) {
+  final byGroup = <int?, List<Person>>{};
+  for (final p in people) {
+    byGroup.putIfAbsent(p.instrument, () => []).add(p);
+  }
+  return [
+    for (final group in byGroup.values) ...[
+      ...group.where((p) => p.isLeader),
+      ...group.where((p) => !p.isLeader),
+    ],
+  ];
+}
 
 int? rdAveragePercent(List<Person> people, Map<int, int> percentages) {
   final values = [
