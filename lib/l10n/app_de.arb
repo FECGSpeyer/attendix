@@ -12368,6 +12368,13 @@
   "@redesignWorkShare": {
     "description": "redesign.work.share"
   },
+  "redesignWorkShareFile": "{name} teilen",
+  "@redesignWorkShareFile": {
+    "description": "redesign.work.shareFile",
+    "placeholders": {
+      "name": {}
+    }
+  },
   "redesignWorkSlower": "Langsamer abspielen",
   "@redesignWorkSlower": {
     "description": "redesign.work.slower"

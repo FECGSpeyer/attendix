@@ -16247,6 +16247,12 @@ abstract class AppLocalizations {
   /// **'Teilen'**
   String get redesignWorkShare;
 
+  /// redesign.work.shareFile
+  ///
+  /// In de, this message translates to:
+  /// **'{name} teilen'**
+  String redesignWorkShareFile(Object name);
+
   /// redesign.work.slower
   ///
   /// In de, this message translates to:

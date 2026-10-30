@@ -388,7 +388,8 @@
         "never": "Noch nie",
         "link": "Link",
         "notFound": "Dieses Werk gibt es hier nicht mehr.",
-        "noFiles": "Zu diesem Werk gibt es noch keine Dateien."
+        "noFiles": "Zu diesem Werk gibt es noch keine Dateien.",
+        "shareFile": "{name} teilen"
       },
       "manage": {
         "search": "Einstellung suchen",
@@ -911,7 +912,8 @@
         "never": "Never",
         "link": "Link",
         "notFound": "This work no longer exists here.",
-        "noFiles": "There are no files for this work yet."
+        "noFiles": "There are no files for this work yet.",
+        "shareFile": "Share {name}"
       },
       "manage": {
         "search": "Search settings",

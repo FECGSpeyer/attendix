@@ -11,6 +11,14 @@
       ]
     },
     {
+      "version": "0.23.8",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Auf der Werk-Seite kannst du jede Stimme teilen und z. B. per WhatsApp, Mail oder AirDrop verschicken: bei „Deine Stimme“, der Partitur, in „Alle Stimmen“ und in der Datei-Tabelle am Desktop. In der App wird die Datei selbst geteilt, im Browser der Link",
+        "✨ Neues Design (Beta): „Gruppen-PDFs drucken“ gibt es jetzt direkt auf der Werk-Seite, nicht mehr nur unter „Bearbeiten“"
+      ]
+    },
+    {
       "version": "0.23.7",
       "date": "30.10.2026",
       "changes": [

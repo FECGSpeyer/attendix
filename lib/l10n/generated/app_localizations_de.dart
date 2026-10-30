@@ -9463,6 +9463,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkShare => 'Teilen';
 
   @override
+  String redesignWorkShareFile(Object name) {
+    return '$name teilen';
+  }
+
+  @override
   String get redesignWorkSlower => 'Langsamer abspielen';
 
   @override
