@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
-import '../../../core/theme/app_colors.dart'; // IOS_THEME2
+import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 
 /// Badge variant styles

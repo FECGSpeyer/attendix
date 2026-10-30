@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../../../../l10n/l10n.dart';
 
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMdSearchbar; // MD_SWEEP
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMdSearchbar;
 
 /// UX_ATT: true when the page should render Ionic's iOS mode (iPhone app and
 /// Flutter web in iPhone Safari). Elsewhere the Material (Ionic md) look stays.

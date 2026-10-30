@@ -16,11 +16,11 @@ import '../../../../data/repositories/player_repository.dart';
 import 'handover_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../widgets/ion_condense.dart'; // IOS_R6
-import '../widgets/settings_list.dart' show ionIsIos; // IOS_R6
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../widgets/ion_condense.dart';
+import '../widgets/settings_list.dart' show ionIsIos;
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Ionic handover-detail auto mapping: same name, or one name contains the
 /// other (e.g. "Trompete" vs. "Bb Trompete", "Flöte" vs. "Querflöte").
@@ -205,8 +205,8 @@ class _HandoverDetailPageState extends ConsumerState<HandoverDetailPage> {
           : ListView(
               padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
               children: [
-                const IonContentTopInset(), // IOS_R6
-                IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)), // IOS_R6
+                const IonContentTopInset(),
+                IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
                 Text(context.l10n.handoverGroupMapping,
                     style: Theme.of(context).textTheme.titleSmall),
                 const SizedBox(height: AppDimensions.paddingS),

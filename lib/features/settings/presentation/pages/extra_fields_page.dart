@@ -12,10 +12,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../widgets/ion_condense.dart';
+import '../widgets/settings_list.dart';
 
 enum ExtraFieldTarget { person, song }
 
@@ -130,7 +130,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _editField(ExtraFieldTarget target, int index) async {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = _fields(target);
     final result = await _showFieldSheet(target: target, existing: fields[index]);
     if (result == null) return;
@@ -140,7 +140,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _removeField(ExtraFieldTarget target, int index) async {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = _fields(target);
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -154,7 +154,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   void _reorder(ExtraFieldTarget target, int oldIndex, int newIndex) {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = [..._fields(target)];
     if (newIndex > oldIndex) newIndex -= 1;
     final item = fields.removeAt(oldIndex);
@@ -361,7 +361,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       )
                     else
                       AppDropdownFormField<String>(
-                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                        iosInterface: AppSelectInterface.alert,
                         value: type,
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                         items: [
@@ -384,7 +384,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                     ),
                     AppDropdownFormField<String>(
-                      iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                      iosInterface: AppSelectInterface.alert,
                       value: displayMode,
                       decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                       items: [
@@ -554,7 +554,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             child: ListView(
           padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),
             _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),

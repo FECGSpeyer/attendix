@@ -8,7 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How the PDF viewer shows the pages (remembered on the device; until
 /// switched, tablets start page by page and phones scroll).

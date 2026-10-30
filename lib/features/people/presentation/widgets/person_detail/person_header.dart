@@ -15,10 +15,10 @@ import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../core/services/error_reporter.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
-import '../../../../../core/providers/player_providers.dart'; // ASTRA_PHOTO
-import '../person_image_picker.dart'; // ASTRA_PHOTO
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../core/utils/profile_image_path.dart';
+import '../../../../../core/providers/player_providers.dart';
+import '../person_image_picker.dart';
 
 /// UX_PEOPLE: Ionic person.page `.profile-header`: 120px avatar with white
 /// ring and shadow, camera badge when editable, name (h1) with a pencil

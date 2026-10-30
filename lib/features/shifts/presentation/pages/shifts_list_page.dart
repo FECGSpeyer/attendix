@@ -9,8 +9,8 @@ import '../../../../data/models/shift/shift_plan.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Shifts List Page
 ///
@@ -128,7 +128,7 @@ class _ShiftsListPageState extends ConsumerState<ShiftsListPage> {
             child: Column(
               children: [
                 AppBar(
-                  toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+                  toolbarHeight: ionModalToolbarHeight(context),
                   automaticallyImplyLeading: false,
                   primary: false,
                   title: Text(sheetContext.l10n.shiftsCreate),

@@ -13,13 +13,13 @@ import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../core/providers/user_registration_providers.dart';
 import '../widgets/import_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 enum _Step { file, mapping, preview }
 

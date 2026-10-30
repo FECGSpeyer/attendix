@@ -6,9 +6,9 @@ import '../../data/help_content_service.dart';
 import '../widgets/glossary_term_dialog.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // IOS_R6
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Single help article with tappable glossary references.
 ///
@@ -46,7 +46,7 @@ class HelpArticlePage extends ConsumerWidget {
               padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
               child: Column(
                 children: [
-                  const IonContentTopInset(), // IOS_R6
+                  const IonContentTopInset(),
                   Center(
                 child: ConstrainedBox(
                   constraints: const BoxConstraints(maxWidth: 720),

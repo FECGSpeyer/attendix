@@ -14,7 +14,7 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
 import '../ion/ion_widgets.dart';
 
 /// Toggle to show all history entries (including before season start).

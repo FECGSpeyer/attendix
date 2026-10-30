@@ -10,27 +10,24 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/realtime_providers.dart'; // MEDIA_REALTIME
-import '../../../../core/providers/role_permission_providers.dart'; // SETTINGS_EXT
+import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../shared/widgets/sheets/feedback_sheet.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
-// PROFILE_OFFLINE
 import '../../../profile/presentation/widgets/account_dialogs.dart';
 import '../../../profile/presentation/widgets/profile_hero_card.dart';
 import '../../../../shared/widgets/sheets/version_history_sheet.dart';
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
-import '../../../../core/services/certificate_service.dart'; // MISC2
-import '../widgets/vorkurs_certificates.dart'; // MISC2
-// SETTINGS2
+import '../../../messages/presentation/widgets/notification_bell.dart';
+import '../../../../core/services/certificate_service.dart';
+import '../widgets/vorkurs_certificates.dart';
 import '../../../../core/providers/admin_providers.dart';
-import '../../../../core/services/app_update_service.dart'; // NATIVE_MISC
+import '../../../../core/services/app_update_service.dart';
 import '../widgets/app_promo_card.dart';
 import '../widgets/settings_admins_sheet.dart';
-// UX_SETTINGS
 import '../widgets/calendar_subscription_dialog.dart';
 import '../widgets/settings_list.dart';
 import 'left_players_page.dart' show leftPlayersProvider, showArchiveSheet;
@@ -46,18 +43,15 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
-// I18N_INFRA
 import '../../../../l10n/l10n.dart';
 import '../widgets/language_picker_tile.dart';
-import '../widgets/redesign_beta_tile.dart'; // REDESIGN
-import '../../../../core/providers/push_providers.dart'; // PUSH
-// IOS_SHELL
-import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
-import '../../../history/presentation/pages/history_page.dart' show showHistoryModal; // IOS_FORMS2
-// PARITY_R5
+import '../widgets/redesign_beta_tile.dart';
+import '../../../../core/providers/push_providers.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher;
 
 /// "Mehr" tab — UX_SETTINGS: same sections, order and role visibility as the
 /// Ionic settings page (src/app/settings/settings/settings.page.html):
@@ -69,7 +63,7 @@ class SettingsPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final l10n = context.l10n; // I18N_INFRA
+    final l10n = context.l10n;
     final tenant = ref.watch(currentTenantProvider);
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
@@ -116,7 +110,7 @@ class SettingsPage extends ConsumerWidget {
 
     void openTeamOrg(String tab) => context.push('/settings/team-organization?tab=$tab');
 
-    final ios = ionIsIos(context); // UX_SETTINGS (WAVE 8)
+    final ios = ionIsIos(context);
     // IOS_SETTINGS2: Ionic `isInstancesModalOpen = true` (sheet, not a page).
     void openTenants() => showTenantsSheet(context);
 
@@ -142,7 +136,7 @@ class SettingsPage extends ConsumerWidget {
             ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
             : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         // IOS_SHELL: iOS → bell in a glass circle
-        actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES
+        actions: const [ToolbarButtonGroup(children: [NotificationBell()])],
       )),
       // Ionic: `@if (isIos)` ion-fab (apps-outline) opens the instance list.
       // IOS_SHELL: rendered in the tab bar row (right of the floating bar).
@@ -156,12 +150,12 @@ class SettingsPage extends ConsumerWidget {
               ),
             )
           : null,
-      body: IonRefresher( // IOS_R6
+      body: IonRefresher(
         onRefresh: () async {
           ref.invalidate(currentTenantProvider);
           ref.invalidate(userTenantsProvider);
           ref.invalidate(pendingPlayersProvider);
-          ref.invalidate(realtimePendingPlayersProvider); // MEDIA_REALTIME
+          ref.invalidate(realtimePendingPlayersProvider);
           ref.invalidate(playersProvider);
           ref.invalidate(viewersProvider);
           ref.invalidate(parentsProvider);
@@ -180,7 +174,7 @@ class SettingsPage extends ConsumerWidget {
                   AppDimensions.paddingM,
                   scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             // IOS_SETTINGS2: no Flutter-only PWA install hint here — Ionic
             // only shows its "Attendix als App" promo card.
             const AppPromoCard(), // SETTINGS2: "📱 Attendix als App"
@@ -507,8 +501,8 @@ class SettingsPage extends ConsumerWidget {
                   detail: false,
                   onTap: openTenants,
                 ),
-                const LanguagePickerTile(), // I18N_INFRA
-                const RedesignBetaTile(), // REDESIGN
+                const LanguagePickerTile(),
+                const RedesignBetaTile(),
                 SettingsListTile(
                   icon: Icons.notifications_outlined,
                   title: l10n.settingsNotifications,
@@ -570,7 +564,7 @@ class SettingsPage extends ConsumerWidget {
                     // Ionic logs out directly (no confirmation)
                     final supabase = ref.read(supabaseClientProvider);
                     final tenantNotifier = ref.read(currentTenantProvider.notifier);
-                    await removePushTokenBeforeSignOut(ref); // PUSH
+                    await removePushTokenBeforeSignOut(ref);
                     await supabase.auth.signOut();
                     await tenantNotifier.clearTenant();
                     if (context.mounted) context.go('/login');

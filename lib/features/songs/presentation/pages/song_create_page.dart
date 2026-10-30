@@ -6,7 +6,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../widgets/add_song_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Full page variant of "Werk hinzufügen" (route `/settings/songs/new`).
 /// The songs list opens the same form as a sheet (like the Ionic modal).

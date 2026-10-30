@@ -8,8 +8,8 @@ import '../../../core/router/redesign_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
-import '../layout/ion_modal_handle.dart'; // IOS_FORMS1
+import '../adaptive/adaptive.dart';
+import '../layout/ion_modal_handle.dart';
 
 /// Shows the feedback bottom sheet.
 ///

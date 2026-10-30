@@ -11,9 +11,9 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
-import 'ion/ion_widgets.dart'; // UX_PEOPLE
+import 'ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 

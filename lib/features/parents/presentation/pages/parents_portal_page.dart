@@ -18,12 +18,12 @@ import '../../data/providers/parents_providers.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/parents_header_widgets.dart'; // PROFILE_OFFLINE
-import '../../../../core/providers/song_providers.dart'; // PROFILE_OFFLINE
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../widgets/parents_header_widgets.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -146,7 +146,7 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
               tooltip: context.l10n.signoutLegend,
               onPressed: () => showEventLegendSheet(context),
             ),
-            const NotificationBell(), // MESSAGES
+            const NotificationBell(),
           ]),
         ],
       ),
@@ -196,9 +196,9 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                   ? past
                   : past.take(EventListUtils.pastPreviewCount).toList();
               final groups = EventListUtils.groupByMonth(upcoming, (g) => g.date);
-              return IonRefresher( // IOS_R6
+              return IonRefresher(
                 onRefresh: () async {
-                  ref.invalidate(currentSongsProvider); // PROFILE_OFFLINE
+                  ref.invalidate(currentSongsProvider);
                   ref.invalidate(parentChildrenProvider);
                   ref.invalidate(childrenAttendancesProvider);
                   await ref.read(childrenAttendancesProvider.future);
@@ -206,9 +206,9 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
                 child: ListView(
                   padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
                   children: [
-                    const IonContentTopInset(), // IOS_R6
+                    const IonContentTopInset(),
                     IonLargeTitle(tenant?.longName ?? '', enabled: !multiTenant),
-                    ParentsWelcomeCard(kids: children), // PROFILE_OFFLINE
+                    ParentsWelcomeCard(kids: children),
                     // Ionic `.ev-today`: kids as rows inside the card and the
                     // "Alle Kinder" button at its end.
                     if (current != null) ...[

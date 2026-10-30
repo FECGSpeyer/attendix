@@ -4,11 +4,11 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../data/models/plan/plan.dart'; // ORG_PLANS
+import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ORG_PLANS
+import '../../../planning/presentation/pages/plan_viewer_page.dart';
 
 /// Plan viewer bottom sheet for displaying attendance plans
 ///

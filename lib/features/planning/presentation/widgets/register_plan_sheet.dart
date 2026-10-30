@@ -23,7 +23,7 @@ import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'plan_export_actions.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).
@@ -165,7 +165,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       // Ionic: ion-content color="light" (grey grouped background).
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+        toolbarHeight: ionModalToolbarHeight(context),
         automaticallyImplyLeading: false,
         title: Text(l10n.planningSectionalPlan),
         // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle

@@ -13,10 +13,10 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../widgets/instrument_categories_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 
 /// Instruments list page — grouped by category with player counts.
 /// Supports drag & drop reordering (sort_order) like Ionic instrument-list.
@@ -411,7 +411,7 @@ class _AddGroupSheetState extends ConsumerState<_AddGroupSheet> {
           if (categories.isNotEmpty) ...[
             const SizedBox(height: AppDimensions.paddingM),
             AppDropdownFormField<int?>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: _categoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [
@@ -611,7 +611,7 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             ),
             const SizedBox(height: AppDimensions.paddingM),
             AppDropdownFormField<int?>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: _selectedCategoryId,
               decoration: InputDecoration(labelText: context.l10n.instrumentsCategory),
               items: [

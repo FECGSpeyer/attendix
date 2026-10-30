@@ -14,8 +14,8 @@ import 'attendance_detail_sheets.dart';
 import 'attendance_grid.dart' show collapseHtmlWhitespace;
 import 'status_chip.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder;
 
 /// Person row of the attendance detail page.
 ///

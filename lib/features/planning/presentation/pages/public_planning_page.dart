@@ -35,7 +35,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 export '../widgets/ion_items.dart' show IonDatetimeChip;
 
@@ -613,7 +613,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       );
       if (!ok) return;
     }
-    _flushPendingSave(); // SOL_FIX15
+    _flushPendingSave();
     setState(() {
       _planId = null;
       _editKey = null;
@@ -629,7 +629,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   }
 
   void _loadPlan(SharedPlan plan) {
-    _flushPendingSave(); // SOL_FIX15
+    _flushPendingSave();
     setState(() {
       _planId = plan.id;
       _editKey = plan.editKey;

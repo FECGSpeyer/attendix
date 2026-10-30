@@ -12,7 +12,7 @@ import 'person_detail/upcoming_appointments_accordion.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion/ion_widgets.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 DateFormat get _dateFormat => DateFormat(dateFmt());
 
@@ -137,7 +137,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               title: Text(context.l10n.personEnterAbsence),
               automaticallyImplyLeading: false,
               actions: [

@@ -8,7 +8,7 @@ import '../../../../data/models/plan/plan.dart';
 import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// A row of the editor: a field, or the "Unterpunkt hinzufügen" row closing an open block.
 class _EditorRow {

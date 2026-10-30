@@ -7,7 +7,7 @@ import '../../../features/public_links/presentation/pages/app_redirect_page.dart
     show appStoreUrl, playStoreUrl;
 import 'native_app_ad_storage.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../adaptive/adaptive.dart';
 
 /// LINKS_STARTUP: set on a fresh sign-in (Ionic `listenToAuthChanges`
 /// SIGNED_IN → `showNativeAppAd`); consumed once the app shell is visible.

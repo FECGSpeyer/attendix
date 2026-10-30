@@ -22,7 +22,7 @@ import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Ionic VoS "Andere Orchester" options
 const otherOrchestraOptions = ['SoS', 'GoS', 'BoS'];

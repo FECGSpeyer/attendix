@@ -5,8 +5,8 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:uuid/uuid.dart';
 
-import '../../../../core/utils/event_list_utils.dart'; // ATTENDANCE_SIGNOUT
-import '../widgets/reasons_list_editor.dart'; // ATTENDANCE_SIGNOUT
+import '../../../../core/utils/event_list_utils.dart';
+import '../widgets/reasons_list_editor.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
@@ -14,18 +14,18 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
-import '../../../../core/providers/group_providers.dart'; // SETTINGS2
+import '../../../../core/providers/group_providers.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../widgets/critical_rule_card.dart';
 import '../widgets/critical_rule_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
-import '../../../../core/utils/page_reload.dart'; // LOGIC_SETTINGS
-import '../widgets/settings_list.dart'; // UX_SETTINGS
-import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../../core/utils/page_reload.dart';
+import '../widgets/settings_list.dart';
+import '../widgets/ion_condense.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// German holiday regions
 const _holidayRegions = [
@@ -75,7 +75,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   bool _showMembersList = false;
   bool _showHolidays = false;
   bool _dutyView = false; // DUTY: "Meine Termine" als Dienstplan-Ansicht
-  bool _shiftExcusedAsPresent = false; // SETTINGS2
+  bool _shiftExcusedAsPresent = false;
 
   // ATTENDANCE_SIGNOUT: show all Termine + absence/late reasons
   bool _showAllAttendances = false;
@@ -110,7 +110,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     _longNameController.dispose();
     _practiceStartController.dispose();
     _practiceEndController.dispose();
-    _showAllInfoTextController.dispose(); // ATTENDANCE_SIGNOUT
+    _showAllInfoTextController.dispose();
     super.dispose();
   }
 
@@ -138,13 +138,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _parents = tenant.parents ?? false;
       _showMembersList = tenant.showMembersList;
       _showHolidays = tenant.showHolidays;
-      // ATTENDANCE_SIGNOUT
       _showAllAttendances = tenant.showAllAttendances;
       _showAllInfoTextController.text = tenant.showAllAttendancesInfoText ?? '';
       _absenceReasons = EventListUtils.absenceReasonsOf(tenant.absenceReasons);
       _lateReasons = EventListUtils.lateReasonsOf(tenant.lateReasons);
-      _dutyView = tenant.dutyView; // DUTY
-      _shiftExcusedAsPresent = tenant.shiftExcusedAsPresent; // SETTINGS2
+      _dutyView = tenant.dutyView;
+      _shiftExcusedAsPresent = tenant.shiftExcusedAsPresent;
       _songSharingEnabled = tenant.songSharingId != null && tenant.songSharingId!.isNotEmpty;
       _songSharingId = tenant.songSharingId;
       _registrationEnabled = tenant.registerId != null && tenant.registerId!.isNotEmpty;
@@ -181,7 +180,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       (ref.read(groupsProvider).valueOrNull ?? const []).any((g) => g.maingroup != true);
 
   Future<void> _saveSettings() async {
-    final defaultInfoText = context.l10n.defaultsShowAllInfoText; // LOGIC_SETTINGS
+    final defaultInfoText = context.l10n.defaultsShowAllInfoText;
     // SETTINGS2: Ionic saveGeneralSettings validation toasts
     if (_longNameController.text.trim().isEmpty) {
       ToastHelper.showError(context, context.l10n.generalSettingsGroupNameEmpty);
@@ -230,8 +229,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'maintainTeachers': _maintainTeachers,
         'parents': _parents,
         'showMembersList': _showMembersList, // DB_FIX: column is camelCase
-        'shift_excused_as_present': _shiftExcusedAsPresent, // SETTINGS2
-        // ATTENDANCE_SIGNOUT
+        'shift_excused_as_present': _shiftExcusedAsPresent,
         'show_all_attendances': _showAllAttendances,
         // LOGIC_SETTINGS: Ionic — null when off, otherwise trimmed or default
         'show_all_attendances_info_text': normalizeShowAllInfoText(
@@ -459,7 +457,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                   96,
                 ),
                 children: [
-                  const IonContentTopInset(), // IOS_R6
+                  const IonContentTopInset(),
                   IonLargeTitle(context.l10n.settingsSettings, padding: const EdgeInsets.only(bottom: 4)),
                   if (ionIsIos(context)) const SizedBox(height: 16),
                   // UX_SETTINGS: sections in Ionic order (general.page.html)
@@ -732,7 +730,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         IonStackedField(
                           label: context.l10n.generalSettingsHolidayState,
                           builder: (decoration) => AppDropdownFormField<String>(
-                            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                            iosInterface: AppSelectInterface.alert,
                           value: _selectedRegion,
                           decoration: decoration,
                           items: _holidayRegions

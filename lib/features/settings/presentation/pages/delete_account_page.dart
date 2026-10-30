@@ -10,10 +10,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/settings_list.dart';
 import '../widgets/strong_html_text.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Characters for the verification code — avoids visually ambiguous chars
 /// (0/O, 1/I/L), identical to Ionic.

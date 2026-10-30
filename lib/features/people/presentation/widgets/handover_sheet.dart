@@ -17,7 +17,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Sheet for transferring players to another tenant (handover)
 class HandoverSheet extends ConsumerStatefulWidget {
@@ -109,7 +109,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             // Header
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               title: Text(
                 _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
@@ -457,7 +457,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingS),
             AppDropdownFormField<int>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: _targetTenantId,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.business),
@@ -553,7 +553,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
-                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                        iosInterface: AppSelectInterface.alert,
                         value: _groupMapping[instrumentId],
                         decoration: const InputDecoration(
                           isDense: true,

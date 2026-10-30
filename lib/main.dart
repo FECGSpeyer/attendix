@@ -6,32 +6,32 @@ import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'package:flutter_localizations/flutter_localizations.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart'; // IOS_SHELL2
+import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
-import 'core/providers/locale_provider.dart'; // I18N_INFRA
-import 'core/providers/redesign_providers.dart'; // REDESIGN
+import 'core/providers/locale_provider.dart';
+import 'core/providers/redesign_providers.dart';
 import 'core/router/app_router.dart';
-import 'core/router/legacy_url.dart'; // LINKS_STARTUP
+import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
-import 'core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
+import 'core/services/offline_queue_service.dart';
 import 'core/services/attendance_detail_cache.dart'
-    show clearOfflineReadCaches, shouldClearOfflineReadCaches; // SOL_FIX7
+    show clearOfflineReadCaches, shouldClearOfflineReadCaches;
 import 'core/services/public_plan_draft_storage.dart'
-    show clearPublicPlanDrafts; // SOL_FIX12
-import 'core/services/planning_draft_store.dart' show clearPlanningDrafts; // SOL_FIX27
-import 'core/services/live_activity_service.dart'; // LIVE_ACTIVITY
+    show clearPublicPlanDrafts;
+import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
+import 'core/services/live_activity_service.dart';
 import 'core/theme/app_theme.dart';
-import 'core/theme/redesign/rd_theme.dart'; // REDESIGN
+import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
-import 'features/auth/data/auth_link_listener.dart'; // AUTH
-import 'core/services/teams/teams_service.dart'; // TEAMS
-import 'core/services/app_icon_service.dart'; // REDESIGN
-import 'core/providers/push_providers.dart'; // PUSH
-import 'l10n/l10n.dart'; // I18N_INFRA
-import 'shared/widgets/dialogs/ion_modal.dart'; // PARITY_R3
-import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics; // IOS_R4
+import 'features/auth/data/auth_link_listener.dart';
+import 'core/services/teams/teams_service.dart';
+import 'core/services/app_icon_service.dart';
+import 'core/providers/push_providers.dart';
+import 'l10n/l10n.dart';
+import 'shared/widgets/dialogs/ion_modal.dart';
+import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
 
@@ -95,8 +95,8 @@ void main() async {
   runApp(
     ProviderScope(
       overrides: [
-        initialLanguageProvider.overrideWithValue(initialLanguage), // I18N_INFRA
-        initialRedesignSettingsProvider.overrideWithValue(initialRedesign), // REDESIGN
+        initialLanguageProvider.overrideWithValue(initialLanguage),
+        initialRedesignSettingsProvider.overrideWithValue(initialRedesign),
       ],
       child: const AttendixApp(),
     ),
@@ -169,8 +169,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     final router = ref.watch(routerProvider);
     final updateAvailable = ref.watch(appUpdateAvailableProvider);
     final updateService = ref.read(appUpdateServiceProvider);
-    final locale = ref.watch(localeProvider); // I18N_INFRA
-    final redesign = ref.watch(redesignSettingsProvider); // REDESIGN
+    final locale = ref.watch(localeProvider);
+    final redesign = ref.watch(redesignSettingsProvider);
 
     // Show update snackbar when available (only once)
     if (updateAvailable && !updateService.wasDialogShown) {
@@ -192,10 +192,10 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       darkTheme: redesign.enabled
           ? buildRdTheme(redesign.world, Brightness.dark)
           : AppTheme.dark,
-      themeMode: ref.watch(teamsThemeModeProvider) ?? // TEAMS
+      themeMode: ref.watch(teamsThemeModeProvider) ??
           (redesign.enabled ? redesign.themeMode : ThemeMode.system),
       routerConfig: router,
-      scaffoldMessengerKey: rootScaffoldMessengerKey, // PROFILE_OFFLINE
+      scaffoldMessengerKey: rootScaffoldMessengerKey,
       // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /
       // long-press / hover) on iOS; their semantics labels stay.
       // IOS_THEME2: Ionic md (desktop / Android) has none either.

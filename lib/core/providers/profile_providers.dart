@@ -218,7 +218,7 @@ class ProfileNotifier extends Notifier<AsyncValue<void>> {
     final repo = _repo;
     state = const AsyncValue.loading();
     try {
-      final session = _captureSession(); // SOL_FIX15
+      final session = _captureSession();
       final url = await repo.uploadOwnImage(
         userId: session.userId,
         isSessionCurrent: session.isCurrent,
@@ -246,7 +246,7 @@ class ProfileNotifier extends Notifier<AsyncValue<void>> {
     final repo = _repo;
     state = const AsyncValue.loading();
     try {
-      final session = _captureSession(); // SOL_FIX15
+      final session = _captureSession();
       await repo.removeOwnImage(
         imgUrl,
         userId: session.userId,

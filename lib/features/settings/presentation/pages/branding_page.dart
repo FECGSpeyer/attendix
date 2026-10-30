@@ -9,10 +9,10 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Maximale Logo-Größe (2 MB, wie Ionic)
 const int kMaxLogoBytes = 2 * 1024 * 1024;

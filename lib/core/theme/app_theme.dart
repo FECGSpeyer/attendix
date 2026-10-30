@@ -7,7 +7,7 @@ import 'package:flutter/services.dart';
 import '../../shared/widgets/adaptive/adaptive_platform.dart' show IosGlass;
 import '../../shared/widgets/adaptive/app_toolbar.dart'
     show IosCircleIcon, IonToolbarButtonMetrics, kIonTitleFontSize;
-import '../../shared/widgets/layout/ionic_md.dart' show IonMd; // MD_SWEEP
+import '../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import 'app_colors.dart';
 
 /// App theme configuration.

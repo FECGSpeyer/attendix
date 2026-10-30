@@ -8,9 +8,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/settings_list.dart';
-import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
+import '../widgets/settings_sheet.dart';
 
 /// IOS_SETTINGS2: Ionic settings "pending-button" card opens the
 /// "Ausstehende Personen" sheet (`[breakpoints]="[0, 1]"`, initial 1).

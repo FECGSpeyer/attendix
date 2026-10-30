@@ -8,9 +8,9 @@ import '../../../core/models/version_history.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/error_message.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../features/auth/presentation/widgets/ion_form_list.dart'; // IOS_FORMS1
-import '../layout/ion_modal_handle.dart'; // IOS_FORMS1
+import '../adaptive/adaptive.dart';
+import '../../../features/auth/presentation/widgets/ion_form_list.dart';
+import '../layout/ion_modal_handle.dart';
 
 /// Bottom sheet showing version history (What's New)
 class VersionHistorySheet extends StatefulWidget {

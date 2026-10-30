@@ -18,8 +18,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.

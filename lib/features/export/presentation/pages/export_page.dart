@@ -8,7 +8,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_providers.dart';
-import '../../../../core/providers/branding_providers.dart'; // ASTRA_EXPORT
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -24,14 +24,14 @@ import '../../export_fields.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
-import 'package:go_router/go_router.dart'; // PARITY_R5
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/native/native_file_service.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import 'package:go_router/go_router.dart';
 
 /// Export Page
 ///
@@ -419,7 +419,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         if (_exportType == 'pdf') {
           if (!mounted) return;
           await exportService.exportPlayerListPdf(
-            branding: await resolvePdfBranding(ref), // ASTRA_EXPORT
+            branding: await resolvePdfBranding(ref),
             players: sortedPlayers,
             fields: headerFields,
             tenantName: tenantName,
@@ -464,7 +464,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
         if (_exportType == 'pdf') {
           if (!mounted) return;
           await exportService.exportAttendancePdf(
-            branding: await resolvePdfBranding(ref), // ASTRA_EXPORT
+            branding: await resolvePdfBranding(ref),
             players: sortedPlayers,
             attendances: relevant,
             personAttendances: personAttendances,
@@ -501,7 +501,7 @@ class _ExportPageState extends ConsumerState<ExportPage> {
 
   /// Share/download the Excel file (works on web/PWA as well)
   Future<void> _shareExcel(Uint8List bytes, String baseName) async {
-    await NativeFileService.saveBytes(bytes, '$baseName.xlsx'); // NATIVE_MISC
+    await NativeFileService.saveBytes(bytes, '$baseName.xlsx');
   }
 }
 

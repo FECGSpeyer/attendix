@@ -8,7 +8,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// TEAMS: configuration page of the Attendix channel tab (Ionic
 /// `teams-config`). Teams loads it in a dialog when someone adds Attendix to

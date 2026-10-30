@@ -3,7 +3,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
 
-// LIVE_ACTIVITY
 
 /// Provider for LiveActivityRepository (without tenant; use
 /// liveActivityRepositoryWithTenantProvider).

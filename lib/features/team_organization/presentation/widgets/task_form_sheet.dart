@@ -10,7 +10,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens "Neue Aufgabe" / "Aufgabe bearbeiten" as a sheet (leadership only).
 /// Resolves with the created/updated task, or null when closed without saving.
@@ -199,7 +199,7 @@ class _TaskFormSheetState extends ConsumerState<TaskFormSheet> {
         child: Column(
           children: [
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               automaticallyImplyLeading: false,
               primary: false,
               leading: IconButton(
@@ -394,7 +394,7 @@ class _PersonPickerState extends State<_PersonPicker> {
       child: Column(
         children: [
           AppBar(
-            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+            toolbarHeight: ionModalToolbarHeight(context),
             automaticallyImplyLeading: false,
             primary: false,
             title: Text(l10n.tasksResponsible),

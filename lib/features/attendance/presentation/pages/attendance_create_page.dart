@@ -19,10 +19,10 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'
-    hide IonInformationIcon; // IOS_LOOK
-import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_FORMS2
-import '../widgets/ion_glyph_icons.dart'; // IOS_FORMS2
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+    hide IonInformationIcon;
+import '../../../../shared/widgets/layout/ionic_ios.dart';
+import '../widgets/ion_glyph_icons.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// UX_ATT: opens "Termin hinzufügen" as a sheet over the list (Ionic att-list
 /// addAttModal, breakpoints [0, 0.8, 1], initial 0.8). Returns true when
@@ -152,7 +152,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     // P10_ATTENDANCE: Ionic showSongsSelection(): !isGeneral && manage_songs
     final showSongs = showSongsForType(_selectedType, ref.watch(currentTenantProvider)?.type);
     final types = typesAsync.valueOrNull ?? const <AttendanceType>[];
-    final ios = isIosLook(context); // IOS_FORMS2
+    final ios = isIosLook(context);
 
     // Auto-select first visible type (Ionic type_id = first visible type)
     if (_selectedType == null && types.isNotEmpty) {
@@ -675,7 +675,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   void _onTypeChanged(AttendanceType type) {
     setState(() {
       _selectedType = type;
-      _dutyRequiredByWeekday = {}; // DUTY
+      _dutyRequiredByWeekday = {};
       // Set default times from type (always overwrite to match type defaults)
       _startTime = type.startTime != null ? _parseTime(type.startTime!) : null;
       _endTime = type.endTime != null ? _parseTime(type.endTime!) : null;

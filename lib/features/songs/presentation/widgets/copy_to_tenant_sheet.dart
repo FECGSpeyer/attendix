@@ -12,7 +12,7 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// `instrument_ids` of a copied song (Ionic copySongToTenant): the mapped
 /// target instrument ids of the copied files, without null and the reserved
@@ -71,7 +71,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
           children: [
             // Header
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               title: Text(context.l10n.songsCopySong),
               leading: IconButton(
                 icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),

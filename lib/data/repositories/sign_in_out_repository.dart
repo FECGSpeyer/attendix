@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
 import '../../core/utils/event_list_utils.dart';
-import '../../core/utils/paged_query.dart'; // SOL_FIX37
+import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';

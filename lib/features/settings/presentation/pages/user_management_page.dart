@@ -7,14 +7,14 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/viewer_providers.dart';
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
-import '../../../../data/repositories/user_registration_repository.dart'; // AUTH
+import '../../../../core/providers/user_registration_providers.dart';
+import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// TenantUser model
 class TenantUser {
@@ -218,7 +218,7 @@ class _AddUserDialogState extends State<_AddUserDialog> {
           ),
           const SizedBox(height: AppDimensions.paddingM),
           AppDropdownFormField<Role>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             value: _selectedRole,
             decoration: InputDecoration(labelText: context.l10n.personRole),
             items: [

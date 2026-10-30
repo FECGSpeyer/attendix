@@ -19,10 +19,10 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
 import 'tenant_create_page.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
-import '../../../../core/providers/push_providers.dart'; // PUSH
-import '../../../settings/presentation/widgets/settings_sheet.dart'; // IOS_SETTINGS2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/providers/dashboard_providers.dart';
+import '../../../../core/providers/push_providers.dart';
+import '../../../settings/presentation/widgets/settings_sheet.dart';
 
 /// IOS_SETTINGS2: Ionic settings "Instanz wechseln" row (and the iOS
 /// `apps-outline` fab) open the instances `ion-modal` as a sheet
@@ -185,12 +185,12 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       role,
       tenant.id,
       container.read(supabaseAuthProvider).currentUser?.userMetadata,
-    ); // DASHBOARD
+    );
 
     // Navigate FIRST - before auth sync can cause rebuilds
     // IOS_SETTINGS2: Ionic `modal?.dismiss()` before navigating.
     sheetNavigator?.pop();
-    goReplacingHistory(router, home); // NAV_REPLACE
+    goReplacingHistory(router, home);
 
     // Auth sync AFTER navigation (fire and forget, notifier captured above)
     prefsNotifier.updateCurrentTenantId(tenant.id!);
@@ -334,7 +334,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
-    await removePushTokenBeforeSignOut(ref); // PUSH
+    await removePushTokenBeforeSignOut(ref);
     await supabase.auth.signOut();
     if (mounted) context.go('/login');
   }

@@ -10,11 +10,11 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../message_format.dart';
 import 'message_compose_page.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Mitteilungen overview for admins/responsibles: all sent messages of the tenant.
 /// Port of Ionic `MessageListPage` (route `/settings/messages`).

@@ -26,7 +26,7 @@ import '../services/tracking/tracking_service.dart';
 import 'message_providers.dart';
 import 'signout_providers.dart';
 import 'tenant_providers.dart';
-import '../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../shared/widgets/adaptive/adaptive.dart';
 
 /// Whether native push exists on this platform (Ionic
 /// `Capacitor.isNativePlatform()`): iOS / Android apps, never the PWA.

@@ -6,7 +6,7 @@ import 'package:flutter/services.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // I18N_INFRA
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// AUTH: Login-Modus (Ionic ion-segment "Passwort" / "Code per E-Mail").
 enum AuthMode { password, otp }

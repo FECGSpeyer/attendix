@@ -13,10 +13,10 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/repositories/teacher_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
-import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 
 /// Validation of the teacher form, per mode exactly as in Ionic:
 /// - create (teachers.page `addTeacher`): `String(name).length < 3 ||

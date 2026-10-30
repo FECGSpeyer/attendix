@@ -7,13 +7,13 @@ import '../../../../data/repositories/user_registration_repository.dart'
     show AccountFlowException;
 import '../../../../core/providers/viewer_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../widgets/settings_list.dart'; // UX_SETTINGS
-import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
+import '../widgets/settings_list.dart';
+import '../widgets/settings_sheet.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/viewer/viewer.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Viewers Page - manage external observers
 /// IOS_SETTINGS2: Ionic settings "viewer-button" opens the "Beobachter" sheet

@@ -6,9 +6,9 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../data/providers/members_providers.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
-import '../../../people/presentation/widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../messages/presentation/widgets/notification_bell.dart';
+import '../../../people/presentation/widgets/ion/ion_widgets.dart';
 
 /// Members page - read-only list of all members for players/helpers
 /// (Ionic people/members: condensed title, searchbar, optional "Einteilung"
@@ -46,7 +46,7 @@ class _MembersPageState extends ConsumerState<MembersPage> {
     return IonPage(
       title: context.l10n.peopleMembers,
       // IOS_SHELL: iOS → bell in a glass circle
-      actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES
+      actions: const [ToolbarButtonGroup(children: [NotificationBell()])],
       onRefresh: _refresh,
       slivers: [
         // ion-searchbar

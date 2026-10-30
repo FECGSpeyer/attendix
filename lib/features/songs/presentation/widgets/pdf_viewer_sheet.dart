@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {

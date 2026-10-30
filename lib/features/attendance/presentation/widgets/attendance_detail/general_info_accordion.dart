@@ -9,7 +9,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import 'attendance_accordion.dart';
 import '../../../../../shared/widgets/display/ion_badge_text.dart';
-import '../../../../../shared/widgets/adaptive/ion_button_label.dart'; // PARITY_R8
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Accordion widget for displaying and editing general attendance info
 /// Uses StatefulWidget to properly manage TextEditingController lifecycle

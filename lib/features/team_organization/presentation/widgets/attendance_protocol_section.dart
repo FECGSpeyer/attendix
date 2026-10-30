@@ -10,8 +10,8 @@ import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // PARITY_R9
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
 import '../../../../core/services/error_reporter.dart';

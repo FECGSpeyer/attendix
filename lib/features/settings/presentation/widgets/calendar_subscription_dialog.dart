@@ -9,7 +9,7 @@ import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// iCal feed URL of the Supabase edge function `ical-tenant`
 /// (Ionic settings `openCalendarSubscription()`).

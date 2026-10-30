@@ -7,7 +7,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_select.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_THEME2
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Editor for the "Anmeldefelder" of an attendance type
 /// (Ionic `type.page.html` registration_fields section).
@@ -111,7 +111,7 @@ class _RegistrationFieldsEditorState extends State<RegistrationFieldsEditor> {
         ),
         const SizedBox(height: 8),
         AppDropdownFormField<String>(
-          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+          iosInterface: AppSelectInterface.alert,
           value: _type,
           decoration: InputDecoration(labelText: context.l10n.typeSettingsType, border: const OutlineInputBorder()),
           items: [

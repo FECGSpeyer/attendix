@@ -11,11 +11,11 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/role_permission/tenant_role_permission.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../widgets/ion_condense.dart';
+import '../widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
 List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
@@ -169,7 +169,7 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
               padding: EdgeInsets.fromLTRB(
                   ionListMargin(context), ios ? 0 : AppDimensions.paddingM, ionListMargin(context), 96),
               children: [
-                const IonContentTopInset(), // IOS_R6
+                const IonContentTopInset(),
                 IonLargeTitle(context.l10n.rolePermTitle, padding: const EdgeInsets.only(bottom: 4)),
                 if (ios) const SizedBox(height: 16),
                 if (ios)

@@ -8,7 +8,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Bottom sheet for creating or editing a critical rule
 class CriticalRuleSheet extends StatefulWidget {
@@ -232,7 +232,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
               children: [
                 Expanded(
                   child: AppDropdownFormField<CriticalRuleThresholdType>(
-                    iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                    iosInterface: AppSelectInterface.alert,
                     value: _thresholdType,
                     decoration: InputDecoration(
                       labelText: context.l10n.generalSettingsThresholdType,
@@ -271,7 +271,7 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
 
             // Period type
             AppDropdownFormField<CriticalRulePeriodType>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: _periodType,
               decoration: InputDecoration(
                 labelText: context.l10n.generalSettingsPeriodType,

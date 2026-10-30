@@ -8,7 +8,7 @@ import '../../../../core/utils/duty_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 
 /// Shared UI actions of the Dienstplan (confirm / decline / take).

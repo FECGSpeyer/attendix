@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/group_providers.dart'; // P10_ATTENDANCE
+import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/plan_providers.dart';
-import '../../../../../core/providers/song_providers.dart'; // P10_ATTENDANCE
-import '../../../../../core/providers/tenant_providers.dart'; // P10_ATTENDANCE
-import '../../../../../core/providers/team_org_providers.dart'; // PROTOCOL
+import '../../../../../core/providers/song_providers.dart';
+import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/providers/team_org_providers.dart';
 import '../../../../../core/services/plan_export_service.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/plan_utils.dart';
@@ -14,8 +14,8 @@ import '../../../../../data/models/plan/plan.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
-import '../../../../songs/presentation/utils/song_utils.dart'; // P10_ATTENDANCE
-import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
+import '../../../../songs/presentation/utils/song_utils.dart';
+import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
 import '../../../../../core/services/error_reporter.dart';

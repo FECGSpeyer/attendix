@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 
 /// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
 /// the auth / registration / tenant / profile screens.

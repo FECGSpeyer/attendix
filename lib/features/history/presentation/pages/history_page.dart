@@ -12,15 +12,15 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
-import '../../../../data/models/person/person.dart'; // P10_ATTENDANCE
+import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../attendance/presentation/widgets/ios_condense_header.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// IOS_FORMS2: Ionic opens the Werkhistorie with
 /// `modalController.create({ component: HistoryPage, presentingElement })`,
@@ -341,7 +341,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       Expanded(child: Text(l10n.attListConductor, style: const TextStyle(fontSize: 17))),
                       DropdownButtonHideUnderline(
                         child: AppDropdownButton<int>(
-                          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                          iosInterface: AppSelectInterface.alert,
                           value: otherConductor != null ? -1 : selectedConductorId,
                           alignment: AlignmentDirectional.centerEnd,
                           items: [

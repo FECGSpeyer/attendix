@@ -10,7 +10,7 @@ import '../../../../../data/models/person/person.dart';
 import '../ion/ion_widgets.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Accordion section displaying account information.
 class AccountAccordion extends ConsumerWidget {
@@ -242,7 +242,7 @@ class AccountAccordion extends ConsumerWidget {
         ),
         const SizedBox(height: AppDimensions.paddingXS),
         AppDropdownFormField<Role>(
-          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+          iosInterface: AppSelectInterface.alert,
           value: currentRole,
           decoration: const InputDecoration(
             border: OutlineInputBorder(),

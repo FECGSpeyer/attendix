@@ -3,18 +3,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/supabase_config.dart';
-import '../providers/user_preferences_provider.dart' show userPreferencesProvider; // NAV_REPLACE
+import '../providers/user_preferences_provider.dart' show userPreferencesProvider;
 import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';
-import '../providers/role_permission_providers.dart'; // SOL_FIX2
+import '../providers/role_permission_providers.dart';
 import 'page_transitions.dart';
 import 'tracking_observer.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent; // MISC2
-import '../services/tracking/tracking_event.dart'; // MISC2
-import '../services/tracking/tracking_service.dart'; // MISC2
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
+import '../services/tracking/tracking_event.dart';
+import '../services/tracking/tracking_service.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/auth/presentation/pages/new_password_page.dart'; // AUTH
+import '../../features/auth/presentation/pages/new_password_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_selection_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
@@ -43,7 +43,7 @@ import '../../features/songs/presentation/pages/song_create_page.dart';
 import '../../features/songs/presentation/pages/song_edit_page.dart';
 import '../../features/instruments/presentation/pages/instruments_list_page.dart';
 import '../../features/self_service/presentation/pages/self_service_overview_page.dart';
-import '../../features/self_service/presentation/pages/signout_page.dart'; // ATTENDANCE_SIGNOUT
+import '../../features/self_service/presentation/pages/signout_page.dart';
 import '../../features/statistics/presentation/pages/statistics_page.dart';
 import '../../features/planning/presentation/pages/planning_page.dart';
 import '../../features/history/presentation/pages/history_page.dart';
@@ -59,7 +59,6 @@ import '../../features/registration/presentation/pages/tenant_registration_page.
 import '../../features/parents/presentation/pages/parents_portal_page.dart';
 import '../../features/shifts/presentation/pages/shifts_list_page.dart';
 import '../../features/shifts/presentation/pages/shift_detail_page.dart';
-// LEGAL_HELP
 import '../../data/repositories/account_repository.dart';
 import '../../features/legal/presentation/pages/legal_page.dart';
 import '../../features/legal/presentation/pages/terms_page.dart';
@@ -67,29 +66,23 @@ import '../../features/help/presentation/pages/help_page.dart';
 import '../../features/help/presentation/pages/help_article_page.dart';
 import '../../features/help/presentation/pages/help_glossary_page.dart';
 import '../../features/settings/presentation/pages/delete_account_page.dart';
-// SETTINGS_EXT
 import '../../features/settings/presentation/pages/files_page.dart';
 import '../../features/settings/presentation/pages/role_permissions_page.dart';
 import '../../features/settings/presentation/pages/extra_fields_page.dart';
 import '../../features/settings/presentation/pages/branding_page.dart';
 import '../../features/settings/presentation/pages/link_persons_page.dart';
 // END SETTINGS_EXT
-// MESSAGES
 import '../../features/messages/presentation/pages/message_detail_page.dart';
 import '../../features/messages/presentation/pages/message_list_page.dart';
-// DASHBOARD
 import '../providers/dashboard_providers.dart';
 import '../../features/dashboard/presentation/pages/home_dashboard_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_settings_page.dart';
 import '../../features/dashboard/presentation/pages/administration_page.dart';
 import '../../features/dashboard/presentation/pages/usage_dashboard_page.dart';
-// PEOPLE_IMPORT
 import '../../features/settings/presentation/pages/handover_page.dart';
 import '../../features/settings/presentation/pages/handover_detail_page.dart';
-// SONGS
 import '../../features/public_links/presentation/pages/app_redirect_page.dart';
 import '../../features/public_links/presentation/pages/open_file_page.dart';
-// ORG_PLANS
 import '../../features/organisation/presentation/pages/org_person_fields_page.dart';
 import '../../features/organisation/presentation/pages/org_plan_public_page.dart';
 import '../../features/organisation/presentation/pages/org_planning_templates_page.dart';
@@ -99,12 +92,11 @@ import '../../features/planning/presentation/pages/open_attendance_page.dart';
 import '../../features/planning/presentation/pages/public_planning_page.dart';
 import '../../features/planning/presentation/pages/shared_plan_page.dart';
 // ORG_PLANS end
-// LINKS_STARTUP
 import '../../features/deep_links/presentation/pages/open_link_page.dart';
 import '../../shared/widgets/dialogs/native_app_ad.dart';
 import 'legacy_routes.dart';
-import 'attendance_detail_guard.dart'; // LEFTOVERS
-import 'route_access.dart'; // PARITY_R7
+import 'attendance_detail_guard.dart';
+import 'route_access.dart';
 import '../../l10n/l10n.dart';
 import '../../shared/widgets/adaptive/ion_button_label.dart';
 // REDESIGN: new design (Beta)
@@ -135,7 +127,7 @@ import '../../features/redesign/presentation/widgets/rd_split_view.dart';
 class AuthChangeNotifier extends ChangeNotifier {
   AuthChangeNotifier(this._ref) {
     _ref.listen(authStateProvider, (_, next) {
-      if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(trackingServiceProvider).track(TrackingEvent.login); // MISC2
+      if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(trackingServiceProvider).track(TrackingEvent.login);
       // LINKS_STARTUP: Ionic shows the native app ad after SIGNED_IN
       if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(nativeAppAdPendingProvider.notifier).state = true;
       notifyListeners();
@@ -166,13 +158,10 @@ const Map<String, RoleCheck> _protectedRoutes = {
   '/settings/shifts': _isAdminOrResponsible,
   '/settings/pending': _isAdminOrResponsible,
   '/settings/left': _isAdminOrResponsible,
-  // SETTINGS_EXT
   '/settings/role-permissions': _isAdminOrResponsible,
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
-  // MESSAGES
   '/settings/messages': _isAdminOrResponsible,
-  // PEOPLE_IMPORT
   '/settings/handover': _isAdminOrResponsible,
   // ORG_PLANS: Ablaufplanung & Organisation (Ionic: admin/responsible)
   '/settings/planung': _isAdminOrResponsible,
@@ -190,7 +179,6 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // Attendance management
   '/attendance': _canSeeAttendanceTab,
 
-  // DASHBOARD (Ionic Utils.isUrlAccessAllowed: Admin/Responsible)
   '/home-dashboard': _isAdminOrResponsible,
   '/settings/dashboard': _isAdminOrResponsible,
   // SETTINGS2: optional "Org" tab (Ionic: Admin/Responsible)
@@ -222,7 +210,7 @@ String? roleRouteRedirect(
   final attendanceDetailTarget = attendanceDetailRedirect(
     location,
     role,
-    canCreate: canCreateAttendance, // SOL_FIX2
+    canCreate: canCreateAttendance,
   );
   if (attendanceDetailTarget != null) return attendanceDetailTarget;
   // END LEFTOVERS
@@ -366,7 +354,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         final isTermsRoute = state.matchedLocation == '/terms';
         if (!termsAccepted && !isTermsRoute) return '/terms';
         if (termsAccepted && isTermsRoute) {
-          return PendingFileLink.consume() ?? '/tenants'; // REVIEW_FIX2
+          return PendingFileLink.consume() ?? '/tenants';
         }
         if (isTermsRoute) return null;
       } else if (state.matchedLocation == '/terms') {
@@ -401,7 +389,7 @@ final routerProvider = Provider<GoRouter>((ref) {
               return '/tenants';
             }
           }
-          if (isRoleGatedRoute(location)) return '/tenants'; // PARITY_R7
+          if (isRoleGatedRoute(location)) return '/tenants';
         }
 
         final role = ref.read(currentRoleProvider);
@@ -425,7 +413,7 @@ final routerProvider = Provider<GoRouter>((ref) {
           location,
           state.uri,
           role,
-          canCreateAttendance: ref.read(canCreateAttendanceProvider), // SOL_FIX2
+          canCreateAttendance: ref.read(canCreateAttendanceProvider),
           tenant: RouteAccessTenant(
             type: tenant?.type,
             showMembersList: tenant?.showMembersList,
@@ -1124,7 +1112,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'deleteAccount',
                 builder: (context, state) => const DeleteAccountPage(),
               ),
-              // SETTINGS_EXT
               GoRoute(
                 path: 'files',
                 name: 'files',
@@ -1154,7 +1141,6 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const LinkPersonsPage(),
               ),
               // END SETTINGS_EXT
-              // DASHBOARD
               GoRoute(
                 path: 'dashboard',
                 name: 'dashboardSettings',

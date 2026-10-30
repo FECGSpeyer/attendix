@@ -7,7 +7,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/organisation_providers.dart';
-import '../../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
+import '../../../../core/providers/optional_tabs_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -16,12 +16,12 @@ import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab; // PARITY_R7
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab;
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -244,7 +244,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           // ion-content padding-bottom), like the other tab root pages.
           padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16)),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             IonLargeTitle(context.l10n.plansOrgPlans),
             if (orgAsync.isLoading)
               const Padding(padding: EdgeInsets.all(24), child: Center(child: AppSpinner()))

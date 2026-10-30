@@ -14,7 +14,7 @@ import 'song_options_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// "Aktuelle Werke" sheet (Ionic signout songsModal): one inset list per
 /// Termin, rows "Nr. Name" / "Dirigent: …", red rows when there are no notes

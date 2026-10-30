@@ -11,8 +11,8 @@ import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
-import 'native/native_file_service.dart'; // NATIVE_MISC
-import 'pdf_branding.dart'; // ASTRA_EXPORT
+import 'native/native_file_service.dart';
+import 'pdf_branding.dart';
 
 /// Font size (pt) and cell padding (mm) of one auto-fit step of the
 /// player / attendance list PDF (Ionic jspdf-autotable styles).
@@ -74,7 +74,7 @@ class ExportService {
       valueOf: valueOf,
     );
     await NativeFileService.saveBytes(
-        bytes, '${l10nWithoutContext.exportPlayerListFile(tenantName, date)}.pdf'); // NATIVE_MISC
+        bytes, '${l10nWithoutContext.exportPlayerListFile(tenantName, date)}.pdf');
   }
 
   /// Builds the player list PDF: tenant letterhead (logo + branding text,
@@ -171,7 +171,7 @@ class ExportService {
       valueOf: valueOf,
     );
     await NativeFileService.saveBytes(
-        bytes, '${l10nWithoutContext.exportAttendanceFileAsOf(tenantName, date)}.pdf'); // NATIVE_MISC
+        bytes, '${l10nWithoutContext.exportAttendanceFileAsOf(tenantName, date)}.pdf');
   }
 
   /// Builds the attendance list PDF with the same letterhead as the player
@@ -725,7 +725,7 @@ class ExportService {
     final bytes = Uint8List.fromList(excel.encode()!);
     final fileName = '${tenantName}_${l10n.exportAttendance}_$dateStr.xlsx';
 
-    await NativeFileService.saveBytes(bytes, fileName); // NATIVE_MISC
+    await NativeFileService.saveBytes(bytes, fileName);
   }
 
   /// Generate plan/program PDF in 2xA5 format (two identical plans side-by-side on A4 landscape)

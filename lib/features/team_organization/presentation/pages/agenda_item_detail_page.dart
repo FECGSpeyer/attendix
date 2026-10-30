@@ -18,8 +18,8 @@ import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
 import '../../../../core/services/error_reporter.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How many upcoming Termine "Einplanen" offers.
 const int _planChoices = 6;

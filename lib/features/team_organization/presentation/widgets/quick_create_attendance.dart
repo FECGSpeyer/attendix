@@ -23,7 +23,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Protocol-enabled, visible types a Termin can be created for ad hoc
 /// (Ionic `protocolAttendanceTypes`), ordered by index.

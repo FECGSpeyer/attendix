@@ -5,7 +5,7 @@ import '../../../../data/models/shift/shift_instance.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Shows the Ionic "calculate shifts" modal (full height sheet, close button
 /// at the end, plain list "Berechnete Schichten").
@@ -108,7 +108,7 @@ class ShiftPreviewSheet extends StatelessWidget {
     return Column(
       children: [
         AppBar(
-          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+          toolbarHeight: ionModalToolbarHeight(context),
           automaticallyImplyLeading: false,
           primary: false,
           actions: [

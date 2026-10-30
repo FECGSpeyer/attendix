@@ -8,7 +8,7 @@ import '../../data/repositories/repositories.dart';
 import 'attendance_type_providers.dart';
 import 'realtime_providers.dart';
 import 'tenant_providers.dart';
-import 'role_permission_providers.dart'; // SOL_FIX2
+import 'role_permission_providers.dart';
 import '../../l10n/l10n.dart';
 
 /// Initialized attendance repository with tenant context
@@ -60,7 +60,6 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
   return repo.getPersonAttendancesForPerson(personId);
 });
 
-// ATT_DETAIL
 /// Termintyp filter of the attendance list (Ionic att-list `filterTypeId`).
 /// `null` = "Alle anzeigen".
 /// Reset on tenant switch (type ids are tenant specific).

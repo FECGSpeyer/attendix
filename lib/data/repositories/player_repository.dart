@@ -3,8 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
-import '../../core/constants/table_names.dart' show SupabaseBuckets; // ASTRA_PHOTO
-import '../../core/utils/profile_image_path.dart'; // ASTRA_PHOTO
+import '../../core/constants/table_names.dart' show SupabaseBuckets;
+import '../../core/utils/profile_image_path.dart';
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
 import '../models/shift/shift_plan.dart';
@@ -12,7 +12,7 @@ import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../../core/utils/db_helpers.dart';
-import '../../core/utils/paged_query.dart'; // SOL_FIX4
+import '../../core/utils/paged_query.dart';
 import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';

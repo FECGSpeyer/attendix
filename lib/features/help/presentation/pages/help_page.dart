@@ -1,4 +1,4 @@
-import 'package:flutter/cupertino.dart' show CupertinoIcons; // PARITY_R7
+import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -7,9 +7,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../../data/help_models.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Help center overview: search, glossary entry and topic accordions.
 ///
@@ -89,7 +89,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     return ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
-        const IonContentTopInset(), // IOS_R6
+        const IonContentTopInset(),
         SettingsListSection(
           children: [
             if (results.isEmpty)
@@ -121,7 +121,7 @@ class _HelpPageState extends ConsumerState<HelpPage> {
     return ListView(
       padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
       children: [
-        const IonContentTopInset(), // IOS_R6
+        const IonContentTopInset(),
         SettingsListSection(
           title: context.l10n.helpLookup,
           children: [

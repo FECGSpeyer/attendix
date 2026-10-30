@@ -9,7 +9,7 @@ import 'group_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
 import '../services/offline_list_cache.dart';
-import 'user_registration_providers.dart'; // AUTH
+import 'user_registration_providers.dart';
 
 /// Initialized player repository with tenant context
 /// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
@@ -210,7 +210,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await repo.approvePlayer(player);
-      await _notifyApproval(registration, player); // AUTH
+      await _notifyApproval(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -227,7 +227,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await repo.declinePlayer(player, reason);
-      await _notifyReject(registration, player); // AUTH
+      await _notifyReject(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);

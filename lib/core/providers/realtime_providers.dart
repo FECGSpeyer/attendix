@@ -19,7 +19,7 @@ import 'attendance_type_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
 import 'group_providers.dart';
-import '../utils/paged_query.dart'; // SOL_FIX1
+import '../utils/paged_query.dart';
 
 // Keep alive counter: incrementing forces providers watching it to refetch.
 final attendanceRefetchCounter = StateProvider<int>((ref) => 0);

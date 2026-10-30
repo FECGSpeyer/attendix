@@ -14,7 +14,7 @@ import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
@@ -30,7 +30,7 @@ import '../widgets/handover_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
-import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../core/utils/demo_guard.dart';
@@ -39,9 +39,9 @@ import '../../../../core/utils/error_message.dart';
 import '../../person_stats.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Provider for single person with group name
 final personProvider =

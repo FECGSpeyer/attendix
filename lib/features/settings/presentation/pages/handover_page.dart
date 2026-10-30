@@ -13,11 +13,11 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/ion_condense.dart'; // IOS_R6
-import '../widgets/settings_list.dart' show ionIsIos; // IOS_R6
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../widgets/ion_condense.dart';
+import '../widgets/settings_list.dart' show ionIsIos;
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Data handed from the handover page to the detail page
 /// (Ionic: DataService.setHandoverData).
@@ -153,8 +153,8 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, ionIsIos(context) ? 0 : AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: 16, fabRoom: 84)), // IOS_R6: large title on top
         children: [
-          const IonContentTopInset(), // IOS_R6
-          IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)), // IOS_R6
+          const IonContentTopInset(),
+          IonLargeTitle(context.l10n.handoverTitle, padding: const EdgeInsets.only(bottom: 4)),
           Card(
             child: Padding(
               padding: const EdgeInsets.all(AppDimensions.paddingM),
@@ -192,7 +192,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     vertical: AppDimensions.paddingS,
                   ),
                   child: AppDropdownFormField<int>(
-                    iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                    iosInterface: AppSelectInterface.alert,
                     // ignore: deprecated_member_use
                     value: _targetTenantId,
                     isExpanded: true,
@@ -239,7 +239,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                       children: [
                         Expanded(
                           child: AppDropdownFormField<int>(
-                            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                            iosInterface: AppSelectInterface.alert,
                             // ignore: deprecated_member_use
                             value: _groupId,
                             isExpanded: true,

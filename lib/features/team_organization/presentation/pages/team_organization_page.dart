@@ -7,7 +7,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/protocols_tab.dart';
 import '../widgets/tasks_tab.dart';
 import '../widgets/topics_tab.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground; // PARITY_R5
+import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 
 /// Teamorganisation: one page for leadership and members. RLS decides what
 /// each person sees; the tabs only change their actions.

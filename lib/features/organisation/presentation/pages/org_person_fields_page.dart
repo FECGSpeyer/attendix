@@ -10,11 +10,11 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
@@ -180,7 +180,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
               ? ListView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24)),
                   children: [
-                    const IonContentTopInset(), // IOS_R6
+                    const IonContentTopInset(),
                     IonLargeTitle(context.l10n.orgPersonFields, padding: const EdgeInsets.only(bottom: 4)),
                     const SizedBox(height: 16),
                     SettingsListSection(
@@ -351,7 +351,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 )
               else
                 AppDropdownFormField<String>(
-                  iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                  iosInterface: AppSelectInterface.alert,
                   value: _type,
                   decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
@@ -365,7 +365,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               ),
               AppDropdownFormField<String>(
-                iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                iosInterface: AppSelectInterface.alert,
                 value: _displayMode,
                 decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                 items: [

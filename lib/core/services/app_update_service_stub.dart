@@ -2,8 +2,8 @@ import 'dart:async';
 
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import 'native/native_platform.dart'; // NATIVE_MISC
-import 'native/store_update_service.dart'; // NATIVE_MISC
+import 'native/native_platform.dart';
+import 'native/store_update_service.dart';
 
 /// Provider for app update availability state
 final appUpdateAvailableProvider = StateProvider<bool>((ref) => false);

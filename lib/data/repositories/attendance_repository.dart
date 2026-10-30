@@ -801,7 +801,6 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   }
 
   // Helper to parse attendance with optional person attendances
-  // STATS_PEOPLE_FIXES
   /// Load person_attendances for the given attendance ids (export).
   ///
   /// Multi-tenant safety: `person_attendances` has no `tenantId` column, so

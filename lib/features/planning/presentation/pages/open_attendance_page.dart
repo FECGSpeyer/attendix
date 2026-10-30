@@ -8,7 +8,7 @@ import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/error_reporter.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Resolver for appointment deep links of reminder mails / Telegram messages
 /// (`/open-attendance?id=42&tenantId=7`, Ionic `OpenAttendancePage`).

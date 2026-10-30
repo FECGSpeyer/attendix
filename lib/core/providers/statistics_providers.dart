@@ -11,9 +11,9 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
-import 'group_providers.dart'; // LOGIC_SETTINGS
+import 'group_providers.dart';
 import 'tenant_providers.dart';
-import '../utils/paged_query.dart'; // SOL_FIX1
+import '../utils/paged_query.dart';
 
 /// Date range for statistics filtering
 class StatisticsDateRange {

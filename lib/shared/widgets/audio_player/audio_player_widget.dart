@@ -26,7 +26,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
     if (!state.hasFile) return const SizedBox.shrink();
 
     final svc = ref.read(audioPlayerServiceProvider.notifier);
-    final queue = ref.watch(audioQueueInfoProvider); // INTEGRATION
+    final queue = ref.watch(audioQueueInfoProvider);
     final maxMs =
         state.duration.inMilliseconds.toDouble().clamp(1.0, double.infinity);
     final value = _dragValueMs ?? state.currentTime.inMilliseconds.toDouble();
