@@ -129,6 +129,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final p = context.rd;
     final l10n = context.l10n;
     ref.watch(songsRealtimeProvider);
+    // Every copy of the list shows the shared search text (e.g. back from
+    // the split view after searching there).
+    ref.listen(rdWorksQueryProvider, (_, next) {
+      if (_search.text != next) _search.text = next;
+    });
     ref.watch(rdWorksQueryProvider);
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;

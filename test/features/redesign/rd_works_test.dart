@@ -143,13 +143,18 @@ List<Override> _common(Role role) => [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     ];
 
-Widget _worksApp(Role role, {List<Song>? songs}) {
+Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false}) {
   final router = GoRouter(
     initialLocation: '/werke',
     routes: [
       GoRoute(
         path: '/werke',
-        builder: (_, __) => const RdWorksPage(),
+        builder: (_, __) => twoLists
+            ? const Row(children: [
+                Expanded(child: RdWorksPage(key: ValueKey('first'))),
+                Expanded(child: RdWorksPage(key: ValueKey('second'))),
+              ])
+            : const RdWorksPage(),
         routes: [
           GoRoute(path: ':id', builder: (_, s) => Scaffold(body: Text('page work ${s.pathParameters['id']}'))),
         ],
@@ -332,30 +337,24 @@ void main() {
       expect(find.text('Kein Werk passt zur Suche.'), findsOneWidget);
     });
 
-    testWidgets('the search survives a new copy of the list (split view)', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(_worksApp(Role.player));
+    testWidgets('the search is shared by every copy of the list (split view, back)', (tester) async {
+      tester.view.physicalSize = const Size(1200, 900);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_worksApp(Role.player, twoLists: true));
       await _settle(tester);
-      await tester.enterText(find.byType(TextField), 'mozart');
-      await _settle(tester);
-      final container = ProviderScope.containerOf(tester.element(find.byType(RdWorksPage)));
-      expect(container.read(rdWorksQueryProvider), 'mozart');
 
-      // A second list (as the split builds on the first opened Werk).
-      await tester.pumpWidget(UncontrolledProviderScope(
-        container: container,
-        child: MaterialApp(
-          locale: const Locale('de'),
-          localizationsDelegates: AppLocalizations.localizationsDelegates,
-          supportedLocales: AppLocalizations.supportedLocales,
-          theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
-          home: const RdWorksPage(key: ValueKey('second')),
-        ),
-      ));
+      await tester.enterText(find.byType(TextField).first, 'mozart');
       await _settle(tester);
-      expect(find.widgetWithText(TextField, 'mozart'), findsOneWidget);
-      expect(find.text('Ave verum corpus'), findsOneWidget);
+      expect(find.widgetWithText(TextField, 'mozart'), findsNWidgets(2));
       expect(find.text('Abendlied'), findsNothing);
+
+      // Changed in the other copy: the first one follows (text and filter).
+      await tester.enterText(find.byType(TextField).last, 'abend');
+      await _settle(tester);
+      expect(find.widgetWithText(TextField, 'abend'), findsNWidgets(2));
+      expect(find.text('Abendlied'), findsNWidgets(2));
+      expect(find.text('Ave verum corpus'), findsNothing);
     });
 
     testWidgets('a row and a current card open the work', (tester) async {
