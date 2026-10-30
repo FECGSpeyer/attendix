@@ -4,12 +4,14 @@ import 'dart:io';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/router/redesign_routes.dart';
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
+import 'package:attendix/core/services/song_file_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
@@ -84,6 +86,35 @@ final _groups = [
 ];
 
 const _pdf = 'application/pdf';
+
+/// Only the download is used by "teilen".
+class _BytesFiles implements SongFileService {
+  _BytesFiles(this.bytes);
+
+  final Uint8List? bytes;
+  final downloads = <String>[];
+
+  @override
+  Future<Uint8List?> downloadFileBytes(String url) async {
+    downloads.add(url);
+    return bytes;
+  }
+
+  @override
+  dynamic noSuchMethod(Invocation invocation) => super.noSuchMethod(invocation);
+}
+
+/// Records the calls on the share_plus channel.
+List<MethodCall> _mockShare(WidgetTester tester) {
+  const channel = MethodChannel('dev.fluttercommunity.plus/share');
+  final calls = <MethodCall>[];
+  tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, (call) async {
+    calls.add(call);
+    return 'net.whatsapp.WhatsApp.ShareExtension';
+  });
+  addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(channel, null));
+  return calls;
+}
 
 final _ouverture = Song(
   id: 5,
@@ -184,7 +215,13 @@ Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false}) {
   );
 }
 
-Widget _workApp(Role role, {Song? song, int? instrument = 11, _FakePlayer? player}) {
+Widget _workApp(
+  Role role, {
+  Song? song,
+  int? instrument = 11,
+  _FakePlayer? player,
+  List<Override> overrides = const [],
+}) {
   final router = GoRouter(
     initialLocation: '/werke/5',
     routes: [
@@ -222,6 +259,7 @@ Widget _workApp(Role role, {Song? song, int? instrument = 11, _FakePlayer? playe
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: instrument),
       ),
+      ...overrides,
     ],
     child: _material(router),
   );
@@ -501,6 +539,77 @@ void main() {
       await tester.tap(find.byTooltip('Teilen'));
       await _settle(tester);
       expect(copied, SongUtils.shareLink('abc', 5));
+    });
+
+    testWidgets('your part: teilen sends the file itself', (tester) async {
+      _phone(tester);
+      final calls = _mockShare(tester);
+      final temp = Directory.systemTemp.createTempSync('rd_share');
+      addTearDown(() => temp.deleteSync(recursive: true));
+      const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(pathChannel, (call) async => temp.path);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(pathChannel, null));
+      final files = _BytesFiles(Uint8List.fromList([1, 2, 3]));
+      await tester.pumpWidget(_workApp(
+        Role.player,
+        song: _ouverture,
+        overrides: [songFileServiceProvider.overrideWithValue(files)],
+      ));
+      await _settle(tester);
+
+      await tester.runAsync(() async {
+        await tester.tap(find.byTooltip('Klarinette teilen'));
+        for (var i = 0; i < 20 && calls.isEmpty; i++) {
+          await Future<void>.delayed(const Duration(milliseconds: 50));
+        }
+      });
+      await _settle(tester);
+      expect(files.downloads, ['https://x/klar.pdf']);
+      expect(calls.single.method, 'shareFiles');
+      final args = Map<String, dynamic>.from(calls.single.arguments as Map);
+      expect(args['subject'], 'Festliche Ouvertüre · Klarinette');
+      expect((args['paths'] as List).single, endsWith('klar.pdf'));
+      expect(args['mimeTypes'], ['application/pdf']);
+    });
+
+    testWidgets('a part that cannot be downloaded: its link is shared', (tester) async {
+      _phone(tester);
+      final calls = _mockShare(tester);
+      await tester.pumpWidget(_workApp(
+        Role.player,
+        song: _ouverture,
+        overrides: [songFileServiceProvider.overrideWithValue(_BytesFiles(null))],
+      ));
+      await _settle(tester);
+
+      await tester.tap(find.text('Alle Stimmen'));
+      await _settle(tester);
+      await tester.tap(find.byTooltip('Flöte teilen'));
+      await _settle(tester);
+      expect(calls.single.method, 'share');
+      final args = Map<String, dynamic>.from(calls.single.arguments as Map);
+      expect(args['text'], 'Festliche Ouvertüre · Flöte\nhttps://x/floete.pdf');
+    });
+
+    testWidgets('players do not get Gruppen-PDFs drucken', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
+      await _settle(tester);
+      expect(find.text('Gruppen-PDFs drucken'), findsNothing);
+    });
+
+    testWidgets('admin: Gruppen-PDFs drucken asks for the copies', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_workApp(
+        Role.admin,
+        song: _ouverture,
+        overrides: [playerCountByInstrumentProvider.overrideWith((ref) async => {11: 4, 12: 2})],
+      ));
+      await _settle(tester);
+      await tester.tap(find.text('Gruppen-PDFs drucken'));
+      await _settle(tester);
+      expect(find.text('Druckoptionen'), findsOneWidget);
+      expect(find.text('Wie viele Ausdrucke pro Gruppe?'), findsOneWidget);
     });
 
     testWidgets('admin: Bearbeiten opens the existing page', (tester) async {

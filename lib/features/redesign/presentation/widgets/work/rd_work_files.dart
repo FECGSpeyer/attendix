@@ -29,6 +29,7 @@ import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
 import '../../../data/rd_works_logic.dart';
+import '../../rd_actions.dart';
 import '../rd_widgets.dart';
 
 /// REDESIGN: desktop file workspace of a Werk (shown on wide screens to
@@ -594,10 +595,18 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                           onToggle: (v) => _toggle(file, v),
                           onCategory: (c) => _setCategory(file, c),
                           onRenameDone: (save) => _endRename(save: save),
-                          onAction: (action) {
+                          onAction: (action, row) {
                             switch (action) {
                               case _RowAction.open:
                                 _open(file);
+                              case _RowAction.share:
+                                rdShareSongFile(
+                                  row,
+                                  ref,
+                                  file,
+                                  subject: '${widget.data.song.name} · ${SongUtils.fileLabel(file, widget.groups)}',
+                                  copiedMessage: l10n.songsLinkCopied,
+                                );
                               case _RowAction.download:
                                 _download([file]);
                               case _RowAction.rename:
@@ -727,7 +736,7 @@ class _HeaderRow extends StatelessWidget {
   }
 }
 
-enum _RowAction { open, download, rename, delete }
+enum _RowAction { open, share, download, rename, delete }
 
 class _FileRow extends StatelessWidget {
   const _FileRow({
@@ -767,7 +776,8 @@ class _FileRow extends StatelessWidget {
   /// null: "Sonstige …" (free text).
   final ValueChanged<_Category?> onCategory;
   final ValueChanged<bool> onRenameDone;
-  final ValueChanged<_RowAction> onAction;
+  /// The row's context comes along as anchor for the share sheet.
+  final void Function(_RowAction action, BuildContext row) onAction;
 
   @override
   Widget build(BuildContext context) {
@@ -834,10 +844,11 @@ class _FileRow extends StatelessWidget {
                   child: PopupMenuButton<_RowAction>(
                     tooltip: l10n.redesignFilesActions(file.fileName),
                     icon: Icon(Icons.more_horiz, color: p.text2),
-                    onSelected: onAction,
+                    onSelected: (action) => onAction(action, context),
                     itemBuilder:
                         (_) => [
                           _menuItem(_RowAction.open, Icons.open_in_new, l10n.redesignFilesOpen),
+                          _menuItem(_RowAction.share, Icons.ios_share, l10n.redesignWorkShare),
                           _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
                           if (rdCanRename(file))
                             _menuItem(_RowAction.rename, Icons.drive_file_rename_outline, l10n.redesignFilesRename),

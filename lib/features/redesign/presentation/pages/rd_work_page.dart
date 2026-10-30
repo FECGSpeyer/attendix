@@ -16,6 +16,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
+import '../../../songs/presentation/widgets/group_pdf_print.dart';
 import '../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../data/rd_works_logic.dart';
 import '../rd_actions.dart';
@@ -28,7 +29,9 @@ import '../widgets/work/rd_work_files.dart';
 
 /// REDESIGN: a work (canvas "WerkDetail"): your part to open, the
 /// recording with 0,8× to practise along, all parts, score, link, last
-/// played. "Bearbeiten" (fields, history) opens the existing page. On wide
+/// played. Every part can be shared (the file itself through the share
+/// sheet), and editors print the group PDFs right here. "Bearbeiten"
+/// (fields, history) opens the existing page. On wide
 /// screens people who may edit the Werk get the file workspace
 /// ([RdWorkFiles]): table, drag and drop, upload queue, ZIP and keys.
 class RdWorkPage extends ConsumerWidget {
@@ -119,6 +122,12 @@ class RdWorkPage extends ConsumerWidget {
     ].join(' · ');
 
     final rows = <Widget>[
+      if (!data.readOnly && !data.isPublic && hasGroupPdfs(files))
+        RdListRow(
+          leading: RdRowIcon(Icons.print_outlined, color: p.softText, background: p.soft),
+          title: l10n.songsPrintGroupPdfs,
+          onTap: () => printGroupPdfs(context: context, ref: ref, song: song, files: files, groups: groups),
+        ),
       if (!workspace && files.isNotEmpty && lead != RdWorkLead.allParts)
         RdListRow(
           title: hasGroupFiles ? l10n.redesignWorkAllParts : l10n.redesignWorkAllFiles,
@@ -188,6 +197,13 @@ class RdWorkPage extends ConsumerWidget {
                 detail: [rdFileKind(part.first), if (part.length > 1) l10n.redesignWorkFileCount(part.length)]
                     .join(' · '),
                 onOpen: () => openSongFile(context, part.first),
+                onShare: (button) => rdShareSongFile(
+                  button,
+                  ref,
+                  part.first,
+                  subject: '${song.name} · ${SongUtils.fileLabel(part.first, groups)}',
+                  copiedMessage: l10n.songsLinkCopied,
+                ),
               ),
               const SizedBox(height: 12),
             ],
@@ -197,6 +213,13 @@ class RdWorkPage extends ConsumerWidget {
                 title: score!.fileName,
                 detail: rdFileKind(score),
                 onOpen: () => openSongFile(context, score),
+                onShare: (button) => rdShareSongFile(
+                  button,
+                  ref,
+                  score,
+                  subject: '${song.name} · ${l10n.redesignWorkScore}',
+                  copiedMessage: l10n.songsLinkCopied,
+                ),
               ),
               const SizedBox(height: 12),
             ],
@@ -316,6 +339,20 @@ class RdWorkPage extends ConsumerWidget {
                     title: SongUtils.fileLabel(f, groups),
                     subtitle: f.fileName,
                     value: rdFileKind(f),
+                    showChevron: false,
+                    trailing: Builder(
+                      builder: (button) => IconButton(
+                        tooltip: sheet.l10n.redesignWorkShareFile(SongUtils.fileLabel(f, groups)),
+                        icon: Icon(Icons.ios_share, color: p.link),
+                        onPressed: () => rdShareSongFile(
+                          button,
+                          ref,
+                          f,
+                          subject: '${song.name} · ${SongUtils.fileLabel(f, groups)}',
+                          copiedMessage: sheet.l10n.songsLinkCopied,
+                        ),
+                      ),
+                    ),
                     onTap: () {
                       Navigator.of(sheet).pop();
                       if (SongUtils.isAudio(f)) {
@@ -337,12 +374,21 @@ class RdWorkPage extends ConsumerWidget {
 /// The top card with "Öffnen": "Deine Stimme" (the person's part), or for
 /// conductors the score or all parts.
 class _PartCard extends StatelessWidget {
-  const _PartCard({required this.eyebrow, required this.title, required this.detail, required this.onOpen});
+  const _PartCard({
+    required this.eyebrow,
+    required this.title,
+    required this.detail,
+    required this.onOpen,
+    this.onShare,
+  });
 
   final String eyebrow;
   final String title;
   final String detail;
   final VoidCallback onOpen;
+
+  /// Shares the file; gets the button as anchor for the share sheet.
+  final void Function(BuildContext button)? onShare;
 
   @override
   Widget build(BuildContext context) {
@@ -386,6 +432,14 @@ class _PartCard extends StatelessWidget {
             ),
           ),
           const SizedBox(width: 8),
+          if (onShare != null)
+            Builder(
+              builder: (button) => IconButton(
+                tooltip: l10n.redesignWorkShareFile(title),
+                icon: Icon(Icons.ios_share, color: p.link),
+                onPressed: () => onShare!(button),
+              ),
+            ),
           FilledButton(
             style: FilledButton.styleFrom(
               backgroundColor: p.primary,
