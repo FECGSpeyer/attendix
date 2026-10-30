@@ -11229,6 +11229,10 @@
   "@redesignFilesOtherCategory": {
     "description": "redesign.files.otherCategory"
   },
+  "redesignFilesPickHint": "Klicken, um Dateien auszuwählen.",
+  "@redesignFilesPickHint": {
+    "description": "redesign.files.pickHint"
+  },
   "redesignFilesQueueDone": "{count, plural, one {1 Datei hochgeladen} other {{count} Dateien hochgeladen}}",
   "@redesignFilesQueueDone": {
     "description": "redesign.files.queueDone",

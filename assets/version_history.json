@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.23.5",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Mac-App: „Hochladen“ und ein Klick auf das Feld „Dateien hierher ziehen“ öffnen jetzt den Dateidialog (der App fehlte die Berechtigung dafür)",
+        "✨ Neues Design (Beta): Das Tastatur-Symbol bei den Dateien eines Werks zeigt beim Klick alle Tastenkürzel",
+        "🐛 Neues Design (Beta): In der App (ohne Browser) steht bei den Dateien „Klicken, um Dateien auszuwählen“, weil Ziehen dort noch nicht geht"
+      ]
+    },
+    {
       "version": "0.23.4",
       "date": "30.10.2026",
       "changes": [

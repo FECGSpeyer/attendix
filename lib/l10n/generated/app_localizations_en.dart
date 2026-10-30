@@ -8584,6 +8584,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignFilesOtherCategory => 'Other …';
 
   @override
+  String get redesignFilesPickHint => 'Click to choose files.';
+
+  @override
   String redesignFilesQueueDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,

@@ -95,6 +95,12 @@ class _FakeFiles implements SongFileService {
       _step('rename $url $fileName');
 
   @override
+  Future<List<PlatformFile>?> pickMultipleFiles() async {
+    calls.add('pick');
+    return null;
+  }
+
+  @override
   dynamic noSuchMethod(Invocation invocation) => null;
 }
 
@@ -154,6 +160,7 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song}) {
       effectiveRoleProvider.overrideWithValue(role),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       readySongFileServiceProvider.overrideWith((ref) async => files),
+      songFileServiceProvider.overrideWithValue(files),
       songDetailDataProvider((songId: 5, sharingId: null)).overrideWith((ref) async => SongDetailData(
             song: song,
             tenantType: 'orchestra',
@@ -442,11 +449,26 @@ void main() {
       expect(files.calls.single, endsWith(' 1 -'));
     });
 
-    testWidgets('an empty Werk offers the drop frame', (tester) async {
+    testWidgets('an empty Werk offers the frame; a click opens the file picker', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles();
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer')));
+      await _settle(tester);
+      // Native apps cannot take dropped files, so the frame only offers the click.
+      expect(find.text('Dateien hierher ziehen oder „Hochladen“ wählen.'), findsNothing);
+      await tester.tap(find.text('Klicken, um Dateien auszuwählen.'));
+      await _settle(tester);
+      expect(service.calls, ['pick']);
+    });
+
+    testWidgets('the keyboard icon lists the shortcuts', (tester) async {
       _desktop(tester);
       await tester.pumpWidget(_app(Role.admin, _FakeFiles(), song: const Song(id: 5, name: 'Leer')));
       await _settle(tester);
-      expect(find.text('Dateien hierher ziehen oder „Hochladen“ wählen.'), findsOneWidget);
+      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      await _settle(tester);
+      expect(find.text('Tastenkürzel'), findsOneWidget);
+      expect(find.text('F2 umbenennen'), findsOneWidget);
     });
   });
 

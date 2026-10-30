@@ -517,15 +517,14 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
               label: l10n.redesignFilesDownloadAll,
               onPressed: _busy ? null : () => _download(files),
             ),
-          Tooltip(
-            message: l10n.redesignFilesShortcutsHelp(modLabel),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Semantics(
-                label: l10n.redesignFilesShortcuts,
-                child: Icon(Icons.keyboard_outlined, color: p.text2),
-              ),
-            ),
+          IconButton(
+            tooltip: l10n.redesignFilesShortcuts,
+            icon: Icon(Icons.keyboard_outlined, color: p.text2),
+            onPressed:
+                () => showAppDialog<void>(
+                  context: context,
+                  builder: (_) => _ShortcutsDialog(help: l10n.redesignFilesShortcutsHelp(modLabel)),
+                ),
           ),
           const SizedBox(width: 4),
           RdPrimaryButton(
@@ -614,7 +613,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
                 },
               ),
             ),
-          if (files.isNotEmpty) ...[
+          if (files.isNotEmpty && isFileDropSupported) ...[
             const SizedBox(height: 8),
             Text(l10n.redesignFilesDropHint, style: RdType.meta(p, size: 13)),
           ],
@@ -665,7 +664,11 @@ class _DropHint extends StatelessWidget {
         children: [
           Icon(Icons.cloud_upload_outlined, size: 36, color: p.text2),
           const SizedBox(height: 8),
-          Text(context.l10n.redesignFilesDropHint, textAlign: TextAlign.center, style: RdType.meta(p, size: 15)),
+          Text(
+            isFileDropSupported ? context.l10n.redesignFilesDropHint : context.l10n.redesignFilesPickHint,
+            textAlign: TextAlign.center,
+            style: RdType.meta(p, size: 15),
+          ),
         ],
       ),
     );
@@ -1088,6 +1091,39 @@ class _ConflictDialog extends StatelessWidget {
         TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.redesignFilesKeepBoth)),
         TextButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.redesignFilesReplace)),
       ],
+    );
+  }
+}
+
+/// The shortcuts of the file table, one per line (the toolbar's keyboard icon).
+class _ShortcutsDialog extends StatelessWidget {
+  const _ShortcutsDialog({required this.help});
+
+  /// `redesignFilesShortcutsHelp`: the shortcuts separated by " · ".
+  final String help;
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    return AppAlertDialog(
+      title: Text(l10n.redesignFilesShortcuts),
+      content: SizedBox(
+        width: 360,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              for (final line in help.split(' · '))
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 6),
+                  child: Text(line, style: const TextStyle(fontSize: 14)),
+                ),
+            ],
+          ),
+        ),
+      ),
+      actions: [TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonOk))],
     );
   }
 }

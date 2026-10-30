@@ -14801,6 +14801,12 @@ abstract class AppLocalizations {
   /// **'Sonstige …'**
   String get redesignFilesOtherCategory;
 
+  /// redesign.files.pickHint
+  ///
+  /// In de, this message translates to:
+  /// **'Klicken, um Dateien auszuwählen.'**
+  String get redesignFilesPickHint;
+
   /// redesign.files.queueDone
   ///
   /// In de, this message translates to:
