@@ -184,7 +184,8 @@ class InstrumentMatcher {
       return const PartMatch(instrumentId: recordingId, confidence: MatchConfidence.sure);
     }
 
-    final tokens = tokenize(_stripExtension(filename));
+    final words = _words(_stripExtension(filename));
+    final tokens = words.tokens;
     if (tokens.isEmpty) return PartMatch.none;
 
     if (extension != 'pdf') {
@@ -198,11 +199,11 @@ class InstrumentMatcher {
       return PartMatch(instrumentId: lyricsId, confidence: MatchConfidence.sure, term: lyrics);
     }
 
-    final fileNumber = _anyNumber(tokens);
+    final familySpans = _familySpans(tokens);
     _Hit? best;
     _Hit? second;
     for (final instrument in instruments) {
-      final hit = _scoreInstrument(tokens, instrument, fileNumber);
+      final hit = _scoreInstrument(words, instrument, familySpans);
       if (hit == null) continue;
       if (best == null || hit.score > best.score) {
         second = best;
@@ -220,14 +221,24 @@ class InstrumentMatcher {
 
   /// Lower-case words of [text]: umlauts folded (ö → oe), split at every
   /// non-letter/digit and between letters and digits ("Vl2" → vl 2).
-  static List<String> tokenize(String text) {
+  static List<String> tokenize(String text) => _words(text).tokens;
+
+  /// [tokenize] plus whether a hard separator (" - ", "_", "/", "(") stands
+  /// before each word: "Sinfonie 2 - Violine" → the 2 is not the part's.
+  static ({List<String> tokens, List<bool> hardBefore}) _words(String text) {
     final folded = _fold(text.toLowerCase())
         .replaceAllMapped(RegExp(r'(\p{L})(\d)', unicode: true), (m) => '${m[1]} ${m[2]}')
         .replaceAllMapped(RegExp(r'(\d)(\p{L})', unicode: true), (m) => '${m[1]} ${m[2]}');
-    return folded
-        .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
-        .where((t) => t.isNotEmpty)
-        .toList();
+    final tokens = <String>[];
+    final hard = <bool>[];
+    var last = 0;
+    for (final m in RegExp(r'[\p{L}\p{N}]+', unicode: true).allMatches(folded)) {
+      final gap = folded.substring(last, m.start);
+      tokens.add(m[0]!);
+      hard.add(tokens.length == 1 || RegExp(r'[-–_/()\[\]+&,;]').hasMatch(gap));
+      last = m.end;
+    }
+    return (tokens: tokens, hardBefore: hard);
   }
 
   static String _fold(String s) => s
@@ -244,7 +255,12 @@ class InstrumentMatcher {
   }
 
   /// Score of [instrument] for [tokens], or null if it does not match.
-  static _Hit? _scoreInstrument(List<String> tokens, InstrumentInfo instrument, int? fileNumber) {
+  static _Hit? _scoreInstrument(
+    ({List<String> tokens, List<bool> hardBefore}) words,
+    InstrumentInfo instrument,
+    List<({int start, int end, String family})> familySpans,
+  ) {
+    final tokens = words.tokens;
     final nameTokens = tokenize(instrument.name);
     final groupNumber = _numberIn(nameTokens);
     final baseName = nameTokens.where((t) => _tokenNumber(t) == null && !_tuningWords.contains(t)).toList();
@@ -267,7 +283,8 @@ class InstrumentMatcher {
     for (final s in (instrument.synonyms ?? '').split(',')) {
       if (s.trim().isNotEmpty) add(s.trim(), 100, synonym: true);
     }
-    for (final family in _familiesOf(baseName)) {
+    final families = _familiesOf(baseName).toSet();
+    for (final family in families) {
       for (final t in translations[family] ?? const <String>[]) {
         add(t, 60);
       }
@@ -284,12 +301,24 @@ class InstrumentMatcher {
       if (c.term.isEmpty) continue;
       final m = _find(tokens, c.term) ?? (c.base >= 60 ? _findCompound(tokens, c.term) : null);
       if (m == null) continue;
-      var score = c.base + c.term.join(' ').length;
+      // More words matched = more specific ("English Horn" before "Horn").
+      var score = c.base + c.term.join(' ').length + 50 * (m.end - m.start - 1);
       var weak = c.weak || m.compound;
       if (m.compound) score -= 50;
+      // The words are part of a longer name of another instrument
+      // ("English Horn" for the group Horn): only unsure.
+      if (!c.synonym &&
+          familySpans.any((f) =>
+              !families.contains(f.family) &&
+              f.start <= m.start &&
+              f.end >= m.end &&
+              f.end - f.start > m.end - m.start)) {
+        weak = true;
+        score -= 50;
+      }
 
       if (!c.explicitNumber && groupNumber != null) {
-        final n = _numberNear(tokens, m.start, m.end) ?? fileNumber;
+        final n = _numberNear(words, m.start, m.end);
         if (n == null) {
           // "Violine.pdf" with groups Violine 1 / Violine 2; a synonym the
           // group was given by hand ("zweite") stands for this group.
@@ -368,35 +397,37 @@ class InstrumentMatcher {
   /// Part number right after the matched words (skipping tuning words and
   /// ordinal endings: "Klarinette in B 2", "Vl II", "Horn 2nd") or right
   /// before them ("2. Violine").
-  static int? _numberNear(List<String> tokens, int start, int end) {
+  /// A number before the words only counts when it starts its part of the
+  /// name ("2. Violine", "Ave Verum - 2. Violine", not "Sinfonie 2 Violine").
+  static int? _numberNear(({List<String> tokens, List<bool> hardBefore}) words, int start, int end) {
+    final tokens = words.tokens;
     for (var i = end, skipped = 0; i < tokens.length && skipped <= 3; i++) {
       final n = _tokenNumber(tokens[i]);
       if (n != null) return n;
       if (!_tuningWords.contains(tokens[i])) break;
       skipped++;
     }
-    if (start > 0) {
-      final n = int.tryParse(tokens[start - 1]);
-      if (n != null && n >= 1 && n <= 9) return n;
-      if (start > 1 && const {'st', 'nd', 'rd', 'th'}.contains(tokens[start - 1])) {
-        final n2 = int.tryParse(tokens[start - 2]);
-        if (n2 != null && n2 >= 1 && n2 <= 9) return n2;
-      }
+    int? before(int i) {
+      if (i < 0) return null;
+      final n = int.tryParse(tokens[i]);
+      if (n == null || n < 1 || n > 9 || !words.hardBefore[i]) return null;
+      return n;
+    }
+    if (start > 0 && !words.hardBefore[start]) {
+      final n = before(start - 1);
+      if (n != null) return n;
+      if (start > 1 && const {'st', 'nd', 'rd', 'th'}.contains(tokens[start - 1])) return before(start - 2);
     }
     return null;
   }
 
-  /// A part number standing alone somewhere in the name (fallback).
-  static int? _anyNumber(List<String> tokens) {
-    final numbers = tokens.map(_tokenNumberStrict).whereType<int>().toSet();
-    return numbers.length == 1 ? numbers.single : null;
-  }
-
-  static int? _tokenNumberStrict(String t) {
-    final n = int.tryParse(t);
-    if (n != null && t.length == 1 && n >= 1) return n;
-    return const {'ii': 2, 'iii': 3, 'iv': 4}[t];
-  }
+  /// Where the name of an instrument family (or one of its terms) stands
+  /// in [tokens].
+  static List<({int start, int end, String family})> _familySpans(List<String> tokens) => [
+        for (final e in translations.entries)
+          for (final term in [e.key, ...e.value])
+            if (_find(tokens, tokenize(term)) case final m?) (start: m.start, end: m.end, family: e.key),
+      ];
 
   static int? _numberIn(List<String> tokens) {
     for (final t in tokens) {

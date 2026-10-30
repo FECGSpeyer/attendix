@@ -76,6 +76,7 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     for (final g in guesses) g.file: (instrumentId: g.guess.instrumentId, note: g.guess.note),
   };
   final review = guesses.where((g) => g.guess.needsReview).toList();
+  var terms = const <int, List<String>>{};
   if (review.isNotEmpty) {
     final result = await showAppDialog<_ReviewResult>(
       context: context,
@@ -83,11 +84,7 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     );
     if (result == null || !context.mounted) return;
     chosen.addAll(result.categories);
-    if (result.terms.isNotEmpty) {
-      final ok = await ref.read(groupNotifierProvider.notifier).addSynonyms(result.terms, data.instruments);
-      if (!ok && context.mounted) ToastHelper.showError(context, l10n.songsFlutterLearnFailed);
-      if (!context.mounted) return;
-    }
+    terms = result.terms;
   }
 
   final items = <({PlatformFile file, int? instrumentId, String? note, List<SongFile> conflicts})>[
@@ -114,6 +111,14 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     for (final i in items)
       (file: i.file, instrumentId: i.instrumentId, note: i.note, replace: replace ? i.conflicts : const <SongFile>[]),
   ], mainGroupId: data.mainGroupId);
+
+  // Only once the upload is really started (not on "Abbrechen" in the
+  // conflict dialog).
+  if (terms.isNotEmpty && context.mounted) {
+    final notifier = ref.read(groupNotifierProvider.notifier);
+    final ok = await notifier.addSynonyms(terms);
+    if (!ok && context.mounted) ToastHelper.showError(context, l10n.songsFlutterLearnFailed);
+  }
 }
 
 /// The whole Werk page as drop target: while files are dragged over it, a
@@ -1134,7 +1139,7 @@ class _ConflictDialog extends StatelessWidget {
 
 typedef _ReviewResult = ({
   Map<PlatformFile, ({int? instrumentId, String? note})> categories,
-  Map<int, String> terms,
+  Map<int, List<String>> terms,
 });
 
 /// "Zuordnung prüfen": the dropped files whose part was not recognised for
@@ -1179,11 +1184,18 @@ class _ReviewDialogState extends State<_ReviewDialog> {
             note: _ids[i.file] == null ? i.guess.note : null,
           ),
       },
-      terms: {
-        for (final f in _learn)
-          if (_ids[f] != null && _terms[f] != null) _ids[f]!: _terms[f]!,
-      },
+      terms: _learnedTerms(),
     ));
+  }
+
+  Map<int, List<String>> _learnedTerms() {
+    final terms = <int, List<String>>{};
+    for (final f in _learn) {
+      final id = _ids[f];
+      final term = _terms[f];
+      if (id != null && term != null) (terms[id] ??= []).add(term);
+    }
+    return terms;
   }
 
   @override

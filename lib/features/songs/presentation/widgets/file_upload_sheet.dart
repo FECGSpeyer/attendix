@@ -355,12 +355,14 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   /// Saves the terms of hand-assigned files as group synonyms.
   Future<void> _rememberTerms(Iterable<_FileToUpload> uploaded) async {
-    final terms = <int, String>{
-      for (final f in uploaded)
-        if (f.learn && f.learnTerm != null && f.instrumentId != null) f.instrumentId!: f.learnTerm!,
-    };
+    final terms = <int, List<String>>{};
+    for (final f in uploaded) {
+      if (f.learn && f.learnTerm != null && f.instrumentId != null) {
+        (terms[f.instrumentId!] ??= []).add(f.learnTerm!);
+      }
+    }
     if (terms.isEmpty) return;
-    final ok = await ref.read(groupNotifierProvider.notifier).addSynonyms(terms, widget.groups);
+    final ok = await ref.read(groupNotifierProvider.notifier).addSynonyms(terms);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.songsFlutterLearnFailed);
   }
 

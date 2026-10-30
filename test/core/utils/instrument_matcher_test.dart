@@ -39,6 +39,15 @@ void main() {
       test('$file → $expected', () => expect(_label(file, _orchestra), expected));
     }
 
+    test('a number of the Werk is not the part', () {
+      expect(_confidence('Sinfonie 2 - Violine.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_label('Sinfonie 5 - Violine.pdf', _orchestra), startsWith('Violine'));
+      expect(_confidence('Sinfonie 5 - Violine.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Sinfonie 2 Violine.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_label('Sinfonie 5 - 2. Violine.pdf', _orchestra), 'Violine 2');
+      expect(_label('Sinfonie 5 - Violine 1.pdf', _orchestra), 'Violine 1');
+    });
+
     test('missing number with two numbered groups is unsure', () {
       expect(_confidence('Violine.pdf', _orchestra), MatchConfidence.unsure);
     });
@@ -69,6 +78,9 @@ void main() {
       expect(_label('Bassklarinette.pdf', _orchestra), 'Klarinette');
       expect(_confidence('Bassklarinette.pdf', _orchestra), MatchConfidence.unsure);
       expect(_confidence('Englischhorn.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('English Horn.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Bass Clarinet.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('French Horn 2.pdf', _orchestra), MatchConfidence.sure);
     });
 
     test('a more specific group wins', () {
@@ -77,6 +89,8 @@ void main() {
       expect(_label('Bass Clarinet in Bb.pdf', groups), 'Bassklarinette');
       expect(_label('Klarinette 1.pdf', groups), 'Klarinette');
       expect(_label('Englischhorn.pdf', groups), 'Englischhorn');
+      expect(_label('English Horn.pdf', groups), 'Englischhorn');
+      expect(_label('Horn in F.pdf', groups), 'Horn');
       expect(_label('Alto Sax 1.pdf', groups), 'Altsaxophon');
       expect(_confidence('Alto Sax 1.pdf', groups), MatchConfidence.sure);
     });
@@ -145,16 +159,17 @@ void main() {
     });
 
     test('a remembered term is recognised next time', () {
-      final syn = {'Violine 2': mergeSynonyms(null, 'Zweite')!};
+      final syn = {'Violine 2': mergeSynonyms(null, ['Zweite'])!};
       expect(_label('Ave Verum - Zweite.pdf', _orchestra, synonyms: syn), 'Violine 2');
       expect(_confidence('Ave Verum - Zweite.pdf', _orchestra, synonyms: syn), MatchConfidence.sure);
     });
 
-    test('mergeSynonyms appends once', () {
-      expect(mergeSynonyms(null, 'Vl2'), 'vl2');
-      expect(mergeSynonyms('geige 2, vl ii', 'VL2'), 'geige 2, vl ii, vl2');
-      expect(mergeSynonyms('geige 2, vl2', 'Vl2'), isNull);
-      expect(mergeSynonyms('a', ' '), isNull);
+    test('mergeSynonyms appends once, several terms per group', () {
+      expect(mergeSynonyms(null, ['Vl2']), 'vl2');
+      expect(mergeSynonyms('geige 2, vl ii', ['VL2']), 'geige 2, vl ii, vl2');
+      expect(mergeSynonyms('geige 2, vl2', ['Vl2']), isNull);
+      expect(mergeSynonyms('a', [' ']), isNull);
+      expect(mergeSynonyms('a', ['b', 'c', 'B']), 'a, b, c');
     });
   });
 }

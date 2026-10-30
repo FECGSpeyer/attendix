@@ -151,23 +151,29 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
 
   /// Remembers file-name terms as synonyms of groups (upload: "künftig so
   /// erkennen"), so the next upload matches them. [terms] maps group id →
-  /// term; terms the group already knows are skipped.
-  Future<bool> addSynonyms(Map<int, String> terms, List<Group> groups) async {
+  /// terms; terms the group already knows are skipped. Each group is read
+  /// fresh right before it is written, so synonyms saved meanwhile (another
+  /// upload, the group page) are kept.
+  Future<bool> addSynonyms(Map<int, List<String>> terms) async {
+    // The tenant is fixed before the first await (tenant switch mid-way).
+    final repo = _repo;
     state = const AsyncValue.loading();
     try {
       for (final entry in terms.entries) {
-        final group = groups.where((g) => g.id == entry.key).firstOrNull;
-        final merged = mergeSynonyms(group?.synonyms, entry.value);
-        if (group == null || merged == null) continue;
-        await _repo.updateGroup(entry.key, {'synonyms': merged});
+        final group = await repo.getGroupById(entry.key);
+        final merged = group == null ? null : mergeSynonyms(group.synonyms, entry.value);
+        if (merged == null) continue;
+        await repo.updateGroup(entry.key, {'synonyms': merged});
       }
       state = const AsyncValue.data(null);
-      ref.invalidate(groupsProvider);
-      ref.invalidate(groupsMapProvider);
       return true;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);
       return false;
+    } finally {
+      // Also after a partial failure: the groups already written are new.
+      ref.invalidate(groupsProvider);
+      ref.invalidate(groupsMapProvider);
     }
   }
 
@@ -262,15 +268,19 @@ final groupNotifierProvider = NotifierProvider<GroupNotifier, AsyncValue<void>>(
   return GroupNotifier();
 });
 
-/// [existing] synonyms (comma separated) plus [term], or null when the term
-/// is empty or already there (case-insensitive).
-String? mergeSynonyms(String? existing, String term) {
-  final t = term.trim().toLowerCase();
-  if (t.isEmpty || t.contains(',')) return null;
+/// [existing] synonyms (comma separated) plus [terms], or null when nothing
+/// is new (case-insensitive; empty terms and terms with a comma are skipped).
+String? mergeSynonyms(String? existing, Iterable<String> terms) {
   final list = [
     for (final s in (existing ?? '').split(','))
       if (s.trim().isNotEmpty) s.trim(),
   ];
-  if (list.any((s) => s.toLowerCase() == t)) return null;
-  return [...list, t].join(', ');
+  var changed = false;
+  for (final term in terms) {
+    final t = term.trim().toLowerCase();
+    if (t.isEmpty || t.contains(',') || list.any((s) => s.toLowerCase() == t)) continue;
+    list.add(t);
+    changed = true;
+  }
+  return changed ? list.join(', ') : null;
 }
