@@ -1,13 +1,20 @@
 {
   "versions": [
     {
-      "version": "0.23.0",
+      "version": "0.23.1",
       "date": "30.10.2026",
       "changes": [
         "✨ Neues Design (Beta): Werke am Desktop mit Liste links und Werk rechts",
         "✨ Neues Design (Beta): Dateien eines Werks als Tabelle, Stimme direkt ändern, Dateien umbenennen",
         "✨ Neues Design (Beta): Dateien per Drag and drop irgendwo aufs Werk ziehen, Upload-Warteschlange mit Status pro Datei und „Erneut versuchen“, Nachfrage bei schon vorhandenen Stimmen",
         "✨ Neues Design (Beta): Mehrere Dateien auswählen und als ZIP laden, Löschen mit „Rückgängig“, Tastenkürzel (↑↓, Enter, Leertaste, Entf, Strg/⌘+A/U/D/Z, F2)"
+      ]
+    },
+    {
+      "version": "0.23.0",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ iPhone-App: Vom linken Bildschirmrand wischen geht eine Seite zurück, z. B. von der Spielerseite zur Liste (bei ungespeicherten Änderungen gesperrt)"
       ]
     },
     {

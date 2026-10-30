@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:attendix/core/services/native/native_platform.dart';
 import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:flutter/material.dart';
@@ -119,8 +120,8 @@ void main() {
           isA<ZoomPageTransitionsBuilder>());
     });
 
-    // Ionic: `swipeBackEnabled: false` (app.module.ts).
-    testWidgets('edge swipe does not pop a pushed page', (tester) async {
+    // Ionic: `swipeBackEnabled: false` (app.module.ts) – kept on the web.
+    testWidgets('web: edge swipe does not pop a pushed page', (tester) async {
       final navKey = GlobalKey<NavigatorState>();
       await tester.pumpWidget(MaterialApp(
         navigatorKey: navKey,
@@ -140,6 +141,71 @@ void main() {
       await gesture.up();
       await tester.pumpAndSettle();
       expect(find.text('Detail'), findsOneWidget);
+    }, variant: ios);
+
+    // SWIPE_BACK: the installed iOS app swipes back from the left edge.
+    Future<void> pushAndSwipe(WidgetTester tester, {bool canPop = true}) async {
+      final navKey = GlobalKey<NavigatorState>();
+      final base = AppTheme.light;
+      await tester.pumpWidget(MaterialApp(
+        navigatorKey: navKey,
+        theme: base.copyWith(
+          pageTransitionsTheme: const PageTransitionsTheme(builders: {
+            TargetPlatform.iOS: IonIosPageTransitionsBuilder(swipeBack: true),
+          }),
+        ),
+        home: const Scaffold(body: Text('Liste')),
+      ));
+      navKey.currentState!.push(MaterialPageRoute<void>(
+          builder: (_) => PopScope(
+                canPop: canPop,
+                child: const Scaffold(body: Center(child: Text('Detail'))),
+              )));
+      await tester.pumpAndSettle();
+      expect(find.text('Detail'), findsOneWidget);
+
+      final gesture = await tester.startGesture(const Offset(5, 300));
+      for (var i = 0; i < 10; i++) {
+        await gesture.moveBy(const Offset(50, 0));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+    }
+
+    testWidgets('native iOS: edge swipe pops a pushed page', (tester) async {
+      await pushAndSwipe(tester);
+      expect(find.text('Detail'), findsNothing);
+      expect(find.text('Liste'), findsOneWidget);
+    }, variant: ios);
+
+    testWidgets('native iOS: no swipe while PopScope blocks (unsaved changes)',
+        (tester) async {
+      await pushAndSwipe(tester, canPop: false);
+      expect(find.text('Detail'), findsOneWidget);
+    }, variant: ios);
+
+    testWidgets('native iOS: swipe-back defaults to on in the installed app',
+        (tester) async {
+      debugIsNativeAppOverride = true;
+      addTearDown(() => debugIsNativeAppOverride = null);
+      final navKey = GlobalKey<NavigatorState>();
+      await tester.pumpWidget(MaterialApp(
+        navigatorKey: navKey,
+        theme: AppTheme.forPlatform(Brightness.light, TargetPlatform.iOS),
+        home: const Scaffold(body: Text('Liste')),
+      ));
+      navKey.currentState!.push(MaterialPageRoute<void>(
+          builder: (_) => const Scaffold(body: Center(child: Text('Detail')))));
+      await tester.pumpAndSettle();
+      final gesture = await tester.startGesture(const Offset(5, 300));
+      for (var i = 0; i < 10; i++) {
+        await gesture.moveBy(const Offset(50, 0));
+        await tester.pump(const Duration(milliseconds: 16));
+      }
+      await gesture.up();
+      await tester.pumpAndSettle();
+      expect(find.text('Detail'), findsNothing);
     }, variant: ios);
   });
 
