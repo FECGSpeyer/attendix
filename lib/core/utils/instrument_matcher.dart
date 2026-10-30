@@ -289,7 +289,9 @@ class InstrumentMatcher {
 
     if (baseName.isNotEmpty) add(baseName.join(' '), 100);
     for (final s in (instrument.synonyms ?? '').split(',')) {
-      if (s.trim().isNotEmpty) add(s.trim(), 100, synonym: true);
+      // Given by hand, so above the group name ("violine" learned for
+      // Violine 2 beats the bare name of Violine 1).
+      if (s.trim().isNotEmpty) add(s.trim(), 110, synonym: true);
     }
     final families = _familiesOf(baseName).toSet();
     for (final family in families) {
@@ -337,7 +339,7 @@ class InstrumentMatcher {
           score += 10;
         }
       }
-      if (best == null || score > best.score) {
+      if (best == null || score > best.score || (score == best.score && best.weak && !weak)) {
         best = _Hit(instrument.id, score, weak, tokens.sublist(m.start, m.end).join(' '));
       }
     }

@@ -167,6 +167,26 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Sets `synonyms` only if it still is [expected] (compare-and-set), so
+  /// two uploads learning terms at once never overwrite each other. Returns
+  /// false when the value changed meanwhile (read again and retry).
+  Future<bool> updateGroupSynonymsIfUnchanged(int id, {required String? expected, required String value}) async {
+    ensureNotDemo('updateGroupSynonymsIfUnchanged'); // DEMO_GUARD
+    try {
+      var query = supabase
+          .from('instruments')
+          .update({'synonyms': value})
+          .eq('id', id)
+          .eq('tenantId', currentTenantId);
+      query = expected == null ? query.isFilter('synonyms', null) : query.eq('synonyms', expected);
+      final response = await query.select('id').maybeSingle();
+      return response != null;
+    } catch (e, stack) {
+      handleError(e, stack, 'updateGroupSynonymsIfUnchanged');
+      rethrow;
+    }
+  }
+
   /// Get count of players assigned to a group.
   /// LOGIC_SETTINGS: with [includeArchived] also archived (left) people count
   /// (Ionic instrument.page.ts:delete uses `getPlayers(true)`).

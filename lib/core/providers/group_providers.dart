@@ -152,18 +152,23 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
   /// Remembers file-name terms as synonyms of groups (upload: "künftig so
   /// erkennen"), so the next upload matches them. [terms] maps group id →
   /// terms; terms the group already knows are skipped. Each group is read
-  /// fresh right before it is written, so synonyms saved meanwhile (another
-  /// upload, the group page) are kept.
+  /// fresh and written only if unchanged since, so synonyms saved meanwhile
+  /// (another upload, the group page) are kept.
   Future<bool> addSynonyms(Map<int, List<String>> terms) async {
     // The tenant is fixed before the first await (tenant switch mid-way).
     final repo = _repo;
     state = const AsyncValue.loading();
     try {
       for (final entry in terms.entries) {
-        final group = await repo.getGroupById(entry.key);
-        final merged = group == null ? null : mergeSynonyms(group.synonyms, entry.value);
-        if (merged == null) continue;
-        await repo.updateGroup(entry.key, {'synonyms': merged});
+        // Compare-and-set: a change in between (another upload, the group
+        // page) makes the write miss, then the group is read again.
+        for (var attempt = 0; ; attempt++) {
+          final group = await repo.getGroupById(entry.key);
+          final merged = group == null ? null : mergeSynonyms(group.synonyms, entry.value);
+          if (merged == null) break;
+          if (await repo.updateGroupSynonymsIfUnchanged(entry.key, expected: group!.synonyms, value: merged)) break;
+          if (attempt >= 4) throw StateError('synonyms of group ${entry.key} keep changing');
+        }
       }
       state = const AsyncValue.data(null);
       return true;

@@ -170,6 +170,18 @@ void main() {
       expect(_confidence('Ave Verum - Zweite.pdf', _orchestra, synonyms: syn), MatchConfidence.sure);
     });
 
+    test('learning cycle: a bare name learned for the second part', () {
+      final groups = _groups(_orchestra);
+      final violine2 = 10 + _orchestra.indexOf('Violine 2');
+      final term = learnableTerm('Violine.pdf', chosenId: violine2, instruments: groups);
+      expect(term, 'Violine');
+      final syn = {'Violine 2': mergeSynonyms(null, [term!])!};
+      expect(_label('Violine.pdf', _orchestra, synonyms: syn), 'Violine 2');
+      expect(_confidence('Violine.pdf', _orchestra, synonyms: syn), MatchConfidence.sure);
+      // A number still wins over the learned word.
+      expect(_label('Violine 1.pdf', _orchestra, synonyms: syn), 'Violine 1');
+    });
+
     test('mergeSynonyms appends once, several terms per group', () {
       expect(mergeSynonyms(null, ['Vl2']), 'vl2');
       expect(mergeSynonyms('geige 2, vl ii', ['VL2']), 'geige 2, vl ii, vl2');
