@@ -21,6 +21,7 @@ class RdUpload {
     this.status = RdUploadStatus.waiting,
     this.error,
     this.stored = false,
+    this.storedUrl,
   });
 
   final int id;
@@ -37,7 +38,10 @@ class RdUpload {
   /// not upload it twice).
   final bool stored;
 
-  RdUpload copyWith({RdUploadStatus? status, String? error, bool? stored}) => RdUpload(
+  /// URL of the stored new file.
+  final String? storedUrl;
+
+  RdUpload copyWith({RdUploadStatus? status, String? error, bool? stored, String? storedUrl}) => RdUpload(
         id: id,
         file: file,
         instrumentId: instrumentId,
@@ -46,6 +50,7 @@ class RdUpload {
         status: status ?? this.status,
         error: error,
         stored: stored ?? this.stored,
+        storedUrl: storedUrl ?? this.storedUrl,
       );
 }
 

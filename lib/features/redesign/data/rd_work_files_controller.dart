@@ -120,16 +120,18 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
       // "Ersetzen": the new file first, the old ones only once it is
       // stored, so a failed upload never loses them.
       if (!upload.stored) {
-        await service.uploadFile(
+        final url = await service.uploadFile(
           songId: _songId,
           file: upload.file,
           instrumentId: upload.instrumentId,
           note: upload.note,
           mainGroupId: _mainGroupId,
         );
-        _setUpload(id, (u) => u.copyWith(stored: true));
+        _setUpload(id, (u) => u.copyWith(stored: true, storedUrl: url));
       }
+      final storedUrl = state.uploads.where((u) => u.id == id).firstOrNull?.storedUrl;
       for (final old in upload.replace) {
+        if (old.url == storedUrl) continue; // never the file just stored
         await service.deleteFile(
           songId: _songId,
           url: old.url,

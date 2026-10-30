@@ -36,6 +36,7 @@ class _TenantNotifier extends CurrentTenantNotifier {
 class _FakeFiles implements SongFileService {
   final calls = <String>[];
   final failing = <String>{};
+  final failingDeletes = <String>{};
   int active = 0;
   int maxActive = 0;
 
@@ -67,8 +68,10 @@ class _FakeFiles implements SongFileService {
     String? storageName,
     String? fileName,
     int? mainGroupId,
-  }) =>
-      _step('delete $fileName');
+  }) async {
+    await _step('delete $fileName');
+    if (failingDeletes.remove(fileName)) throw Exception('kaputt');
+  }
 
   @override
   Future<void> updateFileCategory({
@@ -279,6 +282,24 @@ void main() {
       expect(state().doneCount, 1);
     });
 
+    test('"Ersetzen": a failed delete after the upload is retried without uploading again', () async {
+      files.failingDeletes.add('klar.pdf');
+      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(state().failedCount, 1);
+      controller().retry(state().uploads.single.id);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(files.calls, ['upload a.pdf 11 -', 'delete klar.pdf', 'delete klar.pdf']);
+      expect(state().doneCount, 1);
+    });
+
+    test('"Ersetzen" never deletes the file it just stored', () async {
+      const same = SongFile(fileName: 'a.pdf', fileType: _pdf, url: 'https://x/a.pdf', instrumentId: 11);
+      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [same, _klar])]);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(files.calls, ['upload a.pdf 11 -', 'delete klar.pdf']);
+    });
+
     test('the tenant (service) is taken when a write is queued', () async {
       final other = _FakeFiles();
       var current = files;
@@ -390,6 +411,22 @@ void main() {
       expect(files.calls.single, startsWith('delete '));
     });
 
+    testWidgets('a held Entf deletes only once', (tester) async {
+      _desktop(tester);
+      await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
+      await _settle(tester);
+      await tester.tap(find.text('klar.pdf'));
+      await _settle(tester);
+      await tester.sendKeyDownEvent(LogicalKeyboardKey.delete);
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.delete);
+      await tester.sendKeyRepeatEvent(LogicalKeyboardKey.delete);
+      await tester.sendKeyUpEvent(LogicalKeyboardKey.delete);
+      await tester.pump();
+      expect(find.text('Dateien · 2'), findsOneWidget);
+      await tester.pump(rdFileUndoDelay + const Duration(seconds: 1));
+      await _settle(tester);
+    });
+
     testWidgets('Stimme menu moves a file to another part', (tester) async {
       _desktop(tester);
       final files = _FakeFiles();
@@ -413,6 +450,26 @@ void main() {
   });
 
   group('security (source)', () {
+    test('the per-song lock: same song waits (also after a failure), other songs do not', () async {
+      final log = <String>[];
+      Future<void> step(String name, {bool fail = false}) async {
+        log.add('start $name');
+        await Future<void>.delayed(const Duration(milliseconds: 20));
+        log.add('end $name');
+        if (fail) throw Exception(name);
+      }
+
+      final first = SongFileService.lockedForTest(7, 5, () => step('a', fail: true));
+      final second = SongFileService.lockedForTest(7, 5, () => step('b'));
+      final other = SongFileService.lockedForTest(7, 6, () => step('c'));
+      final otherTenant = SongFileService.lockedForTest(8, 5, () => step('d'));
+      await expectLater(first, throwsException);
+      await Future.wait([second, other, otherTenant]);
+      expect(log.indexOf('start b'), greaterThan(log.indexOf('end a')));
+      expect(log.indexOf('start c'), lessThan(log.indexOf('end a')));
+      expect(log.indexOf('start d'), lessThan(log.indexOf('end a')));
+    });
+
     test('every write of songs.files goes through the per-song lock', () {
       final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
       for (final name in ['uploadFile', 'deleteFile', 'deleteAllFiles', 'updateFileCategory', 'renameFile', 'uploadFileBytes']) {

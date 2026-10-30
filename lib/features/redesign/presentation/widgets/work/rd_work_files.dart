@@ -392,6 +392,11 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       return KeyEventResult.ignored;
     }
     final key = event.logicalKey;
+    // Held keys repeat only ↑ ↓; a held Entf must not delete row after row
+    // (each delete stores the one before, Rückgängig brings back only one).
+    if (event is KeyRepeatEvent && key != LogicalKeyboardKey.arrowDown && key != LogicalKeyboardKey.arrowUp) {
+      return KeyEventResult.handled;
+    }
     final files = _current;
     final order = files.map((f) => f.url).toList();
     final mod = _modPressed;

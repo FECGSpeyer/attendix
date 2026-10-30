@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -62,8 +63,33 @@ class SongFileService {
         .replaceAll(RegExp(r'^-+|-+$'), ''); // Trim hyphens
 
     // Add random number
-    final randomNumber = 100 + (DateTime.now().millisecondsSinceEpoch % 900);
+    final randomNumber = 100 + _random.nextInt(900);
     return '${name}_$randomNumber.$ext';
+  }
+
+  static final _random = Random();
+
+  /// A storage name for [fileName] that no file of the song uses yet. The
+  /// upload overwrites (`upsert`), so an equal name would replace that
+  /// file's object, and deleting the old entry afterwards ("Ersetzen")
+  /// would remove both. Old files without storageName are stored under
+  /// their fileName, so those count as taken too.
+  Future<String> _freeFileId(int tenantId, int songId, String fileName) async {
+    final song = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', tenantId)
+        .maybeSingle();
+    final taken = <Object?>{
+      for (final f in (song?['files'] as List?) ?? const [])
+        if (f is Map) ...[f['storageName'], f['fileName']],
+    };
+    var fileId = _encodeFilename(fileName);
+    for (var i = 0; i < 50 && taken.contains(fileId); i++) {
+      fileId = _encodeFilename(fileName);
+    }
+    return fileId;
   }
 
   /// Writes of one song's `files` list read it, change it and write it back,
@@ -83,6 +109,10 @@ class SongFileService {
     _songLocks[key] = tail;
     return result;
   }
+
+  @visibleForTesting
+  static Future<T> lockedForTest<T>(int? tenantId, int songId, Future<T> Function() task) =>
+      _locked(tenantId, songId, task);
 
   /// Upload a file to Supabase Storage and add it to the song.
   /// Returns the public URL of the uploaded file
@@ -188,7 +218,7 @@ class SongFileService {
     }
 
     // Generate unique storage path
-    final fileId = _encodeFilename(file.name);
+    final fileId = await _freeFileId(_tenantId, songId, file.name);
     final storagePath = 'songs/$_tenantId/$songId/$fileId';
 
     // Get file bytes
@@ -523,7 +553,7 @@ class SongFileService {
   }) async {
     DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
     // Generate unique storage path
-    final fileId = _encodeFilename(fileName);
+    final fileId = await _freeFileId(tenantId, songId, fileName);
     final storagePath = 'songs/$tenantId/$songId/$fileId';
 
     // Upload to storage
