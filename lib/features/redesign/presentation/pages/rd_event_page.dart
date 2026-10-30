@@ -496,6 +496,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         icon: Icons.group_off_outlined,
         action: RdOutlineButton(label: l10n.redesignEventMore, onPressed: () => context.push('/attendance/$_id')),
       ));
+      children
+        ..add(const SizedBox(height: 16))
+        ..add(_EventActions(attendance: attendance, showMore: false));
     } else if (_tab == RdEventTab.overview) {
       children.add(_Overview(
         attendance: attendance,
@@ -863,11 +866,6 @@ class _Overview extends ConsumerWidget {
     final gaps = ended ? const <RdRegisterGap>[] : rdRegisterGaps(members);
     final signouts = rdSignouts(members);
     final notes = (attendance.notes ?? '').trim();
-    final role = ref.watch(effectiveRoleProvider);
-    // Like the old Termine list: Beobachter never see the Ablaufplan; only
-    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
-    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
-    final canDelete = role.isAdmin || role.isResponsible;
     final legend = [
       (l10n.redesignTodayCountYes(counts.present), p.present),
       if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
@@ -993,32 +991,57 @@ class _Overview extends ConsumerWidget {
           ),
         ],
         const SizedBox(height: 24),
-        RdGroupedList(
-          children: [
-            if (hasPlan)
-              RdListRow(
-                leading: const RdRowIcon(Icons.view_timeline_outlined),
-                title: l10n.redesignEventPlan,
-                subtitle: l10n.redesignEventPlanHint,
-                onTap: () => openAttendancePlanViewer(context, attendance),
-              ),
-            RdListRow(
-              leading: const RdRowIcon(Icons.tune),
-              title: l10n.redesignEventMore,
-              subtitle: l10n.redesignEventMoreHint,
-              onTap: () => context.push('/attendance/${attendance.id}'),
-            ),
-            if (canDelete)
-              RdListRow(
-                key: const Key('rd-event-delete'),
-                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
-                title: l10n.redesignEventDelete,
-                titleColor: p.absent,
-                showChevron: false,
-                onTap: () => _delete(context, ref),
-              ),
-          ],
-        ),
+        _EventActions(attendance: attendance),
+      ],
+    );
+  }
+}
+
+/// Ablauf ansehen · Alle Details und Bearbeiten · Termin löschen (also
+/// shown when the Termin has no persons yet).
+class _EventActions extends ConsumerWidget {
+  const _EventActions({required this.attendance, this.showMore = true});
+
+  final Attendance attendance;
+
+  /// False where "Alle Details" already is a button (empty Termin).
+  final bool showMore;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final role = ref.watch(effectiveRoleProvider);
+    // Like the old Termine list: Beobachter never see the Ablaufplan; only
+    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
+    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
+    final canDelete = role.isAdmin || role.isResponsible;
+    if (!hasPlan && !showMore && !canDelete) return const SizedBox.shrink();
+    return RdGroupedList(
+      children: [
+        if (hasPlan)
+          RdListRow(
+            leading: const RdRowIcon(Icons.view_timeline_outlined),
+            title: l10n.redesignEventPlan,
+            subtitle: l10n.redesignEventPlanHint,
+            onTap: () => openAttendancePlanViewer(context, attendance),
+          ),
+        if (showMore)
+          RdListRow(
+            leading: const RdRowIcon(Icons.tune),
+            title: l10n.redesignEventMore,
+            subtitle: l10n.redesignEventMoreHint,
+            onTap: () => context.push('/attendance/${attendance.id}'),
+          ),
+        if (canDelete)
+          RdListRow(
+            key: const Key('rd-event-delete'),
+            leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+            title: l10n.redesignEventDelete,
+            titleColor: p.absent,
+            showChevron: false,
+            onTap: () => _delete(context, ref),
+          ),
       ],
     );
   }
@@ -1046,6 +1069,10 @@ class _Overview extends ConsumerWidget {
       ),
     );
     if (confirmed != true || !context.mounted) return;
+    // The page may close while the delete runs (tab or page change): the
+    // container and router outlive this widget's ref.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final router = GoRouter.of(context);
     HapticHelper.medium();
     try {
       await repo.deleteAttendance(id);
@@ -1053,12 +1080,12 @@ class _Overview extends ConsumerWidget {
       if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
       return;
     }
-    ref.invalidate(attendancesProvider);
-    ref.invalidate(realtimeAttendanceListProvider);
-    ref.invalidate(playerAttendancePercentagesProvider);
-    if (!context.mounted) return;
-    ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
-    context.go(RedesignRoutes.events);
+    container
+      ..invalidate(attendancesProvider)
+      ..invalidate(realtimeAttendanceListProvider)
+      ..invalidate(playerAttendancePercentagesProvider);
+    if (context.mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
+    router.go(RedesignRoutes.events);
   }
 }
 
