@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:desktop_drop/desktop_drop.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -41,6 +42,16 @@ void main() async {
   // Like Ionic's `?ionic:mode=ios|md`: on the web `?mode=ios` forces the
   // iPhone look (and `?mode=md` the Material look) regardless of the browser.
   if (kIsWeb) applyWebModeOverride(Uri.base);
+
+  // desktop_drop (file drag & drop in the desktop apps) also registers on the
+  // web and reports every browser drag to Dart; without a handler each report
+  // fails with a MissingPluginException. The web uses its own drop handling
+  // (file_drop_web.dart), so these events simply have no listener.
+  if (kIsWeb) {
+    try {
+      DesktopDrop.instance.init();
+    } catch (_) {}
+  }
 
   // IOS_SHELL2: like Ionic's router, pushed sub-pages (Mehr → Werke, Hilfe,
   // Benachrichtigungen …) change the browser URL, so reload, browser back
