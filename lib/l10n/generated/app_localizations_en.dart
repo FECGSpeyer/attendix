@@ -9463,6 +9463,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkShare => 'Share';
 
   @override
+  String redesignWorkShareFile(Object name) {
+    return 'Share $name';
+  }
+
+  @override
   String get redesignWorkSlower => 'Play slower';
 
   @override

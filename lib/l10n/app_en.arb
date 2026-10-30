@@ -2690,6 +2690,7 @@
   "redesignWorkRecordingFrom": "Recording from {date}",
   "redesignWorkScore": "Score",
   "redesignWorkShare": "Share",
+  "redesignWorkShareFile": "Share {name}",
   "redesignWorkSlower": "Play slower",
   "redesignWorkYourPart": "Your part",
   "redesignWorksAdd": "Add work",

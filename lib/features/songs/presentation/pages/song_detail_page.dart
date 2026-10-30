@@ -10,7 +10,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/organisation_providers.dart';
-import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
@@ -35,6 +34,7 @@ import '../utils/song_utils.dart';
 import '../widgets/copy_to_tenant_sheet.dart';
 import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
+import '../widgets/group_pdf_print.dart';
 import '../widgets/single_file_upload_sheet.dart';
 import '../widgets/song_file_opener.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
@@ -952,47 +952,13 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
   }
 
   /// Ionic `printSongFiles`: group PDFs with copies per player count
-  Future<void> _printGroupPdfs() async {
-    final groupPdfs = files
-        .where((f) => f.instrumentId != null && f.instrumentId! > 2 && SongUtils.isPdf(f))
-        .toList();
-    if (groupPdfs.isEmpty) {
-      ToastHelper.showWarning(context, context.l10n.songsNoGroupPdfs);
-      return;
-    }
-    final counts = await ref.read(playerCountByInstrumentProvider.future);
-    if (!mounted) return;
-    final withPlayers =
-        groupPdfs.where((f) => (counts[f.instrumentId] ?? 0) > 0).toList();
-    if (withPlayers.isEmpty) {
-      ToastHelper.showWarning(context, context.l10n.songsNoGroupsWithPeople);
-      return;
-    }
-
-    final ratio = await showAppDialog<int>(
-      context: context,
-      builder: (ctx) => _RatioDialog(),
-    );
-    if (ratio == null || !mounted) return;
-
-    final entries = [
-      for (final f in withPlayers)
-        SongPrintEntry(
-          song: song,
-          file: f,
-          copies: ratio == 0 ? 1 : ((counts[f.instrumentId] ?? 0) / ratio).ceil(),
-        ),
-    ];
-    final result = await ref
-        .read(songPrintServiceProvider)
-        .printEntries(entries, '${song.name.isEmpty ? 'song' : song.name}_print.pdf');
-    if (!mounted || result == null || result.pageCount == 0) return;
-    final summary = entries
-        .where((e) => e.copies > 0)
-        .map((e) => '${SongUtils.fileLabel(e.file, data.instruments)}: ${e.copies}x')
-        .join(', ');
-    ToastHelper.showSuccess(context, context.l10n.songsPrintPrepared(summary));
-  }
+  Future<void> _printGroupPdfs() => printGroupPdfs(
+        context: context,
+        ref: ref,
+        song: song,
+        files: files,
+        groups: data.instruments,
+      );
 
   @override
   Widget build(BuildContext context) {
@@ -1186,55 +1152,6 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           );
       widget.onChanged();
     });
-  }
-}
-
-class _RatioDialog extends StatefulWidget {
-  @override
-  State<_RatioDialog> createState() => _RatioDialogState();
-}
-
-class _RatioDialogState extends State<_RatioDialog> {
-  int _ratio = 1;
-
-  @override
-  Widget build(BuildContext context) {
-    final l10n = context.l10n;
-    final options = [
-      (1, l10n.songsPerPerson),
-      (2, l10n.songsEvery2),
-      (3, l10n.songsEvery3),
-      (4, l10n.songsEvery4),
-      (0, l10n.songsPerGroup),
-    ];
-    return AppAlertDialog(
-      title: Text(l10n.songsPrintOptions),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(l10n.songsCopiesPerGroup),
-          for (final o in options)
-            RadioListTile<int>(
-              contentPadding: EdgeInsets.zero,
-              value: o.$1,
-              groupValue: _ratio,
-              title: Text(o.$2),
-              onChanged: (v) => setState(() => _ratio = v ?? 1),
-            ),
-        ],
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.pop(context),
-          child: Text(l10n.commonCancel),
-        ),
-        ElevatedButton(
-          onPressed: () => Navigator.pop(context, _ratio),
-          child: Text(l10n.songsPrint),
-        ),
-      ],
-    );
   }
 }
 
