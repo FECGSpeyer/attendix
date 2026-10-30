@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.23.0",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ iPhone-App: Vom linken Bildschirmrand wischen geht eine Seite zurück, z. B. von der Spielerseite zur Liste (bei ungespeicherten Änderungen gesperrt)"
+      ]
+    },
+    {
       "version": "0.22.10",
       "date": "30.10.2026",
       "changes": [
