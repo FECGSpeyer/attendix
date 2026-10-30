@@ -8659,6 +8659,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String get redesignManageAnnouncementsHint => 'Gesendete Mitteilungen ansehen';
+
+  @override
   String get redesignManageAreaCommunication => 'Kommunikation';
 
   @override
@@ -8671,13 +8674,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignManageAreaGroup => 'Gruppe';
 
   @override
-  String get redesignManageAreaMembers => 'Mitglieder & Rollen';
+  String get redesignManageAreaMembers => 'Mitglieder, Register & Rollen';
 
   @override
-  String get redesignManageAreaWorks => 'Werke, Register & Dateien';
+  String get redesignManageAreaWorks => 'Werke & Dateien';
 
   @override
   String get redesignManageClassic => 'Alle Einstellungen (bisherige Ansicht)';
+
+  @override
+  String get redesignManageExtraFieldsHint => 'Eigene Felder für Personen und Werke';
 
   @override
   String redesignManageFooter(num count) {

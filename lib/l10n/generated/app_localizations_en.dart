@@ -8665,6 +8665,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupsTitle => 'Switch group';
 
   @override
+  String get redesignManageAnnouncementsHint => 'View sent messages';
+
+  @override
   String get redesignManageAreaCommunication => 'Communication';
 
   @override
@@ -8677,13 +8680,16 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignManageAreaGroup => 'Group';
 
   @override
-  String get redesignManageAreaMembers => 'Members & roles';
+  String get redesignManageAreaMembers => 'Members, sections & roles';
 
   @override
-  String get redesignManageAreaWorks => 'Works, sections & files';
+  String get redesignManageAreaWorks => 'Works & files';
 
   @override
   String get redesignManageClassic => 'All settings (previous view)';
+
+  @override
+  String get redesignManageExtraFieldsHint => 'Custom fields for people and works';
 
   @override
   String redesignManageFooter(num count) {

@@ -12,6 +12,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder;
@@ -33,12 +34,17 @@ bool _isDark(BuildContext context) =>
 /// Background of an `ion-content` that holds a plain (not inset) ion-list:
 /// Ionic --ion-background-color (white; dark: #000 on iOS, #121212 on md).
 Color ionContentBackground(BuildContext context) {
+  // Beta-Skin: rows sit on the new design's surface colour.
+  final rd = context.rdSkin;
+  if (rd != null) return rd.surface;
   if (!_isDark(context)) return Colors.white;
   return ionIsIos(context) ? Colors.black : const Color(0xFF121212);
 }
 
 /// Color of the inner item lines (--ion-item-border-color).
 Color ionLineColor(BuildContext context) {
+  final rd = context.rdSkin;
+  if (rd != null) return rd.line;
   final dark = _isDark(context);
   if (ionIsIos(context)) {
     // IOS27_SWEEP: ionic-theme-ios27 `ion-list` --ion-border-color step-100.
@@ -73,6 +79,8 @@ class IonText {
   /// `<p>`: iOS .875rem (14.875pt) step-400 (#999, dark #666); md 14px
   /// step-600.
   static TextStyle p(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return RdType.meta(rd, size: 13);
     final dark = _isDark(context);
     if (ionIsIos(context)) {
       return TextStyle(
@@ -88,6 +96,8 @@ class IonText {
   /// `ion-note`: iOS max(16px, 1rem) = 17pt step-350 (#a6a6a6, dark
   /// #595959), md 14px.
   static TextStyle note(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return RdType.meta(rd, size: 15);
     if (ionIsIos(context)) {
       return TextStyle(
         fontSize: ios27.IonIos.noteFontSize,
@@ -112,6 +122,19 @@ class IonListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: section heading of the new design.
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 20, 16, 8),
+        child: Row(
+          children: [
+            Expanded(child: Semantics(header: true, child: Text(text, style: RdType.section(rd)))),
+            if (trailing != null) trailing!,
+          ],
+        ),
+      );
+    }
     final ios = ionIsIos(context);
     final style = ios
         ? TextStyle(
@@ -149,6 +172,16 @@ class IonItemDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null && color == null) {
+      // Beta-Skin: the uppercase group label of the new design.
+      return Container(
+        width: double.infinity,
+        color: rd.bg,
+        padding: const EdgeInsets.fromLTRB(20, 14, 16, 6),
+        child: Semantics(header: true, child: Text(text.toUpperCase(), style: RdType.eyebrow(rd.text2))),
+      );
+    }
     final ios = ionIsIos(context);
     final dark = _isDark(context);
     final background = color ??
@@ -261,11 +294,13 @@ class IonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
-    final minHeight = ios ? 44.0 : 48.0;
+    final rd = context.rdSkin;
+    // Beta-Skin: rows take the iOS sizes and the new design's colours.
+    final ios = rd != null || ionIsIos(context);
+    final minHeight = rd != null ? 52.0 : (ios ? 44.0 : 48.0);
     // MD_SWEEP: md items use `--ion-item-background` (#fff, dark #1e1e1e).
     final bg = selected
-        ? AppColors.primary.withValues(alpha: 0.1)
+        ? (rd?.soft ?? AppColors.primary.withValues(alpha: 0.1))
         : (background ??
             (ios
                 ? ionContentBackground(context)
@@ -396,7 +431,8 @@ class IonSearchbar extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
+    // Beta-Skin: the shared searchbar draws the new design's field.
+    final ios = ionIsIos(context) || context.rdSkin != null;
 
     if (ios) {
       return Padding(
@@ -438,7 +474,8 @@ class IonFabButton extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!ionIsIos(context)) {
+    // Beta-Skin: the themed FAB of the new design.
+    if (!ionIsIos(context) || context.rdSkin != null) {
       return FloatingActionButton(
         heroTag: heroTag,
         tooltip: tooltip,
@@ -595,7 +632,8 @@ class IonNoData extends StatelessWidget {
 
 /// Ionic `--ion-color-light` (accordion headers `ion-item color="light"`).
 Color ionLightColor(BuildContext context) =>
-    _isDark(context) ? const Color(0xFF222428) : const Color(0xFFF4F5F8);
+    context.rdSkin?.bg ??
+    (_isDark(context) ? const Color(0xFF222428) : const Color(0xFFF4F5F8));
 
 /// `ion-accordion` with an `ion-item slot="header" color="light"` header
 /// and the chevron toggle icon; the content follows directly below.
@@ -984,6 +1022,20 @@ class IonInsetList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: grouped list of the new design.
+      return Container(
+        margin: const EdgeInsets.all(16),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: rd.surface,
+          borderRadius: BorderRadius.circular(rd.listRadius),
+          boxShadow: rd.cardShadow,
+        ),
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+      );
+    }
     return Container(
       margin: const EdgeInsets.all(16),
       clipBehavior: Clip.antiAlias,

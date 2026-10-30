@@ -138,6 +138,11 @@ void main() {
       expect(entries, isNot(contains(RdManageEntry.teamOrg)));
     });
 
+    test('Register and Zusatzfelder sit with the members', () {
+      expect(RdManageEntry.groups.area, RdManageArea.members);
+      expect(RdManageEntry.extraFields.area, RdManageArea.members);
+    });
+
     test('Administratoren only for admins outside the demo', () {
       const responsible = RdManageAccess(isAdmin: true);
       expect(rdManageVisible(RdManageEntry.admins, responsible), isFalse);
@@ -158,6 +163,8 @@ void main() {
         RdManageEntry.teachers,
         RdManageEntry.missingAccounts,
         RdManageEntry.archive,
+        RdManageEntry.groups,
+        RdManageEntry.extraFields,
       ]);
       expect(rdManageVisible(RdManageEntry.planningTemplates, a), isFalse);
       expect(rdManageVisible(RdManageEntry.certificates, a), isFalse);
@@ -167,7 +174,7 @@ void main() {
     test('a general tenant has no Werke entries, but its Dateiablage', () {
       const a = RdManageAccess(isAdmin: true, isGeneral: true, canOpenWorks: true, canAccessFiles: true);
       final works = rdManageEntries(a, area: RdManageArea.works);
-      expect(works, [RdManageEntry.groups, RdManageEntry.fileStorage]);
+      expect(works, [RdManageEntry.fileStorage]);
       const voice = RdManageAccess(isVoiceLeader: true, isGeneral: true);
       expect(rdManageVisible(RdManageEntry.myVoice, voice), isFalse);
       expect(rdManageVisible(RdManageEntry.myVoice, const RdManageAccess(isVoiceLeader: true)), isTrue);
@@ -259,16 +266,16 @@ void main() {
       expect(find.text('Einstellung suchen'), findsOneWidget);
       expect(find.text('2 Personen warten auf Freigabe'), findsOneWidget);
       for (final area in [
-        'Mitglieder & Rollen',
+        'Mitglieder, Register & Rollen',
         'Termine & Planung',
-        'Werke, Register & Dateien',
+        'Werke & Dateien',
         'Auswertung & Daten',
         'Kommunikation',
         'Gruppe',
       ]) {
         expect(find.text(area), findsOneWidget, reason: area);
       }
-      expect(find.text('Anwesenheits-Typen, Schichtpläne, Zusatzfelder, Ablaufpläne …'), findsOneWidget);
+      expect(find.text('Anwesenheits-Typen, Schichtpläne, Ablaufpläne, Ad-Hoc Ablaufplanung …'), findsOneWidget);
       final count = rdManageEntries(_admin).length;
       await tester.ensureVisible(find.textContaining('bisherigen Einträge'));
       expect(find.text('Alle $count bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.'),
@@ -291,14 +298,14 @@ void main() {
       expect(find.text('page types'), findsOneWidget);
     });
 
-    testWidgets('Mitglieder & Rollen shows the counts', (tester) async {
+    testWidgets('Mitglieder, Register & Rollen shows the counts', (tester) async {
       _phone(tester);
       final pending = [TestFactories.createPerson(id: 1), TestFactories.createPerson(id: 2)];
       final left = TestFactories.createPersonList(4, tenantId: 7);
       await tester.pumpWidget(_app(_admin, initial: '/ich/verwaltung/mitglieder', pending: pending, left: left));
       await _settle(tester);
 
-      expect(find.text('Mitglieder & Rollen'), findsOneWidget);
+      expect(find.text('Mitglieder, Register & Rollen'), findsOneWidget);
       expect(find.text('Freigaben'), findsOneWidget);
       expect(find.text('2'), findsOneWidget);
       expect(find.text('Archiv'), findsOneWidget);
@@ -361,9 +368,9 @@ void main() {
       await tester.pumpWidget(_app(_helper));
       await _settle(tester);
 
-      expect(find.text('Werke, Register & Dateien'), findsOneWidget);
+      expect(find.text('Werke & Dateien'), findsOneWidget);
       expect(find.text('Auswertung & Daten'), findsOneWidget);
-      expect(find.text('Mitglieder & Rollen'), findsNothing);
+      expect(find.text('Mitglieder, Register & Rollen'), findsNothing);
       expect(find.textContaining('warten auf Freigabe'), findsNothing);
     });
 

@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
@@ -52,6 +53,27 @@ class IonListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: uppercase group label (inset) / section heading.
+      final style = inset ? RdType.eyebrow(color ?? rd.text2) : RdType.section(rd).copyWith(color: color);
+      return Padding(
+        padding: inset ? const EdgeInsets.fromLTRB(4, 4, 4, 6) : const EdgeInsets.fromLTRB(20, 16, 4, 8),
+        child: Row(
+          children: [
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: titleWidget != null
+                    ? DefaultTextStyle.merge(style: style, child: titleWidget!)
+                    : Text(inset ? title.toUpperCase() : title, style: style),
+              ),
+            ),
+            if (trailing != null) trailing!,
+          ],
+        ),
+      );
+    }
     final theme = Theme.of(context);
     final ios = isIonIos(context);
     final dark = theme.brightness == Brightness.dark;
@@ -136,6 +158,32 @@ class IonInsetList extends StatelessWidget {
           if (children.isNotEmpty)
             // MD_SWEEP: md inset group – radius 16, item background, no
             // shadow, 1px lines.
+            if (context.rdSkin case final rd?)
+              // Beta-Skin: grouped list of the new design.
+              DecoratedBox(
+                decoration: BoxDecoration(
+                  color: rd.surface,
+                  borderRadius: BorderRadius.circular(rd.listRadius),
+                  boxShadow: rd.cardShadow,
+                ),
+                child: ClipRRect(
+                  borderRadius: BorderRadius.circular(rd.listRadius),
+                  child: Material(
+                    type: MaterialType.transparency,
+                    child: Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        for (var i = 0; i < children.length; i++) ...[
+                          if (i > 0 && dividerIndent != null) Divider(height: 1, thickness: 1, color: rd.line),
+                          children[i],
+                        ],
+                      ],
+                    ),
+                  ),
+                ),
+              )
+            else
             Card(
               margin: EdgeInsets.zero,
               elevation: 0,

@@ -14927,6 +14927,12 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.manage.announcementsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Gesendete Mitteilungen ansehen'**
+  String get redesignManageAnnouncementsHint;
+
   /// redesign.manage.areaCommunication
   ///
   /// In de, this message translates to:
@@ -14954,13 +14960,13 @@ abstract class AppLocalizations {
   /// redesign.manage.areaMembers
   ///
   /// In de, this message translates to:
-  /// **'Mitglieder & Rollen'**
+  /// **'Mitglieder, Register & Rollen'**
   String get redesignManageAreaMembers;
 
   /// redesign.manage.areaWorks
   ///
   /// In de, this message translates to:
-  /// **'Werke, Register & Dateien'**
+  /// **'Werke & Dateien'**
   String get redesignManageAreaWorks;
 
   /// redesign.manage.classic
@@ -14968,6 +14974,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle Einstellungen (bisherige Ansicht)'**
   String get redesignManageClassic;
+
+  /// redesign.manage.extraFieldsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Felder für Personen und Werke'**
+  String get redesignManageExtraFieldsHint;
 
   /// redesign.manage.footer
   ///

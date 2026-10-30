@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/providers/player_absence_providers.dart';
@@ -13,6 +14,7 @@ import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
+import '../../../../core/services/app_update_service.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/display/avatar.dart';
@@ -111,7 +113,9 @@ class RdMePage extends ConsumerWidget {
                   : (tenant?.shortName ?? ''),
               onTap: () => showRdGroupSwitchSheet(context),
             ),
-            if (role.canSeeNotifications)
+            // Everyone who had the old settings page (incl. parents and
+            // viewers) keeps the notification settings.
+            if (!role.isApplicant)
               RdListRow(
                 leading: const RdRowIcon(Icons.notifications_outlined),
                 title: l10n.redesignMeNotifications,
@@ -175,6 +179,22 @@ class RdMePage extends ConsumerWidget {
               value: AppConstants.appVersion,
               onTap: () => showVersionHistorySheet(context),
             ),
+            // Like the old settings: "Update installieren" while a new web
+            // version is waiting, "Administration" for developers.
+            if (ref.watch(appUpdateAvailableProvider))
+              RdListRow(
+                leading: RdRowIcon(Icons.cloud_download_outlined, color: p.present, background: p.presentSoft),
+                title: l10n.settingsInstallUpdate,
+                titleColor: p.present,
+                showChevron: false,
+                onTap: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+              ),
+            if (ref.watch(isSuperDeveloperProvider))
+              RdListRow(
+                leading: const RdRowIcon(Icons.construction_outlined),
+                title: l10n.adminTitle,
+                onTap: () => context.push('/settings/administration'),
+              ),
           ],
         ),
         const SizedBox(height: 20),
@@ -186,12 +206,6 @@ class RdMePage extends ConsumerWidget {
               title: l10n.settingsChangePassword,
               onTap: () => showChangePasswordDialog(context),
             ),
-            if (!showManage && !role.isApplicant)
-              RdListRow(
-                leading: const RdRowIcon(Icons.settings_outlined),
-                title: l10n.redesignMeAllSettings,
-                onTap: () => context.push('/settings'),
-              ),
             RdListRow(
               leading: RdRowIcon(Icons.logout, color: p.absent, background: p.absentSoft),
               title: l10n.redesignMeLogout,
@@ -200,6 +214,19 @@ class RdMePage extends ConsumerWidget {
               onTap: () => rdLogout(context, ref),
             ),
           ],
+        ),
+        // Like the old settings (and required by the App Store): the
+        // account can be deleted from the app.
+        const SizedBox(height: 8),
+        Center(
+          child: TextButton(
+            onPressed: () => context.push('/settings/delete-account'),
+            style: TextButton.styleFrom(foregroundColor: p.text2),
+            child: Text(
+              l10n.settingsDeleteAccount,
+              style: const TextStyle(fontSize: 13, decoration: TextDecoration.underline),
+            ),
+          ),
         ),
         const SizedBox(height: 20),
         const Center(child: RdLogo(size: 44)),

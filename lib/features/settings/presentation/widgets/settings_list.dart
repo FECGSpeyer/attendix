@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart';
@@ -61,42 +62,50 @@ abstract final class IonIos {
   static const Color mediumTint = Color(0xFF9D9FA6);
 
   /// `ion-label p` colour (`--ion-color-step-400`).
+  // Beta-Skin: the colours below follow the new design's palette while the
+  // Beta theme is active (`context.rdSkin`).
   static Color labelP(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.text2 ??
+      (Theme.of(context).brightness == Brightness.dark
           ? const Color(0xFF8C8C8C)
-          : const Color(0xFF999999);
+          : const Color(0xFF999999));
 
   /// `ion-note` colour (`--ion-color-step-350`).
   static Color note(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.text2 ??
+      (Theme.of(context).brightness == Brightness.dark
           ? const Color(0xFF8C8C8C)
-          : const Color(0xFFA6A6A6);
+          : const Color(0xFFA6A6A6));
 
   /// ios item text colour (`--ion-text-color`).
   static Color text(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.text ??
+      (Theme.of(context).brightness == Brightness.dark
           ? Colors.white
-          : Colors.black;
+          : Colors.black);
 
   /// ios inset line colour (`--ion-color-step-250`, #c8c7cc).
   static Color line(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.line ??
+      (Theme.of(context).brightness == Brightness.dark
           ? const Color(0xFF404040)
-          : AppColors.dividerLight;
+          : AppColors.dividerLight);
 
   /// ion-item-group background (`--ion-item-background`): white, dark #000
   /// on the #222428 grouped page (IOS_R4, variables.scss
   /// attendix-dark-theme-ios-body; settings.page.scss `ion-item-group`).
   static Color itemBackground(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.surface ??
+      (Theme.of(context).brightness == Brightness.dark
           ? AppColors.iosInsetItemDark
-          : Colors.white;
+          : Colors.white);
 
   /// `ion-card` background (`--ion-card-background`): white, dark #1c1c1d.
   static Color cardBackground(BuildContext context) =>
-      Theme.of(context).brightness == Brightness.dark
+      context.rdSkin?.surface ??
+      (Theme.of(context).brightness == Brightness.dark
           ? AppColors.surfaceDark
-          : Colors.white;
+          : Colors.white);
 }
 
 /// IOS_SETTINGS2: horizontal page padding around inset lists — the ios26
@@ -108,6 +117,22 @@ double ionListMargin(BuildContext context) =>
 /// inset group: 53pt rows, 17pt labels, 16pt insets, 26pt start icons in the
 /// text colour, grey `p` lines.
 Widget ionIosListTileTheme(BuildContext context, {required Widget child}) {
+  final rd = context.rdSkin;
+  if (rd != null) {
+    // Beta-Skin: rows of the new design (RdListRow).
+    return ListTileTheme.merge(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 14),
+      minTileHeight: 52,
+      minVerticalPadding: 8,
+      horizontalTitleGap: 12,
+      minLeadingWidth: 22,
+      iconColor: rd.text2,
+      titleTextStyle: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: rd.text),
+      subtitleTextStyle: RdType.meta(rd, size: 13),
+      leadingAndTrailingTextStyle: RdType.meta(rd, size: 15),
+      child: IconTheme.merge(data: const IconThemeData(size: 22), child: child),
+    );
+  }
   // SF default tracking (Ionic sets no letter-spacing on items).
   final base = (Theme.of(context).textTheme.bodyLarge ?? const TextStyle())
       .copyWith(letterSpacing: 0);
@@ -180,7 +205,7 @@ class SettingsListSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (children.isEmpty && footer == null) return const SizedBox.shrink();
-    if (ionIsIos(context)) return _buildIos(context);
+    if (ionIsIos(context) || context.rdSkin != null) return _buildIos(context);
     final theme = Theme.of(context);
     return Padding(
       padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
@@ -257,7 +282,7 @@ class SettingsListSection extends StatelessWidget {
     final indent = dividerIndent ??
         (icons ? IonIos.iconDividerIndent : IonIos.itemPaddingStart);
     return Padding(
-      padding: const EdgeInsets.only(bottom: IonIos.sectionSpacing),
+      padding: EdgeInsets.only(bottom: context.rdSkin != null ? 20 : IonIos.sectionSpacing),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
@@ -284,6 +309,29 @@ class IonListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: the uppercase group label of the new design.
+      return Padding(
+        padding: EdgeInsets.fromLTRB(20, 4, action == null ? 20 : 4, 6),
+        child: Row(
+          children: [
+            if (icon != null) ...[
+              Icon(icon, size: 16, color: rd.primary),
+              const SizedBox(width: 6),
+            ],
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(title.toUpperCase(), style: RdType.eyebrow(rd.text2)),
+              ),
+            ),
+            if (action != null)
+              ConstrainedBox(constraints: const BoxConstraints(maxHeight: 32), child: action!),
+          ],
+        ),
+      );
+    }
     final dark = Theme.of(context).brightness == Brightness.dark;
     return ConstrainedBox(
       constraints: const BoxConstraints(minHeight: IonIos.listHeaderMinHeight),
@@ -334,6 +382,35 @@ class IonInsetGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: grouped list of the new design (RdGroupedList).
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: color ?? rd.surface,
+          borderRadius: BorderRadius.circular(rd.listRadius),
+          boxShadow: rd.cardShadow,
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(rd.listRadius),
+          child: Material(
+            type: MaterialType.transparency,
+            child: ionIosListTileTheme(
+              context,
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  for (var i = 0; i < children.length; i++) ...[
+                    if (i > 0) Divider(height: 1, thickness: 1, color: rd.line),
+                    children[i],
+                  ],
+                ],
+              ),
+            ),
+          ),
+        ),
+      );
+    }
     return ClipRRect(
       borderRadius: BorderRadius.circular(IonIos.groupRadius),
       child: Material(
@@ -373,6 +450,8 @@ class IonDetailChevron extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return Icon(Icons.chevron_right, size: 20, color: rd.text2);
     if (!ionIsIos(context)) {
       // MD_SWEEP: md `.item-detail-icon` – chevron-forward 1.25em (20px)
       // in the text colour at `--detail-icon-opacity: .25`.
@@ -433,7 +512,9 @@ class SettingsListTile extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = ionIsIos(context);
+    final rd = context.rdSkin;
+    // Beta-Skin: rows take the iOS sizes, the colours come from IonIos.
+    final ios = rd != null || ionIsIos(context);
     final onColor = background != null ? Colors.white : null;
     final fg = onColor ?? color;
     // Ionic ios: slotted icons inherit the item text colour; md: 54 % grey.
@@ -441,6 +522,7 @@ class SettingsListTile extends StatelessWidget {
         onColor ??
         iconColor ??
         color ??
+        rd?.text2 ??
         (ios
             ? IonIos.text(context)
             : IonMd.iconColor(Theme.of(context).brightness));
@@ -451,7 +533,7 @@ class SettingsListTile extends StatelessWidget {
               ? IconTheme.merge(
                 data: IconThemeData(
                   color: iconFg,
-                  size: ios ? IonIos.itemIconSize : 24,
+                  size: rd != null ? 22 : (ios ? IonIos.itemIconSize : 24),
                 ),
                 child: iconWidget!,
               )
@@ -459,7 +541,7 @@ class SettingsListTile extends StatelessWidget {
               ? Icon(
                 icon,
                 color: iconFg,
-                size: ios ? IonIos.itemIconSize : null,
+                size: rd != null ? 22 : (ios ? IonIos.itemIconSize : null),
               )
               : null,
       title: titleWidget ?? Text(title, style: TextStyle(color: fg)),
@@ -469,7 +551,7 @@ class SettingsListTile extends StatelessWidget {
                 subtitle!,
                 // MD_SWEEP: md ion-label p 14 / 20, step-600.
                 style: TextStyle(
-                  fontSize: 14,
+                  fontSize: rd != null ? 13 : 14,
                   height: ios ? null : IonMd.pLineHeight,
                   color:
                       background != null

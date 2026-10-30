@@ -395,9 +395,9 @@
         "search": "Einstellung suchen",
         "searchLabel": "Verwaltung durchsuchen",
         "pending": "{count, plural, one {1 Person wartet auf Freigabe} other {{count} Personen warten auf Freigabe}}",
-        "areaMembers": "Mitglieder & Rollen",
+        "areaMembers": "Mitglieder, Register & Rollen",
         "areaEvents": "Termine & Planung",
-        "areaWorks": "Werke, Register & Dateien",
+        "areaWorks": "Werke & Dateien",
         "areaData": "Auswertung & Daten",
         "areaCommunication": "Kommunikation",
         "areaGroup": "Gruppe",
@@ -408,7 +408,9 @@
         "generalTitle": "Allgemeine Einstellungen",
         "generalHint": "Name, Saison, Gründe, Anmeldung",
         "recent": "Zuletzt geöffnet",
-        "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang"
+        "missingHint": "Mitglieder mit E-Mail, aber ohne Zugang",
+        "announcementsHint": "Gesendete Mitteilungen ansehen",
+        "extraFieldsHint": "Eigene Felder für Personen und Werke"
       },
       "pult": {
         "open": "Pultmodus",
@@ -917,9 +919,9 @@
         "search": "Search settings",
         "searchLabel": "Search administration",
         "pending": "{count, plural, one {1 person is waiting for approval} other {{count} people are waiting for approval}}",
-        "areaMembers": "Members & roles",
+        "areaMembers": "Members, sections & roles",
         "areaEvents": "Events & planning",
-        "areaWorks": "Works, sections & files",
+        "areaWorks": "Works & files",
         "areaData": "Statistics & data",
         "areaCommunication": "Communication",
         "areaGroup": "Group",
@@ -930,7 +932,9 @@
         "generalTitle": "General settings",
         "generalHint": "Name, season, reasons, registration",
         "recent": "Recently opened",
-        "missingHint": "Members with an e-mail but no access"
+        "missingHint": "Members with an e-mail but no access",
+        "announcementsHint": "View sent messages",
+        "extraFieldsHint": "Custom fields for people and works"
       },
       "pult": {
         "open": "Stand mode",

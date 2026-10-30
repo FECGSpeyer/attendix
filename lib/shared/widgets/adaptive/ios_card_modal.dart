@@ -3,6 +3,8 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
+
 /// IOS_R4: Ionic iOS **card modal** (`modalController.create({ component,
 /// presentingElement })`) on a phone:
 ///
@@ -255,11 +257,12 @@ class _IosCardModalFrame extends StatelessWidget {
               onVerticalDragUpdate: (d) => route._dragUpdate(d, cardHeight),
               onVerticalDragEnd: route._dragEnd,
               child: ClipRRect(
-                borderRadius: const BorderRadius.vertical(
-                  top: Radius.circular(kIosCardModalRadius),
+                borderRadius: BorderRadius.vertical(
+                  top: Radius.circular(context.rdSkin != null ? 24 : kIosCardModalRadius),
                 ),
                 child: Material(
-                  color: route.backgroundColor ?? theme.colorScheme.surface,
+                  // Beta-Skin: the page colour of the new design.
+                  color: route.backgroundColor ?? context.rdSkin?.bg ?? theme.colorScheme.surface,
                   child: MediaQuery.removePadding(
                     context: context,
                     removeTop: true,

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
 
 /// UX_AUTH: building blocks for the Ionic `ion-list [inset]="true"` forms of
@@ -23,7 +24,7 @@ double ionInsetMargin(BuildContext context) =>
 
 /// Corner radius of an inset group.
 double ionInsetRadius(BuildContext context) =>
-    ionIsIos(context) ? ion.IonIos.groupRadius : 16;
+    context.rdSkin?.listRadius ?? (ionIsIos(context) ? ion.IonIos.groupRadius : 16);
 
 /// `ion-label` font size inside an inset item (17 px on iOS, 16 px in MD).
 double ionItemFontSize(BuildContext context) =>
@@ -52,6 +53,25 @@ class IonListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: the uppercase group label of the new design.
+      return Padding(
+        padding: EdgeInsets.fromLTRB(ionInsetMargin(context) + 4, 10, ionInsetMargin(context), 6),
+        child: Row(
+          children: [
+            if (leading != null) ...[leading!, const SizedBox(width: 8)],
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(text.toUpperCase(), style: RdType.eyebrow(rd.text2).merge(style?.copyWith(fontSize: 12))),
+              ),
+            ),
+            if (trailing != null) trailing!,
+          ],
+        ),
+      );
+    }
     final base = TextStyle(fontSize: 14.4, color: ionMediumTint);
     return Padding(
       padding: EdgeInsets.fromLTRB(
@@ -87,7 +107,9 @@ class IonInsetGroup extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     // IOS_R4: iOS dark item groups are --ion-item-background #000.
+    final rd = context.rdSkin;
     final background = color ??
+        rd?.surface ??
         (ion.isIosLook(context) && theme.brightness == Brightness.dark
             ? ion.ionItemBackground(context)
             : (theme.cardTheme.color ?? theme.colorScheme.surface));
@@ -99,6 +121,7 @@ class IonInsetGroup extends StatelessWidget {
       decoration: BoxDecoration(
         color: background,
         borderRadius: BorderRadius.circular(ionInsetRadius(context)),
+        boxShadow: rd?.cardShadow,
       ),
       clipBehavior: Clip.antiAlias,
       child: Material(
@@ -125,6 +148,8 @@ class IonItemDivider extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return Divider(height: 1, thickness: 1, color: rd.line);
     final dark = Theme.of(context).brightness == Brightness.dark;
     return Divider(
       height: 0.5,
