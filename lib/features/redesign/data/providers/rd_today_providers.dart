@@ -8,6 +8,8 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/repositories/sign_in_out_repository.dart'
+    show CrossTenantPersonAttendance;
 import '../../../../l10n/l10n.dart';
 import '../rd_dates.dart';
 
@@ -22,6 +24,18 @@ final rdSignoutDataProvider = FutureProvider<SignoutData>((ref) async {
   final data = await ref.watch(signoutDataProvider.future);
   return applySignoutDutyView(data, useDutyView: false);
 });
+
+/// The Termin of the "Nächster Termin" card on "Heute": the next one the
+/// person is part of. With `show_all_attendances` the list also holds Termine
+/// of the instance without the person (e.g. an info entry for those not
+/// invited on the same day); those only lead when no own Termin is upcoming.
+CrossTenantPersonAttendance? rdTodayFocus(SignoutData data) {
+  final all = data.allUpcoming;
+  for (final att in all) {
+    if (att.isMember) return att;
+  }
+  return all.isEmpty ? null : all.first;
+}
 
 /// Answers for one Termin, split like the "Heute" card
 /// ("24 zugesagt · 3 entschuldigt · 2 später · 5 offen").

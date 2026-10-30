@@ -97,7 +97,12 @@ SignoutData buildSignoutData({
   int compareDate(CrossTenantPersonAttendance a, CrossTenantPersonAttendance b) {
     final da = EventListUtils.parse(a.date) ?? DateTime(1970);
     final db = EventListUtils.parse(b.date) ?? DateTime(1970);
-    return da.compareTo(db);
+    final byDate = da.compareTo(db);
+    if (byDate != 0) return byDate;
+    // Same start: own Termine first, then a fixed order (the database
+    // returns ties in any order, so the list must not reshuffle on reload).
+    if (a.isMember != b.isMember) return a.isMember ? -1 : 1;
+    return (a.attendanceId ?? 0).compareTo(b.attendanceId ?? 0);
   }
 
   bool ended(CrossTenantPersonAttendance a) =>
