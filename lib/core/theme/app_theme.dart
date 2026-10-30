@@ -1,5 +1,8 @@
 import 'package:flutter/cupertino.dart'
-    show CupertinoFullscreenDialogTransition, CupertinoPageTransition;
+    show
+        CupertinoFullscreenDialogTransition,
+        CupertinoPageTransition,
+        CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -7,7 +10,8 @@ import 'package:flutter/services.dart';
 import '../../shared/widgets/adaptive/adaptive_platform.dart' show IosGlass;
 import '../../shared/widgets/adaptive/app_toolbar.dart'
     show IosCircleIcon, IonToolbarButtonMetrics, kIonTitleFontSize;
-import '../../shared/widgets/layout/ionic_md.dart' show IonMd;
+import '../../shared/widgets/layout/ionic_md.dart' show IonMd; // MD_SWEEP
+import '../services/native/native_platform.dart' show isNativeIos;
 import 'app_colors.dart';
 
 /// App theme configuration.
@@ -262,8 +266,10 @@ class AppTheme {
       // MaterialPage / MaterialPageRoute uses it on iOS (incl. the iPhone
       // Safari PWA). Ionic disables the edge swipe-back
       // (`swipeBackEnabled: false` in app.module.ts, it caused a double back
-      // with the browser's own swipe), so the slide comes without the
-      // gesture. md keeps the Flutter defaults.
+      // with the browser's own swipe). SWIPE_BACK: the installed iOS app has
+      // no browser swipe, so it gets the edge swipe-back (Leon, v0.23.0);
+      // web keeps the slide without the gesture. md keeps the Flutter
+      // defaults.
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
           TargetPlatform.android: ZoomPageTransitionsBuilder(),
@@ -831,10 +837,19 @@ class _IonToggleAdaptation extends Adaptation<SwitchThemeData> {
 }
 
 /// IOS_R6: the iOS page slide (and the bottom-up slide for full-screen
-/// dialogs) without the edge swipe-back gesture, like Ionic with
-/// `swipeBackEnabled: false`.
+/// dialogs). On the web it comes without the edge swipe-back gesture, like
+/// Ionic with `swipeBackEnabled: false` (Safari's own swipe would go back
+/// twice).
+///
+/// SWIPE_BACK: the installed iOS app swipes back from the left edge like
+/// every native iOS app. Flutter's Cupertino gesture already stays off for
+/// full-screen dialogs, the first page of a navigator and pages whose
+/// [PopScope] blocks the pop (e.g. unsaved changes).
 class IonIosPageTransitionsBuilder extends PageTransitionsBuilder {
-  const IonIosPageTransitionsBuilder();
+  const IonIosPageTransitionsBuilder({this.swipeBack});
+
+  /// Defaults to [isNativeIos]; tests set it explicitly.
+  final bool? swipeBack;
 
   @override
   Widget buildTransitions<T>(
@@ -844,6 +859,10 @@ class IonIosPageTransitionsBuilder extends PageTransitionsBuilder {
     Animation<double> secondaryAnimation,
     Widget child,
   ) {
+    if (swipeBack ?? isNativeIos) {
+      return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
+          route, context, animation, secondaryAnimation, child);
+    }
     if (route.fullscreenDialog) {
       return CupertinoFullscreenDialogTransition(
         primaryRouteAnimation: animation,

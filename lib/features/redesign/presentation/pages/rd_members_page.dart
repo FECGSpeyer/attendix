@@ -35,7 +35,9 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   String _query = '';
 
   /// Thumb of Aktiv / Pausiert / Wartet while swiping the list.
-  double? _swipePos;
+  /// Notifier so only the segmented control rebuilds while swiping, not
+  /// the whole page with every row.
+  final _swipePos = ValueNotifier<double?>(null);
   final _search = TextEditingController();
 
   @override
@@ -63,6 +65,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   @override
   void dispose() {
     _search.dispose();
+    _swipePos.dispose();
     super.dispose();
   }
 
@@ -160,16 +163,19 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ),
       ),
       const SizedBox(height: 12),
-      RdSegmented<RdMembersFilter>(
-        values: filters,
-        selected: filter,
-        position: _swipePos,
-        labelOf: (f) => switch (f) {
-          RdMembersFilter.active => l10n.redesignMembersActive(active.length),
-          RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
-          RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
-        },
-        onChanged: (f) => setState(() => _filter = f),
+      ValueListenableBuilder<double?>(
+        valueListenable: _swipePos,
+        builder: (context, pos, _) => RdSegmented<RdMembersFilter>(
+          values: filters,
+          selected: filter,
+          position: pos,
+          labelOf: (f) => switch (f) {
+            RdMembersFilter.active => l10n.redesignMembersActive(active.length),
+            RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
+            RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
+          },
+          onChanged: (f) => setState(() => _filter = f),
+        ),
       ),
       const SizedBox(height: 16),
     ];
@@ -229,7 +235,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       values: filters,
       selected: filter,
       onChanged: (f) => setState(() => _filter = f),
-      onDrag: (pos) => setState(() => _swipePos = pos),
+      onDrag: (pos) => _swipePos.value = pos,
       child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body),
     ));
 
