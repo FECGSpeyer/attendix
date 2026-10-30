@@ -8,6 +8,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart'
     show CrossTenantPersonAttendance;
 import '../../../../l10n/l10n.dart';
@@ -139,6 +140,13 @@ RdEventInfo rdEventInfo(Attendance attendance, AttendanceType? type) {
     timeRange: EventListUtils.timeRange(startTime, attendance.endTime ?? type?.endTime),
     place: attendance.place ?? '',
   );
+}
+
+/// Ionic `show_all_attendances_info_text` (with its default): hint below
+/// Termine the person is not part of.
+String rdNotMemberInfo(Tenant? tenant) {
+  final text = tenant?.showAllAttendancesInfoText;
+  return text != null && text.isNotEmpty ? text : EventListUtils.defaultShowAllInfoText;
 }
 
 /// [date] plus "HH:mm" [time] in local time.

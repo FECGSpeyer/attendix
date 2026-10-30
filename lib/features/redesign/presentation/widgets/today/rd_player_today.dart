@@ -9,12 +9,11 @@ import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
-import '../../../../../data/models/tenant/tenant.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider, rdStartOf, rdTodayFocus;
+import '../../../data/providers/rd_today_providers.dart' show rdNotMemberInfo, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -63,7 +62,11 @@ class RdPlayerToday extends ConsumerWidget {
                 RdEventRow(
                   date: att.date,
                   title: att.eventTitle,
-                  meta: att.eventMeta(),
+                  meta: actions.isOwn(att)
+                      ? att.eventMeta()
+                      : [att.eventMeta(), rdNotMemberInfo(tenant)]
+                          .where((s) => s.isNotEmpty)
+                          .join('\n'),
                   trailing: actions.isOwn(att) ? rdOwnStatusPill(l10n, att.status) : null,
                   onTap: () => att.id != null && actions.isOwn(att)
                       ? context.push(RedesignRoutes.ownEvent(att.id!))
@@ -255,7 +258,7 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
           // Ionic: hint of the instance below Termine without the person.
           if (qa == null && !att.isMember) ...[
             const SizedBox(height: 4),
-            Text(_notMemberInfo(ref.watch(currentTenantProvider)), style: RdType.meta(p)),
+            Text(rdNotMemberInfo(ref.watch(currentTenantProvider)), style: RdType.meta(p)),
           ],
           if (att.notes != null && att.notes!.isNotEmpty && qa != null && !qa.present) ...[
             const SizedBox(height: 4),
@@ -285,11 +288,6 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
         ],
       ),
     );
-  }
-
-  String _notMemberInfo(Tenant? tenant) {
-    final text = tenant?.showAllAttendancesInfoText;
-    return text != null && text.isNotEmpty ? text : EventListUtils.defaultShowAllInfoText;
   }
 
   List<Widget> _answerButtons(

@@ -9,11 +9,13 @@ CrossTenantPersonAttendance _att(
   String date, {
   bool isMember = true,
   AttendanceStatus status = AttendanceStatus.neutral,
+  String? startTime,
 }) =>
     CrossTenantPersonAttendance(
       id: isMember ? 'pa$attendanceId' : null,
       attendanceId: attendanceId,
       date: date,
+      startTime: startTime,
       status: status,
       isMember: isMember,
       tenantId: 1,
@@ -58,6 +60,20 @@ void main() {
       expect(data.current?.attendanceId, 30);
       expect(rdTodayFocus(data)?.attendanceId, 10);
       expect(rdTodayFocus(data)?.status, AttendanceStatus.excused);
+    });
+
+    test('date normalized to 12:00: the start time decides before membership', () {
+      // Ionic stores the day at 12:00 and the start time separately.
+      final ownEvening = _att(10, '2026-10-31T12:00:00', startTime: '19:00');
+      final infoMorning = _att(20, '2026-10-31T12:00:00', isMember: false, startTime: '10:00');
+      final data = buildSignoutData(
+        own: const [],
+        allUpcoming: [ownEvening, infoMorning],
+        now: now,
+      );
+      expect(data.allUpcoming.map((a) => a.attendanceId), [20, 10]);
+      // The card still shows the own Termin.
+      expect(rdTodayFocus(data)?.attendanceId, 10);
     });
 
     test('"Heute" card falls back to the first Termin without own ones', () {
