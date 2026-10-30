@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -23,6 +22,7 @@ import '../../../songs/presentation/widgets/group_files_sheet.dart';
 import '../../../songs/presentation/widgets/song_categories_sheet.dart';
 import '../../../songs/presentation/widgets/song_filter_sheet.dart';
 import '../../data/rd_works_logic.dart';
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
@@ -54,7 +54,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     await ref.read(songsListDataProvider(null).future).catchError((_) => null);
   }
 
-  void _openWork(int id) => context.push(RedesignRoutes.work(id));
+  void _openWork(int id) => RdSplitScope.open(context, RedesignRoutes.work(id));
 
   Future<void> _more(SongsListData data, List<Song> shown, bool isAdmin) async {
     final l10n = context.l10n;
@@ -293,6 +293,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               _WorkRow(
                 key: ValueKey('rd-work-${song.id}'),
                 song: song,
+                selected: song.id != null && RdSplitScope.of(context)?.selectedId == song.id,
                 onTap: song.id == null ? null : () => _openWork(song.id!),
               ),
           ]),
@@ -371,10 +372,13 @@ class _CurrentCard extends StatelessWidget {
 
 /// Number, title, composer, PDF / Audio.
 class _WorkRow extends StatelessWidget {
-  const _WorkRow({super.key, required this.song, required this.onTap});
+  const _WorkRow({super.key, required this.song, required this.onTap, this.selected = false});
 
   final Song song;
   final VoidCallback? onTap;
+
+  /// Open on the right of the split view.
+  final bool selected;
 
   @override
   Widget build(BuildContext context) {
@@ -383,8 +387,9 @@ class _WorkRow extends StatelessWidget {
     final number = song.fullNumber;
     return Semantics(
       button: onTap != null,
+      selected: selected,
       child: Material(
-        color: Colors.transparent,
+        color: selected ? p.soft : Colors.transparent,
         child: InkWell(
           onTap: onTap,
           child: ConstrainedBox(

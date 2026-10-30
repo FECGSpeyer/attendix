@@ -326,6 +326,48 @@ class SongFileService {
     }).eq('id', songId).eq('tenantId', _tenantId);
   }
 
+  /// Rename a file: only its display name (`fileName`) changes; the storage
+  /// object keeps its `storageName`. Files without a storageName (very old
+  /// uploads) are stored under their fileName, so they are not renamed.
+  Future<void> renameFile({
+    required int songId,
+    required String url,
+    required String storageName,
+    required String fileName,
+  }) async {
+    DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
+    if (_tenantId == null) {
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
+    }
+    if (storageName.isEmpty || fileName.trim().isEmpty) return;
+
+    // RT-009: Use maybeSingle() - song may have been deleted
+    final songResponse = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', _tenantId)
+        .maybeSingle();
+
+    if (songResponse == null) {
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
+    }
+
+    final existingFiles = List<Map<String, dynamic>>.from(
+      (songResponse['files'] as List?) ?? [],
+    );
+    for (var i = 0; i < existingFiles.length; i++) {
+      if (_sameFile(existingFiles[i], url, storageName)) {
+        existingFiles[i] = {...existingFiles[i], 'fileName': fileName.trim()};
+        break;
+      }
+    }
+
+    await _supabase.from('songs').update({
+      'files': existingFiles,
+    }).eq('id', songId).eq('tenantId', _tenantId);
+  }
+
   /// Pick multiple files
   Future<List<PlatformFile>?> pickMultipleFiles() async {
     final result = await FilePicker.platform.pickFiles(

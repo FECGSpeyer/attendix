@@ -14477,6 +14477,216 @@ abstract class AppLocalizations {
   /// **'Dabei'**
   String get redesignEventsYes;
 
+  /// redesign.files.actions
+  ///
+  /// In de, this message translates to:
+  /// **'Aktionen für {name}'**
+  String redesignFilesActions(Object name);
+
+  /// redesign.files.colName
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get redesignFilesColName;
+
+  /// redesign.files.colPart
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme'**
+  String get redesignFilesColPart;
+
+  /// redesign.files.colType
+  ///
+  /// In de, this message translates to:
+  /// **'Typ'**
+  String get redesignFilesColType;
+
+  /// redesign.files.conflictMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Für 1 Datei gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:} other {Für {count} Dateien gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:}}'**
+  String redesignFilesConflictMessage(num count);
+
+  /// redesign.files.conflictTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Schon vorhanden'**
+  String get redesignFilesConflictTitle;
+
+  /// redesign.files.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get redesignFilesDelete;
+
+  /// redesign.files.deletedMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei gelöscht} other {{count} Dateien gelöscht}}'**
+  String redesignFilesDeletedMany(num count);
+
+  /// redesign.files.deletedOne
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gelöscht'**
+  String redesignFilesDeletedOne(Object name);
+
+  /// redesign.files.dismiss
+  ///
+  /// In de, this message translates to:
+  /// **'Ausblenden'**
+  String get redesignFilesDismiss;
+
+  /// redesign.files.done
+  ///
+  /// In de, this message translates to:
+  /// **'Fertig'**
+  String get redesignFilesDone;
+
+  /// redesign.files.download
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignFilesDownload;
+
+  /// redesign.files.downloadAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle als ZIP'**
+  String get redesignFilesDownloadAll;
+
+  /// redesign.files.downloadZip
+  ///
+  /// In de, this message translates to:
+  /// **'Als ZIP laden'**
+  String get redesignFilesDownloadZip;
+
+  /// redesign.files.dropHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien hierher ziehen oder „Hochladen“ wählen.'**
+  String get redesignFilesDropHint;
+
+  /// redesign.files.dropOverlay
+  ///
+  /// In de, this message translates to:
+  /// **'Loslassen, um sie zu „{name}“ hochzuladen'**
+  String redesignFilesDropOverlay(Object name);
+
+  /// redesign.files.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlgeschlagen'**
+  String get redesignFilesFailed;
+
+  /// redesign.files.keepBoth
+  ///
+  /// In de, this message translates to:
+  /// **'Beide behalten'**
+  String get redesignFilesKeepBoth;
+
+  /// redesign.files.open
+  ///
+  /// In de, this message translates to:
+  /// **'Öffnen'**
+  String get redesignFilesOpen;
+
+  /// redesign.files.otherCategory
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstige …'**
+  String get redesignFilesOtherCategory;
+
+  /// redesign.files.queueDone
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei hochgeladen} other {{count} Dateien hochgeladen}}'**
+  String redesignFilesQueueDone(num count);
+
+  /// redesign.files.queueTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen: {done} von {total}'**
+  String redesignFilesQueueTitle(Object done, Object total);
+
+  /// redesign.files.rename
+  ///
+  /// In de, this message translates to:
+  /// **'Umbenennen'**
+  String get redesignFilesRename;
+
+  /// redesign.files.replace
+  ///
+  /// In de, this message translates to:
+  /// **'Ersetzen'**
+  String get redesignFilesReplace;
+
+  /// redesign.files.restored
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederhergestellt'**
+  String get redesignFilesRestored;
+
+  /// redesign.files.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern fehlgeschlagen: {error}'**
+  String redesignFilesSaveFailed(Object error);
+
+  /// redesign.files.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle auswählen'**
+  String get redesignFilesSelectAll;
+
+  /// redesign.files.selected
+  ///
+  /// In de, this message translates to:
+  /// **'{count} ausgewählt'**
+  String redesignFilesSelected(Object count);
+
+  /// redesign.files.shortcuts
+  ///
+  /// In de, this message translates to:
+  /// **'Tastenkürzel'**
+  String get redesignFilesShortcuts;
+
+  /// redesign.files.shortcutsHelp
+  ///
+  /// In de, this message translates to:
+  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen'**
+  String redesignFilesShortcutsHelp(Object mod);
+
+  /// redesign.files.title
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien'**
+  String get redesignFilesTitle;
+
+  /// redesign.files.upload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get redesignFilesUpload;
+
+  /// redesign.files.uploading
+  ///
+  /// In de, this message translates to:
+  /// **'Lädt hoch …'**
+  String get redesignFilesUploading;
+
+  /// redesign.files.waiting
+  ///
+  /// In de, this message translates to:
+  /// **'Wartet'**
+  String get redesignFilesWaiting;
+
+  /// redesign.files.zipPreparing
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP wird erstellt …'**
+  String get redesignFilesZipPreparing;
+
   /// redesign.groups.loadFailed
   ///
   /// In de, this message translates to:
@@ -15142,6 +15352,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wähle links eine Person aus.'**
   String get redesignSplitMembersEmpty;
+
+  /// redesign.split.worksEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links ein Werk aus.'**
+  String get redesignSplitWorksEmpty;
 
   /// redesign.status.absent
   ///
