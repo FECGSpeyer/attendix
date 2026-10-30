@@ -38,6 +38,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../person_stats.dart';
 import '../../../../core/services/error_reporter.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
@@ -45,23 +46,13 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
 /// Provider for single person with group name
 final personProvider =
     FutureProvider.family<Person?, int>((ref, personId) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenant = ref.watch(currentTenantProvider);
+  final repo = ref.watch(playerRepositoryWithTenantProvider);
   final groups = await ref.watch(groupsMapProvider.future);
 
-  if (tenant == null) return null;
-  final tenantId = tenant.id;
-  if (tenantId == null) return null;
+  if (!repo.hasTenantId) return null;
 
-  final response = await supabase
-      .from('player')
-      .select('*')
-      .eq('id', personId)
-      .eq('tenantId', tenantId)
-      .maybeSingle();
-
-  if (response == null) return null;
-  final person = Person.fromJson(response);
+  final person = await repo.getPlayerById(personId);
+  if (person == null) return null;
 
   // Add group name from the groups map
   final groupName = person.instrument != null ? groups[person.instrument] : null;
@@ -74,12 +65,11 @@ final personProvider =
 final personAttendanceStatsProvider =
     FutureProvider.family<Map<String, dynamic>, int>((ref, personId) async {
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
-  final supabase = ref.watch(supabaseClientProvider);
+  final repo = ref.watch(playerRepositoryWithTenantProvider);
   final tenant = ref.watch(currentTenantProvider);
   final person = await ref.watch(personProvider(personId).future);
 
-  final tenantId = tenant?.id;
-  if (tenantId == null || person == null) {
+  if (!repo.hasTenantId || person == null) {
     return {
       'total': 0,
       'attended': 0,
@@ -89,18 +79,10 @@ final personAttendanceStatsProvider =
     };
   }
 
-  // Tenant filter via the inner-joined attendance (person_attendances has no
-  // tenantId column).
-  final response = await supabase
-      .from('person_attendances')
-      .select('status, notes, duty_state, '
-          'attendance:attendance_id!inner(id, date, tenantId, '
-          'attType:type_id(include_in_average, duty_mode))')
-      .eq('person_id', personId)
-      .eq('attendance.tenantId', tenantId);
+  final rows = await repo.getPersonAttendanceStatsRows(personId);
 
   return computePersonAttendanceStats(
-    List<Map<String, dynamic>>.from(response as List),
+    rows,
     now: DateTime.now(),
     windowStart: personAttendanceWindowStart(
       seasonStart: tenant?.seasonStart,
@@ -114,30 +96,18 @@ final personAttendanceStatsProvider =
 /// Provider for person history (attendance + player history combined)
 final personHistoryProvider =
     FutureProvider.family<List<Map<String, dynamic>>, int>((ref, personId) async {
-  final supabase = ref.watch(supabaseClientProvider);
+  final repo = ref.watch(playerRepositoryWithTenantProvider);
+  final typeRepo = ref.watch(attendanceTypeRepositoryWithTenantProvider);
   final person = await ref.watch(personProvider(personId).future);
-  final tenant = ref.watch(currentTenantProvider);
 
-  if (person == null || tenant == null) return [];
-  final tenantId = tenant.id;
-  if (tenantId == null) return [];
+  if (person == null || !repo.hasTenantId || !typeRepo.hasTenantId) return [];
 
   final today = DateTime.now().toIso8601String().substring(0, 10);
 
-  final attendanceResponse = await supabase
-      .from('person_attendances')
-      .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId)')
-      .eq('person_id', personId)
-      .eq('attendance.tenantId', tenantId);
+  final attendanceResponse = await repo.getPersonAttendanceHistoryRows(personId);
+  final attendanceTypes = await typeRepo.getTypeRows();
 
-  List<Map<String, dynamic>> attendanceTypes = [];
-  final typesResponse = await supabase
-      .from('attendance_types')
-      .select('*')
-      .eq('tenant_id', tenantId);
-  attendanceTypes = List<Map<String, dynamic>>.from(typesResponse as List);
-
-  final attendanceHistory = (attendanceResponse as List)
+  final attendanceHistory = attendanceResponse
       .where((a) => a['attendance'] != null)
       .where((a) {
         final attendance = a['attendance'] as Map<String, dynamic>?;
@@ -406,7 +376,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     setState(() => _isLoadingRole = true);
     try {
-      var role = await _getUserRole(appId, tenantId);
+      var role = await _getUserRole(appId);
 
       // LOGIC_PEOPLE: Ionic person.page ngOnInit — repair a half-approved
       // account (pending=false but role still APPLICANT) by promoting it to
@@ -439,18 +409,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
-  Future<Role?> _getUserRole(String userId, int tenantId) async {
-    final supabase = ref.read(supabaseClientProvider);
+  Future<Role?> _getUserRole(String userId) async {
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return null;
     try {
-      final response = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('userId', userId)
-          .eq('tenantId', tenantId)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return Role.fromValue(response['role'] as int? ?? 99);
+      return await repo.getTenantUserRole(userId);
     } catch (e) {
       return null;
     }
@@ -621,10 +584,6 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
     try {
       // Sprint 2a: migrated to PlayerRepository.updatePlayerFields.
-      // The remaining supabaseClientProvider reads in this file (personProvider,
-      // appointmentsProvider, _getUserRole, _updateUserRole, _unlinkAccount)
-      // are Sprint 2b scope — they need TenantUserRepository which doesn't
-      // exist yet.
       final person = widget.person;
 
       // Build history entries for tracked changes
@@ -1540,19 +1499,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    final supabase = ref.read(supabaseClientProvider);
-    final tenant = ref.read(currentTenantProvider);
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     final appId = widget.person.appId;
-    final tenantId = tenant?.id;
 
-    if (appId == null || tenantId == null) return;
+    if (appId == null || !repo.hasTenantId) return;
 
     try {
-      await supabase
-          .from('tenantUsers')
-          .update({'role': newRole.value})
-          .eq('userId', appId)
-          .eq('tenantId', tenantId);
+      await repo.updateTenantUserRole(appId, newRole);
 
       if (mounted) {
         setState(() => _userRole = newRole);

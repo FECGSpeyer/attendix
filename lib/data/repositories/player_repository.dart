@@ -1427,6 +1427,76 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  // ---------------------------------------------------------------------
+  // Person detail page (moved from the page, #7 repository bundling)
+  // ---------------------------------------------------------------------
+
+  /// person_attendances of [personId] with the fields the attendance
+  /// statistics need. Tenant filter via the inner-joined attendance
+  /// (person_attendances has no tenantId column).
+  Future<List<Map<String, dynamic>>> getPersonAttendanceStatsRows(int personId) async {
+    try {
+      final response = await supabase
+          .from('person_attendances')
+          .select('status, notes, duty_state, '
+              'attendance:attendance_id!inner(id, date, tenantId, '
+              'attType:type_id(include_in_average, duty_mode))')
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId);
+      return List<Map<String, dynamic>>.from(response as List);
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonAttendanceStatsRows');
+      rethrow;
+    }
+  }
+
+  /// person_attendances of [personId] with their Termin, for the history.
+  Future<List<Map<String, dynamic>>> getPersonAttendanceHistoryRows(int personId) async {
+    try {
+      final response = await supabase
+          .from('person_attendances')
+          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId)')
+          .eq('person_id', personId)
+          .eq('attendance.tenantId', currentTenantId);
+      return List<Map<String, dynamic>>.from(response as List);
+    } catch (e, stack) {
+      handleError(e, stack, 'getPersonAttendanceHistoryRows');
+      rethrow;
+    }
+  }
+
+  /// Role of the account [userId] in the current tenant, null without access.
+  Future<Role?> getTenantUserRole(String userId) async {
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('role')
+          .eq('userId', userId)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+      if (response == null) return null;
+      return Role.fromValue(response['role'] as int? ?? 99);
+    } catch (e, stack) {
+      handleError(e, stack, 'getTenantUserRole');
+      rethrow;
+    }
+  }
+
+  /// Sets the role of the account [userId] in the current tenant.
+  Future<void> updateTenantUserRole(String userId, Role role) async {
+    ensureNotDemo('updateTenantUserRole'); // DEMO_GUARD
+    try {
+      await supabase
+          .from('tenantUsers')
+          .update({'role': role.value})
+          .eq('userId', userId)
+          .eq('tenantId', currentTenantId);
+    } catch (e, stack) {
+      handleError(e, stack, 'updateTenantUserRole');
+      rethrow;
+    }
+  }
+
   // ============= HANDOVER METHODS =============
 
   /// Check if a player already exists in the target tenant.
