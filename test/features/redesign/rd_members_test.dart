@@ -281,6 +281,24 @@ void main() {
       expect(sections.first.isRegister, isTrue);
       expect(sections.first.average, isNull);
     });
+
+    test('register: groups stay together, leaders first within their group', () {
+      const strings = GroupCategory(id: 9, name: 'Streicher');
+      final groups = [
+        _groups[0].copyWith(categoryData: strings),
+        _groups[1].copyWith(categoryData: strings),
+      ];
+      final fluteLeader = _person(6, 'Fritz', 'Zander', 2, leader: true);
+      final sections = rdMemberSections(
+        [_ben, _clara, fluteLeader, _anna],
+        groups: groups,
+        percentages: const {},
+        noGroupLabel: 'Ohne',
+      );
+      expect(sections, hasLength(1));
+      // Violine: Anna (leader), Ben; then Flöte: Fritz (leader), Clara.
+      expect(sections.first.people.map((p) => p.id), [1, 2, 6, 3]);
+    });
   });
 
   group('helpers', () {

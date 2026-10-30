@@ -33,8 +33,8 @@ Was zählt:
   geht nie an Codex.
 - Sol prüft `git diff origin/master...HEAD` nur lesend und ohne Netz. Er liest `CLAUDE.md`,
   `.claude/agents/flutter-reviewer.md`, bei Supabase, Auth und Mandanten
-  `.claude/agents/security-scanner.md`, bei der Migration `MIGRATION.md` und
-  `.claude/agents/service-parity-checker.md`. Tests laufen dabei nicht.
+  `.claude/agents/security-scanner.md` und bei der Migration `MIGRATION.md`. Tests laufen dabei
+  nicht.
 - Ein Review darf höchstens 45 Minuten dauern. Sehr große PRs besser in Teilen beauftragen
   (im Auftrag Verzeichnisse oder Commits nennen).
 - Die Kommentare sind öffentlich wie das Repository.

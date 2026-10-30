@@ -47,12 +47,15 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   bool _onlyOpen = false;
 
   /// Thumb of Kommend / Vergangen while swiping the list.
-  double? _swipePos;
+  /// Notifier so only the segmented control rebuilds while swiping, not
+  /// the whole page with every row.
+  final _swipePos = ValueNotifier<double?>(null);
   final _search = TextEditingController();
 
   @override
   void dispose() {
     _search.dispose();
+    _swipePos.dispose();
     super.dispose();
   }
 
@@ -273,12 +276,15 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
   Widget _segments(BuildContext context, {required String pastLabel}) {
     final l10n = context.l10n;
-    return RdSegmented<bool>(
-      values: const [false, true],
-      selected: _past,
-      position: _swipePos,
-      labelOf: (past) => past ? pastLabel : l10n.redesignEventsUpcoming,
-      onChanged: _setPast,
+    return ValueListenableBuilder<double?>(
+      valueListenable: _swipePos,
+      builder: (context, pos, _) => RdSegmented<bool>(
+        values: const [false, true],
+        selected: _past,
+        position: pos,
+        labelOf: (past) => past ? pastLabel : l10n.redesignEventsUpcoming,
+        onChanged: _setPast,
+      ),
     );
   }
 
@@ -287,7 +293,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         values: const [false, true],
         selected: _past,
         onChanged: _setPast,
-        onDrag: (pos) => setState(() => _swipePos = pos),
+        onDrag: (pos) => _swipePos.value = pos,
         child: child,
       );
 

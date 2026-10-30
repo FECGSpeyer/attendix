@@ -11,6 +11,20 @@
       ]
     },
     {
+      "version": "0.22.9",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Das Wischen zwischen Aktiv und Pausiert (Mitglieder) und Kommend und Vergangen (Termine) läuft wieder flüssig"
+      ]
+    },
+    {
+      "version": "0.22.8",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Mitglieder sind im Register erst nach Instrument sortiert, die Stimmführung steht oben in ihrem eigenen Instrument"
+      ]
+    },
+    {
       "version": "0.22.7",
       "date": "29.10.2026",
       "changes": [
