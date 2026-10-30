@@ -19,12 +19,18 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../data/rd_works_logic.dart';
 import '../rd_actions.dart';
+import '../../data/rd_work_files_controller.dart';
+import '../widgets/event/rd_record_widgets.dart' show RdUndoBar;
+import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/work/rd_work_files.dart';
 
 /// REDESIGN: a work (canvas "WerkDetail"): your part to open, the
 /// recording with 0,8× to practise along, all parts, score, link, last
-/// played. "Bearbeiten" (files, fields, history) opens the existing page.
+/// played. "Bearbeiten" (fields, history) opens the existing page. On wide
+/// screens people who may edit the Werk get the file workspace
+/// ([RdWorkFiles]): table, drag and drop, upload queue, ZIP and keys.
 class RdWorkPage extends ConsumerWidget {
   const RdWorkPage({super.key, required this.songId});
 
@@ -32,6 +38,11 @@ class RdWorkPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // The real width of this page (window minus side bar and split list).
+    return LayoutBuilder(builder: (context, constraints) => _content(context, ref, constraints.maxWidth));
+  }
+
+  Widget _content(BuildContext context, WidgetRef ref, double width) {
     final p = context.rd;
     final l10n = context.l10n;
     final params = (songId: songId, sharingId: null);
@@ -42,10 +53,12 @@ class RdWorkPage extends ConsumerWidget {
     final header = Row(
       children: [
         Expanded(
-          child: RdBackLink(
-            label: l10n.redesignTabWorks,
-            onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.works),
-          ),
+          child: RdSplitScope.of(context)?.isDetail ?? false
+              ? const SizedBox(height: 44)
+              : RdBackLink(
+                  label: l10n.redesignTabWorks,
+                  onTap: () => context.canPop() ? context.pop() : context.go(RedesignRoutes.works),
+                ),
         ),
         if (sharingId != null && sharingId.isNotEmpty)
           Builder(
@@ -99,13 +112,14 @@ class RdWorkPage extends ConsumerWidget {
     final score = rdScore(song);
     final lyrics = files.where((f) => f.instrumentId == rdLyricsCategory).firstOrNull;
     final hasGroupFiles = files.any((f) => (f.instrumentId ?? 0) > rdLyricsCategory);
+    final workspace = !data.readOnly && !data.isPublic && width >= rdWorkFilesMinWidth;
     final meta = [
       if (song.fullNumber.isNotEmpty) l10n.redesignWorkNumber(song.fullNumber),
       ...rdCategoryNames(song, data.categories),
     ].join(' · ');
 
     final rows = <Widget>[
-      if (files.isNotEmpty && lead != RdWorkLead.allParts)
+      if (!workspace && files.isNotEmpty && lead != RdWorkLead.allParts)
         RdListRow(
           title: hasGroupFiles ? l10n.redesignWorkAllParts : l10n.redesignWorkAllFiles,
           value: l10n.redesignWorkFileCount(files.length),
@@ -144,7 +158,8 @@ class RdWorkPage extends ConsumerWidget {
         ),
     ];
 
-    return RdPage(
+    final page = RdPage(
+      maxWidth: workspace ? 1000 : 720,
       onRefresh: () async {
         ref.invalidate(songDetailDataProvider(params));
         ref.invalidate(songByIdProvider(songId));
@@ -204,12 +219,48 @@ class RdWorkPage extends ConsumerWidget {
           _RecordingCard(song: song, file: recording),
           const SizedBox(height: 12),
         ],
-        if (files.isEmpty) ...[
+        if (workspace) ...[
+          const SizedBox(height: 8),
+          RdWorkFiles(data: data, groups: groups),
+          const SizedBox(height: 24),
+        ] else if (files.isEmpty) ...[
           RdInfoCard(text: l10n.redesignWorkNoFiles, icon: Icons.folder_open_outlined),
           const SizedBox(height: 12),
         ],
         RdGroupedList(children: rows),
       ],
+    );
+    if (!workspace) return page;
+
+    final filesState = ref.watch(rdWorkFilesProvider(songId));
+    final controller = ref.read(rdWorkFilesProvider(songId).notifier);
+    return RdWorkDropArea(
+      data: data,
+      child: Stack(
+        children: [
+          page,
+          if (filesState.notice != null)
+            Positioned(
+              left: 16,
+              right: 16,
+              bottom: 16,
+              child: SafeArea(
+                top: false,
+                child: Center(
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxWidth: 560),
+                    child: RdUndoBar(
+                      text: filesState.notice!,
+                      onUndo: controller.canUndoDelete
+                          ? () => controller.undoDelete(notice: l10n.redesignFilesRestored)
+                          : null,
+                    ),
+                  ),
+                ),
+              ),
+            ),
+        ],
+      ),
     );
   }
 

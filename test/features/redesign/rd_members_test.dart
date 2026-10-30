@@ -585,11 +585,12 @@ void main() {
       expect(find.bySemanticsLabel('Mitglieder'), findsNothing);
     });
 
-    test('the router uses the split for Termine and Mitglieder', () {
+    test('the router uses the split for Termine, Mitglieder and Werke', () {
       final router = File('lib/core/router/app_router.dart').readAsStringSync();
-      expect(RegExp('RdSplitView\\(').allMatches(router).length, 4);
+      expect(RegExp('RdSplitView\\(').allMatches(router).length, 6);
       expect(router, contains("ValueKey('rd-events-split')"));
       expect(router, contains("ValueKey('rd-members-split')"));
+      expect(router, contains("ValueKey('rd-works-split')"));
     });
   });
 

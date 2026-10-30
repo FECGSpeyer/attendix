@@ -23,7 +23,8 @@ class ZipService {
     // Create archive
     final archive = Archive();
 
-    // Download each file and add to archive
+    // Download each file and add to archive (equal names get " (2)" etc.)
+    final used = <String>{};
     for (final file in files) {
       if (file.url.isEmpty) continue;
 
@@ -31,7 +32,7 @@ class ZipService {
         final response = await http.get(Uri.parse(file.url));
         if (response.statusCode == 200) {
           archive.addFile(ArchiveFile(
-            file.fileName,
+            uniqueArchiveName(file.fileName, used),
             response.bodyBytes.length,
             response.bodyBytes,
           ));
@@ -58,6 +59,21 @@ class ZipService {
 
     // Use platform-specific implementation
     await platform.saveZipFile(Uint8List.fromList(zipData), fileName);
+  }
+
+  /// [name], or "name (2).ext", "name (3).ext" … when [used] has it; the
+  /// returned name is added to [used].
+  @visibleForTesting
+  static String uniqueArchiveName(String name, Set<String> used) {
+    var result = name;
+    final dot = name.lastIndexOf('.');
+    final base = dot > 0 ? name.substring(0, dot) : name;
+    final ext = dot > 0 ? name.substring(dot) : '';
+    for (var n = 2; used.contains(result.toLowerCase()); n++) {
+      result = '$base ($n)$ext';
+    }
+    used.add(result.toLowerCase());
+    return result;
   }
 
   /// Sanitize filename for safe file system usage

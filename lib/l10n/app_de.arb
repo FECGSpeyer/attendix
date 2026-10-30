@@ -11130,6 +11130,183 @@
   "@redesignEventsYes": {
     "description": "redesign.events.yes"
   },
+  "redesignFilesActions": "Aktionen für {name}",
+  "@redesignFilesActions": {
+    "description": "redesign.files.actions",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesColName": "Name",
+  "@redesignFilesColName": {
+    "description": "redesign.files.colName"
+  },
+  "redesignFilesColPart": "Stimme",
+  "@redesignFilesColPart": {
+    "description": "redesign.files.colPart"
+  },
+  "redesignFilesColType": "Typ",
+  "@redesignFilesColType": {
+    "description": "redesign.files.colType"
+  },
+  "redesignFilesConflictMessage": "{count, plural, one {Für 1 Datei gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:} other {Für {count} Dateien gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:}}",
+  "@redesignFilesConflictMessage": {
+    "description": "redesign.files.conflictMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignFilesConflictTitle": "Schon vorhanden",
+  "@redesignFilesConflictTitle": {
+    "description": "redesign.files.conflictTitle"
+  },
+  "redesignFilesDelete": "Löschen",
+  "@redesignFilesDelete": {
+    "description": "redesign.files.delete"
+  },
+  "redesignFilesDeletedMany": "{count, plural, one {1 Datei gelöscht} other {{count} Dateien gelöscht}}",
+  "@redesignFilesDeletedMany": {
+    "description": "redesign.files.deletedMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignFilesDeletedOne": "„{name}“ gelöscht",
+  "@redesignFilesDeletedOne": {
+    "description": "redesign.files.deletedOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesDismiss": "Ausblenden",
+  "@redesignFilesDismiss": {
+    "description": "redesign.files.dismiss"
+  },
+  "redesignFilesDone": "Fertig",
+  "@redesignFilesDone": {
+    "description": "redesign.files.done"
+  },
+  "redesignFilesDownload": "Herunterladen",
+  "@redesignFilesDownload": {
+    "description": "redesign.files.download"
+  },
+  "redesignFilesDownloadAll": "Alle als ZIP",
+  "@redesignFilesDownloadAll": {
+    "description": "redesign.files.downloadAll"
+  },
+  "redesignFilesDownloadZip": "Als ZIP laden",
+  "@redesignFilesDownloadZip": {
+    "description": "redesign.files.downloadZip"
+  },
+  "redesignFilesDropHint": "Dateien hierher ziehen oder „Hochladen“ wählen.",
+  "@redesignFilesDropHint": {
+    "description": "redesign.files.dropHint"
+  },
+  "redesignFilesDropOverlay": "Loslassen, um sie zu „{name}“ hochzuladen",
+  "@redesignFilesDropOverlay": {
+    "description": "redesign.files.dropOverlay",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFilesFailed": "Fehlgeschlagen",
+  "@redesignFilesFailed": {
+    "description": "redesign.files.failed"
+  },
+  "redesignFilesKeepBoth": "Beide behalten",
+  "@redesignFilesKeepBoth": {
+    "description": "redesign.files.keepBoth"
+  },
+  "redesignFilesOpen": "Öffnen",
+  "@redesignFilesOpen": {
+    "description": "redesign.files.open"
+  },
+  "redesignFilesOtherCategory": "Sonstige …",
+  "@redesignFilesOtherCategory": {
+    "description": "redesign.files.otherCategory"
+  },
+  "redesignFilesQueueDone": "{count, plural, one {1 Datei hochgeladen} other {{count} Dateien hochgeladen}}",
+  "@redesignFilesQueueDone": {
+    "description": "redesign.files.queueDone",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignFilesQueueTitle": "Hochladen: {done} von {total}",
+  "@redesignFilesQueueTitle": {
+    "description": "redesign.files.queueTitle",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "redesignFilesRename": "Umbenennen",
+  "@redesignFilesRename": {
+    "description": "redesign.files.rename"
+  },
+  "redesignFilesReplace": "Ersetzen",
+  "@redesignFilesReplace": {
+    "description": "redesign.files.replace"
+  },
+  "redesignFilesRestored": "Wiederhergestellt",
+  "@redesignFilesRestored": {
+    "description": "redesign.files.restored"
+  },
+  "redesignFilesSaveFailed": "Speichern fehlgeschlagen: {error}",
+  "@redesignFilesSaveFailed": {
+    "description": "redesign.files.saveFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "redesignFilesSelectAll": "Alle auswählen",
+  "@redesignFilesSelectAll": {
+    "description": "redesign.files.selectAll"
+  },
+  "redesignFilesSelected": "{count} ausgewählt",
+  "@redesignFilesSelected": {
+    "description": "redesign.files.selected",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignFilesShortcuts": "Tastenkürzel",
+  "@redesignFilesShortcuts": {
+    "description": "redesign.files.shortcuts"
+  },
+  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen",
+  "@redesignFilesShortcutsHelp": {
+    "description": "redesign.files.shortcutsHelp",
+    "placeholders": {
+      "mod": {}
+    }
+  },
+  "redesignFilesTitle": "Dateien",
+  "@redesignFilesTitle": {
+    "description": "redesign.files.title"
+  },
+  "redesignFilesUpload": "Hochladen",
+  "@redesignFilesUpload": {
+    "description": "redesign.files.upload"
+  },
+  "redesignFilesUploading": "Lädt hoch …",
+  "@redesignFilesUploading": {
+    "description": "redesign.files.uploading"
+  },
+  "redesignFilesWaiting": "Wartet",
+  "@redesignFilesWaiting": {
+    "description": "redesign.files.waiting"
+  },
+  "redesignFilesZipPreparing": "ZIP wird erstellt …",
+  "@redesignFilesZipPreparing": {
+    "description": "redesign.files.zipPreparing"
+  },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
     "description": "redesign.groups.loadFailed"
@@ -11686,6 +11863,10 @@
   "redesignSplitMembersEmpty": "Wähle links eine Person aus.",
   "@redesignSplitMembersEmpty": {
     "description": "redesign.split.membersEmpty"
+  },
+  "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
+  "@redesignSplitWorksEmpty": {
+    "description": "redesign.split.worksEmpty"
   },
   "redesignStatsAvg": "Ø Anwesenheit",
   "@redesignStatsAvg": {

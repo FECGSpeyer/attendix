@@ -8496,6 +8496,149 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsYes => 'Dabei';
 
   @override
+  String redesignFilesActions(Object name) {
+    return 'Aktionen für $name';
+  }
+
+  @override
+  String get redesignFilesColName => 'Name';
+
+  @override
+  String get redesignFilesColPart => 'Stimme';
+
+  @override
+  String get redesignFilesColType => 'Typ';
+
+  @override
+  String redesignFilesConflictMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Für $count Dateien gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
+      one: 'Für 1 Datei gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignFilesConflictTitle => 'Schon vorhanden';
+
+  @override
+  String get redesignFilesDelete => 'Löschen';
+
+  @override
+  String redesignFilesDeletedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien gelöscht',
+      one: '1 Datei gelöscht',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignFilesDeletedOne(Object name) {
+    return '„$name“ gelöscht';
+  }
+
+  @override
+  String get redesignFilesDismiss => 'Ausblenden';
+
+  @override
+  String get redesignFilesDone => 'Fertig';
+
+  @override
+  String get redesignFilesDownload => 'Herunterladen';
+
+  @override
+  String get redesignFilesDownloadAll => 'Alle als ZIP';
+
+  @override
+  String get redesignFilesDownloadZip => 'Als ZIP laden';
+
+  @override
+  String get redesignFilesDropHint => 'Dateien hierher ziehen oder „Hochladen“ wählen.';
+
+  @override
+  String redesignFilesDropOverlay(Object name) {
+    return 'Loslassen, um sie zu „$name“ hochzuladen';
+  }
+
+  @override
+  String get redesignFilesFailed => 'Fehlgeschlagen';
+
+  @override
+  String get redesignFilesKeepBoth => 'Beide behalten';
+
+  @override
+  String get redesignFilesOpen => 'Öffnen';
+
+  @override
+  String get redesignFilesOtherCategory => 'Sonstige …';
+
+  @override
+  String redesignFilesQueueDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien hochgeladen',
+      one: '1 Datei hochgeladen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignFilesQueueTitle(Object done, Object total) {
+    return 'Hochladen: $done von $total';
+  }
+
+  @override
+  String get redesignFilesRename => 'Umbenennen';
+
+  @override
+  String get redesignFilesReplace => 'Ersetzen';
+
+  @override
+  String get redesignFilesRestored => 'Wiederhergestellt';
+
+  @override
+  String redesignFilesSaveFailed(Object error) {
+    return 'Speichern fehlgeschlagen: $error';
+  }
+
+  @override
+  String get redesignFilesSelectAll => 'Alle auswählen';
+
+  @override
+  String redesignFilesSelected(Object count) {
+    return '$count ausgewählt';
+  }
+
+  @override
+  String get redesignFilesShortcuts => 'Tastenkürzel';
+
+  @override
+  String redesignFilesShortcutsHelp(Object mod) {
+    return '↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · $mod+U hochladen · $mod+A alle · $mod+D herunterladen · $mod+Z rückgängig · F2 umbenennen';
+  }
+
+  @override
+  String get redesignFilesTitle => 'Dateien';
+
+  @override
+  String get redesignFilesUpload => 'Hochladen';
+
+  @override
+  String get redesignFilesUploading => 'Lädt hoch …';
+
+  @override
+  String get redesignFilesWaiting => 'Wartet';
+
+  @override
+  String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
+
+  @override
   String get redesignGroupsLoadFailed => 'Deine Gruppen konnten nicht geladen werden.';
 
   @override
@@ -8912,6 +9055,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignSplitMembersEmpty => 'Wähle links eine Person aus.';
+
+  @override
+  String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
 
   @override
   String get redesignStatsAvg => 'Ø Anwesenheit';

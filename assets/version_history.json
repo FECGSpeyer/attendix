@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.23.1",
+      "version": "0.23.3",
       "date": "30.10.2026",
       "changes": [
         "🔒 Schichten nach einer Termin-Änderung: Wechselt währenddessen das Konto oder die Gruppe, wird nichts mehr unter dem neuen Konto gespeichert",
@@ -16,9 +16,19 @@
         "✨ Neues Design (Beta): Mitteilung schreiben, Benachrichtigungen und „Mitglieder bearbeiten“ (mehrere auf einmal in ein anderes Register, pausieren oder archivieren)",
         "🔧 Feedback aus dem neuen Design wird als solches markiert",
         "🔧 Aufgeräumt: nicht mehr genutzter Code entfernt"
-        ]
-      },
-      {
+      ]
+    },
+    {
+      "version": "0.23.1",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Werke am Desktop mit Liste links und Werk rechts",
+        "✨ Neues Design (Beta): Dateien eines Werks als Tabelle, Stimme direkt ändern, Dateien umbenennen",
+        "✨ Neues Design (Beta): Dateien per Drag and drop irgendwo aufs Werk ziehen, Upload-Warteschlange mit Status pro Datei und „Erneut versuchen“, Nachfrage bei schon vorhandenen Stimmen",
+        "✨ Neues Design (Beta): Mehrere Dateien auswählen und als ZIP laden, Löschen mit „Rückgängig“, Tastenkürzel (↑↓, Enter, Leertaste, Entf, Strg/⌘+A/U/D/Z, F2)"
+      ]
+    },
+    {
       "version": "0.23.0",
       "date": "30.10.2026",
       "changes": [

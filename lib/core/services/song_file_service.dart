@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:math';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -49,8 +50,9 @@ class SongFileService {
     return result.files.firstOrNull;
   }
 
-  /// Generate a safe filename
-  String _encodeFilename(String filename) {
+  /// Generate a safe filename (`name_<suffix>.ext`, Ionic format)
+  @visibleForTesting
+  static String encodeFilename(String filename, Object suffix) {
     final ext = filename.split('.').last;
     String name = filename.substring(0, filename.length - ext.length - 1);
 
@@ -62,14 +64,160 @@ class SongFileService {
         .replaceAll(RegExp(r'-+'), '-') // Multiple hyphens to single
         .replaceAll(RegExp(r'^-+|-+$'), ''); // Trim hyphens
 
-    // Add random number
-    final randomNumber = 100 + (DateTime.now().millisecondsSinceEpoch % 900);
-    return '${name}_$randomNumber.$ext';
+    return '${name}_$suffix.$ext';
   }
+
+  static final _random = Random();
+
+  /// A storage name for [fileName] not in [taken]: first a random number
+  /// 100–999 (as Ionic), then every other one of them, then longer numbers.
+  /// Never returns a taken name.
+  @visibleForTesting
+  static String freeStorageName(String fileName, Set<Object?> taken, [Random? random]) {
+    final first = 100 + (random ?? _random).nextInt(900);
+    for (var i = 0; i < 900; i++) {
+      final id = encodeFilename(fileName, 100 + (first - 100 + i) % 900);
+      if (!taken.contains(id)) return id;
+    }
+    for (var n = 1000;; n++) {
+      final id = encodeFilename(fileName, n);
+      if (!taken.contains(id)) return id;
+    }
+  }
+
+  /// A storage name for [fileName] that no file of the song uses yet. The
+  /// upload overwrites (`upsert`), so an equal name would replace that
+  /// file's object, and deleting the old entry afterwards ("Ersetzen")
+  /// would remove both. Old files without storageName are stored under
+  /// their fileName, so those count as taken too.
+  Future<String> _freeFileId(int tenantId, int songId, String fileName) async {
+    final song = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', tenantId)
+        .maybeSingle();
+    final taken = <Object?>{
+      for (final f in (song?['files'] as List?) ?? const [])
+        if (f is Map) ...[f['storageName'], f['fileName']],
+    };
+    return freeStorageName(fileName, taken);
+  }
+
+  /// Writes of one song's `files` list read it, change it and write it back,
+  /// so two at once would drop a change. They wait for each other here,
+  /// across every service instance and page (old song page, upload sheets,
+  /// the redesign workspace).
+  static final Map<String, Future<void>> _songLocks = {};
+
+  static Future<T> _locked<T>(int? tenantId, int songId, Future<T> Function() task) {
+    final key = '$tenantId/$songId';
+    final before = _songLocks[key] ?? Future<void>.value();
+    final result = before.then((_) => task());
+    late final Future<void> tail;
+    tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() {
+      if (identical(_songLocks[key], tail)) _songLocks.remove(key);
+    });
+    _songLocks[key] = tail;
+    return result;
+  }
+
+  @visibleForTesting
+  static Future<T> lockedForTest<T>(int? tenantId, int songId, Future<T> Function() task) =>
+      _locked(tenantId, songId, task);
+
+  /// Upload a file to Supabase Storage and add it to the song.
+  /// Returns the public URL of the uploaded file
+  Future<String> uploadFile({
+    required int songId,
+    required PlatformFile file,
+    int? instrumentId,
+    String? note,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _uploadFile(
+            songId: songId,
+            file: file,
+            instrumentId: instrumentId,
+            note: note,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Delete a file from storage and song's files array.
+  Future<void> deleteFile({
+    required int songId,
+    required String url,
+    String? storageName,
+    String? fileName,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _deleteFile(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            fileName: fileName,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Delete all files from a song
+  Future<void> deleteAllFiles({required int songId}) =>
+      _locked(_tenantId, songId, () => _deleteAllFiles(songId: songId));
+
+  /// Update file category (instrumentId and note)
+  Future<void> updateFileCategory({
+    required int songId,
+    required String url,
+    String? storageName,
+    int? instrumentId,
+    String? note,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _updateFileCategory(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            instrumentId: instrumentId,
+            note: note,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Rename a file (display name only, see [_renameFile]).
+  Future<void> renameFile({
+    required int songId,
+    required String url,
+    required String storageName,
+    required String fileName,
+  }) =>
+      _locked(_tenantId, songId, () => _renameFile(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            fileName: fileName,
+          ));
+
+  /// Upload file from bytes (for copying between tenants)
+  Future<String> uploadFileBytes({
+    required int songId,
+    required int tenantId,
+    required String fileName,
+    required String fileType,
+    required Uint8List bytes,
+    int? instrumentId,
+    String? note,
+  }) =>
+      _locked(tenantId, songId, () => _uploadFileBytes(
+            songId: songId,
+            tenantId: tenantId,
+            fileName: fileName,
+            fileType: fileType,
+            bytes: bytes,
+            instrumentId: instrumentId,
+            note: note,
+          ));
 
   /// Upload a file to Supabase Storage
   /// Returns the public URL of the uploaded file
-  Future<String> uploadFile({
+  Future<String> _uploadFile({
     required int songId,
     required PlatformFile file,
     int? instrumentId,
@@ -82,7 +230,7 @@ class SongFileService {
     }
 
     // Generate unique storage path
-    final fileId = _encodeFilename(file.name);
+    final fileId = await _freeFileId(_tenantId, songId, file.name);
     final storagePath = 'songs/$_tenantId/$songId/$fileId';
 
     // Get file bytes
@@ -184,7 +332,7 @@ class SongFileService {
 
   /// Delete a file from storage and song's files array.
   /// Files are identified by URL (old files have no storageName).
-  Future<void> deleteFile({
+  Future<void> _deleteFile({
     required int songId,
     required String url,
     String? storageName,
@@ -235,7 +383,7 @@ class SongFileService {
   }
 
   /// Delete all files from a song
-  Future<void> deleteAllFiles({required int songId}) async {
+  Future<void> _deleteAllFiles({required int songId}) async {
     DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
@@ -277,7 +425,7 @@ class SongFileService {
   }
 
   /// Update file category (instrumentId and note)
-  Future<void> updateFileCategory({
+  Future<void> _updateFileCategory({
     required int songId,
     required String url,
     String? storageName,
@@ -329,6 +477,48 @@ class SongFileService {
     }).eq('id', songId).eq('tenantId', _tenantId);
   }
 
+  /// Rename a file: only its display name (`fileName`) changes; the storage
+  /// object keeps its `storageName`. Files without a storageName (very old
+  /// uploads) are stored under their fileName, so they are not renamed.
+  Future<void> _renameFile({
+    required int songId,
+    required String url,
+    required String storageName,
+    required String fileName,
+  }) async {
+    DemoGuard.checkCurrent('updateSongFile'); // DEMO_GUARD
+    if (_tenantId == null) {
+      throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
+    }
+    if (storageName.isEmpty || fileName.trim().isEmpty) return;
+
+    // RT-009: Use maybeSingle() - song may have been deleted
+    final songResponse = await _supabase
+        .from('songs')
+        .select('files')
+        .eq('id', songId)
+        .eq('tenantId', _tenantId)
+        .maybeSingle();
+
+    if (songResponse == null) {
+      throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
+    }
+
+    final existingFiles = List<Map<String, dynamic>>.from(
+      (songResponse['files'] as List?) ?? [],
+    );
+    for (var i = 0; i < existingFiles.length; i++) {
+      if (_sameFile(existingFiles[i], url, storageName)) {
+        existingFiles[i] = {...existingFiles[i], 'fileName': fileName.trim()};
+        break;
+      }
+    }
+
+    await _supabase.from('songs').update({
+      'files': existingFiles,
+    }).eq('id', songId).eq('tenantId', _tenantId);
+  }
+
   /// Pick multiple files
   Future<List<PlatformFile>?> pickMultipleFiles() async {
     final result = await FilePicker.platform.pickFiles(
@@ -366,7 +556,7 @@ class SongFileService {
   }
 
   /// Upload file from bytes (for copying between tenants)
-  Future<String> uploadFileBytes({
+  Future<String> _uploadFileBytes({
     required int songId,
     required int tenantId,
     required String fileName,
@@ -377,7 +567,7 @@ class SongFileService {
   }) async {
     DemoGuard.checkCurrent('uploadSongFile'); // DEMO_GUARD
     // Generate unique storage path
-    final fileId = _encodeFilename(fileName);
+    final fileId = await _freeFileId(tenantId, songId, fileName);
     final storagePath = 'songs/$tenantId/$songId/$fileId';
 
     // Upload to storage
