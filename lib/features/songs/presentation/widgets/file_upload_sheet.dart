@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_matcher.dart';
@@ -16,10 +17,14 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
 /// when no group matched. Returns null if nothing special was detected.
+/// Words are matched whole ("Soundtrack" is no "track", "Kontext" no "text").
 ({int? instrumentId, String? note})? detectSpecialFileType(String filename) {
   final lower = filename.toLowerCase();
-  final normalized = lower.replaceAll(RegExp(r'[_\-.]+'), ' ');
-  bool any(List<String> words) => words.any(normalized.contains);
+  final words = InstrumentMatcher.tokenize(lower).join(' ');
+  bool any(List<String> terms) => terms.any((t) {
+        final term = InstrumentMatcher.tokenize(t).join(' ');
+        return RegExp('(^| )${RegExp.escape(term)}( |\$)').hasMatch(words);
+      });
 
   if (InstrumentMatcher.audioExtensions.any((e) => lower.endsWith('.$e'))) {
     return (instrumentId: 1, note: null);
@@ -28,16 +33,16 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
     return (instrumentId: 2, note: null);
   }
   if (lower.contains('.sib')) return (instrumentId: null, note: 'Sibelius');
-  if (any(['klavierauszug', 'piano reduction', 'vocal score', 'клавир', 'klavir', 'переложение'])) {
+  if (any(['klavierauszug', 'piano reduction', 'vocal score', 'klavier auszug', 'клавир', 'klavir', 'переложение'])) {
     return (instrumentId: null, note: 'Klavierauszug');
   }
-  if (any(['partitur', 'score', 'full', 'conductor', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
+  if (any(['partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
     return (instrumentId: null, note: 'Partitur');
   }
-  if (any(['liedtext', 'lyrics', 'text', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
+  if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
     return (instrumentId: 2, note: null);
   }
-  if (any(['chor', 'choir', 'choral', 'хор', 'khor', 'хоровая'])) {
+  if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: 'Chor');
   }
   return null;
@@ -55,6 +60,26 @@ List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, Str
 
 bool _isPdfName(String name) => name.toLowerCase().endsWith('.pdf');
 
+/// Category of an uploaded file with how sure the detection is.
+class FileCategoryGuess {
+  const FileCategoryGuess({
+    required this.instrumentId,
+    required this.note,
+    required this.confidence,
+    this.term,
+  });
+
+  final int? instrumentId;
+  final String? note;
+  final MatchConfidence confidence;
+
+  /// The words of the file name the guess is based on.
+  final String? term;
+
+  /// The person should look at it before uploading.
+  bool get needsReview => confidence != MatchConfidence.sure;
+}
+
 /// Ionic `addFiles` category detection: group by name/synonym, then special
 /// types (Aufnahme, Liedtext, Partitur, ...), then "Chor" for PDFs in choirs.
 ({int? instrumentId, String? note}) detectFileCategory(
@@ -62,21 +87,57 @@ bool _isPdfName(String name) => name.toLowerCase().endsWith('.pdf');
   required List<InstrumentInfo> instruments,
   required bool isChoir,
 }) {
-  int? id = instruments.isEmpty
-      ? null
-      : InstrumentMatcher.matchInstrument(fileName, instruments);
-  String? note;
-  if (id == null) {
-    final special = detectSpecialFileType(fileName);
-    if (special != null) {
-      id = special.instrumentId;
-      note = special.note;
-    }
+  final guess = guessFileCategory(fileName, instruments: instruments, isChoir: isChoir);
+  return (instrumentId: guess.instrumentId, note: guess.note);
+}
+
+/// [detectFileCategory] with the confidence of the guess.
+FileCategoryGuess guessFileCategory(
+  String fileName, {
+  required List<InstrumentInfo> instruments,
+  required bool isChoir,
+}) {
+  final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
+  if (match.instrumentId != null) {
+    return FileCategoryGuess(
+      instrumentId: match.instrumentId,
+      note: null,
+      confidence: match.confidence,
+      term: match.term,
+    );
   }
-  if (id == null && note == null && isChoir && _isPdfName(fileName)) {
-    note = 'Chor';
+  final special = detectSpecialFileType(fileName);
+  if (special != null) {
+    return FileCategoryGuess(
+      instrumentId: special.instrumentId,
+      note: special.note,
+      confidence: MatchConfidence.sure,
+    );
   }
-  return (instrumentId: id, note: note);
+  if (isChoir && _isPdfName(fileName)) {
+    return const FileCategoryGuess(instrumentId: null, note: 'Chor', confidence: MatchConfidence.sure);
+  }
+  return const FileCategoryGuess(instrumentId: null, note: null, confidence: MatchConfidence.none);
+}
+
+/// The file-name term to remember as synonym when the person assigned
+/// [fileName] to group [chosenId] by hand (upload: "künftig so erkennen").
+/// Null for recordings / lyrics / free text, or when the name already leads
+/// to that group for sure.
+String? learnableTerm(
+  String fileName, {
+  required int? chosenId,
+  required List<InstrumentInfo> instruments,
+  String? workName,
+}) {
+  if (chosenId == null ||
+      chosenId == InstrumentMatcher.recordingId ||
+      chosenId == InstrumentMatcher.lyricsId) {
+    return null;
+  }
+  final now = InstrumentMatcher.detect(fileName, instruments);
+  if (now.instrumentId == chosenId && now.confidence == MatchConfidence.sure) return null;
+  return InstrumentMatcher.partTerm(fileName, workName: workName);
 }
 
 /// Ionic: preselect same-named files, otherwise all conflicts.
@@ -103,7 +164,11 @@ class FileUploadSheet extends ConsumerStatefulWidget {
     this.mainGroupId,
     this.isChoir = false,
     this.initialFiles = const [],
+    this.workName,
   });
+
+  /// Name of the Werk, left out of terms remembered as synonyms.
+  final String? workName;
 
   /// Files dropped onto the song page (Ionic `handlePageDrop` with >1 file).
   final List<PlatformFile> initialFiles;
@@ -122,13 +187,23 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   List<InstrumentInfo> get _instruments => widget.groups
       .where((g) => g.id != null)
-      .map((g) => InstrumentInfo(id: g.id!, name: g.name))
+      .map((g) => InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms))
       .toList();
 
   void _setCategory(int index, int? instrumentId, String? note) {
     final file = _files[index];
     final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note);
     setState(() {
+      if (file.instrumentId != instrumentId) {
+        file.learnTerm = learnableTerm(
+          file.platformFile.name,
+          chosenId: instrumentId,
+          instruments: _instruments,
+          workName: widget.workName,
+        );
+        file.learn = file.learnTerm != null;
+        file.reviewed = true;
+      }
       file.instrumentId = instrumentId;
       file.note = note;
       file.conflicts = conflicts;
@@ -164,7 +239,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           ToastHelper.showError(context, context.l10n.songsFileTooLarge(file.name));
           continue;
         }
-        final cat = detectFileCategory(
+        final cat = guessFileCategory(
           file.name,
           instruments: _instruments,
           isChoir: widget.isChoir,
@@ -175,6 +250,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           platformFile: file,
           instrumentId: cat.instrumentId,
           note: cat.note,
+          confidence: cat.confidence,
           conflicts: conflicts,
           toReplace: _defaultReplace(conflicts, file.name),
         ));
@@ -252,6 +328,8 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       if (mounted) setState(() => _uploadProgress = doneBytes / totalBytes);
     }
 
+    await _rememberTerms(infos.where((f) => f.status == _UploadStatus.done));
+
     if (!mounted) return;
     final failed = infos.where((f) => f.status == _UploadStatus.error).toList();
     setState(() => _isUploading = false);
@@ -273,6 +351,17 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
       context.l10n.songsUploadDone(infos.length),
     );
     Navigator.pop(context, true);
+  }
+
+  /// Saves the terms of hand-assigned files as group synonyms.
+  Future<void> _rememberTerms(Iterable<_FileToUpload> uploaded) async {
+    final terms = <int, String>{
+      for (final f in uploaded)
+        if (f.learn && f.learnTerm != null && f.instrumentId != null) f.instrumentId!: f.learnTerm!,
+    };
+    if (terms.isEmpty) return;
+    final ok = await ref.read(groupNotifierProvider.notifier).addSynonyms(terms, widget.groups);
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.songsFlutterLearnFailed);
   }
 
   @override
@@ -392,6 +481,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   groups: widget.groups,
                                   enabled: !_isUploading,
                                   onCategoryChanged: (id, note) => _setCategory(i, id, note),
+                                  onToggleLearn: (v) => setState(() => _files[i].learn = v),
                                   onToggleReplace: (url) => setState(() {
                                     final set = _files[i].toReplace;
                                     set.contains(url) ? set.remove(url) : set.add(url);
@@ -442,11 +532,22 @@ class _FileToUpload {
     required this.note,
     required this.conflicts,
     required this.toReplace,
+    this.confidence = MatchConfidence.sure,
   });
 
   final PlatformFile platformFile;
   int? instrumentId;
   String? note;
+
+  /// How sure the automatic detection was.
+  final MatchConfidence confidence;
+
+  /// Changed by hand: the detection hint is no longer shown.
+  bool reviewed = false;
+
+  /// File-name term to remember for the chosen group, and whether to.
+  String? learnTerm;
+  bool learn = false;
   List<SongFile> conflicts;
   Set<String> toReplace;
   _UploadStatus? status;
@@ -461,6 +562,7 @@ class _FileItem extends StatefulWidget {
     required this.onCategoryChanged,
     required this.onToggleReplace,
     required this.onRemove,
+    this.onToggleLearn,
   });
 
   final _FileToUpload file;
@@ -469,6 +571,7 @@ class _FileItem extends StatefulWidget {
   final void Function(int? instrumentId, String? note) onCategoryChanged;
   final ValueChanged<String> onToggleReplace;
   final VoidCallback onRemove;
+  final ValueChanged<bool>? onToggleLearn;
 
   @override
   State<_FileItem> createState() => _FileItemState();
@@ -546,11 +649,30 @@ class _FileItemState extends State<_FileItem> {
               children: [
                 if (leading != null) ...[leading, const SizedBox(width: 12)],
                 Expanded(
-                  child: Text(
-                    file.platformFile.name,
-                    style: const TextStyle(fontWeight: FontWeight.w500),
-                    maxLines: 2,
-                    overflow: TextOverflow.ellipsis,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        file.platformFile.name,
+                        style: const TextStyle(fontWeight: FontWeight.w500),
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                      ),
+                      if (file.status == null && !file.reviewed && file.confidence != MatchConfidence.sure)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            file.confidence == MatchConfidence.unsure
+                                ? context.l10n.songsFlutterDetectUnsure
+                                : context.l10n.songsFlutterDetectNone,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: file.confidence == MatchConfidence.unsure ? AppColors.warning : AppColors.danger,
+                            ),
+                          ),
+                        ),
+                    ],
                   ),
                 ),
                 const SizedBox(width: 8),
@@ -585,6 +707,20 @@ class _FileItemState extends State<_FileItem> {
               ),
               onChanged: (v) => widget.onCategoryChanged(null, v.trim()),
             ),
+          ),
+        if (file.learnTerm != null && file.instrumentId != null && widget.onToggleLearn != null)
+          CheckboxListTile(
+            dense: true,
+            controlAffinity: ListTileControlAffinity.leading,
+            value: file.learn,
+            title: Text(
+              context.l10n.songsFlutterLearnTerm(
+                file.learnTerm!,
+                widget.groups.where((g) => g.id == file.instrumentId).firstOrNull?.name ?? '',
+              ),
+              style: const TextStyle(fontSize: 13),
+            ),
+            onChanged: widget.enabled ? (v) => widget.onToggleLearn!(v ?? false) : null,
           ),
         // Ionic: checkbox per conflicting file when more than one
         if (file.conflicts.length > 1)

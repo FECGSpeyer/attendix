@@ -889,6 +889,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         mainGroupId: data.mainGroupId,
         isChoir: data.isChoir,
         initialFiles: initialFiles,
+        workName: song.name,
       ),
     );
     if (result == true) widget.onChanged();

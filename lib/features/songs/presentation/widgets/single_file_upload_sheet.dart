@@ -62,7 +62,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
       widget.file.name,
       instruments: [
         for (final g in widget.groups)
-          if (g.id != null) InstrumentInfo(id: g.id!, name: g.name),
+          if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
       ],
       isChoir: widget.isChoir,
     );

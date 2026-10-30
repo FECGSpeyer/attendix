@@ -149,6 +149,28 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Remembers file-name terms as synonyms of groups (upload: "künftig so
+  /// erkennen"), so the next upload matches them. [terms] maps group id →
+  /// term; terms the group already knows are skipped.
+  Future<bool> addSynonyms(Map<int, String> terms, List<Group> groups) async {
+    state = const AsyncValue.loading();
+    try {
+      for (final entry in terms.entries) {
+        final group = groups.where((g) => g.id == entry.key).firstOrNull;
+        final merged = mergeSynonyms(group?.synonyms, entry.value);
+        if (group == null || merged == null) continue;
+        await _repo.updateGroup(entry.key, {'synonyms': merged});
+      }
+      state = const AsyncValue.data(null);
+      ref.invalidate(groupsProvider);
+      ref.invalidate(groupsMapProvider);
+      return true;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      return false;
+    }
+  }
+
   Future<void> deleteGroup(int id) async {
     state = const AsyncValue.loading();
     try {
@@ -239,3 +261,16 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
 final groupNotifierProvider = NotifierProvider<GroupNotifier, AsyncValue<void>>(() {
   return GroupNotifier();
 });
+
+/// [existing] synonyms (comma separated) plus [term], or null when the term
+/// is empty or already there (case-insensitive).
+String? mergeSynonyms(String? existing, String term) {
+  final t = term.trim().toLowerCase();
+  if (t.isEmpty || t.contains(',')) return null;
+  final list = [
+    for (final s in (existing ?? '').split(','))
+      if (s.trim().isNotEmpty) s.trim(),
+  ];
+  if (list.any((s) => s.toLowerCase() == t)) return null;
+  return [...list, t].join(', ');
+}

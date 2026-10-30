@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.25.0",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Noten-Upload: Die Stimme wird viel genauer erkannt – „Violine 2“, „Vl II“ oder „2. Violine“ landen jetzt bei Violine 2 statt bei Violine 1, „Bassklarinette“ geht an eine eigene Gruppe Bassklarinette (falls vorhanden), Stimmungen wie „in B“ stören nicht mehr",
+        "✨ Noten-Upload: Mehr Instrumente und Abkürzungen (z. B. Euphonium, Flügelhorn, Saxophon-Lagen, Glockenspiel, Chorstimmen Sopran/Alt/Tenor/Bass)",
+        "✨ Noten-Upload: Unsicher oder nicht erkannte Dateien werden markiert; ordnest du eine Datei von Hand zu, kann sich die App den Begriff für diese Stimme merken",
+        "✨ Neues Design (Beta): Beim Hochladen per Drag & Drop erscheint „Zuordnung prüfen“, wenn die Stimme einer Datei nicht eindeutig ist",
+        "🐛 Noten-Upload: Wörter wie „Soundtrack“ oder „Kontext“ machen eine Datei nicht mehr zur Aufnahme bzw. zum Liedtext, „Flügelhorn“ wird nicht mehr zur Flöte"
+      ]
+    },
+    {
       "version": "0.24.4",
       "date": "30.10.2026",
       "changes": [

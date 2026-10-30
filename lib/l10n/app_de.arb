@@ -15353,6 +15353,14 @@
   "@songsFlutterDeleteFailed": {
     "description": "songs.flutter.deleteFailed"
   },
+  "songsFlutterDetectNone": "Nicht erkannt – bitte zuordnen",
+  "@songsFlutterDetectNone": {
+    "description": "songs.flutter.detectNone"
+  },
+  "songsFlutterDetectUnsure": "Unsicher erkannt – bitte prüfen",
+  "@songsFlutterDetectUnsure": {
+    "description": "songs.flutter.detectUnsure"
+  },
   "songsFlutterDownloadFileFailed": "Datei konnte nicht heruntergeladen werden",
   "@songsFlutterDownloadFileFailed": {
     "description": "songs.flutter.downloadFileFailed"
@@ -15408,6 +15416,18 @@
   "songsFlutterLastPage": "Letzte Seite",
   "@songsFlutterLastPage": {
     "description": "songs.flutter.lastPage"
+  },
+  "songsFlutterLearnFailed": "Die Begriffe konnten nicht gemerkt werden",
+  "@songsFlutterLearnFailed": {
+    "description": "songs.flutter.learnFailed"
+  },
+  "songsFlutterLearnTerm": "„{term}“ künftig als {group} erkennen",
+  "@songsFlutterLearnTerm": {
+    "description": "songs.flutter.learnTerm",
+    "placeholders": {
+      "term": {},
+      "group": {}
+    }
   },
   "songsFlutterListAnd": "{rest} und {last}",
   "@songsFlutterListAnd": {
@@ -15498,6 +15518,18 @@
   "songsFlutterReorderCategoriesHint": "Ziehe Kategorien um sie neu zu sortieren",
   "@songsFlutterReorderCategoriesHint": {
     "description": "songs.flutter.reorderCategoriesHint"
+  },
+  "songsFlutterReviewHint": "Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.",
+  "@songsFlutterReviewHint": {
+    "description": "songs.flutter.reviewHint"
+  },
+  "songsFlutterReviewTitle": "Zuordnung prüfen",
+  "@songsFlutterReviewTitle": {
+    "description": "songs.flutter.reviewTitle"
+  },
+  "songsFlutterReviewUpload": "Hochladen",
+  "@songsFlutterReviewUpload": {
+    "description": "songs.flutter.reviewUpload"
   },
   "songsFlutterShowAsTab": "Als Tab anzeigen",
   "@songsFlutterShowAsTab": {

@@ -11718,6 +11718,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFlutterDeleteFailed => 'Werk konnte nicht gelöscht werden';
 
   @override
+  String get songsFlutterDetectNone => 'Nicht erkannt – bitte zuordnen';
+
+  @override
+  String get songsFlutterDetectUnsure => 'Unsicher erkannt – bitte prüfen';
+
+  @override
   String get songsFlutterDownloadFileFailed => 'Datei konnte nicht heruntergeladen werden';
 
   @override
@@ -11757,6 +11763,14 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterLastPage => 'Letzte Seite';
+
+  @override
+  String get songsFlutterLearnFailed => 'Die Begriffe konnten nicht gemerkt werden';
+
+  @override
+  String songsFlutterLearnTerm(Object term, Object group) {
+    return '„$term“ künftig als $group erkennen';
+  }
 
   @override
   String songsFlutterListAnd(Object rest, Object last) {
@@ -11823,6 +11837,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsFlutterReorderCategoriesHint => 'Ziehe Kategorien um sie neu zu sortieren';
+
+  @override
+  String get songsFlutterReviewHint => 'Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.';
+
+  @override
+  String get songsFlutterReviewTitle => 'Zuordnung prüfen';
+
+  @override
+  String get songsFlutterReviewUpload => 'Hochladen';
 
   @override
   String get songsFlutterShowAsTab => 'Als Tab anzeigen';
