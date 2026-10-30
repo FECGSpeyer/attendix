@@ -13,6 +13,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/theme/redesign/rd_palette.dart';
 import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder;
@@ -657,6 +658,7 @@ class IonAccordion extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin case final rd?) return _rdSection(context, rd);
     final ios = ionIsIos(context);
     final bg = headerColor ?? ionLightColor(context);
     final fg = headerColor != null
@@ -715,6 +717,76 @@ class IonAccordion extends StatelessWidget {
       ],
     );
   }
+
+  /// Beta-Skin: a section heading with a chevron; the open content sits in
+  /// a card of the new design. [headerColor] (e.g. Problemfall) tints the
+  /// heading.
+  Widget _rdSection(BuildContext context, RdPalette rd) {
+    final color = headerColor ?? rd.text2;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Semantics(
+          button: true,
+          expanded: expanded,
+          child: InkWell(
+            onTap: onToggle,
+            child: Padding(
+              padding: const EdgeInsets.fromLTRB(20, 18, 16, 8),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: Text(
+                      title,
+                      style: RdType.section(rd).copyWith(color: headerColor),
+                    ),
+                  ),
+                  AnimatedRotation(
+                    turns: expanded ? 0.5 : 0,
+                    duration: const Duration(milliseconds: 200),
+                    child: Icon(Icons.expand_more, size: 22, color: color),
+                  ),
+                ],
+              ),
+            ),
+          ),
+        ),
+        if (expanded) ionBetaCard(rd, child),
+      ],
+    );
+  }
+}
+
+/// Beta-Skin: [child] in a card of the new design (surface, list radius,
+/// card shadow).
+Widget ionBetaCard(RdPalette rd, Widget child, {EdgeInsets margin = const EdgeInsets.symmetric(horizontal: 16)}) =>
+    Container(
+      margin: margin,
+      clipBehavior: Clip.antiAlias,
+      decoration: BoxDecoration(
+        color: rd.surface,
+        borderRadius: BorderRadius.circular(rd.listRadius),
+        boxShadow: rd.cardShadow,
+      ),
+      child: child,
+    );
+
+/// Beta-Skin: groups form rows into one card of the new design, with the
+/// form's left inset unless the rows bring their own ([inset] false).
+/// Without the Beta [children] stay as they are.
+List<Widget> ionBetaGroup(BuildContext context, List<Widget> children, {bool inset = true}) {
+  final rd = context.rdSkin;
+  if (rd == null) return children;
+  return [
+    ionBetaCard(
+      rd,
+      Padding(
+        padding: inset ? const EdgeInsets.fromLTRB(16, 4, 12, 4) : EdgeInsets.zero,
+        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+      ),
+      margin: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+    ),
+  ];
 }
 
 /// `ion-item` with `ion-label position="stacked"` and an input/select

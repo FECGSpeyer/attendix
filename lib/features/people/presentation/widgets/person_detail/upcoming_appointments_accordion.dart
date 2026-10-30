@@ -77,9 +77,13 @@ class UpcomingAppointmentsAccordion extends ConsumerWidget {
   const UpcomingAppointmentsAccordion({
     super.key,
     required this.personId,
+    this.initiallyExpanded = false,
   });
 
   final int personId;
+
+  /// Open from the start (Beta "Verlauf" page).
+  final bool initiallyExpanded;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -91,16 +95,17 @@ class UpcomingAppointmentsAccordion extends ConsumerWidget {
       data: (appointments) {
         if (appointments.isEmpty) return const SizedBox.shrink();
 
-        return _UpcomingAppointmentsCard(appointments: appointments);
+        return _UpcomingAppointmentsCard(appointments: appointments, initiallyExpanded: initiallyExpanded);
       },
     );
   }
 }
 
 class _UpcomingAppointmentsCard extends StatefulWidget {
-  const _UpcomingAppointmentsCard({required this.appointments});
+  const _UpcomingAppointmentsCard({required this.appointments, this.initiallyExpanded = false});
 
   final List<Map<String, dynamic>> appointments;
+  final bool initiallyExpanded;
 
   @override
   State<_UpcomingAppointmentsCard> createState() =>
@@ -108,7 +113,7 @@ class _UpcomingAppointmentsCard extends StatefulWidget {
 }
 
 class _UpcomingAppointmentsCardState extends State<_UpcomingAppointmentsCard> {
-  bool _isExpanded = false;
+  late bool _isExpanded = widget.initiallyExpanded;
 
   @override
   Widget build(BuildContext context) {

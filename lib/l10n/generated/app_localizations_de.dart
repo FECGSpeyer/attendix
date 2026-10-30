@@ -8936,6 +8936,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonEdit => 'Bearbeiten';
 
   @override
+  String get redesignPersonHistory => 'Verlauf';
+
+  @override
   String redesignPersonInDays(Object count) {
     return 'in $count Tagen';
   }

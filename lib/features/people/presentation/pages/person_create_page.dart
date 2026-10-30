@@ -35,6 +35,7 @@ import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../widgets/ion/ion_widgets.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -298,15 +299,23 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
     final ios = ionIsIos(context);
     final gap = SizedBox(height: ios ? 0 : AppDimensions.paddingM);
+    // Beta-Skin: fields in cards, "Sichern" in the header instead of the FAB.
+    final rd = context.rdSkin;
 
     return Scaffold(
       // Ionic person.page (create): title "Person hinzufügen", close button
       // at the end, save via the person-add FAB. UX_PEOPLE: modalBackground.
-      backgroundColor: ionContentBackground(context),
+      backgroundColor: rd?.bg ?? ionContentBackground(context),
       appBar: AppBar(
         title: Text(context.l10n.attendanceAddPerson),
         automaticallyImplyLeading: false,
         actions: [
+          if (rd != null)
+            TextButton(
+              key: const Key('person_create_save'),
+              onPressed: _isLoading ? null : _save,
+              child: Text(context.l10n.commonSave),
+            ),
           IconButton(
             tooltip: context.l10n.commonClose,
             icon: const Icon(Icons.close),
@@ -315,7 +324,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ],
       ),
       // IOS_SHELL2: iOS → ion-fab in the tab bar row
-      floatingActionButton: TabBarFab(
+      floatingActionButton: rd != null ? null : TabBarFab(
         child: IonFabButton(
           key: const Key('person_create_save'),
           tooltip: context.l10n.commonSave,
@@ -327,7 +336,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         key: _formKey,
         child: IonFormTheme(
           child: ListView(
-          padding: ios
+          padding: rd != null
+              ? EdgeInsets.only(bottom: scrollEndPadding(context, base: 16))
+              : ios
               ? EdgeInsets.fromLTRB(
                   16, 0, 0, scrollEndPadding(context, base: 16, fabRoom: 80))
               : EdgeInsets.fromLTRB(AppDimensions.paddingM,
@@ -343,6 +354,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               onTap: _onProfileImageTap,
             ),
 
+            ...ionBetaGroup(context, [
             // First Name
             TextFormField(
               controller: _firstNameController,
@@ -492,10 +504,13 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ),
 
             ..._buildIonicFields(tenant),
+            ]),
 
             // Account help (Ionic person.accountHelp / existingUserHint)
             Padding(
-              padding: EdgeInsets.only(top: AppDimensions.paddingM),
+              padding: rd != null
+                  ? const EdgeInsets.fromLTRB(20, 0, 20, 12)
+                  : EdgeInsets.only(top: AppDimensions.paddingM),
               child: Text(
                 '${context.l10n.personAccountHelp}\n${context.l10n.personExistingUserHint}',
                 style: TextStyle(fontSize: 12, color: AppColors.medium),
@@ -504,12 +519,14 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
 
             // Extra Fields Section - as ExpansionTile like Ionic Accordion
             if (extraFields.isNotEmpty)
-              ExpansionTile(
-                title: Text(context.l10n.peopleExtraFields),
-                initiallyExpanded: true,
-                tilePadding: EdgeInsets.zero,
-                children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
-              ),
+              ...ionBetaGroup(context, [
+                ExpansionTile(
+                  title: Text(context.l10n.peopleExtraFields),
+                  initiallyExpanded: true,
+                  tilePadding: EdgeInsets.zero,
+                  children: extraFields.map((field) => _buildExtraFieldInput(field)).toList(),
+                ),
+              ]),
 
             const SizedBox(height: AppDimensions.paddingL),
           ],

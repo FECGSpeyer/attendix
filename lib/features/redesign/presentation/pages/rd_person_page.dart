@@ -31,7 +31,8 @@ import 'rd_members_page.dart' show rdPercentColor;
 
 /// REDESIGN: a person (canvas "PersonDetail"): contact, attendance with
 /// the last ten Termine, birthday, absence, note, Pausieren / Archivieren.
-/// "Bearbeiten" and the full history open the existing person page.
+/// "Bearbeiten" opens the person page of the normal app (Beta-skinned),
+/// "Alle Termine ansehen" the Beta "Verlauf" page.
 class RdPersonPage extends ConsumerWidget {
   const RdPersonPage({super.key, required this.personId});
 
@@ -314,7 +315,7 @@ class _AttendanceCard extends ConsumerWidget {
                 minimumSize: const Size(0, 40),
                 textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
               ),
-              onPressed: () => context.push('/people/$personId'),
+              onPressed: () => context.push(RedesignRoutes.personHistory(personId)),
               child: Text(l10n.redesignPersonAllTermine),
             ),
           ),

@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.24.1",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): „Alle Termine ansehen“ auf einer Person öffnet jetzt die neue Seite „Verlauf“ mit anstehenden Terminen und der Historie",
+        "💄 Neues Design (Beta): „Person bearbeiten“ und „Person hinzufügen“ zeigen ihre Bereiche als Karten; „Speichern“ und die weiteren Aktionen stehen oben in der Kopfzeile statt im runden Knopf"
+      ]
+    },
+    {
       "version": "0.24.0",
       "date": "30.10.2026",
       "changes": [

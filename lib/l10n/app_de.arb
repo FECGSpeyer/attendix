@@ -11698,6 +11698,10 @@
   "@redesignPersonEdit": {
     "description": "redesign.person.edit"
   },
+  "redesignPersonHistory": "Verlauf",
+  "@redesignPersonHistory": {
+    "description": "redesign.person.history"
+  },
   "redesignPersonInDays": "in {count} Tagen",
   "@redesignPersonInDays": {
     "description": "redesign.person.inDays",

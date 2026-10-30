@@ -113,6 +113,7 @@ import '../../features/redesign/presentation/pages/rd_me_page.dart';
 import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
+import '../../features/redesign/presentation/pages/rd_person_history_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
 import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_message_compose_page.dart';
@@ -658,6 +659,19 @@ final routerProvider = Provider<GoRouter>((ref) {
                   }
                   return MaterialPage<void>(key: state.pageKey, child: detail ?? const RdMembersPage());
                 },
+                routes: [
+                  GoRoute(
+                    path: 'verlauf',
+                    name: 'redesignPersonHistory',
+                    pageBuilder: (context, state) {
+                      final id = int.tryParse(state.pathParameters['id'] ?? '');
+                      return MaterialPage<void>(
+                        key: state.pageKey,
+                        child: id == null ? const RdMembersPage() : RdPersonHistoryPage(personId: id),
+                      );
+                    },
+                  ),
+                ],
               ),
             ],
           ),

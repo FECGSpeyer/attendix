@@ -34,6 +34,9 @@ class RedesignRoutes {
   /// A person of the new design.
   static String person(int id) => '$members/$id';
 
+  /// "Verlauf" of a person (coming Termine and history).
+  static String personHistory(int id) => '$members/$id/verlauf';
+
   /// Tab "Werke" of the new design.
   static const String works = '/werke';
 
