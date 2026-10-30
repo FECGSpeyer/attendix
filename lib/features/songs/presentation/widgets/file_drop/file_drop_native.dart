@@ -14,6 +14,9 @@ bool get isFileDropSupported => switch (defaultTargetPlatform) {
   _ => false,
 };
 
+/// Upload limit of all file dialogs (20 MiB); larger files are not read.
+const int maxDroppedFileBytes = 20 * 1024 * 1024;
+
 final List<FileDropHandlers> _targets = [];
 bool _installed = false;
 
@@ -101,6 +104,12 @@ Future<List<DroppedFile>> _read(List<DropItem> items) async {
       final file = File(item.path);
       if (!await file.exists()) continue;
       final name = item.path.split(Platform.pathSeparator).last;
+      final size = await file.length();
+      // Never read huge files into memory; the dialogs report them as too large.
+      if (size > maxDroppedFileBytes) {
+        result.add(DroppedFile.tooLarge(name: name, size: size));
+        continue;
+      }
       result.add(DroppedFile(name: name, bytes: await file.readAsBytes()));
     } catch (_) {
       // Unreadable entries are skipped.

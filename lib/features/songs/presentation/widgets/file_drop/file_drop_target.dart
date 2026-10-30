@@ -57,7 +57,7 @@ class _FileDropTargetState extends State<FileDropTarget> {
           if (!mounted || !widget.enabled) return;
           widget.onFiles([
             for (final f in files)
-              PlatformFile(name: f.name, size: f.bytes.length, bytes: f.bytes),
+              PlatformFile(name: f.name, size: f.size, bytes: f.bytes),
           ]);
         },
       );
