@@ -233,13 +233,12 @@ class SongFileService {
     final fileId = await _freeFileId(_tenantId, songId, file.name);
     final storagePath = 'songs/$_tenantId/$songId/$fileId';
 
-    // Get file bytes
+    // Get file bytes (dropped files, web and desktop apps, already carry them)
     Uint8List fileBytes;
-    if (kIsWeb) {
-      if (file.bytes == null) {
-        throw Exception(l10nWithoutContext.coreFlutterFileBytesUnavailable);
-      }
+    if (file.bytes != null) {
       fileBytes = file.bytes!;
+    } else if (kIsWeb) {
+      throw Exception(l10nWithoutContext.coreFlutterFileBytesUnavailable);
     } else {
       if (file.path == null) {
         throw Exception(l10nWithoutContext.coreFlutterFilePathUnavailable);
