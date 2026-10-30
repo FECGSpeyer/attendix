@@ -27,6 +27,8 @@ dependencies:
 
   # UI Components
   cached_network_image: ^3.4.1
+  # Offline copies of opened PDFs (already used by cached_network_image)
+  flutter_cache_manager: ^3.4.1
   shimmer: ^3.0.0
 
   # Charts

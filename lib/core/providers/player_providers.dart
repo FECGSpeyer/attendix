@@ -8,6 +8,7 @@ import 'tenant_providers.dart';
 import 'group_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
+import '../services/offline_list_cache.dart';
 import 'user_registration_providers.dart'; // AUTH
 
 /// Initialized player repository with tenant context
@@ -21,10 +22,18 @@ final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
 /// Provider for active players list
 final playersProvider = FutureProvider<List<Person>>((ref) async {
   final repo = ref.watch(playerRepositoryWithTenantProvider);
-  
+
   if (!repo.hasTenantId) return [];
-  
-  return repo.getPlayers();
+
+  // Offline: the last loaded list (rehearsal rooms without reception).
+  return OfflineListCache.read<Person>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'players',
+    fetch: repo.getPlayers,
+    toJson: (p) => p.toJson(),
+    fromJson: Person.fromJson,
+  );
 });
 
 /// Provider for players with group names enriched
