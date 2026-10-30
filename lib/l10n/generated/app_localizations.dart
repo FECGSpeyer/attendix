@@ -13811,6 +13811,102 @@ abstract class AppLocalizations {
   /// **'Deine Anmeldung bei {group} wird geprüft'**
   String redesignApplicantWaitingFor(Object group);
 
+  /// redesign.bulk.actionArchive
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren'**
+  String get redesignBulkActionArchive;
+
+  /// redesign.bulk.actionGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Register'**
+  String get redesignBulkActionGroup;
+
+  /// redesign.bulk.actionPause
+  ///
+  /// In de, this message translates to:
+  /// **'Pausieren'**
+  String get redesignBulkActionPause;
+
+  /// redesign.bulk.archiveConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person archivieren?} other {{count} Personen archivieren?}}'**
+  String redesignBulkArchiveConfirm(num count);
+
+  /// redesign.bulk.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Archivierte Mitglieder findest du unter Archiv.'**
+  String get redesignBulkArchiveHint;
+
+  /// redesign.bulk.clear
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl aufheben'**
+  String get redesignBulkClear;
+
+  /// redesign.bulk.done
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person geändert} other {{count} Personen geändert}}'**
+  String redesignBulkDone(num count);
+
+  /// redesign.bulk.failed
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}'**
+  String redesignBulkFailed(num count);
+
+  /// redesign.bulk.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder antippen, dann unten eine Aktion wählen.'**
+  String get redesignBulkHint;
+
+  /// redesign.bulk.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Register'**
+  String get redesignBulkNoGroup;
+
+  /// redesign.bulk.pauseReason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund der Pause'**
+  String get redesignBulkPauseReason;
+
+  /// redesign.bulk.pickGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Register'**
+  String get redesignBulkPickGroup;
+
+  /// redesign.bulk.search
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglied suchen'**
+  String get redesignBulkSearch;
+
+  /// redesign.bulk.selectGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Alle in {group}'**
+  String redesignBulkSelectGroup(Object group);
+
+  /// redesign.bulk.selected
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Auswahl} one {1 ausgewählt} other {{count} ausgewählt}}'**
+  String redesignBulkSelected(num count);
+
+  /// redesign.bulk.title
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder bearbeiten'**
+  String get redesignBulkTitle;
+
   /// redesign.common.all
   ///
   /// In de, this message translates to:
@@ -13834,6 +13930,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Erneut versuchen'**
   String get redesignCommonRetry;
+
+  /// redesign.compose.body
+  ///
+  /// In de, this message translates to:
+  /// **'Text'**
+  String get redesignComposeBody;
+
+  /// redesign.compose.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Register wählen'**
+  String get redesignComposeGroups;
+
+  /// redesign.compose.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.'**
+  String get redesignComposeHint;
+
+  /// redesign.compose.missing
+  ///
+  /// In de, this message translates to:
+  /// **'Betreff, Text und mindestens ein Versandweg fehlen noch.'**
+  String get redesignComposeMissing;
+
+  /// redesign.compose.send
+  ///
+  /// In de, this message translates to:
+  /// **'Senden'**
+  String get redesignComposeSend;
+
+  /// redesign.compose.subject
+  ///
+  /// In de, this message translates to:
+  /// **'Betreff'**
+  String get redesignComposeSubject;
+
+  /// redesign.compose.title
+  ///
+  /// In de, this message translates to:
+  /// **'Mitteilung schreiben'**
+  String get redesignComposeTitle;
+
+  /// redesign.compose.to
+  ///
+  /// In de, this message translates to:
+  /// **'An wen?'**
+  String get redesignComposeTo;
 
   /// redesign.create.chooseType
   ///
@@ -14909,6 +15053,60 @@ abstract class AppLocalizations {
   /// **'Auswertung'**
   String get redesignMembersStats;
 
+  /// redesign.notif.forMe
+  ///
+  /// In de, this message translates to:
+  /// **'Für mich'**
+  String get redesignNotifForMe;
+
+  /// redesign.notif.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get redesignNotifGroups;
+
+  /// redesign.notif.groupsHint
+  ///
+  /// In de, this message translates to:
+  /// **'Jede Gruppe lässt sich einzeln stummschalten.'**
+  String get redesignNotifGroupsHint;
+
+  /// redesign.notif.how
+  ///
+  /// In de, this message translates to:
+  /// **'Wie'**
+  String get redesignNotifHow;
+
+  /// redesign.notif.lead
+  ///
+  /// In de, this message translates to:
+  /// **'Als Leitung'**
+  String get redesignNotifLead;
+
+  /// redesign.notif.telegram
+  ///
+  /// In de, this message translates to:
+  /// **'Telegram'**
+  String get redesignNotifTelegram;
+
+  /// redesign.notif.telegramConnect
+  ///
+  /// In de, this message translates to:
+  /// **'Verbinden'**
+  String get redesignNotifTelegramConnect;
+
+  /// redesign.notif.telegramConnected
+  ///
+  /// In de, this message translates to:
+  /// **'Verbunden'**
+  String get redesignNotifTelegramConnected;
+
+  /// redesign.notif.telegramDisconnect
+  ///
+  /// In de, this message translates to:
+  /// **'Trennen'**
+  String get redesignNotifTelegramDisconnect;
+
   /// redesign.own.infos
   ///
   /// In de, this message translates to:
@@ -15202,6 +15400,90 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wähle links eine Person aus.'**
   String get redesignSplitMembersEmpty;
+
+  /// redesign.stats.avg
+  ///
+  /// In de, this message translates to:
+  /// **'Ø Anwesenheit'**
+  String get redesignStatsAvg;
+
+  /// redesign.stats.bar
+  ///
+  /// In de, this message translates to:
+  /// **'{date}: {percent} %'**
+  String redesignStatsBar(Object date, Object percent);
+
+  /// redesign.stats.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Im Zeitraum gibt es keine Termine.'**
+  String get redesignStatsEmpty;
+
+  /// redesign.stats.events
+  ///
+  /// In de, this message translates to:
+  /// **'Termine'**
+  String get redesignStatsEvents;
+
+  /// redesign.stats.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung konnte nicht geladen werden.'**
+  String get redesignStatsLoadFailed;
+
+  /// redesign.stats.low
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person unter 50 %} other {{count} Personen unter 50 %}}'**
+  String redesignStatsLow(num count);
+
+  /// redesign.stats.members
+  ///
+  /// In de, this message translates to:
+  /// **'Aktive'**
+  String get redesignStatsMembers;
+
+  /// redesign.stats.perEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit je Termin'**
+  String get redesignStatsPerEvent;
+
+  /// redesign.stats.perEventHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die letzten {count} Termine'**
+  String redesignStatsPerEventHint(Object count);
+
+  /// redesign.stats.perGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Je Register'**
+  String get redesignStatsPerGroup;
+
+  /// redesign.stats.range12m
+  ///
+  /// In de, this message translates to:
+  /// **'12 Monate'**
+  String get redesignStatsRange12m;
+
+  /// redesign.stats.range3m
+  ///
+  /// In de, this message translates to:
+  /// **'3 Monate'**
+  String get redesignStatsRange3m;
+
+  /// redesign.stats.rangeSeason
+  ///
+  /// In de, this message translates to:
+  /// **'Saison'**
+  String get redesignStatsRangeSeason;
+
+  /// redesign.stats.title
+  ///
+  /// In de, this message translates to:
+  /// **'Auswertung'**
+  String get redesignStatsTitle;
 
   /// redesign.status.absent
   ///

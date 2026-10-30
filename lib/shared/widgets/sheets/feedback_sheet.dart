@@ -4,6 +4,7 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/feedback_providers.dart';
+import '../../../core/router/redesign_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
@@ -112,7 +113,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     setState(() => _isLoading = true);
 
     final success = await ref.read(feedbackNotifierProvider.notifier).sendFeedback(
-          message: _feedbackController.text.trim(),
+          // Feedback written in the Beta is marked, so it can be told apart.
+          message: RedesignRoutes.active
+              ? '[Neues Design] ${_feedbackController.text.trim()}'
+              : _feedbackController.text.trim(),
           rating: _rating,
           anonymous: _anonymous,
           phone: _phoneController.text.trim().isNotEmpty

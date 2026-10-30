@@ -423,6 +423,61 @@
       "split": {
         "eventsEmpty": "Wähle links einen Termin aus.",
         "membersEmpty": "Wähle links eine Person aus."
+      },
+      "stats": {
+        "title": "Auswertung",
+        "rangeSeason": "Saison",
+        "range3m": "3 Monate",
+        "range12m": "12 Monate",
+        "avg": "Ø Anwesenheit",
+        "events": "Termine",
+        "members": "Aktive",
+        "perEvent": "Anwesenheit je Termin",
+        "perEventHint": "Die letzten {count} Termine",
+        "perGroup": "Je Register",
+        "low": "{count, plural, one {1 Person unter 50 %} other {{count} Personen unter 50 %}}",
+        "empty": "Im Zeitraum gibt es keine Termine.",
+        "bar": "{date}: {percent} %",
+        "loadFailed": "Auswertung konnte nicht geladen werden."
+      },
+      "compose": {
+        "title": "Mitteilung schreiben",
+        "send": "Senden",
+        "to": "An wen?",
+        "groups": "Register wählen",
+        "subject": "Betreff",
+        "body": "Text",
+        "hint": "Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.",
+        "missing": "Betreff, Text und mindestens ein Versandweg fehlen noch."
+      },
+      "notif": {
+        "how": "Wie",
+        "forMe": "Für mich",
+        "lead": "Als Leitung",
+        "groups": "Gruppen",
+        "groupsHint": "Jede Gruppe lässt sich einzeln stummschalten.",
+        "telegram": "Telegram",
+        "telegramConnected": "Verbunden",
+        "telegramConnect": "Verbinden",
+        "telegramDisconnect": "Trennen"
+      },
+      "bulk": {
+        "title": "Mitglieder bearbeiten",
+        "hint": "Mitglieder antippen, dann unten eine Aktion wählen.",
+        "search": "Mitglied suchen",
+        "selected": "{count, plural, =0 {Keine Auswahl} one {1 ausgewählt} other {{count} ausgewählt}}",
+        "selectGroup": "Alle in {group}",
+        "clear": "Auswahl aufheben",
+        "actionGroup": "Register",
+        "actionPause": "Pausieren",
+        "actionArchive": "Archivieren",
+        "pickGroup": "Neues Register",
+        "pauseReason": "Grund der Pause",
+        "archiveConfirm": "{count, plural, one {1 Person archivieren?} other {{count} Personen archivieren?}}",
+        "archiveHint": "Archivierte Mitglieder findest du unter Archiv.",
+        "done": "{count, plural, one {1 Person geändert} other {{count} Personen geändert}}",
+        "failed": "{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}",
+        "noGroup": "Ohne Register"
       }
     }
   },
@@ -850,6 +905,61 @@
       "split": {
         "eventsEmpty": "Choose an event on the left.",
         "membersEmpty": "Choose a person on the left."
+      },
+      "stats": {
+        "title": "Insights",
+        "rangeSeason": "Season",
+        "range3m": "3 months",
+        "range12m": "12 months",
+        "avg": "Ø attendance",
+        "events": "Events",
+        "members": "Active",
+        "perEvent": "Attendance per event",
+        "perEventHint": "The last {count} events",
+        "perGroup": "Per section",
+        "low": "{count, plural, one {1 person below 50 %} other {{count} people below 50 %}}",
+        "empty": "There are no events in this period.",
+        "bar": "{date}: {percent} %",
+        "loadFailed": "Could not load the insights."
+      },
+      "compose": {
+        "title": "Write message",
+        "send": "Send",
+        "to": "To whom?",
+        "groups": "Choose sections",
+        "subject": "Subject",
+        "body": "Text",
+        "hint": "The message appears for all recipients under Messages.",
+        "missing": "Subject, text and at least one channel are still missing."
+      },
+      "notif": {
+        "how": "How",
+        "forMe": "For me",
+        "lead": "As a leader",
+        "groups": "Groups",
+        "groupsHint": "Each group can be muted on its own.",
+        "telegram": "Telegram",
+        "telegramConnected": "Connected",
+        "telegramConnect": "Connect",
+        "telegramDisconnect": "Disconnect"
+      },
+      "bulk": {
+        "title": "Edit members",
+        "hint": "Tap members, then choose an action below.",
+        "search": "Search member",
+        "selected": "{count, plural, =0 {Nothing selected} one {1 selected} other {{count} selected}}",
+        "selectGroup": "All in {group}",
+        "clear": "Clear selection",
+        "actionGroup": "Section",
+        "actionPause": "Pause",
+        "actionArchive": "Archive",
+        "pickGroup": "New section",
+        "pauseReason": "Reason for the pause",
+        "archiveConfirm": "{count, plural, one {Archive 1 person?} other {Archive {count} people?}}",
+        "archiveHint": "Archived members are listed under Archive.",
+        "done": "{count, plural, one {1 person changed} other {{count} people changed}}",
+        "failed": "{count, plural, one {1 change failed} other {{count} changes failed}}",
+        "noGroup": "No section"
       }
     }
   }

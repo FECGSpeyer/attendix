@@ -122,6 +122,10 @@ import '../../features/redesign/presentation/pages/rd_members_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
 import '../../features/redesign/presentation/pages/rd_appearance_page.dart';
+import '../../features/redesign/presentation/pages/rd_bulk_members_page.dart';
+import '../../features/redesign/presentation/pages/rd_message_compose_page.dart';
+import '../../features/redesign/presentation/pages/rd_notifications_page.dart';
+import '../../features/redesign/presentation/pages/rd_stats_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
@@ -702,10 +706,27 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => const RdAppearancePage(),
               ),
               GoRoute(
+                path: 'benachrichtigungen',
+                builder: (context, state) => const RdNotificationsPage(),
+              ),
+              GoRoute(
                 path: 'verwaltung',
                 name: 'redesignManage',
                 builder: (context, state) => const RdManagePage(),
                 routes: [
+                  // Fixed pages before the `:area` pattern.
+                  GoRoute(
+                    path: 'auswertung',
+                    builder: (context, state) => const RdStatsPage(),
+                  ),
+                  GoRoute(
+                    path: 'mitteilung',
+                    builder: (context, state) => const RdMessageComposePage(),
+                  ),
+                  GoRoute(
+                    path: 'mitglieder-bearbeiten',
+                    builder: (context, state) => const RdBulkMembersPage(),
+                  ),
                   GoRoute(
                     path: ':area',
                     builder: (context, state) => RdManageAreaPage(
