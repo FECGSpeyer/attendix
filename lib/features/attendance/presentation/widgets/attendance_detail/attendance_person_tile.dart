@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -94,7 +95,7 @@ class AttendancePersonTile extends StatelessWidget {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(person.img!),
+                  backgroundImage: CachedNetworkImageProvider(person.img!),
                 )
               else
                 const IonAvatarPlaceholder(size: 36),

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -353,7 +354,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
             CircleAvatar(
               radius: 24,
               backgroundColor: Colors.transparent, // PARITY_R5
-              backgroundImage: NetworkImage(player.img!),
+              backgroundImage: CachedNetworkImageProvider(player.img!),
             ),
           const SizedBox(width: 12),
           Expanded(

@@ -8,6 +8,7 @@
 // badge *.ios.css / *.md.css; 1rem = 17px on the iPhone) and
 // ionic-theme-ios27 (lines, detail icon, searchbar, fab) – IOS27_SWEEP.
 import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
@@ -361,12 +362,14 @@ class IonAvatar extends StatelessWidget {
     final placeholder = IonAvatarPlaceholder(size: s);
     if (!hasImage) return placeholder;
     return ClipOval(
-      child: Image.network(
-        url!,
+      // Cached: list avatars are not downloaded again on every scroll/visit.
+      child: CachedNetworkImage(
+        imageUrl: url!,
         width: s,
         height: s,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => placeholder,
+        placeholder: (_, __) => placeholder,
+        errorWidget: (_, __, ___) => placeholder,
       ),
     );
   }

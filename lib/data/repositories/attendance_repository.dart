@@ -812,27 +812,22 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   ) async {
     if (attendanceIds.isEmpty) return [];
     try {
-      const batchSize = 1000;
-      final result = <PersonAttendance>[];
-      var offset = 0;
-      while (true) {
-        final response = await supabase
+      // Chunked ids (URL size) and paged rows (PostgREST max-rows).
+      final rows = await fetchInChunks<dynamic, int>(
+        attendanceIds,
+        (chunk) => fetchAllPages<dynamic>((from, to) async => await supabase
             .from('person_attendances')
             .select('id, attendance_id, person_id, status, notes, '
                 'attendance:attendance_id!inner(tenantId)')
-            .inFilter('attendance_id', attendanceIds)
+            .inFilter('attendance_id', chunk)
             .eq('attendance.tenantId', currentTenantId)
             .order('id') // stable paging
-            .range(offset, offset + batchSize - 1);
-        final rows = response as List;
-        for (final e in rows) {
-          final row = Map<String, dynamic>.from(e as Map)..remove('attendance');
-          result.add(PersonAttendance.fromJson(row));
-        }
-        if (rows.length < batchSize) break;
-        offset += batchSize;
-      }
-      return result;
+            .range(from, to) as List),
+      );
+      return [
+        for (final e in rows)
+          PersonAttendance.fromJson(Map<String, dynamic>.from(e as Map)..remove('attendance')),
+      ];
     } catch (e, stack) {
       handleError(e, stack, 'getPersonAttendancesForAttendances');
       rethrow;
