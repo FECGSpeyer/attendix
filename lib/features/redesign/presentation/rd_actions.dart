@@ -84,11 +84,14 @@ Future<void> rdShareSongFile(
 }) async {
   final title = (subject ?? '').trim().isEmpty ? file.fileName : subject!.trim();
   if (!kIsWeb) {
-    final box = button.findRenderObject() as RenderBox?;
-    final origin = box == null || !box.hasSize ? null : box.localToGlobal(Offset.zero) & box.size;
     try {
       final bytes = await ref.read(songFileServiceProvider).downloadFileBytes(file.url);
+      // Page or sheet closed during the download: no share sheet any more.
+      if (!button.mounted) return;
       if (bytes != null) {
+        // Measured after the download: the button may have moved meanwhile.
+        final box = button.findRenderObject() as RenderBox?;
+        final origin = box == null || !box.hasSize ? null : box.localToGlobal(Offset.zero) & box.size;
         final name = file.fileName.isEmpty ? 'datei' : file.fileName;
         final result = await Share.shareXFiles(
           [XFile.fromData(bytes, name: name, mimeType: _mimeType(name))],

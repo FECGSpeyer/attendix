@@ -89,14 +89,18 @@ const _pdf = 'application/pdf';
 
 /// Only the download is used by "teilen".
 class _BytesFiles implements SongFileService {
-  _BytesFiles(this.bytes);
+  _BytesFiles(this.bytes, {this.gate});
 
   final Uint8List? bytes;
+
+  /// Holds the download until completed.
+  final Completer<void>? gate;
   final downloads = <String>[];
 
   @override
   Future<Uint8List?> downloadFileBytes(String url) async {
     downloads.add(url);
+    await gate?.future;
     return bytes;
   }
 
@@ -589,6 +593,43 @@ void main() {
       expect(calls.single.method, 'share');
       final args = Map<String, dynamic>.from(calls.single.arguments as Map);
       expect(args['text'], 'Festliche Ouvertüre · Flöte\nhttps://x/floete.pdf');
+    });
+
+    testWidgets('sheet closed during the download: no share sheet', (tester) async {
+      _phone(tester);
+      final calls = _mockShare(tester);
+      final temp = Directory.systemTemp.createTempSync('rd_share');
+      addTearDown(() => temp.deleteSync(recursive: true));
+      const pathChannel = MethodChannel('plugins.flutter.io/path_provider');
+      tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(pathChannel, (call) async => temp.path);
+      addTearDown(() => tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(pathChannel, null));
+      final gate = Completer<void>();
+      final files = _BytesFiles(Uint8List.fromList([1, 2, 3]), gate: gate);
+      await tester.pumpWidget(_workApp(
+        Role.player,
+        song: _ouverture,
+        overrides: [songFileServiceProvider.overrideWithValue(files)],
+      ));
+      await _settle(tester);
+
+      await tester.tap(find.text('Alle Stimmen'));
+      await _settle(tester);
+      // Real async: the share sheet writes the file to the temp folder.
+      await tester.runAsync(() async {
+        await tester.tap(find.byTooltip('Flöte teilen'));
+        await Future<void>.delayed(const Duration(milliseconds: 50));
+      });
+      expect(files.downloads, ['https://x/floete.pdf']);
+      Navigator.of(tester.element(find.byTooltip('Flöte teilen'))).pop();
+      await _settle(tester);
+      expect(find.byTooltip('Flöte teilen'), findsNothing);
+
+      await tester.runAsync(() async {
+        gate.complete();
+        await Future<void>.delayed(const Duration(milliseconds: 500));
+      });
+      await _settle(tester);
+      expect(calls, isEmpty);
     });
 
     testWidgets('players do not get Gruppen-PDFs drucken', (tester) async {
