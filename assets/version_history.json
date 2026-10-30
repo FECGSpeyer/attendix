@@ -11,6 +11,13 @@
       ]
     },
     {
+      "version": "0.22.10",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Beim Wischen zwischen Aktiv und Pausiert bleibt der Balken nicht mehr kurz stehen, die neue Liste schiebt sich direkt neben der alten herein"
+      ]
+    },
+    {
       "version": "0.22.9",
       "date": "30.10.2026",
       "changes": [
