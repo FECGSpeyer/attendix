@@ -24,6 +24,7 @@ import 'package:attendix/features/people/presentation/widgets/person_detail/pers
 import 'package:attendix/features/redesign/presentation/pages/rd_person_history_page.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:mocktail/mocktail.dart';
@@ -159,6 +160,75 @@ void main() {
       expect(deco?.borderRadius, isNotNull);
       await tester.tap(find.text('Allgemein'));
       expect(toggled, 1);
+
+      // Keyboard: Tab focuses the heading, Enter and Space toggle.
+      await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+      await tester.pump();
+      await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+      await tester.pump();
+      expect(toggled, 2);
+      await tester.sendKeyEvent(LogicalKeyboardKey.space);
+      await tester.pump();
+      expect(toggled, 3);
+    });
+
+    testWidgets('Beta: screen reader gets a button with title and expanded state', (tester) async {
+      final handle = tester.ensureSemantics();
+      Future<void> pumpWith(bool expanded) => _pump(
+            tester,
+            _beta(),
+            Scaffold(
+              body: IonAccordion(title: 'Account', expanded: expanded, onToggle: () {}, child: const Text('Inhalt')),
+            ),
+          );
+      await pumpWith(false);
+      expect(
+        tester.getSemantics(find.text('Account')),
+        matchesSemantics(
+          label: 'Account',
+          isButton: true,
+          hasExpandedState: true,
+          isExpanded: false,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+        ),
+      );
+      await pumpWith(true);
+      expect(
+        tester.getSemantics(find.text('Account')),
+        matchesSemantics(
+          label: 'Account',
+          isButton: true,
+          hasExpandedState: true,
+          isExpanded: true,
+          hasTapAction: true,
+          isFocusable: true,
+          hasFocusAction: true,
+        ),
+      );
+      handle.dispose();
+    });
+
+    testWidgets('Verlauf: a missing person shows "gibt es nicht mehr" with retry', (tester) async {
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentRoleProvider.overrideWithValue(Role.admin),
+          personProvider(2).overrideWith((ref) async => null),
+        ],
+        child: MaterialApp(
+          theme: _beta(),
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const RdPersonHistoryPage(personId: 2),
+        ),
+      ));
+      await tester.pump(const Duration(seconds: 1));
+      expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
     });
   });
 }

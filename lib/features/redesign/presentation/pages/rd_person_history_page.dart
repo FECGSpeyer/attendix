@@ -33,7 +33,8 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final id = widget.personId;
-    final person = ref.watch(personProvider(id)).valueOrNull;
+    final async = ref.watch(personProvider(id));
+    final person = async.valueOrNull;
     // Same rights as the history of the old person page.
     final role = ref.watch(currentRoleProvider);
     final hasLeft = person?.left != null;
@@ -44,6 +45,7 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
       // The old sections bring their own 16 px side margins.
       padding: const EdgeInsets.fromLTRB(4, 12, 4, 32),
       onRefresh: () async {
+        ref.invalidate(personProvider(id));
         ref.invalidate(personHistoryProvider(id));
         ref.invalidate(personAttendanceStatsProvider(id));
         ref.invalidate(upcomingAttendancesProvider(id));
@@ -62,7 +64,17 @@ class _RdPersonHistoryPageState extends ConsumerState<RdPersonHistoryPage> {
               Semantics(header: true, child: Text(l10n.redesignPersonHistory, style: RdType.title(p))),
               if (person == null) ...[
                 const SizedBox(height: 12),
-                RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
+                // Same states as the person page: loading, failed, gone.
+                async.isLoading
+                    ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                    : RdInfoCard(
+                        text: async.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignPersonNotFound,
+                        icon: Icons.person_off_outlined,
+                        action: RdOutlineButton(
+                          label: l10n.redesignCommonRetry,
+                          onPressed: () => ref.invalidate(personProvider(id)),
+                        ),
+                      ),
               ],
             ],
           ),
