@@ -9,8 +9,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 /// Persons that receive a certificate: active (not left/paused/pending)
 /// members of the selected groups (Ionic settings.page filter).
@@ -54,7 +54,7 @@ Future<void> generateVorkursCertificates(BuildContext context, WidgetRef ref) as
       persons.map((p) => (firstName: p.firstName, lastName: p.lastName)).toList(),
     );
     final fileName = 'Urkunden_Vorkurs_${DateFormat('yyyy-MM-dd').format(DateTime.now())}.pdf';
-    await NativeFileService.saveBytes(bytes, fileName); // NATIVE_MISC
+    await NativeFileService.saveBytes(bytes, fileName);
   } catch (_) {
     if (context.mounted) ToastHelper.showError(context, context.l10n.settingsCertificatesFailed);
   }

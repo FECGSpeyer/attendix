@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -7,7 +6,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/pdf_bytes_loader.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Bottom sheet for viewing PDF files in-app
 class PdfViewerSheet extends StatefulWidget {
@@ -45,12 +45,9 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
 
   Future<void> _loadPdf() async {
     try {
-      final response = await http.get(Uri.parse(widget.url));
-      if (response.statusCode != 200) {
-        throw Exception('HTTP ${response.statusCode}');
-      }
-
-      final document = await PdfDocument.openData(response.bodyBytes);
+      // Cached on iOS/Android: opens offline after the first time.
+      final bytes = await PdfBytesLoader.load(widget.url);
+      final document = await PdfDocument.openData(bytes);
 
       if (mounted) {
         setState(() {
@@ -151,7 +148,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                         tooltip: context.l10n.songsFlutterFullscreen,
                       ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -395,7 +392,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                       child: Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white),
+                            icon: Icon(Icons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           Expanded(
@@ -439,8 +436,8 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.chevron_left,
-                                color: Colors.white, size: 32),
+                            icon: Icon(Icons.chevron_left,
+                                color: Colors.white, size: 32, semanticLabel: context.l10n.a11yPreviousPage),
                             onPressed: _currentPage > 1
                                 ? () => widget.pdfController.animateToPage(
                                       pageNumber: _currentPage - 1,
@@ -466,8 +463,8 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.chevron_right,
-                                color: Colors.white, size: 32),
+                            icon: Icon(Icons.chevron_right,
+                                color: Colors.white, size: 32, semanticLabel: context.l10n.a11yNextPage),
                             onPressed: _currentPage < widget.totalPages
                                 ? () => widget.pdfController.animateToPage(
                                       pageNumber: _currentPage + 1,

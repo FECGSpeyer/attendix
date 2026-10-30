@@ -13,8 +13,8 @@ import '../../../planning/presentation/widgets/plan_export_actions.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ionic_ios.dart'; // IOS_R6
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart';
 
 /// Public list of all org plans via `/org-plan?key=<public_plan_key>`
 /// (Ionic `OrgPlanPublicPage`). No login required.
@@ -296,14 +296,14 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
           ? const Center(child: AppSpinner())
           : _loading
           ? ListView(children: [
-              ...top, // IOS_R6
+              ...top,
               const Padding(
                   padding: EdgeInsets.all(24),
                   child: Center(child: AppSpinner())),
             ])
           : _notFound
               ? ListView(children: [
-                  ...top, // IOS_R6
+                  ...top,
                   Padding(
                   padding: const EdgeInsets.all(16),
                   child: Card(
@@ -314,12 +314,12 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
                   ),
                 ),
                 ])
-              : IonRefresher( // IOS_R6
+              : IonRefresher(
                   onRefresh: _loadPlans,
                   child: ListView(
                     padding: const EdgeInsets.only(bottom: 24),
                     children: [
-                      ...top, // IOS_R6
+                      ...top,
                       if (_upcoming.isEmpty)
                         ListTile(
                           leading: const Icon(Icons.event_outlined, color: AppColors.medium),

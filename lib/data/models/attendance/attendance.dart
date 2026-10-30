@@ -71,7 +71,7 @@ class _FlexibleAttendanceStatusConverter implements JsonConverter<AttendanceStat
   dynamic toJson(AttendanceStatus status) => status.value;
 }
 
-/// Custom converter for List<AttendanceStatus> handling (DB stores as int[])
+/// Custom converter for `List<AttendanceStatus>` handling (DB stores as int[])
 class _FlexibleAttendanceStatusListConverter
     implements JsonConverter<List<AttendanceStatus>?, dynamic> {
   const _FlexibleAttendanceStatusListConverter();
@@ -100,7 +100,7 @@ class _FlexibleAttendanceStatusListConverter
   }
 }
 
-/// Custom converter for List<int> that handles {} (empty object) as empty list
+/// Custom converter for `List<int>` that handles {} (empty object) as empty list
 /// Database sometimes stores empty objects {} instead of empty arrays []
 class _FlexibleIntListConverter implements JsonConverter<List<int>?, dynamic> {
   const _FlexibleIntListConverter();
@@ -123,7 +123,7 @@ class _FlexibleIntListConverter implements JsonConverter<List<int>?, dynamic> {
   dynamic toJson(List<int>? list) => list;
 }
 
-/// Custom converter for List<String> that handles {} (empty object) as empty list
+/// Custom converter for `List<String>` that handles {} (empty object) as empty list
 class _FlexibleStringListConverter implements JsonConverter<List<String>?, dynamic> {
   const _FlexibleStringListConverter();
 

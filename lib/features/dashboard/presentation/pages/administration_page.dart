@@ -10,11 +10,11 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 const int _gb = 1024 * 1024 * 1024;
 
@@ -239,7 +239,7 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(16, ios ? 0 : 8, 16, scrollEndPadding(context, base: 24)),
         children: [
-          const IonContentTopInset(), // IOS_R6
+          const IonContentTopInset(),
           IonLargeTitle(context.l10n.adminTitle, padding: const EdgeInsets.only(bottom: 4)),
           if (ios) const SizedBox(height: 16),
           SettingsListSection(

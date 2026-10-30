@@ -12,60 +12,60 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
-import '../../../../core/providers/church_providers.dart'; // ATT_DETAIL
-import '../../../../core/providers/group_providers.dart'; // ATT_DETAIL
-import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider; // IOS_DETAIL
-import '../../../../core/providers/profile_providers.dart'; // ATT_DETAIL
-import '../../../../core/utils/shift_utils.dart'; // ATT_DETAIL
-import '../../../../core/providers/shift_providers.dart'; // LOGIC_ATT
-import '../../../../core/utils/attendance_logic_utils.dart'; // LOGIC_ATT
-import '../../../../data/models/shift/shift_plan.dart'; // LOGIC_ATT
-import '../../../../shared/widgets/sheets/church_overview_sheet.dart'; // ATT_DETAIL
-import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart'; // ATT_DETAIL
-import '../widgets/attendance_detail/add_persons_sheet.dart'; // ATT_DETAIL
-import '../widgets/attendance_detail/attendance_view_options.dart'; // ATT_DETAIL
-import '../widgets/attendance_detail/description_attachment_sheet.dart'; // ATT_DETAIL
-import 'package:shared_preferences/shared_preferences.dart'; // ATT_DETAIL
+import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/utils/shift_utils.dart';
+import '../../../../core/providers/shift_providers.dart';
+import '../../../../core/utils/attendance_logic_utils.dart';
+import '../../../../data/models/shift/shift_plan.dart';
+import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
+import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
+import '../widgets/attendance_detail/add_persons_sheet.dart';
+import '../widgets/attendance_detail/attendance_view_options.dart';
+import '../widgets/attendance_detail/description_attachment_sheet.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
-import '../../../../core/providers/debug_providers.dart'; // ORG_PLANS
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/connectivity_provider.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../data/repositories/attendance_repository.dart'; // UI_TENANT_HOIST
+import '../../../../data/repositories/attendance_repository.dart';
 import '../../../../core/services/export_service.dart';
-import '../../../../core/services/offline_queue_service.dart'; // PROFILE_OFFLINE
+import '../../../../core/services/offline_queue_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import '../../../../data/models/church/church.dart'; // ATT_DETAIL
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos; // PARITY_R3
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos;
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../widgets/attendance_detail/attendance_detail_widgets.dart';
-import '../widgets/ios_condense_header.dart'; // UX_ATT
+import '../widgets/ios_condense_header.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
 import '../../../../core/utils/demo_guard.dart';
-import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
+import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
-import '../widgets/attendance_date_change.dart'; // ASTRA_SIGNOUT_TOPICS
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/display/ion_badge_text.dart';
+import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
-export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays; // ASTRA_SIGNOUT_TOPICS
+export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays;
 
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
@@ -140,9 +140,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       _setupProviderListener();
       _loadChecklistFromAttendance();
       _loadSongEntries();
-      _loadViewPrefs(); // ATT_DETAIL
+      _loadViewPrefs();
     });
-    _lifecycleListener = AppLifecycleListener(onShow: _onBecameVisible); // LEFTOVERS
+    _lifecycleListener = AppLifecycleListener(onShow: _onBecameVisible);
   }
 
   /// LEFTOVERS: Ionic onVisibilityChange (document visible again) – reload
@@ -209,7 +209,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   @override
   void dispose() {
     _isDisposed = true;
-    _lifecycleListener?.dispose(); // LEFTOVERS
+    _lifecycleListener?.dispose();
     _providerSubscription?.close();
     _unsubscribeFromRealtimeChanges();
     super.dispose();
@@ -636,7 +636,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                         const SizedBox(height: AppDimensions.paddingXS),
 
                         GeneralInfoAccordion(
-                          key: const ValueKey('att-acc-general'), // IOS_DETAIL
+                          key: const ValueKey('att-acc-general'),
                           attendance: attendance,
                           attendanceType: attendanceType,
                           onTypeInfoChanged: _updateTypeInfo,
@@ -671,7 +671,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onOpenFilesFolder: canAccessFiles && attendance.filesFolder?.isNotEmpty == true
                               ? () => openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
-                          // ATT_DETAIL
                           // IOS_DETAIL: Ionic shows the link to every role that
                           // edits the Termin (Helfer included); viewers stay
                           // read-only (MED5).
@@ -773,7 +772,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       onRemoveFromAttendance: _removePersonFromAttendance,
                       registrationSummaries:
                           _showRegFields ? _registrationSummaries(attendanceType) : const {},
-                      // ATT_DETAIL
                       showAvatars: _showAvatars,
                       extraLines: sortLines,
                       showModifierInfo: !isHelper,
@@ -927,7 +925,6 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'export_excel':
         _exportAttendanceToExcel();
         break;
-      // ATT_DETAIL (Status-Filter / Ansicht open nested popovers)
       case 'sort':
         _openSortPicker();
         break;
@@ -2330,6 +2327,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     if (selectedTime == null || !mounted) return;
+    // #232: session of the acting user, captured before the first write.
+    final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
 
     final timeStr = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
     final previous = attendance.startTime;
@@ -2343,7 +2342,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
       // shift computation for everyone in this Termin.
       if (timeStr != previous) {
-        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        await repo.updateShiftAssignmentsForAttendance(
+          widget.attendanceId,
+          isSessionCurrent: writeSession.isCurrent,
+          actingUserId: writeSession.userId,
+        );
         ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       }
 
@@ -2379,6 +2382,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
 
     if (selectedTime == null || !mounted) return;
+    // #232: session of the acting user, captured before the first write.
+    final writeSession = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
 
     final timeStr = '${selectedTime.hour.toString().padLeft(2, '0')}:${selectedTime.minute.toString().padLeft(2, '0')}';
     final previous = attendance.endTime;
@@ -2392,7 +2397,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       // LOGIC_ATT: Ionic onInfoChanged – the time window moved, re-run the
       // shift computation for everyone in this Termin.
       if (timeStr != previous) {
-        await repo.updateShiftAssignmentsForAttendance(widget.attendanceId);
+        await repo.updateShiftAssignmentsForAttendance(
+          widget.attendanceId,
+          isSessionCurrent: writeSession.isCurrent,
+          actingUserId: writeSession.userId,
+        );
         ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
       }
 

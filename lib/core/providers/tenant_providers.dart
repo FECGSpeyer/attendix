@@ -77,7 +77,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
-      if (_explicitlySet) return; // LINKS_STARTUP
+      if (_explicitlySet) return;
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
@@ -92,7 +92,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
-      if (_explicitlySet) return; // LINKS_STARTUP
+      if (_explicitlySet) return;
       if (response != null) {
         state = Tenant.fromJson(response);
       } else {
@@ -112,7 +112,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   /// Use this for navigation scenarios where auth events would interrupt navigation.
   /// After navigation completes, call updateCurrentTenantId separately.
   Future<void> setTenantLocal(Tenant? tenant) async {
-    _explicitlySet = true; // LINKS_STARTUP
+    _explicitlySet = true;
     state = tenant;
 
     final prefs = await SharedPreferences.getInstance();

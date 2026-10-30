@@ -9,6 +9,38 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get a11yAdd => 'Hinzufügen';
+
+  @override
+  String get a11yClearInput => 'Eingabe löschen';
+
+  @override
+  String get a11yDecrease => 'Verringern';
+
+  @override
+  String get a11yHelp => 'Hilfe';
+
+  @override
+  String get a11yIncrease => 'Erhöhen';
+
+  @override
+  String get a11yMoreActions => 'Weitere Aktionen';
+
+  @override
+  String get a11yNextPage => 'Nächste Seite';
+
+  @override
+  String get a11yPreviousPage => 'Vorherige Seite';
+
+  @override
+  String a11yRating(Object count) {
+    return '$count von 5 Sternen';
+  }
+
+  @override
+  String get a11ySelectDate => 'Datum wählen';
+
+  @override
   String get adminAddChurch => 'Gemeinde hinzufügen';
 
   @override
@@ -7860,6 +7892,89 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignBulkActionArchive => 'Archivieren';
+
+  @override
+  String get redesignBulkActionGroup => 'Register';
+
+  @override
+  String get redesignBulkActionPause => 'Pausieren';
+
+  @override
+  String redesignBulkArchiveConfirm(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen archivieren?',
+      one: '1 Person archivieren?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkArchiveHint => 'Archivierte Mitglieder findest du unter Archiv.';
+
+  @override
+  String get redesignBulkClear => 'Auswahl aufheben';
+
+  @override
+  String redesignBulkDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen geändert',
+      one: '1 Person geändert',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignBulkFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Änderungen fehlgeschlagen',
+      one: '1 Änderung fehlgeschlagen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkHint => 'Mitglieder antippen, dann unten eine Aktion wählen.';
+
+  @override
+  String get redesignBulkNoGroup => 'Ohne Register';
+
+  @override
+  String get redesignBulkPauseReason => 'Grund der Pause';
+
+  @override
+  String get redesignBulkPickGroup => 'Neues Register';
+
+  @override
+  String get redesignBulkSearch => 'Mitglied suchen';
+
+  @override
+  String redesignBulkSelectGroup(Object group) {
+    return 'Alle in $group';
+  }
+
+  @override
+  String redesignBulkSelected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ausgewählt',
+      one: '1 ausgewählt',
+      zero: 'Keine Auswahl',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkTitle => 'Mitglieder bearbeiten';
+
+  @override
   String get redesignCommonAll => 'Alle';
 
   @override
@@ -7870,6 +7985,30 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignCommonRetry => 'Erneut versuchen';
+
+  @override
+  String get redesignComposeBody => 'Text';
+
+  @override
+  String get redesignComposeGroups => 'Register wählen';
+
+  @override
+  String get redesignComposeHint => 'Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.';
+
+  @override
+  String get redesignComposeMissing => 'Betreff, Text und mindestens ein Versandweg fehlen noch.';
+
+  @override
+  String get redesignComposeSend => 'Senden';
+
+  @override
+  String get redesignComposeSubject => 'Betreff';
+
+  @override
+  String get redesignComposeTitle => 'Mitteilung schreiben';
+
+  @override
+  String get redesignComposeTo => 'An wen?';
 
   @override
   String get redesignCreateChooseType => 'Art wählen';
@@ -8726,6 +8865,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMembersStats => 'Auswertung';
 
   @override
+  String get redesignNotifForMe => 'Für mich';
+
+  @override
+  String get redesignNotifGroups => 'Gruppen';
+
+  @override
+  String get redesignNotifGroupsHint => 'Jede Gruppe lässt sich einzeln stummschalten.';
+
+  @override
+  String get redesignNotifHow => 'Wie';
+
+  @override
+  String get redesignNotifLead => 'Als Leitung';
+
+  @override
+  String get redesignNotifTelegram => 'Telegram';
+
+  @override
+  String get redesignNotifTelegramConnect => 'Verbinden';
+
+  @override
+  String get redesignNotifTelegramConnected => 'Verbunden';
+
+  @override
+  String get redesignNotifTelegramDisconnect => 'Trennen';
+
+  @override
   String get redesignOwnInfos => 'Infos zum Termin';
 
   @override
@@ -8892,6 +9058,60 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
+
+  @override
+  String get redesignStatsAvg => 'Ø Anwesenheit';
+
+  @override
+  String redesignStatsBar(Object date, Object percent) {
+    return '$date: $percent %';
+  }
+
+  @override
+  String get redesignStatsEmpty => 'Im Zeitraum gibt es keine Termine.';
+
+  @override
+  String get redesignStatsEvents => 'Termine';
+
+  @override
+  String get redesignStatsLoadFailed => 'Auswertung konnte nicht geladen werden.';
+
+  @override
+  String redesignStatsLow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen unter 50 %',
+      one: '1 Person unter 50 %',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignStatsMembers => 'Aktive';
+
+  @override
+  String get redesignStatsPerEvent => 'Anwesenheit je Termin';
+
+  @override
+  String redesignStatsPerEventHint(Object count) {
+    return 'Die letzten $count Termine';
+  }
+
+  @override
+  String get redesignStatsPerGroup => 'Je Register';
+
+  @override
+  String get redesignStatsRange12m => '12 Monate';
+
+  @override
+  String get redesignStatsRange3m => '3 Monate';
+
+  @override
+  String get redesignStatsRangeSeason => 'Saison';
+
+  @override
+  String get redesignStatsTitle => 'Auswertung';
 
   @override
   String get redesignStatusAbsent => 'Abwesend';

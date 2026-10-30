@@ -4,7 +4,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
-import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../../shared/widgets/display/ion_badge_text.dart';
 
 // UX_ATT: Ionic attendance page status badges and click cycle.
 
@@ -69,21 +69,21 @@ AttendanceStatus? nextClickStatus(
   final has = available.toSet()..remove(le);
   Map<AttendanceStatus, AttendanceStatus>? mapping;
   if (has.containsAll(const [n, p, e, l, a])) {
-    mapping = const {n: p, a: p, p: e, e: l, l: a, le: a}; // DEFAULT
+    mapping = const {n: p, a: p, p: e, e: l, l: a, le: a};
   } else if (has.contains(e) && has.contains(l)) {
-    mapping = const {p: e, e: l, l: a, a: p, le: a}; // NO_NEUTRAL
+    mapping = const {p: e, e: l, l: a, a: p, le: a};
   } else if (has.contains(l) && has.contains(n)) {
-    mapping = const {n: p, a: p, p: l, l: a, le: a, e: p}; // NO_EXCUSED
+    mapping = const {n: p, a: p, p: l, l: a, le: a, e: p};
   } else if (has.contains(e) && has.contains(n)) {
-    mapping = const {n: p, a: p, p: e, e: a, l: a, le: a}; // NO_LATE
+    mapping = const {n: p, a: p, p: e, e: a, l: a, le: a};
   } else if (has.contains(l)) {
-    mapping = const {p: a, l: p, le: p, a: l, e: p}; // NO_NEUTRAL_NO_EXCUSED
+    mapping = const {p: a, l: p, le: p, a: l, e: p};
   } else if (has.contains(n)) {
-    mapping = const {n: p, a: p, p: a, e: p, l: p, le: p}; // NO_LATE_NO_EXCUSED
+    mapping = const {n: p, a: p, p: a, e: p, l: p, le: p};
   } else if (has.contains(e)) {
-    mapping = const {p: e, e: a, a: p, l: p, le: p}; // NO_LATE_NO_NEUTRAL
+    mapping = const {p: e, e: a, a: p, l: p, le: p};
   } else if (has.length == 2 && has.contains(p) && has.contains(a)) {
-    mapping = const {p: a, a: p, l: p, le: p, e: p}; // ONLY_PRESENT_ABSENT
+    mapping = const {p: a, a: p, l: p, le: p, e: p};
   }
   if (mapping == null) return null;
   // LOGIC_ATT: Ionic writes `undefined` when the current status is not in

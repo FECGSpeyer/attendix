@@ -6,10 +6,10 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Card labels (Ionic `CARD_LABELS`).
 Map<String, String> dashboardCardLabels(AppLocalizations l10n) => {
@@ -69,7 +69,7 @@ class _DashboardSettingsPageState extends ConsumerState<DashboardSettingsPage> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(0, 8, 0, scrollEndPadding(context, base: 8)),
         children: [
-          const IonContentTopInset(), // IOS_R6
+          const IonContentTopInset(),
           _Header(context.l10n.dashSettingsTab),
           // UX_SETTINGS (WAVE 8): dashboard-settings.page.html — inset lists.
           _Box(

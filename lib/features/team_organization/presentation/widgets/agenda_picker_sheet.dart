@@ -10,7 +10,7 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// "Themen aufnehmen": picks open topics (and creates new ones inline) and
 /// inserts them as TOPs into a Termin's Ablaufplan. Unchecking a TOP that is
@@ -19,7 +19,7 @@ Future<Map<String, dynamic>?> showAgendaPickerSheet(
   BuildContext context, {
   required ProtocolAttendance attendance,
   ProtocolType? type,
-  AgendaPlanSave? save, // SOL_FIX30
+  AgendaPlanSave? save,
 }) {
   return showModalBottomSheet<Map<String, dynamic>>(
     context: context,
@@ -307,7 +307,7 @@ class _AgendaPickerSheetState extends ConsumerState<AgendaPickerSheet> {
       child: Column(
         children: [
           AppBar(
-            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+            toolbarHeight: ionModalToolbarHeight(context),
             automaticallyImplyLeading: false,
             primary: false,
             leading: IconButton(

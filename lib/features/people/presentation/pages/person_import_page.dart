@@ -13,12 +13,13 @@ import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../core/providers/user_registration_providers.dart'; // AUTH
+import '../../../../core/providers/user_registration_providers.dart';
 import '../widgets/import_widgets.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -185,7 +186,9 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         // all Termine after their join date (best effort).
         try {
           await playerRepo.addPlayerToAttendancesByDate(person);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'person_import_page');
+        }
         // Accounts only when the toggle is on and an email exists.
         if (_createAccounts &&
             (person.email?.isNotEmpty ?? false) &&
@@ -234,7 +237,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
             onPressed: _busy ? null : () => Navigator.of(context).pop(),
           ),
         ],

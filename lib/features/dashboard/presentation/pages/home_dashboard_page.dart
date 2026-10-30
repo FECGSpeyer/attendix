@@ -13,12 +13,12 @@ import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../widgets/event_cards.dart';
 import '../widgets/people_cards.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/app_toolbar.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_R6
-import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // P10_SELF_PLAN
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart'; // P10_SELF_PLAN
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
 /// masonry-like grid (1 / 2 / 3 columns depending on width).
@@ -83,7 +83,7 @@ class HomeDashboardPage extends ConsumerWidget {
                 icon: const Icon(Icons.settings_outlined),
                 onPressed: () => context.push('/settings/dashboard'),
               ),
-            const NotificationBell(), // INTEGRATION (Ionic app-notification-bell)
+            const NotificationBell(),
           ]),
         ],
       ),
@@ -99,13 +99,13 @@ class HomeDashboardPage extends ConsumerWidget {
               ),
             )
           : null,
-      body: IonRefresher( // IOS_R6
+      body: IonRefresher(
         onRefresh: () async => refreshDashboardCards(ref),
         child: widgets.isEmpty
             ? ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
                 children: [
-                  ...top, // IOS_R6
+                  ...top,
                   Padding(
                     padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 60),
                     child: Column(
@@ -135,7 +135,7 @@ class HomeDashboardPage extends ConsumerWidget {
                     return ListView(
                       physics: const AlwaysScrollableScrollPhysics(),
                       padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
-                      children: [...top, ...widgets], // IOS_R6
+                      children: [...top, ...widgets],
                     );
                   }
                   // Column-wise distribution like CSS `column-count`.
@@ -146,7 +146,7 @@ class HomeDashboardPage extends ConsumerWidget {
                     child: Column(
                       crossAxisAlignment: CrossAxisAlignment.stretch,
                       children: [
-                        ...top, // IOS_R6
+                        ...top,
                         Row(
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [

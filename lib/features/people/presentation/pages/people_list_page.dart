@@ -33,13 +33,13 @@ import '../widgets/handover_sheet.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/ion/ion_widgets.dart';
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../messages/presentation/widgets/notification_bell.dart';
 import 'bulk_edit_page.dart';
 import 'person_import_page.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -495,7 +495,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           context,
           title: tenantTitle,
           // IOS_SHELL: bell alone → glass circle
-          trailing: const ToolbarButtonGroup(children: [NotificationBell()]), // MESSAGES
+          trailing: const ToolbarButtonGroup(children: [NotificationBell()]),
         ),
       if (ios) CupertinoSliverRefreshControl(onRefresh: _refresh),
       // Search bar + options button (Ionic div.flex: ion-searchbar (86%) +
@@ -690,7 +690,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return AppBar(
         title: Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length)),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
           onPressed: _exitSelectionMode,
         ),
         actions: [
@@ -741,7 +741,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // and admin actions live in the options popover next to the search bar.
     return AppBar(
       title: TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
-      centerTitle: TenantSwitcherTitle.centerTitle(ref), // UX_AUTH
+      centerTitle: TenantSwitcherTitle.centerTitle(ref),
       actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES, IOS_SHELL
     );
   }

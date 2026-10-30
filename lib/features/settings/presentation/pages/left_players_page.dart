@@ -11,9 +11,9 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/settings_list.dart';
-import '../widgets/settings_sheet.dart'; // IOS_SETTINGS2
+import '../widgets/settings_sheet.dart';
 
 /// Provider for left (archived) players using repository
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
@@ -50,6 +50,7 @@ class LeftPlayersPage extends ConsumerWidget {
               title: Text(context.l10n.settingsArchive),
               leading: IconButton(
                 icon: const BackButtonIcon(),
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () => context.pop(),
               ),
             ),

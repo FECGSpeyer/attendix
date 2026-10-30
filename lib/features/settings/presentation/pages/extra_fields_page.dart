@@ -12,10 +12,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../widgets/ion_condense.dart';
+import '../widgets/settings_list.dart';
 
 enum ExtraFieldTarget { person, song }
 
@@ -130,7 +130,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _editField(ExtraFieldTarget target, int index) async {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = _fields(target);
     final result = await _showFieldSheet(target: target, existing: fields[index]);
     if (result == null) return;
@@ -140,7 +140,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   Future<void> _removeField(ExtraFieldTarget target, int index) async {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = _fields(target);
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -154,7 +154,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   }
 
   void _reorder(ExtraFieldTarget target, int oldIndex, int newIndex) {
-    if (_saving) return; // SOL_FIX20
+    if (_saving) return;
     final fields = [..._fields(target)];
     if (newIndex > oldIndex) newIndex -= 1;
     final item = fields.removeAt(oldIndex);
@@ -349,7 +349,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                             style: Theme.of(ctx).textTheme.titleLarge,
                           ),
                         ),
-                        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(sheetContext)),
+                        IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
                       ],
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
@@ -361,7 +361,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       )
                     else
                       AppDropdownFormField<String>(
-                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                        iosInterface: AppSelectInterface.alert,
                         value: type,
                         decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                         items: [
@@ -384,7 +384,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                       decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
                     ),
                     AppDropdownFormField<String>(
-                      iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                      iosInterface: AppSelectInterface.alert,
                       value: displayMode,
                       decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                       items: [
@@ -416,7 +416,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         children: [
                           Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
                           IconButton(
-                            icon: const Icon(Icons.add),
+                            icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
                             onPressed: () => setSheet(() => options.add(TextEditingController())),
                           ),
                         ],
@@ -438,7 +438,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                              icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                               onPressed: () => removeOption(i),
                             ),
                           ],
@@ -533,7 +533,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
@@ -541,7 +541,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             IconButton(
               icon: _saving
                   ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-                  : const Icon(Icons.check),
+                  : Icon(Icons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _saving ? null : _save,
             ),
           ],
@@ -554,7 +554,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             child: ListView(
           padding: EdgeInsets.fromLTRB(ionListMargin(context), ionIsIos(context) ? 0 : 16, ionListMargin(context), 16),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             IonLargeTitle(context.l10n.extraFieldsTitle, padding: const EdgeInsets.only(bottom: 4)),
             if (ionIsIos(context)) const SizedBox(height: 16),
             _buildSection(ExtraFieldTarget.person, context.l10n.extraFieldsForPersons),
@@ -629,11 +629,11 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+                            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
                             onPressed: () => _editField(target, i),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                             onPressed: () => _removeField(target, i),
                           ),
                           if (fields.length > 1)

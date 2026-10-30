@@ -13,7 +13,7 @@ import '../../../../core/providers/files_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
-import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
+import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -25,12 +25,12 @@ import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
+import '../widgets/settings_list.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/file_mime.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 enum FilesSortBy { name, updatedAt, size }
 
@@ -855,7 +855,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 ),
               )
             : IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
                 onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
               ),
         leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
@@ -1031,7 +1031,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             Padding(
               padding: EdgeInsets.only(right: ios ? 8 : 4),
               child: IconButton(
-                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline, color: AppColors.medium),
+                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline,
+                    color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
                 onPressed: _showSearchHelp,
               ),
             ),
@@ -1126,7 +1127,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       subtitle: subtitle != null ? Text(subtitle) : null,
       onTap: () => _openEntry(entry),
       trailing: IconButton(
-        icon: const Icon(Icons.more_horiz, color: AppColors.medium),
+        icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
         onPressed: () => _showEntryActions(entry),
       ),
     );

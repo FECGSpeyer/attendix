@@ -12,7 +12,7 @@ import '../../../../data/models/song/song.dart';
 import '../utils/song_utils.dart';
 import 'file_drop/file_drop_target.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Ionic `detectSpecialFileType`: category from the file name / extension
 /// when no group matched. Returns null if nothing special was detected.
@@ -301,7 +301,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: _isUploading ? null : () => Navigator.pop(context, false),
                     ),
                   ],

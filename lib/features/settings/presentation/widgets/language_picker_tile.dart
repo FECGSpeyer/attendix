@@ -4,7 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../core/providers/locale_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/app_select.dart'; // IOS_THEME2
+import '../../../../shared/widgets/adaptive/app_select.dart';
 import 'settings_list.dart';
 
 /// I18N_INFRA – Ionic settings "System" item:

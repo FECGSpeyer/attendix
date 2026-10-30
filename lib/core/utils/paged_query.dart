@@ -21,3 +21,25 @@ Future<List<T>> fetchAllPages<T>(
   }
   return all;
 }
+
+/// Max ids per `inFilter`: the ids end up in the request URL, and browsers,
+/// proxies and PostgREST reject URLs beyond roughly 8 KB. 150 ids stay well
+/// below that even for long ids.
+const int kInFilterChunkSize = 150;
+
+/// Runs [fetch] once per chunk of [ids] (at most [chunkSize] each) and
+/// concatenates the results in chunk order. Use it for `inFilter` lists
+/// that can grow with the data (all Termine of a season, all persons).
+Future<List<T>> fetchInChunks<T, K>(
+  List<K> ids,
+  Future<List<T>> Function(List<K> chunk) fetch, {
+  int chunkSize = kInFilterChunkSize,
+}) async {
+  assert(chunkSize > 0);
+  final all = <T>[];
+  for (var i = 0; i < ids.length; i += chunkSize) {
+    final end = i + chunkSize < ids.length ? i + chunkSize : ids.length;
+    all.addAll(await fetch(ids.sublist(i, end)));
+  }
+  return all;
+}

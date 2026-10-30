@@ -128,7 +128,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
             RdCircleButton(
               icon: Icons.bar_chart_rounded,
               label: l10n.redesignMembersStats,
-              onPressed: () => context.push('/statistics'),
+              onPressed: () => context.push(RedesignRoutes.stats),
             ),
         ],
       ),

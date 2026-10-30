@@ -8,19 +8,20 @@
 // badge *.ios.css / *.md.css; 1rem = 17px on the iPhone) and
 // ionic-theme-ios27 (lines, detail icon, searchbar, fab) – IOS27_SWEEP.
 import 'package:flutter/cupertino.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 
 import '../../../../../core/theme/app_colors.dart';
-import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_SHELL2
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
+import 'package:attendix/shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/display/avatar.dart' show IonAvatarPlaceholder;
 import 'package:attendix/shared/widgets/adaptive/adaptive_platform.dart'
-    show IosGlass; // IOS27_SWEEP
+    show IosGlass;
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' as ios27
-    show IonIos, IonDetailChevron, IonSearchbar; // IOS27_SWEEP
-import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+    show IonIos, IonDetailChevron, IonSearchbar;
+import '../../../../../shared/widgets/display/ion_badge_text.dart';
 import 'package:attendix/shared/widgets/layout/ionic_md.dart';
-import '../../../../../shared/widgets/adaptive/ion_button_label.dart'; // MD_SWEEP
+import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// True when the page should look like Ionic's iOS mode.
 bool ionIsIos(BuildContext context) =>
@@ -361,12 +362,14 @@ class IonAvatar extends StatelessWidget {
     final placeholder = IonAvatarPlaceholder(size: s);
     if (!hasImage) return placeholder;
     return ClipOval(
-      child: Image.network(
-        url!,
+      // Cached: list avatars are not downloaded again on every scroll/visit.
+      child: CachedNetworkImage(
+        imageUrl: url!,
         width: s,
         height: s,
         fit: BoxFit.cover,
-        errorBuilder: (_, __, ___) => placeholder,
+        placeholder: (_, __) => placeholder,
+        errorWidget: (_, __, ___) => placeholder,
       ),
     );
   }
@@ -925,7 +928,7 @@ class IonPage extends StatelessWidget {
           ? null
           : AppBar(title: Text(title), leading: leading, actions: actions),
       body: body,
-      floatingActionButton: TabBarFab.wrap(floatingActionButton), // IOS_SHELL2
+      floatingActionButton: TabBarFab.wrap(floatingActionButton),
     );
   }
 }

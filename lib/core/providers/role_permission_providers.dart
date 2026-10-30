@@ -4,7 +4,7 @@ import '../config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 
 import '../../data/models/role_permission/tenant_role_permission.dart';
-import '../../data/models/tenant/tenant.dart'; // ASTRA_FILES
+import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/role_permission_repository.dart';
 import '../constants/enums.dart';
 import 'debug_providers.dart';
@@ -119,7 +119,6 @@ bool canAccessFilesFor(Role role, {required bool filesShared}) {
   return role.isAdmin || role.isResponsible || role.isHelper || role.isVoiceLeaderHelper;
 }
 
-// ASTRA_FILES
 /// Pure Logik: Dateiablage lesen in einer beliebigen Instanz – Ionic
 /// `DbService.canAccessFiles(tenantId)`. Für die aktuelle Instanz zählt
 /// [currentTenantAccess] (canAccessFilesProvider), sonst die Rolle aus der

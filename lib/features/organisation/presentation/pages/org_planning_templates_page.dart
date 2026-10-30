@@ -12,11 +12,11 @@ import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// "Planvorlagen & Felder" of the organisation (Ionic `OrgPlanningTemplatesPage`).
 ///
@@ -282,7 +282,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           child: IonListHeader(
             title: text,
             action: IconButton(
-              icon: const Icon(Icons.add, color: AppColors.primary),
+              icon: Icon(Icons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
               onPressed: onAdd,
             ),
           ),
@@ -295,7 +295,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
               child: Text(text.toUpperCase(),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
             ),
-            IconButton(icon: const Icon(Icons.add), onPressed: onAdd),
+            IconButton(icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd), onPressed: onAdd),
           ],
         ),
       );
@@ -333,7 +333,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           : ListView(
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 32)),
               children: [
-                const IonContentTopInset(), // IOS_R6
+                const IonContentTopInset(),
                 IonLargeTitle(context.l10n.orgTemplatesTitle),
                 _header(context.l10n.orgTemplatesDefaultFields, _addDefaultField),
                 _box(_defaultFields.isEmpty

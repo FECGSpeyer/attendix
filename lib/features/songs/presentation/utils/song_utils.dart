@@ -5,7 +5,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// Shared helpers for the songs feature (ports of Ionic Utils / song.page).
 class SongUtils {

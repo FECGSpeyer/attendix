@@ -1,5 +1,5 @@
 import 'package:flutter/material.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../adaptive/adaptive.dart';
 
 /// Ionic `ion-modal` breakpoint: on screens at least 768 × 600 a modal is a
 /// centred card (600 × 500), below that it covers the whole screen.

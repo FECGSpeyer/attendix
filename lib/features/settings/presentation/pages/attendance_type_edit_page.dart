@@ -15,17 +15,18 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../shared/widgets/common/swipe_actions.dart';
-import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
-import '../widgets/type_protocol_settings.dart'; // PROTOCOL
-import '../widgets/registration_fields_editor.dart'; // ATTENDANCE_SIGNOUT
-import '../widgets/type_reminders_editor.dart'; // SETTINGS2
-import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
+import '../../../../core/providers/team_org_providers.dart';
+import '../widgets/type_protocol_settings.dart';
+import '../widgets/registration_fields_editor.dart';
+import '../widgets/type_reminders_editor.dart';
+import '../widgets/settings_list.dart';
+import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../core/services/error_reporter.dart';
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 
 /// Attendance Type Edit Page
@@ -61,8 +62,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     AttendanceStatus.late,
   };
   bool _manageSongs = false;
-  bool _placeEnabled = false; // ATTENDANCE_SIGNOUT
-  List<RegistrationField> _registrationFields = []; // ATTENDANCE_SIGNOUT
+  bool _placeEnabled = false;
+  List<RegistrationField> _registrationFields = [];
   bool _visible = true;
   bool _highlight = false;
   bool _hideName = false;
@@ -75,10 +76,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   List<ChecklistItem> _checklist = [];
   List<Map<String, dynamic>> _planFields = [];
   String _planningTitle = '';
-  bool _planningPrefixInstanceName = false; // SETTINGS2
+  bool _planningPrefixInstanceName = false;
   List<int> _relevantGroups = [];
   Map<String, dynamic>? _additionalFieldsFilter;
-  TypeProtocolSettings _protocol = const TypeProtocolSettings(); // PROTOCOL
+  TypeProtocolSettings _protocol = const TypeProtocolSettings();
 
   // DUTY: Dienst-Modus (Dienstplan)
   bool _dutyMode = false;
@@ -112,13 +113,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         // SETTINGS2: "Instanz-Name vor Werken"
         _planningPrefixInstanceName =
             await repo.getPlanningPrefixInstanceName(widget.typeId);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
+      }
 
       // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
       try {
         final types = await protocolRepo.getProtocolTypes();
         _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
+      }
       if (!mounted) return;
 
       setState(() {
@@ -144,13 +149,12 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         }
 
         _manageSongs = type.manageSongs;
-        _placeEnabled = type.placeEnabled; // ATTENDANCE_SIGNOUT
-        _registrationFields = List<RegistrationField>.from(type.registrationFields ?? []); // ATTENDANCE_SIGNOUT
+        _placeEnabled = type.placeEnabled;
+        _registrationFields = List<RegistrationField>.from(type.registrationFields ?? []);
         _visible = type.visible;
         _highlight = type.highlight;
         _hideName = type.hideName;
         _includeInAverage = type.includeInAverage;
-        // DUTY
         _dutyMode = type.dutyMode;
         _dutyModeAtLoad = type.dutyMode;
         _dutyRequired = type.dutyRequired ?? 1;
@@ -216,7 +220,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         extendBodyBehindAppBar: useIosLook(context),
         appBar: IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: _onBackPressed,
         ),
         actions: [
@@ -238,7 +242,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         child: ListView(
           padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             // Usage warning
             if (_usageCount > 0) ...[
               Card(
@@ -301,7 +305,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     flush: true,
                     label: context.l10n.typeSettingsDefaultStatus,
                     builder: (decoration) => AppDropdownFormField<AttendanceStatus>(
-                      iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                      iosInterface: AppSelectInterface.alert,
                       decoration: decoration,
                       value: _availableStatuses.contains(_defaultStatus)
                           ? _defaultStatus
@@ -1112,7 +1116,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
           const SizedBox(height: 8),
           AppDropdownFormField<String?>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             value: selectedFieldId,
             decoration: InputDecoration(
               labelText: context.l10n.typeSettingsFlutterExtraField,
@@ -1144,7 +1148,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           if (selectedFieldId != null && options.isNotEmpty) ...[
             const SizedBox(height: 8),
             AppDropdownFormField<String>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: options.contains(selectedOption) ? selectedOption : options.firstOrNull,
               decoration: InputDecoration(
                 labelText: context.l10n.typeSettingsValue,
@@ -1486,28 +1490,26 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           _planFields,
         ),
         'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
-        'planning_prefix_instance_name': _planningPrefixInstanceName, // SETTINGS2
+        'planning_prefix_instance_name': _planningPrefixInstanceName,
         // LOGIC_SETTINGS: Ionic keeps relevant_groups as [] (never null);
         // Ionic code calls relevant_groups.length without null check.
         'relevant_groups': _relevantGroups,
         'additional_fields_filter': _additionalFieldsFilter,
-        // ATTENDANCE_SIGNOUT
         'place_enabled': _placeEnabled,
         'registration_fields': _registrationFields.map((f) => f.toJson()).toList(),
-        // DUTY
         'duty_mode': _dutyMode,
         'duty_required': _dutyRequired < 1 ? 1 : _dutyRequired,
         'duty_self_signup': _dutySelfSignup,
         'duty_confirm_reminder_days': _dutyConfirmReminderDays,
         'duty_notify_understaffed': _dutyNotifyUnderstaffed,
         'duty_urgent_hours': _dutyUrgentHours,
-        ..._protocol.toUpdate(), // PROTOCOL
+        ..._protocol.toUpdate(),
       };
 
       final updated = await ref
           .read(attendanceTypeNotifierProvider.notifier)
           .updateType(widget.typeId, updates);
-      ref.invalidate(protocolTypesProvider); // PROTOCOL
+      ref.invalidate(protocolTypesProvider);
       // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
       if (updated == null) {
         if (mounted) {
@@ -1519,7 +1521,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
         setState(() => _hasChanges = false);
-        await _offerDutyView(); // DUTY
+        await _offerDutyView();
       }
     } on DemoModeException {
       // DEMO_GUARD: the demo warning toast was already shown.

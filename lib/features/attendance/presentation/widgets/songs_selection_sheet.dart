@@ -10,7 +10,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 part 'songs_selection_sheet.freezed.dart';
 part 'songs_selection_sheet.g.dart';
@@ -161,7 +161,7 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                           title: Text(context.l10n.attListConductor),
                           trailing: DropdownButtonHideUnderline(
                             child: AppDropdownButton<int>(
-                              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                              iosInterface: AppSelectInterface.alert,
                               value: conductorValue,
                               hint: Text(context.l10n.attendanceChoose),
                               alignment: AlignmentDirectional.centerEnd,
@@ -415,7 +415,7 @@ class SelectedSongsList extends StatelessWidget {
           trailing: readOnly
               ? null
               : IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () {
                     final newEntries = List<SongHistoryEntry>.from(entries);
                     newEntries.removeAt(index);

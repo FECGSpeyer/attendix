@@ -1,10 +1,12 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
@@ -15,7 +17,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../shared/widgets/display/avatar.dart'; // IOS_THEME2
+import '../../../../shared/widgets/display/avatar.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../data/providers/upcoming_songs_provider.dart';
@@ -28,12 +30,12 @@ import '../../../../core/providers/player_absence_providers.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/self_service_duty_section.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
-import '../../../team_organization/presentation/widgets/my_tasks_card.dart'; // INTEGRATION
+import '../../../messages/presentation/widgets/notification_bell.dart';
+import '../../../team_organization/presentation/widgets/my_tasks_card.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // IOS_SHELL
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -82,7 +84,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
     ref.invalidate(upcomingSongsProvider);
-    ref.invalidate(myTasksProvider); // INTEGRATION
+    ref.invalidate(myTasksProvider);
     await ref.read(signoutDataProvider.future);
   }
 
@@ -93,13 +95,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
     try {
-      final row = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('tenantId', tenant.id!)
-          .eq('userId', userId)
-          .maybeSingle();
-      final role = Role.fromValue(row?['role'] as int? ?? 99);
+      final role = await ref
+              .read(userRegistrationRepositoryForTenantProvider(tenant.id!))
+              .getTenantUserRole(userId, tenantId: tenant.id!) ??
+          Role.fromValue(99);
       await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
       await ref.read(currentTenantUserProvider.future);
       if (!mounted) return;
@@ -151,7 +150,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         tooltip: context.l10n.signoutLegend,
         onPressed: () => showEventLegendSheet(context),
       ),
-      const NotificationBell(), // MESSAGES
+      const NotificationBell(),
     ];
     return AppBar(
       title: title,
@@ -182,7 +181,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final dataAsync = ref.watch(signoutDataProvider);
     ref.watch(canAccessFilesProvider);
     final useDutyView =
-        ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false; // DUTY
+        ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false;
 
     if (isApplicant) {
       // Ionic: ion-card, content centered (global ion-card-content rule)
@@ -254,7 +253,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           edgeOffset: ionTranslucentTopPadding(body, isIosLook(context)),
           child: ListView(
             padding: EdgeInsets.only(
-                top: ionTranslucentTopPadding(body, isIosLook(context)), // PARITY_R5
+                top: ionTranslucentTopPadding(body, isIosLook(context)),
                 bottom: scrollEndPadding(context, base: 32)),
             children: [
               if (player != null)
@@ -352,8 +351,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           else
             CircleAvatar(
               radius: 24,
-              backgroundColor: Colors.transparent, // PARITY_R5
-              backgroundImage: NetworkImage(player.img!),
+              backgroundColor: Colors.transparent,
+              backgroundImage: CachedNetworkImageProvider(player.img!),
             ),
           const SizedBox(width: 12),
           Expanded(

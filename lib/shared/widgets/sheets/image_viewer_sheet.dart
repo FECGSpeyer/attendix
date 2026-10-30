@@ -5,7 +5,7 @@ import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../adaptive/adaptive.dart';
 
 /// Fullscreen image viewer (Ionic image viewer):
 /// - pinch / mouse wheel zoom (1x - 5x), pan when zoomed

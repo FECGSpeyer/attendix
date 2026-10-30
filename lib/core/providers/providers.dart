@@ -1,5 +1,6 @@
 /// Core providers barrel file
 /// Export all providers from a single location
+library;
 
 export 'tenant_providers.dart';
 export 'player_providers.dart';
@@ -9,7 +10,6 @@ export 'song_providers.dart';
 export 'song_filter_providers.dart';
 export 'holiday_providers.dart';
 export 'conductor_providers.dart';
-export 'meeting_providers.dart';
 export 'shift_providers.dart';
 export 'cross_tenant_providers.dart';
 export 'feedback_providers.dart';
@@ -22,43 +22,29 @@ export 'pwa_providers.dart';
 export 'teacher_providers.dart';
 export 'history_providers.dart';
 
-// LEGAL_HELP
 export 'legal_providers.dart';
-// SETTINGS_EXT
 export 'role_permission_providers.dart';
 export 'files_providers.dart';
 // END SETTINGS_EXT
-// MESSAGES
 export 'message_providers.dart';
-// DASHBOARD
 export 'dashboard_providers.dart';
-// PEOPLE_IMPORT
 export 'player_absence_providers.dart';
 export 'import_providers.dart';
-// TEAM_ORG
 export 'team_org_providers.dart';
-export 'signout_providers.dart'; // ATTENDANCE_SIGNOUT
-// PROFILE_OFFLINE
+export 'signout_providers.dart';
 export 'profile_providers.dart';
 export 'notification_settings_providers.dart';
-// DUTY
 export 'duty_providers.dart';
-// ORG_PLANS
 export 'plan_providers.dart';
-// STATS_PEOPLE_FIXES
 export 'cross_tenant_person_providers.dart';
-export 'branding_providers.dart'; // MISC2
+export 'branding_providers.dart';
 
-// SETTINGS2
 export 'optional_tabs_providers.dart';
-export 'admin_providers.dart'; // SETTINGS2
-// AUTH
+export 'admin_providers.dart';
 export 'user_registration_providers.dart';
 // DEMO_GUARD
 export 'demo_providers.dart';
-// I18N_INFRA
 export 'locale_provider.dart';
-// LIVE_ACTIVITY
 export 'live_activity_providers.dart';
 // REDESIGN: new design (Beta)
 export 'redesign_providers.dart';

@@ -16,7 +16,7 @@ import '../../../../l10n/l10n.dart';
 import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How the registration ended (Ionic register-modal dismiss data).
 enum RegisterOutcome {

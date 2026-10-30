@@ -8,6 +8,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -16,7 +17,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Sheet for transferring players to another tenant (handover)
 class HandoverSheet extends ConsumerStatefulWidget {
@@ -108,12 +109,12 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           children: [
             // Header
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               title: Text(
                 _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                 onPressed: () => Navigator.pop(context),
               ),
               automaticallyImplyLeading: false,
@@ -388,7 +389,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           if (_minAge != null || _maxAge != null) ...[
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(Icons.clear, size: 18),
+              icon: Icon(Icons.clear, size: 18, semanticLabel: context.l10n.a11yClearInput),
               onPressed: () => setState(() {
                 _minAge = null;
                 _maxAge = null;
@@ -456,7 +457,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
             ),
             const SizedBox(height: AppDimensions.paddingS),
             AppDropdownFormField<int>(
-              iosInterface: AppSelectInterface.alert, // IOS_THEME2
+              iosInterface: AppSelectInterface.alert,
               value: _targetTenantId,
               decoration: const InputDecoration(
                 prefixIcon: Icon(Icons.business),
@@ -552,7 +553,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                     const SizedBox(width: AppDimensions.paddingS),
                     Expanded(
                       child: AppDropdownFormField<int?>(
-                        iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                        iosInterface: AppSelectInterface.alert,
                         value: _groupMapping[instrumentId],
                         decoration: const InputDecoration(
                           isDense: true,
@@ -633,18 +634,14 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     if (_targetTenantId == null) return;
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final response = await supabase
-          .from('instruments')
-          .select('*')
-          .eq('tenantId', _targetTenantId!);
+      final groups = await ref
+          .read(groupRepositoryForTenantProvider(_targetTenantId))
+          .getGroups();
 
       if (!mounted) return;
 
       setState(() {
-        _targetGroups = (response as List)
-            .map((g) => Group.fromJson(g as Map<String, dynamic>))
-            .toList();
+        _targetGroups = groups;
 
         // Re-auto-map all groups
         final sourceGroups = ref.read(groupsProvider).valueOrNull ?? [];
@@ -707,15 +704,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     if (userId == null) return null;
 
     try {
-      final response = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('tenantId', tenantId)
-          .eq('userId', userId)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return Role.fromValue(response['role'] as int? ?? 99);
+      return await ref
+          .read(userRegistrationRepositoryForTenantProvider(tenantId))
+          .getTenantUserRole(userId, tenantId: tenantId);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error getting user role in tenant: $e');

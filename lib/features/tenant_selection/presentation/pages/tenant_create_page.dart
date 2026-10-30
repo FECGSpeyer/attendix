@@ -15,7 +15,7 @@ import '../../../../core/providers/legal_providers.dart';
 import '../../../../core/providers/push_providers.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
@@ -493,7 +493,7 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
   Future<void> _logout() async {
     final supabase = ref.read(supabaseClientProvider);
     await ref.read(currentTenantProvider.notifier).clearTenant();
-    await removePushTokenBeforeSignOut(ref); // PUSH
+    await removePushTokenBeforeSignOut(ref);
     await supabase.auth.signOut();
     if (mounted) context.go('/login');
   }

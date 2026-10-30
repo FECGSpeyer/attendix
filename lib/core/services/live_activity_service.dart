@@ -15,6 +15,7 @@ import '../providers/tenant_providers.dart';
 import '../router/app_router.dart';
 import '../utils/live_plan.dart';
 import '../utils/plan_utils.dart';
+import 'error_reporter.dart';
 
 // LIVE_ACTIVITY: port of Ionic src/app/services/live-activity/*.
 
@@ -585,7 +586,9 @@ class LiveActivityService {
       try {
         if (_isStale(generation)) return;
         await _channel.invokeMethod<void>('configure', {'url': _host.apiUrl, 'key': _host.apiKey});
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'live_activity_service');
+      }
     }
     try {
       if (_isStale(generation)) return;
@@ -601,7 +604,9 @@ class LiveActivityService {
           await _saveToken('update', token, target: target, generation: generation);
         }
       }
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'live_activity_service');
+    }
   }
 
   /// [generation]: the session the registration started in (SOL_FIX16);

@@ -51,7 +51,6 @@ class ChurchRepository extends BaseRepository {
     }
   }
 
-  // DASHBOARD (Administration / Gemeinden-Verwaltung, super-developer only)
 
   /// Rename a church (global table, no tenant filter).
   Future<void> renameChurch(String id, String name) async {

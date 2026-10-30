@@ -29,7 +29,6 @@ import '../../../../settings/presentation/widgets/calendar_subscription_dialog.d
 import '../../../../settings/presentation/widgets/settings_admins_sheet.dart';
 import '../../../../settings/presentation/widgets/vorkurs_certificates.dart';
 import '../../../../songs/presentation/widgets/song_categories_sheet.dart';
-import '../../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
 import '../../../data/rd_manage_logic.dart';
 
 /// REDESIGN: titles, icons and actions of the Verwaltung entries. Every entry
@@ -150,6 +149,7 @@ IconData rdManageAreaIcon(RdManageArea area) => switch (area) {
 
 String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
       RdManageEntry.approvals => l10n.redesignManagePendingTitle,
+      RdManageEntry.bulkMembers => l10n.redesignBulkTitle,
       RdManageEntry.rolesPermissions => l10n.settingsRolesPerms,
       RdManageEntry.admins => l10n.settingsAdmins,
       RdManageEntry.parents => l10n.settingsParents,
@@ -173,6 +173,7 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
       RdManageEntry.export => l10n.settingsExport,
       RdManageEntry.certificates => l10n.settingsCertificates,
       RdManageEntry.calendar => l10n.settingsSubscribeCalendar,
+      RdManageEntry.writeMessage => l10n.redesignComposeTitle,
       RdManageEntry.announcements => l10n.settingsAnnouncements,
       RdManageEntry.teamOrg => l10n.teamOrgTitle,
       RdManageEntry.myTasks => l10n.tasksMyTasks,
@@ -194,6 +195,7 @@ String rdManageHint(AppLocalizations l10n, RdManageEntry entry) => switch (entry
 
 IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.approvals => Icons.how_to_reg_outlined,
+      RdManageEntry.bulkMembers => Icons.checklist,
       RdManageEntry.rolesPermissions => Icons.key_outlined,
       RdManageEntry.admins => Icons.verified_user_outlined,
       RdManageEntry.parents => Icons.favorite_border,
@@ -217,6 +219,7 @@ IconData rdManageIcon(RdManageEntry entry) => switch (entry) {
       RdManageEntry.export => Icons.download_outlined,
       RdManageEntry.certificates => Icons.workspace_premium_outlined,
       RdManageEntry.calendar => Icons.calendar_month_outlined,
+      RdManageEntry.writeMessage => Icons.edit_outlined,
       RdManageEntry.announcements => Icons.mail_outline,
       RdManageEntry.teamOrg => Icons.supervised_user_circle_outlined,
       RdManageEntry.myTasks => Icons.check_circle_outline,
@@ -235,6 +238,8 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
   switch (entry) {
     case RdManageEntry.approvals:
       showPendingPersonsSheet(context);
+    case RdManageEntry.bulkMembers:
+      push(RedesignRoutes.bulkMembers);
     case RdManageEntry.rolesPermissions:
       push('/settings/role-permissions');
     case RdManageEntry.admins:
@@ -274,13 +279,15 @@ void rdOpenManageEntry(BuildContext context, WidgetRef ref, RdManageEntry entry)
     case RdManageEntry.fileStorage:
       push('/settings/files');
     case RdManageEntry.statistics:
-      showStatisticsModal(context);
+      push(RedesignRoutes.stats);
     case RdManageEntry.export:
       showExportModal(context);
     case RdManageEntry.certificates:
       generateVorkursCertificates(context, ref);
     case RdManageEntry.calendar:
       showCalendarSubscriptionDialog(context, ref);
+    case RdManageEntry.writeMessage:
+      push(RedesignRoutes.compose);
     case RdManageEntry.announcements:
       push('/settings/messages');
     case RdManageEntry.teamOrg || RdManageEntry.myTasks:

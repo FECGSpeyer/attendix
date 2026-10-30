@@ -4,7 +4,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // PARITY_R5
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens the searchable church picker (Ionic church `ion-modal` of the
 /// settings master data and of tenant-register): toolbar with the field name
@@ -79,7 +79,7 @@ class _ChurchPickerState extends State<ChurchPicker> {
 
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+        toolbarHeight: ionModalToolbarHeight(context),
         title: Text(widget.title),
         automaticallyImplyLeading: false,
         actions: [

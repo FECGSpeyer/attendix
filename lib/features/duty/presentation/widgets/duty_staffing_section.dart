@@ -17,8 +17,8 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import 'duty_actions.dart';
 import 'duty_assign_sheet.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // PARITY_R9
-import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
+import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
@@ -291,7 +291,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
         var note = '';
         if (isCancelled(pa)) {
           final visible = dutyStaffingNote(pa.notes,
-              canViewNotes: canViewNotes, noteAddedLabel: l10n.attendanceNoteAdded); // ASTRA_DUTY_GROUPS
+              canViewNotes: canViewNotes, noteAddedLabel: l10n.attendanceNoteAdded);
           note = visible != null ? l10n.attendanceCannotWithNote(visible) : l10n.signoutCannot;
         } else if (rule != null) {
           note = rule.reason.isNotEmpty

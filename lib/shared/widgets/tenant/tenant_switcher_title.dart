@@ -8,7 +8,7 @@ import '../../../core/providers/user_preferences_provider.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive_platform.dart'; // IOS_SHELL
+import '../adaptive/adaptive_platform.dart';
 
 /// AppBar title with a quick tenant switcher (Ionic people/list
 /// `tenant-switcher-list` popover). Shows the current tenant's long name; if

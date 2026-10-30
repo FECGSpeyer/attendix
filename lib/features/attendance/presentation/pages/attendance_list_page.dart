@@ -14,24 +14,24 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import 'attendance_create_page.dart'; // UX_ATT
-import '../../../../data/models/plan/plan.dart'; // ATT_DETAIL
-import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ATT_DETAIL
+import 'attendance_create_page.dart';
+import '../../../../data/models/plan/plan.dart';
+import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../duty/presentation/pages/duty_distribute_page.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
 import '../../../duty/presentation/widgets/my_duty_requests_section.dart';
-import '../../../../shared/widgets/tenant/tenant_switcher_title.dart'; // SETTINGS2
-import '../widgets/ios_condense_header.dart'; // UX_ATT
+import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../widgets/ios_condense_header.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
-    show IonTranslucentBarBackground, ionTranslucentTopPadding; // PARITY_R5
+    show IonTranslucentBarBackground, ionTranslucentTopPadding;
 
 
 /// Attendance list page
@@ -306,7 +306,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 if (saved && mounted) ref.invalidate(realtimeAttendanceListProvider);
               },
             ),
-          const NotificationBell(), // MESSAGES
+          const NotificationBell(),
           ]),
         ],
       ),
@@ -474,7 +474,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
               child: ListView(
                 // Room for the FAB below the last card (Ionic marginBottom)
                 padding: EdgeInsets.only(
-                    top: ionTranslucentTopPadding(body, ios), // PARITY_R5
+                    top: ionTranslucentTopPadding(body, ios),
                     bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
                 children: [
                   if (largeTitle) IosLargeTitle(context.l10n.attListEvents),

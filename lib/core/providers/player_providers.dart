@@ -8,7 +8,8 @@ import 'tenant_providers.dart';
 import 'group_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
-import 'user_registration_providers.dart'; // AUTH
+import '../services/offline_list_cache.dart';
+import 'user_registration_providers.dart';
 
 /// Initialized player repository with tenant context
 /// SOL_FIX1: per-tenant immutable instance, so a tenant switch never
@@ -21,10 +22,18 @@ final playerRepositoryWithTenantProvider = Provider<PlayerRepository>((ref) {
 /// Provider for active players list
 final playersProvider = FutureProvider<List<Person>>((ref) async {
   final repo = ref.watch(playerRepositoryWithTenantProvider);
-  
+
   if (!repo.hasTenantId) return [];
-  
-  return repo.getPlayers();
+
+  // Offline: the last loaded list (rehearsal rooms without reception).
+  return OfflineListCache.read<Person>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'players',
+    fetch: repo.getPlayers,
+    toJson: (p) => p.toJson(),
+    fromJson: Person.fromJson,
+  );
 });
 
 /// Provider for players with group names enriched
@@ -201,7 +210,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await repo.approvePlayer(player);
-      await _notifyApproval(registration, player); // AUTH
+      await _notifyApproval(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);
@@ -218,7 +227,7 @@ class PlayerNotifier extends Notifier<AsyncValue<void>> {
     state = const AsyncValue.loading();
     try {
       await repo.declinePlayer(player, reason);
-      await _notifyReject(registration, player); // AUTH
+      await _notifyReject(registration, player);
       state = const AsyncValue.data(null);
       ref.invalidate(pendingPlayersProvider);
       ref.invalidate(playersProvider);

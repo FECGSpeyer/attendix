@@ -24,9 +24,9 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/providers/registration_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
-    show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
+    show IonTranslucentAppBar, IonContentTopInset;
 
 /// Public tenant registration page
 class TenantRegistrationPage extends ConsumerStatefulWidget {
@@ -216,7 +216,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         controller: _scrollController,
         padding: const EdgeInsets.only(bottom: 32),
         children: [
-          const IonContentTopInset(), // IOS_R6
+          const IonContentTopInset(),
           // ion-header collapse="condense": large title on iOS
           if (ios)
             Padding(

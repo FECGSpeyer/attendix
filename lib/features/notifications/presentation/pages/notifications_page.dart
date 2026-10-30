@@ -7,10 +7,10 @@ import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/notification_settings_providers.dart';
-import '../../../../core/providers/push_providers.dart'; // PUSH
+import '../../../../core/providers/push_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
-import '../../../../core/services/live_activity_service.dart'; // LIVE_ACTIVITY
+import '../../../../core/services/live_activity_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -18,12 +18,12 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Notifications settings page (Ionic notifications.page).
 ///
@@ -194,7 +194,7 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 AppDimensions.paddingM,
                 scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
-          const IonContentTopInset(), // IOS_R6
+          const IonContentTopInset(),
           IonLargeTitle(context.l10n.notifTitle, padding: const EdgeInsets.only(bottom: 4)),
           _group(
             context,

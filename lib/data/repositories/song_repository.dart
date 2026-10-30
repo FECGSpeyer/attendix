@@ -129,7 +129,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     // SOL_FIX1: effective tenant captured once; every page query and the
     // cache key use the same id.
     final tenantId = songTenantId;
-    final cacheKey = _offlineSongsKey(tenantId); // SOL_FIX7
+    final cacheKey = _offlineSongsKey(tenantId);
     // SOL_FIX9: cache session captured before the load; a result arriving
     // after sign-out / account switch / cache clear is not stored.
     final cacheGuard = OfflineReadCacheGuard.capture(

@@ -1,5 +1,4 @@
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 import 'package:pdfx/pdfx.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:url_launcher/url_launcher.dart';
@@ -8,7 +7,8 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/pdf_bytes_loader.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How the PDF viewer shows the pages (remembered on the device; until
 /// switched, tablets start page by page and phones scroll).
@@ -114,12 +114,9 @@ class _PdfViewerPageState extends State<PdfViewerPage> {
 
   Future<void> _loadPdf() async {
     try {
-      final response = await http.get(Uri.parse(widget.url));
-      if (response.statusCode != 200) {
-        throw Exception('HTTP ${response.statusCode}');
-      }
-
-      final document = await PdfDocument.openData(response.bodyBytes);
+      // Cached on iOS/Android: opens offline after the first time.
+      final bytes = await PdfBytesLoader.load(widget.url);
+      final document = await PdfDocument.openData(bytes);
       final stored = await _storedMode();
 
       if (!mounted) {

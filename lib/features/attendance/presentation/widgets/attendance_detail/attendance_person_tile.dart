@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -13,8 +14,8 @@ import 'attendance_detail_sheets.dart';
 import 'attendance_grid.dart' show collapseHtmlWhitespace;
 import 'status_chip.dart';
 import '../../../../../l10n/l10n.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder; // PARITY_R5
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../shared/widgets/display/avatar.dart' show IonAvatarPlaceholder;
 
 /// Person row of the attendance detail page.
 ///
@@ -94,7 +95,7 @@ class AttendancePersonTile extends StatelessWidget {
                 CircleAvatar(
                   radius: 18,
                   backgroundColor: Colors.transparent,
-                  backgroundImage: NetworkImage(person.img!),
+                  backgroundImage: CachedNetworkImageProvider(person.img!),
                 )
               else
                 const IonAvatarPlaceholder(size: 36),

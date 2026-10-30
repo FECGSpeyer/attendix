@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/foundation.dart';
@@ -7,6 +8,7 @@ import 'package:supabase_flutter/supabase_flutter.dart'
 
 import '../../data/repositories/base_repository.dart' show RepositoryException;
 import '../utils/error_message.dart' show isNetworkError;
+import 'pdf_bytes_loader.dart';
 
 /// LEFTOVERS: offline read cache of the attendance detail (Ionic
 /// AttendanceService.getAttendanceByIdRobust, `offline_att_detail_v1_<id>` in
@@ -187,6 +189,7 @@ const List<String> offlineReadCachePrefixes = [
   AttendanceDetailCache.prefix,
   'offline_att_list_v1_',
   'offline_songs_v1_',
+  'offline_list_v1_', // OfflineListCache (people, groups)
 ];
 
 /// SOL_FIX7: removes every offline read cache entry (all users, all
@@ -196,6 +199,8 @@ const List<String> offlineReadCachePrefixes = [
 /// flight cannot recreate entries after the clear.
 Future<void> clearOfflineReadCaches() async {
   bumpOfflineReadCacheGeneration();
+  // Offline copies of opened PDFs belong to the signed-out account too.
+  unawaited(PdfBytesLoader.clear());
   try {
     final prefs = await SharedPreferences.getInstance();
     final keys = prefs

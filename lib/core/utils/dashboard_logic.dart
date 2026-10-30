@@ -5,7 +5,7 @@ import '../../data/models/church/church.dart';
 import '../../data/models/dashboard/dashboard_event.dart';
 import '../../data/models/dashboard/dashboard_models.dart';
 import '../constants/enums.dart';
-import '../router/redesign_routes.dart'; // REDESIGN
+import '../router/redesign_routes.dart';
 import 'attendance_percentage_utils.dart';
 import 'dashboard_utils.dart';
 

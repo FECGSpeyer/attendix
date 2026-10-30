@@ -115,7 +115,7 @@ class RdMePage extends ConsumerWidget {
               RdListRow(
                 leading: const RdRowIcon(Icons.notifications_outlined),
                 title: l10n.redesignMeNotifications,
-                onTap: () => context.push('/settings/notifications'),
+                onTap: () => context.push(RedesignRoutes.notifications),
               ),
             if (!role.isApplicant)
               RdListRow(

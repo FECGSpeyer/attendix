@@ -22,7 +22,7 @@ import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
-import '../widgets/person_image_picker.dart'; // ASTRA_PHOTO
+import '../widgets/person_image_picker.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
@@ -34,10 +34,10 @@ import '../widgets/person_detail/allgemein_accordion.dart'
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Page for creating a new person
 class PersonCreatePage extends ConsumerStatefulWidget {
@@ -397,7 +397,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               data: (instruments) {
                 final label = groupLabel(tenant?.type);
                 return AppDropdownFormField<int>(
-                  iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                  iosInterface: AppSelectInterface.alert,
                 value: _selectedInstrument,
                 decoration: InputDecoration(
                   labelText: label,
@@ -434,7 +434,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               ),
               trailing: _birthday != null
                   ? IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _birthday = null),
                     )
                   : null,
@@ -614,7 +614,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AppDropdownFormField<String>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             decoration: InputDecoration(labelText: field.name),
             value: _additionalFieldValues[field.id]?.toString(),
             items: options.map((opt) => DropdownMenuItem(value: opt, child: Text(opt))).toList(),
@@ -653,7 +653,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       trailing: clearable && value != null
           ? IconButton(
-              icon: const Icon(Icons.clear),
+              icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
               onPressed: () => onChanged(null),
             )
           : null,
@@ -716,7 +716,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       if ((tenant?.parents ?? false) && !isMain)
         AppDropdownFormField<int?>(
-          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+          iosInterface: AppSelectInterface.alert,
           value: _parentId,
           decoration: InputDecoration(
             labelText: context.l10n.personParents,
@@ -742,7 +742,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         if (_hasTeacher)
           AppDropdownFormField<int?>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             value: teachers.any((t) => t.id == _teacherId) ? _teacherId : null,
             decoration: InputDecoration(
               labelText: context.l10n.peopleTeacher,
@@ -813,7 +813,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ],
       if (shifts.isNotEmpty) ...[
         AppDropdownFormField<String?>(
-          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+          iosInterface: AppSelectInterface.alert,
           value: _shiftId,
           decoration: InputDecoration(
             labelText: context.l10n.personShiftPlan,
@@ -843,7 +843,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         if (shift != null && shift.hasNamedShifts)
           AppDropdownFormField<String?>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             value: _shiftName,
             decoration: InputDecoration(
               labelText: context.l10n.personShift,

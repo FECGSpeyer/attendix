@@ -152,7 +152,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -169,7 +169,7 @@ class _SelectionSheetState<T> extends State<SelectionSheet<T>> {
                   border: const OutlineInputBorder(),
                   suffixIcon: _searchQuery.isNotEmpty
                       ? IconButton(
-                          icon: const Icon(Icons.clear),
+                          icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
                           onPressed: () {
                             _searchController.clear();
                             setState(() => _searchQuery = '');

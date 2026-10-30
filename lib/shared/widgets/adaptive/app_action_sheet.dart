@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
-import '../layout/ionic_md.dart' show IonMd; // MD_SWEEP
+import '../layout/ionic_md.dart' show IonMd;
 import 'app_dialog.dart' show IosAlertButton, iosAlertMessageColor;
 
 /// One button of [showAppActionSheet] (Ionic `ActionSheetButton`).

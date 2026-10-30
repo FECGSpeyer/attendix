@@ -5,7 +5,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// UX_SETTINGS: Ionic org-settings `openOrganisationAlert()`.
 ///

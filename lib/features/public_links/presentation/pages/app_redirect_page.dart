@@ -4,7 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 const appStoreUrl = 'https://apps.apple.com/app/attendix/id6771119302';
 const playStoreUrl = 'https://play.google.com/store/apps/details?id=io.stephanus.attendix';

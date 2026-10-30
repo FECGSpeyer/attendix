@@ -11,13 +11,13 @@ import '../../../../data/models/team_org/team_org.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
-import '../../../attendance/presentation/widgets/attendance_date_change.dart'; // ASTRA_SIGNOUT_TOPICS
-import '../../../../core/providers/attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider; // ASTRA_SIGNOUT_TOPICS
+import '../../../attendance/presentation/widgets/attendance_date_change.dart';
+import '../../../../core/providers/attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider;
 import 'agenda_picker_sheet.dart';
 import 'quick_create_attendance.dart';
 import 'tasks_tab.dart' show TeamOrgBadge, TeamOrgListSkeleton, priorityColor;
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Tab "Themen": leadership reviews suggestions, plans the next Termin and
 /// keeps the Themenspeicher; members suggest topics and see their suggestions.
@@ -252,7 +252,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
           child: Column(
             children: [
               AppBar(
-                toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+                toolbarHeight: ionModalToolbarHeight(context),
                 automaticallyImplyLeading: false,
                 leading: IconButton(
                   icon: const Icon(Icons.close),
@@ -701,7 +701,7 @@ class _SuggestSheetState extends ConsumerState<_SuggestSheet> {
         mainAxisSize: MainAxisSize.min,
         children: [
           AppBar(
-            toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+            toolbarHeight: ionModalToolbarHeight(context),
             automaticallyImplyLeading: false,
             leading: TextButton(onPressed: () => Navigator.of(context).pop(), child: IonButtonLabel(l10n.commonCancel)),
             leadingWidth: 100,

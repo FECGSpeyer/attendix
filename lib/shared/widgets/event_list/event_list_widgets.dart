@@ -6,9 +6,9 @@ import '../../../core/constants/enums.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
-import '../layout/ion_modal_handle.dart'; // IOS_SHEETS
-import '../layout/ionic_ios.dart'; // IOS_SHEETS
+import '../adaptive/adaptive.dart';
+import '../layout/ion_modal_handle.dart';
+import '../layout/ionic_ios.dart';
 
 /// Card layout building blocks of the Terminlisten (Ionic `ev-*` classes):
 /// date tile, pills, chips, section and month headers, the "Heute" card and
@@ -717,7 +717,7 @@ class EventTodayCard extends StatelessWidget {
                     minimumSize: const Size.fromHeight(34),
                     textStyle: TextStyle(
                       fontWeight: FontWeight.w600,
-                      fontSize: EvMetrics.rem(context, 1), // ATT_SPACING
+                      fontSize: EvMetrics.rem(context, 1),
                       height: EvMetrics.lineHeight(context),
                     ),
                   ),

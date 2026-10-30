@@ -109,7 +109,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final tenant = ref.read(currentTenantProvider);
     final view = ref.read(songViewOptionsProvider(data.tenantId));
     try {
-      final branding = await resolvePdfBranding(ref); // MISC2
+      final branding = await resolvePdfBranding(ref);
       await ref.read(songPrintServiceProvider).exportSongsCatalogPdf(
             branding: branding,
             songs: shown,

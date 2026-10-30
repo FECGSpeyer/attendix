@@ -9,7 +9,7 @@ import '../../data/models/plan/plan.dart';
 import '../utils/plan_utils.dart';
 import 'pdf_branding.dart';
 import '../../l10n/l10n.dart';
-import 'native/native_file_service.dart'; // NATIVE_MISC
+import 'native/native_file_service.dart';
 
 /// One plan page of an export.
 class PlanExportPage {
@@ -135,7 +135,7 @@ class PlanExportService {
   Future<void> shareImage(List<PlanExportPage> pages,
       {bool sideBySide = false, required String fileName, PdfBranding? branding}) async {
     final bytes = await buildImage(pages, sideBySide: sideBySide, branding: branding);
-    await NativeFileService.saveBytes(bytes, '$fileName.png'); // NATIVE_MISC
+    await NativeFileService.saveBytes(bytes, '$fileName.png');
   }
 
   pw.Widget _withHeader(PlanExportPage page, PdfBranding? branding) {

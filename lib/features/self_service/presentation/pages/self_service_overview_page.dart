@@ -5,7 +5,7 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../data/models/tenant/tenant.dart'; // ASTRA_FILES
+import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
@@ -13,11 +13,11 @@ import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../messages/presentation/widgets/notification_bell.dart'; // MESSAGES
+import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart'; // IOS_ATT_PAGES
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/adaptive/ion_toolbar_segment.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// "Übersicht" – all Termine of the user across all tenants
 /// (Ionic `selfService/overview`) in the card layout.
@@ -49,7 +49,7 @@ class _SelfServiceOverviewPageState
       absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
       lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
       supportsRegistrationFields: false,
-      overviewMode: true, // P10_SELF_PLAN
+      overviewMode: true,
       signIn: (att, note) async {
         await notifier.signIn(att.id!, SignInType.fromStatus(att.status), notes: note);
         return done();
@@ -87,7 +87,7 @@ class _SelfServiceOverviewPageState
     final upcomingAll = ref.watch(upcomingAttendancesAcrossTenantsProvider);
     final past = ref.watch(pastAttendancesAcrossTenantsProvider);
     ref.watch(canAccessFilesProvider);
-    ref.watch(userTenantsProvider); // ASTRA_FILES
+    ref.watch(userTenantsProvider);
     final actions = _actions();
 
     // UX_SONGS_SELF: Ionic condensed large title + segment toolbar.
@@ -119,7 +119,7 @@ class _SelfServiceOverviewPageState
               tooltip: context.l10n.signoutLegend,
               onPressed: () => showEventLegendSheet(context),
             ),
-            const NotificationBell(), // MESSAGES
+            const NotificationBell(),
           ]),
         ],
         // IOS_ATT_PAGES: second ion-toolbar with the segment – iOS: neutral
@@ -182,7 +182,7 @@ class _SelfServiceOverviewPageState
             edgeOffset: ionTranslucentTopPadding(body, isIosLook(context)),
             child: ListView(
               padding: EdgeInsets.only(
-                  top: ionTranslucentTopPadding(body, isIosLook(context)), // PARITY_R5
+                  top: ionTranslucentTopPadding(body, isIosLook(context)),
                   bottom: scrollEndPadding(context, base: 32)),
               children: [
                 IonLargeTitle(context.l10n.selfServiceAllEvents),

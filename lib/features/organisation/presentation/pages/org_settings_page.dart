@@ -11,15 +11,15 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
-import '../widgets/org_song_sync_section.dart'; // SETTINGS2
+import '../widgets/org_song_sync_section.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import '../widgets/org_link_dialogs.dart'; // UX_SETTINGS
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
+import '../widgets/org_link_dialogs.dart';
 import '../../../../core/utils/error_message.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Organisation settings (Ionic `OrgSettingsPage`, route `/settings/org-settings`).
 class OrgSettingsPage extends ConsumerWidget {
@@ -81,7 +81,7 @@ class OrgSettingsPage extends ConsumerWidget {
           if (org == null) {
             return ListView(
               children: [
-                const IonContentTopInset(), // IOS_R6
+                const IonContentTopInset(),
                 IonLargeTitle(context.l10n.orgTitle),
                 if (ionIsIos(context)) const SizedBox(height: 16),
                 _Section(children: [
@@ -96,7 +96,7 @@ class OrgSettingsPage extends ConsumerWidget {
                       leading: const Icon(Icons.add_circle_outline, color: AppColors.primary),
                       title: Text(context.l10n.orgCreateOrLink,
                           style: const TextStyle(color: AppColors.primary)),
-                      onTap: () => showOrganisationLinkDialog(context, ref), // UX_SETTINGS
+                      onTap: () => showOrganisationLinkDialog(context, ref),
                     ),
                 ]),
               ],
@@ -105,7 +105,7 @@ class OrgSettingsPage extends ConsumerWidget {
           return ListView(
             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 24)),
             children: [
-              const IonContentTopInset(), // IOS_R6
+              const IonContentTopInset(),
               IonLargeTitle(context.l10n.orgTitle),
               if (ionIsIos(context)) const SizedBox(height: 16),
               _Section(title: context.l10n.orgTitle, children: [

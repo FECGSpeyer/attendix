@@ -10,10 +10,10 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/repositories/admin_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
-import 'settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'settings_sheet.dart'; // IOS_SETTINGS2
+import 'settings_list.dart';
+import 'settings_sheet.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// SETTINGS2: Ionic settings "Administratoren" modal (super admins only):
 /// list with "Erstellt am", tap to remove, + to add an admin by e-mail.

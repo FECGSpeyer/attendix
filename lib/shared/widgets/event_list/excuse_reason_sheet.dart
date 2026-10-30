@@ -4,7 +4,7 @@ import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/quill_utils.dart';
 import '../../../data/models/attendance/attendance.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../adaptive/adaptive.dart';
 import '../layout/ionic_ios.dart';
 
 // Internal sentinel for the free-text option (never stored).
@@ -323,7 +323,7 @@ class _RegistrationFieldsSheetState extends State<_RegistrationFieldsSheet> {
         return Padding(
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: AppDropdownFormField<String>(
-            iosInterface: AppSelectInterface.alert, // IOS_THEME2
+            iosInterface: AppSelectInterface.alert,
             value: (field.options ?? []).contains(_answers[field.id]) ? _answers[field.id] as String : null,
             decoration: InputDecoration(labelText: field.label, border: const OutlineInputBorder()),
             items: [

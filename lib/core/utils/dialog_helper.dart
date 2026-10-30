@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../l10n/l10n.dart';
 import 'haptic_helper.dart';
-import '../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../shared/widgets/adaptive/adaptive.dart';
 
 /// Helper class for showing dialogs
 class DialogHelper {

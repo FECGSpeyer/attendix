@@ -13,7 +13,8 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../team_org_utils.dart';
 import 'task_form_sheet.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_SHELL2
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Tab "Aufgaben": leadership sees all tasks with person filters and can add
 /// tasks; members see only their own tasks (RLS) and can complete them.
@@ -40,7 +41,9 @@ class _TasksTabState extends ConsumerState<TasksTab> {
       // carries it (otherwise the old status flickers back meanwhile).
       try {
         await ref.read(teamTasksProvider.future);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'tasks_tab');
+      }
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.tasksStatusFailed);
     } finally {

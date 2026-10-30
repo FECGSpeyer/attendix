@@ -3,7 +3,7 @@ import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
+import '../adaptive/adaptive.dart';
 
 /// A reusable BottomSheet for editing text/multiline fields.
 /// Shows a text field with title, optional hint, and save/cancel buttons.
@@ -139,7 +139,7 @@ class _FieldEditorSheetState extends State<FieldEditorSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],

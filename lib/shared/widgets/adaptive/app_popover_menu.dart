@@ -4,7 +4,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
-import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron; // IOS27_SWEEP
+import '../layout/ionic_ios.dart' show IonIos, IonDetailChevron;
 import 'adaptive_platform.dart';
 
 /// iOS nested popovers (`side="start"`, iOS default `alignment="center"`)
@@ -107,7 +107,7 @@ Future<T?> showAppPopoverMenu<T>({
   double iosWidth = 200,
 }) {
   final button = context.findRenderObject()! as RenderBox;
-  final navigator = Navigator.of(context, rootNavigator: true); // IOS_SHELL2
+  final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
   final anchor = Rect.fromPoints(
     button.localToGlobal(Offset.zero, ancestor: overlay),

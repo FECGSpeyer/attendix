@@ -17,8 +17,9 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../widgets/ion/ion_widgets.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 
 /// A field that can be bulk edited.
@@ -224,7 +225,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             oldInstrument: old.instrument,
             oldAdditionalFields: old.additionalFields,
           );
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'bulk_edit_page');
+        }
       }
 
       ref.invalidate(playersProvider);
@@ -235,8 +238,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
       );
       Navigator.of(context).pop(true);
     } catch (_) {
-      if (mounted)
+      if (mounted) {
         ToastHelper.showError(context, context.l10n.peopleSaveFailed);
+      }
     } finally {
       if (mounted) setState(() => _isSaving = false);
     }
@@ -262,7 +266,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
             onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
           ),
         ],
@@ -556,8 +560,9 @@ class _ValueEditor extends StatelessWidget {
               lastDate: DateTime(2100),
               locale: Locale(currentLanguage()),
             );
-            if (picked != null)
+            if (picked != null) {
               onChanged(DateFormat('yyyy-MM-dd').format(picked));
+            }
           },
           child: Text(
             current != null

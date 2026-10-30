@@ -6,7 +6,7 @@ import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
-import '../../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// Deadline status for checklist items
 enum DeadlineStatus { normal, warning, overdue }

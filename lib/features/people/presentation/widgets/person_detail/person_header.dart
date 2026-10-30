@@ -14,10 +14,11 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
-import '../../../../../core/providers/player_providers.dart'; // ASTRA_PHOTO
-import '../person_image_picker.dart'; // ASTRA_PHOTO
+import '../../../../../core/services/error_reporter.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../core/utils/profile_image_path.dart';
+import '../../../../../core/providers/player_providers.dart';
+import '../person_image_picker.dart';
 
 /// UX_PEOPLE: Ionic person.page `.profile-header`: 120px avatar with white
 /// ring and shadow, camera badge when editable, name (h1) with a pencil
@@ -252,7 +253,9 @@ class PersonHeader extends ConsumerWidget {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
               .remove([legacyPath]);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'person_header');
+        }
       }
 
       // Same URL after a replace: drop the cached image so it reloads.
@@ -274,6 +277,8 @@ class PersonHeader extends ConsumerWidget {
   }
 
   Future<void> _removePhoto(BuildContext context, WidgetRef ref) async {
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) => AppAlertDialog(
@@ -306,11 +311,7 @@ class PersonHeader extends ConsumerWidget {
       // DB_REVIEW_REST (M4): Ionic removeImage – clear img with '' (Ionic
       // code calls img.split and breaks on null), then delete the object
       // whose key is taken from the stored URL.
-      await supabase
-          .from('player')
-          .update({'img': ''})
-          .eq('id', personId)
-          .eq('tenantId', tenant.id!);
+      await repo.updatePlayerFields(personId, {'img': ''});
 
       final storagePath = profileImagePathFromUrl(person.img);
       if (storagePath != null) {
@@ -318,7 +319,9 @@ class PersonHeader extends ConsumerWidget {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
               .remove([storagePath]);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'person_header');
+        }
       }
 
       ref.invalidate(personProvider(personId));

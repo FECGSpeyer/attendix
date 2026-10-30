@@ -11,9 +11,9 @@ import '../../data/models/person/person.dart';
 import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
-import 'group_providers.dart'; // LOGIC_SETTINGS
+import 'group_providers.dart';
 import 'tenant_providers.dart';
-import '../utils/paged_query.dart'; // SOL_FIX1
+import '../utils/paged_query.dart';
 
 /// Date range for statistics filtering
 class StatisticsDateRange {
@@ -113,15 +113,19 @@ final allPersonAttendancesForStatsProvider =
   try {
     // SEC-003: Defense-in-Depth - add tenant filter via inner join
     // SOL_FIX1: paged (PostgREST max-rows 1000), stable order by id.
-    final response = await fetchAllPages<dynamic>((from, to) async =>
-        await supabase
-            .from('person_attendances')
-            .select(
-                '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
-            .inFilter('attendance_id', attendanceIds)
-            .eq('attendance.tenantId', tenantId)
-            .order('id', ascending: true)
-            .range(from, to) as List);
+    // Chunked: a long date range has hundreds of Termine, and all their ids
+    // in one URL exceed the request size limit.
+    final response = await fetchInChunks<dynamic, int>(
+        attendanceIds,
+        (chunk) => fetchAllPages<dynamic>((from, to) async =>
+            await supabase
+                .from('person_attendances')
+                .select(
+                    '*, person:person_id(id, firstName, lastName, birthday, instrument, left, paused), attendance:attendance_id!inner(tenantId)')
+                .inFilter('attendance_id', chunk)
+                .eq('attendance.tenantId', tenantId)
+                .order('id', ascending: true)
+                .range(from, to) as List));
 
     return response.map((e) {
       final personData = e['person'] as Map<String, dynamic>?;

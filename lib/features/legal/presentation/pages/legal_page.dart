@@ -20,6 +20,7 @@ class LegalPage extends StatelessWidget {
         title: Text(context.l10n.legalTitle),
         leading: IconButton(
           icon: const BackButtonIcon(),
+          tooltip: MaterialLocalizations.of(context).backButtonTooltip,
           onPressed: () =>
               context.canPop() ? context.pop() : context.go('/login'),
         ),

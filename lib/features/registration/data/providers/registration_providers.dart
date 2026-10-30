@@ -6,7 +6,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/utils/db_helpers.dart';
-import '../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
+import '../../../../core/utils/profile_image_path.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/account_repository.dart';

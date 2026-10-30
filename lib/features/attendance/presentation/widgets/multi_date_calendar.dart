@@ -10,7 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Calendar highlight info for a specific date
 class CalendarHighlight {
@@ -377,7 +377,7 @@ class MultiDateCalendarDialog extends StatelessWidget {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close),
+                    icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                     onPressed: () => Navigator.of(context).pop(),
                   ),
                 ],

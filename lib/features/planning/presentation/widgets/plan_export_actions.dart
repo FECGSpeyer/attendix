@@ -14,7 +14,7 @@ import 'ion_items.dart';
 import 'plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Export formats of an Ablaufplan.
 enum PlanExportAction { pdf, pdf2x, image, telegram, telegram2x, telegramImage }
@@ -227,7 +227,7 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
     return Column(
       children: [
         AppBar(
-          toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+          toolbarHeight: ionModalToolbarHeight(context),
           automaticallyImplyLeading: false,
           primary: false,
           title: Text(l10n.attendanceShareRunSheet),
