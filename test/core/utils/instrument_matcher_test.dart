@@ -150,6 +150,8 @@ void main() {
     test('removes werk name, numbers and extension', () {
       expect(InstrumentMatcher.partTerm('03 Ave Verum - Vl2.pdf', workName: 'Ave Verum'), 'Vl2');
       expect(InstrumentMatcher.partTerm('Zweite Geige.pdf'), 'Zweite Geige');
+      expect(InstrumentMatcher.partTerm('Ave_Verum_Zweite.pdf', workName: 'Ave Verum'), 'Zweite');
+      expect(InstrumentMatcher.partTerm('ave-verum - Vl2.pdf', workName: 'Ave Verum'), 'Vl2');
       expect(InstrumentMatcher.partTerm('Ave Verum.pdf', workName: 'Ave Verum'), isNull);
     });
   });
@@ -180,6 +182,16 @@ void main() {
       expect(_confidence('Violine.pdf', _orchestra, synonyms: syn), MatchConfidence.sure);
       // A number still wins over the learned word.
       expect(_label('Violine 1.pdf', _orchestra, synonyms: syn), 'Violine 1');
+    });
+
+    test('learning cycle: an ambiguous abbreviation learned for one group', () {
+      final groups = _groups(_orchestra);
+      final klavier = 10 + _orchestra.indexOf('Klavier');
+      final term = learnableTerm('Kl.pdf', chosenId: klavier, instruments: groups);
+      expect(term, 'Kl');
+      final syn = {'Klavier': mergeSynonyms(null, [term!])!};
+      expect(_label('Kl.pdf', _orchestra, synonyms: syn), 'Klavier');
+      expect(_confidence('Kl.pdf', _orchestra, synonyms: syn), MatchConfidence.sure);
     });
 
     test('mergeSynonyms appends once, several terms per group', () {

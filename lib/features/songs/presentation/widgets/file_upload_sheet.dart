@@ -194,7 +194,8 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
     final file = _files[index];
     final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note);
     setState(() {
-      if (file.instrumentId != instrumentId) {
+      // Also when the suggested (unsure) part is confirmed explicitly.
+      if (file.instrumentId != instrumentId || instrumentId != null) {
         file.learnTerm = learnableTerm(
           file.platformFile.name,
           chosenId: instrumentId,

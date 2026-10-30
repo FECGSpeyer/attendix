@@ -281,7 +281,8 @@ class InstrumentMatcher {
       candidates.add((
         term: synonym ? term : term.where((t) => _tokenNumber(t) == null).toList(),
         base: base,
-        weak: weak || (term.length == 1 && _ambiguousTerms.contains(term.single)),
+        // A synonym was given to this group on purpose: never ambiguous.
+        weak: weak || (!synonym && term.length == 1 && _ambiguousTerms.contains(term.single)),
         explicitNumber: synonym && hasNumber,
         synonym: synonym,
       ));
@@ -471,12 +472,17 @@ class InstrumentMatcher {
   /// are removed ("03 Ave Verum - Vl2.pdf" → "Vl2"). Null if nothing short
   /// is left.
   static String? partTerm(String filename, {String? workName}) {
-    var stem = _stripExtension(filename);
-    if (workName != null && workName.trim().isNotEmpty) {
-      stem = stem.replaceAll(RegExp(RegExp.escape(workName.trim()), caseSensitive: false), ' ');
+    var stem = _stripExtension(filename).replaceAll(RegExp(r'_+'), ' ');
+    // The Werk name with any separators between its words ("Ave_Verum").
+    final title = (workName ?? '')
+        .split(RegExp(r'[^\p{L}\p{N}]+', unicode: true))
+        .where((w) => w.isNotEmpty)
+        .map(RegExp.escape)
+        .toList();
+    if (title.isNotEmpty) {
+      stem = stem.replaceAll(RegExp(title.join(r'[\s_\-.,]+'), caseSensitive: false, unicode: true), ' ');
     }
     stem = stem
-        .replaceAll(RegExp(r'[_]+'), ' ')
         .replaceFirst(RegExp(r'^\s*\d+[\s.\-]+'), '')
         .replaceAll(RegExp(r'^[\s\-–.,()]+|[\s\-–.,()]+$'), '')
         .replaceAll(RegExp(r'\s+'), ' ')
