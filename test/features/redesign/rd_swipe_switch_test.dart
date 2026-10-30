@@ -4,50 +4,56 @@ import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart'
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
-/// Counts how often the swiped content is built.
-class _Counted extends StatelessWidget {
-  const _Counted(this.onBuild);
+/// Counts how often the swiped content is painted.
+class _CountingPainter extends CustomPainter {
+  _CountingPainter(this.onPaint);
 
-  final VoidCallback onBuild;
+  final VoidCallback onPaint;
 
   @override
-  Widget build(BuildContext context) {
-    onBuild();
-    return const SizedBox(width: double.infinity, height: 400, child: Text('content'));
-  }
+  void paint(Canvas canvas, Size size) => onPaint();
+
+  @override
+  bool shouldRepaint(covariant CustomPainter oldDelegate) => false;
 }
 
-/// REDESIGN: swiping Aktiv / Pausiert must not rebuild the list on every
-/// drag frame (that made the animation stutter on the iPhone).
+/// REDESIGN: swiping Aktiv / Pausiert must not rebuild or repaint the list on
+/// every drag frame (that made the animation stutter on the iPhone).
 void main() {
-  testWidgets('dragging moves the content without rebuilding it, then switches', (tester) async {
-    var builds = 0;
+  testWidgets('dragging moves the content without repainting it, then switches', (tester) async {
+    var paints = 0;
     var selected = 0;
     final positions = <double?>[];
-    final content = _Counted(() => builds++);
+    final painter = _CountingPainter(() => paints++);
 
-    await tester.pumpWidget(MaterialApp(
-      theme: buildRdTheme(RdFarbwelt.values.first, Brightness.light),
-      home: Scaffold(
-        body: StatefulBuilder(
-          builder: (context, setState) => RdSwipeSwitch<int>(
-            values: const [0, 1],
-            selected: selected,
-            onChanged: (v) => setState(() => selected = v),
-            onDrag: positions.add,
-            child: content,
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: buildRdTheme(RdFarbwelt.values.first, Brightness.light),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder:
+                (context, setState) => RdSwipeSwitch<int>(
+                  values: const [0, 1],
+                  selected: selected,
+                  onChanged: (v) => setState(() => selected = v),
+                  onDrag: positions.add,
+                  child: CustomPaint(
+                    painter: painter,
+                    child: const SizedBox(width: double.infinity, height: 400, child: Text('content')),
+                  ),
+                ),
           ),
         ),
       ),
-    ));
-    expect(builds, 1);
+    );
+    expect(paints, 1);
 
     final gesture = await tester.startGesture(const Offset(400, 200));
     for (var i = 0; i < 30; i++) {
       await gesture.moveBy(const Offset(-10, 0));
       await tester.pump(const Duration(milliseconds: 16));
     }
-    expect(builds, 1, reason: 'drag frames only move the cached layer');
+    expect(paints, 1, reason: 'drag frames only move the cached layer');
     expect(tester.getTopLeft(find.text('content')).dx, lessThan(-250));
     expect(positions.last, greaterThan(0.3));
 

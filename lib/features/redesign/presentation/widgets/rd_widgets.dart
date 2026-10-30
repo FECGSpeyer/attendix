@@ -873,7 +873,7 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
   }
 
   /// Reports the thumb position, but only when it changed visibly, so the
-  /// page above does not rebuild for sub-pixel moves.
+  /// segmented control above does not rebuild for sub-pixel moves.
   void _reportDrag(double? pos) {
     if (pos != null && _lastDrag != null && (pos - _lastDrag!).abs() < 0.005) return;
     if (pos == null && _lastDrag == null) return;

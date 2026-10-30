@@ -166,16 +166,16 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       ValueListenableBuilder<double?>(
         valueListenable: _swipePos,
         builder: (context, pos, _) => RdSegmented<RdMembersFilter>(
-            values: filters,
-            selected: filter,
-            position: pos,
-            labelOf: (f) => switch (f) {
-              RdMembersFilter.active => l10n.redesignMembersActive(active.length),
-              RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
-              RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
-            },
-            onChanged: (f) => setState(() => _filter = f),
-          ),
+          values: filters,
+          selected: filter,
+          position: pos,
+          labelOf: (f) => switch (f) {
+            RdMembersFilter.active => l10n.redesignMembersActive(active.length),
+            RdMembersFilter.paused => l10n.redesignMembersPaused(paused.length),
+            RdMembersFilter.pending => l10n.redesignMembersPending(pending.length),
+          },
+          onChanged: (f) => setState(() => _filter = f),
+        ),
       ),
       const SizedBox(height: 16),
     ];
