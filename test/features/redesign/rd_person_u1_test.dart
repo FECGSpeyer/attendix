@@ -230,5 +230,47 @@ void main() {
       expect(find.text('Diese Person gibt es hier nicht mehr.'), findsOneWidget);
       expect(find.text('Erneut versuchen'), findsOneWidget);
     });
+
+    testWidgets('Verlauf: a load error shows it; Erneut versuchen and pull-to-refresh reload the person',
+        (tester) async {
+      var calls = 0;
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+          supabaseAuthProvider.overrideWithValue(_auth),
+          currentRoleProvider.overrideWithValue(Role.admin),
+          personProvider(3).overrideWith((ref) async {
+            calls++;
+            if (calls == 1) throw Exception('Netzwerk weg');
+            return _person;
+          }),
+          personAttendanceStatsProvider(3).overrideWith(
+              (ref) async => {'total': 0, 'attended': 0, 'percentage': 0, 'lateCount': 0, 'lateCountExcused': 0}),
+          personHistoryProvider(3).overrideWith((ref) async => const []),
+          upcomingAttendancesProvider(3).overrideWith((ref) async => const []),
+        ],
+        child: MaterialApp(
+          theme: _beta(),
+          locale: const Locale('de'),
+          localizationsDelegates: AppLocalizations.localizationsDelegates,
+          supportedLocales: AppLocalizations.supportedLocales,
+          home: const RdPersonHistoryPage(personId: 3),
+        ),
+      ));
+      await tester.pump(const Duration(seconds: 1));
+      final l10n = await AppLocalizations.delegate.load(const Locale('de'));
+      expect(find.text(l10n.redesignTodayLoadFailed), findsOneWidget);
+
+      await tester.tap(find.text('Erneut versuchen'));
+      await tester.pump();
+      await tester.pump(const Duration(seconds: 1));
+      expect(calls, 2);
+      expect(find.text('Anna Beispiel'), findsOneWidget);
+      expect(find.text('Historie'), findsOneWidget);
+
+      await tester.fling(find.text('Verlauf'), const Offset(0, 400), 1000);
+      await tester.pumpAndSettle();
+      expect(calls, 3);
+    });
   });
 }

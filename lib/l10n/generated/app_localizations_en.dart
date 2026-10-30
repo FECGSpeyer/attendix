@@ -8335,6 +8335,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignEventDelete => 'Delete event';
+
+  @override
+  String get redesignEventDeleted => 'Event deleted';
+
+  @override
   String get redesignEventDetails => 'All details';
 
   @override
@@ -8373,6 +8379,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventNoteHint => 'e.g. reason or time';
+
+  @override
+  String get redesignEventPlan => 'View schedule';
+
+  @override
+  String get redesignEventPlanHint => 'Run sheet, live on the day';
 
   @override
   String redesignEventRegisterEmpty(Object group, Object count) {

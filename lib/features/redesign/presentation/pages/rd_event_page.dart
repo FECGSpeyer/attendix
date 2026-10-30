@@ -8,12 +8,15 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
@@ -22,6 +25,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/person_attendance_writes.dart';
+import '../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show mainGroupIdOf, sortPersonsByGroup;
 import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
@@ -859,6 +863,11 @@ class _Overview extends ConsumerWidget {
     final gaps = ended ? const <RdRegisterGap>[] : rdRegisterGaps(members);
     final signouts = rdSignouts(members);
     final notes = (attendance.notes ?? '').trim();
+    final role = ref.watch(effectiveRoleProvider);
+    // Like the old Termine list: Beobachter never see the Ablaufplan; only
+    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
+    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
+    final canDelete = role.isAdmin || role.isResponsible;
     final legend = [
       (l10n.redesignTodayCountYes(counts.present), p.present),
       if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
@@ -986,16 +995,70 @@ class _Overview extends ConsumerWidget {
         const SizedBox(height: 24),
         RdGroupedList(
           children: [
+            if (hasPlan)
+              RdListRow(
+                leading: const RdRowIcon(Icons.view_timeline_outlined),
+                title: l10n.redesignEventPlan,
+                subtitle: l10n.redesignEventPlanHint,
+                onTap: () => openAttendancePlanViewer(context, attendance),
+              ),
             RdListRow(
               leading: const RdRowIcon(Icons.tune),
               title: l10n.redesignEventMore,
               subtitle: l10n.redesignEventMoreHint,
               onTap: () => context.push('/attendance/${attendance.id}'),
             ),
+            if (canDelete)
+              RdListRow(
+                key: const Key('rd-event-delete'),
+                leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+                title: l10n.redesignEventDelete,
+                titleColor: p.absent,
+                showChevron: false,
+                onTap: () => _delete(context, ref),
+              ),
           ],
         ),
       ],
     );
+  }
+
+  /// "Termin löschen" (old Termine list: Dirigent only, i.e. Admin and
+  /// Verantwortliche): confirm, delete, back to the Termine.
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final id = attendance.id;
+    if (id == null || DemoGuard.blocked()) return; // DEMO_GUARD
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.attListRemoveConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: context.rd.absent),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.attListContinue),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    HapticHelper.medium();
+    try {
+      await repo.deleteAttendance(id);
+    } catch (e) {
+      if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+      return;
+    }
+    ref.invalidate(attendancesProvider);
+    ref.invalidate(realtimeAttendanceListProvider);
+    ref.invalidate(playerAttendancePercentagesProvider);
+    if (!context.mounted) return;
+    ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
+    context.go(RedesignRoutes.events);
   }
 }
 

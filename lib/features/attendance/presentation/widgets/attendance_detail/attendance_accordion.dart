@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_constants.dart';
+import '../../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../../shared/widgets/adaptive/adaptive_platform.dart';
 import '../../../../../shared/widgets/adaptive/ion_icons.dart';
 import '../../../../../shared/widgets/layout/ionic_ios.dart';
@@ -65,6 +66,45 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
             ),
     );
     void onChanged(bool v) => setState(() => _expanded = v);
+
+    // Beta-Skin: a card of the new design with a 16 pt semibold title.
+    if (context.rdSkin case final rd?) {
+      return Container(
+        margin: const EdgeInsets.fromLTRB(16, 6, 16, 6),
+        clipBehavior: Clip.antiAlias,
+        decoration: BoxDecoration(
+          color: rd.surface,
+          borderRadius: BorderRadius.circular(rd.listRadius),
+          boxShadow: rd.cardShadow,
+        ),
+        child: PageStorage(
+          bucket: _bucket,
+          child: ExpansionTile(
+            controller: widget.controller,
+            initiallyExpanded: widget.initiallyExpanded,
+            onExpansionChanged: onChanged,
+            shape: const Border(),
+            collapsedShape: const Border(),
+            minTileHeight: 52,
+            tilePadding: const EdgeInsets.only(left: 16, right: 14),
+            backgroundColor: rd.surface,
+            collapsedBackgroundColor: rd.surface,
+            textColor: rd.text,
+            collapsedTextColor: rd.text,
+            trailing: AnimatedRotation(
+              turns: _expanded ? 0.5 : 0,
+              duration: const Duration(milliseconds: 200),
+              child: Icon(Icons.expand_more, size: 22, color: rd.text2),
+            ),
+            title: DefaultTextStyle.merge(
+              style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+              child: widget.title,
+            ),
+            children: widget.children,
+          ),
+        ),
+      );
+    }
 
     return Card(
       margin: const EdgeInsets.symmetric(
