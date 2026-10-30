@@ -212,6 +212,41 @@ void main() {
       expect(tester.takeException(), isNull);
     });
 
+    testWidgets('Offene Dienste fits a small phone with large text', (tester) async {
+      tester.view.physicalSize = const Size(320, 1200);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final type = TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true);
+      final termin = DutyTermin(
+        attendance: TestFactories.createAttendance(id: 41, tenantId: 7, date: _day(5), typeId: 'd', typeInfo: 'Ordnerdienst'),
+        type: type,
+        required: 3,
+        occupied: 1,
+        persons: const [],
+      );
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          myDutyOverviewProvider.overrideWith((ref) async => MyDutyOverview(
+                person: TestFactories.createPerson(id: 3, tenantId: 7),
+                termine: [termin],
+                openDuties: [termin],
+              )),
+        ],
+        child: _themed(const SingleChildScrollView(child: RdDutySection())),
+      ));
+      await _settle(tester);
+
+      await tester.tap(find.text('Offene Dienste'));
+      await _settle(tester);
+      // The "Ich übernehme" button leaves the title its room (no layout
+      // error) and the row shows the Termin.
+      expect(tester.takeException(), isNull);
+      expect(find.text('Offene Dienste'), findsNWidgets(2));
+      expect(find.descendant(of: find.byType(ListTile), matching: find.byType(FilledButton)), findsOneWidget);
+    });
+
     testWidgets('no duty circle, nothing to confirm: no duty section', (tester) async {
       await tester.pumpWidget(ProviderScope(
         overrides: [myDutyOverviewProvider.overrideWith((ref) async => const MyDutyOverview())],

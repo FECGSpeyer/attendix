@@ -304,9 +304,18 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
                 ListTile(
                   title: Text(t.title),
                   subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
-                  trailing: FilledButton(
-                    onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                    child: IonButtonLabel(context.l10n.signoutIllTakeIt),
+                  // At most about half the width: on small phones with
+                  // large text the button would leave the title no room.
+                  trailing: ConstrainedBox(
+                    constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(ctx).width * 0.45),
+                    child: FilledButton(
+                      onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
+                      child: IonButtonLabel(
+                        context.l10n.signoutIllTakeIt,
+                        maxLines: 2,
+                        textAlign: TextAlign.center,
+                      ),
+                    ),
                   ),
                 ),
               const Divider(),

@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.24.4",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Telefonnummer in „Person bearbeiten“ antippen startet jetzt den Anruf",
+        "🐛 „Offene Dienste“: Auf kleinen Handys mit großer Schrift bleibt der Termin neben „Ich übernehme“ lesbar",
+        "💄 Neues Design (Beta): Bei großer Schrift bleibt die Karte „Deine Stimme“ lesbar, „Öffnen“ rutscht unter den Titel",
+        "💄 Neues Design (Beta): Die Tab-Leiste bricht bei großer Schrift nicht mehr um, die Umschalter (z. B. „Vergangen · Ø“) bleiben einzeilig",
+        "💄 Neues Design (Beta): Der Vorschau-Knopf in „Darstellung“ ist nur noch Vorschau und reagiert nicht mehr auf Tippen"
+      ]
+    },
+    {
       "version": "0.24.3",
       "date": "30.10.2026",
       "changes": [

@@ -11,6 +11,7 @@ import '../../../../../core/providers/shift_providers.dart';
 import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
+import '../../../../../core/utils/contact_links.dart';
 import '../../../../../core/utils/tenant_label_utils.dart';
 import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
@@ -915,8 +916,9 @@ class AllgemeinAccordion extends ConsumerWidget {
     }
   }
 
-  void _launchPhone(String phone) {
-    // TODO: Implement phone launch
+  Future<void> _launchPhone(String phone) async {
+    final uri = phoneCallUri(phone);
+    if (uri != null) await launchContactUri(uri);
   }
 
   String _formatDate(String dateStr) {
