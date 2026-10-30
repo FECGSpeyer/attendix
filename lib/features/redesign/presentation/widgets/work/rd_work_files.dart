@@ -1158,7 +1158,14 @@ class _ReviewDialog extends StatefulWidget {
 
 class _ReviewDialogState extends State<_ReviewDialog> {
   late final Map<PlatformFile, int?> _ids = {for (final i in widget.items) i.file: i.guess.instrumentId};
-  final Map<PlatformFile, String> _terms = {};
+  /// An unsure part can be confirmed for learning right away (unchecked).
+  late final Map<PlatformFile, String> _terms = {
+    for (final i in widget.items)
+      if (i.guess.confidence == MatchConfidence.unsure)
+        if (learnableTerm(i.file.name, chosenId: i.guess.instrumentId, instruments: widget.instruments, workName: widget.workName)
+            case final term?)
+          i.file: term,
+  };
   final Set<PlatformFile> _learn = {};
 
   void _choose(PlatformFile file, int? id) {

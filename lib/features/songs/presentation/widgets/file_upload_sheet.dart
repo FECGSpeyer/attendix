@@ -254,10 +254,15 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           confidence: cat.confidence,
           conflicts: conflicts,
           toReplace: _defaultReplace(conflicts, file.name),
-        ));
+        )..learnTerm = _suggestedTerm(file.name, cat));
       }
     });
   }
+
+  /// An unsure part can be confirmed for learning right away (unchecked).
+  String? _suggestedTerm(String name, FileCategoryGuess cat) => cat.confidence == MatchConfidence.unsure
+      ? learnableTerm(name, chosenId: cat.instrumentId, instruments: _instruments, workName: widget.workName)
+      : null;
 
   static bool _isPdf(PlatformFile f) => _isPdfName(f.name);
 

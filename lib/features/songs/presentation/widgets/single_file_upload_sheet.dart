@@ -84,6 +84,15 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     _instrumentId = cat.instrumentId;
     _note.text = cat.note ?? '';
     _confidence = cat.confidence;
+    // An unsure part can be confirmed for learning right away (unchecked).
+    if (cat.confidence == MatchConfidence.unsure) {
+      _learnTerm = learnableTerm(
+        widget.file.name,
+        chosenId: cat.instrumentId,
+        instruments: _instruments,
+        workName: widget.workName,
+      );
+    }
     _refreshConflicts();
   }
 

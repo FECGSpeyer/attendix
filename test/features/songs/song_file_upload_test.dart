@@ -2,6 +2,11 @@ import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_drop/file_drop_target.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
+import 'package:attendix/features/songs/presentation/widgets/single_file_upload_sheet.dart';
+import 'package:attendix/l10n/l10n.dart';
+import 'package:file_picker/file_picker.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../factories/test_factories.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -73,5 +78,31 @@ void main() {
     expect(find.text('Dateien hierher ziehen oder tippen zum Auswählen'), findsOneWidget);
     await tester.tap(find.byType(FileDropZone));
     expect(taps, 1);
+  });
+
+  testWidgets('single upload: an unsure part offers "künftig so erkennen" unchecked', (tester) async {
+    await tester.pumpWidget(ProviderScope(
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        home: Scaffold(
+          body: SingleFileUploadSheet(
+            songId: 5,
+            file: PlatformFile(name: 'Kl 1.pdf', size: 10),
+            groups: [
+              TestFactories.createGroup(id: 11, name: 'Klarinette'),
+              TestFactories.createGroup(id: 12, name: 'Klavier'),
+            ],
+            existingFiles: const [],
+          ),
+        ),
+      ),
+    ));
+    await tester.pump();
+    expect(find.text('Unsicher erkannt – bitte prüfen'), findsOneWidget);
+    final learn = find.text('„Kl 1“ künftig als Klarinette erkennen');
+    expect(learn, findsOneWidget);
+    expect(tester.widget<CheckboxListTile>(find.ancestor(of: learn, matching: find.byType(CheckboxListTile))).value, isFalse);
   });
 }

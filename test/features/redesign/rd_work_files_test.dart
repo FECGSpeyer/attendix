@@ -107,6 +107,17 @@ class _FakeFiles implements SongFileService {
   dynamic noSuchMethod(Invocation invocation) => null;
 }
 
+/// Records the terms the upload wants to remember.
+class _FakeGroupNotifier extends GroupNotifier {
+  final learned = <Map<int, List<String>>>[];
+
+  @override
+  Future<bool> addSynonyms(Map<int, List<String>> terms) async {
+    learned.add(terms);
+    return true;
+  }
+}
+
 PlatformFile _file(String name, {int size = 10}) => PlatformFile(name: name, size: size);
 
 const _pdf = 'application/pdf';
@@ -146,7 +157,7 @@ void _desktop(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget _app(Role role, _FakeFiles files, {Song song = _song}) {
+Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier? groupNotifier}) {
   final router = GoRouter(
     initialLocation: '/werke/5',
     routes: [
@@ -175,6 +186,7 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song}) {
           )),
       songsProvider.overrideWith((ref) async => [song]),
       groupsProvider.overrideWith((ref) async => _groups),
+      if (groupNotifier != null) groupNotifierProvider.overrideWith(() => groupNotifier),
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: 11),
       ),
@@ -485,6 +497,29 @@ void main() {
       await tester.tap(find.text('Hochladen').last);
       await _settle(tester);
       expect(service.calls, ['pick', 'upload Scan_0815.pdf null -']);
+    });
+
+    testWidgets('an unsure part can be confirmed and remembered as it is', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Kl 1.pdf')];
+      final groups = _FakeGroupNotifier();
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer'), groupNotifier: groups));
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Unsicher erkannt – bitte prüfen'), findsOneWidget);
+      final learn = find.text('„Kl 1“ künftig als Klarinette erkennen');
+      expect(learn, findsOneWidget);
+      // Unchecked until confirmed.
+      expect(tester.widget<CheckboxListTile>(find.ancestor(of: learn, matching: find.byType(CheckboxListTile))).value, isFalse);
+      await tester.tap(learn);
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(service.calls, ['pick', 'upload Kl 1.pdf 11 -']);
+      expect(groups.learned, [
+        {11: ['Kl 1']},
+      ]);
     });
 
     testWidgets('the keyboard icon lists the shortcuts', (tester) async {

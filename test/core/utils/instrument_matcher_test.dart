@@ -152,6 +152,7 @@ void main() {
       expect(InstrumentMatcher.partTerm('Zweite Geige.pdf'), 'Zweite Geige');
       expect(InstrumentMatcher.partTerm('Ave_Verum_Zweite.pdf', workName: 'Ave Verum'), 'Zweite');
       expect(InstrumentMatcher.partTerm('ave-verum - Vl2.pdf', workName: 'Ave Verum'), 'Vl2');
+      expect(InstrumentMatcher.partTerm('Air - Clairon.pdf', workName: 'Air'), 'Clairon');
       expect(InstrumentMatcher.partTerm('Ave Verum.pdf', workName: 'Ave Verum'), isNull);
     });
   });

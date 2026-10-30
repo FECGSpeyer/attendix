@@ -480,7 +480,11 @@ class InstrumentMatcher {
         .map(RegExp.escape)
         .toList();
     if (title.isNotEmpty) {
-      stem = stem.replaceAll(RegExp(title.join(r'[\s_\-.,]+'), caseSensitive: false, unicode: true), ' ');
+      // Whole words only ("Air" is not taken out of "Clairon").
+      stem = stem.replaceAll(
+        RegExp('(?<![\\p{L}\\p{N}])${title.join(r'[\s_\-.,]+')}(?![\\p{L}\\p{N}])', caseSensitive: false, unicode: true),
+        ' ',
+      );
     }
     stem = stem
         .replaceFirst(RegExp(r'^\s*\d+[\s.\-]+'), '')
