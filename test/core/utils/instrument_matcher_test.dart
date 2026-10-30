@@ -46,6 +46,12 @@ void main() {
       expect(_confidence('Sinfonie 2 Violine.pdf', _orchestra), MatchConfidence.unsure);
       expect(_label('Sinfonie 5 - 2. Violine.pdf', _orchestra), 'Violine 2');
       expect(_label('Sinfonie 5 - Violine 1.pdf', _orchestra), 'Violine 1');
+      expect(_confidence('Violine – 2. Satz.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Violine 2 Satz.pdf', _orchestra), MatchConfidence.unsure);
+      expect(_confidence('Violine (2).pdf', _orchestra), MatchConfidence.unsure);
+      expect(_label('Violine_2.pdf', _orchestra), 'Violine 2');
+      expect(_label('Violine-2.pdf', _orchestra), 'Violine 2');
+      expect(_confidence('Violine_2.pdf', _orchestra), MatchConfidence.sure);
     });
 
     test('missing number with two numbered groups is unsure', () {

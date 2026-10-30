@@ -917,6 +917,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         existingFiles: files,
         mainGroupId: data.mainGroupId,
         isChoir: data.isChoir,
+        workName: song.name,
       ),
     );
     if (!mounted) return;

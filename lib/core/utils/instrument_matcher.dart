@@ -145,6 +145,11 @@ class InstrumentMatcher {
     'sib', 'mib', 'fa', 'do', 'flat', 'sharp', 'dur', 'moll',
   };
 
+  /// Words after a number that make it a movement / Werk number.
+  static const Set<String> _movementWords = {
+    'satz', 'saetze', 'movement', 'mvt', 'mov', 'mvmt', 'teil', 'akt', 'act', 'szene', 'scene',
+  };
+
   /// Roman numeral patterns
   static const Map<String, int> romanNumerals = {
     'i': 1,
@@ -225,20 +230,23 @@ class InstrumentMatcher {
 
   /// [tokenize] plus whether a hard separator (" - ", "_", "/", "(") stands
   /// before each word: "Sinfonie 2 - Violine" → the 2 is not the part's.
-  static ({List<String> tokens, List<bool> hardBefore}) _words(String text) {
+  static _Words _words(String text) {
     final folded = _fold(text.toLowerCase())
         .replaceAllMapped(RegExp(r'(\p{L})(\d)', unicode: true), (m) => '${m[1]} ${m[2]}')
         .replaceAllMapped(RegExp(r'(\d)(\p{L})', unicode: true), (m) => '${m[1]} ${m[2]}');
     final tokens = <String>[];
     final hard = <bool>[];
+    final section = <bool>[];
     var last = 0;
     for (final m in RegExp(r'[\p{L}\p{N}]+', unicode: true).allMatches(folded)) {
       final gap = folded.substring(last, m.start);
       tokens.add(m[0]!);
       hard.add(tokens.length == 1 || RegExp(r'[-–_/()\[\]+&,;]').hasMatch(gap));
+      // A new part of the name: " - ", "–", "(", "/", ",".
+      section.add(RegExp(r'\s-|-\s|[–—/(),;\[\]]').hasMatch(gap));
       last = m.end;
     }
-    return (tokens: tokens, hardBefore: hard);
+    return (tokens: tokens, hardBefore: hard, sectionBefore: section);
   }
 
   static String _fold(String s) => s
@@ -256,7 +264,7 @@ class InstrumentMatcher {
 
   /// Score of [instrument] for [tokens], or null if it does not match.
   static _Hit? _scoreInstrument(
-    ({List<String> tokens, List<bool> hardBefore}) words,
+    _Words words,
     InstrumentInfo instrument,
     List<({int start, int end, String family})> familySpans,
   ) {
@@ -399,11 +407,19 @@ class InstrumentMatcher {
   /// before them ("2. Violine").
   /// A number before the words only counts when it starts its part of the
   /// name ("2. Violine", "Ave Verum - 2. Violine", not "Sinfonie 2 Violine").
-  static int? _numberNear(({List<String> tokens, List<bool> hardBefore}) words, int start, int end) {
+  /// A number after the words counts only within their part of the name
+  /// and not when it numbers a movement / the Werk ("Violine – 2. Satz",
+  /// "Violine 2 Satz", "Violine Nr 2").
+  static int? _numberNear(_Words words, int start, int end) {
     final tokens = words.tokens;
     for (var i = end, skipped = 0; i < tokens.length && skipped <= 3; i++) {
+      if (words.sectionBefore[i]) break;
       final n = _tokenNumber(tokens[i]);
-      if (n != null) return n;
+      if (n != null) {
+        final next = i + 1 < tokens.length ? tokens[i + 1] : null;
+        if (next != null && _movementWords.contains(next)) return null;
+        return n;
+      }
       if (!_tuningWords.contains(tokens[i])) break;
       skipped++;
     }
@@ -519,6 +535,8 @@ class InstrumentMatcher {
     return l10nWithoutContext.songsOther;
   }
 }
+
+typedef _Words = ({List<String> tokens, List<bool> hardBefore, List<bool> sectionBefore});
 
 class _Hit {
   _Hit(this.id, this.score, this.weak, this.term);
