@@ -171,7 +171,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
         // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle
         actions: [
           ToolbarButtonGroup(children: [
-            IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+            IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(context)),
           ]),
         ],
       ),
@@ -269,7 +269,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     return IonListHeader(
       title: label,
       trailing: IconButton(
-        icon: const Icon(Icons.add_circle_outline),
+        icon: Icon(Icons.add_circle_outline, semanticLabel: context.l10n.a11yIncrease),
         color: AppColors.primary,
         onPressed: onAdd,
       ),
@@ -317,7 +317,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       trailing: onRemove == null
           ? null
           : IconButton(
-              icon: const Icon(Icons.highlight_off),
+              icon: Icon(Icons.highlight_off, semanticLabel: context.l10n.commonRemove),
               color: AppColors.danger,
               onPressed: onRemove,
             ),

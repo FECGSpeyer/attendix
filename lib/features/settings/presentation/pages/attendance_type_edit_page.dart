@@ -221,7 +221,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         extendBodyBehindAppBar: useIosLook(context),
         appBar: IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: _onBackPressed,
         ),
         actions: [

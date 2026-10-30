@@ -349,7 +349,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                             style: Theme.of(ctx).textTheme.titleLarge,
                           ),
                         ),
-                        IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(sheetContext)),
+                        IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
                       ],
                     ),
                     const SizedBox(height: AppDimensions.paddingS),
@@ -416,7 +416,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         children: [
                           Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
                           IconButton(
-                            icon: const Icon(Icons.add),
+                            icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
                             onPressed: () => setSheet(() => options.add(TextEditingController())),
                           ),
                         ],
@@ -438,7 +438,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                               ),
                             ),
                             IconButton(
-                              icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                              icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                               onPressed: () => removeOption(i),
                             ),
                           ],
@@ -533,7 +533,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
         // IOS_R6: `ion-header translucent` (blur once condensed)
         appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
           leading: IconButton(
-            icon: const Icon(Icons.arrow_back),
+            icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
             onPressed: () => Navigator.of(context).maybePop(),
           ),
           title: IonCondenseTitle(context.l10n.extraFieldsTitle, collapsed: collapsed),
@@ -541,7 +541,7 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
             IconButton(
               icon: _saving
                   ? const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2))
-                  : const Icon(Icons.check),
+                  : Icon(Icons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _saving ? null : _save,
             ),
           ],
@@ -629,11 +629,11 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+                            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
                             onPressed: () => _editField(target, i),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                             onPressed: () => _removeField(target, i),
                           ),
                           if (fields.length > 1)

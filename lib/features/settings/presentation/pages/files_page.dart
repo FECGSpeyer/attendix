@@ -855,7 +855,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                 ),
               )
             : IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
                 onPressed: () => context.canPop() ? context.pop() : context.go('/settings'),
               ),
         leadingWidth: ionIsIos(context) ? 72 : null, // PARITY_R7: 12 + 48 + 12
@@ -1031,7 +1031,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             Padding(
               padding: EdgeInsets.only(right: ios ? 8 : 4),
               child: IconButton(
-                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline, color: AppColors.medium),
+                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline,
+                    color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
                 onPressed: _showSearchHelp,
               ),
             ),
@@ -1126,7 +1127,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       subtitle: subtitle != null ? Text(subtitle) : null,
       onTap: () => _openEntry(entry),
       trailing: IconButton(
-        icon: const Icon(Icons.more_horiz, color: AppColors.medium),
+        icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
         onPressed: () => _showEntryActions(entry),
       ),
     );

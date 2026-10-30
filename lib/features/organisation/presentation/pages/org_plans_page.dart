@@ -166,7 +166,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
       ),
       trailing: entry.isAdHoc
           ? IconButton(
-              icon: const Icon(Icons.delete_outline, color: AppColors.medium),
+              icon: Icon(Icons.delete_outline, color: AppColors.medium, semanticLabel: context.l10n.commonDelete),
               onPressed: () => _deleteAdHoc(entry),
             )
           : const Icon(Icons.chevron_right),

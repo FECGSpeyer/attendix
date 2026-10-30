@@ -92,6 +92,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       title: context.l10n.instrumentsGroupsCount(count),
       leading: IconButton(
         icon: const BackButtonIcon(),
+        tooltip: MaterialLocalizations.of(context).backButtonTooltip,
         onPressed: () => context.go('/settings'),
       ),
       actions: [

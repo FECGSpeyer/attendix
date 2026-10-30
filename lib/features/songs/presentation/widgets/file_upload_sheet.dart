@@ -301,7 +301,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: _isUploading ? null : () => Navigator.pop(context, false),
                     ),
                   ],

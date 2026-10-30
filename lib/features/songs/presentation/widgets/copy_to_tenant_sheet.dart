@@ -74,7 +74,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
               toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
               title: Text(context.l10n.songsCopySong),
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                 onPressed: () => Navigator.pop(context),
               ),
               automaticallyImplyLeading: false,

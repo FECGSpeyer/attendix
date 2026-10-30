@@ -196,7 +196,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
               onPressed: _busy ? null : () => Navigator.of(context).pop(),
             ),
           ]),

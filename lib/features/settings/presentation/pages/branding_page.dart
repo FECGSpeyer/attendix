@@ -117,14 +117,14 @@ class _BrandingPageState extends ConsumerState<BrandingPage> {
     return Scaffold(
       appBar: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(context.l10n.generalSettingsBranding),
         actions: [
           if (hasOrg)
             IconButton(
-              icon: const Icon(Icons.check),
+              icon: Icon(Icons.check, semanticLabel: context.l10n.commonSave),
               onPressed: _busy ? null : _save,
             ),
         ],

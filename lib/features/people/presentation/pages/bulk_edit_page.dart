@@ -266,7 +266,7 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         automaticallyImplyLeading: false,
         actions: [
           IconButton(
-            icon: const Icon(Icons.close),
+            icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
             onPressed: _isSaving ? null : () => Navigator.of(context).pop(),
           ),
         ],

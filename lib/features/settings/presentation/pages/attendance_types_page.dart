@@ -43,7 +43,7 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => context.pop(),
         ),
         title: IonCondenseTitle(title, collapsed: collapsed),

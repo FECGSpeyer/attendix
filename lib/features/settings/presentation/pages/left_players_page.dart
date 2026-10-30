@@ -50,6 +50,7 @@ class LeftPlayersPage extends ConsumerWidget {
               title: Text(context.l10n.settingsArchive),
               leading: IconButton(
                 icon: const BackButtonIcon(),
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () => context.pop(),
               ),
             ),

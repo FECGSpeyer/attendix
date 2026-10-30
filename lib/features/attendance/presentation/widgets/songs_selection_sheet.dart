@@ -415,7 +415,7 @@ class SelectedSongsList extends StatelessWidget {
           trailing: readOnly
               ? null
               : IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () {
                     final newEntries = List<SongHistoryEntry>.from(entries);
                     newEntries.removeAt(index);

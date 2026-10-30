@@ -142,7 +142,7 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
               automaticallyImplyLeading: false,
               actions: [
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.of(context).pop(),
                 ),
               ],
@@ -177,8 +177,8 @@ class _AbsenceInputSheetState extends State<_AbsenceInputSheet> {
                   : context.l10n.personNoDateChosen),
               trailing: _from != null
                   ? IconButton(
-                      icon: const Icon(Icons.cancel_outlined,
-                          color: AppColors.medium),
+                      icon: Icon(Icons.cancel_outlined,
+                          color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() {
                         _from = null;
                         _until = null;

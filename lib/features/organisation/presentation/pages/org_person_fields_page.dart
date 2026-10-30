@@ -162,7 +162,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: IonCondenseTitle(context.l10n.orgPersonFields, collapsed: collapsed),
@@ -252,11 +252,11 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
             onPressed: isSuperAdmin ? () => _edit(i) : null,
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
             onPressed: isSuperAdmin ? () => _remove(i) : null,
           ),
           if (isSuperAdmin) ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
@@ -394,7 +394,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   children: [
                     Expanded(child: Text(context.l10n.typeSettingsOptions, style: const TextStyle(fontWeight: FontWeight.bold))),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
                       onPressed: () => setState(() => _options.add(TextEditingController())),
                     ),
                   ],
@@ -414,7 +414,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                        icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                         onPressed: () => setState(() => _options.removeAt(i).dispose()),
                       ),
                     ],

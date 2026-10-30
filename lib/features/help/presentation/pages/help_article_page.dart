@@ -30,7 +30,7 @@ class HelpArticlePage extends ConsumerWidget {
       extendBodyBehindAppBar: useIosLook(context),
       appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(article?.title ?? context.l10n.helpTitle),

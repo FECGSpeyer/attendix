@@ -353,7 +353,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
               onTap: _pickValidUntil,
               trailing: editing.validUntil != null
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.medium),
+                      icon: Icon(Icons.clear, color: AppColors.medium, semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
                     )
                   : const Icon(Icons.calendar_today, color: AppColors.medium),

@@ -9,6 +9,38 @@ class AppLocalizationsDe extends AppLocalizations {
   AppLocalizationsDe([String locale = 'de']) : super(locale);
 
   @override
+  String get a11yAdd => 'Hinzufügen';
+
+  @override
+  String get a11yClearInput => 'Eingabe löschen';
+
+  @override
+  String get a11yDecrease => 'Verringern';
+
+  @override
+  String get a11yHelp => 'Hilfe';
+
+  @override
+  String get a11yIncrease => 'Erhöhen';
+
+  @override
+  String get a11yMoreActions => 'Weitere Aktionen';
+
+  @override
+  String get a11yNextPage => 'Nächste Seite';
+
+  @override
+  String get a11yPreviousPage => 'Vorherige Seite';
+
+  @override
+  String a11yRating(Object count) {
+    return '$count von 5 Sternen';
+  }
+
+  @override
+  String get a11ySelectDate => 'Datum wählen';
+
+  @override
   String get adminAddChurch => 'Gemeinde hinzufügen';
 
   @override

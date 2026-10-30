@@ -113,7 +113,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
                 _stayInInstance ? context.l10n.peopleFlutterHandoverCopyTitle : context.l10n.peopleFlutterHandoverTransferTitle,
               ),
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                 onPressed: () => Navigator.pop(context),
               ),
               automaticallyImplyLeading: false,
@@ -388,7 +388,7 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
           if (_minAge != null || _maxAge != null) ...[
             const SizedBox(width: 8),
             IconButton(
-              icon: const Icon(Icons.clear, size: 18),
+              icon: Icon(Icons.clear, size: 18, semanticLabel: context.l10n.a11yClearInput),
               onPressed: () => setState(() {
                 _minAge = null;
                 _maxAge = null;

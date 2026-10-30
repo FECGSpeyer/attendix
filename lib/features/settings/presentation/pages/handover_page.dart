@@ -226,7 +226,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                     subtitle: Text(_dateFormat.format(_date)),
                     onTap: _pickDate,
                     trailing: IconButton(
-                      icon: const Icon(Icons.delete_outline),
+                      icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
                       onPressed: () => setState(() {
                         _filters.remove(_filters.contains('younger') ? 'younger' : 'older');
                       }),
@@ -253,7 +253,7 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
                           ),
                         ),
                         IconButton(
-                          icon: const Icon(Icons.delete_outline),
+                          icon: Icon(Icons.delete_outline, semanticLabel: context.l10n.commonDelete),
                           onPressed: () => setState(() => _filters.remove('group')),
                         ),
                       ],

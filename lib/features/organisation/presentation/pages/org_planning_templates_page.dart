@@ -282,7 +282,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
           child: IonListHeader(
             title: text,
             action: IconButton(
-              icon: const Icon(Icons.add, color: AppColors.primary),
+              icon: Icon(Icons.add, color: AppColors.primary, semanticLabel: context.l10n.a11yAdd),
               onPressed: onAdd,
             ),
           ),
@@ -295,7 +295,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
               child: Text(text.toUpperCase(),
                   style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
             ),
-            IconButton(icon: const Icon(Icons.add), onPressed: onAdd),
+            IconButton(icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd), onPressed: onAdd),
           ],
         ),
       );

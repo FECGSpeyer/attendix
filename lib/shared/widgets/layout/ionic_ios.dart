@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../adaptive/adaptive_platform.dart';
+import '../../../l10n/l10n.dart';
 import '../adaptive/app_toolbar.dart'
     show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
 import 'ion_modal_handle.dart' show kIonModalSheetRadius; // PARITY_R5
@@ -581,6 +582,7 @@ class IonSearchbar extends StatelessWidget {
                 const SizedBox(width: 11),
                 Semantics(
                   button: true,
+                  label: context.l10n.a11yClearInput,
                   child: GestureDetector(
                     onTap: _clear,
                     child: IonSearchbarGlass(

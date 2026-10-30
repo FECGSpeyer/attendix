@@ -151,7 +151,7 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
                         tooltip: context.l10n.songsFlutterFullscreen,
                       ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -395,7 +395,7 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                       child: Row(
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.close, color: Colors.white),
+                            icon: Icon(Icons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
                             onPressed: () => Navigator.of(context).pop(),
                           ),
                           Expanded(
@@ -439,8 +439,8 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           IconButton(
-                            icon: const Icon(Icons.chevron_left,
-                                color: Colors.white, size: 32),
+                            icon: Icon(Icons.chevron_left,
+                                color: Colors.white, size: 32, semanticLabel: context.l10n.a11yPreviousPage),
                             onPressed: _currentPage > 1
                                 ? () => widget.pdfController.animateToPage(
                                       pageNumber: _currentPage - 1,
@@ -466,8 +466,8 @@ class _FullscreenPdfViewerState extends State<_FullscreenPdfViewer> {
                             ),
                           ),
                           IconButton(
-                            icon: const Icon(Icons.chevron_right,
-                                color: Colors.white, size: 32),
+                            icon: Icon(Icons.chevron_right,
+                                color: Colors.white, size: 32, semanticLabel: context.l10n.a11yNextPage),
                             onPressed: _currentPage < widget.totalPages
                                 ? () => widget.pdfController.animateToPage(
                                       pageNumber: _currentPage + 1,

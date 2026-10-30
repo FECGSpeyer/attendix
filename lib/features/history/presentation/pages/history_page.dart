@@ -392,7 +392,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
+                    icon: Icon(Icons.calendar_today_outlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
                     onPressed: () async {
                       final date = await showAppDatePicker(
                         context: sheetContext,

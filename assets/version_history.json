@@ -10,6 +10,7 @@
         "⚡️ Web-App: Logo und Ladeanzeige sofort beim Öffnen statt einer weißen Seite, der App-Code lädt früher",
         "⚡️ Statistik lädt auch bei sehr langen Zeiträumen zuverlässig",
         "⚡️ Profilbilder in Listen werden zwischengespeichert",
+        "♿️ VoiceOver und TalkBack: Alle Symbol-Knöpfe (Schließen, Zurück, Löschen …) und die Sterne-Bewertung werden jetzt vorgelesen",
         "🔧 Aufgeräumt: nicht mehr genutzter Code entfernt"
       ]
     },

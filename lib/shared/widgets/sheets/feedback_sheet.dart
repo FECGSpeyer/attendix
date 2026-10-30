@@ -419,14 +419,20 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var star = 1; star <= 5; star++)
-                  GestureDetector(
-                    onTap: () => setState(() => _rating = star),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 6),
-                      child: Icon(
-                        Icons.star,
-                        size: 22,
-                        color: star <= _rating ? AppColors.warning : AppColors.medium,
+                  Semantics(
+                    button: true,
+                    selected: star <= _rating,
+                    label: context.l10n.a11yRating(star),
+                    excludeSemantics: true,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _rating = star),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.star,
+                          size: 22,
+                          color: star <= _rating ? AppColors.warning : AppColors.medium,
+                        ),
                       ),
                     ),
                   ),
@@ -538,6 +544,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   icon: Icon(
                     starValue <= _rating ? Icons.star : Icons.star_border,
                     color: AppColors.warning,
+                    semanticLabel: context.l10n.a11yRating(starValue),
                   ),
                 );
               }),

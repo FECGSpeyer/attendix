@@ -95,6 +95,66 @@ abstract class AppLocalizations {
     Locale('en')
   ];
 
+  /// a11y.add
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get a11yAdd;
+
+  /// a11y.clearInput
+  ///
+  /// In de, this message translates to:
+  /// **'Eingabe löschen'**
+  String get a11yClearInput;
+
+  /// a11y.decrease
+  ///
+  /// In de, this message translates to:
+  /// **'Verringern'**
+  String get a11yDecrease;
+
+  /// a11y.help
+  ///
+  /// In de, this message translates to:
+  /// **'Hilfe'**
+  String get a11yHelp;
+
+  /// a11y.increase
+  ///
+  /// In de, this message translates to:
+  /// **'Erhöhen'**
+  String get a11yIncrease;
+
+  /// a11y.moreActions
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get a11yMoreActions;
+
+  /// a11y.nextPage
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Seite'**
+  String get a11yNextPage;
+
+  /// a11y.previousPage
+  ///
+  /// In de, this message translates to:
+  /// **'Vorherige Seite'**
+  String get a11yPreviousPage;
+
+  /// a11y.rating
+  ///
+  /// In de, this message translates to:
+  /// **'{count} von 5 Sternen'**
+  String a11yRating(Object count);
+
+  /// a11y.selectDate
+  ///
+  /// In de, this message translates to:
+  /// **'Datum wählen'**
+  String get a11ySelectDate;
+
   /// admin.addChurch
   ///
   /// In de, this message translates to:

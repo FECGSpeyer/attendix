@@ -101,7 +101,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -358,7 +358,7 @@ class _DateHeaderItem extends StatelessWidget {
       end: [
         if (onClear != null)
           IconButton(
-            icon: const Icon(Icons.highlight_off, color: AppColors.medium),
+            icon: Icon(Icons.highlight_off, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
             onPressed: onClear,
           ),
       ],

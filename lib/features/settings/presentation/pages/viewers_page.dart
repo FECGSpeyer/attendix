@@ -39,7 +39,7 @@ class ViewersPage extends ConsumerWidget {
           : AppBar(
               title: Text(context.l10n.settingsViewers),
               leading: IconButton(
-                icon: const Icon(Icons.arrow_back),
+                icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
                 onPressed: () => context.pop(),
               ),
             ),

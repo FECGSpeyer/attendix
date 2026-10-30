@@ -9,6 +9,38 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get a11yAdd => 'Add';
+
+  @override
+  String get a11yClearInput => 'Clear input';
+
+  @override
+  String get a11yDecrease => 'Decrease';
+
+  @override
+  String get a11yHelp => 'Help';
+
+  @override
+  String get a11yIncrease => 'Increase';
+
+  @override
+  String get a11yMoreActions => 'More actions';
+
+  @override
+  String get a11yNextPage => 'Next page';
+
+  @override
+  String get a11yPreviousPage => 'Previous page';
+
+  @override
+  String a11yRating(Object count) {
+    return '$count of 5 stars';
+  }
+
+  @override
+  String get a11ySelectDate => 'Select date';
+
+  @override
   String get adminAddChurch => 'Add church';
 
   @override

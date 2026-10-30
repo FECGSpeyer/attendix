@@ -100,7 +100,7 @@ class _AppPromoCardState extends ConsumerState<AppPromoCard> {
                     ),
                   ),
                   IconButton(
-                    icon: const Icon(Icons.close, color: Colors.white),
+                    icon: Icon(Icons.close, color: Colors.white, semanticLabel: context.l10n.commonClose),
                     onPressed: _dismiss,
                   ),
                 ],

@@ -434,7 +434,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
               ),
               trailing: _birthday != null
                   ? IconButton(
-                      icon: const Icon(Icons.clear),
+                      icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _birthday = null),
                     )
                   : null,
@@ -653,7 +653,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       ),
       trailing: clearable && value != null
           ? IconButton(
-              icon: const Icon(Icons.clear),
+              icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
               onPressed: () => onChanged(null),
             )
           : null,

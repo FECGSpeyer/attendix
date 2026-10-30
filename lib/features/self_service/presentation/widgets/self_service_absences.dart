@@ -444,7 +444,7 @@ class _SelfPauseSheetState extends State<_SelfPauseSheet> {
                 children: [
                   if (_until != null)
                     IconButton(
-                      icon: const Icon(Icons.cancel_outlined, color: AppColors.medium),
+                      icon: Icon(Icons.cancel_outlined, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
                       onPressed: () => setState(() => _until = null),
                     ),
                   Icon(_calendarOpen ? Icons.expand_less : Icons.expand_more),

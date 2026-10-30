@@ -423,7 +423,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         title: IonCondenseTitle(context.l10n.settingsSettings, collapsed: collapsed),
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () {
             if (_hasChanges) {
               _showUnsavedChangesDialog();

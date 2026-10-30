@@ -1,0 +1,30 @@
+{
+  "de": {
+    "a11y": {
+      "add": "Hinzufügen",
+      "clearInput": "Eingabe löschen",
+      "moreActions": "Weitere Aktionen",
+      "previousPage": "Vorherige Seite",
+      "nextPage": "Nächste Seite",
+      "help": "Hilfe",
+      "selectDate": "Datum wählen",
+      "increase": "Erhöhen",
+      "decrease": "Verringern",
+      "rating": "{count} von 5 Sternen"
+    }
+  },
+  "en": {
+    "a11y": {
+      "add": "Add",
+      "clearInput": "Clear input",
+      "moreActions": "More actions",
+      "previousPage": "Previous page",
+      "nextPage": "Next page",
+      "help": "Help",
+      "selectDate": "Select date",
+      "increase": "Increase",
+      "decrease": "Decrease",
+      "rating": "{count} of 5 stars"
+    }
+  }
+}

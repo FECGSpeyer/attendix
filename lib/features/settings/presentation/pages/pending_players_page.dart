@@ -45,6 +45,7 @@ class PendingPlayersPage extends ConsumerWidget {
               title: Text(title),
               leading: IconButton(
                 icon: const BackButtonIcon(),
+                tooltip: MaterialLocalizations.of(context).backButtonTooltip,
                 onPressed: () => context.pop(),
               ),
             ),

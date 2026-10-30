@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../../l10n/l10n.dart';
 
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonSearchIcon, IonIos; // PARITY_R5, IOS27_SWEEP
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMdSearchbar; // MD_SWEEP
@@ -159,7 +160,7 @@ class IonSearchbar extends StatelessWidget {
         final clear = value.text.isEmpty
             ? null
             : IconButton(
-                icon: Icon(ios ? Icons.cancel : Icons.clear, size: ios ? 18 : null),
+                icon: Icon(ios ? Icons.cancel : Icons.clear, size: ios ? 18 : null, semanticLabel: context.l10n.a11yClearInput),
                 color: ios ? Colors.grey : null,
                 onPressed: () {
                   controller.clear();

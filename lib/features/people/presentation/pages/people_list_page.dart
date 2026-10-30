@@ -690,7 +690,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return AppBar(
         title: Text(context.l10n.peopleFlutterSelectedCount(_selectedPlayerIds.length)),
         leading: IconButton(
-          icon: const Icon(Icons.close),
+          icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
           onPressed: _exitSelectionMode,
         ),
         actions: [
