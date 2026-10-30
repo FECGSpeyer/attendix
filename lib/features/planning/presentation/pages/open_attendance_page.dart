@@ -7,6 +7,7 @@ import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Resolver for appointment deep links of reminder mails / Telegram messages
@@ -72,7 +73,9 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
         // tenant above; the notifications must be marked in that tenant.
         final repo = ref.read(userNotificationRepositoryWithTenantProvider);
         if (repo.hasTenantId) await repo.markReadByAttendance(attendanceId);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'open_attendance_page');
+      }
       if (!mounted) return;
       // LOGIC_SELF: Ionic navigateToAttendance — only ADMIN, RESPONSIBLE,
       // HELPER and VOICE_LEADER_HELPER open the Termin detail (not VIEWER).

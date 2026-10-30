@@ -23,6 +23,7 @@ import '../widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
 import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart'; // ORG_PLANS
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
@@ -112,13 +113,17 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         // SETTINGS2: "Instanz-Name vor Werken"
         _planningPrefixInstanceName =
             await repo.getPlanningPrefixInstanceName(widget.typeId);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
+      }
 
       // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
       try {
         final types = await protocolRepo.getProtocolTypes();
         _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
+      }
       if (!mounted) return;
 
       setState(() {

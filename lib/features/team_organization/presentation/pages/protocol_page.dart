@@ -29,6 +29,7 @@ import '../../protocol_layout.dart';
 import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
@@ -308,7 +309,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (ids.isNotEmpty) {
       try {
         items = await _agendaRepo.getAgendaItemsByIds(ids);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'protocol_page');
+      }
     }
     _leftovers = entries.map((e) {
       String title = l10nWithoutContext.protocolEarlierItem;
@@ -796,7 +799,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         }
         _outcomes = {for (final e in row.outcomes.entries) e.key: e.value.toString()};
       }
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'protocol_page');
+    }
 
     final summary = PublishSummary();
     final att = _attendees;
@@ -833,7 +838,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           _outcomes,
           items,
         );
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'protocol_page');
+      }
     }
     if (!mounted) return;
     setState(() {});

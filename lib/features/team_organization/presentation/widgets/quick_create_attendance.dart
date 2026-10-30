@@ -22,6 +22,7 @@ import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Protocol-enabled, visible types a Termin can be created for ad hoc
@@ -238,7 +239,9 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
     try {
       final planTypes = await ref.read(planAttendanceTypesProvider.future);
       isOrgPlan = planTypes.any((t) => t.id == type.id && t.isDefaultOrgPlan);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'quick_create_attendance');
+    }
     final results = await Future.wait([
       repo.getPersonsForNewAttendance(),
       absenceRepo

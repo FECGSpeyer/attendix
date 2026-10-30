@@ -5,6 +5,7 @@
       "date": "30.10.2026",
       "changes": [
         "🔒 Schichten nach einer Termin-Änderung: Wechselt währenddessen das Konto oder die Gruppe, wird nichts mehr unter dem neuen Konto gespeichert",
+        "🔧 Fehler-Monitoring: Unerwartete Fehler werden ohne persönliche Daten gemeldet, damit wir sie schneller beheben",
         "🔧 Aufgeräumt: nicht mehr genutzter Code entfernt"
       ]
     },

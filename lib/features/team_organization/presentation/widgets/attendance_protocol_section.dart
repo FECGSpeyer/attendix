@@ -14,6 +14,7 @@ import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosL
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd; // PARITY_R9
 import '../../team_org_utils.dart';
 import 'agenda_picker_sheet.dart';
+import '../../../../core/services/error_reporter.dart';
 
 /// Status line of the protocol card (Ionic attendance.page "Protokoll"):
 /// "Noch nicht begonnen" / "Freigegeben am …[ · geändert am …]" /
@@ -49,7 +50,9 @@ Future<bool> openAgendaPickerForAttendance(
   ProtocolAttendance? attendance;
   try {
     attendance = await ref.read(protocolRepositoryWithTenantProvider).getAttendance(attendanceId);
-  } catch (_) {}
+  } catch (e, st) {
+    ErrorReporter.report(e, st, where: 'attendance_protocol_section');
+  }
   if (attendance == null || !context.mounted) return false;
   final plan = await showAgendaPickerSheet(context, attendance: attendance, type: type);
   if (plan == null) return false;

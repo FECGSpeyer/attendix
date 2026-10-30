@@ -17,6 +17,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../widgets/ion/ion_widgets.dart'; // UX_PEOPLE
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
@@ -224,7 +225,9 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
             oldInstrument: old.instrument,
             oldAdditionalFields: old.additionalFields,
           );
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'bulk_edit_page');
+        }
       }
 
       ref.invalidate(playersProvider);

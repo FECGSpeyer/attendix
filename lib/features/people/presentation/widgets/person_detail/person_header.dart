@@ -14,6 +14,7 @@ import '../../pages/person_detail_page.dart';
 import '../../../../../core/utils/demo_guard.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
+import '../../../../../core/services/error_reporter.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../../core/utils/profile_image_path.dart'; // DB_REVIEW_REST
 import '../../../../../core/providers/player_providers.dart'; // ASTRA_PHOTO
@@ -252,7 +253,9 @@ class PersonHeader extends ConsumerWidget {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
               .remove([legacyPath]);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'person_header');
+        }
       }
 
       // Same URL after a replace: drop the cached image so it reloads.
@@ -318,7 +321,9 @@ class PersonHeader extends ConsumerWidget {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
               .remove([storagePath]);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'person_header');
+        }
       }
 
       ref.invalidate(personProvider(personId));

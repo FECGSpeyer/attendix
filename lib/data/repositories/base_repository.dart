@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
 import '../../core/utils/demo_guard.dart';
+import '../../core/services/error_reporter.dart';
 
 export '../../core/utils/demo_guard.dart' show DemoModeException, kDemoRestrictedMessage;
 
@@ -63,6 +64,8 @@ abstract class BaseRepository {
       debugPrint('[$runtimeType] Error in $operation: $error');
       debugPrint('$stack');
     }
+    // Production monitoring (no-op without SENTRY_DSN).
+    ErrorReporter.report(error, stack, where: '$runtimeType.$operation');
 
     // Rethrow with more context
     if (error is PostgrestException) {

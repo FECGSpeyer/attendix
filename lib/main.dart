@@ -32,6 +32,8 @@ import 'core/providers/push_providers.dart'; // PUSH
 import 'l10n/l10n.dart'; // I18N_INFRA
 import 'shared/widgets/dialogs/ion_modal.dart'; // PARITY_R3
 import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics; // IOS_R4
+import 'core/services/error_reporter.dart';
+import 'core/constants/app_constants.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -62,6 +64,22 @@ void main() async {
       print('Warning: Could not load .env file: $e');
     }
   }
+
+  // Error monitoring: no-op without SENTRY_DSN (tests, local builds).
+  await ErrorReporter.init(
+    dsn: dotenv.isInitialized ? dotenv.maybeGet('SENTRY_DSN') : null,
+    release: AppConstants.appVersion,
+    environment: dotenv.isInitialized ? dotenv.maybeGet('SENTRY_ENVIRONMENT') : null,
+  );
+  final previousOnError = FlutterError.onError;
+  FlutterError.onError = (details) {
+    ErrorReporter.report(details.exception, details.stack, where: 'FlutterError');
+    previousOnError?.call(details);
+  };
+  PlatformDispatcher.instance.onError = (error, stack) {
+    ErrorReporter.report(error, stack, where: 'PlatformDispatcher');
+    return false; // keep the default handling (console / crash)
+  };
 
   // Initialize Supabase
   await SupabaseConfig.initialize();

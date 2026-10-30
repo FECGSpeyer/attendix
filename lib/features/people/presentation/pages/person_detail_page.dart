@@ -37,6 +37,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../person_stats.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged; // SOL_FIX4
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
@@ -714,7 +715,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           oldInstrument: _selectedGroupId,
           oldAdditionalFields: person.additionalFields,
         );
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'person_detail_page');
+      }
 
       // LOGIC_PEOPLE: Ionic updatePlayer(..., updateShifts) →
       // updateShiftAssignmentsForPerson when the shift plan changed.

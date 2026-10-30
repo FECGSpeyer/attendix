@@ -18,6 +18,7 @@ import '../../core/config/supabase_config.dart'
 import 'base_repository.dart';
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
+import '../../core/services/error_reporter.dart';
 
 /// Provider for PlayerRepository
 final playerRepositoryProvider = Provider<PlayerRepository>((ref) {
@@ -1873,13 +1874,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
             'roleId': role.value,
             'tenantId': currentTenantId,
           });
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'player_repository');
+        }
       }
       // A paused person is not added to upcoming attendances.
       if (!target.paused) {
         try {
           await addToUpcomingAttendances(target);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'player_repository');
+        }
       }
 
       await supabase

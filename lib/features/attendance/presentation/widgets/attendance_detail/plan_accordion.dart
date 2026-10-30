@@ -18,6 +18,7 @@ import '../../../../songs/presentation/utils/song_utils.dart'; // P10_ATTENDANCE
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart'; // PROTOCOL
 import '../../../../../l10n/l10n.dart';
 import 'attendance_accordion.dart';
+import '../../../../../core/services/error_reporter.dart';
 
 /// Accordion widget for displaying attendance plan/schedule.
 ///
@@ -85,7 +86,9 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       if (raw != null && raw.isNotEmpty) {
         try {
           plan = Plan.fromJson(raw);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'plan_accordion');
+        }
       }
       return loaded.copyWith(plan: plan);
     }
@@ -94,7 +97,9 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     if (raw != null && raw.isNotEmpty) {
       try {
         plan = Plan.fromJson(raw);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'plan_accordion');
+      }
     }
     return PlanAttendance(
       id: id,

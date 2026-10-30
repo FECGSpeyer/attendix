@@ -34,6 +34,7 @@ import 'planning_page.dart' show planSongsProvider;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/centered_content.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 export '../widgets/ion_items.dart' show IonDatetimeChip;
@@ -271,7 +272,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
           'currentEditKey': _editKey,
         }),
       );
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'public_planning_page');
+    }
   }
 
   /// Ionic `calculateEnd`: normalize, persist locally and (logged in) debounce the DB save.

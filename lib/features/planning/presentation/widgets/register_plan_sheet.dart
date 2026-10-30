@@ -22,6 +22,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'plan_export_actions.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
@@ -101,10 +102,14 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     var conductors = const <Person>[];
     try {
       categories = await ref.read(groupCategoriesProvider.future);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'register_plan_sheet');
+    }
     try {
       conductors = await ref.read(conductorsProvider.future);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'register_plan_sheet');
+    }
     final defaults = RegisterPlanService.defaultGroups(
       categoryNames: [for (final c in categories) c.name],
       isChoir: tenant?.type == 'choir',
