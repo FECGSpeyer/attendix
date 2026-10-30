@@ -1,11 +1,20 @@
 import 'dart:typed_data';
 
-/// A file dropped onto the browser window (web only).
+/// A file dropped onto the browser window or the desktop app.
 class DroppedFile {
-  const DroppedFile({required this.name, required this.bytes});
+  const DroppedFile({required this.name, required Uint8List this.bytes}) : _size = null;
+
+  /// A file too large to read: only its size is passed on, so the upload
+  /// dialogs reject it with "zu groß".
+  const DroppedFile.tooLarge({required this.name, required int size})
+      : bytes = null,
+        _size = size;
 
   final String name;
-  final Uint8List bytes;
+  final Uint8List? bytes;
+  final int? _size;
+
+  int get size => _size ?? bytes!.length;
 }
 
 /// Callbacks of one registered drop target.

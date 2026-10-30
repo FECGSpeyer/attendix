@@ -9,6 +9,7 @@ import 'package:attendix/shared/widgets/adaptive/app_dialog.dart';
 import 'package:attendix/shared/widgets/adaptive/app_segmented_button.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 ThemeData _beta() => buildRdTheme(RdFarbwelt.nachtblau, Brightness.light).copyWith(platform: TargetPlatform.iOS);
@@ -93,6 +94,14 @@ void main() {
     expect(find.ancestor(of: find.text('Excel'), matching: find.byType(InkWell)), findsOneWidget);
     await tester.tap(find.text('Excel'));
     expect(picked, 1);
+
+    // Tab moves focus to a segment, Enter selects it.
+    picked = -1;
+    await tester.sendKeyEvent(LogicalKeyboardKey.tab);
+    await tester.pump();
+    await tester.sendKeyEvent(LogicalKeyboardKey.enter);
+    await tester.pump();
+    expect(picked, isNot(-1));
   });
 
   testWidgets('locked switches look locked in the Beta', (tester) async {
