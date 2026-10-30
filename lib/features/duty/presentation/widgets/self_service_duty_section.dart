@@ -273,6 +273,32 @@ String _dutyMeta(DutyTermin t) {
   return '$timeText${l10nWithoutContext.signoutDutyOccupied(t.occupied, t.required)}';
 }
 
+/// One open duty with "Ich übernehme". On small phones or with large text
+/// the button moves below title and date, next to them it would leave the
+/// title no room.
+Widget _openDutyTile(
+  BuildContext context, {
+  required String title,
+  required String subtitle,
+  required Widget button,
+}) {
+  final narrow = MediaQuery.sizeOf(context).width < MediaQuery.textScalerOf(context).scale(360);
+  if (!narrow) {
+    return ListTile(title: Text(title), subtitle: Text(subtitle), trailing: button);
+  }
+  return ListTile(
+    title: Text(title),
+    subtitle: Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Text(subtitle),
+        const SizedBox(height: 8),
+        button,
+      ],
+    ),
+  );
+}
+
 /// Sheet "Offene Dienste" with "Ich übernehme" and "Regelmäßig verhindert".
 Future<void> showOpenDutiesSheet(BuildContext context) {
   return showModalBottomSheet<void>(
@@ -301,21 +327,13 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
                   child: Text(context.l10n.signoutAllDutiesFilled, textAlign: TextAlign.center),
                 ),
               for (final t in open)
-                ListTile(
-                  title: Text(t.title),
-                  subtitle: Text('${_dateShort(t)} · ${_dutyMeta(t)}'),
-                  // At most about half the width: on small phones with
-                  // large text the button would leave the title no room.
-                  trailing: ConstrainedBox(
-                    constraints: BoxConstraints(maxWidth: MediaQuery.sizeOf(ctx).width * 0.45),
-                    child: FilledButton(
-                      onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
-                      child: IonButtonLabel(
-                        context.l10n.signoutIllTakeIt,
-                        maxLines: 2,
-                        textAlign: TextAlign.center,
-                      ),
-                    ),
+                _openDutyTile(
+                  ctx,
+                  title: t.title,
+                  subtitle: '${_dateShort(t)} · ${_dutyMeta(t)}',
+                  button: FilledButton(
+                    onPressed: () => takeDutyAction(ctx, ref, t.attendance.id!),
+                    child: IonButtonLabel(context.l10n.signoutIllTakeIt),
                   ),
                 ),
               const Divider(),

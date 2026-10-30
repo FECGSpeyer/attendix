@@ -20,6 +20,7 @@ import 'package:attendix/features/redesign/presentation/widgets/today/rd_duty_se
 import 'package:attendix/features/self_service/presentation/widgets/self_service_event_actions.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -244,7 +245,14 @@ void main() {
       // error) and the row shows the Termin.
       expect(tester.takeException(), isNull);
       expect(find.text('Offene Dienste'), findsNWidgets(2));
-      expect(find.descendant(of: find.byType(ListTile), matching: find.byType(FilledButton)), findsOneWidget);
+      // The button sits below title and date, its label is not cut.
+      final button = find.descendant(of: find.byType(ListTile), matching: find.byType(FilledButton));
+      expect(button, findsOneWidget);
+      expect(tester.getTopLeft(button).dy, greaterThan(tester.getBottomLeft(find.text('Ordnerdienst').last).dy));
+      final label = tester.renderObject<RenderParagraph>(
+        find.descendant(of: button, matching: find.byType(RichText)),
+      );
+      expect(label.didExceedMaxLines, isFalse);
     });
 
     testWidgets('no duty circle, nothing to confirm: no duty section', (tester) async {

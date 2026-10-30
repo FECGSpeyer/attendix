@@ -340,6 +340,14 @@ class AllgemeinAccordion extends ConsumerWidget {
       value: phone ?? context.l10n.personFlutterNotSpecified,
       editable: canEdit,
       onTap: phone != null ? () => _launchPhone(phone) : null,
+      // While editing a tap opens the editor; calling gets its own button.
+      trailing: canEdit && phone != null
+          ? IconButton(
+              tooltip: context.l10n.peopleFlutterContactCall,
+              icon: const Icon(Icons.call_outlined),
+              onPressed: () => _launchPhone(phone),
+            )
+          : null,
       onEdit: () => _editTextField(
         context,
         title: context.l10n.peoplePhone,
