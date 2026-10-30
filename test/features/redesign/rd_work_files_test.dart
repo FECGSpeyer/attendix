@@ -234,7 +234,7 @@ void main() {
     RdWorkFilesController controller() => container.read(rdWorkFilesProvider(5).notifier);
     RdWorkFilesState state() => container.read(rdWorkFilesProvider(5));
 
-    test('uploads run one after the other, replaced files are removed first', () async {
+    test('uploads run one after the other, replaced files are removed after the new one is stored', () async {
       controller().enqueue([
         (file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar]),
         (file: _file('b.pdf'), instrumentId: null, note: 'Partitur', replace: const <SongFile>[]),
@@ -242,7 +242,7 @@ void main() {
       expect(state().busy, isTrue);
       expect(state().total, 2);
       await Future<void>.delayed(const Duration(milliseconds: 200));
-      expect(files.calls, ['delete klar.pdf', 'upload a.pdf 11 -', 'upload b.pdf null Partitur']);
+      expect(files.calls, ['upload a.pdf 11 -', 'delete klar.pdf', 'upload b.pdf null Partitur']);
       expect(files.maxActive, 1);
       expect(state().doneCount, 2);
       expect(state().busy, isFalse);
@@ -264,6 +264,39 @@ void main() {
       await Future<void>.delayed(const Duration(milliseconds: 100));
       controller().dismissFinished();
       expect(state().uploads, isEmpty);
+    });
+
+    test('"Ersetzen": a failed upload keeps the old file; a retry does not upload twice', () async {
+      files.failing.add('a.pdf');
+      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(files.calls, ['upload a.pdf 11 -']);
+      expect(state().failedCount, 1);
+
+      controller().retry(state().uploads.single.id);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(files.calls, ['upload a.pdf 11 -', 'upload a.pdf 11 -', 'delete klar.pdf']);
+      expect(state().doneCount, 1);
+    });
+
+    test('the tenant (service) is taken when a write is queued', () async {
+      final other = _FakeFiles();
+      var current = files;
+      final c = ProviderContainer(overrides: [
+        readySongFileServiceProvider.overrideWith((ref) async => current),
+      ]);
+      addTearDown(c.dispose);
+      c.listen(rdWorkFilesProvider(5), (_, __) {});
+      final ctl = c.read(rdWorkFilesProvider(5).notifier);
+      await c.read(readySongFileServiceProvider.future);
+      ctl.delete(const [_klar]);
+      current = other;
+      c.invalidate(readySongFileServiceProvider);
+      ctl.delete(const [_floete]); // stores the first delete
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(files.calls, ['delete klar.pdf']);
+      expect(other.calls, isEmpty);
+      ctl.undoDelete();
     });
 
     test('delete hides at once, Rückgängig brings it back without a write', () async {
@@ -380,6 +413,17 @@ void main() {
   });
 
   group('security (source)', () {
+    test('every write of songs.files goes through the per-song lock', () {
+      final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
+      for (final name in ['uploadFile', 'deleteFile', 'deleteAllFiles', 'updateFileCategory', 'renameFile', 'uploadFileBytes']) {
+        final start = src.indexOf(RegExp('Future<\\w+> $name\\('));
+        expect(start, greaterThan(0), reason: name);
+        final body = src.substring(start, src.indexOf(';', src.indexOf('=>', start)));
+        expect(body, contains('_locked('), reason: name);
+        expect(body, contains('_$name('), reason: name);
+      }
+    });
+
     test('no direct Supabase access in the workspace', () {
       for (final path in [
         'lib/features/redesign/presentation/widgets/work/rd_work_files.dart',
@@ -394,7 +438,7 @@ void main() {
 
     test('renameFile filters by song id and tenant', () {
       final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
-      final start = src.indexOf('Future<void> renameFile(');
+      final start = src.indexOf('Future<void> _renameFile(');
       final body = src.substring(start, src.indexOf('/// Pick multiple files', start));
       expect(".eq('tenantId', _tenantId)".allMatches(body).length, 2);
       expect(".eq('id', songId)".allMatches(body).length, 2);

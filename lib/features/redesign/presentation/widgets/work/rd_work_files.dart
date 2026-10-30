@@ -38,7 +38,7 @@ import '../rd_widgets.dart';
 /// "Hochladen" go through [rdAddWorkFiles].
 
 /// Width from which the Werk page shows the workspace.
-const double rdWorkFilesMinWidth = 640;
+const double rdWorkFilesMinWidth = 560;
 
 /// Files of [data] that are not deleted a moment ago.
 List<SongFile> rdVisibleFiles(SongDetailData data, Set<String> hidden) =>
@@ -46,12 +46,7 @@ List<SongFile> rdVisibleFiles(SongDetailData data, Set<String> hidden) =>
 
 /// Sorts [files] into parts (as the old upload sheet), asks once what to do
 /// with files that are already there and puts them into the upload queue.
-Future<void> rdAddWorkFiles(
-  BuildContext context,
-  WidgetRef ref,
-  SongDetailData data,
-  List<PlatformFile> files,
-) async {
+Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData data, List<PlatformFile> files) async {
   final l10n = context.l10n;
   final songId = data.song.id;
   if (songId == null || files.isEmpty) return;
@@ -88,13 +83,10 @@ Future<void> rdAddWorkFiles(
     if (choice == null) return;
     replace = choice;
   }
-  controller.enqueue(
-    [
-      for (final i in items)
-        (file: i.file, instrumentId: i.instrumentId, note: i.note, replace: replace ? i.conflicts : const <SongFile>[]),
-    ],
-    mainGroupId: data.mainGroupId,
-  );
+  controller.enqueue([
+    for (final i in items)
+      (file: i.file, instrumentId: i.instrumentId, note: i.note, replace: replace ? i.conflicts : const <SongFile>[]),
+  ], mainGroupId: data.mainGroupId);
 }
 
 /// The whole Werk page as drop target: while files are dragged over it, a
@@ -247,10 +239,14 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       });
     }
     ref.read(rdWorkFilesProvider(_songId).notifier).showNotice(l10n.redesignFilesZipPreparing);
-    return _run(() => ref.read(zipServiceProvider).downloadSongFilesAsZip(
-          files: files,
-          songName: widget.data.song.name.isEmpty ? 'songs' : widget.data.song.name,
-        ));
+    return _run(
+      () => ref
+          .read(zipServiceProvider)
+          .downloadSongFilesAsZip(
+            files: files,
+            songName: widget.data.song.name.isEmpty ? 'songs' : widget.data.song.name,
+          ),
+    );
   }
 
   void _delete(List<SongFile> files) {
@@ -272,12 +268,15 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       _cursor = next;
       _anchor = next;
     });
-    ref.read(rdWorkFilesProvider(_songId).notifier).delete(
+    ref
+        .read(rdWorkFilesProvider(_songId).notifier)
+        .delete(
           files,
           mainGroupId: widget.data.mainGroupId,
-          notice: files.length == 1
-              ? l10n.redesignFilesDeletedOne(files.single.fileName)
-              : l10n.redesignFilesDeletedMany(files.length),
+          notice:
+              files.length == 1
+                  ? l10n.redesignFilesDeletedOne(files.single.fileName)
+                  : l10n.redesignFilesDeletedMany(files.length),
         );
     _focus.requestFocus();
   }
@@ -292,20 +291,23 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       // "Sonstige …": free text in the dialog of the old page.
       final result = await showAppDialog<({int? instrumentId, String? note})>(
         context: context,
-        builder: (_) => FileCategoryDialog(
-          instruments: widget.data.instruments,
-          initialInstrumentId: null,
-          initialNote: file.instrumentId == null ? (file.note ?? '') : '',
-        ),
+        builder:
+            (_) => FileCategoryDialog(
+              instruments: widget.data.instruments,
+              initialInstrumentId: null,
+              initialNote: file.instrumentId == null ? (file.note ?? '') : '',
+            ),
       );
       if (result == null) return;
       target = (id: result.instrumentId, note: result.note);
     }
     if (target.id == file.instrumentId && (target.id != null || target.note == file.note)) return;
     final chosen = target;
-    await _run(() => ref
-        .read(rdWorkFilesProvider(_songId).notifier)
-        .setCategory(file, chosen.id, chosen.note, mainGroupId: widget.data.mainGroupId));
+    await _run(
+      () => ref
+          .read(rdWorkFilesProvider(_songId).notifier)
+          .setCategory(file, chosen.id, chosen.note, mainGroupId: widget.data.mainGroupId),
+    );
   }
 
   void _startRename(SongFile file) {
@@ -386,9 +388,7 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     if (event is! KeyDownEvent && event is! KeyRepeatEvent) return KeyEventResult.ignored;
     if (_renaming != null) return KeyEventResult.ignored;
     final primary = FocusManager.instance.primaryFocus;
-    if (primary != null &&
-        primary != node &&
-        primary.context?.findAncestorWidgetOfExactType<EditableText>() != null) {
+    if (primary != null && primary != node && primary.context?.findAncestorWidgetOfExactType<EditableText>() != null) {
       return KeyEventResult.ignored;
     }
     final key = event.logicalKey;
@@ -417,7 +417,12 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     if (key == LogicalKeyboardKey.arrowDown || key == LogicalKeyboardKey.arrowUp) {
       if (order.isEmpty) return KeyEventResult.handled;
       final current = _cursor == null ? null : order.indexOf(_cursor!);
-      final next = order[rdNextIndex(current == -1 ? null : current, key == LogicalKeyboardKey.arrowDown ? 1 : -1, order.length)];
+      final next =
+          order[rdNextIndex(
+            current == -1 ? null : current,
+            key == LogicalKeyboardKey.arrowDown ? 1 : -1,
+            order.length,
+          )];
       setState(() {
         if (HardwareKeyboard.instance.isShiftPressed) {
           _anchor ??= _cursor ?? next;
@@ -554,46 +559,54 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
           else
             RdCard(
               padding: EdgeInsets.zero,
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  _HeaderRow(
-                    allSelected: allSelected,
-                    someSelected: selected.isNotEmpty,
-                    onSelectAll: (v) => _selectAll(files, v ?? false),
-                  ),
-                  for (final file in files) ...[
-                    Divider(height: 1, thickness: 0.5, color: p.line),
-                    _FileRow(
-                      key: ValueKey('rd-file-${file.url}'),
-                      file: file,
-                      groups: widget.groups,
-                      instruments: widget.data.instruments,
-                      selected: selected.contains(file.url),
-                      cursor: _cursor == file.url,
-                      renaming: _renaming == file.url,
-                      renameController: _rename,
-                      renameFocus: _renameFocus,
-                      onTap: () => _tapRow(file),
-                      onDoubleTap: () => _open(file),
-                      onToggle: (v) => _toggle(file, v),
-                      onCategory: (c) => _setCategory(file, c),
-                      onRenameDone: (save) => _endRename(save: save),
-                      onAction: (action) {
-                        switch (action) {
-                          case _RowAction.open:
-                            _open(file);
-                          case _RowAction.download:
-                            _download([file]);
-                          case _RowAction.rename:
-                            _startRename(file);
-                          case _RowAction.delete:
-                            _delete([file]);
-                        }
-                      },
-                    ),
-                  ],
-                ],
+              child: LayoutBuilder(
+                builder: (context, c) {
+                  // Narrow pages: smaller part column, no type column.
+                  final compact = c.maxWidth < 680;
+                  return Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      _HeaderRow(
+                        compact: compact,
+                        allSelected: allSelected,
+                        someSelected: selected.isNotEmpty,
+                        onSelectAll: (v) => _selectAll(files, v ?? false),
+                      ),
+                      for (final file in files) ...[
+                        Divider(height: 1, thickness: 0.5, color: p.line),
+                        _FileRow(
+                          key: ValueKey('rd-file-${file.url}'),
+                          compact: compact,
+                          file: file,
+                          groups: widget.groups,
+                          instruments: widget.data.instruments,
+                          selected: selected.contains(file.url),
+                          cursor: _cursor == file.url,
+                          renaming: _renaming == file.url,
+                          renameController: _rename,
+                          renameFocus: _renameFocus,
+                          onTap: () => _tapRow(file),
+                          onDoubleTap: () => _open(file),
+                          onToggle: (v) => _toggle(file, v),
+                          onCategory: (c) => _setCategory(file, c),
+                          onRenameDone: (save) => _endRename(save: save),
+                          onAction: (action) {
+                            switch (action) {
+                              case _RowAction.open:
+                                _open(file);
+                              case _RowAction.download:
+                                _download([file]);
+                              case _RowAction.rename:
+                                _startRename(file);
+                              case _RowAction.delete:
+                                _delete([file]);
+                            }
+                          },
+                        ),
+                      ],
+                    ],
+                  );
+                },
               ),
             ),
           if (files.isNotEmpty) ...[
@@ -647,11 +660,7 @@ class _DropHint extends StatelessWidget {
         children: [
           Icon(Icons.cloud_upload_outlined, size: 36, color: p.text2),
           const SizedBox(height: 8),
-          Text(
-            context.l10n.redesignFilesDropHint,
-            textAlign: TextAlign.center,
-            style: RdType.meta(p, size: 15),
-          ),
+          Text(context.l10n.redesignFilesDropHint, textAlign: TextAlign.center, style: RdType.meta(p, size: 15)),
         ],
       ),
     );
@@ -660,12 +669,19 @@ class _DropHint extends StatelessWidget {
 
 const double _checkWidth = 44;
 const double _partWidth = 200;
+const double _partWidthCompact = 140;
 const double _typeWidth = 64;
 const double _menuWidth = 44;
 
 class _HeaderRow extends StatelessWidget {
-  const _HeaderRow({required this.allSelected, required this.someSelected, required this.onSelectAll});
+  const _HeaderRow({
+    required this.compact,
+    required this.allSelected,
+    required this.someSelected,
+    required this.onSelectAll,
+  });
 
+  final bool compact;
   final bool allSelected;
   final bool someSelected;
   final ValueChanged<bool?> onSelectAll;
@@ -691,8 +707,11 @@ class _HeaderRow extends StatelessWidget {
           ),
           const SizedBox(width: 36),
           Expanded(child: Text(l10n.redesignFilesColName.toUpperCase(), style: style)),
-          SizedBox(width: _partWidth, child: Text(l10n.redesignFilesColPart.toUpperCase(), style: style)),
-          SizedBox(width: _typeWidth, child: Text(l10n.redesignFilesColType.toUpperCase(), style: style)),
+          SizedBox(
+            width: compact ? _partWidthCompact : _partWidth,
+            child: Text(l10n.redesignFilesColPart.toUpperCase(), style: style),
+          ),
+          if (!compact) SizedBox(width: _typeWidth, child: Text(l10n.redesignFilesColType.toUpperCase(), style: style)),
           const SizedBox(width: _menuWidth),
         ],
       ),
@@ -705,6 +724,7 @@ enum _RowAction { open, download, rename, delete }
 class _FileRow extends StatelessWidget {
   const _FileRow({
     super.key,
+    required this.compact,
     required this.file,
     required this.groups,
     required this.instruments,
@@ -728,6 +748,7 @@ class _FileRow extends StatelessWidget {
   final List<Group> instruments;
   final bool selected;
   final bool cursor;
+  final bool compact;
   final bool renaming;
   final TextEditingController renameController;
   final FocusNode renameFocus;
@@ -745,29 +766,31 @@ class _FileRow extends StatelessWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final isAudio = SongUtils.isAudio(file);
-    final icon = isAudio
-        ? Icons.graphic_eq
-        : (SongUtils.isPdf(file) ? Icons.description_outlined : Icons.insert_drive_file_outlined);
+    final icon =
+        isAudio
+            ? Icons.graphic_eq
+            : (SongUtils.isPdf(file) ? Icons.description_outlined : Icons.insert_drive_file_outlined);
 
-    final name = renaming
-        ? CallbackShortcuts(
-            bindings: {const SingleActivator(LogicalKeyboardKey.escape): () => onRenameDone(false)},
-            child: TextField(
-              controller: renameController,
-              focusNode: renameFocus,
-              autofocus: true,
-              style: TextStyle(fontSize: 15, color: p.text),
-              decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
-              onSubmitted: (_) => onRenameDone(true),
-              onTapOutside: (_) => onRenameDone(true),
-            ),
-          )
-        : Text(
-            file.fileName,
-            maxLines: 1,
-            overflow: TextOverflow.ellipsis,
-            style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: p.text),
-          );
+    final name =
+        renaming
+            ? CallbackShortcuts(
+              bindings: {const SingleActivator(LogicalKeyboardKey.escape): () => onRenameDone(false)},
+              child: TextField(
+                controller: renameController,
+                focusNode: renameFocus,
+                autofocus: true,
+                style: TextStyle(fontSize: 15, color: p.text),
+                decoration: const InputDecoration(isDense: true, border: OutlineInputBorder()),
+                onSubmitted: (_) => onRenameDone(true),
+                onTapOutside: (_) => onRenameDone(true),
+              ),
+            )
+            : Text(
+              file.fileName,
+              maxLines: 1,
+              overflow: TextOverflow.ellipsis,
+              style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: p.text),
+            );
 
     return Semantics(
       selected: selected,
@@ -793,26 +816,25 @@ class _FileRow extends StatelessWidget {
                 Expanded(child: name),
                 const SizedBox(width: 8),
                 SizedBox(
-                  width: _partWidth,
+                  width: compact ? _partWidthCompact : _partWidth,
                   child: _CategoryButton(file: file, groups: groups, instruments: instruments, onSelected: onCategory),
                 ),
-                SizedBox(
-                  width: _typeWidth,
-                  child: Text(rdFileKind(file), style: RdType.meta(p, size: 13)),
-                ),
+                if (!compact)
+                  SizedBox(width: _typeWidth, child: Text(rdFileKind(file), style: RdType.meta(p, size: 13))),
                 SizedBox(
                   width: _menuWidth,
                   child: PopupMenuButton<_RowAction>(
                     tooltip: l10n.redesignFilesActions(file.fileName),
                     icon: Icon(Icons.more_horiz, color: p.text2),
                     onSelected: onAction,
-                    itemBuilder: (_) => [
-                      _menuItem(_RowAction.open, Icons.open_in_new, l10n.redesignFilesOpen),
-                      _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
-                      if (rdCanRename(file))
-                        _menuItem(_RowAction.rename, Icons.drive_file_rename_outline, l10n.redesignFilesRename),
-                      _menuItem(_RowAction.delete, Icons.delete_outline, l10n.redesignFilesDelete, color: p.absent),
-                    ],
+                    itemBuilder:
+                        (_) => [
+                          _menuItem(_RowAction.open, Icons.open_in_new, l10n.redesignFilesOpen),
+                          _menuItem(_RowAction.download, Icons.download_outlined, l10n.redesignFilesDownload),
+                          if (rdCanRename(file))
+                            _menuItem(_RowAction.rename, Icons.drive_file_rename_outline, l10n.redesignFilesRename),
+                          _menuItem(_RowAction.delete, Icons.delete_outline, l10n.redesignFilesDelete, color: p.absent),
+                        ],
                   ),
                 ),
               ],
@@ -823,22 +845,26 @@ class _FileRow extends StatelessWidget {
     );
   }
 
-  PopupMenuItem<_RowAction> _menuItem(_RowAction value, IconData icon, String label, {Color? color}) =>
-      PopupMenuItem(
-        value: value,
-        child: Row(
-          children: [
-            Icon(icon, size: 20, color: color),
-            const SizedBox(width: 12),
-            Text(label, style: TextStyle(color: color)),
-          ],
-        ),
-      );
+  PopupMenuItem<_RowAction> _menuItem(_RowAction value, IconData icon, String label, {Color? color}) => PopupMenuItem(
+    value: value,
+    child: Row(
+      children: [
+        Icon(icon, size: 20, color: color),
+        const SizedBox(width: 12),
+        Text(label, style: TextStyle(color: color)),
+      ],
+    ),
+  );
 }
 
 /// "Stimme" cell: the current part; a click opens the parts to move to.
 class _CategoryButton extends StatelessWidget {
-  const _CategoryButton({required this.file, required this.groups, required this.instruments, required this.onSelected});
+  const _CategoryButton({
+    required this.file,
+    required this.groups,
+    required this.instruments,
+    required this.onSelected,
+  });
 
   final SongFile file;
   final List<Group> groups;
@@ -861,17 +887,19 @@ class _CategoryButton extends StatelessWidget {
       tooltip: l10n.songsChangeCategory,
       position: PopupMenuPosition.under,
       onSelected: (i) => onSelected(i < 0 ? null : options[i].$1),
-      itemBuilder: (_) => [
-        for (var i = 0; i < options.length; i++)
-          CheckedPopupMenuItem(
-            value: i,
-            checked: options[i].$1.id == file.instrumentId &&
-                (options[i].$1.id != null || options[i].$1.note == file.note),
-            child: Text(options[i].$2),
-          ),
-        const PopupMenuDivider(),
-        PopupMenuItem(value: -1, child: Text(l10n.redesignFilesOtherCategory)),
-      ],
+      itemBuilder:
+          (_) => [
+            for (var i = 0; i < options.length; i++)
+              CheckedPopupMenuItem(
+                value: i,
+                checked:
+                    options[i].$1.id == file.instrumentId &&
+                    (options[i].$1.id != null || options[i].$1.note == file.note),
+                child: Text(options[i].$2),
+              ),
+            const PopupMenuDivider(),
+            PopupMenuItem(value: -1, child: Text(l10n.redesignFilesOtherCategory)),
+          ],
       child: Padding(
         padding: const EdgeInsets.symmetric(vertical: 8),
         child: Row(
@@ -957,7 +985,13 @@ class _UploadQueue extends StatelessWidget {
                     width: 160,
                     child: Text(
                       SongUtils.fileLabel(
-                        SongFile(fileName: u.file.name, fileType: '', url: '', instrumentId: u.instrumentId, note: u.note),
+                        SongFile(
+                          fileName: u.file.name,
+                          fileType: '',
+                          url: '',
+                          instrumentId: u.instrumentId,
+                          note: u.note,
+                        ),
                         groups,
                       ),
                       maxLines: 1,
@@ -967,23 +1001,24 @@ class _UploadQueue extends StatelessWidget {
                   ),
                   SizedBox(
                     width: 150,
-                    child: u.status == RdUploadStatus.failed
-                        ? Align(
-                            alignment: Alignment.centerRight,
-                            child: Tooltip(
-                              message: u.error ?? '',
-                              child: RdTextLink(label: l10n.redesignCommonRetry, onTap: () => onRetry(u.id)),
+                    child:
+                        u.status == RdUploadStatus.failed
+                            ? Align(
+                              alignment: Alignment.centerRight,
+                              child: Tooltip(
+                                message: u.error ?? '',
+                                child: RdTextLink(label: l10n.redesignCommonRetry, onTap: () => onRetry(u.id)),
+                              ),
+                            )
+                            : Text(
+                              switch (u.status) {
+                                RdUploadStatus.waiting => l10n.redesignFilesWaiting,
+                                RdUploadStatus.uploading => l10n.redesignFilesUploading,
+                                _ => l10n.redesignFilesDone,
+                              },
+                              textAlign: TextAlign.end,
+                              style: RdType.meta(p, size: 13),
                             ),
-                          )
-                        : Text(
-                            switch (u.status) {
-                              RdUploadStatus.waiting => l10n.redesignFilesWaiting,
-                              RdUploadStatus.uploading => l10n.redesignFilesUploading,
-                              _ => l10n.redesignFilesDone,
-                            },
-                            textAlign: TextAlign.end,
-                            style: RdType.meta(p, size: 13),
-                          ),
                   ),
                   const SizedBox(width: 6),
                 ],
@@ -995,22 +1030,18 @@ class _UploadQueue extends StatelessWidget {
   }
 
   Widget _statusIcon(RdPalette p, RdUploadStatus status) => switch (status) {
-        RdUploadStatus.waiting => Icon(Icons.schedule, size: 18, color: p.text2),
-        RdUploadStatus.uploading => SizedBox(
-            width: 16,
-            height: 16,
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: SizedBox(
-                width: 16,
-                height: 16,
-                child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
-              ),
-            ),
-          ),
-        RdUploadStatus.done => Icon(Icons.check_circle, size: 18, color: p.present),
-        RdUploadStatus.failed => Icon(Icons.error_outline, size: 18, color: p.absent),
-      };
+    RdUploadStatus.waiting => Icon(Icons.schedule, size: 18, color: p.text2),
+    RdUploadStatus.uploading => SizedBox(
+      width: 16,
+      height: 16,
+      child: Align(
+        alignment: Alignment.centerLeft,
+        child: SizedBox(width: 16, height: 16, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
+      ),
+    ),
+    RdUploadStatus.done => Icon(Icons.check_circle, size: 18, color: p.present),
+    RdUploadStatus.failed => Icon(Icons.error_outline, size: 18, color: p.absent),
+  };
 }
 
 /// "Schon vorhanden": the files that clash, "Ersetzen" (true) or "Beide

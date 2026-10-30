@@ -38,6 +38,11 @@ class RdWorkPage extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // The real width of this page (window minus side bar and split list).
+    return LayoutBuilder(builder: (context, constraints) => _content(context, ref, constraints.maxWidth));
+  }
+
+  Widget _content(BuildContext context, WidgetRef ref, double width) {
     final p = context.rd;
     final l10n = context.l10n;
     final params = (songId: songId, sharingId: null);
@@ -107,9 +112,6 @@ class RdWorkPage extends ConsumerWidget {
     final score = rdScore(song);
     final lyrics = files.where((f) => f.instrumentId == rdLyricsCategory).firstOrNull;
     final hasGroupFiles = files.any((f) => (f.instrumentId ?? 0) > rdLyricsCategory);
-    // Width of this page: the window, or its right column in the split.
-    final split = RdSplitScope.of(context)?.isDetail ?? false;
-    final width = MediaQuery.sizeOf(context).width - (split ? rdSplitListWidth + 1 : 0);
     final workspace = !data.readOnly && !data.isPublic && width >= rdWorkFilesMinWidth;
     final meta = [
       if (song.fullNumber.isNotEmpty) l10n.redesignWorkNumber(song.fullNumber),

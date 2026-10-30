@@ -20,6 +20,7 @@ class RdUpload {
     this.replace = const [],
     this.status = RdUploadStatus.waiting,
     this.error,
+    this.stored = false,
   });
 
   final int id;
@@ -32,7 +33,11 @@ class RdUpload {
   final RdUploadStatus status;
   final String? error;
 
-  RdUpload copyWith({RdUploadStatus? status, String? error}) => RdUpload(
+  /// The new file is stored; only removing [replace] is left (a retry does
+  /// not upload it twice).
+  final bool stored;
+
+  RdUpload copyWith({RdUploadStatus? status, String? error, bool? stored}) => RdUpload(
         id: id,
         file: file,
         instrumentId: instrumentId,
@@ -40,6 +45,7 @@ class RdUpload {
         replace: replace,
         status: status ?? this.status,
         error: error,
+        stored: stored ?? this.stored,
       );
 }
 

@@ -66,9 +66,116 @@ class SongFileService {
     return '${name}_$randomNumber.$ext';
   }
 
-  /// Upload a file to Supabase Storage
+  /// Writes of one song's `files` list read it, change it and write it back,
+  /// so two at once would drop a change. They wait for each other here,
+  /// across every service instance and page (old song page, upload sheets,
+  /// the redesign workspace).
+  static final Map<String, Future<void>> _songLocks = {};
+
+  static Future<T> _locked<T>(int? tenantId, int songId, Future<T> Function() task) {
+    final key = '$tenantId/$songId';
+    final before = _songLocks[key] ?? Future<void>.value();
+    final result = before.then((_) => task());
+    late final Future<void> tail;
+    tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() {
+      if (identical(_songLocks[key], tail)) _songLocks.remove(key);
+    });
+    _songLocks[key] = tail;
+    return result;
+  }
+
+  /// Upload a file to Supabase Storage and add it to the song.
   /// Returns the public URL of the uploaded file
   Future<String> uploadFile({
+    required int songId,
+    required PlatformFile file,
+    int? instrumentId,
+    String? note,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _uploadFile(
+            songId: songId,
+            file: file,
+            instrumentId: instrumentId,
+            note: note,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Delete a file from storage and song's files array.
+  Future<void> deleteFile({
+    required int songId,
+    required String url,
+    String? storageName,
+    String? fileName,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _deleteFile(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            fileName: fileName,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Delete all files from a song
+  Future<void> deleteAllFiles({required int songId}) =>
+      _locked(_tenantId, songId, () => _deleteAllFiles(songId: songId));
+
+  /// Update file category (instrumentId and note)
+  Future<void> updateFileCategory({
+    required int songId,
+    required String url,
+    String? storageName,
+    int? instrumentId,
+    String? note,
+    int? mainGroupId,
+  }) =>
+      _locked(_tenantId, songId, () => _updateFileCategory(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            instrumentId: instrumentId,
+            note: note,
+            mainGroupId: mainGroupId,
+          ));
+
+  /// Rename a file (display name only, see [_renameFile]).
+  Future<void> renameFile({
+    required int songId,
+    required String url,
+    required String storageName,
+    required String fileName,
+  }) =>
+      _locked(_tenantId, songId, () => _renameFile(
+            songId: songId,
+            url: url,
+            storageName: storageName,
+            fileName: fileName,
+          ));
+
+  /// Upload file from bytes (for copying between tenants)
+  Future<String> uploadFileBytes({
+    required int songId,
+    required int tenantId,
+    required String fileName,
+    required String fileType,
+    required Uint8List bytes,
+    int? instrumentId,
+    String? note,
+  }) =>
+      _locked(tenantId, songId, () => _uploadFileBytes(
+            songId: songId,
+            tenantId: tenantId,
+            fileName: fileName,
+            fileType: fileType,
+            bytes: bytes,
+            instrumentId: instrumentId,
+            note: note,
+          ));
+
+  /// Upload a file to Supabase Storage
+  /// Returns the public URL of the uploaded file
+  Future<String> _uploadFile({
     required int songId,
     required PlatformFile file,
     int? instrumentId,
@@ -181,7 +288,7 @@ class SongFileService {
 
   /// Delete a file from storage and song's files array.
   /// Files are identified by URL (old files have no storageName).
-  Future<void> deleteFile({
+  Future<void> _deleteFile({
     required int songId,
     required String url,
     String? storageName,
@@ -232,7 +339,7 @@ class SongFileService {
   }
 
   /// Delete all files from a song
-  Future<void> deleteAllFiles({required int songId}) async {
+  Future<void> _deleteAllFiles({required int songId}) async {
     DemoGuard.checkCurrent('deleteSongFile'); // DEMO_GUARD
     if (_tenantId == null) {
       throw Exception(l10nWithoutContext.coreFlutterNoTenantSelected);
@@ -274,7 +381,7 @@ class SongFileService {
   }
 
   /// Update file category (instrumentId and note)
-  Future<void> updateFileCategory({
+  Future<void> _updateFileCategory({
     required int songId,
     required String url,
     String? storageName,
@@ -329,7 +436,7 @@ class SongFileService {
   /// Rename a file: only its display name (`fileName`) changes; the storage
   /// object keeps its `storageName`. Files without a storageName (very old
   /// uploads) are stored under their fileName, so they are not renamed.
-  Future<void> renameFile({
+  Future<void> _renameFile({
     required int songId,
     required String url,
     required String storageName,
@@ -405,7 +512,7 @@ class SongFileService {
   }
 
   /// Upload file from bytes (for copying between tenants)
-  Future<String> uploadFileBytes({
+  Future<String> _uploadFileBytes({
     required int songId,
     required int tenantId,
     required String fileName,

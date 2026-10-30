@@ -17,9 +17,12 @@ const Duration rdFileUndoDelay = Duration(seconds: 6);
 /// name changes.
 ///
 /// Every write of the service reads `songs.files`, changes it and writes it
-/// back, so they run one after the other ([_serial]); two uploads at once
-/// would drop one of the files. While writes are waiting or a delete can
-/// still be undone the controller stays alive, also when the page is left.
+/// back, so they run one after the other ([_serial]; the service also locks
+/// each song across all pages); two uploads at once would drop one of the
+/// files. The service (and with it the tenant) is taken when a write is
+/// queued, so a tenant switch meanwhile never sends it to another tenant.
+/// While writes are waiting or a delete can still be undone the controller
+/// stays alive, also when the page is left.
 class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, int> {
   Future<void> _tail = Future<void>.value();
   int _running = 0;
@@ -29,6 +32,10 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
   Timer? _deleteTimer;
   Timer? _noticeTimer;
   List<SongFile> _toDelete = const [];
+  Future<SongFileService>? _deleteService;
+
+  /// Service of each queued upload, taken when it was queued.
+  final Map<int, Future<SongFileService>> _uploadServices = {};
 
   int get _songId => arg;
 
@@ -41,10 +48,13 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     return const RdWorkFilesState();
   }
 
-  Future<T> _serial<T>(Future<T> Function(SongFileService service) task) {
+  /// The service for writes queued now (bound to the current tenant).
+  Future<SongFileService> _service() => ref.read(readySongFileServiceProvider.future);
+
+  Future<T> _serial<T>(Future<SongFileService> service, Future<T> Function(SongFileService service) task) {
     _running++;
     _keep ??= ref.keepAlive();
-    final result = _tail.then((_) async => task(await ref.read(readySongFileServiceProvider.future)));
+    final result = _tail.then((_) async => task(await service));
     _tail = result.then<void>((_) {}, onError: (_) {}).whenComplete(() {
       _running--;
       _release();
@@ -95,8 +105,10 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
       ...state.uploads.where((u) => u.status != RdUploadStatus.done),
       ...added,
     ]);
+    final service = _service();
     for (final u in added) {
-      _serial((service) => _upload(service, u.id));
+      _uploadServices[u.id] = service;
+      _serial(service, (s) => _upload(s, u.id));
     }
   }
 
@@ -105,6 +117,18 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     if (upload == null || upload.status != RdUploadStatus.waiting) return;
     _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.uploading));
     try {
+      // "Ersetzen": the new file first, the old ones only once it is
+      // stored, so a failed upload never loses them.
+      if (!upload.stored) {
+        await service.uploadFile(
+          songId: _songId,
+          file: upload.file,
+          instrumentId: upload.instrumentId,
+          note: upload.note,
+          mainGroupId: _mainGroupId,
+        );
+        _setUpload(id, (u) => u.copyWith(stored: true));
+      }
       for (final old in upload.replace) {
         await service.deleteFile(
           songId: _songId,
@@ -114,14 +138,8 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
           mainGroupId: _mainGroupId,
         );
       }
-      await service.uploadFile(
-        songId: _songId,
-        file: upload.file,
-        instrumentId: upload.instrumentId,
-        note: upload.note,
-        mainGroupId: _mainGroupId,
-      );
       _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.done));
+      _uploadServices.remove(id);
     } catch (e) {
       _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.failed, error: friendlyErrorMessage(e)));
     }
@@ -133,15 +151,18 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     final upload = state.uploads.where((u) => u.id == id).firstOrNull;
     if (upload == null || upload.status != RdUploadStatus.failed) return;
     _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.waiting));
-    _serial((service) => _upload(service, id));
+    final service = _uploadServices[id] ??= _service();
+    _serial(service, (s) => _upload(s, id));
   }
 
   /// Removes the finished and failed rows of the queue.
   void dismissFinished() {
-    state = state.copyWith(uploads: [
+    final keep = [
       for (final u in state.uploads)
         if (u.status == RdUploadStatus.waiting || u.status == RdUploadStatus.uploading) u,
-    ]);
+    ];
+    _uploadServices.removeWhere((id, _) => !keep.any((u) => u.id == id));
+    state = state.copyWith(uploads: keep);
   }
 
   /// Shows [text] at the bottom for [rdFileUndoDelay].
@@ -158,6 +179,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     _commitDeletes();
     _mainGroupId = mainGroupId ?? _mainGroupId;
     _toDelete = files;
+    _deleteService = _service();
     _keep ??= ref.keepAlive();
     state = state.copyWith(hidden: {...state.hidden, for (final f in files) f.url});
     _deleteTimer = Timer(rdFileUndoDelay, _commitDeletes);
@@ -173,6 +195,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     _deleteTimer?.cancel();
     final urls = {for (final f in _toDelete) f.url};
     _toDelete = const [];
+    _deleteService = null;
     state = state.copyWith(hidden: {...state.hidden}..removeAll(urls));
     if (notice != null) showNotice(notice);
     _release();
@@ -186,9 +209,12 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     if (batch.isEmpty) return;
     _toDelete = const [];
     final mainGroupId = _mainGroupId;
+    final service = _deleteService ?? _service();
+    _deleteService = null;
     for (final file in batch) {
       _serial(
-        (service) => service.deleteFile(
+        service,
+        (s) => s.deleteFile(
           songId: _songId,
           url: file.url,
           storageName: file.storageName,
@@ -200,13 +226,14 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
         showNotice(friendlyErrorMessage(e));
       });
     }
-    _serial((_) async => _refresh());
+    _serial(service, (_) async => _refresh());
   }
 
   /// Moves a file to another part / category.
   Future<void> setCategory(SongFile file, int? instrumentId, String? note, {int? mainGroupId}) async {
     await _serial(
-      (service) => service.updateFileCategory(
+      _service(),
+      (s) => s.updateFileCategory(
         songId: _songId,
         url: file.url,
         storageName: file.storageName,
@@ -222,7 +249,8 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
   Future<void> rename(SongFile file, String fileName) async {
     if (!rdCanRename(file)) return;
     await _serial(
-      (service) => service.renameFile(
+      _service(),
+      (s) => s.renameFile(
         songId: _songId,
         url: file.url,
         storageName: file.storageName!,
