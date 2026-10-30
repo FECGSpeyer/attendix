@@ -97,8 +97,11 @@ class _FakeFiles implements SongFileService {
   @override
   Future<List<PlatformFile>?> pickMultipleFiles() async {
     calls.add('pick');
-    return null;
+    return picked;
   }
+
+  /// Files "Hochladen" picks.
+  List<PlatformFile>? picked;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
@@ -459,6 +462,29 @@ void main() {
       await tester.tap(find.text('Klicken, um Dateien auszuwählen.'));
       await _settle(tester);
       expect(service.calls, ['pick']);
+    });
+
+    testWidgets('a clear part uploads at once, an unclear one is checked first', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Klarinette 2.pdf')];
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer')));
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Zuordnung prüfen'), findsNothing);
+      expect(service.calls, ['pick', 'upload Klarinette 2.pdf 11 -']);
+
+      service
+        ..calls.clear()
+        ..picked = [_file('Scan_0815.pdf')];
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Zuordnung prüfen'), findsOneWidget);
+      expect(find.text('Nicht erkannt – bitte zuordnen'), findsOneWidget);
+      expect(service.calls, ['pick']);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(service.calls, ['pick', 'upload Scan_0815.pdf null -']);
     });
 
     testWidgets('the keyboard icon lists the shortcuts', (tester) async {

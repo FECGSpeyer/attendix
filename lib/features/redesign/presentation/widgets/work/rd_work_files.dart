@@ -22,6 +22,7 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../songs/presentation/pages/song_detail_page.dart' show FileCategoryDialog;
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
@@ -1225,7 +1226,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                     const SizedBox(width: 12),
                     SizedBox(
                       width: 180,
-                      child: DropdownButton<int?>(
+                      child: AppDropdownButton<int?>(
                         value: _ids[i.file],
                         items: menu,
                         isExpanded: true,
