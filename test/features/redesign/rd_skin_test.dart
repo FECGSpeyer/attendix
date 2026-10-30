@@ -6,6 +6,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/shared/widgets/adaptive/app_action_sheet.dart';
 import 'package:attendix/shared/widgets/adaptive/app_dialog.dart';
+import 'package:attendix/shared/widgets/adaptive/app_segmented_button.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -78,5 +79,25 @@ void main() {
     expect(find.text('Löschen'), findsOneWidget);
     expect(find.widgetWithText(OutlinedButton, 'Abbrechen'), findsOneWidget);
     expect(find.byType(IosAlertButton), findsNothing);
+  });
+
+  testWidgets('segments stay keyboard-focusable in the Beta', (tester) async {
+    var picked = 0;
+    await tester.pumpWidget(_app(_beta(), Scaffold(
+      body: AppSegmentedButton<int>(
+        segments: const [ButtonSegment(value: 0, label: Text('PDF')), ButtonSegment(value: 1, label: Text('Excel'))],
+        selected: const {0},
+        onSelectionChanged: (v) => picked = v.first,
+      ),
+    )));
+    expect(find.ancestor(of: find.text('Excel'), matching: find.byType(InkWell)), findsOneWidget);
+    await tester.tap(find.text('Excel'));
+    expect(picked, 1);
+  });
+
+  testWidgets('locked switches look locked in the Beta', (tester) async {
+    final theme = _beta();
+    final track = theme.switchTheme.trackColor!;
+    expect(track.resolve({WidgetState.selected, WidgetState.disabled})!.a, lessThan(track.resolve({WidgetState.selected})!.a));
   });
 }

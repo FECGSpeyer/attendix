@@ -113,7 +113,9 @@ class RdMePage extends ConsumerWidget {
                   : (tenant?.shortName ?? ''),
               onTap: () => showRdGroupSwitchSheet(context),
             ),
-            if (role.canSeeNotifications)
+            // Everyone who had the old settings page (incl. parents and
+            // viewers) keeps the notification settings.
+            if (!role.isApplicant)
               RdListRow(
                 leading: const RdRowIcon(Icons.notifications_outlined),
                 title: l10n.redesignMeNotifications,

@@ -217,16 +217,26 @@ class IonSegment<T> extends StatelessWidget {
         opacity: enabled ? 1 : iosDisabledOpacity(theme.brightness),
         child: child,
       );
-      child = GestureDetector(
-        behavior: HitTestBehavior.opaque,
-        onTap: enabled && !checked
-            ? () {
-                HapticHelper.light();
-                onChanged!(item.value);
-              }
-            : null,
-        child: child,
-      );
+      final onTap = enabled && !checked
+          ? () {
+              HapticHelper.light();
+              onChanged!(item.value);
+            }
+          : null;
+      // Beta-Skin: InkWell keeps the segments focusable (Tab / Enter on
+      // desktops); the Ionic iOS control stays a plain tap target.
+      child = rd != null
+          ? InkWell(
+              onTap: onTap,
+              borderRadius: BorderRadius.circular(9),
+              canRequestFocus: enabled,
+              child: child,
+            )
+          : GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: onTap,
+              child: child,
+            );
       if (item.tooltip != null) {
         child = Tooltip(message: item.tooltip!, child: child);
       }

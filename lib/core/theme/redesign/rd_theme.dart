@@ -253,8 +253,14 @@ ThemeData buildRdTheme(RdFarbwelt world, Brightness brightness) {
       indicatorColor: p.primary,
     ),
     switchTheme: SwitchThemeData(
-      thumbColor: const WidgetStatePropertyAll(Colors.white),
-      trackColor: selectedOr(p.primary, p.track),
+      thumbColor: WidgetStateProperty.resolveWith(
+        (s) => s.contains(WidgetState.disabled) ? Colors.white.withValues(alpha: 0.7) : Colors.white,
+      ),
+      // Locked switches look locked: the track fades out.
+      trackColor: WidgetStateProperty.resolveWith((s) {
+        final on = s.contains(WidgetState.selected) ? p.primary : p.track;
+        return s.contains(WidgetState.disabled) ? on.withValues(alpha: 0.4) : on;
+      }),
       trackOutlineColor: const WidgetStatePropertyAll(Colors.transparent),
     ),
     checkboxTheme: base.checkboxTheme.copyWith(
