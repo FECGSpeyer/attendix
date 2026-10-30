@@ -796,8 +796,9 @@ class RdSegmented<T> extends StatelessWidget {
 
 /// Horizontal swipe between the parts of a [RdSegmented] (Kommend /
 /// Vergangen, Aktiv / Pausiert). The content follows the finger; past a
-/// quarter of the width or with a fling it switches to the neighbour and
-/// the new content slides in from that side. The segmented control stays
+/// quarter of the width or with a fling it switches to the neighbour right
+/// away: the new content slides in next to the old one like a page and the
+/// segmented thumb moves along with it. The segmented control stays
 /// the main way: this is a shortcut for one-handed use. Swipes starting at
 /// the left screen edge are left to the system back gesture.
 class RdSwipeSwitch<T> extends StatefulWidget {
@@ -828,39 +829,57 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
 
   late final AnimationController _anim;
 
-  /// Horizontal offset of the content. A notifier instead of setState so a
-  /// drag frame only moves the cached layer of the content (RepaintBoundary)
-  /// instead of rebuilding and repainting the whole list.
+  /// Horizontal offset of the content of [_base]. A notifier instead of
+  /// setState so a frame only moves the cached layers of the content
+  /// (RepaintBoundary) instead of rebuilding and repainting the list.
   final _dx = ValueNotifier<double>(0);
   double _from = 0;
   double _to = 0;
   double _width = 1;
   bool _tracking = false;
-  bool _switching = false;
+
+  /// Index the current swipe started on (its content sits at [_dx]).
+  int _base = 0;
+
+  /// Index a swipe switches to while its content slides in, and the
+  /// content of [_base] that slides out next to it.
+  int? _target;
+  Widget? _outgoing;
+
+  /// The segmented thumb follows the content (drag and settle animation).
+  bool _reporting = false;
   double? _lastDrag;
 
-  /// Index this switch selected itself (its slide-in already runs).
-  int? _switchedTo;
-
   int get _index => widget.values.indexOf(widget.selected);
+
+  double get _thumb => (_base - _dx.value / _width).clamp(0.0, widget.values.length - 1.0);
 
   @override
   void initState() {
     super.initState();
-    _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 180))
-      ..addListener(() => _dx.value = _from + (_to - _from) * Curves.easeOutCubic.transform(_anim.value));
+    _anim = AnimationController(vsync: this, duration: const Duration(milliseconds: 220))
+      ..addListener(() {
+        _dx.value = _from + (_to - _from) * Curves.easeOutCubic.transform(_anim.value);
+        if (_reporting) _reportDrag(_thumb);
+      });
   }
 
   @override
   void didUpdateWidget(covariant RdSwipeSwitch<T> old) {
     super.didUpdateWidget(old);
+    if (_target != null) {
+      // The rebuild after our own onChanged: keep the old content beside
+      // the new one until it has slid out.
+      if (_index == _target) {
+        _outgoing ??= old.child;
+        return;
+      }
+      _finishSwitch();
+    }
     // A tap on the segmented control: slide the new content in briefly.
     final before = old.values.indexOf(old.selected);
-    if (_switchedTo != null && _switchedTo == _index) {
-      _switchedTo = null;
-      return;
-    }
-    if (!_switching && !_tracking && before != _index && before >= 0 && _index >= 0) {
+    if (!_tracking && before != _index && before >= 0 && _index >= 0) {
+      _base = _index;
       _slide(from: (_index > before ? 1 : -1) * _width * 0.25, to: 0);
     }
   }
@@ -896,45 +915,68 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
     }
   }
 
+  void _finishSwitch() {
+    if (_target == null) return;
+    _anim.stop();
+    _reporting = false;
+    _base = _index;
+    _dx.value = 0;
+    setState(() {
+      _target = null;
+      _outgoing = null;
+    });
+    _reportDrag(null);
+  }
+
+  Future<void> _settle() async {
+    _reporting = true;
+    await _slide(from: _dx.value, to: 0);
+    // A new drag took over meanwhile.
+    if (!mounted || _tracking || _target != null) return;
+    _reporting = false;
+    _reportDrag(null);
+  }
+
   void _start(DragStartDetails d) {
-    _tracking = d.globalPosition.dx > _edge && !_switching;
-    if (_tracking) _anim.stop();
+    _tracking = d.globalPosition.dx > _edge && _target == null;
+    if (!_tracking) return;
+    _anim.stop();
+    _reporting = false;
+    _base = _index;
   }
 
   void _update(DragUpdateDetails d) {
     if (!_tracking) return;
-    final i = _index;
     final dx = _dx.value;
     final next = dx + d.delta.dx;
     // Rubber band where there is no neighbour.
-    final blocked = (next < 0 && i >= widget.values.length - 1) || (next > 0 && i <= 0);
+    final blocked = (next < 0 && _base >= widget.values.length - 1) || (next > 0 && _base <= 0);
     _dx.value = blocked ? dx + d.delta.dx * 0.25 : next;
-    _reportDrag((i - _dx.value / _width).clamp(0.0, widget.values.length - 1.0));
+    _reportDrag(_thumb);
   }
 
   Future<void> _end(DragEndDetails d) async {
     if (!_tracking) return;
     _tracking = false;
-    final i = _index;
+    final i = _base;
     final dx = _dx.value;
     final v = d.primaryVelocity ?? 0;
     var target = i;
     if ((dx < -_width * 0.25 || v < -400) && i < widget.values.length - 1) target = i + 1;
     if ((dx > _width * 0.25 || v > 400) && i > 0) target = i - 1;
     if (target == i) {
-      _reportDrag(null);
-      await _slide(from: dx, to: 0);
+      await _settle();
       return;
     }
-    final dir = target > i ? -1.0 : 1.0;
-    _switching = true;
-    await _slide(from: dx, to: dir * _width);
-    if (!mounted) return;
-    _switchedTo = target;
+    // Switch now, so the new content is built while the old one is still
+    // moving, and slide both together like pages.
+    final dir = target > i ? 1.0 : -1.0;
+    _reporting = true;
+    setState(() => _target = target);
     widget.onChanged(widget.values[target]);
-    _reportDrag(null);
-    _switching = false;
-    await _slide(from: -dir * _width * 0.4, to: 0);
+    await _slide(from: dx, to: -dir * _width);
+    if (!mounted) return;
+    _finishSwitch();
   }
 
   @override
@@ -952,21 +994,41 @@ class _RdSwipeSwitchState<T> extends State<RdSwipeSwitch<T>> with SingleTickerPr
           onHorizontalDragCancel: () {
             if (!_tracking) return;
             _tracking = false;
-            _reportDrag(null);
-            _slide(from: _dx.value, to: 0);
+            _settle();
           },
           // Short lists: the empty space below still takes the swipe.
           child: ConstrainedBox(
             constraints: BoxConstraints(minHeight: MediaQuery.sizeOf(context).height * 0.55),
             child: ValueListenableBuilder<double>(
               valueListenable: _dx,
-              // Painted once, then only moved and faded as a layer.
-              child: RepaintBoundary(child: widget.child),
-              builder: (context, dx, child) {
-                final fade = (1 - (dx.abs() / _width) * 0.6).clamp(0.0, 1.0);
-                return Opacity(
-                  opacity: fade,
-                  child: Transform.translate(offset: Offset(dx, 0), child: child),
+              builder: (context, dx, _) {
+                final target = _target;
+                final outgoing = _outgoing;
+                // Same structure in every phase (keyed by index), so the old
+                // content is neither rebuilt nor repainted when the new one
+                // joins it: each is painted once and then only moved.
+                Widget page(int index, Widget child, double offset, {bool ignoring = false}) => KeyedSubtree(
+                      key: ValueKey(index),
+                      child: IgnorePointer(
+                        ignoring: ignoring,
+                        child: Opacity(
+                          opacity: (1 - (offset.abs() / _width) * 0.6).clamp(0.0, 1.0),
+                          child: Transform.translate(
+                            offset: Offset(offset, 0),
+                            child: RepaintBoundary(child: child),
+                          ),
+                        ),
+                      ),
+                    );
+                return Stack(
+                  clipBehavior: Clip.none,
+                  children: [
+                    if (target != null && outgoing != null) ...[
+                      page(_base, outgoing, dx, ignoring: true),
+                      page(target, widget.child, dx + (target > _base ? 1 : -1) * _width),
+                    ] else
+                      page(_index, widget.child, dx),
+                  ],
                 );
               },
             ),

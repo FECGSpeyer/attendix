@@ -39,7 +39,7 @@ void main() {
                   onDrag: positions.add,
                   child: CustomPaint(
                     painter: painter,
-                    child: const SizedBox(width: double.infinity, height: 400, child: Text('content')),
+                    child: SizedBox(width: double.infinity, height: 400, child: Text('page $selected')),
                   ),
                 ),
           ),
@@ -54,15 +54,32 @@ void main() {
       await tester.pump(const Duration(milliseconds: 16));
     }
     expect(paints, 1, reason: 'drag frames only move the cached layer');
-    expect(tester.getTopLeft(find.text('content')).dx, lessThan(-250));
+    expect(tester.getTopLeft(find.text('page 0')).dx, lessThan(-250));
     expect(positions.last, greaterThan(0.3));
 
+    final dragged = tester.getTopLeft(find.text('page 0')).dx;
+
+    // Released: the neighbour is built at once and slides in beside the
+    // old content, the thumb keeps moving instead of waiting.
     await gesture.up();
+    await tester.pump();
+    expect(selected, 1);
+    expect(find.text('page 0'), findsOneWidget);
+    expect(find.text('page 1'), findsOneWidget);
+    expect(tester.getTopLeft(find.text('page 1')).dx, closeTo(dragged + 800, 1));
+
+    final released = positions.length;
     for (var i = 0; i < 30; i++) {
       await tester.pump(const Duration(milliseconds: 16));
     }
-    expect(selected, 1);
+    final thumb = positions.skip(released).whereType<double>().toList();
+    expect(thumb.length, greaterThan(5));
+    expect(thumb.last, closeTo(1, 0.01));
+    for (var i = 1; i < thumb.length; i++) {
+      expect(thumb[i], greaterThan(thumb[i - 1]), reason: 'the thumb never stands still');
+    }
     expect(positions.last, isNull);
-    expect(tester.getTopLeft(find.text('content')).dx, 0);
+    expect(find.text('page 0'), findsNothing);
+    expect(tester.getTopLeft(find.text('page 1')).dx, 0);
   });
 }
