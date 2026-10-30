@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.22.8",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Mitglieder sind im Register erst nach Instrument sortiert, die Stimmführung steht oben in ihrem eigenen Instrument"
+      ]
+    },
+    {
       "version": "0.22.7",
       "date": "29.10.2026",
       "changes": [
