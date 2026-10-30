@@ -335,6 +335,16 @@ void main() {
     expect(find.text('page own 12'), findsOneWidget);
   });
 
+  testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 99));
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsOneWidget);
+    expect(find.text('Probe 11'), findsOneWidget, reason: 'the list stays');
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    expect(container.read(pendingAttendanceIdProvider), isNull, reason: 'consumed once');
+  });
+
   testWidgets('Spieler: answer open Termine right in the list', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.player));

@@ -94,14 +94,24 @@ class RedesignRoutes {
   /// role checks of [roleRedirect] stay). Other locations and every location
   /// without the Beta stay as they are. "Alle Details" still pushes
   /// `/attendance/:id` directly, so this is no router redirect.
+  /// Query and fragment (e.g. a push's `tenantId`) are kept.
   static String betaTarget(String location) {
     if (!active) return location;
-    final path = Uri.tryParse(location)?.path ?? location;
+    final uri = Uri.tryParse(location);
+    if (uri == null) return location;
+    final path = uri.path;
     final termin = RegExp(r'^/attendance/(\d+)$').firstMatch(path);
-    if (termin != null) return event(int.parse(termin.group(1)!));
-    if (path == '/signout' || path == '/attendance') return events;
-    if (path == '/people') return members;
-    return location;
+    final String target;
+    if (termin != null) {
+      target = event(int.parse(termin.group(1)!));
+    } else if (path == '/signout' || path == '/attendance') {
+      target = events;
+    } else if (path == '/people') {
+      target = members;
+    } else {
+      return location;
+    }
+    return uri.replace(path: target).toString();
   }
 
   /// Role checks of the new design's routes (the router runs them after the

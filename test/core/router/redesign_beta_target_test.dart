@@ -21,6 +21,13 @@ void main() {
     expect(RedesignRoutes.betaTarget('/people'), '/mitglieder');
   });
 
+  test('with the Beta query and fragment stay (tenant switch of a push)', () {
+    RedesignRoutes.active = true;
+    expect(RedesignRoutes.betaTarget('/attendance?tenantId=4'), '/termine?tenantId=4');
+    expect(RedesignRoutes.betaTarget('/attendance/5?tenantId=4'), '/termine/5?tenantId=4');
+    expect(RedesignRoutes.betaTarget('/signout?tenantId=4#top'), '/termine?tenantId=4#top');
+  });
+
   test('with the Beta other pages stay (protocol, messages, settings, parents)', () {
     RedesignRoutes.active = true;
     for (final l in [

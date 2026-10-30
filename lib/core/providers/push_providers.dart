@@ -295,7 +295,7 @@ class RiverpodPushHost implements PushHost {
     // Detail pages are pushed like in the notification center, so "back"
     // returns to where the user was; tab roots are opened with go.
     final isDetail = location.startsWith('/messages/') ||
-        RegExp(r'^/(attendance|termine)/\d+$').hasMatch(location);
+        RegExp(r'^/(attendance|termine)/\d+([?#]|$)').hasMatch(location);
     if (isDetail && !_startupLocations.contains(_location)) {
       unawaited(_router.push(location));
     } else {
