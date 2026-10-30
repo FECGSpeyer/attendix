@@ -768,13 +768,20 @@ class RdSegmented<T> extends StatelessWidget {
                               behavior: HitTestBehavior.opaque,
                               child: SizedBox(
                                 height: 44,
-                                child: Center(
-                                  child: Text(
-                                    labelOf(values[i]),
-                                    style: TextStyle(
-                                      fontSize: 15,
-                                      fontWeight: i == highlighted ? FontWeight.w700 : FontWeight.w500,
-                                      color: i == highlighted ? p.text : p.text2,
+                                child: Padding(
+                                  padding: const EdgeInsets.symmetric(horizontal: 8),
+                                  child: Center(
+                                    // One line: with large text a second line
+                                    // would be cut by the fixed height.
+                                    child: Text(
+                                      labelOf(values[i]),
+                                      maxLines: 1,
+                                      overflow: TextOverflow.ellipsis,
+                                      style: TextStyle(
+                                        fontSize: 15,
+                                        fontWeight: i == highlighted ? FontWeight.w700 : FontWeight.w500,
+                                        color: i == highlighted ? p.text : p.text2,
+                                      ),
                                     ),
                                   ),
                                 ),

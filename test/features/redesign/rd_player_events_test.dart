@@ -20,6 +20,7 @@ import 'package:attendix/features/redesign/presentation/widgets/today/rd_duty_se
 import 'package:attendix/features/self_service/presentation/widgets/self_service_event_actions.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/rendering.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
@@ -210,6 +211,48 @@ void main() {
       // The existing "Offene Dienste" sheet (duty_take with its checks).
       expect(find.text('Offene Dienste'), findsNWidgets(2));
       expect(tester.takeException(), isNull);
+    });
+
+    testWidgets('Offene Dienste fits a small phone with large text', (tester) async {
+      tester.view.physicalSize = const Size(320, 1200);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      final type = TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true);
+      final termin = DutyTermin(
+        attendance: TestFactories.createAttendance(id: 41, tenantId: 7, date: _day(5), typeId: 'd', typeInfo: 'Ordnerdienst'),
+        type: type,
+        required: 3,
+        occupied: 1,
+        persons: const [],
+      );
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          myDutyOverviewProvider.overrideWith((ref) async => MyDutyOverview(
+                person: TestFactories.createPerson(id: 3, tenantId: 7),
+                termine: [termin],
+                openDuties: [termin],
+              )),
+        ],
+        child: _themed(const SingleChildScrollView(child: RdDutySection())),
+      ));
+      await _settle(tester);
+
+      await tester.tap(find.text('Offene Dienste'));
+      await _settle(tester);
+      // The "Ich übernehme" button leaves the title its room (no layout
+      // error) and the row shows the Termin.
+      expect(tester.takeException(), isNull);
+      expect(find.text('Offene Dienste'), findsNWidgets(2));
+      // The button sits below title and date, its label is not cut.
+      final button = find.descendant(of: find.byType(ListTile), matching: find.byType(FilledButton));
+      expect(button, findsOneWidget);
+      expect(tester.getTopLeft(button).dy, greaterThan(tester.getBottomLeft(find.text('Ordnerdienst').last).dy));
+      final label = tester.renderObject<RenderParagraph>(
+        find.descendant(of: button, matching: find.byType(RichText)),
+      );
+      expect(label.didExceedMaxLines, isFalse);
     });
 
     testWidgets('no duty circle, nothing to confirm: no duty section', (tester) async {

@@ -441,6 +441,24 @@ void main() {
       expect(find.text('Bearbeiten'), findsNothing);
     });
 
+    testWidgets('small phone with large text: Deine Stimme keeps its layout', (tester) async {
+      tester.view.physicalSize = const Size(320, 852);
+      tester.view.devicePixelRatio = 1;
+      tester.platformDispatcher.textScaleFactorTestValue = 1.3;
+      addTearDown(tester.view.reset);
+      addTearDown(tester.platformDispatcher.clearTextScaleFactorTestValue);
+      await tester.pumpWidget(_workApp(Role.player, song: _ouverture));
+      await _settle(tester);
+
+      // No overflow (the test would fail on one); the buttons sit below the
+      // title instead of next to it.
+      expect(find.text('DEINE STIMME'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('Öffnen')).dy,
+        greaterThan(tester.getBottomLeft(find.text('Klarinette')).dy),
+      );
+    });
+
     testWidgets('recording plays inline and 0,8× slows it down', (tester) async {
       _phone(tester);
       final player = _FakePlayer();

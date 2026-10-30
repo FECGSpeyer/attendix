@@ -178,12 +178,20 @@ class _PreviewCard extends StatelessWidget {
               ],
             ),
             const SizedBox(height: 14),
-            SizedBox(
-              width: double.infinity,
-              child: RdPrimaryButton(
-                label: l10n.redesignTodayRecord,
-                icon: Icons.checklist_rounded,
-                onPressed: () {},
+            // Only a preview of the colours: looks like the real button but
+            // takes no taps or keyboard focus and is not announced as a button.
+            IgnorePointer(
+              child: ExcludeFocus(
+                child: ExcludeSemantics(
+                  child: SizedBox(
+                    width: double.infinity,
+                    child: RdPrimaryButton(
+                      label: l10n.redesignTodayRecord,
+                      icon: Icons.checklist_rounded,
+                      onPressed: () {},
+                    ),
+                  ),
+                ),
               ),
             ),
           ],

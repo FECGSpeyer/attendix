@@ -41,7 +41,7 @@ class _TenantNotifier extends CurrentTenantNotifier {
 }
 
 final _person = TestFactories.createPerson(id: 1, firstName: 'Anna', lastName: 'Beispiel')
-    .copyWith(email: 'anna@example.org');
+    .copyWith(email: 'anna@example.org', phone: '0176 1234567');
 
 final _auth = () {
   final auth = MockGoTrueClient();
@@ -112,6 +112,20 @@ void main() {
       expect(find.byType(IonFabButton), findsNothing);
       // E-mail without account → "Account erstellen" (key), like the FAB.
       expect(find.widgetWithIcon(IconButton, Icons.key_outlined), findsOneWidget);
+    });
+
+    testWidgets('editing: the phone number gets its own Anrufen button', (tester) async {
+      tester.view.physicalSize = const Size(393, 4000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await _pump(tester, _beta(), const PersonDetailPage(personId: 1));
+      // A tap on the row opens the editor, calling is the button next to it.
+      if (find.text('0176 1234567').evaluate().isEmpty) {
+        await tester.tap(find.text('Allgemein').first);
+        await tester.pump(const Duration(seconds: 1));
+      }
+      expect(find.text('0176 1234567'), findsOneWidget);
+      expect(find.byTooltip('Anrufen'), findsOneWidget);
     });
 
     testWidgets('without the Beta the FAB stays', (tester) async {

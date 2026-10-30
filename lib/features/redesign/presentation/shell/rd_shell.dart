@@ -214,20 +214,25 @@ class _RdBottomBar extends StatelessWidget {
         color: p.surface,
         border: Border(top: BorderSide(color: p.line)),
       ),
-      child: NavigationBarTheme(
-        data: _barTheme(p),
-        child: NavigationBar(
-          selectedIndex: selectedIndex,
-          onDestinationSelected: onSelected,
-          destinations: [
-            for (final d in destinations)
-              NavigationDestination(
-                icon: Icon(d.icon),
-                selectedIcon: Icon(d.selectedIcon),
-                label: RdShell.labelOf(l10n, d.tab),
-                tooltip: '',
-              ),
-          ],
+      // Large text would wrap the labels ("Mitgliede r"); iOS tab bars
+      // grow their labels only a little, too.
+      child: MediaQuery.withClampedTextScaling(
+        maxScaleFactor: 1.15,
+        child: NavigationBarTheme(
+          data: _barTheme(p),
+          child: NavigationBar(
+            selectedIndex: selectedIndex,
+            onDestinationSelected: onSelected,
+            destinations: [
+              for (final d in destinations)
+                NavigationDestination(
+                  icon: Icon(d.icon),
+                  selectedIcon: Icon(d.selectedIcon),
+                  label: RdShell.labelOf(l10n, d.tab),
+                  tooltip: '',
+                ),
+            ],
+          ),
         ),
       ),
     );

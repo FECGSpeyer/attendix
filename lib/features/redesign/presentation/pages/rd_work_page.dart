@@ -394,65 +394,90 @@ class _PartCard extends StatelessWidget {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    final actions = [
+      if (onShare != null)
+        Builder(
+          builder: (button) => IconButton(
+            tooltip: l10n.redesignWorkShareFile(title),
+            icon: Icon(Icons.ios_share, color: p.link),
+            onPressed: () => onShare!(button),
+          ),
+        ),
+      FilledButton(
+        style: FilledButton.styleFrom(
+          backgroundColor: p.primary,
+          foregroundColor: p.onPrimary,
+          minimumSize: const Size(0, 44),
+          padding: const EdgeInsets.symmetric(horizontal: 14),
+          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
+          textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
+        ),
+        onPressed: onOpen,
+        child: Text(l10n.redesignWorkOpen),
+      ),
+    ];
+    final info = Row(
+      children: [
+        ExcludeSemantics(
+          child: Container(
+            width: 52,
+            height: 68,
+            padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
+            decoration: BoxDecoration(
+              color: p.bg,
+              borderRadius: BorderRadius.circular(8),
+              border: Border.all(color: p.offBorder),
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [for (var i = 0; i < 5; i++) Container(height: 2, color: p.text2.withValues(alpha: 0.5))],
+            ),
+          ),
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              RdEyebrow(eyebrow),
+              const SizedBox(height: 2),
+              Text(
+                title,
+                maxLines: 2,
+                overflow: TextOverflow.ellipsis,
+                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
+              ),
+              Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 13)),
+            ],
+          ),
+        ),
+      ],
+    );
     return RdCard(
       padding: const EdgeInsets.all(14),
-      child: Row(
-        children: [
-          ExcludeSemantics(
-            child: Container(
-              width: 52,
-              height: 68,
-              padding: const EdgeInsets.symmetric(horizontal: 8, vertical: 10),
-              decoration: BoxDecoration(
-                color: p.bg,
-                borderRadius: BorderRadius.circular(8),
-                border: Border.all(color: p.offBorder),
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [for (var i = 0; i < 5; i++) Container(height: 2, color: p.text2.withValues(alpha: 0.5))],
-              ),
-            ),
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: LayoutBuilder(
+        builder: (context, constraints) {
+          // Small phones and large text: the buttons move below the text,
+          // next to it they would squeeze the title into one letter a line.
+          final compact = constraints.maxWidth < MediaQuery.textScalerOf(context).scale(300);
+          if (compact) {
+            return Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                RdEyebrow(eyebrow),
-                const SizedBox(height: 2),
-                Text(
-                  title,
-                  maxLines: 2,
-                  overflow: TextOverflow.ellipsis,
-                  style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
-                ),
-                Text(detail, maxLines: 1, overflow: TextOverflow.ellipsis, style: RdType.meta(p, size: 13)),
+                info,
+                const SizedBox(height: 10),
+                Row(mainAxisAlignment: MainAxisAlignment.end, children: actions),
               ],
-            ),
-          ),
-          const SizedBox(width: 8),
-          if (onShare != null)
-            Builder(
-              builder: (button) => IconButton(
-                tooltip: l10n.redesignWorkShareFile(title),
-                icon: Icon(Icons.ios_share, color: p.link),
-                onPressed: () => onShare!(button),
-              ),
-            ),
-          FilledButton(
-            style: FilledButton.styleFrom(
-              backgroundColor: p.primary,
-              foregroundColor: p.onPrimary,
-              minimumSize: const Size(0, 44),
-              padding: const EdgeInsets.symmetric(horizontal: 14),
-              shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(12)),
-              textStyle: const TextStyle(fontSize: 15, fontWeight: FontWeight.w600),
-            ),
-            onPressed: onOpen,
-            child: Text(l10n.redesignWorkOpen),
-          ),
-        ],
+            );
+          }
+          return Row(
+            children: [
+              Expanded(child: info),
+              const SizedBox(width: 8),
+              ...actions,
+            ],
+          );
+        },
       ),
     );
   }
