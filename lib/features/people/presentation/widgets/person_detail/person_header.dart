@@ -277,6 +277,8 @@ class PersonHeader extends ConsumerWidget {
   }
 
   Future<void> _removePhoto(BuildContext context, WidgetRef ref) async {
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) => AppAlertDialog(
@@ -309,11 +311,7 @@ class PersonHeader extends ConsumerWidget {
       // DB_REVIEW_REST (M4): Ionic removeImage – clear img with '' (Ionic
       // code calls img.split and breaks on null), then delete the object
       // whose key is taken from the stored URL.
-      await supabase
-          .from('player')
-          .update({'img': ''})
-          .eq('id', personId)
-          .eq('tenantId', tenant.id!);
+      await repo.updatePlayerFields(personId, {'img': ''});
 
       final storagePath = profileImagePathFromUrl(person.img);
       if (storagePath != null) {

@@ -6,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/self_service_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
@@ -94,13 +95,10 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final userId = supabase.auth.currentUser?.id;
     if (userId == null) return;
     try {
-      final row = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('tenantId', tenant.id!)
-          .eq('userId', userId)
-          .maybeSingle();
-      final role = Role.fromValue(row?['role'] as int? ?? 99);
+      final role = await ref
+              .read(userRegistrationRepositoryForTenantProvider(tenant.id!))
+              .getTenantUserRole(userId, tenantId: tenant.id!) ??
+          Role.fromValue(99);
       await ref.read(currentTenantProvider.notifier).setTenantLocal(tenant);
       await ref.read(currentTenantUserProvider.future);
       if (!mounted) return;

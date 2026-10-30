@@ -8,6 +8,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -633,18 +634,14 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     if (_targetTenantId == null) return;
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final response = await supabase
-          .from('instruments')
-          .select('*')
-          .eq('tenantId', _targetTenantId!);
+      final groups = await ref
+          .read(groupRepositoryForTenantProvider(_targetTenantId))
+          .getGroups();
 
       if (!mounted) return;
 
       setState(() {
-        _targetGroups = (response as List)
-            .map((g) => Group.fromJson(g as Map<String, dynamic>))
-            .toList();
+        _targetGroups = groups;
 
         // Re-auto-map all groups
         final sourceGroups = ref.read(groupsProvider).valueOrNull ?? [];
@@ -707,15 +704,9 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     if (userId == null) return null;
 
     try {
-      final response = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('tenantId', tenantId)
-          .eq('userId', userId)
-          .maybeSingle();
-
-      if (response == null) return null;
-      return Role.fromValue(response['role'] as int? ?? 99);
+      return await ref
+          .read(userRegistrationRepositoryForTenantProvider(tenantId))
+          .getTenantUserRole(userId, tenantId: tenantId);
     } catch (e) {
       if (kDebugMode) {
         debugPrint('Error getting user role in tenant: $e');

@@ -3,9 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/constants/app_constants.dart';
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/providers/realtime_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
@@ -277,6 +277,8 @@ class HistorieAccordion extends ConsumerWidget {
     WidgetRef ref,
     Map<String, dynamic> item,
   ) async {
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder:
@@ -300,7 +302,6 @@ class HistorieAccordion extends ConsumerWidget {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
       final tenant = ref.read(currentTenantProvider);
       final person = await ref.read(personProvider(personId).future);
 
@@ -323,11 +324,7 @@ class HistorieAccordion extends ConsumerWidget {
               .map((h) => h.toJson())
               .toList();
 
-      await supabase
-          .from('player')
-          .update({'history': updatedHistory})
-          .eq('id', person.id!)
-          .eq('tenantId', tenant.id!);
+      await repo.updatePlayerFields(person.id!, {'history': updatedHistory});
 
       ref.invalidate(personProvider(personId));
       ref.invalidate(personHistoryProvider(personId));

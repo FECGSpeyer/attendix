@@ -1451,48 +1451,20 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// person_attendances of [personId] with their Termin, for the history.
-  Future<List<Map<String, dynamic>>> getPersonAttendanceHistoryRows(int personId) async {
+  /// [fromDate] (`yyyy-MM-dd`) keeps only Termine on or after that day.
+  Future<List<Map<String, dynamic>>> getPersonAttendanceHistoryRows(int personId,
+      {String? fromDate}) async {
     try {
-      final response = await supabase
+      var query = supabase
           .from('person_attendances')
           .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId)')
           .eq('person_id', personId)
           .eq('attendance.tenantId', currentTenantId);
+      if (fromDate != null) query = query.gte('attendance.date', fromDate);
+      final response = await query;
       return List<Map<String, dynamic>>.from(response as List);
     } catch (e, stack) {
       handleError(e, stack, 'getPersonAttendanceHistoryRows');
-      rethrow;
-    }
-  }
-
-  /// Role of the account [userId] in the current tenant, null without access.
-  Future<Role?> getTenantUserRole(String userId) async {
-    try {
-      final response = await supabase
-          .from('tenantUsers')
-          .select('role')
-          .eq('userId', userId)
-          .eq('tenantId', currentTenantId)
-          .maybeSingle();
-      if (response == null) return null;
-      return Role.fromValue(response['role'] as int? ?? 99);
-    } catch (e, stack) {
-      handleError(e, stack, 'getTenantUserRole');
-      rethrow;
-    }
-  }
-
-  /// Sets the role of the account [userId] in the current tenant.
-  Future<void> updateTenantUserRole(String userId, Role role) async {
-    ensureNotDemo('updateTenantUserRole'); // DEMO_GUARD
-    try {
-      await supabase
-          .from('tenantUsers')
-          .update({'role': role.value})
-          .eq('userId', userId)
-          .eq('tenantId', currentTenantId);
-    } catch (e, stack) {
-      handleError(e, stack, 'updateTenantUserRole');
       rethrow;
     }
   }

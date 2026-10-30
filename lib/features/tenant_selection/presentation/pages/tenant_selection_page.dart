@@ -9,6 +9,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/app_router.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -145,16 +146,11 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     if (userId == null) return Role.none;
 
-    final response =
-        await supabase
-            .from('tenantUsers')
-            .select('role')
-            .eq('tenantId', tenantId)
-            .eq('userId', userId)
-            .maybeSingle();
-
-    if (response == null) return Role.none;
-    return Role.fromValue(response['role'] as int? ?? 99);
+    final repo = container != null
+        ? container.read(userRegistrationRepositoryForTenantProvider(tenantId))
+        : ref.read(userRegistrationRepositoryForTenantProvider(tenantId));
+    return await repo.getTenantUserRole(userId, tenantId: tenantId) ??
+        Role.none;
   }
 
   /// Navigate to the appropriate page based on role

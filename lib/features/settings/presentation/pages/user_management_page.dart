@@ -50,54 +50,10 @@ class TenantUser {
 
 /// Provider for tenant users
 final tenantUsersProvider = FutureProvider<List<TenantUser>>((ref) async {
-  ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenantId = ref.watch(currentTenantIdProvider);
-
-  if (tenantId == null) return [];
-
-  // Get tenant users
-  final response = await supabase
-      .from('tenantUsers')
-      .select('*')
-      .eq('tenantId', tenantId)
-      .order('role', ascending: true);
-
-  final users = (response as List).map((e) => TenantUser.fromJson(e)).toList();
-
-  // Load emails from player table for users with personId (Issue #8)
-  final personIds = users
-      .where((u) => u.personId != null)
-      .map((u) => u.personId!)
-      .toSet()
-      .toList();
-
-  if (personIds.isEmpty) return users;
-
-  final playerResponse = await supabase
-      .from('player')
-      .select('id, email')
-      .eq('tenantId', tenantId)
-      .inFilter('id', personIds);
-
-  final emailMap = <int, String?>{};
-  for (final p in playerResponse as List) {
-    emailMap[p['id'] as int] = p['email'] as String?;
-  }
-
-  return users.map((u) {
-    if (u.personId != null && emailMap.containsKey(u.personId)) {
-      return TenantUser(
-        id: u.id,
-        tenantId: u.tenantId,
-        userId: u.userId,
-        role: u.role,
-        personId: u.personId,
-        email: emailMap[u.personId],
-      );
-    }
-    return u;
-  }).toList();
+  final repo = ref.watch(userRegistrationRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return [];
+  final rows = await repo.getTenantUserRows();
+  return rows.map(TenantUser.fromJson).toList();
 });
 
 /// User Management Page
@@ -643,6 +599,8 @@ class _UserTile extends ConsumerWidget {
 
   Future<void> _changeRole(BuildContext context, WidgetRef ref, Role newRole) async {
     if (newRole.value == user.role) return;
+    // Bound before the confirm dialog (tenant switch safety).
+    final registration = ref.read(userRegistrationRepositoryWithTenantProvider);
 
     final supabase = ref.read(supabaseClientProvider);
     final tenantId = ref.read(currentTenantIdProvider);
@@ -700,11 +658,7 @@ class _UserTile extends ConsumerWidget {
     }
 
     try {
-      await supabase
-          .from('tenantUsers')
-          .update({'role': newRole.value})
-          .eq('id', user.id)
-          .eq('tenantId', tenantId);
+      await registration.updateTenantUserRole(user.userId, newRole);
 
       ref.invalidate(tenantUsersProvider);
 

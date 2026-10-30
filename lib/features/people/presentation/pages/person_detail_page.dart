@@ -410,7 +410,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   }
 
   Future<Role?> _getUserRole(String userId) async {
-    final repo = ref.read(playerRepositoryWithTenantProvider);
+    final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return null;
     try {
       return await repo.getTenantUserRole(userId);
@@ -1499,7 +1499,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    final repo = ref.read(playerRepositoryWithTenantProvider);
+    final repo = ref.read(userRegistrationRepositoryWithTenantProvider);
     final appId = widget.person.appId;
 
     if (appId == null || !repo.hasTenantId) return;
