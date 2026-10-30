@@ -93,10 +93,24 @@ SignoutData buildSignoutData({
   DateTime? now,
   bool shiftExcusedAsPresent = false,
 }) {
+  // `date` is often only the day (normalized to 12:00), the start time is
+  // stored separately; compare both so the earlier Termin of a day leads.
+  DateTime start(CrossTenantPersonAttendance a) {
+    final day = EventListUtils.parse(a.date) ?? DateTime(1970);
+    final time = a.startTime ?? a.attendanceType?.startTime;
+    final match = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch(time ?? '');
+    if (match == null) return day;
+    return DateTime(day.year, day.month, day.day,
+        int.parse(match.group(1)!), int.parse(match.group(2)!));
+  }
+
   int compareDate(CrossTenantPersonAttendance a, CrossTenantPersonAttendance b) {
-    final da = EventListUtils.parse(a.date) ?? DateTime(1970);
-    final db = EventListUtils.parse(b.date) ?? DateTime(1970);
-    return da.compareTo(db);
+    final byDate = start(a).compareTo(start(b));
+    if (byDate != 0) return byDate;
+    // Same start: own Termine first, then a fixed order (the database
+    // returns ties in any order, so the list must not reshuffle on reload).
+    if (a.isMember != b.isMember) return a.isMember ? -1 : 1;
+    return (a.attendanceId ?? 0).compareTo(b.attendanceId ?? 0);
   }
 
   bool ended(CrossTenantPersonAttendance a) =>

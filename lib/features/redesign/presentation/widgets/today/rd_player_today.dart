@@ -13,7 +13,7 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider, rdStartOf;
+import '../../../data/providers/rd_today_providers.dart' show rdNotMemberInfo, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -33,7 +33,10 @@ class RdPlayerToday extends ConsumerWidget {
     final data = ref.watch(rdSignoutDataProvider).valueOrNull;
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
-    final next = data?.upcoming.take(4).toList() ?? const <CrossTenantPersonAttendance>[];
+    // Without the Termin of the card above (the next own one).
+    final focus = data == null ? null : rdTodayFocus(data);
+    final next = data?.allUpcoming.where((a) => !identical(a, focus)).take(4).toList() ??
+        const <CrossTenantPersonAttendance>[];
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
 
     return Column(
@@ -59,7 +62,11 @@ class RdPlayerToday extends ConsumerWidget {
                 RdEventRow(
                   date: att.date,
                   title: att.eventTitle,
-                  meta: att.eventMeta(),
+                  meta: actions.isOwn(att)
+                      ? att.eventMeta()
+                      : [att.eventMeta(), rdNotMemberInfo(tenant)]
+                          .where((s) => s.isNotEmpty)
+                          .join('\n'),
                   trailing: actions.isOwn(att) ? rdOwnStatusPill(l10n, att.status) : null,
                   onTap: () => att.id != null && actions.isOwn(att)
                       ? context.push(RedesignRoutes.ownEvent(att.id!))
@@ -166,16 +173,16 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
       // Helfer without an own member entry.
       if (widget.showHeader) return const SizedBox.shrink();
       body = RdInfoCard(text: l10n.redesignTodayNoMember, icon: Icons.info_outline);
-    } else if (data.current == null) {
+    } else if (rdTodayFocus(data) case final focus?) {
+      body = _card(
+        context,
+        focus,
+        signoutEventActions(context, ref, tenant: tenant, player: player),
+      );
+    } else {
       body = RdInfoCard(
         text: l10n.redesignTodayNoUpcoming,
         icon: Icons.event_available_outlined,
-      );
-    } else {
-      body = _card(
-        context,
-        data.current!,
-        signoutEventActions(context, ref, tenant: tenant, player: player),
       );
     }
 
@@ -248,6 +255,11 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
             const SizedBox(height: 10),
           ],
           Text(question, style: RdType.body(p).copyWith(fontWeight: FontWeight.w600)),
+          // Ionic: hint of the instance below Termine without the person.
+          if (qa == null && !att.isMember) ...[
+            const SizedBox(height: 4),
+            Text(rdNotMemberInfo(ref.watch(currentTenantProvider)), style: RdType.meta(p)),
+          ],
           if (att.notes != null && att.notes!.isNotEmpty && qa != null && !qa.present) ...[
             const SizedBox(height: 4),
             Text(att.notes!, style: RdType.meta(p)),

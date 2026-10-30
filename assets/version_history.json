@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.23.4",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Die Karte „Nächster Termin“ auf „Heute“ zeigt jetzt deinen eigenen Termin, auch wenn am selben Tag ein Termin stattfindet, für den du nicht eingeteilt bist. Nach einer Absage steht dort „Du bist abgemeldet“ mit „Doch dabei“ statt „nicht eingeteilt“",
+        "🐛 Neues Design (Beta): Bei Terminen, für die du nicht eingeteilt bist, steht wie im alten Design der Hinweistext der Instanz",
+        "🐛 Termine am selben Tag werden nach Uhrzeit sortiert und springen nach dem Neuladen nicht mehr, bei gleicher Uhrzeit stehen deine eigenen zuerst"
+      ]
+    },
+    {
       "version": "0.23.3",
       "date": "30.10.2026",
       "changes": [
