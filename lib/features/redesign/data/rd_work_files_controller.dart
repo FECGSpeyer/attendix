@@ -12,6 +12,9 @@ import 'rd_work_files_logic.dart';
 /// How long a delete can be taken back before it is stored.
 const Duration rdFileUndoDelay = Duration(seconds: 6);
 
+/// How long the upload queue stays after everything was uploaded.
+const Duration rdUploadQueueHideDelay = Duration(seconds: 3);
+
 /// REDESIGN: file writes of one Werk (key: song id) for the desktop file
 /// workspace: the upload queue, deletes with "Rückgängig", category and
 /// name changes.
@@ -31,6 +34,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
   int? _mainGroupId;
   Timer? _deleteTimer;
   Timer? _noticeTimer;
+  Timer? _hideTimer;
   List<SongFile> _toDelete = const [];
   Future<SongFileService>? _deleteService;
 
@@ -44,6 +48,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
     ref.onDispose(() {
       _deleteTimer?.cancel();
       _noticeTimer?.cancel();
+      _hideTimer?.cancel();
     });
     return const RdWorkFilesState();
   }
@@ -100,6 +105,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
         ),
     ];
     if (added.isEmpty) return;
+    _hideTimer?.cancel();
     // Finished rows of an earlier batch make room for the new one.
     state = state.copyWith(uploads: [
       ...state.uploads.where((u) => u.status != RdUploadStatus.done),
@@ -146,12 +152,24 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
       _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.failed, error: friendlyErrorMessage(e)));
     }
     _refresh();
+    _hideWhenAllDone();
+  }
+
+  /// All uploads stored: the queue goes away by itself after a moment.
+  /// With a failed upload it stays, for "Erneut versuchen".
+  void _hideWhenAllDone() {
+    _hideTimer?.cancel();
+    if (state.busy || state.failedCount > 0 || state.uploads.isEmpty) return;
+    _hideTimer = Timer(rdUploadQueueHideDelay, () {
+      if (!state.busy && state.failedCount == 0) dismissFinished();
+    });
   }
 
   /// "Erneut versuchen" of a failed upload.
   void retry(int id) {
     final upload = state.uploads.where((u) => u.id == id).firstOrNull;
     if (upload == null || upload.status != RdUploadStatus.failed) return;
+    _hideTimer?.cancel();
     _setUpload(id, (u) => u.copyWith(status: RdUploadStatus.waiting));
     final service = _uploadServices[id] ??= _service();
     _serial(service, (s) => _upload(s, id));
@@ -159,6 +177,7 @@ class RdWorkFilesController extends AutoDisposeFamilyNotifier<RdWorkFilesState, 
 
   /// Removes the finished and failed rows of the queue.
   void dismissFinished() {
+    _hideTimer?.cancel();
     final keep = [
       for (final u in state.uploads)
         if (u.status == RdUploadStatus.waiting || u.status == RdUploadStatus.uploading) u,

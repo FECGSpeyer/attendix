@@ -316,6 +316,22 @@ void main() {
       expect(state().uploads, isEmpty);
     });
 
+    test('the queue hides itself once all uploads are stored, but stays with a failure', () async {
+      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const <SongFile>[])]);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(state().doneCount, 1, reason: 'still visible right after the upload');
+      await Future<void>.delayed(rdUploadQueueHideDelay);
+      expect(state().uploads, isEmpty);
+
+      files.failing.add('b.pdf');
+      controller().enqueue([
+        (file: _file('b.pdf'), instrumentId: 11, note: null, replace: const <SongFile>[]),
+        (file: _file('c.pdf'), instrumentId: 12, note: null, replace: const <SongFile>[]),
+      ]);
+      await Future<void>.delayed(const Duration(milliseconds: 100) + rdUploadQueueHideDelay);
+      expect(state().uploads.map((u) => u.status), [RdUploadStatus.failed, RdUploadStatus.done]);
+    });
+
     test('"Ersetzen": a failed upload keeps the old file; a retry does not upload twice', () async {
       files.failing.add('a.pdf');
       controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
