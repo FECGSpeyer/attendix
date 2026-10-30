@@ -44,6 +44,8 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
+import '../../../../core/router/redesign_routes.dart';
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -190,7 +192,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     final ok = await ref.read(songNotifierProvider.notifier).deleteSong(data.song.id!);
     if (!mounted) return;
     if (ok) {
-      context.go('/settings/songs');
+      // Beta: back to the Werke of the new design, not the old list.
+      context.go(context.rdSkin != null ? RedesignRoutes.works : '/settings/songs');
     } else {
       ToastHelper.showError(context, context.l10n.songsFlutterDeleteFailed);
     }
@@ -1249,7 +1252,8 @@ class _FilesGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!isIosLook(context)) {
+    // Beta-Skin: the files are a card like every other group.
+    if (!isIosLook(context) || context.rdSkin != null) {
       return IonInsetList(color: color, border: border, children: children);
     }
     final rows = <Widget>[];

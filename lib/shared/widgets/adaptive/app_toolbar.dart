@@ -23,7 +23,8 @@ class ToolbarButtonGroup extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) {
+    // Beta-Skin: plain header icons in the link colour, no glass capsule.
+    if (!useIosLook(context) || context.rdSkin != null) {
       return Row(mainAxisSize: MainAxisSize.min, children: children);
     }
     final fg = Theme.of(context).colorScheme.onSurface;
