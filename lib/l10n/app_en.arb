@@ -2451,6 +2451,7 @@
   "redesignFilesKeepBoth": "Keep both",
   "redesignFilesOpen": "Open",
   "redesignFilesOtherCategory": "Other …",
+  "redesignFilesPickHint": "Click to choose files.",
   "redesignFilesQueueDone": "{count, plural, one {1 file uploaded} other {{count} files uploaded}}",
   "redesignFilesQueueTitle": "Uploading: {done} of {total}",
   "redesignFilesRename": "Rename",
