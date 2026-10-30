@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.24.3",
+      "date": "30.10.2026",
+      "changes": [
+        "💄 Neues Design (Beta): „Werk bearbeiten“ zeigt die Dateien als Karte, und die Knöpfe oben (z. B. „Werk löschen“) erscheinen wie im neuen Design ohne graue Kapsel",
+        "🐛 Neues Design (Beta): Nach „Werk löschen“ landest du wieder bei den Werken des neuen Designs statt in der alten Werkliste"
+      ]
+    },
+    {
       "version": "0.24.2",
       "date": "30.10.2026",
       "changes": [
