@@ -8,12 +8,15 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
@@ -22,6 +25,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/person_attendance_writes.dart';
+import '../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show mainGroupIdOf, sortPersonsByGroup;
 import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
@@ -492,6 +496,9 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         icon: Icons.group_off_outlined,
         action: RdOutlineButton(label: l10n.redesignEventMore, onPressed: () => context.push('/attendance/$_id')),
       ));
+      children
+        ..add(const SizedBox(height: 16))
+        ..add(_EventActions(attendance: attendance, showMore: false));
     } else if (_tab == RdEventTab.overview) {
       children.add(_Overview(
         attendance: attendance,
@@ -984,18 +991,101 @@ class _Overview extends ConsumerWidget {
           ),
         ],
         const SizedBox(height: 24),
-        RdGroupedList(
-          children: [
-            RdListRow(
-              leading: const RdRowIcon(Icons.tune),
-              title: l10n.redesignEventMore,
-              subtitle: l10n.redesignEventMoreHint,
-              onTap: () => context.push('/attendance/${attendance.id}'),
-            ),
-          ],
-        ),
+        _EventActions(attendance: attendance),
       ],
     );
+  }
+}
+
+/// Ablauf ansehen · Alle Details und Bearbeiten · Termin löschen (also
+/// shown when the Termin has no persons yet).
+class _EventActions extends ConsumerWidget {
+  const _EventActions({required this.attendance, this.showMore = true});
+
+  final Attendance attendance;
+
+  /// False where "Alle Details" already is a button (empty Termin).
+  final bool showMore;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final role = ref.watch(effectiveRoleProvider);
+    // Like the old Termine list: Beobachter never see the Ablaufplan; only
+    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
+    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
+    final canDelete = role.isAdmin || role.isResponsible;
+    if (!hasPlan && !showMore && !canDelete) return const SizedBox.shrink();
+    return RdGroupedList(
+      children: [
+        if (hasPlan)
+          RdListRow(
+            leading: const RdRowIcon(Icons.view_timeline_outlined),
+            title: l10n.redesignEventPlan,
+            subtitle: l10n.redesignEventPlanHint,
+            onTap: () => openAttendancePlanViewer(context, attendance),
+          ),
+        if (showMore)
+          RdListRow(
+            leading: const RdRowIcon(Icons.tune),
+            title: l10n.redesignEventMore,
+            subtitle: l10n.redesignEventMoreHint,
+            onTap: () => context.push('/attendance/${attendance.id}'),
+          ),
+        if (canDelete)
+          RdListRow(
+            key: const Key('rd-event-delete'),
+            leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+            title: l10n.redesignEventDelete,
+            titleColor: p.absent,
+            showChevron: false,
+            onTap: () => _delete(context, ref),
+          ),
+      ],
+    );
+  }
+
+  /// "Termin löschen" (old Termine list: Dirigent only, i.e. Admin and
+  /// Verantwortliche): confirm, delete, back to the Termine.
+  Future<void> _delete(BuildContext context, WidgetRef ref) async {
+    final l10n = context.l10n;
+    final id = attendance.id;
+    if (id == null || DemoGuard.blocked()) return; // DEMO_GUARD
+    // Bound before the dialog (tenant switch safety).
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final confirmed = await showDialog<bool>(
+      context: context,
+      builder: (ctx) => AlertDialog(
+        title: Text(l10n.attListRemoveConfirm),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx, false), child: Text(l10n.commonCancel)),
+          TextButton(
+            style: TextButton.styleFrom(foregroundColor: context.rd.absent),
+            onPressed: () => Navigator.pop(ctx, true),
+            child: Text(l10n.attListContinue),
+          ),
+        ],
+      ),
+    );
+    if (confirmed != true || !context.mounted) return;
+    // The page may close while the delete runs (tab or page change): the
+    // container and router outlive this widget's ref.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final router = GoRouter.of(context);
+    HapticHelper.medium();
+    try {
+      await repo.deleteAttendance(id);
+    } catch (e) {
+      if (context.mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+      return;
+    }
+    container
+      ..invalidate(attendancesProvider)
+      ..invalidate(realtimeAttendanceListProvider)
+      ..invalidate(playerAttendancePercentagesProvider);
+    if (context.mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
+    router.go(RedesignRoutes.events);
   }
 }
 

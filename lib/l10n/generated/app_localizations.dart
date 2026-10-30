@@ -14411,6 +14411,18 @@ abstract class AppLocalizations {
   /// **'{count} da'**
   String redesignEventCountPresent(Object count);
 
+  /// redesign.event.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Termin löschen'**
+  String get redesignEventDelete;
+
+  /// redesign.event.deleted
+  ///
+  /// In de, this message translates to:
+  /// **'Termin gelöscht'**
+  String get redesignEventDeleted;
+
   /// redesign.event.details
   ///
   /// In de, this message translates to:
@@ -14482,6 +14494,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'z. B. Grund oder Uhrzeit'**
   String get redesignEventNoteHint;
+
+  /// redesign.event.plan
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf ansehen'**
+  String get redesignEventPlan;
+
+  /// redesign.event.planHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan, am Termin-Tag live'**
+  String get redesignEventPlanHint;
 
   /// redesign.event.registerEmpty
   ///

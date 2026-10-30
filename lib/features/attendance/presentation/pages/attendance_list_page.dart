@@ -15,8 +15,7 @@ import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import 'attendance_create_page.dart';
-import '../../../../data/models/plan/plan.dart';
-import '../../../planning/presentation/pages/plan_viewer_page.dart';
+import '../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
@@ -94,39 +93,11 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   /// Beobachter never see the Ablaufplan.
   bool _hasPlan(Attendance att) {
     if (ref.read(effectiveRoleProvider).isViewer) return false;
-    final fields = att.plan?['fields'];
-    return fields is List && fields.isNotEmpty;
+    return attendanceHasPlan(att);
   }
 
   /// Opens the Ablaufplan read-only; a Termin running today starts in live mode.
-  Future<void> _openPlanViewer(Attendance att) async {
-    Plan? plan;
-    try {
-      plan = Plan.fromJson(att.plan!);
-    } catch (_) {
-      return;
-    }
-    await showPlanViewer(
-      context,
-      attendance: PlanAttendance(
-        id: att.id,
-        date: att.date,
-        durationDays: att.durationDays,
-        plan: plan,
-        typeId: att.typeId,
-        typeInfo: att.typeInfo,
-        startTime: att.startTime,
-        sharePlan: att.sharePlan,
-      ),
-      plan: plan,
-      title: (plan.title?.trim().isNotEmpty ?? false)
-          ? plan.title!.trim()
-          : (att.typeInfo?.isNotEmpty ?? false)
-              ? att.typeInfo!
-              : context.l10n.signoutRunSheet,
-      defaultLive: EventListUtils.isRunning(att.date, att.durationDays),
-    );
-  }
+  Future<void> _openPlanViewer(Attendance att) => openAttendancePlanViewer(context, att);
 
   /// Termintyp filter popover (Ionic att-list "options" popover).
   Widget _buildTypeFilterButton(List<AttendanceType> types) {

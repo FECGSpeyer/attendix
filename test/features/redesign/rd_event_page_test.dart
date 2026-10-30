@@ -84,7 +84,15 @@ class _Harness {
     this.scope = const AttendanceGroupScope.all(),
     this.valid = true,
     this.canViewNotes = true,
+    this.plan,
+    this.empty = false,
   });
+
+  /// Termin without persons.
+  final bool empty;
+
+  /// Ablaufplan of the Termin (Attendance.plan).
+  final Map<String, dynamic>? plan;
 
   final Role role;
   final AttendanceGroupScope scope;
@@ -161,12 +169,12 @@ class _Harness {
               startTime: '19:30',
               endTime: '21:30',
               notes: 'Bitte Konzertmappe mitbringen.',
-            )),
+            ).copyWith(plan: plan)),
         attendanceTypeForAttendanceProvider.overrideWith(
           (ref, id) async => TestFactories.createAttendanceType(id: 'p', name: 'Probe'),
         ),
-        personAttendancesForAttendanceProvider.overrideWith((ref, id) async => _rows()),
-        filteredPersonsForAttendanceProvider.overrideWith((ref, id) async => _persons),
+        personAttendancesForAttendanceProvider.overrideWith((ref, id) async => empty ? const [] : _rows()),
+        filteredPersonsForAttendanceProvider.overrideWith((ref, id) async => empty ? const [] : _persons),
         groupsProvider.overrideWith((ref) async => [
               TestFactories.createGroup(id: 10, name: 'Holz', index: 1),
               TestFactories.createGroup(id: 20, name: 'Trompete', index: 2),
@@ -730,6 +738,108 @@ void main() {
       await tester.pumpWidget(_Harness().app(tab: tab));
       await _settle(tester);
       expect(tester.takeException(), isNull, reason: tab.name);
+    }
+  });
+
+  group('U2: Überblick actions', () {
+    const plan = {
+      'fields': [
+        {'id': 'a', 'name': 'Einspielen', 'time': '10'},
+      ],
+    };
+
+    testWidgets('Dirigent deletes the Termin after confirming', (tester) async {
+      _size(tester, const Size(393, 1400));
+      final h = _Harness();
+      when(() => h.repo.deleteAttendance(21)).thenAnswer((_) async {});
+      await tester.pumpWidget(h.app());
+      await _settle(tester);
+
+      await tester.ensureVisible(find.text('Termin löschen'));
+      await tester.tap(find.text('Termin löschen'));
+      await _settle(tester);
+      expect(find.text('Möchtest du den Termin wirklich entfernen?'), findsOneWidget);
+      await tester.tap(find.text('Abbrechen'));
+      await _settle(tester);
+      verifyNever(() => h.repo.deleteAttendance(any()));
+
+      await tester.tap(find.text('Termin löschen'));
+      await _settle(tester);
+      await tester.tap(find.text('Fortfahren'));
+      await _settle(tester);
+      verify(() => h.repo.deleteAttendance(21)).called(1);
+      expect(find.text('page termine'), findsOneWidget);
+    });
+
+    testWidgets('a failed delete stays on the Termin', (tester) async {
+      _size(tester, const Size(393, 1400));
+      final h = _Harness();
+      when(() => h.repo.deleteAttendance(21)).thenThrow(Exception('Netzwerk weg'));
+      await tester.pumpWidget(h.app());
+      await _settle(tester);
+      await tester.ensureVisible(find.text('Termin löschen'));
+      await tester.tap(find.text('Termin löschen'));
+      await _settle(tester);
+      await tester.tap(find.text('Fortfahren'));
+      await _settle(tester);
+      expect(find.text('page termine'), findsNothing);
+      expect(find.text('Gesamtprobe'), findsOneWidget);
+    });
+
+    testWidgets('a Termin without persons still offers Ablauf and Löschen', (tester) async {
+      _size(tester, const Size(393, 1400));
+      await tester.pumpWidget(_Harness(plan: plan, empty: true).app());
+      await _settle(tester);
+      expect(find.text('Ablauf ansehen'), findsOneWidget);
+      expect(find.text('Termin löschen'), findsOneWidget);
+      // "Alle Details" stays the button of the empty card, not a second row.
+      expect(find.text('Ablauf, Checkliste, Werke und Notizen'), findsNothing);
+    });
+
+    testWidgets('switching to Anwesenheit while deleting still finishes', (tester) async {
+      _size(tester, const Size(393, 1400));
+      final h = _Harness();
+      final gate = Completer<void>();
+      when(() => h.repo.deleteAttendance(21)).thenAnswer((_) => gate.future);
+      await tester.pumpWidget(h.app());
+      await _settle(tester);
+      await tester.ensureVisible(find.text('Termin löschen'));
+      await tester.tap(find.text('Termin löschen'));
+      await _settle(tester);
+      await tester.tap(find.text('Fortfahren'));
+      await tester.pump();
+      // The Überblick goes away while the delete is still running.
+      await tester.ensureVisible(find.text('Anwesenheit').first);
+      await tester.tap(find.text('Anwesenheit').first);
+      await _settle(tester);
+      expect(find.text('Termin löschen'), findsNothing);
+      gate.complete();
+      await _settle(tester);
+      expect(tester.takeException(), isNull);
+      expect(find.text('page termine'), findsOneWidget);
+    });
+
+    for (final role in [Role.helper, Role.viewer]) {
+      testWidgets('${role.name} cannot delete', (tester) async {
+        _size(tester, const Size(393, 1400));
+        await tester.pumpWidget(_Harness(role: role).app());
+        await _settle(tester);
+        expect(find.text('Termin löschen'), findsNothing);
+      });
+    }
+
+    for (final (name, h, shown) in [
+      ('no plan', () => _Harness(), false),
+      ('plan, Dirigent', () => _Harness(plan: plan), true),
+      ('plan, Helfer', () => _Harness(plan: plan, role: Role.helper), true),
+      ('plan, Beobachter', () => _Harness(plan: plan, role: Role.viewer), false),
+    ]) {
+      testWidgets('Ablauf ansehen: $name', (tester) async {
+        _size(tester, const Size(393, 1400));
+        await tester.pumpWidget(h().app());
+        await _settle(tester);
+        expect(find.text('Ablauf ansehen'), shown ? findsOneWidget : findsNothing);
+      });
     }
   });
 }

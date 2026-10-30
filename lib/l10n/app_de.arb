@@ -10913,6 +10913,14 @@
       "count": {}
     }
   },
+  "redesignEventDelete": "Termin löschen",
+  "@redesignEventDelete": {
+    "description": "redesign.event.delete"
+  },
+  "redesignEventDeleted": "Termin gelöscht",
+  "@redesignEventDeleted": {
+    "description": "redesign.event.deleted"
+  },
   "redesignEventDetails": "Alle Details",
   "@redesignEventDetails": {
     "description": "redesign.event.details"
@@ -10966,6 +10974,14 @@
   "redesignEventNoteHint": "z. B. Grund oder Uhrzeit",
   "@redesignEventNoteHint": {
     "description": "redesign.event.noteHint"
+  },
+  "redesignEventPlan": "Ablauf ansehen",
+  "@redesignEventPlan": {
+    "description": "redesign.event.plan"
+  },
+  "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
+  "@redesignEventPlanHint": {
+    "description": "redesign.event.planHint"
   },
   "redesignEventRegisterEmpty": "{group}: 0 von {count} da.",
   "@redesignEventRegisterEmpty": {

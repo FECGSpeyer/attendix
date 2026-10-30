@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.24.2",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Im Überblick eines Termins kannst du jetzt den Ablauf direkt ansehen (am Termin-Tag live)",
+        "✨ Neues Design (Beta): Dirigenten können einen Termin jetzt auch im neuen Design löschen (Überblick › „Termin löschen“)",
+        "💄 Neues Design (Beta): Unter „Alle Details und Bearbeiten“ erscheinen Allgemein, Werke, Checkliste und Ablauf als Karten im neuen Design"
+      ]
+    },
+    {
       "version": "0.24.1",
       "date": "30.10.2026",
       "changes": [
