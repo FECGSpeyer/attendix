@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
+
 import '../../../core/utils/haptic_helper.dart';
 import 'adaptive_platform.dart';
 
@@ -165,13 +167,17 @@ class IonSegment<T> extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (forceMd || !useIosLook(context)) return _buildMd(context);
+    // Beta-Skin: the segmented control of the new design on every platform
+    // (grey track, white pill, bold selected label).
+    final rd = context.rdSkin;
+    if (rd == null && (forceMd || !useIosLook(context))) return _buildMd(context);
     final theme = Theme.of(context);
-    final labelColor = theme.colorScheme.onSurface;
-    final trackColor = !neutral
-        ? theme.colorScheme.primary.withValues(alpha: 0.065)
-        : iosTrack(theme.brightness);
-    final pillColor = iosIndicator(theme.brightness);
+    final labelColor = rd?.text ?? theme.colorScheme.onSurface;
+    final trackColor = rd?.track ??
+        (!neutral
+            ? theme.colorScheme.primary.withValues(alpha: 0.065)
+            : iosTrack(theme.brightness));
+    final pillColor = rd?.surface ?? iosIndicator(theme.brightness);
 
     Widget segment(IonSegmentItem<T> item) {
       final checked = item.value == value;
@@ -181,9 +187,9 @@ class IonSegment<T> extends StatelessWidget {
         overflow: TextOverflow.ellipsis,
         textAlign: TextAlign.center,
         style: TextStyle(
-          fontSize: iosFontSize,
-          fontWeight: FontWeight.w500,
-          color: labelColor,
+          fontSize: rd != null ? 15 : iosFontSize,
+          fontWeight: rd != null && checked ? FontWeight.w700 : FontWeight.w500,
+          color: rd != null && !checked ? rd.text2 : labelColor,
         ),
         child: IconTheme.merge(
           data: IconThemeData(color: labelColor, size: 18),
@@ -200,7 +206,10 @@ class IonSegment<T> extends StatelessWidget {
         alignment: Alignment.center,
         decoration: BoxDecoration(
           color: checked ? pillColor : Colors.transparent,
-          borderRadius: BorderRadius.circular(height),
+          borderRadius: BorderRadius.circular(rd != null ? 9 : height),
+          boxShadow: rd != null && checked
+              ? const [BoxShadow(color: Color(0x1F000000), blurRadius: 3, offset: Offset(0, 1))]
+              : null,
         ),
         child: child,
       );
@@ -238,10 +247,10 @@ class IonSegment<T> extends StatelessWidget {
     );
 
     final track = Container(
-      height: height,
+      height: rd != null ? 40 : height,
       decoration: BoxDecoration(
         color: trackColor,
-        borderRadius: BorderRadius.circular(height / 2),
+        borderRadius: BorderRadius.circular(rd != null ? 11 : height / 2),
       ),
       child: scrollable
           ? SingleChildScrollView(scrollDirection: Axis.horizontal, child: row)

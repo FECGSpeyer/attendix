@@ -11334,6 +11334,10 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignManageAnnouncementsHint": "Gesendete Mitteilungen ansehen",
+  "@redesignManageAnnouncementsHint": {
+    "description": "redesign.manage.announcementsHint"
+  },
   "redesignManageAreaCommunication": "Kommunikation",
   "@redesignManageAreaCommunication": {
     "description": "redesign.manage.areaCommunication"
@@ -11350,17 +11354,21 @@
   "@redesignManageAreaGroup": {
     "description": "redesign.manage.areaGroup"
   },
-  "redesignManageAreaMembers": "Mitglieder & Rollen",
+  "redesignManageAreaMembers": "Mitglieder, Register & Rollen",
   "@redesignManageAreaMembers": {
     "description": "redesign.manage.areaMembers"
   },
-  "redesignManageAreaWorks": "Werke, Register & Dateien",
+  "redesignManageAreaWorks": "Werke & Dateien",
   "@redesignManageAreaWorks": {
     "description": "redesign.manage.areaWorks"
   },
   "redesignManageClassic": "Alle Einstellungen (bisherige Ansicht)",
   "@redesignManageClassic": {
     "description": "redesign.manage.classic"
+  },
+  "redesignManageExtraFieldsHint": "Eigene Felder für Personen und Werke",
+  "@redesignManageExtraFieldsHint": {
+    "description": "redesign.manage.extraFieldsHint"
   },
   "redesignManageFooter": "{count, plural, one {Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.} other {Alle {count} bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.}}",
   "@redesignManageFooter": {

@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive.dart';
 
 /// Ionic `ion-modal` breakpoint: on screens at least 768 × 600 a modal is a
@@ -27,6 +28,7 @@ Future<T?> showIonModal<T>(
   final cardHeight = height ?? ionModalCardHeight(size);
   if (isIonModalCard(size)) {
     final ios = useIosLook(context);
+    final rd = context.rdSkin;
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
@@ -35,9 +37,11 @@ Future<T?> showIonModal<T>(
         clipBehavior: Clip.antiAlias,
         // PARITY_R3: Ionic md desktop modal `--border-radius: 2px` with a
         // `0 28px 48px rgba(0,0,0,.4)` shadow; iOS 10px.
-        elevation: ios ? null : 24,
+        elevation: ios || rd != null ? null : 24,
+        // Beta-Skin: the page colour and radius of the new design.
+        backgroundColor: rd?.bg,
         shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(ios ? 10 : 2)),
+            borderRadius: BorderRadius.circular(rd != null ? 20 : (ios ? 10 : 2))),
         child: SizedBox(
             width: width, height: cardHeight, child: builder(ctx)),
       ),
@@ -68,7 +72,8 @@ class IonModalTheme extends StatelessWidget {
     final theme = Theme.of(context);
     final wide = isIonModalCard(MediaQuery.sizeOf(context));
     final sheet = theme.bottomSheetTheme;
-    final ios = theme.platform == TargetPlatform.iOS;
+    // Beta-Skin: the new design keeps its rounded sheets on every platform.
+    final ios = theme.platform == TargetPlatform.iOS || context.rdSkin != null;
     return Theme(
       data: theme.copyWith(
         bottomSheetTheme: sheet.copyWith(

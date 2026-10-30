@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.24.0",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Alle bisherigen Seiten, Dialoge und Auswahlmenüs, die man aus dem neuen Design erreicht (z. B. Anwesenheitstypen, Gruppen, Rollen & Rechte, Team-Organisation, Hilfe), erscheinen jetzt ebenfalls im neuen Design und in deiner Farbwelt",
+        "✨ Neues Design (Beta): „Konto löschen“, „Update installieren“ und „Administration“ sind jetzt auch unter „Ich“ erreichbar",
+        "💄 Neues Design (Beta): In der Verwaltung stehen Register und Zusatzfelder jetzt bei „Mitglieder, Register & Rollen“; „Mitteilungen“ zeigt als Hinweis „Gesendete Mitteilungen ansehen“",
+        "💄 Neues Design (Beta): „Alle Einstellungen“ unter „Ich“ entfällt, weil alle Einträge jetzt direkt unter „Ich“ oder in der Verwaltung stehen"
+      ]
+    },
+    {
       "version": "0.23.5",
       "date": "30.10.2026",
       "changes": [

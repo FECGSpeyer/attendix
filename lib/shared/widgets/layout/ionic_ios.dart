@@ -5,6 +5,8 @@ import 'package:flutter/foundation.dart' show ValueListenable;
 import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/redesign/rd_palette.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive_platform.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/app_toolbar.dart'
@@ -179,7 +181,14 @@ class IonDetailChevron extends StatelessWidget {
   const IonDetailChevron({super.key});
 
   @override
-  Widget build(BuildContext context) => Icon(
+  Widget build(BuildContext context) {
+    // Beta-Skin: the chevron of the new design's list rows.
+    final rd = context.rdSkin;
+    if (rd != null) return Icon(Icons.chevron_right, size: 20, color: rd.text2);
+    return _ionChevron(context);
+  }
+
+  Widget _ionChevron(BuildContext context) => Icon(
         CupertinoIcons.chevron_forward,
         size: IonIos.detailIconSize,
         color: IonIos.detailIconColor(Theme.of(context).brightness),
@@ -260,6 +269,17 @@ class IonTranslucentBarBackground extends StatelessWidget {
   Widget build(BuildContext context) {
     if (!visible || !isIosLook(context)) return const SizedBox.shrink();
     final theme = Theme.of(context);
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: the page colour, nearly opaque, with a hairline.
+      return DecoratedBox(
+        decoration: BoxDecoration(
+          color: rd.bg.withValues(alpha: 0.96),
+          border: Border(bottom: BorderSide(color: rd.line)),
+        ),
+        child: const SizedBox.expand(),
+      );
+    }
     final dark = theme.brightness == Brightness.dark;
     return ClipRect(
       child: BackdropFilter(
@@ -411,11 +431,15 @@ class IonSearchIcon extends StatelessWidget {
   static const double size = 1.375 * IonIos.rem;
 
   @override
-  Widget build(BuildContext context) => Icon(
-        CupertinoIcons.search,
-        size: size,
-        color: Theme.of(context).colorScheme.onSurface,
-      );
+  Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return Icon(Icons.search, size: 20, color: rd.text2);
+    return Icon(
+      CupertinoIcons.search,
+      size: size,
+      color: Theme.of(context).colorScheme.onSurface,
+    );
+  }
 }
 
 /// Toolbar title that fades in when the large title is condensed.
@@ -472,6 +496,22 @@ class IonLargeTitle extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     if (!enabled || !isIosLook(context)) return const SizedBox.shrink();
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: sub page title of the new design.
+      return Padding(
+        padding: const EdgeInsets.fromLTRB(20, 4, 20, 12),
+        child: Semantics(
+          header: true,
+          child: Text(
+            title,
+            maxLines: 2,
+            overflow: TextOverflow.ellipsis,
+            style: RdType.title(rd),
+          ),
+        ),
+      );
+    }
     return Padding(
       // IOS27_SWEEP / AUDIT_R4: the condense header's first toolbar has
       // padding-top 0 (core header.ios + ios27), so: toolbar padding-start
@@ -526,6 +566,8 @@ class IonSearchbar extends StatelessWidget {
       valueListenable: controller,
       builder: (context, value, _) {
         final hasText = value.text.isNotEmpty;
+        final rd = context.rdSkin;
+        if (rd != null) return _rdField(context, rd, hasText);
         if (!isIosLook(context)) {
           // MD_SWEEP: the Ionic md searchbar (white, shadow, no border);
           // the caller keeps its host padding.
@@ -600,6 +642,50 @@ class IonSearchbar extends StatelessWidget {
   }
 }
 
+extension on IonSearchbar {
+  /// Beta-Skin: the search field of the new design (white field, hairline,
+  /// radius 12) on every platform.
+  Widget _rdField(BuildContext context, RdPalette rd, bool hasText) {
+    return SizedBox(
+      height: IonSearchbar.height,
+      child: TextField(
+        controller: controller,
+        onChanged: onChanged,
+        textAlignVertical: TextAlignVertical.center,
+        style: TextStyle(fontSize: 16, color: rd.text),
+        decoration: InputDecoration(
+          hintText: hintText,
+          hintStyle: TextStyle(fontSize: 16, color: rd.text2),
+          filled: true,
+          fillColor: rd.surface,
+          isDense: true,
+          contentPadding: const EdgeInsets.symmetric(vertical: 10),
+          prefixIcon: const IonSearchIcon(),
+          suffixIcon: hasText
+              ? IconButton(
+                  tooltip: context.l10n.a11yClearInput,
+                  icon: Icon(Icons.close, size: 20, color: rd.text2),
+                  onPressed: _clear,
+                )
+              : null,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: rd.offBorder),
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: rd.offBorder),
+          ),
+          focusedBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(12),
+            borderSide: BorderSide(color: rd.primary, width: 2),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// IOS27_SWEEP: the glass of the ios27 searchbar input and its clear /
 /// cancel circle (`searchbar-glass`): `rgba(glass, .52)`, a 0.5pt
 /// `rgba(text, .25)` ring, `0 3px 8px rgba(0,0,0,.035)`, radius 22.
@@ -664,6 +750,8 @@ class IonListHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return _rdHeader(rd);
     final ios = isIosLook(context);
     // MD_SWEEP: md-ion-list-inset header label – 16px semibold
     // medium-tint, line-height 1.29rem.
@@ -710,11 +798,32 @@ class IonListHeader extends StatelessWidget {
   }
 }
 
+extension on IonListHeader {
+  /// Beta-Skin: the uppercase group label of the new design.
+  Widget _rdHeader(RdPalette rd) => Padding(
+        padding: EdgeInsets.fromLTRB(20, 16, trailing == null ? 20 : 8, 6),
+        child: Row(
+          children: [
+            Expanded(
+              child: Semantics(
+                header: true,
+                child: Text(label.toUpperCase(), style: RdType.eyebrow(color ?? rd.text2)),
+              ),
+            ),
+            if (trailing != null)
+              _PrimaryIconButtons(child: Row(mainAxisSize: MainAxisSize.min, children: trailing!)),
+          ],
+        ),
+      );
+}
+
 /// `--ion-item-background` of rows in inset lists / item groups: iOS dark
 /// #000 on the grouped #222428 page (IOS_R4), otherwise the theme surface
 /// (white; md dark #1e1e1e).
 Color ionItemBackground(BuildContext context) {
   final theme = Theme.of(context);
+  final rd = context.rdSkin;
+  if (rd != null) return rd.surface;
   if (isIosLook(context) && theme.brightness == Brightness.dark) {
     return AppColors.iosInsetItemDark;
   }
@@ -742,6 +851,8 @@ class IonInsetList extends StatelessWidget {
   final BoxBorder? border;
 
   static double radiusOf(BuildContext context, {bool grouped = true}) {
+    final rd = context.rdSkin;
+    if (rd != null) return rd.listRadius;
     // MD_SWEEP: md-ion-list-inset groups radius 16, a plain md inset list
     // the core 2px.
     if (!isIosLook(context)) {
@@ -753,12 +864,13 @@ class IonInsetList extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final radius = radiusOf(context, grouped: grouped);
+    final rd = context.rdSkin;
     final rows = <Widget>[];
     for (var i = 0; i < children.length; i++) {
       if (i > 0) {
-        // MD_SWEEP: md item lines are 1px.
-        final w = isIosLook(context) ? 0.5 : IonMd.lineWidth;
-        rows.add(Divider(height: w, thickness: w, indent: dividerIndent));
+        // MD_SWEEP: md item lines are 1px. Beta-Skin: full-width 1px lines.
+        final w = rd != null ? 1.0 : (isIosLook(context) ? 0.5 : IonMd.lineWidth);
+        rows.add(Divider(height: w, thickness: w, indent: rd != null ? 0 : dividerIndent, color: rd?.line));
       }
       rows.add(children[i]);
     }
@@ -769,6 +881,7 @@ class IonInsetList extends StatelessWidget {
         color: color ?? ionItemBackground(context),
         borderRadius: BorderRadius.circular(radius),
         border: border,
+        boxShadow: rd?.cardShadow,
       ),
       child: Material(
         type: MaterialType.transparency,
@@ -810,6 +923,8 @@ class IonItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return _rdRow(rd);
     final ios = isIosLook(context);
     final chevron = ios && detail && onTap != null;
     final b = Theme.of(context).brightness;
@@ -886,6 +1001,53 @@ class IonItem extends StatelessWidget {
   }
 }
 
+extension on IonItem {
+  /// Beta-Skin: a list row of the new design (`RdListRow`): 52 high, 16pt
+  /// title, 13pt grey subtitle, chevron when [detail].
+  Widget _rdRow(RdPalette rd) {
+    final chevron = detail && onTap != null;
+    return InkWell(
+      onTap: onTap,
+      child: ConstrainedBox(
+        constraints: const BoxConstraints(minHeight: 52),
+        child: Padding(
+          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
+          child: Row(
+            children: [
+              if (leading != null) ...[
+                IconTheme.merge(data: IconThemeData(color: rd.text2, size: 22), child: leading!),
+                const SizedBox(width: 12),
+              ],
+              Expanded(
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    DefaultTextStyle.merge(
+                      style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: titleColor ?? rd.text),
+                      child: title,
+                    ),
+                    if (subtitle != null)
+                      Padding(
+                        padding: const EdgeInsets.only(top: 2),
+                        child: DefaultTextStyle.merge(
+                          style: RdType.meta(rd, size: 13),
+                          child: subtitle!,
+                        ),
+                      ),
+                  ],
+                ),
+              ),
+              if (trailing != null) ...[const SizedBox(width: 8), trailing!],
+              if (chevron) ...[const SizedBox(width: 4), const IonDetailChevron()],
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 /// Toolbar of an Ionic sheet modal (`ion-modal` > `ion-header` >
 /// `ion-toolbar`): title centered on iOS (start-aligned in md mode) with
 /// optional start / end buttons.
@@ -903,7 +1065,8 @@ class IonSheetHeader extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final ios = isIosLook(context);
+    final rd = context.rdSkin;
+    final ios = rd != null || isIosLook(context);
     final titleWidget = Text(
       title,
       maxLines: 1,
@@ -914,9 +1077,10 @@ class IonSheetHeader extends StatelessWidget {
         fontWeight: ios ? FontWeight.w600 : FontWeight.w500,
         // MD_SWEEP: md ion-title – toolbar colour, .0125em tracking.
         letterSpacing: ios ? null : IonMd.titleLetterSpacing,
-        color: ios
-            ? Theme.of(context).colorScheme.onSurface
-            : IonMd.toolbarText(Theme.of(context).brightness),
+        color: rd?.text ??
+            (ios
+                ? Theme.of(context).colorScheme.onSurface
+                : IonMd.toolbarText(Theme.of(context).brightness)),
       ),
     );
     final header = Container(
@@ -924,13 +1088,14 @@ class IonSheetHeader extends StatelessWidget {
       // `--min-height: 64px`, no padding); md toolbar 56.
       height: ios ? kIonModalToolbarHeight : 56,
       decoration: BoxDecoration(
-        color: Theme.of(context).colorScheme.surface,
+        // Beta-Skin: the sheet colour of the new design (page background).
+        color: rd?.bg ?? Theme.of(context).colorScheme.surface,
         // Matches the bottom sheet's rounded top corners (ios27
         // `.modal-sheet --border-radius: 32px`; PARITY_R3: md sheets are
         // square like Ionic md modals).
         borderRadius: ios
-            ? const BorderRadius.vertical(
-                top: Radius.circular(kIonModalSheetRadius))
+            ? BorderRadius.vertical(
+                top: Radius.circular(rd != null ? 24 : kIonModalSheetRadius))
             : null,
       ),
       child: _PrimaryIconButtons(
@@ -974,7 +1139,10 @@ class IonSheetHeader extends StatelessWidget {
     );
     return Column(
       mainAxisSize: MainAxisSize.min,
-      children: [header, const Divider(height: 0.5, thickness: 0.5)],
+      children: [
+        header,
+        Divider(height: rd != null ? 1 : 0.5, thickness: rd != null ? 1 : 0.5, color: rd?.line),
+      ],
     );
   }
 }
@@ -988,7 +1156,8 @@ InputDecoration ionInputDecoration(
   String? helperText,
   String? hintText,
 }) {
-  if (!isIosLook(context)) {
+  // Beta-Skin: the theme's field of the new design on every platform.
+  if (context.rdSkin != null || !isIosLook(context)) {
     return InputDecoration(
       labelText: label,
       helperText: helperText,
@@ -1028,12 +1197,13 @@ class _PrimaryIconButtons extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final color = context.rdSkin?.link ?? AppColors.primary;
     return IconButtonTheme(
       data: IconButtonThemeData(
-        style: IconButton.styleFrom(foregroundColor: AppColors.primary),
+        style: IconButton.styleFrom(foregroundColor: color),
       ),
       child: IconTheme.merge(
-        data: const IconThemeData(color: AppColors.primary),
+        data: IconThemeData(color: color),
         child: child,
       ),
     );

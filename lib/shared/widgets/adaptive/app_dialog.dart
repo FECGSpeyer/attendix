@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../core/theme/app_colors.dart';
+import '../../../core/theme/redesign/rd_palette.dart';
+import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
 import 'ion_button_label.dart';
@@ -94,6 +96,8 @@ class AppAlertDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final rd = context.rdSkin;
+    if (rd != null) return _rdAlert(context, rd);
     if (!useIosLook(context)) {
       // PARITY_R3: Ionic md `ion-alert` – 4px radius, 20/500 title,
       // grey 16px message, flat UPPERCASE primary text buttons aligned
@@ -156,6 +160,124 @@ class AppAlertDialog extends StatelessWidget {
   }
 }
 
+extension on AppAlertDialog {
+  /// Beta-Skin: the dialog of the new design on every platform – white card
+  /// (radius 20), bold title, grey message, the actions as 48pt buttons (the
+  /// last one filled, a destructive one red; three or more stacked).
+  Widget _rdAlert(BuildContext context, RdPalette rd) {
+    final list = [
+      for (final a in actions ?? const <Widget>[])
+        if (a is! Spacer) a,
+    ];
+    final buttons = [
+      for (var i = 0; i < list.length; i++)
+        rdAlertActionFrom(context, rd, list[i], filled: i == list.length - 1),
+    ];
+    return AlertDialog(
+      icon: icon,
+      title: title,
+      content: content,
+      actions: buttons.isEmpty
+          ? null
+          : [
+              if (buttons.length > 2)
+                Column(
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < buttons.length; i++) ...[
+                      if (i > 0) const SizedBox(height: 8),
+                      buttons[i],
+                    ],
+                  ],
+                )
+              else
+                Row(
+                  children: [
+                    for (var i = 0; i < buttons.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 8),
+                      Expanded(child: buttons[i]),
+                    ],
+                  ],
+                ),
+            ],
+      contentPadding: contentPadding ?? EdgeInsets.fromLTRB(22, title == null ? 22 : 0, 22, 18),
+      titlePadding: titlePadding ?? EdgeInsets.fromLTRB(22, 22, 22, content == null ? 18 : 10),
+      actionsPadding: actionsPadding ?? const EdgeInsets.fromLTRB(16, 0, 16, 16),
+      insetPadding: insetPadding ?? const EdgeInsets.symmetric(horizontal: 32, vertical: 24),
+      scrollable: scrollable,
+      backgroundColor: backgroundColor ?? rd.surface,
+      shape: shape ?? RoundedRectangleBorder(borderRadius: BorderRadius.circular(20)),
+      titleTextStyle: titleTextStyle ?? TextStyle(fontSize: 18, fontWeight: FontWeight.w700, color: rd.text),
+      contentTextStyle: contentTextStyle ?? TextStyle(fontSize: 15, height: 1.35, color: rd.text2),
+      semanticLabel: semanticLabel,
+    );
+  }
+}
+
+/// Beta-Skin: converts a Material dialog action into a button of the new
+/// design ([filled]: primary, else outlined; a destructive action red).
+Widget rdAlertActionFrom(BuildContext context, RdPalette rd, Widget action, {required bool filled}) {
+  final VoidCallback? onPressed;
+  final bool destructive;
+  final bool autofocus;
+  Widget? raw;
+  if (action is IosAlertButton) {
+    onPressed = action.onPressed;
+    destructive = action.destructive;
+    autofocus = false;
+    raw = action.child;
+  } else if (action is ButtonStyleButton) {
+    const states = <WidgetState>{};
+    final fg = action.style?.foregroundColor?.resolve(states);
+    final bg = action.style?.backgroundColor?.resolve(states);
+    final error = Theme.of(context).colorScheme.error;
+    onPressed = action.onPressed;
+    destructive = _isDanger(fg, error) || (action is! TextButton && _isDanger(bg, error));
+    autofocus = action.autofocus;
+    raw = action.child;
+  } else {
+    return action;
+  }
+  final child = switch (raw) {
+    final IonButtonLabel l => l.toText(context),
+    final c => c ?? const SizedBox.shrink(),
+  };
+  final shape = RoundedRectangleBorder(borderRadius: BorderRadius.circular(rd.buttonRadius));
+  const text = TextStyle(fontSize: 16, fontWeight: FontWeight.w600);
+  if (filled) {
+    return FilledButton(
+      onPressed: onPressed,
+      autofocus: autofocus,
+      style: FilledButton.styleFrom(
+        backgroundColor: destructive ? rd.absent : rd.primary,
+        foregroundColor: destructive ? rd.onStatus : rd.onPrimary,
+        disabledBackgroundColor: rd.track,
+        disabledForegroundColor: rd.text2,
+        minimumSize: const Size(64, 48),
+        padding: const EdgeInsets.symmetric(horizontal: 12),
+        shape: shape,
+        textStyle: text,
+      ),
+      child: child,
+    );
+  }
+  return OutlinedButton(
+    onPressed: onPressed,
+    autofocus: autofocus,
+    style: OutlinedButton.styleFrom(
+      foregroundColor: destructive ? rd.absent : rd.text,
+      backgroundColor: rd.surface,
+      side: BorderSide(color: destructive ? rd.absent : rd.offBorder, width: 1.5),
+      minimumSize: const Size(64, 48),
+      padding: const EdgeInsets.symmetric(horizontal: 12),
+      shape: shape,
+      textStyle: text,
+    ),
+    child: child,
+  );
+}
+
 /// IOS_LOOK: [SimpleDialog] replacement – on iOS an [IosAlertCard] with the
 /// options as list rows (ion-alert with radio/plain buttons), otherwise the
 /// Material [SimpleDialog].
@@ -167,7 +289,8 @@ class AppSimpleDialog extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!useIosLook(context)) {
+    // Beta-Skin: the themed Material dialog of the new design.
+    if (!useIosLook(context) || context.rdSkin != null) {
       return SimpleDialog(title: title, children: children);
     }
     return IosAlertCard(
@@ -383,6 +506,25 @@ class IosAlertCard extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    if (context.rdSkin != null) {
+      // Beta-Skin: the dialog of the new design (AppAlertDialog).
+      final hasMessage = message != null && message!.isNotEmpty;
+      return AppAlertDialog(
+        icon: icon,
+        title: title,
+        content: content != null && hasMessage
+            ? Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [Text(message!), const SizedBox(height: 14), content!],
+              )
+            : content ?? (hasMessage ? Text(message!) : null),
+        contentPadding: contentPadding,
+        scrollable: scrollable,
+        semanticLabel: semanticLabel,
+        actions: actions,
+      );
+    }
     final theme = Theme.of(context);
     final b = theme.brightness;
     final textColor = theme.colorScheme.onSurface;

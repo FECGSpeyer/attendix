@@ -188,7 +188,8 @@ String rdManageTitle(AppLocalizations l10n, RdManageEntry entry) => switch (entr
 /// Second line of a few entries (also searched).
 String rdManageHint(AppLocalizations l10n, RdManageEntry entry) => switch (entry) {
       RdManageEntry.general => l10n.redesignManageGeneralHint,
-      RdManageEntry.announcements => l10n.settingsMessageAll,
+      RdManageEntry.announcements => l10n.redesignManageAnnouncementsHint,
+      RdManageEntry.extraFields => l10n.redesignManageExtraFieldsHint,
       RdManageEntry.missingAccounts => l10n.redesignManageMissingHint,
       _ => '',
     };

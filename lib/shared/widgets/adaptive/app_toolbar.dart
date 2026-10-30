@@ -2,6 +2,8 @@ import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
 
+import '../../../core/theme/redesign/rd_theme.dart';
+
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
 
@@ -88,7 +90,8 @@ class IonCloseButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final onTap = onPressed ?? () => Navigator.of(context).maybePop();
-    if (!useIosLook(context)) {
+    // Beta-Skin: a plain close icon in the link colour.
+    if (!useIosLook(context) || context.rdSkin != null) {
       return IconButton(
         icon: const Icon(Icons.close),
         tooltip: tooltip ?? context.l10n.commonClose,
@@ -131,6 +134,19 @@ class IosCircleIcon extends StatelessWidget {
   Widget build(BuildContext context) {
     final theme = Theme.of(context);
     final b = theme.brightness;
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: no glass circle, the plain icon in the link colour.
+      return SizedBox(
+        width: size,
+        height: size,
+        child: Icon(
+          icon == Icons.arrow_back_ios_new ? Icons.chevron_left : icon,
+          size: icon == Icons.arrow_back_ios_new ? 30 : iconSize + 2,
+          color: rd.link,
+        ),
+      );
+    }
     final fg = theme.colorScheme.onSurface;
     final glyph = Icon(icon, size: iconSize, color: fg);
     if (filled) {
@@ -207,6 +223,30 @@ class IonModalHeader extends StatelessWidget implements PreferredSizeWidget {
     final theme = Theme.of(context);
     final end = trailing ??
         (showClose ? IonCloseButton(onPressed: onClose) : null);
+    final rd = context.rdSkin;
+    if (rd != null) {
+      // Beta-Skin: sheet header of the new design – page colour, centred
+      // 17pt title, 1px line.
+      return Container(
+        height: kIonModalToolbarHeight,
+        decoration: BoxDecoration(
+          color: rd.bg,
+          border: showDivider ? Border(bottom: BorderSide(color: rd.line)) : null,
+        ),
+        child: NavigationToolbar(
+          leading: leading,
+          trailing: end,
+          middle: DefaultTextStyle.merge(
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: rd.text),
+            child: title,
+          ),
+          centerMiddle: true,
+          middleSpacing: 8,
+        ),
+      );
+    }
     // MD_SWEEP: md modal toolbar = md ion-toolbar: 56px, start-aligned
     // 20px medium title (toolbar colour, .0125em tracking) 20px in, buttons
     // 4px from the edges, the md header shadow instead of a hairline.
