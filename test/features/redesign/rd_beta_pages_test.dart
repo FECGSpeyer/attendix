@@ -46,10 +46,10 @@ Widget _app(Widget home) => ProviderScope(
               TestFactories.createGroup(id: 1, name: 'Holz'),
               TestFactories.createGroup(id: 2, name: 'Streicher'),
             ]),
-        attendanceTypesProvider.overrideWith((ref) async => const []),
+        attendanceTypesProvider.overrideWith((ref) async => [TestFactories.createAttendanceType(id: 'p', name: 'Probe')]),
         filteredAttendancesForStatsProvider.overrideWith((ref) async => [
               for (var i = 1; i <= 8; i++)
-                TestFactories.createAttendance(id: i, date: '2026-10-${(i + 10).toString()}', percentage: 50.0 + i * 5),
+                TestFactories.createAttendance(id: i, typeId: 'p', date: '2026-10-${(i + 10).toString()}', percentage: 50.0 + i * 5),
             ]),
         allPersonAttendancesForStatsProvider.overrideWith((ref) async => [
               for (var i = 1; i <= 8; i++) ...[
@@ -120,6 +120,13 @@ void main() {
         _pa(4, AttendanceStatus.absent),
       ];
       final low = rdLowAttendance(pas, [anna, ben, clara, paused]);
+      // Shift-excused absences count as present when the tenant says so.
+      final shift = [
+        for (var i = 0; i < 3; i++)
+          PersonAttendance(attendanceId: 1, personId: 3, status: AttendanceStatus.excused, notes: 'Schichtbedingt'),
+      ];
+      expect(rdLowAttendance(shift, [clara], shiftExcusedAsPresent: true), isEmpty);
+      expect(rdLowAttendance(shift, [clara]).single.percent, 0);
       expect(low.map((e) => e.person.firstName), ['Anna', 'Ben']);
       expect(low.map((e) => e.percent), [25, 33]);
     });

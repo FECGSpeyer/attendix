@@ -55,7 +55,9 @@ final groupsProvider = FutureProvider<List<Group>>((ref) async {
     tenantId: repo.currentTenantId,
     part: 'groups',
     fetch: repo.getGroups,
-    toJson: (g) => g.toJson(),
+    // categoryData is not part of Group.toJson (never written to the DB),
+    // but the Register headings need it offline too.
+    toJson: (g) => {...g.toJson(), 'categoryData': g.categoryData?.toJson()},
     fromJson: Group.fromJson,
   );
 });

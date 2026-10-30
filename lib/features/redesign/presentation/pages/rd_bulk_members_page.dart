@@ -6,6 +6,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
@@ -58,6 +59,15 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
   bool _busy = false;
 
   @override
+  void initState() {
+    super.initState();
+    // A group switch empties the selection.
+    ref.listenManual(currentTenantIdProvider, (previous, next) {
+      if (previous != next && mounted) setState(_selected.clear);
+    });
+  }
+
+  @override
   void dispose() {
     _search.dispose();
     super.dispose();
@@ -84,6 +94,10 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     final l10n = context.l10n;
     // Bound before the first await (tenant switch safety).
     final PlayerRepository repo = boundRepo ?? ref.read(playerRepositoryWithTenantProvider);
+    // The list may still show the previous group's people after a group
+    // switch; never touch a person outside the bound tenant.
+    persons = persons.where((p) => p.tenantId == repo.currentTenantId).toList();
+    if (persons.isEmpty) return;
     setState(() => _busy = true);
     final result = await rdApplyToAll(persons, (p) => change(repo, p));
     ref.invalidate(realtimePlayersProvider);

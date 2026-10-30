@@ -428,6 +428,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                     selected: star <= _rating,
                     label: context.l10n.a11yRating(star),
                     excludeSemantics: true,
+                    onTap: () => setState(() => _rating = star),
                     child: GestureDetector(
                       onTap: () => setState(() => _rating = star),
                       child: Padding(

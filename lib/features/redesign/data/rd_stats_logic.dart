@@ -1,4 +1,5 @@
 import '../../../core/constants/enums.dart';
+import '../../../core/utils/duty_utils.dart' show isDutyType;
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/person/person.dart';
 
@@ -24,12 +25,18 @@ class RdLowAttendance {
 }
 
 /// Active people whose attendance in [personAttendances] is below
-/// [threshold] percent, lowest first. Neutral entries (not expected) do not
-/// count; people with fewer than [minEvents] counted Termine are left out,
-/// one missed rehearsal is no trend.
+/// [threshold] percent, lowest first. Counts like the person statistics:
+/// only Termine whose type is in the average ([typeOfAttendance], unknown
+/// types are left out when [typeOfAttendance] is given), duty Termine only
+/// for assigned persons, and with [shiftExcusedAsPresent] a shift-excused
+/// absence as present. Neutral entries do not count; people with fewer than
+/// [minEvents] counted Termine are left out, one missed rehearsal is no
+/// trend.
 List<RdLowAttendance> rdLowAttendance(
   List<PersonAttendance> personAttendances,
   List<Person> players, {
+  Map<int, AttendanceType?>? typeOfAttendance,
+  bool shiftExcusedAsPresent = false,
   int threshold = 50,
   int minEvents = 3,
 }) {
@@ -38,8 +45,15 @@ List<RdLowAttendance> rdLowAttendance(
   for (final pa in personAttendances) {
     final id = pa.personId;
     if (id == null || pa.status == AttendanceStatus.neutral) continue;
+    if (typeOfAttendance != null) {
+      final type = typeOfAttendance[pa.attendanceId];
+      if (type == null || !type.includeInAverage) continue;
+      if (isDutyType(type) && (pa.dutyState == null || pa.dutyState!.isEmpty)) continue;
+    }
     total[id] = (total[id] ?? 0) + 1;
-    if (pa.status.countsAsPresent) present[id] = (present[id] ?? 0) + 1;
+    if (pa.status.countsAsAttended(notes: pa.notes, shiftExcusedAsPresent: shiftExcusedAsPresent)) {
+      present[id] = (present[id] ?? 0) + 1;
+    }
   }
   final result = <RdLowAttendance>[];
   for (final player in players) {

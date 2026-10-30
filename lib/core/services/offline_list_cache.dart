@@ -27,13 +27,21 @@ class OfflineListCache {
   }) async {
     final currentUserId = ref.read(offlineQueueUserIdProvider);
     final userId = currentUserId();
+    // Fresh results go back unchanged (toJson may drop joined data such as
+    // a group's category); only the offline fallback is rebuilt from JSON.
+    List<T>? fresh;
     final rows = await const AttendanceDetailCache().fetchWithCache<List<dynamic>>(
       key: userId == null ? null : keyFor(userId, tenantId, part),
       scope: userId == null ? null : (userId: userId, tenantId: tenantId),
       currentUserId: currentUserId,
       isOnline: ref.read(connectivityCheckProvider),
-      fetch: () async => [for (final item in await fetch()) toJson(item)],
+      fetch: () async {
+        final items = await fetch();
+        fresh = items;
+        return [for (final item in items) toJson(item)];
+      },
     );
+    if (fresh != null) return fresh!;
     return [
       for (final row in rows ?? const [])
         if (row is Map) fromJson(Map<String, dynamic>.from(row)),

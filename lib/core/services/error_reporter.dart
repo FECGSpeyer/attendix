@@ -68,9 +68,21 @@ class ErrorReporter {
   static final _uuid = RegExp(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
   static final _quotedValue = RegExp(r'=\([^)]*\)');
 
+  static final _doubleQuoted = RegExp(r'"[^"]*"');
+  static final _postgrest = RegExp(r'PostgrestException\(message: (.*?), code: ([\w-]+)', dotAll: true);
+
   /// Removes e-mail addresses, ids and quoted column values from [text].
+  /// Database errors keep only their message and code: `details` and
+  /// `hint` quote row values.
   @visibleForTesting
-  static String redact(String text) => text
+  static String redact(String text) {
+    final pg = _postgrest.firstMatch(text);
+    if (pg != null) text = 'PostgrestException(message: ${pg.group(1)}, code: ${pg.group(2)})';
+    return _redactValues(text);
+  }
+
+  static String _redactValues(String text) => text
+      .replaceAll(_doubleQuoted, '"<value>"')
       .replaceAll(_email, '<email>')
       .replaceAll(_uuid, '<uuid>')
       .replaceAll(_quotedValue, '=(<value>)');

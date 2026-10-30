@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -56,9 +57,16 @@ class _RdStatsPageState extends ConsumerState<RdStatsPage> {
     final trend = ref.watch(trendChartDataProvider);
     final groups = ref.watch(groupChartDataProvider);
     final players = ref.watch(activePlayersForStatsProvider).valueOrNull ?? const [];
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
+    final typeById = {for (final t in types) t.id: t};
     final low = rdLowAttendance(
       ref.watch(allPersonAttendancesForStatsProvider).valueOrNull ?? const [],
       players,
+      typeOfAttendance: {
+        for (final a in attendancesAsync.valueOrNull ?? const [])
+          if (a.id != null) a.id!: typeById[a.typeId],
+      },
+      shiftExcusedAsPresent: ref.watch(currentTenantProvider)?.shiftExcusedAsPresent ?? false,
     );
 
     return RdPage(

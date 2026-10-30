@@ -46,6 +46,21 @@ void main() {
     expect(await read(c, () async => throw StateError('no network')), ['Anna', 'Ben']);
   });
 
+  test('fresh results come back unchanged, not rebuilt from JSON', () async {
+    final c = container();
+    final fresh = ['Anna', 'Ben'];
+    final result = await OfflineListCache.read<String>(
+      c.read(refProvider),
+      tenantId: 42,
+      part: 'players',
+      fetch: () async => fresh,
+      // A lossy round trip: only the offline copy may go through it.
+      toJson: (s) => {'name': s.substring(0, 1)},
+      fromJson: (j) => j['name'] as String,
+    );
+    expect(identical(result, fresh), isTrue);
+  });
+
   test('network error while online falls back to the copy', () async {
     final c = container();
     await read(c, () async => ['Anna']);

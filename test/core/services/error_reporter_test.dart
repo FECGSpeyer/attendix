@@ -59,6 +59,13 @@ void main() {
     expect(out.exceptions!.single.value, 'Key (email)=(<value>) exists');
   });
 
+  test('database errors keep only message and code', () {
+    const raw = 'PostgrestException(message: invalid input syntax for type uuid: "max-mustermann", '
+        'code: 22P02, details: Failing row contains (12, Max, Mustermann, max@x.de), hint: null)';
+    final text = ErrorReporter.redact(raw);
+    expect(text, 'PostgrestException(message: invalid input syntax for type uuid: "<value>", code: 22P02)');
+  });
+
   test('web offline errors are expected', () {
     expect(ErrorReporter.isExpected(Exception('ClientException: Failed to fetch')), isTrue);
   });
