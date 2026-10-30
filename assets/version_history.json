@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.23.6",
+      "date": "30.10.2026",
+      "changes": [
+        "✨ Mac-App: Dateien lassen sich jetzt aus dem Finder auf ein Werk ziehen und werden hochgeladen, wie im Browser"
+      ]
+    },
+    {
       "version": "0.23.5",
       "date": "30.10.2026",
       "changes": [

@@ -8,8 +8,8 @@ import '../../../../../l10n/l10n.dart';
 
 export 'file_drop_platform.dart' show isFileDropSupported;
 
-/// Area that accepts files dragged from the desktop (web only; elsewhere it
-/// just renders [builder] with `hovering == false`).
+/// Area that accepts files dragged from the desktop (web and desktop apps; on
+/// iOS / Android it just renders [builder] with `hovering == false`).
 ///
 /// When several targets are mounted, only the most recently mounted one is
 /// active, so an open upload sheet takes precedence over the page behind it.
@@ -89,7 +89,7 @@ class _FileDropTargetState extends State<FileDropTarget> {
 }
 
 /// Ionic `.drop-zone`: bordered box "Dateien hierher ziehen oder tippen zum
-/// Auswählen"; a tap opens the file picker, a drop (web) adds the files.
+/// Auswählen"; a tap opens the file picker, a drop (web, desktop apps) adds the files.
 class FileDropZone extends StatelessWidget {
   const FileDropZone({
     super.key,

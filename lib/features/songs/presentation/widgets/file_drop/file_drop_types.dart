@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-/// A file dropped onto the browser window (web only).
+/// A file dropped onto the browser window or the desktop app.
 class DroppedFile {
   const DroppedFile({required this.name, required this.bytes});
 
