@@ -11,7 +11,7 @@ import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Route of the Dateiablage (files module, `/settings/files?path=<folder>`).
 const String kFilesRoute = '/settings/files';

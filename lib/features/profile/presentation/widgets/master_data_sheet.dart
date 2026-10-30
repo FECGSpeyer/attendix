@@ -15,8 +15,8 @@ import 'church_picker.dart';
 import 'profile_helpers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_FORMS1
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 
 /// Opens the "Meine Stammdaten" sheet (Ionic settings master data modal).
 ///
@@ -277,7 +277,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     // an inset list on the light background; "Speichern" is the last item.
     return Scaffold(
       appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+        toolbarHeight: ionModalToolbarHeight(context),
         title: Text(context.l10n.settingsMyData),
         automaticallyImplyLeading: false,
       ),

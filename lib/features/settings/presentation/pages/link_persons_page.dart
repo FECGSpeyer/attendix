@@ -14,8 +14,8 @@ import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/organisation_repository.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 class PersonLinkMatch {
   PersonLinkMatch(this.match);

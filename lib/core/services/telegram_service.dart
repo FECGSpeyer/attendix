@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
+import 'error_reporter.dart';
 
 /// Notification configuration model
 class NotificationConfig {
@@ -293,7 +294,9 @@ class TelegramService {
       Future.delayed(const Duration(seconds: 10), () async {
         try {
           await _supabase.storage.from('attendances').remove([fileName]);
-        } catch (_) {}
+        } catch (e, st) {
+          ErrorReporter.report(e, st, where: 'telegram_service');
+        }
       });
     }
   }

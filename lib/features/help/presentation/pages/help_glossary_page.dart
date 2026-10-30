@@ -5,9 +5,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../data/help_content_service.dart';
 import '../widgets/help_markdown.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Alphabetical glossary with search.
 ///
@@ -46,7 +46,7 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
       extendBodyBehindAppBar: ios,
       appBar: IonTranslucentAppBar(child: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: Text(context.l10n.helpGlossary),
@@ -62,7 +62,7 @@ class _HelpGlossaryPageState extends ConsumerState<HelpGlossaryPage> {
       body: ListView(
         padding: EdgeInsets.fromLTRB(AppDimensions.paddingM, AppDimensions.paddingM, AppDimensions.paddingM, scrollEndPadding(context, base: AppDimensions.paddingM)),
         children: [
-          const IonContentTopInset(), // IOS_R6
+          const IonContentTopInset(),
           SettingsListSection(
             icons: false,
             children: [

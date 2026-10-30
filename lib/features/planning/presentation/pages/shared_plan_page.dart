@@ -17,7 +17,8 @@ import '../widgets/plan_view_list.dart';
 import '../widgets/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Public plan link without login (Ionic `SharedPlanPage`, route `/plan`).
 ///
@@ -415,7 +416,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         return;
       }
       _applyFreshAttendance(fresh);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'shared_plan_page');
+    }
   }
 
   /// SOL_FIX10: takes over the complete fresh Termin state (date, type,
@@ -490,7 +493,9 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
         if (updated.endTime?.isNotEmpty ?? false) _end = updated.endTime!;
         _fields = [...updated.fields];
       });
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'shared_plan_page');
+    }
   }
 
   DateTime? get _dateTime => DateTime.tryParse(_date);

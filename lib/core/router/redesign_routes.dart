@@ -52,6 +52,22 @@ class RedesignRoutes {
   /// One area of the Verwaltung (`RdManageArea.key`).
   static String manageArea(String key) => '$manage/$key';
 
+  /// Verwaltung › Auswertung (statistics of the new design).
+  static const String stats = '$manage/auswertung';
+
+  /// Verwaltung › Mitteilung schreiben.
+  static const String compose = '$manage/mitteilung';
+
+  /// Verwaltung › Mitglieder bearbeiten (several members at once).
+  static const String bulkMembers = '$manage/mitglieder-bearbeiten';
+
+  /// Ich › Benachrichtigungen.
+  static const String notifications = '$me/benachrichtigungen';
+
+  /// Pages for leads only (Admins and Verantwortliche, like the old
+  /// statistics, messages and archive entries).
+  static const _leadOnly = {stats, compose, bulkMembers};
+
   /// True while the new design is switched on (set by
   /// `RedesignSettingsNotifier`).
   static bool active = false;
@@ -83,7 +99,9 @@ class RedesignRoutes {
   ///   each entry keeps the guard of the page it opens.
   static String? roleRedirect(String location, Role role) {
     if (location == manage || location.startsWith('$manage/')) {
-      return role.isApplicant || role.isParent ? me : null;
+      if (role.isApplicant || role.isParent) return me;
+      if (_leadOnly.contains(location) && !(role.isAdmin || role.isResponsible)) return manage;
+      return null;
     }
     if (location == members || location.startsWith('$members/')) {
       return role.canSeePeopleTab ? null : today;

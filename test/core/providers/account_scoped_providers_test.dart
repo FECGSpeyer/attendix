@@ -386,6 +386,6 @@ void main() {
             reason: '${m.group(1)} (${f.path})');
       }
     }
-    expect(count, greaterThanOrEqualTo(33));
+    expect(count, greaterThanOrEqualTo(32)); // meeting repository removed (#21)
   });
 }

@@ -11,9 +11,9 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../../../../core/utils/date_helper.dart';
 import '../../../../l10n/l10n.dart';
-import 'ion/ion_widgets.dart'; // UX_PEOPLE
+import 'ion/ion_widgets.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 final _fmt = DateFormat('dd.MM.yyyy');
 
@@ -101,7 +101,7 @@ class _PauseSheetState extends State<_PauseSheet> {
                   ),
                 ),
                 IconButton(
-                  icon: const Icon(Icons.close),
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                   onPressed: () => Navigator.pop(context),
                 ),
               ],
@@ -358,7 +358,7 @@ class _DateHeaderItem extends StatelessWidget {
       end: [
         if (onClear != null)
           IconButton(
-            icon: const Icon(Icons.highlight_off, color: AppColors.medium),
+            icon: Icon(Icons.highlight_off, color: AppColors.medium, semanticLabel: context.l10n.commonRemove),
             onPressed: onClear,
           ),
       ],

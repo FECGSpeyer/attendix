@@ -251,6 +251,62 @@ class UserRegistrationRepository extends BaseRepository
     }
   }
 
+  /// Role of the account [userId] in [tenantId] (default: the bound
+  /// tenant), null when the account has no access there.
+  Future<Role?> getTenantUserRole(String userId, {int? tenantId}) async {
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('role')
+          .eq('tenantId', tenantId ?? currentTenantId)
+          .eq('userId', userId)
+          .maybeSingle();
+      if (response == null) return null;
+      return Role.fromValue(response['role'] as int? ?? 99);
+    } catch (e, stack) {
+      handleError(e, stack, 'getTenantUserRole');
+      rethrow;
+    }
+  }
+
+  /// tenantUsers rows of the current tenant ordered by role, with the
+  /// e-mail of the linked person where one exists.
+  Future<List<Map<String, dynamic>>> getTenantUserRows() async {
+    try {
+      final response = await supabase
+          .from('tenantUsers')
+          .select('*')
+          .eq('tenantId', currentTenantId)
+          .order('role', ascending: true);
+      final rows = List<Map<String, dynamic>>.from(response as List);
+
+      // Issue #8: the e-mail of a linked person wins over the invite e-mail.
+      final personIds = {
+        for (final r in rows)
+          if ((r['personId'] ?? r['person_id']) is int) (r['personId'] ?? r['person_id']) as int,
+      }.toList();
+      if (personIds.isEmpty) return rows;
+      final players = await supabase
+          .from('player')
+          .select('id, email')
+          .eq('tenantId', currentTenantId)
+          .inFilter('id', personIds);
+      final emails = <int, String?>{
+        for (final p in players as List) p['id'] as int: p['email'] as String?,
+      };
+      return [
+        for (final r in rows)
+          if (emails.containsKey(r['personId'] ?? r['person_id']))
+            {...r, 'email': emails[r['personId'] ?? r['person_id']]}
+          else
+            r,
+      ];
+    } catch (e, stack) {
+      handleError(e, stack, 'getTenantUserRows');
+      rethrow;
+    }
+  }
+
   /// Ionic `updateTenantUser({ role })`.
   Future<void> updateTenantUserRole(String userId, Role role,
       {int? tenantId}) async {

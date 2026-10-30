@@ -2,8 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../../core/config/supabase_config.dart';
-import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/providers/attendance_type_providers.dart';
+import '../../../../../core/providers/player_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../ion/ion_widgets.dart';
@@ -12,31 +12,20 @@ import '../ion/ion_widgets.dart';
 final upcomingAttendancesProvider =
     FutureProvider.family<List<Map<String, dynamic>>, int>(
         (ref, personId) async {
-  final supabase = ref.watch(supabaseClientProvider);
-  final tenant = ref.watch(currentTenantProvider);
-  // SOL_FIX15: reload on an account switch.
-  ref.watch(currentAuthUserIdProvider);
+  final repo = ref.watch(playerRepositoryWithTenantProvider);
+  final typeRepo = ref.watch(attendanceTypeRepositoryWithTenantProvider);
 
-  if (tenant == null) return [];
+  if (!repo.hasTenantId || !typeRepo.hasTenantId) return [];
 
   final today = DateTime.now().toIso8601String().substring(0, 10);
 
   // Get attendance types for name resolution
-  final typesResponse = await supabase
-      .from('attendance_types')
-      .select('*')
-      .eq('tenant_id', tenant.id!);
-  final attendanceTypes = List<Map<String, dynamic>>.from(typesResponse as List);
+  final attendanceTypes = await typeRepo.getTypeRows();
 
-  final response = await supabase
-      .from('person_attendances')
-      .select(
-          '*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId)')
-      .eq('person_id', personId)
-      .eq('attendance.tenantId', tenant.id!)
-      .gte('attendance.date', today);
+  final response =
+      await repo.getPersonAttendanceHistoryRows(personId, fromDate: today);
 
-  final attendances = (response as List).where((a) => a['attendance'] != null).map((a) {
+  final attendances = response.where((a) => a['attendance'] != null).map((a) {
     final attendance = a['attendance'] as Map<String, dynamic>;
     final typeId = attendance['type_id'];
     final typeInfo = attendance['typeInfo']?.toString();

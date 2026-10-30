@@ -6,16 +6,16 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/message_providers.dart';
-import '../../../../core/providers/signout_providers.dart'; // INTEGRATION
+import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/ionic_route_mapper.dart'; // INTEGRATION
+import '../../../../core/utils/ionic_route_mapper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ion_modal_handle.dart'; // IOS_SHEETS
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
@@ -111,7 +111,7 @@ class NotificationBell extends ConsumerWidget {
     if (route != null) {
       // Ionic routes are prefixed with /tabs; only navigate when the route
       // exists in this app.
-      final path = mapIonicRoute(route); // INTEGRATION
+      final path = mapIonicRoute(route);
       try {
         if (router.configuration.findMatch(Uri.parse(path)).isNotEmpty) {
           router.push(path);

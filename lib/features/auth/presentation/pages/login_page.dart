@@ -6,9 +6,10 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
-import '../../../../core/services/app_update_service.dart'; // NATIVE_MISC
+import '../../../../core/services/app_update_service.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -17,15 +18,15 @@ import '../../../legal/presentation/widgets/legal_content_view.dart';
 import '../../data/auth_flow_service.dart';
 import '../widgets/otp_widgets.dart';
 import 'register_page.dart';
-import '../../../../core/providers/dashboard_providers.dart'; // DASHBOARD
-import '../../../../core/services/teams/teams_service.dart'; // TEAMS
+import '../../../../core/providers/dashboard_providers.dart';
+import '../../../../core/services/teams/teams_service.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/providers/redesign_providers.dart'; // LOGO
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/display/attendix_logo.dart'; // LOGO
-import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors; // LOGO
+import '../../../../core/providers/redesign_providers.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/display/attendix_logo.dart';
+import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
 import '../widgets/ion_buttons.dart';
-import '../widgets/ion_input_decoration.dart'; // I18N_INFRA
+import '../widgets/ion_input_decoration.dart';
 import '../widgets/reset_password_dialog.dart';
 
 /// Login page
@@ -72,7 +73,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     if (mounted) setState(() {});
   }
 
-  // TEAMS
   @override
   void didChangeDependencies() {
     super.didChangeDependencies();
@@ -192,7 +192,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     try {
       if (_teamsLinkMode) {
-        await _linkTeamsAccount(); // TEAMS
+        await _linkTeamsAccount();
         return;
       }
       final user = await ref.read(authFlowServiceProvider).signInWithPassword(
@@ -444,7 +444,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       // Navigate FIRST – also when the router already disposed this page
       // after the tenant change, so the user lands on the tenant's home.
       router.go(homeRouteFor(role, tenantId,
-          container.read(supabaseAuthProvider).currentUser?.userMetadata)); // DASHBOARD
+          container.read(supabaseAuthProvider).currentUser?.userMetadata));
 
       // Auth sync AFTER navigation (fire and forget, notifier captured above)
       prefsNotifier.updateCurrentTenantId(tenantId);
@@ -464,15 +464,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     if (userId == null) return Role.none;
 
-    final response = await supabase
-        .from('tenantUsers')
-        .select('role')
-        .eq('tenantId', tenantId)
-        .eq('userId', userId)
-        .maybeSingle();
-
-    if (response == null) return Role.none;
-    return Role.fromValue(response['role'] as int? ?? 99);
+    final repo =
+        container.read(userRegistrationRepositoryForTenantProvider(tenantId));
+    return await repo.getTenantUserRole(userId, tenantId: tenantId) ??
+        Role.none;
   }
 
   /// Ionic `ion-button color="primary" expand="block"` (disabled = teal at
@@ -794,7 +789,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
             const SizedBox(height: linksToButton),
             _primaryButton(
                 _teamsLinkMode
-                    ? context.l10n.loginLinkAndSignIn // TEAMS
+                    ? context.l10n.loginLinkAndSignIn
                     : context.l10n.loginSignIn,
                 _login),
           ] else if (!_otpSent) ...[

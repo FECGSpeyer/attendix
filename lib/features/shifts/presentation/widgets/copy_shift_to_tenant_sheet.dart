@@ -6,14 +6,14 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../core/utils/shift_utils.dart'; // DB_REVIEW_REST
+import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Sheet for copying a shift plan to another tenant
 class CopyShiftToTenantSheet extends ConsumerStatefulWidget {
@@ -63,10 +63,10 @@ class _CopyShiftToTenantSheetState
           children: [
             // Header
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               title: Text(context.l10n.shiftsCopyToTenant),
               leading: IconButton(
-                icon: const Icon(Icons.close),
+                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                 onPressed: () => Navigator.pop(context),
               ),
               automaticallyImplyLeading: false,
@@ -110,7 +110,7 @@ class _CopyShiftToTenantSheetState
                               ),
                               const SizedBox(height: 8),
                               AppDropdownFormField<int>(
-                                iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                                iosInterface: AppSelectInterface.alert,
                                 value: _targetTenantId,
                                 decoration: const InputDecoration(
                                   prefixIcon: Icon(Icons.business),

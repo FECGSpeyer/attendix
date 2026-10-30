@@ -10,7 +10,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Same-tenant, account-less people similar to a pending applicant
 /// (Ionic person.page loadDuplicateCandidates).

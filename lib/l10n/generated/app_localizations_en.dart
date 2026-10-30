@@ -9,6 +9,38 @@ class AppLocalizationsEn extends AppLocalizations {
   AppLocalizationsEn([String locale = 'en']) : super(locale);
 
   @override
+  String get a11yAdd => 'Add';
+
+  @override
+  String get a11yClearInput => 'Clear input';
+
+  @override
+  String get a11yDecrease => 'Decrease';
+
+  @override
+  String get a11yHelp => 'Help';
+
+  @override
+  String get a11yIncrease => 'Increase';
+
+  @override
+  String get a11yMoreActions => 'More actions';
+
+  @override
+  String get a11yNextPage => 'Next page';
+
+  @override
+  String get a11yPreviousPage => 'Previous page';
+
+  @override
+  String a11yRating(Object count) {
+    return '$count of 5 stars';
+  }
+
+  @override
+  String get a11ySelectDate => 'Select date';
+
+  @override
   String get adminAddChurch => 'Add church';
 
   @override
@@ -7866,6 +7898,89 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignBulkActionArchive => 'Archive';
+
+  @override
+  String get redesignBulkActionGroup => 'Section';
+
+  @override
+  String get redesignBulkActionPause => 'Pause';
+
+  @override
+  String redesignBulkArchiveConfirm(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Archive $count people?',
+      one: 'Archive 1 person?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkArchiveHint => 'Archived members are listed under Archive.';
+
+  @override
+  String get redesignBulkClear => 'Clear selection';
+
+  @override
+  String redesignBulkDone(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people changed',
+      one: '1 person changed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignBulkFailed(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count changes failed',
+      one: '1 change failed',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkHint => 'Tap members, then choose an action below.';
+
+  @override
+  String get redesignBulkNoGroup => 'No section';
+
+  @override
+  String get redesignBulkPauseReason => 'Reason for the pause';
+
+  @override
+  String get redesignBulkPickGroup => 'New section';
+
+  @override
+  String get redesignBulkSearch => 'Search member';
+
+  @override
+  String redesignBulkSelectGroup(Object group) {
+    return 'All in $group';
+  }
+
+  @override
+  String redesignBulkSelected(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '1 selected',
+      zero: 'Nothing selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignBulkTitle => 'Edit members';
+
+  @override
   String get redesignCommonAll => 'All';
 
   @override
@@ -7876,6 +7991,30 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignCommonRetry => 'Try again';
+
+  @override
+  String get redesignComposeBody => 'Text';
+
+  @override
+  String get redesignComposeGroups => 'Choose sections';
+
+  @override
+  String get redesignComposeHint => 'The message appears for all recipients under Messages.';
+
+  @override
+  String get redesignComposeMissing => 'Subject, text and at least one channel are still missing.';
+
+  @override
+  String get redesignComposeSend => 'Send';
+
+  @override
+  String get redesignComposeSubject => 'Subject';
+
+  @override
+  String get redesignComposeTitle => 'Write message';
+
+  @override
+  String get redesignComposeTo => 'To whom?';
 
   @override
   String get redesignCreateChooseType => 'Choose type';
@@ -8732,6 +8871,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMembersStats => 'Statistics';
 
   @override
+  String get redesignNotifForMe => 'For me';
+
+  @override
+  String get redesignNotifGroups => 'Groups';
+
+  @override
+  String get redesignNotifGroupsHint => 'Each group can be muted on its own.';
+
+  @override
+  String get redesignNotifHow => 'How';
+
+  @override
+  String get redesignNotifLead => 'As a leader';
+
+  @override
+  String get redesignNotifTelegram => 'Telegram';
+
+  @override
+  String get redesignNotifTelegramConnect => 'Connect';
+
+  @override
+  String get redesignNotifTelegramConnected => 'Connected';
+
+  @override
+  String get redesignNotifTelegramDisconnect => 'Disconnect';
+
+  @override
   String get redesignOwnInfos => 'Event info';
 
   @override
@@ -8898,6 +9064,60 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignSplitWorksEmpty => 'Choose a work on the left.';
+
+  @override
+  String get redesignStatsAvg => 'Ø attendance';
+
+  @override
+  String redesignStatsBar(Object date, Object percent) {
+    return '$date: $percent %';
+  }
+
+  @override
+  String get redesignStatsEmpty => 'There are no events in this period.';
+
+  @override
+  String get redesignStatsEvents => 'Events';
+
+  @override
+  String get redesignStatsLoadFailed => 'Could not load the insights.';
+
+  @override
+  String redesignStatsLow(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people below 50 %',
+      one: '1 person below 50 %',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignStatsMembers => 'Active';
+
+  @override
+  String get redesignStatsPerEvent => 'Attendance per event';
+
+  @override
+  String redesignStatsPerEventHint(Object count) {
+    return 'The last $count events';
+  }
+
+  @override
+  String get redesignStatsPerGroup => 'Per section';
+
+  @override
+  String get redesignStatsRange12m => '12 months';
+
+  @override
+  String get redesignStatsRange3m => '3 months';
+
+  @override
+  String get redesignStatsRangeSeason => 'Season';
+
+  @override
+  String get redesignStatsTitle => 'Insights';
 
   @override
   String get redesignStatusAbsent => 'Absent';

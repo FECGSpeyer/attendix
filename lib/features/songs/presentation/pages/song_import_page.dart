@@ -13,7 +13,7 @@ import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 enum _Step { file, mapping, preview }
 
@@ -196,7 +196,7 @@ class _SongImportPageState extends ConsumerState<SongImportPage> {
         actions: [
           ToolbarButtonGroup(children: [
             IconButton(
-              icon: const Icon(Icons.close),
+              icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
               onPressed: _busy ? null : () => Navigator.of(context).pop(),
             ),
           ]),

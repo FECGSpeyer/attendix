@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html>
+<html lang="de">
 <head>
   <!--
     If you are serving your web app in a path other than the root, change the
@@ -18,7 +18,7 @@
 
   <meta charset="UTF-8">
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
-  <meta name="description" content="A new Flutter project.">
+  <meta name="description" content="Attendix – Anwesenheit, Termine und Werke für Orchester, Chöre und Gruppen">
 
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
@@ -33,8 +33,35 @@
 
   <title>attendix</title>
   <link rel="manifest" href="manifest.json">
+  <!-- Start loading the app code right away, in parallel with the bootstrap
+       script (it would otherwise only be requested after flutter_bootstrap.js). -->
+  <link rel="preload" href="main.dart.js" as="script">
+  <style>
+    /* Shown until Flutter paints its first frame (removed on flutter-first-frame). */
+    #app-loading { position: fixed; inset: 0; display: flex; flex-direction: column;
+      align-items: center; justify-content: center; gap: 24px; background: #ffffff; z-index: 0; }
+    #app-loading img { width: 88px; height: 88px; border-radius: 20px; }
+    #app-loading .spinner { width: 28px; height: 28px; border-radius: 50%;
+      border: 3px solid rgba(0,0,0,.12); border-top-color: #438e96; animation: app-spin .8s linear infinite; }
+    @keyframes app-spin { to { transform: rotate(360deg); } }
+    @media (prefers-color-scheme: dark) {
+      #app-loading { background: #000000; }
+      #app-loading .spinner { border-color: rgba(255,255,255,.18); border-top-color: #5699a1; }
+    }
+    @media (prefers-reduced-motion: reduce) { #app-loading .spinner { animation-duration: 2.4s; } }
+  </style>
 </head>
 <body>
+  <div id="app-loading" role="progressbar" aria-label="attendix wird geladen">
+    <img src="icons/Icon-192.png" alt="">
+    <div class="spinner"></div>
+  </div>
+  <script>
+    window.addEventListener('flutter-first-frame', function () {
+      var el = document.getElementById('app-loading');
+      if (el) el.remove();
+    });
+  </script>
   <!-- pdf.js for the in-app PDF viewer (pdfx). Loaded from a CDN, so it can
        be blocked (offline, ad blocker, firewall). Everything below is guarded:
        without pdf.js the app still starts and the PDF viewer shows a friendly

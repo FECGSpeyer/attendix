@@ -7,7 +7,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Dialog for smart printing with instrument-based copy selection
 class SmartPrintDialog extends ConsumerStatefulWidget {
@@ -309,7 +309,7 @@ class _CopyCountRow extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             children: [
               IconButton(
-                icon: const Icon(Icons.remove_circle_outline),
+                icon: Icon(Icons.remove_circle_outline, semanticLabel: context.l10n.a11yDecrease),
                 onPressed: copies > 0 ? () => onChanged(copies - 1) : null,
                 visualDensity: VisualDensity.compact,
                 iconSize: 20,
@@ -326,7 +326,7 @@ class _CopyCountRow extends StatelessWidget {
                 ),
               ),
               IconButton(
-                icon: const Icon(Icons.add_circle_outline),
+                icon: Icon(Icons.add_circle_outline, semanticLabel: context.l10n.a11yIncrease),
                 onPressed: copies < 99 ? () => onChanged(copies + 1) : null,
                 visualDensity: VisualDensity.compact,
                 iconSize: 20,

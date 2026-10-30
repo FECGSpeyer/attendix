@@ -1,5 +1,48 @@
 {
   "@@locale": "de",
+  "a11yAdd": "Hinzufügen",
+  "@a11yAdd": {
+    "description": "a11y.add"
+  },
+  "a11yClearInput": "Eingabe löschen",
+  "@a11yClearInput": {
+    "description": "a11y.clearInput"
+  },
+  "a11yDecrease": "Verringern",
+  "@a11yDecrease": {
+    "description": "a11y.decrease"
+  },
+  "a11yHelp": "Hilfe",
+  "@a11yHelp": {
+    "description": "a11y.help"
+  },
+  "a11yIncrease": "Erhöhen",
+  "@a11yIncrease": {
+    "description": "a11y.increase"
+  },
+  "a11yMoreActions": "Weitere Aktionen",
+  "@a11yMoreActions": {
+    "description": "a11y.moreActions"
+  },
+  "a11yNextPage": "Nächste Seite",
+  "@a11yNextPage": {
+    "description": "a11y.nextPage"
+  },
+  "a11yPreviousPage": "Vorherige Seite",
+  "@a11yPreviousPage": {
+    "description": "a11y.previousPage"
+  },
+  "a11yRating": "{count} von 5 Sternen",
+  "@a11yRating": {
+    "description": "a11y.rating",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "a11ySelectDate": "Datum wählen",
+  "@a11ySelectDate": {
+    "description": "a11y.selectDate"
+  },
   "adminAddChurch": "Gemeinde hinzufügen",
   "@adminAddChurch": {
     "description": "admin.addChurch"
@@ -10354,6 +10397,93 @@
       "group": {}
     }
   },
+  "redesignBulkActionArchive": "Archivieren",
+  "@redesignBulkActionArchive": {
+    "description": "redesign.bulk.actionArchive"
+  },
+  "redesignBulkActionGroup": "Register",
+  "@redesignBulkActionGroup": {
+    "description": "redesign.bulk.actionGroup"
+  },
+  "redesignBulkActionPause": "Pausieren",
+  "@redesignBulkActionPause": {
+    "description": "redesign.bulk.actionPause"
+  },
+  "redesignBulkArchiveConfirm": "{count, plural, one {1 Person archivieren?} other {{count} Personen archivieren?}}",
+  "@redesignBulkArchiveConfirm": {
+    "description": "redesign.bulk.archiveConfirm",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkArchiveHint": "Archivierte Mitglieder findest du unter Archiv.",
+  "@redesignBulkArchiveHint": {
+    "description": "redesign.bulk.archiveHint"
+  },
+  "redesignBulkClear": "Auswahl aufheben",
+  "@redesignBulkClear": {
+    "description": "redesign.bulk.clear"
+  },
+  "redesignBulkDone": "{count, plural, one {1 Person geändert} other {{count} Personen geändert}}",
+  "@redesignBulkDone": {
+    "description": "redesign.bulk.done",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkFailed": "{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}",
+  "@redesignBulkFailed": {
+    "description": "redesign.bulk.failed",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkHint": "Mitglieder antippen, dann unten eine Aktion wählen.",
+  "@redesignBulkHint": {
+    "description": "redesign.bulk.hint"
+  },
+  "redesignBulkNoGroup": "Ohne Register",
+  "@redesignBulkNoGroup": {
+    "description": "redesign.bulk.noGroup"
+  },
+  "redesignBulkPauseReason": "Grund der Pause",
+  "@redesignBulkPauseReason": {
+    "description": "redesign.bulk.pauseReason"
+  },
+  "redesignBulkPickGroup": "Neues Register",
+  "@redesignBulkPickGroup": {
+    "description": "redesign.bulk.pickGroup"
+  },
+  "redesignBulkSearch": "Mitglied suchen",
+  "@redesignBulkSearch": {
+    "description": "redesign.bulk.search"
+  },
+  "redesignBulkSelectGroup": "Alle in {group}",
+  "@redesignBulkSelectGroup": {
+    "description": "redesign.bulk.selectGroup",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignBulkSelected": "{count, plural, =0 {Keine Auswahl} one {1 ausgewählt} other {{count} ausgewählt}}",
+  "@redesignBulkSelected": {
+    "description": "redesign.bulk.selected",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignBulkTitle": "Mitglieder bearbeiten",
+  "@redesignBulkTitle": {
+    "description": "redesign.bulk.title"
+  },
   "redesignCommonAll": "Alle",
   "@redesignCommonAll": {
     "description": "redesign.common.all"
@@ -10369,6 +10499,38 @@
   "redesignCommonRetry": "Erneut versuchen",
   "@redesignCommonRetry": {
     "description": "redesign.common.retry"
+  },
+  "redesignComposeBody": "Text",
+  "@redesignComposeBody": {
+    "description": "redesign.compose.body"
+  },
+  "redesignComposeGroups": "Register wählen",
+  "@redesignComposeGroups": {
+    "description": "redesign.compose.groups"
+  },
+  "redesignComposeHint": "Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.",
+  "@redesignComposeHint": {
+    "description": "redesign.compose.hint"
+  },
+  "redesignComposeMissing": "Betreff, Text und mindestens ein Versandweg fehlen noch.",
+  "@redesignComposeMissing": {
+    "description": "redesign.compose.missing"
+  },
+  "redesignComposeSend": "Senden",
+  "@redesignComposeSend": {
+    "description": "redesign.compose.send"
+  },
+  "redesignComposeSubject": "Betreff",
+  "@redesignComposeSubject": {
+    "description": "redesign.compose.subject"
+  },
+  "redesignComposeTitle": "Mitteilung schreiben",
+  "@redesignComposeTitle": {
+    "description": "redesign.compose.title"
+  },
+  "redesignComposeTo": "An wen?",
+  "@redesignComposeTo": {
+    "description": "redesign.compose.to"
   },
   "redesignCreateChooseType": "Art wählen",
   "@redesignCreateChooseType": {
@@ -11440,6 +11602,42 @@
   "@redesignMembersStats": {
     "description": "redesign.members.stats"
   },
+  "redesignNotifForMe": "Für mich",
+  "@redesignNotifForMe": {
+    "description": "redesign.notif.forMe"
+  },
+  "redesignNotifGroups": "Gruppen",
+  "@redesignNotifGroups": {
+    "description": "redesign.notif.groups"
+  },
+  "redesignNotifGroupsHint": "Jede Gruppe lässt sich einzeln stummschalten.",
+  "@redesignNotifGroupsHint": {
+    "description": "redesign.notif.groupsHint"
+  },
+  "redesignNotifHow": "Wie",
+  "@redesignNotifHow": {
+    "description": "redesign.notif.how"
+  },
+  "redesignNotifLead": "Als Leitung",
+  "@redesignNotifLead": {
+    "description": "redesign.notif.lead"
+  },
+  "redesignNotifTelegram": "Telegram",
+  "@redesignNotifTelegram": {
+    "description": "redesign.notif.telegram"
+  },
+  "redesignNotifTelegramConnect": "Verbinden",
+  "@redesignNotifTelegramConnect": {
+    "description": "redesign.notif.telegramConnect"
+  },
+  "redesignNotifTelegramConnected": "Verbunden",
+  "@redesignNotifTelegramConnected": {
+    "description": "redesign.notif.telegramConnected"
+  },
+  "redesignNotifTelegramDisconnect": "Trennen",
+  "@redesignNotifTelegramDisconnect": {
+    "description": "redesign.notif.telegramDisconnect"
+  },
   "redesignOwnInfos": "Infos zum Termin",
   "@redesignOwnInfos": {
     "description": "redesign.own.infos"
@@ -11669,6 +11867,74 @@
   "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
   "@redesignSplitWorksEmpty": {
     "description": "redesign.split.worksEmpty"
+  },
+  "redesignStatsAvg": "Ø Anwesenheit",
+  "@redesignStatsAvg": {
+    "description": "redesign.stats.avg"
+  },
+  "redesignStatsBar": "{date}: {percent} %",
+  "@redesignStatsBar": {
+    "description": "redesign.stats.bar",
+    "placeholders": {
+      "date": {},
+      "percent": {}
+    }
+  },
+  "redesignStatsEmpty": "Im Zeitraum gibt es keine Termine.",
+  "@redesignStatsEmpty": {
+    "description": "redesign.stats.empty"
+  },
+  "redesignStatsEvents": "Termine",
+  "@redesignStatsEvents": {
+    "description": "redesign.stats.events"
+  },
+  "redesignStatsLoadFailed": "Auswertung konnte nicht geladen werden.",
+  "@redesignStatsLoadFailed": {
+    "description": "redesign.stats.loadFailed"
+  },
+  "redesignStatsLow": "{count, plural, one {1 Person unter 50 %} other {{count} Personen unter 50 %}}",
+  "@redesignStatsLow": {
+    "description": "redesign.stats.low",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignStatsMembers": "Aktive",
+  "@redesignStatsMembers": {
+    "description": "redesign.stats.members"
+  },
+  "redesignStatsPerEvent": "Anwesenheit je Termin",
+  "@redesignStatsPerEvent": {
+    "description": "redesign.stats.perEvent"
+  },
+  "redesignStatsPerEventHint": "Die letzten {count} Termine",
+  "@redesignStatsPerEventHint": {
+    "description": "redesign.stats.perEventHint",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignStatsPerGroup": "Je Register",
+  "@redesignStatsPerGroup": {
+    "description": "redesign.stats.perGroup"
+  },
+  "redesignStatsRange12m": "12 Monate",
+  "@redesignStatsRange12m": {
+    "description": "redesign.stats.range12m"
+  },
+  "redesignStatsRange3m": "3 Monate",
+  "@redesignStatsRange3m": {
+    "description": "redesign.stats.range3m"
+  },
+  "redesignStatsRangeSeason": "Saison",
+  "@redesignStatsRangeSeason": {
+    "description": "redesign.stats.rangeSeason"
+  },
+  "redesignStatsTitle": "Auswertung",
+  "@redesignStatsTitle": {
+    "description": "redesign.stats.title"
   },
   "redesignStatusAbsent": "Abwesend",
   "@redesignStatusAbsent": {

@@ -4,24 +4,23 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/conductor_providers.dart';
 import '../../../../core/providers/history_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/history/history_entry.dart';
-import '../../../../data/models/person/person.dart'; // P10_ATTENDANCE
+import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../history_utils.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../attendance/presentation/widgets/ios_condense_header.dart'; // UX_ATT
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../attendance/presentation/widgets/ios_condense_header.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// IOS_FORMS2: Ionic opens the Werkhistorie with
 /// `modalController.create({ component: HistoryPage, presentingElement })`,
@@ -342,7 +341,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                       Expanded(child: Text(l10n.attListConductor, style: const TextStyle(fontSize: 17))),
                       DropdownButtonHideUnderline(
                         child: AppDropdownButton<int>(
-                          iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                          iosInterface: AppSelectInterface.alert,
                           value: otherConductor != null ? -1 : selectedConductorId,
                           alignment: AlignmentDirectional.centerEnd,
                           items: [
@@ -392,7 +391,7 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
                   ),
                   trailing: IconButton(
-                    icon: const Icon(Icons.calendar_today_outlined, color: AppColors.primary),
+                    icon: Icon(Icons.calendar_today_outlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
                     onPressed: () async {
                       final date = await showAppDatePicker(
                         context: sheetContext,
@@ -489,10 +488,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   }) async {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final tenant = ref.read(currentTenantProvider);
+      final repo = ref.read(attendanceRepositoryWithTenantProvider);
 
-      if (tenant?.id == null) {
+      if (!repo.hasTenantId) {
         if (mounted) {
           ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
@@ -500,22 +498,17 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       }
 
       final dateStr = date.toIso8601String().substring(0, 10);
-      await supabase
-          .from('history')
-          .insert(
-            songIds
-                .map(
-                  (songId) => {
-                    'tenantId': tenant!.id!,
-                    'songId': songId, // DB column (Ionic History.songId)
-                    'person_id': conductorId,
-                    'otherConductor': otherConductor,
-                    'date': dateStr,
-                    'visible': true,
-                  },
-                )
-                .toList(),
-          );
+      // tenantId is set by the repository.
+      await repo.addHistoryEntries([
+        for (final songId in songIds)
+          {
+            'songId': songId, // DB column (Ionic History.songId)
+            'person_id': conductorId,
+            'otherConductor': otherConductor,
+            'date': dateStr,
+            'visible': true,
+          },
+      ]);
 
       ref.invalidate(performanceHistoryProvider);
       if (mounted) {
@@ -534,6 +527,8 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
 
   Future<void> _deleteEntry(HistoryEntry entry) async {
     if (entry.id == null) return;
+    // Bound before the dialog, so a tenant switch meanwhile cannot redirect it.
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
     HapticHelper.medium(); // MEDIA_REALTIME: Ionic Haptics.impact Medium
 
     final confirmed = await DialogHelper.showConfirmation(
@@ -548,21 +543,15 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
 
     try {
-      final supabase = ref.read(supabaseClientProvider);
-      final tenant = ref.read(currentTenantProvider);
 
-      if (tenant?.id == null) {
+      if (!repo.hasTenantId) {
         if (mounted) {
           ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
         }
         return;
       }
 
-      await supabase
-          .from('history')
-          .delete()
-          .eq('id', entry.id!)
-          .eq('tenantId', tenant!.id!);
+      await repo.deleteHistoryEntry(entry.id!);
 
       ref.invalidate(performanceHistoryProvider);
       if (mounted) {

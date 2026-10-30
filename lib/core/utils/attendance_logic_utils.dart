@@ -1,6 +1,6 @@
 import 'package:intl/intl.dart';
 
-import '../../data/models/attendance/attendance.dart' show AttendanceType; // P10_ATTENDANCE
+import '../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../data/models/player_absence/player_absence.dart';
 import '../constants/enums.dart';
 

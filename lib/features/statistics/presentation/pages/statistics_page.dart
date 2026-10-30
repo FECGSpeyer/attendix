@@ -7,12 +7,12 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
-import '../../../../core/providers/player_providers.dart'; // UX_SETTINGS
+import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/statistics_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
-import '../../../../core/utils/dialog_helper.dart'; // IOS_PAGES3
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/person_matcher.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/organisation/organisation.dart';
@@ -20,11 +20,11 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground; // IOS_PAGES3
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal; // PARITY_R5
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetHeader, ionItemBackground;
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+import '../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// Statistics Page with Charts
 ///

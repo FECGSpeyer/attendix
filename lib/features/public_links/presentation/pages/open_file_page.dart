@@ -3,12 +3,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/config/supabase_config.dart';
-import '../../../../core/providers/role_permission_providers.dart'; // ASTRA_FILES
+import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
-import '../../../../core/utils/dashboard_logic.dart'; // ASTRA_FILES
+import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Shared Dateiablage link that was opened while signed out. The router
 /// resumes it after login (Ionic `FilesService.setPendingLink`).

@@ -13,6 +13,7 @@ import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
+import '../../core/utils/status_utils.dart';
 
 /// Provider for AttendanceRepository
 final attendanceRepositoryProvider = Provider<AttendanceRepository>((ref) {
@@ -394,7 +395,16 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// time window of a Termin changed, re-run the shift computation for every
   /// person of the Termin (see [ShiftUtils.shiftUpdatesForAttendance]).
   /// Skips past Termine and all-day types.
-  Future<void> updateShiftAssignmentsForAttendance(int attendanceId) async {
+  ///
+  /// [isSessionCurrent] / [actingUserId] come from the write session captured
+  /// when the user acted. They are handed to every [updatePersonAttendance],
+  /// which checks the session right before each write, so an account or
+  /// tenant switch during the computation stops the remaining writes.
+  Future<void> updateShiftAssignmentsForAttendance(
+    int attendanceId, {
+    bool Function()? isSessionCurrent,
+    String? actingUserId,
+  }) async {
     try {
       final att = await supabase
           .from('attendance')
@@ -422,7 +432,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             ShiftAttendanceRow(
               id: r['id'].toString(),
               personId: (r['person_id'] as num).toInt(),
-              status: _parseStatus(r['status']),
+              status: parseAttendanceStatus(r['status']),
               notes: r['notes'] as String?,
             ),
       ];
@@ -463,8 +473,16 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         shifts: shifts,
       );
       for (final u in updates) {
-        await updatePersonAttendance(u.id, {'status': u.status.value, 'notes': u.notes});
+        await updatePersonAttendance(
+          u.id,
+          {'status': u.status.value, 'notes': u.notes},
+          isSessionCurrent: isSessionCurrent,
+          actingUserId: actingUserId,
+        );
       }
+    } on OfflineSessionChangedException {
+      // Session changed mid-run: stop, keep the typed error for the caller.
+      rethrow;
     } catch (e, stack) {
       handleError(e, stack, 'updateShiftAssignmentsForAttendance');
       rethrow;
@@ -783,7 +801,6 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   }
 
   // Helper to parse attendance with optional person attendances
-  // STATS_PEOPLE_FIXES
   /// Load person_attendances for the given attendance ids (export).
   ///
   /// Multi-tenant safety: `person_attendances` has no `tenantId` column, so
@@ -794,27 +811,22 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   ) async {
     if (attendanceIds.isEmpty) return [];
     try {
-      const batchSize = 1000;
-      final result = <PersonAttendance>[];
-      var offset = 0;
-      while (true) {
-        final response = await supabase
+      // Chunked ids (URL size) and paged rows (PostgREST max-rows).
+      final rows = await fetchInChunks<dynamic, int>(
+        attendanceIds,
+        (chunk) => fetchAllPages<dynamic>((from, to) async => await supabase
             .from('person_attendances')
             .select('id, attendance_id, person_id, status, notes, '
                 'attendance:attendance_id!inner(tenantId)')
-            .inFilter('attendance_id', attendanceIds)
+            .inFilter('attendance_id', chunk)
             .eq('attendance.tenantId', currentTenantId)
             .order('id') // stable paging
-            .range(offset, offset + batchSize - 1);
-        final rows = response as List;
-        for (final e in rows) {
-          final row = Map<String, dynamic>.from(e as Map)..remove('attendance');
-          result.add(PersonAttendance.fromJson(row));
-        }
-        if (rows.length < batchSize) break;
-        offset += batchSize;
-      }
-      return result;
+            .range(from, to) as List),
+      );
+      return [
+        for (final e in rows)
+          PersonAttendance.fromJson(Map<String, dynamic>.from(e as Map)..remove('attendance')),
+      ];
     } catch (e, stack) {
       handleError(e, stack, 'getPersonAttendancesForAttendances');
       rethrow;
@@ -835,7 +847,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
       id: data['id']?.toString(),
       attendanceId: data['attendance_id'],
       personId: data['person_id'],
-      status: _parseStatus(data['status']),
+      status: parseAttendanceStatus(data['status']),
       notes: data['notes'],
       date: attendanceData?['date'],
       title: attendanceData?['typeInfo'],
@@ -1103,25 +1115,4 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   }
   // END ATT_DETAIL
 
-  AttendanceStatus _parseStatus(dynamic status) {
-    if (status == null) return AttendanceStatus.neutral;
-    if (status is AttendanceStatus) return status;
-
-    // Handle integer values (as stored in database)
-    if (status is int) {
-      return AttendanceStatus.fromValue(status);
-    }
-
-    // Handle string values (enum names or integer strings)
-    final statusStr = status.toString();
-    final intValue = int.tryParse(statusStr);
-    if (intValue != null) {
-      return AttendanceStatus.fromValue(intValue);
-    }
-
-    return AttendanceStatus.values.firstWhere(
-      (s) => s.name.toLowerCase() == statusStr.toLowerCase(),
-      orElse: () => AttendanceStatus.neutral,
-    );
-  }
 }

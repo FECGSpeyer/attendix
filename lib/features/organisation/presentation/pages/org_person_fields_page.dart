@@ -10,11 +10,11 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../l10n/l10n.dart';
-import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset; // IOS_R6
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/ion_condense.dart'; // UX_SETTINGS (WAVE 8)
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/ion_condense.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 Map<String, String> _fieldTypes(AppLocalizations l10n) => <String, String>{
       'text': l10n.typeSettingsText,
@@ -162,7 +162,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       // IOS_R6: `ion-header translucent` (blur once condensed)
       appBar: IonTranslucentAppBar(condensed: collapsed, child: AppBar(
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back),
+          icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: () => Navigator.of(context).maybePop(),
         ),
         title: IonCondenseTitle(context.l10n.orgPersonFields, collapsed: collapsed),
@@ -180,7 +180,7 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
               ? ListView(
                   padding: EdgeInsets.fromLTRB(16, 0, 16, scrollEndPadding(context, base: 24)),
                   children: [
-                    const IonContentTopInset(), // IOS_R6
+                    const IonContentTopInset(),
                     IonLargeTitle(context.l10n.orgPersonFields, padding: const EdgeInsets.only(bottom: 4)),
                     const SizedBox(height: 16),
                     SettingsListSection(
@@ -252,11 +252,11 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButton(
-            icon: const Icon(Icons.edit_outlined, color: AppColors.primary),
+            icon: Icon(Icons.edit_outlined, color: AppColors.primary, semanticLabel: context.l10n.commonEdit),
             onPressed: isSuperAdmin ? () => _edit(i) : null,
           ),
           IconButton(
-            icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+            icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
             onPressed: isSuperAdmin ? () => _remove(i) : null,
           ),
           if (isSuperAdmin) ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
@@ -351,7 +351,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 )
               else
                 AppDropdownFormField<String>(
-                  iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                  iosInterface: AppSelectInterface.alert,
                   value: _type,
                   decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
                   items: [
@@ -365,7 +365,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
               ),
               AppDropdownFormField<String>(
-                iosInterface: AppSelectInterface.alert, // IOS_THEME2
+                iosInterface: AppSelectInterface.alert,
                 value: _displayMode,
                 decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
                 items: [
@@ -394,7 +394,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   children: [
                     Expanded(child: Text(context.l10n.typeSettingsOptions, style: const TextStyle(fontWeight: FontWeight.bold))),
                     IconButton(
-                      icon: const Icon(Icons.add),
+                      icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
                       onPressed: () => setState(() => _options.add(TextEditingController())),
                     ),
                   ],
@@ -414,7 +414,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                         ),
                       ),
                       IconButton(
-                        icon: const Icon(Icons.delete_outline, color: AppColors.danger),
+                        icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
                         onPressed: () => setState(() => _options.removeAt(i).dispose()),
                       ),
                     ],

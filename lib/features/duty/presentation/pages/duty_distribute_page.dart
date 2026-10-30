@@ -14,7 +14,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens "Dienste verteilen". Returns true when assignments were saved.
 Future<bool> openDutyDistributePage(BuildContext context) async {

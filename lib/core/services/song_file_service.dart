@@ -11,6 +11,7 @@ import '../providers/tenant_providers.dart';
 import '../utils/demo_guard.dart'; // DEMO_GUARD
 import '../../l10n/l10n.dart';
 import '../utils/file_mime.dart';
+import 'error_reporter.dart';
 
 /// PARITY_B (D14): Ionic `filesJson` mapping of a `songs.files[]` entry —
 /// storageName, fileName, fileType, url, instrumentId (null if missing) and
@@ -271,7 +272,9 @@ class SongFileService {
       // Cleanup: remove uploaded file
       try {
         await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'song_file_service');
+      }
       throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
     }
 
@@ -592,7 +595,9 @@ class SongFileService {
       // Cleanup: remove uploaded file
       try {
         await _supabase.storage.from(_bucketName).remove([storagePath]);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'song_file_service');
+      }
       throw Exception(l10nWithoutContext.coreFlutterSongNotFound);
     }
 

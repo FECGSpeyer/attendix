@@ -9,6 +9,20 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
   AttendanceTypeRepository(super.ref);
 
   /// Get all attendance types for current tenant, ordered by index
+  /// Raw attendance_types rows of the tenant (person history labels).
+  Future<List<Map<String, dynamic>>> getTypeRows() async {
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .select('*')
+          .eq('tenant_id', currentTenantId);
+      return List<Map<String, dynamic>>.from(response as List);
+    } catch (e, stack) {
+      handleError(e, stack, 'getTypeRows');
+      rethrow;
+    }
+  }
+
   Future<List<AttendanceType>> getTypes() async {
     try {
       final response = await supabase

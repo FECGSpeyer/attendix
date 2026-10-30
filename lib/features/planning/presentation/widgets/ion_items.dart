@@ -2,14 +2,14 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 
 import '../../../../core/theme/app_colors.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
     show IonTranslucentAppBar, IonContentTopInset; // PARITY_R5, IOS_R6
 import '../../../../shared/widgets/layout/ionic_ios.dart' as ios27
-    show IonIos, IonDetailChevron, IonSearchbar, IonLargeTitle; // IOS27_SWEEP
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
-import '../../../../shared/widgets/layout/ionic_md.dart'; // MD_SWEEP
+    show IonIos, IonDetailChevron, IonSearchbar, IonLargeTitle;
+import '../../../../shared/widgets/display/ion_badge_text.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart';
 
 // UX_PLANNING (wave 8): page-structure building blocks that mirror the Ionic
 // components as rendered in iOS mode (the app on an iPhone). They are used by
@@ -231,7 +231,7 @@ class IonDetailIcon extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) => isIonIos(context)
-      ? const ios27.IonDetailChevron() // IOS27_SWEEP
+      ? const ios27.IonDetailChevron()
       // MD_SWEEP: md detail icon – 20px, text colour at .25.
       : Icon(Icons.chevron_right,
           size: 20,
@@ -716,7 +716,7 @@ class _IonCondenseScaffoldState extends State<IonCondenseScaffold> {
     final ios = isIonIos(context);
     return Scaffold(
       backgroundColor: widget.backgroundColor,
-      floatingActionButton: TabBarFab.wrap(widget.floatingActionButton), // IOS_SHELL2
+      floatingActionButton: TabBarFab.wrap(widget.floatingActionButton),
       // IOS_R6: Ionic `ion-content fullscreen` under the translucent header
       extendBodyBehindAppBar: ios,
       // IOS_R6: `ion-header translucent` (blur once condensed)

@@ -282,7 +282,7 @@ class ProfileRepository extends BaseRepository
     int organisationId,
     String personKey,
     Map<String, dynamic> values, {
-    bool Function()? isSessionCurrent, // SOL_FIX15
+    bool Function()? isSessionCurrent,
   }) async {
     ensureNotDemo('updateSharedFieldValues'); // DEMO_GUARD
     if (values.isEmpty) return;
@@ -308,7 +308,7 @@ class ProfileRepository extends BaseRepository
                 'value': e.value,
               })
           .toList();
-      _ensureSession(isSessionCurrent); // SOL_FIX15
+      _ensureSession(isSessionCurrent);
       await supabase
           .from('tenant_group_person_fields')
           .upsert(rows, onConflict: 'tenant_group,person_key,field_id');
@@ -372,7 +372,7 @@ class ProfileRepository extends BaseRepository
         .eq('appId', userId)
         .neq('tenantId', currentTenantId);
     for (final row in (rows as List).cast<Map<String, dynamic>>()) {
-      _ensureSession(isSessionCurrent); // SOL_FIX15
+      _ensureSession(isSessionCurrent);
       await supabase
           .from('player')
           .update(personalData)
@@ -397,7 +397,7 @@ class ProfileRepository extends BaseRepository
       final current = fields['bfecg_church'];
       if (current != null && current != '' && current != churchId) {
         fields['bfecg_church'] = churchId;
-        _ensureSession(isSessionCurrent); // SOL_FIX15
+        _ensureSession(isSessionCurrent);
         await supabase
             .from('player')
             .update({'additional_fields': fields})
@@ -420,7 +420,7 @@ class ProfileRepository extends BaseRepository
     ensureNotDemo('uploadOwnImage'); // DEMO_GUARD
     try {
       final fileName = '$playerId';
-      _ensureSession(isSessionCurrent); // SOL_FIX15
+      _ensureSession(isSessionCurrent);
       await supabase.storage.from('profiles').uploadBinary(
             fileName,
             bytes,
@@ -432,7 +432,7 @@ class ProfileRepository extends BaseRepository
       // client-side only (ProfileNotifier.updateImage).
       final url = supabase.storage.from('profiles').getPublicUrl(fileName);
 
-      _ensureSession(isSessionCurrent); // SOL_FIX15
+      _ensureSession(isSessionCurrent);
       await supabase
           .from('player')
           .update({'img': url})
@@ -455,7 +455,7 @@ class ProfileRepository extends BaseRepository
   }) async {
     ensureNotDemo('removeOwnImage'); // DEMO_GUARD
     try {
-      _ensureSession(isSessionCurrent); // SOL_FIX15
+      _ensureSession(isSessionCurrent);
       await supabase
           .from('player')
           .update({'img': ''})
@@ -465,7 +465,7 @@ class ProfileRepository extends BaseRepository
 
       final fileName = Uri.tryParse(imgUrl)?.pathSegments.lastOrNull;
       if (fileName != null && fileName.isNotEmpty) {
-        _ensureSession(isSessionCurrent); // SOL_FIX15
+        _ensureSession(isSessionCurrent);
         await supabase.storage.from('profiles').remove([fileName]);
       }
     } catch (e, stack) {

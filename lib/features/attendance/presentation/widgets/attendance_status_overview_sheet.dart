@@ -6,7 +6,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
+import '../../../../shared/widgets/display/ion_badge_text.dart';
 
 /// PARITY_R3: Ionic `StatusInfoComponent` (⋮ → Status-Übersicht), a sheet
 /// modal with breakpoints [0, 0.5, 0.75] (initial 0.5).
@@ -141,7 +141,7 @@ class StatusOverviewSheet extends StatelessWidget {
             color: background,
             borderRadius: ios
                 ? const BorderRadius.vertical(
-                    top: Radius.circular(kIonModalSheetRadius)) // PARITY_R5
+                    top: Radius.circular(kIonModalSheetRadius))
                 : null,
           ),
           clipBehavior: Clip.antiAlias,

@@ -10,9 +10,9 @@ import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/branding_providers.dart'; // P10_SONGS_ORG
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
-import '../../../../core/services/pdf_branding.dart'; // P10_SONGS_ORG
+import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -29,9 +29,10 @@ import '../../protocol_layout.dart';
 import '../widgets/protocol_editor.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, outcomeColor;
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../../core/services/native/native_file_service.dart'; // NATIVE_MISC
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/native/native_file_service.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 const _saveDebounce = Duration(milliseconds: 800);
 const _avatarColors = [
@@ -308,7 +309,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     if (ids.isNotEmpty) {
       try {
         items = await _agendaRepo.getAgendaItemsByIds(ids);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'protocol_page');
+      }
     }
     _leftovers = entries.map((e) {
       String title = l10nWithoutContext.protocolEarlierItem;
@@ -772,7 +775,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           .protocolFileName(_title, d != null ? DateFormat('yyyy-MM-dd').format(d) : '')
           .trim()
           .replaceAll(RegExp(r'[\\/:*?"<>|]+'), '-');
-      await NativeFileService.saveBytes(bytes, '$name.pdf'); // NATIVE_MISC
+      await NativeFileService.saveBytes(bytes, '$name.pdf');
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolPdfFailed);
     }
@@ -796,7 +799,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         }
         _outcomes = {for (final e in row.outcomes.entries) e.key: e.value.toString()};
       }
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'protocol_page');
+    }
 
     final summary = PublishSummary();
     final att = _attendees;
@@ -833,7 +838,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           _outcomes,
           items,
         );
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'protocol_page');
+      }
     }
     if (!mounted) return;
     setState(() {});
@@ -849,7 +856,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           child: Column(
             children: [
               AppBar(
-                toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+                toolbarHeight: ionModalToolbarHeight(context),
                 automaticallyImplyLeading: false,
                 leading: TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: IonButtonLabel(ctx.l10n.commonCancel)),
                 leadingWidth: 100,
@@ -1198,7 +1205,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           children: [
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolParticipants),
               actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],
@@ -1260,7 +1267,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
         child: Column(
           children: [
             AppBar(
-              toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+              toolbarHeight: ionModalToolbarHeight(context),
               automaticallyImplyLeading: false,
               title: Text(ctx.l10n.protocolGeneralNotes),
               actions: [TextButton(onPressed: () => Navigator.of(ctx).pop(), child: IonButtonLabel(ctx.l10n.personDone))],

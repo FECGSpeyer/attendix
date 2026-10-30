@@ -1,6 +1,24 @@
 {
   "versions": [
     {
+      "version": "0.23.3",
+      "date": "30.10.2026",
+      "changes": [
+        "🔒 Schichten nach einer Termin-Änderung: Wechselt währenddessen das Konto oder die Gruppe, wird nichts mehr unter dem neuen Konto gespeichert",
+        "🔧 Fehler-Monitoring: Unerwartete Fehler werden ohne persönliche Daten gemeldet, damit wir sie schneller beheben",
+        "🔧 Automatische Prüfung aller Datenbankabfragen gegen das Schema, damit falsche Spaltennamen nicht mehr bis zu euch durchrutschen",
+        "⚡️ Web-App: Logo und Ladeanzeige sofort beim Öffnen statt einer weißen Seite, der App-Code lädt früher",
+        "⚡️ Statistik lädt auch bei sehr langen Zeiträumen zuverlässig",
+        "⚡️ Profilbilder in Listen werden zwischengespeichert",
+        "♿️ VoiceOver und TalkBack: Alle Symbol-Knöpfe (Schließen, Zurück, Löschen …) und die Sterne-Bewertung werden jetzt vorgelesen",
+        "✨ Offline: Personenliste und Gruppen bleiben ohne Netz sichtbar, einmal geöffnete Noten-PDFs öffnen in der App auch ohne Empfang",
+        "✨ Neues Design (Beta): Auswertung mit Anwesenheit je Termin und Register und den Personen unter 50 %",
+        "✨ Neues Design (Beta): Mitteilung schreiben, Benachrichtigungen und „Mitglieder bearbeiten“ (mehrere auf einmal in ein anderes Register, pausieren oder archivieren)",
+        "🔧 Feedback aus dem neuen Design wird als solches markiert",
+        "🔧 Aufgeräumt: nicht mehr genutzter Code entfernt"
+      ]
+    },
+    {
       "version": "0.23.1",
       "date": "30.10.2026",
       "changes": [

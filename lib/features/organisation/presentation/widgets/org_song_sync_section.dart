@@ -8,8 +8,8 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// SETTINGS2: Ionic org-settings "Werk-Synchronisierung" (super admin only).
 ///
@@ -92,7 +92,7 @@ class _OrgSongSyncSectionState extends ConsumerState<OrgSongSyncSection> {
                         child: AppSpinner(strokeWidth: 2),
                       )
                     : AppDropdownButton<int?>(
-                      iosInterface: AppSelectInterface.actionSheet, // IOS_THEME2
+                      iosInterface: AppSelectInterface.actionSheet,
                         value: widget.linkedTenants.any((t) => t.id == current) ||
                                 current == null
                             ? current

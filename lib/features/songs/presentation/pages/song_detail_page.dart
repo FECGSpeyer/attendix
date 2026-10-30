@@ -42,8 +42,8 @@ import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -287,7 +287,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               child: const Icon(Icons.play_arrow),
             )),
       bottomNavigationBar: data.isPublic ? const AudioPlayerWidget() : null,
-      body: IonRefresher( // IOS_R6
+      body: IonRefresher(
         onRefresh: () async {
           _refresh();
           await ref.read(songDetailDataProvider(_params).future);
@@ -296,7 +296,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
         child: ListView(
           padding: EdgeInsets.fromLTRB(0, AppDimensions.paddingS, 0, scrollEndPadding(context, base: 16, fabRoom: 80)),
           children: [
-            const IonContentTopInset(), // IOS_R6
+            const IonContentTopInset(),
             IonLargeTitle(title),
             if (_saving) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),

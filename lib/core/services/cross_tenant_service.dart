@@ -1,10 +1,10 @@
 import 'package:flutter/foundation.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
-import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/cross_tenant/cross_tenant_attendance.dart';
 import '../../data/models/tenant/tenant.dart';
+import '../utils/status_utils.dart';
 
 /// Service for loading attendance data across multiple tenants
 class CrossTenantService {
@@ -185,7 +185,7 @@ class CrossTenantService {
           id: att['id']?.toString(),
           attendanceId: attendanceData['id'] as int?,
           personId: personId,
-          status: _parseStatus(att['status']),
+          status: parseAttendanceStatus(att['status']),
           notes: att['notes']?.toString(),
           date: attendanceData['date']?.toString(),
         );
@@ -217,14 +217,4 @@ class CrossTenantService {
     return results;
   }
 
-  /// Parse attendance status from dynamic value
-  AttendanceStatus _parseStatus(dynamic value) {
-    if (value == null) return AttendanceStatus.neutral;
-    if (value is int) return AttendanceStatus.fromValue(value);
-    if (value is String) {
-      final intValue = int.tryParse(value);
-      if (intValue != null) return AttendanceStatus.fromValue(intValue);
-    }
-    return AttendanceStatus.neutral;
-  }
 }

@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.23.1+65
+version: 0.23.3+67
 
 environment:
   sdk: ^3.7.0
@@ -27,6 +27,8 @@ dependencies:
 
   # UI Components
   cached_network_image: ^3.4.1
+  # Offline copies of opened PDFs (already used by cached_network_image)
+  flutter_cache_manager: ^3.4.1
   shimmer: ^3.0.0
 
   # Charts
@@ -91,6 +93,7 @@ dependencies:
   audio_service: ^0.18.19
   in_app_update: ^4.2.5
   audio_session: ^0.1.25
+  sentry: ^9.30.1
 
 dev_dependencies:
   flutter_test:

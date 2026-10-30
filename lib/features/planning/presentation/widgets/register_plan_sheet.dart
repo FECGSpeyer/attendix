@@ -22,7 +22,8 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import 'ion_items.dart';
 import 'plan_export_actions.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/error_reporter.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens the Registerprobenplan modal (Ionic `isPlanModalOpen`, a sheet with
 /// breakpoints `[0, 1]`, i.e. full height).
@@ -101,10 +102,14 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     var conductors = const <Person>[];
     try {
       categories = await ref.read(groupCategoriesProvider.future);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'register_plan_sheet');
+    }
     try {
       conductors = await ref.read(conductorsProvider.future);
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'register_plan_sheet');
+    }
     final defaults = RegisterPlanService.defaultGroups(
       categoryNames: [for (final c in categories) c.name],
       isChoir: tenant?.type == 'choir',
@@ -160,13 +165,13 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       // Ionic: ion-content color="light" (grey grouped background).
       backgroundColor: theme.scaffoldBackgroundColor,
       appBar: AppBar(
-        toolbarHeight: ionModalToolbarHeight(context), // PARITY_R5
+        toolbarHeight: ionModalToolbarHeight(context),
         automaticallyImplyLeading: false,
         title: Text(l10n.planningSectionalPlan),
         // IOS_PAGES3: iOS → ✕ in a Liquid Glass circle
         actions: [
           ToolbarButtonGroup(children: [
-            IconButton(icon: const Icon(Icons.close), onPressed: () => Navigator.pop(context)),
+            IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(context)),
           ]),
         ],
       ),
@@ -264,7 +269,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
     return IonListHeader(
       title: label,
       trailing: IconButton(
-        icon: const Icon(Icons.add_circle_outline),
+        icon: Icon(Icons.add_circle_outline, semanticLabel: context.l10n.a11yIncrease),
         color: AppColors.primary,
         onPressed: onAdd,
       ),
@@ -312,7 +317,7 @@ class _RegisterPlanSheetState extends ConsumerState<RegisterPlanSheet> {
       trailing: onRemove == null
           ? null
           : IconButton(
-              icon: const Icon(Icons.highlight_off),
+              icon: Icon(Icons.highlight_off, semanticLabel: context.l10n.commonRemove),
               color: AppColors.danger,
               onPressed: onRemove,
             ),

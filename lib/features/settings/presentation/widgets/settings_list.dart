@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' as ion; // IOS_SETTINGS2
-import '../../../../shared/widgets/display/ion_badge_text.dart'; // PARITY_R8
-import '../../../../shared/widgets/layout/ionic_md.dart'; // MD_SWEEP
+import '../../../../shared/widgets/layout/ionic_ios.dart' as ion;
+import '../../../../shared/widgets/display/ion_badge_text.dart';
+import '../../../../shared/widgets/layout/ionic_md.dart';
 
 /// PARITY_R8: md settings list header label (`.9rem` of the md inset
 /// list = 14.4px; the screenshot audit measures Ionic md at 14px).
@@ -443,7 +443,7 @@ class SettingsListTile extends StatelessWidget {
         color ??
         (ios
             ? IonIos.text(context)
-            : IonMd.iconColor(Theme.of(context).brightness)); // MD_SWEEP
+            : IonMd.iconColor(Theme.of(context).brightness));
     final showChevron = detail && onTap != null;
     final tile = ListTile(
       leading:
@@ -552,7 +552,7 @@ class IonBadge extends StatelessWidget {
       child: Text(
         text,
         textAlign: TextAlign.center,
-        style: ionBadgeTextStyle(color: textColor), // PARITY_R8
+        style: ionBadgeTextStyle(color: textColor),
       ),
     );
   }

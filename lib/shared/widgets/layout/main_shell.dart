@@ -7,19 +7,19 @@ import 'package:go_router/go_router.dart';
 import '../../../core/constants/enums.dart';
 import '../../../core/providers/dashboard_providers.dart';
 import '../../../core/providers/debug_providers.dart';
-import '../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
+import '../../../core/providers/optional_tabs_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
-import '../../../core/services/app_update_service.dart'; // IOS_SHELL2
+import '../../../core/services/app_update_service.dart';
 import '../../../data/models/tenant/tenant.dart';
-import '../../../l10n/l10n.dart'; // I18N_INFRA
-import '../adaptive/adaptive_platform.dart'; // IOS_LOOK
+import '../../../l10n/l10n.dart';
+import '../adaptive/adaptive_platform.dart';
 import '../audio_player/audio_player_widget.dart';
 import '../debug/debug_role_fab.dart';
-import '../dialogs/native_app_ad.dart'; // LINKS_STARTUP
-import 'ios_tab_bar.dart'; // IOS_LOOK
-import 'root_back_button_scope.dart'; // NATIVE_MISC
-import 'ionic_md.dart' show IonMd; // MD_SWEEP
-import 'route_leave_guard.dart'; // SOL_FIX25
+import '../dialogs/native_app_ad.dart';
+import 'ios_tab_bar.dart';
+import 'root_back_button_scope.dart';
+import 'ionic_md.dart' show IonMd;
+import 'route_leave_guard.dart';
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -311,9 +311,9 @@ class MainShell extends ConsumerWidget {
         (ref.watch(userTenantsProvider).valueOrNull?.length ?? 0) > 1;
     final destinations = _buildDestinations(context.l10n, role, tenant,
         hasMultipleTenants: hasMultipleTenants,
-        showDashboardTab: ref.watch(showDashboardTabProvider), // DASHBOARD
-        showSongsTab: ref.watch(showSongsTabProvider), // SETTINGS2
-        showOrgPlansTab: ref.watch(showOrgPlansTabProvider)); // SETTINGS2
+        showDashboardTab: ref.watch(showDashboardTabProvider),
+        showSongsTab: ref.watch(showSongsTabProvider),
+        showOrgPlansTab: ref.watch(showOrgPlansTabProvider));
     final selectedIndex = _getSelectedIndex(context, destinations);
 
     // Safety check: ensure we have at least one destination

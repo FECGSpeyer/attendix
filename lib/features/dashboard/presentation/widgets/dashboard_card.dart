@@ -3,7 +3,7 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Colour family of a dashboard tile / chip / header strip
 /// (Ionic global.scss `.tile-*` and `.strip-*`, "Kachel" design).

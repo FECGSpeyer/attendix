@@ -12,8 +12,8 @@ import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor;
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 /// Aufgabe: leadership edits everything (task form) and can delete; the
 /// responsible person only changes the status.

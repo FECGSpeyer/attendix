@@ -9,7 +9,7 @@ import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Bottom sheet for managing song categories (CRUD)
 class SongCategoriesSheet extends ConsumerStatefulWidget {

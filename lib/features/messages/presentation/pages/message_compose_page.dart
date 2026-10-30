@@ -14,8 +14,8 @@ import '../../../../core/utils/tiptap_converter.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import '../../../settings/presentation/widgets/settings_list.dart'; // UX_SETTINGS (WAVE 8)
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
 Future<String?> openMessageCompose(BuildContext context) {
@@ -151,11 +151,13 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
       final counts = await ref
           .read(messageRepositoryWithTenantProvider)
           .getRecipientCounts(groupIds: _groupIds, push: _push, email: _email);
-      if (mounted && request == _countsRequest)
+      if (mounted && request == _countsRequest) {
         setState(() => _counts = counts);
+      }
     } catch (_) {
-      if (mounted && request == _countsRequest)
+      if (mounted && request == _countsRequest) {
         setState(() => _countsError = true);
+      }
     }
   }
 

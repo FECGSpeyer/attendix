@@ -8,7 +8,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/providers/optional_tabs_providers.dart'; // SETTINGS2
+import '../../../../core/providers/optional_tabs_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -25,14 +25,14 @@ import '../widgets/group_files_sheet.dart';
 import '../widgets/song_categories_sheet.dart';
 import '../widgets/song_filter_sheet.dart';
 import 'song_import_page.dart';
-import '../../../../core/providers/branding_providers.dart'; // MISC2
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/common/error_state_view.dart';
-import '../../../../shared/widgets/adaptive/app_segmented_button.dart'; // PARITY_R3
-import '../../../../shared/widgets/adaptive/app_toolbar.dart'; // IOS_SHELL
+import '../../../../shared/widgets/adaptive/app_segmented_button.dart';
+import '../../../../shared/widgets/adaptive/app_toolbar.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
-import '../../../../shared/widgets/adaptive/ion_button_label.dart'; // IOS_SHELL
+import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Songs list (Ionic `songs.page`).
 ///
@@ -134,7 +134,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   Future<void> _exportPdf(SongsListData data, List<Song> filtered, SongViewOptions view) async {
     final tenant = data.publicTenant ?? ref.read(currentTenantProvider);
     try {
-      final branding = data.isPublic ? null : await resolvePdfBranding(ref); // MISC2
+      final branding = data.isPublic ? null : await resolvePdfBranding(ref);
       await ref.read(songPrintServiceProvider).exportSongsCatalogPdf(
             branding: branding,
             songs: filtered,
@@ -340,11 +340,11 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
               ),
             )
           : null,
-      body: IonRefresher( // IOS_R6
+      body: IonRefresher(
         onRefresh: _refresh,
         child: CustomScrollView(
           slivers: [
-            const SliverIonContentTopInset(), // IOS_R6
+            const SliverIonContentTopInset(),
             SliverToBoxAdapter(child: IonLargeTitle(title)),
             if (data.categories.isNotEmpty)
               SliverToBoxAdapter(

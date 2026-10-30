@@ -4,11 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../core/constants/enums.dart';
 import '../../core/services/cross_tenant_service.dart' show CrossTenantService;
 import '../../core/utils/event_list_utils.dart';
-import '../../core/utils/paged_query.dart'; // SOL_FIX37
+import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
+import '../../core/utils/status_utils.dart';
 
 /// Provider for SignInOutRepository (without tenant – use the WithTenant variant).
 final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
@@ -433,7 +434,7 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       id: pa['id']?.toString(),
       personId: _toInt(pa['person_id']),
       attendanceId: _toInt(att['id']),
-      status: isMember ? _parseStatus(pa['status']) : AttendanceStatus.neutral,
+      status: isMember ? parseAttendanceStatus(pa['status']) : AttendanceStatus.neutral,
       notes: pa['notes'] as String?,
       date: att['date'] as String?,
       typeInfo: att['typeInfo'] as String?,
@@ -606,27 +607,6 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     return [...list]..sort((a, b) => d(a).compareTo(d(b)));
   }
 
-  AttendanceStatus _parseStatus(dynamic status) {
-    if (status == null) return AttendanceStatus.neutral;
-    if (status is AttendanceStatus) return status;
-
-    // Handle integer values (as stored in database)
-    if (status is int) {
-      return AttendanceStatus.fromValue(status);
-    }
-
-    // Handle string values (enum names or integer strings)
-    final statusStr = status.toString();
-    final intValue = int.tryParse(statusStr);
-    if (intValue != null) {
-      return AttendanceStatus.fromValue(intValue);
-    }
-
-    return AttendanceStatus.values.firstWhere(
-      (s) => s.name.toLowerCase() == statusStr.toLowerCase(),
-      orElse: () => AttendanceStatus.neutral,
-    );
-  }
 }
 
 /// Previous status of a sign-in – selects the notification text.

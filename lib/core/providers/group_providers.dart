@@ -8,6 +8,7 @@ import '../../data/repositories/repositories.dart';
 import 'tenant_providers.dart';
 import '../services/tracking/tracking_event.dart';
 import '../services/tracking/tracking_service.dart';
+import '../services/offline_list_cache.dart';
 
 /// Initialized group repository with tenant context
 final groupRepositoryWithTenantProvider = Provider<GroupRepository>((ref) {
@@ -48,7 +49,17 @@ final groupsProvider = FutureProvider<List<Group>>((ref) async {
 
   if (!repo.hasTenantId) return [];
 
-  return repo.getGroups();
+  // Offline: the last loaded groups.
+  return OfflineListCache.read<Group>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'groups',
+    fetch: repo.getGroups,
+    // categoryData is not part of Group.toJson (never written to the DB),
+    // but the Register headings need it offline too.
+    toJson: (g) => {...g.toJson(), 'categoryData': g.categoryData?.toJson()},
+    fromJson: Group.fromJson,
+  );
 });
 
 /// Provider for groups as a map (id -> name)
@@ -62,7 +73,16 @@ final groupsMapProvider = FutureProvider<Map<int, String>>((ref) async {
 
   if (!repo.hasTenantId) return {};
 
-  return repo.getGroupsMap();
+  // Offline: the last loaded id → name map.
+  final entries = await OfflineListCache.read<MapEntry<int, String>>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'groups_map',
+    fetch: () async => (await repo.getGroupsMap()).entries.toList(),
+    toJson: (e) => {'id': e.key, 'name': e.value},
+    fromJson: (j) => MapEntry((j['id'] as num).toInt(), j['name'] as String? ?? ''),
+  );
+  return Map.fromEntries(entries);
 });
 
 /// Provider for the main group

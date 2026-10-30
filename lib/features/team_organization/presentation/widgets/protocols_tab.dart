@@ -10,8 +10,8 @@ import '../../../../l10n/l10n.dart';
 import '../../team_org_utils.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import 'tasks_tab.dart' show TeamOrgBadge;
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
 class _ProtocolRow {
   _ProtocolRow({

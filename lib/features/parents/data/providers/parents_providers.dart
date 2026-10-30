@@ -10,6 +10,7 @@ import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/status_utils.dart';
 
 /// Statistics for a child
 class ChildStats {
@@ -256,7 +257,7 @@ final childrenAttendancesProvider =
       id: json['id']?.toString(),
       personId: personId,
       attendanceId: json['attendance_id'] as int?,
-      status: _parseStatus(json['status']),
+      status: parseAttendanceStatus(json['status']),
       notes: json['notes'] as String?,
       date: attendance?['date'] as String?,
       typeInfo: attendance?['typeInfo'] as String?,
@@ -487,22 +488,3 @@ List<Map<String, dynamic>>? parseExtraPlans(dynamic raw) {
 }
 
 // Helper function to parse status
-AttendanceStatus _parseStatus(dynamic status) {
-  if (status == null) return AttendanceStatus.neutral;
-  if (status is AttendanceStatus) return status;
-
-  if (status is int) {
-    return AttendanceStatus.fromValue(status);
-  }
-
-  final statusStr = status.toString();
-  final intValue = int.tryParse(statusStr);
-  if (intValue != null) {
-    return AttendanceStatus.fromValue(intValue);
-  }
-
-  return AttendanceStatus.values.firstWhere(
-    (s) => s.name.toLowerCase() == statusStr.toLowerCase(),
-    orElse: () => AttendanceStatus.neutral,
-  );
-}

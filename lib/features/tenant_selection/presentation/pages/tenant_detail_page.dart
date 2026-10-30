@@ -11,7 +11,7 @@ import '../../../../core/utils/string_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Page showing tenant details and danger zone (delete)
 class TenantDetailPage extends ConsumerWidget {

@@ -4,10 +4,11 @@ import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
-import '../../../../data/models/plan/plan.dart'; // ORG_PLANS
+import '../../../../data/models/plan/plan.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../planning/presentation/pages/plan_viewer_page.dart'; // ORG_PLANS
+import '../../../../core/services/error_reporter.dart';
+import '../../../planning/presentation/pages/plan_viewer_page.dart';
 
 /// Plan viewer bottom sheet for displaying attendance plans
 ///
@@ -91,7 +92,7 @@ class PlanViewerSheet extends ConsumerWidget {
                       ),
                     ),
                     IconButton(
-                      icon: const Icon(Icons.close),
+                      icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
                       onPressed: () => Navigator.of(context).pop(),
                     ),
                   ],
@@ -392,12 +393,16 @@ Future<void> showPlanViewerSheet(
   Plan? plan;
   try {
     if (attendance.plan != null) plan = Plan.fromJson(attendance.plan!);
-  } catch (_) {}
+  } catch (e, st) {
+    ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
+  }
   final extra = <Plan>[];
   for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
     try {
       extra.add(Plan.fromJson(p));
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
+    }
   }
   bool missing(int? songId) {
     if (songId == null || playerInstrumentId == null || songs.isEmpty) return false;

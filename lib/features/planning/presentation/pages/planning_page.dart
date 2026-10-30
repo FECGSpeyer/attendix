@@ -11,7 +11,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
-import '../../../../core/providers/team_org_providers.dart'; // PROTOCOL
+import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -19,9 +19,9 @@ import '../../../../core/utils/plan_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../../data/models/song/song.dart';
-import '../../../../data/models/team_org/team_org.dart' show AgendaItem, ProtocolAttendance, ProtocolType; // PROTOCOL
-import '../../../team_organization/team_org_utils.dart' show planWithTopics; // SOL_FIX30
-import '../../../team_organization/presentation/widgets/agenda_picker_sheet.dart'; // PROTOCOL
+import '../../../../data/models/team_org/team_org.dart' show AgendaItem, ProtocolAttendance, ProtocolType;
+import '../../../team_organization/team_org_utils.dart' show planWithTopics;
+import '../../../team_organization/presentation/widgets/agenda_picker_sheet.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
@@ -31,16 +31,16 @@ import '../widgets/ion_items.dart';
 import '../widgets/register_plan_sheet.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
-import '../../../../core/providers/branding_providers.dart'; // MISC2
+import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import 'package:attendix/shared/widgets/layout/route_leave_guard.dart'; // SOL_FIX25
-import '../../../../data/repositories/plan_repository.dart'; // SOL_FIX25
-import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey; // SOL_FIX26
-import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider; // SOL_FIX27
-import '../../../../core/services/planning_draft_store.dart'; // SOL_FIX27
-import '../../data/planning_write_sync.dart'; // SOL_FIX27
+import '../../../../shared/widgets/adaptive/adaptive.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
+import '../../../../data/repositories/plan_repository.dart';
+import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
+import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
+import '../../../../core/services/planning_draft_store.dart';
+import '../../data/planning_write_sync.dart';
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -177,7 +177,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _container = ProviderScope.containerOf(context, listen: false);
     _disposeRepo = ref.read(planRepositoryWithTenantProvider);
     _tenantId = ref.read(currentTenantIdProvider);
-    _userId = ref.read(currentAuthUserIdProvider); // SOL_FIX27
+    _userId = ref.read(currentAuthUserIdProvider);
   }
 
   @override
@@ -290,7 +290,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       if (baseIndex == null) {
         // SOL_FIX29: the plan was deleted meanwhile: never restore it. The
         // edit stays as the local draft written above (when confirmed).
-        final changed = _isPositionalKey(planKey); // SOL_FIX30
+        final changed = _isPositionalKey(planKey);
         _showDetachedError(await draftRev != null
             ? (changed
                 ? l10nWithoutContext.planningFlutterPlanChangedDraftSaved
@@ -405,7 +405,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   /// editor's copy [own] ([_indexOfRef]), 0 when neither has a plan, else
   /// null (a conflict).
   static int? _indexInLatest(PlanAttendance latest, PlanAttendance? own, int planIndex) {
-    final index = _indexOfRef(latest, _refOf(own, planIndex)); // SOL_FIX30
+    final index = _indexOfRef(latest, _refOf(own, planIndex));
     if (index != null) return index;
     if (PlanUtils.allPlans(latest).isEmpty && PlanUtils.allPlans(own).isEmpty) return 0;
     return null;
@@ -488,12 +488,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (latest == null || latest.id != attId) return true;
     final own = _att;
     final planKey = _planKeyOf(own, _planIndex);
-    final index = own == null ? null : _indexOfRef(latest, _refOf(own, _planIndex)); // SOL_FIX30
+    final index = own == null ? null : _indexOfRef(latest, _refOf(own, _planIndex));
     if (index == null && PlanUtils.allPlans(own).isNotEmpty) {
       final draft = _hasPendingChanges
           ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
           : null;
-      final base = _baseOf(own, _planIndex); // SOL_FIX31
+      final base = _baseOf(own, _planIndex);
       _reloadLatest(attId, latest);
       unawaited(_planDeletedMeanwhile(attId, planKey, draft, base: base));
       return false;
@@ -660,8 +660,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _attendances = [...attendances];
     // SOL_FIX25: the repository (tenant) the Termine were loaded with.
     _disposeRepo = ref.read(planRepositoryWithTenantProvider);
-    _tenantId = ref.read(currentTenantIdProvider); // SOL_FIX26
-    _userId = ref.read(currentAuthUserIdProvider); // SOL_FIX27
+    _tenantId = ref.read(currentTenantIdProvider);
+    _userId = ref.read(currentAuthUserIdProvider);
     // SOL_FIX29: the cached rows hold the commits up to the last cache
     // refresh; newer commits are adopted when a Termin is loaded.
     for (final a in _attendances) {
@@ -786,7 +786,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       // default plan of a Termin without plan; keep it as a pending change.
       _dirty = true;
       _restoredDraft = null;
-      if (att.id != null) unawaited(_restoreDraft(att.id!, index)); // SOL_FIX26
+      if (att.id != null) unawaited(_restoreDraft(att.id!, index));
     }
   }
 
@@ -812,7 +812,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }).toList();
     });
     _savedTitle = _titleController.text.trim();
-    if (att.id != null) unawaited(_restoreDraft(att.id!, _planIndex)); // SOL_FIX26
+    if (att.id != null) unawaited(_restoreDraft(att.id!, _planIndex));
   }
 
   /// SOL_FIX22 / Ionic `deletePlan` → `loadPlan(att, undefined)`: after the
@@ -981,7 +981,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       // shows the newest stored row.
       final planKey = _planKeyOf(att, _planIndex);
       final draft = _draftData(time: _time, fields: _fields, title: title);
-      final draftBase = _baseOf(att, _planIndex); // SOL_FIX31
+      final draftBase = _baseOf(att, _planIndex);
       _reloadLatest(attId, base.att);
       await _planDeletedMeanwhile(attId, planKey, draft, base: draftBase);
       return true;
@@ -1043,7 +1043,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                     ? _draftData(time: _time, fields: _fields, title: _titleController.text.trim())
                     : null;
             _reloadLatest(attId, base);
-            await _planDeletedMeanwhile(attId, planRef.key, draft, base: planRef.json); // SOL_FIX31
+            await _planDeletedMeanwhile(attId, planRef.key, draft, base: planRef.json);
             return null;
           }
         }
@@ -1265,7 +1265,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
     final shownIndex = _planIndex;
-    final loadGen = _loadGen; // SOL_FIX30
+    final loadGen = _loadGen;
     final action = await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, shownIndex, plans)),
@@ -1588,7 +1588,6 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         item('note', l10n.planningAddNoteField),
         if (!isGeneral) item('current', l10n.planningAddCurrentSongs),
         if (!isGeneral && _songs.isNotEmpty) item('song', l10n.planningAddSong),
-        // PROTOCOL
         if (canAddTopics)
           item('topics', l10n.attendanceAddTopics,
               icon: const Icon(Icons.playlist_add_circle_outlined, color: AppColors.primary)),
@@ -1664,9 +1663,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         await _addSong();
       case 'plan':
         await _addPlan();
-      case 'agenda': // PROTOCOL
+      case 'agenda':
         _addAgendaPlaceholder();
-      case 'topics': // PROTOCOL
+      case 'topics':
         await _openAgendaPicker();
     }
   }
@@ -1876,7 +1875,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ref,
       title: context.l10n.personActions,
       fileName: fileName,
-      includeBranding: ref.read(includeBrandingProvider), // MISC2
+      includeBranding: ref.read(includeBrandingProvider),
       showExports: _fields.isNotEmpty,
       beforeExport: () => _validate(showToast: true),
       pages: () => [
@@ -1914,7 +1913,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
               for (var i = 0; i < plans.length; i++) _exportPage(att, i, i == _planIndex ? current : plans[i]),
             ],
             fileName: fileName,
-            includeBranding: ref.read(includeBrandingProvider), // MISC2
+            includeBranding: ref.read(includeBrandingProvider),
           );
         }
       },

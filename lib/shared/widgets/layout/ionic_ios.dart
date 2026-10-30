@@ -6,10 +6,11 @@ import 'package:flutter/material.dart';
 
 import '../../../core/theme/app_colors.dart';
 import '../adaptive/adaptive_platform.dart';
+import '../../../l10n/l10n.dart';
 import '../adaptive/app_toolbar.dart'
     show kIonModalToolbarHeight, kIonTitleFontSize; // PARITY_R5, IOS27_SWEEP
-import 'ion_modal_handle.dart' show kIonModalSheetRadius; // PARITY_R5
-import 'ionic_md.dart'; // MD_SWEEP
+import 'ion_modal_handle.dart' show kIonModalSheetRadius;
+import 'ionic_md.dart';
 
 /// Page building blocks that mirror Ionic components as they render in
 /// **iOS mode** (iPhone app and iPhone Safari PWA, @rdlabo ionic-theme-ios26)
@@ -541,7 +542,7 @@ class IonSearchbar extends StatelessWidget {
           child: Row(
             children: [
               const SizedBox(width: 12),
-              const IonSearchIcon(), // PARITY_R5
+              const IonSearchIcon(),
               // input padding-start 1.375rem + 17.67px
               const SizedBox(width: 17.67 - 12),
               Expanded(
@@ -581,6 +582,7 @@ class IonSearchbar extends StatelessWidget {
                 const SizedBox(width: 11),
                 Semantics(
                   button: true,
+                  label: context.l10n.a11yClearInput,
                   child: GestureDetector(
                     onTap: _clear,
                     child: IonSearchbarGlass(

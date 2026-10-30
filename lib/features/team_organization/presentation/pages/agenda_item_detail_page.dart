@@ -17,8 +17,9 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
-import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart'; // IOS_SHELL2
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../core/services/error_reporter.dart';
+import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// How many upcoming Termine "Einplanen" offers.
 const int _planChoices = 6;
@@ -135,7 +136,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     List<ProtocolAttendance> upcoming = [];
     try {
       upcoming = (await ref.read(upcomingProtocolAttendancesProvider.future)).take(_planChoices).toList();
-    } catch (_) {}
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'agenda_item_detail_page');
+    }
     if (!mounted) return;
     final fid = agendaFieldId(item.id!);
     ProtocolType? typeOf(ProtocolAttendance a) {
@@ -173,7 +176,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
       ProtocolAttendance? created;
       try {
         created = await protocolRepo.getAttendance(id);
-      } catch (_) {}
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'agenda_item_detail_page');
+      }
       if (created == null || !mounted) return;
       choice = created;
     }

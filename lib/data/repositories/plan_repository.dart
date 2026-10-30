@@ -2,7 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
-import '../../core/utils/paged_query.dart'; // SOL_FIX1
+import '../../core/utils/paged_query.dart';
 
 /// Provider for PlanRepository (without tenant; use planRepositoryWithTenantProvider)
 final planRepositoryProvider = Provider<PlanRepository>((ref) {

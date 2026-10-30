@@ -65,7 +65,7 @@ void main() {
     final consume = s.indexOf('PendingFileLink.consume()', authBlock);
     expect(termsCheck, greaterThan(authBlock));
     expect(consume, greaterThan(termsCheck));
-    expect(s, contains("return PendingFileLink.consume() ?? '/tenants'; // REVIEW_FIX2"));
+    expect(s, contains("return PendingFileLink.consume() ?? '/tenants';"));
     expect(src('lib/features/legal/presentation/pages/terms_page.dart'),
         contains("PendingFileLink.consume() ?? '/tenants'"));
   });

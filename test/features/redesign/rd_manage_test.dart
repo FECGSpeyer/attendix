@@ -151,6 +151,7 @@ void main() {
     test('tenant features switch entries on', () {
       const a = RdManageAccess(isAdmin: true, parentsEnabled: true, maintainTeachers: true, hasMissingAccounts: true);
       expect(rdManageEntries(a, area: RdManageArea.members), [
+        RdManageEntry.bulkMembers,
         RdManageEntry.rolesPermissions,
         RdManageEntry.parents,
         RdManageEntry.viewers,
@@ -195,6 +196,7 @@ void main() {
         RdManageEntry.statistics,
         RdManageEntry.export,
         RdManageEntry.archive,
+        RdManageEntry.bulkMembers,
         RdManageEntry.workHistory,
       ]) {
         expect(rdManageVisible(e, lead), isFalse, reason: e.name);

@@ -4,11 +4,12 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/app_constants.dart';
 import '../../../core/providers/feedback_providers.dart';
+import '../../../core/router/redesign_routes.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/toast_helper.dart';
 import '../../../l10n/l10n.dart';
-import '../adaptive/adaptive.dart'; // IOS_LOOK
-import '../layout/ion_modal_handle.dart'; // IOS_FORMS1
+import '../adaptive/adaptive.dart';
+import '../layout/ion_modal_handle.dart';
 
 /// Shows the feedback bottom sheet.
 ///
@@ -112,7 +113,10 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
     setState(() => _isLoading = true);
 
     final success = await ref.read(feedbackNotifierProvider.notifier).sendFeedback(
-          message: _feedbackController.text.trim(),
+          // Feedback written in the Beta is marked, so it can be told apart.
+          message: RedesignRoutes.active
+              ? '[Neues Design] ${_feedbackController.text.trim()}'
+              : _feedbackController.text.trim(),
           rating: _rating,
           anonymous: _anonymous,
           phone: _phoneController.text.trim().isNotEmpty
@@ -419,14 +423,21 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
               mainAxisSize: MainAxisSize.min,
               children: [
                 for (var star = 1; star <= 5; star++)
-                  GestureDetector(
+                  Semantics(
+                    button: true,
+                    selected: star <= _rating,
+                    label: context.l10n.a11yRating(star),
+                    excludeSemantics: true,
                     onTap: () => setState(() => _rating = star),
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 6),
-                      child: Icon(
-                        Icons.star,
-                        size: 22,
-                        color: star <= _rating ? AppColors.warning : AppColors.medium,
+                    child: GestureDetector(
+                      onTap: () => setState(() => _rating = star),
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 6),
+                        child: Icon(
+                          Icons.star,
+                          size: 22,
+                          color: star <= _rating ? AppColors.warning : AppColors.medium,
+                        ),
                       ),
                     ),
                   ),
@@ -538,6 +549,7 @@ class _FeedbackSheetState extends ConsumerState<_FeedbackSheet>
                   icon: Icon(
                     starValue <= _rating ? Icons.star : Icons.star_border,
                     color: AppColors.warning,
+                    semanticLabel: context.l10n.a11yRating(starValue),
                   ),
                 );
               }),

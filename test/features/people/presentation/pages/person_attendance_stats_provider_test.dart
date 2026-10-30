@@ -124,7 +124,11 @@ void main() {
         .readAsStringSync();
     expect(source, contains('final canEdit = isAdmin && !hasLeft;'));
     expect(source, contains('onPressed: _activatePerson'));
-    // Stats query stays tenant-bound via the inner-joined attendance.
-    expect(source, contains(".eq('attendance.tenantId', tenantId)"));
+    // Stats query (now in PlayerRepository) stays tenant-bound via the
+    // inner-joined attendance.
+    expect(source, contains('repo.getPersonAttendanceStatsRows(personId)'));
+    final repo = File('lib/data/repositories/player_repository.dart').readAsStringSync();
+    final body = repo.substring(repo.indexOf('getPersonAttendanceStatsRows(int personId)'));
+    expect(body.substring(0, body.indexOf('catch (e')), contains(".eq('attendance.tenantId', currentTenantId)"));
   });
 }

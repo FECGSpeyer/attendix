@@ -1,7 +1,7 @@
 import 'package:flutter/material.dart';
 import '../../../core/constants/app_constants.dart';
 import '../../../core/constants/enums.dart';
-import '../../../core/theme/app_colors.dart'; // IOS_THEME2
+import '../../../core/theme/app_colors.dart';
 import '../../../l10n/l10n.dart';
 
 /// Badge variant styles
@@ -32,7 +32,6 @@ class StatusBadge extends StatelessWidget {
     this.size = StatusBadgeSize.medium,
     this.showLabel = false,
     this.showIcon = true,
-    @Deprecated('Use size instead') this.compact = false,
   });
 
   final AttendanceStatus status;
@@ -40,8 +39,6 @@ class StatusBadge extends StatelessWidget {
   final StatusBadgeSize size;
   final bool showLabel;
   final bool showIcon;
-  @Deprecated('Use size instead')
-  final bool compact;
 
   // IOS_THEME2: Ionic dark palette in dark mode.
   Color _colorOf(BuildContext context) =>
@@ -83,11 +80,6 @@ class StatusBadge extends StatelessWidget {
   }
 
   EdgeInsets get _padding {
-    // Handle deprecated compact parameter
-    if (compact) {
-      return const EdgeInsets.symmetric(horizontal: 6, vertical: 2);
-    }
-
     switch (size) {
       case StatusBadgeSize.small:
         return const EdgeInsets.symmetric(horizontal: 6, vertical: 2);
@@ -99,9 +91,6 @@ class StatusBadge extends StatelessWidget {
   }
 
   double get _fontSize {
-    // Handle deprecated compact parameter
-    if (compact) return 12;
-
     switch (size) {
       case StatusBadgeSize.small:
         return 11;

@@ -34,6 +34,10 @@ jobs:
         run: |
           echo "SUPABASE_URL=${{ secrets.SUPABASE_URL }}" >> .env
           echo "SUPABASE_ANON_KEY=${{ secrets.SUPABASE_ANON_KEY }}" >> .env
+          # Error monitoring: optional repo secret SENTRY_DSN (no DSN = off).
+          # Previews report as "preview", master as "production".
+          echo "SENTRY_DSN=${{ secrets.SENTRY_DSN }}" >> .env
+          echo "SENTRY_ENVIRONMENT=${{ github.event_name == 'pull_request' && 'preview' || 'production' }}" >> .env
           # DEMO_GUARD: optional demo account ("Demo starten", write-protected)
           # Repo secrets may be named DEMO_EMAIL/DEMO_PASSWORD or DEMOMAIL/DEMOPASSWORD.
           # Passed via env and single-quoted: flutter_dotenv treats an unquoted '#' as a

@@ -12,7 +12,7 @@ import '../../../../../core/utils/toast_helper.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
-import '../../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and

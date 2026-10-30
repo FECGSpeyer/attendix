@@ -15,7 +15,7 @@ import '../../../../data/models/duty/person_unavailability.dart';
 import '../../../planning/presentation/widgets/ion_items.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Opens "Regelmäßig verhindert" for a person (as a full screen dialog).
 Future<void> openUnavailabilityPage(
@@ -353,7 +353,7 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
               onTap: _pickValidUntil,
               trailing: editing.validUntil != null
                   ? IconButton(
-                      icon: const Icon(Icons.clear, color: AppColors.medium),
+                      icon: Icon(Icons.clear, color: AppColors.medium, semanticLabel: context.l10n.a11yClearInput),
                       onPressed: () => setState(() => _editing = editing.copyWith(validUntil: null)),
                     )
                   : const Icon(Icons.calendar_today, color: AppColors.medium),

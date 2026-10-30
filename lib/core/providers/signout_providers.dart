@@ -6,7 +6,6 @@ import '../config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 
 import '../../data/repositories/sign_in_out_repository.dart';
-import '../constants/enums.dart';
 import '../utils/duty_utils.dart';
 import '../utils/event_list_utils.dart';
 import 'duty_providers.dart';

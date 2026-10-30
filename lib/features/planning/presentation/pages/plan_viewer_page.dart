@@ -10,8 +10,8 @@ import '../widgets/plan_view_list.dart';
 import '../widgets/ion_items.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook; // IOS_PAGES3
-import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup; // IOS_PAGES3
+import '../../../../shared/widgets/adaptive/adaptive_platform.dart' show useIosLook;
+import '../../../../shared/widgets/adaptive/app_toolbar.dart' show ToolbarButtonGroup;
 
 /// Read-only Ablaufplan with chips for several plans, live mode and export
 /// (Ionic `PlanViewerComponent`). Opened as full screen dialog.

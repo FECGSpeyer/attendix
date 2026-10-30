@@ -9,7 +9,7 @@ import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/legacy_routes.dart';
 import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../data/models/tenant/tenant.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// LINKS_STARTUP: resolves the tenant for an in-app link before opening it.
 ///

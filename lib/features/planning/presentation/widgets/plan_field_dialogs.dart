@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../shared/widgets/adaptive/adaptive.dart'; // IOS_LOOK
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {
