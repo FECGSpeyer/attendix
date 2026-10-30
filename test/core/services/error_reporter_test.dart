@@ -69,11 +69,12 @@ void main() {
   test('row contents are dropped from any error text', () {
     final text = ErrorReporter.redact(
       'Exception: null value in column "x" violates not-null constraint. '
-      'Failing row contains (42, Erika, Musterfrau, 030123456, null).',
+      'Failing row contains (42, Erika (privat), Musterfrau, 030123456, null).',
     );
     expect(text, isNot(contains('Erika')));
+    expect(text, isNot(contains('Musterfrau')));
     expect(text, isNot(contains('030123456')));
-    expect(text, contains('Failing row contains (<row>).'));
+    expect(text, endsWith('Failing row contains (<row>)'));
   });
 
   test('web offline errors are expected', () {

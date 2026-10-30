@@ -152,16 +152,36 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
       // Ionic continueUpdatingPlayer: joining or leaving the main group
       // makes the account Verantwortlicher or Spieler (admins stay). Done
       // before the Register change: if it fails the person stays in the old
-      // Register and a retry repeats both steps.
+      // Register and a retry repeats both steps; if the Register change
+      // fails, the old role is restored.
       final appId = p.appId;
+      Role? previousRole;
       if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
         final role = await registration.getTenantUserRole(appId);
-        if (role != null && role != Role.admin) {
-          await registration.updateTenantUserRole(appId, groupId == mainId ? Role.responsible : Role.player);
+        final next = groupId == mainId ? Role.responsible : Role.player;
+        if (role != null && role != Role.admin && role != next) {
+          await registration.updateTenantUserRole(appId, next);
+          previousRole = role;
         }
       }
-      // Same history entry as the person page (Instrumentenwechsel).
-      await repo.updatePlayerFields(p.id!, {
+      try {
+        await _changeGroup(repo, p, groupId, names);
+      } catch (_) {
+        if (appId != null && previousRole != null) {
+          try {
+            await registration.updateTenantUserRole(appId, previousRole);
+          } catch (_) {
+            // The failure below is reported; a retry sets the role again.
+          }
+        }
+        rethrow;
+      }
+    });
+  }
+
+  /// Same history entry as the person page (Instrumentenwechsel).
+  static Future<void> _changeGroup(PlayerRepository repo, Person p, int groupId, Map<int?, String> names) =>
+      repo.updatePlayerFields(p.id!, {
         'instrument': groupId,
         'history': [
           ...p.history.map((h) => h.toJson()),
@@ -172,8 +192,6 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
           },
         ],
       });
-    });
-  }
 
   Future<void> _pause(List<Person> persons) async {
     final l10n = context.l10n;
