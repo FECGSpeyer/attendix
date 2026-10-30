@@ -6,6 +6,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -80,13 +81,13 @@ class _OpenAttendancePageState extends ConsumerState<OpenAttendancePage> {
       // LOGIC_SELF: Ionic navigateToAttendance — only ADMIN, RESPONSIBLE,
       // HELPER and VOICE_LEADER_HELPER open the Termin detail (not VIEWER).
       if (role.canAddAttendance) {
-        context.go('/attendance/$attendanceId');
+        context.go(RedesignRoutes.betaTarget('/attendance/$attendanceId'));
         return;
       }
       // Parents land on their portal, everybody else on "Meine Termine";
       // both open this Termin's action sheet (Ionic pendingAttendanceId).
       ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
-      context.go(role.isParent ? '/parents' : '/signout');
+      context.go(role.isParent ? '/parents' : RedesignRoutes.betaTarget('/signout'));
       return;
     }
     context.go(role.defaultRoute);

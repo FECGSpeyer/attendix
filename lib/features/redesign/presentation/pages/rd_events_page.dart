@@ -301,6 +301,26 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   // Spieler, Stimmführer
   // ---------------------------------------------------------------------------
 
+  /// Opens the Termin a notification asked for (`pendingAttendanceId`)
+  /// once the own Termine are loaded: the own Termin page, or the answer
+  /// sheet for a Termin of another group.
+  void _openPending(SignoutData data, SelfServiceEventActions actions) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final att = [...data.allUpcoming, ...data.past].where((a) => a.attendanceId == pendingId).firstOrNull;
+      if (att == null) return;
+      final own = actions.isOwn(att);
+      if (att.id != null && own) {
+        context.push(RedesignRoutes.ownEvent(att.id!));
+      } else {
+        actions.presentActions(context, att);
+      }
+    });
+  }
+
   Widget _playerBody(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(rdSignoutDataProvider);
@@ -320,6 +340,10 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
+    // A notification, push or "open attendance" link asked for a Termin
+    // (like "Meine Termine" does); also when it arrives while open.
+    ref.watch(pendingAttendanceIdProvider);
+    _openPending(data, actions);
 
     bool waiting(CrossTenantPersonAttendance att) {
       final qa = actions.quickActions(att);

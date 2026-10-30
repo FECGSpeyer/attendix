@@ -57,7 +57,7 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = const []}) {
+Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = const [], int? pending}) {
   final router = GoRouter(
     initialLocation: '/termine',
     routes: [
@@ -112,6 +112,7 @@ Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = cons
             percentage: 92,
           )),
       attendanceTypesProvider.overrideWith((ref) async => types),
+      if (pending != null) pendingAttendanceIdProvider.overrideWith((ref) => pending),
       realtimeAttendanceListProvider.overrideWith((ref) async => [
             TestFactories.createAttendance(
               id: 21,
@@ -325,6 +326,13 @@ void main() {
     await tester.tap(find.text('Gesamtprobe'));
     await _settle(tester);
     expect(find.text('page termin 21'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification for a Termin opens its own Termin page', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 12));
+    await _settle(tester);
+    expect(find.text('page own 12'), findsOneWidget);
   });
 
   testWidgets('Spieler: answer open Termine right in the list', (tester) async {

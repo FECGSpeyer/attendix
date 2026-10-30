@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.24.5",
+      "date": "30.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Benachrichtigungen, Push-Nachrichten und Anwesenheits-Links öffnen den Termin jetzt im neuen Design statt auf der alten Termin-Seite bzw. in „Meine Termine“"
+      ]
+    },
+    {
       "version": "0.24.4",
       "date": "30.10.2026",
       "changes": [

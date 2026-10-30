@@ -88,6 +88,22 @@ class RedesignRoutes {
       location.startsWith('$works/') ||
       location.startsWith('$me/');
 
+  /// Where a notification, a push or an "open attendance" link leads while
+  /// the new design is on: the old Termin page, "Meine Termine", the Termin
+  /// list and the people list become their pages of the new design (the
+  /// role checks of [roleRedirect] stay). Other locations and every location
+  /// without the Beta stay as they are. "Alle Details" still pushes
+  /// `/attendance/:id` directly, so this is no router redirect.
+  static String betaTarget(String location) {
+    if (!active) return location;
+    final path = Uri.tryParse(location)?.path ?? location;
+    final termin = RegExp(r'^/attendance/(\d+)$').firstMatch(path);
+    if (termin != null) return event(int.parse(termin.group(1)!));
+    if (path == '/signout' || path == '/attendance') return events;
+    if (path == '/people') return members;
+    return location;
+  }
+
   /// Role checks of the new design's routes (the router runs them after the
   /// Beta check); null when [role] may open [location].
   ///
