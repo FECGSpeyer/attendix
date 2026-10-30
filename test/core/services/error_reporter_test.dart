@@ -66,6 +66,16 @@ void main() {
     expect(text, 'PostgrestException(message: invalid input syntax for type uuid: "<value>", code: 22P02)');
   });
 
+  test('row contents are dropped from any error text', () {
+    final text = ErrorReporter.redact(
+      'Exception: null value in column "x" violates not-null constraint. '
+      'Failing row contains (42, Erika, Musterfrau, 030123456, null).',
+    );
+    expect(text, isNot(contains('Erika')));
+    expect(text, isNot(contains('030123456')));
+    expect(text, contains('Failing row contains (<row>).'));
+  });
+
   test('web offline errors are expected', () {
     expect(ErrorReporter.isExpected(Exception('ClientException: Failed to fetch')), isTrue);
   });

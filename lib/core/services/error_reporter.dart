@@ -68,6 +68,7 @@ class ErrorReporter {
   static final _uuid = RegExp(r'[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}');
   static final _quotedValue = RegExp(r'=\([^)]*\)');
 
+  static final _failingRow = RegExp(r'Failing row contains \(.*?\)(?=[,.)\s]|$)', dotAll: true);
   static final _doubleQuoted = RegExp(r'"[^"]*"');
   static final _postgrest = RegExp(r'PostgrestException\(message: (.*?), code: ([\w-]+)', dotAll: true);
 
@@ -82,6 +83,7 @@ class ErrorReporter {
   }
 
   static String _redactValues(String text) => text
+      .replaceAll(_failingRow, 'Failing row contains (<row>)')
       .replaceAll(_doubleQuoted, '"<value>"')
       .replaceAll(_email, '<email>')
       .replaceAll(_uuid, '<uuid>')

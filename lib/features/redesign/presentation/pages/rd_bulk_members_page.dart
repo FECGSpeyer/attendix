@@ -149,6 +149,17 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
     final mainId = (await mainGroup)?.id;
     if (!mounted) return;
     await _run(boundRepo: repo, persons.where((p) => p.instrument != groupId).toList(), (repo, p) async {
+      // Ionic continueUpdatingPlayer: joining or leaving the main group
+      // makes the account Verantwortlicher or Spieler (admins stay). Done
+      // before the Register change: if it fails the person stays in the old
+      // Register and a retry repeats both steps.
+      final appId = p.appId;
+      if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
+        final role = await registration.getTenantUserRole(appId);
+        if (role != null && role != Role.admin) {
+          await registration.updateTenantUserRole(appId, groupId == mainId ? Role.responsible : Role.player);
+        }
+      }
       // Same history entry as the person page (Instrumentenwechsel).
       await repo.updatePlayerFields(p.id!, {
         'instrument': groupId,
@@ -161,15 +172,6 @@ class _RdBulkMembersPageState extends ConsumerState<RdBulkMembersPage> {
           },
         ],
       });
-      // Ionic continueUpdatingPlayer: joining or leaving the main group
-      // makes the account Verantwortlicher or Spieler (admins stay).
-      final appId = p.appId;
-      if (appId != null && mainId != null && (groupId == mainId || p.instrument == mainId)) {
-        final role = await registration.getTenantUserRole(appId);
-        if (role != null && role != Role.admin) {
-          await registration.updateTenantUserRole(appId, groupId == mainId ? Role.responsible : Role.player);
-        }
-      }
     });
   }
 

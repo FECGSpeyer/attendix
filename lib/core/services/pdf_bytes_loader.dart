@@ -4,12 +4,15 @@ import 'dart:io' show Platform;
 import 'package:flutter/foundation.dart';
 import 'package:flutter_cache_manager/flutter_cache_manager.dart';
 import 'package:http/http.dart' as http;
+import 'package:supabase_flutter/supabase_flutter.dart';
 
 /// Loads a PDF for the in-app viewers.
 ///
 /// iOS/Android: through the file cache, so a PDF opened once (sheet music,
 /// Ablaufplan) also opens later without network, e.g. in a rehearsal room
-/// without reception. Copies expire after 30 days without use.
+/// without reception. Copies expire after 30 days without use. Copies are
+/// kept per account and dropped on sign-out; a download still running at
+/// sign-out is not kept.
 /// Web: plain download (the browser cache applies).
 class PdfBytesLoader {
   PdfBytesLoader._();
@@ -26,15 +29,32 @@ class PdfBytesLoader {
     ),
   );
 
+  /// Raised by [clear]; a download started before it is not kept.
+  static int _epoch = 0;
+
+  static String? _accountId() {
+    try {
+      return Supabase.instance.client.auth.currentUser?.id;
+    } catch (_) {
+      return null;
+    }
+  }
+
   static Future<Uint8List> load(String url) async {
-    if (_useFileCache) {
+    final account = _accountId();
+    if (_useFileCache && account != null) {
+      final key = '$account|$url';
+      final epoch = _epoch;
       try {
-        final file = await _cache.getSingleFile(url);
-        return file.readAsBytes();
+        final file = await _cache.getSingleFile(url, key: key);
+        final bytes = await file.readAsBytes();
+        if (epoch != _epoch) await _remove(key);
+        return bytes;
       } catch (_) {
+        if (epoch != _epoch) rethrow;
         // Offline after the copy's HTTP max-age: getSingleFile tries to
         // download again and fails, so fall back to the stale copy.
-        final cached = await _cache.getFileFromCache(url);
+        final cached = await _cache.getFileFromCache(key);
         if (cached != null) return cached.file.readAsBytes();
         rethrow;
       }
@@ -46,8 +66,17 @@ class PdfBytesLoader {
     return response.bodyBytes;
   }
 
+  static Future<void> _remove(String key) async {
+    try {
+      await _cache.removeFile(key);
+    } catch (_) {
+      // Best effort.
+    }
+  }
+
   /// Removes all offline copies (sign-out).
   static Future<void> clear() async {
+    _epoch++;
     if (!_useFileCache) return;
     try {
       await _cache.emptyCache();
