@@ -622,6 +622,7 @@ class _SongListItem extends StatelessWidget {
         song.instrumentIds!,
         data.groups,
         data.groupCategories,
+        playerCounts: data.playerCounts,
       );
       if (text.isNotEmpty) {
         lines.add(Text(text, style: subtitleStyle?.copyWith(color: AppColors.danger)));

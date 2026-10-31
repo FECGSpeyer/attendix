@@ -94,6 +94,15 @@ final playerCountByInstrumentProvider = FutureProvider<Map<int, int>>((ref) asyn
   return repo.getPlayerCountByInstrument();
 });
 
+/// Active players per group for the "Ohne …" line of works: only roles
+/// that see every player (conductors, helpers) get counts; for the others
+/// null, and every group counts as before.
+final missingGroupsPlayerCountsProvider = Provider<Map<int, int>?>((ref) {
+  final role = ref.watch(currentRoleProvider);
+  if (!role.isConductor && !role.isHelperRole) return null;
+  return ref.watch(playerCountByInstrumentProvider).valueOrNull;
+});
+
 /// Notifier for player mutations
 class PlayerNotifier extends Notifier<AsyncValue<void>> {
   @override

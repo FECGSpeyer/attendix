@@ -8,6 +8,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -1527,6 +1528,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ids,
       ref.read(groupsProvider).valueOrNull ?? const [],
       ref.read(groupCategoriesProvider).valueOrNull ?? const [],
+      playerCounts: ref.read(missingGroupsPlayerCountsProvider),
     );
   }
 

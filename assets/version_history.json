@@ -6,6 +6,7 @@
       "changes": [
         "✨ Noten-Upload: Sibelius- und MIDI-Dateien bekommen immer ihr eigenes Label, auch wenn eine Stimme im Namen steht",
         "✨ Noten-Upload: Neue Labels „MIDI“ und „Solo“",
+        "✨ Werke: „Ohne …“ nennt nur noch Gruppen, in denen aktuell jemand spielt",
         "🐛 Noten-Upload: Umlaute in Dateinamen vom Mac oder aus Google Drive werden jetzt erkannt („Flöte“)",
         "✨ Noten-Upload: Erkennt jetzt auch „Generalpartitur“, „Dirigentenauszug“ und „Dirigierpartitur“ als Partitur",
         "✨ Noten-Upload: Erkennt italienische Mehrzahl („Flauti“, „Corni“, „Trombe“) und russische Kürzel („фл“, „гоб“, „валт“, „к-бас“)"
