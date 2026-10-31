@@ -47,19 +47,19 @@ class InstrumentMatcher {
   /// as a word or ends with it ("Altsaxophon" → saxophon).
   static const Map<String, List<String>> translations = {
     // Strings
-    'violine': ['violin', 'violins', 'geige', 'violino', 'violon', 'скрипка'],
-    'viola': ['bratsche', 'alto viola', 'альт'],
-    'cello': ['violoncello', 'violoncell', 'violoncelle', 'виолончель'],
-    'kontrabass': ['contrabass', 'double bass', 'string bass', 'contrebasse', 'bass', 'контрабас'],
+    'violine': ['violin', 'violins', 'geige', 'violino', 'violini', 'violon', 'скрипка', 'скрипки'],
+    'viola': ['bratsche', 'alto viola', 'viole', 'альт', 'альты'],
+    'cello': ['violoncello', 'violoncelli', 'violoncell', 'violoncelle', 'виолончель', 'виолончели'],
+    'kontrabass': ['contrabass', 'contrabbasso', 'contrabbassi', 'double bass', 'string bass', 'contrebasse', 'bass', 'контрабас', 'контрабасы'],
 
     // Woodwinds
     'piccolo': ['piccoloflöte', 'piccolo flute', 'ottavino'],
-    'flöte': ['flute', 'flauto', 'querflöte', 'flote', 'флейта'],
-    'oboe': ['hautbois', 'гобой'],
+    'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта', 'флейты'],
+    'oboe': ['hautbois', 'oboi', 'гобой', 'гобои'],
     'englischhorn': ['english horn', 'cor anglais', 'corno inglese'],
-    'klarinette': ['clarinet', 'clarinetto', 'clarinette', 'кларнет'],
+    'klarinette': ['clarinet', 'clarinetto', 'clarinetti', 'clarinette', 'кларнет', 'кларнеты'],
     'bassklarinette': ['bass clarinet', 'bassclarinet', 'clarinetto basso', 'clarinette basse'],
-    'fagott': ['bassoon', 'fagotto', 'basson', 'фагот'],
+    'fagott': ['bassoon', 'fagotto', 'fagotti', 'basson', 'фагот', 'фаготы'],
     'kontrafagott': ['contrabassoon', 'contrafagotto', 'double bassoon'],
     'saxophon': ['saxophone', 'saxofon', 'саксофон'],
     'sopransaxophon': ['soprano sax', 'soprano saxophone', 'sopransax'],
@@ -68,11 +68,11 @@ class InstrumentMatcher {
     'baritonsaxophon': ['baritone sax', 'baritone saxophone', 'baritonsax', 'baritonsaxofon'],
 
     // Brass
-    'horn': ['french horn', 'corno', 'cor', 'waldhorn', 'валторна'],
-    'trompete': ['trumpet', 'tromba', 'trompette', 'труба'],
+    'horn': ['french horn', 'corno', 'corni', 'cor', 'waldhorn', 'валторна', 'валторны'],
+    'trompete': ['trumpet', 'tromba', 'trombe', 'trompette', 'труба', 'трубы'],
     'flügelhorn': ['flugelhorn', 'flicorno'],
     'kornett': ['cornet', 'cornetto'],
-    'posaune': ['trombone', 'trombon', 'тромбон'],
+    'posaune': ['trombone', 'tromboni', 'trombon', 'тромбон', 'тромбоны'],
     'bassposaune': ['bass trombone', 'basstrombone'],
     'tenorhorn': ['tenor horn'],
     'euphonium': ['bariton', 'baritone', 'baritonhorn', 'eufonium'],
@@ -101,39 +101,43 @@ class InstrumentMatcher {
     'bass': ['basso', 'бас'],
 
     // Special
-    'partitur': ['score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура'],
+    'partitur': [
+      'score', 'full score', 'conductor', 'direktion', 'dirigent', 'partitura', 'партитура',
+      'generalpartitur', 'dirigierpartitur', 'dirigentenpartitur', 'dirigentenauszug', 'direktionsstimme',
+      'studienpartitur', 'gesamtpartitur',
+    ],
     'stimmen': ['parts', 'voices', 'parti', 'голоса'],
   };
 
   /// Abbreviations mapping (whole words only).
   static const Map<String, List<String>> abbreviations = {
-    'violine': ['vl', 'vln', 'vi', 'viol', 'vn', 'vni'],
+    'violine': ['vl', 'vln', 'vi', 'viol', 'vn', 'vni', 'скр'],
     'viola': ['va', 'vla', 'br', 'vle'],
-    'cello': ['vc', 'vlc', 'vcl', 'vcs'],
-    'kontrabass': ['kb', 'cb', 'db'],
+    'cello': ['vc', 'vlc', 'vcl', 'vcs', 'влч', 'вчл', 'вл ч'],
+    'kontrabass': ['kb', 'cb', 'db', 'кб', 'к бас', 'кбас'],
     'piccolo': ['picc', 'pic'],
-    'flöte': ['fl', 'flt', 'fls'],
-    'oboe': ['ob', 'obs'],
+    'flöte': ['fl', 'flt', 'fls', 'фл'],
+    'oboe': ['ob', 'obs', 'гоб'],
     'englischhorn': ['eh', 'ca', 'engl hn'],
-    'klarinette': ['cl', 'kl', 'clar', 'klar', 'cls'],
+    'klarinette': ['cl', 'kl', 'clar', 'klar', 'cls', 'кл', 'кларн'],
     'bassklarinette': ['bcl', 'bkl', 'bass cl', 'bass kl'],
-    'fagott': ['fg', 'bn', 'bsn', 'fag'],
+    'fagott': ['fg', 'bn', 'bsn', 'fag', 'фаг'],
     'saxophon': ['sx', 'sax'],
     'altsaxophon': ['asx', 'asax', 'as'],
     'tenorsaxophon': ['tsx', 'tsax', 'ts'],
     'baritonsaxophon': ['bsx', 'bsax', 'bs'],
-    'horn': ['hr', 'hn', 'hrn', 'hns'],
-    'trompete': ['tr', 'tp', 'trp', 'tpt', 'trpt'],
+    'horn': ['hr', 'hn', 'hrn', 'hns', 'валт', 'влт'],
+    'trompete': ['tr', 'tp', 'trp', 'tpt', 'trpt', 'тр', 'труб'],
     'flügelhorn': ['flgh', 'flghn', 'flh'],
-    'posaune': ['pos', 'tb', 'tbn', 'trb'],
-    'tuba': ['tu', 'tba'],
+    'posaune': ['pos', 'tb', 'tbn', 'trb', 'тромб', 'трб'],
+    'tuba': ['tu', 'tba', 'туб'],
     'euphonium': ['euph', 'bar'],
     'schlagzeug': ['perc', 'schlg', 'drs', 'dr'],
-    'pauke': ['timp', 'pk', 'pauk'],
+    'pauke': ['timp', 'pk', 'pauk', 'лит'],
     'glockenspiel': ['glsp', 'glock', 'xyl', 'vib'],
     'klavier': ['pf', 'pno', 'kl'],
     'orgel': ['org'],
-    'harfe': ['hp', 'hrf', 'hfe'],
+    'harfe': ['hp', 'hrf', 'hfe', 'арф'],
     'gitarre': ['gt', 'gtr', 'git'],
     'sopran': ['sop'],
     'tenor': ['ten'],
@@ -141,7 +145,7 @@ class InstrumentMatcher {
   };
 
   /// Terms that also mean something else: a match on them is only "unsure".
-  static const Set<String> _ambiguousTerms = {'bass', 'kl', 'bariton', 'baritone', 'cor', 'as', 'bs', 'ts', 'bar', 'dr', 'alto'};
+  static const Set<String> _ambiguousTerms = {'bass', 'kl', 'bariton', 'baritone', 'cor', 'as', 'bs', 'ts', 'bar', 'dr', 'alto', 'кл', 'тр'};
 
   /// Words that only describe the tuning ("Klarinette in B", "Horn in F").
   static const Set<String> _tuningWords = {

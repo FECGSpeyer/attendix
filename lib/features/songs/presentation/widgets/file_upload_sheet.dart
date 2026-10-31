@@ -37,7 +37,10 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['klavierauszug', 'piano reduction', 'vocal score', 'klavier auszug', 'клавир', 'klavir', 'переложение'])) {
     return (instrumentId: null, note: 'Klavierauszug');
   }
-  if (any(['partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
+  if (any([
+    'partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер',
+    'dirizher', ...partiturCompounds,
+  ])) {
     return (instrumentId: null, note: 'Partitur');
   }
   if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
@@ -46,7 +49,34 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: 'Chor');
   }
+  if (any(['solo', 'soli', 'solist', 'solostimme', 'соло', 'солист'])) {
+    return (instrumentId: null, note: 'Solo');
+  }
   return null;
+}
+
+/// Scores named as one word (the matcher only knows "partitur" itself).
+const partiturCompounds = [
+  'generalpartitur', 'dirigierpartitur', 'dirigentenpartitur', 'dirigentenauszug', 'direktionsstimme',
+  'studienpartitur', 'gesamtpartitur',
+];
+
+/// Labels by file type that win over a part in the name: a Sibelius file
+/// "Violine 1.sib" is the Sibelius file, not the violin part.
+({int? instrumentId, String? note})? fileTypeLabel(String filename) {
+  final lower = filename.toLowerCase();
+  if (lower.endsWith('.sib')) return (instrumentId: null, note: 'Sibelius');
+  if (lower.endsWith('.mid') || lower.endsWith('.midi')) return (instrumentId: null, note: 'MIDI');
+  return null;
+}
+
+/// Old versions ("alte Fassung", "old version"): kept apart from the parts
+/// in use, so nobody opens an outdated part by mistake.
+bool isOldVersionName(String filename) {
+  final words = InstrumentMatcher.tokenize(filename.toLowerCase()).join(' ');
+  return RegExp(
+    r'(^| )(alte (fassung|version)|alt version|old version|fruehere (fassung|version)|veraltet|старая версия)( |$)',
+  ).hasMatch(words);
 }
 
 /// Ionic `findConflictingFiles`: existing files with the same category.
@@ -116,6 +146,13 @@ FileCategoryGuess guessFileCategory(
   required List<InstrumentInfo> instruments,
   required bool isChoir,
 }) {
+  final byType = fileTypeLabel(fileName);
+  if (byType != null) {
+    return FileCategoryGuess(instrumentId: byType.instrumentId, note: byType.note, confidence: MatchConfidence.sure);
+  }
+  if (isOldVersionName(fileName)) {
+    return const FileCategoryGuess(instrumentId: null, note: 'Alte Fassung', confidence: MatchConfidence.sure);
+  }
   final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
   if (match.instrumentId != null) {
     return FileCategoryGuess(

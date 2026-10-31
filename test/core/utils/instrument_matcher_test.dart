@@ -149,6 +149,41 @@ void main() {
       expect(_label('Scan_20231004.pdf', _orchestra), isNull);
       expect(_confidence('Scan_20231004.pdf', _orchestra), MatchConfidence.none);
     });
+
+    // Names from the SOS Google Drive archive.
+    test('scores named as one word', () {
+      expect(_label('06 Ich weiß, an wen ich glaube! - Generalpartitur.pdf', _orchestra), 'Partitur');
+      expect(_label('06 Ich weiß - Dirigentenauszug Klein.pdf', _orchestra), 'Partitur');
+      expect(_label('03 Dirigierpartitur.pdf', _orchestra), 'Partitur');
+    });
+
+    test('file types win over a part in the name: Sibelius, MIDI', () {
+      expect(_label('Violine 1.sib', _orchestra), 'Sibelius');
+      expect(_label('120 Wie wunderbar.sib', _orchestra), 'Sibelius');
+      expect(_label('Trompete 2.mid', _orchestra), 'MIDI');
+      expect(_label('Song.MIDI', _orchestra), 'MIDI');
+      expect(_label('Text Werk 5.docx', _orchestra), 'Liedtext');
+    });
+
+    test('old versions and solo parts', () {
+      expect(_label('Violine 1 alte Fassung.pdf', _orchestra), 'Alte Fassung');
+      expect(_label('Horn 2 - old version.pdf', _orchestra), 'Alte Fassung');
+      // "Alt" alone is the voice, not an old version.
+      expect(_label('Alt.pdf', ['Sopran', 'Alt']), 'Alt');
+      expect(_label('Solo Sopran.pdf', _orchestra), 'Solo');
+      expect(_label('Trompete Solo.pdf', _orchestra), 'Trompete');
+    });
+
+    test('Italian plurals and Cyrillic abbreviations', () {
+      expect(_label('Kurz und Flüchtig - 2 Flauti.pdf', _orchestra), 'Flöte');
+      expect(_label('Ouvertüre - Corni.pdf', _orchestra), 'Horn');
+      expect(_label('Ouvertüre - Trombe.pdf', _orchestra), 'Trompete');
+      expect(_label('01 Где найду я любовь(фл1).pdf', _orchestra), 'Flöte');
+      expect(_label('01 Где найду я любовь(гоб).pdf', _orchestra), 'Oboe');
+      expect(_label('01 Где найду я любовь(валт).pdf', _orchestra), 'Horn');
+      expect(_label('01 Где найду я любовь(к-бас).pdf', _orchestra), 'Kontrabass');
+      expect(_label('01 Где найду я любовь(фаг).pdf', _orchestra), 'Fagott');
+    });
   });
 
   group('partTerm', () {
