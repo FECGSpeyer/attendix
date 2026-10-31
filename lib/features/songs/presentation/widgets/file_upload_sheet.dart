@@ -153,6 +153,12 @@ FileCategoryGuess guessFileCategory(
   if (isOldVersionName(fileName)) {
     return const FileCategoryGuess(instrumentId: null, note: 'Alte Fassung', confidence: MatchConfidence.sure);
   }
+  // A full score stays one even when a part is named ("Mit Harfe -
+  // Generalpartitur"); a plain "Partitur" does not ("Werk - Partitur - Oboe"
+  // is the oboe part taken from the score).
+  if (InstrumentMatcher.tokenize(fileName.toLowerCase()).any(partiturCompounds.contains)) {
+    return const FileCategoryGuess(instrumentId: null, note: 'Partitur', confidence: MatchConfidence.sure);
+  }
   final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
   if (match.instrumentId != null) {
     return FileCategoryGuess(

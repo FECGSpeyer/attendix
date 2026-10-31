@@ -155,6 +155,9 @@ void main() {
       expect(_label('06 Ich weiß, an wen ich glaube! - Generalpartitur.pdf', _orchestra), 'Partitur');
       expect(_label('06 Ich weiß - Dirigentenauszug Klein.pdf', _orchestra), 'Partitur');
       expect(_label('03 Dirigierpartitur.pdf', _orchestra), 'Partitur');
+      // Also with a part in the name; a part taken from the score stays the part.
+      expect(_label('Mit Harfe - Generalpartitur.pdf', [..._orchestra, 'Harfe']), 'Partitur');
+      expect(_label('Ich sah einen SoS - Partitur - Oboe.pdf', _orchestra), 'Oboe');
     });
 
     test('file types win over a part in the name: Sibelius, MIDI', () {
