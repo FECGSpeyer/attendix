@@ -40,6 +40,7 @@ _$SongImpl _$$SongImplFromJson(Map<String, dynamic> json) => _$SongImpl(
           ? null
           : DateTime.parse(json['created_at'] as String),
   beamerFile: const BeamerFileConverter().fromJson(json['beamer_file']),
+  copiedFrom: songCopiedFromOrNull(json['copied_from']),
 );
 
 Map<String, dynamic> _$$SongImplToJson(_$SongImpl instance) =>
@@ -62,6 +63,23 @@ Map<String, dynamic> _$$SongImplToJson(_$SongImpl instance) =>
       'additional_fields': instance.additionalFields,
       'created_at': instance.createdAt?.toIso8601String(),
     };
+
+_$SongCopiedFromImpl _$$SongCopiedFromImplFromJson(Map<String, dynamic> json) =>
+    _$SongCopiedFromImpl(
+      tenantId: (json['tenantId'] as num).toInt(),
+      tenantName: json['tenantName'] as String,
+      songId: (json['songId'] as num).toInt(),
+      copiedAt: json['copiedAt'] as String,
+    );
+
+Map<String, dynamic> _$$SongCopiedFromImplToJson(
+  _$SongCopiedFromImpl instance,
+) => <String, dynamic>{
+  'tenantId': instance.tenantId,
+  'tenantName': instance.tenantName,
+  'songId': instance.songId,
+  'copiedAt': instance.copiedAt,
+};
 
 _$SongFileImpl _$$SongFileImplFromJson(Map<String, dynamic> json) =>
     _$SongFileImpl(

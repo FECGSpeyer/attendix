@@ -368,6 +368,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   ),
                 ),
               ]),
+            // Ionic 4.17.13: origin of a Werk copied from another instance
+            if (!data.readOnly && song.copiedFrom != null)
+              _SongOrigin(origin: song.copiedFrom!),
             if (!data.isPublic) _CopyToOtherInstance(song: song),
           ],
         ),
@@ -801,6 +804,31 @@ class _MultiSelectTile<T> extends StatelessWidget {
       ),
       onTap: options.isEmpty ? null : () => _open(context),
     );
+  }
+}
+
+// ============================================================================
+// Origin (copied from another instance, Ionic 4.17.13)
+// ============================================================================
+
+/// "Kopiert aus X am …" for Werke taken over from another instance of the
+/// organisation (Ionic `copiedFromText`).
+class _SongOrigin extends StatelessWidget {
+  const _SongOrigin({required this.origin});
+
+  final SongCopiedFrom origin;
+
+  @override
+  Widget build(BuildContext context) {
+    return IonInsetList(children: [
+      IonItem(
+        leading: const Icon(Icons.call_split, color: AppColors.medium),
+        title: Text(
+          context.l10n.orgSongsCopiedFrom(origin.tenantName, SongUtils.formatDate(origin.copiedAt)),
+          style: const TextStyle(fontSize: 14, color: AppColors.medium),
+        ),
+      ),
+    ]);
   }
 }
 

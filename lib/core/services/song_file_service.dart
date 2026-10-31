@@ -72,7 +72,6 @@ class SongFileService {
   /// A storage name for [fileName] not in [taken]: first a random number
   /// 100–999 (as Ionic), then every other one of them, then longer numbers.
   /// Never returns a taken name.
-  @visibleForTesting
   static String freeStorageName(String fileName, Set<Object?> taken, [Random? random]) {
     final first = 100 + (random ?? _random).nextInt(900);
     for (var i = 0; i < 900; i++) {

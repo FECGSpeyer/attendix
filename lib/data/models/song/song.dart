@@ -38,9 +38,43 @@ class Song with _$Song {
     /// SongBeamer file of the Werk, written by the Gemeinde App only
     /// (never sent back by Attendix).
     @JsonKey(name: 'beamer_file', includeToJson: false) @BeamerFileConverter() BeamerFile? beamerFile,
+    /// Origin when the Werk was copied from another instance of the
+    /// organisation (`songs.copied_from`, Ionic 4.17.13). Written only by
+    /// the org copy, never by Song updates.
+    @JsonKey(name: 'copied_from', includeToJson: false, fromJson: songCopiedFromOrNull) SongCopiedFrom? copiedFrom,
   }) = _Song;
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);
+}
+
+/// Origin of a Werk copied from another instance (`songs.copied_from`):
+/// `{ tenantId, tenantName, songId, copiedAt }` (Ionic `SongCopiedFrom`).
+@freezed
+class SongCopiedFrom with _$SongCopiedFrom {
+  const factory SongCopiedFrom({
+    required int tenantId,
+    required String tenantName,
+    required int songId,
+    required String copiedAt,
+  }) = _SongCopiedFrom;
+
+  factory SongCopiedFrom.fromJson(Map<String, dynamic> json) =>
+      _$SongCopiedFromFromJson(json);
+}
+
+/// Tolerant `copied_from` parsing: a malformed value never breaks a Werk.
+SongCopiedFrom? songCopiedFromOrNull(Object? json) {
+  if (json is! Map) return null;
+  try {
+    return SongCopiedFrom(
+      tenantId: (json['tenantId'] as num).toInt(),
+      tenantName: (json['tenantName'] ?? '').toString(),
+      songId: (json['songId'] as num).toInt(),
+      copiedAt: (json['copiedAt'] ?? '').toString(),
+    );
+  } catch (_) {
+    return null;
+  }
 }
 
 /// Song file attachment

@@ -9,6 +9,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/optional_tabs_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -270,6 +271,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                 // SETTINGS2: "Als Tab anzeigen" / "Tab ausblenden"
                 case 'tab':
                   _toggleSongsTab();
+                // Ionic 4.17.13 openOrgSongSearch: search term goes along
+                case 'orgSearch':
+                  final q = _search.trim();
+                  context.push(q.isEmpty
+                      ? '/settings/org-settings/songs'
+                      : Uri(path: '/settings/org-settings/songs', queryParameters: {'q': q}).toString());
               }
             },
             itemBuilder: (context) => [
@@ -313,6 +320,18 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                   child: ListTile(
                     leading: const Icon(Icons.cloud_upload_outlined),
                     title: Text(context.l10n.songsImportSongs),
+                    contentPadding: EdgeInsets.zero,
+                  ),
+                ),
+              // Ionic 4.17.13: "In der Organisation suchen" (with organisation)
+              if (isAdmin &&
+                  !data.isPublic &&
+                  ref.watch(currentOrganisationProvider).valueOrNull != null)
+                PopupMenuItem(
+                  value: 'orgSearch',
+                  child: ListTile(
+                    leading: const Icon(Icons.search),
+                    title: Text(context.l10n.orgSongsMenuEntry),
                     contentPadding: EdgeInsets.zero,
                   ),
                 ),

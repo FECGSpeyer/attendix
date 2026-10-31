@@ -265,6 +265,17 @@ class OrgSettingsPage extends ConsumerWidget {
                     onTap: () => context.push('/settings/handover'),
                   ),
                 ]),
+              // Ionic 4.17.13: Werke in der Organisation (admins/responsibles)
+              if ((role.isAdmin || role.isResponsible) && others.isNotEmpty)
+                _Section(title: context.l10n.orgSongsSection, children: [
+                  ListTile(
+                    leading: const Icon(Icons.search),
+                    title: Text(context.l10n.orgSongsTitle),
+                    subtitle: Text(context.l10n.orgSongsEntryHint),
+                    trailing: const _Chevron(),
+                    onTap: () => context.push('/settings/org-settings/songs'),
+                  ),
+                ]),
               // SETTINGS2: Werk-Synchronisierung (Ionic: super admin + linked tenants)
               if (isSuperAdmin && others.isNotEmpty)
                 OrgSongSyncSection(linkedTenants: others),

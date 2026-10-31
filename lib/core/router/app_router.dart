@@ -88,6 +88,7 @@ import '../../features/organisation/presentation/pages/org_plan_public_page.dart
 import '../../features/organisation/presentation/pages/org_planning_templates_page.dart';
 import '../../features/organisation/presentation/pages/org_plans_page.dart';
 import '../../features/organisation/presentation/pages/org_settings_page.dart';
+import '../../features/organisation/presentation/pages/org_songs_page.dart';
 import '../../features/planning/presentation/pages/open_attendance_page.dart';
 import '../../features/planning/presentation/pages/public_planning_page.dart';
 import '../../features/planning/presentation/pages/shared_plan_page.dart';
@@ -1124,6 +1125,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'person-fields',
                     name: 'orgPersonFields',
                     builder: (context, state) => const OrgPersonFieldsPage(),
+                  ),
+                  // Ionic 4.17.13: Werke in der Organisation suchen (?q=)
+                  GoRoute(
+                    path: 'songs',
+                    name: 'orgSongs',
+                    builder: (context, state) => OrgSongsPage(
+                      initialQuery: state.uri.queryParameters['q'],
+                    ),
                   ),
                 ],
               ),
