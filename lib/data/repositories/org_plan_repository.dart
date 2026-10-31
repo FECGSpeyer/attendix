@@ -9,6 +9,14 @@ final orgPlanRepositoryProvider = Provider<OrgPlanRepository>((ref) {
   return OrgPlanRepository(ref);
 });
 
+/// An org plan Termin with the name and colour of its Termin type
+/// (`attType:type_id(name, color)`), for the Live Activity.
+typedef OrgLiveAttendance = ({
+  PlanAttendance attendance,
+  String typeName,
+  String? typeColor,
+});
+
 /// Organisation-level planning (ORG_PLANS package).
 ///
 /// Organisations (`tenant_groups`) span several instances, so these queries
@@ -66,6 +74,89 @@ class OrgPlanRepository extends BaseRepository {
       }).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getOrgPlans');
+      rethrow;
+    }
+  }
+
+  /// LIVE_ACTIVITY (Ionic 4.17.8 `addOrgPlans`): org plan Termine of the
+  /// organisation's instances dated within [[from], [to]], with the name and
+  /// colour of their Termin type.
+  Future<List<OrgLiveAttendance>> getOrgLiveAttendancesBetween(
+    int orgId,
+    DateTime from,
+    DateTime to,
+  ) async {
+    try {
+      final links = await supabase
+          .from('tenant_group_tenants')
+          .select('tenant_id')
+          .eq('tenant_group', orgId);
+      final tenantIds = (links as List)
+          .map((l) => (l as Map)['tenant_id'])
+          .whereType<int>()
+          .toList();
+      if (tenantIds.isEmpty) return [];
+
+      final response = await supabase
+          .from('attendance')
+          .select('id, date, plan, typeInfo, attType:type_id(name, color)')
+          .inFilter('tenantId', tenantIds)
+          .eq('is_org_plan', true)
+          .gte('date', from.toUtc().toIso8601String())
+          .lte('date', to.toUtc().toIso8601String())
+          .not('plan', 'is', null);
+
+      return (response as List).map((e) {
+        final row = e as Map<String, dynamic>;
+        final type = row['attType'];
+        return (
+          attendance: PlanAttendance.fromJson(row),
+          typeName: type is Map ? (type['name'] as String? ?? '') : '',
+          typeColor: type is Map ? type['color'] as String? : null,
+        );
+      }).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getOrgLiveAttendancesBetween');
+      rethrow;
+    }
+  }
+
+  /// LIVE_ACTIVITY: ad-hoc plans of the organisation dated within
+  /// [[fromDate], [toDate]] ("YYYY-MM-DD").
+  Future<List<SharedPlan>> getAdHocOrgPlansBetween(
+    int orgId,
+    String fromDate,
+    String toDate,
+  ) async {
+    try {
+      final response = await supabase
+          .from('shared_plans')
+          .select('*')
+          .eq('org_id', orgId)
+          .gte('date', fromDate)
+          .lte('date', toDate);
+
+      return (response as List)
+          .map((e) => SharedPlan.fromJson(e as Map<String, dynamic>))
+          .toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getAdHocOrgPlansBetween');
+      rethrow;
+    }
+  }
+
+  /// One ad-hoc plan of the organisation (tap on its Live Activity).
+  Future<SharedPlan?> getAdHocOrgPlan(int orgId, String planId) async {
+    try {
+      final response = await supabase
+          .from('shared_plans')
+          .select('*')
+          .eq('id', planId)
+          .eq('org_id', orgId)
+          .maybeSingle();
+      return response == null ? null : SharedPlan.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'getAdHocOrgPlan');
       rethrow;
     }
   }

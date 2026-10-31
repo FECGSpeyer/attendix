@@ -6,10 +6,13 @@ import 'package:flutter/widgets.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../data/models/plan/plan.dart';
+import '../../data/repositories/org_plan_repository.dart';
 import '../../features/planning/presentation/pages/plan_viewer_page.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
+import '../providers/attendance_type_providers.dart';
 import '../providers/live_activity_providers.dart';
+import '../providers/organisation_providers.dart';
 import '../providers/plan_providers.dart';
 import '../providers/tenant_providers.dart';
 import '../router/app_router.dart';
@@ -66,8 +69,13 @@ abstract class LiveActivityHost {
   Future<bool> loadEnabled();
   Future<List<PlanAttendance>> loadAttendances(DateTime from, DateTime to);
 
-  /// Names of the tenant's Termin types by id.
-  Future<Map<String, String>> typeNames();
+  /// Name and colour of the tenant's Termin types by id.
+  Future<Map<String, LiveTermType>> termTypes();
+
+  /// ORG plans of the current tenant's organisation dated within
+  /// [[from], [to]] (Ionic 4.17.8 `addOrgPlans`); null without an
+  /// organisation.
+  Future<LiveOrgPlans?> loadOrgPlans(DateTime from, DateTime to);
   Future<void> saveToken({
     required String userId,
     required String kind,
@@ -82,7 +90,21 @@ abstract class LiveActivityHost {
 
   /// Opens the plan viewer of a Termin in live mode.
   Future<void> openPlan(int attendanceId);
+
+  /// Opens an ad-hoc ORG plan (`shared_plans.id`) in the plan viewer in
+  /// live mode, like on the ORG-Pläne page.
+  Future<void> openSharedOrgPlan(String id);
 }
+
+/// Name and colour (`attendance_types.color`) of a Termin type.
+typedef LiveTermType = ({String name, String? color});
+
+/// ORG plans of the organisation: Termine marked as ORG plan and ad-hoc
+/// ORG plans without a Termin.
+typedef LiveOrgPlans = ({
+  List<OrgLiveAttendance> attendances,
+  List<SharedPlan> sharedPlans,
+});
 
 /// Shows the currently running Ablaufplan as iOS Live Activity / Dynamic
 /// Island. While the app is open it starts and updates them itself; with the
@@ -546,7 +568,7 @@ class LiveActivityService {
     final from = DateTime(today.year, today.month, today.day - lookbackDays);
     final to = DateTime(today.year, today.month, today.day + 1, 23, 59, 59, 999);
     final attendances = await _host.loadAttendances(from, to);
-    final typeNames = await _host.typeNames();
+    final types = await _host.termTypes();
 
     final result = <LivePlanCandidate>[];
     for (final att in attendances) {
@@ -555,9 +577,14 @@ class LiveActivityService {
       // Beobachter never see the plan; others only when it is shared.
       if (role.isViewer || (!isLeader && !att.sharePlan)) continue;
       final plans = PlanUtils.allPlans(att);
-      final typeName = typeNames[att.typeId] ?? '';
+      final type = types[att.typeId];
+      final typeName = type?.name ?? '';
       for (var index = 0; index < plans.length; index++) {
-        final state = liveStateAt(liveSchedule(att, index, timezone, plans), now);
+        // Ionic 4.17.22: the activity has the colour of the Termin type.
+        final state = withLiveColor(
+          liveStateAt(liveSchedule(att, index, timezone, plans), now),
+          type?.color,
+        );
         if (state == null) continue;
         result.add(LivePlanCandidate(
           attendanceId: id,
@@ -567,10 +594,74 @@ class LiveActivityService {
         ));
       }
     }
-    return (
-      candidates: result,
-      attendanceIds: attendances.map((a) => a.id).whereType<int>().toSet(),
-    );
+    final attendanceIds = attendances.map((a) => a.id).whereType<int>().toSet();
+    if (isLeader) await _addOrgPlans(result, attendanceIds, timezone, now);
+    return (candidates: result, attendanceIds: attendanceIds);
+  }
+
+  /// ORG plans of the organisation (Termine of all its choirs marked as
+  /// ORG plan, plan 1 only, and ad-hoc ORG plans), for admins and
+  /// Verantwortliche like the ORG-Pläne page (Ionic 4.17.8 `addOrgPlans`).
+  /// Ad-hoc plans have no Termin: attendanceId 0 and plan key `org-<id>`,
+  /// as in the Edge Function.
+  Future<void> _addOrgPlans(
+    List<LivePlanCandidate> result,
+    Set<int> attendanceIds,
+    String timezone,
+    int now,
+  ) async {
+    final today = DateTime.fromMillisecondsSinceEpoch(now);
+    final from = DateTime(today.year, today.month, today.day - 1);
+    final to = DateTime(today.year, today.month, today.day + 1, 23, 59, 59, 999);
+    LiveOrgPlans? org;
+    try {
+      org = await _host.loadOrgPlans(from, to);
+    } catch (e) {
+      // Without the ORG plans their activities are left alone (not ended).
+      _log('org plans', e);
+      return;
+    }
+    if (org == null) return;
+
+    for (final entry in org.attendances) {
+      final att = entry.attendance;
+      final id = att.id;
+      final plan = att.plan;
+      if (id == null) continue;
+      attendanceIds.add(id);
+      if (plan == null) continue;
+      if (result.any((c) => c.attendanceId == id && c.planKey == 'main')) continue;
+      final state = withLiveColor(
+        liveStateAt(liveSchedule(att, 0, timezone, [plan]), now),
+        entry.typeColor,
+      );
+      if (state == null) continue;
+      result.add(LivePlanCandidate(
+        attendanceId: id,
+        planKey: 'main',
+        title: liveTitle(att, entry.typeName, 0, [plan]),
+        state: state,
+      ));
+    }
+
+    attendanceIds.add(0);
+    for (final sp in org.sharedPlans) {
+      final date = sp.date ?? '';
+      final time = sp.time ?? '';
+      if (date.isEmpty || time.isEmpty || sp.fields.isEmpty) continue;
+      final state = liveStateAt(
+        buildSchedule(date: date, planTime: time, fields: sp.fields, timezone: timezone),
+        now,
+      );
+      if (state == null) continue;
+      final title = sp.planTitle?.trim() ?? '';
+      result.add(LivePlanCandidate(
+        attendanceId: 0,
+        planKey: 'org-${sp.id}',
+        title: title.isNotEmpty ? title : 'ORG-Plan',
+        state: state,
+      ));
+    }
   }
 
   Future<void> _registerTokens(int generation) async {
@@ -680,14 +771,21 @@ class LiveActivityService {
   Future<bool> openFromUrl(Uri url) async {
     if (url.scheme != 'attendix' || url.host != 'live-plan') return false;
     final attendanceId = int.tryParse(url.queryParameters['attendance'] ?? '') ?? 0;
-    if (attendanceId == 0) return true;
+    final planKey = url.queryParameters['plan'] ?? '';
+    // Ionic 4.17.8: ad-hoc ORG plans have no Termin (attendance 0, plan "org-<id>").
+    final orgPlanId = attendanceId == 0 && planKey.startsWith('org-') ? planKey.substring(4) : null;
+    if (attendanceId == 0 && (orgPlanId == null || orgPlanId.isEmpty)) return true;
     if (_host.tenantId == null) {
       // Opened before the tenant was loaded (cold start): open after init.
       _pendingUri = url;
       return true;
     }
     try {
-      await _host.openPlan(attendanceId);
+      if (orgPlanId != null) {
+        await _host.openSharedOrgPlan(orgPlanId);
+      } else {
+        await _host.openPlan(attendanceId);
+      }
     } catch (e) {
       _log('openFromUrl', e);
     }
@@ -756,13 +854,35 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   }
 
   @override
-  Future<Map<String, String>> typeNames() async {
+  Future<Map<String, LiveTermType>> termTypes() async {
     try {
-      final types = await _ref.read(planAttendanceTypesProvider.future);
-      return {for (final t in types) t.id: t.name};
+      // Ionic db.attendanceTypes() (name and colour).
+      final types = await _ref.read(attendanceTypesProvider.future);
+      return {
+        for (final t in types)
+          if (t.id != null) t.id!: (name: t.name, color: t.color),
+      };
     } catch (_) {
       return {};
     }
+  }
+
+  @override
+  Future<LiveOrgPlans?> loadOrgPlans(DateTime from, DateTime to) async {
+    final org = await _ref.read(currentOrganisationProvider.future);
+    final orgId = org?.id;
+    if (orgId == null) return null;
+    final repo = _ref.read(orgPlanRepositoryProvider);
+    String day(DateTime d) =>
+        '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+    final results = await Future.wait([
+      repo.getOrgLiveAttendancesBetween(orgId, from, to),
+      repo.getAdHocOrgPlansBetween(orgId, day(from), day(to)),
+    ]);
+    return (
+      attendances: results[0] as List<OrgLiveAttendance>,
+      sharedPlans: results[1] as List<SharedPlan>,
+    );
   }
 
   @override
@@ -800,6 +920,25 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
     final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;
     await showPlanViewer(context, attendance: attendance!, defaultLive: true);
+  }
+
+  @override
+  Future<void> openSharedOrgPlan(String id) async {
+    final org = await _ref.read(currentOrganisationProvider.future);
+    final orgId = org?.id;
+    if (orgId == null) return;
+    final sp = await _ref.read(orgPlanRepositoryProvider).getAdHocOrgPlan(orgId, id);
+    if (sp == null || sp.fields.isEmpty) return;
+    final entry = OrgPlanEntry.adHoc(sp);
+    final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
+    if (context == null || !context.mounted) return;
+    await showPlanViewer(
+      context,
+      attendance: PlanAttendance(id: null, date: entry.date),
+      plan: entry.plan,
+      title: entry.title,
+      defaultLive: true,
+    );
   }
 }
 
