@@ -314,8 +314,13 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     if (pendingId == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      // While the Termine (re)load, e.g. after the tenant switch of a push,
+      // they may still be the previous ones: wait, the page rebuilds once
+      // they are loaded and comes back here.
+      final source = ref.read(signoutDataProvider);
+      if (source.isLoading || ref.read(rdSignoutDataProvider).isLoading) return;
       ref.read(pendingAttendanceIdProvider.notifier).state = null;
-      final all = ref.read(signoutDataProvider).valueOrNull ?? data;
+      final all = source.valueOrNull ?? data;
       final att = [...all.allUpcoming, ...all.past].where((a) => a.attendanceId == pendingId).firstOrNull;
       if (att == null) {
         ToastHelper.showInfo(context, context.l10n.redesignEventNotFound);

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -63,6 +65,7 @@ Widget _app(
   List<AttendanceType> types = const [],
   int? pending,
   List<CrossTenantPersonAttendance> extraUpcoming = const [],
+  Future<SignoutData> Function(Ref ref)? signout,
 }) {
   final router = GoRouter(
     initialLocation: '/termine',
@@ -108,7 +111,7 @@ Widget _app(
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),
       ),
-      signoutDataProvider.overrideWith((ref) async => SignoutData(
+      signoutDataProvider.overrideWith(signout ?? (ref) async => SignoutData(
             current: _own('11', 0, AttendanceStatus.neutral),
             upcoming: [
               _own('12', 2, AttendanceStatus.present),
@@ -360,6 +363,33 @@ void main() {
     expect(find.text('Offene Dienste'), findsOneWidget, reason: 'taken over via duty_take only');
     expect(find.text('Dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
     expect(find.text('page own 14'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification waits until the Termine of the new tenant are loaded', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    final reload = Completer<SignoutData>();
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) => ref.watch(generation) == 0
+          ? Future.value(SignoutData(current: _own('11', 0, AttendanceStatus.neutral)))
+          : reload.future,
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    // A push switched the tenant: the Termine reload, the old ones still show.
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept while loading');
+
+    reload.complete(SignoutData(current: _own('15', 1, AttendanceStatus.neutral)));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
   });
 
   testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
