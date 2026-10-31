@@ -8514,6 +8514,14 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventsYes => 'I\'m in';
 
   @override
+  String get redesignEventsYou => 'You';
+
+  @override
+  String redesignEventsYourAnswerLabel(Object status) {
+    return 'Your answer: $status';
+  }
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Actions for $name';
   }
@@ -8768,6 +8776,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMeApp => 'App';
 
   @override
+  String get redesignMeAttendance => 'Your attendance';
+
+  @override
+  String redesignMeAttendanceLate(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'late $count times',
+      one: 'late once',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignMeBeta => 'New design (beta)';
 
   @override
@@ -8835,6 +8857,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignMembersBirthdayTomorrow => 'Birthday tomorrow';
+
+  @override
+  String redesignMembersCritical(Object count) {
+    return 'Often missing · $count';
+  }
 
   @override
   String get redesignMembersEmpty => 'No members yet.';
@@ -9308,6 +9335,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayDayTomorrow => 'Tomorrow';
 
   @override
+  String redesignTodayDeadline(Object date) {
+    return 'Answer by $date';
+  }
+
+  @override
   String get redesignTodayDutyQuestion => 'You have been assigned. Do you confirm?';
 
   @override
@@ -9440,7 +9472,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayThisWeek => 'This week';
 
   @override
+  String redesignTodayUnrecorded(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events not recorded yet',
+      one: '1 event not recorded yet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignTodayUpNext => 'Up next';
+
+  @override
+  String get redesignTodayViewerHint => 'As an observer you see the overview. Leaders open single events.';
 
   @override
   String get redesignTodayWeekEmpty => 'Nothing else this week.';

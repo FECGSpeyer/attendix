@@ -49,6 +49,42 @@ List<Attendance> rdUpcoming(List<Attendance> all, {DateTime? now}) {
     ..sort((a, b) => keyOf(a).compareTo(keyOf(b)));
 }
 
+/// Termine that ended within the last [days] days, oldest first (UX D4).
+List<Attendance> rdRecentPast(List<Attendance> all, {DateTime? now, int days = 14}) {
+  final current = now ?? DateTime.now();
+  final from = DateTime(current.year, current.month, current.day).subtract(Duration(days: days));
+  DateTime keyOf(Attendance a) => rdStartOf(a.date, a.startTime) ?? DateTime(1970);
+  return all
+      .where((a) => EventListUtils.hasEnded(a.date, a.durationDays, now: current) && !keyOf(a).isBefore(from))
+      .toList()
+    ..sort((a, b) => keyOf(a).compareTo(keyOf(b)));
+}
+
+/// Ids of [ids] (kept in order) where someone still has no status.
+List<int> rdUnrecordedIds(List<int> ids, Iterable<PersonAttendance> rows) {
+  final open = {
+    for (final r in rows)
+      if (r.status == AttendanceStatus.neutral && r.attendanceId != null) r.attendanceId!,
+  };
+  return [for (final id in ids) if (open.contains(id)) id];
+}
+
+/// "Termine noch nicht erfasst" on Heute (UX D4): Termine of the last two
+/// weeks that are over but still have people without a status. One query
+/// for all of them, like [rdUpcomingCountsProvider].
+final rdUnrecordedProvider = FutureProvider.autoDispose<List<int>>((ref) async {
+  ref.watch(attendanceRefetchCounter);
+  final recent = ref.watch(realtimeAttendanceListProvider.select((v) => rdRecentPast(v.valueOrNull ?? const <Attendance>[])
+      .map((a) => a.id)
+      .whereType<int>()
+      .join(',')));
+  if (recent.isEmpty) return const [];
+  final ids = recent.split(',').map(int.parse).toList();
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const [];
+  return rdUnrecordedIds(ids, await repo.getPersonAttendancesForAttendances(ids));
+});
+
 /// Ended Termine, newest first.
 List<Attendance> rdPast(List<Attendance> all, {DateTime? now}) {
   final current = now ?? DateTime.now();

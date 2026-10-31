@@ -12,6 +12,7 @@ import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/features/redesign/data/providers/rd_events_providers.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
 import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
@@ -63,6 +64,10 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
         builder: (context, state, child) => RdShell(child: child),
         routes: [
           GoRoute(path: '/heute', builder: (_, __) => const RdTodayPage()),
+          GoRoute(
+            path: '/termine/:id',
+            builder: (_, state) => Scaffold(body: Text('page termin ${state.uri}')),
+          ),
           for (final path in ['/attendance', '/signout', '/people', '/mitglieder', '/members', '/songs-tab', '/werke', '/ich'])
             GoRoute(path: path, builder: (_, __) => Scaffold(body: Text('page $path'))),
         ],
@@ -102,6 +107,7 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
         (ref) async => [TestFactories.createPerson(id: 9), TestFactories.createPerson(id: 10)],
       ),
       criticalPlayersProvider.overrideWith((ref) async => const []),
+      rdUnrecordedProvider.overrideWith((ref) async => const [23]),
       dashboardBirthdaysProvider.overrideWith((ref) async => const []),
     ],
     child: Consumer(
@@ -181,6 +187,35 @@ void main() {
     expect(find.text('3 Abmeldungen für den nächsten Termin'), findsOneWidget);
     expect(find.text('Registerprobe'), findsOneWidget);
     expect(find.text('Vorbei'), findsNothing);
+  });
+
+  testWidgets('Dirigent: past Termine without a status lead to the recording (UX D4)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    final row = find.text('1 Termin noch nicht erfasst');
+    await tester.scrollUntilVisible(row, 200);
+    expect(find.textContaining('Vorbei'), findsOneWidget);
+    await tester.tap(row);
+    await _settle(tester);
+    expect(find.textContaining('page termin /termine/23'), findsOneWidget);
+    expect(find.textContaining('tab=anwesenheit'), findsOneWidget);
+  });
+
+  testWidgets('Beobachter: a hint once, Termine without dead taps (UX V1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.viewer));
+    await _settle(tester);
+
+    expect(find.text('Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'), findsOneWidget);
+    expect(find.text('Anwesenheit erfassen'), findsNothing);
+    expect(find.textContaining('noch nicht erfasst'), findsNothing);
+    await tester.scrollUntilVisible(find.text('Registerprobe'), 200);
+    await tester.tap(find.text('Registerprobe'));
+    await _settle(tester);
+    expect(find.textContaining('page'), findsNothing);
+    expect(find.text('Registerprobe'), findsOneWidget);
   });
 
   testWidgets('every Farbwelt renders the phone shell without overflow', (tester) async {

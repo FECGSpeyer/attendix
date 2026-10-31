@@ -14705,6 +14705,18 @@ abstract class AppLocalizations {
   /// **'Dabei'**
   String get redesignEventsYes;
 
+  /// redesign.events.you
+  ///
+  /// In de, this message translates to:
+  /// **'Du'**
+  String get redesignEventsYou;
+
+  /// redesign.events.yourAnswerLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Antwort: {status}'**
+  String redesignEventsYourAnswerLabel(Object status);
+
   /// redesign.files.actions
   ///
   /// In de, this message translates to:
@@ -15101,6 +15113,18 @@ abstract class AppLocalizations {
   /// **'App'**
   String get redesignMeApp;
 
+  /// redesign.me.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get redesignMeAttendance;
+
+  /// redesign.me.attendanceLate
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 × verspätet} other {{count} × verspätet}}'**
+  String redesignMeAttendanceLate(num count);
+
   /// redesign.me.beta
   ///
   /// In de, this message translates to:
@@ -15152,7 +15176,7 @@ abstract class AppLocalizations {
   /// redesign.me.logout
   ///
   /// In de, this message translates to:
-  /// **'Abmelden'**
+  /// **'Ausloggen'**
   String get redesignMeLogout;
 
   /// redesign.me.notifications
@@ -15214,6 +15238,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geburtstag morgen'**
   String get redesignMembersBirthdayTomorrow;
+
+  /// redesign.members.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlen oft · {count}'**
+  String redesignMembersCritical(Object count);
 
   /// redesign.members.empty
   ///
@@ -16013,6 +16043,12 @@ abstract class AppLocalizations {
   /// **'Morgen'**
   String get redesignTodayDayTomorrow;
 
+  /// redesign.today.deadline
+  ///
+  /// In de, this message translates to:
+  /// **'Antwort bis {date}'**
+  String redesignTodayDeadline(Object date);
+
   /// redesign.today.dutyQuestion
   ///
   /// In de, this message translates to:
@@ -16193,11 +16229,23 @@ abstract class AppLocalizations {
   /// **'Diese Woche'**
   String get redesignTodayThisWeek;
 
+  /// redesign.today.unrecorded
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}'**
+  String redesignTodayUnrecorded(num count);
+
   /// redesign.today.upNext
   ///
   /// In de, this message translates to:
   /// **'Als Nächstes'**
   String get redesignTodayUpNext;
+
+  /// redesign.today.viewerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'**
+  String get redesignTodayViewerHint;
 
   /// redesign.today.weekEmpty
   ///

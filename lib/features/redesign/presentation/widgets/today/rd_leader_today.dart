@@ -14,6 +14,8 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../settings/presentation/pages/pending_players_page.dart'
     show showPendingPersonsSheet;
+import '../../../data/providers/rd_events_providers.dart' show rdUnrecordedProvider;
+import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
@@ -69,6 +71,12 @@ class RdLeaderToday extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
+        // UX V1: Beobachter cannot open Termine (Ionic); say so once
+        // instead of rows that look tappable.
+        if (role.isViewer) ...[
+          RdInfoCard(text: l10n.redesignTodayViewerHint, icon: Icons.info_outline),
+          const SizedBox(height: 16),
+        ],
         if (next == null)
           RdInfoCard(
             text: l10n.redesignTodayNoUpcoming,
@@ -221,6 +229,7 @@ class _AttentionSection extends ConsumerWidget {
     final pending = ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0;
     final critical = ref.watch(criticalPlayersProvider).valueOrNull?.length ?? 0;
     final nextId = next?.id;
+    final unrecorded = ref.watch(rdUnrecordedProvider).valueOrNull ?? const <int>[];
     final excused = nextId == null
         ? 0
         : ref.watch(rdAttendanceCountsProvider(nextId)).valueOrNull?.excused ?? 0;
@@ -240,7 +249,20 @@ class _AttentionSection extends ConsumerWidget {
           title: l10n.redesignTodayCritical(critical),
           subtitle: l10n.redesignTodayCriticalHint,
           trailing: RdCountBadge(critical, tone: RdTone.absent),
-          onTap: () => context.go(RedesignRoutes.members),
+          onTap: () {
+            // UX D3: open Mitglieder already filtered to "Fehlen oft".
+            ref.read(rdMembersCriticalOnlyProvider.notifier).state = true;
+            context.go(RedesignRoutes.members);
+          },
+        ),
+      if (unrecorded.isNotEmpty)
+        RdListRow(
+          leading: RdRowIcon(Icons.edit_note_rounded, color: p.late, background: p.lateSoft),
+          title: l10n.redesignTodayUnrecorded(unrecorded.length),
+          subtitle: _unrecordedLine(ref, unrecorded),
+          trailing: RdCountBadge(unrecorded.length, tone: RdTone.late),
+          // Newest first: the one most likely still to be recorded.
+          onTap: () => context.push(RedesignRoutes.event(unrecorded.last, record: true)),
         ),
       if (excused > 0 && nextId != null)
         RdListRow(
@@ -265,6 +287,21 @@ class _AttentionSection extends ConsumerWidget {
   }
 }
 
+/// "Probe 29.10., Probe 22.10." for the not yet recorded Termine (newest
+/// first, at most three).
+String _unrecordedLine(WidgetRef ref, List<int> ids) {
+  final all = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
+  final byId = {for (final a in all) a.id: a};
+  return [
+    for (final id in ids.reversed.take(3))
+      if (byId[id] case final a?)
+        [
+          rdEventInfo(a, ref.watch(rdAttendanceTypeProvider(a.typeId))).title,
+          if (EventListUtils.parse(a.date) case final d?) '${d.day}.${d.month}.',
+        ].join(' '),
+  ].join(', ');
+}
+
 class _WeekRow extends ConsumerWidget {
   const _WeekRow({required this.attendance, required this.canOpen});
 
@@ -280,9 +317,8 @@ class _WeekRow extends ConsumerWidget {
       date: attendance.date,
       title: info.title,
       meta: [info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · '),
-      onTap: id != null && canOpen
-          ? () => context.push(RedesignRoutes.event(id))
-          : () => context.go(RedesignRoutes.events),
+      // UX V1: no chevron and no tap for Beobachter (route guard).
+      onTap: id != null && canOpen ? () => context.push(RedesignRoutes.event(id)) : null,
     );
   }
 }

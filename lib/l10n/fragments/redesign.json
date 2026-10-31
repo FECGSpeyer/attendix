@@ -85,7 +85,10 @@
         "mySectionHint": "Anwesenheit deiner Stimmgruppe",
         "noChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
         "answerChildren": "Zu- und absagen",
-        "answered": "Alle geantwortet"
+        "answered": "Alle geantwortet",
+        "deadline": "Antwort bis {date}",
+        "unrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
+        "viewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung."
       },
       "applicant": {
         "title": "Bewerbung",
@@ -110,7 +113,9 @@
         "whatsNew": "Neu in dieser Version",
         "account": "Konto",
         "allSettings": "Alle Einstellungen",
-        "logout": "Abmelden"
+        "logout": "Ausloggen",
+        "attendance": "Deine Anwesenheit",
+        "attendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}"
       },
       "appearance": {
         "title": "Darstellung",
@@ -157,7 +162,9 @@
         "waiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
         "showAll": "Wieder alle Termine zeigen",
         "empty": "Noch keine Termine. Leg die erste Probe an.",
-        "createFirst": "Ersten Termin anlegen"
+        "createFirst": "Ersten Termin anlegen",
+        "you": "Du",
+        "yourAnswerLabel": "Deine Antwort: {status}"
       },
       "event": {
         "details": "Alle Details",
@@ -321,7 +328,8 @@
         "noMatch": "Niemand passt zur Suche.",
         "emptyPaused": "Niemand ist pausiert.",
         "emptyPending": "Niemand wartet auf Freigabe.",
-        "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben."
+        "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
+        "critical": "Fehlen oft · {count}"
       },
       "person": {
         "edit": "Bearbeiten",
@@ -629,7 +637,10 @@
         "mySectionHint": "Attendance of your section",
         "noChildren": "No children are linked to your account yet.",
         "answerChildren": "Answer for my children",
-        "answered": "All answered"
+        "answered": "All answered",
+        "deadline": "Answer by {date}",
+        "unrecorded": "{count, plural, one {1 event not recorded yet} other {{count} events not recorded yet}}",
+        "viewerHint": "As an observer you see the overview. Leaders open single events."
       },
       "applicant": {
         "title": "Application",
@@ -654,7 +665,9 @@
         "whatsNew": "New in this version",
         "account": "Account",
         "allSettings": "All settings",
-        "logout": "Log out"
+        "logout": "Log out",
+        "attendance": "Your attendance",
+        "attendanceLate": "{count, plural, one {late once} other {late {count} times}}"
       },
       "appearance": {
         "title": "Appearance",
@@ -701,7 +714,9 @@
         "waiting": "{count, plural, one {1 event is waiting for your answer} other {{count} events are waiting for your answer}}",
         "showAll": "Show all events again",
         "empty": "No events yet. Create the first rehearsal.",
-        "createFirst": "Create first event"
+        "createFirst": "Create first event",
+        "you": "You",
+        "yourAnswerLabel": "Your answer: {status}"
       },
       "event": {
         "details": "All details",
@@ -865,7 +880,8 @@
         "noMatch": "Nobody matches the search.",
         "emptyPaused": "Nobody is paused.",
         "emptyPending": "Nobody is waiting for approval.",
-        "pendingHint": "Tap a person to review and approve them."
+        "pendingHint": "Tap a person to review and approve them.",
+        "critical": "Often missing · {count}"
       },
       "person": {
         "edit": "Edit",

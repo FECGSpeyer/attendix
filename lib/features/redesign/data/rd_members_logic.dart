@@ -156,3 +156,8 @@ DateTime _day(DateTime d) => DateTime(d.year, d.month, d.day);
 
 String _key(DateTime d) =>
     '${d.year.toString().padLeft(4, '0')}-${d.month.toString().padLeft(2, '0')}-${d.day.toString().padLeft(2, '0')}';
+
+/// Active members the server flags as critical (`isCritical`, set by the
+/// attendance rules of the group), as "Heute" counts them (UX D3).
+List<Person> rdCriticalMembers(Iterable<Person> active) =>
+    active.where((x) => x.isCritical && !x.paused && !x.pending).toList();

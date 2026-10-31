@@ -108,7 +108,7 @@ List<Override> _common(Role role, MockPlayerRepository repo) => [
       playerRepositoryWithTenantProvider.overrideWithValue(repo),
     ];
 
-Widget _membersApp(Role role, MockPlayerRepository repo) {
+Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people}) {
   final router = GoRouter(
     initialLocation: '/mitglieder',
     routes: [
@@ -132,7 +132,7 @@ Widget _membersApp(Role role, MockPlayerRepository repo) {
   return ProviderScope(
     overrides: [
       ..._common(role, repo),
-      realtimePlayersProvider.overrideWith((ref) => Stream.value([_anna, _ben, _clara, _dora])),
+      realtimePlayersProvider.overrideWith((ref) => Stream.value(people ?? [_anna, _ben, _clara, _dora])),
       realtimePendingPlayersProvider.overrideWith((ref) => Stream.value([_emil])),
       playerAttendancePercentagesProvider.overrideWith((ref) async => const {1: 90, 2: 40, 3: 80, 4: 70}),
       groupsProvider.overrideWith((ref) async => _groups),
@@ -374,6 +374,33 @@ void main() {
       expect(find.text('Dora Ernst'), findsNothing);
       // Leader first in the section.
       expect(tester.getTopLeft(find.text('Anna Berg')).dy, lessThan(tester.getTopLeft(find.text('Ben Clas')).dy));
+    });
+
+    testWidgets('"Fehlen oft" narrows Aktiv to the critical members (UX D3)', (tester) async {
+      await tester.pumpWidget(_membersApp(
+        Role.admin,
+        _repo(),
+        people: [_anna, _ben.copyWith(isCritical: true), _clara, _dora],
+      ));
+      await _settle(tester);
+      expect(find.text('Fehlen oft · 1'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsOneWidget);
+
+      await tester.tap(find.text('Fehlen oft · 1'));
+      await _settle(tester);
+      expect(find.text('Ben Clas'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+      expect(find.text('Clara Dorn'), findsNothing);
+
+      await tester.tap(find.text('Fehlen oft · 1'));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+    });
+
+    testWidgets('no "Fehlen oft" chip without critical members', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      expect(find.textContaining('Fehlen oft'), findsNothing);
     });
 
     testWidgets('Pausiert lists paused persons with their end date', (tester) async {

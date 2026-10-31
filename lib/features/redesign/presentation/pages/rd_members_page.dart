@@ -15,6 +15,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
+import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -92,8 +93,13 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       RdMembersFilter.paused,
       if (pending.isNotEmpty) RdMembersFilter.pending,
     ];
+    // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
+    final critical = rdCriticalMembers(active);
+    final criticalOnly = filter == RdMembersFilter.active &&
+        critical.isNotEmpty &&
+        ref.watch(rdMembersCriticalOnlyProvider);
     final shown = switch (filter) {
-      RdMembersFilter.active => active,
+      RdMembersFilter.active => criticalOnly ? critical : active,
       RdMembersFilter.paused => paused,
       RdMembersFilter.pending => pending,
     };
@@ -177,6 +183,17 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onChanged: (f) => setState(() => _filter = f),
         ),
       ),
+      if (filter == RdMembersFilter.active && critical.isNotEmpty) ...[
+        const SizedBox(height: 10),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: RdChoiceChip(
+            label: l10n.redesignMembersCritical(critical.length),
+            selected: criticalOnly,
+            onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = !criticalOnly,
+          ),
+        ),
+      ],
       const SizedBox(height: 16),
     ];
 
