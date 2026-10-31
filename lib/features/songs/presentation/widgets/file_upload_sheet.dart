@@ -291,7 +291,14 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
   Future<void> _readFirstPages(Iterable<_FileToUpload> items) async {
     final vision = ref.read(partVisionServiceProvider);
     for (final item in items.toList()) {
-      final match = await vision.detect(item.platformFile, _instruments);
+      // Removed, changed by hand or uploading meanwhile: no (paid) request,
+      // also not one already under way that has not been sent yet.
+      bool gone() => !mounted || !_files.contains(item) || item.reviewed || item.status != null;
+      if (gone()) {
+        if (mounted) setState(() => item.reading = false);
+        continue;
+      }
+      final match = await vision.detect(item.platformFile, _instruments, cancelled: gone);
       if (!mounted) return;
       setState(() {
         item.reading = false;

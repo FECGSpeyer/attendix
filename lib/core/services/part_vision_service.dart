@@ -40,19 +40,29 @@ class PartVisionService {
   static const maxImageBytes = 1500000;
   static const _renderWidth = 1100;
 
-  /// Whether [file] can be looked at (PDF or image).
-  static bool supports(String fileName) {
+  /// Whether [file] can be looked at: PDFs, and photos (PNG/JPEG) outside
+  /// the PWA. In the browser a photo could only be re-encoded on the UI
+  /// thread (blocking the page and every deadline), so it keeps the
+  /// file-name result there.
+  static bool supports(String fileName, {bool web = kIsWeb}) {
     final lower = fileName.toLowerCase();
-    return lower.endsWith('.pdf') || lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg');
+    if (lower.endsWith('.pdf')) return true;
+    return !web && (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg'));
   }
 
   /// Reads the part of [file] among [instruments]; null when it could not
-  /// within [limit] (at most [timeout]).
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) async {
+  /// within [limit] (at most [timeout]). Once [cancelled] says true (file
+  /// removed, changed by hand, uploading), no request is started any more.
+  Future<PartMatch?> detect(
+    PlatformFile file,
+    List<InstrumentInfo> instruments, {
+    Duration? limit,
+    bool Function()? cancelled,
+  }) async {
     if (_unavailable || instruments.isEmpty || !supports(file.name)) return null;
     final time = limit == null || limit > timeout ? timeout : limit;
     if (time < _minRequestTime) return null;
-    final deadline = _Deadline(time);
+    final deadline = _Deadline(time, cancelled);
     try {
       final tenantId = _tenantId();
       if (tenantId == null) return null;
@@ -116,7 +126,8 @@ class PartVisionService {
     final bytes = await _bytes(file);
     if (bytes == null || deadline.isOver) return null;
     if (!file.name.toLowerCase().endsWith('.pdf')) {
-      final image = await (kIsWeb ? Future.value(reencodeImage(bytes)) : compute(reencodeImage, bytes));
+      // Never in the browser (see [supports]): in its own isolate.
+      final image = await compute(reencodeImage, bytes);
       return deadline.isOver ? null : image;
     }
     final doc = await PdfDocument.openData(bytes);
@@ -150,21 +161,27 @@ class PartVisionService {
 
 /// Time left for one file; over once it ran out or the caller gave up.
 class _Deadline {
-  _Deadline(Duration time) : _end = DateTime.now().add(time);
+  _Deadline(Duration time, this._cancelled) : _end = DateTime.now().add(time);
 
   final DateTime _end;
+  final bool Function()? _cancelled;
   bool _expired = false;
 
   void expire() => _expired = true;
-  bool get isOver => _expired || !DateTime.now().isBefore(_end);
+  bool get isOver => _expired || (_cancelled?.call() ?? false) || !DateTime.now().isBefore(_end);
   Duration get left => isOver ? Duration.zero : _end.difference(DateTime.now());
 }
 
 /// [bytes] (PNG/JPEG) decoded and written anew as a small JPEG: upright,
 /// at most 1100 px wide, without EXIF (GPS, camera) or colour profile.
+/// Pictures with more pixels are not decoded at all (memory).
+const int maxPhotoPixels = 40 * 1000 * 1000;
+
 Uint8List? reencodeImage(Uint8List bytes) {
   img.Image? decoded;
   try {
+    final info = img.findDecoderForData(bytes)?.startDecode(bytes);
+    if (info == null || info.width * info.height > maxPhotoPixels) return null;
     decoded = img.decodeImage(bytes);
   } catch (_) {
     return null; // not a readable picture

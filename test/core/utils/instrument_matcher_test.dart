@@ -210,18 +210,50 @@ void main() {
   });
 
   group('part-detect answer', () {
-    test('no request is started without enough time left', () async {
-      var asked = 0;
-      final service = PartVisionService(() {
-        asked++;
-        throw StateError('no client');
-      }, () => 1);
-      final file = PlatformFile(name: 'Scan.png', size: 3, bytes: Uint8List.fromList([1, 2, 3]));
+    group('requests', () {
+      late int asked;
+      late PartVisionService service;
+      final photo = PlatformFile(
+        name: 'Scan.png',
+        size: 1,
+        bytes: img.encodePng(img.Image(width: 40, height: 60)),
+      );
       const groups = [InstrumentInfo(id: 1, name: 'Flöte')];
-      expect(await service.detect(file, groups, limit: const Duration(seconds: 1)), isNull);
-      expect(asked, 0);
-      expect(await service.detect(file, groups, limit: Duration.zero), isNull);
-      expect(asked, 0);
+
+      setUp(() {
+        asked = 0;
+        service = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => 1);
+      });
+
+      test('a readable page with enough time is sent', () async {
+        expect(await service.detect(photo, groups), isNull);
+        expect(asked, 1);
+      });
+
+      test('not without enough time left', () async {
+        expect(await service.detect(photo, groups, limit: const Duration(seconds: 1)), isNull);
+        expect(await service.detect(photo, groups, limit: Duration.zero), isNull);
+        expect(asked, 0);
+      });
+
+      test('not once the file is gone or changed by hand, also mid-way', () async {
+        expect(await service.detect(photo, groups, cancelled: () => true), isNull);
+        expect(asked, 0);
+        // Cancelled only after the page was read (while it is prepared).
+        var checks = 0;
+        expect(await service.detect(photo, groups, cancelled: () => ++checks > 1), isNull);
+        expect(checks, greaterThan(1));
+        expect(asked, 0);
+      });
+
+      test('photos only outside the browser', () {
+        expect(PartVisionService.supports('a.pdf', web: true), isTrue);
+        expect(PartVisionService.supports('a.jpg', web: true), isFalse);
+        expect(PartVisionService.supports('a.jpg', web: false), isTrue);
+      });
     });
 
     test('photos are sent re-encoded: smaller, without EXIF', () {
@@ -235,6 +267,8 @@ void main() {
       expect(back.width, 1100);
       expect(back.exif.isEmpty, isTrue);
       expect(reencodeImage(Uint8List.fromList([1, 2, 3])), isNull);
+      // Too many pixels: not decoded at all.
+      expect(reencodeImage(img.encodePng(img.Image(width: 8000, height: 6000))), isNull);
       expect(PartVisionService.maxImageBytes, 1500000);
     });
 

@@ -26,9 +26,13 @@ class _LateVision extends PartVisionService {
   _LateVision() : super(() => throw UnimplementedError(), () => 1);
 
   final answer = Completer<PartMatch?>();
+  final asked = <String>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) => answer.future;
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled}) {
+    asked.add(file.name);
+    return answer.future;
+  }
 }
 
 Widget _host(Widget sheet, {PartVisionService? vision}) => ProviderScope(
@@ -225,5 +229,24 @@ void main() {
         expect(tester.widget<CheckboxListTile>(learn).value, isTrue);
       });
     }
+
+    testWidgets('upload sheet: a queued file changed by hand is not read any more', (tester) async {
+      final vision = _LateVision();
+      await tester.pumpWidget(_host(
+        FileUploadSheet(songId: 5, groups: groups, initialFiles: [
+          PlatformFile(name: 'Scan_0815.pdf', size: 10),
+          PlatformFile(name: 'Scan_0816.pdf', size: 10),
+        ]),
+        vision: vision,
+      ));
+      await tester.pump();
+      expect(vision.asked, ['Scan_0815.pdf']);
+      await tester.enterText(find.byType(TextField).last, 'Partitur');
+      await tester.pump();
+      vision.answer.complete(null);
+      await tester.pump();
+      expect(vision.asked, ['Scan_0815.pdf']);
+      expect(find.text('Erste Seite wird gelesen …'), findsNothing);
+    });
   });
 }

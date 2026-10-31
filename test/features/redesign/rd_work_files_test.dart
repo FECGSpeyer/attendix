@@ -119,7 +119,7 @@ class _FakeVision extends PartVisionService {
   final limits = <Duration?>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) async {
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled}) async {
     asked.add(file.name);
     limits.add(limit);
     return answers[file.name];
