@@ -79,10 +79,21 @@ bool isOldVersionName(String filename) {
   ).hasMatch(words);
 }
 
-/// Ionic `findConflictingFiles`: existing files with the same category.
-List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, String? note) {
+/// Categories that collect files of many parts (old horn and old violin
+/// parts are both "Alte Fassung"): one does not replace another.
+const collectingNotes = {'Alte Fassung', 'Solo'};
+
+/// Ionic `findConflictingFiles`: existing files with the same category. In a
+/// [collectingNotes] category only a file of the same name ([fileName]).
+List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, String? note, {String? fileName}) {
   if (instrumentId != null) {
     return files.where((f) => f.instrumentId == instrumentId).toList();
+  }
+  if (collectingNotes.contains(note)) {
+    final name = fileName?.toLowerCase();
+    return files
+        .where((f) => f.instrumentId == null && f.note == note && name != null && f.fileName.toLowerCase() == name)
+        .toList();
   }
   return files
       .where((f) => f.instrumentId == null && (f.note ?? '') == (note ?? ''))
@@ -149,6 +160,22 @@ FileCategoryGuess guessFileCategory(
   final byType = fileTypeLabel(fileName);
   if (byType != null) {
     return FileCategoryGuess(instrumentId: byType.instrumentId, note: byType.note, confidence: MatchConfidence.sure);
+  }
+  // Recordings and texts keep their type whatever the name says
+  // ("Probe alte Fassung.mp3" is a recording).
+  final lower = fileName.toLowerCase();
+  final byExtension = InstrumentMatcher.audioExtensions.any((e) => lower.endsWith('.$e')) ||
+      lower.endsWith('.doc') ||
+      lower.endsWith('.docx') ||
+      lower.endsWith('.txt');
+  if (byExtension) {
+    // Ionic order: a group in the name, then Aufnahme / Liedtext.
+    final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
+    if (match.instrumentId != null) {
+      return FileCategoryGuess(instrumentId: match.instrumentId, note: null, confidence: match.confidence, term: match.term);
+    }
+    final special = detectSpecialFileType(fileName)!;
+    return FileCategoryGuess(instrumentId: special.instrumentId, note: special.note, confidence: MatchConfidence.sure);
   }
   if (isOldVersionName(fileName)) {
     return const FileCategoryGuess(instrumentId: null, note: 'Alte Fassung', confidence: MatchConfidence.sure);
@@ -254,7 +281,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   void _setCategory(int index, int? instrumentId, String? note) {
     final file = _files[index];
-    final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note);
+    final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note, fileName: file.platformFile.name);
     setState(() {
       // Also when the suggested (unsure) part is confirmed explicitly.
       if (file.instrumentId != instrumentId || instrumentId != null) {
@@ -311,7 +338,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           isChoir: widget.isChoir,
         );
         final conflicts =
-            findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note);
+            findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note, fileName: file.name);
         final item = _FileToUpload(
           platformFile: file,
           instrumentId: cat.instrumentId,

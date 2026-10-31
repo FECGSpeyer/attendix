@@ -303,6 +303,7 @@ class InstrumentMatcher {
       if (s.trim().isNotEmpty) add(s.trim(), 110, synonym: true);
     }
     final families = _familiesOf(baseName).toSet();
+    final lastSection = words.sectionBefore.lastIndexOf(true);
     for (final family in families) {
       for (final t in translations[family] ?? const <String>[]) {
         add(t, 60);
@@ -322,6 +323,9 @@ class InstrumentMatcher {
       if (m == null) continue;
       // More words matched = more specific ("English Horn" before "Horn").
       var score = c.base + c.term.join(' ').length + 50 * (m.end - m.start - 1);
+      // The part is named after the work ("Le viole - Vl II"): a word in the
+      // last part of the name beats one in the title before it.
+      if (lastSection > 0 && m.start >= lastSection) score += 40;
       var weak = c.weak || m.compound;
       if (m.compound) score -= 50;
       // The words are part of a longer name of another instrument

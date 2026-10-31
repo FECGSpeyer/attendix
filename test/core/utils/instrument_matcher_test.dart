@@ -168,6 +168,18 @@ void main() {
       expect(_label('Text Werk 5.docx', _orchestra), 'Liedtext');
     });
 
+    test('recordings and texts keep their type whatever the name says', () {
+      expect(_label('Probe alte Fassung.mp3', _orchestra), 'Aufnahme');
+      expect(_label('Generalpartitur.mp3', _orchestra), 'Aufnahme');
+      expect(_label('Alte Fassung Text.docx', _orchestra), 'Liedtext');
+    });
+
+    test('the part after the title beats a translation in the title', () {
+      expect(_label('Le viole - Vl II.pdf', _orchestra), 'Violine 2');
+      expect(_confidence('Le viole - Vl II.pdf', _orchestra), MatchConfidence.sure);
+      expect(_label('Звуки трубы - Fl.pdf', _orchestra), 'Flöte');
+    });
+
     test('old versions and solo parts', () {
       expect(_label('Violine 1 alte Fassung.pdf', _orchestra), 'Alte Fassung');
       expect(_label('Horn 2 - old version.pdf', _orchestra), 'Alte Fassung');

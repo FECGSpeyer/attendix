@@ -90,6 +90,18 @@ void main() {
       expect(findConflictingFiles(existing, 11, null), isEmpty);
     });
 
+    test('old versions only conflict with a file of the same name', () {
+      final old = [
+        _file('Violine 1 alte Fassung.pdf', note: 'Alte Fassung'),
+        _file('Cello alte Fassung.pdf', note: 'Alte Fassung'),
+      ];
+      expect(findConflictingFiles(old, null, 'Alte Fassung', fileName: 'Horn 2 alte Fassung.pdf'), isEmpty);
+      expect(
+        findConflictingFiles(old, null, 'Alte Fassung', fileName: 'cello alte fassung.pdf').single.fileName,
+        'Cello alte Fassung.pdf',
+      );
+    });
+
     test('preselects the same-named file, otherwise all conflicts', () {
       final conflicts = findConflictingFiles(existing, 10, null);
       expect(defaultReplaceSelection(conflicts, 'b.pdf'), {'https://example.com/b.pdf'});
