@@ -93,8 +93,10 @@ class FileCategoryGuess {
   /// The page may still help: the name was not clear and it is a PDF/image.
   bool canAskVision(String fileName) => !byVision && needsReview && PartVisionService.supports(fileName);
 
-  /// The person should look at it before uploading.
-  bool get needsReview => confidence != MatchConfidence.sure;
+  /// The person should look at it before uploading. A part read on page 1
+  /// is always confirmed by hand: the model's own "sure" is no proof (a
+  /// page can carry misleading text).
+  bool get needsReview => byVision || confidence != MatchConfidence.sure;
 }
 
 /// Ionic `addFiles` category detection: group by name/synonym, then special
@@ -220,8 +222,10 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           workName: widget.workName,
         );
         file.learn = file.learnTerm != null;
-        file.reviewed = true;
       }
+      // Every change by hand (also typed free text) is kept: a late
+      // page-1 result no longer overrides it.
+      file.reviewed = true;
       file.instrumentId = instrumentId;
       file.note = note;
       file.conflicts = conflicts;
@@ -539,6 +543,8 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   onCategoryChanged: (id, note) => _setCategory(i, id, note),
                                   onToggleLearn: (v) => setState(() => _files[i].learn = v),
                                   onToggleReplace: (url) => setState(() {
+                                    // Chosen by hand: a late page-1 result keeps it.
+                                    _files[i].reviewed = true;
                                     final set = _files[i].toReplace;
                                     set.contains(url) ? set.remove(url) : set.add(url);
                                   }),

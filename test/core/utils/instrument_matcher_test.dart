@@ -1,8 +1,11 @@
+import 'dart:typed_data';
+
 import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms;
 import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 
 const _orchestra = [
   'Flöte', 'Oboe', 'Klarinette', 'Fagott', 'Horn', 'Trompete', 'Posaune', 'Tuba',
@@ -206,6 +209,20 @@ void main() {
   });
 
   group('part-detect answer', () {
+    test('photos are sent re-encoded: smaller, without EXIF', () {
+      final photo = img.Image(width: 2400, height: 1200);
+      photo.exif.imageIfd['Make'] = 'Camera';
+      photo.exif.imageIfd['Orientation'] = 1;
+      final original = img.encodeJpg(photo);
+      expect(img.decodeJpgExif(original)?.isEmpty, isFalse);
+      final sent = reencodeImage(original)!;
+      final back = img.decodeJpg(sent)!;
+      expect(back.width, 1100);
+      expect(back.exif.isEmpty, isTrue);
+      expect(reencodeImage(Uint8List.fromList([1, 2, 3])), isNull);
+      expect(PartVisionService.maxImageBytes, 1500000);
+    });
+
     final groups = _groups(_orchestra);
     test('only ids of the tenant groups count', () {
       final m = PartVisionService.parseResponse({'groupId': 18, 'label': 'Violin I', 'confidence': 'high'}, groups)!;

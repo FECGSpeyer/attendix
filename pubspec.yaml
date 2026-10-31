@@ -41,6 +41,8 @@ dependencies:
   pdf: ^3.11.1
   printing: ^5.13.4
   pdfx: ^2.6.0
+  # Re-encodes photos of parts before page 1 is read (no EXIF/GPS leaves the device)
+  image: ^4.3.0
 
   # ZIP
   archive: ^3.6.1

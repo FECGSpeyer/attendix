@@ -41,6 +41,9 @@ import '../rd_widgets.dart';
 /// Files dropped anywhere on the Werk (see [RdWorkDropArea]) or picked with
 /// "Hochladen" go through [rdAddWorkFiles].
 
+/// Longest the Beta upload waits for page-1 reading of a whole drop.
+const Duration rdVisionBudget = Duration(minutes: 1);
+
 /// Width from which the Werk page shows the workspace.
 const double rdWorkFilesMinWidth = 560;
 
@@ -79,7 +82,11 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
   if (unclear.isNotEmpty) {
     controller.showNotice(l10n.songsFlutterVisionReading);
     final vision = ref.read(partVisionServiceProvider);
+    // Each file has its own deadline; after a minute in all, the rest keep
+    // the file-name result (and land in the review below).
+    final clock = Stopwatch()..start();
     for (final i in unclear) {
+      if (clock.elapsed > rdVisionBudget) break;
       final match = await vision.detect(guesses[i].file, instruments);
       if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
     }
@@ -1211,6 +1218,10 @@ class _ReviewDialogState extends State<_ReviewDialog> {
     ));
   }
 
+  /// What page 1 showed: the printed name, else the group it was matched to.
+  String _visionLabel(FileCategoryGuess guess) =>
+      guess.term ?? widget.groups.where((g) => g.id == guess.instrumentId).firstOrNull?.name ?? '';
+
   Map<int, List<String>> _learnedTerms() {
     final terms = <int, List<String>>{};
     for (final f in _learn) {
@@ -1252,12 +1263,21 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                         children: [
                           Text(i.file.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                           Text(
-                            i.guess.byVision
+                            i.guess.byVision && i.guess.confidence == MatchConfidence.sure
+                                ? l10n.songsFlutterVisionSure(_visionLabel(i.guess))
+                                : i.guess.byVision
                                 ? l10n.songsFlutterVisionUnsure
                                 : i.guess.confidence == MatchConfidence.unsure
                                 ? l10n.songsFlutterDetectUnsure
                                 : l10n.songsFlutterDetectNone,
-                            style: TextStyle(fontSize: 12, color: i.guess.confidence == MatchConfidence.unsure ? p.late : p.absent),
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: i.guess.confidence == MatchConfidence.sure
+                                  ? p.present
+                                  : i.guess.confidence == MatchConfidence.unsure
+                                  ? p.late
+                                  : p.absent,
+                            ),
                           ),
                         ],
                       ),

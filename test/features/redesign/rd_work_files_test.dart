@@ -111,7 +111,7 @@ class _FakeFiles implements SongFileService {
 
 /// Reads "page 1" from a fixed answer per file name.
 class _FakeVision extends PartVisionService {
-  _FakeVision(this.answers) : super(() => throw UnimplementedError());
+  _FakeVision(this.answers) : super(() => throw UnimplementedError(), () => 1);
 
   final Map<String, PartMatch> answers;
   final asked = <String>[];
@@ -203,7 +203,7 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier?
       songsProvider.overrideWith((ref) async => [song]),
       groupsProvider.overrideWith((ref) async => _groups),
       if (groupNotifier != null) groupNotifierProvider.overrideWith(() => groupNotifier),
-      if (vision != null) partVisionServiceProvider.overrideWithValue(vision),
+      partVisionServiceProvider.overrideWithValue(vision ?? _FakeVision(const {})),
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: 11),
       ),
@@ -539,7 +539,7 @@ void main() {
       ]);
     });
 
-    testWidgets('page 1 decides when the name does not: sure → no check, unsure → checked', (tester) async {
+    testWidgets('page 1 decides when the name does not, and is always confirmed by hand', (tester) async {
       _desktop(tester);
       final service = _FakeFiles()..picked = [_file('Scan_0815.pdf'), _file('Scan_0816.pdf'), _file('Klarinette 1.pdf')];
       final vision = _FakeVision({
@@ -552,9 +552,13 @@ void main() {
       await _settle(tester);
       // Only the unclear names are looked at.
       expect(vision.asked, ['Scan_0815.pdf', 'Scan_0816.pdf']);
+      // The model's own "sure" is no proof (text on the page): both are
+      // shown, the clear file name is not.
       expect(find.text('Zuordnung prüfen'), findsOneWidget);
-      expect(find.text('Scan_0815.pdf'), findsNothing);
+      expect(find.text('Scan_0815.pdf'), findsOneWidget);
+      expect(find.text('Auf Seite 1 erkannt: Flute'), findsOneWidget);
       expect(find.text('Auf Seite 1 vermutet – bitte prüfen'), findsOneWidget);
+      expect(find.text('Klarinette 1.pdf'), findsNothing);
       await tester.tap(find.text('Hochladen').last);
       await _settle(tester);
       expect(service.calls, [

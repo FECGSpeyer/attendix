@@ -302,7 +302,11 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         child: TextField(
                           controller: _note,
                           decoration: InputDecoration(hintText: context.l10n.songsEnterCategory),
-                          onChanged: (_) => setState(_refreshConflicts),
+                          onChanged: (_) => setState(() {
+                            // Typed by hand: a late page-1 result keeps it.
+                            _reviewed = true;
+                            _refreshConflicts();
+                          }),
                         ),
                       ),
                     ],
@@ -329,6 +333,8 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                             label: SongUtils.fileLabel(c, widget.groups),
                           ),
                           onChanged: (_) => setState(() {
+                            // Chosen by hand: a late page-1 result keeps it.
+                            _reviewed = true;
                             _toReplace.contains(c.url)
                                 ? _toReplace.remove(c.url)
                                 : _toReplace.add(c.url);
