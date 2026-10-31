@@ -9078,10 +9078,65 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSplitEventsEmpty => 'Wähle links einen Termin aus.';
 
   @override
+  String get redesignSplitMembersActive => 'aktiv';
+
+  @override
+  String get redesignSplitMembersBirthdays => 'Nächste Geburtstage';
+
+  @override
+  String get redesignSplitMembersCritical => 'Auffällige Anwesenheit';
+
+  @override
   String get redesignSplitMembersEmpty => 'Wähle links eine Person aus.';
 
   @override
+  String get redesignSplitMembersHint => 'Wähle links eine Person aus.';
+
+  @override
+  String get redesignSplitMembersPaused => 'pausiert';
+
+  @override
+  String get redesignSplitMembersPending => 'Anfragen';
+
+  @override
+  String redesignSplitMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'und $count weitere',
+      one: 'und 1 weiteres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignSplitOverviewTitle => 'Überblick';
+
+  @override
+  String get redesignSplitWorksCount => 'Werke';
+
+  @override
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
+
+  @override
+  String get redesignSplitWorksHint => 'Wähle links ein Werk aus oder fang hier an.';
+
+  @override
+  String get redesignSplitWorksLongAgo => 'Am längsten nicht dran';
+
+  @override
+  String get redesignSplitWorksMissing => 'Noch ohne Noten';
+
+  @override
+  String redesignSplitWorksNext(Object date) {
+    return 'Als Nächstes geplant · $date';
+  }
+
+  @override
+  String get redesignSplitWorksWithFiles => 'mit Noten';
+
+  @override
+  String get redesignSplitWorksWithoutFiles => 'ohne Noten';
 
   @override
   String get redesignStatsAvg => 'Ø Anwesenheit';

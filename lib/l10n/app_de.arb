@@ -11892,13 +11892,81 @@
   "@redesignSplitEventsEmpty": {
     "description": "redesign.split.eventsEmpty"
   },
+  "redesignSplitMembersActive": "aktiv",
+  "@redesignSplitMembersActive": {
+    "description": "redesign.split.membersActive"
+  },
+  "redesignSplitMembersBirthdays": "Nächste Geburtstage",
+  "@redesignSplitMembersBirthdays": {
+    "description": "redesign.split.membersBirthdays"
+  },
+  "redesignSplitMembersCritical": "Auffällige Anwesenheit",
+  "@redesignSplitMembersCritical": {
+    "description": "redesign.split.membersCritical"
+  },
   "redesignSplitMembersEmpty": "Wähle links eine Person aus.",
   "@redesignSplitMembersEmpty": {
     "description": "redesign.split.membersEmpty"
   },
+  "redesignSplitMembersHint": "Wähle links eine Person aus.",
+  "@redesignSplitMembersHint": {
+    "description": "redesign.split.membersHint"
+  },
+  "redesignSplitMembersPaused": "pausiert",
+  "@redesignSplitMembersPaused": {
+    "description": "redesign.split.membersPaused"
+  },
+  "redesignSplitMembersPending": "Anfragen",
+  "@redesignSplitMembersPending": {
+    "description": "redesign.split.membersPending"
+  },
+  "redesignSplitMore": "{count, plural, one {und 1 weiteres} other {und {count} weitere}}",
+  "@redesignSplitMore": {
+    "description": "redesign.split.more",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignSplitOverviewTitle": "Überblick",
+  "@redesignSplitOverviewTitle": {
+    "description": "redesign.split.overviewTitle"
+  },
+  "redesignSplitWorksCount": "Werke",
+  "@redesignSplitWorksCount": {
+    "description": "redesign.split.worksCount"
+  },
   "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
   "@redesignSplitWorksEmpty": {
     "description": "redesign.split.worksEmpty"
+  },
+  "redesignSplitWorksHint": "Wähle links ein Werk aus oder fang hier an.",
+  "@redesignSplitWorksHint": {
+    "description": "redesign.split.worksHint"
+  },
+  "redesignSplitWorksLongAgo": "Am längsten nicht dran",
+  "@redesignSplitWorksLongAgo": {
+    "description": "redesign.split.worksLongAgo"
+  },
+  "redesignSplitWorksMissing": "Noch ohne Noten",
+  "@redesignSplitWorksMissing": {
+    "description": "redesign.split.worksMissing"
+  },
+  "redesignSplitWorksNext": "Als Nächstes geplant · {date}",
+  "@redesignSplitWorksNext": {
+    "description": "redesign.split.worksNext",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignSplitWorksWithFiles": "mit Noten",
+  "@redesignSplitWorksWithFiles": {
+    "description": "redesign.split.worksWithFiles"
+  },
+  "redesignSplitWorksWithoutFiles": "ohne Noten",
+  "@redesignSplitWorksWithoutFiles": {
+    "description": "redesign.split.worksWithoutFiles"
   },
   "redesignStatsAvg": "Ø Anwesenheit",
   "@redesignStatsAvg": {
