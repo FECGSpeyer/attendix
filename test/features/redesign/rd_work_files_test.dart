@@ -581,14 +581,20 @@ void main() {
       ]);
     });
 
-    testWidgets('the keyboard icon lists the shortcuts', (tester) async {
+    testWidgets('no keyboard icon in the toolbar; "?" lists the shortcuts', (tester) async {
       _desktop(tester);
-      await tester.pumpWidget(_app(Role.admin, _FakeFiles(), song: const Song(id: 5, name: 'Leer')));
+      await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      // The hint lives in the Werke "…" menu now, not on the main UI.
+      expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
+
+      await tester.tap(find.text('klar.pdf'));
+      await _settle(tester);
+      await tester.sendKeyEvent(LogicalKeyboardKey.question, character: '?');
       await _settle(tester);
       expect(find.text('Tastenkürzel'), findsOneWidget);
       expect(find.text('F2 umbenennen'), findsOneWidget);
+      expect(find.text('? diese Übersicht'), findsOneWidget);
     });
   });
 

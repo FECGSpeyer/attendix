@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.26.1",
+      "date": "31.10.2026",
+      "changes": [
+        "💄 Beta-Design, Werk: Das Tastatur-Symbol über der Dateiliste ist weg; die Tastenkürzel stehen jetzt im „…“-Menü der Werke und erscheinen mit „?“ in der Dateiliste"
+      ]
+    },
+    {
       "version": "0.26.0",
       "date": "31.10.2026",
       "changes": [

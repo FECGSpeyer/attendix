@@ -25,6 +25,7 @@ import '../../data/rd_works_logic.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../widgets/work/rd_work_files.dart' show rdWorkFilesMinWidth, showRdWorkFilesShortcuts;
 
 /// REDESIGN: tab "Werke" (canvas "WerkeListe"): search, "Gerade geprobt",
 /// categories as chips, the works with PDF / Audio badges. Filter, view,
@@ -81,6 +82,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         if (isAdmin)
           AppActionSheetAction(value: 'import', icon: Icons.cloud_upload_outlined, label: l10n.songsImportSongs),
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
+        // The file table's keys (editors on wide screens); kept here instead
+        // of on the Werk page so the main UI stays calm.
+        if (isAdmin && MediaQuery.sizeOf(context).width >= rdWorkFilesMinWidth)
+          AppActionSheetAction(value: 'shortcuts', icon: Icons.keyboard_outlined, label: l10n.redesignFilesShortcuts),
       ],
     );
     if (!mounted || action == null) return;
@@ -102,6 +107,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         }
       case 'pdf':
         await _exportPdf(data, shown);
+      case 'shortcuts':
+        await showRdWorkFilesShortcuts(context);
     }
   }
 

@@ -2465,7 +2465,7 @@
   "redesignFilesSelectAll": "Select all",
   "redesignFilesSelected": "{count} selected",
   "redesignFilesShortcuts": "Keyboard shortcuts",
-  "redesignFilesShortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename",
+  "redesignFilesShortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename · ? this overview",
   "redesignFilesTitle": "Files",
   "redesignFilesUpload": "Upload",
   "redesignFilesUploading": "Uploading …",

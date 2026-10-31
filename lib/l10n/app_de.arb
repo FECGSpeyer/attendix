@@ -11300,7 +11300,7 @@
   "@redesignFilesShortcuts": {
     "description": "redesign.files.shortcuts"
   },
-  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen",
+  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht",
   "@redesignFilesShortcutsHelp": {
     "description": "redesign.files.shortcutsHelp",
     "placeholders": {

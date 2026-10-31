@@ -8641,7 +8641,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesShortcutsHelp(Object mod) {
-    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename';
+    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename · ? this overview';
   }
 
   @override

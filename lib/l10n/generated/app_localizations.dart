@@ -14888,7 +14888,7 @@ abstract class AppLocalizations {
   /// redesign.files.shortcutsHelp
   ///
   /// In de, this message translates to:
-  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen'**
+  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
   /// redesign.files.title
