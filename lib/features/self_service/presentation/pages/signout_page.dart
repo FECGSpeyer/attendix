@@ -491,10 +491,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         date: att.date,
         title: att.eventTitle,
         meta: att.eventMeta(withDate: true, withPlace: false),
-        status: own ? EventPill.status(att.status) : null,
+        // Ionic 4.17.14: "Nicht eingeladen" pill instead of the status
+        status: own ? EventPill.status(att.status) : const EventNotInvitedPill(),
         place: att.place,
         infoText: infoText,
-        dimmed: showAll && !att.isMember,
+        notInvited: showAll && !att.isMember,
         chips: actions.chips(context, att),
         actions: actions.quickActionButtons(context, att),
         onMore: qa != null
@@ -524,7 +525,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                     : null,
                 subtitle: att.eventMeta(),
                 highlight: att.highlight,
-                dimmed: actions.showAllAttendances && !att.isMember,
+                notInvited: actions.showAllAttendances && !att.isMember,
                 onTap: () => actions.presentActions(context, att),
                 extra: [
                   if (actions.showAllAttendances && !att.isMember)
@@ -540,7 +541,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
                   EventChips(chips: actions.chips(context, att)),
                 ],
                 trailing: [
-                  if (actions.isOwn(att)) EventPill.status(att.status),
+                  if (actions.isOwn(att)) EventPill.status(att.status) else const EventNotInvitedPill(),
                 ],
               ),
           ],
