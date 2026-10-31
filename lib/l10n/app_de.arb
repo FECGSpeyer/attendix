@@ -11146,6 +11146,17 @@
   "@redesignEventsYes": {
     "description": "redesign.events.yes"
   },
+  "redesignEventsYou": "Du",
+  "@redesignEventsYou": {
+    "description": "redesign.events.you"
+  },
+  "redesignEventsYourAnswerLabel": "Deine Antwort: {status}",
+  "@redesignEventsYourAnswerLabel": {
+    "description": "redesign.events.yourAnswerLabel",
+    "placeholders": {
+      "status": {}
+    }
+  },
   "redesignFilesActions": "Aktionen für {name}",
   "@redesignFilesActions": {
     "description": "redesign.files.actions",
@@ -11460,6 +11471,19 @@
   "@redesignMeApp": {
     "description": "redesign.me.app"
   },
+  "redesignMeAttendance": "Deine Anwesenheit",
+  "@redesignMeAttendance": {
+    "description": "redesign.me.attendance"
+  },
+  "redesignMeAttendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}",
+  "@redesignMeAttendanceLate": {
+    "description": "redesign.me.attendanceLate",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignMeBeta": "Neues Design (Beta)",
   "@redesignMeBeta": {
     "description": "redesign.me.beta"
@@ -11495,7 +11519,7 @@
   "@redesignMeHelp": {
     "description": "redesign.me.help"
   },
-  "redesignMeLogout": "Abmelden",
+  "redesignMeLogout": "Ausloggen",
   "@redesignMeLogout": {
     "description": "redesign.me.logout"
   },
@@ -11553,6 +11577,13 @@
   "redesignMembersBirthdayTomorrow": "Geburtstag morgen",
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
+  },
+  "redesignMembersCritical": "Fehlen oft · {count}",
+  "@redesignMembersCritical": {
+    "description": "redesign.members.critical",
+    "placeholders": {
+      "count": {}
+    }
   },
   "redesignMembersEmpty": "Noch keine Mitglieder.",
   "@redesignMembersEmpty": {
@@ -12181,6 +12212,13 @@
   "@redesignTodayDayTomorrow": {
     "description": "redesign.today.dayTomorrow"
   },
+  "redesignTodayDeadline": "Antwort bis {date}",
+  "@redesignTodayDeadline": {
+    "description": "redesign.today.deadline",
+    "placeholders": {
+      "date": {}
+    }
+  },
   "redesignTodayDutyQuestion": "Du bist eingeteilt. Bestätigst du?",
   "@redesignTodayDutyQuestion": {
     "description": "redesign.today.dutyQuestion"
@@ -12329,9 +12367,22 @@
   "@redesignTodayThisWeek": {
     "description": "redesign.today.thisWeek"
   },
+  "redesignTodayUnrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
+  "@redesignTodayUnrecorded": {
+    "description": "redesign.today.unrecorded",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignTodayUpNext": "Als Nächstes",
   "@redesignTodayUpNext": {
     "description": "redesign.today.upNext"
+  },
+  "redesignTodayViewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.",
+  "@redesignTodayViewerHint": {
+    "description": "redesign.today.viewerHint"
   },
   "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
   "@redesignTodayWeekEmpty": {

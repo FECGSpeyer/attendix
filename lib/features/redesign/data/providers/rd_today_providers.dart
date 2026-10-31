@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -147,6 +148,24 @@ RdEventInfo rdEventInfo(Attendance attendance, AttendanceType? type) {
 String rdNotMemberInfo(Tenant? tenant) {
   final text = tenant?.showAllAttendancesInfoText;
   return text != null && text.isNotEmpty ? text : EventListUtils.defaultShowAllInfoText;
+}
+
+/// Answer deadline that is still ahead (UX S5); null without one or once
+/// it has passed (then [EventListUtils.deadlineText] says "abgelaufen").
+DateTime? rdOpenDeadline(String? deadline, {DateTime? now}) {
+  final local = EventListUtils.deadlineLocal(deadline);
+  if (local == null || (now ?? DateTime.now()).isAfter(local)) return null;
+  return local;
+}
+
+/// Less than a day left until [deadline].
+bool rdDeadlineUrgent(DateTime deadline, {DateTime? now}) =>
+    deadline.difference(now ?? DateTime.now()) < const Duration(hours: 24);
+
+/// "Fr 2.11., 18:00".
+String rdDeadlineLabel(DateTime deadline) {
+  final day = DateFormat.E(currentIntlLocale()).format(deadline).replaceAll('.', '');
+  return '$day ${DateFormat('d.M.').format(deadline)}, ${DateFormat('HH:mm').format(deadline)}';
 }
 
 /// [date] plus "HH:mm" [time] in local time.

@@ -162,6 +162,9 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
+Finder _semantics(String label) =>
+    find.byWidgetPredicate((w) => w is Semantics && w.properties.label == label);
+
 void _size(WidgetTester tester, Size size) {
   tester.view.physicalSize = size;
   tester.view.devicePixelRatio = 1;
@@ -431,6 +434,83 @@ void main() {
     expect(find.text('Probe 11'), findsOneWidget, reason: 'the list stays');
     final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
     expect(container.read(pendingAttendanceIdProvider), isNull, reason: 'consumed once');
+  });
+
+  testWidgets('Helfer: own answer as "Du" chip in the leader list, opens a sheet (UX H1/H2)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async => SignoutData(
+        current: _own('21', 0, AttendanceStatus.neutral),
+        upcoming: [_own('22', 2, AttendanceStatus.present)],
+      ),
+    ));
+    await _settle(tester);
+
+    // Leader list with answers, plus one chip per own Termin.
+    expect(find.textContaining('24 zugesagt'), findsOneWidget);
+    expect(find.text('Du'), findsNWidgets(2));
+    expect(_semantics('Deine Antwort: Zugesagt'), findsOneWidget);
+    expect(_semantics('Deine Antwort: Offen'), findsOneWidget);
+    // Helfer are members: they can report an absence here too.
+    expect(find.text('Abwesend …'), findsOneWidget);
+
+    await tester.tap(_semantics('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('DEINE ZUSAGE'), findsOneWidget);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    expect(find.text('page termin 21'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Helfer: the "Du" chip works with a screen reader, the sheet scrolls on a small screen', (tester) async {
+    _size(tester, const Size(568, 320)); // phone in landscape
+    final semantics = tester.ensureSemantics();
+    var loads = 0;
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async {
+        loads++;
+        return SignoutData(current: _own('21', 0, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    expect(
+      tester.getSemantics(_semantics('Deine Antwort: Offen')),
+      matchesSemantics(label: 'Deine Antwort: Offen', isButton: true, hasTapAction: true),
+    );
+
+    // A recording or realtime change reloads the own answers.
+    final before = loads;
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    container.read(attendanceRefetchCounter.notifier).state++;
+    await _settle(tester);
+    expect(loads, greaterThan(before));
+
+    // Opened through the screen reader action, with the keyboard up.
+    await tester.ensureVisible(_semantics('Deine Antwort: Offen'));
+    await tester.pump();
+    tester.view.viewInsets = const FakeViewPadding(bottom: 120);
+    tester.semantics.tap(find.semantics.byLabel('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    // The last control of the sheet scrolls into reach.
+    final more = find.text('Mehr zum Termin');
+    await tester.scrollUntilVisible(
+      more,
+      40,
+      scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first,
+    );
+    expect(tester.getRect(more).bottom, lessThanOrEqualTo(320 - 120));
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
+  testWidgets('Dirigent without own Termine sees no "Du" chips', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+    expect(find.text('Du'), findsNothing);
   });
 
   testWidgets('Spieler: answer open Termine right in the list', (tester) async {

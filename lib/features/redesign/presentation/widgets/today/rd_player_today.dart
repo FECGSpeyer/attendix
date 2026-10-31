@@ -13,7 +13,8 @@ import '../../../../../l10n/l10n.dart';
 import '../../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
-import '../../../data/providers/rd_today_providers.dart' show rdNotMemberInfo, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
+import '../../../data/providers/rd_today_providers.dart'
+    show rdDeadlineLabel, rdDeadlineUrgent, rdNotMemberInfo, rdOpenDeadline, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -208,6 +209,9 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
     final countdown = rdCountdown(l10n, startAt, hasTime: hasTime);
     final meta = att.eventMeta();
     final busy = _busy || ref.watch(signoutNotifierProvider).isLoading;
+    // UX S5: the deadline shows while answering is still possible, not only
+    // once it has passed.
+    final openDeadline = qa != null && qa.canSignin && !qa.present ? rdOpenDeadline(att.deadline) : null;
 
     String question;
     if (qa == null) {
@@ -270,6 +274,10 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
               EventListUtils.deadlineText(att.deadline),
               style: RdType.meta(p, size: 13).copyWith(color: p.absent),
             ),
+          ],
+          if (openDeadline != null) ...[
+            const SizedBox(height: 6),
+            _DeadlineHint(deadline: openDeadline),
           ],
           const SizedBox(height: 12),
           if (qa != null) ..._answerButtons(context, att, actions, qa, busy),
@@ -415,6 +423,31 @@ class _AnsweredBox extends StatelessWidget {
           ],
         ),
       ),
+    );
+  }
+}
+
+/// "Antwort bis Fr 2.11., 18:00"; red in the last 24 hours.
+class _DeadlineHint extends StatelessWidget {
+  const _DeadlineHint({required this.deadline});
+
+  final DateTime deadline;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final color = rdDeadlineUrgent(deadline) ? p.absent : p.text2;
+    return Row(
+      children: [
+        Icon(Icons.schedule, size: 16, color: color),
+        const SizedBox(width: 6),
+        Expanded(
+          child: Text(
+            context.l10n.redesignTodayDeadline(rdDeadlineLabel(deadline)),
+            style: RdType.meta(p, size: 13).copyWith(color: color, fontWeight: FontWeight.w600),
+          ),
+        ),
+      ],
     );
   }
 }

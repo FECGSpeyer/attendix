@@ -1,6 +1,19 @@
 {
   "versions": [
     {
+      "version": "0.27.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design, Termine für Helfer: In der Terminliste zeigt ein „Du ✓/?/✕“ die eigene Antwort; antippen öffnet Zusage oder Absage mit denselben Gründen wie auf „Heute“. „Abwesend …“ gibt es jetzt auch für Helfer",
+        "✨ Beta-Design, Ich: Die eigene Anwesenheit steht direkt unter dem Profil (Prozent, Balken, Anzahl Verspätungen)",
+        "✨ Beta-Design, Heute: Die Antwortfrist steht schon vor dem Ablauf beim Termin („Antwort bis Fr 2.11., 18:00“), in den letzten 24 Stunden rot",
+        "✨ Beta-Design, Heute (Leitung): Neuer Hinweis „Termine noch nicht erfasst“ für vergangene Termine der letzten zwei Wochen, bei denen noch Personen ohne Status sind; antippen öffnet die Erfassung",
+        "✨ Beta-Design, Mitglieder: Filter „Fehlen oft“ zeigt nur die als kritisch markierten Mitglieder; der Hinweis auf „Heute“ öffnet die Liste schon gefiltert",
+        "💄 Beta-Design für Beobachter: Ein kurzer Hinweis erklärt, dass Termine nur die Leitung öffnet; Termine sehen nicht mehr antippbar aus",
+        "💄 Beta-Design, Ich: „Abmelden“ heißt jetzt „Ausloggen“, damit „Abmelden“ nur noch Absagen meint"
+      ]
+    },
+    {
       "version": "0.26.3",
       "date": "31.10.2026",
       "changes": [

@@ -24,6 +24,7 @@ import '../../../self_service/presentation/widgets/self_service_event_actions.da
 import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
+import '../widgets/event/rd_own_answer_sheet.dart';
 import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -74,13 +75,20 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final role = ref.watch(effectiveRoleProvider);
     final leader = role.canSeeAttendanceTab;
     final canCreate = leader && ref.watch(canCreateAttendanceProvider);
-    final player = leader ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
+    // Helfer are members too: they keep "Abwesend" next to the leader list.
+    final player = leader && !role.canSeeSelfServiceTab ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
+    // Helfer: own answers ("Du ✓") follow recordings and realtime changes.
+    final ownInLeaderList = leader && role.canSeeSelfServiceTab;
+    if (ownInLeaderList) {
+      ref.listen<int>(attendanceRefetchCounter, (_, __) => ref.invalidate(signoutDataProvider));
+    }
 
     return RdPage(
       onRefresh: () async {
         if (leader) {
           ref.read(attendanceRefetchCounter.notifier).state++;
+          if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
           ref.invalidate(signoutDataProvider);
           await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
@@ -190,7 +198,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     }).toList();
     final sections = rdGroupEvents(list, (a) => a.date, past: _past);
     final counts = _past ? const <int, RdStatusCounts>{} : (ref.watch(rdUpcomingCountsProvider).valueOrNull ?? const {});
-    final canOpen = ref.watch(effectiveRoleProvider).canAddAttendance;
+    final role = ref.watch(effectiveRoleProvider);
+    final canOpen = role.canAddAttendance;
+    final own = role.canSeeSelfServiceTab && !_past ? _ownByAttendance() : const <int, CrossTenantPersonAttendance>{};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -257,6 +267,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                     attendance: a,
                     type: typeById[a.typeId],
                     counts: a.id == null ? null : counts[a.id],
+                    own: a.id == null ? null : own[a.id],
                     past: _past,
                     selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
                     onTap: a.id != null && canOpen
@@ -269,6 +280,19 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         )),
       ],
     );
+  }
+
+  /// Own upcoming Termine of Helfer in this group by attendance id, for the
+  /// "Du ✓" chips of the leader list.
+  Map<int, CrossTenantPersonAttendance> _ownByAttendance() {
+    final data = ref.watch(rdSignoutDataProvider).valueOrNull;
+    final tenantId = ref.watch(currentTenantProvider)?.id;
+    if (data == null || tenantId == null) return const {};
+    return {
+      for (final att in data.allUpcoming)
+        if (att.isMember && att.tenantId == tenantId && att.attendanceId != null && att.id != null)
+          att.attendanceId!: att,
+    };
   }
 
   void _setPast(bool past) => setState(() {
@@ -518,12 +542,16 @@ class _LeaderEventCard extends StatelessWidget {
     required this.counts,
     required this.past,
     required this.onTap,
+    this.own,
     this.selected = false,
   });
 
   final Attendance attendance;
   final AttendanceType? type;
   final RdStatusCounts? counts;
+
+  /// The Helfer's own answer for this Termin (chip opens the answer sheet).
+  final CrossTenantPersonAttendance? own;
   final bool past;
   final VoidCallback? onTap;
 
@@ -600,6 +628,10 @@ class _LeaderEventCard extends StatelessWidget {
               ],
             ),
           ),
+          if (own != null) ...[
+            const SizedBox(width: 10),
+            RdOwnStatusChip(attendance: own!, onTap: () => showRdOwnAnswerSheet(context, own!.id!)),
+          ],
         ],
       ),
     );

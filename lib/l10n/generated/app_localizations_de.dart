@@ -8508,6 +8508,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsYes => 'Dabei';
 
   @override
+  String get redesignEventsYou => 'Du';
+
+  @override
+  String redesignEventsYourAnswerLabel(Object status) {
+    return 'Deine Antwort: $status';
+  }
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Aktionen für $name';
   }
@@ -8762,6 +8770,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeApp => 'App';
 
   @override
+  String get redesignMeAttendance => 'Deine Anwesenheit';
+
+  @override
+  String redesignMeAttendanceLate(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count × verspätet',
+      one: '1 × verspätet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignMeBeta => 'Neues Design (Beta)';
 
   @override
@@ -8788,7 +8810,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeHelp => 'Hilfe';
 
   @override
-  String get redesignMeLogout => 'Abmelden';
+  String get redesignMeLogout => 'Ausloggen';
 
   @override
   String get redesignMeNotifications => 'Benachrichtigungen';
@@ -8829,6 +8851,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
+
+  @override
+  String redesignMembersCritical(Object count) {
+    return 'Fehlen oft · $count';
+  }
 
   @override
   String get redesignMembersEmpty => 'Noch keine Mitglieder.';
@@ -9302,6 +9329,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayDayTomorrow => 'Morgen';
 
   @override
+  String redesignTodayDeadline(Object date) {
+    return 'Antwort bis $date';
+  }
+
+  @override
   String get redesignTodayDutyQuestion => 'Du bist eingeteilt. Bestätigst du?';
 
   @override
@@ -9434,7 +9466,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayThisWeek => 'Diese Woche';
 
   @override
+  String redesignTodayUnrecorded(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine noch nicht erfasst',
+      one: '1 Termin noch nicht erfasst',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignTodayUpNext => 'Als Nächstes';
+
+  @override
+  String get redesignTodayViewerHint => 'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
 
   @override
   String get redesignTodayWeekEmpty => 'Diese Woche kommt sonst nichts.';
