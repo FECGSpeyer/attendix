@@ -541,7 +541,12 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   groups: widget.groups,
                                   enabled: !_isUploading,
                                   onCategoryChanged: (id, note) => _setCategory(i, id, note),
-                                  onToggleLearn: (v) => setState(() => _files[i].learn = v),
+                                  onToggleLearn: (v) => setState(() {
+                                    // Confirmed by hand: a late page-1 result keeps it.
+                                    _files[i]
+                                      ..learn = v
+                                      ..reviewed = true;
+                                  }),
                                   onToggleReplace: (url) => setState(() {
                                     // Chosen by hand: a late page-1 result keeps it.
                                     _files[i].reviewed = true;

@@ -33,7 +33,7 @@ const SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
 /// Roles that edit the tenant (app: `Role.canEdit`).
 const EDIT_ROLES = [1, 4, 5, 9];
 
-/// Calls per day (UTC); about 0.1 cent each.
+/// Calls per day (UTC): per account over all its tenants, per tenant; about 0.1 cent each.
 const DAILY_LIMIT_USER = 200;
 const DAILY_LIMIT_TENANT = 500;
 

@@ -82,12 +82,14 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
   if (unclear.isNotEmpty) {
     controller.showNotice(l10n.songsFlutterVisionReading);
     final vision = ref.read(partVisionServiceProvider);
-    // Each file has its own deadline; after a minute in all, the rest keep
-    // the file-name result (and land in the review below).
+    // A minute in all; files not read by then keep the file-name result
+    // (and land in the review below).
     final clock = Stopwatch()..start();
     for (final i in unclear) {
-      if (clock.elapsed > rdVisionBudget) break;
-      final match = await vision.detect(guesses[i].file, instruments);
+      final left = rdVisionBudget - clock.elapsed;
+      if (left <= Duration.zero) break;
+      // Each file gets at most what is left of the minute.
+      final match = await vision.detect(guesses[i].file, instruments, limit: left);
       if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
     }
     if (!context.mounted) return;

@@ -17,6 +17,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/work/rd_work_files.dart' show rdVisionBudget;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -115,10 +116,12 @@ class _FakeVision extends PartVisionService {
 
   final Map<String, PartMatch> answers;
   final asked = <String>[];
+  final limits = <Duration?>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments) async {
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) async {
     asked.add(file.name);
+    limits.add(limit);
     return answers[file.name];
   }
 }
@@ -552,6 +555,8 @@ void main() {
       await _settle(tester);
       // Only the unclear names are looked at.
       expect(vision.asked, ['Scan_0815.pdf', 'Scan_0816.pdf']);
+      // Every file only gets what is left of the minute.
+      expect(vision.limits.every((l) => l != null && l <= rdVisionBudget), isTrue);
       // The model's own "sure" is no proof (text on the page): both are
       // shown, the clear file name is not.
       expect(find.text('Zuordnung prüfen'), findsOneWidget);

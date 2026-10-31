@@ -4,6 +4,7 @@ import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms
 import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:image/image.dart' as img;
 
@@ -209,6 +210,20 @@ void main() {
   });
 
   group('part-detect answer', () {
+    test('no request is started without enough time left', () async {
+      var asked = 0;
+      final service = PartVisionService(() {
+        asked++;
+        throw StateError('no client');
+      }, () => 1);
+      final file = PlatformFile(name: 'Scan.png', size: 3, bytes: Uint8List.fromList([1, 2, 3]));
+      const groups = [InstrumentInfo(id: 1, name: 'Flöte')];
+      expect(await service.detect(file, groups, limit: const Duration(seconds: 1)), isNull);
+      expect(asked, 0);
+      expect(await service.detect(file, groups, limit: Duration.zero), isNull);
+      expect(asked, 0);
+    });
+
     test('photos are sent re-encoded: smaller, without EXIF', () {
       final photo = img.Image(width: 2400, height: 1200);
       photo.exif.imageIfd['Make'] = 'Camera';

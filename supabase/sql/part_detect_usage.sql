@@ -15,9 +15,12 @@ create table if not exists public.part_detect_usage (
 
 alter table public.part_detect_usage enable row level security;
 
--- Counts one call and says whether it is still within both daily limits.
--- The tenant lock serialises calls of one tenant, so two parallel calls can
--- never both take the last unit.
+-- Counts one call and says whether it is still within both daily limits:
+-- [p_user_limit] for the account over all its tenants, [p_tenant_limit]
+-- for the tenant over all its accounts. Two locks (always account first,
+-- then tenant, so calls never wait on each other in a circle) serialise the
+-- calls of one account and of one tenant: two parallel calls can never both
+-- take the last unit.
 create or replace function public.part_detect_take(
   p_tenant_id bigint,
   p_user_id text,
@@ -33,16 +36,17 @@ declare
   user_calls integer;
   tenant_calls integer;
 begin
-  perform pg_advisory_xact_lock(hashtext('part_detect'), p_tenant_id::integer);
+  perform pg_advisory_xact_lock(hashtext('part_detect_user'), hashtext(p_user_id));
+  perform pg_advisory_xact_lock(hashtext('part_detect_tenant'), p_tenant_id::integer);
 
+  select coalesce(sum(calls), 0) into user_calls
+    from part_detect_usage
+    where "userId" = p_user_id and day = today;
   select coalesce(sum(calls), 0) into tenant_calls
     from part_detect_usage
     where "tenantId" = p_tenant_id and day = today;
-  select coalesce(max(calls), 0) into user_calls
-    from part_detect_usage
-    where "tenantId" = p_tenant_id and "userId" = p_user_id and day = today;
 
-  if tenant_calls >= p_tenant_limit or user_calls >= p_user_limit then
+  if user_calls >= p_user_limit or tenant_calls >= p_tenant_limit then
     return false;
   end if;
 
@@ -56,6 +60,9 @@ begin
   return true;
 end;
 $$;
+
+create index if not exists part_detect_usage_user_day_idx
+  on public.part_detect_usage ("userId", day);
 
 revoke all on function public.part_detect_take(bigint, text, integer, integer) from public, anon, authenticated;
 grant execute on function public.part_detect_take(bigint, text, integer, integer) to service_role;

@@ -287,7 +287,13 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                           ),
                           style: const TextStyle(fontSize: 13),
                         ),
-                        onChanged: _uploading ? null : (v) => setState(() => _learn = v ?? false),
+                        onChanged: _uploading
+                            ? null
+                            : (v) => setState(() {
+                                // Confirmed by hand: a late page-1 result keeps it.
+                                _learn = v ?? false;
+                                _reviewed = true;
+                              }),
                       ),
                     if (_instrumentId == null) ...[
                       Padding(

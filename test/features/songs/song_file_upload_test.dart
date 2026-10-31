@@ -28,7 +28,7 @@ class _LateVision extends PartVisionService {
   final answer = Completer<PartMatch?>();
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments) => answer.future;
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) => answer.future;
 }
 
 Widget _host(Widget sheet, {PartVisionService? vision}) => ProviderScope(
@@ -203,5 +203,27 @@ void main() {
       await tester.pump();
       expect(tester.widget<CheckboxListTile>(a).value, isFalse);
     });
+
+    for (final single in [false, true]) {
+      testWidgets('${single ? 'single upload' : 'upload sheet'}: a confirmed "künftig so erkennen"', (tester) async {
+        final vision = _LateVision();
+        final file = PlatformFile(name: 'Kl 1.pdf', size: 10);
+        await tester.pumpWidget(_host(
+          single
+              ? SingleFileUploadSheet(songId: 5, file: file, groups: groups, existingFiles: const [])
+              : FileUploadSheet(songId: 5, groups: groups, initialFiles: [file]),
+          vision: vision,
+        ));
+        await tester.pump();
+        final learn = find.ancestor(of: find.text('„Kl 1“ künftig als Klarinette erkennen'), matching: find.byType(CheckboxListTile));
+        await tester.ensureVisible(learn);
+        await tester.tap(learn);
+        await tester.pump();
+        vision.answer.complete(_flute);
+        await tester.pump();
+        expect(find.text('Auf Seite 1 erkannt: Flute'), findsNothing);
+        expect(tester.widget<CheckboxListTile>(learn).value, isTrue);
+      });
+    }
   });
 }

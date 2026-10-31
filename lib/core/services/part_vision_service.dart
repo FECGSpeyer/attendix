@@ -46,31 +46,44 @@ class PartVisionService {
     return lower.endsWith('.pdf') || lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg');
   }
 
-  /// Reads the part of [file] among [instruments]; null when it could not.
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments) async {
+  /// Reads the part of [file] among [instruments]; null when it could not
+  /// within [limit] (at most [timeout]).
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit}) async {
     if (_unavailable || instruments.isEmpty || !supports(file.name)) return null;
+    final time = limit == null || limit > timeout ? timeout : limit;
+    if (time < _minRequestTime) return null;
+    final deadline = _Deadline(time);
     try {
       final tenantId = _tenantId();
       if (tenantId == null) return null;
-      // One deadline for the whole file; resources are closed by the
-      // `finally` blocks below even when the deadline hits first.
-      return await _detect(file, tenantId, instruments).timeout(timeout);
+      // The caller gets its answer on time; the work behind it checks the
+      // same deadline after every step, so a late render never leads to a
+      // (paid) request.
+      return await _detect(file, tenantId, instruments, deadline).timeout(time);
     } on FunctionException catch (e) {
       if (e.status == 404) _unavailable = true;
       return null;
     } catch (e) {
       if (kDebugMode) debugPrint('[part-detect] $e');
       return null;
+    } finally {
+      deadline.expire();
     }
   }
 
-  Future<PartMatch?> _detect(PlatformFile file, int tenantId, List<InstrumentInfo> instruments) async {
-    final image = await _firstPage(file);
+  /// Less than this left: no request is started any more.
+  static const _minRequestTime = Duration(seconds: 3);
+
+  Future<PartMatch?> _detect(PlatformFile file, int tenantId, List<InstrumentInfo> instruments, _Deadline deadline) async {
+    final image = await _firstPage(file, deadline);
     if (image == null || image.length > maxImageBytes) return null;
+    final left = deadline.left;
+    if (left < _minRequestTime) return null;
     final response = await _client().functions.invoke(_function, body: {
       'tenantId': tenantId,
       'image': base64Encode(image),
-    });
+    }).timeout(left);
+    if (deadline.isOver) return null;
     return parseResponse(response.data, instruments);
   }
 
@@ -97,17 +110,21 @@ class PartVisionService {
     );
   }
 
-  /// Page 1 as a fresh JPEG (PDF rendered, photos decoded and re-encoded).
-  Future<Uint8List?> _firstPage(PlatformFile file) async {
+  /// Page 1 as a fresh JPEG (PDF rendered, photos decoded and re-encoded);
+  /// null as soon as [deadline] is over.
+  Future<Uint8List?> _firstPage(PlatformFile file, _Deadline deadline) async {
     final bytes = await _bytes(file);
-    if (bytes == null) return null;
+    if (bytes == null || deadline.isOver) return null;
     if (!file.name.toLowerCase().endsWith('.pdf')) {
-      return kIsWeb ? reencodeImage(bytes) : compute(reencodeImage, bytes);
+      final image = await (kIsWeb ? Future.value(reencodeImage(bytes)) : compute(reencodeImage, bytes));
+      return deadline.isOver ? null : image;
     }
     final doc = await PdfDocument.openData(bytes);
     try {
+      if (deadline.isOver) return null;
       final page = await doc.getPage(1);
       try {
+        if (deadline.isOver) return null;
         final image = await page.render(
           width: _renderWidth.toDouble(),
           height: _renderWidth * page.height / page.width,
@@ -115,7 +132,7 @@ class PartVisionService {
           backgroundColor: '#FFFFFF',
           quality: 70,
         );
-        return image?.bytes;
+        return deadline.isOver ? null : image?.bytes;
       } finally {
         await page.close();
       }
@@ -129,6 +146,18 @@ class PartVisionService {
     if (kIsWeb || file.path == null) return null;
     return File(file.path!).readAsBytes();
   }
+}
+
+/// Time left for one file; over once it ran out or the caller gave up.
+class _Deadline {
+  _Deadline(Duration time) : _end = DateTime.now().add(time);
+
+  final DateTime _end;
+  bool _expired = false;
+
+  void expire() => _expired = true;
+  bool get isOver => _expired || !DateTime.now().isBefore(_end);
+  Duration get left => isOver ? Duration.zero : _end.difference(DateTime.now());
 }
 
 /// [bytes] (PNG/JPEG) decoded and written anew as a small JPEG: upright,
