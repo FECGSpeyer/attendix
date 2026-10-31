@@ -816,7 +816,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         attendanceIds,
         (chunk) => fetchAllPages<dynamic>((from, to) async => await supabase
             .from('person_attendances')
-            .select('id, attendance_id, person_id, status, notes, '
+            .select('id, attendance_id, person_id, status, notes, duty_state, '
                 'attendance:attendance_id!inner(tenantId)')
             .inFilter('attendance_id', chunk)
             .eq('attendance.tenantId', currentTenantId)

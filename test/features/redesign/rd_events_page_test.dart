@@ -487,11 +487,21 @@ void main() {
     await _settle(tester);
     expect(loads, greaterThan(before));
 
+    // Opened through the screen reader action, with the keyboard up.
     await tester.ensureVisible(_semantics('Deine Antwort: Offen'));
     await tester.pump();
-    await tester.tap(_semantics('Deine Antwort: Offen'));
+    tester.view.viewInsets = const FakeViewPadding(bottom: 120);
+    tester.semantics.tap(find.semantics.byLabel('Deine Antwort: Offen'));
     await _settle(tester);
     expect(find.text('Bist du dabei?'), findsOneWidget);
+    // The last control of the sheet scrolls into reach.
+    final more = find.text('Mehr zum Termin');
+    await tester.scrollUntilVisible(
+      more,
+      40,
+      scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first,
+    );
+    expect(tester.getRect(more).bottom, lessThanOrEqualTo(320 - 120));
     expect(tester.takeException(), isNull);
     semantics.dispose();
   });

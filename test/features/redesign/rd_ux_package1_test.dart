@@ -54,6 +54,21 @@ void main() {
       expect(rdUnrecordedIds([2, 3], rows), [3]);
       expect(rdUnrecordedIds([2, 3], const []), isEmpty);
     });
+
+    test('duty Termine: stand-ins without a duty state stay neutral on purpose', () {
+      const rows = [
+        PersonAttendance(attendanceId: 3, status: AttendanceStatus.present, dutyState: 'confirmed'),
+        PersonAttendance(attendanceId: 3, status: AttendanceStatus.neutral), // stand-in
+      ];
+      expect(rdUnrecordedIds([3], rows, dutyIds: {3}), isEmpty);
+      // An assigned person without a status is still open.
+      expect(
+        rdUnrecordedIds([3], [...rows, const PersonAttendance(attendanceId: 3, dutyState: 'requested')], dutyIds: {3}),
+        [3],
+      );
+      // Outside duty Termine everyone counts.
+      expect(rdUnrecordedIds([3], rows), [3]);
+    });
   });
 
   group('D3: "Fehlen oft"', () {
