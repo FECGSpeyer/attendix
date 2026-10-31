@@ -1327,7 +1327,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
   }
 }
 
-/// Shows the file table's keyboard shortcuts (Werke "…" menu, or "?" in
+/// Shows the file table's keyboard shortcuts (Ich › Hilfe, or "?" in
 /// the file table). Kept out of the toolbar so the main UI stays calm.
 Future<void> showRdWorkFilesShortcuts(BuildContext context) {
   final isMac = defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;

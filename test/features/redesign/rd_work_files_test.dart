@@ -585,7 +585,7 @@ void main() {
       _desktop(tester);
       await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      // The hint lives in the Werke "…" menu now, not on the main UI.
+      // The hint lives under Ich › Hilfe now, not on the main UI.
       expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
 
       await tester.tap(find.text('klar.pdf'));

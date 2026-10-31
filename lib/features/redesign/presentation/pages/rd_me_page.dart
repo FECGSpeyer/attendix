@@ -32,6 +32,7 @@ import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/work/rd_work_files.dart' show rdWorkFilesMinWidth, showRdWorkFilesShortcuts;
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
 /// REDESIGN: tab "Ich" (canvas E1): own profile, things for me, the app,
@@ -168,6 +169,14 @@ class RdMePage extends ConsumerWidget {
               title: l10n.settingsHelp,
               onTap: () => context.push('/settings/help'),
             ),
+            // Keys of the Werk file table: only where that table exists
+            // (editors, wide window). Kept here, off the main UI.
+            if (isLead && MediaQuery.sizeOf(context).width >= rdWorkFilesMinWidth)
+              RdListRow(
+                leading: const RdRowIcon(Icons.keyboard_outlined),
+                title: l10n.redesignFilesShortcuts,
+                onTap: () => showRdWorkFilesShortcuts(context),
+              ),
             RdListRow(
               leading: const RdRowIcon(Icons.chat_bubble_outline),
               title: l10n.redesignMeFeedback,
