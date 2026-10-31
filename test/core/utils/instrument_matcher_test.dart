@@ -169,9 +169,8 @@ void main() {
     });
 
     test('recordings and texts keep their type whatever the name says', () {
-      expect(_label('Probe alte Fassung.mp3', _orchestra), 'Aufnahme');
       expect(_label('Generalpartitur.mp3', _orchestra), 'Aufnahme');
-      expect(_label('Alte Fassung Text.docx', _orchestra), 'Liedtext');
+      expect(_label('Partitur Text.docx', _orchestra), 'Liedtext');
     });
 
     test('decomposed umlauts (macOS file names)', () {
@@ -185,10 +184,7 @@ void main() {
       expect(_label('Звуки трубы - Fl.pdf', _orchestra), 'Flöte');
     });
 
-    test('old versions and solo parts', () {
-      expect(_label('Violine 1 alte Fassung.pdf', _orchestra), 'Alte Fassung');
-      expect(_label('Horn 2 - old version.pdf', _orchestra), 'Alte Fassung');
-      // "Alt" alone is the voice, not an old version.
+    test('solo parts', () {
       expect(_label('Alt.pdf', ['Sopran', 'Alt']), 'Alt');
       expect(_label('Solo Sopran.pdf', _orchestra), 'Solo');
       expect(_label('Trompete Solo.pdf', _orchestra), 'Trompete');

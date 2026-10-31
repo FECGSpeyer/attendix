@@ -90,15 +90,15 @@ void main() {
       expect(findConflictingFiles(existing, 11, null), isEmpty);
     });
 
-    test('old versions only conflict with a file of the same name', () {
-      final old = [
-        _file('Violine 1 alte Fassung.pdf', note: 'Alte Fassung'),
-        _file('Cello alte Fassung.pdf', note: 'Alte Fassung'),
+    test('solo parts only conflict with a file of the same name', () {
+      final solos = [
+        _file('Violine Solo.pdf', note: 'Solo'),
+        _file('Cello Solo.pdf', note: 'Solo'),
       ];
-      expect(findConflictingFiles(old, null, 'Alte Fassung', fileName: 'Horn 2 alte Fassung.pdf'), isEmpty);
+      expect(findConflictingFiles(solos, null, 'Solo', fileName: 'Horn Solo.pdf'), isEmpty);
       expect(
-        findConflictingFiles(old, null, 'Alte Fassung', fileName: 'cello alte fassung.pdf').single.fileName,
-        'Cello alte Fassung.pdf',
+        findConflictingFiles(solos, null, 'Solo', fileName: 'cello solo.pdf').single.fileName,
+        'Cello Solo.pdf',
       );
     });
 

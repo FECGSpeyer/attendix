@@ -70,18 +70,9 @@ const partiturCompounds = [
   return null;
 }
 
-/// Old versions ("alte Fassung", "old version"): kept apart from the parts
-/// in use, so nobody opens an outdated part by mistake.
-bool isOldVersionName(String filename) {
-  final words = InstrumentMatcher.tokenize(filename.toLowerCase()).join(' ');
-  return RegExp(
-    r'(^| )(alte (fassung|version)|alt version|old version|fruehere (fassung|version)|veraltet|старая версия)( |$)',
-  ).hasMatch(words);
-}
-
-/// Categories that collect files of many parts (old horn and old violin
-/// parts are both "Alte Fassung"): one does not replace another.
-const collectingNotes = {'Alte Fassung', 'Solo'};
+/// Categories that collect files of many parts (a violin solo and a
+/// trumpet solo are both "Solo"): one does not replace another.
+const collectingNotes = {'Solo'};
 
 /// Ionic `findConflictingFiles`: existing files with the same category. In a
 /// [collectingNotes] category only a file of the same name ([fileName]).
@@ -162,7 +153,7 @@ FileCategoryGuess guessFileCategory(
     return FileCategoryGuess(instrumentId: byType.instrumentId, note: byType.note, confidence: MatchConfidence.sure);
   }
   // Recordings and texts keep their type whatever the name says
-  // ("Probe alte Fassung.mp3" is a recording).
+  // ("Generalpartitur.mp3" is a recording).
   final lower = fileName.toLowerCase();
   final byExtension = InstrumentMatcher.audioExtensions.any((e) => lower.endsWith('.$e')) ||
       lower.endsWith('.doc') ||
@@ -176,9 +167,6 @@ FileCategoryGuess guessFileCategory(
     }
     final special = detectSpecialFileType(fileName)!;
     return FileCategoryGuess(instrumentId: special.instrumentId, note: special.note, confidence: MatchConfidence.sure);
-  }
-  if (isOldVersionName(fileName)) {
-    return const FileCategoryGuess(instrumentId: null, note: 'Alte Fassung', confidence: MatchConfidence.sure);
   }
   // A full score stays one even when a part is named ("Mit Harfe -
   // Generalpartitur"); a plain "Partitur" does not ("Werk - Partitur - Oboe"
