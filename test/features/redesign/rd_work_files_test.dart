@@ -590,9 +590,9 @@ void main() {
 
       await tester.tap(find.text('klar.pdf'));
       await _settle(tester);
-      // "?" has no own physical key (Umschalt + ß / slash): give one.
-      await tester.sendKeyDownEvent(LogicalKeyboardKey.question, physicalKey: PhysicalKeyboardKey.slash, character: '?');
-      await tester.sendKeyUpEvent(LogicalKeyboardKey.question, physicalKey: PhysicalKeyboardKey.slash);
+      // "?" is typed with Umschalt (no own key in the test key maps): the
+      // page reacts to the typed character, so send it on the slash key.
+      await tester.sendKeyEvent(LogicalKeyboardKey.slash, character: '?');
       await _settle(tester);
       expect(find.text('Tastenkürzel'), findsOneWidget);
       expect(find.text('F2 umbenennen'), findsOneWidget);
