@@ -246,8 +246,8 @@ const List<HelpArticle> helpArticles = [
     id: "songs-add",
     title: "Werk anlegen",
     categoryId: "songs",
-    keywords: ["stück hinzufügen", "notenbibliothek", "neues werk"],
-    body: "Unter \"Werke\" legst du ein neues [[Werk]] mit Nummer, Namen, Schwierigkeitsgrad und Kategorien an. Optional lassen sich zu jeder [[Gruppe]]/Stimme passende Notendateien (PDF) hinterlegen.",
+    keywords: ["stück hinzufügen", "notenbibliothek", "neues werk", "datei öffnen", "pdf anzeigen", "web-app"],
+    body: "Unter \"Werke\" legst du ein neues [[Werk]] mit Nummer, Namen, Schwierigkeitsgrad und Kategorien an. Optional lassen sich zu jeder [[Gruppe]]/Stimme passende Notendateien (PDF) hinterlegen.\n\nTippst du auf eine Datei und dann auf \"Datei öffnen\", zeigt Attendix PDFs und Bilder direkt in der App an. Andere Dateien öffnen sich in einem neuen Tab bzw. in der passenden App. Nutzt du Attendix als installierte Web-App (z. B. am Mac über \"Zum Dock hinzufügen\"), bekommst du für solche Dateien stattdessen einen Hinweis mit \"Datei herunterladen\" und \"Schließen\". In der Attendix-App aus dem App Store auf einem Mac mit Apple-Chip öffnen sie sich im Browser.",
   ),
   HelpArticle(
     id: "songs-filter",

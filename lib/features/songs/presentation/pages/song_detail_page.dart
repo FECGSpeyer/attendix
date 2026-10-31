@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -341,8 +341,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   title: Text(context.l10n.songsOpenExternalLink),
                   titleColor: AppColors.primary,
                   detail: true,
-                  onTap: () => launchUrl(Uri.parse(song.link!),
-                      mode: LaunchMode.externalApplication),
+                  // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
+                  onTap: () =>
+                      NativeFileService.openExternal(Uri.parse(song.link!)),
                 ),
               ]),
             if (!data.readOnly)

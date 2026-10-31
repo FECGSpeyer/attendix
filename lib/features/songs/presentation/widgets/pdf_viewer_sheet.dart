@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:pdfx/pdfx.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
+import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/pdf_bytes_loader.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -219,10 +219,8 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
               // blocked on web): open the file in the browser / system viewer.
               const SizedBox(height: AppDimensions.paddingS),
               TextButton.icon(
-                onPressed: () => launchUrl(
-                  Uri.parse(widget.url),
-                  mode: LaunchMode.externalApplication,
-                ),
+                onPressed: () =>
+                    NativeFileService.openExternal(Uri.parse(widget.url)),
                 icon: const Icon(Icons.open_in_new),
                 label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),

@@ -146,8 +146,8 @@ const Map<String, HelpArticleTranslation> helpArticlesEn = {
   ),
   "songs-add": HelpArticleTranslation(
     title: "Adding a piece",
-    keywords: ["add piece", "sheet music library", "new piece", "song"],
-    body: "Under \"Pieces\" you create a new [[Piece|piece]] with number, name, difficulty and categories. Optionally you can store matching sheet music files (PDF) for each [[Group|group]]/voice.",
+    keywords: ["add piece", "sheet music library", "new piece", "song", "open file", "view pdf", "web app"],
+    body: "Under \"Pieces\" you create a new [[Piece|piece]] with number, name, difficulty and categories. Optionally you can store matching sheet music files (PDF) for each [[Group|group]]/voice.\n\nTap a file and then \"Open file\": Attendix shows PDFs and images right inside the app. Other files open in a new tab or in the matching app. If you use Attendix as an installed web app (e.g. on a Mac via \"Add to Dock\"), you get a hint with \"Download file\" and \"Close\" for such files instead. In the Attendix app from the App Store on a Mac with Apple silicon, they open in the browser.",
   ),
   "songs-filter": HelpArticleTranslation(
     title: "Searching and filtering pieces",
