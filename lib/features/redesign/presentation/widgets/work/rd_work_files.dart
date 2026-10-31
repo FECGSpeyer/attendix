@@ -604,15 +604,24 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
         children: [
           toolbar,
           const SizedBox(height: 10),
-          if (state.uploads.isNotEmpty) ...[
-            _UploadQueue(
-              state: state,
-              groups: widget.groups,
-              onRetry: (id) => ref.read(rdWorkFilesProvider(_songId).notifier).retry(id),
-              onDismiss: () => ref.read(rdWorkFilesProvider(_songId).notifier).dismissFinished(),
-            ),
-            const SizedBox(height: 12),
-          ],
+          // Collapses smoothly once everything is uploaded (see rdUploadQueueHideDelay).
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            alignment: Alignment.topCenter,
+            child:
+                state.uploads.isEmpty
+                    ? const SizedBox(width: double.infinity)
+                    : Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _UploadQueue(
+                        state: state,
+                        groups: widget.groups,
+                        onRetry: (id) => ref.read(rdWorkFilesProvider(_songId).notifier).retry(id),
+                        onDismiss: () => ref.read(rdWorkFilesProvider(_songId).notifier).dismissFinished(),
+                      ),
+                    ),
+          ),
           if (_busy) ...[
             LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
             const SizedBox(height: 8),
