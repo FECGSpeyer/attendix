@@ -235,11 +235,16 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
-  Future<bool> assign(List<String> personAttendanceIds, int attendanceId) =>
-      _run(() => _repo.assign(personAttendanceIds, attendanceId), attendanceId: attendanceId);
+  /// [presentIds]: persons already present; they are confirmed directly
+  /// without a push and keep their status (Ionic 4.17.9).
+  Future<bool> assign(List<String> personAttendanceIds, int attendanceId,
+          {List<String> presentIds = const []}) =>
+      _run(() => _repo.assign(personAttendanceIds, attendanceId, presentIds: presentIds),
+          attendanceId: attendanceId);
 
-  Future<bool> unassign(String personAttendanceId, int attendanceId) =>
-      _run(() => _repo.unassign(personAttendanceId), attendanceId: attendanceId);
+  /// [keepStatus]: unassigning a present person keeps status and notes.
+  Future<bool> unassign(String personAttendanceId, int attendanceId, {bool keepStatus = false}) =>
+      _run(() => _repo.unassign(personAttendanceId, keepStatus: keepStatus), attendanceId: attendanceId);
 
   Future<bool> confirm(String personAttendanceId, int attendanceId) =>
       _run(() => _repo.confirm(personAttendanceId), attendanceId: attendanceId);

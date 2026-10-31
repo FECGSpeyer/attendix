@@ -5,6 +5,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/services/live_activity_service.dart';
 import 'package:attendix/core/utils/live_plan.dart';
 import 'package:attendix/data/models/plan/plan.dart';
+import 'package:attendix/data/repositories/org_plan_repository.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -55,7 +56,27 @@ class FakeHost implements LiveActivityHost {
     return attendances;
   }
   @override
-  Future<Map<String, String>> typeNames() async => {'t1': 'Probe'};
+  Future<Map<String, LiveTermType>> termTypes() async => {
+        't1': (name: 'Probe', color: typeColor),
+      };
+  String? typeColor;
+
+  /// Ionic 4.17.8: ORG plans of the organisation (null = no organisation).
+  LiveOrgPlans? orgPlans;
+  Object? orgPlansError;
+  final orgRanges = <List<DateTime>>[];
+  final openedOrgPlans = <String>[];
+
+  @override
+  Future<LiveOrgPlans?> loadOrgPlans(DateTime from, DateTime to) async {
+    orgRanges.add([from, to]);
+    final error = orgPlansError;
+    if (error != null) throw error;
+    return orgPlans;
+  }
+
+  @override
+  Future<void> openSharedOrgPlan(String id) async => openedOrgPlans.add(id);
   @override
   Future<void> saveToken({
     required String userId,
@@ -327,6 +348,101 @@ void main() {
     s.dispose();
     expect(host.opened, [8]);
   });
+  group('ORG plans (Ionic 4.17.8)', () {
+    const fields = [
+      PlanField(id: 'a', name: 'Einsingen', time: '15'),
+      PlanField(id: 'b', name: 'Auftritt', time: '45'),
+    ];
+    OrgLiveAttendance orgAttendance(int id, {String? color}) => (
+          attendance: PlanAttendance(
+            id: id,
+            date: '2026-10-21T10:00:00+00:00',
+            plan: const Plan(time: '19:00', fields: fields),
+          ),
+          typeName: 'Konzert',
+          typeColor: color,
+        );
+    SharedPlan sharedPlan({String id = 'sp1', String? title = ' Chortag ', String? time = '19:00'}) =>
+        SharedPlan(id: id, editKey: 'k', planTitle: title, date: '2026-10-21', time: time, fields: fields);
+
+    test('admins get org Termine and ad-hoc ORG plans (attendance 0, plan "org-<id>")', () async {
+      final host = FakeHost(attendances: [attendance()])
+        ..orgPlans = (
+          attendances: [orgAttendance(11), orgAttendance(55, color: 'mint')],
+          sharedPlans: [
+            sharedPlan(),
+            sharedPlan(id: 'sp2', title: null),
+            sharedPlan(id: 'sp3', time: null),
+          ],
+        );
+      final r = await service(host).runningPlans();
+      // 11 is already a plan of this tenant: not added twice.
+      expect(r.candidates.map((c) => c.key), ['11:main', '55:main', '0:org-sp1', '0:org-sp2']);
+      expect(r.candidates[1].title, 'Konzert');
+      expect(r.candidates[1].state.color, '#36c2c4');
+      expect(r.candidates[2].title, 'Chortag');
+      expect(r.candidates[2].state.color, isNull); // ad-hoc plans stay teal
+      expect(r.candidates[3].title, 'ORG-Plan');
+      expect(r.attendanceIds, containsAll([11, 55, 0]));
+      // Yesterday to the end of tomorrow.
+      final range = host.orgRanges.single;
+      expect(range[0], DateTime(2026, 10, 20));
+      expect(range[1], DateTime(2026, 10, 22, 23, 59, 59, 999));
+    });
+
+    test('players never load ORG plans', () async {
+      final host = FakeHost(attendances: [attendance()], role: Role.player)
+        ..orgPlans = (attendances: [orgAttendance(55)], sharedPlans: [sharedPlan()]);
+      final r = await service(host).runningPlans();
+      expect(r.candidates.map((c) => c.key), ['11:main']);
+      expect(r.attendanceIds, {11});
+      expect(host.orgRanges, isEmpty);
+    });
+
+    test('a failing ORG query leaves their activities alone', () async {
+      running = [
+        {'id': 'y', 'attendanceId': 0, 'planKey': 'org-sp1'},
+      ];
+      final host = FakeHost(attendances: [attendance()])..orgPlansError = Exception('offline');
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      expect(methods(), isNot(contains('end')));
+    });
+
+    test('ad-hoc ORG plans that are over are ended', () async {
+      running = [
+        {'id': 'y', 'attendanceId': 0, 'planKey': 'org-old'},
+      ];
+      final host = FakeHost(attendances: [attendance()])
+        ..orgPlans = (attendances: <OrgLiveAttendance>[], sharedPlans: <SharedPlan>[]);
+      final s = service(host);
+      await s.init();
+      s.stopLoop();
+      final ends = calls.where((c) => c.method == 'end').toList();
+      expect(ends.single.arguments, {'attendanceId': 0, 'planKey': 'org-old', 'immediate': true});
+    });
+
+    test('tap on an ad-hoc ORG plan opens it', () async {
+      final host = FakeHost();
+      final s = service(host);
+      expect(await s.openFromUrl(Uri.parse('attendix://live-plan?attendance=0&plan=org-abc')), isTrue);
+      expect(host.openedOrgPlans, ['abc']);
+      expect(host.opened, isEmpty);
+      expect(await s.openFromUrl(Uri.parse('attendix://live-plan?attendance=0&plan=main')), isTrue);
+      expect(host.openedOrgPlans, ['abc']);
+    });
+  });
+
+  test('the activity gets the colour of the Termin type (Ionic 4.17.22)', () async {
+    final host = FakeHost(attendances: [attendance()])..typeColor = 'danger';
+    final s = service(host);
+    await s.init();
+    s.stopLoop();
+    final start = calls.firstWhere((c) => c.method == 'start');
+    expect(((start.arguments as Map)['state'] as Map)['color'], '#ff4961');
+  });
+
   // SOL_FIX15: logout / account switch.
   group('logout and account switch', () {
     test('logout ends the activities and removes this device\'s tokens', () async {

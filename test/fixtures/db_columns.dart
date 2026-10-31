@@ -415,6 +415,7 @@ const Map<String, Set<String>> kDbColumns = {
     'beamer_file',
     'category',
     'category_ids',
+    'copied_from',
     'created_at',
     'difficulty',
     'files',

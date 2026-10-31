@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
@@ -43,10 +44,14 @@ class SongUtils {
         _audioExtensions.contains(_extension(file.fileName));
   }
 
-  /// Label of a file category (Ionic `getInstrumentName`)
-  static String fileLabel(SongFile file, List<Group> instruments) {
+  /// Label of a file category (Ionic `getInstrumentName`). In choirs a
+  /// file for all singers is labelled "Chor (alle)" (Ionic 4.17.16).
+  static String fileLabel(SongFile file, List<Group> instruments, {bool isChoir = false}) {
     final id = file.instrumentId;
-    if (id == null || id == 0) return file.note ?? l10nWithoutContext.songsOther;
+    if (id == null || id == 0) {
+      if (isChoir && isChoirAllFile(note: file.note)) return l10nWithoutContext.songsChoirAll;
+      return file.note ?? l10nWithoutContext.songsOther;
+    }
     if (id == 1) return l10nWithoutContext.songsRecording;
     if (id == 2) return l10nWithoutContext.songsLyrics;
     for (final g in instruments) {
@@ -70,7 +75,10 @@ class SongUtils {
       case 'Chor':
         return AppColors.tertiary;
       default:
-        return AppColors.medium;
+        // Ionic 4.17.16: "Chor (alle)" detected tolerantly
+        return isChoirAllFile(instrumentId: id, note: file.note)
+            ? AppColors.tertiary
+            : AppColors.medium;
     }
   }
 
@@ -83,7 +91,7 @@ class SongUtils {
       if (id == null && f.note == 'Partitur') return '1';
       if (id == null && f.note == 'Sibelius') return '2';
       if (id == 2) return '3';
-      if (id == null && f.note == 'Chor') return '4';
+      if (isChoirAllFile(instrumentId: id, note: f.note)) return '4';
       if (id == null && f.note == 'Klavierauszug') return '5';
       if (id == null) return '6';
       final idx = instruments.indexWhere((g) => g.id == id);

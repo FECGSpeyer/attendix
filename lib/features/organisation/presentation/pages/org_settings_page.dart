@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
@@ -8,6 +9,7 @@ import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/organisation/organisation.dart';
 import '../../../planning/presentation/widgets/plan_field_dialogs.dart';
@@ -56,6 +58,68 @@ class OrgSettingsPage extends ConsumerWidget {
     success
         ? ToastHelper.showSuccess(context, context.l10n.orgUnlinked)
         : ToastHelper.showError(context, context.l10n.orgFlutterUnlinkFailed);
+  }
+
+  Future<void> _toggleBeamerFiles(BuildContext context, WidgetRef ref, bool enabled) async {
+    final ok = await ref
+        .read(planSettingsNotifierProvider.notifier)
+        .updateOrgGemeindeApp({'beamer_files_enabled': enabled});
+    if (!ok && context.mounted) ToastHelper.showError(context, context.l10n.svcSaveGemeindeAppFailed);
+  }
+
+  /// Ionic 4.17.10 `createGemeindeAppKey`: only the hash is stored, so the
+  /// key is shown once. A new key cuts the old link.
+  Future<void> _createGemeindeAppKey(BuildContext context, WidgetRef ref, Organisation org) async {
+    final l10n = context.l10n;
+    if (org.gemeindeAppKeyHash != null) {
+      final ok = await showPlanConfirm(
+        context,
+        title: l10n.orgGaRenewKey,
+        message: l10n.orgGaRenewMessage,
+        confirmText: l10n.orgGaRenewButton,
+        destructive: true,
+      );
+      if (!ok || !context.mounted) return;
+    }
+    final created = PlanBeamer.newGemeindeAppKey();
+    final saved = await ref.read(planSettingsNotifierProvider.notifier).updateOrgGemeindeApp({
+      'gemeinde_app_key_hash': created.hash,
+      'gemeinde_app_key_hint': created.hint,
+    });
+    if (!context.mounted) return;
+    if (!saved) {
+      ToastHelper.showError(context, l10n.svcSaveGemeindeAppFailed);
+      return;
+    }
+    await showAppDialog<void>(
+      context: context,
+      builder: (ctx) => AppAlertDialog(
+        title: Text(ctx.l10n.orgGaKeyHeader),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            SelectableText(created.key, style: const TextStyle(fontFamily: 'monospace', fontWeight: FontWeight.w600)),
+            const SizedBox(height: 8),
+            Text(ctx.l10n.orgGaKeyMessage),
+          ],
+        ),
+        actions: [
+          TextButton(
+            onPressed: () async {
+              try {
+                await Clipboard.setData(ClipboardData(text: created.key));
+                if (ctx.mounted) ToastHelper.showSuccess(ctx, ctx.l10n.orgGaCopied);
+              } catch (_) {
+                // Clipboard not available (PWA without permission): key stays visible.
+              }
+            },
+            child: Text(ctx.l10n.orgGaCopy),
+          ),
+          FilledButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonClose)),
+        ],
+      ),
+    );
   }
 
   @override
@@ -144,6 +208,35 @@ class OrgSettingsPage extends ConsumerWidget {
                   onTap: () => context.push('/settings/org-plans'),
                 ),
               ]),
+              // Ionic 4.17.10: Gemeinde App (FECG Speyer, FECG Schwegenheim only)
+              if (isSuperAdmin && PlanBeamer.gemeindeAppLinked(org)) ...[
+                _Section(title: context.l10n.orgGemeindeApp, children: [
+                  SwitchListTile.adaptive(
+                    key: const ValueKey('org-beamer-files-toggle'),
+                    secondary: const Icon(Icons.tv_outlined),
+                    title: Text(context.l10n.orgGaBeamerFiles),
+                    subtitle: Text(context.l10n.orgGaBeamerFilesHint),
+                    value: org.beamerFilesEnabled,
+                    onChanged: (v) => _toggleBeamerFiles(context, ref, v),
+                  ),
+                  ListTile(
+                    key: const ValueKey('org-gemeinde-app-key'),
+                    leading: const Icon(Icons.key_outlined),
+                    title: Text(org.gemeindeAppKeyHash != null
+                        ? context.l10n.orgGaRenewKey
+                        : context.l10n.orgGaCreateKey),
+                    subtitle: Text(org.gemeindeAppKeyHash != null
+                        ? context.l10n.orgGaKeyActive(org.gemeindeAppKeyHint ?? '')
+                        : context.l10n.orgGaNoKey),
+                    onTap: () => _createGemeindeAppKey(context, ref, org),
+                  ),
+                ]),
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(32, 4, 32, 8),
+                  child: Text(context.l10n.orgGaHint,
+                      style: const TextStyle(fontSize: 13, color: AppColors.medium)),
+                ),
+              ],
               if (isSuperAdmin)
                 _Section(title: context.l10n.orgPersons, children: [
                   // UX_SETTINGS: Ionic org-settings → Personen verknüpfen
@@ -170,6 +263,17 @@ class OrgSettingsPage extends ConsumerWidget {
                     title: Text(context.l10n.handoverTitle),
                     trailing: const _Chevron(),
                     onTap: () => context.push('/settings/handover'),
+                  ),
+                ]),
+              // Ionic 4.17.13: Werke in der Organisation (admins/responsibles)
+              if ((role.isAdmin || role.isResponsible) && others.isNotEmpty)
+                _Section(title: context.l10n.orgSongsSection, children: [
+                  ListTile(
+                    leading: const Icon(Icons.search),
+                    title: Text(context.l10n.orgSongsTitle),
+                    subtitle: Text(context.l10n.orgSongsEntryHint),
+                    trailing: const _Chevron(),
+                    onTap: () => context.push('/settings/org-settings/songs'),
                   ),
                 ]),
               // SETTINGS2: Werk-Synchronisierung (Ionic: super admin + linked tenants)

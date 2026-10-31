@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import 'ion_items.dart';
@@ -41,6 +42,7 @@ class PlanFieldsEditor extends StatefulWidget {
     this.showTimes = true,
     this.emptyText,
     this.onAddTopics,
+    this.beamerFileOf,
   });
 
   final List<PlanField> fields;
@@ -60,6 +62,12 @@ class PlanFieldsEditor extends StatefulWidget {
 
   /// "Themen aufnehmen" on the Tagesordnung insert marker (Ionic `openAgendaPicker`).
   final VoidCallback? onAddTopics;
+
+  /// Beamer rows (Gemeinde App, Ionic 4.17.10): set only when
+  /// [PlanBeamer.active]. Returns the file shown for a row (its own, else
+  /// the one of its Werk). Rows needing a file get a status line and the
+  /// edit dialog shows the "Beamer-Datei nötig" switch.
+  final BeamerFile? Function(PlanField field)? beamerFileOf;
 
   @override
   State<PlanFieldsEditor> createState() => _PlanFieldsEditorState();
@@ -152,6 +160,8 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     }
     if (PlanUtils.isAgendaPlaceholder(field)) return;
     final isNote = PlanUtils.isNote(field);
+    final beamerFileOf = widget.beamerFileOf;
+    final showBeamer = beamerFileOf != null && !isNote;
     final result = await showPlanFieldDialog(
       context,
       title: context.l10n.planningEditField,
@@ -166,6 +176,9 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       withConductor: !isNote,
       withInfo: !isNote,
       withMinutes: !isNote,
+      beamer: showBeamer
+          ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: beamerFileOf(field))
+          : null,
     );
     if (result == null) return;
     final updated = [..._fields];
@@ -176,6 +189,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             conductor: result.conductor,
             info: result.info,
             time: result.minutes?.toString() ?? field.time,
+            needsBeamer: showBeamer ? result.needsBeamer : field.needsBeamer,
           );
     _emit(updated);
   }
@@ -407,6 +421,20 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final warning = widget.fieldWarning?.call(field);
     if (warning != null && warning.isNotEmpty) {
       subtitleParts.add(Text(warning, style: h3Style.copyWith(color: AppColors.danger)));
+    }
+    // Ionic 4.17.10 `.beamer-status`: file name, or "Beamer-Datei fehlt" in warning colour.
+    final beamerFileOf = widget.beamerFileOf;
+    if (beamerFileOf != null && PlanBeamer.needsBeamer(field)) {
+      final file = beamerFileOf(field);
+      final style = file != null ? h3Style : h3Style.copyWith(color: const Color(0xFFB38600));
+      subtitleParts.add(Row(
+        key: ValueKey('beamer-status-${field.id}'),
+        children: [
+          Icon(Icons.tv_outlined, size: 14, color: style.color),
+          const SizedBox(width: 4),
+          Flexible(child: Text(file?.name ?? context.l10n.planningBeamerMissing, style: style)),
+        ],
+      ));
     }
     if (!isHead && !isNote && widget.showTimes) {
       final conductor = (field.conductor ?? '').isNotEmpty ? ' | ${field.conductor}' : '';

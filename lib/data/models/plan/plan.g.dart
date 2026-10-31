@@ -28,25 +28,47 @@ _$PlanFieldImpl _$$PlanFieldImplFromJson(Map<String, dynamic> json) =>
           json['isNote'] == null
               ? false
               : const PlanBoolConverter().fromJson(json['isNote']),
+      uid: json['uid'] as String?,
+      needsBeamer: json['needsBeamer'] as bool?,
+      beamerFile: const BeamerFileConverter().fromJson(json['beamerFile']),
     );
 
-Map<String, dynamic> _$$PlanFieldImplToJson(_$PlanFieldImpl instance) =>
+Map<String, dynamic> _$$PlanFieldImplToJson(
+  _$PlanFieldImpl instance,
+) => <String, dynamic>{
+  if (const PlanStringConverter().toJson(instance.id) case final value?)
+    'id': value,
+  if (const PlanStringConverter().toJson(instance.name) case final value?)
+    'name': value,
+  if (const PlanStringConverter().toJson(instance.time) case final value?)
+    'time': value,
+  if (instance.conductor case final value?) 'conductor': value,
+  if (instance.currentTime case final value?) 'currentTime': value,
+  if (const PlanIntConverter().toJson(instance.songId) case final value?)
+    'songId': value,
+  if (instance.info case final value?) 'info': value,
+  if (instance.agendaItemId case final value?) 'agendaItemId': value,
+  if (const PlanBoolConverter().toJson(instance.isGroup) case final value?)
+    'isGroup': value,
+  if (instance.groupId case final value?) 'groupId': value,
+  if (instance.uid case final value?) 'uid': value,
+  if (instance.needsBeamer case final value?) 'needsBeamer': value,
+  if (const BeamerFileConverter().toJson(instance.beamerFile) case final value?)
+    'beamerFile': value,
+};
+
+_$BeamerFileImpl _$$BeamerFileImplFromJson(Map<String, dynamic> json) =>
+    _$BeamerFileImpl(
+      name: json['name'] as String? ?? '',
+      path: json['path'] as String? ?? '',
+      linkedAt: json['linkedAt'] as String?,
+    );
+
+Map<String, dynamic> _$$BeamerFileImplToJson(_$BeamerFileImpl instance) =>
     <String, dynamic>{
-      if (const PlanStringConverter().toJson(instance.id) case final value?)
-        'id': value,
-      if (const PlanStringConverter().toJson(instance.name) case final value?)
-        'name': value,
-      if (const PlanStringConverter().toJson(instance.time) case final value?)
-        'time': value,
-      if (instance.conductor case final value?) 'conductor': value,
-      if (instance.currentTime case final value?) 'currentTime': value,
-      if (const PlanIntConverter().toJson(instance.songId) case final value?)
-        'songId': value,
-      if (instance.info case final value?) 'info': value,
-      if (instance.agendaItemId case final value?) 'agendaItemId': value,
-      if (const PlanBoolConverter().toJson(instance.isGroup) case final value?)
-        'isGroup': value,
-      if (instance.groupId case final value?) 'groupId': value,
+      'name': instance.name,
+      'path': instance.path,
+      if (instance.linkedAt case final value?) 'linkedAt': value,
     };
 
 _$PlanImpl _$$PlanImplFromJson(Map<String, dynamic> json) => _$PlanImpl(

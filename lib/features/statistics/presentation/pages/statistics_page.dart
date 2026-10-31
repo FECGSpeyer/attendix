@@ -25,6 +25,7 @@ import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonSheetH
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import '../../../../shared/widgets/display/ion_badge_text.dart';
+import '../widgets/field_stats_section.dart';
 
 /// Statistics Page with Charts
 ///
@@ -70,6 +71,10 @@ enum StatsSection {
   members,
   ageDistribution,
   avgAgeInstrument,
+
+  /// Ionic 4.17.17 "🧩 Zusatzfelder" (hidden without select / yes-no /
+  /// church fields).
+  additionalFields,
   organisation,
 }
 
@@ -96,6 +101,7 @@ List<StatsSection> statsSectionsFor({
       StatsSection.members,
       StatsSection.ageDistribution,
       StatsSection.avgAgeInstrument,
+      StatsSection.additionalFields,
       StatsSection.organisation,
     ];
 
@@ -265,6 +271,11 @@ class _StatisticsPageState extends ConsumerState<StatisticsPage> {
       case StatsSection.avgAgeInstrument:
         return _titled(
             l10n.statsAvgAgeInstrument, const _AvgAgePerInstrumentChart());
+      case StatsSection.additionalFields:
+        return [
+          FieldStatsSection(
+              header: _buildSectionTitle(l10n.statsAdditionalFields)),
+        ];
       case StatsSection.organisation:
         // Organisation statistics (only shown if tenant has an org)
         return const [

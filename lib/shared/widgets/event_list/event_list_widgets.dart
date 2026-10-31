@@ -3,10 +3,12 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../../core/services/native/native_file_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive.dart';
+import '../layout/dashed_border.dart';
 import '../layout/ion_modal_handle.dart';
 import '../layout/ionic_ios.dart';
 
@@ -77,11 +79,16 @@ class EventDateTile extends StatelessWidget {
     this.size = 46,
     this.background,
     this.foreground,
+    this.notInvited = false,
   });
 
   final String? date;
   final bool highlight;
   final bool past;
+
+  /// Ionic 4.17.14 `.not-member .ev-tile`: transparent, 2px dashed grey
+  /// outline, grey text (Termin the person is not invited to).
+  final bool notInvited;
 
   /// `.ev-today .ev-tile`: 54 × 58, radius 14, solid primary.
   final bool today;
@@ -97,7 +104,10 @@ class EventDateTile extends StatelessWidget {
   Widget build(BuildContext context) {
     final Color bg;
     final Color fg;
-    if (highlight || today) {
+    if (notInvited) {
+      bg = Colors.transparent;
+      fg = EvNotInvited.shade(context);
+    } else if (highlight || today) {
       bg = AppColors.primary;
       fg = Colors.white;
     } else {
@@ -110,7 +120,7 @@ class EventDateTile extends StatelessWidget {
       width: width,
       height: width + 4,
       decoration: BoxDecoration(
-        color: background ?? bg,
+        color: notInvited ? bg : (background ?? bg),
         borderRadius: BorderRadius.circular(large ? 14 : 12),
       ),
       child: Column(
@@ -123,7 +133,7 @@ class EventDateTile extends StatelessWidget {
               fontSize: EvMetrics.rem(context, 0.68),
               height: 1,
               letterSpacing: EvMetrics.rem(context, 0.68) * 0.06,
-              color: foreground ?? fg,
+              color: notInvited ? fg : (foreground ?? fg),
               fontWeight: FontWeight.w600,
             ),
           ),
@@ -133,14 +143,23 @@ class EventDateTile extends StatelessWidget {
               // ATT_SPACING: 1.25rem (today card 1.5rem)
               fontSize: EvMetrics.rem(context, large ? 1.5 : 1.25),
               height: 1.15,
-              color: foreground ?? fg,
+              color: notInvited ? fg : (foreground ?? fg),
               fontWeight: FontWeight.w700,
             ),
           ),
         ],
       ),
     );
-    return past ? Opacity(opacity: 0.7, child: tile) : tile;
+    final framed = notInvited
+        ? CustomPaint(
+            foregroundPainter: DashedRRectPainter(
+              color: AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.6),
+              radius: large ? 14 : 12,
+            ),
+            child: tile,
+          )
+        : tile;
+    return past ? Opacity(opacity: 0.7, child: framed) : framed;
   }
 }
 
@@ -181,6 +200,51 @@ class EventPill extends StatelessWidget {
           fontWeight: FontWeight.w700,
           fontFeatures: const [FontFeature.tabularFigures()],
         ),
+      ),
+    );
+  }
+}
+
+/// Ionic 4.17.14 "not invited" look (`.not-member`, `.not-invited-pill`) for
+/// Termine shown via "Alle Termine für Mitglieder sichtbar".
+class EvNotInvited {
+  EvNotInvited._();
+
+  /// `--ion-color-medium-shade` (title, tile text, pill text).
+  static Color shade(BuildContext context) =>
+      Theme.of(context).brightness == Brightness.dark ? const Color(0xFF86888F) : const Color(0xFF808289);
+
+  /// `rgba(medium, 0.08)` background of the row / card.
+  static Color background(BuildContext context) =>
+      AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.08);
+}
+
+/// Pill "Nicht eingeladen" with eye icon in place of the status pill
+/// (Ionic 4.17.14 `.not-invited-pill`).
+class EventNotInvitedPill extends StatelessWidget {
+  const EventNotInvitedPill({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final fg = EvNotInvited.shade(context);
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
+      decoration: BoxDecoration(
+        color: AppColors.adaptive(context, AppColors.medium).withValues(alpha: 0.2),
+        borderRadius: BorderRadius.circular(999),
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Icon(Icons.visibility_outlined, size: 13, color: fg),
+          const SizedBox(width: 4),
+          Text(
+            context.l10n.signoutNotInvited,
+            maxLines: 1,
+            softWrap: false,
+            style: TextStyle(color: fg, fontSize: 12.8, fontWeight: FontWeight.w700),
+          ),
+        ],
       ),
     );
   }
@@ -429,7 +493,7 @@ class EventRow extends StatelessWidget {
     this.trailing = const [],
     this.highlight = false,
     this.past = false,
-    this.dimmed = false,
+    this.notInvited = false,
     this.onTap,
     this.titleSuffix,
     this.titleLeading,
@@ -443,8 +507,10 @@ class EventRow extends StatelessWidget {
   final bool highlight;
   final bool past;
 
-  /// Termin the person is not part of (show_all_attendances)
-  final bool dimmed;
+  /// Termin the person is not invited to (show_all_attendances, Ionic
+  /// 4.17.14 `ion-item.not-member`): grey background, dashed date tile,
+  /// grey title.
+  final bool notInvited;
   final VoidCallback? onTap;
   final Widget? titleSuffix;
 
@@ -468,7 +534,7 @@ class EventRow extends StatelessWidget {
           children: [
             Padding(
               padding: const EdgeInsets.symmetric(vertical: 7),
-              child: EventDateTile(date: date, highlight: highlight, past: past),
+              child: EventDateTile(date: date, highlight: highlight, past: past, notInvited: notInvited),
             ),
             const SizedBox(width: 12),
             Expanded(
@@ -488,6 +554,7 @@ class EventRow extends StatelessWidget {
                               fontWeight: FontWeight.w600,
                               fontSize: EvMetrics.rem(context, 1),
                               height: lineHeight,
+                              color: notInvited ? EvNotInvited.shade(context) : null,
                             ),
                           ),
                         ),
@@ -521,7 +588,9 @@ class EventRow extends StatelessWidget {
         ),
       ),
     );
-    final child = Opacity(opacity: dimmed ? 0.6 : 1, child: content);
+    final child = notInvited
+        ? ColoredBox(color: EvNotInvited.background(context), child: content)
+        : content;
     if (onTap == null) return child;
     return InkWell(onTap: onTap, child: child);
   }
@@ -556,7 +625,7 @@ class EventTodayCard extends StatelessWidget {
     this.actions = const [],
     this.moreLabel,
     this.onMore,
-    this.dimmed = false,
+    this.notInvited = false,
     this.extraHeader = const [],
     this.bordered = false,
     this.rows = const [],
@@ -573,7 +642,11 @@ class EventTodayCard extends StatelessWidget {
   final List<Widget> actions;
   final String? moreLabel;
   final VoidCallback? onMore;
-  final bool dimmed;
+
+  /// Termin the person is not invited to (Ionic 4.17.14
+  /// `.ev-today.not-member`): 2px dashed grey border, grey background,
+  /// grey title and dashed date tile.
+  final bool notInvited;
   final List<Widget> extraHeader;
 
   /// Ionic `.ev-today` (signout / overview / parents): 2px primary border.
@@ -592,141 +665,158 @@ class EventTodayCard extends StatelessWidget {
       color: Theme.of(context).dividerColor,
       width: 0.5,
     );
-    return Opacity(
-      opacity: dimmed ? 0.7 : 1,
-      child: Card(
-        // Ionic `.ev-today`: margin 8 16 0, padding 16, radius 18.
-        margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-        shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(18),
-          side: bordered
-              ? const BorderSide(color: AppColors.primary, width: 2)
-              : BorderSide.none,
-        ),
-        child: Padding(
-          padding: const EdgeInsets.all(16),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Row(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  EventDateTile(date: date, today: true),
-                  const SizedBox(width: 14),
-                  Expanded(
-                    child: Column(
-                      crossAxisAlignment: CrossAxisAlignment.start,
-                      children: [
-                        Text(
-                          title,
-                          // ATT_SPACING: 1.15rem, line-height 1.25
-                          style: TextStyle(
-                            fontSize: EvMetrics.rem(context, 1.15),
-                            height: 1.25,
-                            fontWeight: FontWeight.w700,
-                          ),
-                        ),
-                        if (meta != null && meta!.isNotEmpty)
-                          Padding(
-                            padding: const EdgeInsets.only(top: 2),
-                            child: Text(
-                              meta!,
-                              style: TextStyle(
-                                color: EvMetrics.medium(context),
-                                fontSize: EvMetrics.rem(context, 0.875),
-                                height: EvMetrics.lineHeight(context),
-                              ),
-                            ),
-                          ),
-                        ...extraHeader,
-                        if (status != null)
-                          Padding(padding: const EdgeInsets.only(top: 6), child: status!),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-              if (place != null && place!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 10),
-                  child: Row(
+    // Ionic `.ev-today`: margin 8 16 0, padding 16, radius 18.
+    const margin = EdgeInsets.fromLTRB(16, 8, 16, 0);
+    final theme = Theme.of(context);
+    final card = Card(
+      margin: notInvited ? EdgeInsets.zero : margin,
+      color: notInvited
+          ? Color.alphaBlend(
+              EvNotInvited.background(context),
+              theme.cardTheme.color ?? theme.colorScheme.surfaceContainerLow,
+            )
+          : null,
+      shape: RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(18),
+        side: bordered && !notInvited
+            ? const BorderSide(color: AppColors.primary, width: 2)
+            : BorderSide.none,
+      ),
+      child: Padding(
+        padding: const EdgeInsets.all(16),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            Row(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                EventDateTile(date: date, today: true, notInvited: notInvited),
+                const SizedBox(width: 14),
+                Expanded(
+                  child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      const Padding(
-                        padding: EdgeInsets.only(top: 2),
-                        child: Icon(Icons.location_on_outlined, size: 16, color: AppColors.medium),
+                      Text(
+                        title,
+                        // ATT_SPACING: 1.15rem, line-height 1.25
+                        style: TextStyle(
+                          fontSize: EvMetrics.rem(context, 1.15),
+                          height: 1.25,
+                          fontWeight: FontWeight.w700,
+                          color: notInvited ? EvNotInvited.shade(context) : null,
+                        ),
                       ),
-                      const SizedBox(width: 6),
-                      Expanded(
-                        child: Text(
-                          place!,
-                          style: TextStyle(
-                            color: EvMetrics.medium(context),
-                            fontSize: EvMetrics.rem(context, 0.875),
-                            height: EvMetrics.lineHeight(context),
+                      if (meta != null && meta!.isNotEmpty)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            meta!,
+                            style: TextStyle(
+                              color: EvMetrics.medium(context),
+                              fontSize: EvMetrics.rem(context, 0.875),
+                              height: EvMetrics.lineHeight(context),
+                            ),
                           ),
                         ),
-                      ),
+                      ...extraHeader,
+                      if (status != null)
+                        Padding(padding: const EdgeInsets.only(top: 6), child: status!),
                     ],
                   ),
                 ),
-              if (infoText != null && infoText!.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 8),
-                  child: Text(
-                    infoText!,
-                    style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium),
-                  ),
-                ),
-              EventChips(chips: chips),
-              if (rows.isNotEmpty)
-                Container(
-                  margin: const EdgeInsets.only(top: 12),
-                  decoration: BoxDecoration(border: Border(top: hairline)),
-                  child: Column(
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      for (var i = 0; i < rows.length; i++)
-                        Container(
-                          decoration: i == rows.length - 1
-                              ? null
-                              : BoxDecoration(border: Border(bottom: hairline)),
-                          child: rows[i],
-                        ),
-                    ],
-                  ),
-                ),
-              if (actions.isNotEmpty)
-                Padding(
-                  padding: const EdgeInsets.only(top: 14),
-                  child: Row(
-                    children: [
-                      for (var i = 0; i < actions.length; i++) ...[
-                        if (i > 0) const SizedBox(width: 8),
-                        Expanded(child: actions[i]),
-                      ],
-                    ],
-                  ),
-                ),
-              if (onMore != null)
-                // Ionic `.ev-today .ev-more-link`: padding 10 0 0, semibold.
-                TextButton(
-                  onPressed: onMore,
-                  style: TextButton.styleFrom(
-                    padding: const EdgeInsets.only(top: 10, bottom: 0),
-                    minimumSize: const Size.fromHeight(34),
-                    textStyle: TextStyle(
-                      fontWeight: FontWeight.w600,
-                      fontSize: EvMetrics.rem(context, 1),
-                      height: EvMetrics.lineHeight(context),
+              ],
+            ),
+            if (place != null && place!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 10),
+                child: Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    const Padding(
+                      padding: EdgeInsets.only(top: 2),
+                      child: Icon(Icons.location_on_outlined, size: 16, color: AppColors.medium),
                     ),
-                  ),
-                  child: Text(moreLabel ?? context.l10n.signoutMoreOptions),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        place!,
+                        style: TextStyle(
+                          color: EvMetrics.medium(context),
+                          fontSize: EvMetrics.rem(context, 0.875),
+                          height: EvMetrics.lineHeight(context),
+                        ),
+                      ),
+                    ),
+                  ],
                 ),
-              ...footer,
-            ],
-          ),
+              ),
+            if (infoText != null && infoText!.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 8),
+                child: Text(
+                  infoText!,
+                  style: const TextStyle(fontStyle: FontStyle.italic, color: AppColors.medium),
+                ),
+              ),
+            EventChips(chips: chips),
+            if (rows.isNotEmpty)
+              Container(
+                margin: const EdgeInsets.only(top: 12),
+                decoration: BoxDecoration(border: Border(top: hairline)),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.stretch,
+                  children: [
+                    for (var i = 0; i < rows.length; i++)
+                      Container(
+                        decoration: i == rows.length - 1
+                            ? null
+                            : BoxDecoration(border: Border(bottom: hairline)),
+                        child: rows[i],
+                      ),
+                  ],
+                ),
+              ),
+            if (actions.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 14),
+                child: Row(
+                  children: [
+                    for (var i = 0; i < actions.length; i++) ...[
+                      if (i > 0) const SizedBox(width: 8),
+                      Expanded(child: actions[i]),
+                    ],
+                  ],
+                ),
+              ),
+            if (onMore != null)
+              // Ionic `.ev-today .ev-more-link`: padding 10 0 0, semibold.
+              TextButton(
+                onPressed: onMore,
+                style: TextButton.styleFrom(
+                  padding: const EdgeInsets.only(top: 10, bottom: 0),
+                  minimumSize: const Size.fromHeight(34),
+                  textStyle: TextStyle(
+                    fontWeight: FontWeight.w600,
+                    fontSize: EvMetrics.rem(context, 1),
+                    height: EvMetrics.lineHeight(context),
+                  ),
+                ),
+                child: Text(moreLabel ?? context.l10n.signoutMoreOptions),
+              ),
+            ...footer,
+          ],
         ),
+      ),
+    );
+    if (!notInvited) return card;
+    return Padding(
+      padding: margin,
+      child: CustomPaint(
+        foregroundPainter: DashedRRectPainter(
+          color: AppColors.adaptive(context, AppColors.medium),
+          radius: 18,
+        ),
+        child: card,
       ),
     );
   }
@@ -1015,6 +1105,11 @@ Future<void> showEventLegendSheet(BuildContext context) {
 Future<void> openEventNavigation(BuildContext context, String place) async {
   Future<void> open(Uri uri) async {
     try {
+      // Ionic 4.17.18: installed web apps ignore window.open → real link click.
+      if (kIsWeb) {
+        await NativeFileService.openExternal(uri);
+        return;
+      }
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (kDebugMode) debugPrint('openEventNavigation failed: $e');
@@ -1041,7 +1136,13 @@ Future<void> openEventNavigation(BuildContext context, String place) async {
 /// Opens an attachment URL in the browser.
 Future<void> openEventAttachment(String url) async {
   try {
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    final uri = Uri.parse(url);
+    // Ionic 4.17.18: installed web apps ignore window.open → real link click.
+    if (kIsWeb) {
+      await NativeFileService.openExternal(uri);
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   } catch (e) {
     if (kDebugMode) debugPrint('openEventAttachment failed: $e');
   }

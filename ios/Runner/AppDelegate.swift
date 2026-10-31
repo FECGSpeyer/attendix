@@ -26,6 +26,10 @@ import UIKit
     if let registrar = flutterEngine.registrar(forPlugin: "AppIconPlugin") {
       AppIconPlugin.register(with: registrar)
     }
+    // MAC_FILES: iPhone/iPad app on an Apple silicon Mac (Ionic 4.17.20)
+    if let registrar = flutterEngine.registrar(forPlugin: "PlatformInfoPlugin") {
+      PlatformInfoPlugin.register(with: registrar)
+    }
     return super.application(application, didFinishLaunchingWithOptions: launchOptions)
   }
 }
@@ -63,6 +67,27 @@ public class AppIconPlugin: NSObject, FlutterPlugin {
   }
 }
 // APP_ICON end
+
+// MAC_FILES: tells Dart whether the iPhone/iPad app runs on an Apple silicon
+// Mac (de.attendix/platform_info), where the native file preview
+// (UIDocumentInteractionController) shows nothing. Dart side:
+// lib/core/services/native/native_platform.dart (isIosAppOnMac).
+public class PlatformInfoPlugin: NSObject, FlutterPlugin {
+  public static func register(with registrar: FlutterPluginRegistrar) {
+    let channel = FlutterMethodChannel(
+      name: "de.attendix/platform_info", binaryMessenger: registrar.messenger())
+    registrar.addMethodCallDelegate(PlatformInfoPlugin(), channel: channel)
+  }
+
+  public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
+    guard call.method == "isiOSAppOnMac" else {
+      result(FlutterMethodNotImplemented)
+      return
+    }
+    result(ProcessInfo.processInfo.isiOSAppOnMac)
+  }
+}
+// MAC_FILES end
 
 // SCENE: iOS 27 SDK requires UIScene lifecycle adoption (apps without it trap
 // on launch in _UIApplicationEvaluateRuntimeIssueForNoSceneLifecycleAdoption).

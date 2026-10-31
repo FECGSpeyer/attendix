@@ -2189,6 +2189,12 @@ abstract class AppLocalizations {
   /// **'Ort'**
   String get attendancePlace;
 
+  /// attendance.presentNotAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend, nicht eingeteilt'**
+  String get attendancePresentNotAssigned;
+
   /// attendance.presentPeople
   ///
   /// In de, this message translates to:
@@ -5597,6 +5603,18 @@ abstract class AppLocalizations {
   /// **'Ja/Nein'**
   String get extraFieldsYesNo;
 
+  /// fileViewer.downloadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get fileViewerDownloadFailed;
+
+  /// fileViewer.noPreview
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.'**
+  String get fileViewerNoPreview;
+
   /// files.almostFull
   ///
   /// In de, this message translates to:
@@ -8879,6 +8897,90 @@ abstract class AppLocalizations {
   /// **'Fehler beim Trennen'**
   String get orgFlutterUnlinkFailed;
 
+  /// org.gaBeamerFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Dateien im Ablaufplan'**
+  String get orgGaBeamerFiles;
+
+  /// org.gaBeamerFilesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.'**
+  String get orgGaBeamerFilesHint;
+
+  /// org.gaCopied
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel kopiert'**
+  String get orgGaCopied;
+
+  /// org.gaCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopieren'**
+  String get orgGaCopy;
+
+  /// org.gaCreateKey
+  ///
+  /// In de, this message translates to:
+  /// **'Verbindungsschlüssel erstellen'**
+  String get orgGaCreateKey;
+
+  /// org.gaHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.'**
+  String get orgGaHint;
+
+  /// org.gaKeyActive
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel aktiv, endet auf …{hint}'**
+  String orgGaKeyActive(Object hint);
+
+  /// org.gaKeyHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Verbindungsschlüssel'**
+  String get orgGaKeyHeader;
+
+  /// org.gaKeyMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.'**
+  String get orgGaKeyMessage;
+
+  /// org.gaNoKey
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht mit der Gemeinde App verbunden'**
+  String get orgGaNoKey;
+
+  /// org.gaRenewButton
+  ///
+  /// In de, this message translates to:
+  /// **'Erneuern'**
+  String get orgGaRenewButton;
+
+  /// org.gaRenewKey
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel erneuern'**
+  String get orgGaRenewKey;
+
+  /// org.gaRenewMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.'**
+  String get orgGaRenewMessage;
+
+  /// org.gemeindeApp
+  ///
+  /// In de, this message translates to:
+  /// **'Gemeinde App'**
+  String get orgGemeindeApp;
+
   /// org.handover
   ///
   /// In de, this message translates to:
@@ -8986,6 +9088,300 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.'**
   String get orgSongSyncIntro;
+
+  /// orgSongs.alreadyOwn
+  ///
+  /// In de, this message translates to:
+  /// **'Schon bei dir'**
+  String get orgSongsAlreadyOwn;
+
+  /// orgSongs.copiedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert aus {tenant} am {date}'**
+  String orgSongsCopiedFrom(Object tenant, Object date);
+
+  /// orgSongs.copiedTo
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde nach {tenant} kopiert.'**
+  String orgSongsCopiedTo(Object name, Object tenant);
+
+  /// orgSongs.copyAsNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk kopieren'**
+  String get orgSongsCopyAsNew;
+
+  /// orgSongs.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.'**
+  String get orgSongsCopyHint;
+
+  /// orgSongs.copyIntoExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In vorhandenes Werk kopieren'**
+  String get orgSongsCopyIntoExisting;
+
+  /// orgSongs.currentValue
+  ///
+  /// In de, this message translates to:
+  /// **'Im Ziel: {value}'**
+  String orgSongsCurrentValue(Object value);
+
+  /// orgSongs.duplicateWarning
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Im Ziel gibt es schon ein Werk mit diesem Namen.} other {Im Ziel gibt es schon {count} Werke mit diesem Namen.}}'**
+  String orgSongsDuplicateWarning(num count);
+
+  /// orgSongs.entryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werke anderer Instanzen finden und übernehmen'**
+  String get orgSongsEntryHint;
+
+  /// orgSongs.existingSong
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get orgSongsExistingSong;
+
+  /// orgSongs.fieldBeamer
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei'**
+  String get orgSongsFieldBeamer;
+
+  /// orgSongs.fieldCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien'**
+  String get orgSongsFieldCategories;
+
+  /// orgSongs.fieldChoirSolo
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get orgSongsFieldChoirSolo;
+
+  /// orgSongs.fieldDifficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get orgSongsFieldDifficulty;
+
+  /// orgSongs.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Felder übernehmen'**
+  String get orgSongsFields;
+
+  /// orgSongs.fileCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Datei} other {{count} Dateien}}'**
+  String orgSongsFileCount(num count);
+
+  /// orgSongs.fileExists
+  ///
+  /// In de, this message translates to:
+  /// **'Gleichnamige Datei ist schon im Werk'**
+  String get orgSongsFileExists;
+
+  /// orgSongs.files
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien ({selected} von {total})'**
+  String orgSongsFiles(Object selected, Object total);
+
+  /// orgSongs.fromTenant
+  ///
+  /// In de, this message translates to:
+  /// **'aus {tenant}'**
+  String orgSongsFromTenant(Object tenant);
+
+  /// orgSongs.menuEntry
+  ///
+  /// In de, this message translates to:
+  /// **'In der Organisation suchen'**
+  String get orgSongsMenuEntry;
+
+  /// orgSongs.mergedInto
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde in das vorhandene Werk in {tenant} übernommen.'**
+  String orgSongsMergedInto(Object name, Object tenant);
+
+  /// orgSongs.modeExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In vorhandenes Werk kopieren'**
+  String get orgSongsModeExisting;
+
+  /// orgSongs.modeNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk anlegen'**
+  String get orgSongsModeNew;
+
+  /// orgSongs.noPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.'**
+  String get orgSongsNoPermission;
+
+  /// orgSongs.noResults
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Werke gefunden.'**
+  String get orgSongsNoResults;
+
+  /// orgSongs.noTargets
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.'**
+  String get orgSongsNoTargets;
+
+  /// orgSongs.number
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get orgSongsNumber;
+
+  /// orgSongs.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Nummer ist im Ziel schon vergeben.'**
+  String get orgSongsNumberTaken;
+
+  /// orgSongs.onlyWithFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Nur mit Dateien'**
+  String get orgSongsOnlyWithFiles;
+
+  /// orgSongs.overwriteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Überschreiben'**
+  String get orgSongsOverwriteConfirm;
+
+  /// orgSongs.overwriteHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Werte überschreiben?'**
+  String get orgSongsOverwriteHeader;
+
+  /// orgSongs.overwriteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Felder haben im Ziel schon einen Wert und werden überschrieben: {fields}'**
+  String orgSongsOverwriteMessage(Object fields);
+
+  /// orgSongs.prefix
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix'**
+  String get orgSongsPrefix;
+
+  /// orgSongs.resultCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Treffer} other {{count} Treffer}}'**
+  String orgSongsResultCount(num count);
+
+  /// orgSongs.searchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Suche fehlgeschlagen: {error}'**
+  String orgSongsSearchFailed(Object error);
+
+  /// orgSongs.searchPh
+  ///
+  /// In de, this message translates to:
+  /// **'Name oder Nummer'**
+  String get orgSongsSearchPh;
+
+  /// orgSongs.section
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get orgSongsSection;
+
+  /// orgSongs.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get orgSongsSelectAll;
+
+  /// orgSongs.selectNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get orgSongsSelectNone;
+
+  /// orgSongs.sourceGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Dort: {group}'**
+  String orgSongsSourceGroup(Object group);
+
+  /// orgSongs.syncedTarget
+  ///
+  /// In de, this message translates to:
+  /// **'{tenant} nutzt die Werke von {library}. Das Werk wird dort gespeichert.'**
+  String orgSongsSyncedTarget(Object tenant, Object library);
+
+  /// orgSongs.target
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel'**
+  String get orgSongsTarget;
+
+  /// orgSongs.targetGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe im Ziel'**
+  String get orgSongsTargetGroup;
+
+  /// orgSongs.targetLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Zielinstanz konnte nicht geladen werden: {error}'**
+  String orgSongsTargetLoadFailed(Object error);
+
+  /// orgSongs.targetMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Das Zielwerk wurde nicht gefunden.'**
+  String get orgSongsTargetMissing;
+
+  /// orgSongs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke in der Organisation suchen'**
+  String get orgSongsTitle;
+
+  /// orgSongs.useNextFree
+  ///
+  /// In de, this message translates to:
+  /// **'Tippen für die nächste freie Nummer: {number}'**
+  String orgSongsUseNextFree(Object number);
+
+  /// orgSongs.withChoir
+  ///
+  /// In de, this message translates to:
+  /// **'mit Chor'**
+  String get orgSongsWithChoir;
+
+  /// orgSongs.withSolo
+  ///
+  /// In de, this message translates to:
+  /// **'mit Solo'**
+  String get orgSongsWithSolo;
 
   /// org.sourceTenant
   ///
@@ -11699,6 +12095,60 @@ abstract class AppLocalizations {
   /// **'Bass'**
   String get planningBass;
 
+  /// planning.beamer
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer'**
+  String get planningBeamer;
+
+  /// planning.beamerAutoHint
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.'**
+  String get planningBeamerAutoHint;
+
+  /// planning.beamerAutoSong
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an: Werk'**
+  String get planningBeamerAutoSong;
+
+  /// planning.beamerAutoWord
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an: Titel enthält „{word}“'**
+  String planningBeamerAutoWord(Object word);
+
+  /// planning.beamerChangeInApp
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern kannst du die Datei in der Gemeinde App.'**
+  String get planningBeamerChangeInApp;
+
+  /// planning.beamerLinkInApp
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfen kannst du die Datei in der Gemeinde App.'**
+  String get planningBeamerLinkInApp;
+
+  /// planning.beamerMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei fehlt'**
+  String get planningBeamerMissing;
+
+  /// planning.beamerNeeded
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei nötig'**
+  String get planningBeamerNeeded;
+
+  /// planning.beamerNoFile
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Datei verknüpft'**
+  String get planningBeamerNoFile;
+
   /// planning.blockDurationHint
   ///
   /// In de, this message translates to:
@@ -12551,6 +13001,12 @@ abstract class AppLocalizations {
   /// **'Fehler beim Hinzufügen zur Organisation'**
   String get plansAddOrgFailed;
 
+  /// plans.addToOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Organisation hinzufügen'**
+  String get plansAddToOrg;
+
   /// plans.addedToOrg
   ///
   /// In de, this message translates to:
@@ -12682,6 +13138,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bild (A4)'**
   String get plansImageA4;
+
+  /// plans.inOrg
+  ///
+  /// In de, this message translates to:
+  /// **'In Organisation \"{org}\"'**
+  String plansInOrg(Object org);
 
   /// plans.linkCopied
   ///
@@ -19739,6 +20201,12 @@ abstract class AppLocalizations {
   /// **'Für dieses Werk sind keine Aktionen verfügbar.'**
   String get signoutNoSongActions;
 
+  /// signout.notInvited
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht eingeladen'**
+  String get signoutNotInvited;
+
   /// signout.noteChip
   ///
   /// In de, this message translates to:
@@ -20033,6 +20501,12 @@ abstract class AppLocalizations {
   /// **'Alle Werke'**
   String get songsAllSongs;
 
+  /// songs.beamerFile
+  ///
+  /// In de, this message translates to:
+  /// **'SongBeamer-Datei'**
+  String get songsBeamerFile;
+
   /// songs.catalogPdf
   ///
   /// In de, this message translates to:
@@ -20092,6 +20566,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Chor'**
   String get songsChoir;
+
+  /// songs.choirAll
+  ///
+  /// In de, this message translates to:
+  /// **'Chor (alle)'**
+  String get songsChoirAll;
+
+  /// songs.choirAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Datei für alle Sängerinnen und Sänger'**
+  String get songsChoirAllHint;
 
   /// songs.choirOrchShort
   ///
@@ -21215,6 +21701,12 @@ abstract class AppLocalizations {
   /// **'Aktive Mitglieder'**
   String get statsActiveMembers;
 
+  /// stats.additionalFields
+  ///
+  /// In de, this message translates to:
+  /// **'🧩 Zusatzfelder'**
+  String get statsAdditionalFields;
+
   /// stats.ageChart
   ///
   /// In de, this message translates to:
@@ -21274,6 +21766,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termine im Zeitraum'**
   String get statsEventsInPeriod;
+
+  /// stats.fieldAllGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Gruppen'**
+  String get statsFieldAllGroups;
+
+  /// stats.fieldGroupFilter
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get statsFieldGroupFilter;
+
+  /// stats.fieldIncludePaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausierende einbeziehen'**
+  String get statsFieldIncludePaused;
+
+  /// stats.fieldNoPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Auswahl gibt es keine Personen.'**
+  String get statsFieldNoPersons;
+
+  /// stats.fieldNoValue
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Angabe'**
+  String get statsFieldNoValue;
+
+  /// stats.fieldPerGroupChart
+  ///
+  /// In de, this message translates to:
+  /// **'{field} nach Gruppe (in %)'**
+  String statsFieldPerGroupChart(Object field);
+
+  /// stats.fieldSelect
+  ///
+  /// In de, this message translates to:
+  /// **'Feld'**
+  String get statsFieldSelect;
+
+  /// stats.fieldTooltip
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Person} other {{count} Personen}} ({perc}%)'**
+  String statsFieldTooltip(num count, Object perc);
 
   /// stats.filterTenants
   ///
@@ -21976,6 +22516,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Speichern'**
   String get svcSaveFailed;
+
+  /// svc.saveGemeindeAppFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern der Gemeinde-App-Einstellungen'**
+  String get svcSaveGemeindeAppFailed;
 
   /// svc.saveOrgFieldsFailed
   ///

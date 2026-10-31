@@ -239,6 +239,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
               .toList();
           _planId = s['currentPlanId'] as String?;
           _editKey = s['currentEditKey'] as String?;
+          // Ionic 4.17.15: the org assignment is part of the local backup.
+          _isOrgPlan = s['isOrgPlan'] == true;
           restored = true;
         }
       }
@@ -250,6 +252,23 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       _applyTemplate(publicPlanningTemplates.first, persist: false);
     }
     if (mounted) setState(() => _ready = true);
+    if (restored) unawaited(_syncOrgStateFromDb());
+  }
+
+  /// Ionic 4.17.15 `syncOrgStateFromDb`: the DB row (`shared_plans.org_id`)
+  /// is the source of truth for the org assignment, not the local backup.
+  Future<void> _syncOrgStateFromDb() async {
+    final planId = _planId;
+    if (planId == null || !_loggedIn) return;
+    try {
+      final row = await ref.read(planRepositoryWithTenantProvider).getMySharedPlanOrg(planId);
+      if (row == null || !mounted || _planId != planId) return;
+      final isOrgPlan = row.orgId != null;
+      if (isOrgPlan != _isOrgPlan) setState(() => _isOrgPlan = isOrgPlan);
+      unawaited(_persistLocal());
+    } catch (_) {
+      // Offline / not reachable: keep the local state.
+    }
   }
 
   Future<void> _persistLocal() async {
@@ -270,6 +289,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
           'selectedFields': _fields.map((f) => f.toJson()).toList(),
           'currentPlanId': _planId,
           'currentEditKey': _editKey,
+          'isOrgPlan': _isOrgPlan,
         }),
       );
     } catch (e, st) {
@@ -662,6 +682,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       try {
         await repo.setMySharedPlanOrg(_planId!, null);
         setState(() => _isOrgPlan = false);
+        unawaited(_persistLocal());
         ref.invalidate(orgPlansProvider);
         if (mounted) ToastHelper.showSuccess(context, context.l10n.plansRemovedFromOrg);
       } catch (_) {
@@ -678,6 +699,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     try {
       await repo.setMySharedPlanOrg(_planId!, org!.id);
       setState(() => _isOrgPlan = true);
+      unawaited(_persistLocal());
       ref.invalidate(orgPlansProvider);
       if (mounted) ToastHelper.showSuccess(context, context.l10n.plansAddedToOrg(org.name));
     } catch (_) {
@@ -908,7 +930,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         leading: Icon(_isOrgPlan ? Icons.check_circle : Icons.business_outlined,
                             color: _isOrgPlan ? AppColors.success : AppColors.primary),
                         title: Text(
-                          _isOrgPlan ? context.l10n.plansFlutterInOrg(org.name) : context.l10n.plansFlutterAddToOrg,
+                          _isOrgPlan ? context.l10n.plansInOrg(org.name) : context.l10n.plansAddToOrg,
                           style: TextStyle(color: _isOrgPlan ? AppColors.success : AppColors.primary),
                         ),
                         onTap: _toggleOrg,

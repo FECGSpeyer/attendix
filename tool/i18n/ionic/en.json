@@ -642,7 +642,8 @@
     "invalidFileName": "Invalid file name.",
     "invalidName": "Invalid name.",
     "invalidFolderName": "Invalid folder name.",
-    "linkFailed": "Linking failed"
+    "linkFailed": "Linking failed",
+    "saveGemeindeAppFailed": "Could not save the Gemeinde App settings"
   },
   "editor": {
     "formatting": "Formatting",
@@ -794,6 +795,7 @@
     "confirmLinkInvalid": "The confirmation link is invalid or has expired."
   },
   "signout": {
+    "notInvited": "Not invited",
     "current": "Current",
     "legend": "Legend",
     "legendAccepted": "Accepted",
@@ -1159,7 +1161,8 @@
     "onlyNeutral": "Only people without status",
     "onlyNeutralHint": "Only sends to people who have not responded yet",
     "emailLink": "Link in the email",
-    "send": "Send"
+    "send": "Send",
+    "presentNotAssigned": "Present, not assigned"
   },
   "people": {
     "searchPerson": "Search person...",
@@ -1567,7 +1570,16 @@
     "indent": "Indent",
     "outdent": "Outdent",
     "expandBlock": "Expand block",
-    "collapseBlock": "Collapse block"
+    "collapseBlock": "Collapse block",
+    "beamer": "Projector",
+    "beamerNeeded": "Projector file needed",
+    "beamerAutoSong": "On automatically: piece",
+    "beamerAutoWord": "On automatically: title contains “{word}”",
+    "beamerNoFile": "No file linked yet",
+    "beamerLinkInApp": "You can link the file in the Gemeinde App.",
+    "beamerChangeInApp": "You can change the file in the Gemeinde App.",
+    "beamerMissing": "Projector file missing",
+    "beamerAutoHint": "On automatically for pieces and when the title contains “Lied” or “Gedicht”. If you switch it by hand, it stays that way."
   },
   "duty": {
     "placesFree": "{count, plural, one {# place free} other {# places free}}",
@@ -1662,6 +1674,8 @@
     "savePlanFailed": "Could not save the plan",
     "addOrgFailed": "Could not add to the organization",
     "addedToOrg": "Plan added to the organization \"{org}\"",
+    "addToOrg": "Add to organization",
+    "inOrg": "In organization \"{org}\"",
     "removeOrgFailed": "Could not remove from the organization",
     "removedFromOrg": "Plan removed from organization",
     "noTemplate": "No template chosen.",
@@ -1803,6 +1817,8 @@
     "dontClose": "Please do not close the window until the upload is finished.",
     "dropHere": "Drag files here or tap to choose",
     "instrument": "Instrument",
+    "choirAll": "Choir (all)",
+    "choirAllHint": "File for all singers",
     "recording": "Recording",
     "lyrics": "Lyrics",
     "otherFreeText": "Other (free text)",
@@ -1912,7 +1928,8 @@
     "difficulty123": "Difficulty (1/2/3)",
     "prefixOptional": "Prefix (optional)",
     "prefix": "Prefix",
-    "choirOrchShort": "Choir/orch."
+    "choirOrchShort": "Choir/orch.",
+    "beamerFile": "SongBeamer file"
   },
   "messages": {
     "deleteMessage": "Delete message",
@@ -2277,7 +2294,16 @@
     "years": "Years",
     "unexcusedChart": "Unexcused absences",
     "unexcusedAbsences": "Unexcused absences",
-    "orgTenants": "Instances of the organisation"
+    "orgTenants": "Instances of the organisation",
+    "additionalFields": "🧩 Additional fields",
+    "fieldSelect": "Field",
+    "fieldGroupFilter": "Group",
+    "fieldAllGroups": "All groups",
+    "fieldIncludePaused": "Include paused people",
+    "fieldNoValue": "Not specified",
+    "fieldTooltip": "{count, plural, one {# person} other {# people}} ({perc}%)",
+    "fieldPerGroupChart": "{field} by group (in %)",
+    "fieldNoPersons": "There are no people for this selection."
   },
   "history": {
     "title": "Piece history",
@@ -2957,7 +2983,72 @@
     "sourceTenant": "Source instance",
     "tenants": "Instances",
     "thisTenant": "This instance",
-    "noneOwnSongs": "None (own pieces)"
+    "noneOwnSongs": "None (own pieces)",
+    "gemeindeApp": "Gemeinde App",
+    "gaBeamerFiles": "Projector files in the run sheet",
+    "gaBeamerFilesHint": "Shows “Projector file needed” on every item of org plans.",
+    "gaCreateKey": "Create connection key",
+    "gaNoKey": "Not connected to the Gemeinde App yet",
+    "gaRenewKey": "Renew key",
+    "gaKeyActive": "Key active, ends in …{hint}",
+    "gaRenewMessage": "The old key stops working. You need to enter the new one in the Gemeinde App.",
+    "gaRenewButton": "Renew",
+    "gaKeyHeader": "Connection key",
+    "gaKeyMessage": "Only visible now. Enter it in the Gemeinde App under More › Run sheets.",
+    "gaCopy": "Copy",
+    "gaCopied": "Key copied",
+    "gaHint": "Only for FECG Speyer and FECG Schwegenheim. A new key ends the old connection."
+  },
+  "orgSongs": {
+    "section": "Pieces",
+    "title": "Search pieces in the organisation",
+    "entryHint": "Find pieces from other instances and copy them",
+    "menuEntry": "Search in organisation",
+    "searchPh": "Name or number",
+    "noPermission": "Only admins and responsible persons of an instance linked to an organisation can search pieces across the organisation.",
+    "onlyWithFiles": "Only with files",
+    "resultCount": "{count, plural, one {# result} other {# results}}",
+    "fileCount": "{count, plural, one {# file} other {# files}}",
+    "alreadyOwn": "Already yours",
+    "noResults": "No pieces found.",
+    "searchFailed": "Search failed: {error}",
+    "noTargets": "You are not admin or responsible in any other instance you could copy this piece into.",
+    "targetLoadFailed": "Could not load the target instance: {error}",
+    "targetMissing": "The target piece was not found.",
+    "fromTenant": "from {tenant}",
+    "target": "Target",
+    "syncedTarget": "{tenant} uses the pieces of {library}. The piece will be saved there.",
+    "duplicateWarning": "{count, plural, one {The target already has a piece with this name.} other {The target already has # pieces with this name.}}",
+    "modeExisting": "Copy into existing piece",
+    "existingSong": "Piece",
+    "modeNew": "Create as new piece",
+    "number": "Number",
+    "prefix": "Prefix",
+    "numberTaken": "This number is already used in the target.",
+    "useNextFree": "Tap to use the next free number: {number}",
+    "fields": "Copy fields",
+    "currentValue": "In target: {value}",
+    "fieldDifficulty": "Difficulty",
+    "fieldChoirSolo": "Scoring",
+    "withChoir": "with choir",
+    "withSolo": "with solo",
+    "fieldCategories": "Categories",
+    "fieldBeamer": "Projector file",
+    "files": "Files ({selected} of {total})",
+    "selectAll": "All",
+    "selectNone": "None",
+    "sourceGroup": "There: {group}",
+    "targetGroup": "Group in target",
+    "fileExists": "A file with this name is already in the piece",
+    "copyHint": "Files are copied and then belong to the target instance. Missing categories are created. Extra fields are copied if the target has fields with the same name.",
+    "copyIntoExisting": "Copy into existing piece",
+    "copyAsNew": "Copy as new piece",
+    "overwriteHeader": "Overwrite values?",
+    "overwriteMessage": "These fields already have a value in the target and will be overwritten: {fields}",
+    "overwriteConfirm": "Overwrite",
+    "copiedTo": "\"{name}\" was copied to {tenant}.",
+    "mergedInto": "\"{name}\" was copied into the existing piece in {tenant}.",
+    "copiedFrom": "Copied from {tenant} on {date}"
   },
   "orgFields": {
     "title": "Person fields",
@@ -3105,5 +3196,9 @@
     "setup": "Set up Attendix tab",
     "noAccount": "No Attendix account found. Please log in to the Attendix tab first.",
     "choose": "Choose which Attendix instance to show in this channel."
+  },
+  "fileViewer": {
+    "noPreview": "There is no preview for this file. Download it to open it.",
+    "downloadFailed": "File could not be downloaded"
   }
 }

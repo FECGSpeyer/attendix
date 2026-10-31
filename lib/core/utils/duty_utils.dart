@@ -31,11 +31,12 @@ const _cancelledStatuses = {
   AttendanceStatus.absent,
 };
 
-/// Duty state after a status change. Zugesagt/Verspätet → bestätigt (also for
-/// stand-ins), Neutral after a confirmation → angefragt.
+/// Duty state after a status change. Zugesagt/Verspätet confirms a requested
+/// duty but never assigns anybody (attendance and assignment are separate,
+/// Ionic 4.17.9), Neutral after a confirmation → angefragt.
 String? dutyStateAfterStatus(String? current, AttendanceStatus status) {
   if (status == AttendanceStatus.present || status == AttendanceStatus.late) {
-    return (current == null || current == DutyState.requested) ? DutyState.confirmed : current;
+    return current == DutyState.requested ? DutyState.confirmed : current;
   }
   if (status == AttendanceStatus.neutral &&
       (current == DutyState.confirmed || current == DutyState.self)) {
@@ -77,6 +78,22 @@ int dutyRequired(Attendance? att, AttendanceType? type) {
 bool isCancelledStatus(AttendanceStatus status) => _cancelledStatuses.contains(status);
 
 bool isCancelled(PersonAttendance pa) => isCancelledStatus(pa.status);
+
+/// Marked present or late (Ionic attendance.page.ts `isPresent`).
+bool isPresentForDuty(PersonAttendance pa) =>
+    pa.status == AttendanceStatus.present || pa.status == AttendanceStatus.late;
+
+bool _hasNoDuty(PersonAttendance pa) => (pa.dutyState ?? '').isEmpty;
+
+/// Stand-ins that can be assigned: no duty, not cancelled and not already
+/// present (those are listed in [dutyPresentUnassigned]).
+List<PersonAttendance> dutyAvailable(List<PersonAttendance> players) =>
+    players.where((p) => _hasNoDuty(p) && !isCancelled(p) && !isPresentForDuty(p)).toList();
+
+/// "Anwesend, nicht eingeteilt": present but not on duty, e.g. to find a
+/// stand-in at short notice (Ionic 4.17.9).
+List<PersonAttendance> dutyPresentUnassigned(List<PersonAttendance> players) =>
+    players.where((p) => _hasNoDuty(p) && isPresentForDuty(p)).toList();
 
 /// Assigned (requested, confirmed or self) and not cancelled.
 bool occupiesDutyRaw(String? dutyState, AttendanceStatus status) =>

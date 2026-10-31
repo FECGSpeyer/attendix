@@ -1,9 +1,11 @@
 import 'package:flutter/foundation.dart';
+import 'package:http/http.dart' as http;
 import 'package:printing/printing.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import 'native_file_stub.dart'
     if (dart.library.io) 'native_file_io.dart' as impl;
+import '../web_window.dart' as web_window;
 import 'native_platform.dart';
 
 /// NATIVE_MISC: platform-aware file opening / saving / printing.
@@ -28,8 +30,7 @@ class NativeFileService {
   static Future<bool> Function(Uint8List bytes, String fileName) writeAndOpen =
       impl.writeAndOpen;
   @visibleForTesting
-  static Future<bool> Function(Uri uri) launchExternal =
-      (uri) => launchUrl(uri, mode: LaunchMode.externalApplication);
+  static Future<bool> Function(Uri uri) launchExternal = _launchExternal;
   @visibleForTesting
   static Future<bool> Function(Uint8List bytes, String fileName) shareBytes =
       (bytes, fileName) => Printing.sharePdf(bytes: bytes, filename: fileName);
@@ -37,23 +38,84 @@ class NativeFileService {
   static Future<bool> Function(Uint8List bytes, String name) layoutPdf =
       (bytes, name) => Printing.layoutPdf(onLayout: (_) async => bytes, name: name);
 
+  @visibleForTesting
+  static bool Function() isStandaloneWeb = web_window.isStandaloneWebApp;
+  @visibleForTesting
+  static Future<Uint8List> Function(String url) fetchBytes = _fetchBytes;
+  @visibleForTesting
+  static bool Function(Uint8List bytes, String fileName) browserDownload =
+      web_window.downloadBytesInBrowser;
+
   /// Restores the production implementations (tests).
   @visibleForTesting
   static void debugReset() {
     downloadAndOpen = impl.downloadAndOpen;
     writeAndOpen = impl.writeAndOpen;
-    launchExternal = (uri) => launchUrl(uri, mode: LaunchMode.externalApplication);
+    launchExternal = _launchExternal;
     shareBytes = (bytes, fileName) => Printing.sharePdf(bytes: bytes, filename: fileName);
     layoutPdf = (bytes, name) => Printing.layoutPdf(onLayout: (_) async => bytes, name: name);
+    isStandaloneWeb = web_window.isStandaloneWebApp;
+    fetchBytes = _fetchBytes;
+    browserDownload = web_window.downloadBytesInBrowser;
+  }
+
+  static Future<Uint8List> _fetchBytes(String url) async {
+    final response = await http.get(Uri.parse(url));
+    if (response.statusCode < 200 || response.statusCode >= 300) {
+      throw Exception('HTTP ${response.statusCode}');
+    }
+    return response.bodyBytes;
+  }
+
+  /// Ionic 4.17.19: the web app runs installed (Safari "Zum Dock
+  /// hinzufügen" …), where new windows are blocked entirely, so files have
+  /// to be shown inside the app.
+  static bool get isInstalledWebApp => isStandaloneWeb();
+
+  /// Ionic 4.17.19 in-app file viewer "Datei herunterladen": loads [url]
+  /// and hands it to the browser as a download. Returns false on failure.
+  static Future<bool> downloadInBrowser(String url, String fileName) async {
+    try {
+      final bytes = await fetchBytes(url);
+      return browserDownload(
+          bytes, fileName.trim().isEmpty ? fileNameFromUrl(url) : fileName);
+    } catch (e) {
+      if (kDebugMode) debugPrint('[NativeFileService] download failed: $e');
+      return false;
+    }
+  }
+
+  /// Opens [uri] in the browser / external app. Web: Ionic 4.17.18
+  /// `Utils.openInNewTab` – installed web apps ignore `window.open`, so a
+  /// real link is clicked there.
+  static Future<bool> _launchExternal(Uri uri) async {
+    if (kIsWeb && (uri.isScheme('http') || uri.isScheme('https'))) {
+      return web_window.openInNewTab(uri.toString());
+    }
+    return launchUrl(uri, mode: LaunchMode.externalApplication);
+  }
+
+  /// Opens [uri] externally (song links, Ionic `openLink`).
+  static Future<bool> openExternal(Uri uri) async {
+    try {
+      return await launchExternal(uri);
+    } catch (_) {
+      return false;
+    }
   }
 
   /// Ionic `Utils.openFileNative(url, fileName)`: native → download to the
   /// cache dir and open the system viewer; web → open the URL externally.
   /// Returns false when nothing could open the file.
+  ///
+  /// Ionic 4.17.20: the iOS app on an Apple silicon Mac opens http(s) files
+  /// in the browser, the native file preview shows nothing there.
   static Future<bool> openUrl(String url, {String? fileName}) async {
     final uri = Uri.tryParse(url);
     if (uri == null || url.isEmpty) return false;
-    if (isNativeApp) {
+    final viaBrowser =
+        (uri.isScheme('http') || uri.isScheme('https')) && await isIosAppOnMac();
+    if (isNativeApp && !viaBrowser) {
       try {
         final name = (fileName == null || fileName.trim().isEmpty)
             ? fileNameFromUrl(url)

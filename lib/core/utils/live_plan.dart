@@ -60,6 +60,7 @@ class LivePlanState {
     required this.planStart,
     required this.planEnd,
     this.bounds,
+    this.color,
   });
 
   /// 'before' | 'running' | 'ended'
@@ -79,7 +80,11 @@ class LivePlanState {
   /// Start of every item (epoch seconds), for the widget's timeline bar.
   final List<int>? bounds;
 
-  LivePlanState copyWith({String? title, String? subtitle, List<LiveNextItem>? next}) {
+  /// Accent colour of the widget (hex, from the Termin type); null means the
+  /// default teal.
+  final String? color;
+
+  LivePlanState copyWith({String? title, String? subtitle, List<LiveNextItem>? next, String? color}) {
     return LivePlanState(
       phase: phase,
       index: index,
@@ -92,6 +97,7 @@ class LivePlanState {
       planStart: planStart,
       planEnd: planEnd,
       bounds: bounds,
+      color: color ?? this.color,
     );
   }
 
@@ -108,7 +114,40 @@ class LivePlanState {
         'planStart': planStart,
         'planEnd': planEnd,
         if (bounds != null) 'bounds': bounds,
+        if (color != null) 'color': color,
       };
+}
+
+/// Ionic colour names of attendance_types.color as hex, in their dark-mode
+/// shade because the widgets have a dark background. Hex values pass through.
+const Map<String, String> liveColors = {
+  'primary': '#5eb8bf',
+  'secondary': '#50c8ff',
+  'tertiary': '#8a85ff',
+  'success': '#25b15d',
+  'warning': '#ffd534',
+  'danger': '#ff4961',
+  'rosa': '#be72c0',
+  'mint': '#36c2c4',
+  'orange': '#ec8d09',
+  'holiday': '#c07a90',
+  'medium': '#989aa2',
+};
+
+final _hexColor = RegExp(r'^#[0-9a-f]{6}$');
+
+/// Widget accent for a Termin type colour, or null for the default.
+String? liveColor(String? typeColor) {
+  final value = typeColor?.trim().toLowerCase();
+  if (value == null || value.isEmpty) return null;
+  if (_hexColor.hasMatch(value)) return value;
+  return liveColors[value];
+}
+
+/// State with the Termin type's accent colour attached (no-op without one).
+LivePlanState? withLiveColor(LivePlanState? state, String? typeColor) {
+  final color = liveColor(typeColor);
+  return state != null && color != null ? state.copyWith(color: color) : state;
 }
 
 /// IANA time zones for the plan times (tenant.timezone).

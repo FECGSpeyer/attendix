@@ -14,6 +14,7 @@ export 'shift_providers.dart';
 export 'cross_tenant_providers.dart';
 export 'feedback_providers.dart';
 export 'organisation_providers.dart';
+export 'org_song_providers.dart';
 export 'viewer_providers.dart';
 export 'parent_providers.dart';
 export 'church_providers.dart';

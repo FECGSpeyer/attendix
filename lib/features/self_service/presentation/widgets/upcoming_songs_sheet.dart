@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/date_helper.dart';
@@ -23,7 +24,7 @@ class UpcomingSongsSheet extends ConsumerWidget {
   const UpcomingSongsSheet({super.key});
 
   /// One merged PDF of all upcoming songs' files for the player's own
-  /// instrument (choir: fallback to files noted "Chor").
+  /// instrument (choir: fallback to "Chor (alle)" files).
   Future<void> _printAllCurrentFiles(BuildContext context, WidgetRef ref) async {
     final groups = ref.read(upcomingSongsProvider).valueOrNull ?? const [];
     final player = await ref.read(currentSelfServicePlayerProvider.future);
@@ -138,14 +139,14 @@ class UpcomingSongsSheet extends ConsumerWidget {
 }
 
 /// Ionic hasSongNotesForPlayer: the song lists the player's instrument
-/// (choir: or has a file noted "Chor").
+/// (choir: or has a "Chor (alle)" file).
 bool hasSongNotesForPlayer(Song? song, int? instrumentId, {required bool isChoir}) {
   if (song == null) return false;
   final hasInstrument =
       instrumentId != null && (song.instrumentIds ?? const <int>[]).contains(instrumentId);
   if (isChoir) {
     final hasChoirNote =
-        (song.files ?? const <SongFile>[]).any((f) => f.note?.toLowerCase() == 'chor');
+        (song.files ?? const <SongFile>[]).any((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note));
     return hasInstrument || hasChoirNote;
   }
   return hasInstrument;
@@ -258,7 +259,7 @@ class _SongListItem extends StatelessWidget {
 }
 
 /// Collects one print entry per upcoming song: the file for [instrumentId],
-/// or for choirs the file noted "Chor" (Ionic printAllCurrentFiles).
+/// or for choirs the "Chor (alle)" file (Ionic printAllCurrentFiles).
 List<SongPrintEntry> collectCurrentSongPrintEntries(
   List<UpcomingSongGroup> groups,
   int? instrumentId, {
@@ -272,7 +273,7 @@ List<SongPrintEntry> collectCurrentSongPrintEntries(
       if (song == null || files == null) continue;
       var file = files.where((f) => f.instrumentId == instrumentId).firstOrNull;
       if (file == null && isChoir) {
-        file = files.where((f) => f.note?.toLowerCase() == 'chor').firstOrNull;
+        file = files.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note)).firstOrNull;
       }
       if (file != null) entries.add(SongPrintEntry(song: song, file: file));
     }

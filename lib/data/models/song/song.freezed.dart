@@ -62,6 +62,22 @@ mixin _$Song {
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile => throw _privateConstructorUsedError;
+
+  /// Origin when the Werk was copied from another instance of the
+  /// organisation (`songs.copied_from`, Ionic 4.17.13). Written only by
+  /// the org copy, never by Song updates.
+  @JsonKey(
+    name: 'copied_from',
+    includeToJson: false,
+    fromJson: songCopiedFromOrNull,
+  )
+  SongCopiedFrom? get copiedFrom => throw _privateConstructorUsedError;
+
   /// Serializes this Song to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -97,7 +113,19 @@ abstract class $SongCopyWith<$Res> {
     @JsonKey(name: 'category_ids') List<String>? categoryIds,
     @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    BeamerFile? beamerFile,
+    @JsonKey(
+      name: 'copied_from',
+      includeToJson: false,
+      fromJson: songCopiedFromOrNull,
+    )
+    SongCopiedFrom? copiedFrom,
   });
+
+  $BeamerFileCopyWith<$Res>? get beamerFile;
+  $SongCopiedFromCopyWith<$Res>? get copiedFrom;
 }
 
 /// @nodoc
@@ -135,6 +163,8 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
     Object? categoryIds = freezed,
     Object? additionalFields = freezed,
     Object? createdAt = freezed,
+    Object? beamerFile = freezed,
+    Object? copiedFrom = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -238,9 +268,47 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                     ? _value.createdAt
                     : createdAt // ignore: cast_nullable_to_non_nullable
                         as DateTime?,
+            beamerFile:
+                freezed == beamerFile
+                    ? _value.beamerFile
+                    : beamerFile // ignore: cast_nullable_to_non_nullable
+                        as BeamerFile?,
+            copiedFrom:
+                freezed == copiedFrom
+                    ? _value.copiedFrom
+                    : copiedFrom // ignore: cast_nullable_to_non_nullable
+                        as SongCopiedFrom?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of Song
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BeamerFileCopyWith<$Res>? get beamerFile {
+    if (_value.beamerFile == null) {
+      return null;
+    }
+
+    return $BeamerFileCopyWith<$Res>(_value.beamerFile!, (value) {
+      return _then(_value.copyWith(beamerFile: value) as $Val);
+    });
+  }
+
+  /// Create a copy of Song
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $SongCopiedFromCopyWith<$Res>? get copiedFrom {
+    if (_value.copiedFrom == null) {
+      return null;
+    }
+
+    return $SongCopiedFromCopyWith<$Res>(_value.copiedFrom!, (value) {
+      return _then(_value.copyWith(copiedFrom: value) as $Val);
+    });
   }
 }
 
@@ -273,7 +341,21 @@ abstract class _$$SongImplCopyWith<$Res> implements $SongCopyWith<$Res> {
     @JsonKey(name: 'category_ids') List<String>? categoryIds,
     @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    BeamerFile? beamerFile,
+    @JsonKey(
+      name: 'copied_from',
+      includeToJson: false,
+      fromJson: songCopiedFromOrNull,
+    )
+    SongCopiedFrom? copiedFrom,
   });
+
+  @override
+  $BeamerFileCopyWith<$Res>? get beamerFile;
+  @override
+  $SongCopiedFromCopyWith<$Res>? get copiedFrom;
 }
 
 /// @nodoc
@@ -308,6 +390,8 @@ class __$$SongImplCopyWithImpl<$Res>
     Object? categoryIds = freezed,
     Object? additionalFields = freezed,
     Object? createdAt = freezed,
+    Object? beamerFile = freezed,
+    Object? copiedFrom = freezed,
   }) {
     return _then(
       _$SongImpl(
@@ -411,6 +495,16 @@ class __$$SongImplCopyWithImpl<$Res>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                     as DateTime?,
+        beamerFile:
+            freezed == beamerFile
+                ? _value.beamerFile
+                : beamerFile // ignore: cast_nullable_to_non_nullable
+                    as BeamerFile?,
+        copiedFrom:
+            freezed == copiedFrom
+                ? _value.copiedFrom
+                : copiedFrom // ignore: cast_nullable_to_non_nullable
+                    as SongCopiedFrom?,
       ),
     );
   }
@@ -441,6 +535,15 @@ class _$SongImpl implements _Song {
     @JsonKey(name: 'additional_fields')
     final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    this.beamerFile,
+    @JsonKey(
+      name: 'copied_from',
+      includeToJson: false,
+      fromJson: songCopiedFromOrNull,
+    )
+    this.copiedFrom,
   }) : _instrumentIds = instrumentIds,
        _files = files,
        _categoryIds = categoryIds,
@@ -546,9 +649,27 @@ class _$SongImpl implements _Song {
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
 
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @override
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  final BeamerFile? beamerFile;
+
+  /// Origin when the Werk was copied from another instance of the
+  /// organisation (`songs.copied_from`, Ionic 4.17.13). Written only by
+  /// the org copy, never by Song updates.
+  @override
+  @JsonKey(
+    name: 'copied_from',
+    includeToJson: false,
+    fromJson: songCopiedFromOrNull,
+  )
+  final SongCopiedFrom? copiedFrom;
+
   @override
   String toString() {
-    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt)';
+    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt, beamerFile: $beamerFile, copiedFrom: $copiedFrom)';
   }
 
   @override
@@ -595,7 +716,11 @@ class _$SongImpl implements _Song {
               _additionalFields,
             ) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.beamerFile, beamerFile) ||
+                other.beamerFile == beamerFile) &&
+            (identical(other.copiedFrom, copiedFrom) ||
+                other.copiedFrom == copiedFrom));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -622,6 +747,8 @@ class _$SongImpl implements _Song {
     const DeepCollectionEquality().hash(_categoryIds),
     const DeepCollectionEquality().hash(_additionalFields),
     createdAt,
+    beamerFile,
+    copiedFrom,
   ]);
 
   /// Create a copy of Song
@@ -661,6 +788,15 @@ abstract class _Song implements Song {
     @JsonKey(name: 'additional_fields')
     final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    final BeamerFile? beamerFile,
+    @JsonKey(
+      name: 'copied_from',
+      includeToJson: false,
+      fromJson: songCopiedFromOrNull,
+    )
+    final SongCopiedFrom? copiedFrom,
   }) = _$SongImpl;
 
   factory _Song.fromJson(Map<String, dynamic> json) = _$SongImpl.fromJson;
@@ -725,11 +861,257 @@ abstract class _Song implements Song {
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
 
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @override
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile;
+
+  /// Origin when the Werk was copied from another instance of the
+  /// organisation (`songs.copied_from`, Ionic 4.17.13). Written only by
+  /// the org copy, never by Song updates.
+  @override
+  @JsonKey(
+    name: 'copied_from',
+    includeToJson: false,
+    fromJson: songCopiedFromOrNull,
+  )
+  SongCopiedFrom? get copiedFrom;
+
   /// Create a copy of Song
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$SongImplCopyWith<_$SongImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+SongCopiedFrom _$SongCopiedFromFromJson(Map<String, dynamic> json) {
+  return _SongCopiedFrom.fromJson(json);
+}
+
+/// @nodoc
+mixin _$SongCopiedFrom {
+  int get tenantId => throw _privateConstructorUsedError;
+  String get tenantName => throw _privateConstructorUsedError;
+  int get songId => throw _privateConstructorUsedError;
+  String get copiedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this SongCopiedFrom to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of SongCopiedFrom
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $SongCopiedFromCopyWith<SongCopiedFrom> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $SongCopiedFromCopyWith<$Res> {
+  factory $SongCopiedFromCopyWith(
+    SongCopiedFrom value,
+    $Res Function(SongCopiedFrom) then,
+  ) = _$SongCopiedFromCopyWithImpl<$Res, SongCopiedFrom>;
+  @useResult
+  $Res call({int tenantId, String tenantName, int songId, String copiedAt});
+}
+
+/// @nodoc
+class _$SongCopiedFromCopyWithImpl<$Res, $Val extends SongCopiedFrom>
+    implements $SongCopiedFromCopyWith<$Res> {
+  _$SongCopiedFromCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of SongCopiedFrom
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+    Object? tenantName = null,
+    Object? songId = null,
+    Object? copiedAt = null,
+  }) {
+    return _then(
+      _value.copyWith(
+            tenantId:
+                null == tenantId
+                    ? _value.tenantId
+                    : tenantId // ignore: cast_nullable_to_non_nullable
+                        as int,
+            tenantName:
+                null == tenantName
+                    ? _value.tenantName
+                    : tenantName // ignore: cast_nullable_to_non_nullable
+                        as String,
+            songId:
+                null == songId
+                    ? _value.songId
+                    : songId // ignore: cast_nullable_to_non_nullable
+                        as int,
+            copiedAt:
+                null == copiedAt
+                    ? _value.copiedAt
+                    : copiedAt // ignore: cast_nullable_to_non_nullable
+                        as String,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$SongCopiedFromImplCopyWith<$Res>
+    implements $SongCopiedFromCopyWith<$Res> {
+  factory _$$SongCopiedFromImplCopyWith(
+    _$SongCopiedFromImpl value,
+    $Res Function(_$SongCopiedFromImpl) then,
+  ) = __$$SongCopiedFromImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({int tenantId, String tenantName, int songId, String copiedAt});
+}
+
+/// @nodoc
+class __$$SongCopiedFromImplCopyWithImpl<$Res>
+    extends _$SongCopiedFromCopyWithImpl<$Res, _$SongCopiedFromImpl>
+    implements _$$SongCopiedFromImplCopyWith<$Res> {
+  __$$SongCopiedFromImplCopyWithImpl(
+    _$SongCopiedFromImpl _value,
+    $Res Function(_$SongCopiedFromImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of SongCopiedFrom
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? tenantId = null,
+    Object? tenantName = null,
+    Object? songId = null,
+    Object? copiedAt = null,
+  }) {
+    return _then(
+      _$SongCopiedFromImpl(
+        tenantId:
+            null == tenantId
+                ? _value.tenantId
+                : tenantId // ignore: cast_nullable_to_non_nullable
+                    as int,
+        tenantName:
+            null == tenantName
+                ? _value.tenantName
+                : tenantName // ignore: cast_nullable_to_non_nullable
+                    as String,
+        songId:
+            null == songId
+                ? _value.songId
+                : songId // ignore: cast_nullable_to_non_nullable
+                    as int,
+        copiedAt:
+            null == copiedAt
+                ? _value.copiedAt
+                : copiedAt // ignore: cast_nullable_to_non_nullable
+                    as String,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+@JsonSerializable()
+class _$SongCopiedFromImpl implements _SongCopiedFrom {
+  const _$SongCopiedFromImpl({
+    required this.tenantId,
+    required this.tenantName,
+    required this.songId,
+    required this.copiedAt,
+  });
+
+  factory _$SongCopiedFromImpl.fromJson(Map<String, dynamic> json) =>
+      _$$SongCopiedFromImplFromJson(json);
+
+  @override
+  final int tenantId;
+  @override
+  final String tenantName;
+  @override
+  final int songId;
+  @override
+  final String copiedAt;
+
+  @override
+  String toString() {
+    return 'SongCopiedFrom(tenantId: $tenantId, tenantName: $tenantName, songId: $songId, copiedAt: $copiedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$SongCopiedFromImpl &&
+            (identical(other.tenantId, tenantId) ||
+                other.tenantId == tenantId) &&
+            (identical(other.tenantName, tenantName) ||
+                other.tenantName == tenantName) &&
+            (identical(other.songId, songId) || other.songId == songId) &&
+            (identical(other.copiedAt, copiedAt) ||
+                other.copiedAt == copiedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode =>
+      Object.hash(runtimeType, tenantId, tenantName, songId, copiedAt);
+
+  /// Create a copy of SongCopiedFrom
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$SongCopiedFromImplCopyWith<_$SongCopiedFromImpl> get copyWith =>
+      __$$SongCopiedFromImplCopyWithImpl<_$SongCopiedFromImpl>(
+        this,
+        _$identity,
+      );
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$SongCopiedFromImplToJson(this);
+  }
+}
+
+abstract class _SongCopiedFrom implements SongCopiedFrom {
+  const factory _SongCopiedFrom({
+    required final int tenantId,
+    required final String tenantName,
+    required final int songId,
+    required final String copiedAt,
+  }) = _$SongCopiedFromImpl;
+
+  factory _SongCopiedFrom.fromJson(Map<String, dynamic> json) =
+      _$SongCopiedFromImpl.fromJson;
+
+  @override
+  int get tenantId;
+  @override
+  String get tenantName;
+  @override
+  int get songId;
+  @override
+  String get copiedAt;
+
+  /// Create a copy of SongCopiedFrom
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$SongCopiedFromImplCopyWith<_$SongCopiedFromImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

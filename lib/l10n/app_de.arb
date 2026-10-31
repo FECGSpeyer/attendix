@@ -1625,6 +1625,10 @@
   "@attendancePlace": {
     "description": "attendance.place"
   },
+  "attendancePresentNotAssigned": "Anwesend, nicht eingeteilt",
+  "@attendancePresentNotAssigned": {
+    "description": "attendance.presentNotAssigned"
+  },
   "attendancePresentPeople": "Anwesende",
   "@attendancePresentPeople": {
     "description": "attendance.presentPeople"
@@ -4177,6 +4181,14 @@
   "@extraFieldsYesNo": {
     "description": "extraFields.yesNo"
   },
+  "fileViewerDownloadFailed": "Datei konnte nicht heruntergeladen werden",
+  "@fileViewerDownloadFailed": {
+    "description": "fileViewer.downloadFailed"
+  },
+  "fileViewerNoPreview": "Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.",
+  "@fileViewerNoPreview": {
+    "description": "fileViewer.noPreview"
+  },
   "filesAlmostFull": " · fast voll",
   "@filesAlmostFull": {
     "description": "files.almostFull"
@@ -6642,6 +6654,65 @@
   "@orgFlutterUnlinkFailed": {
     "description": "org.flutter.unlinkFailed"
   },
+  "orgGaBeamerFiles": "Beamer-Dateien im Ablaufplan",
+  "@orgGaBeamerFiles": {
+    "description": "org.gaBeamerFiles"
+  },
+  "orgGaBeamerFilesHint": "Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.",
+  "@orgGaBeamerFilesHint": {
+    "description": "org.gaBeamerFilesHint"
+  },
+  "orgGaCopied": "Schlüssel kopiert",
+  "@orgGaCopied": {
+    "description": "org.gaCopied"
+  },
+  "orgGaCopy": "Kopieren",
+  "@orgGaCopy": {
+    "description": "org.gaCopy"
+  },
+  "orgGaCreateKey": "Verbindungsschlüssel erstellen",
+  "@orgGaCreateKey": {
+    "description": "org.gaCreateKey"
+  },
+  "orgGaHint": "Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.",
+  "@orgGaHint": {
+    "description": "org.gaHint"
+  },
+  "orgGaKeyActive": "Schlüssel aktiv, endet auf …{hint}",
+  "@orgGaKeyActive": {
+    "description": "org.gaKeyActive",
+    "placeholders": {
+      "hint": {}
+    }
+  },
+  "orgGaKeyHeader": "Verbindungsschlüssel",
+  "@orgGaKeyHeader": {
+    "description": "org.gaKeyHeader"
+  },
+  "orgGaKeyMessage": "Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.",
+  "@orgGaKeyMessage": {
+    "description": "org.gaKeyMessage"
+  },
+  "orgGaNoKey": "Noch nicht mit der Gemeinde App verbunden",
+  "@orgGaNoKey": {
+    "description": "org.gaNoKey"
+  },
+  "orgGaRenewButton": "Erneuern",
+  "@orgGaRenewButton": {
+    "description": "org.gaRenewButton"
+  },
+  "orgGaRenewKey": "Schlüssel erneuern",
+  "@orgGaRenewKey": {
+    "description": "org.gaRenewKey"
+  },
+  "orgGaRenewMessage": "Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.",
+  "@orgGaRenewMessage": {
+    "description": "org.gaRenewMessage"
+  },
+  "orgGemeindeApp": "Gemeinde App",
+  "@orgGemeindeApp": {
+    "description": "org.gemeindeApp"
+  },
   "orgHandover": "Übergabe",
   "@orgHandover": {
     "description": "org.handover"
@@ -6713,6 +6784,258 @@
   "orgSongSyncIntro": "Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.",
   "@orgSongSyncIntro": {
     "description": "org.songSyncIntro"
+  },
+  "orgSongsAlreadyOwn": "Schon bei dir",
+  "@orgSongsAlreadyOwn": {
+    "description": "orgSongs.alreadyOwn"
+  },
+  "orgSongsCopiedFrom": "Kopiert aus {tenant} am {date}",
+  "@orgSongsCopiedFrom": {
+    "description": "orgSongs.copiedFrom",
+    "placeholders": {
+      "tenant": {},
+      "date": {}
+    }
+  },
+  "orgSongsCopiedTo": "„{name}“ wurde nach {tenant} kopiert.",
+  "@orgSongsCopiedTo": {
+    "description": "orgSongs.copiedTo",
+    "placeholders": {
+      "name": {},
+      "tenant": {}
+    }
+  },
+  "orgSongsCopyAsNew": "Als neues Werk kopieren",
+  "@orgSongsCopyAsNew": {
+    "description": "orgSongs.copyAsNew"
+  },
+  "orgSongsCopyHint": "Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.",
+  "@orgSongsCopyHint": {
+    "description": "orgSongs.copyHint"
+  },
+  "orgSongsCopyIntoExisting": "In vorhandenes Werk kopieren",
+  "@orgSongsCopyIntoExisting": {
+    "description": "orgSongs.copyIntoExisting"
+  },
+  "orgSongsCurrentValue": "Im Ziel: {value}",
+  "@orgSongsCurrentValue": {
+    "description": "orgSongs.currentValue",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "orgSongsDuplicateWarning": "{count, plural, one {Im Ziel gibt es schon ein Werk mit diesem Namen.} other {Im Ziel gibt es schon {count} Werke mit diesem Namen.}}",
+  "@orgSongsDuplicateWarning": {
+    "description": "orgSongs.duplicateWarning",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsEntryHint": "Werke anderer Instanzen finden und übernehmen",
+  "@orgSongsEntryHint": {
+    "description": "orgSongs.entryHint"
+  },
+  "orgSongsExistingSong": "Werk",
+  "@orgSongsExistingSong": {
+    "description": "orgSongs.existingSong"
+  },
+  "orgSongsFieldBeamer": "Beamer-Datei",
+  "@orgSongsFieldBeamer": {
+    "description": "orgSongs.fieldBeamer"
+  },
+  "orgSongsFieldCategories": "Kategorien",
+  "@orgSongsFieldCategories": {
+    "description": "orgSongs.fieldCategories"
+  },
+  "orgSongsFieldChoirSolo": "Besetzung",
+  "@orgSongsFieldChoirSolo": {
+    "description": "orgSongs.fieldChoirSolo"
+  },
+  "orgSongsFieldDifficulty": "Schwierigkeit",
+  "@orgSongsFieldDifficulty": {
+    "description": "orgSongs.fieldDifficulty"
+  },
+  "orgSongsFields": "Felder übernehmen",
+  "@orgSongsFields": {
+    "description": "orgSongs.fields"
+  },
+  "orgSongsFileCount": "{count, plural, one {{count} Datei} other {{count} Dateien}}",
+  "@orgSongsFileCount": {
+    "description": "orgSongs.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsFileExists": "Gleichnamige Datei ist schon im Werk",
+  "@orgSongsFileExists": {
+    "description": "orgSongs.fileExists"
+  },
+  "orgSongsFiles": "Dateien ({selected} von {total})",
+  "@orgSongsFiles": {
+    "description": "orgSongs.files",
+    "placeholders": {
+      "selected": {},
+      "total": {}
+    }
+  },
+  "orgSongsFromTenant": "aus {tenant}",
+  "@orgSongsFromTenant": {
+    "description": "orgSongs.fromTenant",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "orgSongsMenuEntry": "In der Organisation suchen",
+  "@orgSongsMenuEntry": {
+    "description": "orgSongs.menuEntry"
+  },
+  "orgSongsMergedInto": "„{name}“ wurde in das vorhandene Werk in {tenant} übernommen.",
+  "@orgSongsMergedInto": {
+    "description": "orgSongs.mergedInto",
+    "placeholders": {
+      "name": {},
+      "tenant": {}
+    }
+  },
+  "orgSongsModeExisting": "In vorhandenes Werk kopieren",
+  "@orgSongsModeExisting": {
+    "description": "orgSongs.modeExisting"
+  },
+  "orgSongsModeNew": "Als neues Werk anlegen",
+  "@orgSongsModeNew": {
+    "description": "orgSongs.modeNew"
+  },
+  "orgSongsNoPermission": "Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.",
+  "@orgSongsNoPermission": {
+    "description": "orgSongs.noPermission"
+  },
+  "orgSongsNoResults": "Keine Werke gefunden.",
+  "@orgSongsNoResults": {
+    "description": "orgSongs.noResults"
+  },
+  "orgSongsNoTargets": "Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.",
+  "@orgSongsNoTargets": {
+    "description": "orgSongs.noTargets"
+  },
+  "orgSongsNumber": "Nummer",
+  "@orgSongsNumber": {
+    "description": "orgSongs.number"
+  },
+  "orgSongsNumberTaken": "Diese Nummer ist im Ziel schon vergeben.",
+  "@orgSongsNumberTaken": {
+    "description": "orgSongs.numberTaken"
+  },
+  "orgSongsOnlyWithFiles": "Nur mit Dateien",
+  "@orgSongsOnlyWithFiles": {
+    "description": "orgSongs.onlyWithFiles"
+  },
+  "orgSongsOverwriteConfirm": "Überschreiben",
+  "@orgSongsOverwriteConfirm": {
+    "description": "orgSongs.overwriteConfirm"
+  },
+  "orgSongsOverwriteHeader": "Werte überschreiben?",
+  "@orgSongsOverwriteHeader": {
+    "description": "orgSongs.overwriteHeader"
+  },
+  "orgSongsOverwriteMessage": "Diese Felder haben im Ziel schon einen Wert und werden überschrieben: {fields}",
+  "@orgSongsOverwriteMessage": {
+    "description": "orgSongs.overwriteMessage",
+    "placeholders": {
+      "fields": {}
+    }
+  },
+  "orgSongsPrefix": "Präfix",
+  "@orgSongsPrefix": {
+    "description": "orgSongs.prefix"
+  },
+  "orgSongsResultCount": "{count, plural, one {{count} Treffer} other {{count} Treffer}}",
+  "@orgSongsResultCount": {
+    "description": "orgSongs.resultCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsSearchFailed": "Suche fehlgeschlagen: {error}",
+  "@orgSongsSearchFailed": {
+    "description": "orgSongs.searchFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "orgSongsSearchPh": "Name oder Nummer",
+  "@orgSongsSearchPh": {
+    "description": "orgSongs.searchPh"
+  },
+  "orgSongsSection": "Werke",
+  "@orgSongsSection": {
+    "description": "orgSongs.section"
+  },
+  "orgSongsSelectAll": "Alle",
+  "@orgSongsSelectAll": {
+    "description": "orgSongs.selectAll"
+  },
+  "orgSongsSelectNone": "Keine",
+  "@orgSongsSelectNone": {
+    "description": "orgSongs.selectNone"
+  },
+  "orgSongsSourceGroup": "Dort: {group}",
+  "@orgSongsSourceGroup": {
+    "description": "orgSongs.sourceGroup",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "orgSongsSyncedTarget": "{tenant} nutzt die Werke von {library}. Das Werk wird dort gespeichert.",
+  "@orgSongsSyncedTarget": {
+    "description": "orgSongs.syncedTarget",
+    "placeholders": {
+      "tenant": {},
+      "library": {}
+    }
+  },
+  "orgSongsTarget": "Ziel",
+  "@orgSongsTarget": {
+    "description": "orgSongs.target"
+  },
+  "orgSongsTargetGroup": "Gruppe im Ziel",
+  "@orgSongsTargetGroup": {
+    "description": "orgSongs.targetGroup"
+  },
+  "orgSongsTargetLoadFailed": "Zielinstanz konnte nicht geladen werden: {error}",
+  "@orgSongsTargetLoadFailed": {
+    "description": "orgSongs.targetLoadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "orgSongsTargetMissing": "Das Zielwerk wurde nicht gefunden.",
+  "@orgSongsTargetMissing": {
+    "description": "orgSongs.targetMissing"
+  },
+  "orgSongsTitle": "Werke in der Organisation suchen",
+  "@orgSongsTitle": {
+    "description": "orgSongs.title"
+  },
+  "orgSongsUseNextFree": "Tippen für die nächste freie Nummer: {number}",
+  "@orgSongsUseNextFree": {
+    "description": "orgSongs.useNextFree",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "orgSongsWithChoir": "mit Chor",
+  "@orgSongsWithChoir": {
+    "description": "orgSongs.withChoir"
+  },
+  "orgSongsWithSolo": "mit Solo",
+  "@orgSongsWithSolo": {
+    "description": "orgSongs.withSolo"
   },
   "orgSourceTenant": "Quellinstanz",
   "@orgSourceTenant": {
@@ -8801,6 +9124,45 @@
   "@planningBass": {
     "description": "planning.bass"
   },
+  "planningBeamer": "Beamer",
+  "@planningBeamer": {
+    "description": "planning.beamer"
+  },
+  "planningBeamerAutoHint": "Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.",
+  "@planningBeamerAutoHint": {
+    "description": "planning.beamerAutoHint"
+  },
+  "planningBeamerAutoSong": "Automatisch an: Werk",
+  "@planningBeamerAutoSong": {
+    "description": "planning.beamerAutoSong"
+  },
+  "planningBeamerAutoWord": "Automatisch an: Titel enthält „{word}“",
+  "@planningBeamerAutoWord": {
+    "description": "planning.beamerAutoWord",
+    "placeholders": {
+      "word": {}
+    }
+  },
+  "planningBeamerChangeInApp": "Ändern kannst du die Datei in der Gemeinde App.",
+  "@planningBeamerChangeInApp": {
+    "description": "planning.beamerChangeInApp"
+  },
+  "planningBeamerLinkInApp": "Verknüpfen kannst du die Datei in der Gemeinde App.",
+  "@planningBeamerLinkInApp": {
+    "description": "planning.beamerLinkInApp"
+  },
+  "planningBeamerMissing": "Beamer-Datei fehlt",
+  "@planningBeamerMissing": {
+    "description": "planning.beamerMissing"
+  },
+  "planningBeamerNeeded": "Beamer-Datei nötig",
+  "@planningBeamerNeeded": {
+    "description": "planning.beamerNeeded"
+  },
+  "planningBeamerNoFile": "Noch keine Datei verknüpft",
+  "@planningBeamerNoFile": {
+    "description": "planning.beamerNoFile"
+  },
   "planningBlockDurationHint": "Die Dauer ergibt sich aus den Unterpunkten.",
   "@planningBlockDurationHint": {
     "description": "planning.blockDurationHint"
@@ -9426,6 +9788,10 @@
   "@plansAddOrgFailed": {
     "description": "plans.addOrgFailed"
   },
+  "plansAddToOrg": "Zur Organisation hinzufügen",
+  "@plansAddToOrg": {
+    "description": "plans.addToOrg"
+  },
   "plansAddedToOrg": "Plan zur Organisation \"{org}\" hinzugefügt",
   "@plansAddedToOrg": {
     "description": "plans.addedToOrg",
@@ -9528,6 +9894,13 @@
   "plansImageA4": "Bild (A4)",
   "@plansImageA4": {
     "description": "plans.imageA4"
+  },
+  "plansInOrg": "In Organisation \"{org}\"",
+  "@plansInOrg": {
+    "description": "plans.inOrg",
+    "placeholders": {
+      "org": {}
+    }
   },
   "plansLinkCopied": "Link kopiert",
   "@plansLinkCopied": {
@@ -14990,6 +15363,10 @@
   "@signoutNoSongActions": {
     "description": "signout.noSongActions"
   },
+  "signoutNotInvited": "Nicht eingeladen",
+  "@signoutNotInvited": {
+    "description": "signout.notInvited"
+  },
   "signoutNoteChip": "Notiz: {note}",
   "@signoutNoteChip": {
     "description": "signout.noteChip",
@@ -15195,6 +15572,10 @@
   "@songsAllSongs": {
     "description": "songs.allSongs"
   },
+  "songsBeamerFile": "SongBeamer-Datei",
+  "@songsBeamerFile": {
+    "description": "songs.beamerFile"
+  },
   "songsCatalogPdf": "Werkverzeichnis als PDF",
   "@songsCatalogPdf": {
     "description": "songs.catalogPdf"
@@ -15237,6 +15618,14 @@
   "songsChoir": "Chor",
   "@songsChoir": {
     "description": "songs.choir"
+  },
+  "songsChoirAll": "Chor (alle)",
+  "@songsChoirAll": {
+    "description": "songs.choirAll"
+  },
+  "songsChoirAllHint": "Datei für alle Sängerinnen und Sänger",
+  "@songsChoirAllHint": {
+    "description": "songs.choirAllHint"
   },
   "songsChoirOrchShort": "Chor/Orch.",
   "@songsChoirOrchShort": {
@@ -16086,6 +16475,10 @@
   "@statsActiveMembers": {
     "description": "stats.activeMembers"
   },
+  "statsAdditionalFields": "🧩 Zusatzfelder",
+  "@statsAdditionalFields": {
+    "description": "stats.additionalFields"
+  },
   "statsAgeChart": "Altersverteilung 🎂",
   "@statsAgeChart": {
     "description": "stats.ageChart"
@@ -16128,6 +16521,47 @@
   "statsEventsInPeriod": "Termine im Zeitraum",
   "@statsEventsInPeriod": {
     "description": "stats.eventsInPeriod"
+  },
+  "statsFieldAllGroups": "Alle Gruppen",
+  "@statsFieldAllGroups": {
+    "description": "stats.fieldAllGroups"
+  },
+  "statsFieldGroupFilter": "Gruppe",
+  "@statsFieldGroupFilter": {
+    "description": "stats.fieldGroupFilter"
+  },
+  "statsFieldIncludePaused": "Pausierende einbeziehen",
+  "@statsFieldIncludePaused": {
+    "description": "stats.fieldIncludePaused"
+  },
+  "statsFieldNoPersons": "Für diese Auswahl gibt es keine Personen.",
+  "@statsFieldNoPersons": {
+    "description": "stats.fieldNoPersons"
+  },
+  "statsFieldNoValue": "Keine Angabe",
+  "@statsFieldNoValue": {
+    "description": "stats.fieldNoValue"
+  },
+  "statsFieldPerGroupChart": "{field} nach Gruppe (in %)",
+  "@statsFieldPerGroupChart": {
+    "description": "stats.fieldPerGroupChart",
+    "placeholders": {
+      "field": {}
+    }
+  },
+  "statsFieldSelect": "Feld",
+  "@statsFieldSelect": {
+    "description": "stats.fieldSelect"
+  },
+  "statsFieldTooltip": "{count, plural, one {{count} Person} other {{count} Personen}} ({perc}%)",
+  "@statsFieldTooltip": {
+    "description": "stats.fieldTooltip",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "perc": {}
+    }
   },
   "statsFilterTenants": "Instanzen filtern",
   "@statsFilterTenants": {
@@ -16616,6 +17050,10 @@
   "svcSaveFailed": "Fehler beim Speichern",
   "@svcSaveFailed": {
     "description": "svc.saveFailed"
+  },
+  "svcSaveGemeindeAppFailed": "Fehler beim Speichern der Gemeinde-App-Einstellungen",
+  "@svcSaveGemeindeAppFailed": {
+    "description": "svc.saveGemeindeAppFailed"
   },
   "svcSaveOrgFieldsFailed": "Fehler beim Speichern der Organisations-Zusatzfelder",
   "@svcSaveOrgFieldsFailed": {

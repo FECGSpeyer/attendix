@@ -66,7 +66,7 @@ void main() {
       );
     });
 
-    test('present without assignment confirms and assigns', () {
+    test('present without assignment does not assign (Ionic 4.17.9)', () {
       expect(
         dutySyncFieldsForStatus(
           isDutyTermin: true,
@@ -75,12 +75,7 @@ void main() {
           userId: 'u',
           now: now,
         ),
-        {
-          'duty_state': DutyState.confirmed,
-          'duty_reminder_sent': true,
-          'duty_assigned_by': 'u',
-          'duty_assigned_at': now.toIso8601String(),
-        },
+        isEmpty,
       );
     });
 

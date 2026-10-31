@@ -1,14 +1,15 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../songs/data/song_print_service.dart';
+import '../../../songs/presentation/widgets/song_file_opener.dart';
 import 'upcoming_songs_sheet.dart' show hasSongNotesForPlayer;
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -16,7 +17,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 /// Opens the external notes link of a song (Ionic openSongLink).
 Future<void> openSongLink(BuildContext context, String link) async {
   final uri = Uri.tryParse(link);
-  final ok = uri != null && await launchUrl(uri, mode: LaunchMode.externalApplication);
+  // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
+  final ok = uri != null && await NativeFileService.openExternal(uri);
   if (!ok && context.mounted) {
     ToastHelper.showError(context, context.l10n.signoutFlutterLinkOpenFailed);
   }
@@ -63,15 +65,22 @@ Future<void> _chooseFile(
 }
 
 // NATIVE_MISC: native app → system file viewer (Ionic Utils.openFileNative).
-Future<void> _openFile(BuildContext context, SongFile file) async {
-  final ok = await NativeFileService.openUrl(file.url, fileName: file.fileName);
-  if (!ok && context.mounted) {
-    ToastHelper.showError(context, context.l10n.signoutFlutterFileOpenFailed);
-  }
-}
+// Ionic 4.17.19: in an installed web app the file is shown in the app.
+Future<void> _openFile(BuildContext context, SongFile file) =>
+    openSongFileExternally(context, file,
+        errorMessage: context.l10n.signoutFlutterFileOpenFailed);
 
 Future<void> _downloadFile(BuildContext context, SongFile file) async {
   // Append ?download= to force Content-Disposition: attachment
+  // Ionic 4.17.19: installed web apps block new windows and link clicks →
+  // fetch the file and save it as a browser download (downloadFileNative).
+  if (NativeFileService.isInstalledWebApp) {
+    final ok = await NativeFileService.downloadInBrowser(file.url, file.fileName);
+    if (!ok && context.mounted) {
+      ToastHelper.showError(context, context.l10n.signoutFlutterFileDownloadFailed);
+    }
+    return;
+  }
   final url = file.url.contains('?') ? '${file.url}&download=' : '${file.url}?download=';
   // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative).
   final ok = await NativeFileService.openUrl(url, fileName: file.fileName);
@@ -100,10 +109,10 @@ Future<void> showSongOptionsSheet(
     ToastHelper.showError(context, l10n.signoutNoScoresForInstrument);
   }
 
-  // Files for the player's instrument (choir: plus files noted "Chor")
+  // Files for the player's instrument (choir: plus "Chor (alle)" files)
   var files = allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
   if (isChoir) {
-    files = [...files, ...allFiles.where((f) => f.note?.toLowerCase() == 'chor')];
+    files = [...files, ...allFiles.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note))];
     final seen = <String>{};
     files = files.where((f) => seen.add(f.fileName)).toList();
   }

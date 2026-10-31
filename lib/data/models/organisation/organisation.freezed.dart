@@ -38,7 +38,22 @@ mixin _$Organisation {
   @JsonKey(name: 'planning_templates')
   List<Plan>? get planningTemplates => throw _privateConstructorUsedError;
   @JsonKey(name: 'default_fields')
-  List<PlanField>? get defaultFields => throw _privateConstructorUsedError;
+  List<PlanField>? get defaultFields => throw _privateConstructorUsedError; // Gemeinde App link (Ionic 4.17.10)
+  /// Set in the database only (FECG Speyer, FECG Schwegenheim).
+  @JsonKey(name: 'fecg_link_enabled')
+  bool get fecgLinkEnabled => throw _privateConstructorUsedError;
+
+  /// Org setting "Beamer-Dateien im Ablaufplan".
+  @JsonKey(name: 'beamer_files_enabled')
+  bool get beamerFilesEnabled => throw _privateConstructorUsedError;
+
+  /// SHA-256 of the Gemeinde App key; the key itself is shown once.
+  @JsonKey(name: 'gemeinde_app_key_hash')
+  String? get gemeindeAppKeyHash => throw _privateConstructorUsedError;
+
+  /// Last characters of the key, to recognise it.
+  @JsonKey(name: 'gemeinde_app_key_hint')
+  String? get gemeindeAppKeyHint => throw _privateConstructorUsedError;
 
   /// Serializes this Organisation to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -67,6 +82,10 @@ abstract class $OrganisationCopyWith<$Res> {
     @JsonKey(name: 'additional_fields') List<OrgExtraField>? additionalFields,
     @JsonKey(name: 'planning_templates') List<Plan>? planningTemplates,
     @JsonKey(name: 'default_fields') List<PlanField>? defaultFields,
+    @JsonKey(name: 'fecg_link_enabled') bool fecgLinkEnabled,
+    @JsonKey(name: 'beamer_files_enabled') bool beamerFilesEnabled,
+    @JsonKey(name: 'gemeinde_app_key_hash') String? gemeindeAppKeyHash,
+    @JsonKey(name: 'gemeinde_app_key_hint') String? gemeindeAppKeyHint,
   });
 }
 
@@ -94,6 +113,10 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
     Object? additionalFields = freezed,
     Object? planningTemplates = freezed,
     Object? defaultFields = freezed,
+    Object? fecgLinkEnabled = null,
+    Object? beamerFilesEnabled = null,
+    Object? gemeindeAppKeyHash = freezed,
+    Object? gemeindeAppKeyHint = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -142,6 +165,26 @@ class _$OrganisationCopyWithImpl<$Res, $Val extends Organisation>
                     ? _value.defaultFields
                     : defaultFields // ignore: cast_nullable_to_non_nullable
                         as List<PlanField>?,
+            fecgLinkEnabled:
+                null == fecgLinkEnabled
+                    ? _value.fecgLinkEnabled
+                    : fecgLinkEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            beamerFilesEnabled:
+                null == beamerFilesEnabled
+                    ? _value.beamerFilesEnabled
+                    : beamerFilesEnabled // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            gemeindeAppKeyHash:
+                freezed == gemeindeAppKeyHash
+                    ? _value.gemeindeAppKeyHash
+                    : gemeindeAppKeyHash // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            gemeindeAppKeyHint:
+                freezed == gemeindeAppKeyHint
+                    ? _value.gemeindeAppKeyHint
+                    : gemeindeAppKeyHint // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -167,6 +210,10 @@ abstract class _$$OrganisationImplCopyWith<$Res>
     @JsonKey(name: 'additional_fields') List<OrgExtraField>? additionalFields,
     @JsonKey(name: 'planning_templates') List<Plan>? planningTemplates,
     @JsonKey(name: 'default_fields') List<PlanField>? defaultFields,
+    @JsonKey(name: 'fecg_link_enabled') bool fecgLinkEnabled,
+    @JsonKey(name: 'beamer_files_enabled') bool beamerFilesEnabled,
+    @JsonKey(name: 'gemeinde_app_key_hash') String? gemeindeAppKeyHash,
+    @JsonKey(name: 'gemeinde_app_key_hint') String? gemeindeAppKeyHint,
   });
 }
 
@@ -193,6 +240,10 @@ class __$$OrganisationImplCopyWithImpl<$Res>
     Object? additionalFields = freezed,
     Object? planningTemplates = freezed,
     Object? defaultFields = freezed,
+    Object? fecgLinkEnabled = null,
+    Object? beamerFilesEnabled = null,
+    Object? gemeindeAppKeyHash = freezed,
+    Object? gemeindeAppKeyHint = freezed,
   }) {
     return _then(
       _$OrganisationImpl(
@@ -241,6 +292,26 @@ class __$$OrganisationImplCopyWithImpl<$Res>
                 ? _value._defaultFields
                 : defaultFields // ignore: cast_nullable_to_non_nullable
                     as List<PlanField>?,
+        fecgLinkEnabled:
+            null == fecgLinkEnabled
+                ? _value.fecgLinkEnabled
+                : fecgLinkEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        beamerFilesEnabled:
+            null == beamerFilesEnabled
+                ? _value.beamerFilesEnabled
+                : beamerFilesEnabled // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        gemeindeAppKeyHash:
+            freezed == gemeindeAppKeyHash
+                ? _value.gemeindeAppKeyHash
+                : gemeindeAppKeyHash // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        gemeindeAppKeyHint:
+            freezed == gemeindeAppKeyHint
+                ? _value.gemeindeAppKeyHint
+                : gemeindeAppKeyHint // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -261,6 +332,10 @@ class _$OrganisationImpl implements _Organisation {
     final List<OrgExtraField>? additionalFields,
     @JsonKey(name: 'planning_templates') final List<Plan>? planningTemplates,
     @JsonKey(name: 'default_fields') final List<PlanField>? defaultFields,
+    @JsonKey(name: 'fecg_link_enabled') this.fecgLinkEnabled = false,
+    @JsonKey(name: 'beamer_files_enabled') this.beamerFilesEnabled = false,
+    @JsonKey(name: 'gemeinde_app_key_hash') this.gemeindeAppKeyHash,
+    @JsonKey(name: 'gemeinde_app_key_hint') this.gemeindeAppKeyHint,
   }) : _additionalFields = additionalFields,
        _planningTemplates = planningTemplates,
        _defaultFields = defaultFields;
@@ -320,9 +395,30 @@ class _$OrganisationImpl implements _Organisation {
     return EqualUnmodifiableListView(value);
   }
 
+  // Gemeinde App link (Ionic 4.17.10)
+  /// Set in the database only (FECG Speyer, FECG Schwegenheim).
+  @override
+  @JsonKey(name: 'fecg_link_enabled')
+  final bool fecgLinkEnabled;
+
+  /// Org setting "Beamer-Dateien im Ablaufplan".
+  @override
+  @JsonKey(name: 'beamer_files_enabled')
+  final bool beamerFilesEnabled;
+
+  /// SHA-256 of the Gemeinde App key; the key itself is shown once.
+  @override
+  @JsonKey(name: 'gemeinde_app_key_hash')
+  final String? gemeindeAppKeyHash;
+
+  /// Last characters of the key, to recognise it.
+  @override
+  @JsonKey(name: 'gemeinde_app_key_hint')
+  final String? gemeindeAppKeyHint;
+
   @override
   String toString() {
-    return 'Organisation(id: $id, createdAt: $createdAt, name: $name, publicPlanKey: $publicPlanKey, logoUrl: $logoUrl, brandingText: $brandingText, additionalFields: $additionalFields, planningTemplates: $planningTemplates, defaultFields: $defaultFields)';
+    return 'Organisation(id: $id, createdAt: $createdAt, name: $name, publicPlanKey: $publicPlanKey, logoUrl: $logoUrl, brandingText: $brandingText, additionalFields: $additionalFields, planningTemplates: $planningTemplates, defaultFields: $defaultFields, fecgLinkEnabled: $fecgLinkEnabled, beamerFilesEnabled: $beamerFilesEnabled, gemeindeAppKeyHash: $gemeindeAppKeyHash, gemeindeAppKeyHint: $gemeindeAppKeyHint)';
   }
 
   @override
@@ -350,7 +446,15 @@ class _$OrganisationImpl implements _Organisation {
             const DeepCollectionEquality().equals(
               other._defaultFields,
               _defaultFields,
-            ));
+            ) &&
+            (identical(other.fecgLinkEnabled, fecgLinkEnabled) ||
+                other.fecgLinkEnabled == fecgLinkEnabled) &&
+            (identical(other.beamerFilesEnabled, beamerFilesEnabled) ||
+                other.beamerFilesEnabled == beamerFilesEnabled) &&
+            (identical(other.gemeindeAppKeyHash, gemeindeAppKeyHash) ||
+                other.gemeindeAppKeyHash == gemeindeAppKeyHash) &&
+            (identical(other.gemeindeAppKeyHint, gemeindeAppKeyHint) ||
+                other.gemeindeAppKeyHint == gemeindeAppKeyHint));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -366,6 +470,10 @@ class _$OrganisationImpl implements _Organisation {
     const DeepCollectionEquality().hash(_additionalFields),
     const DeepCollectionEquality().hash(_planningTemplates),
     const DeepCollectionEquality().hash(_defaultFields),
+    fecgLinkEnabled,
+    beamerFilesEnabled,
+    gemeindeAppKeyHash,
+    gemeindeAppKeyHint,
   );
 
   /// Create a copy of Organisation
@@ -394,6 +502,10 @@ abstract class _Organisation implements Organisation {
     final List<OrgExtraField>? additionalFields,
     @JsonKey(name: 'planning_templates') final List<Plan>? planningTemplates,
     @JsonKey(name: 'default_fields') final List<PlanField>? defaultFields,
+    @JsonKey(name: 'fecg_link_enabled') final bool fecgLinkEnabled,
+    @JsonKey(name: 'beamer_files_enabled') final bool beamerFilesEnabled,
+    @JsonKey(name: 'gemeinde_app_key_hash') final String? gemeindeAppKeyHash,
+    @JsonKey(name: 'gemeinde_app_key_hint') final String? gemeindeAppKeyHint,
   }) = _$OrganisationImpl;
 
   factory _Organisation.fromJson(Map<String, dynamic> json) =
@@ -423,7 +535,26 @@ abstract class _Organisation implements Organisation {
   List<Plan>? get planningTemplates;
   @override
   @JsonKey(name: 'default_fields')
-  List<PlanField>? get defaultFields;
+  List<PlanField>? get defaultFields; // Gemeinde App link (Ionic 4.17.10)
+  /// Set in the database only (FECG Speyer, FECG Schwegenheim).
+  @override
+  @JsonKey(name: 'fecg_link_enabled')
+  bool get fecgLinkEnabled;
+
+  /// Org setting "Beamer-Dateien im Ablaufplan".
+  @override
+  @JsonKey(name: 'beamer_files_enabled')
+  bool get beamerFilesEnabled;
+
+  /// SHA-256 of the Gemeinde App key; the key itself is shown once.
+  @override
+  @JsonKey(name: 'gemeinde_app_key_hash')
+  String? get gemeindeAppKeyHash;
+
+  /// Last characters of the key, to recognise it.
+  @override
+  @JsonKey(name: 'gemeinde_app_key_hint')
+  String? get gemeindeAppKeyHint;
 
   /// Create a copy of Organisation
   /// with the given fields replaced by the non-null parameter values.
