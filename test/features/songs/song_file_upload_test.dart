@@ -29,7 +29,7 @@ class _LateVision extends PartVisionService {
   final asked = <String>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled}) {
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled, int? tenantId}) {
     asked.add(file.name);
     return answer.future;
   }

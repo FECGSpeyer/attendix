@@ -249,6 +249,45 @@ void main() {
         expect(asked, 0);
       });
 
+      test('not when the time runs out while the page is prepared', () async {
+        final t0 = DateTime(2026, 10, 31, 12);
+        var reads = 0;
+        // The deadline is set and checked once at t0; from the check after
+        // reading the file on, 30 s have passed (slow preparation).
+        final slow = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => 1, clock: () => ++reads <= 2 ? t0 : t0.add(const Duration(seconds: 30)));
+        expect(await slow.detect(photo, groups), isNull);
+        expect(reads, greaterThan(2));
+        expect(asked, 0);
+      });
+
+      test('not for another tenant than the upload started in', () async {
+        var tenant = 1;
+        final switching = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => tenant);
+        // Started in tenant 2, now in 1.
+        expect(await switching.detect(photo, groups, tenantId: 2), isNull);
+        expect(asked, 0);
+        // Switched to tenant 2 while the page is prepared.
+        var checks = 0;
+        expect(
+          await switching.detect(photo, groups, cancelled: () {
+            if (++checks == 2) tenant = 2;
+            return false;
+          }),
+          isNull,
+        );
+        expect(asked, 0);
+        // Same tenant: sent.
+        tenant = 1;
+        expect(await switching.detect(photo, groups, tenantId: 1), isNull);
+        expect(asked, 1);
+      });
+
       test('photos only outside the browser', () {
         expect(PartVisionService.supports('a.pdf', web: true), isTrue);
         expect(PartVisionService.supports('a.jpg', web: true), isFalse);

@@ -107,9 +107,14 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
 
   /// Fallback for an unclear name: the part printed on page 1.
   Future<void> _readFirstPage() async {
-    final match = await ref
-        .read(partVisionServiceProvider)
-        .detect(widget.file, _instruments, cancelled: () => !mounted || _reviewed || _uploading);
+    final vision = ref.read(partVisionServiceProvider);
+    // Pinned to the tenant the sheet was opened in.
+    final match = await vision.detect(
+      widget.file,
+      _instruments,
+      tenantId: vision.currentTenant(),
+      cancelled: () => !mounted || _reviewed || _uploading,
+    );
     if (!mounted) return;
     setState(() {
       _reading = false;

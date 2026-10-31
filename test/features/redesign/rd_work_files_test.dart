@@ -117,11 +117,15 @@ class _FakeVision extends PartVisionService {
   final Map<String, PartMatch> answers;
   final asked = <String>[];
   final limits = <Duration?>[];
+  final tenants = <int?>[];
+  final stillWanted = <bool>[];
 
   @override
-  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled}) async {
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled, int? tenantId}) async {
     asked.add(file.name);
     limits.add(limit);
+    tenants.add(tenantId);
+    stillWanted.add(cancelled?.call() == false);
     return answers[file.name];
   }
 }
@@ -557,6 +561,9 @@ void main() {
       expect(vision.asked, ['Scan_0815.pdf', 'Scan_0816.pdf']);
       // Every file only gets what is left of the minute.
       expect(vision.limits.every((l) => l != null && l <= rdVisionBudget), isTrue);
+      // Pinned to the tenant of the drop, stopped once the page is left.
+      expect(vision.tenants, [1, 1]);
+      expect(vision.stillWanted, [true, true]);
       // The model's own "sure" is no proof (text on the page): both are
       // shown, the clear file name is not.
       expect(find.text('Zuordnung prüfen'), findsOneWidget);

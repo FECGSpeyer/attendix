@@ -290,6 +290,8 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
   /// rows the person already changed stay as they are).
   Future<void> _readFirstPages(Iterable<_FileToUpload> items) async {
     final vision = ref.read(partVisionServiceProvider);
+    // The tenant these files were added in: after a switch nothing is sent.
+    final tenantId = vision.currentTenant();
     for (final item in items.toList()) {
       // Removed, changed by hand or uploading meanwhile: no (paid) request,
       // also not one already under way that has not been sent yet.
@@ -298,7 +300,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
         if (mounted) setState(() => item.reading = false);
         continue;
       }
-      final match = await vision.detect(item.platformFile, _instruments, cancelled: gone);
+      final match = await vision.detect(item.platformFile, _instruments, cancelled: gone, tenantId: tenantId);
       if (!mounted) return;
       setState(() {
         item.reading = false;

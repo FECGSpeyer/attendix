@@ -22,11 +22,14 @@ import '../utils/instrument_matcher.dart';
 /// unreadable PDF, too slow) yields null, so the upload simply keeps the
 /// file-name result.
 class PartVisionService {
-  PartVisionService(this._client, this._tenantId);
+  PartVisionService(this._client, this._tenantId, {DateTime Function()? clock}) : _now = clock ?? DateTime.now;
 
   /// Read lazily, so a missing client is just another failure (null).
   final SupabaseClient Function() _client;
+
+  /// The tenant now (it can change while files are read).
   final int? Function() _tenantId;
+  final DateTime Function() _now;
 
   /// Off for the rest of the session once the function is missing.
   static bool _unavailable = false;
@@ -50,26 +53,40 @@ class PartVisionService {
     return !web && (lower.endsWith('.png') || lower.endsWith('.jpg') || lower.endsWith('.jpeg'));
   }
 
+  /// The tenant now, to pin an upload to (null when it cannot be read).
+  int? currentTenant() {
+    try {
+      return _tenantId();
+    } catch (_) {
+      return null;
+    }
+  }
+
   /// Reads the part of [file] among [instruments]; null when it could not
   /// within [limit] (at most [timeout]). Once [cancelled] says true (file
-  /// removed, changed by hand, uploading), no request is started any more.
+  /// removed, changed by hand, uploading, page left), no request is started
+  /// any more. [tenantId] is the tenant the upload started in (default: the
+  /// current one); after a switch to another tenant nothing is sent.
   Future<PartMatch?> detect(
     PlatformFile file,
     List<InstrumentInfo> instruments, {
     Duration? limit,
     bool Function()? cancelled,
+    int? tenantId,
   }) async {
     if (_unavailable || instruments.isEmpty || !supports(file.name)) return null;
     final time = limit == null || limit > timeout ? timeout : limit;
     if (time < _minRequestTime) return null;
-    final deadline = _Deadline(time, cancelled);
+    _Deadline? deadline;
     try {
-      final tenantId = _tenantId();
-      if (tenantId == null) return null;
+      final tenant = tenantId ?? _tenantId();
+      if (tenant == null) return null;
+      final d = deadline = _Deadline(time, _now, () => (cancelled?.call() ?? false) || currentTenant() != tenant);
+      if (d.isOver) return null;
       // The caller gets its answer on time; the work behind it checks the
       // same deadline after every step, so a late render never leads to a
       // (paid) request.
-      return await _detect(file, tenantId, instruments, deadline).timeout(time);
+      return await _detect(file, tenant, instruments, d).timeout(time);
     } on FunctionException catch (e) {
       if (e.status == 404) _unavailable = true;
       return null;
@@ -77,7 +94,7 @@ class PartVisionService {
       if (kDebugMode) debugPrint('[part-detect] $e');
       return null;
     } finally {
-      deadline.expire();
+      deadline?.expire();
     }
   }
 
@@ -161,15 +178,16 @@ class PartVisionService {
 
 /// Time left for one file; over once it ran out or the caller gave up.
 class _Deadline {
-  _Deadline(Duration time, this._cancelled) : _end = DateTime.now().add(time);
+  _Deadline(Duration time, this._now, this._cancelled) : _end = _now().add(time);
 
+  final DateTime Function() _now;
   final DateTime _end;
-  final bool Function()? _cancelled;
+  final bool Function() _cancelled;
   bool _expired = false;
 
   void expire() => _expired = true;
-  bool get isOver => _expired || (_cancelled?.call() ?? false) || !DateTime.now().isBefore(_end);
-  Duration get left => isOver ? Duration.zero : _end.difference(DateTime.now());
+  bool get isOver => _expired || _cancelled() || !_now().isBefore(_end);
+  Duration get left => isOver ? Duration.zero : _end.difference(_now());
 }
 
 /// [bytes] (PNG/JPEG) decoded and written anew as a small JPEG: upright,
