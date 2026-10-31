@@ -258,6 +258,36 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Eltern: after "kommt später" both Zusage and Absage stay open (UX E1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    final group = ParentAttendanceGroup(
+      attendanceId: 41,
+      date: _day(2),
+      typeInfo: 'Chorprobe',
+      startTime: '16:30',
+      endTime: '17:30',
+      childAttendances: [
+        ChildPersonAttendance(
+          id: 'm',
+          childId: 1,
+          childName: 'Mia Wolf',
+          childFirstName: 'Mia',
+          status: AttendanceStatus.lateExcused,
+        ),
+      ],
+    );
+    await tester.pumpWidget(_app(Role.parent, extra: [
+      parentChildrenProvider.overrideWith((ref) async => [TestFactories.createPerson(id: 1)]),
+      childrenAttendancesProvider.overrideWith((ref) async => const []),
+      upcomingParentAttendancesProvider.overrideWithValue([group]),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('Doch dabei'), findsOneWidget);
+    expect(find.text('Doch absagen'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
   testWidgets('Beobachter: a hint once, Termine without dead taps (UX V1)', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.viewer));

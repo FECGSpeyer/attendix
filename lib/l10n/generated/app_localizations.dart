@@ -16337,6 +16337,12 @@ abstract class AppLocalizations {
   /// **'Hallo {name},'**
   String redesignRemindHello(Object name);
 
+  /// redesign.remind.helloAll
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo zusammen,'**
+  String get redesignRemindHelloAll;
+
   /// redesign.remind.hint
   ///
   /// In de, this message translates to:
@@ -16372,6 +16378,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}'**
   String redesignRemindPush(num count);
+
+  /// redesign.remind.reached
+  ///
+  /// In de, this message translates to:
+  /// **'erinnert'**
+  String get redesignRemindReached;
 
   /// redesign.remind.sent
   ///

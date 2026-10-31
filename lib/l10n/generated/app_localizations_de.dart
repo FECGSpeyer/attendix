@@ -9498,6 +9498,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignRemindHelloAll => 'Hallo zusammen,';
+
+  @override
   String get redesignRemindHint => 'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.';
 
   @override
@@ -9526,6 +9529,9 @@ class AppLocalizationsDe extends AppLocalizations {
     );
     return '$_temp0';
   }
+
+  @override
+  String get redesignRemindReached => 'erinnert';
 
   @override
   String redesignRemindSent(num count) {

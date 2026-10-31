@@ -187,22 +187,31 @@ class _ChildAnswerRow extends ConsumerWidget {
       );
     } else {
       final yes = status == AttendanceStatus.present;
-      answer = Wrap(
-        spacing: 4,
-        crossAxisAlignment: WrapCrossAlignment.center,
-        alignment: WrapAlignment.end,
-        children: [
-          if (yes)
-            RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
-          else
-            rdOwnStatusPill(l10n, status),
-          if (canAnswer)
-            RdTextLink(
-              label: status.countsAsPresent ? l10n.redesignTodayNoAfterAll : l10n.redesignTodayYesAfterAll,
-              onTap: () => status.countsAsPresent ? _signOut(context, ref) : _signIn(context, ref),
-            ),
-        ],
-      );
+      // After "kommt später" both ways stay open: a normal Zusage
+      // (SignInType.late) or cancelling after all.
+      final links = [
+        if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
+          RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
+        if (canAnswer && status.countsAsPresent)
+          RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
+      ];
+      final pill = yes
+          ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
+          : rdOwnStatusPill(l10n, status);
+      answer = links.length < 2
+          ? Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.end,
+              children: [pill, ...links],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                pill,
+                Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
+              ],
+            );
     }
 
     return Padding(

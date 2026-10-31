@@ -129,9 +129,15 @@ final rdOpenPersonsProvider = FutureProvider.autoDispose.family<List<Person>, in
   if (!repo.hasTenantId) return const [];
   final people = await ref.watch(realtimePlayersProvider.future);
   final types = await ref.watch(attendanceTypesProvider.future);
-  final all = ref.read(realtimeAttendanceListProvider).valueOrNull ?? const <Attendance>[];
-  final typeId = all.where((a) => a.id == attendanceId).firstOrNull?.typeId;
-  final duty = types.any((t) => t.id == typeId && t.dutyMode);
+  // Watched and awaited, so a type change of the Termin (realtime) is seen.
+  // A Termin or type that is not known counts as duty: then stand-ins are
+  // left out rather than reminded by mistake. Termine without a type (old
+  // data) are never duty Termine.
+  final all = await ref.watch(realtimeAttendanceListProvider.future);
+  final attendance = all.where((a) => a.id == attendanceId).firstOrNull;
+  final typeId = attendance?.typeId;
+  final duty = attendance == null ||
+      (typeId != null && (types.where((t) => t.id == typeId).firstOrNull?.dutyMode ?? true));
   final rows = await repo.getPersonAttendancesForAttendances([attendanceId]);
   return rdOpenPersons(rows, people, duty: duty);
 });

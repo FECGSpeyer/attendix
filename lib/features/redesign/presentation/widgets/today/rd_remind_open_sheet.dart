@@ -19,6 +19,20 @@ String rdRemindWhen(DateTime? start, {required bool hasTime}) {
   return hasTime ? '$date, ${DateFormat('HH:mm').format(start)}' : date;
 }
 
+/// Text to share with everybody: the standard text while [body] is the
+/// unchanged [defaultBody], else "Hallo zusammen," and the edited body.
+String rdRemindShareText(
+  AppLocalizations l10n, {
+  required String body,
+  required String defaultBody,
+  required String title,
+  required String when,
+}) {
+  final text = body.trim();
+  if (text.isEmpty || text == defaultBody.trim()) return l10n.redesignRemindShareText(title, when);
+  return '${l10n.redesignRemindHelloAll}\n$text';
+}
+
 /// Personal push text: "Hallo Tim," and the body below.
 String rdRemindMessage(AppLocalizations l10n, Person person, String body) {
   final name = person.firstName.trim();
@@ -57,10 +71,13 @@ class _RemindSheet extends ConsumerStatefulWidget {
 }
 
 class _RemindSheetState extends ConsumerState<_RemindSheet> {
-  late final _body = TextEditingController(
-    text: l10nWithoutContext.redesignRemindBody(widget.title, widget.when),
-  );
+  late final _defaultBody = l10nWithoutContext.redesignRemindBody(widget.title, widget.when);
+  late final _body = TextEditingController(text: _defaultBody);
   bool _sending = false;
+
+  /// Persons reached in this sheet; a second send after a partial failure
+  /// only goes to the others, so nobody gets the reminder twice.
+  final _reached = <int>{};
 
   @override
   void dispose() {
@@ -85,6 +102,7 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
           playerAppId: person.appId,
         );
         sent++;
+        if (person.id != null) _reached.add(person.id!);
       } catch (_) {
         failed++;
       }
@@ -117,7 +135,8 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
     if (open == null) {
       children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: !async.hasError));
     } else {
-      final withApp = open.where((x) => x.appId?.isNotEmpty ?? false).toList();
+      final withApp =
+          open.where((x) => (x.appId?.isNotEmpty ?? false) && !_reached.contains(x.id)).toList();
       String? group;
       final rows = <Widget>[];
       for (final person in open) {
@@ -129,10 +148,13 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
           children.add(Padding(padding: const EdgeInsets.only(top: 6), child: RdGroupLabel(g)));
         }
         final hasApp = person.appId?.isNotEmpty ?? false;
+        final reached = _reached.contains(person.id);
         rows.add(RdListRow(
           leading: RdInitials(rdInitialsOf('${person.firstName} ${person.lastName}'), size: 32),
           title: '${person.firstName} ${person.lastName}'.trim(),
-          trailing: hasApp ? null : Text(l10n.redesignRemindNoApp, style: RdType.meta(p, size: 12)),
+          trailing: reached
+              ? Text(l10n.redesignRemindReached, style: RdType.meta(p, size: 12).copyWith(color: p.present))
+              : (hasApp ? null : Text(l10n.redesignRemindNoApp, style: RdType.meta(p, size: 12))),
           showChevron: false,
         ));
       }
@@ -167,7 +189,13 @@ class _RemindSheetState extends ConsumerState<_RemindSheet> {
             icon: Icons.ios_share,
             onPressed: () => rdShareLink(
               button,
-              l10n.redesignRemindShareText(widget.title, widget.when),
+              rdRemindShareText(
+                l10n,
+                body: _body.text,
+                defaultBody: _defaultBody,
+                title: widget.title,
+                when: widget.when,
+              ),
               copiedMessage: l10n.redesignRemindCopied,
             ),
           ),

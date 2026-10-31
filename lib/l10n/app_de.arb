@@ -12443,6 +12443,10 @@
       "name": {}
     }
   },
+  "redesignRemindHelloAll": "Hallo zusammen,",
+  "@redesignRemindHelloAll": {
+    "description": "redesign.remind.helloAll"
+  },
   "redesignRemindHint": "Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.",
   "@redesignRemindHint": {
     "description": "redesign.remind.hint"
@@ -12478,6 +12482,10 @@
         "type": "num"
       }
     }
+  },
+  "redesignRemindReached": "erinnert",
+  "@redesignRemindReached": {
+    "description": "redesign.remind.reached"
   },
   "redesignRemindSent": "{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}",
   "@redesignRemindSent": {
