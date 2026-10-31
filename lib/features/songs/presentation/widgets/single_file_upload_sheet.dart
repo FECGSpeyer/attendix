@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_matcher.dart';
@@ -68,6 +69,10 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
   String? _learnTerm;
   bool _learn = false;
 
+  /// The first page is being read / the part was read there (label).
+  bool _reading = false;
+  String? _visionLabel;
+
   List<InstrumentInfo> get _instruments => [
         for (final g in widget.groups)
           if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
@@ -94,6 +99,26 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
       );
     }
     _refreshConflicts();
+    if (cat.canAskVision(widget.file.name) && _instruments.isNotEmpty) {
+      _reading = true;
+      _readFirstPage();
+    }
+  }
+
+  /// Fallback for an unclear name: the part printed on page 1.
+  Future<void> _readFirstPage() async {
+    final match = await ref.read(partVisionServiceProvider).detect(widget.file, _instruments);
+    if (!mounted) return;
+    setState(() {
+      _reading = false;
+      if (match == null || _reviewed || _uploading) return;
+      _instrumentId = match.instrumentId;
+      _confidence = match.confidence;
+      _visionLabel = match.term ?? widget.groups.where((g) => g.id == match.instrumentId).firstOrNull?.name ?? '';
+      _learnTerm = null;
+      _learn = false;
+      _refreshConflicts();
+    });
   }
 
   void _choose(int? id) {
@@ -212,7 +237,22 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                     ListTile(
                       leading: const Icon(Icons.description_outlined),
                       title: Text(widget.file.name),
-                      subtitle: !_reviewed && _confidence != MatchConfidence.sure
+                      subtitle: _reading && !_reviewed
+                          ? Text(
+                              context.l10n.songsFlutterVisionReading,
+                              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                            )
+                          : _visionLabel != null && !_reviewed
+                          ? Text(
+                              _confidence == MatchConfidence.sure
+                                  ? context.l10n.songsFlutterVisionSure(_visionLabel!)
+                                  : context.l10n.songsFlutterVisionUnsure,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _confidence == MatchConfidence.sure ? AppColors.success : AppColors.warning,
+                              ),
+                            )
+                          : !_reviewed && _confidence != MatchConfidence.sure
                           ? Text(
                               _confidence == MatchConfidence.unsure
                                   ? context.l10n.songsFlutterDetectUnsure

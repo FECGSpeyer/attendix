@@ -1,4 +1,5 @@
 import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms;
+import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -201,6 +202,36 @@ void main() {
       expect(mergeSynonyms('geige 2, vl2', ['Vl2']), isNull);
       expect(mergeSynonyms('a', [' ']), isNull);
       expect(mergeSynonyms('a', ['b', 'c', 'B']), 'a, b, c');
+    });
+  });
+
+  group('part-detect answer', () {
+    final groups = _groups(_orchestra);
+    test('only ids of the tenant groups count', () {
+      final m = PartVisionService.parseResponse({'groupId': 18, 'label': 'Violin I', 'confidence': 'high'}, groups)!;
+      expect(m.instrumentId, 18);
+      expect(m.confidence, MatchConfidence.sure);
+      expect(m.term, 'Violin I');
+      expect(m.byVision, isTrue);
+      expect(PartVisionService.parseResponse({'groupId': 999, 'confidence': 'high'}, groups), isNull);
+      expect(PartVisionService.parseResponse({'groupId': null}, groups), isNull);
+      expect(PartVisionService.parseResponse('nope', groups), isNull);
+    });
+
+    test('low confidence stays unsure; JSON text is accepted', () {
+      final m = PartVisionService.parseResponse('{"groupId": "19", "confidence": "low"}', groups)!;
+      expect(m.instrumentId, 19);
+      expect(m.confidence, MatchConfidence.unsure);
+    });
+
+    test('only unclear PDFs / images are sent', () {
+      expect(PartVisionService.supports('a.PDF'), isTrue);
+      expect(PartVisionService.supports('a.jpeg'), isTrue);
+      expect(PartVisionService.supports('a.mp3'), isFalse);
+      final unclear = guessFileCategory('Scan.pdf', instruments: groups, isChoir: false);
+      expect(unclear.canAskVision('Scan.pdf'), isTrue);
+      final clear = guessFileCategory('Violine 2.pdf', instruments: groups, isChoir: false);
+      expect(clear.canAskVision('Violine 2.pdf'), isFalse);
     });
   });
 }

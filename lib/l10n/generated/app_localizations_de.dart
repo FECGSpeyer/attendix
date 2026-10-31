@@ -11862,6 +11862,17 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get songsFlutterVisionReading => 'Erste Seite wird gelesen …';
+
+  @override
+  String songsFlutterVisionSure(Object label) {
+    return 'Auf Seite 1 erkannt: $label';
+  }
+
+  @override
+  String get songsFlutterVisionUnsure => 'Auf Seite 1 vermutet – bitte prüfen';
+
+  @override
   String get songsFreeText => 'Freitext';
 
   @override

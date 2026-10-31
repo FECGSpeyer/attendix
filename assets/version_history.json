@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.26.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Noten-Upload: Verrät der Dateiname die Stimme nicht (z. B. „Scan_0815.pdf“), liest die App die erste Seite und erkennt die Stimme dort",
+        "✨ Noten-Upload: Auf Seite 1 sicher erkannte Stimmen werden direkt zugeordnet, vermutete bleiben zum Prüfen markiert"
+      ]
+    },
+    {
       "version": "0.25.0",
       "date": "30.10.2026",
       "changes": [

@@ -15550,6 +15550,21 @@
       "error": {}
     }
   },
+  "songsFlutterVisionReading": "Erste Seite wird gelesen …",
+  "@songsFlutterVisionReading": {
+    "description": "songs.flutter.visionReading"
+  },
+  "songsFlutterVisionSure": "Auf Seite 1 erkannt: {label}",
+  "@songsFlutterVisionSure": {
+    "description": "songs.flutter.visionSure",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "songsFlutterVisionUnsure": "Auf Seite 1 vermutet – bitte prüfen",
+  "@songsFlutterVisionUnsure": {
+    "description": "songs.flutter.visionUnsure"
+  },
   "songsFreeText": "Freitext",
   "@songsFreeText": {
     "description": "songs.freeText"

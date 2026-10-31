@@ -20525,6 +20525,24 @@ abstract class AppLocalizations {
   /// **'Fehler beim Hochladen: {error}'**
   String songsFlutterUploadFailedWith(Object error);
 
+  /// songs.flutter.visionReading
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite wird gelesen …'**
+  String get songsFlutterVisionReading;
+
+  /// songs.flutter.visionSure
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Seite 1 erkannt: {label}'**
+  String songsFlutterVisionSure(Object label);
+
+  /// songs.flutter.visionUnsure
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Seite 1 vermutet – bitte prüfen'**
+  String get songsFlutterVisionUnsure;
+
   /// songs.freeText
   ///
   /// In de, this message translates to:

@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../../core/services/part_vision_service.dart';
 import '../../../../../core/services/song_file_service.dart';
 import '../../../../../core/services/zip_service.dart';
 import '../../../../../core/services/zip_service_stub.dart'
@@ -69,6 +70,21 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     guesses.add((file: file, guess: guessFileCategory(file.name, instruments: instruments, isChoir: data.isChoir)));
   }
   if (guesses.isEmpty) return;
+
+  // Unclear names: the part printed on page 1 (`part-detect`), one at a time.
+  final unclear = [
+    for (var i = 0; i < guesses.length; i++)
+      if (instruments.isNotEmpty && guesses[i].guess.canAskVision(guesses[i].file.name)) i,
+  ];
+  if (unclear.isNotEmpty) {
+    controller.showNotice(l10n.songsFlutterVisionReading);
+    final vision = ref.read(partVisionServiceProvider);
+    for (final i in unclear) {
+      final match = await vision.detect(guesses[i].file, instruments);
+      if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
+    }
+    if (!context.mounted) return;
+  }
 
   // Files whose part is not clear are checked first; terms assigned by hand
   // can be remembered as synonyms of the group.
@@ -1161,7 +1177,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
   /// An unsure part can be confirmed for learning right away (unchecked).
   late final Map<PlatformFile, String> _terms = {
     for (final i in widget.items)
-      if (i.guess.confidence == MatchConfidence.unsure)
+      if (i.guess.confidence == MatchConfidence.unsure && !i.guess.byVision)
         if (learnableTerm(i.file.name, chosenId: i.guess.instrumentId, instruments: widget.instruments, workName: widget.workName)
             case final term?)
           i.file: term,
@@ -1236,7 +1252,11 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                         children: [
                           Text(i.file.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                           Text(
-                            i.guess.confidence == MatchConfidence.unsure ? l10n.songsFlutterDetectUnsure : l10n.songsFlutterDetectNone,
+                            i.guess.byVision
+                                ? l10n.songsFlutterVisionUnsure
+                                : i.guess.confidence == MatchConfidence.unsure
+                                ? l10n.songsFlutterDetectUnsure
+                                : l10n.songsFlutterDetectNone,
                             style: TextStyle(fontSize: 12, color: i.guess.confidence == MatchConfidence.unsure ? p.late : p.absent),
                           ),
                         ],

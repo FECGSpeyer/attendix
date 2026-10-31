@@ -120,7 +120,10 @@
         "learnFailed": "Die Begriffe konnten nicht gemerkt werden",
         "reviewTitle": "Zuordnung prüfen",
         "reviewHint": "Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.",
-        "reviewUpload": "Hochladen"
+        "reviewUpload": "Hochladen",
+        "visionReading": "Erste Seite wird gelesen …",
+        "visionSure": "Auf Seite 1 erkannt: {label}",
+        "visionUnsure": "Auf Seite 1 vermutet – bitte prüfen"
       }
     }
   },
@@ -245,7 +248,10 @@
         "learnFailed": "The terms could not be saved",
         "reviewTitle": "Check parts",
         "reviewHint": "The part of these files is not clear. Please check the assignment before uploading.",
-        "reviewUpload": "Upload"
+        "reviewUpload": "Upload",
+        "visionReading": "Reading the first page …",
+        "visionSure": "Recognised on page 1: {label}",
+        "visionUnsure": "Guessed from page 1 – please check"
       }
     }
   }
