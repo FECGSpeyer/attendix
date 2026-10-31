@@ -14,8 +14,10 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/event_list_utils.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../duty/presentation/widgets/self_service_duty_section.dart' show showOpenDutiesSheet;
 import '../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
@@ -301,10 +303,56 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   // Spieler, Stimmführer
   // ---------------------------------------------------------------------------
 
+  /// Opens the Termin a notification asked for (`pendingAttendanceId`)
+  /// once the own Termine are loaded: the own Termin page, or the sheet
+  /// "Meine Termine" opens for another group, "Offene Dienste" for a duty
+  /// without an own assignment. It looks in
+  /// the unfiltered own Termine, since the list here leaves out duties
+  /// without an own assignment; a Termin that is not there says so.
+  void _openPending(SignoutData data, SelfServiceEventActions actions) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      // While the Termine (re)load, e.g. after the tenant switch of a push,
+      // they may still be the previous ones: wait, the page rebuilds once
+      // they are loaded and comes back here.
+      // A failed reload keeps the Termin too: the page shows the load error
+      // with "retry" instead of the previous Termine.
+      final source = ref.read(signoutDataProvider);
+      final shown = ref.read(rdSignoutDataProvider);
+      if (source.isLoading || shown.isLoading || source.hasError || shown.hasError) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final all = source.valueOrNull ?? data;
+      final att = [...all.allUpcoming, ...all.past].where((a) => a.attendanceId == pendingId).firstOrNull;
+      if (att == null) {
+        ToastHelper.showInfo(context, context.l10n.redesignEventNotFound);
+        return;
+      }
+      // A duty without an own assignment is taken over only through the
+      // duty process (`duty_take` with its checks), never answered here.
+      if (isUnassignedDutyAttendance(att)) {
+        showOpenDutiesSheet(context);
+        return;
+      }
+      final own = actions.isOwn(att);
+      // The own Termin page reads the filtered list, so only those open it.
+      final listed = [...data.allUpcoming, ...data.past].any((a) => a.id == att.id);
+      if (att.id != null && own && listed) {
+        context.push(RedesignRoutes.ownEvent(att.id!));
+      } else {
+        actions.presentActions(context, att);
+      }
+    });
+  }
+
   Widget _playerBody(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(rdSignoutDataProvider);
-    final data = async.valueOrNull;
+    // A notification waits for its Termin: after a failed reload the
+    // previous Termine would not hold it, so the error shows instead.
+    final pending = ref.watch(pendingAttendanceIdProvider);
+    final data = async.hasError && pending != null ? null : async.valueOrNull;
     if (data == null) {
       return async.hasError
           ? RdInfoCard(
@@ -320,6 +368,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
+    // A notification, push or "open attendance" link asked for a Termin
+    // (like "Meine Termine" does); also when it arrives while open.
+    _openPending(data, actions);
 
     bool waiting(CrossTenantPersonAttendance att) {
       final qa = actions.quickActions(att);

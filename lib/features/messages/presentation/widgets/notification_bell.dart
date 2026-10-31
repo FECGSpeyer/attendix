@@ -8,6 +8,7 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/ionic_route_mapper.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -111,7 +112,8 @@ class NotificationBell extends ConsumerWidget {
     if (route != null) {
       // Ionic routes are prefixed with /tabs; only navigate when the route
       // exists in this app.
-      final path = mapIonicRoute(route);
+      // In the new design (Beta) Termine open on their new pages.
+      final path = RedesignRoutes.betaTarget(mapIonicRoute(route));
       try {
         if (router.configuration.findMatch(Uri.parse(path)).isNotEmpty) {
           router.push(path);
@@ -129,7 +131,7 @@ class NotificationBell extends ConsumerWidget {
     final role = tenantUser?.roleEnum;
     if (role != null &&
         (role.isAdmin || role.isResponsible || role.isHelper || role.isVoiceLeaderHelper)) {
-      router.push('/attendance/$attendanceId');
+      router.push(RedesignRoutes.betaTarget('/attendance/$attendanceId'));
     } else if (role != null && role.isParent) {
       // LOGIC_SELF: the parents portal opens the Termin's action sheet
       // (Ionic navigateToAttendance sets pendingAttendanceId for PARENT too).
@@ -139,7 +141,7 @@ class NotificationBell extends ConsumerWidget {
       // INTEGRATION: Ionic navigateToAttendance – "Meine Termine" opens the
       // Termin's action sheet via the pending attendance id.
       ref.read(pendingAttendanceIdProvider.notifier).state = attendanceId;
-      router.go('/signout');
+      router.go(RedesignRoutes.betaTarget('/signout'));
     }
   }
 
