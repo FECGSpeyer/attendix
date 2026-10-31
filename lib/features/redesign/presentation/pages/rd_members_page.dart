@@ -95,9 +95,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     ];
     // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
     final critical = rdCriticalMembers(active);
-    final criticalOnly = filter == RdMembersFilter.active &&
-        critical.isNotEmpty &&
-        ref.watch(rdMembersCriticalOnlyProvider);
+    // An empty filter stays on (shows nobody) instead of silently showing all.
+    final criticalOnly = filter == RdMembersFilter.active && ref.watch(rdMembersCriticalOnlyProvider);
     final shown = switch (filter) {
       RdMembersFilter.active => criticalOnly ? critical : active,
       RdMembersFilter.paused => paused,
@@ -183,7 +182,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onChanged: (f) => setState(() => _filter = f),
         ),
       ),
-      if (filter == RdMembersFilter.active && critical.isNotEmpty) ...[
+      if (filter == RdMembersFilter.active && (critical.isNotEmpty || criticalOnly)) ...[
         const SizedBox(height: 10),
         Align(
           alignment: Alignment.centerLeft,
@@ -212,7 +211,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
     } else if (filtered.isEmpty) {
       body.add(RdInfoCard(
         icon: Icons.people_outline,
-        text: _query.trim().isNotEmpty
+        text: _query.trim().isNotEmpty || criticalOnly
             ? l10n.redesignMembersNoMatch
             : switch (filter) {
                 RdMembersFilter.active => l10n.redesignMembersEmpty,

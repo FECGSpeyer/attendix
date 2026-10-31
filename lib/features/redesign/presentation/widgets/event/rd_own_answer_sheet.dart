@@ -40,45 +40,49 @@ class _OwnAnswerSheet extends ConsumerWidget {
     final data = ref.watch(rdSignoutDataProvider).valueOrNull;
     final att = data == null ? null : rdFindOwnEvent(data, personAttendanceId);
 
-    return SafeArea(
-      top: false,
-      child: Padding(
-        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-        child:
-            att == null
-                ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
-                : Column(
-                  mainAxisSize: MainAxisSize.min,
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  children: [
-                    RdEyebrow(l10n.redesignTodayYourAnswer),
-                    const SizedBox(height: 6),
-                    Semantics(header: true, child: Text(att.eventTitle, style: RdType.cardTitle(p))),
-                    if (att.eventMeta(withDate: true).isNotEmpty) ...[
-                      const SizedBox(height: 4),
-                      Text(att.eventMeta(withDate: true), style: RdType.meta(p, size: 15)),
-                    ],
-                    const SizedBox(height: 14),
-                    RdOwnAnswerSection(
-                      key: ValueKey('rd-own-sheet-${att.id}'),
-                      attendance: att,
-                      showHeader: false,
-                      showEvent: false,
-                    ),
-                    if (att.id != null)
-                      Align(
-                        alignment: Alignment.centerLeft,
-                        child: RdLinkButton(
-                          label: l10n.redesignTodayMore,
-                          onPressed: () {
-                            final router = GoRouter.of(context);
-                            Navigator.of(context).pop();
-                            router.push(RedesignRoutes.ownEvent(att.id!));
-                          },
-                        ),
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: SafeArea(
+        top: false,
+        // Scrolls in landscape or with many reasons opened.
+        child: SingleChildScrollView(
+          padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+          child:
+              att == null
+                  ? RdInfoCard(text: l10n.redesignTodayLoading, loading: true)
+                  : Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    children: [
+                      RdEyebrow(l10n.redesignTodayYourAnswer),
+                      const SizedBox(height: 6),
+                      Semantics(header: true, child: Text(att.eventTitle, style: RdType.cardTitle(p))),
+                      if (att.eventMeta(withDate: true).isNotEmpty) ...[
+                        const SizedBox(height: 4),
+                        Text(att.eventMeta(withDate: true), style: RdType.meta(p, size: 15)),
+                      ],
+                      const SizedBox(height: 14),
+                      RdOwnAnswerSection(
+                        key: ValueKey('rd-own-sheet-${att.id}'),
+                        attendance: att,
+                        showHeader: false,
+                        showEvent: false,
                       ),
-                  ],
-                ),
+                      if (att.id != null)
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: RdLinkButton(
+                            label: l10n.redesignTodayMore,
+                            onPressed: () {
+                              final router = GoRouter.of(context);
+                              Navigator.of(context).pop();
+                              router.push(RedesignRoutes.ownEvent(att.id!));
+                            },
+                          ),
+                        ),
+                    ],
+                  ),
+        ),
       ),
     );
   }
@@ -111,6 +115,8 @@ class RdOwnStatusChip extends StatelessWidget {
     return Semantics(
       button: true,
       label: l10n.redesignEventsYourAnswerLabel(status),
+      // excludeSemantics drops the InkWell's action: tap from here.
+      onTap: onTap,
       excludeSemantics: true,
       child: Material(
         color: bg,

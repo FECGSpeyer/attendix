@@ -14,6 +14,7 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/features/redesign/data/providers/rd_members_providers.dart';
 import 'package:attendix/data/models/player_absence/player_absence.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
@@ -108,7 +109,7 @@ List<Override> _common(Role role, MockPlayerRepository repo) => [
       playerRepositoryWithTenantProvider.overrideWithValue(repo),
     ];
 
-Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people}) {
+Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, bool criticalOnly = false}) {
   final router = GoRouter(
     initialLocation: '/mitglieder',
     routes: [
@@ -132,6 +133,7 @@ Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people})
   return ProviderScope(
     overrides: [
       ..._common(role, repo),
+      rdMembersCriticalOnlyProvider.overrideWith((ref) => criticalOnly),
       realtimePlayersProvider.overrideWith((ref) => Stream.value(people ?? [_anna, _ben, _clara, _dora])),
       realtimePendingPlayersProvider.overrideWith((ref) => Stream.value([_emil])),
       playerAttendancePercentagesProvider.overrideWith((ref) async => const {1: 90, 2: 40, 3: 80, 4: 70}),
@@ -395,6 +397,17 @@ void main() {
       await tester.tap(find.text('Fehlen oft · 1'));
       await _settle(tester);
       expect(find.text('Anna Berg'), findsOneWidget);
+    });
+
+    testWidgets('"Fehlen oft" from Heute stays on even when nobody active is critical', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo(), criticalOnly: true));
+      await _settle(tester);
+      expect(find.text('Fehlen oft · 0'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+      await tester.tap(find.text('Fehlen oft · 0'));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+      expect(find.textContaining('Fehlen oft'), findsNothing);
     });
 
     testWidgets('no "Fehlen oft" chip without critical members', (tester) async {

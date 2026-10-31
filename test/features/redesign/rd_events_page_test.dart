@@ -463,6 +463,39 @@ void main() {
     expect(tester.takeException(), isNull);
   });
 
+  testWidgets('Helfer: the "Du" chip works with a screen reader, the sheet scrolls on a small screen', (tester) async {
+    _size(tester, const Size(568, 320)); // phone in landscape
+    final semantics = tester.ensureSemantics();
+    var loads = 0;
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async {
+        loads++;
+        return SignoutData(current: _own('21', 0, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    expect(
+      tester.getSemantics(_semantics('Deine Antwort: Offen')),
+      matchesSemantics(label: 'Deine Antwort: Offen', isButton: true, hasTapAction: true),
+    );
+
+    // A recording or realtime change reloads the own answers.
+    final before = loads;
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    container.read(attendanceRefetchCounter.notifier).state++;
+    await _settle(tester);
+    expect(loads, greaterThan(before));
+
+    await tester.ensureVisible(_semantics('Deine Antwort: Offen'));
+    await tester.pump();
+    await tester.tap(_semantics('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
   testWidgets('Dirigent without own Termine sees no "Du" chips', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.admin));

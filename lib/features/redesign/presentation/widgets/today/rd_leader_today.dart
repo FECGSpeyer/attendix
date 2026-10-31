@@ -227,7 +227,8 @@ class _AttentionSection extends ConsumerWidget {
     final p = context.rd;
     final l10n = context.l10n;
     final pending = ref.watch(pendingPlayersProvider).valueOrNull?.length ?? 0;
-    final critical = ref.watch(criticalPlayersProvider).valueOrNull?.length ?? 0;
+    // Same set as the "Fehlen oft" filter of Mitglieder: active only.
+    final critical = ref.watch(criticalPlayersProvider).valueOrNull?.where((x) => !x.paused).length ?? 0;
     final nextId = next?.id;
     final unrecorded = ref.watch(rdUnrecordedProvider).valueOrNull ?? const <int>[];
     final excused = nextId == null

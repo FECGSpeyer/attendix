@@ -78,11 +78,17 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     // Helfer are members too: they keep "Abwesend" next to the leader list.
     final player = leader && !role.canSeeSelfServiceTab ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
+    // Helfer: own answers ("Du ✓") follow recordings and realtime changes.
+    final ownInLeaderList = leader && role.canSeeSelfServiceTab;
+    if (ownInLeaderList) {
+      ref.listen<int>(attendanceRefetchCounter, (_, __) => ref.invalidate(signoutDataProvider));
+    }
 
     return RdPage(
       onRefresh: () async {
         if (leader) {
           ref.read(attendanceRefetchCounter.notifier).state++;
+          if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
           ref.invalidate(signoutDataProvider);
           await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
