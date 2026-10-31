@@ -1,6 +1,18 @@
 {
   "versions": [
     {
+      "version": "0.29.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design, Eltern: Auf „Heute“ pro Kind direkt zu- oder absagen („Ist dabei“ / „Kann nicht“, Grund wie bei Spielern; „Doch absagen“ / „Doch dabei“)",
+        "✨ Beta-Design, Heute (Leitung): „5 offen“ zeigt, wer noch nicht geantwortet hat, nach Register; Push-Erinnerung an jede Person mit ihrem Namen oder den Text teilen",
+        "✨ Beta-Design, Mitglieder: „Einladen“ mit Link teilen, Kopieren und QR-Code (auch im Vollbild für die Probe); neue Gruppen starten mit der Einladung",
+        "✨ Beta-Design ohne Gruppe: Einladungslink einfügen oder QR-Code scannen und beitreten, oder eigene Gruppe gründen",
+        "✨ Beta-Design, Bewerber: Die Seite zeigt die nächsten Schritte; „Andere Gruppe beitreten“ öffnet das Beitreten mit Link statt „Neue Instanz“",
+        "💄 Beta-Design, Eltern ohne verknüpftes Kind: klarer Hinweis, dass die Gruppenleitung das übernimmt"
+      ]
+    },
+    {
       "version": "0.28.0",
       "date": "31.10.2026",
       "changes": [

@@ -15425,6 +15425,228 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.invite.addPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Person anlegen'**
+  String get redesignInviteAddPerson;
+
+  /// redesign.invite.button
+  ///
+  /// In de, this message translates to:
+  /// **'Einladen'**
+  String get redesignInviteButton;
+
+  /// redesign.invite.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Link kopiert'**
+  String get redesignInviteCopied;
+
+  /// redesign.invite.copy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopieren'**
+  String get redesignInviteCopy;
+
+  /// redesign.invite.emptyMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.'**
+  String get redesignInviteEmptyMembers;
+
+  /// redesign.invite.fullscreen
+  ///
+  /// In de, this message translates to:
+  /// **'Vollbild zeigen'**
+  String get redesignInviteFullscreen;
+
+  /// redesign.invite.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.'**
+  String get redesignInviteIntro;
+
+  /// redesign.invite.introAuto
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich an und ist gleich dabei.'**
+  String get redesignInviteIntroAuto;
+
+  /// redesign.invite.off
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anmeldung per Link ist für diese Gruppe aus.'**
+  String get redesignInviteOff;
+
+  /// redesign.invite.qrLabel
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code für die Anmeldung bei {group}'**
+  String redesignInviteQrLabel(Object group);
+
+  /// redesign.invite.share
+  ///
+  /// In de, this message translates to:
+  /// **'Link teilen'**
+  String get redesignInviteShare;
+
+  /// redesign.invite.shareSubject
+  ///
+  /// In de, this message translates to:
+  /// **'Melde dich bei {group} in Attendix an:'**
+  String redesignInviteShareSubject(Object group);
+
+  /// redesign.invite.title
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder einladen'**
+  String get redesignInviteTitle;
+
+  /// redesign.invite.turnOn
+  ///
+  /// In de, this message translates to:
+  /// **'In den Einstellungen einschalten'**
+  String get redesignInviteTurnOn;
+
+  /// redesign.join.continue
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter zur Anmeldung'**
+  String get redesignJoinContinue;
+
+  /// redesign.join.create
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Gruppe gründen'**
+  String get redesignJoinCreate;
+
+  /// redesign.join.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe gründen'**
+  String get redesignJoinCreateButton;
+
+  /// redesign.join.createHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Leitungen, die Attendix neu einführen'**
+  String get redesignJoinCreateHint;
+
+  /// redesign.join.found
+  ///
+  /// In de, this message translates to:
+  /// **'{group} gefunden'**
+  String redesignJoinFound(Object group);
+
+  /// redesign.join.haveInvite
+  ///
+  /// In de, this message translates to:
+  /// **'Ich habe eine Einladung'**
+  String get redesignJoinHaveInvite;
+
+  /// redesign.join.haveInviteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Link einfügen oder QR-Code scannen'**
+  String get redesignJoinHaveInviteHint;
+
+  /// redesign.join.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Füge den Link aus der Einladung ein.'**
+  String get redesignJoinIntro;
+
+  /// redesign.join.invalid
+  ///
+  /// In de, this message translates to:
+  /// **'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).'**
+  String get redesignJoinInvalid;
+
+  /// redesign.join.label
+  ///
+  /// In de, this message translates to:
+  /// **'Einladungslink'**
+  String get redesignJoinLabel;
+
+  /// redesign.join.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.'**
+  String get redesignJoinNoGroup;
+
+  /// redesign.join.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.'**
+  String get redesignJoinNotFound;
+
+  /// redesign.join.scan
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code scannen'**
+  String get redesignJoinScan;
+
+  /// redesign.join.scanHint
+  ///
+  /// In de, this message translates to:
+  /// **'Halte die Kamera auf den QR-Code der Einladung.'**
+  String get redesignJoinScanHint;
+
+  /// redesign.join.scanNoCamera
+  ///
+  /// In de, this message translates to:
+  /// **'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.'**
+  String get redesignJoinScanNoCamera;
+
+  /// redesign.join.scanTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Einladung scannen'**
+  String get redesignJoinScanTitle;
+
+  /// redesign.join.scanWrong
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist kein Einladungs-Code von Attendix.'**
+  String get redesignJoinScanWrong;
+
+  /// redesign.join.stepCheck
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung prüft deine Angaben'**
+  String get redesignJoinStepCheck;
+
+  /// redesign.join.stepNotify
+  ///
+  /// In de, this message translates to:
+  /// **'Du bekommst eine Benachrichtigung, sobald du freigegeben bist'**
+  String get redesignJoinStepNotify;
+
+  /// redesign.join.stepReceived
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung eingegangen am {date}'**
+  String redesignJoinStepReceived(Object date);
+
+  /// redesign.join.stepReceivedNoDate
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung eingegangen'**
+  String get redesignJoinStepReceivedNoDate;
+
+  /// redesign.join.title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe beitreten'**
+  String get redesignJoinTitle;
+
+  /// redesign.join.welcomeNoName
+  ///
+  /// In de, this message translates to:
+  /// **'Willkommen'**
+  String get redesignJoinWelcomeNoName;
+
   /// redesign.manage.announcementsHint
   ///
   /// In de, this message translates to:
@@ -16091,6 +16313,102 @@ abstract class AppLocalizations {
   /// **'{title} · Pultmodus'**
   String redesignPultTitle(Object title);
 
+  /// redesign.remind.body
+  ///
+  /// In de, this message translates to:
+  /// **'für „{event}“ am {when} fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!'**
+  String redesignRemindBody(Object event, Object when);
+
+  /// redesign.remind.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Text kopiert'**
+  String get redesignRemindCopied;
+
+  /// redesign.remind.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Senden hat nicht geklappt.'**
+  String get redesignRemindFailed;
+
+  /// redesign.remind.hello
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {name},'**
+  String redesignRemindHello(Object name);
+
+  /// redesign.remind.helloAll
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo zusammen,'**
+  String get redesignRemindHelloAll;
+
+  /// redesign.remind.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.'**
+  String get redesignRemindHint;
+
+  /// redesign.remind.messageLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht (beginnt mit „Hallo Vorname,“)'**
+  String get redesignRemindMessageLabel;
+
+  /// redesign.remind.noApp
+  ///
+  /// In de, this message translates to:
+  /// **'ohne App'**
+  String get redesignRemindNoApp;
+
+  /// redesign.remind.openLink
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignRemindOpenLink(Object count);
+
+  /// redesign.remind.partlyFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{sent} gesendet, {failed} fehlgeschlagen'**
+  String redesignRemindPartlyFailed(Object sent, Object failed);
+
+  /// redesign.remind.push
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}'**
+  String redesignRemindPush(num count);
+
+  /// redesign.remind.reached
+  ///
+  /// In de, this message translates to:
+  /// **'erinnert'**
+  String get redesignRemindReached;
+
+  /// redesign.remind.sent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}'**
+  String redesignRemindSent(num count);
+
+  /// redesign.remind.share
+  ///
+  /// In de, this message translates to:
+  /// **'Als Text teilen'**
+  String get redesignRemindShare;
+
+  /// redesign.remind.shareText
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!'**
+  String redesignRemindShareText(Object event, Object when);
+
+  /// redesign.remind.title
+  ///
+  /// In de, this message translates to:
+  /// **'{count} noch offen'**
+  String redesignRemindTitle(Object count);
+
   /// redesign.signout.cannot
   ///
   /// In de, this message translates to:
@@ -16451,6 +16769,36 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day}) +{count}'**
   String redesignTodayBirthdayMore(Object name, Object day, Object count);
 
+  /// redesign.today.childFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das hat nicht geklappt. Bitte versuch es noch einmal.'**
+  String get redesignTodayChildFailed;
+
+  /// redesign.today.childIn
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei'**
+  String get redesignTodayChildIn;
+
+  /// redesign.today.childNo
+  ///
+  /// In de, this message translates to:
+  /// **'Kann nicht'**
+  String get redesignTodayChildNo;
+
+  /// redesign.today.childOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{name} offen'**
+  String redesignTodayChildOpen(Object name);
+
+  /// redesign.today.childYes
+  ///
+  /// In de, this message translates to:
+  /// **'Ist dabei'**
+  String get redesignTodayChildYes;
+
   /// redesign.today.countAbsent
   ///
   /// In de, this message translates to:
@@ -16592,7 +16940,7 @@ abstract class AppLocalizations {
   /// redesign.today.noChildren
   ///
   /// In de, this message translates to:
-  /// **'Es sind noch keine Kinder mit deinem Konto verknüpft.'**
+  /// **'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.'**
   String get redesignTodayNoChildren;
 
   /// redesign.today.noDone
@@ -16636,6 +16984,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {Benachrichtigungen, {count} ungelesen} other {Benachrichtigungen, {count} ungelesen}}'**
   String redesignTodayNotificationsUnread(num count);
+
+  /// redesign.today.openCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignTodayOpenCount(Object count);
 
   /// redesign.today.otherReason
   ///

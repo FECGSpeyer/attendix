@@ -8,6 +8,7 @@ import '../../../../core/router/go_replace.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/redesign_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
@@ -19,6 +20,7 @@ import '../../../../core/utils/demo_guard.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
 import 'tenant_create_page.dart';
+import '../../../redesign/presentation/pages/rd_no_group_page.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/push_providers.dart';
@@ -353,6 +355,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // Ionic routeAfterAuth: no instance → the full-page "Neue Instanz
     // anlegen" (register.page, not dismissable, account menu).
     if (!widget.sheet && tenantsAsync.hasValue && count == 0) {
+      // REDESIGN (UX N1): with the Beta switch on, join or found instead
+      // of the bare form; the default app keeps the Ionic flow.
+      if (ref.watch(redesignSettingsProvider).enabled) return const RdNoGroupPage();
       return const TenantCreatePage(canDismiss: false);
     }
 

@@ -17,6 +17,7 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
+import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -129,6 +130,15 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
+          // UX D1: invite right here (Dirigent, Verantwortlich).
+          if (canApprove) ...[
+            RdPillButton(
+              icon: Icons.person_add_alt_outlined,
+              label: l10n.redesignInviteButton,
+              onPressed: () => showRdInviteSheet(context),
+            ),
+            const SizedBox(width: 8),
+          ],
           if (canApprove)
             RdCircleButton(
               icon: Icons.bar_chart_rounded,
@@ -206,6 +216,29 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         action: RdOutlineButton(
           label: l10n.redesignCommonRetry,
           onPressed: () => ref.invalidate(realtimePlayersProvider),
+        ),
+      ));
+    } else if (filtered.isEmpty && people.isEmpty && _query.trim().isEmpty && canApprove) {
+      // UX D1: a new group starts with the invitation.
+      body.add(RdInfoCard(
+        icon: Icons.people_outline,
+        text: l10n.redesignInviteEmptyMembers,
+        action: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RdPrimaryButton(
+              label: l10n.redesignInviteButton,
+              icon: Icons.person_add_alt_outlined,
+              onPressed: () => showRdInviteSheet(context),
+            ),
+            if (role.canEdit) ...[
+              const SizedBox(height: 8),
+              RdOutlineButton(
+                label: l10n.redesignInviteAddPerson,
+                onPressed: () => context.push('/people/new'),
+              ),
+            ],
+          ],
         ),
       ));
     } else if (filtered.isEmpty) {

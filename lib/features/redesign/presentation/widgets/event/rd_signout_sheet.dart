@@ -29,25 +29,51 @@ Future<void> showRdSignoutSheet(
   final allowLate = qa.allowLate && !qa.blocked;
   if (!allowExcuse && !allowLate) return;
 
-  final choice = await showModalBottomSheet<RdSignoutChoice>(
+  final choice = await showRdReasonSheet(
+    context,
+    title: att.eventTitle,
+    meta: att.eventMeta(withDate: true),
+    absenceReasons: actions.absenceReasons,
+    lateReasons: actions.lateReasons,
+    allowExcuse: allowExcuse,
+    allowLate: allowLate,
+    late: late && allowLate || !allowExcuse,
+    ownReasonFirst: att.isRunning,
+  );
+  if (choice == null || !context.mounted) return;
+  await actions.submitSignout(context, att, choice.reason, isLate: choice.isLate);
+}
+
+/// The reason picker of [showRdSignoutSheet] on its own (also used by
+/// Eltern for a child): returns the choice, writes nothing.
+Future<RdSignoutChoice?> showRdReasonSheet(
+  BuildContext context, {
+  required String title,
+  String meta = '',
+  required List<String> absenceReasons,
+  required List<String> lateReasons,
+  bool allowExcuse = true,
+  bool allowLate = true,
+  bool late = false,
+  bool ownReasonFirst = false,
+}) {
+  return showModalBottomSheet<RdSignoutChoice>(
     context: context,
     useRootNavigator: true,
     isScrollControlled: true,
     showDragHandle: true,
     backgroundColor: context.rd.bg,
     builder: (_) => _SignoutSheet(
-      title: att.eventTitle,
-      meta: att.eventMeta(withDate: true),
-      absenceReasons: actions.absenceReasons,
-      lateReasons: actions.lateReasons,
+      title: title,
+      meta: meta,
+      absenceReasons: absenceReasons,
+      lateReasons: lateReasons,
       allowExcuse: allowExcuse,
       allowLate: allowLate,
-      late: late && allowLate || !allowExcuse,
-      ownReasonFirst: att.isRunning,
+      late: late,
+      ownReasonFirst: ownReasonFirst,
     ),
   );
-  if (choice == null || !context.mounted) return;
-  await actions.submitSignout(context, att, choice.reason, isLate: choice.isLate);
 }
 
 class _SignoutSheet extends StatefulWidget {

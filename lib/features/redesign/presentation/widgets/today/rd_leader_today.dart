@@ -19,6 +19,7 @@ import '../../../data/providers/rd_members_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
 import '../rd_widgets.dart';
 import 'rd_player_today.dart';
+import 'rd_remind_open_sheet.dart';
 import 'rd_today_common.dart';
 import 'rd_duty_section.dart';
 
@@ -87,7 +88,7 @@ class RdLeaderToday extends ConsumerWidget {
             ),
           )
         else
-          _NextEventCard(attendance: next, canOpen: role.canAddAttendance),
+          _NextEventCard(attendance: next, canOpen: role.canAddAttendance, canRemind: isLead),
         if (isLead) _AttentionSection(next: next),
         if (role.canSeeSelfServiceTab) ...[
           const SizedBox(height: 24),
@@ -133,9 +134,12 @@ class RdLeaderToday extends ConsumerWidget {
 }
 
 class _NextEventCard extends ConsumerWidget {
-  const _NextEventCard({required this.attendance, required this.canOpen});
+  const _NextEventCard({required this.attendance, required this.canOpen, this.canRemind = false});
 
   final Attendance attendance;
+
+  /// Dirigent and Verantwortlich: "6 offen" opens the reminder (UX D2).
+  final bool canRemind;
 
   /// Beobachter only see the list, not the Termin (route guard).
   final bool canOpen;
@@ -189,7 +193,43 @@ class _NextEventCard extends ConsumerWidget {
               semanticLabel: _countsLine(l10n, counts),
             ),
             const SizedBox(height: 8),
-            Text(_countsLine(l10n, counts), style: RdType.meta(p, size: 13)),
+            if (canRemind && id != null && counts.open > 0)
+              Wrap(
+                crossAxisAlignment: WrapCrossAlignment.center,
+                children: [
+                  Text('${_countsLine(l10n, counts, withOpen: false)} · ', style: RdType.meta(p, size: 13)),
+                  InkWell(
+                    borderRadius: BorderRadius.circular(8),
+                    onTap: () => showRdRemindOpenSheet(
+                      context,
+                      attendanceId: id,
+                      title: info.title,
+                      when: rdRemindWhen(info.start, hasTime: hasTime),
+                    ),
+                    child: ConstrainedBox(
+                      constraints: const BoxConstraints(minHeight: 32),
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          Text(
+                            l10n.redesignRemindOpenLink(counts.open),
+                            style: TextStyle(
+                              fontSize: 13,
+                              fontWeight: FontWeight.w700,
+                              color: p.link,
+                              decoration: TextDecoration.underline,
+                              decorationColor: p.link,
+                            ),
+                          ),
+                          Icon(Icons.chevron_right, size: 16, color: p.link),
+                        ],
+                      ),
+                    ),
+                  ),
+                ],
+              )
+            else
+              Text(_countsLine(l10n, counts), style: RdType.meta(p, size: 13)),
             const SizedBox(height: 16),
           ],
           if (id != null && canOpen)
@@ -206,12 +246,12 @@ class _NextEventCard extends ConsumerWidget {
     );
   }
 
-  static String _countsLine(AppLocalizations l10n, RdStatusCounts c) => [
+  static String _countsLine(AppLocalizations l10n, RdStatusCounts c, {bool withOpen = true}) => [
         l10n.redesignTodayCountYes(c.present),
         if (c.excused > 0) l10n.redesignTodayCountExcused(c.excused),
         if (c.lateAnnounced > 0) l10n.redesignTodayCountLater(c.lateAnnounced),
         if (c.absent > 0) l10n.redesignTodayCountAbsent(c.absent),
-        l10n.redesignTodayCountOpen(c.open),
+        if (withOpen) l10n.redesignTodayCountOpen(c.open),
       ].join(' · ');
 }
 

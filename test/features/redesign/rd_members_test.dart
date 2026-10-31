@@ -410,6 +410,22 @@ void main() {
       expect(find.textContaining('Fehlen oft'), findsNothing);
     });
 
+    testWidgets('Einladen opens the invitation; off without a sign-up link (UX D1)', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      await tester.tap(find.text('Einladen'));
+      await _settle(tester);
+      expect(find.text('Mitglieder einladen'), findsOneWidget);
+      expect(find.text('Die Anmeldung per Link ist für diese Gruppe aus.'), findsOneWidget);
+      expect(find.text('In den Einstellungen einschalten'), findsOneWidget);
+    });
+
+    testWidgets('Beobachter cannot invite', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.viewer, _repo()));
+      await _settle(tester);
+      expect(find.text('Einladen'), findsNothing);
+    });
+
     testWidgets('no "Fehlen oft" chip without critical members', (tester) async {
       await tester.pumpWidget(_membersApp(Role.admin, _repo()));
       await _settle(tester);
