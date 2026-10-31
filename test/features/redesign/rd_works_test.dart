@@ -18,6 +18,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
@@ -156,6 +157,9 @@ Future<void> _settle(WidgetTester tester) async {
   }
 }
 
+/// A number tile of the overview, by its spoken label.
+Finder _stat(String label) => find.byWidgetPredicate((w) => w is Semantics && w.properties.label == label);
+
 void _phone(WidgetTester tester) {
   tester.view.physicalSize = const Size(393, 852);
   tester.view.devicePixelRatio = 1;
@@ -178,13 +182,15 @@ List<Override> _common(Role role) => [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     ];
 
-Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false}) {
+Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false, bool overview = false}) {
   final router = GoRouter(
     initialLocation: '/werke',
     routes: [
       GoRoute(
         path: '/werke',
-        builder: (_, __) => twoLists
+        builder: (_, __) => overview
+            ? const RdWorksOverviewPanel()
+            : twoLists
             ? const Row(children: [
                 Expanded(child: RdWorksPage(key: ValueKey('first'))),
                 Expanded(child: RdWorksPage(key: ValueKey('second'))),
@@ -406,6 +412,89 @@ void main() {
       await tester.tap(find.text('Abendlied'));
       await _settle(tester);
       expect(find.text('page work 7'), findsOneWidget);
+    });
+
+    testWidgets('empty split column: overview with counts, next plan, missing sheet music', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      final planned = DateTime.now().add(const Duration(days: 3));
+      final songs = [
+        _ouverture.copyWith(lastSung: '2025-01-10T19:00:00Z'),
+        _ave.copyWith(nextPlanned: planned.toIso8601String(), lastSung: '2024-05-01T19:00:00Z'),
+        _abend.copyWith(lastSung: '2026-06-01T19:00:00Z'),
+      ];
+      await tester.pumpWidget(_worksApp(Role.admin, songs: songs, overview: true));
+      await _settle(tester);
+
+      expect(find.text('Überblick'), findsOneWidget);
+      expect(_stat('3 Werke'), findsOneWidget);
+      expect(_stat('2 mit Noten'), findsOneWidget);
+      expect(_stat('1 ohne Noten'), findsOneWidget);
+      expect(find.textContaining('ALS NÄCHSTES GEPLANT'), findsOneWidget);
+      expect(find.text('NOCH OHNE NOTEN'), findsOneWidget);
+      expect(find.text('Werk hinzufügen'), findsOneWidget);
+      // Ave is planned again: not "long ago"; the oldest comes first.
+      expect(find.text('AM LÄNGSTEN NICHT DRAN'), findsOneWidget);
+      expect(
+        tester.getTopLeft(find.text('12  Festliche Ouvertüre')).dy,
+        lessThan(tester.getTopLeft(find.text('3  Abendlied')).dy),
+      );
+
+      await tester.tap(find.text('41  Ave verum corpus').first);
+      await _settle(tester);
+      expect(find.text('page work 6'), findsOneWidget);
+    });
+
+    testWidgets('overview: Erneut versuchen reloads a failed songs load', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var calls = 0;
+      final router = GoRouter(
+        initialLocation: '/werke',
+        routes: [GoRoute(path: '/werke', builder: (_, __) => const RdWorksOverviewPanel())],
+      );
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          ..._common(Role.admin),
+          // Kept alive like a cached source: its error stays until reset.
+          songsProvider.overrideWith((ref) async {
+            ref.keepAlive();
+            if (calls++ == 0) throw Exception('offline');
+            return [_ouverture, _ave, _abend];
+          }),
+          songsListDataProvider(null).overrideWith((ref) async => SongsListData(
+                tenantId: 7,
+                tenantType: 'orchestra',
+                songs: await ref.watch(songsProvider.future),
+                categories: const [],
+                groups: _groups,
+                groupCategories: const [],
+                currentSongs: const [],
+                additionalFields: const [],
+              )),
+        ],
+        child: _material(router),
+      ));
+      await _settle(tester);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+
+      await tester.tap(find.text('Erneut versuchen'));
+      await _settle(tester);
+      expect(calls, 2);
+      expect(_stat('3 Werke'), findsOneWidget);
+    });
+
+    testWidgets('overview for players: no missing sheet music, no add button', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(_worksApp(Role.player, overview: true));
+      await _settle(tester);
+      expect(find.text('Überblick'), findsOneWidget);
+      expect(find.text('NOCH OHNE NOTEN'), findsNothing);
+      expect(find.text('Werk hinzufügen'), findsNothing);
     });
 
     testWidgets('admin may add works; no group files, no Dateien', (tester) async {

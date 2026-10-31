@@ -8641,7 +8641,7 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String redesignFilesShortcutsHelp(Object mod) {
-    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename';
+    return '↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · $mod+U upload · $mod+A all · $mod+D download · $mod+Z undo · F2 rename · ? this overview';
   }
 
   @override
@@ -9084,10 +9084,65 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignSplitEventsEmpty => 'Choose an event on the left.';
 
   @override
+  String get redesignSplitMembersActive => 'active';
+
+  @override
+  String get redesignSplitMembersBirthdays => 'Upcoming birthdays';
+
+  @override
+  String get redesignSplitMembersCritical => 'Attendance to watch';
+
+  @override
   String get redesignSplitMembersEmpty => 'Choose a person on the left.';
 
   @override
+  String get redesignSplitMembersHint => 'Choose a person on the left.';
+
+  @override
+  String get redesignSplitMembersPaused => 'paused';
+
+  @override
+  String get redesignSplitMembersPending => 'requests';
+
+  @override
+  String redesignSplitMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more',
+      one: 'and 1 more',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignSplitOverviewTitle => 'Overview';
+
+  @override
+  String get redesignSplitWorksCount => 'Works';
+
+  @override
   String get redesignSplitWorksEmpty => 'Choose a work on the left.';
+
+  @override
+  String get redesignSplitWorksHint => 'Choose a work on the left or start here.';
+
+  @override
+  String get redesignSplitWorksLongAgo => 'Longest since last time';
+
+  @override
+  String get redesignSplitWorksMissing => 'No sheet music yet';
+
+  @override
+  String redesignSplitWorksNext(Object date) {
+    return 'Planned next · $date';
+  }
+
+  @override
+  String get redesignSplitWorksWithFiles => 'with sheet music';
+
+  @override
+  String get redesignSplitWorksWithoutFiles => 'without sheet music';
 
   @override
   String get redesignStatsAvg => 'Ø attendance';

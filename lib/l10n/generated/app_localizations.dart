@@ -14888,7 +14888,7 @@ abstract class AppLocalizations {
   /// redesign.files.shortcutsHelp
   ///
   /// In de, this message translates to:
-  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen'**
+  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
   /// redesign.files.title
@@ -15653,17 +15653,107 @@ abstract class AppLocalizations {
   /// **'Wähle links einen Termin aus.'**
   String get redesignSplitEventsEmpty;
 
+  /// redesign.split.membersActive
+  ///
+  /// In de, this message translates to:
+  /// **'aktiv'**
+  String get redesignSplitMembersActive;
+
+  /// redesign.split.membersBirthdays
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Geburtstage'**
+  String get redesignSplitMembersBirthdays;
+
+  /// redesign.split.membersCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Auffällige Anwesenheit'**
+  String get redesignSplitMembersCritical;
+
   /// redesign.split.membersEmpty
   ///
   /// In de, this message translates to:
   /// **'Wähle links eine Person aus.'**
   String get redesignSplitMembersEmpty;
 
+  /// redesign.split.membersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links eine Person aus.'**
+  String get redesignSplitMembersHint;
+
+  /// redesign.split.membersPaused
+  ///
+  /// In de, this message translates to:
+  /// **'pausiert'**
+  String get redesignSplitMembersPaused;
+
+  /// redesign.split.membersPending
+  ///
+  /// In de, this message translates to:
+  /// **'Anfragen'**
+  String get redesignSplitMembersPending;
+
+  /// redesign.split.more
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weiteres} other {und {count} weitere}}'**
+  String redesignSplitMore(num count);
+
+  /// redesign.split.overviewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Überblick'**
+  String get redesignSplitOverviewTitle;
+
+  /// redesign.split.worksCount
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignSplitWorksCount;
+
   /// redesign.split.worksEmpty
   ///
   /// In de, this message translates to:
   /// **'Wähle links ein Werk aus.'**
   String get redesignSplitWorksEmpty;
+
+  /// redesign.split.worksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links ein Werk aus oder fang hier an.'**
+  String get redesignSplitWorksHint;
+
+  /// redesign.split.worksLongAgo
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht dran'**
+  String get redesignSplitWorksLongAgo;
+
+  /// redesign.split.worksMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Noch ohne Noten'**
+  String get redesignSplitWorksMissing;
+
+  /// redesign.split.worksNext
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes geplant · {date}'**
+  String redesignSplitWorksNext(Object date);
+
+  /// redesign.split.worksWithFiles
+  ///
+  /// In de, this message translates to:
+  /// **'mit Noten'**
+  String get redesignSplitWorksWithFiles;
+
+  /// redesign.split.worksWithoutFiles
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Noten'**
+  String get redesignSplitWorksWithoutFiles;
 
   /// redesign.stats.avg
   ///

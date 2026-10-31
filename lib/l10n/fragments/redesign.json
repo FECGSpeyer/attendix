@@ -431,7 +431,22 @@
       "split": {
         "eventsEmpty": "Wähle links einen Termin aus.",
         "membersEmpty": "Wähle links eine Person aus.",
-        "worksEmpty": "Wähle links ein Werk aus."
+        "worksEmpty": "Wähle links ein Werk aus.",
+        "overviewTitle": "Überblick",
+        "worksHint": "Wähle links ein Werk aus oder fang hier an.",
+        "membersHint": "Wähle links eine Person aus.",
+        "worksCount": "Werke",
+        "worksWithFiles": "mit Noten",
+        "worksWithoutFiles": "ohne Noten",
+        "worksNext": "Als Nächstes geplant · {date}",
+        "worksMissing": "Noch ohne Noten",
+        "worksLongAgo": "Am längsten nicht dran",
+        "more": "{count, plural, one {und 1 weiteres} other {und {count} weitere}}",
+        "membersActive": "aktiv",
+        "membersPaused": "pausiert",
+        "membersPending": "Anfragen",
+        "membersBirthdays": "Nächste Geburtstage",
+        "membersCritical": "Auffällige Anwesenheit"
       },
       "files": {
         "title": "Dateien",
@@ -469,7 +484,7 @@
         "replace": "Ersetzen",
         "keepBoth": "Beide behalten",
         "shortcuts": "Tastenkürzel",
-        "shortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen"
+        "shortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht"
       },
       "stats": {
         "title": "Auswertung",
@@ -960,7 +975,22 @@
       "split": {
         "eventsEmpty": "Choose an event on the left.",
         "membersEmpty": "Choose a person on the left.",
-        "worksEmpty": "Choose a work on the left."
+        "worksEmpty": "Choose a work on the left.",
+        "overviewTitle": "Overview",
+        "worksHint": "Choose a work on the left or start here.",
+        "membersHint": "Choose a person on the left.",
+        "worksCount": "Works",
+        "worksWithFiles": "with sheet music",
+        "worksWithoutFiles": "without sheet music",
+        "worksNext": "Planned next · {date}",
+        "worksMissing": "No sheet music yet",
+        "worksLongAgo": "Longest since last time",
+        "more": "{count, plural, one {and 1 more} other {and {count} more}}",
+        "membersActive": "active",
+        "membersPaused": "paused",
+        "membersPending": "requests",
+        "membersBirthdays": "Upcoming birthdays",
+        "membersCritical": "Attendance to watch"
       },
       "files": {
         "title": "Files",
@@ -998,7 +1028,7 @@
         "replace": "Replace",
         "keepBoth": "Keep both",
         "shortcuts": "Keyboard shortcuts",
-        "shortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename"
+        "shortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename · ? this overview"
       },
       "stats": {
         "title": "Insights",

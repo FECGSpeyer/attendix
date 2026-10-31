@@ -597,14 +597,22 @@ void main() {
       ]);
     });
 
-    testWidgets('the keyboard icon lists the shortcuts', (tester) async {
+    testWidgets('no keyboard icon in the toolbar; "?" lists the shortcuts', (tester) async {
       _desktop(tester);
-      await tester.pumpWidget(_app(Role.admin, _FakeFiles(), song: const Song(id: 5, name: 'Leer')));
+      await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      // The hint lives under Ich › Hilfe now, not on the main UI.
+      expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
+
+      await tester.tap(find.text('klar.pdf'));
+      await _settle(tester);
+      // "?" is typed with Umschalt (no own key in the test key maps): the
+      // page reacts to the typed character, so send it on the slash key.
+      await tester.sendKeyEvent(LogicalKeyboardKey.slash, character: '?');
       await _settle(tester);
       expect(find.text('Tastenkürzel'), findsOneWidget);
       expect(find.text('F2 umbenennen'), findsOneWidget);
+      expect(find.text('? diese Übersicht'), findsOneWidget);
     });
   });
 

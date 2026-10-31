@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.26.3",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design am breiten Bildschirm: Ist links kein Werk oder keine Person gewählt, zeigt die rechte Spalte jetzt einen Überblick (Zahlen, als Nächstes geplant, Werke ohne Noten, lange nicht dran, Geburtstage, auffällige Anwesenheit) statt eines leeren Kastens",
+        "💄 Beta-Design, Werk: Das Tastatur-Symbol über der Dateiliste ist weg; die Tastenkürzel stehen jetzt unter Ich › Hilfe und erscheinen mit „?“ in der Dateiliste"
+      ]
+    },
+    {
       "version": "0.26.2",
       "date": "31.10.2026",
       "changes": [

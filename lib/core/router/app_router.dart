@@ -122,6 +122,7 @@ import '../../features/redesign/presentation/pages/rd_stats_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
+import '../../features/redesign/presentation/widgets/rd_overview.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -635,6 +636,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       detail: null,
                       selectedId: null,
                       emptyText: context.l10n.redesignSplitMembersEmpty,
+                      empty: const RdMembersOverviewPanel(),
                     )
                   : const RdMembersPage(),
               state: state,
@@ -654,6 +656,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                         detail: detail,
                         selectedId: id,
                         emptyText: context.l10n.redesignSplitMembersEmpty,
+                        empty: const RdMembersOverviewPanel(),
                       ),
                     );
                   }
@@ -686,6 +689,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       selectedId: null,
                       emptyText: context.l10n.redesignSplitWorksEmpty,
                       emptyIcon: Icons.library_music_outlined,
+                      empty: const RdWorksOverviewPanel(),
                     )
                   : const RdWorksPage(),
               state: state,
@@ -708,6 +712,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                         selectedId: id,
                         emptyText: context.l10n.redesignSplitWorksEmpty,
                         emptyIcon: Icons.library_music_outlined,
+                        empty: const RdWorksOverviewPanel(),
                       ),
                     );
                   }
