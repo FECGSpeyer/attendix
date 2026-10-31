@@ -8964,6 +8964,125 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String get redesignInviteAddPerson => 'Person anlegen';
+
+  @override
+  String get redesignInviteButton => 'Einladen';
+
+  @override
+  String get redesignInviteCopied => 'Link kopiert';
+
+  @override
+  String get redesignInviteCopy => 'Kopieren';
+
+  @override
+  String get redesignInviteEmptyMembers => 'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
+
+  @override
+  String get redesignInviteFullscreen => 'Vollbild zeigen';
+
+  @override
+  String get redesignInviteIntro => 'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.';
+
+  @override
+  String get redesignInviteIntroAuto => 'Wer den Link öffnet, meldet sich an und ist gleich dabei.';
+
+  @override
+  String get redesignInviteOff => 'Die Anmeldung per Link ist für diese Gruppe aus.';
+
+  @override
+  String redesignInviteQrLabel(Object group) {
+    return 'QR-Code für die Anmeldung bei $group';
+  }
+
+  @override
+  String get redesignInviteShare => 'Link teilen';
+
+  @override
+  String redesignInviteShareSubject(Object group) {
+    return 'Melde dich bei $group in Attendix an:';
+  }
+
+  @override
+  String get redesignInviteTitle => 'Mitglieder einladen';
+
+  @override
+  String get redesignInviteTurnOn => 'In den Einstellungen einschalten';
+
+  @override
+  String get redesignJoinContinue => 'Weiter zur Anmeldung';
+
+  @override
+  String get redesignJoinCreate => 'Eigene Gruppe gründen';
+
+  @override
+  String get redesignJoinCreateButton => 'Gruppe gründen';
+
+  @override
+  String get redesignJoinCreateHint => 'Für Leitungen, die Attendix neu einführen';
+
+  @override
+  String redesignJoinFound(Object group) {
+    return '$group gefunden';
+  }
+
+  @override
+  String get redesignJoinHaveInvite => 'Ich habe eine Einladung';
+
+  @override
+  String get redesignJoinHaveInviteHint => 'Link einfügen oder QR-Code scannen';
+
+  @override
+  String get redesignJoinIntro => 'Füge den Link aus der Einladung ein.';
+
+  @override
+  String get redesignJoinInvalid => 'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).';
+
+  @override
+  String get redesignJoinLabel => 'Einladungslink';
+
+  @override
+  String get redesignJoinNoGroup => 'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.';
+
+  @override
+  String get redesignJoinNotFound => 'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.';
+
+  @override
+  String get redesignJoinScan => 'QR-Code scannen';
+
+  @override
+  String get redesignJoinScanHint => 'Halte die Kamera auf den QR-Code der Einladung.';
+
+  @override
+  String get redesignJoinScanNoCamera => 'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.';
+
+  @override
+  String get redesignJoinScanTitle => 'Einladung scannen';
+
+  @override
+  String get redesignJoinScanWrong => 'Das ist kein Einladungs-Code von Attendix.';
+
+  @override
+  String get redesignJoinStepCheck => 'Die Leitung prüft deine Angaben';
+
+  @override
+  String get redesignJoinStepNotify => 'Du bekommst eine Benachrichtigung, sobald du freigegeben bist';
+
+  @override
+  String redesignJoinStepReceived(Object date) {
+    return 'Anmeldung eingegangen am $date';
+  }
+
+  @override
+  String get redesignJoinStepReceivedNoDate => 'Anmeldung eingegangen';
+
+  @override
+  String get redesignJoinTitle => 'Gruppe beitreten';
+
+  @override
+  String get redesignJoinWelcomeNoName => 'Willkommen';
+
+  @override
   String get redesignManageAnnouncementsHint => 'Gesendete Mitteilungen ansehen';
 
   @override
@@ -9363,6 +9482,76 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignRemindBody(Object event, Object when) {
+    return 'für „$event“ am $when fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!';
+  }
+
+  @override
+  String get redesignRemindCopied => 'Text kopiert';
+
+  @override
+  String get redesignRemindFailed => 'Senden hat nicht geklappt.';
+
+  @override
+  String redesignRemindHello(Object name) {
+    return 'Hallo $name,';
+  }
+
+  @override
+  String get redesignRemindHint => 'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.';
+
+  @override
+  String get redesignRemindMessageLabel => 'Nachricht (beginnt mit „Hallo Vorname,“)';
+
+  @override
+  String get redesignRemindNoApp => 'ohne App';
+
+  @override
+  String redesignRemindOpenLink(Object count) {
+    return '$count offen';
+  }
+
+  @override
+  String redesignRemindPartlyFailed(Object sent, Object failed) {
+    return '$sent gesendet, $failed fehlgeschlagen';
+  }
+
+  @override
+  String redesignRemindPush(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Push an $count Personen senden',
+      one: 'Push an 1 Person senden',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignRemindSent(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Erinnerung an $count Personen gesendet',
+      one: 'Erinnerung an 1 Person gesendet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignRemindShare => 'Als Text teilen';
+
+  @override
+  String redesignRemindShareText(Object event, Object when) {
+    return 'Hallo zusammen, für „$event“ am $when fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!';
+  }
+
+  @override
+  String redesignRemindTitle(Object count) {
+    return '$count noch offen';
+  }
+
+  @override
   String get redesignSignoutCannot => 'Ich kann nicht';
 
   @override
@@ -9569,6 +9758,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignTodayChildFailed => 'Das hat nicht geklappt. Bitte versuch es noch einmal.';
+
+  @override
+  String get redesignTodayChildIn => 'Dabei';
+
+  @override
+  String get redesignTodayChildNo => 'Kann nicht';
+
+  @override
+  String redesignTodayChildOpen(Object name) {
+    return '$name offen';
+  }
+
+  @override
+  String get redesignTodayChildYes => 'Ist dabei';
+
+  @override
   String redesignTodayCountAbsent(Object count) {
     return '$count abwesend';
   }
@@ -9676,7 +9882,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayNoAfterAll => 'Doch absagen';
 
   @override
-  String get redesignTodayNoChildren => 'Es sind noch keine Kinder mit deinem Konto verknüpft.';
+  String get redesignTodayNoChildren => 'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.';
 
   @override
   String get redesignTodayNoDone => 'Abgemeldet';
@@ -9705,6 +9911,11 @@ class AppLocalizationsDe extends AppLocalizations {
       one: 'Benachrichtigungen, $count ungelesen',
     );
     return '$_temp0';
+  }
+
+  @override
+  String redesignTodayOpenCount(Object count) {
+    return '$count offen';
   }
 
   @override

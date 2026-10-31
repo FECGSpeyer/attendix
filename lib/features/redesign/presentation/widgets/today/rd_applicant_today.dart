@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../../core/providers/self_service_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../rd_actions.dart';
+import '../join/rd_join_sheet.dart';
 import '../rd_widgets.dart';
 
 /// REDESIGN: "Heute" of Bewerber (canvas R4): the application is being
@@ -56,8 +57,16 @@ class RdApplicantToday extends ConsumerWidget {
                 group.isEmpty ? l10n.redesignApplicantWaiting : l10n.redesignApplicantWaitingFor(group),
                 style: RdType.cardTitle(p),
               ),
-              const SizedBox(height: 8),
-              Text(l10n.signoutRegistrationSubmitted, style: RdType.body(p).copyWith(color: p.text2)),
+              const SizedBox(height: 14),
+              // UX B2: what happens next.
+              _Step(
+                done: true,
+                text: player?.createdAt == null
+                    ? l10n.redesignJoinStepReceivedNoDate
+                    : l10n.redesignJoinStepReceived(DateFormat('d.M.').format(player!.createdAt!.toLocal())),
+              ),
+              _Step(number: 2, text: l10n.redesignJoinStepCheck),
+              _Step(number: 3, text: l10n.redesignJoinStepNotify),
             ],
           ),
         ),
@@ -65,7 +74,8 @@ class RdApplicantToday extends ConsumerWidget {
         RdOutlineButton(
           label: l10n.redesignApplicantOtherGroup,
           icon: Icons.group_add_outlined,
-          onPressed: () => context.go('/tenants'),
+          // UX B1: join with the invitation link, not "Neue Instanz".
+          onPressed: () => showRdJoinSheet(context),
         ),
         const SizedBox(height: 10),
         RdOutlineButton(
@@ -75,6 +85,39 @@ class RdApplicantToday extends ConsumerWidget {
           onPressed: () => rdLogout(context, ref),
         ),
       ],
+    );
+  }
+}
+
+/// One step of "how it goes on" (done = check mark).
+class _Step extends StatelessWidget {
+  const _Step({required this.text, this.number, this.done = false});
+
+  final String text;
+  final int? number;
+  final bool done;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 5),
+      child: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            width: 24,
+            height: 24,
+            alignment: Alignment.center,
+            decoration: BoxDecoration(color: done ? p.presentSoft : p.track, shape: BoxShape.circle),
+            child: done
+                ? Icon(Icons.check, size: 16, color: p.present)
+                : Text('$number', style: TextStyle(fontSize: 13, fontWeight: FontWeight.w700, color: p.text2)),
+          ),
+          const SizedBox(width: 10),
+          Expanded(child: Text(text, style: RdType.body(p))),
+        ],
+      ),
     );
   }
 }

@@ -12,6 +12,7 @@ import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/features/parents/data/providers/parents_providers.dart';
 import 'package:attendix/features/redesign/data/providers/rd_events_providers.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
@@ -56,7 +57,7 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
+Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> extra = const []}) {
   final router = GoRouter(
     initialLocation: '/heute',
     routes: [
@@ -108,6 +109,12 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
       ),
       criticalPlayersProvider.overrideWith((ref) async => const []),
       rdUnrecordedProvider.overrideWith((ref) async => const [23]),
+      rdOpenPersonsProvider.overrideWith((ref, id) async => [
+            TestFactories.createPerson(id: 31, firstName: 'Tim', lastName: 'Maurer', appId: 'app-tim')
+                .copyWith(groupName: 'Trompete'),
+            TestFactories.createPerson(id: 32, firstName: 'Lukas', lastName: 'Weber').copyWith(groupName: 'Trompete'),
+          ]),
+      ...extra,
       dashboardBirthdaysProvider.overrideWith((ref) async => const []),
     ],
     child: Consumer(
@@ -201,6 +208,54 @@ void main() {
     await _settle(tester);
     expect(find.textContaining('page termin /termine/23'), findsOneWidget);
     expect(find.textContaining('tab=anwesenheit'), findsOneWidget);
+  });
+
+  testWidgets('Dirigent: "5 offen" lists who is open and reminds personally (UX D2)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    await tester.tap(find.text('5 offen'));
+    await _settle(tester);
+    expect(find.text('2 noch offen'), findsOneWidget);
+    expect(find.text('TROMPETE'), findsOneWidget);
+    expect(find.text('Tim Maurer'), findsOneWidget);
+    expect(find.text('ohne App'), findsOneWidget, reason: 'Lukas has no app account');
+    expect(find.text('Push an 1 Person senden'), findsOneWidget);
+    expect(find.text('Als Text teilen'), findsOneWidget);
+  });
+
+  testWidgets('Eltern answer per child right on Heute (UX E1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    final group = ParentAttendanceGroup(
+      attendanceId: 40,
+      date: _day(2),
+      typeInfo: 'Chorprobe',
+      startTime: '16:30',
+      endTime: '17:30',
+      childAttendances: [
+        ChildPersonAttendance(id: 'm', childId: 1, childName: 'Mia Wolf', childFirstName: 'Mia', status: AttendanceStatus.present),
+        ChildPersonAttendance(id: 'b', childId: 2, childName: 'Ben Wolf', childFirstName: 'Ben'),
+      ],
+    );
+    await tester.pumpWidget(_app(Role.parent, extra: [
+      parentChildrenProvider.overrideWith((ref) async => [TestFactories.createPerson(id: 1)]),
+      childrenAttendancesProvider.overrideWith((ref) async => const []),
+      upcomingParentAttendancesProvider.overrideWithValue([group]),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('Chorprobe'), findsOneWidget);
+    expect(find.text('Dabei'), findsOneWidget);
+    expect(find.text('Doch absagen'), findsOneWidget);
+    expect(find.text('Ist dabei'), findsOneWidget);
+    expect(find.text('Kann nicht'), findsOneWidget);
+    expect(find.text('Zu- und absagen'), findsNothing);
+
+    await tester.tap(find.text('Kann nicht'));
+    await _settle(tester);
+    expect(find.text('Ben · Chorprobe'), findsOneWidget);
+    expect(tester.takeException(), isNull);
   });
 
   testWidgets('Beobachter: a hint once, Termine without dead taps (UX V1)', (tester) async {

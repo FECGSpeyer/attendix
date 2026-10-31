@@ -11734,6 +11734,166 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignInviteAddPerson": "Person anlegen",
+  "@redesignInviteAddPerson": {
+    "description": "redesign.invite.addPerson"
+  },
+  "redesignInviteButton": "Einladen",
+  "@redesignInviteButton": {
+    "description": "redesign.invite.button"
+  },
+  "redesignInviteCopied": "Link kopiert",
+  "@redesignInviteCopied": {
+    "description": "redesign.invite.copied"
+  },
+  "redesignInviteCopy": "Kopieren",
+  "@redesignInviteCopy": {
+    "description": "redesign.invite.copy"
+  },
+  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+  "@redesignInviteEmptyMembers": {
+    "description": "redesign.invite.emptyMembers"
+  },
+  "redesignInviteFullscreen": "Vollbild zeigen",
+  "@redesignInviteFullscreen": {
+    "description": "redesign.invite.fullscreen"
+  },
+  "redesignInviteIntro": "Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.",
+  "@redesignInviteIntro": {
+    "description": "redesign.invite.intro"
+  },
+  "redesignInviteIntroAuto": "Wer den Link öffnet, meldet sich an und ist gleich dabei.",
+  "@redesignInviteIntroAuto": {
+    "description": "redesign.invite.introAuto"
+  },
+  "redesignInviteOff": "Die Anmeldung per Link ist für diese Gruppe aus.",
+  "@redesignInviteOff": {
+    "description": "redesign.invite.off"
+  },
+  "redesignInviteQrLabel": "QR-Code für die Anmeldung bei {group}",
+  "@redesignInviteQrLabel": {
+    "description": "redesign.invite.qrLabel",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignInviteShare": "Link teilen",
+  "@redesignInviteShare": {
+    "description": "redesign.invite.share"
+  },
+  "redesignInviteShareSubject": "Melde dich bei {group} in Attendix an:",
+  "@redesignInviteShareSubject": {
+    "description": "redesign.invite.shareSubject",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignInviteTitle": "Mitglieder einladen",
+  "@redesignInviteTitle": {
+    "description": "redesign.invite.title"
+  },
+  "redesignInviteTurnOn": "In den Einstellungen einschalten",
+  "@redesignInviteTurnOn": {
+    "description": "redesign.invite.turnOn"
+  },
+  "redesignJoinContinue": "Weiter zur Anmeldung",
+  "@redesignJoinContinue": {
+    "description": "redesign.join.continue"
+  },
+  "redesignJoinCreate": "Eigene Gruppe gründen",
+  "@redesignJoinCreate": {
+    "description": "redesign.join.create"
+  },
+  "redesignJoinCreateButton": "Gruppe gründen",
+  "@redesignJoinCreateButton": {
+    "description": "redesign.join.createButton"
+  },
+  "redesignJoinCreateHint": "Für Leitungen, die Attendix neu einführen",
+  "@redesignJoinCreateHint": {
+    "description": "redesign.join.createHint"
+  },
+  "redesignJoinFound": "{group} gefunden",
+  "@redesignJoinFound": {
+    "description": "redesign.join.found",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignJoinHaveInvite": "Ich habe eine Einladung",
+  "@redesignJoinHaveInvite": {
+    "description": "redesign.join.haveInvite"
+  },
+  "redesignJoinHaveInviteHint": "Link einfügen oder QR-Code scannen",
+  "@redesignJoinHaveInviteHint": {
+    "description": "redesign.join.haveInviteHint"
+  },
+  "redesignJoinIntro": "Füge den Link aus der Einladung ein.",
+  "@redesignJoinIntro": {
+    "description": "redesign.join.intro"
+  },
+  "redesignJoinInvalid": "Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).",
+  "@redesignJoinInvalid": {
+    "description": "redesign.join.invalid"
+  },
+  "redesignJoinLabel": "Einladungslink",
+  "@redesignJoinLabel": {
+    "description": "redesign.join.label"
+  },
+  "redesignJoinNoGroup": "Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.",
+  "@redesignJoinNoGroup": {
+    "description": "redesign.join.noGroup"
+  },
+  "redesignJoinNotFound": "Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.",
+  "@redesignJoinNotFound": {
+    "description": "redesign.join.notFound"
+  },
+  "redesignJoinScan": "QR-Code scannen",
+  "@redesignJoinScan": {
+    "description": "redesign.join.scan"
+  },
+  "redesignJoinScanHint": "Halte die Kamera auf den QR-Code der Einladung.",
+  "@redesignJoinScanHint": {
+    "description": "redesign.join.scanHint"
+  },
+  "redesignJoinScanNoCamera": "Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.",
+  "@redesignJoinScanNoCamera": {
+    "description": "redesign.join.scanNoCamera"
+  },
+  "redesignJoinScanTitle": "Einladung scannen",
+  "@redesignJoinScanTitle": {
+    "description": "redesign.join.scanTitle"
+  },
+  "redesignJoinScanWrong": "Das ist kein Einladungs-Code von Attendix.",
+  "@redesignJoinScanWrong": {
+    "description": "redesign.join.scanWrong"
+  },
+  "redesignJoinStepCheck": "Die Leitung prüft deine Angaben",
+  "@redesignJoinStepCheck": {
+    "description": "redesign.join.stepCheck"
+  },
+  "redesignJoinStepNotify": "Du bekommst eine Benachrichtigung, sobald du freigegeben bist",
+  "@redesignJoinStepNotify": {
+    "description": "redesign.join.stepNotify"
+  },
+  "redesignJoinStepReceived": "Anmeldung eingegangen am {date}",
+  "@redesignJoinStepReceived": {
+    "description": "redesign.join.stepReceived",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignJoinStepReceivedNoDate": "Anmeldung eingegangen",
+  "@redesignJoinStepReceivedNoDate": {
+    "description": "redesign.join.stepReceivedNoDate"
+  },
+  "redesignJoinTitle": "Gruppe beitreten",
+  "@redesignJoinTitle": {
+    "description": "redesign.join.title"
+  },
+  "redesignJoinWelcomeNoName": "Willkommen",
+  "@redesignJoinWelcomeNoName": {
+    "description": "redesign.join.welcomeNoName"
+  },
   "redesignManageAnnouncementsHint": "Gesendete Mitteilungen ansehen",
   "@redesignManageAnnouncementsHint": {
     "description": "redesign.manage.announcementsHint"
@@ -12260,6 +12420,93 @@
       "title": {}
     }
   },
+  "redesignRemindBody": "für „{event}“ am {when} fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+  "@redesignRemindBody": {
+    "description": "redesign.remind.body",
+    "placeholders": {
+      "event": {},
+      "when": {}
+    }
+  },
+  "redesignRemindCopied": "Text kopiert",
+  "@redesignRemindCopied": {
+    "description": "redesign.remind.copied"
+  },
+  "redesignRemindFailed": "Senden hat nicht geklappt.",
+  "@redesignRemindFailed": {
+    "description": "redesign.remind.failed"
+  },
+  "redesignRemindHello": "Hallo {name},",
+  "@redesignRemindHello": {
+    "description": "redesign.remind.hello",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignRemindHint": "Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.",
+  "@redesignRemindHint": {
+    "description": "redesign.remind.hint"
+  },
+  "redesignRemindMessageLabel": "Nachricht (beginnt mit „Hallo Vorname,“)",
+  "@redesignRemindMessageLabel": {
+    "description": "redesign.remind.messageLabel"
+  },
+  "redesignRemindNoApp": "ohne App",
+  "@redesignRemindNoApp": {
+    "description": "redesign.remind.noApp"
+  },
+  "redesignRemindOpenLink": "{count} offen",
+  "@redesignRemindOpenLink": {
+    "description": "redesign.remind.openLink",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignRemindPartlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
+  "@redesignRemindPartlyFailed": {
+    "description": "redesign.remind.partlyFailed",
+    "placeholders": {
+      "sent": {},
+      "failed": {}
+    }
+  },
+  "redesignRemindPush": "{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}",
+  "@redesignRemindPush": {
+    "description": "redesign.remind.push",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignRemindSent": "{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}",
+  "@redesignRemindSent": {
+    "description": "redesign.remind.sent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignRemindShare": "Als Text teilen",
+  "@redesignRemindShare": {
+    "description": "redesign.remind.share"
+  },
+  "redesignRemindShareText": "Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+  "@redesignRemindShareText": {
+    "description": "redesign.remind.shareText",
+    "placeholders": {
+      "event": {},
+      "when": {}
+    }
+  },
+  "redesignRemindTitle": "{count} noch offen",
+  "@redesignRemindTitle": {
+    "description": "redesign.remind.title",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"
@@ -12529,6 +12776,29 @@
       "count": {}
     }
   },
+  "redesignTodayChildFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
+  "@redesignTodayChildFailed": {
+    "description": "redesign.today.childFailed"
+  },
+  "redesignTodayChildIn": "Dabei",
+  "@redesignTodayChildIn": {
+    "description": "redesign.today.childIn"
+  },
+  "redesignTodayChildNo": "Kann nicht",
+  "@redesignTodayChildNo": {
+    "description": "redesign.today.childNo"
+  },
+  "redesignTodayChildOpen": "{name} offen",
+  "@redesignTodayChildOpen": {
+    "description": "redesign.today.childOpen",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTodayChildYes": "Ist dabei",
+  "@redesignTodayChildYes": {
+    "description": "redesign.today.childYes"
+  },
   "redesignTodayCountAbsent": "{count} abwesend",
   "@redesignTodayCountAbsent": {
     "description": "redesign.today.countAbsent",
@@ -12657,7 +12927,7 @@
   "@redesignTodayNoAfterAll": {
     "description": "redesign.today.noAfterAll"
   },
-  "redesignTodayNoChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
+  "redesignTodayNoChildren": "Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.",
   "@redesignTodayNoChildren": {
     "description": "redesign.today.noChildren"
   },
@@ -12692,6 +12962,13 @@
       "count": {
         "type": "num"
       }
+    }
+  },
+  "redesignTodayOpenCount": "{count} offen",
+  "@redesignTodayOpenCount": {
+    "description": "redesign.today.openCount",
+    "placeholders": {
+      "count": {}
     }
   },
   "redesignTodayOtherReason": "Anderer Grund …",
