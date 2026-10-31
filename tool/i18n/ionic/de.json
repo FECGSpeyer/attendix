@@ -642,7 +642,8 @@
     "invalidFileName": "Ungültiger Dateiname.",
     "invalidName": "Ungültiger Name.",
     "invalidFolderName": "Ungültiger Ordnername.",
-    "linkFailed": "Verknüpfung fehlgeschlagen"
+    "linkFailed": "Verknüpfung fehlgeschlagen",
+    "saveGemeindeAppFailed": "Fehler beim Speichern der Gemeinde-App-Einstellungen"
   },
   "editor": {
     "formatting": "Formatierung",
@@ -794,6 +795,7 @@
     "confirmLinkInvalid": "Der Bestätigungslink ist ungültig oder abgelaufen."
   },
   "signout": {
+    "notInvited": "Nicht eingeladen",
     "current": "Aktuell",
     "legend": "Legende",
     "legendAccepted": "Zugesagt",
@@ -1159,7 +1161,8 @@
     "onlyNeutral": "Nur Personen ohne Status",
     "onlyNeutralHint": "Sendet nur an Personen, die noch keine Rückmeldung gegeben haben",
     "emailLink": "Link in der E-Mail",
-    "send": "Versenden"
+    "send": "Versenden",
+    "presentNotAssigned": "Anwesend, nicht eingeteilt"
   },
   "people": {
     "searchPerson": "Person suchen...",
@@ -1567,7 +1570,16 @@
     "indent": "Einrücken",
     "outdent": "Ausrücken",
     "expandBlock": "Block aufklappen",
-    "collapseBlock": "Block einklappen"
+    "collapseBlock": "Block einklappen",
+    "beamer": "Beamer",
+    "beamerNeeded": "Beamer-Datei nötig",
+    "beamerAutoSong": "Automatisch an: Werk",
+    "beamerAutoWord": "Automatisch an: Titel enthält „{word}“",
+    "beamerNoFile": "Noch keine Datei verknüpft",
+    "beamerLinkInApp": "Verknüpfen kannst du die Datei in der Gemeinde App.",
+    "beamerChangeInApp": "Ändern kannst du die Datei in der Gemeinde App.",
+    "beamerMissing": "Beamer-Datei fehlt",
+    "beamerAutoHint": "Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so."
   },
   "duty": {
     "placesFree": "{count, plural, one {# Platz frei} other {# Plätze frei}}",
@@ -1662,6 +1674,8 @@
     "savePlanFailed": "Fehler beim Speichern des Plans",
     "addOrgFailed": "Fehler beim Hinzufügen zur Organisation",
     "addedToOrg": "Plan zur Organisation \"{org}\" hinzugefügt",
+    "addToOrg": "Zur Organisation hinzufügen",
+    "inOrg": "In Organisation \"{org}\"",
     "removeOrgFailed": "Fehler beim Entfernen aus der Organisation",
     "removedFromOrg": "Plan aus Organisation entfernt",
     "noTemplate": "Keine Vorlage ausgewählt.",
@@ -1803,6 +1817,8 @@
     "dontClose": "Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.",
     "dropHere": "Dateien hierher ziehen oder tippen zum Auswählen",
     "instrument": "Instrument",
+    "choirAll": "Chor (alle)",
+    "choirAllHint": "Datei für alle Sängerinnen und Sänger",
     "recording": "Aufnahme",
     "lyrics": "Liedtext",
     "otherFreeText": "Sonstige (Freitext)",
@@ -1912,7 +1928,8 @@
     "difficulty123": "Schwierigkeit (1/2/3)",
     "prefixOptional": "Präfix (optional)",
     "prefix": "Präfix",
-    "choirOrchShort": "Chor/Orch."
+    "choirOrchShort": "Chor/Orch.",
+    "beamerFile": "SongBeamer-Datei"
   },
   "messages": {
     "deleteMessage": "Mitteilung löschen",
@@ -2277,7 +2294,16 @@
     "years": "Jahre",
     "unexcusedChart": "Unentschuldigte Fehlzeiten",
     "unexcusedAbsences": "Unentschuldigte Abwesenheiten",
-    "orgTenants": "Instanzen der Organisation"
+    "orgTenants": "Instanzen der Organisation",
+    "additionalFields": "🧩 Zusatzfelder",
+    "fieldSelect": "Feld",
+    "fieldGroupFilter": "Gruppe",
+    "fieldAllGroups": "Alle Gruppen",
+    "fieldIncludePaused": "Pausierende einbeziehen",
+    "fieldNoValue": "Keine Angabe",
+    "fieldTooltip": "{count, plural, one {# Person} other {# Personen}} ({perc}%)",
+    "fieldPerGroupChart": "{field} nach Gruppe (in %)",
+    "fieldNoPersons": "Für diese Auswahl gibt es keine Personen."
   },
   "history": {
     "title": "Werkhistorie",
@@ -2957,7 +2983,72 @@
     "sourceTenant": "Quellinstanz",
     "tenants": "Instanzen",
     "thisTenant": "Diese Instanz",
-    "noneOwnSongs": "Keine (eigene Werke)"
+    "noneOwnSongs": "Keine (eigene Werke)",
+    "gemeindeApp": "Gemeinde App",
+    "gaBeamerFiles": "Beamer-Dateien im Ablaufplan",
+    "gaBeamerFilesHint": "Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.",
+    "gaCreateKey": "Verbindungsschlüssel erstellen",
+    "gaNoKey": "Noch nicht mit der Gemeinde App verbunden",
+    "gaRenewKey": "Schlüssel erneuern",
+    "gaKeyActive": "Schlüssel aktiv, endet auf …{hint}",
+    "gaRenewMessage": "Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.",
+    "gaRenewButton": "Erneuern",
+    "gaKeyHeader": "Verbindungsschlüssel",
+    "gaKeyMessage": "Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.",
+    "gaCopy": "Kopieren",
+    "gaCopied": "Schlüssel kopiert",
+    "gaHint": "Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung."
+  },
+  "orgSongs": {
+    "section": "Werke",
+    "title": "Werke in der Organisation suchen",
+    "entryHint": "Werke anderer Instanzen finden und übernehmen",
+    "menuEntry": "In der Organisation suchen",
+    "searchPh": "Name oder Nummer",
+    "noPermission": "Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.",
+    "onlyWithFiles": "Nur mit Dateien",
+    "resultCount": "{count, plural, one {# Treffer} other {# Treffer}}",
+    "fileCount": "{count, plural, one {# Datei} other {# Dateien}}",
+    "alreadyOwn": "Schon bei dir",
+    "noResults": "Keine Werke gefunden.",
+    "searchFailed": "Suche fehlgeschlagen: {error}",
+    "noTargets": "Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.",
+    "targetLoadFailed": "Zielinstanz konnte nicht geladen werden: {error}",
+    "targetMissing": "Das Zielwerk wurde nicht gefunden.",
+    "fromTenant": "aus {tenant}",
+    "target": "Ziel",
+    "syncedTarget": "{tenant} nutzt die Werke von {library}. Das Werk wird dort gespeichert.",
+    "duplicateWarning": "{count, plural, one {Im Ziel gibt es schon ein Werk mit diesem Namen.} other {Im Ziel gibt es schon # Werke mit diesem Namen.}}",
+    "modeExisting": "In vorhandenes Werk kopieren",
+    "existingSong": "Werk",
+    "modeNew": "Als neues Werk anlegen",
+    "number": "Nummer",
+    "prefix": "Präfix",
+    "numberTaken": "Diese Nummer ist im Ziel schon vergeben.",
+    "useNextFree": "Tippen für die nächste freie Nummer: {number}",
+    "fields": "Felder übernehmen",
+    "currentValue": "Im Ziel: {value}",
+    "fieldDifficulty": "Schwierigkeit",
+    "fieldChoirSolo": "Besetzung",
+    "withChoir": "mit Chor",
+    "withSolo": "mit Solo",
+    "fieldCategories": "Kategorien",
+    "fieldBeamer": "Beamer-Datei",
+    "files": "Dateien ({selected} von {total})",
+    "selectAll": "Alle",
+    "selectNone": "Keine",
+    "sourceGroup": "Dort: {group}",
+    "targetGroup": "Gruppe im Ziel",
+    "fileExists": "Gleichnamige Datei ist schon im Werk",
+    "copyHint": "Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.",
+    "copyIntoExisting": "In vorhandenes Werk kopieren",
+    "copyAsNew": "Als neues Werk kopieren",
+    "overwriteHeader": "Werte überschreiben?",
+    "overwriteMessage": "Diese Felder haben im Ziel schon einen Wert und werden überschrieben: {fields}",
+    "overwriteConfirm": "Überschreiben",
+    "copiedTo": "„{name}“ wurde nach {tenant} kopiert.",
+    "mergedInto": "„{name}“ wurde in das vorhandene Werk in {tenant} übernommen.",
+    "copiedFrom": "Kopiert aus {tenant} am {date}"
   },
   "orgFields": {
     "title": "Personen-Zusatzfelder",
@@ -3105,5 +3196,9 @@
     "setup": "Attendix-Tab einrichten",
     "noAccount": "Kein Attendix-Konto gefunden. Bitte melde dich zuerst im Attendix-Tab an.",
     "choose": "Wähle aus, welche Attendix-Instanz in diesem Kanal angezeigt werden soll."
+  },
+  "fileViewer": {
+    "noPreview": "Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.",
+    "downloadFailed": "Datei konnte nicht heruntergeladen werden"
   }
 }

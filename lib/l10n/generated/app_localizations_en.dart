@@ -1262,6 +1262,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendancePlace => 'Location';
 
   @override
+  String get attendancePresentNotAssigned => 'Present, not assigned';
+
+  @override
   String get attendancePresentPeople => 'Present';
 
   @override
@@ -3194,6 +3197,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get extraFieldsYesNo => 'Yes/No';
 
   @override
+  String get fileViewerDownloadFailed => 'File could not be downloaded';
+
+  @override
+  String get fileViewerNoPreview => 'There is no preview for this file. Download it to open it.';
+
+  @override
   String get filesAlmostFull => ' · almost full';
 
   @override
@@ -5069,6 +5078,50 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orgFlutterUnlinkFailed => 'Error while unlinking';
 
   @override
+  String get orgGaBeamerFiles => 'Projector files in the run sheet';
+
+  @override
+  String get orgGaBeamerFilesHint => 'Shows “Projector file needed” on every item of org plans.';
+
+  @override
+  String get orgGaCopied => 'Key copied';
+
+  @override
+  String get orgGaCopy => 'Copy';
+
+  @override
+  String get orgGaCreateKey => 'Create connection key';
+
+  @override
+  String get orgGaHint => 'Only for FECG Speyer and FECG Schwegenheim. A new key ends the old connection.';
+
+  @override
+  String orgGaKeyActive(Object hint) {
+    return 'Key active, ends in …$hint';
+  }
+
+  @override
+  String get orgGaKeyHeader => 'Connection key';
+
+  @override
+  String get orgGaKeyMessage => 'Only visible now. Enter it in the Gemeinde App under More › Run sheets.';
+
+  @override
+  String get orgGaNoKey => 'Not connected to the Gemeinde App yet';
+
+  @override
+  String get orgGaRenewButton => 'Renew';
+
+  @override
+  String get orgGaRenewKey => 'Renew key';
+
+  @override
+  String get orgGaRenewMessage => 'The old key stops working. You need to enter the new one in the Gemeinde App.';
+
+  @override
+  String get orgGemeindeApp => 'Gemeinde App';
+
+  @override
   String get orgHandover => 'Handover';
 
   @override
@@ -5121,6 +5174,201 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgSongSyncIntro => 'Use the pieces of another instance. All changes are saved there.';
+
+  @override
+  String get orgSongsAlreadyOwn => 'Already yours';
+
+  @override
+  String orgSongsCopiedFrom(Object tenant, Object date) {
+    return 'Copied from $tenant on $date';
+  }
+
+  @override
+  String orgSongsCopiedTo(Object name, Object tenant) {
+    return '\"$name\" was copied to $tenant.';
+  }
+
+  @override
+  String get orgSongsCopyAsNew => 'Copy as new piece';
+
+  @override
+  String get orgSongsCopyHint => 'Files are copied and then belong to the target instance. Missing categories are created. Extra fields are copied if the target has fields with the same name.';
+
+  @override
+  String get orgSongsCopyIntoExisting => 'Copy into existing piece';
+
+  @override
+  String orgSongsCurrentValue(Object value) {
+    return 'In target: $value';
+  }
+
+  @override
+  String orgSongsDuplicateWarning(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The target already has $count pieces with this name.',
+      one: 'The target already has a piece with this name.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSongsEntryHint => 'Find pieces from other instances and copy them';
+
+  @override
+  String get orgSongsExistingSong => 'Piece';
+
+  @override
+  String get orgSongsFieldBeamer => 'Projector file';
+
+  @override
+  String get orgSongsFieldCategories => 'Categories';
+
+  @override
+  String get orgSongsFieldChoirSolo => 'Scoring';
+
+  @override
+  String get orgSongsFieldDifficulty => 'Difficulty';
+
+  @override
+  String get orgSongsFields => 'Copy fields';
+
+  @override
+  String orgSongsFileCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '$count file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSongsFileExists => 'A file with this name is already in the piece';
+
+  @override
+  String orgSongsFiles(Object selected, Object total) {
+    return 'Files ($selected of $total)';
+  }
+
+  @override
+  String orgSongsFromTenant(Object tenant) {
+    return 'from $tenant';
+  }
+
+  @override
+  String get orgSongsMenuEntry => 'Search in organisation';
+
+  @override
+  String orgSongsMergedInto(Object name, Object tenant) {
+    return '\"$name\" was copied into the existing piece in $tenant.';
+  }
+
+  @override
+  String get orgSongsModeExisting => 'Copy into existing piece';
+
+  @override
+  String get orgSongsModeNew => 'Create as new piece';
+
+  @override
+  String get orgSongsNoPermission => 'Only admins and responsible persons of an instance linked to an organisation can search pieces across the organisation.';
+
+  @override
+  String get orgSongsNoResults => 'No pieces found.';
+
+  @override
+  String get orgSongsNoTargets => 'You are not admin or responsible in any other instance you could copy this piece into.';
+
+  @override
+  String get orgSongsNumber => 'Number';
+
+  @override
+  String get orgSongsNumberTaken => 'This number is already used in the target.';
+
+  @override
+  String get orgSongsOnlyWithFiles => 'Only with files';
+
+  @override
+  String get orgSongsOverwriteConfirm => 'Overwrite';
+
+  @override
+  String get orgSongsOverwriteHeader => 'Overwrite values?';
+
+  @override
+  String orgSongsOverwriteMessage(Object fields) {
+    return 'These fields already have a value in the target and will be overwritten: $fields';
+  }
+
+  @override
+  String get orgSongsPrefix => 'Prefix';
+
+  @override
+  String orgSongsResultCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count results',
+      one: '$count result',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orgSongsSearchFailed(Object error) {
+    return 'Search failed: $error';
+  }
+
+  @override
+  String get orgSongsSearchPh => 'Name or number';
+
+  @override
+  String get orgSongsSection => 'Pieces';
+
+  @override
+  String get orgSongsSelectAll => 'All';
+
+  @override
+  String get orgSongsSelectNone => 'None';
+
+  @override
+  String orgSongsSourceGroup(Object group) {
+    return 'There: $group';
+  }
+
+  @override
+  String orgSongsSyncedTarget(Object tenant, Object library) {
+    return '$tenant uses the pieces of $library. The piece will be saved there.';
+  }
+
+  @override
+  String get orgSongsTarget => 'Target';
+
+  @override
+  String get orgSongsTargetGroup => 'Group in target';
+
+  @override
+  String orgSongsTargetLoadFailed(Object error) {
+    return 'Could not load the target instance: $error';
+  }
+
+  @override
+  String get orgSongsTargetMissing => 'The target piece was not found.';
+
+  @override
+  String get orgSongsTitle => 'Search pieces in the organisation';
+
+  @override
+  String orgSongsUseNextFree(Object number) {
+    return 'Tap to use the next free number: $number';
+  }
+
+  @override
+  String get orgSongsWithChoir => 'with choir';
+
+  @override
+  String get orgSongsWithSolo => 'with solo';
 
   @override
   String get orgSourceTenant => 'Source instance';
@@ -6679,6 +6927,35 @@ class AppLocalizationsEn extends AppLocalizations {
   String get planningBass => 'Bass';
 
   @override
+  String get planningBeamer => 'Projector';
+
+  @override
+  String get planningBeamerAutoHint => 'On automatically for pieces and when the title contains “Lied” or “Gedicht”. If you switch it by hand, it stays that way.';
+
+  @override
+  String get planningBeamerAutoSong => 'On automatically: piece';
+
+  @override
+  String planningBeamerAutoWord(Object word) {
+    return 'On automatically: title contains “$word”';
+  }
+
+  @override
+  String get planningBeamerChangeInApp => 'You can change the file in the Gemeinde App.';
+
+  @override
+  String get planningBeamerLinkInApp => 'You can link the file in the Gemeinde App.';
+
+  @override
+  String get planningBeamerMissing => 'Projector file missing';
+
+  @override
+  String get planningBeamerNeeded => 'Projector file needed';
+
+  @override
+  String get planningBeamerNoFile => 'No file linked yet';
+
+  @override
   String get planningBlockDurationHint => 'The duration is the sum of the sub-items.';
 
   @override
@@ -7149,6 +7426,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get plansAddOrgFailed => 'Could not add to the organization';
 
   @override
+  String get plansAddToOrg => 'Add to organization';
+
+  @override
   String plansAddedToOrg(Object org) {
     return 'Plan added to the organization \"$org\"';
   }
@@ -7223,6 +7503,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get plansImageA4 => 'Image (A4)';
+
+  @override
+  String plansInOrg(Object org) {
+    return 'In organization \"$org\"';
+  }
 
   @override
   String get plansLinkCopied => 'Link copied';
@@ -11467,6 +11752,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get signoutNoSongActions => 'No actions are available for this piece.';
 
   @override
+  String get signoutNotInvited => 'Not invited';
+
+  @override
   String signoutNoteChip(Object note) {
     return 'Note: $note';
   }
@@ -11620,6 +11908,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsAllSongs => 'All pieces';
 
   @override
+  String get songsBeamerFile => 'SongBeamer file';
+
+  @override
   String get songsCatalogPdf => 'Catalog of pieces as PDF';
 
   @override
@@ -11650,6 +11941,12 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsChoir => 'Choir';
+
+  @override
+  String get songsChoirAll => 'Choir (all)';
+
+  @override
+  String get songsChoirAllHint => 'File for all singers';
 
   @override
   String get songsChoirOrchShort => 'Choir/orch.';
@@ -12295,6 +12592,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get statsActiveMembers => 'Active members';
 
   @override
+  String get statsAdditionalFields => '🧩 Additional fields';
+
+  @override
   String get statsAgeChart => 'Age distribution 🎂';
 
   @override
@@ -12325,6 +12625,40 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get statsEventsInPeriod => 'Events in period';
+
+  @override
+  String get statsFieldAllGroups => 'All groups';
+
+  @override
+  String get statsFieldGroupFilter => 'Group';
+
+  @override
+  String get statsFieldIncludePaused => 'Include paused people';
+
+  @override
+  String get statsFieldNoPersons => 'There are no people for this selection.';
+
+  @override
+  String get statsFieldNoValue => 'Not specified';
+
+  @override
+  String statsFieldPerGroupChart(Object field) {
+    return '$field by group (in %)';
+  }
+
+  @override
+  String get statsFieldSelect => 'Field';
+
+  @override
+  String statsFieldTooltip(num count, Object perc) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '$count person',
+    );
+    return '$_temp0 ($perc%)';
+  }
 
   @override
   String get statsFilterTenants => 'Filter instances';
@@ -12688,6 +13022,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get svcSaveFailed => 'Could not save';
+
+  @override
+  String get svcSaveGemeindeAppFailed => 'Could not save the Gemeinde App settings';
 
   @override
   String get svcSaveOrgFieldsFailed => 'Could not save the organisation extra fields';
