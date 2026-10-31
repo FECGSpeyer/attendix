@@ -446,6 +446,46 @@ void main() {
       expect(find.text('page work 6'), findsOneWidget);
     });
 
+    testWidgets('overview: Erneut versuchen reloads a failed songs load', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var calls = 0;
+      final router = GoRouter(
+        initialLocation: '/werke',
+        routes: [GoRoute(path: '/werke', builder: (_, __) => const RdWorksOverviewPanel())],
+      );
+      await tester.pumpWidget(ProviderScope(
+        overrides: [
+          ..._common(Role.admin),
+          // Kept alive like a cached source: its error stays until reset.
+          songsProvider.overrideWith((ref) async {
+            ref.keepAlive();
+            if (calls++ == 0) throw Exception('offline');
+            return [_ouverture, _ave, _abend];
+          }),
+          songsListDataProvider(null).overrideWith((ref) async => SongsListData(
+                tenantId: 7,
+                tenantType: 'orchestra',
+                songs: await ref.watch(songsProvider.future),
+                categories: const [],
+                groups: _groups,
+                groupCategories: const [],
+                currentSongs: const [],
+                additionalFields: const [],
+              )),
+        ],
+        child: _material(router),
+      ));
+      await _settle(tester);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+
+      await tester.tap(find.text('Erneut versuchen'));
+      await _settle(tester);
+      expect(calls, 2);
+      expect(_stat('3 Werke'), findsOneWidget);
+    });
+
     testWidgets('overview for players: no missing sheet music, no add button', (tester) async {
       tester.view.physicalSize = const Size(800, 1000);
       tester.view.devicePixelRatio = 1;

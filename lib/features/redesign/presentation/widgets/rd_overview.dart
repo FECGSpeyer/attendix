@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -36,7 +37,16 @@ class RdWorksOverviewPanel extends ConsumerWidget {
       return _OverviewPage(
         hint: l10n.redesignSplitWorksHint,
         failed: async.hasError && !async.isLoading,
-        onRetry: () => ref.invalidate(songsListDataProvider(null)),
+        // The sources too: a failed one would keep its stored error.
+        onRetry: () {
+          ref.invalidate(songTenantSettingsProvider);
+          ref.invalidate(songsProvider);
+          ref.invalidate(songCategoriesProvider);
+          ref.invalidate(groupsProvider);
+          ref.invalidate(groupCategoriesProvider);
+          ref.invalidate(currentSongsProvider);
+          ref.invalidate(songsListDataProvider(null));
+        },
         children: const [],
       );
     }
@@ -116,7 +126,11 @@ class RdMembersOverviewPanel extends ConsumerWidget {
       return _OverviewPage(
         hint: l10n.redesignSplitMembersHint,
         failed: async.hasError && !async.isLoading,
-        onRetry: () => ref.invalidate(realtimePlayersProvider),
+        // groupsMapProvider is kept alive: a failed load stays until reset.
+        onRetry: () {
+          ref.invalidate(groupsMapProvider);
+          ref.invalidate(realtimePlayersProvider);
+        },
         children: const [],
       );
     }

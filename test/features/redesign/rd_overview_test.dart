@@ -1,5 +1,6 @@
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -154,6 +155,46 @@ void main() {
       await settle(tester);
       expect(find.byType(CircularProgressIndicator), findsNothing);
       expect(find.text('Erneut versuchen'), findsOneWidget);
+    });
+
+    testWidgets('Erneut versuchen reloads the failed source, then shows the data', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      var calls = 0;
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            effectiveRoleProvider.overrideWithValue(Role.admin),
+            // Kept alive like the real one: its error stays until reset.
+            groupsMapProvider.overrideWith((ref) async {
+              ref.keepAlive();
+              if (calls++ == 0) throw Exception('offline');
+              return const <int, String>{};
+            }),
+            // Like the real stream: built on the groups.
+            realtimePlayersProvider.overrideWith((ref) async* {
+              await ref.watch(groupsMapProvider.future);
+              yield people;
+            }),
+            realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
+          ],
+          child: MaterialApp(
+            locale: const Locale('de'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+            home: const RdMembersOverviewPanel(),
+          ),
+        ),
+      );
+      await settle(tester);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+
+      await tester.tap(find.text('Erneut versuchen'));
+      await settle(tester);
+      expect(calls, 2);
+      expect(stat('1 aktiv'), findsOneWidget);
     });
 
     testWidgets('players: no requests, no attendance warnings', (tester) async {
