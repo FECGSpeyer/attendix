@@ -9,6 +9,13 @@
       ]
     },
     {
+      "version": "0.26.1",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Die Upload-Leiste bei den Dateien eines Werks blendet sich nach erfolgreichem Hochladen nach kurzer Zeit selbst aus; bei einem Fehler bleibt sie zum erneuten Versuchen stehen"
+      ]
+    },
+    {
       "version": "0.26.0",
       "date": "31.10.2026",
       "changes": [
