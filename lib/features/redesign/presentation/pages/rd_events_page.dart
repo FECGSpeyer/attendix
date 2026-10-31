@@ -17,6 +17,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../duty/presentation/widgets/self_service_duty_section.dart' show showOpenDutiesSheet;
 import '../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
@@ -304,7 +305,8 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
   /// Opens the Termin a notification asked for (`pendingAttendanceId`)
   /// once the own Termine are loaded: the own Termin page, or the sheet
-  /// "Meine Termine" opens (another group, a duty to take over). It looks in
+  /// "Meine Termine" opens for another group, "Offene Dienste" for a duty
+  /// without an own assignment. It looks in
   /// the unfiltered own Termine, since the list here leaves out duties
   /// without an own assignment; a Termin that is not there says so.
   void _openPending(SignoutData data, SelfServiceEventActions actions) {
@@ -317,6 +319,12 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
       final att = [...all.allUpcoming, ...all.past].where((a) => a.attendanceId == pendingId).firstOrNull;
       if (att == null) {
         ToastHelper.showInfo(context, context.l10n.redesignEventNotFound);
+        return;
+      }
+      // A duty without an own assignment is taken over only through the
+      // duty process (`duty_take` with its checks), never answered here.
+      if (isUnassignedDutyAttendance(att)) {
+        showOpenDutiesSheet(context);
         return;
       }
       final own = actions.isOwn(att);

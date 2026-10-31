@@ -57,7 +57,13 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = const [], int? pending}) {
+Widget _app(
+  Role role, {
+  bool canCreate = true,
+  List<AttendanceType> types = const [],
+  int? pending,
+  List<CrossTenantPersonAttendance> extraUpcoming = const [],
+}) {
   final router = GoRouter(
     initialLocation: '/termine',
     routes: [
@@ -107,6 +113,7 @@ Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = cons
             upcoming: [
               _own('12', 2, AttendanceStatus.present),
               _own('13', 40, AttendanceStatus.excused),
+              ...extraUpcoming,
             ],
             past: [_own('10', -2, AttendanceStatus.present)],
             percentage: 92,
@@ -333,6 +340,26 @@ void main() {
     await tester.pumpWidget(_app(Role.player, pending: 12));
     await _settle(tester);
     expect(find.text('page own 12'), findsOneWidget);
+  });
+
+  testWidgets('Spieler: a notification for a duty without assignment opens "Offene Dienste"', (tester) async {
+    _size(tester, const Size(393, 852));
+    final duty = CrossTenantPersonAttendance(
+      id: '14',
+      attendanceId: 14,
+      status: AttendanceStatus.neutral,
+      date: _day(5),
+      typeInfo: 'Dienst 14',
+      tenantId: 7,
+      tenantName: 'SO',
+      tenantColor: 'primary',
+      attendanceType: TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true),
+    );
+    await tester.pumpWidget(_app(Role.player, pending: 14, extraUpcoming: [duty]));
+    await _settle(tester);
+    expect(find.text('Offene Dienste'), findsOneWidget, reason: 'taken over via duty_take only');
+    expect(find.text('Dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
+    expect(find.text('page own 14'), findsNothing);
   });
 
   testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
