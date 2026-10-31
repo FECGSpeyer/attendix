@@ -6,6 +6,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -56,6 +57,9 @@ class SingleFileUploadSheet extends ConsumerStatefulWidget {
 
 class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
   int? _instrumentId;
+
+  /// "Chor (alle)" chosen (choirs, Ionic 4.17.16): stored as note 'Chor'.
+  bool _choirAll = false;
   final _note = TextEditingController();
   List<SongFile> _conflicts = const [];
   Set<String> _toReplace = {};
@@ -87,7 +91,8 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
       isChoir: widget.isChoir,
     );
     _instrumentId = cat.instrumentId;
-    _note.text = cat.note ?? '';
+    _choirAll = widget.isChoir && isChoirAllFile(instrumentId: cat.instrumentId, note: cat.note);
+    _note.text = _choirAll ? '' : (cat.note ?? '');
     _confidence = cat.confidence;
     // An unsure part can be confirmed for learning right away (unchecked).
     if (cat.confidence == MatchConfidence.unsure) {
@@ -120,6 +125,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
       _reading = false;
       if (match == null || _reviewed || _uploading) return;
       _instrumentId = match.instrumentId;
+      _choirAll = false;
       _confidence = match.confidence;
       _visionLabel = match.term ?? widget.groups.where((g) => g.id == match.instrumentId).firstOrNull?.name ?? '';
       _learnTerm = null;
@@ -128,7 +134,12 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     });
   }
 
-  void _choose(int? id) {
+  void _choose(int? value) {
+    final category = resolveFileCategoryOption(
+        value, _choirAll ? '' : _note.text);
+    final id = category.instrumentId;
+    _choirAll = value == kChoirAllOptionValue;
+    if (value == null) _note.text = category.note ?? '';
     _instrumentId = id;
     _reviewed = true;
     _learnTerm = learnableTerm(
@@ -156,7 +167,9 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
     super.dispose();
   }
 
-  String? get _effectiveNote => _instrumentId == null ? _note.text.trim() : null;
+  String? get _effectiveNote => _instrumentId == null
+      ? (_choirAll ? kChoirAllNote : _note.text.trim())
+      : null;
 
   /// Ionic `refreshSingleFileConflicts`
   void _refreshConflicts() {
@@ -200,6 +213,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
   @override
   Widget build(BuildContext context) {
     final options = <(int?, String)>[
+      if (widget.isChoir) (kChoirAllOptionValue, context.l10n.songsChoirAll),
       (null, context.l10n.songsOtherFreeText),
       (1, context.l10n.songsRecording),
       (2, context.l10n.songsLyrics),
@@ -276,8 +290,11 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                       RadioListTile<int?>(
                         dense: true,
                         value: o.$1,
-                        groupValue: _instrumentId,
+                        groupValue: _choirAll ? kChoirAllOptionValue : _instrumentId,
                         title: Text(o.$2),
+                        subtitle: o.$1 == kChoirAllOptionValue
+                            ? Text(context.l10n.songsChoirAllHint)
+                            : null,
                         onChanged: _uploading
                             ? null
                             : (v) => setState(() => _choose(v)),
@@ -302,7 +319,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                                 _reviewed = true;
                               }),
                       ),
-                    if (_instrumentId == null) ...[
+                    if (_instrumentId == null && !_choirAll) ...[
                       Padding(
                         padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
                         child: Text(
@@ -343,7 +360,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                           title: Text(c.fileName),
                           secondary: SongBadge(
                             color: SongUtils.fileBadgeColor(c),
-                            label: SongUtils.fileLabel(c, widget.groups),
+                            label: SongUtils.fileLabel(c, widget.groups, isChoir: widget.isChoir),
                           ),
                           onChanged: (_) => setState(() {
                             // Chosen by hand: a late page-1 result keeps it.

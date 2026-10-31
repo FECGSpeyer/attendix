@@ -9,6 +9,7 @@ import '../../data/models/song/song_additional_field.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
 import '../config/supabase_config.dart';
+import '../utils/choir_file_utils.dart';
 import 'group_providers.dart';
 import 'locale_provider.dart';
 import 'tenant_providers.dart';
@@ -678,21 +679,30 @@ final songCategoryNotifierProvider =
 /// Virtual group id for the "Dirigenten" entry (all scores / Partituren)
 const int songConductorGroupId = -1;
 
+/// Virtual group id for the "Chor (alle)" entry in choirs (Ionic 4.17.16
+/// `CHOIR_ALL_GROUP_ID`): all files meant for the whole choir.
+const int songChoirAllGroupId = -2;
+
 /// Ionic `isScoreFile`: file without instrument and note "Partitur".
 bool isScoreFile(SongFile file) =>
     file.instrumentId == null && file.note == 'Partitur';
 
 /// Groups (sorted by name) with at least one file, plus a virtual
 /// "Dirigenten" group first if any score exists (Ionic `buildGroupsWithFiles`).
-/// [conductorsLabel]: pass the widget's `context.l10n.songsConductors` so the
-/// label follows a language switch (REVIEW_FIX2).
+/// In choirs ([isChoir]) a virtual "Chor (alle)" group follows when any file
+/// is meant for the whole choir (Ionic 4.17.16).
+/// [conductorsLabel] / [choirAllLabel]: pass the widget's l10n labels so they
+/// follow a language switch (REVIEW_FIX2).
 List<Group> buildGroupsWithFiles(
   List<Song> songs,
   List<Group> groups, {
   String? conductorsLabel,
+  bool isChoir = false,
+  String? choirAllLabel,
 }) {
   final ids = <int>{};
   var hasScores = false;
+  var hasChoirAll = false;
   for (final song in songs) {
     for (final file in song.files ?? const <SongFile>[]) {
       final id = file.instrumentId;
@@ -700,6 +710,8 @@ List<Group> buildGroupsWithFiles(
         ids.add(id);
       } else if (isScoreFile(file)) {
         hasScores = true;
+      } else if (isChoir && isChoirAllFile(instrumentId: id, note: file.note)) {
+        hasChoirAll = true;
       }
     }
   }
@@ -707,20 +719,26 @@ List<Group> buildGroupsWithFiles(
       .where((g) => g.maingroup != true && g.id != null && ids.contains(g.id))
       .toList()
     ..sort((a, b) => a.name.toLowerCase().compareTo(b.name.toLowerCase()));
+  if (hasChoirAll) {
+    result.insert(0, Group(id: songChoirAllGroupId, name: choirAllLabel ?? l10nWithoutContext.songsChoirAll));
+  }
   if (hasScores) {
     result.insert(0, Group(id: songConductorGroupId, name: conductorsLabel ?? l10nWithoutContext.songsConductors));
   }
   return result;
 }
 
-/// Files of a group (or all scores for the virtual conductor group).
+/// Files of a group (or all scores for the virtual conductor group, all
+/// "Chor (alle)" files for the virtual choir group).
 List<({Song song, SongFile file})> filesForGroup(List<Song> songs, int groupId) {
   final result = <({Song song, SongFile file})>[];
   for (final song in songs) {
     for (final file in song.files ?? const <SongFile>[]) {
       final matches = groupId == songConductorGroupId
           ? isScoreFile(file)
-          : file.instrumentId == groupId;
+          : groupId == songChoirAllGroupId
+              ? isChoirAllFile(instrumentId: file.instrumentId, note: file.note)
+              : file.instrumentId == groupId;
       if (matches) result.add((song: song, file: file));
     }
   }

@@ -7,6 +7,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -44,7 +45,7 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
     return (instrumentId: 2, note: null);
   }
   if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
-    return (instrumentId: null, note: 'Chor');
+    return (instrumentId: null, note: kChoirAllNote);
   }
   return null;
 }
@@ -134,7 +135,7 @@ FileCategoryGuess guessFileCategory(
     );
   }
   if (isChoir && _isPdfName(fileName)) {
-    return const FileCategoryGuess(instrumentId: null, note: 'Chor', confidence: MatchConfidence.sure);
+    return const FileCategoryGuess(instrumentId: null, note: kChoirAllNote, confidence: MatchConfidence.sure);
   }
   return const FileCategoryGuess(instrumentId: null, note: null, confidence: MatchConfidence.none);
 }
@@ -548,6 +549,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   key: ObjectKey(_files[i]),
                                   file: _files[i],
                                   groups: widget.groups,
+                                  isChoir: widget.isChoir,
                                   enabled: !_isUploading,
                                   onCategoryChanged: (id, note) => _setCategory(i, id, note),
                                   onToggleLearn: (v) => setState(() {
@@ -644,10 +646,14 @@ class _FileItem extends StatefulWidget {
     required this.onToggleReplace,
     required this.onRemove,
     this.onToggleLearn,
+    this.isChoir = false,
   });
 
   final _FileToUpload file;
   final List<Group> groups;
+
+  /// Choirs get the option "Chor (alle)" on top (Ionic 4.17.16).
+  final bool isChoir;
   final bool enabled;
   final void Function(int? instrumentId, String? note) onCategoryChanged;
   final ValueChanged<String> onToggleReplace;
@@ -659,7 +665,13 @@ class _FileItem extends StatefulWidget {
 }
 
 class _FileItemState extends State<_FileItem> {
-  late final _note = TextEditingController(text: widget.file.note ?? '');
+  late final _note = TextEditingController(
+      text: _value == kChoirAllOptionValue ? '' : (widget.file.note ?? ''));
+
+  /// Picker value: group id, null (free text) or "Chor (alle)".
+  int? get _value => fileCategoryOptionValue(
+      widget.file.instrumentId, widget.file.note,
+      isChoir: widget.isChoir);
 
   @override
   void dispose() {
@@ -696,7 +708,10 @@ class _FileItemState extends State<_FileItem> {
   @override
   Widget build(BuildContext context) {
     final file = widget.file;
+    final value = _value;
     final items = <DropdownMenuItem<int?>>[
+      if (widget.isChoir)
+        DropdownMenuItem(value: kChoirAllOptionValue, child: Text(context.l10n.songsChoirAll)),
       DropdownMenuItem(value: null, child: Text(context.l10n.songsOtherFreeText)),
       DropdownMenuItem(value: 1, child: Text(context.l10n.songsRecording)),
       DropdownMenuItem(value: 2, child: Text(context.l10n.songsLyrics)),
@@ -781,13 +796,17 @@ class _FileItemState extends State<_FileItem> {
                 Flexible(
                   child: DropdownButtonHideUnderline(
                     child: DropdownButton<int?>(
-                      value: file.instrumentId,
+                      value: value,
                       items: items,
                       isExpanded: true,
                       hint: Text(context.l10n.songsInstrument),
                       onChanged: widget.enabled
-                          ? (id) => widget.onCategoryChanged(
-                              id, id == null ? _note.text.trim() : null)
+                          ? (v) {
+                              final category = resolveFileCategoryOption(
+                                  v, value == kChoirAllOptionValue ? '' : _note.text.trim());
+                              if (v == null) _note.text = category.note ?? '';
+                              widget.onCategoryChanged(category.instrumentId, category.note);
+                            }
                           : null,
                     ),
                   ),
@@ -796,7 +815,7 @@ class _FileItemState extends State<_FileItem> {
             ),
           ),
         ),
-        if (file.instrumentId == null)
+        if (value == null)
           Padding(
             padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
             child: TextField(
@@ -834,7 +853,7 @@ class _FileItemState extends State<_FileItem> {
               title: Text(c.fileName, style: const TextStyle(fontSize: 13)),
               secondary: SongBadge(
                 color: SongUtils.fileBadgeColor(c),
-                label: SongUtils.fileLabel(c, widget.groups),
+                label: SongUtils.fileLabel(c, widget.groups, isChoir: widget.isChoir),
               ),
               onChanged: widget.enabled ? (_) => widget.onToggleReplace(c.url) : null,
             ),

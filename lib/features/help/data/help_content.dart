@@ -257,6 +257,13 @@ const List<HelpArticle> helpArticles = [
     body: "Unter \"Werke\" legst du ein neues [[Werk]] mit Nummer, Namen, Schwierigkeitsgrad und Kategorien an. Optional lassen sich zu jeder [[Gruppe]]/Stimme passende Notendateien (PDF) hinterlegen.\n\nTippst du auf eine Datei und dann auf \"Datei öffnen\", zeigt Attendix PDFs und Bilder direkt in der App an. Andere Dateien öffnen sich in einem neuen Tab bzw. in der passenden App. Nutzt du Attendix als installierte Web-App (z. B. am Mac über \"Zum Dock hinzufügen\"), bekommst du für solche Dateien stattdessen einen Hinweis mit \"Datei herunterladen\" und \"Schließen\". In der Attendix-App aus dem App Store auf einem Mac mit Apple-Chip öffnen sie sich im Browser.",
   ),
   HelpArticle(
+    id: "songs-choir-files",
+    title: "Dateien für den ganzen Chor (Chor (alle))",
+    categoryId: "songs",
+    keywords: ["chor (alle)", "chor alle", "für alle", "alle sänger", "alle stimmen", "chornoten", "noten für alle", "sonstige", "freitext", "kategorie ändern"],
+    body: "In Chören haben meist alle Sängerinnen und Sänger dieselbe Notendatei. Dafür gibt es beim Hochladen einer Datei zu einem [[Werk]] die Kategorie **\"Chor (alle)\"** ganz oben in der Auswahl. PDFs, die keiner Stimme zugeordnet werden können, wählt Attendix in Chören automatisch so aus.\n\nEine Datei mit \"Chor (alle)\" sieht jedes Mitglied, egal in welcher Stimme es ist: auf der Abmeldeseite beim Werk eines kommenden Termins, beim Drucken aller aktuellen Noten und im Gruppenverzeichnis unter \"Chor (alle)\". Hat eine Stimme eine eigene Datei, bekommt sie zusätzlich diese.\n\nEine bereits hochgeladene Datei kannst du über \"Kategorie ändern\" auf der Werkseite umstellen. Die Kategorie gibt es nur in Chor-Instanzen.",
+  ),
+  HelpArticle(
     id: "songs-filter",
     title: "Werke suchen und filtern",
     categoryId: "songs",
@@ -282,7 +289,7 @@ const List<HelpArticle> helpArticles = [
     title: "Gruppenverzeichnis und Notenmappe drucken",
     categoryId: "songs",
     keywords: ["gruppenverzeichnis", "notenmappe", "stimme", "noten einer gruppe", "partitur", "dirigenten", "drucken"],
-    body: "Über \"Gruppenverzeichnis\" in der Werkeliste wählst du eine [[Gruppe]] aus und siehst alle Notendateien, die für diese Gruppe hinterlegt sind. Mit dem Drucker-Symbol oben rechts druckst du die komplette Notenmappe der Gruppe auf einmal.\n\nSind Partituren hinterlegt, gibt es zusätzlich die Gruppe \"Dirigenten\", die alle Partituren enthält. Das Gruppenverzeichnis ist auch verfügbar, wenn deine Instanz keine Werkkategorien verwendet.",
+    body: "Über \"Gruppenverzeichnis\" in der Werkeliste wählst du eine [[Gruppe]] aus und siehst alle Notendateien, die für diese Gruppe hinterlegt sind. Mit dem Drucker-Symbol oben rechts druckst du die komplette Notenmappe der Gruppe auf einmal.\n\nSind Partituren hinterlegt, gibt es zusätzlich die Gruppe \"Dirigenten\", die alle Partituren enthält. In Chören gibt es außerdem die Gruppe \"Chor (alle)\" mit allen Dateien für den ganzen Chor; beim Drucken der Noten einer Stimme kommt diese Datei dazu, wenn die Stimme selbst keine eigene hat. Das Gruppenverzeichnis ist auch verfügbar, wenn deine Instanz keine Werkkategorien verwendet.",
   ),
   HelpArticle(
     id: "songs-sync",
@@ -290,6 +297,13 @@ const List<HelpArticle> helpArticles = [
     categoryId: "songs",
     keywords: ["werk-synchronisierung", "synchronisieren", "quellinstanz", "werke teilen", "gemeinsame werke", "werke zusammenführen", "werk löschen"],
     body: "Verknüpfte [[Instanz|Instanzen]] können eine gemeinsame Werkbibliothek nutzen. Als Super-Admin wählst du dafür unter \"Organisation → Werk-Synchronisierung\" eine Quellinstanz aus. Deine Instanz zeigt dann die Werke, Kategorien und Notendateien der Quellinstanz an, und alle Änderungen werden dort gespeichert. Termine und Historie bleiben pro Instanz getrennt.\n\nWichtig beim Löschen: Ein Werk gibt es nur einmal für alle beteiligten Instanzen. Löschst du es, ist es überall weg, inklusive der Historie aller Instanzen. Attendix weist dich beim Löschen darauf hin und nennt die betroffenen Instanzen.",
+  ),
+  HelpArticle(
+    id: "songs-org-search",
+    title: "Werke in der Organisation suchen und kopieren",
+    categoryId: "songs",
+    keywords: ["organisation", "andere instanz", "werk kopieren", "werk übernehmen", "organisationsweit", "suchen", "noten übernehmen", "doppelt", "duplikat"],
+    body: "Als [[Administrator]] oder [[Verantwortlicher]] kannst du die Werke aller anderen [[Instanz|Instanzen]] deiner [[Organisation]] durchsuchen. Du findest die Suche unter \"Organisation → Werke in der Organisation suchen\" oder in der Werkeliste über das Menü (drei Punkte) → \"In der Organisation suchen\".\n\nSuche nach Name oder Nummer und grenze bei Bedarf auf einzelne Instanzen oder Werke mit Dateien ein. \"Schon bei dir\" zeigt, dass es in deiner Instanz bereits ein Werk mit diesem Namen gibt.\n\nTippst du auf ein Werk, wählst du die Zielinstanz. Ziel kann jede Instanz sein, in der du Admin oder Verantwortlicher bist. Gibt es dort schon ein Werk mit gleichem Namen, warnt Attendix und schlägt vor, in das vorhandene Werk zu kopieren. Dann werden die ausgewählten Dateien ergänzt und leere Felder gefüllt. Felder mit vorhandenem Wert werden nur überschrieben, wenn du sie bewusst ankreuzt. Legst du ein neues Werk an und die Nummer ist schon vergeben, kannst du sie ändern oder die nächste freie Nummer übernehmen.\n\nDu kannst Felder und Dateien einzeln abwählen und für jede Datei die [[Gruppe]] im Ziel festlegen. Attendix ordnet sie vorher anhand von Namen und Synonymen zu. Die Dateien werden kopiert und gehören danach der Zielinstanz, spätere Änderungen im Original kommen nicht automatisch an. Fehlende Kategorien werden angelegt, [[Zusatzfeld|Zusatzfelder]] werden übernommen, wenn es im Ziel ein Feld mit gleichem Namen gibt. Am kopierten Werk steht, aus welcher Instanz es stammt.",
   ),
   HelpArticle(
     id: "self-signout",

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../data/song_print_service.dart';
@@ -32,10 +33,18 @@ class CurrentSongsSheet extends ConsumerWidget {
     if (group == null || !context.mounted) return;
 
     final entries = <SongPrintEntry>[];
+    final isChoir = data.tenantType == 'choir';
     for (final g in data.currentSongs) {
       for (final his in g.history) {
         final song = his.song;
-        final file = song?.files?.where((f) => f.instrumentId == group.id).firstOrNull;
+        // Ionic 4.17.16: in choirs the "Chor (alle)" file when the group
+        // has no file of its own.
+        final file = song?.files?.where((f) => f.instrumentId == group.id).firstOrNull ??
+            (isChoir
+                ? song?.files
+                    ?.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note))
+                    .firstOrNull
+                : null);
         if (song != null && file != null) {
           entries.add(SongPrintEntry(song: song, file: file));
         }

@@ -21,6 +21,7 @@ import '../../../../core/services/zip_service_stub.dart'
     if (dart.library.html) '../../../../core/services/zip_service_web.dart'
     as file_saver;
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
@@ -1051,7 +1052,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
                         title: Text(file.fileName),
                         trailing: SongBadge(
                           color: SongUtils.fileBadgeColor(file),
-                          label: SongUtils.fileLabel(file, data.instruments),
+                          label: SongUtils.fileLabel(file, data.instruments, isChoir: data.isChoir),
                         ),
                         onTap: () => _openActions(file),
                       ),
@@ -1138,15 +1139,24 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     }
   }
 
-  /// Ionic category modal: Sonstige (Freitext) / Aufnahme / Liedtext / groups
+  /// Ionic category modal: Chor (alle) (choirs) / Sonstige (Freitext) /
+  /// Aufnahme / Liedtext / groups
   Future<void> _changeCategory(SongFile file) async {
     final result = await showAppDialog<({int? instrumentId, String? note})>(
       context: context,
       builder: (_) => FileCategoryDialog(
         instruments: data.instruments,
-        initialInstrumentId: file.instrumentId,
-        initialNote: file.note ??
-            (file.instrumentId == null && data.isChoir ? 'Chor' : ''),
+        isChoir: data.isChoir,
+        // Ionic 4.17.16 changeCategory: in choirs a file without group and
+        // note (or noted "Chor") preselects "Chor (alle)".
+        initialInstrumentId: data.isChoir &&
+                file.instrumentId == null &&
+                ((file.note ?? '').isEmpty || isChoirAllFile(note: file.note))
+            ? kChoirAllOptionValue
+            : file.instrumentId,
+        initialNote: isChoirAllFile(instrumentId: file.instrumentId, note: file.note) && data.isChoir
+            ? ''
+            : (file.note ?? ''),
       ),
     );
     if (result == null) return;
@@ -1171,11 +1181,18 @@ class FileCategoryDialog extends StatefulWidget {
     required this.instruments,
     required this.initialInstrumentId,
     required this.initialNote,
+    this.isChoir = false,
   });
 
   final List<Group> instruments;
+
+  /// Picker value: an instrumentId, null ("Sonstige (Freitext)") or
+  /// [kChoirAllOptionValue] ("Chor (alle)").
   final int? initialInstrumentId;
   final String initialNote;
+
+  /// Choirs get the option "Chor (alle)" on top (Ionic 4.17.16).
+  final bool isChoir;
 
   @override
   State<FileCategoryDialog> createState() => _FileCategoryDialogState();
@@ -1194,6 +1211,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
   @override
   Widget build(BuildContext context) {
     final options = <(int?, String)>[
+      if (widget.isChoir) (kChoirAllOptionValue, context.l10n.songsChoirAll),
       (null, context.l10n.songsOtherFreeText),
       (1, context.l10n.songsRecording),
       (2, context.l10n.songsLyrics),
@@ -1212,6 +1230,9 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
                 value: o.$1,
                 groupValue: _id,
                 title: Text(o.$2),
+                subtitle: o.$1 == kChoirAllOptionValue
+                    ? Text(context.l10n.songsChoirAllHint)
+                    : null,
                 onChanged: (v) => setState(() => _id = v),
               ),
             if (_id == null)
@@ -1236,7 +1257,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
         ElevatedButton(
           onPressed: () => Navigator.pop(
             context,
-            (instrumentId: _id, note: _id == null ? _note.text.trim() : null),
+            resolveFileCategoryOption(_id, _note.text.trim()),
           ),
           child: Text(context.l10n.commonSave),
         ),

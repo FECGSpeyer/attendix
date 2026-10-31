@@ -154,6 +154,11 @@ const Map<String, HelpArticleTranslation> helpArticlesEn = {
     keywords: ["add piece", "sheet music library", "new piece", "song", "open file", "view pdf", "web app"],
     body: "Under \"Pieces\" you create a new [[Piece|piece]] with number, name, difficulty and categories. Optionally you can store matching sheet music files (PDF) for each [[Group|group]]/voice.\n\nTap a file and then \"Open file\": Attendix shows PDFs and images right inside the app. Other files open in a new tab or in the matching app. If you use Attendix as an installed web app (e.g. on a Mac via \"Add to Dock\"), you get a hint with \"Download file\" and \"Close\" for such files instead. In the Attendix app from the App Store on a Mac with Apple silicon, they open in the browser.",
   ),
+  "songs-choir-files": HelpArticleTranslation(
+    title: "Files for the whole choir (Choir (all))",
+    keywords: ["choir (all)", "choir all", "for everyone", "all singers", "all voices", "choir sheet music", "sheet music for all", "other", "free text", "change category"],
+    body: "In choirs, all singers usually share the same sheet music file. For this, when you upload a file to a [[Piece|piece]], the category **\"Choir (all)\"** is at the top of the selection. In choirs, Attendix picks it automatically for PDFs that cannot be matched to a voice.\n\nEvery member sees a file with \"Choir (all)\", whatever voice they sing: on the sign-out page for a piece of an upcoming event, when printing all current sheet music and in the group directory under \"Choir (all)\". If a voice has its own file, it gets that one as well.\n\nYou can switch an uploaded file via \"Change category\" on the piece page. The category only exists in choir instances.",
+  ),
   "songs-filter": HelpArticleTranslation(
     title: "Searching and filtering pieces",
     keywords: ["search", "filter", "difficulty", "last played", "last sung", "planned", "not sung yet", "prefix", "song book", "load more", "scroll"],
@@ -172,12 +177,17 @@ const Map<String, HelpArticleTranslation> helpArticlesEn = {
   "songs-group-directory": HelpArticleTranslation(
     title: "Printing the group directory and music folder",
     keywords: ["group directory", "music folder", "voice", "sheet music of a group", "score", "conductors", "print"],
-    body: "Via \"Group directory\" in the list of pieces you choose a [[Group|group]] and see all sheet music files stored for this group. With the printer icon at the top right you print the group's complete music folder at once.\n\nIf scores are stored, there is also the group \"Conductors\", which contains all scores. The group directory is also available if your instance does not use piece categories.",
+    body: "Via \"Group directory\" in the list of pieces you choose a [[Group|group]] and see all sheet music files stored for this group. With the printer icon at the top right you print the group's complete music folder at once.\n\nIf scores are stored, there is also the group \"Conductors\", which contains all scores. Choirs also get the group \"Choir (all)\" with all files for the whole choir; when printing the sheet music of a voice, this file is added if the voice has none of its own. The group directory is also available if your instance does not use piece categories.",
   ),
   "songs-sync": HelpArticleTranslation(
     title: "Sharing pieces with another instance (piece sync)",
     keywords: ["piece sync", "synchronise", "source instance", "share pieces", "shared pieces", "merge pieces", "delete piece"],
     body: "Linked [[Instance|instances]] can use a shared piece library. As super admin you choose a source instance under \"Organisation → Piece sync\". Your instance then shows the pieces, categories and sheet music files of the source instance, and all changes are saved there. Events and history stay separate per instance.\n\nImportant when deleting: a piece exists only once for all instances involved. If you delete it, it is gone everywhere, including the history of all instances. Attendix points this out when deleting and names the instances affected.",
+  ),
+  "songs-org-search": HelpArticleTranslation(
+    title: "Searching and copying pieces across the organisation",
+    keywords: ["organisation", "other instance", "copy piece", "take over piece", "organisation-wide", "search", "copy sheet music", "duplicate"],
+    body: "As [[Administrator]] or [[Person in charge]] you can search the pieces of all other [[Instance|instances]] of your [[Organisation]]. You find the search under \"Organisation → Search pieces in the organisation\" or in the piece list via the menu (three dots) → \"Search in organisation\".\n\nSearch by name or number and narrow it down to single instances or pieces with files if needed. \"Already yours\" shows that your instance already has a piece with this name.\n\nTap a piece to choose the target instance. The target can be any instance where you are admin or person in charge. If it already has a piece with the same name, Attendix warns you and suggests copying into the existing piece. The selected files are then added and empty fields are filled. Fields that already have a value are only overwritten if you tick them on purpose. If you create a new piece and the number is already taken, you can change it or use the next free number.\n\nYou can untick single fields and files and set the [[Group]] in the target for each file. Attendix assigns them beforehand by name and synonyms. The files are copied and then belong to the target instance; later changes to the original do not arrive automatically. Missing categories are created, [[Additional field|extra fields]] are copied if the target has a field with the same name. The copied piece shows which instance it came from.",
   ),
   "self-signout": HelpArticleTranslation(
     title: "Signing myself in or out",

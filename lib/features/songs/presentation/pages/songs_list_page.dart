@@ -225,7 +225,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
       additionalFields: data.additionalFields,
     );
     final groupsWithFiles = buildGroupsWithFiles(data.songs, data.groups,
-        conductorsLabel: context.l10n.songsConductors);
+        conductorsLabel: context.l10n.songsConductors,
+        isChoir: data.tenantType == 'choir',
+        choirAllLabel: context.l10n.songsChoirAll);
     // PARITY_R7: entries of the quick-link item group (Ionic songs.page)
     final showCurrentLink = data.currentSongs.isNotEmpty &&
         filter.category == null &&

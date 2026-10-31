@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/audio_player/audio_player_service.dart';
 import '../../../../core/services/native/native_file_service.dart';
@@ -99,10 +100,10 @@ Future<void> showSongOptionsSheet(
     ToastHelper.showError(context, l10n.signoutNoScoresForInstrument);
   }
 
-  // Files for the player's instrument (choir: plus files noted "Chor")
+  // Files for the player's instrument (choir: plus "Chor (alle)" files)
   var files = allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
   if (isChoir) {
-    files = [...files, ...allFiles.where((f) => f.note?.toLowerCase() == 'chor')];
+    files = [...files, ...allFiles.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note))];
     final seen = <String>{};
     files = files.where((f) => seen.add(f.fileName)).toList();
   }
