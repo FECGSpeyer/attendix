@@ -337,7 +337,12 @@ const Map<String, HelpArticleTranslation> helpArticlesEn = {
   "other-stats": HelpArticleTranslation(
     title: "Statistics",
     keywords: ["analysis", "charts", "attendance rate"],
-    body: "The statistics page shows attendance trends, the distribution of [[Attendance status|attendance statuses]], age distribution and further analyses over a period of your choice.",
+    body: "The statistics page shows attendance trends, the distribution of [[Attendance status|attendance statuses]], age distribution and further analyses over a period of your choice. For [[Additional field|additional fields]] with fixed options you can also see how the answers are distributed.",
+  ),
+  "other-stats-fields": HelpArticleTranslation(
+    title: "Statistics for additional fields",
+    keywords: ["analyse additional fields", "distribution", "percent", "pie chart", "select field", "yes no", "church distribution", "options"],
+    body: "In the statistics you will find the \"Additional fields\" section. For every [[Additional field|additional field]] of type select, yes/no or church, it shows how many people have which option, as a chart and as a list with count and percentage.\n\nHow to use it:\n- Pick the field you want to analyse at the top.\n- Use \"Group\" to limit the analysis to one [[Group|group]].\n- Turn on \"Include paused people\" to count paused people as well. People who have left are never counted.\n- With \"All groups\" a second chart shows the distribution per group in percent.\n\nIf a person has no value for the field yet, the field's default value counts, just as it is shown in the people list. Organisation-wide additional fields are included too.",
   ),
   "other-instruments": HelpArticleTranslation(
     title: "Instruments/groups",

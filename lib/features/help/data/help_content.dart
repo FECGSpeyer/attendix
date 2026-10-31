@@ -520,7 +520,14 @@ const List<HelpArticle> helpArticles = [
     title: "Statistiken",
     categoryId: "other",
     keywords: ["auswertung", "diagramme", "anwesenheitsquote"],
-    body: "Die Statistik-Seite zeigt Anwesenheitstrends, die Verteilung der [[Anwesenheitsstatus|Anwesenheitsstatus]], Altersverteilung und weitere Auswertungen über einen frei wählbaren Zeitraum.",
+    body: "Die Statistik-Seite zeigt Anwesenheitstrends, die Verteilung der [[Anwesenheitsstatus|Anwesenheitsstatus]], Altersverteilung und weitere Auswertungen über einen frei wählbaren Zeitraum. Für [[Zusatzfeld|Zusatzfelder]] mit festen Optionen siehst du dort außerdem, wie sich die Antworten verteilen.",
+  ),
+  HelpArticle(
+    id: "other-stats-fields",
+    title: "Statistiken zu Zusatzfeldern",
+    categoryId: "other",
+    keywords: ["zusatzfelder auswerten", "verteilung", "prozent", "kreisdiagramm", "auswahlfeld", "ja nein", "gemeinde verteilung", "optionen"],
+    body: "In den Statistiken findest du den Bereich \"Zusatzfelder\". Dort siehst du für jedes [[Zusatzfeld]] vom Typ Auswahl, Ja/Nein oder Gemeinde, wie viele Personen welche Option haben, als Diagramm und als Liste mit Anzahl und Prozent.\n\nSo nutzt du ihn:\n- Wähle oben das Feld aus, das du auswerten möchtest.\n- Über \"Gruppe\" schränkst du die Auswertung auf eine [[Gruppe]] ein.\n- Mit \"Pausierende einbeziehen\" zählst du pausierende Personen mit. Ausgetretene Personen zählen nie mit.\n- Bei \"Alle Gruppen\" zeigt ein zweites Diagramm die Verteilung pro Gruppe in Prozent.\n\nHat eine Person für das Feld noch keinen Wert, zählt der Standardwert des Feldes, so wie er auch in der Personenliste angezeigt wird. Auch organisationsweite Zusatzfelder werden ausgewertet.",
   ),
   HelpArticle(
     id: "other-instruments",
