@@ -47,8 +47,11 @@ void main() {
           (instrumentId: null, note: 'Chor'));
       expect(resolveFileCategoryOption(null, 'Partitur'),
           (instrumentId: null, note: 'Partitur'));
-      // Switching from "Chor (alle)" to free text clears the note.
-      expect(resolveFileCategoryOption(null, 'chor'), (instrumentId: null, note: ''));
+      // Upload sheets: switching from "Chor (alle)" to free text clears the note.
+      expect(resolveFileCategoryOption(null, 'chor', clearChoirNote: true),
+          (instrumentId: null, note: ''));
+      // Category dialog (Ionic saveCategoryModal) keeps the free text.
+      expect(resolveFileCategoryOption(null, 'Chor'), (instrumentId: null, note: 'Chor'));
       expect(resolveFileCategoryOption(4, 'Partitur'), (instrumentId: 4, note: null));
     });
   });

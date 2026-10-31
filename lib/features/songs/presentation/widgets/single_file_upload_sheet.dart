@@ -136,7 +136,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
 
   void _choose(int? value) {
     final category = resolveFileCategoryOption(
-        value, _choirAll ? '' : _note.text);
+        value, _choirAll ? '' : _note.text, clearChoirNote: true);
     final id = category.instrumentId;
     _choirAll = value == kChoirAllOptionValue;
     if (value == null) _note.text = category.note ?? '';

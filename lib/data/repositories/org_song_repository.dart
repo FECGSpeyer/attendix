@@ -291,12 +291,27 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
-  /// Copies only go into Werk libraries of the current organisation.
+  /// Copies only go into Werk libraries of the current organisation, and only
+  /// where the user is admin (1) or responsible (5) in an instance using that
+  /// library (the UI lists only those; this re-checks it at the data layer).
   Future<void> _ensureOrgLibrary(int libraryId) async {
     final tenants = await getOrgTenants();
-    final allowed = tenants.map((t) => t.libraryId).toSet();
-    if (!allowed.contains(libraryId)) {
+    final candidates = tenants.where((t) => t.libraryId == libraryId).map((t) => t.id).toSet();
+    final userId = supabase.auth.currentUser?.id;
+    if (candidates.isEmpty || userId == null) {
       throw RepositoryException(message: 'Target library is not part of the organisation', operation: 'copyOrgSong');
+    }
+    final roles = await supabase
+        .from('tenantUsers')
+        .select('tenantId, role')
+        .eq('userId', userId)
+        .inFilter('tenantId', candidates.toList());
+    final allowed = (roles as List).any((r) {
+      final role = (r as Map)['role'];
+      return role == 1 || role == 5;
+    });
+    if (!allowed) {
+      throw RepositoryException(message: 'No admin rights in the target instance', operation: 'copyOrgSong');
     }
   }
 

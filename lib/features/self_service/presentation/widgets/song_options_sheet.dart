@@ -72,6 +72,15 @@ Future<void> _openFile(BuildContext context, SongFile file) =>
 
 Future<void> _downloadFile(BuildContext context, SongFile file) async {
   // Append ?download= to force Content-Disposition: attachment
+  // Ionic 4.17.19: installed web apps block new windows and link clicks →
+  // fetch the file and save it as a browser download (downloadFileNative).
+  if (NativeFileService.isInstalledWebApp) {
+    final ok = await NativeFileService.downloadInBrowser(file.url, file.fileName);
+    if (!ok && context.mounted) {
+      ToastHelper.showError(context, context.l10n.signoutFlutterFileDownloadFailed);
+    }
+    return;
+  }
   final url = file.url.contains('?') ? '${file.url}&download=' : '${file.url}?download=';
   // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative).
   final ok = await NativeFileService.openUrl(url, fileName: file.fileName);

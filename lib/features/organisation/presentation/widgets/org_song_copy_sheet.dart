@@ -377,10 +377,10 @@ class _OrgSongCopySheetState extends ConsumerState<OrgSongCopySheet> {
           if (mounted) setState(() => _progress = l10n.songsCopyingFile(current, total));
         },
       );
+      if (!mounted) return;
       // The copy may land in the own (or synced) library: reload the Werke.
       ref.invalidate(songsProvider);
       widget.onCopied?.call(target.libraryId);
-      if (!mounted) return;
       final tenantName = target.libraryName ?? target.tenant.shortName;
       ToastHelper.showSuccess(
         context,

@@ -3,6 +3,7 @@ import 'package:flutter/material.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../core/constants/enums.dart';
+import '../../../core/services/native/native_file_service.dart';
 import '../../../core/theme/app_colors.dart';
 import '../../../core/utils/event_list_utils.dart';
 import '../../../l10n/l10n.dart';
@@ -1104,6 +1105,11 @@ Future<void> showEventLegendSheet(BuildContext context) {
 Future<void> openEventNavigation(BuildContext context, String place) async {
   Future<void> open(Uri uri) async {
     try {
+      // Ionic 4.17.18: installed web apps ignore window.open → real link click.
+      if (kIsWeb) {
+        await NativeFileService.openExternal(uri);
+        return;
+      }
       await launchUrl(uri, mode: LaunchMode.externalApplication);
     } catch (e) {
       if (kDebugMode) debugPrint('openEventNavigation failed: $e');
@@ -1130,7 +1136,13 @@ Future<void> openEventNavigation(BuildContext context, String place) async {
 /// Opens an attachment URL in the browser.
 Future<void> openEventAttachment(String url) async {
   try {
-    await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
+    final uri = Uri.parse(url);
+    // Ionic 4.17.18: installed web apps ignore window.open → real link click.
+    if (kIsWeb) {
+      await NativeFileService.openExternal(uri);
+      return;
+    }
+    await launchUrl(uri, mode: LaunchMode.externalApplication);
   } catch (e) {
     if (kDebugMode) debugPrint('openEventAttachment failed: $e');
   }

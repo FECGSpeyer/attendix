@@ -29,14 +29,17 @@ int? fileCategoryOptionValue(int? instrumentId, String? note, {required bool isC
 
 /// Category stored for a picked option (Ionic `changeFileInstrument` /
 /// `saveCategoryModal`): "Chor (alle)" → note 'Chor'; "Sonstige (Freitext)"
-/// → the free text (a leftover "Chor" is cleared); a group → no note.
-({int? instrumentId, String? note}) resolveFileCategoryOption(int? value, String? freeText) {
+/// → the free text; a group → no note. With [clearChoirNote] (upload sheets,
+/// Ionic `changeFileInstrument`) a leftover "Chor" free text is cleared; the
+/// category dialog (Ionic `saveCategoryModal`) keeps it.
+({int? instrumentId, String? note}) resolveFileCategoryOption(int? value, String? freeText,
+    {bool clearChoirNote = false}) {
   if (value == kChoirAllOptionValue) {
     return (instrumentId: null, note: kChoirAllNote);
   }
   if (value == null) {
     final text = freeText ?? '';
-    return (instrumentId: null, note: isChoirAllFile(note: text) ? '' : text);
+    return (instrumentId: null, note: clearChoirNote && isChoirAllFile(note: text) ? '' : text);
   }
   return (instrumentId: value, note: null);
 }

@@ -219,8 +219,11 @@ class _PdfViewerSheetState extends State<PdfViewerSheet> {
               // blocked on web): open the file in the browser / system viewer.
               const SizedBox(height: AppDimensions.paddingS),
               TextButton.icon(
-                onPressed: () =>
-                    NativeFileService.openExternal(Uri.parse(widget.url)),
+                // Installed web app (Ionic 4.17.19): no new windows → download.
+                onPressed: () => NativeFileService.isInstalledWebApp
+                    ? NativeFileService.downloadInBrowser(
+                        widget.url, NativeFileService.fileNameFromUrl(widget.url))
+                    : NativeFileService.openExternal(Uri.parse(widget.url)),
                 icon: const Icon(Icons.open_in_new),
                 label: IonButtonLabel(context.l10n.coreFlutterOpenExternally),
               ),

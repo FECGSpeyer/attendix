@@ -51,9 +51,16 @@ class _FieldStatsSectionState extends ConsumerState<FieldStatsSection> {
     );
     final personsAsync = ref.watch(fieldStatsPersonsProvider);
     final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
-    final churches = fields.any((f) => f.type == ExtraFieldType.bfecgChurch)
-        ? ref.watch(churchesProvider).valueOrNull ?? const <Church>[]
-        : const <Church>[];
+    final churchesAsync = fields.any((f) => f.type == ExtraFieldType.bfecgChurch)
+        ? ref.watch(churchesProvider)
+        : null;
+    final churches = churchesAsync?.valueOrNull ?? const <Church>[];
+    // Ionic waits for the churches before counting church fields; otherwise
+    // missing values would briefly show as "Kein Wert".
+    final waitingForChurches = field.type == ExtraFieldType.bfecgChurch &&
+        churchesAsync != null &&
+        !churchesAsync.hasValue &&
+        !churchesAsync.hasError;
 
     final stats = computeFieldStats(
       field: field,
@@ -94,7 +101,7 @@ class _FieldStatsSectionState extends ConsumerState<FieldStatsSection> {
         value: _includePaused,
         onChanged: (v) => setState(() => _includePaused = v),
       ),
-      if (!personsAsync.hasValue)
+      if (!personsAsync.hasValue || waitingForChurches)
         const Padding(
           padding: EdgeInsets.all(AppDimensions.paddingM),
           child: Center(child: AppSpinner()),

@@ -803,7 +803,7 @@ class _FileItemState extends State<_FileItem> {
                       onChanged: widget.enabled
                           ? (v) {
                               final category = resolveFileCategoryOption(
-                                  v, value == kChoirAllOptionValue ? '' : _note.text.trim());
+                                  v, value == kChoirAllOptionValue ? '' : _note.text.trim(), clearChoirNote: true);
                               if (v == null) _note.text = category.note ?? '';
                               widget.onCategoryChanged(category.instrumentId, category.note);
                             }
