@@ -258,6 +258,10 @@ class InstrumentMatcher {
   }
 
   static String _fold(String s) => s
+      // macOS / Drive names spell ö as o + U+0308 (decomposed).
+      .replaceAll('a\u0308', 'ae')
+      .replaceAll('o\u0308', 'oe')
+      .replaceAll('u\u0308', 'ue')
       .replaceAll('ä', 'ae')
       .replaceAll('ö', 'oe')
       .replaceAll('ü', 'ue')

@@ -174,6 +174,11 @@ void main() {
       expect(_label('Alte Fassung Text.docx', _orchestra), 'Liedtext');
     });
 
+    test('decomposed umlauts (macOS file names)', () {
+      expect(_label('122 Herbei, o ihr Gla\u0308ubigen - Flo\u0308te.pdf', _orchestra), 'Flöte');
+      expect(_confidence('122 Herbei, o ihr Gla\u0308ubigen - Flo\u0308te.pdf', _orchestra), MatchConfidence.sure);
+    });
+
     test('the part after the title beats a translation in the title', () {
       expect(_label('Le viole - Vl II.pdf', _orchestra), 'Violine 2');
       expect(_confidence('Le viole - Vl II.pdf', _orchestra), MatchConfidence.sure);
