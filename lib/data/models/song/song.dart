@@ -1,5 +1,6 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../l10n/l10n.dart';
+import '../plan/plan.dart';
 
 part 'song.freezed.dart';
 part 'song.g.dart';
@@ -34,6 +35,9 @@ class Song with _$Song {
     /// Values of the tenant's `song_additional_fields`
     @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    /// SongBeamer file of the Werk, written by the Gemeinde App only
+    /// (never sent back by Attendix).
+    @JsonKey(name: 'beamer_file', includeToJson: false) @BeamerFileConverter() BeamerFile? beamerFile,
   }) = _Song;
 
   factory Song.fromJson(Map<String, dynamic> json) => _$SongFromJson(json);

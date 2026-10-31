@@ -1,15 +1,36 @@
 import 'package:flutter/material.dart';
+import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/plan_beamer.dart';
+import '../../../../data/models/plan/plan.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Values entered in a plan field dialog.
 class PlanFieldInput {
-  const PlanFieldInput({required this.name, this.conductor = '', this.info, this.minutes});
+  const PlanFieldInput({required this.name, this.conductor = '', this.info, this.minutes, this.needsBeamer});
 
   final String name;
   final String conductor;
   final String? info;
   final int? minutes;
+
+  /// "Beamer-Datei nötig" switched by hand; null = follows the automatic
+  /// rule. Only meaningful when the dialog showed the Beamer section.
+  final bool? needsBeamer;
+}
+
+/// Beamer section of the "Feld bearbeiten" dialog (Ionic 4.17.10
+/// `PlanFieldEditComponent`): only on ORG plans of orgs linked to the
+/// Gemeinde App (see [PlanBeamer.active]).
+class PlanFieldBeamerOptions {
+  const PlanFieldBeamerOptions({this.manual, this.songId, this.file});
+
+  /// Value switched by hand (`field.needsBeamer`); null = automatic rule.
+  final bool? manual;
+  final int? songId;
+
+  /// File of the row, otherwise the one stored with its Werk.
+  final BeamerFile? file;
 }
 
 /// Generic dialog for Programmpunkte, Notizen, Programmblöcke and Unterpunkte
@@ -37,6 +58,7 @@ Future<PlanFieldInput?> showPlanFieldDialog(
   bool withMinutes = true,
   bool requireName = true,
   VoidCallback? onDelete,
+  PlanFieldBeamerOptions? beamer,
 }) {
   return showAppDialog<PlanFieldInput>(
     context: context,
@@ -60,6 +82,7 @@ Future<PlanFieldInput?> showPlanFieldDialog(
       withMinutes: withMinutes,
       requireName: requireName,
       onDelete: onDelete,
+      beamer: beamer,
     ),
   );
 }
@@ -85,6 +108,7 @@ class _PlanFieldDialog extends StatefulWidget {
     required this.withMinutes,
     required this.requireName,
     required this.onDelete,
+    this.beamer,
   });
 
   final String title;
@@ -106,6 +130,7 @@ class _PlanFieldDialog extends StatefulWidget {
   final bool withMinutes;
   final bool requireName;
   final VoidCallback? onDelete;
+  final PlanFieldBeamerOptions? beamer;
 
   @override
   State<_PlanFieldDialog> createState() => _PlanFieldDialogState();
@@ -119,8 +144,29 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
       TextEditingController(text: widget.initialMinutes?.toString() ?? '');
   String? _error;
 
+  /// Beamer switch set by hand; null while the automatic rule applies.
+  late bool? _manualBeamer = widget.beamer?.manual;
+
+  @override
+  void initState() {
+    super.initState();
+    // The automatic rule follows the title while typing.
+    if (widget.beamer != null) _name.addListener(_onNameChanged);
+  }
+
+  void _onNameChanged() => setState(() {});
+
+  bool get _autoBeamer => PlanBeamer.autoNeedsBeamer(name: _name.text, songId: widget.beamer?.songId);
+
+  bool get _beamerOn => _manualBeamer ?? _autoBeamer;
+
+  void _setBeamer(bool on) {
+    if (on != _beamerOn) setState(() => _manualBeamer = on);
+  }
+
   @override
   void dispose() {
+    _name.removeListener(_onNameChanged);
     _name.dispose();
     _conductor.dispose();
     _info.dispose();
@@ -140,7 +186,51 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
       conductor: _conductor.text.trim(),
       info: info.isEmpty ? null : info,
       minutes: int.tryParse(_minutes.text.trim()),
+      needsBeamer: widget.beamer != null ? _manualBeamer : null,
     ));
+  }
+
+  /// Ionic plan-field-edit: list "Beamer" with the switch, the linked file
+  /// (when on) and the hint below.
+  List<Widget> _beamerSection(BuildContext context) {
+    final l10n = context.l10n;
+    final theme = Theme.of(context);
+    final reason = PlanBeamer.autoReason(
+      name: _name.text,
+      songId: widget.beamer?.songId,
+      manual: _manualBeamer,
+    );
+    final file = widget.beamer?.file;
+    final muted = theme.textTheme.bodySmall?.copyWith(color: AppColors.medium);
+    return [
+      const SizedBox(height: 16),
+      Align(
+        alignment: Alignment.centerLeft,
+        child: Text(l10n.planningBeamer.toUpperCase(),
+            style: const TextStyle(fontSize: 12, fontWeight: FontWeight.w600, color: AppColors.medium)),
+      ),
+      SwitchListTile.adaptive(
+        key: const ValueKey('plan-field-beamer-toggle'),
+        contentPadding: EdgeInsets.zero,
+        value: _beamerOn,
+        onChanged: _setBeamer,
+        title: Text(l10n.planningBeamerNeeded),
+        subtitle: reason == null
+            ? null
+            : Text(reason.song ? l10n.planningBeamerAutoSong : l10n.planningBeamerAutoWord(reason.word ?? '')),
+      ),
+      if (_beamerOn)
+        ListTile(
+          contentPadding: EdgeInsets.zero,
+          leading: Icon(Icons.tv_outlined, color: file != null ? AppColors.primary : AppColors.warning),
+          title: Text(file?.name ?? l10n.planningBeamerNoFile),
+          subtitle: Text(file != null ? l10n.planningBeamerChangeInApp : l10n.planningBeamerLinkInApp),
+        ),
+      Padding(
+        padding: const EdgeInsets.only(top: 4),
+        child: Text(l10n.planningBeamerAutoHint, style: muted),
+      ),
+    ];
   }
 
   @override
@@ -209,6 +299,7 @@ class _PlanFieldDialogState extends State<_PlanFieldDialog> {
                 padding: const EdgeInsets.only(top: 8),
                 child: Text(_error!, style: TextStyle(color: Theme.of(context).colorScheme.error)),
               ),
+            if (widget.beamer != null) ..._beamerSection(context),
           ],
         ),
       ),

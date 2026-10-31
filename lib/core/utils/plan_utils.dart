@@ -214,6 +214,9 @@ class PlanUtils {
             // Song fields are looked up by their id (= song id), so they keep it.
             id: f.songId != null || f.id.startsWith('noteFld') ? f.id : 'fld-${uuid()}',
             groupId: copy.id,
+            // A copy is a new row: it gets its own uid and no linked Beamer file.
+            uid: null,
+            beamerFile: null,
           )),
     ];
   }

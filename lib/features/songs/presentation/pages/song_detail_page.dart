@@ -36,6 +36,7 @@ import '../widgets/file_drop/file_drop_target.dart';
 import '../widgets/file_upload_sheet.dart';
 import '../widgets/group_pdf_print.dart';
 import '../widgets/single_file_upload_sheet.dart';
+import '../widgets/song_beamer_file_section.dart';
 import '../widgets/song_file_opener.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
@@ -334,6 +335,8 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
               data: data,
               onChanged: _refresh,
             ),
+            // Ionic 4.17.10: SongBeamer-Datei (Gemeinde App)
+            if (!data.isPublic) SongBeamerFileSection(song: song),
             const SizedBox(height: AppDimensions.paddingM),
             if (data.readOnly && (song.link?.isNotEmpty ?? false))
               IonInsetList(children: [

@@ -39,6 +39,7 @@ _$SongImpl _$$SongImplFromJson(Map<String, dynamic> json) => _$SongImpl(
       json['created_at'] == null
           ? null
           : DateTime.parse(json['created_at'] as String),
+  beamerFile: const BeamerFileConverter().fromJson(json['beamer_file']),
 );
 
 Map<String, dynamic> _$$SongImplToJson(_$SongImpl instance) =>

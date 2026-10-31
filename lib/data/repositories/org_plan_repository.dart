@@ -244,6 +244,17 @@ class OrgPlanRepository extends BaseRepository {
   Future<Organisation> updateOrgName(int orgId, String name) =>
       updateOrganisation(orgId, {'name': name});
 
+  /// Gemeinde App link settings (Ionic 4.17.10 `updateOrgGemeindeApp`):
+  /// `beamer_files_enabled`, `gemeinde_app_key_hash`, `gemeinde_app_key_hint`.
+  /// Only these columns are accepted; scoped by the organisation id.
+  Future<Organisation> updateOrgGemeindeApp(int orgId, Map<String, dynamic> updates) {
+    const allowed = {'beamer_files_enabled', 'gemeinde_app_key_hash', 'gemeinde_app_key_hint'};
+    return updateOrganisation(orgId, {
+      for (final e in updates.entries)
+        if (allowed.contains(e.key)) e.key: e.value,
+    });
+  }
+
   Future<Organisation> updateOrgExtraFields(int orgId, List<OrgExtraField> fields) =>
       updateOrganisation(orgId, {'additional_fields': fields.map((f) => f.toJson()).toList()});
 

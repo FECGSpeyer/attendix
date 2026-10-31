@@ -72,4 +72,75 @@ void main() {
     await tester.tap(find.text('Themen aufnehmen'));
     expect(tapped, isTrue);
   });
+
+  group('Beamer rows (Ionic 4.17.10/4.17.11)', () {
+    Future<List<PlanField>? Function()> pumpBeamer(
+      WidgetTester tester,
+      List<PlanField> fields, {
+      BeamerFile? Function(PlanField)? fileOf,
+    }) async {
+      List<PlanField>? emitted;
+      await tester.pumpWidget(MaterialApp(
+        home: Scaffold(
+          body: SingleChildScrollView(
+            child: PlanFieldsEditor(
+              fields: fields,
+              startTime: '18:00',
+              onChanged: (f) => emitted = f,
+              beamerFileOf: fileOf,
+            ),
+          ),
+        ),
+      ));
+      return () => emitted;
+    }
+
+    testWidgets('no status line when the Beamer feature is off', (tester) async {
+      await pumpBeamer(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5')]);
+      expect(find.text('Beamer-Datei fehlt'), findsNothing);
+    });
+
+    testWidgets('status line shows the file or "Beamer-Datei fehlt"', (tester) async {
+      await pumpBeamer(
+        tester,
+        const [
+          PlanField(id: 'a', name: 'Gemeindelied', time: '5'),
+          PlanField(id: '7', name: 'Werk', time: '5', songId: 7),
+          PlanField(id: 'c', name: 'Predigt', time: '30'),
+        ],
+        fileOf: (f) => f.songId == 7 ? const BeamerFile(name: 'werk.sng', path: 'p') : null,
+      );
+      expect(find.text('Beamer-Datei fehlt'), findsOneWidget);
+      expect(find.text('werk.sng'), findsOneWidget);
+      expect(find.byKey(const ValueKey('beamer-status-c')), findsNothing);
+    });
+
+    testWidgets('edit dialog switches "Beamer-Datei nötig" off by hand', (tester) async {
+      final emitted = await pumpBeamer(
+        tester,
+        const [PlanField(id: 'a', name: 'Gemeindelied', time: '5')],
+        fileOf: (_) => null,
+      );
+      await tester.tap(find.text('Gemeindelied'));
+      await tester.pumpAndSettle();
+      expect(find.text('Beamer-Datei nötig'), findsOneWidget);
+      expect(find.text('Automatisch an: Titel enthält „Lied“'), findsOneWidget);
+      expect(find.text('Noch keine Datei verknüpft'), findsOneWidget);
+
+      await tester.tap(find.byKey(const ValueKey('plan-field-beamer-toggle')));
+      await tester.pumpAndSettle();
+      expect(find.text('Noch keine Datei verknüpft'), findsNothing);
+
+      await tester.tap(find.text('UPDATEN'));
+      await tester.pumpAndSettle();
+      expect(emitted()?.single.needsBeamer, isFalse);
+    });
+
+    testWidgets('edit dialog has no Beamer section when the feature is off', (tester) async {
+      await pumpBeamer(tester, const [PlanField(id: 'a', name: 'Gemeindelied', time: '5', needsBeamer: true)]);
+      await tester.tap(find.text('Gemeindelied'));
+      await tester.pumpAndSettle();
+      expect(find.text('Beamer-Datei nötig'), findsNothing);
+    });
+  });
 }

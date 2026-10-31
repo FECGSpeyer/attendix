@@ -62,6 +62,12 @@ mixin _$Song {
   @JsonKey(name: 'created_at')
   DateTime? get createdAt => throw _privateConstructorUsedError;
 
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile => throw _privateConstructorUsedError;
+
   /// Serializes this Song to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -97,7 +103,12 @@ abstract class $SongCopyWith<$Res> {
     @JsonKey(name: 'category_ids') List<String>? categoryIds,
     @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    BeamerFile? beamerFile,
   });
+
+  $BeamerFileCopyWith<$Res>? get beamerFile;
 }
 
 /// @nodoc
@@ -135,6 +146,7 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
     Object? categoryIds = freezed,
     Object? additionalFields = freezed,
     Object? createdAt = freezed,
+    Object? beamerFile = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -238,9 +250,28 @@ class _$SongCopyWithImpl<$Res, $Val extends Song>
                     ? _value.createdAt
                     : createdAt // ignore: cast_nullable_to_non_nullable
                         as DateTime?,
+            beamerFile:
+                freezed == beamerFile
+                    ? _value.beamerFile
+                    : beamerFile // ignore: cast_nullable_to_non_nullable
+                        as BeamerFile?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of Song
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BeamerFileCopyWith<$Res>? get beamerFile {
+    if (_value.beamerFile == null) {
+      return null;
+    }
+
+    return $BeamerFileCopyWith<$Res>(_value.beamerFile!, (value) {
+      return _then(_value.copyWith(beamerFile: value) as $Val);
+    });
   }
 }
 
@@ -273,7 +304,13 @@ abstract class _$$SongImplCopyWith<$Res> implements $SongCopyWith<$Res> {
     @JsonKey(name: 'category_ids') List<String>? categoryIds,
     @JsonKey(name: 'additional_fields') Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    BeamerFile? beamerFile,
   });
+
+  @override
+  $BeamerFileCopyWith<$Res>? get beamerFile;
 }
 
 /// @nodoc
@@ -308,6 +345,7 @@ class __$$SongImplCopyWithImpl<$Res>
     Object? categoryIds = freezed,
     Object? additionalFields = freezed,
     Object? createdAt = freezed,
+    Object? beamerFile = freezed,
   }) {
     return _then(
       _$SongImpl(
@@ -411,6 +449,11 @@ class __$$SongImplCopyWithImpl<$Res>
                 ? _value.createdAt
                 : createdAt // ignore: cast_nullable_to_non_nullable
                     as DateTime?,
+        beamerFile:
+            freezed == beamerFile
+                ? _value.beamerFile
+                : beamerFile // ignore: cast_nullable_to_non_nullable
+                    as BeamerFile?,
       ),
     );
   }
@@ -441,6 +484,9 @@ class _$SongImpl implements _Song {
     @JsonKey(name: 'additional_fields')
     final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') this.createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    this.beamerFile,
   }) : _instrumentIds = instrumentIds,
        _files = files,
        _categoryIds = categoryIds,
@@ -546,9 +592,16 @@ class _$SongImpl implements _Song {
   @JsonKey(name: 'created_at')
   final DateTime? createdAt;
 
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @override
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  final BeamerFile? beamerFile;
+
   @override
   String toString() {
-    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt)';
+    return 'Song(id: $id, tenantId: $tenantId, name: $name, number: $number, prefix: $prefix, withChoir: $withChoir, withSolo: $withSolo, lastSung: $lastSung, nextPlanned: $nextPlanned, link: $link, conductor: $conductor, composer: $composer, legacyId: $legacyId, instrumentIds: $instrumentIds, files: $files, difficulty: $difficulty, category: $category, categoryIds: $categoryIds, additionalFields: $additionalFields, createdAt: $createdAt, beamerFile: $beamerFile)';
   }
 
   @override
@@ -595,7 +648,9 @@ class _$SongImpl implements _Song {
               _additionalFields,
             ) &&
             (identical(other.createdAt, createdAt) ||
-                other.createdAt == createdAt));
+                other.createdAt == createdAt) &&
+            (identical(other.beamerFile, beamerFile) ||
+                other.beamerFile == beamerFile));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -622,6 +677,7 @@ class _$SongImpl implements _Song {
     const DeepCollectionEquality().hash(_categoryIds),
     const DeepCollectionEquality().hash(_additionalFields),
     createdAt,
+    beamerFile,
   ]);
 
   /// Create a copy of Song
@@ -661,6 +717,9 @@ abstract class _Song implements Song {
     @JsonKey(name: 'additional_fields')
     final Map<String, dynamic>? additionalFields,
     @JsonKey(name: 'created_at') final DateTime? createdAt,
+    @JsonKey(name: 'beamer_file', includeToJson: false)
+    @BeamerFileConverter()
+    final BeamerFile? beamerFile,
   }) = _$SongImpl;
 
   factory _Song.fromJson(Map<String, dynamic> json) = _$SongImpl.fromJson;
@@ -724,6 +783,13 @@ abstract class _Song implements Song {
   @override
   @JsonKey(name: 'created_at')
   DateTime? get createdAt;
+
+  /// SongBeamer file of the Werk, written by the Gemeinde App only
+  /// (never sent back by Attendix).
+  @override
+  @JsonKey(name: 'beamer_file', includeToJson: false)
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile;
 
   /// Create a copy of Song
   /// with the given fields replaced by the non-null parameter values.

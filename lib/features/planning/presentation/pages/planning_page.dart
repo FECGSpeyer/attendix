@@ -9,6 +9,7 @@ import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/utils/plan_beamer.dart';
 import '../../../../core/providers/plan_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
@@ -91,6 +92,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _sharePlan = false;
   bool _isOrgPlan = false;
   bool _loaded = false;
+
+  /// Ionic 4.17.10: the organisation is linked to the Gemeinde App, so every
+  /// row gets a stable uid when the plan is stored (kept from the last build,
+  /// also used by [_flushOnDispose]).
+  bool _gemeindeAppLinked = false;
 
   /// SOL_FIX2: the explicitly requested Termin could not be loaded. The
   /// editor then shows an error and never falls back to another Termin.
@@ -237,7 +243,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     final repo = _disposeRepo;
     if (attId == null || repo == null || !_hasPendingChanges) return;
     final time = _time;
-    final fields = [..._fields];
+    final fields = _withFieldUids([..._fields]);
     final title = _titleController.text.trim();
     final planIndex = _planIndex;
     if (PlanUtils.validate(time, fields) != PlanValidation.ok) return;
@@ -837,6 +843,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   List<Song> get _songs => ref.read(planSongsProvider).valueOrNull ?? const [];
 
+  /// Ionic 4.17.10: unique row uids for the Gemeinde App (linked orgs only).
+  List<PlanField> _withFieldUids(List<PlanField> fields) =>
+      _gemeindeAppLinked ? PlanBeamer.ensureFieldUids(fields) : fields;
+
+  /// Ionic 4.17.11 `beamerFileOf`: the row's file, otherwise its Werk's.
+  BeamerFile? _beamerFileOf(PlanField field) => PlanBeamer.fileOf(
+      field, (songId) => _songs.where((s) => s.id == songId).firstOrNull?.beamerFile);
+
   /// Ionic `onAttChange` without plan / "Plan zurücksetzen".
   void _applyTypeDefaultPlan(PlanAttendance att, {bool save = true}) {
     final type = _typeOf(att);
@@ -986,6 +1000,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       await _planDeletedMeanwhile(attId, planKey, draft, base: draftBase);
       return true;
     }
+    // Ionic 4.17.10 `ensureFieldUids`: the editor keeps the uids it stored.
+    // (setState: the fields editor must emit its next change with the uids.)
+    final withUids = _withFieldUids(_fields);
+    if (!identical(withUids, _fields)) setState(() => _fields = withUids);
     final update = _planUpdate(base.att, baseIndex, time: _time, fields: _fields, title: title);
     try {
       final saved = await repo.updateAttendancePlanFields(att.id!, update);
@@ -1960,6 +1978,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     ref.watch(protocolTypesProvider); // PROTOCOL: keeps the protocol settings loaded
     final blockTemplates = ref.watch(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
     final role = ref.watch(effectiveRoleProvider);
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
+    _gemeindeAppLinked = PlanBeamer.gemeindeAppLinked(org);
+    // Ionic 4.17.10 `showBeamer`: linked org, setting on, ORG plan.
+    final showBeamer = PlanBeamer.active(org, _isOrgPlan);
 
     // SOL_FIX26: not from the previous value while the Termine reload after
     // an invalidation (that would edit the stale plan).
@@ -2075,6 +2097,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
                     onAddTopics: _canAddTopics ? _openAgendaPicker : null,
                     fieldWarning: _missingGroups,
                     onSaveBlockTemplate: role.isAdmin ? _saveBlockTemplate : null,
+                    beamerFileOf: showBeamer ? _beamerFileOf : null,
                   ),
                   if (_fields.isNotEmpty)
                     ListTile(

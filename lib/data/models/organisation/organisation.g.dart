@@ -29,6 +29,10 @@ _$OrganisationImpl _$$OrganisationImplFromJson(Map<String, dynamic> json) =>
           (json['default_fields'] as List<dynamic>?)
               ?.map((e) => PlanField.fromJson(e as Map<String, dynamic>))
               .toList(),
+      fecgLinkEnabled: json['fecg_link_enabled'] as bool? ?? false,
+      beamerFilesEnabled: json['beamer_files_enabled'] as bool? ?? false,
+      gemeindeAppKeyHash: json['gemeinde_app_key_hash'] as String?,
+      gemeindeAppKeyHint: json['gemeinde_app_key_hint'] as String?,
     );
 
 Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
@@ -44,6 +48,10 @@ Map<String, dynamic> _$$OrganisationImplToJson(_$OrganisationImpl instance) =>
       'planning_templates':
           instance.planningTemplates?.map((e) => e.toJson()).toList(),
       'default_fields': instance.defaultFields?.map((e) => e.toJson()).toList(),
+      'fecg_link_enabled': instance.fecgLinkEnabled,
+      'beamer_files_enabled': instance.beamerFilesEnabled,
+      'gemeinde_app_key_hash': instance.gemeindeAppKeyHash,
+      'gemeinde_app_key_hint': instance.gemeindeAppKeyHint,
     };
 
 _$TenantGroupTenantImpl _$$TenantGroupTenantImplFromJson(
