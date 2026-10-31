@@ -11724,6 +11724,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get songsFlutterDeleteFailed => 'Song could not be deleted';
 
   @override
+  String get songsFlutterDetectNone => 'Not recognised – please assign';
+
+  @override
+  String get songsFlutterDetectUnsure => 'Unsure – please check';
+
+  @override
   String get songsFlutterDownloadFileFailed => 'File could not be downloaded';
 
   @override
@@ -11763,6 +11769,14 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterLastPage => 'Last page';
+
+  @override
+  String get songsFlutterLearnFailed => 'The terms could not be saved';
+
+  @override
+  String songsFlutterLearnTerm(Object term, Object group) {
+    return 'Recognise “$term” as $group from now on';
+  }
 
   @override
   String songsFlutterListAnd(Object rest, Object last) {
@@ -11829,6 +11843,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get songsFlutterReorderCategoriesHint => 'Drag categories to reorder them';
+
+  @override
+  String get songsFlutterReviewHint => 'The part of these files is not clear. Please check the assignment before uploading.';
+
+  @override
+  String get songsFlutterReviewTitle => 'Check parts';
+
+  @override
+  String get songsFlutterReviewUpload => 'Upload';
 
   @override
   String get songsFlutterShowAsTab => 'Show as tab';
