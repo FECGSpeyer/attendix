@@ -7,6 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../../core/services/part_vision_service.dart';
 import '../../../../../core/services/song_file_service.dart';
 import '../../../../../core/services/zip_service.dart';
 import '../../../../../core/services/zip_service_stub.dart'
@@ -40,6 +41,9 @@ import '../rd_widgets.dart';
 /// Files dropped anywhere on the Werk (see [RdWorkDropArea]) or picked with
 /// "Hochladen" go through [rdAddWorkFiles].
 
+/// Longest the Beta upload waits for page-1 reading of a whole drop.
+const Duration rdVisionBudget = Duration(minutes: 1);
+
 /// Width from which the Werk page shows the workspace.
 const double rdWorkFilesMinWidth = 560;
 
@@ -69,6 +73,36 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     guesses.add((file: file, guess: guessFileCategory(file.name, instruments: instruments, isChoir: data.isChoir)));
   }
   if (guesses.isEmpty) return;
+
+  // Unclear names: the part printed on page 1 (`part-detect`), one at a time.
+  final unclear = [
+    for (var i = 0; i < guesses.length; i++)
+      if (instruments.isNotEmpty && guesses[i].guess.canAskVision(guesses[i].file.name)) i,
+  ];
+  if (unclear.isNotEmpty) {
+    controller.showNotice(l10n.songsFlutterVisionReading);
+    final vision = ref.read(partVisionServiceProvider);
+    // The tenant of this drop: after a switch nothing more is sent for it.
+    final tenantId = vision.currentTenant();
+    // A minute in all; files not read by then keep the file-name result
+    // (and land in the review below).
+    final clock = Stopwatch()..start();
+    for (final i in unclear) {
+      final left = rdVisionBudget - clock.elapsed;
+      if (left <= Duration.zero || !context.mounted) break;
+      // Each file gets at most what is left of the minute; leaving the page
+      // stops it.
+      final match = await vision.detect(
+        guesses[i].file,
+        instruments,
+        limit: left,
+        tenantId: tenantId,
+        cancelled: () => !context.mounted,
+      );
+      if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
+    }
+    if (!context.mounted) return;
+  }
 
   // Files whose part is not clear are checked first; terms assigned by hand
   // can be remembered as synonyms of the group.
@@ -1161,7 +1195,7 @@ class _ReviewDialogState extends State<_ReviewDialog> {
   /// An unsure part can be confirmed for learning right away (unchecked).
   late final Map<PlatformFile, String> _terms = {
     for (final i in widget.items)
-      if (i.guess.confidence == MatchConfidence.unsure)
+      if (i.guess.confidence == MatchConfidence.unsure && !i.guess.byVision)
         if (learnableTerm(i.file.name, chosenId: i.guess.instrumentId, instruments: widget.instruments, workName: widget.workName)
             case final term?)
           i.file: term,
@@ -1194,6 +1228,10 @@ class _ReviewDialogState extends State<_ReviewDialog> {
       terms: _learnedTerms(),
     ));
   }
+
+  /// What page 1 showed: the printed name, else the group it was matched to.
+  String _visionLabel(FileCategoryGuess guess) =>
+      guess.term ?? widget.groups.where((g) => g.id == guess.instrumentId).firstOrNull?.name ?? '';
 
   Map<int, List<String>> _learnedTerms() {
     final terms = <int, List<String>>{};
@@ -1236,8 +1274,21 @@ class _ReviewDialogState extends State<_ReviewDialog> {
                         children: [
                           Text(i.file.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
                           Text(
-                            i.guess.confidence == MatchConfidence.unsure ? l10n.songsFlutterDetectUnsure : l10n.songsFlutterDetectNone,
-                            style: TextStyle(fontSize: 12, color: i.guess.confidence == MatchConfidence.unsure ? p.late : p.absent),
+                            i.guess.byVision && i.guess.confidence == MatchConfidence.sure
+                                ? l10n.songsFlutterVisionSure(_visionLabel(i.guess))
+                                : i.guess.byVision
+                                ? l10n.songsFlutterVisionUnsure
+                                : i.guess.confidence == MatchConfidence.unsure
+                                ? l10n.songsFlutterDetectUnsure
+                                : l10n.songsFlutterDetectNone,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: i.guess.confidence == MatchConfidence.sure
+                                  ? p.present
+                                  : i.guess.confidence == MatchConfidence.unsure
+                                  ? p.late
+                                  : p.absent,
+                            ),
                           ),
                         ],
                       ),

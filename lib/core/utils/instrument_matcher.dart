@@ -15,15 +15,19 @@ enum MatchConfidence {
 
 /// Result of [InstrumentMatcher.detect].
 class PartMatch {
-  const PartMatch({required this.instrumentId, required this.confidence, this.term});
+  const PartMatch({required this.instrumentId, required this.confidence, this.term, this.byVision = false});
 
   static const PartMatch none = PartMatch(instrumentId: null, confidence: MatchConfidence.none);
 
   final int? instrumentId;
   final MatchConfidence confidence;
 
-  /// The part of the file name the match was based on (for display).
+  /// The part of the file name the match was based on (for display); for
+  /// [byVision] the part name read on the first page.
   final String? term;
+
+  /// Read on the first page by the `part-detect` function, not the name.
+  final bool byVision;
 }
 
 /// Utility class for matching filenames to instruments / parts.

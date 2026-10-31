@@ -1,7 +1,12 @@
+import 'dart:typed_data';
+
 import 'package:attendix/core/providers/group_providers.dart' show mergeSynonyms;
+import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/features/songs/presentation/widgets/file_upload_sheet.dart';
+import 'package:file_picker/file_picker.dart';
 import 'package:flutter_test/flutter_test.dart';
+import 'package:image/image.dart' as img;
 
 const _orchestra = [
   'Flöte', 'Oboe', 'Klarinette', 'Fagott', 'Horn', 'Trompete', 'Posaune', 'Tuba',
@@ -201,6 +206,137 @@ void main() {
       expect(mergeSynonyms('geige 2, vl2', ['Vl2']), isNull);
       expect(mergeSynonyms('a', [' ']), isNull);
       expect(mergeSynonyms('a', ['b', 'c', 'B']), 'a, b, c');
+    });
+  });
+
+  group('part-detect answer', () {
+    group('requests', () {
+      late int asked;
+      late PartVisionService service;
+      final photo = PlatformFile(
+        name: 'Scan.png',
+        size: 1,
+        bytes: img.encodePng(img.Image(width: 40, height: 60)),
+      );
+      const groups = [InstrumentInfo(id: 1, name: 'Flöte')];
+
+      setUp(() {
+        asked = 0;
+        service = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => 1);
+      });
+
+      test('a readable page with enough time is sent', () async {
+        expect(await service.detect(photo, groups), isNull);
+        expect(asked, 1);
+      });
+
+      test('not without enough time left', () async {
+        expect(await service.detect(photo, groups, limit: const Duration(seconds: 1)), isNull);
+        expect(await service.detect(photo, groups, limit: Duration.zero), isNull);
+        expect(asked, 0);
+      });
+
+      test('not once the file is gone or changed by hand, also mid-way', () async {
+        expect(await service.detect(photo, groups, cancelled: () => true), isNull);
+        expect(asked, 0);
+        // Cancelled only after the page was read (while it is prepared).
+        var checks = 0;
+        expect(await service.detect(photo, groups, cancelled: () => ++checks > 1), isNull);
+        expect(checks, greaterThan(1));
+        expect(asked, 0);
+      });
+
+      test('not when the time runs out while the page is prepared', () async {
+        final t0 = DateTime(2026, 10, 31, 12);
+        var reads = 0;
+        // The deadline is set and checked once at t0; from the check after
+        // reading the file on, 30 s have passed (slow preparation).
+        final slow = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => 1, clock: () => ++reads <= 2 ? t0 : t0.add(const Duration(seconds: 30)));
+        expect(await slow.detect(photo, groups), isNull);
+        expect(reads, greaterThan(2));
+        expect(asked, 0);
+      });
+
+      test('not for another tenant than the upload started in', () async {
+        var tenant = 1;
+        final switching = PartVisionService(() {
+          asked++;
+          throw StateError('no client in tests');
+        }, () => tenant);
+        // Started in tenant 2, now in 1.
+        expect(await switching.detect(photo, groups, tenantId: 2), isNull);
+        expect(asked, 0);
+        // Switched to tenant 2 while the page is prepared.
+        var checks = 0;
+        expect(
+          await switching.detect(photo, groups, cancelled: () {
+            if (++checks == 2) tenant = 2;
+            return false;
+          }),
+          isNull,
+        );
+        expect(asked, 0);
+        // Same tenant: sent.
+        tenant = 1;
+        expect(await switching.detect(photo, groups, tenantId: 1), isNull);
+        expect(asked, 1);
+      });
+
+      test('photos only outside the browser', () {
+        expect(PartVisionService.supports('a.pdf', web: true), isTrue);
+        expect(PartVisionService.supports('a.jpg', web: true), isFalse);
+        expect(PartVisionService.supports('a.jpg', web: false), isTrue);
+      });
+    });
+
+    test('photos are sent re-encoded: smaller, without EXIF', () {
+      final photo = img.Image(width: 2400, height: 1200);
+      photo.exif.imageIfd['Make'] = 'Camera';
+      photo.exif.imageIfd['Orientation'] = 1;
+      final original = img.encodeJpg(photo);
+      expect(img.decodeJpgExif(original)?.isEmpty, isFalse);
+      final sent = reencodeImage(original)!;
+      final back = img.decodeJpg(sent)!;
+      expect(back.width, 1100);
+      expect(back.exif.isEmpty, isTrue);
+      expect(reencodeImage(Uint8List.fromList([1, 2, 3])), isNull);
+      // Too many pixels: not decoded at all.
+      expect(reencodeImage(img.encodePng(img.Image(width: 8000, height: 6000))), isNull);
+      expect(PartVisionService.maxImageBytes, 1500000);
+    });
+
+    final groups = _groups(_orchestra);
+    test('only ids of the tenant groups count', () {
+      final m = PartVisionService.parseResponse({'groupId': 18, 'label': 'Violin I', 'confidence': 'high'}, groups)!;
+      expect(m.instrumentId, 18);
+      expect(m.confidence, MatchConfidence.sure);
+      expect(m.term, 'Violin I');
+      expect(m.byVision, isTrue);
+      expect(PartVisionService.parseResponse({'groupId': 999, 'confidence': 'high'}, groups), isNull);
+      expect(PartVisionService.parseResponse({'groupId': null}, groups), isNull);
+      expect(PartVisionService.parseResponse('nope', groups), isNull);
+    });
+
+    test('low confidence stays unsure; JSON text is accepted', () {
+      final m = PartVisionService.parseResponse('{"groupId": "19", "confidence": "low"}', groups)!;
+      expect(m.instrumentId, 19);
+      expect(m.confidence, MatchConfidence.unsure);
+    });
+
+    test('only unclear PDFs / images are sent', () {
+      expect(PartVisionService.supports('a.PDF'), isTrue);
+      expect(PartVisionService.supports('a.jpeg'), isTrue);
+      expect(PartVisionService.supports('a.mp3'), isFalse);
+      final unclear = guessFileCategory('Scan.pdf', instruments: groups, isChoir: false);
+      expect(unclear.canAskVision('Scan.pdf'), isTrue);
+      final clear = guessFileCategory('Violine 2.pdf', instruments: groups, isChoir: false);
+      expect(clear.canAskVision('Violine 2.pdf'), isFalse);
     });
   });
 }

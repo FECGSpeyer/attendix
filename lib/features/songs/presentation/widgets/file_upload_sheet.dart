@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../core/providers/group_providers.dart';
+import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_matcher.dart';
@@ -67,7 +68,17 @@ class FileCategoryGuess {
     required this.note,
     required this.confidence,
     this.term,
+    this.byVision = false,
   });
+
+  /// [match] read on the first page (`part-detect`).
+  factory FileCategoryGuess.vision(PartMatch match) => FileCategoryGuess(
+        instrumentId: match.instrumentId,
+        note: null,
+        confidence: match.confidence,
+        term: match.term,
+        byVision: true,
+      );
 
   final int? instrumentId;
   final String? note;
@@ -76,8 +87,16 @@ class FileCategoryGuess {
   /// The words of the file name the guess is based on.
   final String? term;
 
-  /// The person should look at it before uploading.
-  bool get needsReview => confidence != MatchConfidence.sure;
+  /// Read on the first page instead of the file name.
+  final bool byVision;
+
+  /// The page may still help: the name was not clear and it is a PDF/image.
+  bool canAskVision(String fileName) => !byVision && needsReview && PartVisionService.supports(fileName);
+
+  /// The person should look at it before uploading. A part read on page 1
+  /// is always confirmed by hand: the model's own "sure" is no proof (a
+  /// page can carry misleading text).
+  bool get needsReview => byVision || confidence != MatchConfidence.sure;
 }
 
 /// Ionic `addFiles` category detection: group by name/synonym, then special
@@ -203,8 +222,10 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           workName: widget.workName,
         );
         file.learn = file.learnTerm != null;
-        file.reviewed = true;
       }
+      // Every change by hand (also typed free text) is kept: a late
+      // page-1 result no longer overrides it.
+      file.reviewed = true;
       file.instrumentId = instrumentId;
       file.note = note;
       file.conflicts = conflicts;
@@ -234,6 +255,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   /// Ionic `addFiles`: size check, automatic category, conflicts.
   void _addFiles(List<PlatformFile> files) {
+    final added = <_FileToUpload>[];
     setState(() {
       for (final file in files) {
         if (file.size > _maxSizeBytes) {
@@ -247,16 +269,55 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
         );
         final conflicts =
             findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note);
-        _files.add(_FileToUpload(
+        final item = _FileToUpload(
           platformFile: file,
           instrumentId: cat.instrumentId,
           note: cat.note,
           confidence: cat.confidence,
           conflicts: conflicts,
           toReplace: _defaultReplace(conflicts, file.name),
-        )..learnTerm = _suggestedTerm(file.name, cat));
+        )
+          ..learnTerm = _suggestedTerm(file.name, cat)
+          ..reading = cat.canAskVision(file.name) && _instruments.isNotEmpty;
+        _files.add(item);
+        added.add(item);
       }
     });
+    _readFirstPages(added.where((f) => f.reading));
+  }
+
+  /// Fallback for unclear names: the part printed on page 1 (one at a time,
+  /// rows the person already changed stay as they are).
+  Future<void> _readFirstPages(Iterable<_FileToUpload> items) async {
+    final vision = ref.read(partVisionServiceProvider);
+    // The tenant these files were added in: after a switch nothing is sent.
+    final tenantId = vision.currentTenant();
+    for (final item in items.toList()) {
+      // Removed, changed by hand or uploading meanwhile: no (paid) request,
+      // also not one already under way that has not been sent yet.
+      bool gone() => !mounted || !_files.contains(item) || item.reviewed || item.status != null;
+      if (gone()) {
+        if (mounted) setState(() => item.reading = false);
+        continue;
+      }
+      final match = await vision.detect(item.platformFile, _instruments, cancelled: gone, tenantId: tenantId);
+      if (!mounted) return;
+      setState(() {
+        item.reading = false;
+        if (match == null || item.reviewed || item.status != null || !_files.contains(item)) return;
+        final conflicts = findConflictingFiles(widget.existingFiles, match.instrumentId, null);
+        item
+          ..instrumentId = match.instrumentId
+          ..note = null
+          ..confidence = match.confidence
+          ..visionLabel = match.term ?? widget.groups.where((g) => g.id == match.instrumentId).firstOrNull?.name ?? ''
+          ..byVision = true
+          ..learnTerm = null
+          ..learn = false
+          ..conflicts = conflicts
+          ..toReplace = _defaultReplace(conflicts, item.platformFile.name);
+      });
+    }
   }
 
   /// An unsure part can be confirmed for learning right away (unchecked).
@@ -489,8 +550,15 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
                                   groups: widget.groups,
                                   enabled: !_isUploading,
                                   onCategoryChanged: (id, note) => _setCategory(i, id, note),
-                                  onToggleLearn: (v) => setState(() => _files[i].learn = v),
+                                  onToggleLearn: (v) => setState(() {
+                                    // Confirmed by hand: a late page-1 result keeps it.
+                                    _files[i]
+                                      ..learn = v
+                                      ..reviewed = true;
+                                  }),
                                   onToggleReplace: (url) => setState(() {
+                                    // Chosen by hand: a late page-1 result keeps it.
+                                    _files[i].reviewed = true;
                                     final set = _files[i].toReplace;
                                     set.contains(url) ? set.remove(url) : set.add(url);
                                   }),
@@ -548,7 +616,12 @@ class _FileToUpload {
   String? note;
 
   /// How sure the automatic detection was.
-  final MatchConfidence confidence;
+  MatchConfidence confidence;
+
+  /// The first page is being read / the part was read there (label).
+  bool reading = false;
+  bool byVision = false;
+  String visionLabel = '';
 
   /// Changed by hand: the detection hint is no longer shown.
   bool reviewed = false;
@@ -667,7 +740,28 @@ class _FileItemState extends State<_FileItem> {
                         maxLines: 2,
                         overflow: TextOverflow.ellipsis,
                       ),
-                      if (file.status == null && !file.reviewed && file.confidence != MatchConfidence.sure)
+                      if (file.status == null && !file.reviewed && file.reading)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            context.l10n.songsFlutterVisionReading,
+                            style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                          ),
+                        )
+                      else if (file.status == null && !file.reviewed && file.byVision)
+                        Padding(
+                          padding: const EdgeInsets.only(top: 2),
+                          child: Text(
+                            file.confidence == MatchConfidence.sure
+                                ? context.l10n.songsFlutterVisionSure(file.visionLabel)
+                                : context.l10n.songsFlutterVisionUnsure,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: file.confidence == MatchConfidence.sure ? AppColors.success : AppColors.warning,
+                            ),
+                          ),
+                        )
+                      else if (file.status == null && !file.reviewed && file.confidence != MatchConfidence.sure)
                         Padding(
                           padding: const EdgeInsets.only(top: 2),
                           child: Text(

@@ -11868,6 +11868,17 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get songsFlutterVisionReading => 'Reading the first page …';
+
+  @override
+  String songsFlutterVisionSure(Object label) {
+    return 'Recognised on page 1: $label';
+  }
+
+  @override
+  String get songsFlutterVisionUnsure => 'Guessed from page 1 – please check';
+
+  @override
   String get songsFreeText => 'Free text';
 
   @override
