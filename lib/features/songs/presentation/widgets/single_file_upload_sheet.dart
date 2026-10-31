@@ -2,6 +2,8 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/providers/group_providers.dart';
+import '../../../../core/services/part_vision_service.dart';
 import '../../../../core/services/song_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/instrument_matcher.dart';
@@ -35,7 +37,11 @@ class SingleFileUploadSheet extends ConsumerStatefulWidget {
     required this.existingFiles,
     this.mainGroupId,
     this.isChoir = false,
+    this.workName,
   });
+
+  /// Name of the Werk, left out of terms remembered as synonyms.
+  final String? workName;
 
   final int songId;
   final PlatformFile file;
@@ -55,20 +61,93 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
   Set<String> _toReplace = {};
   bool _uploading = false;
 
+  /// How sure the automatic detection was; changed by hand → hint hidden.
+  MatchConfidence _confidence = MatchConfidence.sure;
+  bool _reviewed = false;
+
+  /// File-name term to remember for the chosen group, and whether to.
+  String? _learnTerm;
+  bool _learn = false;
+
+  /// The first page is being read / the part was read there (label).
+  bool _reading = false;
+  String? _visionLabel;
+
+  List<InstrumentInfo> get _instruments => [
+        for (final g in widget.groups)
+          if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
+      ];
+
   @override
   void initState() {
     super.initState();
-    final cat = detectFileCategory(
+    final cat = guessFileCategory(
       widget.file.name,
-      instruments: [
-        for (final g in widget.groups)
-          if (g.id != null) InstrumentInfo(id: g.id!, name: g.name),
-      ],
+      instruments: _instruments,
       isChoir: widget.isChoir,
     );
     _instrumentId = cat.instrumentId;
     _note.text = cat.note ?? '';
+    _confidence = cat.confidence;
+    // An unsure part can be confirmed for learning right away (unchecked).
+    if (cat.confidence == MatchConfidence.unsure) {
+      _learnTerm = learnableTerm(
+        widget.file.name,
+        chosenId: cat.instrumentId,
+        instruments: _instruments,
+        workName: widget.workName,
+      );
+    }
     _refreshConflicts();
+    if (cat.canAskVision(widget.file.name) && _instruments.isNotEmpty) {
+      _reading = true;
+      _readFirstPage();
+    }
+  }
+
+  /// Fallback for an unclear name: the part printed on page 1.
+  Future<void> _readFirstPage() async {
+    final vision = ref.read(partVisionServiceProvider);
+    // Pinned to the tenant the sheet was opened in.
+    final match = await vision.detect(
+      widget.file,
+      _instruments,
+      tenantId: vision.currentTenant(),
+      cancelled: () => !mounted || _reviewed || _uploading,
+    );
+    if (!mounted) return;
+    setState(() {
+      _reading = false;
+      if (match == null || _reviewed || _uploading) return;
+      _instrumentId = match.instrumentId;
+      _confidence = match.confidence;
+      _visionLabel = match.term ?? widget.groups.where((g) => g.id == match.instrumentId).firstOrNull?.name ?? '';
+      _learnTerm = null;
+      _learn = false;
+      _refreshConflicts();
+    });
+  }
+
+  void _choose(int? id) {
+    _instrumentId = id;
+    _reviewed = true;
+    _learnTerm = learnableTerm(
+      widget.file.name,
+      chosenId: id,
+      instruments: _instruments,
+      workName: widget.workName,
+    );
+    _learn = _learnTerm != null;
+    _refreshConflicts();
+  }
+
+  /// Saves the term of a hand-assigned file as group synonym.
+  Future<void> _rememberTerm() async {
+    final id = _instrumentId;
+    final term = _learnTerm;
+    if (!_learn || id == null || term == null) return;
+    final ok = await ref.read(groupNotifierProvider.notifier).addSynonyms({id: [term]});
+    if (!ok && mounted) ToastHelper.showError(context, context.l10n.songsFlutterLearnFailed);
   }
 
   @override
@@ -108,6 +187,8 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
         note: _effectiveNote,
         mainGroupId: widget.mainGroupId,
       );
+      if (!mounted) return;
+      await _rememberTerm();
       if (mounted) Navigator.pop(context, SingleFileUploadResult.uploaded);
     } catch (e) {
       if (!mounted) return;
@@ -163,6 +244,32 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                     ListTile(
                       leading: const Icon(Icons.description_outlined),
                       title: Text(widget.file.name),
+                      subtitle: _reading && !_reviewed
+                          ? Text(
+                              context.l10n.songsFlutterVisionReading,
+                              style: const TextStyle(fontSize: 12, color: AppColors.medium),
+                            )
+                          : _visionLabel != null && !_reviewed
+                          ? Text(
+                              _confidence == MatchConfidence.sure
+                                  ? context.l10n.songsFlutterVisionSure(_visionLabel!)
+                                  : context.l10n.songsFlutterVisionUnsure,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _confidence == MatchConfidence.sure ? AppColors.success : AppColors.warning,
+                              ),
+                            )
+                          : !_reviewed && _confidence != MatchConfidence.sure
+                          ? Text(
+                              _confidence == MatchConfidence.unsure
+                                  ? context.l10n.songsFlutterDetectUnsure
+                                  : context.l10n.songsFlutterDetectNone,
+                              style: TextStyle(
+                                fontSize: 12,
+                                color: _confidence == MatchConfidence.unsure ? AppColors.warning : AppColors.danger,
+                              ),
+                            )
+                          : null,
                     ),
                     const Divider(height: 1),
                     for (final o in options)
@@ -173,10 +280,27 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         title: Text(o.$2),
                         onChanged: _uploading
                             ? null
+                            : (v) => setState(() => _choose(v)),
+                      ),
+                    if (_learnTerm != null && _instrumentId != null)
+                      CheckboxListTile(
+                        dense: true,
+                        controlAffinity: ListTileControlAffinity.leading,
+                        value: _learn,
+                        title: Text(
+                          context.l10n.songsFlutterLearnTerm(
+                            _learnTerm!,
+                            widget.groups.where((g) => g.id == _instrumentId).firstOrNull?.name ?? '',
+                          ),
+                          style: const TextStyle(fontSize: 13),
+                        ),
+                        onChanged: _uploading
+                            ? null
                             : (v) => setState(() {
-                                  _instrumentId = v;
-                                  _refreshConflicts();
-                                }),
+                                // Confirmed by hand: a late page-1 result keeps it.
+                                _learn = v ?? false;
+                                _reviewed = true;
+                              }),
                       ),
                     if (_instrumentId == null) ...[
                       Padding(
@@ -191,7 +315,11 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                         child: TextField(
                           controller: _note,
                           decoration: InputDecoration(hintText: context.l10n.songsEnterCategory),
-                          onChanged: (_) => setState(_refreshConflicts),
+                          onChanged: (_) => setState(() {
+                            // Typed by hand: a late page-1 result keeps it.
+                            _reviewed = true;
+                            _refreshConflicts();
+                          }),
                         ),
                       ),
                     ],
@@ -218,6 +346,8 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
                             label: SongUtils.fileLabel(c, widget.groups),
                           ),
                           onChanged: (_) => setState(() {
+                            // Chosen by hand: a late page-1 result keeps it.
+                            _reviewed = true;
                             _toReplace.contains(c.url)
                                 ? _toReplace.remove(c.url)
                                 : _toReplace.add(c.url);

@@ -7,7 +7,9 @@ import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
+import 'package:attendix/core/services/part_vision_service.dart';
 import 'package:attendix/core/services/song_file_service.dart';
+import 'package:attendix/core/utils/instrument_matcher.dart';
 import 'package:attendix/core/services/zip_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
@@ -15,6 +17,7 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_controller.dart';
 import 'package:attendix/features/redesign/data/rd_work_files_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/work/rd_work_files.dart' show rdVisionBudget;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -97,11 +100,45 @@ class _FakeFiles implements SongFileService {
   @override
   Future<List<PlatformFile>?> pickMultipleFiles() async {
     calls.add('pick');
-    return null;
+    return picked;
   }
+
+  /// Files "Hochladen" picks.
+  List<PlatformFile>? picked;
 
   @override
   dynamic noSuchMethod(Invocation invocation) => null;
+}
+
+/// Reads "page 1" from a fixed answer per file name.
+class _FakeVision extends PartVisionService {
+  _FakeVision(this.answers) : super(() => throw UnimplementedError(), () => 1);
+
+  final Map<String, PartMatch> answers;
+  final asked = <String>[];
+  final limits = <Duration?>[];
+  final tenants = <int?>[];
+  final stillWanted = <bool>[];
+
+  @override
+  Future<PartMatch?> detect(PlatformFile file, List<InstrumentInfo> instruments, {Duration? limit, bool Function()? cancelled, int? tenantId}) async {
+    asked.add(file.name);
+    limits.add(limit);
+    tenants.add(tenantId);
+    stillWanted.add(cancelled?.call() == false);
+    return answers[file.name];
+  }
+}
+
+/// Records the terms the upload wants to remember.
+class _FakeGroupNotifier extends GroupNotifier {
+  final learned = <Map<int, List<String>>>[];
+
+  @override
+  Future<bool> addSynonyms(Map<int, List<String>> terms) async {
+    learned.add(terms);
+    return true;
+  }
 }
 
 PlatformFile _file(String name, {int size = 10}) => PlatformFile(name: name, size: size);
@@ -143,7 +180,7 @@ void _desktop(WidgetTester tester) {
   addTearDown(tester.view.reset);
 }
 
-Widget _app(Role role, _FakeFiles files, {Song song = _song}) {
+Widget _app(Role role, _FakeFiles files, {Song song = _song, _FakeGroupNotifier? groupNotifier, _FakeVision? vision}) {
   final router = GoRouter(
     initialLocation: '/werke/5',
     routes: [
@@ -172,6 +209,8 @@ Widget _app(Role role, _FakeFiles files, {Song song = _song}) {
           )),
       songsProvider.overrideWith((ref) async => [song]),
       groupsProvider.overrideWith((ref) async => _groups),
+      if (groupNotifier != null) groupNotifierProvider.overrideWith(() => groupNotifier),
+      partVisionServiceProvider.overrideWithValue(vision ?? _FakeVision(const {})),
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: 11),
       ),
@@ -459,6 +498,87 @@ void main() {
       await tester.tap(find.text('Klicken, um Dateien auszuwählen.'));
       await _settle(tester);
       expect(service.calls, ['pick']);
+    });
+
+    testWidgets('a clear part uploads at once, an unclear one is checked first', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Klarinette 2.pdf')];
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer')));
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Zuordnung prüfen'), findsNothing);
+      expect(service.calls, ['pick', 'upload Klarinette 2.pdf 11 -']);
+
+      service
+        ..calls.clear()
+        ..picked = [_file('Scan_0815.pdf')];
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Zuordnung prüfen'), findsOneWidget);
+      expect(find.text('Nicht erkannt – bitte zuordnen'), findsOneWidget);
+      expect(service.calls, ['pick']);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(service.calls, ['pick', 'upload Scan_0815.pdf null -']);
+    });
+
+    testWidgets('an unsure part can be confirmed and remembered as it is', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Kl 1.pdf')];
+      final groups = _FakeGroupNotifier();
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer'), groupNotifier: groups));
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      expect(find.text('Unsicher erkannt – bitte prüfen'), findsOneWidget);
+      final learn = find.text('„Kl 1“ künftig als Klarinette erkennen');
+      expect(learn, findsOneWidget);
+      // Unchecked until confirmed.
+      expect(tester.widget<CheckboxListTile>(find.ancestor(of: learn, matching: find.byType(CheckboxListTile))).value, isFalse);
+      await tester.tap(learn);
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(service.calls, ['pick', 'upload Kl 1.pdf 11 -']);
+      expect(groups.learned, [
+        {11: ['Kl 1']},
+      ]);
+    });
+
+    testWidgets('page 1 decides when the name does not, and is always confirmed by hand', (tester) async {
+      _desktop(tester);
+      final service = _FakeFiles()..picked = [_file('Scan_0815.pdf'), _file('Scan_0816.pdf'), _file('Klarinette 1.pdf')];
+      final vision = _FakeVision({
+        'Scan_0815.pdf': const PartMatch(instrumentId: 12, confidence: MatchConfidence.sure, term: 'Flute', byVision: true),
+        'Scan_0816.pdf': const PartMatch(instrumentId: 11, confidence: MatchConfidence.unsure, byVision: true),
+      });
+      await tester.pumpWidget(_app(Role.admin, service, song: const Song(id: 5, name: 'Leer'), vision: vision));
+      await _settle(tester);
+      await tester.tap(find.text('Hochladen'));
+      await _settle(tester);
+      // Only the unclear names are looked at.
+      expect(vision.asked, ['Scan_0815.pdf', 'Scan_0816.pdf']);
+      // Every file only gets what is left of the minute.
+      expect(vision.limits.every((l) => l != null && l <= rdVisionBudget), isTrue);
+      // Pinned to the tenant of the drop, stopped once the page is left.
+      expect(vision.tenants, [1, 1]);
+      expect(vision.stillWanted, [true, true]);
+      // The model's own "sure" is no proof (text on the page): both are
+      // shown, the clear file name is not.
+      expect(find.text('Zuordnung prüfen'), findsOneWidget);
+      expect(find.text('Scan_0815.pdf'), findsOneWidget);
+      expect(find.text('Auf Seite 1 erkannt: Flute'), findsOneWidget);
+      expect(find.text('Auf Seite 1 vermutet – bitte prüfen'), findsOneWidget);
+      expect(find.text('Klarinette 1.pdf'), findsNothing);
+      await tester.tap(find.text('Hochladen').last);
+      await _settle(tester);
+      expect(service.calls, [
+        'pick',
+        'upload Scan_0815.pdf 12 -',
+        'upload Scan_0816.pdf 11 -',
+        'upload Klarinette 1.pdf 11 -',
+      ]);
     });
 
     testWidgets('the keyboard icon lists the shortcuts', (tester) async {

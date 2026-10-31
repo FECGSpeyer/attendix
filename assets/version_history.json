@@ -1,10 +1,31 @@
 {
   "versions": [
     {
-      "version": "0.24.5",
+      "version": "0.26.2",
+      "date": "31.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Benachrichtigungen, Push-Nachrichten und Anwesenheits-Links öffnen den Termin jetzt im neuen Design statt auf der alten Termin-Seite bzw. in „Meine Termine“",
+        "🐛 Neues Design (Beta): Benachrichtigungen zu einem Termin, der nicht mehr in deiner Liste steht, zeigen einen Hinweis statt nichts zu tun"
+      ]
+    },
+    {
+      "version": "0.26.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Noten-Upload: Verrät der Dateiname die Stimme nicht (z. B. „Scan_0815.pdf“), liest die App die erste Seite und erkennt die Stimme dort",
+        "✨ Noten-Upload: Auf Seite 1 erkannte Stimmen werden vorgeschlagen und vor dem Hochladen kurz bestätigt",
+        "🔒 Seite 1 lesen: Nur für Bearbeiter des Ensembles, mit Tageslimit; Fotos werden ohne Standort- und Kameradaten verschickt"
+      ]
+    },
+    {
+      "version": "0.25.0",
       "date": "30.10.2026",
       "changes": [
-        "🐛 Neues Design (Beta): Benachrichtigungen, Push-Nachrichten und Anwesenheits-Links öffnen den Termin jetzt im neuen Design statt auf der alten Termin-Seite bzw. in „Meine Termine“"
+        "✨ Noten-Upload: Die Stimme wird viel genauer erkannt – „Violine 2“, „Vl II“ oder „2. Violine“ landen jetzt bei Violine 2 statt bei Violine 1, „Bassklarinette“ geht an eine eigene Gruppe Bassklarinette (falls vorhanden), Stimmungen wie „in B“ stören nicht mehr",
+        "✨ Noten-Upload: Mehr Instrumente und Abkürzungen (z. B. Euphonium, Flügelhorn, Saxophon-Lagen, Glockenspiel)",
+        "✨ Noten-Upload: Unsicher oder nicht erkannte Dateien werden markiert; ordnest du eine Datei von Hand zu, kann sich die App den Begriff für diese Stimme merken",
+        "✨ Neues Design (Beta): Beim Hochladen per Drag & Drop erscheint „Zuordnung prüfen“, wenn die Stimme einer Datei nicht eindeutig ist",
+        "🐛 Noten-Upload: Wörter wie „Soundtrack“ oder „Kontext“ machen eine Datei nicht mehr zur Aufnahme bzw. zum Liedtext, „Flügelhorn“ wird nicht mehr zur Flöte"
       ]
     },
     {

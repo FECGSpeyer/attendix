@@ -20273,6 +20273,18 @@ abstract class AppLocalizations {
   /// **'Werk konnte nicht gelöscht werden'**
   String get songsFlutterDeleteFailed;
 
+  /// songs.flutter.detectNone
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht erkannt – bitte zuordnen'**
+  String get songsFlutterDetectNone;
+
+  /// songs.flutter.detectUnsure
+  ///
+  /// In de, this message translates to:
+  /// **'Unsicher erkannt – bitte prüfen'**
+  String get songsFlutterDetectUnsure;
+
   /// songs.flutter.downloadFileFailed
   ///
   /// In de, this message translates to:
@@ -20338,6 +20350,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Letzte Seite'**
   String get songsFlutterLastPage;
+
+  /// songs.flutter.learnFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Begriffe konnten nicht gemerkt werden'**
+  String get songsFlutterLearnFailed;
+
+  /// songs.flutter.learnTerm
+  ///
+  /// In de, this message translates to:
+  /// **'„{term}“ künftig als {group} erkennen'**
+  String songsFlutterLearnTerm(Object term, Object group);
 
   /// songs.flutter.listAnd
   ///
@@ -20459,6 +20483,24 @@ abstract class AppLocalizations {
   /// **'Ziehe Kategorien um sie neu zu sortieren'**
   String get songsFlutterReorderCategoriesHint;
 
+  /// songs.flutter.reviewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.'**
+  String get songsFlutterReviewHint;
+
+  /// songs.flutter.reviewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Zuordnung prüfen'**
+  String get songsFlutterReviewTitle;
+
+  /// songs.flutter.reviewUpload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get songsFlutterReviewUpload;
+
   /// songs.flutter.showAsTab
   ///
   /// In de, this message translates to:
@@ -20482,6 +20524,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Hochladen: {error}'**
   String songsFlutterUploadFailedWith(Object error);
+
+  /// songs.flutter.visionReading
+  ///
+  /// In de, this message translates to:
+  /// **'Erste Seite wird gelesen …'**
+  String get songsFlutterVisionReading;
+
+  /// songs.flutter.visionSure
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Seite 1 erkannt: {label}'**
+  String songsFlutterVisionSure(Object label);
+
+  /// songs.flutter.visionUnsure
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Seite 1 vermutet – bitte prüfen'**
+  String get songsFlutterVisionUnsure;
 
   /// songs.freeText
   ///

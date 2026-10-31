@@ -4,8 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/services/audio_player/audio_player_service.dart';
+import '../../../../../core/services/part_vision_service.dart';
 import '../../../../../core/services/song_file_service.dart';
 import '../../../../../core/services/zip_service.dart';
 import '../../../../../core/services/zip_service_stub.dart'
@@ -21,10 +23,11 @@ import '../../../../../data/models/instrument/instrument.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../../../shared/widgets/adaptive/app_select.dart';
 import '../../../../songs/presentation/pages/song_detail_page.dart' show FileCategoryDialog;
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
-import '../../../../songs/presentation/widgets/file_upload_sheet.dart' show detectFileCategory;
+import '../../../../songs/presentation/widgets/file_upload_sheet.dart' show FileCategoryGuess, guessFileCategory, learnableTerm;
 import '../../../../songs/presentation/widgets/song_file_opener.dart';
 import '../../../data/rd_work_files_controller.dart';
 import '../../../data/rd_work_files_logic.dart';
@@ -37,6 +40,9 @@ import '../rd_widgets.dart';
 /// actions, multi-select with ZIP download, the upload queue and keys.
 /// Files dropped anywhere on the Werk (see [RdWorkDropArea]) or picked with
 /// "Hochladen" go through [rdAddWorkFiles].
+
+/// Longest the Beta upload waits for page-1 reading of a whole drop.
+const Duration rdVisionBudget = Duration(minutes: 1);
 
 /// Width from which the Werk page shows the workspace.
 const double rdWorkFilesMinWidth = 560;
@@ -58,21 +64,72 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
       if (g.id != null) InstrumentInfo(id: g.id!, name: g.name, synonyms: g.synonyms),
   ];
 
-  final items = <({PlatformFile file, int? instrumentId, String? note, List<SongFile> conflicts})>[];
+  final guesses = <({PlatformFile file, FileCategoryGuess guess})>[];
   for (final file in files) {
     if (file.size > rdMaxUploadBytes) {
       ToastHelper.showError(context, l10n.songsFileTooLarge(file.name));
       continue;
     }
-    final cat = detectFileCategory(file.name, instruments: instruments, isChoir: data.isChoir);
-    items.add((
-      file: file,
-      instrumentId: cat.instrumentId,
-      note: cat.note,
-      conflicts: rdUploadConflicts(file.name, cat.instrumentId, existing),
-    ));
+    guesses.add((file: file, guess: guessFileCategory(file.name, instruments: instruments, isChoir: data.isChoir)));
   }
-  if (items.isEmpty) return;
+  if (guesses.isEmpty) return;
+
+  // Unclear names: the part printed on page 1 (`part-detect`), one at a time.
+  final unclear = [
+    for (var i = 0; i < guesses.length; i++)
+      if (instruments.isNotEmpty && guesses[i].guess.canAskVision(guesses[i].file.name)) i,
+  ];
+  if (unclear.isNotEmpty) {
+    controller.showNotice(l10n.songsFlutterVisionReading);
+    final vision = ref.read(partVisionServiceProvider);
+    // The tenant of this drop: after a switch nothing more is sent for it.
+    final tenantId = vision.currentTenant();
+    // A minute in all; files not read by then keep the file-name result
+    // (and land in the review below).
+    final clock = Stopwatch()..start();
+    for (final i in unclear) {
+      final left = rdVisionBudget - clock.elapsed;
+      if (left <= Duration.zero || !context.mounted) break;
+      // Each file gets at most what is left of the minute; leaving the page
+      // stops it.
+      final match = await vision.detect(
+        guesses[i].file,
+        instruments,
+        limit: left,
+        tenantId: tenantId,
+        cancelled: () => !context.mounted,
+      );
+      if (match != null) guesses[i] = (file: guesses[i].file, guess: FileCategoryGuess.vision(match));
+    }
+    if (!context.mounted) return;
+  }
+
+  // Files whose part is not clear are checked first; terms assigned by hand
+  // can be remembered as synonyms of the group.
+  final chosen = <PlatformFile, ({int? instrumentId, String? note})>{
+    for (final g in guesses) g.file: (instrumentId: g.guess.instrumentId, note: g.guess.note),
+  };
+  final review = guesses.where((g) => g.guess.needsReview).toList();
+  var terms = const <int, List<String>>{};
+  if (review.isNotEmpty) {
+    final result = await showAppDialog<_ReviewResult>(
+      context: context,
+      builder: (_) => _ReviewDialog(items: review, groups: data.instruments, instruments: instruments, workName: data.song.name),
+    );
+    if (result == null || !context.mounted) return;
+    chosen.addAll(result.categories);
+    terms = result.terms;
+  }
+
+  final items = <({PlatformFile file, int? instrumentId, String? note, List<SongFile> conflicts})>[
+    for (final g in guesses)
+      (
+        file: g.file,
+        instrumentId: chosen[g.file]!.instrumentId,
+        note: chosen[g.file]!.note,
+        conflicts: rdUploadConflicts(g.file.name, chosen[g.file]!.instrumentId, existing),
+      ),
+  ];
 
   var replace = false;
   final clashing = items.where((i) => i.conflicts.isNotEmpty).toList();
@@ -88,6 +145,14 @@ Future<void> rdAddWorkFiles(BuildContext context, WidgetRef ref, SongDetailData 
     for (final i in items)
       (file: i.file, instrumentId: i.instrumentId, note: i.note, replace: replace ? i.conflicts : const <SongFile>[]),
   ], mainGroupId: data.mainGroupId);
+
+  // Only once the upload is really started (not on "Abbrechen" in the
+  // conflict dialog).
+  if (terms.isNotEmpty && context.mounted) {
+    final notifier = ref.read(groupNotifierProvider.notifier);
+    final ok = await notifier.addSynonyms(terms);
+    if (!ok && context.mounted) ToastHelper.showError(context, l10n.songsFlutterLearnFailed);
+  }
 }
 
 /// The whole Werk page as drop target: while files are dragged over it, a
@@ -1101,6 +1166,169 @@ class _ConflictDialog extends StatelessWidget {
         TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonCancel)),
         TextButton(onPressed: () => Navigator.pop(context, false), child: Text(l10n.redesignFilesKeepBoth)),
         TextButton(onPressed: () => Navigator.pop(context, true), child: Text(l10n.redesignFilesReplace)),
+      ],
+    );
+  }
+}
+
+typedef _ReviewResult = ({
+  Map<PlatformFile, ({int? instrumentId, String? note})> categories,
+  Map<int, List<String>> terms,
+});
+
+/// "Zuordnung prüfen": the dropped files whose part was not recognised for
+/// sure, each with a part menu and "künftig so erkennen" once changed.
+class _ReviewDialog extends StatefulWidget {
+  const _ReviewDialog({required this.items, required this.groups, required this.instruments, required this.workName});
+
+  final List<({PlatformFile file, FileCategoryGuess guess})> items;
+  final List<Group> groups;
+  final List<InstrumentInfo> instruments;
+  final String workName;
+
+  @override
+  State<_ReviewDialog> createState() => _ReviewDialogState();
+}
+
+class _ReviewDialogState extends State<_ReviewDialog> {
+  late final Map<PlatformFile, int?> _ids = {for (final i in widget.items) i.file: i.guess.instrumentId};
+  /// An unsure part can be confirmed for learning right away (unchecked).
+  late final Map<PlatformFile, String> _terms = {
+    for (final i in widget.items)
+      if (i.guess.confidence == MatchConfidence.unsure && !i.guess.byVision)
+        if (learnableTerm(i.file.name, chosenId: i.guess.instrumentId, instruments: widget.instruments, workName: widget.workName)
+            case final term?)
+          i.file: term,
+  };
+  final Set<PlatformFile> _learn = {};
+
+  void _choose(PlatformFile file, int? id) {
+    setState(() {
+      _ids[file] = id;
+      final term = learnableTerm(file.name, chosenId: id, instruments: widget.instruments, workName: widget.workName);
+      if (term == null) {
+        _terms.remove(file);
+        _learn.remove(file);
+      } else {
+        _terms[file] = term;
+        _learn.add(file);
+      }
+    });
+  }
+
+  void _submit() {
+    Navigator.pop<_ReviewResult>(context, (
+      categories: {
+        for (final i in widget.items)
+          i.file: (
+            instrumentId: _ids[i.file],
+            note: _ids[i.file] == null ? i.guess.note : null,
+          ),
+      },
+      terms: _learnedTerms(),
+    ));
+  }
+
+  /// What page 1 showed: the printed name, else the group it was matched to.
+  String _visionLabel(FileCategoryGuess guess) =>
+      guess.term ?? widget.groups.where((g) => g.id == guess.instrumentId).firstOrNull?.name ?? '';
+
+  Map<int, List<String>> _learnedTerms() {
+    final terms = <int, List<String>>{};
+    for (final f in _learn) {
+      final id = _ids[f];
+      final term = _terms[f];
+      if (id != null && term != null) (terms[id] ??= []).add(term);
+    }
+    return terms;
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final p = context.rd;
+    final menu = <DropdownMenuItem<int?>>[
+      DropdownMenuItem(value: null, child: Text(l10n.songsOther)),
+      DropdownMenuItem(value: InstrumentMatcher.recordingId, child: Text(l10n.songsRecording)),
+      DropdownMenuItem(value: InstrumentMatcher.lyricsId, child: Text(l10n.songsLyrics)),
+      for (final g in widget.groups)
+        if (g.id != null) DropdownMenuItem(value: g.id, child: Text(g.name)),
+    ];
+    return AppAlertDialog(
+      title: Text(l10n.songsFlutterReviewTitle),
+      content: SizedBox(
+        width: 520,
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(l10n.songsFlutterReviewHint),
+              const SizedBox(height: 12),
+              for (final i in widget.items) ...[
+                Row(
+                  children: [
+                    Expanded(
+                      child: Column(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(i.file.name, maxLines: 2, overflow: TextOverflow.ellipsis, style: const TextStyle(fontSize: 14, fontWeight: FontWeight.w500)),
+                          Text(
+                            i.guess.byVision && i.guess.confidence == MatchConfidence.sure
+                                ? l10n.songsFlutterVisionSure(_visionLabel(i.guess))
+                                : i.guess.byVision
+                                ? l10n.songsFlutterVisionUnsure
+                                : i.guess.confidence == MatchConfidence.unsure
+                                ? l10n.songsFlutterDetectUnsure
+                                : l10n.songsFlutterDetectNone,
+                            style: TextStyle(
+                              fontSize: 12,
+                              color: i.guess.confidence == MatchConfidence.sure
+                                  ? p.present
+                                  : i.guess.confidence == MatchConfidence.unsure
+                                  ? p.late
+                                  : p.absent,
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                    const SizedBox(width: 12),
+                    SizedBox(
+                      width: 180,
+                      child: AppDropdownButton<int?>(
+                        value: _ids[i.file],
+                        items: menu,
+                        isExpanded: true,
+                        onChanged: (id) => _choose(i.file, id),
+                      ),
+                    ),
+                  ],
+                ),
+                if (_terms[i.file] != null && _ids[i.file] != null)
+                  CheckboxListTile(
+                    dense: true,
+                    contentPadding: EdgeInsets.zero,
+                    controlAffinity: ListTileControlAffinity.leading,
+                    value: _learn.contains(i.file),
+                    title: Text(
+                      l10n.songsFlutterLearnTerm(
+                        _terms[i.file]!,
+                        widget.groups.where((g) => g.id == _ids[i.file]).firstOrNull?.name ?? '',
+                      ),
+                      style: const TextStyle(fontSize: 13),
+                    ),
+                    onChanged: (v) => setState(() => v == true ? _learn.add(i.file) : _learn.remove(i.file)),
+                  ),
+                const SizedBox(height: 8),
+              ],
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(context), child: Text(l10n.commonCancel)),
+        TextButton(onPressed: _submit, child: Text(l10n.songsFlutterReviewUpload)),
       ],
     );
   }
