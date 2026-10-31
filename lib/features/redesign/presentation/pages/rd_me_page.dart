@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -32,12 +33,20 @@ import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
-import '../widgets/work/rd_work_files.dart' show rdWorkFilesMinWidth, showRdWorkFilesShortcuts;
+import '../widgets/work/rd_work_files.dart' show showRdWorkFilesShortcuts;
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
 /// REDESIGN: tab "Ich" (canvas E1): own profile, things for me, the app,
 /// help and the account. Verwaltung leads to the old settings sorted into
 /// six areas (rd_manage_page.dart).
+
+/// Desktop and web (where the Werk file table and its keys are used).
+bool get _hasKeyboard =>
+    kIsWeb ||
+    defaultTargetPlatform == TargetPlatform.macOS ||
+    defaultTargetPlatform == TargetPlatform.windows ||
+    defaultTargetPlatform == TargetPlatform.linux;
+
 class RdMePage extends ConsumerWidget {
   const RdMePage({super.key});
 
@@ -169,9 +178,10 @@ class RdMePage extends ConsumerWidget {
               title: l10n.settingsHelp,
               onTap: () => context.push('/settings/help'),
             ),
-            // Keys of the Werk file table: only where that table exists
-            // (editors, wide window). Kept here, off the main UI.
-            if (isLead && MediaQuery.sizeOf(context).width >= rdWorkFilesMinWidth)
+            // Keys of the Werk file table: editors on devices with a
+            // keyboard (desktop, web); the table shows once the Werk column
+            // is wide enough. Kept here, off the main UI.
+            if (isLead && _hasKeyboard)
               RdListRow(
                 leading: const RdRowIcon(Icons.keyboard_outlined),
                 title: l10n.redesignFilesShortcuts,

@@ -30,8 +30,16 @@ class RdWorksOverviewPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final data = ref.watch(songsListDataProvider(null)).valueOrNull;
-    if (data == null) return _OverviewPage(hint: l10n.redesignSplitWorksHint, children: const []);
+    final async = ref.watch(songsListDataProvider(null));
+    final data = async.valueOrNull;
+    if (data == null) {
+      return _OverviewPage(
+        hint: l10n.redesignSplitWorksHint,
+        failed: async.hasError && !async.isLoading,
+        onRetry: () => ref.invalidate(songsListDataProvider(null)),
+        children: const [],
+      );
+    }
     final role = ref.watch(effectiveRoleProvider);
     final isAdmin = role.isAdmin || role.isResponsible;
     final o = rdWorksOverview(data.songs);
@@ -102,8 +110,16 @@ class RdMembersOverviewPanel extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final l10n = context.l10n;
-    final people = ref.watch(realtimePlayersProvider).valueOrNull;
-    if (people == null) return _OverviewPage(hint: l10n.redesignSplitMembersHint, children: const []);
+    final async = ref.watch(realtimePlayersProvider);
+    final people = async.valueOrNull;
+    if (people == null) {
+      return _OverviewPage(
+        hint: l10n.redesignSplitMembersHint,
+        failed: async.hasError && !async.isLoading,
+        onRetry: () => ref.invalidate(realtimePlayersProvider),
+        children: const [],
+      );
+    }
     final role = ref.watch(effectiveRoleProvider);
     final canApprove = role.isAdmin || role.isResponsible;
     final pending = canApprove ? ref.watch(realtimePendingPlayersProvider).valueOrNull?.length ?? 0 : 0;
@@ -170,11 +186,21 @@ class RdMembersOverviewPanel extends ConsumerWidget {
 }
 
 class _OverviewPage extends StatelessWidget {
-  const _OverviewPage({required this.hint, required this.children, this.action});
+  const _OverviewPage({
+    required this.hint,
+    required this.children,
+    this.action,
+    this.failed = false,
+    this.onRetry,
+  });
 
   final String hint;
+
+  /// Empty while the data loads ([failed]: it could not be loaded).
   final List<Widget> children;
   final Widget? action;
+  final bool failed;
+  final VoidCallback? onRetry;
 
   @override
   Widget build(BuildContext context) {
@@ -201,7 +227,16 @@ class _OverviewPage extends StatelessWidget {
           ],
         ),
         const SizedBox(height: 20),
-        if (children.isEmpty) RdInfoCard(text: l10n.redesignTodayLoading, loading: true) else ...children,
+        if (children.isNotEmpty)
+          ...children
+        else if (failed)
+          RdInfoCard(
+            text: l10n.redesignTodayLoadFailed,
+            icon: Icons.cloud_off_outlined,
+            action: onRetry == null ? null : RdOutlineButton(label: l10n.redesignCommonRetry, onPressed: onRetry),
+          )
+        else
+          RdInfoCard(text: l10n.redesignTodayLoading, loading: true),
       ],
     );
   }

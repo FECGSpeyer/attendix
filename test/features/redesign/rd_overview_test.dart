@@ -131,6 +131,31 @@ void main() {
       expect(find.text('person 1'), findsOneWidget);
     });
 
+    testWidgets('load error: message with retry, not an endless spinner', (tester) async {
+      tester.view.physicalSize = const Size(800, 1000);
+      tester.view.devicePixelRatio = 1;
+      addTearDown(tester.view.reset);
+      await tester.pumpWidget(
+        ProviderScope(
+          overrides: [
+            effectiveRoleProvider.overrideWithValue(Role.admin),
+            realtimePlayersProvider.overrideWith((ref) => Stream.error(Exception('offline'))),
+            realtimePendingPlayersProvider.overrideWith((ref) => Stream.value(const [])),
+          ],
+          child: MaterialApp(
+            locale: const Locale('de'),
+            localizationsDelegates: AppLocalizations.localizationsDelegates,
+            supportedLocales: AppLocalizations.supportedLocales,
+            theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+            home: const RdMembersOverviewPanel(),
+          ),
+        ),
+      );
+      await settle(tester);
+      expect(find.byType(CircularProgressIndicator), findsNothing);
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+    });
+
     testWidgets('players: no requests, no attendance warnings', (tester) async {
       tester.view.physicalSize = const Size(800, 1000);
       tester.view.devicePixelRatio = 1;
