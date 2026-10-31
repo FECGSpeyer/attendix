@@ -47,14 +47,14 @@ class InstrumentMatcher {
   /// as a word or ends with it ("Altsaxophon" → saxophon).
   static const Map<String, List<String>> translations = {
     // Strings
-    'violine': ['violin', 'violins', 'geige', 'violino', 'violon', 'скрипка'],
-    'viola': ['bratsche', 'alto viola', 'альт'],
-    'cello': ['violoncello', 'violoncell', 'violoncelle', 'виолончель'],
-    'kontrabass': ['contrabass', 'double bass', 'string bass', 'contrebasse', 'bass', 'контрабас'],
+    'violine': ['violin', 'violins', 'violini', 'geige', 'violino', 'violon', 'скрипка'],
+    'viola': ['bratsche', 'alto viola', 'viole', 'альт'],
+    'cello': ['violoncello', 'violoncelli', 'violoncell', 'violoncelle', 'виолончель'],
+    'kontrabass': ['contrabass', 'contrabassi', 'double bass', 'string bass', 'contrebasse', 'bass', 'контрабас'],
 
     // Woodwinds
     'piccolo': ['piccoloflöte', 'piccolo flute', 'ottavino'],
-    'flöte': ['flute', 'flauto', 'querflöte', 'flote', 'флейта'],
+    'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта'],
     'oboe': ['hautbois', 'гобой'],
     'englischhorn': ['english horn', 'cor anglais', 'corno inglese'],
     'klarinette': ['clarinet', 'clarinetto', 'clarinette', 'кларнет'],
@@ -68,8 +68,8 @@ class InstrumentMatcher {
     'baritonsaxophon': ['baritone sax', 'baritone saxophone', 'baritonsax', 'baritonsaxofon'],
 
     // Brass
-    'horn': ['french horn', 'corno', 'cor', 'waldhorn', 'валторна'],
-    'trompete': ['trumpet', 'tromba', 'trompette', 'труба'],
+    'horn': ['french horn', 'corno', 'corni', 'cor', 'waldhorn', 'валторна'],
+    'trompete': ['trumpet', 'tromba', 'trombe', 'trompette', 'труба'],
     'flügelhorn': ['flugelhorn', 'flicorno'],
     'kornett': ['cornet', 'cornetto'],
     'posaune': ['trombone', 'trombon', 'тромбон'],
@@ -107,25 +107,25 @@ class InstrumentMatcher {
 
   /// Abbreviations mapping (whole words only).
   static const Map<String, List<String>> abbreviations = {
-    'violine': ['vl', 'vln', 'vi', 'viol', 'vn', 'vni'],
-    'viola': ['va', 'vla', 'br', 'vle'],
-    'cello': ['vc', 'vlc', 'vcl', 'vcs'],
-    'kontrabass': ['kb', 'cb', 'db'],
+    'violine': ['vl', 'vln', 'vi', 'viol', 'vn', 'vni', 'скр'],
+    'viola': ['va', 'vla', 'br', 'vle', 'альт'],
+    'cello': ['vc', 'vlc', 'vcl', 'vcs', 'влч'],
+    'kontrabass': ['kb', 'cb', 'db', 'к бас'],
     'piccolo': ['picc', 'pic'],
-    'flöte': ['fl', 'flt', 'fls'],
-    'oboe': ['ob', 'obs'],
+    'flöte': ['fl', 'flt', 'fls', 'фл'],
+    'oboe': ['ob', 'obs', 'гоб'],
     'englischhorn': ['eh', 'ca', 'engl hn'],
-    'klarinette': ['cl', 'kl', 'clar', 'klar', 'cls'],
+    'klarinette': ['cl', 'kl', 'clar', 'klar', 'cls', 'кл'],
     'bassklarinette': ['bcl', 'bkl', 'bass cl', 'bass kl'],
-    'fagott': ['fg', 'bn', 'bsn', 'fag'],
+    'fagott': ['fg', 'bn', 'bsn', 'fag', 'фаг'],
     'saxophon': ['sx', 'sax'],
     'altsaxophon': ['asx', 'asax', 'as'],
     'tenorsaxophon': ['tsx', 'tsax', 'ts'],
     'baritonsaxophon': ['bsx', 'bsax', 'bs'],
-    'horn': ['hr', 'hn', 'hrn', 'hns'],
-    'trompete': ['tr', 'tp', 'trp', 'tpt', 'trpt'],
+    'horn': ['hr', 'hn', 'hrn', 'hns', 'валт'],
+    'trompete': ['tr', 'tp', 'trp', 'tpt', 'trpt', 'тр'],
     'flügelhorn': ['flgh', 'flghn', 'flh'],
-    'posaune': ['pos', 'tb', 'tbn', 'trb'],
+    'posaune': ['pos', 'tb', 'tbn', 'trb', 'тромб'],
     'tuba': ['tu', 'tba'],
     'euphonium': ['euph', 'bar'],
     'schlagzeug': ['perc', 'schlg', 'drs', 'dr'],

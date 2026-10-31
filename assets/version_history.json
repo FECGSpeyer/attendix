@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.26.1",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Noten-Upload: Generalpartituren und Dirigentenauszüge werden als Partitur erkannt, MIDI und Solostimmen bekommen ein eigenes Label",
+        "✨ Noten-Upload: Italienische und kyrillische Stimmnamen (Flauti, Corni, гоб, валт) werden erkannt"
+      ]
+    },
+    {
       "version": "0.26.0",
       "date": "31.10.2026",
       "changes": [

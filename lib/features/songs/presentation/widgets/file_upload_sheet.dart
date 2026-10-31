@@ -34,10 +34,11 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
     return (instrumentId: 2, note: null);
   }
   if (lower.contains('.sib')) return (instrumentId: null, note: 'Sibelius');
+  if (lower.endsWith('.mid') || lower.endsWith('.midi')) return (instrumentId: null, note: 'MIDI');
   if (any(['klavierauszug', 'piano reduction', 'vocal score', 'klavier auszug', 'клавир', 'klavir', 'переложение'])) {
     return (instrumentId: null, note: 'Klavierauszug');
   }
-  if (any(['partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
+  if (any(['partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'generalpartitur', 'gesamtpartitur', 'dirigierpartitur', 'dirigentenpartitur', 'dirigentenauszug', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
     return (instrumentId: null, note: 'Partitur');
   }
   if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
@@ -45,6 +46,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   }
   if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: 'Chor');
+  }
+  if (any(['solo', 'соло'])) {
+    return (instrumentId: null, note: 'Solo');
   }
   return null;
 }
@@ -110,12 +114,22 @@ class FileCategoryGuess {
   return (instrumentId: guess.instrumentId, note: guess.note);
 }
 
+const _fullScoreWords = {'generalpartitur', 'gesamtpartitur', 'dirigierpartitur', 'dirigentenpartitur', 'dirigentenauszug'};
+
 /// [detectFileCategory] with the confidence of the guess.
 FileCategoryGuess guessFileCategory(
   String fileName, {
   required List<InstrumentInfo> instruments,
   required bool isChoir,
 }) {
+  // Sibelius, MIDI and full scores stay in their category even when the
+  // name also carries a part ("Violine 1.sib", "Mit Harfe - Generalpartitur").
+  // A plain "Partitur" does not: "Werk - Partitur - Oboe" is the oboe part.
+  final fileType = detectSpecialFileType(fileName);
+  final isFullScore = InstrumentMatcher.tokenize(fileName.toLowerCase()).any(_fullScoreWords.contains);
+  if (fileType != null && (fileType.note == 'Sibelius' || fileType.note == 'MIDI' || (fileType.note == 'Partitur' && isFullScore))) {
+    return FileCategoryGuess(instrumentId: null, note: fileType.note, confidence: MatchConfidence.sure);
+  }
   final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
   if (match.instrumentId != null) {
     return FileCategoryGuess(

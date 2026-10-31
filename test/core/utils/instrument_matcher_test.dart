@@ -339,4 +339,35 @@ void main() {
       expect(clear.canAskVision('Violine 2.pdf'), isFalse);
     });
   });
+
+  group('Notenimport: Partituren, MIDI, Solo, Abkürzungen', () {
+    FileCategoryGuess guess(String name) => guessFileCategory(name, instruments: _groups(_orchestra), isChoir: false);
+
+    test('zusammengesetzte Partitur-Wörter sind Partituren, auch mit Instrument im Namen', () {
+      for (final name in ['Ohne Gott - Generalpartitur.pdf', '03 Dirigierpartitur.pdf', 'Dirigentenauszug Klein.pdf', 'Mit Harfe - Generalpartitur.pdf']) {
+        expect(guess(name).note, 'Partitur', reason: name);
+      }
+    });
+
+    test('eine Stimme aus der Partitur bleibt die Stimme', () {
+      expect(guess('Ich sah einen SoS - Partitur - Oboe.pdf').instrumentId, 11);
+    });
+
+    test('MIDI und Sibelius bleiben ihre Art, auch mit Stimme im Namen', () {
+      expect(guess('Violine 1.mid').note, 'MIDI');
+      expect(guess('Violine 1.sib').note, 'Sibelius');
+    });
+
+    test('Solo ohne Gruppe bekommt das Label, mit Gruppe bleibt die Gruppe', () {
+      expect(guess('009 Wo sind sie alle Solo.pdf').note, 'Solo');
+      expect(guess('Violine 1 Solo.pdf').instrumentId, 18);
+    });
+
+    test('italienische Plurale und kyrillische Kürzel', () {
+      expect(guess('Wo sind sie alle Flauti I II.pdf').instrumentId, 10);
+      expect(guess('Wo sind sie alle Corni F.pdf').instrumentId, 14);
+      expect(guess('03 Где найду я любовь(гоб).pdf').instrumentId, 11);
+      expect(guess('05 Где найду я любовь(валт).pdf').instrumentId, 14);
+    });
+  });
 }
