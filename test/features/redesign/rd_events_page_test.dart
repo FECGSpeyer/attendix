@@ -392,6 +392,37 @@ void main() {
     expect(container.read(pendingAttendanceIdProvider), isNull);
   });
 
+  testWidgets('Spieler: a failed reload keeps the notification until retry', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    var failed = false;
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) async {
+        if (ref.watch(generation) == 0) return SignoutData(current: _own('11', 0, AttendanceStatus.neutral));
+        if (!failed) {
+          failed = true;
+          throw Exception('offline');
+        }
+        return SignoutData(current: _own('15', 1, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept after the error');
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+
+    await tester.tap(find.text('Erneut versuchen'));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
+  });
+
   testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
     _size(tester, const Size(393, 852));
     await tester.pumpWidget(_app(Role.player, pending: 99));

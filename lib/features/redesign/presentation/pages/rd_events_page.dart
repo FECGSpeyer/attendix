@@ -317,8 +317,11 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
       // While the Termine (re)load, e.g. after the tenant switch of a push,
       // they may still be the previous ones: wait, the page rebuilds once
       // they are loaded and comes back here.
+      // A failed reload keeps the Termin too: the page shows the load error
+      // with "retry" instead of the previous Termine.
       final source = ref.read(signoutDataProvider);
-      if (source.isLoading || ref.read(rdSignoutDataProvider).isLoading) return;
+      final shown = ref.read(rdSignoutDataProvider);
+      if (source.isLoading || shown.isLoading || source.hasError || shown.hasError) return;
       ref.read(pendingAttendanceIdProvider.notifier).state = null;
       final all = source.valueOrNull ?? data;
       final att = [...all.allUpcoming, ...all.past].where((a) => a.attendanceId == pendingId).firstOrNull;
@@ -346,7 +349,10 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   Widget _playerBody(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(rdSignoutDataProvider);
-    final data = async.valueOrNull;
+    // A notification waits for its Termin: after a failed reload the
+    // previous Termine would not hold it, so the error shows instead.
+    final pending = ref.watch(pendingAttendanceIdProvider);
+    final data = async.hasError && pending != null ? null : async.valueOrNull;
     if (data == null) {
       return async.hasError
           ? RdInfoCard(
@@ -364,7 +370,6 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
     // A notification, push or "open attendance" link asked for a Termin
     // (like "Meine Termine" does); also when it arrives while open.
-    ref.watch(pendingAttendanceIdProvider);
     _openPending(data, actions);
 
     bool waiting(CrossTenantPersonAttendance att) {
