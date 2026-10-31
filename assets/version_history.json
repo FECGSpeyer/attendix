@@ -1,6 +1,21 @@
 {
   "versions": [
     {
+      "version": "0.28.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Dienstplan: Anwesenheit und Einteilung sind getrennt. „Anwesend“ teilt niemanden mehr ein, bestätigt aber angefragte Dienste; in der Besetzung gibt es die Liste „Anwesend, nicht eingeteilt“ (Einteilen bestätigt dort direkt ohne Push)",
+        "✨ Übersicht: Termine, zu denen du nicht eingeladen bist, sind grau, gestrichelt und mit „Nicht eingeladen“ gekennzeichnet",
+        "✨ Live Activity auch für ORG-Pläne (Admins und Verantwortliche aller Chöre der Organisation), in der Farbe des Termintyps",
+        "✨ Ablaufplan: Beamer-Dateien für die Gemeinde App (FECG Speyer/Schwegenheim, ORG-Pläne), SongBeamer-Datei am Werk, Bereich „Gemeinde App“ in den Org-Einstellungen",
+        "✨ Werke organisationsweit suchen und in eine andere Instanz kopieren",
+        "✨ Werk-Dateien: eigene Kategorie „Chor (alle)“",
+        "✨ Statistik: neuer Bereich „Zusatzfelder“ mit Ringdiagramm und Verteilung pro Gruppe",
+        "🐛 Werk-Dateien öffnen jetzt auch in der installierten Web-App und in der iPhone-App auf dem Mac",
+        "🐛 Ad-hoc-Ablaufplanung zeigt die Org-Zuordnung zuverlässig an"
+      ]
+    },
+    {
       "version": "0.27.0",
       "date": "31.10.2026",
       "changes": [
