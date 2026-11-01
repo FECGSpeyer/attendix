@@ -64,6 +64,11 @@ void main() {
     expect(template, contains("if (data === 'skipWaiting')"));
     // Only files of this deploy are stored.
     expect(template, contains("crypto.subtle.digest('SHA-256'"));
+    // Install waits for the page's file list and fails without a complete
+    // cache; a file of another deploy triggers an update check.
+    expect(template, contains('receiveList(data.urls)'));
+    expect(template, contains("throw new Error('[SW] no file list from the page')"));
+    expect(template, contains('self.registration.update()'));
   });
 
   test('index.html registers the worker outside iframes after the first frame', () {
@@ -75,6 +80,10 @@ void main() {
     // "Aktualisieren" lets the waiting worker take over before reloading.
     expect(html, contains("registration.waiting.postMessage('skipWaiting')"));
     expect(html, contains('registration.waiting && navigator.serviceWorker.controller'));
+    // Every tab that ran the previous deploy reloads after the switch.
+    expect(html, contains('if (userRequestedUpdate || hadController)'));
+    // The installing worker gets the list too.
+    expect(html, contains('postUrls(registration.installing);'));
     final bootstrap = File('web/flutter_bootstrap.js').readAsStringSync();
     expect(bootstrap, isNot(contains('serviceWorkerSettings')));
     expect(bootstrap, contains('wasmAllowList'));

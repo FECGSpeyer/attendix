@@ -12,53 +12,81 @@
 // - Every deploy has its own cache (CACHE_PREFIX + VERSION).
 // - A file is only stored when its sha256 matches RESOURCES, so a request
 //   that reaches a newer deploy never lands in this deploy's cache.
-// - A new worker fills its cache completely while installing: unchanged
-//   files are copied from the previous cache, changed ones are downloaded
-//   again. If that fails, the install fails and the old worker (with its
-//   complete cache) stays.
-// - No skipWaiting on install: the new worker takes over only when the app
-//   is closed, or when the user taps "Aktualisieren" (web/index.html posts
-//   'skipWaiting' and reloads). A running page never switches versions.
+// - Install only succeeds with a complete cache: the app page plus every
+//   file the open page needs to start (web/index.html posts its list,
+//   including the engine files of this browser's variant), or, without such
+//   a list, every file of the previous Attendix cache. Unchanged files are
+//   copied, changed ones downloaded and checked. Anything missing fails the
+//   install, and the old worker with its complete cache stays.
+// - No skipWaiting on install: the new worker takes over when the app is
+//   closed, or when the user taps "Aktualisieren"; then every open tab
+//   reloads (web/index.html, controllerchange), so no page keeps running
+//   old code under the new worker.
+// - A cache miss that the network answers with another deploy's file still
+//   reaches the page (no other copy exists), but triggers an update check,
+//   so the page offers "Aktualisieren".
 //
 // Requests:
 // - Navigations (index.html): network first, cache as fallback (offline).
 //   index.html only names fixed file names, so it is not version-bound.
-// - Other files of the build: cache first, filled on first use; the page
-//   also posts the files it loaded before ('cache-urls', web/index.html), so
-//   the very first visit is enough for an offline start.
+// - Other files of the build: cache first, filled on first use.
 
 const VERSION = /*VERSION*/'';
 const RESOURCES = /*RESOURCES*/{};
 const CACHE_PREFIX = 'attendix-app-cache-';
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const INDEX = './';
+// How long an install waits for the page's file list.
+const LIST_WAIT_WITH_PREVIOUS_MS = 5000;
+const LIST_WAIT_FIRST_MS = 60000;
+
+let installing = false;
+let receiveList = null;
+const pageList = new Promise((resolve) => { receiveList = resolve; });
 
 self.addEventListener('install', (event) => {
-  event.waitUntil(fillCache());
+  installing = true;
+  event.waitUntil(fillCache().finally(() => { installing = false; }));
 });
 
-/** Builds this deploy's cache from the previous one; rejects on failure. */
+/** Builds this deploy's complete cache; rejects when that is not possible. */
 async function fillCache() {
   const cache = await caches.open(CACHE_NAME);
   const origin = self.location.origin;
   await cache.add(new Request(INDEX, { cache: 'reload' }));
+  // Files the device used with the previous deploy(s).
+  const previous = new Set();
   for (const name of await caches.keys()) {
     if (!name.startsWith(CACHE_PREFIX) || name === CACHE_NAME) continue;
     const old = await caches.open(name);
     for (const request of await old.keys()) {
       const key = keyFor(request.url, origin);
       if (key == null || key === '/' || !RESOURCES[key]) continue;
+      previous.add(key);
       if (await cache.match(key)) continue;
       const response = await old.match(request);
       if (response && (await matchesHash(response.clone(), key))) {
         await cache.put(key, response);
-      } else {
-        // Changed in this deploy: download it now, so the cache is complete
-        // before this worker takes over (throws, and fails the install,
-        // when the file is unreachable or already from a newer deploy).
-        await fetchVerified(cache, key, true, 'no-cache');
       }
     }
+  }
+  // Files the open page needs (posted by web/index.html).
+  const urls = await Promise.race([
+    pageList,
+    new Promise((resolve) => setTimeout(() => resolve(null),
+      previous.size ? LIST_WAIT_WITH_PREVIOUS_MS : LIST_WAIT_FIRST_MS)),
+  ]);
+  if (!urls && !previous.size) throw new Error('[SW] no file list from the page');
+  const needed = new Set(previous);
+  for (const url of urls || []) {
+    const key = keyFor(String(url), origin);
+    if (key != null && key !== '/' && RESOURCES[key]) needed.add(key);
+  }
+  for (const key of needed) {
+    if (await cache.match(key)) continue;
+    // Throws, and fails the install, when the file is unreachable or
+    // already from a newer deploy.
+    await fetchVerified(cache, key, true, 'no-cache');
   }
 }
 
@@ -144,12 +172,14 @@ async function cacheFirst(event, key) {
   const cached = await cache.match(key);
   if (cached) return cached;
   const response = await fetch(event.request);
-  if (response && response.ok && response.type === 'basic') {
-    const copy = response.clone();
-    // The page gets the file at once; hashing and storing run afterwards.
-    event.waitUntil((async () => {
-      if (await matchesHash(copy.clone(), key)) await cache.put(key, copy);
-    })().catch(() => {}));
+  if (!response || !response.ok || response.type !== 'basic') return response;
+  // Checked before it reaches the page: this deploy's file is stored; a file
+  // of another deploy means a new version is online, so look for its worker
+  // (the page then offers "Aktualisieren").
+  if (await matchesHash(response.clone(), key)) {
+    event.waitUntil(cache.put(key, response.clone()).catch(() => {}));
+  } else {
+    event.waitUntil(self.registration.update().catch(() => {}));
   }
   return response;
 }
@@ -161,6 +191,10 @@ self.addEventListener('message', (event) => {
     return;
   }
   if (data && data.type === 'cache-urls' && Array.isArray(data.urls)) {
+    if (installing) {
+      receiveList(data.urls);
+      return;
+    }
     event.waitUntil(cacheUrls(data.urls));
   }
 });

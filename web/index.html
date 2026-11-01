@@ -221,14 +221,17 @@
         });
       });
 
-      // Handle controller change (after skipWaiting)
-      // Only reload if user explicitly clicked "Update"
+      // Handle controller change (after skipWaiting).
+      // PWA_SW (SOL #272): a new deploy only takes over after "Aktualisieren"
+      // (in this or another tab), so every tab that ran under the previous
+      // worker reloads – no page keeps running old code under the new one.
+      // The first worker of a fresh visit (no controller before) is no
+      // version change and reloads nothing.
+      var hadController = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
-        if (userRequestedUpdate) {
+        if (userRequestedUpdate || hadController) {
           window.location.reload();
         }
-        // Otherwise: update is ready but don't force reload
-        // The user will see the dialog and can choose when to update
       });
     }
 
@@ -279,19 +282,15 @@
 
   <!-- PWA_SW: Attendix's own service worker (tool/web/write_service_worker.dart
        writes it after the build). Registered after the first frame so it
-       never delays the start; then, on every start, the active worker is
-       told which files this page loaded, so one visit is enough for an
-       offline start (it only stores files of its own deploy). Not inside an
-       iframe (Teams tab), like Ionic. -->
+       never delays the start. On every start each worker of the registration
+       is told which files this page needs: an installing one only finishes
+       with all of them (complete offline start before it can take over), the
+       active one fills gaps. The list holds the files the page loaded plus
+       the engine files of this browser's variant (window.attendixEngineFiles).
+       Not inside an iframe (Teams tab), like Ionic. -->
   <script>
     if ('serviceWorker' in navigator && !window.attendixInIframe) {
       window.addEventListener('flutter-first-frame', function () {
-        // Split so `flutter build web` does not rewrite it into its legacy
-        // `?v=` registration (the worker's own content changes per deploy).
-        var swUrl = 'flutter_service' + '_worker.js';
-        navigator.serviceWorker.register(swUrl).catch(function (e) {
-          console.warn('[SW] registration failed', e);
-        });
         var postUrls = function (worker) {
           if (!worker) return;
           var urls = performance.getEntriesByType('resource').map(function (e) { return e.name; });
@@ -300,21 +299,27 @@
           });
           worker.postMessage({ type: 'cache-urls', urls: urls });
         };
-        // A new deploy that waits for "Aktualisieren" gets the list too, so
-        // its own cache is complete before it takes over.
-        var whenInstalled = function (worker) {
-          if (!worker) return;
-          worker.addEventListener('statechange', function () {
-            if (worker.state === 'installed') postUrls(worker);
+        var postAll = function (registration) {
+          postUrls(registration.installing);
+          postUrls(registration.waiting);
+          postUrls(registration.active);
+        };
+        var listen = function (registration) {
+          if (!registration) return;
+          postAll(registration);
+          registration.addEventListener('updatefound', function () {
+            postUrls(registration.installing);
           });
         };
-        navigator.serviceWorker.ready.then(function (registration) {
-          postUrls(registration.active);
-          postUrls(registration.waiting);
-          whenInstalled(registration.installing);
-          registration.addEventListener('updatefound', function () {
-            whenInstalled(registration.installing);
-          });
+        // An existing registration first: register() waits in the browser's
+        // job queue behind a running install, and that install waits for
+        // this list.
+        navigator.serviceWorker.getRegistration().then(listen);
+        // Split so `flutter build web` does not rewrite it into its legacy
+        // `?v=` registration (the worker's own content changes per deploy).
+        var swUrl = 'flutter_service' + '_worker.js';
+        navigator.serviceWorker.register(swUrl).then(postAll).catch(function (e) {
+          console.warn('[SW] registration failed', e);
         });
       }, { once: true });
     }
