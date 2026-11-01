@@ -189,7 +189,7 @@ enum AttendanceStatus {
     AttendanceStatus.excused => AppColors.statusExcused,
     AttendanceStatus.late => AppColors.statusLate,
     AttendanceStatus.lateExcused => AppColors.statusLateExcused,
-    AttendanceStatus.neutral => AppColors.medium,
+    AttendanceStatus.neutral => AppColors.statusNeutral,
   };
 
   /// UI icon for this status
