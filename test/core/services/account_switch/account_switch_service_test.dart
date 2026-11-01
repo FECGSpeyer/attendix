@@ -1,7 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
-import 'package:attendix/core/providers/account_switch_providers.dart' show followsOtherTab;
+import 'package:attendix/core/providers/account_switch_providers.dart' show followAccountChange, followsOtherTab;
 import 'package:attendix/core/services/account_switch/account_switch_service.dart';
 import 'package:attendix/core/services/account_switch/auth_token_api.dart';
 import 'package:attendix/core/services/account_switch/saved_accounts_store.dart';
@@ -813,6 +813,58 @@ void main() {
       expect(followsOtherTab('a', AuthState(AuthChangeEvent.tokenRefreshed, _session('b', 'rb1'))), isFalse);
       expect(followsOtherTab('a', AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra2'), fromBroadcast: true)), isFalse);
       expect(followsOtherTab(null, AuthState(AuthChangeEvent.signedIn, _session('b', 'rb1'), fromBroadcast: true)), isFalse);
+    });
+
+    test('a password recovery of another account keeps its own flow', () {
+      expect(
+        followsOtherTab('a', AuthState(AuthChangeEvent.passwordRecovery, _session('b', 'rb1'), fromBroadcast: true)),
+        isFalse,
+      );
+    });
+
+    test('following clears the group, then opens the group selection', () async {
+      final steps = <String>[];
+      final navigated = await followAccountChange(
+        userId: 'b',
+        generation: () => 1,
+        currentUserId: () => 'b',
+        clearTenant: () async => steps.add('clear'),
+        navigate: () => steps.add('go'),
+      );
+      expect(navigated, isTrue);
+      expect(steps, ['clear', 'go']);
+    });
+
+    test('a newer change while the group is cleared stops the navigation', () async {
+      var gen = 1;
+      String? user = 'b';
+      final steps = <String>[];
+      final navigated = await followAccountChange(
+        userId: 'b',
+        generation: () => gen,
+        currentUserId: () => user,
+        clearTenant: () async {
+          steps.add('clear');
+          // Meanwhile: sign-in as C (or a new login of B).
+          gen = 2;
+          user = 'c';
+        },
+        navigate: () => steps.add('go'),
+      );
+      expect(navigated, isFalse);
+      expect(steps, ['clear']);
+
+      gen = 1;
+      user = 'b';
+      final sameUserNewLogin = await followAccountChange(
+        userId: 'b',
+        generation: () => gen,
+        currentUserId: () => user,
+        clearTenant: () async => gen = 2,
+        navigate: () => steps.add('go'),
+      );
+      expect(sameUserNewLogin, isFalse);
+      expect(steps, ['clear']);
     });
   });
 

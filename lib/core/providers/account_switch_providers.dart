@@ -71,7 +71,15 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     // names the signed-in account, so a later sign-out removes the right one.
     final previous = activeUserId;
     activeUserId = session.user.id;
-    if (followsOtherTab(previous, state)) unawaited(_followAccountChange(ref));
+    if (followsOtherTab(previous, state)) {
+      unawaited(followAccountChange(
+        userId: session.user.id,
+        generation: () => service.sessionGeneration,
+        currentUserId: () => auth.currentSession?.user.id,
+        clearTenant: () => ref.read(currentTenantProvider.notifier).setTenantLocal(null),
+        navigate: () => ref.read(routerProvider).go('/tenants'),
+      ).catchError((_) => false));
+    }
     // A recovery session only updates a saved account, it never adds one.
     final add = state.event != AuthChangeEvent.passwordRecovery &&
         ref.read(redesignEnabledProvider);
@@ -97,17 +105,36 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
 });
 
 /// True when [state] is an account change made in another browser tab
-/// while this tab ran as [previousUserId].
+/// while this tab ran as [previousUserId]. A password recovery is left to
+/// its own flow (the auth link listener opens the new-password page).
 bool followsOtherTab(String? previousUserId, AuthState state) {
   final userId = state.session?.user.id;
-  return state.fromBroadcast && previousUserId != null && userId != null && userId != previousUserId;
+  return state.fromBroadcast &&
+      state.event != AuthChangeEvent.passwordRecovery &&
+      previousUserId != null &&
+      userId != null &&
+      userId != previousUserId;
 }
 
-Future<void> _followAccountChange(Ref ref) async {
+/// Makes this tab follow an account change of another tab: no group
+/// selected, then the group selection. Navigates only when the tab still
+/// runs as [userId] in the same session after clearing the group (a newer
+/// change meanwhile has its own follow-up). Returns whether it navigated.
+Future<bool> followAccountChange({
+  required String userId,
+  required int Function() generation,
+  required String? Function() currentUserId,
+  required Future<void> Function() clearTenant,
+  required void Function() navigate,
+}) async {
+  final start = generation();
+  await clearTenant();
+  if (generation() != start || currentUserId() != userId) return false;
   try {
-    await ref.read(currentTenantProvider.notifier).setTenantLocal(null);
-    ref.read(routerProvider).go('/tenants');
+    navigate();
   } catch (_) {
     // Router not built yet (start-up): the normal start opens the selection.
+    return false;
   }
+  return true;
 }
