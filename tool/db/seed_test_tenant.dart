@@ -66,7 +66,7 @@ class _Account {
 }
 
 const _accounts = [
-  _Account('admin', _admin, 'Test', 'Dirigent', isPerson: false),
+  _Account('admin', _admin, 'Test', 'Admin', isPerson: false),
   _Account('verantwortlich', _responsible, 'Test', 'Verantwortlich',
       isPerson: false),
   _Account('beobachter', _viewer, 'Test', 'Beobachter', isPerson: false),
@@ -164,8 +164,18 @@ Future<void> main(List<String> args) async {
     for (final a in _accounts.where((a) => !a.isPerson && a.role != _parent)) {
       final uid = await _userId(emails[a.tag]!);
       final has = await _rest('GET',
-          '/rest/v1/player?tenantId=eq.$tid&appId=eq.$uid&select=id') as List;
-      if (has.isNotEmpty) continue;
+          '/rest/v1/player?tenantId=eq.$tid&appId=eq.$uid&select=id,lastName')
+          as List;
+      if (has.isNotEmpty) {
+        // Existing person: only align the name.
+        if (has.first['lastName'] != a.lastName) {
+          await _rest('PATCH',
+              '/rest/v1/player?id=eq.${has.first['id']}&tenantId=eq.$tid',
+              {'firstName': a.firstName, 'lastName': a.lastName});
+          stdout.writeln('Umbenannt: ${has.first['lastName']} → ${a.lastName}');
+        }
+        continue;
+      }
       rows.add({
         'firstName': a.firstName, 'lastName': a.lastName,
         'instrument': main.first['id'], 'tenantId': tid,
