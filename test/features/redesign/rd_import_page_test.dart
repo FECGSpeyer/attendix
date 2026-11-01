@@ -479,6 +479,25 @@ void main() {
     );
   });
 
+  test('a symbolic link in the ZIP is skipped without unpacking it', () {
+    final pdf = Uint8List.fromList(List.filled(64, 1));
+    final bytes = Uint8List.fromList(ZipEncoder().encode(Archive()
+      ..addFile(ArchiveFile('Noten/1 Eins/Viola.pdf', pdf.length, pdf))
+      // No valid UTF-8: reading it as a link target would fail.
+      ..addFile(ArchiveFile.noCompress('Noten/1 Eins/Link.pdf', 3, Uint8List.fromList([0xff, 0xfe, 0xfd]))))!);
+    // Mark the second entry as a Unix symlink in the directory.
+    final data = ByteData.sublistView(bytes);
+    var n = 0;
+    for (var i = 0; i + 4 <= bytes.length; i++) {
+      if (data.getUint32(i, Endian.little) == 0x02014b50 && n++ == 1) {
+        data.setUint16(i + 4, 3 << 8 | 20, Endian.little);
+        data.setUint32(i + 38, 0xA1FF << 16, Endian.little);
+      }
+    }
+    final source = RdImportSource.open([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    expect(source.entries.map((e) => e.path), ['Noten/1 Eins/Viola.pdf']);
+  });
+
   test('the KI fills in sure answers, offers unsure ones and never overrides a person', () async {
     final calls = <Map<String, dynamic>>[];
     var reply = Completer<Map<String, dynamic>>();

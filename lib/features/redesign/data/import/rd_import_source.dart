@@ -89,7 +89,7 @@ class RdImportSource implements RdImportFiles {
       streams.add(input);
       final Archive archive;
       try {
-        archive = ZipDecoder().decodeBuffer(input);
+        archive = _decode(input);
       } catch (_) {
         throw FormatException(zip.name);
       }
@@ -114,6 +114,32 @@ class RdImportSource implements RdImportFiles {
     }
     final names = {for (final z in zips) zipStem(z.name)};
     return RdImportSource._(names.length == 1 ? names.first : names.join(', '), entries, junk, files, streams);
+  }
+
+  /// Like archive's `ZipDecoder.decodeBuffer`, but nothing is unpacked here:
+  /// the decoder reads a symbolic link's target right away, and a
+  /// manipulated link entry could unpack to any size. Links are skipped.
+  static Archive _decode(InputStreamBase input) {
+    final archive = Archive();
+    for (final header in ZipDirectory.read(input).fileHeaders) {
+      final zf = header.file!;
+      final mode = (header.externalFileAttributes ?? 0) >> 16;
+      final file = ArchiveFile(zf.filename, zf.uncompressedSize!, zf, zf.compressionMethod)
+        ..mode = mode
+        ..crc32 = zf.crc32
+        ..compress = zf.compressionMethod != ZipFile.zipCompressionStore
+        ..lastModTime = zf.lastModFileDate << 16 | zf.lastModFileTime;
+      if (header.versionMadeBy >> 8 == 3) {
+        // Unix: regular file (or unknown), directory, link …
+        final type = mode & 0xF000;
+        file.isFile = type == 0x8000 || type == 0x0000;
+        file.isSymbolicLink = type == 0xA000;
+      } else {
+        file.isFile = !file.name.endsWith('/');
+      }
+      archive.addFile(file);
+    }
+    return archive;
   }
 
   /// Content of the file at [path]. Read freshly each time, so a large

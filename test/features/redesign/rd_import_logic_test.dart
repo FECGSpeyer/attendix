@@ -225,6 +225,13 @@ void main() {
         _e('Noten/1 Stille Nacht/Alt/Viola.pdf'),
       ]);
       expect(orchestra.works.single.fassungen.map((f) => (f.label, f.isOld)), [('', false), ('Alt', true)]);
+
+      // Voices count only next to "Alt", not deeper inside another folder.
+      final nested = _plan([
+        _e('Noten/1 Stille Nacht/Chor/Sopran/Sopran.pdf', modified: DateTime(2026)),
+        _e('Noten/1 Stille Nacht/Alt/Chor/Sopran/Sopran.pdf', modified: DateTime(2020)),
+      ]);
+      expect(nested.works.single.fassungen.map((f) => (f.label, f.isOld)), [('Chor/Sopran', false), ('Alt/Chor/Sopran', true)]);
     });
 
     test('Fassungen without dates inside the files: the ZIP dates decide', () {
