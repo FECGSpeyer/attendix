@@ -149,6 +149,60 @@ void main() {
       expect(_label('Scan_20231004.pdf', _orchestra), isNull);
       expect(_confidence('Scan_20231004.pdf', _orchestra), MatchConfidence.none);
     });
+
+    // Names from the SOS Google Drive archive.
+    test('scores named as one word', () {
+      expect(_label('06 Ich weiß, an wen ich glaube! - Generalpartitur.pdf', _orchestra), 'Partitur');
+      expect(_label('06 Ich weiß - Dirigentenauszug Klein.pdf', _orchestra), 'Partitur');
+      expect(_label('03 Dirigierpartitur.pdf', _orchestra), 'Partitur');
+      // Also with a part in the name; a part taken from the score stays the part.
+      expect(_label('Mit Harfe - Generalpartitur.pdf', [..._orchestra, 'Harfe']), 'Partitur');
+      expect(_label('Ich sah einen SoS - Partitur - Oboe.pdf', _orchestra), 'Oboe');
+    });
+
+    test('file types win over a part in the name: Sibelius, MIDI', () {
+      expect(_label('Violine 1.sib', _orchestra), 'Sibelius');
+      expect(_label('120 Wie wunderbar.sib', _orchestra), 'Sibelius');
+      expect(_label('Trompete 2.mid', _orchestra), 'MIDI');
+      expect(_label('Song.MIDI', _orchestra), 'MIDI');
+      expect(_label('Text Werk 5.docx', _orchestra), 'Liedtext');
+    });
+
+    test('recordings and texts keep their type whatever the name says', () {
+      expect(_label('Generalpartitur.mp3', _orchestra), 'Aufnahme');
+      expect(_label('Partitur Text.docx', _orchestra), 'Liedtext');
+    });
+
+    test('decomposed umlauts (macOS file names)', () {
+      expect(_label('122 Herbei, o ihr Gla\u0308ubigen - Flo\u0308te.pdf', _orchestra), 'Flöte');
+      expect(_confidence('122 Herbei, o ihr Gla\u0308ubigen - Flo\u0308te.pdf', _orchestra), MatchConfidence.sure);
+    });
+
+    test('the part after the title beats a translation in the title', () {
+      expect(_label('Le viole - Vl II.pdf', _orchestra), 'Violine 2');
+      expect(_confidence('Le viole - Vl II.pdf', _orchestra), MatchConfidence.sure);
+      expect(_label('Звуки трубы - Fl.pdf', _orchestra), 'Flöte');
+    });
+
+    test('solo parts go to their instrument, no own "Solo" label', () {
+      expect(_label('Alt.pdf', ['Sopran', 'Alt']), 'Alt');
+      expect(_label('Trompete Solo.pdf', _orchestra), 'Trompete');
+      expect(_label('Solo Violine.pdf', _orchestra), 'Violine 1');
+      expect(_label('Welikij obras - Violin solo.pdf', _orchestra), 'Violine 1');
+      expect(_label('Solo Sopran.pdf', _orchestra), isNull);
+      expect(_label('Solo Sopran.pdf', [..._orchestra, 'Gesang'], synonyms: {'Gesang': 'sopran'}), 'Gesang');
+    });
+
+    test('Italian plurals and Cyrillic abbreviations', () {
+      expect(_label('Kurz und Flüchtig - 2 Flauti.pdf', _orchestra), 'Flöte');
+      expect(_label('Ouvertüre - Corni.pdf', _orchestra), 'Horn');
+      expect(_label('Ouvertüre - Trombe.pdf', _orchestra), 'Trompete');
+      expect(_label('01 Где найду я любовь(фл1).pdf', _orchestra), 'Flöte');
+      expect(_label('01 Где найду я любовь(гоб).pdf', _orchestra), 'Oboe');
+      expect(_label('01 Где найду я любовь(валт).pdf', _orchestra), 'Horn');
+      expect(_label('01 Где найду я любовь(к-бас).pdf', _orchestra), 'Kontrabass');
+      expect(_label('01 Где найду я любовь(фаг).pdf', _orchestra), 'Fagott');
+    });
   });
 
   group('partTerm', () {

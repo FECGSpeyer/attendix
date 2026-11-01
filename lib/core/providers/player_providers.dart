@@ -94,6 +94,33 @@ final playerCountByInstrumentProvider = FutureProvider<Map<int, int>>((ref) asyn
   return repo.getPlayerCountByInstrument();
 });
 
+/// Active players per group, counted from a player list.
+Map<int, int> countPlayersByGroup(Iterable<Person> players) {
+  final counts = <int, int>{};
+  for (final p in players) {
+    final group = p.instrument;
+    if (group != null) counts[group] = (counts[group] ?? 0) + 1;
+  }
+  return counts;
+}
+
+/// Active players per group for the "Ohne …" line of works: only roles
+/// that see every player (conductors, helpers) get counts; for the others
+/// null, and every group counts as before.
+///
+/// Derived from [playersProvider], which every player change (create,
+/// archive, reactivate, instrument change) invalidates, so the counts stay
+/// current. While the list (re)loads or after an error it is null, also
+/// when an older list is still around: every group counts (Ionic behavior)
+/// instead of a stale count.
+final missingGroupsPlayerCountsProvider = Provider<Map<int, int>?>((ref) {
+  final role = ref.watch(currentRoleProvider);
+  if (!role.isConductor && !role.isHelperRole) return null;
+  final players = ref.watch(playersProvider);
+  if (players.isLoading || players.hasError || !players.hasValue) return null;
+  return countPlayersByGroup(players.requireValue);
+});
+
 /// Notifier for player mutations
 class PlayerNotifier extends Notifier<AsyncValue<void>> {
   @override

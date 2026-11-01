@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/providers/group_providers.dart';
+import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/plan_providers.dart';
 import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
@@ -162,6 +163,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       ids,
       ref.read(groupsProvider).valueOrNull ?? const [],
       ref.read(groupCategoriesProvider).valueOrNull ?? const [],
+      playerCounts: ref.read(missingGroupsPlayerCountsProvider),
     );
     return text.isEmpty ? null : text;
   }
@@ -171,6 +173,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     // P10_ATTENDANCE: keep the data of the missing-groups line loaded
     ref.watch(songsProvider);
     ref.watch(groupCategoriesProvider);
+    ref.watch(missingGroupsPlayerCountsProvider);
     final att = _planAttendance();
     final plans = PlanUtils.allPlans(att);
     if (_planIndex < 0 || _planIndex >= plans.length) {

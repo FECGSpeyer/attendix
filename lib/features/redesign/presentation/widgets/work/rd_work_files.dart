@@ -968,6 +968,8 @@ class _CategoryButton extends StatelessWidget {
       ((id: 2, note: null), l10n.songsLyrics),
       ((id: null, note: 'Partitur'), 'Partitur'),
       ((id: null, note: 'Klavierauszug'), 'Klavierauszug'),
+      ((id: null, note: 'Sibelius'), 'Sibelius'),
+      ((id: null, note: 'MIDI'), 'MIDI'),
     ];
     return PopupMenuButton<int>(
       tooltip: l10n.songsChangeCategory,

@@ -38,7 +38,10 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['klavierauszug', 'piano reduction', 'vocal score', 'klavier auszug', 'клавир', 'klavir', 'переложение'])) {
     return (instrumentId: null, note: 'Klavierauszug');
   }
-  if (any(['partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер', 'dirizher'])) {
+  if (any([
+    'partitur', 'score', 'full score', 'conductor', 'direktion', 'dirigent', 'партитура', 'partitura', 'дирижер',
+    'dirizher', ...partiturCompounds,
+  ])) {
     return (instrumentId: null, note: 'Partitur');
   }
   if (any(['liedtext', 'songtext', 'lyrics', 'text', 'texte', 'words', 'текст', 'tekst', 'слова', 'slova'])) {
@@ -47,6 +50,21 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: kChoirAllNote);
   }
+  return null;
+}
+
+/// Scores named as one word (the matcher only knows "partitur" itself).
+const partiturCompounds = [
+  'generalpartitur', 'dirigierpartitur', 'dirigentenpartitur', 'dirigentenauszug', 'direktionsstimme',
+  'studienpartitur', 'gesamtpartitur',
+];
+
+/// Labels by file type that win over a part in the name: a Sibelius file
+/// "Violine 1.sib" is the Sibelius file, not the violin part.
+({int? instrumentId, String? note})? fileTypeLabel(String filename) {
+  final lower = filename.toLowerCase();
+  if (lower.endsWith('.sib')) return (instrumentId: null, note: 'Sibelius');
+  if (lower.endsWith('.mid') || lower.endsWith('.midi')) return (instrumentId: null, note: 'MIDI');
   return null;
 }
 
@@ -117,6 +135,32 @@ FileCategoryGuess guessFileCategory(
   required List<InstrumentInfo> instruments,
   required bool isChoir,
 }) {
+  final byType = fileTypeLabel(fileName);
+  if (byType != null) {
+    return FileCategoryGuess(instrumentId: byType.instrumentId, note: byType.note, confidence: MatchConfidence.sure);
+  }
+  // Recordings and texts keep their type whatever the name says
+  // ("Generalpartitur.mp3" is a recording).
+  final lower = fileName.toLowerCase();
+  final byExtension = InstrumentMatcher.audioExtensions.any((e) => lower.endsWith('.$e')) ||
+      lower.endsWith('.doc') ||
+      lower.endsWith('.docx') ||
+      lower.endsWith('.txt');
+  if (byExtension) {
+    // Ionic order: a group in the name, then Aufnahme / Liedtext.
+    final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
+    if (match.instrumentId != null) {
+      return FileCategoryGuess(instrumentId: match.instrumentId, note: null, confidence: match.confidence, term: match.term);
+    }
+    final special = detectSpecialFileType(fileName)!;
+    return FileCategoryGuess(instrumentId: special.instrumentId, note: special.note, confidence: MatchConfidence.sure);
+  }
+  // A full score stays one even when a part is named ("Mit Harfe -
+  // Generalpartitur"); a plain "Partitur" does not ("Werk - Partitur - Oboe"
+  // is the oboe part taken from the score).
+  if (InstrumentMatcher.tokenize(fileName.toLowerCase()).any(partiturCompounds.contains)) {
+    return const FileCategoryGuess(instrumentId: null, note: 'Partitur', confidence: MatchConfidence.sure);
+  }
   final match = instruments.isEmpty ? PartMatch.none : InstrumentMatcher.detect(fileName, instruments);
   if (match.instrumentId != null) {
     return FileCategoryGuess(

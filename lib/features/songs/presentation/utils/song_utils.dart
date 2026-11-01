@@ -107,12 +107,23 @@ class SongUtils {
 
   /// Ionic `Utils.getInstrumentText`: "Ohne ..." text for missing groups.
   /// Categories missing completely are named by category.
+  ///
+  /// With [playerCounts] (active players per group) only groups somebody
+  /// plays in count: a group nobody plays now (Celesta, an empty Violine 3)
+  /// is not "missing" from a work. `null` means unknown: every group counts.
+  /// An empty map means nobody plays, so nothing is missing.
   static String missingInstrumentsText(
     List<int> instrumentIds,
     List<Group> groups,
-    List<GroupCategory> groupCategories,
-  ) {
-    final nonMain = groups.where((g) => g.maingroup != true).toList();
+    List<GroupCategory> groupCategories, {
+    Map<int, int>? playerCounts,
+  }) {
+    final occupied = playerCounts == null
+        ? null
+        : {for (final e in playerCounts.entries) if (e.value > 0) e.key};
+    final nonMain = groups
+        .where((g) => g.maingroup != true && (occupied == null || occupied.contains(g.id)))
+        .toList();
     final missing = nonMain.where((g) => !instrumentIds.contains(g.id)).toList();
     if (missing.isEmpty) return '';
     if (missing.length == 1) return l10nWithoutContext.commonWithout(missing.first.name);

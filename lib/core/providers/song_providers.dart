@@ -376,7 +376,6 @@ final songsListDataProvider =
     currentSongs = const [];
   }
   final isOrchestra = tenant!.type == 'orchestra';
-
   return SongsListData(
     tenantId: tenantId,
     tenantType: tenant.type,
