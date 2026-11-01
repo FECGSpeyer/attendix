@@ -1,12 +1,18 @@
+import 'dart:async';
+
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/account_switch_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/locale_provider.dart';
+import '../../../../core/providers/parent_providers.dart' show ownParentProvider;
+import '../../../../data/models/parent/parent_model.dart' show ParentModelExtension;
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
@@ -30,6 +36,7 @@ import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider
 import '../../data/rd_manage_logic.dart';
 import '../rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
+import '../widgets/rd_account_switch.dart';
 import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_logo.dart';
@@ -66,6 +73,7 @@ class RdMePage extends ConsumerWidget {
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
     final canPause = player != null && ref.watch(canSelfPauseProvider);
     final language = ref.watch(localeProvider).languageCode;
+    final accountCount = ref.watch(savedAccountsProvider).valueOrNull?.length ?? 0;
     final appearance = settings.world.alwaysDark
         ? rdWorldName(l10n, settings.world)
         : '${rdWorldName(l10n, settings.world)} · ${rdModeName(l10n, settings.mode)}';
@@ -221,6 +229,13 @@ class RdMePage extends ConsumerWidget {
         RdGroupLabel(l10n.redesignMeAccount),
         RdGroupedList(
           children: [
+            // ACCOUNT_SWITCH: saved accounts of this device.
+            RdListRow(
+              leading: const RdRowIcon(Icons.switch_account_outlined),
+              title: l10n.redesignAccountsTitle,
+              value: accountCount > 1 ? l10n.redesignAccountsCount(accountCount) : null,
+              onTap: () => showRdAccountSwitchSheet(context),
+            ),
             RdListRow(
               leading: const RdRowIcon(Icons.key_outlined),
               title: l10n.settingsChangePassword,
@@ -312,6 +327,41 @@ class _ProfileCard extends ConsumerWidget {
     // Own attendance (UX S1): until now only in the label of "Vergangen".
     final signout = role.canSeeSelfServiceTab ? ref.watch(rdSignoutDataProvider).valueOrNull : null;
     final showAttendance = person != null && signout != null && signout.past.isNotEmpty;
+    // ACCOUNT_SWITCH: name, role and group for the account switcher (no-op
+    // when unchanged or when the account is not saved).
+    // Only a loaded profile of THIS account (the old account's profile can
+    // still be shown for a moment after a switch).
+    final userId = ref.watch(currentAuthUserIdProvider);
+    final profile = ref.watch(ownProfileProvider);
+    String? accountName;
+    if (userId != null &&
+        name.isNotEmpty &&
+        !profile.isLoading &&
+        !profile.hasError &&
+        person?.appId == userId &&
+        tenant != null &&
+        person?.tenantId == tenant.id) {
+      accountName = name;
+    } else if (userId != null && tenant != null && person == null && role.isParent) {
+      // Parents have no person of their own: their parent entry's name
+      // (read only, same checks: loaded, this account, this group).
+      final parentValue = ref.watch(ownParentProvider);
+      final parent = parentValue.valueOrNull;
+      if (!parentValue.isLoading &&
+          !parentValue.hasError &&
+          parent != null &&
+          parent.appId == userId &&
+          parent.tenantId == tenant.id &&
+          parent.fullName.trim().isNotEmpty) {
+        accountName = parent.fullName.trim();
+      }
+    }
+    if (userId != null && accountName != null) {
+      final label = [roleName, group].where((s) => s.isNotEmpty).join(' · ');
+      final service = ref.read(accountSwitchServiceProvider);
+      final n = accountName;
+      scheduleMicrotask(() => service.updateProfile(userId, name: n, label: label).catchError((_) {}));
+    }
 
     final header = Row(
       children: [
