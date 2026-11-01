@@ -248,11 +248,13 @@ void main() {
     expect(find.text('Chorprobe'), findsOneWidget);
     expect(find.text('Dabei'), findsOneWidget);
     expect(find.text('Doch absagen'), findsOneWidget);
-    expect(find.text('Ist dabei'), findsOneWidget);
-    expect(find.text('Kann nicht'), findsOneWidget);
+    // Ben's buttons plus "Alle Kinder" (old portal).
+    expect(find.text('Ist dabei'), findsNWidgets(2));
+    expect(find.text('Kann nicht'), findsNWidgets(2));
+    expect(find.text('Alle Kinder'), findsOneWidget);
     expect(find.text('Zu- und absagen'), findsNothing);
 
-    await tester.tap(find.text('Kann nicht'));
+    await tester.tap(find.text('Kann nicht').first);
     await _settle(tester);
     expect(find.text('Ben · Chorprobe'), findsOneWidget);
     expect(tester.takeException(), isNull);
