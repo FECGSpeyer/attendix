@@ -10,7 +10,10 @@
 //   `tenantUsers` row that adds YOUR account (--owner) as admin of the
 //   test tenant, so you see it in your own tenant list.
 // * Default is a dry run that only prints the plan. Writes need `--apply`.
-// * Aborts if a tenant with the short name `ATTX-TEST` is already visible.
+// * A tenant `ATTX-TEST` left half-created by an aborted run (no groups
+//   yet) is resumed; one that already has data stops the script.
+// * Existing accounts are detected by a login and not signed up again, so a
+//   re-run sends no new confirmation mails.
 //
 // Usage (repo root, .env with SUPABASE_URL + SUPABASE_ANON_KEY):
 //   dart run tool/db/seed_test_tenant.dart --base you@example.com
@@ -116,14 +119,27 @@ Future<void> main(List<String> args) async {
     return;
   }
 
-  // 1. Accounts (sign-up; existing ones are kept).
+  // 1. Accounts. A password login tells whether an account already exists
+  // (confirmed or not); only missing accounts are signed up, so a re-run
+  // does not send new confirmation mails.
   final unconfirmed = <String>[];
   for (final a in _accounts) {
     final email = emails[a.tag]!;
+    final probe = await _req('POST', '/auth/v1/token?grant_type=password',
+        body: {'email': email, 'password': password}, auth: false);
+    if (probe.status < 300) {
+      stdout.writeln('Konto existiert (bestätigt): $email');
+      continue;
+    }
+    if (probe.body.contains('email_not_confirmed') ||
+        probe.body.toLowerCase().contains('not confirmed')) {
+      unconfirmed.add(email);
+      stdout.writeln('Konto existiert (noch unbestätigt): $email');
+      continue;
+    }
     final res = await _req('POST', '/auth/v1/signup',
         body: {'email': email, 'password': password}, auth: false);
-    final already = res.status == 422 || res.status == 400;
-    if (res.status >= 300 && !already) {
+    if (res.status >= 300) {
       _die('Sign-up $email: ${res.status} ${res.body}');
     }
     final data = res.json;
@@ -131,8 +147,8 @@ Future<void> main(List<String> args) async {
         (data['access_token'] != null ||
             (data['user'] is Map &&
                 (data['user'] as Map)['email_confirmed_at'] != null));
-    if (!already && !confirmed) unconfirmed.add(email);
-    stdout.writeln('Konto ${already ? 'existiert' : 'angelegt'}: $email');
+    if (!confirmed) unconfirmed.add(email);
+    stdout.writeln('Konto angelegt: $email');
   }
 
   // 2. Log in as the test admin.
@@ -149,12 +165,21 @@ Future<void> main(List<String> args) async {
   _token = (login.json as Map)['access_token'] as String;
   final adminUserId = ((login.json as Map)['user'] as Map)['id'] as String;
 
-  // 3. Abort if the test tenant already exists for this account.
-  final existing = await _rest('GET',
-      '/rest/v1/tenants?shortName=eq.$_shortName&select=id');
-  if ((existing as List).isNotEmpty) {
-    _die('Testgruppe existiert schon (id ${existing.first['id']}). '
-        'Erst in der App löschen.');
+  // 3. Existing test tenant? A tenant left half-created by an aborted run
+  // (no groups yet) is resumed; a seeded one stops the script.
+  final existing = (await _rest('GET',
+      '/rest/v1/tenants?shortName=eq.$_shortName&select=id') as List);
+  int? resumeId;
+  if (existing.isNotEmpty) {
+    resumeId = existing.first['id'] as int;
+    final groups = await _rest('GET',
+        '/rest/v1/instruments?tenantId=eq.$resumeId&select=id&limit=1');
+    if ((groups as List).isNotEmpty) {
+      _die('Testgruppe existiert schon mit Daten (id $resumeId). '
+          'Erst in der App löschen.');
+    }
+    stdout.writeln('Halb angelegte Testgruppe gefunden (id $resumeId), '
+        'setze fort.');
   }
 
   // 4. User ids of all accounts.
@@ -165,36 +190,54 @@ Future<void> main(List<String> args) async {
   final ownerId = owner == null ? null : await _userId(owner);
 
   // 5. Tenant + admins (same payload as TenantCreateRepository).
-  final tenant = (await _rest('POST', '/rest/v1/tenants', {
-    'shortName': _shortName,
-    'longName': _longName,
-    'type': 'orchestra',
-    'maintainTeachers': false,
-    'withExcuses': true,
-    'betaProgram': true,
-    'showHolidays': false,
-    'timezone': 'Europe/Berlin',
-    'parents': true,
-    'showMembersList': true,
-  }) as List)
-      .first as Map;
-  final tid = tenant['id'] as int;
-  stdout.writeln('Testgruppe angelegt: id $tid');
+  final int tid;
+  if (resumeId != null) {
+    tid = resumeId;
+  } else {
+    final tenant = (await _rest('POST', '/rest/v1/tenants', {
+      'shortName': _shortName,
+      'longName': _longName,
+      'type': 'orchestra',
+      'maintainTeachers': false,
+      'withExcuses': true,
+      'betaProgram': true,
+      'showHolidays': false,
+      'timezone': 'Europe/Berlin',
+      'parents': true,
+      'showMembersList': true,
+    }) as List)
+        .first as Map;
+    tid = tenant['id'] as int;
+    stdout.writeln('Testgruppe angelegt: id $tid');
+  }
 
-  await _rest('POST', '/rest/v1/tenantUsers', [
-    {'userId': ids['admin'], 'role': _admin, 'tenantId': tid,
-     'email': emails['admin']},
+  // Bulk inserts: PostgREST needs the same keys in every row (PGRST102).
+  final present = {
+    for (final r in (await _rest('GET',
+            '/rest/v1/tenantUsers?tenantId=eq.$tid&select=userId') as List)
+        .cast<Map>())
+      r['userId'] as String,
+  };
+  final admins = [
+    {'userId': ids['admin'], 'email': emails['admin']},
     if (ownerId != null && ownerId != ids['admin'])
-      {'userId': ownerId, 'role': _admin, 'tenantId': tid, 'email': owner},
-  ]);
+      {'userId': ownerId, 'email': owner},
+  ].where((r) => !present.contains(r['userId'])).toList();
+  if (admins.isNotEmpty) {
+    await _rest('POST', '/rest/v1/tenantUsers', [
+      for (final r in admins)
+        {'userId': r['userId'], 'role': _admin, 'tenantId': tid,
+         'email': r['email'], 'parent_id': null},
+    ]);
+  }
 
   // 6. Groups + attendance types.
   final groupRows = (await _rest('POST', '/rest/v1/instruments', [
     {'name': 'Dirigent', 'tuning': 'C', 'clefs': ['g'], 'tenantId': tid,
-     'maingroup': true},
+     'maingroup': true, 'sort_order': 0},
     for (final (i, g) in _groups.indexed)
       {'name': g, 'tuning': 'C', 'clefs': ['g'], 'tenantId': tid,
-       'sort_order': i},
+       'maingroup': false, 'sort_order': i + 1},
   ]) as List)
       .cast<Map>();
   final groupId = {for (final g in groupRows) g['name'] as String: g['id']};
@@ -230,10 +273,11 @@ Future<void> main(List<String> args) async {
   // 8. tenantUsers for every other role.
   await _rest('POST', '/rest/v1/tenantUsers', [
     for (final a in _accounts.skip(1))
+      if (!present.contains(ids[a.tag]))
       {
         'userId': ids[a.tag], 'role': a.role, 'tenantId': tid,
         'email': emails[a.tag],
-        if (a.role == _parent) 'parent_id': parent['id'],
+        'parent_id': a.role == _parent ? parent['id'] : null,
       },
   ]);
 
