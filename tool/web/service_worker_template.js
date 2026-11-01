@@ -14,10 +14,17 @@
 //   that reaches a newer deploy never lands in this deploy's cache.
 // - Install only succeeds with a complete cache: the app page plus every
 //   file the open page needs to start (web/index.html posts its list,
-//   including the engine files of this browser's variant), or, without such
-//   a list, every file of the previous Attendix cache. Unchanged files are
-//   copied, changed ones downloaded and checked. Anything missing fails the
-//   install, and the old worker with its complete cache stays.
+//   including the engine files of this browser's variant) and every file of
+//   the previous complete Attendix cache. Without either (e.g. only a tab of
+//   the Flutter 3.29 deploy is open, which posts no list), it installs the
+//   start set: every file except the engine files, plus the engine files of
+//   this browser's variant (same checks as web/index.html). Unchanged files
+//   are copied, changed ones downloaded and checked. Anything missing fails
+//   the install; its cache is deleted, and the old worker with its complete
+//   cache stays.
+// - A cache counts as complete only with the marker that a finished install
+//   writes last, so a cache left by an interrupted install never stands in
+//   for a complete one.
 // - No skipWaiting on install: the new worker takes over when the app is
 //   closed, or when the user taps "Aktualisieren"; then every open tab
 //   reloads (activate navigates them; web/index.html also reloads on
@@ -37,6 +44,8 @@ const RESOURCES = /*RESOURCES*/{};
 const CACHE_PREFIX = 'attendix-app-cache-';
 const CACHE_NAME = CACHE_PREFIX + VERSION;
 const INDEX = './';
+// Written last by a finished install (not a build file, never served).
+const COMPLETE = './attendix-cache-complete';
 // How long an install waits for the page's file list.
 const LIST_WAIT_WITH_PREVIOUS_MS = 5000;
 const LIST_WAIT_FIRST_MS = 60000;
@@ -52,14 +61,25 @@ self.addEventListener('install', (event) => {
 
 /** Builds this deploy's complete cache; rejects when that is not possible. */
 async function fillCache() {
+  try {
+    await fill();
+  } catch (e) {
+    // SOL (#272): no half-filled cache stays behind.
+    await caches.delete(CACHE_NAME);
+    throw e;
+  }
+}
+
+async function fill() {
   const cache = await caches.open(CACHE_NAME);
   const origin = self.location.origin;
   await cache.add(new Request(INDEX, { cache: 'reload' }));
-  // Files the device used with the previous deploy(s).
+  // Files the device used with the previous deploy(s): only complete caches.
   const previous = new Set();
   for (const name of await caches.keys()) {
     if (!name.startsWith(CACHE_PREFIX) || name === CACHE_NAME) continue;
     const old = await caches.open(name);
+    if (!(await old.match(COMPLETE))) continue;
     for (const request of await old.keys()) {
       const key = keyFor(request.url, origin);
       if (key == null || key === '/' || !RESOURCES[key]) continue;
@@ -77,11 +97,13 @@ async function fillCache() {
     new Promise((resolve) => setTimeout(() => resolve(null),
       previous.size ? LIST_WAIT_WITH_PREVIOUS_MS : LIST_WAIT_FIRST_MS)),
   ]);
-  if (!urls && !previous.size) throw new Error('[SW] no file list from the page');
   const needed = new Set(previous);
   for (const url of urls || []) {
     const key = keyFor(String(url), origin);
     if (key != null && key !== '/' && RESOURCES[key]) needed.add(key);
+  }
+  if (!urls && !previous.size) {
+    for (const key of startSet()) needed.add(key);
   }
   for (const key of needed) {
     if (await cache.match(key)) continue;
@@ -89,6 +111,57 @@ async function fillCache() {
     // already from a newer deploy.
     await fetchVerified(cache, key, true, 'no-cache');
   }
+  await cache.put(COMPLETE, new Response(VERSION));
+}
+
+/** Files only one engine variant loads (app code, CanvasKit, skwasm). */
+function isEngineFile(key) {
+  return key.startsWith('canvaskit/') || key.startsWith('main.dart.');
+}
+
+/**
+ * Every file needed to start offline without a list from the page: all
+ * files except the engine files, plus those of the variant Flutter's loader
+ * picks in this browser.
+ */
+function startSet() {
+  const keys = Object.keys(RESOURCES).filter((key) => key !== '/' &&
+    key !== 'index.html' && !isEngineFile(key));
+  for (const key of engineFiles()) {
+    if (RESOURCES[key]) keys.push(key);
+  }
+  return keys;
+}
+
+/**
+ * The engine files of this browser's variant. SOL (#272): keep in sync with
+ * PWA_WASM in web/index.html (tool/web/test/sw_behavior.test.mjs compares
+ * both). A worker has no navigator.vendor and no ImageDecoder, so the engine
+ * comes from the user agent, and Blink (Chrome 94+) counts as having
+ * ImageDecoder, as it does in the page.
+ */
+function engineFiles() {
+  const ua = (self.navigator && self.navigator.userAgent) || '';
+  const engine = /Chrome\/|Edg\//.test(ua) ? 'blink'
+    : /AppleWebKit\//.test(ua) ? 'webkit' : 'other';
+  let safariWasm = false;
+  if (engine === 'webkit') {
+    const m = /Version\/(\d+)\.(\d+)/.exec(ua);
+    safariWasm = !!m && (+m[1] > 26 || (+m[1] === 26 && +m[2] >= 2));
+  }
+  let wasmGC = false;
+  try {
+    wasmGC = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 95, 1, 120, 0]));
+  } catch (e) {}
+  const codecs = engine === 'blink';
+  const breakIterators = typeof Intl.v8BreakIterator !== 'undefined' &&
+    typeof Intl.Segmenter !== 'undefined';
+  if (wasmGC && (engine === 'blink' || safariWasm)) {
+    const skwasm = codecs && breakIterators ? 'canvaskit/skwasm' : 'canvaskit/skwasm_heavy';
+    return ['main.dart.wasm', 'main.dart.mjs', skwasm + '.js', skwasm + '.wasm'];
+  }
+  const canvaskit = codecs && breakIterators ? 'canvaskit/chromium/canvaskit' : 'canvaskit/canvaskit';
+  return ['main.dart.js', canvaskit + '.js', canvaskit + '.wasm'];
 }
 
 self.addEventListener('activate', (event) => {

@@ -199,25 +199,30 @@
         setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
         checkForUpdate();
 
-        // PWA_SW (SOL #272): a new worker may already be waiting from an
-        // earlier visit (it only takes over after "Aktualisieren").
-        if (registration.waiting && navigator.serviceWorker.controller) {
+        var notifyUpdate = function () {
+          if (window.appUpdateAvailable) return;
           window.appUpdateAvailable = true;
           window.dispatchEvent(new CustomEvent('flutter-update-available'));
-        }
+        };
+        // New version available once a new worker is installed (it waits).
+        var watchInstalling = function (worker) {
+          if (!worker) return;
+          worker.addEventListener('statechange', () => {
+            if (worker.state === 'installed' && navigator.serviceWorker.controller) {
+              notifyUpdate();
+            }
+          });
+        };
 
-        // Listen for new service worker waiting
+        // PWA_SW (SOL #272): a new worker may already be waiting from an
+        // earlier visit (it only takes over after "Aktualisieren"), or still
+        // be installing – its updatefound has then already fired.
+        if (registration.waiting && navigator.serviceWorker.controller) {
+          notifyUpdate();
+        }
+        watchInstalling(registration.installing);
         registration.addEventListener('updatefound', () => {
-          const newWorker = registration.installing;
-          if (newWorker) {
-            newWorker.addEventListener('statechange', () => {
-              if (newWorker.state === 'installed' && navigator.serviceWorker.controller) {
-                // New version available
-                window.appUpdateAvailable = true;
-                window.dispatchEvent(new CustomEvent('flutter-update-available'));
-              }
-            });
-          }
+          watchInstalling(registration.installing);
         });
       });
 
