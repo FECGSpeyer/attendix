@@ -66,7 +66,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get adminDuplicatesHint => 'Gemeinden mit gleichem Namen können zusammengeführt werden.';
+  String get adminDuplicatesHint =>
+      'Gemeinden mit gleichem Namen können zusammengeführt werden.';
 
   @override
   String get adminEvaluation => 'Auswertung';
@@ -80,13 +81,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get adminInvalidLimit => 'Bitte eine Zahl größer 0 eingeben oder das Feld leeren (unbegrenzt).';
+  String get adminInvalidLimit =>
+      'Bitte eine Zahl größer 0 eingeben oder das Feld leeren (unbegrenzt).';
 
   @override
   String get adminInvalidValues => 'Bitte gib gültige Werte ein.';
 
   @override
-  String get adminLimitHelper => 'Leer lassen für unbegrenzt. Neue Instanzen starten mit 5 GB.';
+  String get adminLimitHelper =>
+      'Leer lassen für unbegrenzt. Neue Instanzen starten mit 5 GB.';
 
   @override
   String get adminMaxStorage => 'Max. Speicher (GB)';
@@ -216,7 +219,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get agendaDeleteFailed => 'Löschen fehlgeschlagen';
 
   @override
-  String get agendaDeleteMessage => 'Es verschwindet aus dem Themenspeicher. Bereits geplante Ablaufpläne und Protokolle bleiben unverändert. Soll es nur aus einem Termin raus, entferne es dort über „Themen aufnehmen“ oder in der Teamorganisation.';
+  String get agendaDeleteMessage =>
+      'Es verschwindet aus dem Themenspeicher. Bereits geplante Ablaufpläne und Protokolle bleiben unverändert. Soll es nur aus einem Termin raus, entferne es dort über „Themen aufnehmen“ oder in der Teamorganisation.';
 
   @override
   String get agendaDeleteTopic => 'Thema löschen';
@@ -228,7 +232,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get agendaDescription => 'Beschreibung';
 
   @override
-  String get agendaDescriptionPlaceholder => 'Hintergrund, Ziel, offene Fragen …';
+  String get agendaDescriptionPlaceholder =>
+      'Hintergrund, Ziel, offene Fragen …';
 
   @override
   String agendaDone(Object who) {
@@ -255,7 +260,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get agendaFlutterNoMatch => 'Kein passendes Thema gefunden.';
 
   @override
-  String get agendaFlutterNoOpenTopics => 'Keine offenen Themen. Lege oben ein neues an.';
+  String get agendaFlutterNoOpenTopics =>
+      'Keine offenen Themen. Lege oben ein neues an.';
 
   @override
   String get agendaFlutterNotFound => 'Thema nicht gefunden';
@@ -301,7 +307,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get agendaNoOutcome => 'Ohne Ergebnis';
 
   @override
-  String get agendaNoProtocolEvent => 'Noch kein Termin mit Tagesordnung geplant';
+  String get agendaNoProtocolEvent =>
+      'Noch kein Termin mit Tagesordnung geplant';
 
   @override
   String get agendaNoTasks => 'Keine Aufgaben';
@@ -319,7 +326,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get agendaPlanIn => 'Einplanen';
 
   @override
-  String get agendaPlanSaveFailed => 'Ablaufplan konnte nicht gespeichert werden';
+  String get agendaPlanSaveFailed =>
+      'Ablaufplan konnte nicht gespeichert werden';
 
   @override
   String get agendaPlanned => 'Geplant';
@@ -426,7 +434,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appChangePassword => 'Passwort ändern';
 
   @override
-  String get appConfirmLinkInvalid => 'Der Bestätigungslink ist ungültig oder abgelaufen.';
+  String get appConfirmLinkInvalid =>
+      'Der Bestätigungslink ist ungültig oder abgelaufen.';
 
   @override
   String get appEmailConfirmed => 'E-Mail-Adresse bestätigt. Willkommen!';
@@ -451,13 +460,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get appNewPassword => 'Neues Passwort eingeben';
 
   @override
-  String get appPasswordMin => 'Bitte gib ein Passwort mit mindestens 6 Zeichen ein';
+  String get appPasswordMin =>
+      'Bitte gib ein Passwort mit mindestens 6 Zeichen ein';
 
   @override
   String get appRedirectLoadApp => 'Lade die App im Store deines Geräts:';
 
   @override
-  String get appResetLinkInvalid => 'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.';
+  String get appResetLinkInvalid =>
+      'Der Link zum Zurücksetzen ist ungültig oder abgelaufen.';
 
   @override
   String get attListAddEvent => 'Termin hinzufügen';
@@ -542,13 +553,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListHolidays => 'Feiertage';
 
   @override
-  String get attListHolidaysOfState => 'Feiertage des ausgewählten Bundeslandes';
+  String get attListHolidaysOfState =>
+      'Feiertage des ausgewählten Bundeslandes';
 
   @override
   String get attListInfoText => 'Info-Text (optional)';
 
   @override
-  String get attListInfoTextHelper => 'Dieser Text wird anstelle des Typs angezeigt.';
+  String get attListInfoTextHelper =>
+      'Dieser Text wird anstelle des Typs angezeigt.';
 
   @override
   String get attListInvalidType => 'Ungültiger Anwesenheitstyp ausgewählt';
@@ -583,7 +596,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListPlace => 'Ort (für Navigation)';
 
   @override
-  String get attListPlacePlaceholder => 'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin';
+  String get attListPlacePlaceholder =>
+      'z. B. Gemeindehaus, Musterstr. 1, 12345 Berlin';
 
   @override
   String attListPresentOf(Object present, Object total) {
@@ -591,13 +605,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get attListRemoveConfirm => 'Möchtest du den Termin wirklich entfernen?';
+  String get attListRemoveConfirm =>
+      'Möchtest du den Termin wirklich entfernen?';
 
   @override
   String get attListSchoolHolidays => 'Ferien';
 
   @override
-  String get attListSchoolHolidaysOfState => 'Ferien des ausgewählten Bundeslandes';
+  String get attListSchoolHolidaysOfState =>
+      'Ferien des ausgewählten Bundeslandes';
 
   @override
   String get attListSearchSong => 'Werk suchen...';
@@ -664,7 +680,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceAddressPlaceholder => 'Adresse oder Ortsname';
 
   @override
-  String get attendanceAllAlreadyIncluded => 'Alle Personen sind bereits in dieser Anwesenheit enthalten.';
+  String get attendanceAllAlreadyIncluded =>
+      'Alle Personen sind bereits in dieser Anwesenheit enthalten.';
 
   @override
   String get attendanceAssign => 'Einteilen';
@@ -723,7 +740,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceChoosePeople => 'Personen auswählen';
 
   @override
-  String get attendanceChoosePersonMin => 'Bitte wähle mindestens eine Person aus';
+  String get attendanceChoosePersonMin =>
+      'Bitte wähle mindestens eine Person aus';
 
   @override
   String get attendanceChurchOverview => 'Gemeinde-Übersicht';
@@ -758,7 +776,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceDeadlineDate => 'Fristdatum';
 
   @override
-  String get attendanceDeadlineHelper => 'Personen können sich nur bis zu diesem Datum anmelden. Eine Abmeldung ist weiterhin möglich.';
+  String get attendanceDeadlineHelper =>
+      'Personen können sich nur bis zu diesem Datum anmelden. Eine Abmeldung ist weiterhin möglich.';
 
   @override
   String get attendanceDeadlineHours => 'Deadline in Stunden (optional)';
@@ -776,10 +795,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceDeleteTodo => 'To-Do löschen';
 
   @override
-  String get attendanceDeleteTodoConfirm => 'Möchtest du dieses To-Do wirklich löschen?';
+  String get attendanceDeleteTodoConfirm =>
+      'Möchtest du dieses To-Do wirklich löschen?';
 
   @override
-  String get attendanceDeletedByOther => 'Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht';
+  String get attendanceDeletedByOther =>
+      'Die Anwesenheit wurde soeben von einem anderen Nutzer gelöscht';
 
   @override
   String get attendanceDescriptionAttachment => 'Beschreibung & Anhang';
@@ -836,7 +857,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceExplicitStatus => 'Explizite Statusauswahl';
 
   @override
-  String get attendanceExplicitStatusHint => 'Status über Dropdown statt Antippen wählen';
+  String get attendanceExplicitStatusHint =>
+      'Status über Dropdown statt Antippen wählen';
 
   @override
   String get attendanceExportExcel => 'Anwesenheit als Excel exportieren';
@@ -891,7 +913,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterChooseDeadline => 'Anmeldefrist wählen';
 
   @override
-  String get attendanceFlutterChooseType => 'Bitte wähle einen Veranstaltungstyp';
+  String get attendanceFlutterChooseType =>
+      'Bitte wähle einen Veranstaltungstyp';
 
   @override
   String get attendanceFlutterCreatingExcel => 'Erstelle Excel-Export...';
@@ -949,7 +972,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterHoliday => 'Feiertag';
 
   @override
-  String get attendanceFlutterListLoadFailed => 'Die Anwesenheitsliste konnte nicht geladen werden.';
+  String get attendanceFlutterListLoadFailed =>
+      'Die Anwesenheitsliste konnte nicht geladen werden.';
 
   @override
   String get attendanceFlutterLoadError => 'Fehler beim Laden';
@@ -961,19 +985,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterNoEntry => 'Kein Anwesenheitseintrag gefunden';
 
   @override
-  String get attendanceFlutterNoEventTypes => 'Keine Veranstaltungstypen konfiguriert';
+  String get attendanceFlutterNoEventTypes =>
+      'Keine Veranstaltungstypen konfiguriert';
 
   @override
-  String get attendanceFlutterNoItemsToExport => 'Keine Programmpunkte zum Exportieren';
+  String get attendanceFlutterNoItemsToExport =>
+      'Keine Programmpunkte zum Exportieren';
 
   @override
-  String get attendanceFlutterNoItemsToSend => 'Keine Programmpunkte zum Senden';
+  String get attendanceFlutterNoItemsToSend =>
+      'Keine Programmpunkte zum Senden';
 
   @override
   String get attendanceFlutterNoPermission => 'Keine Berechtigung';
 
   @override
-  String get attendanceFlutterNoPlanToExport => 'Kein Ablaufplan zum Exportieren';
+  String get attendanceFlutterNoPlanToExport =>
+      'Kein Ablaufplan zum Exportieren';
 
   @override
   String get attendanceFlutterNoPlanToSend => 'Kein Ablaufplan zum Senden';
@@ -1009,7 +1037,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterPlanSentTelegram => 'Plan per Telegram gesendet';
 
   @override
-  String get attendanceFlutterPlanShared => 'Plan wird jetzt mit Mitgliedern geteilt';
+  String get attendanceFlutterPlanShared =>
+      'Plan wird jetzt mit Mitgliedern geteilt';
 
   @override
   String get attendanceFlutterQuickPreview => 'Für schnelle Vorschau';
@@ -1024,10 +1053,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterRemoveAttachment => 'Anhang entfernen';
 
   @override
-  String get attendanceFlutterRestoreChecklistMessage => 'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.';
+  String get attendanceFlutterRestoreChecklistMessage =>
+      'Die aktuelle Checkliste wird durch die Standard-Checkliste ersetzt.';
 
   @override
-  String get attendanceFlutterRestoreChecklistTitle => 'Checkliste wiederherstellen?';
+  String get attendanceFlutterRestoreChecklistTitle =>
+      'Checkliste wiederherstellen?';
 
   @override
   String attendanceFlutterSaveFailedWith(Object error) {
@@ -1063,7 +1094,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterStartTimeUpdated => 'Startzeit aktualisiert';
 
   @override
-  String get attendanceFlutterTelegramNotConnected => 'Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.';
+  String get attendanceFlutterTelegramNotConnected =>
+      'Telegram nicht verbunden. Bitte zuerst in den Einstellungen verbinden.';
 
   @override
   String get attendanceFlutterTodoAdded => 'To-Do hinzugefügt';
@@ -1072,7 +1104,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceFlutterTodoDeleted => 'To-Do gelöscht';
 
   @override
-  String get attendanceFlutterTwoIdenticalPlans => 'Zwei identische Pläne (Querformat)';
+  String get attendanceFlutterTwoIdenticalPlans =>
+      'Zwei identische Pläne (Querformat)';
 
   @override
   String get attendanceFlutterTwoPlansOnePage => 'Zwei Pläne auf einer Seite';
@@ -1127,10 +1160,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceLateExcusedParen => 'Verspätet (entsch.)';
 
   @override
-  String get attendanceLoadFailed => 'Anwesenheitsliste konnte nicht geladen werden';
+  String get attendanceLoadFailed =>
+      'Anwesenheitsliste konnte nicht geladen werden';
 
   @override
-  String get attendanceLoadFailedReopen => 'Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.';
+  String get attendanceLoadFailedReopen =>
+      'Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.';
 
   @override
   String get attendanceLoadPeopleFailed => 'Fehler beim Laden der Personen';
@@ -1170,7 +1205,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceNoConnection => 'Keine Internetverbindung vorhanden';
 
   @override
-  String get attendanceNoDefaultChecklist => 'Keine Standard-Checkliste vorhanden';
+  String get attendanceNoDefaultChecklist =>
+      'Keine Standard-Checkliste vorhanden';
 
   @override
   String get attendanceNoGroup => 'Keine Gruppe';
@@ -1197,7 +1233,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceOnlyNeutral => 'Nur Personen ohne Status';
 
   @override
-  String get attendanceOnlyNeutralHint => 'Sendet nur an Personen, die noch keine Rückmeldung gegeben haben';
+  String get attendanceOnlyNeutralHint =>
+      'Sendet nur an Personen, die noch keine Rückmeldung gegeben haben';
 
   @override
   String get attendanceOpenProtocol => 'Protokoll öffnen';
@@ -1250,7 +1287,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendancePersonRemoved => 'Person aus Anwesenheit entfernt';
 
   @override
-  String get attendancePictureFailed => 'Fehler beim hinzufügen des Bildes, versuche es später erneut';
+  String get attendancePictureFailed =>
+      'Fehler beim hinzufügen des Bildes, versuche es später erneut';
 
   @override
   String get attendancePlace => 'Ort';
@@ -1287,10 +1325,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceReload => 'Neu laden';
 
   @override
-  String get attendanceReloadFailed => 'Neu laden fehlgeschlagen — bitte erneut versuchen.';
+  String get attendanceReloadFailed =>
+      'Neu laden fehlgeschlagen — bitte erneut versuchen.';
 
   @override
-  String get attendanceReminderInfo => 'Die Erinnerung wird per App-Benachrichtigung und per E-Mail verschickt. Betreff und Nachricht können frei angepasst werden.';
+  String get attendanceReminderInfo =>
+      'Die Erinnerung wird per App-Benachrichtigung und per E-Mail verschickt. Betreff und Nachricht können frei angepasst werden.';
 
   @override
   String get attendanceReminderSent => 'Erinnerung versendet';
@@ -1383,13 +1423,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceStartSession => 'Sitzung starten & protokollieren';
 
   @override
-  String get attendanceStatusChangeFailed => 'Fehler beim Ändern des Anwesenheitsstatus, bitte versuche es später erneut';
+  String get attendanceStatusChangeFailed =>
+      'Fehler beim Ändern des Anwesenheitsstatus, bitte versuche es später erneut';
 
   @override
   String get attendanceStatusFilter => 'Status-Filter';
 
   @override
-  String get attendanceStatusNotChanged => 'Der Status wurde bisher nicht verändert';
+  String get attendanceStatusNotChanged =>
+      'Der Status wurde bisher nicht verändert';
 
   @override
   String get attendanceStatusOverview => 'Status-Übersicht';
@@ -1398,7 +1440,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceSubject => 'Betreff';
 
   @override
-  String get attendanceSubjectPlaceholder => 'z. B. 🔔 Erinnerung: Probe am 01.09.2026';
+  String get attendanceSubjectPlaceholder =>
+      'z. B. 🔔 Erinnerung: Probe am 01.09.2026';
 
   @override
   String get attendanceTasksFromEvent => 'Aufgaben aus diesem Termin';
@@ -1458,25 +1501,30 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get authConfirmEmailFirst => 'Bitte bestätige zuerst deine E-Mail-Adresse.';
+  String get authConfirmEmailFirst =>
+      'Bitte bestätige zuerst deine E-Mail-Adresse.';
 
   @override
-  String get authConfirmationResent => 'Bestätigungs-E-Mail wurde erneut gesendet';
+  String get authConfirmationResent =>
+      'Bestätigungs-E-Mail wurde erneut gesendet';
 
   @override
   String get authInvalidCredentials => 'Ungültige Anmeldedaten';
 
   @override
-  String get authResendConfirmationFailed => 'Fehler beim Senden der Bestätigungs-E-Mail';
+  String get authResendConfirmationFailed =>
+      'Fehler beim Senden der Bestätigungs-E-Mail';
 
   @override
   String get authResetFailed => 'Fehler beim Zurücksetzen des Passworts';
 
   @override
-  String get authResetRetry => 'Fehler beim zurücksetzen, versuche es noch einmal';
+  String get authResetRetry =>
+      'Fehler beim zurücksetzen, versuche es noch einmal';
 
   @override
-  String get authResetSent => 'E-Mail zum Zurücksetzen des Passworts wurde gesendet';
+  String get authResetSent =>
+      'E-Mail zum Zurücksetzen des Passworts wurde gesendet';
 
   @override
   String get authUserNotFound => 'Benutzer nicht gefunden';
@@ -1491,7 +1539,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bellDeleteAllHeader => 'Alle Benachrichtigungen löschen?';
 
   @override
-  String get bellDeleteAllMessage => 'Alle Benachrichtigungen aus allen Instanzen werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.';
+  String get bellDeleteAllMessage =>
+      'Alle Benachrichtigungen aus allen Instanzen werden gelöscht. Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get bellMark => 'Markieren';
@@ -1500,7 +1549,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get bellMarkAllHeader => 'Alle als gelesen markieren?';
 
   @override
-  String get bellMarkAllMessage => 'Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert.';
+  String get bellMarkAllMessage =>
+      'Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert.';
 
   @override
   String get bellMarkAllRead => 'Alle gelesen';
@@ -1521,7 +1571,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brandingFlutterUploadLogo => 'Logo hochladen';
 
   @override
-  String get brandingIntro => 'Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.';
+  String get brandingIntro =>
+      'Logo und Text erscheinen dezent auf exportierten Plänen und Listen (PDF/Bild). Das Logo darf maximal 2 MB groß sein. Das Branding gilt für alle Instanzen der Organisation.';
 
   @override
   String get brandingLogo => 'Logo';
@@ -1533,10 +1584,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get brandingLogoTooBig => 'Das Logo darf maximal 2MB groß sein.';
 
   @override
-  String get brandingLogoUploaded => 'Logo hochgeladen. Speichern nicht vergessen.';
+  String get brandingLogoUploaded =>
+      'Logo hochgeladen. Speichern nicht vergessen.';
 
   @override
-  String get brandingOrgOnly => 'Branding wird auf Organisationsebene verwaltet. Diese Instanz ist keiner Organisation zugeordnet.';
+  String get brandingOrgOnly =>
+      'Branding wird auf Organisationsebene verwaltet. Diese Instanz ist keiner Organisation zugeordnet.';
 
   @override
   String get brandingRemoveLogo => 'Logo entfernen';
@@ -1593,7 +1646,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get commonCancel => 'Abbrechen';
 
   @override
-  String get commonCannotUndo => 'Diese Aktion kann nicht rückgängig gemacht werden.';
+  String get commonCannotUndo =>
+      'Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get commonClefC => 'Altschlüssel';
@@ -1806,7 +1860,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterExportOpen => 'Offen';
 
   @override
-  String get coreFlutterExportPdfRenderFailed => 'PDF konnte nicht gerendert werden';
+  String get coreFlutterExportPdfRenderFailed =>
+      'PDF konnte nicht gerendert werden';
 
   @override
   String coreFlutterExportPlayerListHeader(Object name, Object date) {
@@ -1823,10 +1878,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterExportRehearsalProgramme => 'Probenprogramm';
 
   @override
-  String get coreFlutterFeedbackAnonymousHint => 'Deine Daten werden nicht mitgesendet';
+  String get coreFlutterFeedbackAnonymousHint =>
+      'Deine Daten werden nicht mitgesendet';
 
   @override
-  String get coreFlutterFeedbackQuestionIntro => 'Hast du eine Frage oder brauchst Hilfe?';
+  String get coreFlutterFeedbackQuestionIntro =>
+      'Hast du eine Frage oder brauchst Hilfe?';
 
   @override
   String get coreFlutterFeedbackQuestionRequired => 'Bitte gib eine Frage ein';
@@ -1889,13 +1946,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get coreFlutterImportDuplicateEmailInFile => 'Doppelte E-Mail in der Datei';
+  String get coreFlutterImportDuplicateEmailInFile =>
+      'Doppelte E-Mail in der Datei';
 
   @override
-  String get coreFlutterImportDuplicateNumberInFile => 'Doppelte Nummer in der Datei';
+  String get coreFlutterImportDuplicateNumberInFile =>
+      'Doppelte Nummer in der Datei';
 
   @override
-  String get coreFlutterImportEmailExists => 'E-Mail existiert bereits in dieser Instanz';
+  String get coreFlutterImportEmailExists =>
+      'E-Mail existiert bereits in dieser Instanz';
 
   @override
   String coreFlutterImportEmailInvalid(Object email) {
@@ -1913,16 +1973,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get coreFlutterImportNameRequired => 'Vor- und Nachname sind erforderlich';
+  String get coreFlutterImportNameRequired =>
+      'Vor- und Nachname sind erforderlich';
 
   @override
-  String get coreFlutterImportNumberRequired => 'Nummer ist erforderlich und muss eine Zahl sein';
+  String get coreFlutterImportNumberRequired =>
+      'Nummer ist erforderlich und muss eine Zahl sein';
 
   @override
   String get coreFlutterImportSongNameRequired => 'Name ist erforderlich';
 
   @override
-  String get coreFlutterImportSongNumberExists => 'Liednummer existiert bereits in dieser Instanz';
+  String get coreFlutterImportSongNumberExists =>
+      'Liednummer existiert bereits in dieser Instanz';
 
   @override
   String get coreFlutterInvalidCopyCount => 'Ungültige Kopienanzahl';
@@ -1940,13 +2003,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterNoConnection => 'Keine Internetverbindung vorhanden';
 
   @override
-  String get coreFlutterNoCopiesSelected => 'Keine Kopien zum Drucken ausgewählt';
+  String get coreFlutterNoCopiesSelected =>
+      'Keine Kopien zum Drucken ausgewählt';
 
   @override
   String get coreFlutterNoEmailAddress => 'Keine E-Mail-Adresse vorhanden';
 
   @override
-  String get coreFlutterNoFilesDownloaded => 'Keine Dateien konnten heruntergeladen werden';
+  String get coreFlutterNoFilesDownloaded =>
+      'Keine Dateien konnten heruntergeladen werden';
 
   @override
   String get coreFlutterNoFilesToDownload => 'Keine Dateien zum Herunterladen';
@@ -1975,7 +2040,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterNotSignedIn => 'Nicht angemeldet';
 
   @override
-  String get coreFlutterOfflineQueueSaveFailed => 'Die Änderung konnte nicht offline gespeichert werden';
+  String get coreFlutterOfflineQueueSaveFailed =>
+      'Die Änderung konnte nicht offline gespeichert werden';
 
   @override
   String get coreFlutterOpenExternally => 'Extern öffnen';
@@ -2023,13 +2089,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterRegistration => 'Anmeldung';
 
   @override
-  String get coreFlutterRepoAccountCreateFailed => 'Der Account konnte nicht erstellt werden.';
+  String get coreFlutterRepoAccountCreateFailed =>
+      'Der Account konnte nicht erstellt werden.';
 
   @override
   String get coreFlutterRepoAlreadyAdmin => 'Diese Person ist bereits Admin.';
 
   @override
-  String get coreFlutterRepoCategoryCreateFailed => 'Kategorie konnte nicht erstellt werden';
+  String get coreFlutterRepoCategoryCreateFailed =>
+      'Kategorie konnte nicht erstellt werden';
 
   @override
   String coreFlutterRepoCategoryNotFound(Object id) {
@@ -2042,16 +2110,20 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get coreFlutterRepoEventExistsOnDate => 'Ein Termin an diesem Datum existiert bereits';
+  String get coreFlutterRepoEventExistsOnDate =>
+      'Ein Termin an diesem Datum existiert bereits';
 
   @override
-  String get coreFlutterRepoEventNotInTenant => 'Termin gehört nicht zur aktuellen Instanz';
+  String get coreFlutterRepoEventNotInTenant =>
+      'Termin gehört nicht zur aktuellen Instanz';
 
   @override
-  String get coreFlutterRepoForeignTenantDenied => 'Zugriff auf fremde Instanz verweigert';
+  String get coreFlutterRepoForeignTenantDenied =>
+      'Zugriff auf fremde Instanz verweigert';
 
   @override
-  String get coreFlutterRepoGroupCreateFailed => 'Gruppe konnte nicht erstellt werden';
+  String get coreFlutterRepoGroupCreateFailed =>
+      'Gruppe konnte nicht erstellt werden';
 
   @override
   String coreFlutterRepoGroupHasPlayers(Object count) {
@@ -2064,22 +2136,27 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get coreFlutterRepoMeetingExistsOnDate => 'Eine Besprechung an diesem Datum existiert bereits';
+  String get coreFlutterRepoMeetingExistsOnDate =>
+      'Eine Besprechung an diesem Datum existiert bereits';
 
   @override
-  String get coreFlutterRepoNoPermissionInTenant => 'Keine Berechtigung in dieser Instanz';
+  String get coreFlutterRepoNoPermissionInTenant =>
+      'Keine Berechtigung in dieser Instanz';
 
   @override
   String get coreFlutterRepoNoValidPersons => 'Keine gültigen Personen';
 
   @override
-  String get coreFlutterRepoPersonsNotInTenant => 'Personen gehören nicht zur aktuellen Instanz';
+  String get coreFlutterRepoPersonsNotInTenant =>
+      'Personen gehören nicht zur aktuellen Instanz';
 
   @override
-  String get coreFlutterRepoRootNotDeletable => 'Root kann nicht gelöscht werden.';
+  String get coreFlutterRepoRootNotDeletable =>
+      'Root kann nicht gelöscht werden.';
 
   @override
-  String get coreFlutterRepoSongNotFoundOrDenied => 'Song nicht gefunden oder Zugriff verweigert';
+  String get coreFlutterRepoSongNotFoundOrDenied =>
+      'Song nicht gefunden oder Zugriff verweigert';
 
   @override
   String get coreFlutterRepoTenantNotLinked => 'Instanz ist nicht verknüpft';
@@ -2101,7 +2178,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterRouterGoHome => 'Zur Startseite';
 
   @override
-  String get coreFlutterRouterInvalidAttendanceId => 'Ungültige Anwesenheits-ID';
+  String get coreFlutterRouterInvalidAttendanceId =>
+      'Ungültige Anwesenheits-ID';
 
   @override
   String get coreFlutterRouterInvalidPersonId => 'Ungültige Person-ID';
@@ -2148,7 +2226,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterSongFiles => 'Song-Dateien';
 
   @override
-  String get coreFlutterSongNotFound => 'Song wurde nicht gefunden oder bereits gelöscht';
+  String get coreFlutterSongNotFound =>
+      'Song wurde nicht gefunden oder bereits gelöscht';
 
   @override
   String get coreFlutterUpdate => 'Aktualisieren';
@@ -2157,7 +2236,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterVoices => 'Stimmen';
 
   @override
-  String get coreFlutterXlsUnsupported => 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.';
+  String get coreFlutterXlsUnsupported =>
+      'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.';
 
   @override
   String get coreFlutterZipFailed => 'ZIP konnte nicht erstellt werden';
@@ -2174,7 +2254,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dashSettingsReorderHint => 'Tippe auf das Symbol oben rechts, um die Reihenfolge per Drag & Drop anzupassen.';
+  String get dashSettingsReorderHint =>
+      'Tippe auf das Symbol oben rechts, um die Reihenfolge per Drag & Drop anzupassen.';
 
   @override
   String get dashSettingsReset => 'Zurücksetzen';
@@ -2209,7 +2290,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dateDialogLoadFailed => 'Termin konnte nicht geladen werden';
 
   @override
-  String get dateDialogMoveTo => 'Auf welchen Tag soll der Termin verschoben werden?';
+  String get dateDialogMoveTo =>
+      'Auf welchen Tag soll der Termin verschoben werden?';
 
   @override
   String dateDialogMoved(Object date) {
@@ -2217,7 +2299,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dateDialogNoProtocolType => 'Kein Termintyp mit Protokoll & Tagesordnung vorhanden';
+  String get dateDialogNoProtocolType =>
+      'Kein Termintyp mit Protokoll & Tagesordnung vorhanden';
 
   @override
   String get dateDialogReset => 'Zurücksetzen';
@@ -2237,10 +2320,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dateDialogWhichType => 'Welcher Termintyp?';
 
   @override
-  String get dbAccountDisabled => 'Dein Konto wurde deaktiviert. Bitte wende dich an den Administrator deiner Instanz.';
+  String get dbAccountDisabled =>
+      'Dein Konto wurde deaktiviert. Bitte wende dich an den Administrator deiner Instanz.';
 
   @override
-  String get dbAddDefaultTypesFailed => 'Fehler beim Hinzufügen der Standard Anwesenheitstypen';
+  String get dbAddDefaultTypesFailed =>
+      'Fehler beim Hinzufügen der Standard Anwesenheitstypen';
 
   @override
   String get dbAddParentFailed => 'Fehler beim hinzufügen des Elternteils.';
@@ -2252,16 +2337,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbChooseInstanceHeader => 'Instanz auswählen';
 
   @override
-  String get dbChooseInstanceMessage => 'Bitte wähle die Instanz aus, die du öffnen möchtest:';
+  String get dbChooseInstanceMessage =>
+      'Bitte wähle die Instanz aus, die du öffnen möchtest:';
 
   @override
-  String get dbCodeExpired => 'Der Code ist abgelaufen. Bitte fordere einen neuen an.';
+  String get dbCodeExpired =>
+      'Der Code ist abgelaufen. Bitte fordere einen neuen an.';
 
   @override
-  String get dbCodeInvalid => 'Der Code ist ungültig. Bitte überprüfe deine Eingabe.';
+  String get dbCodeInvalid =>
+      'Der Code ist ungültig. Bitte überprüfe deine Eingabe.';
 
   @override
-  String get dbCodeSendFailed => 'Der Code konnte nicht gesendet werden. Bitte versuche es erneut.';
+  String get dbCodeSendFailed =>
+      'Der Code konnte nicht gesendet werden. Bitte versuche es erneut.';
 
   @override
   String get dbCodeSent => 'Wir haben dir einen Code per E-Mail gesendet.';
@@ -2275,16 +2364,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dbCreateInstanceFailed => 'Fehler beim Erstellen der Instanz, bitte versuche es später erneut.';
+  String get dbCreateInstanceFailed =>
+      'Fehler beim Erstellen der Instanz, bitte versuche es später erneut.';
 
   @override
-  String get dbCreateUserFailed => 'Fehler beim Erstellen des Benutzers, bitte versuche es später erneut.';
+  String get dbCreateUserFailed =>
+      'Fehler beim Erstellen des Benutzers, bitte versuche es später erneut.';
 
   @override
   String get dbDeleteAccountFailed => 'Fehler beim Löschen des Kontos';
 
   @override
-  String get dbDeleteInstanceFailed => 'Fehler beim Löschen der Instanz, bitte versuche es später erneut.';
+  String get dbDeleteInstanceFailed =>
+      'Fehler beim Löschen der Instanz, bitte versuche es später erneut.';
 
   @override
   String get dbDeleteParentFailed => 'Fehler beim Löschen des Elternteils';
@@ -2293,16 +2385,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbDeleteViewerFailed => 'Fehler beim Löschen des Beobachters';
 
   @override
-  String get dbDemoRestricted => 'Diese Funktion ist im Demo-Modus nicht verfügbar.';
+  String get dbDemoRestricted =>
+      'Diese Funktion ist im Demo-Modus nicht verfügbar.';
 
   @override
-  String get dbEmailExists => 'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.';
+  String get dbEmailExists =>
+      'Deine E-Mail-Adresse existiert bereits. Bitte melde dich an.';
 
   @override
   String get dbEnterCorrectData => 'Bitte gib die richtigen Daten an!';
 
   @override
-  String get dbFavoriteFailed => 'Fehler beim Setzen des Favoriten, bitte versuche es später erneut.';
+  String get dbFavoriteFailed =>
+      'Fehler beim Setzen des Favoriten, bitte versuche es später erneut.';
 
   @override
   String get dbInstanceCreated => 'Instanz wurde erfolgreich erstellt!';
@@ -2317,13 +2412,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbInvalidPassword => 'Ungültiges Passwort';
 
   @override
-  String get dbLoadAttendanceTypeFailed => 'Fehler beim Laden des Anwesenheitstyps';
+  String get dbLoadAttendanceTypeFailed =>
+      'Fehler beim Laden des Anwesenheitstyps';
 
   @override
   String get dbLoadChildrenFailed => 'Fehler beim Laden der Kinder';
 
   @override
-  String get dbLoadGroupMembersFailed => 'Fehler beim Laden der Gruppenteilnehmer';
+  String get dbLoadGroupMembersFailed =>
+      'Fehler beim Laden der Gruppenteilnehmer';
 
   @override
   String get dbLoadPeopleFailed => 'Fehler beim Laden der Personen';
@@ -2347,7 +2444,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbMainGroupNotFound => 'Hauptgruppe nicht gefunden';
 
   @override
-  String get dbNoAccount => 'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.';
+  String get dbNoAccount =>
+      'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.';
 
   @override
   String get dbNoPersonFound => 'Keine Person gefunden';
@@ -2356,16 +2454,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbNotifyUserFailed => 'Fehler beim Informieren des Benutzers';
 
   @override
-  String get dbOtpUnavailable => 'Anmeldung per Code ist derzeit nicht möglich.';
+  String get dbOtpUnavailable =>
+      'Anmeldung per Code ist derzeit nicht möglich.';
 
   @override
-  String get dbPasswordChangeFailed => 'Passwort konnte nicht geändert werden. Bitte versuche es erneut.';
+  String get dbPasswordChangeFailed =>
+      'Passwort konnte nicht geändert werden. Bitte versuche es erneut.';
 
   @override
-  String get dbPasswordSameAsOld => 'Das neue Passwort darf nicht mit dem alten übereinstimmen.';
+  String get dbPasswordSameAsOld =>
+      'Das neue Passwort darf nicht mit dem alten übereinstimmen.';
 
   @override
-  String get dbPasswordTooWeak => 'Das Passwort ist zu schwach. Bitte wähle ein sichereres Passwort.';
+  String get dbPasswordTooWeak =>
+      'Das Passwort ist zu schwach. Bitte wähle ein sichereres Passwort.';
 
   @override
   String get dbPasswordUpdated => 'Passwort wurde erfolgreich aktualisiert';
@@ -2387,16 +2489,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbRegisterFailed => 'Fehler beim Registrieren';
 
   @override
-  String get dbRemoveAuthEmailFailed => 'Fehler beim Entfernen der E-Mail aus der Authentifizierung';
+  String get dbRemoveAuthEmailFailed =>
+      'Fehler beim Entfernen der E-Mail aus der Authentifizierung';
 
   @override
-  String get dbRemoveFromTenantFailed => 'Fehler beim Löschen des Accounts vom Mandanten';
+  String get dbRemoveFromTenantFailed =>
+      'Fehler beim Löschen des Accounts vom Mandanten';
 
   @override
-  String get dbResetPasswordFailed => 'Fehler beim Zurücksetzen des Passworts. Versuche es später erneut';
+  String get dbResetPasswordFailed =>
+      'Fehler beim Zurücksetzen des Passworts. Versuche es später erneut';
 
   @override
-  String get dbResetPasswordSent => 'Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt';
+  String get dbResetPasswordSent =>
+      'Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt';
 
   @override
   String get dbRoleParent => 'Elternteil';
@@ -2405,22 +2511,28 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbRoleViewer => 'Beobachter';
 
   @override
-  String get dbSessionExpired => 'Deine Sitzung ist abgelaufen. Bitte fordere den Link zum Zurücksetzen erneut an.';
+  String get dbSessionExpired =>
+      'Deine Sitzung ist abgelaufen. Bitte fordere den Link zum Zurücksetzen erneut an.';
 
   @override
-  String get dbTooManyAttempts => 'Zu viele Versuche. Bitte versuche es später erneut.';
+  String get dbTooManyAttempts =>
+      'Zu viele Versuche. Bitte versuche es später erneut.';
 
   @override
-  String get dbTooManyAttemptsWait => 'Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.';
+  String get dbTooManyAttemptsWait =>
+      'Zu viele Versuche. Bitte warte einen Moment und versuche es erneut.';
 
   @override
-  String get dbTooManyLogins => 'Zu viele Anmeldeversuche. Bitte versuche es später erneut.';
+  String get dbTooManyLogins =>
+      'Zu viele Anmeldeversuche. Bitte versuche es später erneut.';
 
   @override
-  String get dbTooManyRequests => 'Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.';
+  String get dbTooManyRequests =>
+      'Zu viele Anfragen. Bitte warte einen Moment und versuche es erneut.';
 
   @override
-  String get dbUpdateChurchFailed => 'Fehler beim Aktualisieren der Kirchenzuordnung';
+  String get dbUpdateChurchFailed =>
+      'Fehler beim Aktualisieren der Kirchenzuordnung';
 
   @override
   String get dbUpdatePlayerFailed => 'Fehler beim updaten des Spielers';
@@ -2429,10 +2541,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dbUpdateProfileFailed => 'Fehler beim Aktualisieren des Profils';
 
   @override
-  String get dbUpdateRoleFailed => 'Fehler beim Aktualisieren der Benutzerrolle';
+  String get dbUpdateRoleFailed =>
+      'Fehler beim Aktualisieren der Benutzerrolle';
 
   @override
-  String get dbUpdateSongHistoryFailed => 'Fehler beim Aktualisieren des Song-Verlaufs';
+  String get dbUpdateSongHistoryFailed =>
+      'Fehler beim Aktualisieren des Song-Verlaufs';
 
   @override
   String get dbUpdateUserFailed => 'Fehler beim Updaten des Benutzers';
@@ -2446,7 +2560,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dbUserAlreadyInTenant => 'Der Benutzer ist bereits in diesem Mandanten';
+  String get dbUserAlreadyInTenant =>
+      'Der Benutzer ist bereits in diesem Mandanten';
 
   @override
   String dbUserAlreadyInTenantAs(Object name, Object role) {
@@ -2454,13 +2569,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dbWeakPasswordRequirements => 'Das Passwort erfüllt nicht die Sicherheitsanforderungen.';
+  String get dbWeakPasswordRequirements =>
+      'Das Passwort erfüllt nicht die Sicherheitsanforderungen.';
 
   @override
-  String get dbWrongCredentials => 'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.';
+  String get dbWrongCredentials =>
+      'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.';
 
   @override
-  String get defaultsShowAllInfoText => 'Du bist bei diesem Termin nicht dabei.';
+  String get defaultsShowAllInfoText =>
+      'Du bist bei diesem Termin nicht dabei.';
 
   @override
   String get defaultsTypesMeeting => 'Treffen';
@@ -2481,7 +2599,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteAccountAttendance => 'Alle deine Anwesenheitsdaten';
 
   @override
-  String get deleteAccountCannotUndo => 'Diese Aktion kann <strong>nicht rückgängig</strong> gemacht werden.';
+  String get deleteAccountCannotUndo =>
+      'Diese Aktion kann <strong>nicht rückgängig</strong> gemacht werden.';
 
   @override
   String get deleteAccountCode => 'Bestätigungscode';
@@ -2493,7 +2612,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteAccountConfirm => 'Konto wirklich löschen?';
 
   @override
-  String get deleteAccountConfirmMessage => 'Dein Konto und alle damit verbundenen Daten werden unwiderruflich entfernt. Diese Aktion kann nicht rückgängig gemacht werden.';
+  String get deleteAccountConfirmMessage =>
+      'Dein Konto und alle damit verbundenen Daten werden unwiderruflich entfernt. Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get deleteAccountDeleteFinal => 'Endgültig löschen';
@@ -2508,7 +2628,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get deleteAccountDeleting => 'Konto wird gelöscht...';
 
   @override
-  String get deleteAccountEnterCode => 'Bitte gib zur Bestätigung den folgenden Code ein:';
+  String get deleteAccountEnterCode =>
+      'Bitte gib zur Bestätigung den folgenden Code ein:';
 
   @override
   String deleteAccountFailed(Object error) {
@@ -2516,10 +2637,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get deleteAccountIntro => 'Wenn du dein Konto löschst, werden <strong>alle</strong> deine Daten unwiderruflich entfernt:';
+  String get deleteAccountIntro =>
+      'Wenn du dein Konto löschst, werden <strong>alle</strong> deine Daten unwiderruflich entfernt:';
 
   @override
-  String get deleteAccountMemberships => 'Alle deine Mitgliedschaften in jeder Instanz';
+  String get deleteAccountMemberships =>
+      'Alle deine Mitgliedschaften in jeder Instanz';
 
   @override
   String get deleteAccountProfile => 'Dein Profil und Passbild';
@@ -2534,13 +2657,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dutyAddRule => 'Regel hinzufügen';
 
   @override
-  String get dutyAllAssigned => 'Alle aus dem Personenkreis sind schon eingeteilt.';
+  String get dutyAllAssigned =>
+      'Alle aus dem Personenkreis sind schon eingeteilt.';
 
   @override
   String get dutyAllTypes => 'alle Termintypen';
 
   @override
-  String get dutyAllTypesHint => 'Ohne Auswahl gilt die Regel für alle Termintypen.';
+  String get dutyAllTypesHint =>
+      'Ohne Auswahl gilt die Regel für alle Termintypen.';
 
   @override
   String get dutyAlsoPlanned => 'Auch geplante Termine?';
@@ -2571,7 +2696,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get dutyAssignHint => 'Sortiert nach Anzahl Dienste. Eingeteilte bekommen sofort eine Push-Nachricht und müssen bestätigen.';
+  String get dutyAssignHint =>
+      'Sortiert nach Anzahl Dienste. Eingeteilte bekommen sofort eine Push-Nachricht und müssen bestätigen.';
 
   @override
   String dutyAssignName(Object name) {
@@ -2622,10 +2748,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dutyDeleteRuleConfirm => 'Regel löschen?';
 
   @override
-  String get dutyDeleteRuleMessage => 'Bereits eingetragene Abmeldungen bleiben bestehen.';
+  String get dutyDeleteRuleMessage =>
+      'Bereits eingetragene Abmeldungen bleiben bestehen.';
 
   @override
-  String get dutyDistributeHint => 'Nur offene Plätze werden gefüllt, bestehende Einteilungen bleiben. Wer abgesagt hat oder regelmäßig verhindert ist, wird nicht eingeteilt. Wer bisher am wenigsten Dienste hat, kommt zuerst dran.';
+  String get dutyDistributeHint =>
+      'Nur offene Plätze werden gefüllt, bestehende Einteilungen bleiben. Wer abgesagt hat oder regelmäßig verhindert ist, wird nicht eingeteilt. Wer bisher am wenigsten Dienste hat, kommt zuerst dran.';
 
   @override
   String get dutyDistributing => 'Verteile Dienste…';
@@ -2727,13 +2855,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dutyMyRequestsTitle => 'Deine Dienste: bitte bestätigen';
 
   @override
-  String get dutyNoDutyEvents => 'Im Zeitraum gibt es keine Termine mit Dienst-Modus.';
+  String get dutyNoDutyEvents =>
+      'Im Zeitraum gibt es keine Termine mit Dienst-Modus.';
 
   @override
-  String get dutyNoRuleOther => 'Noch keine Regel. Trag ein, an welchen Wochentagen die Person grundsätzlich nicht kann, z. B. mittwochs wegen der Kinderstunde.';
+  String get dutyNoRuleOther =>
+      'Noch keine Regel. Trag ein, an welchen Wochentagen die Person grundsätzlich nicht kann, z. B. mittwochs wegen der Kinderstunde.';
 
   @override
-  String get dutyNoRuleSelf => 'Noch keine Regel. Trag ein, an welchen Wochentagen du grundsätzlich nicht kannst, z. B. mittwochs wegen der Kinderstunde.';
+  String get dutyNoRuleSelf =>
+      'Noch keine Regel. Trag ein, an welchen Wochentagen du grundsätzlich nicht kannst, z. B. mittwochs wegen der Kinderstunde.';
 
   @override
   String get dutyNobody => 'Niemand (Platz offen lassen)';
@@ -2751,7 +2882,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dutyOpen => 'offen';
 
   @override
-  String get dutyOverbooked => 'Du hast mehr Personen gewählt als Plätze frei sind. Der Dienst ist dann überbesetzt.';
+  String get dutyOverbooked =>
+      'Du hast mehr Personen gewählt als Plätze frei sind. Der Dienst ist dann überbesetzt.';
 
   @override
   String get dutyPeriod => 'Zeitraum';
@@ -2802,7 +2934,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get dutyRedistribute => 'Neu verteilen';
 
   @override
-  String get dutyRuleHint => 'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wirst du dann nicht eingeteilt.';
+  String get dutyRuleHint =>
+      'Neue Termine an diesen Tagen werden automatisch als entschuldigt eingetragen. Bei Diensten wirst du dann nicht eingeteilt.';
 
   @override
   String get dutyRules => 'Regeln';
@@ -2982,7 +3115,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get exportFlutterPdfLimitHint => 'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.';
+  String get exportFlutterPdfLimitHint =>
+      'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.';
 
   @override
   String get exportFlutterSuccess => 'Export erfolgreich';
@@ -3040,10 +3174,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsAddNew => 'Neues Feld hinzufügen';
 
   @override
-  String get extraFieldsAddOption => 'Bitte füge mindestens eine Option für das Auswahlfeld hinzu.';
+  String get extraFieldsAddOption =>
+      'Bitte füge mindestens eine Option für das Auswahlfeld hinzu.';
 
   @override
-  String get extraFieldsAllNeedName => 'Alle Zusatzfelder müssen einen Namen haben.';
+  String get extraFieldsAllNeedName =>
+      'Alle Zusatzfelder müssen einen Namen haben.';
 
   @override
   String get extraFieldsAsChip => 'Als Chip';
@@ -3085,16 +3221,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsEditable => 'Von Mitgliedern bearbeitbar';
 
   @override
-  String get extraFieldsEditableHelper => 'Aktivieren, damit Mitglieder den Wert selbst ändern können.';
+  String get extraFieldsEditableHelper =>
+      'Aktivieren, damit Mitglieder den Wert selbst ändern können.';
 
   @override
   String get extraFieldsEditableSuffix => ' (bearbeitbar)';
 
   @override
-  String get extraFieldsFlutterFirstOptionDefault => 'Erste Option ist der Standardwert';
+  String get extraFieldsFlutterFirstOptionDefault =>
+      'Erste Option ist der Standardwert';
 
   @override
-  String get extraFieldsFlutterLeaveMessage => 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
+  String get extraFieldsFlutterLeaveMessage =>
+      'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
 
   @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
@@ -3103,13 +3242,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsForSongs => 'Zusätzliche Felder für Werke';
 
   @override
-  String get extraFieldsIdEmpty => 'Die ID des Zusatzfeldes darf nicht leer sein.';
+  String get extraFieldsIdEmpty =>
+      'Die ID des Zusatzfeldes darf nicht leer sein.';
 
   @override
-  String get extraFieldsIdExists => 'Ein Zusatzfeld mit dieser ID existiert bereits. Bitte wähle einen anderen Namen.';
+  String get extraFieldsIdExists =>
+      'Ein Zusatzfeld mit dieser ID existiert bereits. Bitte wähle einen anderen Namen.';
 
   @override
-  String get extraFieldsInvalidName => 'Bitte gib einen gültigen Namen für das Zusatzfeld ein.';
+  String get extraFieldsInvalidName =>
+      'Bitte gib einen gültigen Namen für das Zusatzfeld ein.';
 
   @override
   String get extraFieldsNoOptions => 'Keine Optionen';
@@ -3118,7 +3260,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsNoOptionsSelected => 'Keine Optionen ausgewählt';
 
   @override
-  String get extraFieldsNoneYet => 'Es wurden noch keine zusätzlichen Felder hinzugefügt.';
+  String get extraFieldsNoneYet =>
+      'Es wurden noch keine zusätzlichen Felder hinzugefügt.';
 
   @override
   String get extraFieldsNumber => 'Zahl';
@@ -3185,16 +3328,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsVisible => 'Für Mitglieder sichtbar';
 
   @override
-  String get extraFieldsVisibleHelper => 'Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.';
+  String get extraFieldsVisibleHelper =>
+      'Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.';
 
   @override
   String get extraFieldsYesNo => 'Ja/Nein';
 
   @override
-  String get fileViewerDownloadFailed => 'Datei konnte nicht heruntergeladen werden';
+  String get fileViewerDownloadFailed =>
+      'Datei konnte nicht heruntergeladen werden';
 
   @override
-  String get fileViewerNoPreview => 'Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.';
+  String get fileViewerNoPreview =>
+      'Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.';
 
   @override
   String get filesAlmostFull => ' · fast voll';
@@ -3213,7 +3359,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get filesConnectTelegram => 'Bitte verbinde zuerst Telegram in den Benachrichtigungen.';
+  String get filesConnectTelegram =>
+      'Bitte verbinde zuerst Telegram in den Benachrichtigungen.';
 
   @override
   String get filesCreate => 'Erstellen';
@@ -3301,7 +3448,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get filesFull => ' · voll';
 
   @override
-  String get filesHowMuch => 'Wie viel Speicher braucht ihr ungefähr? (optional)';
+  String get filesHowMuch =>
+      'Wie viel Speicher braucht ihr ungefähr? (optional)';
 
   @override
   String get filesLinkCopied => 'Link in Zwischenablage kopiert';
@@ -3331,7 +3479,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get filesMoveHint => 'Zielordner relativ zum Tenant-Root. Leer lassen für Root.';
+  String get filesMoveHint =>
+      'Zielordner relativ zum Tenant-Root. Leer lassen für Root.';
 
   @override
   String get filesMoved => 'Eintrag wurde verschoben.';
@@ -3395,13 +3544,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get filesRequestHint => 'Die Anfrage geht an den Attendix-Admin. Er meldet sich bei dir.';
+  String get filesRequestHint =>
+      'Die Anfrage geht an den Attendix-Admin. Er meldet sich bei dir.';
 
   @override
   String get filesRequestMore => 'Mehr Speicher anfragen';
 
   @override
-  String get filesRequestSent => 'Deine Anfrage wurde gesendet. Wir melden uns so schnell wie möglich.';
+  String get filesRequestSent =>
+      'Deine Anfrage wurde gesendet. Wir melden uns so schnell wie möglich.';
 
   @override
   String get filesResetSearch => 'Suche zurücksetzen';
@@ -3413,19 +3564,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get filesSearch => 'Suche';
 
   @override
-  String get filesSearchCombine => 'Filter sind kombinierbar, z. B. <strong>protokoll typ:pdf datum:2026</strong>.';
+  String get filesSearchCombine =>
+      'Filter sind kombinierbar, z. B. <strong>protokoll typ:pdf datum:2026</strong>.';
 
   @override
-  String get filesSearchDate => '<strong>datum:&lt;wert&gt;</strong> · Filtert nach Änderungsdatum (z. B. <strong>datum:2026</strong>, <strong>datum:03.2026</strong>, <strong>datum:03.03.2026</strong>).';
+  String get filesSearchDate =>
+      '<strong>datum:&lt;wert&gt;</strong> · Filtert nach Änderungsdatum (z. B. <strong>datum:2026</strong>, <strong>datum:03.2026</strong>, <strong>datum:03.03.2026</strong>).';
 
   @override
-  String get filesSearchHelp => 'Freitext durchsucht den Dateinamen/Ordnernamen.';
+  String get filesSearchHelp =>
+      'Freitext durchsucht den Dateinamen/Ordnernamen.';
 
   @override
   String get filesSearchPlaceholder => 'Dateien & Ordner suchen...';
 
   @override
-  String get filesSearchType => '<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).';
+  String get filesSearchType =>
+      '<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).';
 
   @override
   String get filesSend => 'Senden';
@@ -3543,7 +3698,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsAllEvents => 'Alle Termine für Mitglieder sichtbar';
 
   @override
-  String get generalSettingsAllEventsHelper => 'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.';
+  String get generalSettingsAllEventsHelper =>
+      'Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.';
 
   @override
   String get generalSettingsAllTime => 'Gesamte Historie';
@@ -3567,7 +3723,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsAutoApprove => 'Auto-Genehmigung';
 
   @override
-  String get generalSettingsAutoApproveHelper => 'Aktivieren, um neue Registrierungen automatisch zu genehmigen. Andernfalls müssen neue Registrierungen manuell genehmigt werden.';
+  String get generalSettingsAutoApproveHelper =>
+      'Aktivieren, um neue Registrierungen automatisch zu genehmigen. Andernfalls müssen neue Registrierungen manuell genehmigt werden.';
 
   @override
   String get generalSettingsBranding => 'Branding';
@@ -3576,7 +3733,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsCombine => 'Verknüpfung';
 
   @override
-  String get generalSettingsCombineHelper => 'Wie diese Regel mit anderen Regeln kombiniert wird';
+  String get generalSettingsCombineHelper =>
+      'Wie diese Regel mit anderen Regeln kombiniert wird';
 
   @override
   String get generalSettingsCount => 'Anzahl';
@@ -3588,22 +3746,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsDays => 'Anzahl Tage';
 
   @override
-  String get generalSettingsDaysHelper => 'Anzahl der Tage, die zurück geprüft werden';
+  String get generalSettingsDaysHelper =>
+      'Anzahl der Tage, die zurück geprüft werden';
 
   @override
   String get generalSettingsDeleteRule => 'Regel löschen?';
 
   @override
-  String get generalSettingsDeleteRuleMessage => 'Möchtest du diese Regel wirklich löschen?';
+  String get generalSettingsDeleteRuleMessage =>
+      'Möchtest du diese Regel wirklich löschen?';
 
   @override
   String get generalSettingsDutyView => 'Dienstplan-Ansicht für Meine Termine';
 
   @override
-  String get generalSettingsDutyViewHelper => '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.';
+  String get generalSettingsDutyViewHelper =>
+      '„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.';
 
   @override
-  String get generalSettingsFlutterAndHint => 'Person ist kritisch, wenn ALLE Regeln zutreffen';
+  String get generalSettingsFlutterAndHint =>
+      'Person ist kritisch, wenn ALLE Regeln zutreffen';
 
   @override
   String get generalSettingsFlutterAndShort => 'UND';
@@ -3626,7 +3788,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterExcuses => 'Entschuldigungen';
 
   @override
-  String get generalSettingsFlutterExcusesHelper => 'Erlaubt \"Entschuldigt\" als Status';
+  String get generalSettingsFlutterExcusesHelper =>
+      'Erlaubt \"Entschuldigt\" als Status';
 
   @override
   String generalSettingsFlutterFieldsCount(num count) {
@@ -3646,7 +3809,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterNoTypes => 'Keine Terminarten vorhanden';
 
   @override
-  String get generalSettingsFlutterOrHint => 'Person ist kritisch, wenn EINE der Regeln zutrifft';
+  String get generalSettingsFlutterOrHint =>
+      'Person ist kritisch, wenn EINE der Regeln zutrifft';
 
   @override
   String get generalSettingsFlutterOrShort => 'ODER';
@@ -3667,31 +3831,36 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterRuleEnabled => 'Regel aktiviert';
 
   @override
-  String get generalSettingsFlutterRuleEnabledHelper => 'Deaktivierte Regeln werden nicht ausgewertet';
+  String get generalSettingsFlutterRuleEnabledHelper =>
+      'Deaktivierte Regeln werden nicht ausgewertet';
 
   @override
   String get generalSettingsFlutterRuleUpdated => 'Regel aktualisiert';
 
   @override
-  String get generalSettingsFlutterStatusCritical => 'Status (zählt als kritisch)';
+  String get generalSettingsFlutterStatusCritical =>
+      'Status (zählt als kritisch)';
 
   @override
   String get generalSettingsForeignInfo => 'Info-Text für fremde Termine';
 
   @override
-  String get generalSettingsForeignInfoPh => 'Du bist bei diesem Termin nicht dabei.';
+  String get generalSettingsForeignInfoPh =>
+      'Du bist bei diesem Termin nicht dabei.';
 
   @override
   String get generalSettingsGeneral => 'Allgemein';
 
   @override
-  String get generalSettingsGroupNameEmpty => 'Der Gruppenname darf nicht leer sein.';
+  String get generalSettingsGroupNameEmpty =>
+      'Der Gruppenname darf nicht leer sein.';
 
   @override
   String get generalSettingsHolidayState => 'Bundesland für Ferien/Feiertage';
 
   @override
-  String get generalSettingsHolidaysHelper => 'Aktivieren, um beim Anlegen der Anwesenheiten die Ferien und Feiertage hervorzuheben. (nur verfügbar für Deutschland)';
+  String get generalSettingsHolidaysHelper =>
+      'Aktivieren, um beim Anlegen der Anwesenheiten die Ferien und Feiertage hervorzuheben. (nur verfügbar für Deutschland)';
 
   @override
   String get generalSettingsLastXDays => 'Letzte X Tage';
@@ -3709,7 +3878,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsMembersList => 'Mitgliederliste für alle';
 
   @override
-  String get generalSettingsMembersListHelper => 'Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen.';
+  String get generalSettingsMembersListHelper =>
+      'Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen.';
 
   @override
   String get generalSettingsNameOptional => 'Name (optional)';
@@ -3721,10 +3891,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsNewRule => 'Neue Regel hinzufügen';
 
   @override
-  String get generalSettingsNoGroupsYet => 'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine Gruppe an, bevor du die Registrierung aktivierst.';
+  String get generalSettingsNoGroupsYet =>
+      'Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine Gruppe an, bevor du die Registrierung aktivierst.';
 
   @override
-  String get generalSettingsNoRules => 'Es wurden noch keine Problemfall-Regeln definiert. Regeln bestimmen, wann eine Person als Problemfall markiert wird.';
+  String get generalSettingsNoRules =>
+      'Es wurden noch keine Problemfall-Regeln definiert. Regeln bestimmen, wann eine Person als Problemfall markiert wird.';
 
   @override
   String get generalSettingsNone => 'Keine';
@@ -3739,16 +3911,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsParentsFeature => 'Eltern-Funktion';
 
   @override
-  String get generalSettingsParentsHelper => 'Aktivieren, um Eltern die Möglichkeit zu geben, Einsicht in die Anwesenheiten ihrer Kinder zu geben und Abwesenheiten pflegen zu können.';
+  String get generalSettingsParentsHelper =>
+      'Aktivieren, um Eltern die Möglichkeit zu geben, Einsicht in die Anwesenheiten ihrer Kinder zu geben und Abwesenheiten pflegen zu können.';
 
   @override
   String get generalSettingsPercent => 'Prozent';
 
   @override
-  String get generalSettingsPeriodHelper => 'Bestimmt den Zeitraum für die Zählung';
+  String get generalSettingsPeriodHelper =>
+      'Bestimmt den Zeitraum für die Zählung';
 
   @override
-  String get generalSettingsPeriodPositive => 'Der Zeitraum muss größer als 0 sein.';
+  String get generalSettingsPeriodPositive =>
+      'Der Zeitraum muss größer als 0 sein.';
 
   @override
   String get generalSettingsPeriodType => 'Zeitraum-Typ';
@@ -3774,13 +3949,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsRegisterFields => 'Registrierungsfelder';
 
   @override
-  String get generalSettingsRegisterFieldsHint => 'Wähle die Felder aus, die bei der Registrierung angezeigt werden sollen. Alle ausgewählten Felder sind Pflichtfelder.';
+  String get generalSettingsRegisterFieldsHint =>
+      'Wähle die Felder aus, die bei der Registrierung angezeigt werden sollen. Alle ausgewählten Felder sind Pflichtfelder.';
 
   @override
-  String get generalSettingsRegisterHelper => 'Aktivieren, um neuen Personen die Registrierung in dieser Instanz zu erlauben. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.';
+  String get generalSettingsRegisterHelper =>
+      'Aktivieren, um neuen Personen die Registrierung in dieser Instanz zu erlauben. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.';
 
   @override
-  String get generalSettingsRegisterNoGroups => 'Registrierung kann nicht aktiviert werden: Bitte lege zuerst mindestens eine Gruppe an.';
+  String get generalSettingsRegisterNoGroups =>
+      'Registrierung kann nicht aktiviert werden: Bitte lege zuerst mindestens eine Gruppe an.';
 
   @override
   String get generalSettingsRegistration => 'Registrierung';
@@ -3795,46 +3973,55 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsRulePh => 'z.B. Verspätungs-Warnung';
 
   @override
-  String get generalSettingsSaveFailed => 'Fehler beim Aktualisieren der Einstellungen';
+  String get generalSettingsSaveFailed =>
+      'Fehler beim Aktualisieren der Einstellungen';
 
   @override
   String get generalSettingsSaved => 'Einstellungen gespeichert';
 
   @override
-  String get generalSettingsSavedReload => 'Die Einstellungen wurden erfolgreich gespeichert. Bitte lade die Seite neu, um die Änderungen zu sehen.';
+  String get generalSettingsSavedReload =>
+      'Die Einstellungen wurden erfolgreich gespeichert. Bitte lade die Seite neu, um die Änderungen zu sehen.';
 
   @override
   String get generalSettingsSaving => 'Einstellungen werden gespeichert...';
 
   @override
-  String get generalSettingsSeasonHelper => 'Anwesenheiten werden erst ab diesem Datum bei den Personen berücksichtigt';
+  String get generalSettingsSeasonHelper =>
+      'Anwesenheiten werden erst ab diesem Datum bei den Personen berücksichtigt';
 
   @override
   String get generalSettingsSeasonStart => 'Saisonbeginn';
 
   @override
-  String get generalSettingsSelectStatus => 'Bitte wähle mindestens einen Status aus.';
+  String get generalSettingsSelectStatus =>
+      'Bitte wähle mindestens einen Status aus.';
 
   @override
   String get generalSettingsShareSongs => 'Werke öffentlich teilen';
 
   @override
-  String get generalSettingsShareSongsHelper => 'Aktivieren, um Werke als öffentlichen link zu teilen. Jeder mit dem Link kann die Werke ansehen aber nicht bearbeiten. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.';
+  String get generalSettingsShareSongsHelper =>
+      'Aktivieren, um Werke als öffentlichen link zu teilen. Jeder mit dem Link kann die Werke ansehen aber nicht bearbeiten. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.';
 
   @override
   String get generalSettingsShiftPlans => 'Schichtpläne';
 
   @override
-  String get generalSettingsShiftPresent => 'Schicht-/Arbeitsbedingt = Anwesend';
+  String get generalSettingsShiftPresent =>
+      'Schicht-/Arbeitsbedingt = Anwesend';
 
   @override
-  String get generalSettingsShiftPresentHelper => 'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten als anwesend für die prozentuale Berechnung zu werten.';
+  String get generalSettingsShiftPresentHelper =>
+      'Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten als anwesend für die prozentuale Berechnung zu werten.';
 
   @override
-  String get generalSettingsShortNameEmpty => 'Der Kurzname darf nicht leer sein.';
+  String get generalSettingsShortNameEmpty =>
+      'Der Kurzname darf nicht leer sein.';
 
   @override
-  String get generalSettingsShortNameHelper => 'Wird vor allem als Dateiname bei Exports verwendet';
+  String get generalSettingsShortNameHelper =>
+      'Wird vor allem als Dateiname bei Exports verwendet';
 
   @override
   String get generalSettingsShowHolidays => 'Ferien/Feiertage anzeigen';
@@ -3846,7 +4033,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsSongDb => 'Werk-Datenbank';
 
   @override
-  String get generalSettingsTeachersHelper => 'Aktivieren, um die Lehrer der Spieler verwalten zu können.';
+  String get generalSettingsTeachersHelper =>
+      'Aktivieren, um die Lehrer der Spieler verwalten zu können.';
 
   @override
   String get generalSettingsTenantName => 'Instanz-Name';
@@ -3855,7 +4043,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsTenantShort => 'Instanz-Kürzel';
 
   @override
-  String get generalSettingsThresholdPositive => 'Der Schwellenwert muss größer als 0 sein.';
+  String get generalSettingsThresholdPositive =>
+      'Der Schwellenwert muss größer als 0 sein.';
 
   @override
   String get generalSettingsThresholdType => 'Schwellenwert-Typ';
@@ -3869,7 +4058,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get handoverArchiveNote => 'Die Personen werden in dieser Instanz archiviert.';
+  String get handoverArchiveNote =>
+      'Die Personen werden in dieser Instanz archiviert.';
 
   @override
   String handoverConfirm(Object count, Object tenant, Object note) {
@@ -3891,22 +4081,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get handoverInGroupDots => 'Ist in der Gruppe...';
 
   @override
-  String get handoverIntro => 'Hiermit kannst du Personen innerhalb einer Organisation weitergeben oder in einer andere Instanz kopieren. Falls die Person ein Account hat, wird diese informiert.';
+  String get handoverIntro =>
+      'Hiermit kannst du Personen innerhalb einer Organisation weitergeben oder in einer andere Instanz kopieren. Falls die Person ein Account hat, wird diese informiert.';
 
   @override
-  String get handoverKeepHelper => 'Die Person wird in der aktuellen Instanz nicht archiviert sondern bleibt aktiv';
+  String get handoverKeepHelper =>
+      'Die Person wird in der aktuellen Instanz nicht archiviert sondern bleibt aktiv';
 
   @override
   String get handoverKeepInTenant => 'Personen in Instanz behalten';
 
   @override
-  String get handoverMainGroupHelper => 'Personen die in der Hauptgruppe sind, werden auch angezeigt';
+  String get handoverMainGroupHelper =>
+      'Personen die in der Hauptgruppe sind, werden auch angezeigt';
 
   @override
-  String get handoverNoData => 'Keine Daten für die Personenübergabe vorhanden.';
+  String get handoverNoData =>
+      'Keine Daten für die Personenübergabe vorhanden.';
 
   @override
-  String get handoverNoOtherTenants => 'Es sind keine weiteren Instanzen vorhanden. Bitte füge weitere Instanzen dieser Organisation hinzu.';
+  String get handoverNoOtherTenants =>
+      'Es sind keine weiteren Instanzen vorhanden. Bitte füge weitere Instanzen dieser Organisation hinzu.';
 
   @override
   String get handoverNoneSelected => 'Keine Personen ausgewählt';
@@ -3933,7 +4128,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get handoverSettings => 'Einstellungen';
 
   @override
-  String get handoverStayNote => 'Die Personen bleiben in dieser Instanz erhalten.';
+  String get handoverStayNote =>
+      'Die Personen bleiben in dieser Instanz erhalten.';
 
   @override
   String get handoverTargetTenant => 'Ziel-Instanz';
@@ -4037,7 +4233,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get historyRemoveConfirm => 'Möchtest du den Eintrag wirklich entfernen?';
+  String get historyRemoveConfirm =>
+      'Möchtest du den Eintrag wirklich entfernen?';
 
   @override
   String get historySearchSong => 'Werk suchen...';
@@ -4063,7 +4260,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeDashboardAbsences => 'Abwesenheiten & Pausierungen';
 
   @override
-  String get homeDashboardAllHidden => 'Alle Karten sind ausgeblendet. Konfiguriere das Dashboard unter Einstellungen.';
+  String get homeDashboardAllHidden =>
+      'Alle Karten sind ausgeblendet. Konfiguriere das Dashboard unter Einstellungen.';
 
   @override
   String get homeDashboardAverage => 'Durchschnitt';
@@ -4131,7 +4329,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get homeDashboardLastEvent => 'Letzter Termin';
 
   @override
-  String homeDashboardLastSummary(Object present, Object total, Object excused) {
+  String homeDashboardLastSummary(
+    Object present,
+    Object total,
+    Object excused,
+  ) {
     return '$present/$total anwesend · $excused entschuldigt';
   }
 
@@ -4241,7 +4443,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsAddGroup => 'Gruppe hinzufügen';
 
   @override
-  String get instrumentsCannotDelete => 'Du kannst das Instrument nicht löschen, da es Spieler gibt (gab), die darauf spielen';
+  String get instrumentsCannotDelete =>
+      'Du kannst das Instrument nicht löschen, da es Spieler gibt (gab), die darauf spielen';
 
   @override
   String get instrumentsCategories => 'Kategorien';
@@ -4253,16 +4456,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsCategoryName => 'Name der Kategorie';
 
   @override
-  String get instrumentsDeleteCategory => 'Kategorie wirklich löschen? Alle Gruppen in dieser Kategorie verlieren die Kategorisierung.';
+  String get instrumentsDeleteCategory =>
+      'Kategorie wirklich löschen? Alle Gruppen in dieser Kategorie verlieren die Kategorisierung.';
 
   @override
   String get instrumentsDeleteGroup => 'Gruppe wirklich löschen?';
 
   @override
-  String get instrumentsDragCategories => 'Ziehe die Kategorien, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern.';
+  String get instrumentsDragCategories =>
+      'Ziehe die Kategorien, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern.';
 
   @override
-  String get instrumentsDragGroups => 'Ziehe die Gruppen, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern.';
+  String get instrumentsDragGroups =>
+      'Ziehe die Gruppen, um die Reihenfolge anzupassen. Klicke auf das Häkchen, um zu speichern.';
 
   @override
   String get instrumentsEditCategory => 'Kategorie bearbeiten';
@@ -4291,7 +4497,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsFlutterNoCategories => 'Keine Kategorien';
 
   @override
-  String get instrumentsFlutterNoCategoriesHint => 'Tippe + um eine Kategorie zu erstellen';
+  String get instrumentsFlutterNoCategoriesHint =>
+      'Tippe + um eine Kategorie zu erstellen';
 
   @override
   String get instrumentsFlutterShortName => 'Kurzname';
@@ -4343,7 +4550,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get instrumentsSynonymsGenerated => 'Synonyme erfolgreich generiert!';
 
   @override
-  String get instrumentsSynonymsHelper => 'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.';
+  String get instrumentsSynonymsHelper =>
+      'Definiere Synonyme um beim Hinzufügen von Dateien zu Werken die Instrumente automatisch zuordnen zu können. Synonyme durch Komma trennen.';
 
   @override
   String get instrumentsTuning => 'Stimmung';
@@ -4369,7 +4577,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get linkPersonsIgnore => 'Ignorieren';
 
   @override
-  String get linkPersonsIntro => 'Mögliche Übereinstimmungen aus verschiedenen Instanzen. Verknüpfte Personen synchronisieren Name, Geburtstag, E-Mail und Telefon automatisch.';
+  String get linkPersonsIntro =>
+      'Mögliche Übereinstimmungen aus verschiedenen Instanzen. Verknüpfte Personen synchronisieren Name, Geburtstag, E-Mail und Telefon automatisch.';
 
   @override
   String get linkPersonsLink => 'Verknüpfen';
@@ -4421,7 +4630,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get linkPersonsReasonSwapped => 'Vor-/Nachname vertauscht';
 
   @override
-  String get linkPersonsSelectOne => 'Bitte mindestens eine Übereinstimmung auswählen';
+  String get linkPersonsSelectOne =>
+      'Bitte mindestens eine Übereinstimmung auswählen';
 
   @override
   String get linkPersonsTitle => 'Personen verknüpfen';
@@ -4436,7 +4646,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginFailedHeader => 'Anmeldung fehlgeschlagen';
 
   @override
-  String get loginFailedMessage => 'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.';
+  String get loginFailedMessage =>
+      'E-Mail oder Passwort ist falsch. Falls du kein Passwort gesetzt hast, kannst du dich stattdessen mit einem Code per E-Mail anmelden.';
 
   @override
   String get loginFlutterAccessDenied => 'Der Zugriff wurde verweigert.';
@@ -4459,7 +4670,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginFlutterEnterPassword => 'Bitte Passwort eingeben';
 
   @override
-  String get loginFlutterLinkFailed => 'Der Link konnte nicht verarbeitet werden.';
+  String get loginFlutterLinkFailed =>
+      'Der Link konnte nicht verarbeitet werden.';
 
   @override
   String get loginFlutterNewPassword => 'Neues Passwort';
@@ -4468,7 +4680,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginFlutterOtherEmail => 'Andere E-Mail verwenden';
 
   @override
-  String get loginFlutterResetIntro => 'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.';
+  String get loginFlutterResetIntro =>
+      'Gib deine E-Mail-Adresse ein und wir senden dir einen Link zum Zurücksetzen.';
 
   @override
   String loginFlutterResetLinkSent(Object email) {
@@ -4482,7 +4695,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginFlutterToLogin => 'Zum Login';
 
   @override
-  String get loginFlutterUnexpectedError => 'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
+  String get loginFlutterUnexpectedError =>
+      'Ein unerwarteter Fehler ist aufgetreten. Bitte versuche es erneut.';
 
   @override
   String get loginForgotPassword => 'Passwort vergessen?';
@@ -4497,7 +4711,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginLinkAndSignIn => 'Verknüpfen & anmelden';
 
   @override
-  String get loginLinkNote => 'Verknüpfe dein Attendix-Konto einmalig mit Microsoft. Melde dich mit deinen Attendix-Zugangsdaten an – danach wirst du in Teams automatisch angemeldet.';
+  String get loginLinkNote =>
+      'Verknüpfe dein Attendix-Konto einmalig mit Microsoft. Melde dich mit deinen Attendix-Zugangsdaten an – danach wirst du in Teams automatisch angemeldet.';
 
   @override
   String get loginModeOtp => 'Code per E-Mail';
@@ -4509,13 +4724,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginNoAccountHeader => 'Kein Konto gefunden';
 
   @override
-  String get loginNoAccountMessage => 'Für diese E-Mail-Adresse existiert noch kein Konto. Möchtest du dich jetzt registrieren?';
+  String get loginNoAccountMessage =>
+      'Für diese E-Mail-Adresse existiert noch kein Konto. Möchtest du dich jetzt registrieren?';
 
   @override
   String get loginNotConfirmedHeader => 'E-Mail nicht bestätigt';
 
   @override
-  String get loginNotConfirmedMessage => 'Deine E-Mail-Adresse wurde noch nicht bestätigt. Möchtest du die Bestätigungs-E-Mail erneut senden?';
+  String get loginNotConfirmedMessage =>
+      'Deine E-Mail-Adresse wurde noch nicht bestätigt. Möchtest du die Bestätigungs-E-Mail erneut senden?';
 
   @override
   String get loginNotConfirmedResend => 'Erneut senden';
@@ -4559,13 +4776,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get loginToastEnterEmail => 'Bitte gib deine E-Mail-Adresse ein.';
 
   @override
-  String get loginToastInvalidEmail => 'Bitte eine gültige E-Mail Adresse eingeben.';
+  String get loginToastInvalidEmail =>
+      'Bitte eine gültige E-Mail Adresse eingeben.';
 
   @override
-  String get loginToastMsLinked => 'Microsoft-Konto verknüpft. Du wirst künftig automatisch angemeldet.';
+  String get loginToastMsLinked =>
+      'Microsoft-Konto verknüpft. Du wirst künftig automatisch angemeldet.';
 
   @override
-  String get loginToastRegistered => 'Registrierung erfolgreich, bitte bestätige deine E-Mail-Adresse.';
+  String get loginToastRegistered =>
+      'Registrierung erfolgreich, bitte bestätige deine E-Mail-Adresse.';
 
   @override
   String loginVersion(Object version) {
@@ -4581,7 +4801,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get messagesCountsFailed => 'Die Empfänger konnten nicht geladen werden.';
+  String get messagesCountsFailed =>
+      'Die Empfänger konnten nicht geladen werden.';
 
   @override
   String get messagesDeleteConfirm => 'Mitteilung löschen?';
@@ -4590,7 +4811,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messagesDeleteFailed => 'Fehler beim Löschen';
 
   @override
-  String get messagesDeleteHint => 'Die Mitteilung verschwindet auch bei allen Empfängern aus der App. Bereits versendete E-Mails bleiben bestehen.';
+  String get messagesDeleteHint =>
+      'Die Mitteilung verschwindet auch bei allen Empfängern aus der App. Bereits versendete E-Mails bleiben bestehen.';
 
   @override
   String get messagesDeleteMessage => 'Mitteilung löschen';
@@ -4667,7 +4889,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messagesIsSending => 'Mitteilung wird versendet';
 
   @override
-  String get messagesListLoadFailed => 'Mitteilungen konnten nicht geladen werden';
+  String get messagesListLoadFailed =>
+      'Mitteilungen konnten nicht geladen werden';
 
   @override
   String get messagesLoadFailed => 'Mitteilung konnte nicht geladen werden';
@@ -4697,10 +4920,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messagesNone => 'Noch keine Mitteilungen';
 
   @override
-  String get messagesNoneHint => 'Informiere deine Gruppe mit einer Mitteilung und sieh direkt, wer sie schon gelesen hat.';
+  String get messagesNoneHint =>
+      'Informiere deine Gruppe mit einer Mitteilung und sieh direkt, wer sie schon gelesen hat.';
 
   @override
-  String get messagesNotAvailable => 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.';
+  String get messagesNotAvailable =>
+      'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.';
 
   @override
   String get messagesOnlyGroups => 'Nur bestimmte Gruppen';
@@ -4711,7 +4936,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get messagesOpenedEstimate => '„Geöffnet“ bei E-Mails ist ein Schätzwert: manche Mail-Apps laden Bilder vorab, andere blockieren sie.';
+  String get messagesOpenedEstimate =>
+      '„Geöffnet“ bei E-Mails ist ein Schätzwert: manche Mail-Apps laden Bilder vorab, andere blockieren sie.';
 
   @override
   String get messagesOverview => 'Übersicht';
@@ -4800,7 +5026,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get messagesSendFailed => 'Fehler beim Versenden, bitte versuche es erneut.';
+  String get messagesSendFailed =>
+      'Fehler beim Versenden, bitte versuche es erneut.';
 
   @override
   String get messagesSendVia => 'Versand über';
@@ -4815,7 +5042,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get messagesSent => 'Gesendet';
 
   @override
-  String get messagesStillSending => 'Der Versand läuft noch. Ziehe nach unten, um zu aktualisieren.';
+  String get messagesStillSending =>
+      'Der Versand läuft noch. Ziehe nach unten, um zu aktualisieren.';
 
   @override
   String get messagesTelegram => 'Telegram';
@@ -4871,31 +5099,36 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifAnnouncements => 'Mitteilungen';
 
   @override
-  String get notifAnnouncementsHelper => 'Nachrichten von Admins und Verantwortlichen deiner Instanz';
+  String get notifAnnouncementsHelper =>
+      'Nachrichten von Admins und Verantwortlichen deiner Instanz';
 
   @override
   String get notifAppUpdates => 'App-Updates';
 
   @override
-  String get notifAppUpdatesHelper => 'Erhalte Benachrichtigungen über App-Updates sobald verfügbar';
+  String get notifAppUpdatesHelper =>
+      'Erhalte Benachrichtigungen über App-Updates sobald verfügbar';
 
   @override
   String get notifBirthdays => 'Geburtstage';
 
   @override
-  String get notifBirthdaysHelper => 'Erhalte täglich um 8:00 Uhr eine Benachrichtigung, falls jemand heute Geburtstag hat';
+  String get notifBirthdaysHelper =>
+      'Erhalte täglich um 8:00 Uhr eine Benachrichtigung, falls jemand heute Geburtstag hat';
 
   @override
   String get notifBothChannels => 'Beide Kanäle gleichzeitig';
 
   @override
-  String get notifBothChannelsHelper => 'Push und Telegram werden parallel gesendet, nicht nur als Fallback.';
+  String get notifBothChannelsHelper =>
+      'Push und Telegram werden parallel gesendet, nicht nur als Fallback.';
 
   @override
   String get notifChecklist => 'Checklisten-Erinnerungen';
 
   @override
-  String get notifChecklistHelper => 'Erhalte Erinnerungen für fällige To-Dos in deiner Checkliste. Nur möglich, wenn du Verantwortlicher einer Gruppe bist.';
+  String get notifChecklistHelper =>
+      'Erhalte Erinnerungen für fällige To-Dos in deiner Checkliste. Nur möglich, wenn du Verantwortlicher einer Gruppe bist.';
 
   @override
   String get notifConnect => 'Verbinden';
@@ -4904,16 +5137,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifDisconnect => 'Trennen';
 
   @override
-  String get notifDisconnectConfirm => 'Möchtest du die Verbindung wirklich trennen?';
+  String get notifDisconnectConfirm =>
+      'Möchtest du die Verbindung wirklich trennen?';
 
   @override
-  String get notifDisconnectHint => 'Die Verbindung kann jederzeit wiederhergestellt werden';
+  String get notifDisconnectHint =>
+      'Die Verbindung kann jederzeit wiederhergestellt werden';
 
   @override
   String get notifDuties => 'Dienste';
 
   @override
-  String get notifDutiesHelper => 'Wenn du für einen Dienst eingeteilt wirst, an die Bestätigung erinnert wirst oder jemand zum Einspringen gesucht wird. Dringende Anfragen kommen trotzdem an.';
+  String get notifDutiesHelper =>
+      'Wenn du für einen Dienst eingeteilt wirst, an die Bestätigung erinnert wirst oder jemand zum Einspringen gesucht wird. Dringende Anfragen kommen trotzdem an.';
 
   @override
   String get notifEnable => 'Benachrichtigungen aktivieren';
@@ -4933,7 +5169,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifFlutterTelegramOpenFailed => 'Konnte Telegram nicht öffnen';
 
   @override
-  String get notifFlutterUpdateFailed => 'Fehler beim Aktualisieren der Konfiguration';
+  String get notifFlutterUpdateFailed =>
+      'Fehler beim Aktualisieren der Konfiguration';
 
   @override
   String get notifFlutterUserIdCopied => 'Benutzer-Id kopiert';
@@ -4945,10 +5182,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifLiveActivity => 'Laufender Ablaufplan';
 
   @override
-  String get notifLiveActivityHelper => 'Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm.';
+  String get notifLiveActivityHelper =>
+      'Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm.';
 
   @override
-  String get notifLiveActivityHelperIos => 'Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm und in der Dynamic Island.';
+  String get notifLiveActivityHelperIos =>
+      'Zeigt den aktuellen Punkt eines laufenden Ablaufplans auf dem Sperrbildschirm und in der Dynamic Island.';
 
   @override
   String get notifNewProblemCases => 'Neue Problemfälle';
@@ -4960,10 +5199,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifPush => 'Push-Benachrichtigungen';
 
   @override
-  String get notifPushPreferred => 'Push wird bevorzugt. Telegram wird nur als Fallback genutzt, wenn keine Push-Zustellung möglich ist.';
+  String get notifPushPreferred =>
+      'Push wird bevorzugt. Telegram wird nur als Fallback genutzt, wenn keine Push-Zustellung möglich ist.';
 
   @override
-  String get notifResponsibleOnly => 'Nur möglich, wenn du Verantwortlicher einer Gruppe bist.';
+  String get notifResponsibleOnly =>
+      'Nur möglich, wenn du Verantwortlicher einer Gruppe bist.';
 
   @override
   String get notifSignIns => 'Anmeldungen';
@@ -4975,7 +5216,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get notifTasks => 'Aufgaben-Erinnerungen';
 
   @override
-  String get notifTasksHelper => 'Erhalte Erinnerungen 2 Tage vor Fälligkeit von Aufgaben, für die du verantwortlich bist.';
+  String get notifTasksHelper =>
+      'Erhalte Erinnerungen 2 Tage vor Fälligkeit von Aufgaben, für die du verantwortlich bist.';
 
   @override
   String get notifTelegram => 'Telegramverknüpfung';
@@ -4993,7 +5235,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get openFileLinkFailed => 'Der Link konnte nicht geöffnet werden.';
 
   @override
-  String get openFileNoTenantAccess => 'Du hast keinen Zugriff auf diese Instanz.';
+  String get openFileNoTenantAccess =>
+      'Du hast keinen Zugriff auf diese Instanz.';
 
   @override
   String get orgAppearancePlans => 'Darstellung & Pläne';
@@ -5020,25 +5263,30 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgDisableSync => 'Synchronisierung deaktivieren?';
 
   @override
-  String get orgDisableSyncMessage => 'Die Werke dieser Instanz sind danach leer, bis eigene Werke angelegt werden. Historieneinträge auf Werke der Quellinstanz können nicht mehr aufgelöst werden.';
+  String get orgDisableSyncMessage =>
+      'Die Werke dieser Instanz sind danach leer, bis eigene Werke angelegt werden. Historieneinträge auf Werke der Quellinstanz können nicht mehr aufgelöst werden.';
 
   @override
-  String get orgFieldsAddOption => 'Bitte füge mindestens eine Auswahloption hinzu.';
+  String get orgFieldsAddOption =>
+      'Bitte füge mindestens eine Auswahloption hinzu.';
 
   @override
   String get orgFieldsApplyChanges => 'Änderungen übernehmen';
 
   @override
-  String get orgFieldsFlutterFirstOptionDefault => 'Erste Option ist der Standardwert';
+  String get orgFieldsFlutterFirstOptionDefault =>
+      'Erste Option ist der Standardwert';
 
   @override
-  String get orgFieldsIntro => 'Diese Felder und ihre Werte gelten für dieselbe Person gemeinsam in allen Instanzen der Organisation.';
+  String get orgFieldsIntro =>
+      'Diese Felder und ihre Werte gelten für dieselbe Person gemeinsam in allen Instanzen der Organisation.';
 
   @override
   String get orgFieldsInvalid => 'Ungültige Organisations-Zusatzfelder.';
 
   @override
-  String get orgFieldsNameExists => 'Ein Zusatzfeld mit diesem Namen existiert bereits.';
+  String get orgFieldsNameExists =>
+      'Ein Zusatzfeld mit diesem Namen existiert bereits.';
 
   @override
   String orgFieldsNeedsOptions(Object name) {
@@ -5046,7 +5294,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get orgFieldsNone => 'Es wurden noch keine organisationsweiten Zusatzfelder hinzugefügt.';
+  String get orgFieldsNone =>
+      'Es wurden noch keine organisationsweiten Zusatzfelder hinzugefügt.';
 
   @override
   String get orgFieldsSaved => 'Organisations-Zusatzfelder gespeichert.';
@@ -5075,7 +5324,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgGaBeamerFiles => 'Beamer-Dateien im Ablaufplan';
 
   @override
-  String get orgGaBeamerFilesHint => 'Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.';
+  String get orgGaBeamerFilesHint =>
+      'Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.';
 
   @override
   String get orgGaCopied => 'Schlüssel kopiert';
@@ -5087,7 +5337,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgGaCreateKey => 'Verbindungsschlüssel erstellen';
 
   @override
-  String get orgGaHint => 'Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.';
+  String get orgGaHint =>
+      'Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.';
 
   @override
   String orgGaKeyActive(Object hint) {
@@ -5098,7 +5349,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgGaKeyHeader => 'Verbindungsschlüssel';
 
   @override
-  String get orgGaKeyMessage => 'Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.';
+  String get orgGaKeyMessage =>
+      'Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.';
 
   @override
   String get orgGaNoKey => 'Noch nicht mit der Gemeinde App verbunden';
@@ -5110,7 +5362,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgGaRenewKey => 'Schlüssel erneuern';
 
   @override
-  String get orgGaRenewMessage => 'Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.';
+  String get orgGaRenewMessage =>
+      'Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.';
 
   @override
   String get orgGemeindeApp => 'Gemeinde App';
@@ -5119,16 +5372,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgHandover => 'Übergabe';
 
   @override
-  String get orgLinkPersonsHint => 'Personen aus verschiedenen Instanzen miteinander verbinden';
+  String get orgLinkPersonsHint =>
+      'Personen aus verschiedenen Instanzen miteinander verbinden';
 
   @override
   String get orgNamePh => 'Name eingeben...';
 
   @override
-  String get orgNoneAdminOnly => 'Diese Instanz ist keiner Organisation zugewiesen. Nur Administratoren können Organisationen verwalten.';
+  String get orgNoneAdminOnly =>
+      'Diese Instanz ist keiner Organisation zugewiesen. Nur Administratoren können Organisationen verwalten.';
 
   @override
-  String get orgNoneIntro => 'Erstelle eine neue Organisation oder verknüpfe diese Instanz mit einer bestehenden, um Personen organisationsweit zu verbinden und gemeinsame Pläne zu nutzen.';
+  String get orgNoneIntro =>
+      'Erstelle eine neue Organisation oder verknüpfe diese Instanz mit einer bestehenden, um Personen organisationsweit zu verbinden und gemeinsame Pläne zu nutzen.';
 
   @override
   String get orgNoneLinked => 'Keine Organisation verknüpft';
@@ -5143,7 +5399,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgPersonFields => 'Personen-Zusatzfelder';
 
   @override
-  String get orgPersonFieldsHint => 'Felder und Werte für verknüpfte Personen gemeinsam verwalten';
+  String get orgPersonFieldsHint =>
+      'Felder und Werte für verknüpfte Personen gemeinsam verwalten';
 
   @override
   String get orgPersons => 'Personen';
@@ -5167,7 +5424,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgSongSync => 'Werk-Synchronisierung';
 
   @override
-  String get orgSongSyncIntro => 'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.';
+  String get orgSongSyncIntro =>
+      'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.';
 
   @override
   String get orgSongsAlreadyOwn => 'Schon bei dir';
@@ -5186,7 +5444,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgSongsCopyAsNew => 'Als neues Werk kopieren';
 
   @override
-  String get orgSongsCopyHint => 'Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.';
+  String get orgSongsCopyHint =>
+      'Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.';
 
   @override
   String get orgSongsCopyIntoExisting => 'In vorhandenes Werk kopieren';
@@ -5208,7 +5467,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get orgSongsEntryHint => 'Werke anderer Instanzen finden und übernehmen';
+  String get orgSongsEntryHint =>
+      'Werke anderer Instanzen finden und übernehmen';
 
   @override
   String get orgSongsExistingSong => 'Werk';
@@ -5267,13 +5527,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgSongsModeNew => 'Als neues Werk anlegen';
 
   @override
-  String get orgSongsNoPermission => 'Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.';
+  String get orgSongsNoPermission =>
+      'Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.';
 
   @override
   String get orgSongsNoResults => 'Keine Werke gefunden.';
 
   @override
-  String get orgSongsNoTargets => 'Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.';
+  String get orgSongsNoTargets =>
+      'Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.';
 
   @override
   String get orgSongsNumber => 'Nummer';
@@ -5380,7 +5642,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgTemplatesDefaultFields => 'Standardfelder';
 
   @override
-  String get orgTemplatesDefaultFieldsHint => 'Standardfelder erscheinen im Planungs-Menü als schnell hinzufügbare Felder für alle Instanzen der Organisation.';
+  String get orgTemplatesDefaultFieldsHint =>
+      'Standardfelder erscheinen im Planungs-Menü als schnell hinzufügbare Felder für alle Instanzen der Organisation.';
 
   @override
   String orgTemplatesDuration(Object h, Object m) {
@@ -5413,7 +5676,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgTemplatesMinutes => 'Minuten';
 
   @override
-  String get orgTemplatesNoDefaultFields => 'Noch keine Standardfelder definiert';
+  String get orgTemplatesNoDefaultFields =>
+      'Noch keine Standardfelder definiert';
 
   @override
   String get orgTemplatesNoTemplates => 'Noch keine Vorlagen definiert';
@@ -5434,7 +5698,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgTemplatesTemplates => 'Vorlagen';
 
   @override
-  String get orgTemplatesTemplatesHint => 'Vorlagen können beim Planen mit einem Tippen auf das Programm angewendet werden und ersetzen dabei den aktuellen Ablauf.';
+  String get orgTemplatesTemplatesHint =>
+      'Vorlagen können beim Planen mit einem Tippen auf das Programm angewendet werden und ersetzen dabei den aktuellen Ablauf.';
 
   @override
   String get orgTemplatesTitle => 'Planvorlagen & Felder';
@@ -5463,7 +5728,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgUnlinkTenant => 'Instanz trennen';
 
   @override
-  String get orgUnlinked => 'Die Organisation wurde erfolgreich von der Instanz getrennt.';
+  String get orgUnlinked =>
+      'Die Organisation wurde erfolgreich von der Instanz getrennt.';
 
   @override
   String get orgValidName => 'Bitte gib einen gültigen Namen ein.';
@@ -5539,7 +5805,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleBulkEdit => 'Bulk-Bearbeitung';
 
   @override
-  String get peopleBulkEditHint => 'Wähle ein Feld aus, um die Werte für alle Personen zu bearbeiten.';
+  String get peopleBulkEditHint =>
+      'Wähle ein Feld aus, um die Werte für alle Personen zu bearbeiten.';
 
   @override
   String get peopleCandidate => 'Prüfling';
@@ -5551,7 +5818,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleCannotRemoveSelf => 'Du kannst dich nicht selbst entfernen!';
 
   @override
-  String get peopleCannotUndoExcl => 'Diese Aktion kann nicht rückgängig gemacht werden!';
+  String get peopleCannotUndoExcl =>
+      'Diese Aktion kann nicht rückgängig gemacht werden!';
 
   @override
   String get peopleCheckingData => 'Daten werden geprüft...';
@@ -5575,13 +5843,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleCreateAccounts => 'Konten erstellen';
 
   @override
-  String get peopleCreateAccountsHint => 'Für Personen mit E-Mail-Adresse werden Benutzerkonten erstellt und Einladungs-E-Mails versendet.';
+  String get peopleCreateAccountsHint =>
+      'Für Personen mit E-Mail-Adresse werden Benutzerkonten erstellt und Einladungs-E-Mails versendet.';
 
   @override
   String get peopleCurrent => 'Aktuell';
 
   @override
-  String get peopleDemoUnavailable => 'Diese Funktion ist im Demo-Modus nicht verfügbar.';
+  String get peopleDemoUnavailable =>
+      'Diese Funktion ist im Demo-Modus nicht verfügbar.';
 
   @override
   String get peopleDownloadTemplate => 'Vorlage herunterladen';
@@ -5642,7 +5912,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFilter => 'Filtern';
 
   @override
-  String get peopleFiltersNoMatch => 'Die aktiven Filter ergeben keine Treffer.';
+  String get peopleFiltersNoMatch =>
+      'Die aktiven Filter ergeben keine Treffer.';
 
   @override
   String get peopleFirstName => 'Vorname';
@@ -5718,7 +5989,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get peopleFlutterHandoverCopyNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.';
+  String get peopleFlutterHandoverCopyNote =>
+      'Die ausgewählten Spieler werden in die Ziel-Instanz kopiert. Sie bleiben in dieser Instanz aktiv. Der App-Zugang muss in der Ziel-Instanz neu verknüpft werden.';
 
   @override
   String get peopleFlutterHandoverCopyQuestion => 'Spieler kopieren?';
@@ -5732,36 +6004,50 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get peopleFlutterHandoverMappingHint => 'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:';
+  String get peopleFlutterHandoverMappingHint =>
+      'Ordne die Gruppen der Quell-Instanz den Gruppen der Ziel-Instanz zu:';
 
   @override
   String get peopleFlutterHandoverMode => 'Modus';
 
   @override
-  String get peopleFlutterHandoverModeCopy => 'Spieler werden kopiert (bleiben hier aktiv)';
+  String get peopleFlutterHandoverModeCopy =>
+      'Spieler werden kopiert (bleiben hier aktiv)';
 
   @override
-  String get peopleFlutterHandoverModeTransfer => 'Spieler werden übertragen (hier archiviert)';
+  String get peopleFlutterHandoverModeTransfer =>
+      'Spieler werden übertragen (hier archiviert)';
 
   @override
   String get peopleFlutterHandoverNoMapping => '-- Nicht zuordnen --';
 
   @override
-  String get peopleFlutterHandoverNoPermission => 'Keine Berechtigung in der Ziel-Instanz';
+  String get peopleFlutterHandoverNoPermission =>
+      'Keine Berechtigung in der Ziel-Instanz';
 
   @override
-  String get peopleFlutterHandoverNoTenants => 'Keine anderen Instanzen verfügbar';
+  String get peopleFlutterHandoverNoTenants =>
+      'Keine anderen Instanzen verfügbar';
 
   @override
-  String get peopleFlutterHandoverNoTenantsHint => 'Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.';
+  String get peopleFlutterHandoverNoTenantsHint =>
+      'Du hast nur Zugriff auf eine Instanz. Um Spieler zu übertragen, benötigst du Zugriff auf mindestens zwei Instanzen.';
 
   @override
-  String peopleFlutterHandoverPartialCopied(Object success, Object duplicate, Object error) {
+  String peopleFlutterHandoverPartialCopied(
+    Object success,
+    Object duplicate,
+    Object error,
+  ) {
     return '$success kopiert, $duplicate bereits vorhanden, $error fehlgeschlagen';
   }
 
   @override
-  String peopleFlutterHandoverPartialTransferred(Object success, Object duplicate, Object error) {
+  String peopleFlutterHandoverPartialTransferred(
+    Object success,
+    Object duplicate,
+    Object error,
+  ) {
     return '$success übertragen, $duplicate bereits vorhanden, $error fehlgeschlagen';
   }
 
@@ -5769,12 +6055,17 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFlutterHandoverPreparing => 'Bereite Übertragung vor...';
 
   @override
-  String peopleFlutterHandoverProgress(Object name, Object current, Object total) {
+  String peopleFlutterHandoverProgress(
+    Object name,
+    Object current,
+    Object total,
+  ) {
     return 'Übertrage $name ($current/$total)...';
   }
 
   @override
-  String get peopleFlutterHandoverTargetNotFound => 'Ziel-Instanz nicht gefunden';
+  String get peopleFlutterHandoverTargetNotFound =>
+      'Ziel-Instanz nicht gefunden';
 
   @override
   String peopleFlutterHandoverTransferConfirm(Object count, Object tenant) {
@@ -5782,7 +6073,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get peopleFlutterHandoverTransferNote => 'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
+  String get peopleFlutterHandoverTransferNote =>
+      'Die ausgewählten Spieler werden in die Ziel-Instanz übertragen. Sie werden in dieser Instanz archiviert und der App-Zugang wird getrennt. Dieser Vorgang kann nicht rückgängig gemacht werden.';
 
   @override
   String get peopleFlutterHandoverTransferQuestion => 'Spieler übertragen?';
@@ -5805,7 +6097,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFlutterLastNameRequired => 'Nachname ist erforderlich';
 
   @override
-  String get peopleFlutterListLoadFailed => 'Die Personenliste konnte nicht geladen werden.';
+  String get peopleFlutterListLoadFailed =>
+      'Die Personenliste konnte nicht geladen werden.';
 
   @override
   String get peopleFlutterLoadFailed => 'Fehler beim Laden';
@@ -5863,7 +6156,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get peopleImportIntro => 'Importiere Personen aus einer Excel- (.xlsx/.xls) oder CSV-Datei. Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten ist es, die Vorlage herunterzuladen und auszufüllen.';
+  String get peopleImportIntro =>
+      'Importiere Personen aus einer Excel- (.xlsx/.xls) oder CSV-Datei. Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten ist es, die Vorlage herunterzuladen und auszufüllen.';
 
   @override
   String get peopleImportPeople => 'Personen importieren';
@@ -5906,10 +6200,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleMapNames => 'Bitte Spalten für Vor- und Nachnamen zuordnen.';
 
   @override
-  String get peopleMappingIntro => 'Ordne die Spalten deiner Datei den Personenfeldern zu. Vorname und Nachname (oder eine kombinierte Namensspalte) sind erforderlich.';
+  String get peopleMappingIntro =>
+      'Ordne die Spalten deiner Datei den Personenfeldern zu. Vorname und Nachname (oder eine kombinierte Namensspalte) sind erforderlich.';
 
   @override
-  String get peopleMappingMissing => 'Bitte ordne Spalten für Vor- und Nachnamen zu (oder eine kombinierte Namensspalte).';
+  String get peopleMappingMissing =>
+      'Bitte ordne Spalten für Vor- und Nachnamen zu (oder eine kombinierte Namensspalte).';
 
   @override
   String get peopleMembers => 'Mitglieder';
@@ -5984,7 +6280,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peoplePause => 'Pausieren';
 
   @override
-  String get peoplePauseHint => 'Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert.';
+  String get peoplePauseHint =>
+      'Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben wird, wird die Person automatisch reaktiviert.';
 
   @override
   String get peoplePauseOthers => 'Auch in anderen Instanzen pausieren?';
@@ -6152,7 +6449,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personAccountCreated => 'Account wurde erfolgreich angelegt';
 
   @override
-  String get personAccountHelp => 'Sobald die E-Mail Adresse eingeben wurde, kann ein Account erstellt werden. Der Benutzer wird per E-Mail über die Erstellung benachrichtigt. Das Passwort wird automatisch generiert und an die E-Mail Adresse gesendet.';
+  String get personAccountHelp =>
+      'Sobald die E-Mail Adresse eingeben wurde, kann ein Account erstellt werden. Der Benutzer wird per E-Mail über die Erstellung benachrichtigt. Das Passwort wird automatisch generiert und an die E-Mail Adresse gesendet.';
 
   @override
   String get personActions => 'Aktionen';
@@ -6213,7 +6511,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get personCopyConfirm => 'Möchtest du die Person wirklich in die andere Instanz kopieren?';
+  String get personCopyConfirm =>
+      'Möchtest du die Person wirklich in die andere Instanz kopieren?';
 
   @override
   String personCopyFrom(Object name) {
@@ -6230,7 +6529,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personCopyPerson => 'Person kopieren';
 
   @override
-  String get personCreateAccountNow => 'Möchtest du gleich ein Konto für die Person anlegen?';
+  String get personCreateAccountNow =>
+      'Möchtest du gleich ein Konto für die Person anlegen?';
 
   @override
   String get personDataTaken => 'Die Daten wurden erfolgreich übernommen';
@@ -6248,13 +6548,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personDeclining => 'Die Person wird abgelehnt...';
 
   @override
-  String get personDeleteAbsenceMessage => 'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf \"Neutral\" zurückgesetzt.';
+  String get personDeleteAbsenceMessage =>
+      'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf \"Neutral\" zurückgesetzt.';
 
   @override
   String get personDiscardChanges => 'Änderungen verwerfen?';
 
   @override
-  String get personDiscardChangesMessage => 'Möchtest du die ungespeicherten Änderungen wirklich verwerfen?';
+  String get personDiscardChangesMessage =>
+      'Möchtest du die ungespeicherten Änderungen wirklich verwerfen?';
 
   @override
   String get personDone => 'Fertig';
@@ -6272,7 +6574,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personEmailTaken => 'E-Mail bereits vergeben';
 
   @override
-  String get personEmailUpdated => 'Die E-Mail Adresse wurde erfolgreich aktualisiert';
+  String get personEmailUpdated =>
+      'Die E-Mail Adresse wurde erfolgreich aktualisiert';
 
   @override
   String personEmailUsedBy(Object name) {
@@ -6280,7 +6583,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get personEmailUsedMany => 'Diese E-Mail wird bereits in anderen Instanzen verwendet. Daten welcher Person übernehmen?';
+  String get personEmailUsedMany =>
+      'Diese E-Mail wird bereits in anderen Instanzen verwendet. Daten welcher Person übernehmen?';
 
   @override
   String get personEnableVoiceLeader => 'Stimmführer aktivieren';
@@ -6298,7 +6602,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personEntryRemoved => 'Eintrag wurde erfolgreich entfernt.';
 
   @override
-  String get personExistingUserHint => 'Falls schon ein Benutzer für die E-Mail Adresse existiert, wird dieser automatisch der Instanz zugewiesen.';
+  String get personExistingUserHint =>
+      'Falls schon ein Benutzer für die E-Mail Adresse existiert, wird dieser automatisch der Instanz zugewiesen.';
 
   @override
   String personExistsWithEmail(Object tenant, Object email) {
@@ -6311,13 +6616,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get personFlutterAbsenceDeleteFailed => 'Abwesenheit konnte nicht gelöscht werden';
+  String get personFlutterAbsenceDeleteFailed =>
+      'Abwesenheit konnte nicht gelöscht werden';
 
   @override
-  String get personFlutterAbsenceSaveFailed => 'Abwesenheit konnte nicht gespeichert werden';
+  String get personFlutterAbsenceSaveFailed =>
+      'Abwesenheit konnte nicht gespeichert werden';
 
   @override
-  String get personFlutterAccountCreatedMail => 'Account erstellt. Passwort-E-Mail wurde gesendet.';
+  String get personFlutterAccountCreatedMail =>
+      'Account erstellt. Passwort-E-Mail wurde gesendet.';
 
   @override
   String get personFlutterAllEntries => 'Alle Einträge';
@@ -6377,13 +6685,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get personFlutterDeclineReasonHint => 'Warum wird die Person abgelehnt?';
+  String get personFlutterDeclineReasonHint =>
+      'Warum wird die Person abgelehnt?';
 
   @override
   String get personFlutterDeclined => 'Person wurde abgelehnt';
 
   @override
-  String get personFlutterEmailRequiredForAccount => 'Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.';
+  String get personFlutterEmailRequiredForAccount =>
+      'Um einen Account zu erstellen, muss eine E-Mail-Adresse hinterlegt werden.';
 
   @override
   String get personFlutterFrequentLate => 'Häufige Verspätungen';
@@ -6416,7 +6726,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personFlutterMore => 'Mehr';
 
   @override
-  String get personFlutterNoAccountLinked => 'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.';
+  String get personFlutterNoAccountLinked =>
+      'Kein Account verknüpft. Ein Dirigent kann einen Account erstellen.';
 
   @override
   String get personFlutterNoEmail => 'Keine E-Mail-Adresse vorhanden';
@@ -6431,25 +6742,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personFlutterNoNotes => 'Keine Notizen';
 
   @override
-  String get personFlutterNoPermissionArchive => 'Keine Berechtigung zum Archivieren';
+  String get personFlutterNoPermissionArchive =>
+      'Keine Berechtigung zum Archivieren';
 
   @override
-  String get personFlutterNoPermissionCreateAccount => 'Keine Berechtigung zum Erstellen von Accounts';
+  String get personFlutterNoPermissionCreateAccount =>
+      'Keine Berechtigung zum Erstellen von Accounts';
 
   @override
-  String get personFlutterNoPermissionEdit => 'Keine Berechtigung zum Bearbeiten';
+  String get personFlutterNoPermissionEdit =>
+      'Keine Berechtigung zum Bearbeiten';
 
   @override
-  String get personFlutterNoPermissionPause => 'Keine Berechtigung zum Pausieren';
+  String get personFlutterNoPermissionPause =>
+      'Keine Berechtigung zum Pausieren';
 
   @override
-  String get personFlutterNoPermissionReactivate => 'Keine Berechtigung zum Reaktivieren';
+  String get personFlutterNoPermissionReactivate =>
+      'Keine Berechtigung zum Reaktivieren';
 
   @override
-  String get personFlutterNoPermissionRoles => 'Keine Berechtigung zum Ändern von Rollen';
+  String get personFlutterNoPermissionRoles =>
+      'Keine Berechtigung zum Ändern von Rollen';
 
   @override
-  String get personFlutterNoPermissionUnlink => 'Keine Berechtigung zum Aufheben von Account-Verknüpfungen';
+  String get personFlutterNoPermissionUnlink =>
+      'Keine Berechtigung zum Aufheben von Account-Verknüpfungen';
 
   @override
   String get personFlutterNoShiftPlan => 'Kein Schichtplan';
@@ -6531,7 +6849,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personFlutterShowAll => 'Alle anzeigen';
 
   @override
-  String get personFlutterTalkedToHint => 'Bestätigen, dass das Problem besprochen wurde';
+  String get personFlutterTalkedToHint =>
+      'Bestätigen, dass das Problem besprochen wurde';
 
   @override
   String get personFlutterTestResultHint => 'Ergebnis eingeben...';
@@ -6574,7 +6893,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personHistory => 'Historie';
 
   @override
-  String get personInvalidEmail => 'Bitte gib eine valide E-Mail Adresse ein...';
+  String get personInvalidEmail =>
+      'Bitte gib eine valide E-Mail Adresse ein...';
 
   @override
   String get personJoinedOn => 'Beigetreten am';
@@ -6596,7 +6916,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personLateWarningTitle => '🕐 Häufige Verspätungen';
 
   @override
-  String get personLongAbsenceHint => 'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, damit die Person nicht in neuen Terminen erscheint.';
+  String get personLongAbsenceHint =>
+      'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, damit die Person nicht in neuen Terminen erscheint.';
 
   @override
   String get personMerge => 'Zusammenführen';
@@ -6631,7 +6952,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personNoDateChosen => 'Kein Datum gewählt';
 
   @override
-  String get personNoMatchOther => 'Es wurde keine passende Person in einer anderen Instanz gefunden';
+  String get personNoMatchOther =>
+      'Es wurde keine passende Person in einer anderen Instanz gefunden';
 
   @override
   String get personNoShift => 'Keine Schicht zugewiesen';
@@ -6668,10 +6990,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personParents => 'Eltern';
 
   @override
-  String get personPauseHintAuto => 'Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert.';
+  String get personPauseHintAuto =>
+      'Mit einem Startdatum in der Vergangenheit wird die Person auch aus zurückliegenden Anwesenheiten ab diesem Datum entfernt. Wenn ein Enddatum angegeben ist, wird die Person danach automatisch wieder aktiviert.';
 
   @override
-  String get personPauseReasonPlaceholder => 'Gib einen Grund für die Pause an...';
+  String get personPauseReasonPlaceholder =>
+      'Gib einen Grund für die Pause an...';
 
   @override
   String personPauseTitle(Object name) {
@@ -6687,7 +7011,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personPhoneNumber => 'Telefon-/Handynummer';
 
   @override
-  String get personPhotoChangeFailed => 'Fehler beim ändern des Passbildes, versuche es später erneut';
+  String get personPhotoChangeFailed =>
+      'Fehler beim ändern des Passbildes, versuche es später erneut';
 
   @override
   String get personPhotoLoadFailed => 'Fehler beim Laden des Passbildes';
@@ -6711,13 +7036,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personReactivate => 'Wieder aktivieren';
 
   @override
-  String get personReactivateConfirm => 'Möchtest du die Person wirklich reaktivieren?';
+  String get personReactivateConfirm =>
+      'Möchtest du die Person wirklich reaktivieren?';
 
   @override
   String get personReactivatePerson => 'Person reaktivieren';
 
   @override
-  String get personReactivated => 'Die Person wurde erfolgreich wieder aktiviert';
+  String get personReactivated =>
+      'Die Person wurde erfolgreich wieder aktiviert';
 
   @override
   String personReactivatedAt(Object date) {
@@ -6731,19 +7058,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personRemoveAccount => 'Account entfernen';
 
   @override
-  String get personRemoveAccountMessage => 'Möchtest du den Account wirklich aus der Instanz entfernen? Die Personendaten bleiben erhalten.';
+  String get personRemoveAccountMessage =>
+      'Möchtest du den Account wirklich aus der Instanz entfernen? Die Personendaten bleiben erhalten.';
 
   @override
   String get personRemoveEntry => 'Eintrag unwiderruflich entfernen?';
 
   @override
-  String get personRemovePersonMessage => 'Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!';
+  String get personRemovePersonMessage =>
+      'Möchtest du die Person wirklich entfernen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!';
 
   @override
   String get personRemovePhoto => 'Passbild entfernen';
 
   @override
-  String get personRemovePhotoMessage => 'Möchtest du das Passbild wirklich entfernen?';
+  String get personRemovePhotoMessage =>
+      'Möchtest du das Passbild wirklich entfernen?';
 
   @override
   String get personRemoved => 'Die Person wurde erfolgreich entfernt';
@@ -6799,7 +7129,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personTargetInstance => 'Ziel-Instanz';
 
   @override
-  String get personTransferConfirm => 'Möchtest du die Person wirklich in die andere Instanz übertragen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!';
+  String get personTransferConfirm =>
+      'Möchtest du die Person wirklich in die andere Instanz übertragen? Alle zugehörigen Daten (Abwesenheiten, Notizen, etc.) gehen dabei verloren!';
 
   @override
   String personTransferFrom(Object name) {
@@ -6840,7 +7171,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get personUpdated => 'Die Spielerdaten wurden erfolgreich aktualisiert.';
+  String get personUpdated =>
+      'Die Spielerdaten wurden erfolgreich aktualisiert.';
 
   @override
   String get personUserAssigned => 'Benutzer wurde erfolgreich zugewiesen';
@@ -6866,7 +7198,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningAddAnotherPlan => 'Weiteren Ablaufplan anlegen';
 
   @override
-  String get planningAddAnotherPlanMessage => 'Soll der neue Plan den aktuellen Ablauf übernehmen oder leer starten?';
+  String get planningAddAnotherPlanMessage =>
+      'Soll der neue Plan den aktuellen Ablauf übernehmen oder leer starten?';
 
   @override
   String get planningAddBlock => 'Programmblock hinzufügen';
@@ -6890,7 +7223,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningAgenda => 'Tagesordnung';
 
   @override
-  String get planningAgendaExists => 'Ein Tagesordnungs-Platzhalter ist bereits vorhanden';
+  String get planningAgendaExists =>
+      'Ein Tagesordnungs-Platzhalter ist bereits vorhanden';
 
   @override
   String get planningAgendaInsertPos => 'Einfügeposition Tagesordnung';
@@ -6924,7 +7258,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningBeamer => 'Beamer';
 
   @override
-  String get planningBeamerAutoHint => 'Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.';
+  String get planningBeamerAutoHint =>
+      'Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.';
 
   @override
   String get planningBeamerAutoSong => 'Automatisch an: Werk';
@@ -6935,10 +7270,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get planningBeamerChangeInApp => 'Ändern kannst du die Datei in der Gemeinde App.';
+  String get planningBeamerChangeInApp =>
+      'Ändern kannst du die Datei in der Gemeinde App.';
 
   @override
-  String get planningBeamerLinkInApp => 'Verknüpfen kannst du die Datei in der Gemeinde App.';
+  String get planningBeamerLinkInApp =>
+      'Verknüpfen kannst du die Datei in der Gemeinde App.';
 
   @override
   String get planningBeamerMissing => 'Beamer-Datei fehlt';
@@ -6950,7 +7287,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningBeamerNoFile => 'Noch keine Datei verknüpft';
 
   @override
-  String get planningBlockDurationHint => 'Die Dauer ergibt sich aus den Unterpunkten.';
+  String get planningBlockDurationHint =>
+      'Die Dauer ergibt sich aus den Unterpunkten.';
 
   @override
   String planningBlockHasItems(Object name, num count) {
@@ -6999,7 +7337,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningCopy => 'Kopie';
 
   @override
-  String get planningCreateRunSheetFirst => 'Lege zuerst einen Ablauf für diesen Plan an.';
+  String get planningCreateRunSheetFirst =>
+      'Lege zuerst einen Ablauf für diesen Plan an.';
 
   @override
   String get planningCreateSectionalPlan => 'Registerprobenplan erstellen';
@@ -7096,7 +7435,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFields => 'Felder';
 
   @override
-  String get planningFillRequired => 'Bitte fülle alle erforderlichen Felder aus.';
+  String get planningFillRequired =>
+      'Bitte fülle alle erforderlichen Felder aus.';
 
   @override
   String get planningFirstEvent => 'Dies ist die aktuell erste Veranstaltung';
@@ -7113,19 +7453,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFlutterConflictDraftDiscard => 'Verwerfen';
 
   @override
-  String get planningFlutterConflictDraftMessage => 'Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.';
+  String get planningFlutterConflictDraftMessage =>
+      'Ein älterer Entwurf wurde wegen eines Konflikts nicht übernommen.';
 
   @override
   String get planningFlutterConflictDraftTitle => 'Entwurf nicht übernommen';
 
   @override
-  String get planningFlutterDraftLost => 'Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren';
+  String get planningFlutterDraftLost =>
+      'Ablaufplan konnte nicht gespeichert werden – Änderungen gehen verloren';
 
   @override
-  String get planningFlutterDraftRestored => 'Nicht gespeicherte Änderungen wiederhergestellt';
+  String get planningFlutterDraftRestored =>
+      'Nicht gespeicherte Änderungen wiederhergestellt';
 
   @override
-  String get planningFlutterDraftSavedLocally => 'Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert';
+  String get planningFlutterDraftSavedLocally =>
+      'Ablaufplan konnte nicht gespeichert werden – Entwurf lokal gesichert';
 
   @override
   String planningFlutterErrorWith(Object error) {
@@ -7167,19 +7511,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningFlutterPlanChanged => 'Plan wurde inzwischen geändert';
 
   @override
-  String get planningFlutterPlanChangedDraftLost => 'Plan wurde inzwischen geändert – Änderungen gehen verloren';
+  String get planningFlutterPlanChangedDraftLost =>
+      'Plan wurde inzwischen geändert – Änderungen gehen verloren';
 
   @override
-  String get planningFlutterPlanChangedDraftSaved => 'Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert';
+  String get planningFlutterPlanChangedDraftSaved =>
+      'Plan wurde inzwischen geändert – Änderungen als Entwurf gesichert';
 
   @override
   String get planningFlutterPlanDeleted => 'Plan wurde inzwischen gelöscht';
 
   @override
-  String get planningFlutterPlanDeletedDraftLost => 'Plan wurde inzwischen gelöscht – Änderungen gehen verloren';
+  String get planningFlutterPlanDeletedDraftLost =>
+      'Plan wurde inzwischen gelöscht – Änderungen gehen verloren';
 
   @override
-  String get planningFlutterPlanDeletedDraftSaved => 'Plan wurde inzwischen gelöscht – Änderungen als Entwurf gesichert';
+  String get planningFlutterPlanDeletedDraftSaved =>
+      'Plan wurde inzwischen gelöscht – Änderungen als Entwurf gesichert';
 
   @override
   String planningFlutterPlanPosition(Object index, Object total) {
@@ -7197,7 +7545,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get planningFlutterTelegramNotConfigured => 'Telegram nicht konfiguriert';
+  String get planningFlutterTelegramNotConfigured =>
+      'Telegram nicht konfiguriert';
 
   @override
   String get planningFlutterTelegramPdf2x => 'Per Telegram senden (PDF 2x A5)';
@@ -7329,7 +7678,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningResetPlan => 'Plan zurücksetzen';
 
   @override
-  String get planningResetPlanMessage => 'Möchtest du den Plan für diese Veranstaltung wirklich zurücksetzen? Alle Änderungen gehen verloren.';
+  String get planningResetPlanMessage =>
+      'Möchtest du den Plan für diese Veranstaltung wirklich zurücksetzen? Alle Änderungen gehen verloren.';
 
   @override
   String get planningRunSheet => 'Ablauf';
@@ -7361,7 +7711,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningStrings => 'Streicher';
 
   @override
-  String get planningSubItemInfoPlaceholder => 'Info-Text (optional), z. B. Liedtitel';
+  String get planningSubItemInfoPlaceholder =>
+      'Info-Text (optional), z. B. Liedtitel';
 
   @override
   String get planningSubItemPlaceholder => 'Programmpunkt, z. B. Gruppenlied';
@@ -7373,7 +7724,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningTelegramPdfShort => 'Per Telegram (PDF)';
 
   @override
-  String get planningTemplateSaveFailed => 'Die Vorlage konnte nicht gespeichert werden.';
+  String get planningTemplateSaveFailed =>
+      'Die Vorlage konnte nicht gespeichert werden.';
 
   @override
   String planningTemplateSaved(Object name) {
@@ -7399,7 +7751,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningUnshareConfirm => 'Freigabe aufheben?';
 
   @override
-  String get planningUnshareMessage => 'Der öffentliche Link wird ungültig. Fortfahren?';
+  String get planningUnshareMessage =>
+      'Der öffentliche Link wird ungültig. Fortfahren?';
 
   @override
   String get planningUnshared => 'Freigabe aufgehoben';
@@ -7456,7 +7809,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get plansDetailedCalendar => 'Detailliert (je Programmpunkt)';
 
   @override
-  String get plansDiscardNew => 'Aktuellen Plan verwerfen und einen neuen erstellen?';
+  String get plansDiscardNew =>
+      'Aktuellen Plan verwerfen und einen neuen erstellen?';
 
   @override
   String get plansDurationMin => 'Dauer (min)';
@@ -7534,13 +7888,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get plansNoTemplate => 'Keine Vorlage ausgewählt.';
 
   @override
-  String get plansNoUpcomingOrgPlans => 'Keine bevorstehenden Org-Pläne. Pläne können über die Ablaufplanung zur Organisation hinzugefügt werden.';
+  String get plansNoUpcomingOrgPlans =>
+      'Keine bevorstehenden Org-Pläne. Pläne können über die Ablaufplanung zur Organisation hinzugefügt werden.';
 
   @override
-  String get plansNoUpcomingPlans => 'Keine bevorstehenden Org-Pläne vorhanden.';
+  String get plansNoUpcomingPlans =>
+      'Keine bevorstehenden Org-Pläne vorhanden.';
 
   @override
-  String get plansNotFound => 'Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig.';
+  String get plansNotFound =>
+      'Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig.';
 
   @override
   String get plansOpenGuide => 'Anleitung öffnen';
@@ -7589,16 +7946,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get plansPublicLink => 'Öffentlicher Link';
 
   @override
-  String get plansPublicLinkActive => 'Öffentlicher Link aktiv. Alle Org-Pläne sind für jeden mit dem Link einsehbar.';
+  String get plansPublicLinkActive =>
+      'Öffentlicher Link aktiv. Alle Org-Pläne sind für jeden mit dem Link einsehbar.';
 
   @override
-  String get plansRemoveOrgFailed => 'Fehler beim Entfernen aus der Organisation';
+  String get plansRemoveOrgFailed =>
+      'Fehler beim Entfernen aus der Organisation';
 
   @override
   String get plansRemovedFromOrg => 'Plan aus Organisation entfernt';
 
   @override
-  String get plansReplaceWithTemplate => 'Aktuellen Ablauf durch die Vorlage ersetzen?';
+  String get plansReplaceWithTemplate =>
+      'Aktuellen Ablauf durch die Vorlage ersetzen?';
 
   @override
   String get plansRestore => 'Wiederherstellen';
@@ -7662,10 +8022,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get protocolChangesAutoSaved => 'Änderungen werden automatisch gespeichert';
+  String get protocolChangesAutoSaved =>
+      'Änderungen werden automatisch gespeichert';
 
   @override
-  String get protocolCloseFailed => 'Nicht alle Themen konnten als erledigt markiert werden';
+  String get protocolCloseFailed =>
+      'Nicht alle Themen konnten als erledigt markiert werden';
 
   @override
   String get protocolCloseTopics => 'Themen als erledigt markieren';
@@ -7696,7 +8058,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get protocolDragResize => 'Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)';
+  String get protocolDragResize =>
+      'Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)';
 
   @override
   String protocolDueShort(Object date) {
@@ -7710,7 +8073,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolEarlierItem => 'Früherer Programmpunkt';
 
   @override
-  String get protocolEditAfterPublish => 'Die Leitung kann das Protokoll auch nach der Freigabe noch bearbeiten. Änderungen werden mit Datum angezeigt.';
+  String get protocolEditAfterPublish =>
+      'Die Leitung kann das Protokoll auch nach der Freigabe noch bearbeiten. Änderungen werden mit Datum angezeigt.';
 
   @override
   String protocolExcusedCount(Object count) {
@@ -7743,7 +8107,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolFlutterPublishNotify => 'Freigeben & benachrichtigen';
 
   @override
-  String get protocolFlutterRepublishNotify => 'Erneut freigeben & benachrichtigen';
+  String get protocolFlutterRepublishNotify =>
+      'Erneut freigeben & benachrichtigen';
 
   @override
   String protocolForNames(Object names) {
@@ -7769,7 +8134,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolHasNotes => 'Enthält Notizen';
 
   @override
-  String get protocolListFromAttendance => 'Die Liste kommt aus der Anwesenheit des Termins.';
+  String get protocolListFromAttendance =>
+      'Die Liste kommt aus der Anwesenheit des Termins.';
 
   @override
   String get protocolLoadFailed => 'Protokoll konnte nicht geladen werden.';
@@ -7781,7 +8147,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolMoreNotes => 'Weitere Notizen';
 
   @override
-  String get protocolMoreNotesHint => 'Notizen zu Punkten, die nicht mehr im Ablaufplan stehen.';
+  String get protocolMoreNotesHint =>
+      'Notizen zu Punkten, die nicht mehr im Ablaufplan stehen.';
 
   @override
   String protocolMoreNotesTitle(Object title) {
@@ -7798,19 +8165,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolNoNotes => 'Keine Notizen';
 
   @override
-  String get protocolNoTasksYet => 'Noch keine Aufgaben. Lege sie direkt bei einem Punkt an.';
+  String get protocolNoTasksYet =>
+      'Noch keine Aufgaben. Lege sie direkt bei einem Punkt an.';
 
   @override
   String get protocolNobodyPresent => 'Niemand als anwesend eingetragen';
 
   @override
-  String get protocolNotInPlan => 'Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.';
+  String get protocolNotInPlan =>
+      'Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.';
 
   @override
-  String get protocolNotPublished => 'Dieses Protokoll ist noch nicht freigegeben.';
+  String get protocolNotPublished =>
+      'Dieses Protokoll ist noch nicht freigegeben.';
 
   @override
-  String get protocolNotPublishedHint => 'Sobald die Leitung es freigibt, kannst du es hier lesen.';
+  String get protocolNotPublishedHint =>
+      'Sobald die Leitung es freigibt, kannst du es hier lesen.';
 
   @override
   String get protocolNoted => 'Notiert';
@@ -7819,7 +8190,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolNotes => 'Notizen';
 
   @override
-  String get protocolNotesSaveFailed => 'Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.';
+  String get protocolNotesSaveFailed =>
+      'Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.';
 
   @override
   String get protocolNotified => 'Benachrichtigt werden';
@@ -7836,7 +8208,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolOutcome => 'Ergebnis';
 
   @override
-  String get protocolOutcomeSaveFailed => 'Ergebnis konnte nicht gespeichert werden';
+  String get protocolOutcomeSaveFailed =>
+      'Ergebnis konnte nicht gespeichert werden';
 
   @override
   String protocolPage(Object i, Object n) {
@@ -7850,7 +8223,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolPdfFailed => 'PDF konnte nicht erstellt werden';
 
   @override
-  String get protocolPdfFailedNotify => 'PDF konnte nicht erstellt werden, die Benachrichtigung geht ohne PDF raus';
+  String get protocolPdfFailedNotify =>
+      'PDF konnte nicht erstellt werden, die Benachrichtigung geht ohne PDF raus';
 
   @override
   String protocolPdfTitle(Object title) {
@@ -7858,7 +8232,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get protocolPlanEmpty => 'Der Ablaufplan ist noch leer. Füge einen Punkt hinzu oder schreib in die Notizen.';
+  String get protocolPlanEmpty =>
+      'Der Ablaufplan ist noch leer. Füge einen Punkt hinzu oder schreib in die Notizen.';
 
   @override
   String get protocolPoint => 'Punkt';
@@ -7897,7 +8272,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolPublish => 'Protokoll freigeben';
 
   @override
-  String get protocolPublishFailed => 'Protokoll konnte nicht freigegeben werden';
+  String get protocolPublishFailed =>
+      'Protokoll konnte nicht freigegeben werden';
 
   @override
   String get protocolPublishShort => 'Freigeben';
@@ -7966,10 +8342,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolSpontaneous => 'Spontaner Punkt';
 
   @override
-  String get protocolSpontaneousHint => 'Wird als neues Thema angelegt und im Ablaufplan ergänzt.';
+  String get protocolSpontaneousHint =>
+      'Wird als neues Thema angelegt und im Ablaufplan ergänzt.';
 
   @override
-  String get protocolSuggestNext => ' · wird beim nächsten Termin vorgeschlagen';
+  String get protocolSuggestNext =>
+      ' · wird beim nächsten Termin vorgeschlagen';
 
   @override
   String get protocolSummary => 'Zusammenfassung';
@@ -8021,7 +8399,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get protocolVisibility => 'Sichtbarkeit';
 
   @override
-  String get protocolWholeMeeting => 'Gilt für die ganze Sitzung, unabhängig vom Punkt.';
+  String get protocolWholeMeeting =>
+      'Gilt für die ganze Sitzung, unabhängig vom Punkt.';
 
   @override
   String protocolWithoutNotes(Object count) {
@@ -8061,7 +8440,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAbsencePauseButton => 'Pausieren …';
 
   @override
-  String get redesignAbsencePauseHint => 'Wenn du länger nicht kannst, kannst du dich pausieren. Die Leitung sieht dann, dass du gerade nicht dabei bist.';
+  String get redesignAbsencePauseHint =>
+      'Wenn du länger nicht kannst, kannst du dich pausieren. Die Leitung sieht dann, dass du gerade nicht dabei bist.';
 
   @override
   String get redesignAbsencePeriod => 'Zeitraum';
@@ -8091,13 +8471,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsAdd => 'Konto hinzufügen';
 
   @override
-  String get redesignAccountsAddHint => 'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.';
+  String get redesignAccountsAddHint =>
+      'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.';
 
   @override
   String get redesignAccountsAddTitle => 'Konto hinzufügen';
 
   @override
-  String get redesignAccountsAlreadyActive => 'Mit diesem Konto bist du bereits angemeldet.';
+  String get redesignAccountsAlreadyActive =>
+      'Mit diesem Konto bist du bereits angemeldet.';
 
   @override
   String redesignAccountsCount(num count) {
@@ -8117,10 +8499,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsEmail => 'E-Mail';
 
   @override
-  String get redesignAccountsFailed => 'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
+  String get redesignAccountsFailed =>
+      'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
-  String get redesignAccountsFooter => 'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.';
+  String get redesignAccountsFooter =>
+      'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.';
 
   @override
   String redesignAccountsLoginAgainHint(Object email) {
@@ -8145,7 +8529,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsNeedsLogin => 'Bitte erneut anmelden';
 
   @override
-  String get redesignAccountsOffline => 'Keine Verbindung. Bitte versuche es erneut.';
+  String get redesignAccountsOffline =>
+      'Keine Verbindung. Bitte versuche es erneut.';
 
   @override
   String get redesignAccountsPassword => 'Passwort';
@@ -8162,7 +8547,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsRemoveConfirm => 'Entfernen';
 
   @override
-  String get redesignAccountsRemoveFailed => 'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.';
+  String get redesignAccountsRemoveFailed =>
+      'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.';
 
   @override
   String get redesignAccountsRemoveTitle => 'Konto entfernen?';
@@ -8188,16 +8574,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAppearanceAppIconFollow => 'App-Symbol in Farbwelt';
 
   @override
-  String get redesignAppearanceAppIconHint => 'Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.';
+  String get redesignAppearanceAppIconHint =>
+      'Das Symbol auf dem Home-Bildschirm wechselt mit der Farbwelt.';
 
   @override
-  String get redesignAppearanceAutoHint => 'Automatisch folgt der Einstellung deines Geräts.';
+  String get redesignAppearanceAutoHint =>
+      'Automatisch folgt der Einstellung deines Geräts.';
 
   @override
   String get redesignAppearanceBrightness => 'Hell oder dunkel';
 
   @override
-  String get redesignAppearanceDeviceOnly => 'Diese Einstellungen gelten nur auf diesem Gerät.';
+  String get redesignAppearanceDeviceOnly =>
+      'Diese Einstellungen gelten nur auf diesem Gerät.';
 
   @override
   String get redesignAppearanceModeAuto => 'Automatisch';
@@ -8227,13 +8616,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAppearanceWorldClear => 'Klar';
 
   @override
-  String get redesignAppearanceWorldClearHint => 'Schwarz auf Weiß, höchster Kontrast';
+  String get redesignAppearanceWorldClearHint =>
+      'Schwarz auf Weiß, höchster Kontrast';
 
   @override
   String get redesignAppearanceWorldConcertHall => 'Konzertsaal';
 
   @override
-  String get redesignAppearanceWorldConcertHallHint => 'Warm, mit Serifen-Überschriften';
+  String get redesignAppearanceWorldConcertHallHint =>
+      'Warm, mit Serifen-Überschriften';
 
   @override
   String get redesignAppearanceWorldNightBlue => 'Nachtblau';
@@ -8251,7 +8642,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAppearanceWorldStage => 'Bühne';
 
   @override
-  String get redesignAppearanceWorldStageHint => 'Immer dunkel, für Abende und Proben';
+  String get redesignAppearanceWorldStageHint =>
+      'Immer dunkel, für Abende und Proben';
 
   @override
   String get redesignApplicantOtherGroup => 'Andere Gruppe beitreten';
@@ -8288,7 +8680,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignBulkArchiveHint => 'Archivierte Mitglieder findest du unter Archiv.';
+  String get redesignBulkArchiveHint =>
+      'Archivierte Mitglieder findest du unter Archiv.';
 
   @override
   String get redesignBulkClear => 'Auswahl aufheben';
@@ -8316,7 +8709,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignBulkHint => 'Mitglieder antippen, dann unten eine Aktion wählen.';
+  String get redesignBulkHint =>
+      'Mitglieder antippen, dann unten eine Aktion wählen.';
 
   @override
   String get redesignBulkNoGroup => 'Ohne Register';
@@ -8369,10 +8763,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignComposeGroups => 'Register wählen';
 
   @override
-  String get redesignComposeHint => 'Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.';
+  String get redesignComposeHint =>
+      'Die Mitteilung erscheint bei allen Empfängern unter Mitteilungen.';
 
   @override
-  String get redesignComposeMissing => 'Betreff, Text und mindestens ein Versandweg fehlen noch.';
+  String get redesignComposeMissing =>
+      'Betreff, Text und mindestens ein Versandweg fehlen noch.';
 
   @override
   String get redesignComposeSend => 'Senden';
@@ -8413,7 +8809,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateDeadline2d => '2 Tage vorher';
 
   @override
-  String get redesignCreateDeadlineHint => 'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.';
+  String get redesignCreateDeadlineHint =>
+      'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.';
 
   @override
   String get redesignCreateDeadlineNone => 'Keiner';
@@ -8489,7 +8886,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateKeepEditing => 'Weiter bearbeiten';
 
   @override
-  String get redesignCreateLaterHint => 'Infotext, Anhang, Checkliste und Ablauf bearbeitest du danach im Termin.';
+  String get redesignCreateLaterHint =>
+      'Infotext, Anhang, Checkliste und Ablauf bearbeitest du danach im Termin.';
 
   @override
   String get redesignCreateMore => 'Mehr';
@@ -8507,7 +8905,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateNoPermission => 'Du darfst keine Termine anlegen.';
 
   @override
-  String get redesignCreateNoTypes => 'Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.';
+  String get redesignCreateNoTypes =>
+      'Es gibt noch keine Termin-Art. Lege zuerst eine in den Einstellungen an.';
 
   @override
   String get redesignCreatePlace => 'Ort';
@@ -8563,7 +8962,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateRepeatPick => 'Tage im Kalender wählen';
 
   @override
-  String get redesignCreateRepeatSkipHolidays => 'Ferien und Feiertage auslassen';
+  String get redesignCreateRepeatSkipHolidays =>
+      'Ferien und Feiertage auslassen';
 
   @override
   String get redesignCreateRepeatUntil => 'Bis';
@@ -8640,7 +9040,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateTemplate => 'Vorlage';
 
   @override
-  String get redesignCreateTemplateHint => 'Füllt Art, Titel, Zeit und Ort vor. Alles bleibt änderbar.';
+  String get redesignCreateTemplateHint =>
+      'Füllt Art, Titel, Zeit und Ort vor. Alles bleibt änderbar.';
 
   @override
   String get redesignCreateTime => 'Zeit';
@@ -8672,7 +9073,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventAnswers => 'Rückmeldungen';
 
   @override
-  String get redesignEventBusyLeave => 'Bitte warte, bis alles gespeichert ist.';
+  String get redesignEventBusyLeave =>
+      'Bitte warte, bis alles gespeichert ist.';
 
   @override
   String redesignEventCountAbsent(Object count) {
@@ -8719,7 +9121,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignEventKeyboardHint => 'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig';
+  String get redesignEventKeyboardHint =>
+      'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig';
 
   @override
   String get redesignEventMore => 'Alle Details und Bearbeiten';
@@ -8739,7 +9142,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventNoMatch => 'Niemand passt zur Suche.';
 
   @override
-  String get redesignEventNoPersons => 'Für diesen Termin sind noch keine Personen eingetragen.';
+  String get redesignEventNoPersons =>
+      'Für diesen Termin sind noch keine Personen eingetragen.';
 
   @override
   String get redesignEventNotFound => 'Dieser Termin wurde nicht gefunden.';
@@ -8819,7 +9223,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsCreateFirst => 'Ersten Termin anlegen';
 
   @override
-  String get redesignEventsEmpty => 'Noch keine Termine. Leg die erste Probe an.';
+  String get redesignEventsEmpty =>
+      'Noch keine Termine. Leg die erste Probe an.';
 
   @override
   String get redesignEventsLastWeek => 'Letzte 7 Tage';
@@ -8910,8 +9315,10 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Für $count Dateien gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
-      one: 'Für 1 Datei gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
+      other:
+          'Für $count Dateien gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
+      one:
+          'Für 1 Datei gibt es schon eine Datei mit gleichem Namen oder für dieselbe Stimme:',
     );
     return '$_temp0';
   }
@@ -8954,7 +9361,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFilesDownloadZip => 'Als ZIP laden';
 
   @override
-  String get redesignFilesDropHint => 'Dateien hierher ziehen oder „Hochladen“ wählen.';
+  String get redesignFilesDropHint =>
+      'Dateien hierher ziehen oder „Hochladen“ wählen.';
 
   @override
   String redesignFilesDropOverlay(Object name) {
@@ -9038,13 +9446,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
 
   @override
-  String get redesignGroupsLoadFailed => 'Deine Gruppen konnten nicht geladen werden.';
+  String get redesignGroupsLoadFailed =>
+      'Deine Gruppen konnten nicht geladen werden.';
 
   @override
   String get redesignGroupsManage => 'Gruppen verwalten';
 
   @override
-  String get redesignGroupsSwitchFailed => 'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
+  String get redesignGroupsSwitchFailed =>
+      'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
   String redesignGroupsSwitchHint(Object name) {
@@ -9065,8 +9475,10 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Die KI hat $count Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.',
-      one: 'Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.',
+      other:
+          'Die KI hat $count Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.',
+      one:
+          'Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.',
     );
     return '$_temp0';
   }
@@ -9075,7 +9487,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportAiConfirmTitle => 'Vorschläge der KI übernehmen?';
 
   @override
-  String get redesignImportAiFailed => 'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.';
+  String get redesignImportAiFailed =>
+      'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.';
 
   @override
   String redesignImportAiFilled(num count) {
@@ -9089,7 +9502,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportAiLimit => 'Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.';
+  String get redesignImportAiLimit =>
+      'Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.';
 
   @override
   String get redesignImportAiLoading => 'Die KI sucht Vorschläge …';
@@ -9100,16 +9514,19 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportAiNone => 'Die KI hat keine sicheren Vorschläge gefunden.';
+  String get redesignImportAiNone =>
+      'Die KI hat keine sicheren Vorschläge gefunden.';
 
   @override
-  String get redesignImportAiOffered => 'Vorschläge der KI sind mit ✦ markiert.';
+  String get redesignImportAiOffered =>
+      'Vorschläge der KI sind mit ✦ markiert.';
 
   @override
   String get redesignImportAiOption => 'Vorschläge der KI';
 
   @override
-  String get redesignImportAiOptionDetail => 'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
+  String get redesignImportAiOptionDetail =>
+      'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
 
   @override
   String redesignImportAnswerNewGroup(Object name) {
@@ -9146,7 +9563,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportConfirmButton => 'Übernehmen';
 
   @override
-  String get redesignImportConfirmKeepOpen => 'Lass die Seite offen, bis alles fertig ist.';
+  String get redesignImportConfirmKeepOpen =>
+      'Lass die Seite offen, bis alles fertig ist.';
 
   @override
   String redesignImportConfirmMessage(num files, Object works) {
@@ -9188,25 +9606,30 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportDatesReading => 'Das Datum der Fassungen wird noch gelesen …';
+  String get redesignImportDatesReading =>
+      'Das Datum der Fassungen wird noch gelesen …';
 
   @override
   String get redesignImportDiscardConfirm => 'Verwerfen';
 
   @override
-  String get redesignImportDiscardMessage => 'Deine Antworten und Entscheidungen gehen verloren. Hochgeladen wurde noch nichts.';
+  String get redesignImportDiscardMessage =>
+      'Deine Antworten und Entscheidungen gehen verloren. Hochgeladen wurde noch nichts.';
 
   @override
   String get redesignImportDiscardTitle => 'Import verwerfen?';
 
   @override
-  String get redesignImportDoneAborted => 'Abgebrochen, weil die Gruppe gewechselt wurde.';
+  String get redesignImportDoneAborted =>
+      'Abgebrochen, weil die Gruppe gewechselt wurde.';
 
   @override
-  String get redesignImportDoneAgainHint => 'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
+  String get redesignImportDoneAgainHint =>
+      'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
 
   @override
-  String get redesignImportDoneAgainHintDrive => 'Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
+  String get redesignImportDoneAgainHintDrive =>
+      'Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
 
   @override
   String get redesignImportDoneAnother => 'Weitere Noten importieren';
@@ -9253,7 +9676,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDriveChecking => 'Ordner wird gesucht …';
 
   @override
-  String get redesignImportDriveFileGone => 'Die Datei ist in Google Drive nicht mehr erreichbar.';
+  String get redesignImportDriveFileGone =>
+      'Die Datei ist in Google Drive nicht mehr erreichbar.';
 
   @override
   String redesignImportDriveFound(Object name) {
@@ -9261,7 +9685,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportDriveLinkHint => 'https://drive.google.com/drive/folders/…';
+  String get redesignImportDriveLinkHint =>
+      'https://drive.google.com/drive/folders/…';
 
   @override
   String get redesignImportDriveLinkLabel => 'Link zum Ordner';
@@ -9273,61 +9698,78 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDrivePaste => 'Einfügen';
 
   @override
-  String get redesignImportDriveReading => 'Attendix liest die Ordner in Google Drive.';
+  String get redesignImportDriveReading =>
+      'Attendix liest die Ordner in Google Drive.';
 
   @override
   String get redesignImportDriveStart => 'Einlesen starten';
 
   @override
-  String get redesignImportDriveStep1 => 'Öffne den Notenordner in Google Drive und wähle „Teilen“.';
+  String get redesignImportDriveStep1 =>
+      'Öffne den Notenordner in Google Drive und wähle „Teilen“.';
 
   @override
-  String get redesignImportDriveStep2 => 'Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.';
+  String get redesignImportDriveStep2 =>
+      'Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.';
 
   @override
-  String get redesignImportDriveStep3 => 'Kopiere den Link und füge ihn hier ein.';
+  String get redesignImportDriveStep3 =>
+      'Kopiere den Link und füge ihn hier ein.';
 
   @override
-  String get redesignImportDriveUnshareNote => 'Nach dem Import kannst du die Freigabe wieder aufheben.';
+  String get redesignImportDriveUnshareNote =>
+      'Nach dem Import kannst du die Freigabe wieder aufheben.';
 
   @override
-  String get redesignImportErrorBadLink => 'Das ist kein Link zu einem Google-Drive-Ordner.';
+  String get redesignImportErrorBadLink =>
+      'Das ist kein Link zu einem Google-Drive-Ordner.';
 
   @override
-  String get redesignImportErrorDropbox => 'Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.';
+  String get redesignImportErrorDropbox =>
+      'Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.';
 
   @override
   String get redesignImportErrorEmpty => 'In der ZIP-Datei sind keine Dateien.';
 
   @override
-  String get redesignImportErrorFailed => 'Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.';
+  String get redesignImportErrorFailed =>
+      'Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.';
 
   @override
-  String get redesignImportErrorForbidden => 'Du darfst in dieser Gruppe keine Noten hochladen.';
+  String get redesignImportErrorForbidden =>
+      'Du darfst in dieser Gruppe keine Noten hochladen.';
 
   @override
-  String get redesignImportErrorLimit => 'Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.';
+  String get redesignImportErrorLimit =>
+      'Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.';
 
   @override
-  String get redesignImportErrorNoData => 'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.';
+  String get redesignImportErrorNoData =>
+      'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.';
 
   @override
-  String get redesignImportErrorNotFolder => 'Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.';
+  String get redesignImportErrorNotFolder =>
+      'Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.';
 
   @override
-  String get redesignImportErrorNotFound => 'Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?';
+  String get redesignImportErrorNotFound =>
+      'Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?';
 
   @override
-  String get redesignImportErrorNotSetUp => 'Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.';
+  String get redesignImportErrorNotSetUp =>
+      'Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.';
 
   @override
-  String get redesignImportErrorNotZip => 'Die Datei ist keine ZIP-Datei oder beschädigt.';
+  String get redesignImportErrorNotZip =>
+      'Die Datei ist keine ZIP-Datei oder beschädigt.';
 
   @override
-  String get redesignImportErrorTooLargeWeb => 'Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.';
+  String get redesignImportErrorTooLargeWeb =>
+      'Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.';
 
   @override
-  String get redesignImportErrorTooMany => 'Der Ordner hat zu viele Dateien. Wähle einen Unterordner.';
+  String get redesignImportErrorTooMany =>
+      'Der Ordner hat zu viele Dateien. Wähle einen Unterordner.';
 
   @override
   String get redesignImportFassungAll => 'Alle Fassungen übernehmen';
@@ -9361,13 +9803,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFassungOld => 'älter';
 
   @override
-  String get redesignImportFassungenIntro => 'In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.';
+  String get redesignImportFassungenIntro =>
+      'In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.';
 
   @override
   String get redesignImportFassungenTitle => 'Fassungen';
 
   @override
-  String get redesignImportFileBroken => 'Die Datei in der ZIP-Datei ist beschädigt.';
+  String get redesignImportFileBroken =>
+      'Die Datei in der ZIP-Datei ist beschädigt.';
 
   @override
   String redesignImportFilesSkip(Object count) {
@@ -9442,22 +9886,28 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportKeepOpen => 'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
+  String get redesignImportKeepOpen =>
+      'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
 
   @override
-  String get redesignImportLearnFailed => 'Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.';
+  String get redesignImportLearnFailed =>
+      'Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.';
 
   @override
-  String get redesignImportMatchAmbiguous => 'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
+  String get redesignImportMatchAmbiguous =>
+      'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
 
   @override
-  String get redesignImportMatchNumberOnly => 'Die Nummer passt, der Titel weicht ab.';
+  String get redesignImportMatchNumberOnly =>
+      'Die Nummer passt, der Titel weicht ab.';
 
   @override
-  String get redesignImportMatchTitleOnly => 'Der Titel passt, die Nummer weicht ab.';
+  String get redesignImportMatchTitleOnly =>
+      'Der Titel passt, die Nummer weicht ab.';
 
   @override
-  String get redesignImportMenuHint => 'Ordner aus Google Drive, Dropbox oder vom Rechner';
+  String get redesignImportMenuHint =>
+      'Ordner aus Google Drive, Dropbox oder vom Rechner';
 
   @override
   String get redesignImportNewGroupTitle => 'Neue Gruppe anlegen';
@@ -9467,7 +9917,8 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Werke sind noch nicht geprüft und werden nicht hochgeladen.',
+      other:
+          '$count Werke sind noch nicht geprüft und werden nicht hochgeladen.',
       one: '1 Werk ist noch nicht geprüft und wird nicht hochgeladen.',
     );
     return '$_temp0';
@@ -9477,13 +9928,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportOptionFassung => 'Neueste Fassung vorschlagen';
 
   @override
-  String get redesignImportOptionFassungDetail => 'Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.';
+  String get redesignImportOptionFassungDetail =>
+      'Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.';
 
   @override
-  String get redesignImportOptionWord => 'Word weglassen, wenn PDF daneben liegt';
+  String get redesignImportOptionWord =>
+      'Word weglassen, wenn PDF daneben liegt';
 
   @override
-  String get redesignImportOptionWordDetail => 'Für Liedtexte und Pläne, die es auch als PDF gibt.';
+  String get redesignImportOptionWordDetail =>
+      'Für Liedtexte und Pläne, die es auch als PDF gibt.';
 
   @override
   String get redesignImportOptionsTitle => 'Für diesen Import';
@@ -9511,7 +9965,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportQuestionsIntro => 'Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.';
+  String get redesignImportQuestionsIntro =>
+      'Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.';
 
   @override
   String get redesignImportQuestionsNone => 'Alle Stimmen sind bekannt.';
@@ -9521,8 +9976,10 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Noch $count Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.',
-      one: 'Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.',
+      other:
+          'Noch $count Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.',
+      one:
+          'Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.',
     );
     return '$_temp0';
   }
@@ -9539,7 +9996,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportReadingDetail => 'Attendix sucht doppelte Dateien und liest das Datum der Fassungen.';
+  String get redesignImportReadingDetail =>
+      'Attendix sucht doppelte Dateien und liest das Datum der Fassungen.';
 
   @override
   String get redesignImportReadingTitle => 'Wird eingelesen …';
@@ -9563,7 +10021,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportReasonTooLarge => 'Größer als 20 MB';
 
   @override
-  String get redesignImportReasonUnsupported => 'Dateityp wird nicht übernommen';
+  String get redesignImportReasonUnsupported =>
+      'Dateityp wird nicht übernommen';
 
   @override
   String get redesignImportReasonWord => 'PDF liegt daneben';
@@ -9572,7 +10031,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportReasonWorkSkipped => 'Werk wird nicht übernommen';
 
   @override
-  String get redesignImportRecheckHint => 'Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.';
+  String get redesignImportRecheckHint =>
+      'Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.';
 
   @override
   String redesignImportReviewAll(Object count) {
@@ -9591,7 +10051,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportReviewEmpty => 'Hier ist nichts mehr zu prüfen.';
 
   @override
-  String get redesignImportReviewIntro => 'Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn du sie angeschaut hast.';
+  String get redesignImportReviewIntro =>
+      'Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn du sie angeschaut hast.';
 
   @override
   String redesignImportReviewNew(Object count) {
@@ -9608,8 +10069,10 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.',
-      one: '1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.',
+      other:
+          '$count Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.',
+      one:
+          '1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.',
     );
     return '$_temp0';
   }
@@ -9623,22 +10086,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportSourceDrive => 'Google Drive';
 
   @override
-  String get redesignImportSourceDriveDetail => 'Ordner-Link einfügen. Nichts wird aufs Gerät geladen.';
+  String get redesignImportSourceDriveDetail =>
+      'Ordner-Link einfügen. Nichts wird aufs Gerät geladen.';
 
   @override
-  String get redesignImportSourceHowComputer => 'Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).';
+  String get redesignImportSourceHowComputer =>
+      'Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).';
 
   @override
-  String get redesignImportSourceHowDrive => 'Google Drive: Ordner mit rechts anklicken › Herunterladen. Große Ordner kommen als mehrere ZIP-Dateien, wähle sie zusammen aus.';
+  String get redesignImportSourceHowDrive =>
+      'Google Drive: Ordner mit rechts anklicken › Herunterladen. Große Ordner kommen als mehrere ZIP-Dateien, wähle sie zusammen aus.';
 
   @override
-  String get redesignImportSourceHowDropbox => 'Dropbox: beim Ordner auf … › Herunterladen.';
+  String get redesignImportSourceHowDropbox =>
+      'Dropbox: beim Ordner auf … › Herunterladen.';
 
   @override
   String get redesignImportSourceHowTitle => 'So bekommst du die ZIP-Datei';
 
   @override
-  String get redesignImportSourceIntro => 'Lade den Ordner mit euren Noten als ZIP-Datei herunter und wähle sie hier aus. Attendix ordnet die Dateien den Werken und Stimmen zu. Hochgeladen wird erst, wenn du alles geprüft hast.';
+  String get redesignImportSourceIntro =>
+      'Lade den Ordner mit euren Noten als ZIP-Datei herunter und wähle sie hier aus. Attendix ordnet die Dateien den Werken und Stimmen zu. Hochgeladen wird erst, wenn du alles geprüft hast.';
 
   @override
   String get redesignImportSourcePick => 'ZIP-Datei wählen';
@@ -9647,7 +10115,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportSourceRecommended => 'Empfohlen';
 
   @override
-  String get redesignImportSourceSafe => 'In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.';
+  String get redesignImportSourceSafe =>
+      'In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.';
 
   @override
   String get redesignImportSourceWhere => 'Wo liegen eure Noten?';
@@ -9656,7 +10125,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportSourceZip => 'ZIP-Datei';
 
   @override
-  String get redesignImportSourceZipDetail => 'Aus Dropbox, OneDrive oder vom Rechner.';
+  String get redesignImportSourceZipDetail =>
+      'Aus Dropbox, OneDrive oder vom Rechner.';
 
   @override
   String redesignImportStepOf(Object step, Object name) {
@@ -9712,10 +10182,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportUnshareOpen => 'In Google Drive öffnen';
 
   @override
-  String get redesignImportUnshareText => 'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.';
+  String get redesignImportUnshareText =>
+      'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.';
 
   @override
-  String get redesignImportUnshareTextLater => 'Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.';
+  String get redesignImportUnshareTextLater =>
+      'Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.';
 
   @override
   String get redesignImportUnshareTitle => 'Freigabe wieder aufheben';
@@ -9755,19 +10227,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignInviteCopy => 'Kopieren';
 
   @override
-  String get redesignInviteEmptyMembers => 'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
+  String get redesignInviteEmptyMembers =>
+      'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
 
   @override
   String get redesignInviteFullscreen => 'Vollbild zeigen';
 
   @override
-  String get redesignInviteIntro => 'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.';
+  String get redesignInviteIntro =>
+      'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.';
 
   @override
-  String get redesignInviteIntroAuto => 'Wer den Link öffnet, meldet sich an und ist gleich dabei.';
+  String get redesignInviteIntroAuto =>
+      'Wer den Link öffnet, meldet sich an und ist gleich dabei.';
 
   @override
-  String get redesignInviteOff => 'Die Anmeldung per Link ist für diese Gruppe aus.';
+  String get redesignInviteOff =>
+      'Die Anmeldung per Link ist für diese Gruppe aus.';
 
   @override
   String redesignInviteQrLabel(Object group) {
@@ -9798,7 +10274,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignJoinCreateButton => 'Gruppe gründen';
 
   @override
-  String get redesignJoinCreateHint => 'Für Leitungen, die Attendix neu einführen';
+  String get redesignJoinCreateHint =>
+      'Für Leitungen, die Attendix neu einführen';
 
   @override
   String redesignJoinFound(Object group) {
@@ -9815,37 +10292,44 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignJoinIntro => 'Füge den Link aus der Einladung ein.';
 
   @override
-  String get redesignJoinInvalid => 'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).';
+  String get redesignJoinInvalid =>
+      'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).';
 
   @override
   String get redesignJoinLabel => 'Einladungslink';
 
   @override
-  String get redesignJoinNoGroup => 'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.';
+  String get redesignJoinNoGroup =>
+      'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.';
 
   @override
-  String get redesignJoinNotFound => 'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.';
+  String get redesignJoinNotFound =>
+      'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.';
 
   @override
   String get redesignJoinScan => 'QR-Code scannen';
 
   @override
-  String get redesignJoinScanHint => 'Halte die Kamera auf den QR-Code der Einladung.';
+  String get redesignJoinScanHint =>
+      'Halte die Kamera auf den QR-Code der Einladung.';
 
   @override
-  String get redesignJoinScanNoCamera => 'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.';
+  String get redesignJoinScanNoCamera =>
+      'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.';
 
   @override
   String get redesignJoinScanTitle => 'Einladung scannen';
 
   @override
-  String get redesignJoinScanWrong => 'Das ist kein Einladungs-Code von Attendix.';
+  String get redesignJoinScanWrong =>
+      'Das ist kein Einladungs-Code von Attendix.';
 
   @override
   String get redesignJoinStepCheck => 'Die Leitung prüft deine Angaben';
 
   @override
-  String get redesignJoinStepNotify => 'Du bekommst eine Benachrichtigung, sobald du freigegeben bist';
+  String get redesignJoinStepNotify =>
+      'Du bekommst eine Benachrichtigung, sobald du freigegeben bist';
 
   @override
   String redesignJoinStepReceived(Object date) {
@@ -9862,7 +10346,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignJoinWelcomeNoName => 'Willkommen';
 
   @override
-  String get redesignManageAnnouncementsHint => 'Gesendete Mitteilungen ansehen';
+  String get redesignManageAnnouncementsHint =>
+      'Gesendete Mitteilungen ansehen';
 
   @override
   String get redesignManageAreaCommunication => 'Kommunikation';
@@ -9886,15 +10371,18 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignManageClassic => 'Alle Einstellungen (bisherige Ansicht)';
 
   @override
-  String get redesignManageExtraFieldsHint => 'Eigene Felder für Personen und Werke';
+  String get redesignManageExtraFieldsHint =>
+      'Eigene Felder für Personen und Werke';
 
   @override
   String redesignManageFooter(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: 'Alle $count bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.',
-      one: 'Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.',
+      other:
+          'Alle $count bisherigen Einträge stecken in diesen Bereichen und sind über die Suche direkt erreichbar.',
+      one:
+          'Der bisherige Eintrag steckt in diesen Bereichen und ist über die Suche direkt erreichbar.',
     );
     return '$_temp0';
   }
@@ -9906,7 +10394,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignManageGeneralTitle => 'Allgemeine Einstellungen';
 
   @override
-  String get redesignManageMissingHint => 'Mitglieder mit E-Mail, aber ohne Zugang';
+  String get redesignManageMissingHint =>
+      'Mitglieder mit E-Mail, aber ohne Zugang';
 
   @override
   String get redesignManageNoMatch => 'Keine Einstellung passt zur Suche.';
@@ -9970,7 +10459,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeBeta => 'Neues Design (Beta)';
 
   @override
-  String get redesignMeBetaHint => 'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.';
+  String get redesignMeBetaHint =>
+      'Nur auf diesem Gerät. Jederzeit wieder ausschaltbar.';
 
   @override
   String get redesignMeCalendar => 'Kalender abonnieren';
@@ -10074,7 +10564,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignMembersPendingHint => 'Tippe auf eine Person, um sie zu prüfen und freizugeben.';
+  String get redesignMembersPendingHint =>
+      'Tippe auf eine Person, um sie zu prüfen und freizugeben.';
 
   @override
   String redesignMembersPercent(Object percent) {
@@ -10116,7 +10607,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignNotifGroups => 'Gruppen';
 
   @override
-  String get redesignNotifGroupsHint => 'Jede Gruppe lässt sich einzeln stummschalten.';
+  String get redesignNotifGroupsHint =>
+      'Jede Gruppe lässt sich einzeln stummschalten.';
 
   @override
   String get redesignNotifHow => 'Wie';
@@ -10143,7 +10635,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignOwnMore => 'Mehr';
 
   @override
-  String get redesignOwnNotFound => 'Dieser Termin ist nicht mehr in deiner Liste.';
+  String get redesignOwnNotFound =>
+      'Dieser Termin ist nicht mehr in deiner Liste.';
 
   @override
   String get redesignOwnRoute => 'Route';
@@ -10272,13 +10765,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignPultHint => 'Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status';
+  String get redesignPultHint =>
+      'Antippen = da · nochmal antippen = zurück · gedrückt halten = weitere Status';
 
   @override
   String get redesignPultOpen => 'Pultmodus';
 
   @override
-  String get redesignPultOpenHint => 'Große Kacheln zum Antippen, gut für das Tablet am Pult';
+  String get redesignPultOpenHint =>
+      'Große Kacheln zum Antippen, gut für das Tablet am Pult';
 
   @override
   String get redesignPultStatusOpen => 'offen';
@@ -10308,10 +10803,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignRemindHelloAll => 'Hallo zusammen,';
 
   @override
-  String get redesignRemindHint => 'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.';
+  String get redesignRemindHint =>
+      'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.';
 
   @override
-  String get redesignRemindMessageLabel => 'Nachricht (beginnt mit „Hallo Vorname,“)';
+  String get redesignRemindMessageLabel =>
+      'Nachricht (beginnt mit „Hallo Vorname,“)';
 
   @override
   String get redesignRemindNoApp => 'ohne App';
@@ -10374,7 +10871,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSignoutOther => 'Anderer Grund';
 
   @override
-  String get redesignSignoutOtherHint => 'Kurz beschreiben (mindestens 5 Zeichen)';
+  String get redesignSignoutOtherHint =>
+      'Kurz beschreiben (mindestens 5 Zeichen)';
 
   @override
   String get redesignSignoutPrivacy => 'Deinen Grund sieht nur die Leitung.';
@@ -10433,7 +10931,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
 
   @override
-  String get redesignSplitWorksHint => 'Wähle links ein Werk aus oder fang hier an.';
+  String get redesignSplitWorksHint =>
+      'Wähle links ein Werk aus oder fang hier an.';
 
   @override
   String get redesignSplitWorksLongAgo => 'Am längsten nicht dran';
@@ -10467,7 +10966,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignStatsEvents => 'Termine';
 
   @override
-  String get redesignStatsLoadFailed => 'Auswertung konnte nicht geladen werden.';
+  String get redesignStatsLoadFailed =>
+      'Auswertung konnte nicht geladen werden.';
 
   @override
   String redesignStatsLow(num count) {
@@ -10549,7 +11049,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayAnswered => 'Alle geantwortet';
 
   @override
-  String get redesignTodayAnsweredLater => 'Du hast gemeldet, dass du später kommst.';
+  String get redesignTodayAnsweredLater =>
+      'Du hast gemeldet, dass du später kommst.';
 
   @override
   String get redesignTodayAnsweredNo => 'Du bist abgemeldet.';
@@ -10574,7 +11075,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayChangeAnswer => 'Ändern';
 
   @override
-  String get redesignTodayChildFailed => 'Das hat nicht geklappt. Bitte versuch es noch einmal.';
+  String get redesignTodayChildFailed =>
+      'Das hat nicht geklappt. Bitte versuch es noch einmal.';
 
   @override
   String get redesignTodayChildIn => 'Dabei';
@@ -10698,19 +11200,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayNoAfterAll => 'Doch absagen';
 
   @override
-  String get redesignTodayNoChildren => 'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.';
+  String get redesignTodayNoChildren =>
+      'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.';
 
   @override
   String get redesignTodayNoDone => 'Abgemeldet';
 
   @override
-  String get redesignTodayNoMember => 'Du bist in dieser Gruppe nicht als Mitglied eingetragen.';
+  String get redesignTodayNoMember =>
+      'Du bist in dieser Gruppe nicht als Mitglied eingetragen.';
 
   @override
   String get redesignTodayNoUpcoming => 'Gerade stehen keine Termine an.';
 
   @override
-  String get redesignTodayNotPart => 'Du bist für diesen Termin nicht eingeteilt.';
+  String get redesignTodayNotPart =>
+      'Du bist für diesen Termin nicht eingeteilt.';
 
   @override
   String get redesignTodayNothingElse => 'Danach ist noch nichts geplant.';
@@ -10792,7 +11297,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayUpNext => 'Als Nächstes';
 
   @override
-  String get redesignTodayViewerHint => 'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
+  String get redesignTodayViewerHint =>
+      'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
 
   @override
   String get redesignTodayWeekEmpty => 'Diese Woche kommt sonst nichts.';
@@ -10848,7 +11354,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkNever => 'Noch nie';
 
   @override
-  String get redesignWorkNoFiles => 'Zu diesem Werk gibt es noch keine Dateien.';
+  String get redesignWorkNoFiles =>
+      'Zu diesem Werk gibt es noch keine Dateien.';
 
   @override
   String get redesignWorkNoPart => 'Für deine Stimme gibt es noch keine Noten.';
@@ -10977,7 +11484,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerDeleteHeader => 'Konto wirklich löschen?';
 
   @override
-  String get registerDeleteMessage => 'Dein Konto wird unwiderruflich entfernt. Diese Aktion kann nicht rückgängig gemacht werden.';
+  String get registerDeleteMessage =>
+      'Dein Konto wird unwiderruflich entfernt. Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get registerDeleteRunning => 'Konto wird gelöscht...';
@@ -11001,25 +11509,32 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerGroupType => 'Gruppentyp';
 
   @override
-  String get registerGroupTypeQuestion => 'Was beschreibt deine Gruppe am besten?';
+  String get registerGroupTypeQuestion =>
+      'Was beschreibt deine Gruppe am besten?';
 
   @override
-  String get registerHelpChoir => 'Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).';
+  String get registerHelpChoir =>
+      'Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).';
 
   @override
-  String get registerHelpGeneral => 'Ideal für Vereine, Teams oder sonstige Gruppen.';
+  String get registerHelpGeneral =>
+      'Ideal für Vereine, Teams oder sonstige Gruppen.';
 
   @override
-  String get registerHelpOrchestra => 'Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.';
+  String get registerHelpOrchestra =>
+      'Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.';
 
   @override
-  String get registerIntroHtml => 'Eine <strong>Instanz</strong> ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten.';
+  String get registerIntroHtml =>
+      'Eine <strong>Instanz</strong> ist dein eigener Bereich für dein Orchester, deinen Chor oder deine Gruppe. Hier verwaltest du Mitglieder, Termine und Anwesenheiten.';
 
   @override
-  String get registerJoinHeading => 'Du möchtest einer bestehenden Instanz beitreten?';
+  String get registerJoinHeading =>
+      'Du möchtest einer bestehenden Instanz beitreten?';
 
   @override
-  String get registerJoinText => 'Bitte deinen Verantwortlichen, dich per E-Mail einzuladen. Eine neue Instanz ist nur nötig, wenn du selbst Administrator sein möchtest.';
+  String get registerJoinText =>
+      'Bitte deinen Verantwortlichen, dich per E-Mail einzuladen. Eine neue Instanz ist nur nötig, wenn du selbst Administrator sein möchtest.';
 
   @override
   String get registerLogout => 'Abmelden';
@@ -11028,7 +11543,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerMainGroupHelper => 'z.B. Leitung, Dirigenten, Vorstand';
 
   @override
-  String get registerMainGroupInfoHtml => '<h3>Was ist die Hauptgruppe?</h3><p>Die Hauptgruppe ist eine besondere Gruppe für Personen mit Leitungsfunktion (z.B. Dirigenten, Chorleiter, Vorstand).</p><p><strong>Besonderheiten:</strong></p><ul><li>Kann nicht gelöscht werden</li><li>Mitglieder erhalten automatisch erweiterte Rechte</li><li>Ideal für Personen, die die Instanz verwalten</li></ul><p><em>Du kannst später weitere Gruppen (z.B. Sopran, Geigen) hinzufügen.</em></p>';
+  String get registerMainGroupInfoHtml =>
+      '<h3>Was ist die Hauptgruppe?</h3><p>Die Hauptgruppe ist eine besondere Gruppe für Personen mit Leitungsfunktion (z.B. Dirigenten, Chorleiter, Vorstand).</p><p><strong>Besonderheiten:</strong></p><ul><li>Kann nicht gelöscht werden</li><li>Mitglieder erhalten automatisch erweiterte Rechte</li><li>Ideal für Personen, die die Instanz verwalten</li></ul><p><em>Du kannst später weitere Gruppen (z.B. Sopran, Geigen) hinzufügen.</em></p>';
 
   @override
   String get registerMainGroupName => 'Name der Hauptgruppe';
@@ -11046,7 +11562,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerModalAcceptPrivacy => 'Datenschutzerklärung akzeptieren';
 
   @override
-  String get registerModalAcceptPrivacyToast => 'Bitte stimme der Datenschutzerklärung zu';
+  String get registerModalAcceptPrivacyToast =>
+      'Bitte stimme der Datenschutzerklärung zu';
 
   @override
   String get registerModalConfirm => 'Bestätigen';
@@ -11055,7 +11572,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerModalConfirmPassword => 'Passwort bestätigen';
 
   @override
-  String get registerModalConfirmPasswordPlaceholder => 'Passwort erneut eingeben';
+  String get registerModalConfirmPasswordPlaceholder =>
+      'Passwort erneut eingeben';
 
   @override
   String get registerModalEmailPlaceholder => 'deine@email.de';
@@ -11064,31 +11582,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerModalFailed => 'Fehler beim Registrieren';
 
   @override
-  String get registerModalHintOtp => 'Nach der Registrierung senden wir dir einen 6-stelligen Code per E-Mail. Gib ihn hier ein, um deinen Account zu aktivieren.';
+  String get registerModalHintOtp =>
+      'Nach der Registrierung senden wir dir einen 6-stelligen Code per E-Mail. Gib ihn hier ein, um deinen Account zu aktivieren.';
 
   @override
-  String get registerModalHintPassword => 'Nach der Registrierung senden wir dir eine Bestätigungs-E-Mail. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.';
+  String get registerModalHintPassword =>
+      'Nach der Registrierung senden wir dir eine Bestätigungs-E-Mail. Bitte klicke auf den Link darin, um deinen Account zu aktivieren.';
 
   @override
-  String get registerModalIntro => 'Lege einen Account an, um deine Anwesenheit zu verwalten oder eine neue Instanz für deine Gruppe, deinen Chor oder dein Orchester zu erstellen.';
+  String get registerModalIntro =>
+      'Lege einen Account an, um deine Anwesenheit zu verwalten oder eine neue Instanz für deine Gruppe, deinen Chor oder dein Orchester zu erstellen.';
 
   @override
   String get registerModalInvalidEmail => 'Ungültige E-Mail-Adresse';
 
   @override
-  String get registerModalPasswordMismatch => 'Passwörter stimmen nicht überein';
+  String get registerModalPasswordMismatch =>
+      'Passwörter stimmen nicht überein';
 
   @override
   String get registerModalPasswordPlaceholder => 'Mindestens 6 Zeichen';
 
   @override
-  String get registerModalPasswordTooShort => 'Passwort muss mindestens 6 Zeichen lang sein';
+  String get registerModalPasswordTooShort =>
+      'Passwort muss mindestens 6 Zeichen lang sein';
 
   @override
   String get registerModalPrivacyAfter => ' gelesen.';
 
   @override
-  String get registerModalPrivacyBefore => 'Ich akzeptiere die Nutzungsbedingungen und habe die';
+  String get registerModalPrivacyBefore =>
+      'Ich akzeptiere die Nutzungsbedingungen und habe die';
 
   @override
   String get registerModalPrivacyLink => 'Datenschutzerklärung';
@@ -11127,7 +11651,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerPlaceholderOrchestraMain => 'z.B. Dirigenten';
 
   @override
-  String get registerPlaceholderOrchestraName => 'z.B. Stadtorchester Musterstadt';
+  String get registerPlaceholderOrchestraName =>
+      'z.B. Stadtorchester Musterstadt';
 
   @override
   String get registerPlaceholderOrchestraShort => 'z.B. SOM';
@@ -11136,7 +11661,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerShortName => 'Instanz-Kürzel';
 
   @override
-  String get registerShortNameHelper => 'Wird für kompakte Darstellungen verwendet';
+  String get registerShortNameHelper =>
+      'Wird für kompakte Darstellungen verwendet';
 
   @override
   String get registerStep1 => 'Art der Gruppe wählen';
@@ -11182,25 +11708,29 @@ class AppLocalizationsDe extends AppLocalizations {
   String get registerWelcome => 'Willkommen!';
 
   @override
-  String get rolePermAbsencesHelper => 'Wenn aktiviert, können Personen mit dieser Rolle geplante Abwesenheiten für sich selbst eintragen.';
+  String get rolePermAbsencesHelper =>
+      'Wenn aktiviert, können Personen mit dieser Rolle geplante Abwesenheiten für sich selbst eintragen.';
 
   @override
   String get rolePermAllGroups => 'Alle Gruppen pflegen';
 
   @override
-  String get rolePermAllGroupsHelper => 'Wenn deaktiviert, können Personen mit dieser Rolle nur Anwesenheiten der ihnen zugeordneten Gruppe pflegen.';
+  String get rolePermAllGroupsHelper =>
+      'Wenn deaktiviert, können Personen mit dieser Rolle nur Anwesenheiten der ihnen zugeordneten Gruppe pflegen.';
 
   @override
   String get rolePermAllowPause => 'Eigene Pausierung erlauben';
 
   @override
-  String get rolePermChecklistHelper => 'Wenn aktiviert, können Personen mit dieser Rolle die Checkliste in der Anwesenheitsansicht sehen.';
+  String get rolePermChecklistHelper =>
+      'Wenn aktiviert, können Personen mit dieser Rolle die Checkliste in der Anwesenheitsansicht sehen.';
 
   @override
   String get rolePermCreateAttendance => 'Anwesenheiten erstellen';
 
   @override
-  String get rolePermCreateHelper => 'Wenn deaktiviert, können Personen mit dieser Rolle keine neuen Anwesenheiten anlegen.';
+  String get rolePermCreateHelper =>
+      'Wenn deaktiviert, können Personen mit dieser Rolle keine neuen Anwesenheiten anlegen.';
 
   @override
   String get rolePermDiscard => 'Verwerfen';
@@ -11215,7 +11745,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rolePermFilesForAll => 'Dateiablage für alle Mitglieder';
 
   @override
-  String get rolePermFilesHelper => 'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.';
+  String get rolePermFilesHelper =>
+      'Admins, Verantwortliche und Helfer sehen die Dateiablage immer. Wenn aktiviert, können auch alle anderen Mitglieder außer Bewerber sie lesen. Hochladen bleibt Admins und Verantwortlichen vorbehalten.';
 
   @override
   String rolePermFlutterLoadFailed(Object error) {
@@ -11223,13 +11754,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get rolePermNotesHelper => 'Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.';
+  String get rolePermNotesHelper =>
+      'Wenn aktiviert, können Personen mit dieser Rolle die Notizen der Mitglieder in der Anwesenheitsansicht sehen.';
 
   @override
-  String get rolePermPauseHelper => 'Wenn aktiviert, können Spieler sich selbst pausieren und reaktivieren.';
+  String get rolePermPauseHelper =>
+      'Wenn aktiviert, können Spieler sich selbst pausieren und reaktivieren.';
 
   @override
-  String get rolePermSaveFailed => 'Fehler beim Speichern der Rollenberechtigungen';
+  String get rolePermSaveFailed =>
+      'Fehler beim Speichern der Rollenberechtigungen';
 
   @override
   String get rolePermSaved => 'Rollenberechtigungen gespeichert';
@@ -11247,7 +11781,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get rolePermUnsaved => 'Ungespeicherte Änderungen';
 
   @override
-  String get rolePermUnsavedMessage => 'Du hast ungespeicherte Änderungen. Möchtest du sie speichern bevor du die Seite verlässt?';
+  String get rolePermUnsavedMessage =>
+      'Du hast ungespeicherte Änderungen. Möchtest du sie speichern bevor du die Seite verlässt?';
 
   @override
   String get rolesAdministrator => 'Administrator';
@@ -11306,10 +11841,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selfServiceFlutterNoKids => 'Keine Kinder gefunden';
 
   @override
-  String get selfServiceFlutterNoKidsHint => 'Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.';
+  String get selfServiceFlutterNoKidsHint =>
+      'Es wurden keine Kinder mit Ihrem\nEltern-Account verknüpft.';
 
   @override
-  String get selfServiceFlutterNoValidEntries => 'Keine gültigen Einträge gefunden';
+  String get selfServiceFlutterNoValidEntries =>
+      'Keine gültigen Einträge gefunden';
 
   @override
   String selfServiceFlutterSignInUntil(Object date) {
@@ -11331,10 +11868,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get selfServiceNoUpcoming => 'Keine anstehenden Termine';
 
   @override
-  String get selfServiceParentsThanksLate => 'Vielen Dank für die Info und Gottes Segen!';
+  String get selfServiceParentsThanksLate =>
+      'Vielen Dank für die Info und Gottes Segen!';
 
   @override
-  String get selfServiceParentsThanksSignout => 'Vielen Dank für die rechtzeitige Abmeldung und Gottes Segen!';
+  String get selfServiceParentsThanksSignout =>
+      'Vielen Dank für die rechtzeitige Abmeldung und Gottes Segen!';
 
   @override
   String get selfServiceShalom => 'Shalom!';
@@ -11357,7 +11896,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsAccountsCreated => 'Die Accounts wurden erfolgreich angelegt';
+  String get settingsAccountsCreated =>
+      'Die Accounts wurden erfolgreich angelegt';
 
   @override
   String get settingsAdHocPlanning => 'Ad-Hoc Ablaufplanung';
@@ -11381,7 +11921,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsAdmins => 'Administratoren';
 
   @override
-  String get settingsAdminsHint => 'Administratoren haben alle Rechte in der Instanz und können auch die Instanz löschen.';
+  String get settingsAdminsHint =>
+      'Administratoren haben alle Rechte in der Instanz und können auch die Instanz löschen.';
 
   @override
   String get settingsAnalyticsData => 'Auswertung & Daten';
@@ -11402,7 +11943,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsAsApp => '📱 Attendix als App';
 
   @override
-  String get settingsAsAppText => 'Attendix gibt es jetzt als native App mit Push-Benachrichtigungen und schnellerem Zugriff.';
+  String get settingsAsAppText =>
+      'Attendix gibt es jetzt als native App mit Push-Benachrichtigungen und schnellerem Zugriff.';
 
   @override
   String settingsCalendarMessage(Object link) {
@@ -11410,19 +11952,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsCannotDeleteTenant => 'Du kannst diese Instanz nicht löschen.';
+  String get settingsCannotDeleteTenant =>
+      'Du kannst diese Instanz nicht löschen.';
 
   @override
-  String get settingsCannotRemoveSelf => 'Du kannst dich nicht selbst entfernen.';
+  String get settingsCannotRemoveSelf =>
+      'Du kannst dich nicht selbst entfernen.';
 
   @override
   String get settingsCertificates => 'Urkunden generieren';
 
   @override
-  String get settingsCertificatesFailed => 'Fehler beim Erstellen der Urkunden.';
+  String get settingsCertificatesFailed =>
+      'Fehler beim Erstellen der Urkunden.';
 
   @override
-  String get settingsCertificatesFor => 'Für welche Gruppen sollen Urkunden erstellt werden?';
+  String get settingsCertificatesFor =>
+      'Für welche Gruppen sollen Urkunden erstellt werden?';
 
   @override
   String get settingsChange => 'Ändern';
@@ -11437,7 +11983,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsConfigureDashboard => 'Dashboard konfigurieren';
 
   @override
-  String get settingsContactOnly => 'Dient nur zur Kontaktaufnahme bei Rückfragen';
+  String get settingsContactOnly =>
+      'Dient nur zur Kontaktaufnahme bei Rückfragen';
 
   @override
   String get settingsContactTelegram => 'Per Telegram kontaktieren';
@@ -11515,7 +12062,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFeedbackPh => 'Dein Feedback eingeben...';
 
   @override
-  String get settingsFeedbackSent => 'Dein Feedback wurde erfolgreich gesendet. Vielen Dank!';
+  String get settingsFeedbackSent =>
+      'Dein Feedback wurde erfolgreich gesendet. Vielen Dank!';
 
   @override
   String get settingsFileStorage => 'Dateiablage';
@@ -11527,19 +12075,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterAddFailed => 'Fehler beim Hinzufügen';
 
   @override
-  String get settingsFlutterAdminAddedNotNotified => 'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.';
+  String get settingsFlutterAdminAddedNotNotified =>
+      'Der Admin wurde hinzugefügt, konnte aber nicht benachrichtigt werden.';
 
   @override
-  String get settingsFlutterApplicantText => 'Ein Administrator wird deine Registrierung prüfen.';
+  String get settingsFlutterApplicantText =>
+      'Ein Administrator wird deine Registrierung prüfen.';
 
   @override
   String get settingsFlutterApplicantTitle => 'Mitgliedschaft wird geprüft';
 
   @override
-  String get settingsFlutterArchiveHint => 'Hier erscheinen archivierte Mitglieder';
+  String get settingsFlutterArchiveHint =>
+      'Hier erscheinen archivierte Mitglieder';
 
   @override
-  String get settingsFlutterBatchAllHaveAccount => 'Alle Spieler mit E-Mail haben bereits einen Account.';
+  String get settingsFlutterBatchAllHaveAccount =>
+      'Alle Spieler mit E-Mail haben bereits einen Account.';
 
   @override
   String settingsFlutterBatchCreateButton(Object count) {
@@ -11579,7 +12131,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterBatchWithAccount => 'Mit Account';
 
   @override
-  String get settingsFlutterCalendarIntro => 'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:';
+  String get settingsFlutterCalendarIntro =>
+      'Kopiere den folgenden Link in deine Kalender-App, um die Termine zu abonnieren:';
 
   @override
   String get settingsFlutterChangeEmail => 'E-Mail ändern';
@@ -11590,10 +12143,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsFlutterConfirmEmailChange => 'Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.';
+  String get settingsFlutterConfirmEmailChange =>
+      'Bitte bestätige die Änderung über den Link in der E-Mail an deine neue Adresse.';
 
   @override
-  String get settingsFlutterCopyLinkFailed => 'Link konnte nicht kopiert werden';
+  String get settingsFlutterCopyLinkFailed =>
+      'Link konnte nicht kopiert werden';
 
   @override
   String settingsFlutterCreateFailed(Object error) {
@@ -11617,7 +12172,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterFirstNameRequired => 'Vorname ist erforderlich';
 
   @override
-  String get settingsFlutterInvalidEmail => 'Bitte gib eine gültige E-Mail-Adresse ein.';
+  String get settingsFlutterInvalidEmail =>
+      'Bitte gib eine gültige E-Mail-Adresse ein.';
 
   @override
   String get settingsFlutterLastNameRequired => 'Nachname ist erforderlich';
@@ -11664,10 +12220,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterPendingDeclined => 'Registrierung abgelehnt';
 
   @override
-  String get settingsFlutterPendingEmpty => 'Keine ausstehenden Registrierungen';
+  String get settingsFlutterPendingEmpty =>
+      'Keine ausstehenden Registrierungen';
 
   @override
-  String get settingsFlutterPendingEmptyHint => 'Neue Registrierungen erscheinen hier automatisch';
+  String get settingsFlutterPendingEmptyHint =>
+      'Neue Registrierungen erscheinen hier automatisch';
 
   @override
   String get settingsFlutterPendingInvalidId => 'Ungültige Spieler-ID';
@@ -11676,7 +12234,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterPwaAndroidStep1 => 'Tippe auf das Menü (⋮)';
 
   @override
-  String get settingsFlutterPwaAndroidStep2 => '\"App installieren\" oder \"Zum Startbildschirm\"';
+  String get settingsFlutterPwaAndroidStep2 =>
+      '\"App installieren\" oder \"Zum Startbildschirm\"';
 
   @override
   String get settingsFlutterPwaIosStep1 => 'Tippe auf das Teilen-Symbol';
@@ -11688,7 +12247,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterPwaIosStep3 => '\"Hinzufügen\"';
 
   @override
-  String get settingsFlutterPwaText => 'Für ein besseres Erlebnis kannst du diese App installieren:';
+  String get settingsFlutterPwaText =>
+      'Für ein besseres Erlebnis kannst du diese App installieren:';
 
   @override
   String get settingsFlutterPwaTitle => 'App installieren';
@@ -11704,13 +12264,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsFlutterSameEmail => 'Das ist bereits deine E-Mail-Adresse.';
+  String get settingsFlutterSameEmail =>
+      'Das ist bereits deine E-Mail-Adresse.';
 
   @override
   String get settingsFlutterUserMgmtAdd => 'Benutzer hinzufügen';
 
   @override
-  String get settingsFlutterUserMgmtAddFailed => 'Fehler beim Hinzufügen des Benutzers';
+  String get settingsFlutterUserMgmtAddFailed =>
+      'Fehler beim Hinzufügen des Benutzers';
 
   @override
   String get settingsFlutterUserMgmtAdded => 'Benutzer hinzugefügt';
@@ -11719,19 +12281,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterUserMgmtEmailPh => 'email@beispiel.de';
 
   @override
-  String get settingsFlutterUserMgmtLastAdmin => 'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.';
+  String get settingsFlutterUserMgmtLastAdmin =>
+      'Der letzte Administrator kann nicht herabgestuft werden. Bitte füge zuerst einen weiteren Admin hinzu.';
 
   @override
   String get settingsFlutterUserMgmtNoAdmins => 'Keine Administratoren';
 
   @override
-  String get settingsFlutterUserMgmtNoAdminsHint => 'Füge Admins über den + Button hinzu';
+  String get settingsFlutterUserMgmtNoAdminsHint =>
+      'Füge Admins über den + Button hinzu';
 
   @override
   String get settingsFlutterUserMgmtNoParents => 'Keine Eltern';
 
   @override
-  String get settingsFlutterUserMgmtNoParentsHint => 'Eltern können ihre Kinder an-/abmelden';
+  String get settingsFlutterUserMgmtNoParentsHint =>
+      'Eltern können ihre Kinder an-/abmelden';
 
   @override
   String get settingsFlutterUserMgmtNoRole => 'Keine Rolle';
@@ -11743,7 +12308,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterUserMgmtNoViewers => 'Keine Betrachter';
 
   @override
-  String get settingsFlutterUserMgmtNoViewersHint => 'Betrachter können Anwesenheit sehen, aber nicht bearbeiten';
+  String get settingsFlutterUserMgmtNoViewersHint =>
+      'Betrachter können Anwesenheit sehen, aber nicht bearbeiten';
 
   @override
   String get settingsFlutterUserMgmtPlayers => 'Spieler';
@@ -11752,7 +12318,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterUserMgmtResponsibles => 'Verantwortliche';
 
   @override
-  String get settingsFlutterUserMgmtRoleChangeFailed => 'Fehler beim Ändern der Rolle';
+  String get settingsFlutterUserMgmtRoleChangeFailed =>
+      'Fehler beim Ändern der Rolle';
 
   @override
   String settingsFlutterUserMgmtRoleChanged(Object role) {
@@ -11763,7 +12330,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsFlutterUserMgmtSelfDemoteConfirm => 'Ja, Rolle ändern';
 
   @override
-  String get settingsFlutterUserMgmtSelfDemoteMessage => 'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?';
+  String get settingsFlutterUserMgmtSelfDemoteMessage =>
+      'Du bist dabei, deine eigene Admin-Rolle zu entfernen. Du verlierst dadurch den Zugang zur Benutzerverwaltung. Möchtest du fortfahren?';
 
   @override
   String get settingsFlutterUserMgmtSelfDemoteTitle => 'Eigene Rolle ändern?';
@@ -11817,7 +12385,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsInvite => 'Einladen';
 
   @override
-  String get settingsLanguageHint => 'Gilt für die App sowie für Push-Nachrichten, Telegram und E-Mails an dich.';
+  String get settingsLanguageHint =>
+      'Gilt für die App sowie für Push-Nachrichten, Telegram und E-Mails an dich.';
 
   @override
   String get settingsLanguageTitle => 'Sprache';
@@ -11828,7 +12397,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsLinkCopied => 'Der Link wurde in die Zwischenablage kopiert';
+  String get settingsLinkCopied =>
+      'Der Link wurde in die Zwischenablage kopiert';
 
   @override
   String get settingsLogout => 'Ausloggen';
@@ -11858,7 +12428,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsNoChurch => 'Keine Gemeinde gefunden.';
 
   @override
-  String get settingsNoPersonsInGroups => 'Keine Personen in den gewählten Gruppen gefunden.';
+  String get settingsNoPersonsInGroups =>
+      'Keine Personen in den gewählten Gruppen gefunden.';
 
   @override
   String get settingsNotLinked => 'Nicht verknüpft';
@@ -11882,22 +12453,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsParents => 'Eltern';
 
   @override
-  String get settingsParentsHint => 'Eltern können die Anwesenheiten ihrer Kinder einsehen und Abwesenheiten pflegen.';
+  String get settingsParentsHint =>
+      'Eltern können die Anwesenheiten ihrer Kinder einsehen und Abwesenheiten pflegen.';
 
   @override
   String get settingsPassPhoto => 'Passbild';
 
   @override
-  String get settingsPasswordChanged => 'Das Passwort wurde erfolgreich geändert';
+  String get settingsPasswordChanged =>
+      'Das Passwort wurde erfolgreich geändert';
 
   @override
-  String get settingsPasswordFailed => 'Fehler beim Ändern deines Passworts. Bitte versuche es später erneut.';
+  String get settingsPasswordFailed =>
+      'Fehler beim Ändern deines Passworts. Bitte versuche es später erneut.';
 
   @override
-  String get settingsPasswordTooShort => 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+  String get settingsPasswordTooShort =>
+      'Das Passwort muss mindestens 6 Zeichen lang sein.';
 
   @override
-  String get settingsPasswordsMismatch => 'Die Passwörter stimmen nicht überein.';
+  String get settingsPasswordsMismatch =>
+      'Die Passwörter stimmen nicht überein.';
 
   @override
   String settingsPendingCount(Object count) {
@@ -11911,13 +12487,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsPhonePh => 'Handynummer eingeben...';
 
   @override
-  String get settingsPhotoChangeFailed => 'Fehler beim ändern des Passbildes, versuche es später erneut';
+  String get settingsPhotoChangeFailed =>
+      'Fehler beim ändern des Passbildes, versuche es später erneut';
 
   @override
   String get settingsPhotoChanged => 'Das Passbild wurde erfolgreich geändert.';
 
   @override
-  String get settingsPhotoRemoveFailed => 'Fehler beim Entfernen des Passbildes, versuche es später erneut';
+  String get settingsPhotoRemoveFailed =>
+      'Fehler beim Entfernen des Passbildes, versuche es später erneut';
 
   @override
   String get settingsPhotoRemoved => 'Das Passbild wurde erfolgreich entfernt';
@@ -11932,7 +12510,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsProfilePicture => 'Profilbild';
 
   @override
-  String get settingsProfileUpdated => 'Die Profildaten wurden erfolgreich aktualisiert.';
+  String get settingsProfileUpdated =>
+      'Die Profildaten wurden erfolgreich aktualisiert.';
 
   @override
   String settingsQuestionFailed(Object error) {
@@ -11940,7 +12519,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get settingsQuestionSent => 'Deine Anfrage wurde erfolgreich gesendet. Wir melden uns so schnell wie möglich bei dir.';
+  String get settingsQuestionSent =>
+      'Deine Anfrage wurde erfolgreich gesendet. Wir melden uns so schnell wie möglich bei dir.';
 
   @override
   String get settingsRatingRequired => 'Bitte gib eine Bewertung ab.';
@@ -11960,7 +12540,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsRemovePhoto => 'Passbild entfernen';
 
   @override
-  String get settingsRemovePhotoConfirm => 'Möchtest du dein Passbild wirklich entfernen?';
+  String get settingsRemovePhotoConfirm =>
+      'Möchtest du dein Passbild wirklich entfernen?';
 
   @override
   String get settingsRemoveViewer => 'Beobachter entfernen?';
@@ -11987,7 +12568,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsSelectGroups => 'Gruppen auswählen';
 
   @override
-  String get settingsSelectOneGroup => 'Bitte mindestens eine Gruppe auswählen.';
+  String get settingsSelectOneGroup =>
+      'Bitte mindestens eine Gruppe auswählen.';
 
   @override
   String get settingsSettings => 'Einstellungen';
@@ -12023,7 +12605,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsTenantNamePh => 'Name der Instanz eingeben...';
 
   @override
-  String get settingsTenantSelectHelper => 'Wenn diese Option aktiv ist, wirst du vor dem Öffnen der App immer gefragt, welche Instanz du öffnen möchtest.';
+  String get settingsTenantSelectHelper =>
+      'Wenn diese Option aktiv ist, wirst du vor dem Öffnen der App immer gefragt, welche Instanz du öffnen möchtest.';
 
   @override
   String settingsTenantsCount(Object count) {
@@ -12043,7 +12626,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsViewers => 'Beobachter';
 
   @override
-  String get settingsViewersHint => 'Beobachter haben nur Leserechte auf Anwesenheitsübersicht und Personendaten.';
+  String get settingsViewersHint =>
+      'Beobachter haben nur Leserechte auf Anwesenheitsübersicht und Personendaten.';
 
   @override
   String get settingsVoiceLeader => 'Stimmführer';
@@ -12073,7 +12657,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsYourRating => 'Deine Bewertung';
 
   @override
-  String get shiftsChooseTarget => 'Wähle die Ziel-Instanz, in die der Schichtplan kopiert werden soll.';
+  String get shiftsChooseTarget =>
+      'Wähle die Ziel-Instanz, in die der Schichtplan kopiert werden soll.';
 
   @override
   String get shiftsComputed => 'Berechnete Schichten';
@@ -12122,7 +12707,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsCopyFailed => 'Fehler beim Kopieren des Schichtplans.';
 
   @override
-  String get shiftsCopyFromOther => 'Schichtplan aus anderer Instanz übernehmen';
+  String get shiftsCopyFromOther =>
+      'Schichtplan aus anderer Instanz übernehmen';
 
   @override
   String get shiftsCopyToTenant => 'In Instanz kopieren';
@@ -12134,7 +12720,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsCreate => 'Schichtplan erstellen';
 
   @override
-  String get shiftsDecimalHelper => 'Wenn die Schichtdauer keine ganze Zahl ist, bitte Dezimalstellen mit Punkt angeben. (z.B. 8.5 für 8 1/2 Stunden)';
+  String get shiftsDecimalHelper =>
+      'Wenn die Schichtdauer keine ganze Zahl ist, bitte Dezimalstellen mit Punkt angeben. (z.B. 8.5 für 8 1/2 Stunden)';
 
   @override
   String get shiftsDefinition => 'Definition';
@@ -12146,7 +12733,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsDeleteFailed => 'Fehler beim Löschen des Schichtplans';
 
   @override
-  String get shiftsDeleteMessage => 'Möchtest du den Schichtplan wirklich löschen? Alle zugehörigen Schichten werden ebenfalls gelöscht. Personen, die diesem Schichtplan zugewiesen sind, verlieren ihre Zuordnung. Diese Aktion kann nicht rückgängig gemacht werden.';
+  String get shiftsDeleteMessage =>
+      'Möchtest du den Schichtplan wirklich löschen? Alle zugehörigen Schichten werden ebenfalls gelöscht. Personen, die diesem Schichtplan zugewiesen sind, verlieren ihre Zuordnung. Diese Aktion kann nicht rückgängig gemacht werden.';
 
   @override
   String get shiftsDeleted => 'Schichtplan gelöscht';
@@ -12161,16 +12749,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsEdit => 'Schichtplan anpassen';
 
   @override
-  String get shiftsEditIntro => 'Füge hier die verschiedenen Schichten hinzu, aus denen sich der Schichtplan zusammensetzt. Jede Schicht entspricht einem Tag, an dem eine Person Schicht hat. Der Schichtplan beginnt wieder von vorne, wenn alle Schichten durchlaufen sind.';
+  String get shiftsEditIntro =>
+      'Füge hier die verschiedenen Schichten hinzu, aus denen sich der Schichtplan zusammensetzt. Jede Schicht entspricht einem Tag, an dem eine Person Schicht hat. Der Schichtplan beginnt wieder von vorne, wenn alle Schichten durchlaufen sind.';
 
   @override
-  String get shiftsEnterName => 'Bitte gib einen Namen für den Schichtplan ein.';
+  String get shiftsEnterName =>
+      'Bitte gib einen Namen für den Schichtplan ein.';
 
   @override
   String get shiftsExample => 'Beispiel-Rechnung';
 
   @override
-  String get shiftsFixedIntro => 'Lege feste Schichten fest, die regelmäßig wiederkehren. Falls keine Schichten festgelegt sind, kann mein Zuweisen der Schicht einer Person, das Anfangsdatum festgelegt werden.';
+  String get shiftsFixedIntro =>
+      'Lege feste Schichten fest, die regelmäßig wiederkehren. Falls keine Schichten festgelegt sind, kann mein Zuweisen der Schicht einer Person, das Anfangsdatum festgelegt werden.';
 
   @override
   String get shiftsFixedOptional => 'Feste Schichten (optional)';
@@ -12179,7 +12770,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFlutterAddSegment => 'Segment hinzufügen';
 
   @override
-  String get shiftsFlutterAddSegmentsHint => 'Füge Segmente hinzu, um die Vorschau zu sehen';
+  String get shiftsFlutterAddSegmentsHint =>
+      'Füge Segmente hinzu, um die Vorschau zu sehen';
 
   @override
   String get shiftsFlutterAddShift => 'Schicht hinzufügen';
@@ -12214,7 +12806,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get shiftsFlutterCopyInfoAssignments => 'Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.';
+  String get shiftsFlutterCopyInfoAssignments =>
+      'Zuweisungen werden anhand der App-ID (appId) der Personen gemappt.';
 
   @override
   String get shiftsFlutterCopyingShort => 'Wird kopiert...';
@@ -12248,7 +12841,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get shiftsFlutterDeleteConfirm => 'Möchtest du diesen Schichtplan wirklich löschen?';
+  String get shiftsFlutterDeleteConfirm =>
+      'Möchtest du diesen Schichtplan wirklich löschen?';
 
   @override
   String shiftsFlutterDeleteConfirmUsed(num count) {
@@ -12279,7 +12873,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFlutterFirstSegment => 'Erstes Segment';
 
   @override
-  String get shiftsFlutterFixedHint => 'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.';
+  String get shiftsFlutterFixedHint =>
+      'Feste Schichten definieren konkrete Startdaten für den Schichtzyklus.';
 
   @override
   String get shiftsFlutterFixedShifts => 'Feste Schichten';
@@ -12288,7 +12883,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFlutterFreeHint => 'Mitarbeiter ist an diesem Tag frei';
 
   @override
-  String get shiftsFlutterInfoText => 'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.';
+  String get shiftsFlutterInfoText =>
+      'Schichtpläne ermöglichen automatische Entschuldigungen basierend auf Arbeitsschichten. Weise einem Mitglied einen Schichtplan zu, um Konflikte mit Terminen automatisch zu erkennen.';
 
   @override
   String get shiftsFlutterInfoTitle => 'Automatische Entschuldigungen';
@@ -12348,7 +12944,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFlutterRepetitionsHint => 'Anzahl aufeinanderfolgender Tage';
 
   @override
-  String get shiftsFlutterSearchingPeople => 'Suche passende Personen in Ziel-Instanz...';
+  String get shiftsFlutterSearchingPeople =>
+      'Suche passende Personen in Ziel-Instanz...';
 
   @override
   String shiftsFlutterSegments(num count) {
@@ -12406,10 +13003,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsFree => 'Frei';
 
   @override
-  String get shiftsImportant => 'WICHTIG: Die Anwesenheiten der Personen werden immer nach dem Anlegen einer neuen Anwesenheit und beim Zuweisen eines Schichtplans einer Person aktualisiert.';
+  String get shiftsImportant =>
+      'WICHTIG: Die Anwesenheiten der Personen werden immer nach dem Anlegen einer neuen Anwesenheit und beim Zuweisen eines Schichtplans einer Person aktualisiert.';
 
   @override
-  String get shiftsIntro => 'Pflege Schichtpläne um automatisiert Personen bei Anwesenheiten zu entschuldigen wenn diese aufgrund von Schichten nicht verfügbar sind. Du kannst verschiedene Schichtpläne anlegen und diese dann den Personen zuweisen. Personen werden nur dann als \"entschuldigt\" markiert, wenn sie einer Schicht zugewiesen sind und die Schicht zur Zeit des Termins stattfindet. Die Notiz \"Schichtbedingt\" wird dann automatisch bei der Anwesenheit hinzugefügt.';
+  String get shiftsIntro =>
+      'Pflege Schichtpläne um automatisiert Personen bei Anwesenheiten zu entschuldigen wenn diese aufgrund von Schichten nicht verfügbar sind. Du kannst verschiedene Schichtpläne anlegen und diese dann den Personen zuweisen. Personen werden nur dann als \"entschuldigt\" markiert, wenn sie einer Schicht zugewiesen sind und die Schicht zur Zeit des Termins stattfindet. Die Notiz \"Schichtbedingt\" wird dann automatisch bei der Anwesenheit hinzugefügt.';
 
   @override
   String get shiftsLabel => 'Bezeichnung';
@@ -12433,7 +13032,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsRepetitions => 'Wiederholungen';
 
   @override
-  String get shiftsRepetitionsHelper => 'Anzahl der Wiederholungen dieser Schicht im Plan.';
+  String get shiftsRepetitionsHelper =>
+      'Anzahl der Wiederholungen dieser Schicht im Plan.';
 
   @override
   String get shiftsSaveFailed => 'Fehler beim Speichern des Schichtplans';
@@ -12456,7 +13056,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get shiftsStartTime => 'Startzeit';
 
   @override
-  String get shiftsWarning => 'ACHTUNG: Das Ändern der Schichtdefinition kann zu Inkonsistenzen führen. Falls der Schichtplan bereits einer Person zugewiesen wurde, können feste Schichten nicht mehr geändert oder entfernt werden! Lege stattdessen einen neuen Schichtplan an.';
+  String get shiftsWarning =>
+      'ACHTUNG: Das Ändern der Schichtdefinition kann zu Inkonsistenzen führen. Falls der Schichtplan bereits einer Person zugewiesen wurde, können feste Schichten nicht mehr geändert oder entfernt werden! Lege stattdessen einen neuen Schichtplan an.';
 
   @override
   String get shiftsWithAssignments => 'Mit Zuweisungen';
@@ -12493,7 +13094,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get signoutAllDutiesFilled => 'Gerade sind alle Dienste besetzt. Danke!';
+  String get signoutAllDutiesFilled =>
+      'Gerade sind alle Dienste besetzt. Danke!';
 
   @override
   String get signoutAttendance => 'Anwesenheit';
@@ -12557,7 +13159,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutDeleteAbsence => 'Abwesenheit löschen';
 
   @override
-  String get signoutDeleteAbsenceMessage => 'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf den Standardstatus des jeweiligen Termintyps zurückgesetzt.';
+  String get signoutDeleteAbsenceMessage =>
+      'Soll die Abwesenheit gelöscht werden? Bereits entschuldigte Termine in diesem Zeitraum werden auf den Standardstatus des jeweiligen Termintyps zurückgesetzt.';
 
   @override
   String get signoutDescription => 'Beschreibung';
@@ -12586,10 +13189,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutDutyConfirmed => 'Danke, dein Dienst ist bestätigt 🙂';
 
   @override
-  String get signoutDutyFull => 'Jemand war schneller, der Dienst ist schon voll.';
+  String get signoutDutyFull =>
+      'Jemand war schneller, der Dienst ist schon voll.';
 
   @override
-  String get signoutDutyNotAllowed => 'Du kannst diesen Dienst nicht übernehmen.';
+  String get signoutDutyNotAllowed =>
+      'Du kannst diesen Dienst nicht übernehmen.';
 
   @override
   String signoutDutyOccupied(Object occupied, Object required) {
@@ -12609,7 +13214,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutEndPause => 'Pausierung beenden';
 
   @override
-  String get signoutEndPauseMessage => 'Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?';
+  String get signoutEndPauseMessage =>
+      'Möchtest du deine Pausierung wirklich beenden und wieder aktiv werden?';
 
   @override
   String get signoutEnterAbsence => 'Abwesenheit eintragen';
@@ -12632,7 +13238,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutFillRequired => 'Bitte fülle alle Pflichtfelder aus';
 
   @override
-  String get signoutFlutterAbsenceSaveFailed => 'Abwesenheit konnte nicht gespeichert werden';
+  String get signoutFlutterAbsenceSaveFailed =>
+      'Abwesenheit konnte nicht gespeichert werden';
 
   @override
   String signoutFlutterError(Object error) {
@@ -12645,13 +13252,16 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get signoutFlutterFieldsSaveFailed => 'Anmeldefelder konnten nicht gespeichert werden.';
+  String get signoutFlutterFieldsSaveFailed =>
+      'Anmeldefelder konnten nicht gespeichert werden.';
 
   @override
-  String get signoutFlutterFileDownloadFailed => 'Datei konnte nicht heruntergeladen werden';
+  String get signoutFlutterFileDownloadFailed =>
+      'Datei konnte nicht heruntergeladen werden';
 
   @override
-  String get signoutFlutterFileOpenFailed => 'Datei konnte nicht geöffnet werden';
+  String get signoutFlutterFileOpenFailed =>
+      'Datei konnte nicht geöffnet werden';
 
   @override
   String signoutFlutterFilesSkipped(Object count) {
@@ -12659,19 +13269,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get signoutFlutterLinkOpenFailed => 'Link konnte nicht geöffnet werden';
+  String get signoutFlutterLinkOpenFailed =>
+      'Link konnte nicht geöffnet werden';
 
   @override
   String get signoutFlutterNoCurrentSongs => 'Keine aktuellen Werke';
 
   @override
-  String get signoutFlutterNoPerson => 'Für dein Konto wurde in dieser Instanz keine Person gefunden.';
+  String get signoutFlutterNoPerson =>
+      'Für dein Konto wurde in dieser Instanz keine Person gefunden.';
 
   @override
-  String get signoutFlutterNoPrintableScores => 'Keine druckbaren Noten gefunden.';
+  String get signoutFlutterNoPrintableScores =>
+      'Keine druckbaren Noten gefunden.';
 
   @override
-  String get signoutFlutterNoteSaveFailed => 'Notiz konnte nicht gespeichert werden.';
+  String get signoutFlutterNoteSaveFailed =>
+      'Notiz konnte nicht gespeichert werden.';
 
   @override
   String get signoutFlutterPrintAllScores => 'Alle Noten drucken';
@@ -12685,13 +13299,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutFlutterShowLess => 'Weniger anzeigen';
 
   @override
-  String get signoutFlutterSigninFailed => 'Anmeldung fehlgeschlagen. Bitte versuche es erneut.';
+  String get signoutFlutterSigninFailed =>
+      'Anmeldung fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
-  String get signoutFlutterSignoutFailed => 'Abmeldung fehlgeschlagen. Bitte versuche es erneut.';
+  String get signoutFlutterSignoutFailed =>
+      'Abmeldung fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
-  String get signoutFlutterSwitchTenantFailed => 'Instanz konnte nicht gewechselt werden';
+  String get signoutFlutterSwitchTenantFailed =>
+      'Instanz konnte nicht gewechselt werden';
 
   @override
   String get signoutGiveReason => 'Bitte gib einen Grund an!';
@@ -12737,13 +13354,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutLegendLateReported => 'Verspätung gemeldet';
 
   @override
-  String get signoutLegendLateReportedExcused => 'Verspätung gemeldet (entschuldigt)';
+  String get signoutLegendLateReportedExcused =>
+      'Verspätung gemeldet (entschuldigt)';
 
   @override
   String get signoutListenRecording => 'Aufnahme anhören';
 
   @override
-  String get signoutLongAbsenceHint => 'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, damit du nicht in neuen Terminen erscheinst.';
+  String get signoutLongAbsenceHint =>
+      'Für längere Abwesenheiten empfiehlt sich die Pausieren-Funktion, damit du nicht in neuen Terminen erscheinst.';
 
   @override
   String get signoutMoreEvents => 'Weitere Termine';
@@ -12758,19 +13377,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutNextDuty => 'Nächster Dienst';
 
   @override
-  String get signoutNoActions => 'Für diesen Termin sind keine Aktionen verfügbar.';
+  String get signoutNoActions =>
+      'Für diesen Termin sind keine Aktionen verfügbar.';
 
   @override
   String get signoutNoEndDate => 'Kein Enddatum gewählt';
 
   @override
-  String get signoutNoScoresForInstrument => 'Für dein Instrument sind leider keine Noten verfügbar.';
+  String get signoutNoScoresForInstrument =>
+      'Für dein Instrument sind leider keine Noten verfügbar.';
 
   @override
-  String get signoutNoScoresFound => 'Keine Noten für dein Instrument gefunden.';
+  String get signoutNoScoresFound =>
+      'Keine Noten für dein Instrument gefunden.';
 
   @override
-  String get signoutNoSongActions => 'Für dieses Werk sind keine Aktionen verfügbar.';
+  String get signoutNoSongActions =>
+      'Für dieses Werk sind keine Aktionen verfügbar.';
 
   @override
   String get signoutNotInvited => 'Nicht eingeladen';
@@ -12846,13 +13469,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutRegistrationFieldsSaved => 'Anmeldefelder gespeichert.';
 
   @override
-  String get signoutRegistrationSubmitted => 'Deine Registrierung wurde erfolgreich übermittelt. Du wirst benachrichtigt, sobald diese bearbeitet wurde.';
+  String get signoutRegistrationSubmitted =>
+      'Deine Registrierung wurde erfolgreich übermittelt. Du wirst benachrichtigt, sobald diese bearbeitet wurde.';
 
   @override
   String get signoutRegularlyUnavailable => 'Regelmäßig verhindert';
 
   @override
-  String get signoutRegularlyUnavailableHint => 'z. B. jeden Mittwoch wegen der Kinderstunde';
+  String get signoutRegularlyUnavailableHint =>
+      'z. B. jeden Mittwoch wegen der Kinderstunde';
 
   @override
   String get signoutReportAbsence => 'Abwesenheit melden';
@@ -12882,10 +13507,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutSignOut => 'Abmelden';
 
   @override
-  String get signoutThanksLate => 'Vielen Dank für die Info und Gottes Segen dir!';
+  String get signoutThanksLate =>
+      'Vielen Dank für die Info und Gottes Segen dir!';
 
   @override
-  String get signoutThanksSignout => 'Vielen Dank für deine rechtzeitige Abmeldung und Gottes Segen dir.';
+  String get signoutThanksSignout =>
+      'Vielen Dank für deine rechtzeitige Abmeldung und Gottes Segen dir.';
 
   @override
   String get signoutToConfirm => 'zu bestätigen';
@@ -12952,7 +13579,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsCategoryName => 'Name der Kategorie';
 
   @override
-  String get songsCategoryNameEmpty => 'Der Name der Kategorie darf nicht leer sein';
+  String get songsCategoryNameEmpty =>
+      'Der Name der Kategorie darf nicht leer sein';
 
   @override
   String get songsCategorySaved => 'Kategorie gespeichert';
@@ -13033,13 +13661,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsDeleteAll => 'Alle Dateien löschen';
 
   @override
-  String get songsDeleteAllConfirm => 'Möchten Sie wirklich alle Dateien dieses Werks löschen?';
+  String get songsDeleteAllConfirm =>
+      'Möchten Sie wirklich alle Dateien dieses Werks löschen?';
 
   @override
   String get songsDeleteCategory => 'Kategorie löschen';
 
   @override
-  String get songsDeleteCategoryMessage => 'Möchten Sie diese Kategorie wirklich löschen? Alle Werke in dieser Kategorie werden keiner neuen Kategorie zugewiesen.';
+  String get songsDeleteCategoryMessage =>
+      'Möchten Sie diese Kategorie wirklich löschen? Alle Werke in dieser Kategorie werden keiner neuen Kategorie zugewiesen.';
 
   @override
   String get songsDeleteConfirm => 'Soll das Werk wirklich gelöscht werden?';
@@ -13076,7 +13706,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsDifficultyShort => 'Schwierigkeit';
 
   @override
-  String get songsDontClose => 'Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.';
+  String get songsDontClose =>
+      'Bitte das Fenster nicht schließen, bis der Upload abgeschlossen ist.';
 
   @override
   String get songsDownloadAll => 'Alle Dateien herunterladen';
@@ -13091,7 +13722,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsDownloadingFiles => 'Dateien werden heruntergeladen...';
 
   @override
-  String get songsDropHere => 'Dateien hierher ziehen oder tippen zum Auswählen';
+  String get songsDropHere =>
+      'Dateien hierher ziehen oder tippen zum Auswählen';
 
   @override
   String get songsEasy => '1 - Leicht';
@@ -13149,7 +13781,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFlutterDetectUnsure => 'Unsicher erkannt – bitte prüfen';
 
   @override
-  String get songsFlutterDownloadFileFailed => 'Datei konnte nicht heruntergeladen werden';
+  String get songsFlutterDownloadFileFailed =>
+      'Datei konnte nicht heruntergeladen werden';
 
   @override
   String songsFlutterErrorWith(Object error) {
@@ -13190,7 +13823,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFlutterLastPage => 'Letzte Seite';
 
   @override
-  String get songsFlutterLearnFailed => 'Die Begriffe konnten nicht gemerkt werden';
+  String get songsFlutterLearnFailed =>
+      'Die Begriffe konnten nicht gemerkt werden';
 
   @override
   String songsFlutterLearnTerm(Object term, Object group) {
@@ -13252,7 +13886,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get songsFlutterPrintFileFailed => 'Datei konnte nicht gedruckt werden';
+  String get songsFlutterPrintFileFailed =>
+      'Datei konnte nicht gedruckt werden';
 
   @override
   String get songsFlutterPrintJobSent => 'Druckauftrag gesendet';
@@ -13261,10 +13896,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsFlutterPrinting => 'Wird gedruckt...';
 
   @override
-  String get songsFlutterReorderCategoriesHint => 'Ziehe Kategorien um sie neu zu sortieren';
+  String get songsFlutterReorderCategoriesHint =>
+      'Ziehe Kategorien um sie neu zu sortieren';
 
   @override
-  String get songsFlutterReviewHint => 'Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.';
+  String get songsFlutterReviewHint =>
+      'Bei diesen Dateien ist die Stimme nicht eindeutig. Bitte prüfe die Zuordnung vor dem Hochladen.';
 
   @override
   String get songsFlutterReviewTitle => 'Zuordnung prüfen';
@@ -13315,7 +13952,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get songsImportIntro => 'Importiere Werke aus einer Excel- (.xlsx/.xls) oder CSV-Datei. Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten ist es, die Vorlage herunterzuladen und auszufüllen.';
+  String get songsImportIntro =>
+      'Importiere Werke aus einer Excel- (.xlsx/.xls) oder CSV-Datei. Die erste Zeile muss Spaltenüberschriften enthalten. Am einfachsten ist es, die Vorlage herunterzuladen und auszufüllen.';
 
   @override
   String get songsImportSongs => 'Werke importieren';
@@ -13392,10 +14030,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get songsMapNumberName => 'Bitte Spalten für Nummer und Name zuordnen.';
+  String get songsMapNumberName =>
+      'Bitte Spalten für Nummer und Name zuordnen.';
 
   @override
-  String get songsMappingIntro => 'Ordne die Spalten deiner Datei den Werkfeldern zu. Nummer und Name sind erforderlich.';
+  String get songsMappingIntro =>
+      'Ordne die Spalten deiner Datei den Werkfeldern zu. Nummer und Name sind erforderlich.';
 
   @override
   String get songsMedium => '2 - Mittel';
@@ -13425,10 +14065,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsNoGroupPdfs => 'Keine Gruppen-PDFs zum Drucken gefunden';
 
   @override
-  String get songsNoGroupsWithPeople => 'Keine Gruppen mit zugewiesenen Personen gefunden';
+  String get songsNoGroupsWithPeople =>
+      'Keine Gruppen mit zugewiesenen Personen gefunden';
 
   @override
-  String get songsNoScoresCurrent => 'Keine Noten für diese Gruppe in den aktuellen Werken gefunden.';
+  String get songsNoScoresCurrent =>
+      'Keine Noten für diese Gruppe in den aktuellen Werken gefunden.';
 
   @override
   String get songsNoScoresGroup => 'Keine Noten für diese Gruppe vorhanden.';
@@ -13464,7 +14106,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsNumberTaken => 'Die Liednummer ist bereits vergeben';
 
   @override
-  String get songsOnlyGroupsWithFiles => 'Es werden nur Gruppen angezeigt, für die Dateien vorhanden sind.';
+  String get songsOnlyGroupsWithFiles =>
+      'Es werden nur Gruppen angezeigt, für die Dateien vorhanden sind.';
 
   @override
   String get songsOpenExternalLink => 'Externen Noten-Link öffnen';
@@ -13499,7 +14142,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsPrefix => 'Präfix';
 
   @override
-  String get songsPrefixHelper => 'Bspw. um Weihnachtslieder kennzeichnen zu können (z.B. W für Weihnachten -> W1)';
+  String get songsPrefixHelper =>
+      'Bspw. um Weihnachtslieder kennzeichnen zu können (z.B. W für Weihnachten -> W1)';
 
   @override
   String get songsPrefixOptional => 'Präfix (optional)';
@@ -13585,7 +14229,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsUploadFiles => 'Dateien hochladen';
 
   @override
-  String get songsUploadInfo => '- Die Besetzung wird nach dem Hochladen automatisch anhand der ausgewählten Instrumente aktualisiert.<br>- Füge den Instrumenten Synonyme hinzu (<a href=\"/tabs/settings/instruments\">Gruppeneinstellungen</a>), um die automatische Zuordnung der Dateien zu verbessern.<br>- Beim Hochladen mehrerer Dateien kann es je nach Dateigröße und Internetverbindung einige Zeit dauern, bis alle Dateien vollständig hochgeladen sind. Bitte schließen Sie das Fenster nicht, bis der Upload abgeschlossen ist.';
+  String get songsUploadInfo =>
+      '- Die Besetzung wird nach dem Hochladen automatisch anhand der ausgewählten Instrumente aktualisiert.<br>- Füge den Instrumenten Synonyme hinzu (<a href=\"/tabs/settings/instruments\">Gruppeneinstellungen</a>), um die automatische Zuordnung der Dateien zu verbessern.<br>- Beim Hochladen mehrerer Dateien kann es je nach Dateigröße und Internetverbindung einige Zeit dauern, bis alle Dateien vollständig hochgeladen sind. Bitte schließen Sie das Fenster nicht, bis der Upload abgeschlossen ist.';
 
   @override
   String songsUploadPartialFail(Object failed, Object total) {
@@ -13696,7 +14341,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get statsFlutterNoData => 'Keine Daten verfügbar';
 
   @override
-  String get statsFlutterNoDataInPeriod => 'Keine Daten im ausgewählten Zeitraum';
+  String get statsFlutterNoDataInPeriod =>
+      'Keine Daten im ausgewählten Zeitraum';
 
   @override
   String get statsFlutterNoUnexcused => 'Keine unentschuldigten Abwesenheiten';
@@ -13805,37 +14451,45 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcAddCategoryFailed => 'Fehler beim Hinzufügen der Kategorie';
 
   @override
-  String get svcAddGroupCategoryFailed => 'Fehler beim hinzufügen der Gruppenkategorie';
+  String get svcAddGroupCategoryFailed =>
+      'Fehler beim hinzufügen der Gruppenkategorie';
 
   @override
-  String get svcAddPersonAttendancesFailed => 'Fehler beim Hinzufügen der Person-Anwesenheiten';
+  String get svcAddPersonAttendancesFailed =>
+      'Fehler beim Hinzufügen der Person-Anwesenheiten';
 
   @override
   String get svcAddShiftFailed => 'Fehler beim Hinzufügen der Schicht';
 
   @override
-  String get svcAddSongCategoryFailed => 'Fehler beim hinzufügen der Werkkategorie';
+  String get svcAddSongCategoryFailed =>
+      'Fehler beim hinzufügen der Werkkategorie';
 
   @override
-  String get svcAddSongHistoryFailed => 'Fehler beim Hinzufügen der Lieder zur Historie';
+  String get svcAddSongHistoryFailed =>
+      'Fehler beim Hinzufügen der Lieder zur Historie';
 
   @override
   String get svcAddTypeFailed => 'Fehler beim Hinzufügen des Anwesenheitstyps';
 
   @override
-  String get svcAddUserToTenantFailed => 'Fehler beim Hinzufügen des Benutzers zum Mandanten';
+  String get svcAddUserToTenantFailed =>
+      'Fehler beim Hinzufügen des Benutzers zum Mandanten';
 
   @override
-  String get svcApplyToPlannedFailed => 'Fehler beim Übernehmen in geplante Termine';
+  String get svcApplyToPlannedFailed =>
+      'Fehler beim Übernehmen in geplante Termine';
 
   @override
   String get svcAssignFailed => 'Fehler beim Einteilen';
 
   @override
-  String get svcCheckShiftUsageFailed => 'Fehler beim Überprüfen der Schichtverwendung';
+  String get svcCheckShiftUsageFailed =>
+      'Fehler beim Überprüfen der Schichtverwendung';
 
   @override
-  String get svcCleanupAttendancesFailed => 'Fehler beim Bereinigen der Person-Anwesenheiten';
+  String get svcCleanupAttendancesFailed =>
+      'Fehler beim Bereinigen der Person-Anwesenheiten';
 
   @override
   String get svcConfirmFailed => 'Fehler beim Bestätigen';
@@ -13847,7 +14501,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcCreateOrgFailed => 'Fehler beim Erstellen der Organisation';
 
   @override
-  String get svcCreatePublicLinkFailed => 'Fehler beim Erstellen des öffentlichen Links';
+  String get svcCreatePublicLinkFailed =>
+      'Fehler beim Erstellen des öffentlichen Links';
 
   @override
   String get svcCreateTenantFailed => 'Fehler beim Erstellen des Mandanten';
@@ -13868,13 +14523,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcDeleteFailed => 'Fehler beim Löschen';
 
   @override
-  String get svcDeletePersonAttendanceFailed => 'Fehler beim Löschen der Person-Anwesenheit';
+  String get svcDeletePersonAttendanceFailed =>
+      'Fehler beim Löschen der Person-Anwesenheit';
 
   @override
-  String get svcDeletePersonAttendancesFailed => 'Fehler beim Löschen der Person-Anwesenheiten';
+  String get svcDeletePersonAttendancesFailed =>
+      'Fehler beim Löschen der Person-Anwesenheiten';
 
   @override
-  String get svcDeleteSharedFieldValuesFailed => 'Fehler beim Löschen der gemeinsamen Zusatzfeldwerte';
+  String get svcDeleteSharedFieldValuesFailed =>
+      'Fehler beim Löschen der gemeinsamen Zusatzfeldwerte';
 
   @override
   String get svcDeleteShiftFailed => 'Fehler beim Löschen der Schicht';
@@ -13892,7 +14550,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcFileLoading => 'Datei wird geladen...';
 
   @override
-  String get svcFolderIntoItself => 'Ordner kann nicht in sich selbst verschoben werden.';
+  String get svcFolderIntoItself =>
+      'Ordner kann nicht in sich selbst verschoben werden.';
 
   @override
   String get svcInvalidFileName => 'Ungültiger Dateiname.';
@@ -13934,16 +14593,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcLoadChurchesFailed => 'Fehler beim Laden der Kirchen';
 
   @override
-  String get svcLoadGroupMembersFailed => 'Fehler beim Laden der Gruppenmitglieder';
+  String get svcLoadGroupMembersFailed =>
+      'Fehler beim Laden der Gruppenmitglieder';
 
   @override
-  String get svcLoadMainGroupPeopleFailed => 'Fehler beim Laden der Hauptgruppen-Personen';
+  String get svcLoadMainGroupPeopleFailed =>
+      'Fehler beim Laden der Hauptgruppen-Personen';
 
   @override
   String get svcLoadOrgFailed => 'Fehler beim Laden der Organisation';
 
   @override
-  String get svcLoadOrgPlansFailed => 'Fehler beim Laden der Organisationspläne';
+  String get svcLoadOrgPlansFailed =>
+      'Fehler beim Laden der Organisationspläne';
 
   @override
   String get svcLoadOrgsFailed => 'Fehler beim Laden der Organisationen';
@@ -13952,19 +14614,23 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcLoadParentsFailed => 'Fehler beim Laden der Elternteile';
 
   @override
-  String get svcLoadPersonAttendancesFailed => 'Fehler beim Laden der Person-Anwesenheiten';
+  String get svcLoadPersonAttendancesFailed =>
+      'Fehler beim Laden der Person-Anwesenheiten';
 
   @override
   String get svcLoadPlayersFailed => 'Fehler beim Laden der Spieler';
 
   @override
-  String get svcLoadRolePermissionsFailed => 'Fehler beim Laden der Rollenberechtigungen';
+  String get svcLoadRolePermissionsFailed =>
+      'Fehler beim Laden der Rollenberechtigungen';
 
   @override
-  String get svcLoadSharedFieldsFailed => 'Fehler beim Laden der gemeinsamen Zusatzfelder';
+  String get svcLoadSharedFieldsFailed =>
+      'Fehler beim Laden der gemeinsamen Zusatzfelder';
 
   @override
-  String get svcLoadShiftPeopleFailed => 'Fehler beim Laden der Personen mit Schicht';
+  String get svcLoadShiftPeopleFailed =>
+      'Fehler beim Laden der Personen mit Schicht';
 
   @override
   String get svcLoadShiftsFailed => 'Fehler beim Laden der Schichten';
@@ -14000,7 +14666,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcNoPlayerFound => 'Es konnte kein Spieler gefunden werden.';
 
   @override
-  String get svcNoPrintableScores => 'Keine druckbaren Noten (PDF/Bild) gefunden.';
+  String get svcNoPrintableScores =>
+      'Keine druckbaren Noten (PDF/Bild) gefunden.';
 
   @override
   String get svcNotification => 'Benachrichtigung';
@@ -14018,7 +14685,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcPdfDownloaded => 'PDF heruntergeladen - bitte manuell drucken';
 
   @override
-  String get svcPushPrompt => 'Möchtest du Push-Benachrichtigungen aktivieren? Du wirst über Termine, Checklisten und wichtige Ereignisse informiert.';
+  String get svcPushPrompt =>
+      'Möchtest du Push-Benachrichtigungen aktivieren? Du wirst über Termine, Checklisten und wichtige Ereignisse informiert.';
 
   @override
   String get svcPushTitle => 'Push-Benachrichtigungen';
@@ -14030,7 +14698,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcRenameOrgFailed => 'Fehler beim Umbenennen der Organisation';
 
   @override
-  String get svcRevokePublicLinkFailed => 'Fehler beim Widerrufen des öffentlichen Links';
+  String get svcRevokePublicLinkFailed =>
+      'Fehler beim Widerrufen des öffentlichen Links';
 
   @override
   String get svcSaveAbsenceFailed => 'Fehler beim Speichern der Abwesenheit';
@@ -14039,34 +14708,41 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcSaveBrandingFailed => 'Fehler beim Speichern des Brandings';
 
   @override
-  String get svcSaveDefaultFieldsFailed => 'Fehler beim Speichern der Standardfelder';
+  String get svcSaveDefaultFieldsFailed =>
+      'Fehler beim Speichern der Standardfelder';
 
   @override
   String get svcSaveFailed => 'Fehler beim Speichern';
 
   @override
-  String get svcSaveGemeindeAppFailed => 'Fehler beim Speichern der Gemeinde-App-Einstellungen';
+  String get svcSaveGemeindeAppFailed =>
+      'Fehler beim Speichern der Gemeinde-App-Einstellungen';
 
   @override
-  String get svcSaveOrgFieldsFailed => 'Fehler beim Speichern der Organisations-Zusatzfelder';
+  String get svcSaveOrgFieldsFailed =>
+      'Fehler beim Speichern der Organisations-Zusatzfelder';
 
   @override
-  String get svcSavePlanTemplatesFailed => 'Fehler beim Speichern der Planvorlagen';
+  String get svcSavePlanTemplatesFailed =>
+      'Fehler beim Speichern der Planvorlagen';
 
   @override
-  String get svcSaveSharedFieldsFailed => 'Fehler beim Speichern der gemeinsamen Zusatzfelder';
+  String get svcSaveSharedFieldsFailed =>
+      'Fehler beim Speichern der gemeinsamen Zusatzfelder';
 
   @override
   String get svcScores => 'Noten';
 
   @override
-  String get svcSearchTargetPeopleFailed => 'Fehler beim Suchen der Personen in Ziel-Instanz';
+  String get svcSearchTargetPeopleFailed =>
+      'Fehler beim Suchen der Personen in Ziel-Instanz';
 
   @override
   String get svcSendFeedbackFailed => 'Fehler beim Senden des Feedbacks';
 
   @override
-  String get svcSendMessageFailed => 'Fehler beim Senden der Nachricht, versuche es später erneut!';
+  String get svcSendMessageFailed =>
+      'Fehler beim Senden der Nachricht, versuche es später erneut!';
 
   @override
   String get svcSendQuestionFailed => 'Fehler beim Senden der Frage';
@@ -14081,10 +14757,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcSignedUrlFailed => 'Signed URL konnte nicht erzeugt werden.';
 
   @override
-  String get svcTransferAbsencesFailed => 'Fehler beim Übertragen der Abwesenheiten';
+  String get svcTransferAbsencesFailed =>
+      'Fehler beim Übertragen der Abwesenheiten';
 
   @override
-  String get svcTransferPersonAttendancesFailed => 'Fehler beim Übertragen der Person-Anwesenheiten';
+  String get svcTransferPersonAttendancesFailed =>
+      'Fehler beim Übertragen der Person-Anwesenheiten';
 
   @override
   String get svcUnassignFailed => 'Fehler beim Austragen';
@@ -14093,22 +14771,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcUpdateAttendanceFailed => 'Fehler beim updaten der Anwesenheit';
 
   @override
-  String get svcUpdateCategoryFailed => 'Fehler beim Aktualisieren der Kategorie';
+  String get svcUpdateCategoryFailed =>
+      'Fehler beim Aktualisieren der Kategorie';
 
   @override
-  String get svcUpdateCategoryOrderFailed => 'Fehler beim Aktualisieren der Kategoriereihenfolge';
+  String get svcUpdateCategoryOrderFailed =>
+      'Fehler beim Aktualisieren der Kategoriereihenfolge';
 
   @override
   String get svcUpdateChurchFailed => 'Fehler beim Aktualisieren der Gemeinde';
 
   @override
-  String get svcUpdateConfigFailed => 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.';
+  String get svcUpdateConfigFailed =>
+      'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.';
 
   @override
   String get svcUpdateEntryFailed => 'Fehler beim Updaten des Eintrags';
 
   @override
-  String get svcUpdateExtraFieldsFailed => 'Fehler beim updaten der Zusatzfelder';
+  String get svcUpdateExtraFieldsFailed =>
+      'Fehler beim updaten der Zusatzfelder';
 
   @override
   String get svcUpdateFieldFailed => 'Fehler beim updaten des Feldes';
@@ -14117,22 +14799,27 @@ class AppLocalizationsDe extends AppLocalizations {
   String get svcUpdateGroupFailed => 'Fehler beim updaten des Instruments';
 
   @override
-  String get svcUpdateRolePermissionFailed => 'Fehler beim Aktualisieren der Rollenberechtigung';
+  String get svcUpdateRolePermissionFailed =>
+      'Fehler beim Aktualisieren der Rollenberechtigung';
 
   @override
-  String get svcUpdateSettingsFailed => 'Fehler beim Aktualisieren der Einstellungen';
+  String get svcUpdateSettingsFailed =>
+      'Fehler beim Aktualisieren der Einstellungen';
 
   @override
   String get svcUpdateShiftFailed => 'Fehler beim Aktualisieren der Schicht';
 
   @override
-  String get svcUpdateTenantDataFailed => 'Fehler beim Aktualisieren der Mandantendaten';
+  String get svcUpdateTenantDataFailed =>
+      'Fehler beim Aktualisieren der Mandantendaten';
 
   @override
-  String get svcUpdateTenantUserFailed => 'Fehler beim Aktualisieren des Mandantenbenutzers';
+  String get svcUpdateTenantUserFailed =>
+      'Fehler beim Aktualisieren des Mandantenbenutzers';
 
   @override
-  String get svcUpdateTypeFailed => 'Fehler beim Aktualisieren des Anwesenheitstyps';
+  String get svcUpdateTypeFailed =>
+      'Fehler beim Aktualisieren des Anwesenheitstyps';
 
   @override
   String get tabsDashboard => 'Dashboard';
@@ -14257,7 +14944,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksNotAssigned => 'Noch niemandem zugewiesen';
 
   @override
-  String get tasksNotAvailable => 'Diese Aufgabe gibt es nicht mehr oder du kannst sie nicht sehen.';
+  String get tasksNotAvailable =>
+      'Diese Aufgabe gibt es nicht mehr oder du kannst sie nicht sehen.';
 
   @override
   String tasksNotify(Object name) {
@@ -14298,10 +14986,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tasksProtocol => 'Protokoll';
 
   @override
-  String get tasksReminderOther => 'Die verantwortliche Person bekommt 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.';
+  String get tasksReminderOther =>
+      'Die verantwortliche Person bekommt 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.';
 
   @override
-  String get tasksReminderSelf => 'Du bekommst 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.';
+  String get tasksReminderSelf =>
+      'Du bekommst 2 Tage vor Fälligkeit eine Erinnerung und noch eine, falls die Aufgabe überfällig wird.';
 
   @override
   String get tasksResponsible => 'Verantwortlich';
@@ -14432,13 +15122,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get teamOrgDecisionFailed => 'Entscheidung konnte nicht gespeichert werden';
+  String get teamOrgDecisionFailed =>
+      'Entscheidung konnte nicht gespeichert werden';
 
   @override
   String get teamOrgDescPlaceholder => 'Worum geht es? (optional)';
 
   @override
-  String get teamOrgDoneDisappear => 'Erledigte Aufgaben verschwinden nach 30 Tagen aus der Liste.';
+  String get teamOrgDoneDisappear =>
+      'Erledigte Aufgaben verschwinden nach 30 Tagen aus der Liste.';
 
   @override
   String get teamOrgDraft => 'Entwurf';
@@ -14449,13 +15141,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get teamOrgEmptyAll => 'Noch keine Aufgaben. Leg die erste mit + an oder direkt aus einem Protokoll.';
+  String get teamOrgEmptyAll =>
+      'Noch keine Aufgaben. Leg die erste mit + an oder direkt aus einem Protokoll.';
 
   @override
   String get teamOrgEmptyMine => 'Du hast keine Aufgaben. Alles erledigt!';
 
   @override
-  String get teamOrgEmptyMineAssigned => 'Dir sind gerade keine Aufgaben zugewiesen. Genieß die Ruhe!';
+  String get teamOrgEmptyMineAssigned =>
+      'Dir sind gerade keine Aufgaben zugewiesen. Genieß die Ruhe!';
 
   @override
   String get teamOrgEmptyPerson => 'Hier ist nichts offen.';
@@ -14495,7 +15189,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgGroupWeek => 'Diese Woche';
 
   @override
-  String get teamOrgLeadersPlan => 'Themen und Tagesordnungen plant die Leitung. Du gehörst zu keiner Gruppe mit Protokoll & Tagesordnung.';
+  String get teamOrgLeadersPlan =>
+      'Themen und Tagesordnungen plant die Leitung. Du gehörst zu keiner Gruppe mit Protokoll & Tagesordnung.';
 
   @override
   String teamOrgMineCount(Object count) {
@@ -14517,10 +15212,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgNoHits => 'Keine Treffer';
 
   @override
-  String get teamOrgNoOpenTopics => 'Keine offenen Themen. Lege mit + ein neues an.';
+  String get teamOrgNoOpenTopics =>
+      'Keine offenen Themen. Lege mit + ein neues an.';
 
   @override
-  String get teamOrgNoProtocolEvent => 'Kein Termin mit Protokoll & Tagesordnung geplant.';
+  String get teamOrgNoProtocolEvent =>
+      'Kein Termin mit Protokoll & Tagesordnung geplant.';
 
   @override
   String teamOrgNoProtocolMatch(Object search) {
@@ -14531,13 +15228,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgNoProtocols => 'Noch keine Protokolle';
 
   @override
-  String get teamOrgNoProtocolsHint => 'Ein Protokoll schreibst du direkt im Termin: Öffne den Termin und tippe auf „Protokoll“.';
+  String get teamOrgNoProtocolsHint =>
+      'Ein Protokoll schreibst du direkt im Termin: Öffne den Termin und tippe auf „Protokoll“.';
 
   @override
   String get teamOrgNoPublished => 'Noch keine Protokolle freigegeben';
 
   @override
-  String get teamOrgNoPublishedHint => 'Sobald die Leitung ein Protokoll freigibt, findest du es hier.';
+  String get teamOrgNoPublishedHint =>
+      'Sobald die Leitung ein Protokoll freigibt, findest du es hier.';
 
   @override
   String get teamOrgNoTopsYet => 'Noch keine Themen auf der Tagesordnung.';
@@ -14606,7 +15305,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgRemoveFromEvent => 'Aus diesem Termin entfernen';
 
   @override
-  String get teamOrgRemovedStays => 'Aus dem Termin entfernt, bleibt im Themenspeicher';
+  String get teamOrgRemovedStays =>
+      'Aus dem Termin entfernt, bleibt im Themenspeicher';
 
   @override
   String get teamOrgReview => 'Prüfen';
@@ -14639,7 +15339,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get teamOrgSuggestHint => 'Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt.';
+  String get teamOrgSuggestHint =>
+      'Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt.';
 
   @override
   String get teamOrgSuggestTopic => 'Thema vorschlagen';
@@ -14648,7 +15349,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgSuggestionAccepted => 'Übernommen';
 
   @override
-  String get teamOrgSuggestionFailed => 'Vorschlag konnte nicht gesendet werden';
+  String get teamOrgSuggestionFailed =>
+      'Vorschlag konnte nicht gesendet werden';
 
   @override
   String get teamOrgSuggestionRejected => 'Abgelehnt';
@@ -14663,7 +15365,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamOrgSuggestions => 'Vorschläge';
 
   @override
-  String get teamOrgSuggestionsHint => 'Übernommene Vorschläge landen im Themenspeicher. Wer vorgeschlagen hat, wird über deine Entscheidung informiert.';
+  String get teamOrgSuggestionsHint =>
+      'Übernommene Vorschläge landen im Themenspeicher. Wer vorgeschlagen hat, wird über deine Entscheidung informiert.';
 
   @override
   String get teamOrgTabProtocols => 'Protokolle';
@@ -14701,19 +15404,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get teamOrgWhichPriority => 'Mit welcher Priorität kommt das Thema in den Themenspeicher?';
+  String get teamOrgWhichPriority =>
+      'Mit welcher Priorität kommt das Thema in den Themenspeicher?';
 
   @override
   String get teamOrgYesterday => 'gestern';
 
   @override
-  String get teamsChoose => 'Wähle aus, welche Attendix-Instanz in diesem Kanal angezeigt werden soll.';
+  String get teamsChoose =>
+      'Wähle aus, welche Attendix-Instanz in diesem Kanal angezeigt werden soll.';
 
   @override
-  String get teamsNoAccount => 'Kein Attendix-Konto gefunden. Bitte melde dich zuerst im Attendix-Tab an.';
+  String get teamsNoAccount =>
+      'Kein Attendix-Konto gefunden. Bitte melde dich zuerst im Attendix-Tab an.';
 
   @override
-  String get teamsOnlyInTeams => 'Diese Seite wird nur innerhalb von Microsoft Teams verwendet.';
+  String get teamsOnlyInTeams =>
+      'Diese Seite wird nur innerhalb von Microsoft Teams verwendet.';
 
   @override
   String get teamsSaveFailed => 'Konfiguration konnte nicht gespeichert werden';
@@ -14722,37 +15429,45 @@ class AppLocalizationsDe extends AppLocalizations {
   String get teamsSetup => 'Attendix-Tab einrichten';
 
   @override
-  String get tenantRegisterAcceptTerms => 'Nutzungsbedingungen und Datenschutzerklärung akzeptieren';
+  String get tenantRegisterAcceptTerms =>
+      'Nutzungsbedingungen und Datenschutzerklärung akzeptieren';
 
   @override
-  String get tenantRegisterAcceptTermsToast => 'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
+  String get tenantRegisterAcceptTermsToast =>
+      'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
 
   @override
   String get tenantRegisterAccount => 'Account';
 
   @override
-  String get tenantRegisterAlreadyRegistered => 'Sie sind bereits in dieser Instanz registriert.';
+  String get tenantRegisterAlreadyRegistered =>
+      'Sie sind bereits in dieser Instanz registriert.';
 
   @override
   String get tenantRegisterBirthDate => 'Geburtsdatum';
 
   @override
-  String get tenantRegisterBirthDateRequired => 'Bitte geben Sie ein gültiges Geburtsdatum an.';
+  String get tenantRegisterBirthDateRequired =>
+      'Bitte geben Sie ein gültiges Geburtsdatum an.';
 
   @override
-  String get tenantRegisterChoosePicture => 'Wähle ein Passbild aus (max. 15 MB)';
+  String get tenantRegisterChoosePicture =>
+      'Wähle ein Passbild aus (max. 15 MB)';
 
   @override
   String get tenantRegisterChurchNamePlaceholder => 'Name deiner Gemeinde';
 
   @override
-  String get tenantRegisterChurchNameRequired => 'Bitte geben Sie den Namen Ihrer Gemeinde ein.';
+  String get tenantRegisterChurchNameRequired =>
+      'Bitte geben Sie den Namen Ihrer Gemeinde ein.';
 
   @override
-  String get tenantRegisterChurchNotListed => 'Gemeinde nicht gelistet? Bitte Namen eingeben';
+  String get tenantRegisterChurchNotListed =>
+      'Gemeinde nicht gelistet? Bitte Namen eingeben';
 
   @override
-  String get tenantRegisterChurchRequired => 'Bitte wählen Sie eine Gemeinde aus.';
+  String get tenantRegisterChurchRequired =>
+      'Bitte wählen Sie eine Gemeinde aus.';
 
   @override
   String get tenantRegisterConfirmCode => 'Code bestätigen';
@@ -14797,16 +15512,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterFirstName => 'Vorname';
 
   @override
-  String get tenantRegisterFlutterCreateChurchFailed => 'Fehler beim Erstellen der Gemeinde.';
+  String get tenantRegisterFlutterCreateChurchFailed =>
+      'Fehler beim Erstellen der Gemeinde.';
 
   @override
   String get tenantRegisterFlutterGroupRequired => 'Gruppe ist erforderlich';
 
   @override
-  String get tenantRegisterFlutterInvalidLink => 'Ungültiger Registrierungslink.';
+  String get tenantRegisterFlutterInvalidLink =>
+      'Ungültiger Registrierungslink.';
 
   @override
-  String get tenantRegisterFlutterLoadChurchesFailed => 'Fehler beim Laden der Gemeinden';
+  String get tenantRegisterFlutterLoadChurchesFailed =>
+      'Fehler beim Laden der Gemeinden';
 
   @override
   String tenantRegisterFlutterLoadError(Object error) {
@@ -14814,7 +15532,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get tenantRegisterFlutterLoadGroupsFailed => 'Fehler beim Laden der Gruppen';
+  String get tenantRegisterFlutterLoadGroupsFailed =>
+      'Fehler beim Laden der Gruppen';
 
   @override
   String get tenantRegisterFlutterMaxSize => 'Max. 15 MB';
@@ -14823,28 +15542,33 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterFlutterMinFiveChars => 'Mindestens 5 Zeichen';
 
   @override
-  String get tenantRegisterFlutterRegisterFailedRetry => 'Fehler beim Registrieren. Bitte versuche es erneut.';
+  String get tenantRegisterFlutterRegisterFailedRetry =>
+      'Fehler beim Registrieren. Bitte versuche es erneut.';
 
   @override
   String get tenantRegisterFlutterRegistrationAt => 'Registrierung bei';
 
   @override
-  String get tenantRegisterFlutterSignInExisting => 'Melde dich mit deinem bestehenden Account an.';
+  String get tenantRegisterFlutterSignInExisting =>
+      'Melde dich mit deinem bestehenden Account an.';
 
   @override
   String get tenantRegisterFlutterTermsAccept => ' akzeptieren';
 
   @override
-  String get tenantRegisterFlutterTermsLink => 'Nutzungsbedingungen und Datenschutzerklärung';
+  String get tenantRegisterFlutterTermsLink =>
+      'Nutzungsbedingungen und Datenschutzerklärung';
 
   @override
   String get tenantRegisterFlutterToLogin => 'Zur Anmeldung';
 
   @override
-  String get tenantRegisterHaveAccount => 'Account bereits vorhanden? Hier klicken';
+  String get tenantRegisterHaveAccount =>
+      'Account bereits vorhanden? Hier klicken';
 
   @override
-  String get tenantRegisterIntro => 'Registriere dich über dieses Formular für die oben genannte Instanz.';
+  String get tenantRegisterIntro =>
+      'Registriere dich über dieses Formular für die oben genannte Instanz.';
 
   @override
   String get tenantRegisterInvalidLink => 'Ungültiger Freigabe-Link.';
@@ -14856,16 +15580,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterMoreInfo => 'Weitere Informationen';
 
   @override
-  String get tenantRegisterNameRequired => 'Bitte geben Sie Ihren Vor- und Nachnamen an.';
+  String get tenantRegisterNameRequired =>
+      'Bitte geben Sie Ihren Vor- und Nachnamen an.';
 
   @override
   String get tenantRegisterNoChurchFound => 'Keine Gemeinde gefunden.';
 
   @override
-  String get tenantRegisterNoGroups => 'Registrierung aktuell nicht möglich: Der Administrator hat noch keine Gruppen angelegt. Bitte versuche es später erneut.';
+  String get tenantRegisterNoGroups =>
+      'Registrierung aktuell nicht möglich: Der Administrator hat noch keine Gruppen angelegt. Bitte versuche es später erneut.';
 
   @override
-  String get tenantRegisterNoGroupsToast => 'Registrierung nicht möglich: Es sind keine Gruppen verfügbar.';
+  String get tenantRegisterNoGroupsToast =>
+      'Registrierung nicht möglich: Es sind keine Gruppen verfügbar.';
 
   @override
   String get tenantRegisterNotListed => 'Nicht gelistet';
@@ -14874,10 +15601,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterNotes => 'Bemerkungen (optional)';
 
   @override
-  String get tenantRegisterPasswordMismatch => 'Die Passwörter stimmen nicht überein.';
+  String get tenantRegisterPasswordMismatch =>
+      'Die Passwörter stimmen nicht überein.';
 
   @override
-  String get tenantRegisterPasswordTooShort => 'Das Passwort muss mindestens 6 Zeichen lang sein.';
+  String get tenantRegisterPasswordTooShort =>
+      'Das Passwort muss mindestens 6 Zeichen lang sein.';
 
   @override
   String get tenantRegisterPersonalData => 'Persönliche Daten';
@@ -14886,16 +15615,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterPhone => 'Handynummer';
 
   @override
-  String get tenantRegisterPhoneRequired => 'Bitte geben Sie eine gültige Telefonnummer an.';
+  String get tenantRegisterPhoneRequired =>
+      'Bitte geben Sie eine gültige Telefonnummer an.';
 
   @override
-  String get tenantRegisterPictureFailed => 'Fehler beim ändern des Passbildes, versuche es später erneut';
+  String get tenantRegisterPictureFailed =>
+      'Fehler beim ändern des Passbildes, versuche es später erneut';
 
   @override
-  String get tenantRegisterPictureRequired => 'Bitte wählen Sie ein Passbild aus.';
+  String get tenantRegisterPictureRequired =>
+      'Bitte wählen Sie ein Passbild aus.';
 
   @override
-  String get tenantRegisterPictureTooLarge => 'Das ausgewählte Bild ist zu groß. Bitte wähle ein Bild unter 15 MB.';
+  String get tenantRegisterPictureTooLarge =>
+      'Das ausgewählte Bild ist zu groß. Bitte wähle ein Bild unter 15 MB.';
 
   @override
   String get tenantRegisterPleaseChoose => 'Bitte auswählen';
@@ -14915,16 +15648,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantRegisterSuccessHeader => 'Registrierung erfolgreich';
 
   @override
-  String get tenantRegisterSuccessJoined => 'Deine Registrierung war erfolgreich! Du bist nun teil der Instanz.';
+  String get tenantRegisterSuccessJoined =>
+      'Deine Registrierung war erfolgreich! Du bist nun teil der Instanz.';
 
   @override
-  String get tenantRegisterSuccessNewConfirm => 'Dein Konto wurde erstellt. Um dich anmelden zu können, bestätige bitte deine E-Mail. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner. Im Anschluss kannst du dich anmelden.';
+  String get tenantRegisterSuccessNewConfirm =>
+      'Dein Konto wurde erstellt. Um dich anmelden zu können, bestätige bitte deine E-Mail. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner. Im Anschluss kannst du dich anmelden.';
 
   @override
-  String get tenantRegisterSuccessNewPending => 'Dein Konto wurde erstellt und wartet auf die Genehmigung durch einen Administrator. Bitte bestätige deine E-Mail, um dich anmelden zu können. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner.';
+  String get tenantRegisterSuccessNewPending =>
+      'Dein Konto wurde erstellt und wartet auf die Genehmigung durch einen Administrator. Bitte bestätige deine E-Mail, um dich anmelden zu können. Falls keine E-Mail ankommt, überprüfe bitte deinen Spam-Ordner.';
 
   @override
-  String get tenantRegisterSuccessPending => 'Deine Registrierung war erfolgreich! Bitte warte auf die Genehmigung durch einen Administrator.';
+  String get tenantRegisterSuccessPending =>
+      'Deine Registrierung war erfolgreich! Bitte warte auf die Genehmigung durch einen Administrator.';
 
   @override
   String get tenantRegisterTitle => 'Registrierung';
@@ -14936,31 +15673,36 @@ class AppLocalizationsDe extends AppLocalizations {
   String get tenantSelectFlutterDangerZone => 'Gefahrenzone';
 
   @override
-  String get tenantSelectFlutterDeleteAllData => 'Alle Daten dieser Instanz werden unwiderruflich gelöscht.';
+  String get tenantSelectFlutterDeleteAllData =>
+      'Alle Daten dieser Instanz werden unwiderruflich gelöscht.';
 
   @override
   String get tenantSelectFlutterDeleteTenant => 'Instanz löschen';
 
   @override
-  String get tenantSelectFlutterDeleteTenantHint => 'Diese Gruppe unwiderruflich löschen';
+  String get tenantSelectFlutterDeleteTenantHint =>
+      'Diese Gruppe unwiderruflich löschen';
 
   @override
   String get tenantSelectFlutterDeleted => 'Instanz gelöscht';
 
   @override
-  String get tenantSelectFlutterDetailsLoadFailed => 'Fehler beim Laden der Instanz-Details';
+  String get tenantSelectFlutterDetailsLoadFailed =>
+      'Fehler beim Laden der Instanz-Details';
 
   @override
   String get tenantSelectFlutterDetailsTitle => 'Instanz-Details';
 
   @override
-  String get tenantSelectFlutterEmptyText => 'Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.';
+  String get tenantSelectFlutterEmptyText =>
+      'Du bist noch keiner Instanz zugeordnet. Bitte wende dich an einen Administrator oder lege eine neue Instanz an.';
 
   @override
   String get tenantSelectFlutterEmptyTitle => 'Keine Instanzen';
 
   @override
-  String get tenantSelectFlutterEnterNameToConfirm => 'Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:';
+  String get tenantSelectFlutterEnterNameToConfirm =>
+      'Bitte gib den Namen der Instanz ein, um das Löschen zu bestätigen:';
 
   @override
   String get tenantSelectFlutterInfo => 'Informationen';
@@ -14990,10 +15732,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get termsAcceptAfter => 'gelesen.';
 
   @override
-  String get termsAcceptAria => 'Nutzungsbedingungen und Datenschutzerklärung akzeptieren';
+  String get termsAcceptAria =>
+      'Nutzungsbedingungen und Datenschutzerklärung akzeptieren';
 
   @override
-  String get termsAcceptBefore => 'Ich akzeptiere die Nutzungsbedingungen und habe die';
+  String get termsAcceptBefore =>
+      'Ich akzeptiere die Nutzungsbedingungen und habe die';
 
   @override
   String get termsAcceptContinue => 'Akzeptieren und fortfahren';
@@ -15002,10 +15746,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get termsBeforeStart => 'Kurz bevor es losgeht';
 
   @override
-  String get termsIntro => 'Um Attendix nutzen zu können, benötigen wir einmalig deine Zustimmung zu unseren Nutzungsbedingungen und der Datenschutzerklärung.';
+  String get termsIntro =>
+      'Um Attendix nutzen zu können, benötigen wir einmalig deine Zustimmung zu unseren Nutzungsbedingungen und der Datenschutzerklärung.';
 
   @override
-  String get termsPleaseAccept => 'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
+  String get termsPleaseAccept =>
+      'Bitte akzeptiere die Nutzungsbedingungen und Datenschutzerklärung.';
 
   @override
   String get termsPrivacy => 'Datenschutzerklärung';
@@ -15017,13 +15763,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get termsSafe => 'Deine Daten sind sicher';
 
   @override
-  String get termsSafeText => 'Wir speichern nur die Daten, die für den Betrieb der App notwendig sind, und geben sie nicht an Dritte weiter.';
+  String get termsSafeText =>
+      'Wir speichern nur die Daten, die für den Betrieb der App notwendig sind, und geben sie nicht an Dritte weiter.';
 
   @override
-  String get termsSaveFailed => 'Fehler beim Speichern. Bitte versuche es erneut.';
+  String get termsSaveFailed =>
+      'Fehler beim Speichern. Bitte versuche es erneut.';
 
   @override
-  String get termsSessionExpired => 'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.';
+  String get termsSessionExpired =>
+      'Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.';
 
   @override
   String get termsTitle => 'Datenschutz & Nutzung';
@@ -15032,13 +15781,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get termsUsage => 'Wofür werden deine Daten genutzt?';
 
   @override
-  String get termsUsageText => 'Ausschließlich zur Verwaltung deiner Anwesenheit und zur Kommunikation innerhalb deiner Gruppe oder deines Chores.';
+  String get termsUsageText =>
+      'Ausschließlich zur Verwaltung deiner Anwesenheit und zur Kommunikation innerhalb deiner Gruppe oder deines Chores.';
 
   @override
   String get typeSettingsActive => 'Aktiv';
 
   @override
-  String get typeSettingsActiveHelper => 'Wenn du diese Option deaktivierst, wird der Anwesenheitstyp beim Anlegen einer Anwesenheit nicht mehr als Option angezeigt.';
+  String get typeSettingsActiveHelper =>
+      'Wenn du diese Option deaktivierst, wird der Anwesenheitstyp beim Anlegen einer Anwesenheit nicht mehr als Option angezeigt.';
 
   @override
   String get typeSettingsActiveReminders => 'Aktive Erinnerungen';
@@ -15071,7 +15822,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsAgenda => 'Tagesordnung';
 
   @override
-  String get typeSettingsAgendaExists => 'Ein Tagesordnungs-Platzhalter ist bereits vorhanden';
+  String get typeSettingsAgendaExists =>
+      'Ein Tagesordnungs-Platzhalter ist bereits vorhanden';
 
   @override
   String get typeSettingsAgendaPlaceholder => 'Tagesordnung Platzhalter';
@@ -15080,7 +15832,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsAllDay => 'Ganztägig';
 
   @override
-  String get typeSettingsAllDayHelper => 'Wenn du diese Option aktivierst, wird bei einer Anwesenheit von diesem Typ keine Uhrzeit festgelegt aber eine Dauer angegeben.';
+  String get typeSettingsAllDayHelper =>
+      'Wenn du diese Option aktivierst, wird bei einer Anwesenheit von diesem Typ keine Uhrzeit festgelegt aber eine Dauer angegeben.';
 
   @override
   String get typeSettingsAppearance => 'Darstellung';
@@ -15095,16 +15848,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsChecklist => 'Checkliste';
 
   @override
-  String get typeSettingsChecklistHelper => 'Aktiviere die Checkliste, um To-Dos für diesen Anwesenheitstyp zu definieren. Diese werden automatisch bei neuen Terminen übernommen.';
+  String get typeSettingsChecklistHelper =>
+      'Aktiviere die Checkliste, um To-Dos für diesen Anwesenheitstyp zu definieren. Diese werden automatisch bei neuen Terminen übernommen.';
 
   @override
-  String get typeSettingsCircleHint => 'Den Personenkreis legst du wie gewohnt über relevante Gruppen oder unter „Filter“ mit einem Zusatzfeld fest (z. B. Ja/Nein-Feld „Tontechnik“). Dienste zählen in die Anwesenheitsquote, aber nur für eingeteilte Personen.';
+  String get typeSettingsCircleHint =>
+      'Den Personenkreis legst du wie gewohnt über relevante Gruppen oder unter „Filter“ mit einem Zusatzfeld fest (z. B. Ja/Nein-Feld „Tontechnik“). Dienste zählen in die Anwesenheitsquote, aber nur für eingeteilte Personen.';
 
   @override
   String get typeSettingsColor => 'Farbe';
 
   @override
-  String get typeSettingsColorHint => 'Die Farbe ist nur für den Kalender relevant (beim Anlegen einer Anwesenheit).';
+  String get typeSettingsColorHint =>
+      'Die Farbe ist nur für den Kalender relevant (beim Anlegen einer Anwesenheit).';
 
   @override
   String get typeSettingsConfigureReminders => 'Erinnerungen konfigurieren';
@@ -15113,10 +15869,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsCountForAvg => 'Für Ø berücksichtigen';
 
   @override
-  String get typeSettingsCountForAvgHelper => 'Wenn diese Option aktiviert ist, wird dieser Typ beim Anwesenheitsdurchschnitt berücksichtigt.';
+  String get typeSettingsCountForAvgHelper =>
+      'Wenn diese Option aktiviert ist, wird dieser Typ beim Anwesenheitsdurchschnitt berücksichtigt.';
 
   @override
-  String get typeSettingsCreateFailed => 'Fehler beim Erstellen des Anwesenheitstyps';
+  String get typeSettingsCreateFailed =>
+      'Fehler beim Erstellen des Anwesenheitstyps';
 
   @override
   String get typeSettingsCreated => 'Anwesenheitstyp erfolgreich erstellt';
@@ -15148,7 +15906,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsDefaultStatus => 'Standard Anwesenheitsstatus';
 
   @override
-  String get typeSettingsDeleteFailed => 'Fehler beim Löschen des Anwesenheitstyps';
+  String get typeSettingsDeleteFailed =>
+      'Fehler beim Löschen des Anwesenheitstyps';
 
   @override
   String get typeSettingsDeleteType => 'Anwesenheitstyp löschen';
@@ -15165,10 +15924,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsDiscardChanges => 'Änderungen verwerfen?';
 
   @override
-  String get typeSettingsDiscardMessage => 'Du hast bereits Daten eingegeben. Möchtest du diese wirklich verwerfen?';
+  String get typeSettingsDiscardMessage =>
+      'Du hast bereits Daten eingegeben. Möchtest du diese wirklich verwerfen?';
 
   @override
-  String get typeSettingsDutyHelper => 'Für Dienste wie Tontechnik: Pro Termin wird eine feste Zahl Personen eingeteilt. Nur Eingeteilte sind erwartet, alle anderen aus dem Personenkreis sind Springer.';
+  String get typeSettingsDutyHelper =>
+      'Für Dienste wie Tontechnik: Pro Termin wird eine feste Zahl Personen eingeteilt. Nur Eingeteilte sind erwartet, alle anderen aus dem Personenkreis sind Springer.';
 
   @override
   String get typeSettingsDutyMode => 'Dienst-Modus';
@@ -15195,13 +15956,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsEnd => 'Ende';
 
   @override
-  String get typeSettingsEnterFieldLabel => 'Bitte eine Feldbezeichnung eingeben';
+  String get typeSettingsEnterFieldLabel =>
+      'Bitte eine Feldbezeichnung eingeben';
 
   @override
   String get typeSettingsEnterItem => 'Bitte einen Programmpunkt eingeben.';
 
   @override
-  String get typeSettingsEnterName => 'Bitte einen Namen für den Anwesenheitstyp eingeben.';
+  String get typeSettingsEnterName =>
+      'Bitte einen Namen für den Anwesenheitstyp eingeben.';
 
   @override
   String get typeSettingsEnterTodo => 'Bitte einen Text für das To-Do eingeben';
@@ -15210,7 +15973,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsEventReminder => 'Terminerinnerung';
 
   @override
-  String get typeSettingsEventReminderHelper => 'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.';
+  String get typeSettingsEventReminderHelper =>
+      'Wenn diese Option aktiviert ist, Erinnerungen angelegt wurden und die Benachrichtigungen aktiviert sind, erhalten Personen eine Terminerinnerung.';
 
   @override
   String get typeSettingsEventReminders => 'Terminerinnerungen';
@@ -15219,7 +15983,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsExtraFilter => 'Zusatzfeld-Filter';
 
   @override
-  String get typeSettingsExtraFilterHelper => 'Nur Personen mit dem ausgewählten Zusatzfeld-Wert werden beim Anlegen einer Anwesenheit von diesem Typ berücksichtigt.';
+  String get typeSettingsExtraFilterHelper =>
+      'Nur Personen mit dem ausgewählten Zusatzfeld-Wert werden beim Anlegen einer Anwesenheit von diesem Typ berücksichtigt.';
 
   @override
   String get typeSettingsFieldLabel => 'Feldbezeichnung';
@@ -15242,7 +16007,8 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get typeSettingsFlutterDeadlineLabel => 'Frist (Stunden vorher, optional)';
+  String get typeSettingsFlutterDeadlineLabel =>
+      'Frist (Stunden vorher, optional)';
 
   @override
   String get typeSettingsFlutterDeadlinePh => 'z.B. 24 für 1 Tag';
@@ -15257,7 +16023,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsFlutterExtraField => 'Zusatzfeld';
 
   @override
-  String get typeSettingsFlutterExtraFilterHint => 'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen';
+  String get typeSettingsFlutterExtraFilterHint =>
+      'Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen';
 
   @override
   String get typeSettingsFlutterFieldNamePh => 'z.B. Einspielen, Pause';
@@ -15295,7 +16062,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsFlutterReorder => 'Reihenfolge ändern';
 
   @override
-  String get typeSettingsFlutterSaveOrderFailed => 'Fehler beim Speichern. Bitte erneut versuchen.';
+  String get typeSettingsFlutterSaveOrderFailed =>
+      'Fehler beim Speichern. Bitte erneut versuchen.';
 
   @override
   String get typeSettingsFlutterTodoPh => 'z.B. Noten vorbereiten';
@@ -15338,13 +16106,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsHideName => 'Name verbergen';
 
   @override
-  String get typeSettingsHideNameHelper => 'Wenn du diese Option aktivierst, wird der Name dieses Anwesenheitstyps in der Liste verborgen. Nur die Zusatzinfo (falls vorhanden) wird angezeigt.';
+  String get typeSettingsHideNameHelper =>
+      'Wenn du diese Option aktivierst, wird der Name dieses Anwesenheitstyps in der Liste verborgen. Nur die Zusatzinfo (falls vorhanden) wird angezeigt.';
 
   @override
   String get typeSettingsHighlight => 'Hervorheben';
 
   @override
-  String get typeSettingsHighlightHelper => 'Wenn du diese Option aktivierst, wird dieser Anwesenheitstyp in der Liste als Fett dargestellt.';
+  String get typeSettingsHighlightHelper =>
+      'Wenn du diese Option aktivierst, wird dieser Anwesenheitstyp in der Liste als Fett dargestellt.';
 
   @override
   String get typeSettingsHoursBefore => 'Stunden vor Termin';
@@ -15369,13 +16139,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsHoursPlaceholder => 'z.B. 12 für 12 Stunden vorher';
 
   @override
-  String get typeSettingsHowEvery5 => 'Erinnerungen werden <strong>alle 5 Minuten</strong> geprüft und versendet.';
+  String get typeSettingsHowEvery5 =>
+      'Erinnerungen werden <strong>alle 5 Minuten</strong> geprüft und versendet.';
 
   @override
-  String get typeSettingsHowMax => 'Maximal <strong>3 Erinnerungen</strong> pro Termintyp möglich.';
+  String get typeSettingsHowMax =>
+      'Maximal <strong>3 Erinnerungen</strong> pro Termintyp möglich.';
 
   @override
-  String get typeSettingsHowRemaining => 'Die Erinnerung wird versendet, sobald die <strong>verbleibende Zeit</strong> dem konfigurierten Wert entspricht.';
+  String get typeSettingsHowRemaining =>
+      'Die Erinnerung wird versendet, sobald die <strong>verbleibende Zeit</strong> dem konfigurierten Wert entspricht.';
 
   @override
   String get typeSettingsHowReminders => 'So funktionieren Erinnerungen';
@@ -15396,7 +16169,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsLearnMore => 'Mehr erfahren';
 
   @override
-  String get typeSettingsLocationHelper => 'Wenn aktiviert, kann bei Terminen dieses Typs ein Ort hinterlegt werden. Dieser wird dann als Navigationslink in Google Maps oder Apple Karten angezeigt.';
+  String get typeSettingsLocationHelper =>
+      'Wenn aktiviert, kann bei Terminen dieses Typs ein Ort hinterlegt werden. Dieser wird dann als Navigationslink in Google Maps oder Apple Karten angezeigt.';
 
   @override
   String get typeSettingsManageSongs => 'Werke verwalten';
@@ -15405,7 +16179,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsMax3 => 'Maximal 3 Erinnerungen pro Typ möglich';
 
   @override
-  String get typeSettingsMaxReached => 'Maximum von 3 Erinnerungen erreicht. Entferne eine bestehende Erinnerung, um eine neue hinzuzufügen.';
+  String get typeSettingsMaxReached =>
+      'Maximum von 3 Erinnerungen erreicht. Entferne eine bestehende Erinnerung, um eine neue hinzuzufügen.';
 
   @override
   String get typeSettingsMinPh => 'min';
@@ -15432,7 +16207,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsNoReminders => 'Keine Erinnerungen konfiguriert';
 
   @override
-  String get typeSettingsNoRemindersYet => 'Noch keine Erinnerungen konfiguriert';
+  String get typeSettingsNoRemindersYet =>
+      'Noch keine Erinnerungen konfiguriert';
 
   @override
   String get typeSettingsNoSignupFields => 'Keine Anmeldefelder konfiguriert';
@@ -15453,7 +16229,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsNotifyGroup => 'Gruppe bei Ausfall benachrichtigen';
 
   @override
-  String get typeSettingsNotifyGroupHelper => 'Sagt eine eingeteilte Person ab und der Dienst ist unterbesetzt, bekommen alle aus dem Personenkreis eine Nachricht.';
+  String get typeSettingsNotifyGroupHelper =>
+      'Sagt eine eingeteilte Person ab und der Dienst ist unterbesetzt, bekommen alle aus dem Personenkreis eine Nachricht.';
 
   @override
   String get typeSettingsOff => 'Aus';
@@ -15474,7 +16251,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsOrderSaved => 'Reihenfolge gespeichert';
 
   @override
-  String get typeSettingsOrgPlanDefault => 'Ablaufplan ist standardmäßig ein Organisationsplan';
+  String get typeSettingsOrgPlanDefault =>
+      'Ablaufplan ist standardmäßig ein Organisationsplan';
 
   @override
   String get typeSettingsPerformer => 'Ausführender';
@@ -15483,16 +16261,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsPerformerPh => 'Ausführenden eingeben...';
 
   @override
-  String get typeSettingsPlaceholderHint => 'Der Platzhalter „Tagesordnung“ im Standard-Ablaufplan legt fest, wo Themen eingefügt werden. Ohne Platzhalter landen sie am Ende.';
+  String get typeSettingsPlaceholderHint =>
+      'Der Platzhalter „Tagesordnung“ im Standard-Ablaufplan legt fest, wo Themen eingefügt werden. Ohne Platzhalter landen sie am Ende.';
 
   @override
   String get typeSettingsPlanHeading => 'Ablaufplan Überschrift';
 
   @override
-  String get typeSettingsPositiveInt => 'Bitte geben Sie eine positive Ganzzahl ein';
+  String get typeSettingsPositiveInt =>
+      'Bitte geben Sie eine positive Ganzzahl ein';
 
   @override
-  String get typeSettingsPostponedHelper => 'Beim nächsten Termin dieses Typs stehen vertagte Themen beim Aufnehmen ganz oben.';
+  String get typeSettingsPostponedHelper =>
+      'Beim nächsten Termin dieses Typs stehen vertagte Themen beim Aufnehmen ganz oben.';
 
   @override
   String get typeSettingsProgrammeItem => 'Programmpunkt';
@@ -15504,7 +16285,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsProtocolAgenda => 'Protokoll & Tagesordnung';
 
   @override
-  String get typeSettingsProtocolHelper => 'Termine dieses Typs bekommen eine Tagesordnung im Ablaufplan und ein Protokoll. Wer dazugehört, regeln die relevanten Gruppen.';
+  String get typeSettingsProtocolHelper =>
+      'Termine dieses Typs bekommen eine Tagesordnung im Ablaufplan und ein Protokoll. Wer dazugehört, regeln die relevanten Gruppen.';
 
   @override
   String get typeSettingsQuickSelect => 'Schnellauswahl';
@@ -15513,7 +16295,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsRelevantGroups => 'Relevante Gruppen';
 
   @override
-  String get typeSettingsRelevantGroupsHelper => 'Nur die relevanten Gruppen werden beim Anlegen einer Anwesenheit von diesem Typ berücksichtigt. Wenn keine Gruppe ausgewählt ist, werden alle Gruppen berücksichtigt.';
+  String get typeSettingsRelevantGroupsHelper =>
+      'Nur die relevanten Gruppen werden beim Anlegen einer Anwesenheit von diesem Typ berücksichtigt. Wenn keine Gruppe ausgewählt ist, werden alle Gruppen berücksichtigt.';
 
   @override
   String get typeSettingsRemindUnconfirmed => 'Erinnern, wenn unbestätigt';
@@ -15545,7 +16328,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsSelfAssign => 'Selbst eintragen erlaubt';
 
   @override
-  String get typeSettingsSelfAssignHelper => 'Personen aus dem Personenkreis können offene Dienste selbst übernehmen.';
+  String get typeSettingsSelfAssignHelper =>
+      'Personen aus dem Personenkreis können offene Dienste selbst übernehmen.';
 
   @override
   String get typeSettingsSignupFields => 'Anmeldefelder';
@@ -15562,13 +16346,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get typeSettingsSongsHelper => 'Wenn du diese Option aktivierst, dann kannst du beim Anlegen einer Anwesenheit von diesem Typ, Werke hinzufügen, die für die kommenden Proben relevant sind und automatisch im Probenplan berücksichtigt werden.';
+  String get typeSettingsSongsHelper =>
+      'Wenn du diese Option aktivierst, dann kannst du beim Anlegen einer Anwesenheit von diesem Typ, Werke hinzufügen, die für die kommenden Proben relevant sind und automatisch im Probenplan berücksichtigt werden.';
 
   @override
   String get typeSettingsStart => 'Beginn';
 
   @override
-  String get typeSettingsStartAllDay => 'Startzeit für den Ablaufplan bei ganztägigen Terminen';
+  String get typeSettingsStartAllDay =>
+      'Startzeit für den Ablaufplan bei ganztägigen Terminen';
 
   @override
   String get typeSettingsStartShort => 'Start';
@@ -15580,16 +16366,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsTenantNameBefore => 'Instanz-Name vor Werken';
 
   @override
-  String get typeSettingsTenantNameHelper => 'Falls aktiviert, wird der Instanz-Name vor jedem Werk im Ablaufplan angezeigt.';
+  String get typeSettingsTenantNameHelper =>
+      'Falls aktiviert, wird der Instanz-Name vor jedem Werk im Ablaufplan angezeigt.';
 
   @override
   String get typeSettingsText => 'Text';
 
   @override
-  String get typeSettingsTimesHint => 'Die Zeiten können nachträglich individuell in jeder Anwesenheit angepasst werden';
+  String get typeSettingsTimesHint =>
+      'Die Zeiten können nachträglich individuell in jeder Anwesenheit angepasst werden';
 
   @override
-  String get typeSettingsTitleHelper => 'Dieser Titel wird beim Exportieren eines Ablaufplans angezeigt. Falls eine Typ-Info vorhanden ist, wird diese in Klammern dahinter angezeigt. (z.B. Probenplan (Kantateprobe))';
+  String get typeSettingsTitleHelper =>
+      'Dieser Titel wird beim Exportieren eines Ablaufplans angezeigt. Falls eine Typ-Info vorhanden ist, wird diese in Klammern dahinter angezeigt. (z.B. Probenplan (Kantateprobe))';
 
   @override
   String get typeSettingsTodoPlaceholder => 'To-Do Text eingeben...';
@@ -15607,7 +16396,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsTwoOptions => 'Bitte mindestens 2 Optionen angeben';
 
   @override
-  String get typeSettingsTwoStatus => 'Bitte mindestens zwei verfügbare Anwesenheitsstatus auswählen.';
+  String get typeSettingsTwoStatus =>
+      'Bitte mindestens zwei verfügbare Anwesenheitsstatus auswählen.';
 
   @override
   String get typeSettingsType => 'Typ';
@@ -15616,19 +16406,22 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsTypes => 'Typen';
 
   @override
-  String get typeSettingsTypesIntro => 'Pflege deine eigenen Typen für Anwesenheiten. So kannst du individuelle Bezeichnungen, einen Standard-Status, Probenvorlagen und Start- bzw. Endzeiten hinterlegen und auch Anwesenheiten nur für bestimmte Gruppen konfigurieren.';
+  String get typeSettingsTypesIntro =>
+      'Pflege deine eigenen Typen für Anwesenheiten. So kannst du individuelle Bezeichnungen, einen Standard-Status, Probenvorlagen und Start- bzw. Endzeiten hinterlegen und auch Anwesenheiten nur für bestimmte Gruppen konfigurieren.';
 
   @override
   String get typeSettingsUpdate => 'Updaten';
 
   @override
-  String get typeSettingsUpdateFailed => 'Fehler beim Aktualisieren des Anwesenheitstyps';
+  String get typeSettingsUpdateFailed =>
+      'Fehler beim Aktualisieren des Anwesenheitstyps';
 
   @override
   String get typeSettingsUpdated => 'Anwesenheitstyp erfolgreich aktualisiert';
 
   @override
-  String get typeSettingsUrgentHelper => 'Einmaliger dringender Push an alle aus dem Personenkreis und die Leitung.';
+  String get typeSettingsUrgentHelper =>
+      'Einmaliger dringender Push an alle aus dem Personenkreis und die Leitung.';
 
   @override
   String get typeSettingsUrgentIfOpen => 'Dringend, wenn noch offen';
@@ -15637,13 +16430,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get typeSettingsUseDutyView => 'Dienstplan-Ansicht verwenden?';
 
   @override
-  String get typeSettingsUseDutyViewMessage => 'Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das jederzeit unter Mehr → Einstellungen ändern.';
+  String get typeSettingsUseDutyViewMessage =>
+      'Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das jederzeit unter Mehr → Einstellungen ändern.';
 
   @override
   String get typeSettingsUseIt => 'Ja, verwenden';
 
   @override
-  String get typeSettingsValidHours => 'Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)';
+  String get typeSettingsValidHours =>
+      'Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)';
 
   @override
   String get typeSettingsValue => 'Wert';
@@ -15707,13 +16502,15 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get voiceLeaderFlutterNoGroup => 'Du bist noch keiner Stimmgruppe zugeordnet.';
+  String get voiceLeaderFlutterNoGroup =>
+      'Du bist noch keiner Stimmgruppe zugeordnet.';
 
   @override
   String get voiceLeaderFlutterVoiceGroup => 'Stimmgruppe';
 
   @override
-  String get voiceLeaderLoadFailed => 'Fehler beim Laden der Gruppenmitglieder.';
+  String get voiceLeaderLoadFailed =>
+      'Fehler beim Laden der Gruppenmitglieder.';
 
   @override
   String get voiceLeaderMyVoice => 'Meine Stimme';
@@ -15722,7 +16519,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get voiceLeaderNoContact => 'Keine Kontaktdaten hinterlegt';
 
   @override
-  String get voiceLeaderNoMembers => 'Keine Mitglieder in deiner Stimme gefunden.';
+  String get voiceLeaderNoMembers =>
+      'Keine Mitglieder in deiner Stimme gefunden.';
 
   @override
   String get voiceLeaderNoProfile => 'Kein Spielerprofil gefunden.';

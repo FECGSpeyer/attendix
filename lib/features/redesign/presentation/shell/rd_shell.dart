@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/services/app_update_service.dart';
+import '../../../../core/services/update_hint.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -141,7 +142,7 @@ class _RdUpdateBar extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final show = Theme.of(context).platform == TargetPlatform.iOS &&
-        ref.watch(appUpdateAvailableProvider) &&
+        showUpdateHint(ref.watch(appUpdateAvailableProvider)) &&
         !ref.watch(_rdUpdateDismissedProvider);
     if (!show) return const SizedBox.shrink();
     final p = context.rd;

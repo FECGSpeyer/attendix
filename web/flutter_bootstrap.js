@@ -1,12 +1,17 @@
 {{flutter_js}}
 {{flutter_build_config}}
 
-// TEAMS: same as Flutter's default bootstrap, except that the service worker
-// is not registered when the app is framed (Microsoft Teams tab). The SW would
-// cache index.html across deploys inside Teams (Ionic disables it there too).
-// window.attendixInIframe is set by web/index.html.
-_flutter.loader.load(window.attendixInIframe ? {} : {
-  serviceWorkerSettings: {
-    serviceWorkerVersion: {{flutter_service_worker_version}}
-  }
+// PWA_WASM: the build has a WebAssembly (skwasm) and a JavaScript (CanvasKit)
+// variant; Flutter's loader picks WebAssembly for Chrome/Edge and JavaScript
+// elsewhere. Safari gets WebAssembly too from 26.2 on (window.attendixSafariWasm,
+// set in web/index.html), the version Flutter's docs name for WebKit support.
+//
+// PWA_SW: the service worker is no longer registered here (Flutter 3.47's
+// loader would wait for it before starting the app); web/index.html
+// registers Attendix's own worker after the first frame, never inside an
+// iframe (Microsoft Teams tab).
+_flutter.loader.load({
+  config: {
+    wasmAllowList: { webkit: window.attendixSafariWasm === true },
+  },
 });

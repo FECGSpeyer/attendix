@@ -18,6 +18,7 @@ import 'core/providers/redesign_providers.dart';
 import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
+import 'core/services/update_hint.dart';
 import 'core/services/offline_queue_service.dart';
 import 'core/services/attendance_detail_cache.dart'
     show clearOfflineReadCaches, shouldClearOfflineReadCaches;
@@ -183,7 +184,9 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       }
     });
     final router = ref.watch(routerProvider);
-    final updateAvailable = ref.watch(appUpdateAvailableProvider);
+    // PWA_UPDATE: the web app updates at the next start, without a toast.
+    final updateAvailable =
+        showUpdateHint(ref.watch(appUpdateAvailableProvider));
     final updateService = ref.read(appUpdateServiceProvider);
     final locale = ref.watch(localeProvider);
     final redesign = ref.watch(redesignSettingsProvider);

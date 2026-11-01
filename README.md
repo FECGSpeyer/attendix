@@ -7,7 +7,7 @@ Läuft als PWA im Browser sowie nativ auf iOS, Android und macOS.
 
 ### Voraussetzungen (alle Plattformen)
 
-1. **Flutter SDK** (stable, mindestens 3.29, die CI nutzt 3.29.0). `flutter doctor` zeigt, was für die jeweilige Plattform noch fehlt.
+1. **Flutter SDK** (stable, mindestens 3.47, die CI nutzt 3.47.9). `flutter doctor` zeigt, was für die jeweilige Plattform noch fehlt.
 2. **Abhängigkeiten holen:**
    ```bash
    flutter pub get
@@ -23,10 +23,11 @@ Läuft als PWA im Browser sowie nativ auf iOS, Android und macOS.
 
 ```bash
 flutter run -d chrome                         # Entwicklung
-flutter build web --release --base-href / --no-web-resources-cdn   # Release nach build/web
+flutter build web --release --base-href / --no-web-resources-cdn --wasm   # Release nach build/web
+dart run tool/web/write_service_worker.dart build/web                      # eigener Service Worker (Offline-Start)
 ```
 
-`--no-web-resources-cdn` legt CanvasKit in den eigenen Build statt es vom Google-CDN zu laden. Nur so kann die installierte PWA offline starten.
+Der Build enthält eine WebAssembly- und eine JavaScript-Variante; Flutter wählt pro Browser (Chrome/Edge und Safari ab 26.2 WebAssembly, sonst JavaScript). Beide Teile sind für den Offline-Start der installierten App nötig: `--no-web-resources-cdn` legt CanvasKit/Skwasm in den eigenen Build, statt sie vom Google-CDN zu laden, und der zweite Befehl ersetzt den Service Worker von Flutter 3.47, der sich nur selbst abmeldet.
 
 Master und PRs werden per GitHub Actions automatisch auf Cloudflare Pages deployt (`.github/workflows/deploy-cloudflare.yml`).
 

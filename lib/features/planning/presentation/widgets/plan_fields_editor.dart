@@ -481,7 +481,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
           bottom: isNote ? BorderSide.none : BorderSide(color: theme.dividerColor, width: 0.5),
         ),
       ),
-      child: ListTile(
+      // FLUTTER347: the tile paints its ink on its own Material above the grey.
+      child: Material(
+        type: MaterialType.transparency,
+        child: ListTile(
         dense: isNote,
         minTileHeight: isNote ? 0 : null,
         // Ionic `.group-child`: --padding-start 34px; group head toggle pulled left.
@@ -517,6 +520,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             dragHandle,
           ],
         ),
+      ),
       ),
     );
     if (isChild) tile = _GroupChildLine(child: tile);
