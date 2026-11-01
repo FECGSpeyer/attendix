@@ -86,11 +86,17 @@ class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
   Future<void> activate(Session session, {String? leftUserId}) async {
     _guard?.cancel();
     _guard = null;
+    final generation = _generation;
+    final userId = _auth.currentSession?.user.id;
     // Marks this switch for the guards of other tabs before they can see it.
     String? stamp;
     try {
       stamp = await _stamps.next();
     } catch (_) {}
+    // A sign-in or sign-out while the mark was written wins.
+    if (_generation != generation || _auth.currentSession?.user.id != userId) {
+      throw const AccountSwitchSuperseded();
+    }
     // Saves the session (supabase_flutter persists it) and emits
     // TOKEN_REFRESHED for the new user; no network call for a fresh session.
     await _recover(session);

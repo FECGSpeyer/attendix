@@ -4,10 +4,12 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
+import '../router/app_router.dart' show routerProvider;
 import '../services/account_switch/account_switch_service.dart';
 import '../services/account_switch/auth_token_api.dart';
 import '../services/account_switch/saved_accounts_store.dart';
 import 'redesign_providers.dart';
+import 'tenant_providers.dart';
 
 /// ACCOUNT_SWITCH: account switcher of the new design (Beta).
 ///
@@ -46,7 +48,11 @@ final savedAccountsProvider = StreamProvider<List<SavedAccount>>((ref) async* {
 /// - every new session or token refresh stores the account's newest
 ///   refresh token; new accounts are only added while the new design is on,
 /// - a sign-out removes the account that was signed in (its session is
-///   revoked by the sign-out anyway).
+///   revoked by the sign-out anyway),
+/// - another browser tab that changed the account (switch or sign-in, it
+///   reaches this tab as a broadcast) makes this tab follow like the
+///   switching tab: no group selected, back to the group selection – the
+///   group of the old account may not exist for the new one.
 final accountSwitchBootstrapProvider = Provider<void>((ref) {
   final service = ref.watch(accountSwitchServiceProvider);
   final auth = ref.watch(supabaseAuthProvider);
@@ -63,7 +69,9 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     if (session == null) return;
     // Every event that carries a session (incl. password recovery, MFA)
     // names the signed-in account, so a later sign-out removes the right one.
+    final previous = activeUserId;
     activeUserId = session.user.id;
+    if (followsOtherTab(previous, state)) unawaited(_followAccountChange(ref));
     // A recovery session only updates a saved account, it never adds one.
     final add = state.event != AuthChangeEvent.passwordRecovery &&
         ref.read(redesignEnabledProvider);
@@ -87,3 +95,19 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
     }
   });
 });
+
+/// True when [state] is an account change made in another browser tab
+/// while this tab ran as [previousUserId].
+bool followsOtherTab(String? previousUserId, AuthState state) {
+  final userId = state.session?.user.id;
+  return state.fromBroadcast && previousUserId != null && userId != null && userId != previousUserId;
+}
+
+Future<void> _followAccountChange(Ref ref) async {
+  try {
+    await ref.read(currentTenantProvider.notifier).setTenantLocal(null);
+    ref.read(routerProvider).go('/tenants');
+  } catch (_) {
+    // Router not built yet (start-up): the normal start opens the selection.
+  }
+}

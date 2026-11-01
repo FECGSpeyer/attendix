@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:convert';
 
+import 'package:attendix/core/providers/account_switch_providers.dart' show followsOtherTab;
 import 'package:attendix/core/services/account_switch/account_switch_service.dart';
 import 'package:attendix/core/services/account_switch/auth_token_api.dart';
 import 'package:attendix/core/services/account_switch/saved_accounts_store.dart';
@@ -601,6 +602,41 @@ void main() {
     });
   });
 
+  group('Account switch – sign-in while the switch mark is written (real client)', () {
+    test('the sign-in wins, the switch is superseded', () async {
+      String jwt(String sub) {
+        String b64(Map<String, dynamic> m) => base64Url.encode(utf8.encode(jsonEncode(m))).replaceAll('=', '');
+        final exp = DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/ 1000;
+        return '${b64({'alg': 'HS256', 'typ': 'JWT'})}.${b64({'sub': sub, 'exp': exp})}.sig';
+      }
+
+      String sessionJson(String user, String refresh) => jsonEncode({
+            'access_token': jwt(user),
+            'token_type': 'bearer',
+            'expires_in': 3600,
+            'refresh_token': refresh,
+            'user': _user(user).toJson(),
+          });
+
+      final client = GoTrueClient(url: 'http://localhost:1/auth/v1', autoRefreshToken: false);
+      final stamps = _DelayedSwitchStamp();
+      final auth = SupabaseAccountSwitchAuth(client, stamps: stamps);
+      await client.recoverSession(sessionJson('a', 'ra1'));
+      await Future<void>.delayed(Duration.zero);
+
+      final switching = auth.activate(Session.fromJson(jsonDecode(sessionJson('b', 'rb1')))!, leftUserId: 'a');
+      // Someone signs in as C while the mark is still being written.
+      await client.recoverSession(sessionJson('c', 'rc1'));
+      await Future<void>.delayed(Duration.zero);
+      stamps.release.complete();
+
+      await expectLater(switching, throwsA(isA<AccountSwitchSuperseded>()));
+      expect(client.currentSession?.user.id, 'c');
+      auth.dispose();
+      client.dispose();
+    });
+  });
+
   group('Account switch – new login of the same account (real client)', () {
     test('SIGNED_IN of the same account starts a new generation', () async {
       String jwt(String sub) {
@@ -767,6 +803,19 @@ void main() {
     });
   });
 
+  group('Account switch – other tabs', () {
+    test('a broadcast change to another account is followed', () {
+      expect(followsOtherTab('a', AuthState(AuthChangeEvent.tokenRefreshed, _session('b', 'rb1'), fromBroadcast: true)), isTrue);
+      expect(followsOtherTab('a', AuthState(AuthChangeEvent.signedIn, _session('b', 'rb1'), fromBroadcast: true)), isTrue);
+    });
+
+    test('own changes, refreshes of the same account and first sign-ins are not', () {
+      expect(followsOtherTab('a', AuthState(AuthChangeEvent.tokenRefreshed, _session('b', 'rb1'))), isFalse);
+      expect(followsOtherTab('a', AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra2'), fromBroadcast: true)), isFalse);
+      expect(followsOtherTab(null, AuthState(AuthChangeEvent.signedIn, _session('b', 'rb1'), fromBroadcast: true)), isFalse);
+    });
+  });
+
   group('Account switch – storage format', () {
     test('round trip and damaged data', () {
       final list = [
@@ -786,4 +835,17 @@ void main() {
       expect(decodeSavedAccounts(null), isEmpty);
     });
   });
+}
+
+class _DelayedSwitchStamp implements SwitchStamp {
+  final release = Completer<void>();
+
+  @override
+  Future<String> next() async {
+    await release.future;
+    return 's1';
+  }
+
+  @override
+  Future<String?> current() async => 's1';
 }
