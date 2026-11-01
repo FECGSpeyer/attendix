@@ -67,7 +67,8 @@ class RdImportWorkPage extends ConsumerWidget {
                     Semantics(
                       button: true,
                       label: '${l10n.redesignImportCategoryLabel}: ${rdImportCategoryLabel(context, plan, fs.category)}',
-                      excludeSemantics: true,
+                      // The tap stays with the InkWell; only the text read
+                      // out is replaced.
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () async {
@@ -75,19 +76,21 @@ class RdImportWorkPage extends ConsumerWidget {
                           if (picked != null) controller.setCategory(f.path, picked);
                         },
                         // 44 px to tap, like the other links of the new design.
-                        child: ConstrainedBox(
-                          constraints: const BoxConstraints(minHeight: 44),
-                          child: Row(
-                            mainAxisSize: MainAxisSize.min,
-                            children: [
-                              Flexible(
-                                child: Text(
-                                  rdImportCategoryLabel(context, plan, fs.category),
-                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: p.link),
+                        child: ExcludeSemantics(
+                          child: ConstrainedBox(
+                            constraints: const BoxConstraints(minHeight: 44),
+                            child: Row(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Flexible(
+                                  child: Text(
+                                    rdImportCategoryLabel(context, plan, fs.category),
+                                    style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: p.link),
+                                  ),
                                 ),
-                              ),
-                              Icon(Icons.arrow_drop_down, color: p.link, size: 22),
-                            ],
+                                Icon(Icons.arrow_drop_down, color: p.link, size: 22),
+                              ],
+                            ),
                           ),
                         ),
                       ),

@@ -100,13 +100,16 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     super.dispose();
   }
 
-  /// Stay while uploading; ask before throwing away answers and decisions.
+  /// Stay while uploading; ask before throwing away answers and decisions
+  /// (also while the dates of Fassungen are read after the questions).
   Future<bool> _onLeave() async {
     if (_leaving || !mounted) return true;
-    switch (ref.read(rdImportProvider).step) {
+    final state = ref.read(rdImportProvider);
+    switch (state.step) {
       case RdImportStep.uploading:
         ToastHelper.showInfo(context, context.l10n.redesignImportBusy);
         return false;
+      case RdImportStep.reading when state.plan != null:
       case RdImportStep.questions:
       case RdImportStep.review:
         final ok = await _confirmDiscard();
@@ -266,6 +269,9 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           _mode = null;
           _error = null;
         });
+      // Dates read after the questions: back to them.
+      case RdImportStep.reading when state.plan != null:
+        _controller.goTo(RdImportStep.questions);
       case RdImportStep.source:
       case RdImportStep.reading:
       case RdImportStep.done:
@@ -580,7 +586,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final p = context.rd;
     final l10n = context.l10n;
     return RdImportFrame(
-      backLabel: l10n.redesignTabWorks,
+      // After the questions the back link leads to them.
+      backLabel: state.plan != null ? l10n.redesignImportStepRead : l10n.redesignTabWorks,
       onBack: _back,
       title: l10n.redesignImportTitle,
       step: 2,

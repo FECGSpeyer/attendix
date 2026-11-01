@@ -1209,6 +1209,23 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
   return RdWorkState(target: target, files: files, flags: flags, confirmed: d.confirmed.contains(work.key));
 }
 
+/// What a Werk shows and will upload, as one text: target, Fassung, flags
+/// and every file taken with its part. "Passt so" holds for this selection
+/// only; when it changes (an answer, a category, a Fassung that shows only
+/// then, dates read later) the Werk has to be checked again.
+String rdWorkSelection(RdImportPlan plan, RdImportDecisions d, RdImportWork work) {
+  final s = rdWorkState(plan, d, work);
+  final t = s.target;
+  String category(RdImportCategory c) => '${c.instrumentId}|${c.note}|${c.newGroup}';
+  return [
+    'target ${t.skip}|${t.songId}|${t.prefix}|${t.number}|${t.name}',
+    'fassung ${rdFassungOf(d, work)}',
+    'flags ${(s.flags.map((f) => f.name).toList()..sort()).join(',')}',
+    for (final f in work.files)
+      if (s.files[f.path]!.take) 'file ${f.path} ${category(s.files[f.path]!.category)}',
+  ].join('\n');
+}
+
 /// Counts for the overview and the upload button.
 class RdImportSummary {
   const RdImportSummary({

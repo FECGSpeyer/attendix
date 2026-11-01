@@ -179,28 +179,31 @@ void main() {
   test('the function takes its budget before it asks Google and never reads more', () {
     final src = File('supabase/functions/werke-import/index.ts').readAsStringSync();
     final body = src.substring(src.indexOf('switch (action)'));
-    for (final action in ['folder', 'head', 'copy']) {
-      final start = body.indexOf('case "$action"');
-      final end = body.indexOf('case "', start + 1);
-      final part = body.substring(start, end < 0 ? body.length : end);
-      final take = part.indexOf('await take(1,');
-      expect(take, greaterThan(0), reason: action);
-      for (final google in ['meta(', 'children', 'bytes(', 'drive(']) {
-        final at = part.indexOf(google);
-        if (at >= 0) expect(take, lessThan(at), reason: '$action: $google');
+    // Google is reached only through drive(), which takes one call of the
+    // budget right before each request (every page, the metadata, each
+    // window, the download).
+    expect(RegExp(r'fetch\(').allMatches(src).length, 1);
+    final drive = src.substring(src.indexOf('async function drive('), src.indexOf('type Meta'));
+    expect(drive, contains('charge: Charge,'));
+    expect(drive.indexOf('await charge();'), greaterThan(0));
+    expect(drive.indexOf('await charge();'), lessThan(drive.indexOf('fetch(')));
+    final calls = RegExp(r'\bdrive\(([^,)]*)').allMatches(src).map((m) => m[1]!.trim()).toList();
+    expect(calls, isNotEmpty);
+    for (final first in calls) {
+      expect(first, anyOf('charge', 'charge: Charge'), reason: 'every request to Google takes a call');
+    }
+    for (final helper in ['meta(', 'bytes(', 'children(']) {
+      for (final m in RegExp(RegExp.escape(helper) + r'([^)]*)\)').allMatches(body)) {
+        expect(m[1], contains('charge'), reason: m[0]);
       }
     }
-    // A list takes one call for every page of every folder, each before
-    // its request to Google.
-    final list = body.substring(body.indexOf('case "list"'), body.indexOf('case "head"'));
-    expect(list, contains('children(f, charge)'));
-    final children = src.substring(src.indexOf('async function children('), src.indexOf('async function readAtMost('));
-    expect(children.indexOf('await charge();'), greaterThan(0));
-    expect(children.indexOf('await charge();'), lessThan(children.indexOf('drive(')));
     expect(src, contains('if (e instanceof BudgetRefused) return e.response;'));
+    // The bytes of the windows of a head are taken before the first request.
+    final head = body.substring(body.indexOf('case "head"'), body.indexOf('case "copy"'));
+    expect(head.indexOf('take(0, HEAD_WINDOW * 2)'), lessThan(head.indexOf('meta(')));
     // The bytes of a copy are taken before the download, which stops there.
     final copy = body.substring(body.indexOf('case "copy"'));
-    expect(copy.indexOf('take(0, m.size)'), lessThan(copy.indexOf('drive(file.id')));
+    expect(copy.indexOf('take(0, m.size)'), lessThan(copy.indexOf('drive(charge, file.id')));
     expect(copy, contains('readAtMost(res, m.size)'));
     expect(src, isNot(contains('arrayBuffer()')));
     // A folder with more pages than read is refused, not cut.

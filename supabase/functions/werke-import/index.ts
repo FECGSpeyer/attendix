@@ -112,8 +112,14 @@ class BudgetRefused extends Error {
   }
 }
 
+/// Takes one call of the day's budget or throws [BudgetRefused].
+type Charge = () => Promise<void>;
+
 /// A request to the Drive API with the key and the resource keys of [refs].
+/// Every request takes one call of the budget first ([charge]): the only
+/// way this function reaches Google.
 async function drive(
+  charge: Charge,
   path: string,
   params: Record<string, string>,
   refs: Ref[],
@@ -125,6 +131,7 @@ async function drive(
   url.searchParams.set("key", API_KEY);
   const keys = refs.filter((r) => r.resourceKey).map((r) => `${r.id}/${r.resourceKey}`);
   if (keys.length) headers["X-Goog-Drive-Resource-Keys"] = keys.join(",");
+  await charge();
   const res = await fetch(url, { headers, signal: AbortSignal.timeout(60_000) });
   if (res.ok) return res;
   let reason = "";
@@ -148,8 +155,8 @@ async function drive(
 
 type Meta = { id: string; name: string; mimeType: string; size: number };
 
-async function meta(file: Ref): Promise<Meta> {
-  const res = await drive(file.id, { fields: "id,name,mimeType,size" }, [file]);
+async function meta(file: Ref, charge: Charge): Promise<Meta> {
+  const res = await drive(charge, file.id, { fields: "id,name,mimeType,size" }, [file]);
   const m = await res.json();
   return {
     id: String(m.id ?? file.id),
@@ -160,13 +167,12 @@ async function meta(file: Ref): Promise<Meta> {
 }
 
 /// Children of one folder, every page; a folder with more pages is refused
-/// (choose a sub-folder) instead of being read in part. [charge] takes one
-/// call of the day's budget before each request to Google.
-async function children(folder: Ref, charge: () => Promise<void>): Promise<unknown[]> {
+/// (choose a sub-folder) instead of being read in part. Each page is one
+/// call of the budget.
+async function children(folder: Ref, charge: Charge): Promise<unknown[]> {
   const items: unknown[] = [];
   let pageToken = "";
   for (let page = 0; page < MAX_PAGES_PER_FOLDER; page++) {
-    await charge();
     const params: Record<string, string> = {
       q: `'${folder.id}' in parents and trashed = false`,
       fields: "nextPageToken,files(id,name,mimeType,size,modifiedTime,md5Checksum,resourceKey)",
@@ -174,7 +180,7 @@ async function children(folder: Ref, charge: () => Promise<void>): Promise<unkno
       includeItemsFromAllDrives: "true",
     };
     if (pageToken) params.pageToken = pageToken;
-    const res = await drive("", params, [folder]);
+    const res = await drive(charge, "", params, [folder]);
     const body = await res.json();
     for (const f of body.files ?? []) {
       if (typeof f?.id !== "string" || !DRIVE_ID.test(f.id)) continue;
@@ -227,8 +233,8 @@ async function readAtMost(res: Response, limit: number): Promise<Uint8Array> {
 
 /// The bytes of [file] from [start] to [end] (inclusive); never more than
 /// that many are downloaded.
-async function bytes(file: Ref, start: number, end: number): Promise<Uint8Array> {
-  const res = await drive(file.id, { alt: "media" }, [file], { Range: `bytes=${start}-${end}` });
+async function bytes(file: Ref, start: number, end: number, charge: Charge): Promise<Uint8Array> {
+  const res = await drive(charge, file.id, { alt: "media" }, [file], { Range: `bytes=${start}-${end}` });
   const want = end - start + 1;
   if (res.status === 206) return readAtMost(res, want);
   // A server that ignores the range sends the whole file from its start.
@@ -330,7 +336,8 @@ Deno.serve(async (req: Request) => {
     return allowed === true ? null : fail("limit", 429);
   }
 
-  /// One call of the budget, or [BudgetRefused].
+  /// One call of the budget, or [BudgetRefused]; taken by [drive] before
+  /// every request to Google.
   async function charge(): Promise<void> {
     const refused = await take(1, 0);
     if (refused) throw new BudgetRefused(refused);
@@ -341,9 +348,7 @@ Deno.serve(async (req: Request) => {
       case "folder": {
         const folder = ref(body.folder);
         if (!folder) return fail("bad_request", 400);
-        const refused = await take(1, 0);
-        if (refused) return refused;
-        const m = await meta(folder);
+        const m = await meta(folder, charge);
         if (m.mimeType !== FOLDER_MIME) return fail("not_folder", 400);
         return json({ id: m.id, name: m.name.slice(0, 300) });
       }
@@ -355,7 +360,7 @@ Deno.serve(async (req: Request) => {
         }
         const folders = raw.map(ref);
         if (folders.some((f) => f === null)) return fail("bad_request", 400);
-        // Every page of every folder is one call of the budget.
+        // Every page of every folder is one call of the budget (in drive).
         const lists = await Promise.all((folders as Ref[]).map((f) => children(f, charge)));
         const result: Record<string, unknown[]> = {};
         (folders as Ref[]).forEach((f, i) => (result[f.id] = lists[i]));
@@ -365,20 +370,21 @@ Deno.serve(async (req: Request) => {
       case "head": {
         const file = ref(body.file);
         if (!file) return fail("bad_request", 400);
-        // At most two windows are read.
-        const refused = await take(1, HEAD_WINDOW * 2);
+        // The bytes of at most two windows first; every request to Google
+        // (the metadata and each window) is one call of its own.
+        const refused = await take(0, HEAD_WINDOW * 2);
         if (refused) return refused;
-        const m = await meta(file);
+        const m = await meta(file, charge);
         if (m.mimeType.startsWith("application/vnd.google-apps.")) return fail("not_a_file", 400);
         if (m.size > MAX_FILE_BYTES) return fail("too_large", 413);
         const whole = m.size <= HEAD_WINDOW * 2;
         if (m.size === 0) return json({ data: "", size: 0 });
         let data: Uint8Array;
         if (whole) {
-          data = await bytes(file, 0, m.size - 1);
+          data = await bytes(file, 0, m.size - 1, charge);
         } else {
-          const head = await bytes(file, 0, HEAD_WINDOW - 1);
-          const tail = await bytes(file, m.size - HEAD_WINDOW, m.size - 1);
+          const head = await bytes(file, 0, HEAD_WINDOW - 1, charge);
+          const tail = await bytes(file, m.size - HEAD_WINDOW, m.size - 1, charge);
           data = new Uint8Array(head.length + tail.length);
           data.set(head, 0);
           data.set(tail, head.length);
@@ -412,16 +418,15 @@ Deno.serve(async (req: Request) => {
         }
         if (!song) return fail("song_not_found", 404);
 
-        const refusedCall = await take(1, 0);
-        if (refusedCall) return refusedCall;
-        const m = await meta(file);
+        // The metadata and the download are one call each (in drive).
+        const m = await meta(file, charge);
         if (m.mimeType.startsWith("application/vnd.google-apps.")) return fail("not_a_file", 400);
         if (m.size > MAX_FILE_BYTES) return fail("too_large", 413);
         // The bytes before the download; a file that grew since is refused.
         const refusedBytes = await take(0, m.size);
         if (refusedBytes) return refusedBytes;
 
-        const res = await drive(file.id, { alt: "media" }, [file]);
+        const res = await drive(charge, file.id, { alt: "media" }, [file]);
         const data = await readAtMost(res, m.size);
 
         const path = `songs/${tenantId}/${songId}/${storageName}`;

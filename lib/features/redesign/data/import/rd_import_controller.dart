@@ -293,6 +293,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void restart() {
     _aiRun++;
     _dated.clear();
+    _confirmedAs.clear();
     _source?.close();
     _source = null;
     _input = null;
@@ -456,6 +457,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       dates: dates,
       junk: source.junk,
     );
+    _confirmedAs.clear();
     state = state.copyWith(
       step: RdImportStep.questions,
       progress: 1,
@@ -520,7 +522,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// changed meanwhile.
   /// While they are read, [RdImportState.readingDates] holds "Passt so" and
   /// the upload; a Werk whose suggested Fassung changes by the new dates
-  /// has to be checked again.
+  /// has to be checked again ([_dropStaleConfirmations]).
   Future<bool> _completeDates() async {
     final input = _input;
     final source = _source;
@@ -536,16 +538,28 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       if (!_disposed && _datesRunning == 0) state = state.copyWith(readingDates: false);
     }
     if (_disposed || !identical(_input, input)) return false;
-    final before = {for (final w in state.plan?.works ?? const <RdImportWork>[]) w.key: rdFassungOf(state.decisions, w)};
     _replan();
-    final changed = {
-      for (final w in state.plan?.works ?? const <RdImportWork>[])
-        if (before.containsKey(w.key) && before[w.key] != rdFassungOf(state.decisions, w)) w.key,
-    };
-    if (changed.any(state.decisions.confirmed.contains)) {
-      _decide((d) => d.copyWith(confirmed: {...d.confirmed}..removeAll(changed)));
-    }
     return true;
+  }
+
+  /// The selection each "Passt so" was given for ([rdWorkSelection]), by
+  /// Werk.
+  final Map<String, String> _confirmedAs = {};
+
+  /// Takes back every "Passt so" whose Werk no longer shows what was
+  /// confirmed. Runs after each change of the plan or the decisions.
+  void _dropStaleConfirmations() {
+    final plan = state.plan;
+    final d = state.decisions;
+    if (plan == null || d.confirmed.isEmpty) return;
+    final works = {for (final w in plan.works) w.key: w};
+    final stale = <String>{
+      for (final key in d.confirmed)
+        if (works[key] == null || _confirmedAs[key] != rdWorkSelection(plan, d, works[key]!)) key,
+    };
+    if (stale.isEmpty) return;
+    _confirmedAs.removeWhere((key, _) => stale.contains(key));
+    state = state.copyWith(decisions: d.copyWith(confirmed: {...d.confirmed}..removeAll(stale)));
   }
 
   /// Date reads running ([_completeDates]).
@@ -595,6 +609,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       filled.add(e.key);
     }
     state = state.copyWith(decisions: state.decisions.copyWith(answers: answers), aiFilled: filled);
+    _dropStaleConfirmations();
   }
 
   /// Switches the KI suggestions; off takes back the answers it filled in.
@@ -610,6 +625,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         aiFilled: const {},
         decisions: state.decisions.copyWith(answers: answers),
       );
+      _dropStaleConfirmations();
       return;
     }
     state = state.copyWith(useAi: true);
@@ -640,6 +656,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         categories: d.categories,
       ),
     );
+    _dropStaleConfirmations();
   }
 
   Future<void> _pause() => Future<void>.delayed(Duration.zero);
@@ -658,7 +675,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// Goes to [step]. From the questions to the review the plan is made
   /// again with the answers, and dates of Fassungen that only show now are
   /// read first. Answers the KI filled in have to be confirmed before
-  /// ([confirmAi]); until then the questions stay.
+  /// ([confirmAi]); until then the questions stay. Back to the questions
+  /// while those dates are read keeps them there.
   Future<void> goTo(RdImportStep step) async {
     if (step == RdImportStep.review && state.step == RdImportStep.questions) {
       if (state.aiFilled.isNotEmpty) return;
@@ -666,13 +684,16 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       if (_missingDates().isNotEmpty) {
         state = state.copyWith(step: RdImportStep.reading, progress: 0);
         if (!await _completeDates()) return;
+        if (state.step != RdImportStep.reading) return;
       }
     }
     state = state.copyWith(step: step);
   }
 
-  void _decide(RdImportDecisions Function(RdImportDecisions d) change) =>
-      state = state.copyWith(decisions: change(state.decisions));
+  void _decide(RdImportDecisions Function(RdImportDecisions d) change) {
+    state = state.copyWith(decisions: change(state.decisions));
+    _dropStaleConfirmations();
+  }
 
   void answer(String questionKey, RdImportCategory? answer) {
     if (state.aiFilled.contains(questionKey)) state = state.copyWith(aiFilled: {...state.aiFilled}..remove(questionKey));
@@ -702,9 +723,18 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   }
 
   /// "Passt so" (not while dates of Fassungen are read: the suggested
-  /// Fassung may still change).
+  /// Fassung may still change). It holds for the selection shown now; when
+  /// that changes later, the Werk is open again.
   void confirm(String workKey, {bool value = true}) {
     if (value && state.readingDates) return;
+    final plan = state.plan;
+    final work = plan?.works.where((w) => w.key == workKey).firstOrNull;
+    if (value && (plan == null || work == null)) return;
+    if (value) {
+      _confirmedAs[workKey] = rdWorkSelection(plan!, state.decisions, work!);
+    } else {
+      _confirmedAs.remove(workKey);
+    }
     _decide((d) {
       final confirmed = {...d.confirmed};
       value ? confirmed.add(workKey) : confirmed.remove(workKey);
@@ -722,6 +752,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     if (plan == null || source == null) return;
     // Unconfirmed KI answers and dates still being read are not uploaded.
     if (state.aiFilled.isNotEmpty || state.readingDates) return;
+    _dropStaleConfirmations();
     // Bound before the first await (tenant switch safety).
     final tenantId = _tenantId;
     if (tenantId == null || ref.read(currentTenantIdProvider) != tenantId) return;

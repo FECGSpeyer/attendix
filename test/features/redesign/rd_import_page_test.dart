@@ -612,14 +612,104 @@ void main() {
     controller.confirm(eins);
     expect(c.read(rdImportProvider).decisions.confirmed, {eins});
 
-    // Checked before, then the dates change the suggested Fassung: check again.
+    // Checked before, then a part makes Fassungen: check again, at once.
     controller.confirm(zwei);
+    expect(c.read(rdImportProvider).decisions.confirmed, {eins, zwei});
     controller.setCategory('Noten/2 Zwei/Fassung B/Xyz1.pdf', const RdImportCategory(instrumentId: 12));
+    expect(c.read(rdImportProvider).decisions.confirmed, {eins});
     expect(rdFassungOf(c.read(rdImportProvider).decisions, work('Zwei')), '');
     await Future<void>.delayed(const Duration(milliseconds: 50));
     state = c.read(rdImportProvider);
     expect(rdFassungOf(state.decisions, work('Zwei')), 'Fassung B');
     expect(state.decisions.confirmed, {eins});
+  });
+
+  test('"Passt so" holds for what was shown: any change of the selection opens the Werk again', () async {
+    final archive = Archive();
+    void add(String path, String content, DateTime modified) {
+      final bytes = Uint8List.fromList(content.codeUnits);
+      archive.addFile(ArchiveFile(path, bytes.length, bytes)..lastModTime = modified.millisecondsSinceEpoch ~/ 1000);
+    }
+
+    add('Noten/1 Eins/Viola.pdf', '%PDF a /CreationDate (D:20250101)', DateTime(2026, 1, 1));
+    add('Noten/1 Eins/Fassung B/Xyz1.pdf', '%PDF b /CreationDate (D:20190101)', DateTime(2026, 1, 1));
+    add('Noten/2 Zwei/Viola.pdf', '%PDF c', DateTime(2026, 1, 1));
+    add('Noten/2 Zwei/Qfl1.pdf', '%PDF d', DateTime(2026, 1, 1));
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    final files = _FakeFiles();
+    final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    await controller.goTo(RdImportStep.review);
+    RdImportState state() => c.read(rdImportProvider);
+    RdImportWork work(String title) => state().plan!.works.firstWhere((w) => w.title == title);
+    final eins = work('Eins').key;
+    final zwei = work('Zwei').key;
+    expect(work('Eins').fassungen, isEmpty);
+    controller.confirm(eins);
+    controller.confirm(zwei);
+    expect(state().decisions.confirmed, {eins, zwei});
+
+    // A part decided afterwards makes Fassungen and leaves files out: the
+    // Werk is open again right away, even when no date changes later.
+    controller.setCategory('Noten/1 Eins/Fassung B/Xyz1.pdf', const RdImportCategory(instrumentId: 12));
+    expect(work('Eins').fassungen, hasLength(2));
+    expect(state().decisions.confirmed, {zwei});
+    expect(rdWorkState(state().plan!, state().decisions, work('Eins')).open, isTrue);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(state().readingDates, isFalse);
+    expect(rdFassungOf(state().decisions, work('Eins')), '');
+    expect(state().decisions.confirmed, {zwei});
+
+    // Checked again; another Werk's change keeps it.
+    controller.confirm(eins);
+    controller.setTake('Noten/2 Zwei/Qfl1.pdf', false);
+    expect(state().decisions.confirmed, {eins});
+
+    // An option that changes what is taken counts too.
+    controller.setProposeFassung(false);
+    expect(state().decisions.confirmed, isEmpty);
+
+    // Back to the questions and an answer there: the same.
+    controller.setProposeFassung(true);
+    controller.setTake('Noten/2 Zwei/Qfl1.pdf', true);
+    controller.confirm(eins);
+    controller.confirm(zwei);
+    await controller.goTo(RdImportStep.questions);
+    controller.answer('qfl', const RdImportCategory(instrumentId: 10));
+    await controller.goTo(RdImportStep.review);
+    expect(state().decisions.confirmed, {eins});
+
+    // A new import starts without any.
+    controller.confirm(eins);
+    controller.restart();
+    expect(state().decisions.confirmed, isEmpty);
+  });
+
+  test('back to the questions while their dates are read stays there', () async {
+    final bytes = _zip({
+      'Noten/1 Eins/Qfl1.pdf': '%PDF a /CreationDate (D:20190101)',
+      'Noten/1 Eins/Fassung B/Qfl1.pdf': '%PDF bb /CreationDate (D:20250301)',
+    });
+    final c = ProviderContainer(overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    controller.answer('qfl', const RdImportCategory(instrumentId: 10));
+    final going = controller.goTo(RdImportStep.review);
+    expect(c.read(rdImportProvider).step, RdImportStep.reading);
+    await controller.goTo(RdImportStep.questions);
+    await going;
+    expect(c.read(rdImportProvider).step, RdImportStep.questions);
+    // The dates are there now: on to the review at once.
+    await controller.goTo(RdImportStep.review);
+    expect(c.read(rdImportProvider).step, RdImportStep.review);
+    expect(c.read(rdImportProvider).plan!.works.single.defaultFassung, 'Fassung B');
   });
 
   test('link errors: Dropbox, a file, not shared, function missing', () async {
@@ -758,6 +848,15 @@ void main() {
     expect(find.text('Ziel in Attendix'), findsOneWidget);
     expect(find.text('Doppelt vorhanden'), findsOneWidget);
     expect(find.text('Passt so'), findsOneWidget);
+
+    // The part of a file is read out with what it is and can be changed
+    // with a screen reader.
+    final semantics = tester.ensureSemantics();
+    await tester.pump();
+    final link = find.bySemanticsLabel(RegExp(r'^Stimme ändern: '));
+    expect(link, findsWidgets);
+    expect(tester.getSemantics(link.first), containsSemantics(isButton: true, hasTapAction: true));
+    semantics.dispose();
   });
 
   testWidgets('questions: the KI\'s answer is marked and can be switched off', (tester) async {
@@ -791,8 +890,16 @@ void main() {
     expect(tester.widget<RdChoiceChip>(chip).selected, isTrue);
     expect(tester.widget<RdChoiceChip>(chip).icon, Icons.auto_awesome);
 
-    // The ✦ is read out.
+    // The ✦ is read out, and the chip can still be tapped with a screen
+    // reader.
     expect(tester.widget<RdChoiceChip>(chip).semanticLabel, 'Neue Gruppe „Saxophon“, Vorschlag der KI');
+    final semantics = tester.ensureSemantics();
+    await tester.pump();
+    expect(
+      tester.getSemantics(find.bySemanticsLabel('Neue Gruppe „Saxophon“, Vorschlag der KI')),
+      containsSemantics(label: 'Neue Gruppe „Saxophon“, Vorschlag der KI', isButton: true, isSelected: true, hasTapAction: true),
+    );
+    semantics.dispose();
 
     // The KI's answers are confirmed before the review.
     await tester.ensureVisible(find.text('Zur Prüfung'));
@@ -840,6 +947,61 @@ void main() {
     expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
   });
 
+  testWidgets('leaving while the dates of Fassungen are read after the questions asks too; back leads to them', (tester) async {
+    tester.view.physicalSize = const Size(430, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final drive = _GatedDrive({
+      'root00000001': [folder('f001000001', '1 Eins')],
+      'f001000001': [file('a000000001', 'Qfl1.pdf', size: 10, md5: 'a'), folder('fb00000001', 'Fassung B')],
+      'fb00000001': [file('b000000001', 'Qfl1.pdf', size: 10, md5: 'b')],
+    }, names: {
+      'root00000001': 'Noten',
+    });
+    await tester.pumpWidget(ProviderScope(
+      overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), drive),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdImportPage(),
+      ),
+    ));
+    await tester.pump();
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+    final guards = container.read(routeLeaveGuardRegistryProvider);
+    final notifier = container.read(rdImportProvider.notifier);
+    await tester.runAsync(() => notifier.readLink(const RdDriveRef('root00000001'), 'Noten'));
+    await tester.pump();
+    expect(container.read(rdImportProvider).step, RdImportStep.questions);
+    notifier.answer('qfl', const RdImportCategory(instrumentId: 10));
+    final going = notifier.goTo(RdImportStep.review);
+    await tester.pump();
+    expect(container.read(rdImportProvider).step, RdImportStep.reading);
+
+    // A tab switch or browser back asks first.
+    final leaving = guards.canLeave();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(find.text('Import verwerfen?'), findsOneWidget);
+    await tester.tap(find.text('Abbrechen').last);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(await leaving, isFalse);
+
+    // The back link leads to the questions, where the answers still are.
+    await tester.tap(find.text('Stimmen').first);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 500));
+    expect(container.read(rdImportProvider).step, RdImportStep.questions);
+    expect(container.read(rdImportProvider).decisions.answers, contains('qfl'));
+    drive.gate.complete();
+    await tester.runAsync(() => going);
+    await tester.pump();
+    expect(container.read(rdImportProvider).step, RdImportStep.questions);
+  });
+
   testWidgets('leaving: asks only while there are answers to lose', (tester) async {
     tester.view.physicalSize = const Size(430, 1400);
     tester.view.devicePixelRatio = 1;
@@ -876,4 +1038,17 @@ void main() {
     await tester.pumpAndSettle();
     expect(await leaving, isTrue);
   });
+}
+
+/// [FakeDrive] whose `head` (the dates inside the PDFs) waits for [gate].
+class _GatedDrive extends FakeDrive {
+  _GatedDrive(super.tree, {super.names});
+
+  final gate = Completer<void>();
+
+  @override
+  Future<dynamic> call(Map<String, dynamic> body) async {
+    if (body['action'] == 'head') await gate.future;
+    return super.call(body);
+  }
 }

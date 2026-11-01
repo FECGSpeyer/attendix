@@ -1097,16 +1097,27 @@ class RdChoiceChip extends StatelessWidget {
         color: selected ? p.bg : p.text,
       ),
     );
+    final Widget content = icon == null
+        ? text
+        : Row(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              Icon(icon, size: 16, color: selected ? p.bg : p.primary),
+              const SizedBox(width: 6),
+              Flexible(child: text),
+            ],
+          );
     return Semantics(
       button: true,
       selected: selected,
       label: semanticLabel,
-      excludeSemantics: semanticLabel != null,
       child: Material(
         color: selected ? p.text : p.surface,
         shape: StadiumBorder(
           side: selected ? BorderSide.none : BorderSide(color: p.offBorder),
         ),
+        // The tap stays with the InkWell; a [semanticLabel] only replaces
+        // the text that is read out.
         child: InkWell(
           customBorder: const StadiumBorder(),
           onTap: onTap,
@@ -1114,16 +1125,7 @@ class RdChoiceChip extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 40),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: icon == null
-                  ? text
-                  : Row(
-                      mainAxisSize: MainAxisSize.min,
-                      children: [
-                        Icon(icon, size: 16, color: selected ? p.bg : p.primary),
-                        const SizedBox(width: 6),
-                        Flexible(child: text),
-                      ],
-                    ),
+              child: semanticLabel == null ? content : ExcludeSemantics(child: content),
             ),
           ),
         ),
