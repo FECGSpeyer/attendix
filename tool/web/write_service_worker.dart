@@ -6,7 +6,7 @@
 // Replaces build/web/flutter_service_worker.js with
 // tool/web/service_worker_template.js and fills its RESOURCES map with the
 // sha256 of every built file (the worker checks downloads against it) and
-// VERSION, the name of this deploy's cache. Dotfiles (assets/.env.app) are
+// VERSION, the name of this deploy's cache (hash of template and files). Dotfiles (assets/.env.app) are
 // included on purpose: Flutter's old worker skipped them, which broke the
 // offline start.
 import 'dart:convert';
@@ -33,8 +33,13 @@ String buildServiceWorker(String template, Map<String, String> resources) {
   final sorted = Map.fromEntries(
       resources.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
   final json = jsonEncode(sorted);
-  // Changes with every changed file, so each deploy gets its own cache.
-  final version = sha256.convert(utf8.encode(json)).toString().substring(0, 16);
+  // Changes with every changed file and with every change of the worker
+  // itself (SOL #272), so each worker script gets its own cache: a failed
+  // install of a new worker never deletes the cache the active one uses.
+  final version = sha256
+      .convert(utf8.encode('$template\n$json'))
+      .toString()
+      .substring(0, 16);
   return template
       .replaceFirst(_placeholder, json)
       .replaceFirst(_versionPlaceholder, "'$version'");

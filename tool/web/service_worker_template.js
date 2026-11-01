@@ -34,9 +34,14 @@
 //   reaches the page (no other copy exists), but triggers an update check,
 //   so the page offers "Aktualisieren".
 //
+// - The app page (index.html) is checked like every other file: it picks
+//   the engine variant (e.g. WebAssembly in Safari 26.2+), so a page of
+//   another deploy could ask for files this cache does not hold.
+//
 // Requests:
 // - Navigations (index.html): network first, cache as fallback (offline).
-//   index.html only names fixed file names, so it is not version-bound.
+//   A page of another deploy is not stored and not shown; the page of this
+//   version is, and the new worker is looked for ("Aktualisieren").
 // - Other files of the build: cache first, filled on first use.
 
 const VERSION = /*VERSION*/'';
@@ -73,7 +78,11 @@ async function fillCache() {
 async function fill() {
   const cache = await caches.open(CACHE_NAME);
   const origin = self.location.origin;
-  await cache.add(new Request(INDEX, { cache: 'reload' }));
+  const index = await fetch(new Request(INDEX, { cache: 'reload' }));
+  if (!index.ok || !(await matchesHash(index.clone(), 'index.html'))) {
+    throw new Error('[SW] index.html is not this deploy\'s version');
+  }
+  await cache.put(INDEX, index);
   // Files the device used with the previous deploy(s): only complete caches.
   const previous = new Set();
   for (const name of await caches.keys()) {
@@ -235,7 +244,7 @@ self.addEventListener('fetch', (event) => {
   if (request.mode === 'navigate') {
     // Hash routing: every app navigation is index.html (any query, e.g. ?mode=ios).
     if (keyFor(request.url, origin) !== '/') return;
-    event.respondWith(onlineFirst(request));
+    event.respondWith(onlineFirst(event));
     return;
   }
   const key = keyFor(request.url, origin);
@@ -243,17 +252,25 @@ self.addEventListener('fetch', (event) => {
   event.respondWith(cacheFirst(event, key));
 });
 
-async function onlineFirst(request) {
+async function onlineFirst(event) {
   const cache = await caches.open(CACHE_NAME);
+  let response;
   try {
-    const response = await fetch(request);
-    if (response && response.ok) await cache.put(INDEX, response.clone());
-    return response;
+    response = await fetch(event.request);
   } catch (e) {
     const cached = await cache.match(INDEX);
     if (cached) return cached;
     throw e;
   }
+  if (!response || !response.ok) return response;
+  if (await matchesHash(response.clone(), 'index.html')) {
+    event.waitUntil(cache.put(INDEX, response.clone()).catch(() => {}));
+    return response;
+  }
+  // SOL (#272): another deploy's page is online. This version's page goes
+  // with this cache's files; the new worker is looked for and offered.
+  event.waitUntil(self.registration.update().catch(() => {}));
+  return (await cache.match(INDEX)) || response;
 }
 
 async function cacheFirst(event, key) {

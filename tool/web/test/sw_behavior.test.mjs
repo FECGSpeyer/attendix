@@ -159,27 +159,30 @@ class FakeCaches {
  * Loads the worker template with [resources] (path -> file text) as the
  * deploy; [network] (path -> text) is what the server answers.
  */
-function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, wasmGC = true }) {
+function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, wasmGC = true,
+  version = 'v1', caches: sharedCaches = null }) {
   const template = readFileSync('tool/web/service_worker_template.js', 'utf8');
   const hashes = Object.fromEntries(Object.entries(resources).map(([k, v]) => [k, sha(v)]));
   const source = template
-    .replace("/*VERSION*/''", "'v1'")
+    .replace("/*VERSION*/''", `'${version}'`)
     .replace('/*RESOURCES*/{}', JSON.stringify(hashes))
     .replace(/const LIST_WAIT_WITH_PREVIOUS_MS = \d+;/, `const LIST_WAIT_WITH_PREVIOUS_MS = ${listWaitMs};`)
     .replace(/const LIST_WAIT_FIRST_MS = \d+;/, `const LIST_WAIT_FIRST_MS = ${listWaitMs};`);
   const handlers = {};
-  const sw = { navigated: [], updates: 0, fetched: [], offline: false };
+  // sw.network may be swapped: what the server answers from then on.
+  const sw = { navigated: [], updates: 0, fetched: [], offline: false, network };
   const fetchFn = async (req) => {
     if (sw.offline) throw new TypeError('Failed to fetch');
     const url = new URL(typeof req === 'string' ? req : req.url, ORIGIN + '/');
     const path = url.pathname.slice(1) || 'index.html';
     sw.fetched.push(path);
-    if (!(path in network)) return new Response('', { status: 404 });
-    const res = new Response(network[path], { status: 200 });
+    if (!(path in sw.network)) return new Response('', { status: 404 });
+    const res = new Response(sw.network[path], { status: 200 });
     Object.defineProperty(res, 'type', { value: 'basic' });
     return res;
   };
-  const caches = new FakeCaches(fetchFn);
+  const caches = sharedCaches || new FakeCaches(fetchFn);
+  caches.fetch = fetchFn;
   sw.caches = caches;
   sw.clients = [
     { url: ORIGIN + '/#/termine', navigate: async (u) => { sw.navigated.push(u); } },
@@ -323,6 +326,44 @@ test('a cache of an interrupted install is no predecessor', async () => {
   const cache = await sw.caches.open('attendix-app-cache-v1');
   assert.equal(await (await cache.match('main.dart.wasm')).text(), 'wasm-B');
   assert.equal(await (await cache.match('canvaskit/skwasm.wasm')).text(), 'skwasm-wasm');
+});
+
+test('install fails when the server already has another deploy\'s app page', async () => {
+  const sw = loadWorker({ resources: DEPLOY, network: { ...DEPLOY, 'index.html': '<html C>' } });
+  await assert.rejects(sw.install(), /index\.html is not this deploy's version/);
+  assert.deepEqual(await sw.caches.keys(), []);
+});
+
+test('online, another deploy\'s app page is not shown: this version\'s page, and the update is looked for', async () => {
+  const sw = loadWorker({ resources: DEPLOY, network: DEPLOY });
+  await sw.install();
+  sw.network = { ...DEPLOY, 'index.html': '<html C>' };
+  assert.equal(await (await sw.request('?mode=ios', 'navigate')).text(), '<html>');
+  assert.equal(sw.updates, 1);
+  const cache = await sw.caches.open('attendix-app-cache-v1');
+  assert.equal(await (await cache.match('./')).text(), '<html>');
+});
+
+test('online, this deploy\'s app page comes from the network and is stored', async () => {
+  const sw = loadWorker({ resources: DEPLOY, network: DEPLOY });
+  await sw.install();
+  assert.equal(await (await sw.request('', 'navigate')).text(), '<html>');
+  assert.equal(sw.updates, 0);
+});
+
+test('a failed install of a new worker keeps the active worker\'s cache', async () => {
+  const caches = new FakeCaches(null);
+  const active = loadWorker({ resources: DEPLOY, network: DEPLOY, caches });
+  await active.install();
+  await active.activate();
+  // New worker (other script, so other VERSION); its deploy is not online.
+  const next = loadWorker({ resources: { ...DEPLOY, 'main.dart.wasm': 'wasm-D' }, network: DEPLOY,
+    version: 'v2', caches });
+  await assert.rejects(next.install(), /main\.dart\.wasm is not this deploy's version/);
+  assert.deepEqual(await caches.keys(), ['attendix-app-cache-v1']);
+  active.offline = true;
+  assert.equal(await (await active.request('main.dart.wasm')).text(), 'wasm-B');
+  assert.equal(await (await active.request('', 'navigate')).text(), '<html>');
 });
 
 test('install takes the page list and stores only verified files', async () => {

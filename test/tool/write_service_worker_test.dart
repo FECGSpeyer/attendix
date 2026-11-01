@@ -49,6 +49,14 @@ void main() {
     // A changed file gives the deploy a new cache.
     final next = buildServiceWorker(template, {'b.js': '3', 'a.js': '1'});
     expect(next, isNot(contains("const VERSION = '${version!.group(1)}';")));
+    // So does a change of the worker alone (SOL #272): a failed install of
+    // the new worker never shares, and deletes, the active worker's cache.
+    final newWorker =
+        buildServiceWorker('$template\n// changed', {'b.js': '2', 'a.js': '1'});
+    expect(newWorker, isNot(contains("const VERSION = '${version.group(1)}';")));
+    // The same input gives the same name.
+    expect(buildServiceWorker(template, {'a.js': '1', 'b.js': '2'}),
+        contains("const VERSION = '${version.group(1)}';"));
   });
 
   test('template keeps the update flow and the offline fallback', () {
@@ -73,6 +81,9 @@ void main() {
     expect(template, contains('await cache.put(COMPLETE, new Response(VERSION));'));
     expect(template, contains('if (!(await old.match(COMPLETE))) continue;'));
     expect(template, contains('await caches.delete(CACHE_NAME);'));
+    // The app page is checked as well, at install and on navigation.
+    expect(template, contains("matchesHash(index.clone(), 'index.html')"));
+    expect(template, contains("matchesHash(response.clone(), 'index.html')"));
     expect(template, contains('self.registration.update()'));
   });
 
