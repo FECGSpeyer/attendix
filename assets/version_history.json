@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.31.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Beta-Design, Mitglieder für Spieler und Helfer: schreibgeschützte Liste im neuen Design mit Suche, Registern, „Stimmführung“ und Einteilung (z. B. Nord/Süd) als Filter",
+        "✨ Beta-Design, Termine für Eltern: alle kommenden Termine als Karten mit Zu- und Absage pro Kind, Ablaufplan, Infos, Anhang und Route; „Vergangen“ mit dem Status jedes Kindes",
+        "✨ Beta-Design, Stimmführer: „Meine Stimme“ mit Kontakt und kommenden Abwesenheiten im neuen Design",
+        "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
+      ]
+    },
+    {
       "version": "0.30.0",
       "date": "1.11.2026",
       "changes": [

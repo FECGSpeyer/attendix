@@ -95,7 +95,7 @@ class RdParentToday extends ConsumerWidget {
                   );
                 }),
                 const SizedBox(height: 12),
-                for (final child in next.childAttendances) _ChildAnswerRow(group: next, child: child),
+                for (final child in next.childAttendances) RdChildAnswerRow(group: next, child: child),
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -152,8 +152,8 @@ String rdChildrenLine(AppLocalizations l10n, ParentAttendanceGroup g) {
 
 /// One child of the next Termin: open → "Ist dabei" / "Kann nicht",
 /// answered → status plus "Doch absagen" / "Doch dabei".
-class _ChildAnswerRow extends ConsumerWidget {
-  const _ChildAnswerRow({required this.group, required this.child});
+class RdChildAnswerRow extends ConsumerWidget {
+  const RdChildAnswerRow({super.key, required this.group, required this.child});
 
   final ParentAttendanceGroup group;
   final ChildPersonAttendance child;

@@ -394,7 +394,9 @@
         "emptyPaused": "Niemand ist pausiert.",
         "emptyPending": "Niemand wartet auf Freigabe.",
         "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
-        "critical": "Fehlen oft · {count}"
+        "critical": "Fehlen oft · {count}",
+        "total": "{count, plural, one {1 Person} other {{count} Personen}}",
+        "searchRead": "Name oder Register"
       },
       "person": {
         "edit": "Bearbeiten",
@@ -613,6 +615,11 @@
         "done": "{count, plural, one {1 Person geändert} other {{count} Personen geändert}}",
         "failed": "{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}",
         "noGroup": "Ohne Register"
+      },
+      "parents": {
+        "childRate": "{name} · {percent} %",
+        "route": "Route",
+        "today": "Heute"
       }
     }
   },
@@ -1011,7 +1018,9 @@
         "emptyPaused": "Nobody is paused.",
         "emptyPending": "Nobody is waiting for approval.",
         "pendingHint": "Tap a person to review and approve them.",
-        "critical": "Often missing · {count}"
+        "critical": "Often missing · {count}",
+        "total": "{count, plural, one {1 person} other {{count} people}}",
+        "searchRead": "Name or section"
       },
       "person": {
         "edit": "Edit",
@@ -1230,6 +1239,11 @@
         "done": "{count, plural, one {1 person changed} other {{count} people changed}}",
         "failed": "{count, plural, one {1 change failed} other {{count} changes failed}}",
         "noGroup": "No section"
+      },
+      "parents": {
+        "childRate": "{name} · {percent} %",
+        "route": "Directions",
+        "today": "Today"
       }
     }
   }
