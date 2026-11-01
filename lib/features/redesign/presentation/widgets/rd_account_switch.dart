@@ -505,34 +505,30 @@ class _RdSavedAccountsOnLoginState extends ConsumerState<RdSavedAccountsOnLogin>
   Widget build(BuildContext context) {
     final accounts = ref.watch(savedAccountsProvider).valueOrNull ?? const <SavedAccount>[];
     if (accounts.isEmpty) return const SizedBox.shrink();
+    final p = context.rd;
     final l10n = context.l10n;
-    final theme = Theme.of(context);
-    final muted = theme.textTheme.bodySmall?.color ?? theme.colorScheme.onSurfaceVariant;
+    // Same rows as the "Konto wechseln" sheet (one look for accounts).
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        Text(l10n.redesignAccountsLoginSaved, style: theme.textTheme.titleSmall),
-        const SizedBox(height: 4),
-        for (final a in accounts)
-          ListTile(
-            contentPadding: EdgeInsets.zero,
-            leading: CircleAvatar(child: Text(rdInitialsOf(a.name ?? a.email))),
-            title: Text(a.title, maxLines: 1, overflow: TextOverflow.ellipsis),
-            subtitle: Text(
-              a.canResume ? (a.title != a.email ? a.email : (a.label ?? '')) : l10n.redesignAccountsNeedsLogin,
-              maxLines: 1,
-              overflow: TextOverflow.ellipsis,
-            ),
-            trailing: _switchingTo == a.userId
-                ? const SizedBox(width: 20, height: 20, child: CircularProgressIndicator(strokeWidth: 2))
-                : const Icon(Icons.chevron_right),
-            onTap: _switchingTo == null ? () => _open(a) : null,
-          ),
-        const SizedBox(height: 8),
+        RdGroupLabel(l10n.redesignAccountsLoginSaved),
+        RdGroupedList(
+          children: [
+            for (final a in accounts)
+              _AccountRow(
+                account: a,
+                isCurrent: false,
+                busy: _switchingTo == a.userId,
+                onTap: _switchingTo == null ? () => _open(a) : null,
+                onRemove: null,
+              ),
+          ],
+        ),
+        const SizedBox(height: 12),
         Text(
           l10n.redesignAccountsLoginOr,
           textAlign: TextAlign.center,
-          style: TextStyle(color: muted, fontSize: 13),
+          style: RdType.meta(p, size: 13),
         ),
         const SizedBox(height: 12),
       ],
