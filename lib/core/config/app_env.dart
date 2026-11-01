@@ -10,14 +10,6 @@ const appEnvFileName = '.env.app';
 @visibleForTesting
 const appEnvCacheKey = 'app_env_cache_v1';
 
-/// Loads [appEnvFileName] into [dotenv].
-///
-/// PWA_OFFLINE: Flutter's service worker leaves dotfiles out of its cache
-/// list, so `assets/.env.app` is never cached and an installed PWA hung on
-/// the splash screen offline (the Ionic PWA starts offline up to the login).
-/// On web the file text is therefore also kept in local storage and used
-/// when the asset cannot be fetched. The file only holds public client
-/// values that are served with every page load anyway.
 /// Keys without which the app cannot start (SupabaseConfig.initialize).
 @visibleForTesting
 const appEnvRequiredKeys = ['SUPABASE_URL', 'SUPABASE_ANON_KEY'];
@@ -30,6 +22,14 @@ bool isUsableAppEnv(String? text) {
   return appEnvRequiredKeys.every((k) => (values[k] ?? '').trim().isNotEmpty);
 }
 
+/// Loads [appEnvFileName] into [dotenv].
+///
+/// PWA_OFFLINE: Flutter's service worker leaves dotfiles out of its cache
+/// list, so `assets/.env.app` is never cached and an installed PWA hung on
+/// the splash screen offline (the Ionic PWA starts offline up to the login).
+/// On web the file text is therefore also kept in local storage and used
+/// when the asset cannot be fetched. The file only holds public client
+/// values that are served with every page load anyway.
 Future<void> loadAppEnv({AssetBundle? bundle, bool? web}) async {
   final isWeb = web ?? kIsWeb;
   String? text;
