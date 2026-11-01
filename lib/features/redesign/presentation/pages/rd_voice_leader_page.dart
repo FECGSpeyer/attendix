@@ -168,10 +168,15 @@ class _VoiceMemberRow extends StatelessWidget {
                   crossAxisAlignment: WrapCrossAlignment.center,
                   children: [
                     Text(name, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w600, color: p.text)),
-                    if (person.isLeader) RdPill(l10n.redesignMembersLeader, tone: RdTone.primary),
-                    if (einteilung != null && einteilung.isNotEmpty && einteilung != '-') RdPill(einteilung),
+                    if (person.isLeader) const RdLeaderTag(),
                   ],
                 ),
+                // Like the Mitglieder rows: the Einteilung as grey line.
+                if (einteilung != null && einteilung.isNotEmpty && einteilung != '-')
+                  Padding(
+                    padding: const EdgeInsets.only(top: 2),
+                    child: Text(einteilung, style: RdType.meta(p, size: 13)),
+                  ),
                 const SizedBox(height: 4),
                 if (email.isNotEmpty) contact(Icons.mail_outline, email, 'mailto:$email'),
                 if (phone.isNotEmpty) contact(Icons.call_outlined, phone, 'tel:$phone'),

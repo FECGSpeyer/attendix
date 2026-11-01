@@ -153,3 +153,54 @@ class RdLinkButton extends StatelessWidget {
     );
   }
 }
+
+/// Date box of a Termin card; multi-day Termine show the range.
+class RdEventDateBox extends StatelessWidget {
+  const RdEventDateBox({super.key, required this.date, this.durationDays, this.highlight = false});
+
+  final String? date;
+  final int? durationDays;
+  final bool highlight;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final start = EventListUtils.parse(date);
+    final locale = currentIntlLocale();
+    String wd(DateTime d) => DateFormat.E(locale).format(d).replaceAll('.', '').toUpperCase();
+    var top = start == null ? '' : wd(start);
+    var bottom = start == null ? '–' : '${start.day}';
+    final days = durationDays ?? 1;
+    if (start != null && days > 1) {
+      final end = rdAddDays(start, days - 1);
+      top = '${wd(start)}–${wd(end)}';
+      bottom = '${start.day}–${end.day}';
+    }
+    final fg = highlight ? p.softText : p.text;
+    return Container(
+      width: 52,
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      decoration: BoxDecoration(
+        color: highlight ? p.soft : p.track,
+        borderRadius: BorderRadius.circular(12),
+      ),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          Text(
+            top,
+            maxLines: 1,
+            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: highlight ? fg : p.text2),
+          ),
+          FittedBox(
+            fit: BoxFit.scaleDown,
+            child: Text(
+              bottom,
+              style: TextStyle(fontSize: days > 1 ? 16 : 20, fontWeight: FontWeight.w700, color: fg),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+}

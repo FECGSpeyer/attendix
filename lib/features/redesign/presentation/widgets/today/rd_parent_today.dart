@@ -148,10 +148,13 @@ String rdChildrenLine(AppLocalizations l10n, ParentAttendanceGroup g) {
 /// One child of the next Termin: open → "Ist dabei" / "Kann nicht",
 /// answered → status plus "Doch absagen" / "Doch dabei".
 class RdChildAnswerRow extends ConsumerWidget {
-  const RdChildAnswerRow({super.key, required this.group, required this.child});
+  const RdChildAnswerRow({super.key, required this.group, required this.child, this.readOnly = false});
 
   final ParentAttendanceGroup group;
   final ChildPersonAttendance child;
+
+  /// Past Termine: the status only, no answers.
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -170,6 +173,13 @@ class RdChildAnswerRow extends ConsumerWidget {
       ],
     );
 
+    if (readOnly) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(children: [Expanded(child: name), rdOwnStatusPill(l10n, status)]),
+      );
+    }
+
     // Open: both answers as equal buttons under the name, so they fit side
     // by side on a phone instead of wrapping into two rows.
     if (status.isNeutral) {
@@ -184,17 +194,21 @@ class RdChildAnswerRow extends ConsumerWidget {
               padding: const EdgeInsets.only(left: 42),
               child: Row(
                 children: [
+                  // Same answer buttons as the Termine of Spieler.
                   Expanded(
-                    child: _SmallButton(
+                    child: RdOutlineButton(
                       label: l10n.redesignTodayChildYes,
-                      primary: true,
+                      icon: Icons.check,
+                      color: p.present,
+                      height: 44,
                       onPressed: canAnswer ? () => _signIn(context, ref) : null,
                     ),
                   ),
                   const SizedBox(width: 8),
                   Expanded(
-                    child: _SmallButton(
+                    child: RdOutlineButton(
                       label: l10n.redesignTodayChildNo,
+                      height: 44,
                       onPressed: canAnswer ? () => _signOut(context, ref) : null,
                     ),
                   ),
@@ -293,39 +307,5 @@ class RdChildAnswerRow extends ConsumerWidget {
 
   void _failed(BuildContext context) {
     ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
-  }
-}
-
-/// Compact answer button of a child row (min. 40 px high).
-class _SmallButton extends StatelessWidget {
-  const _SmallButton({required this.label, required this.onPressed, this.primary = false});
-
-  final String label;
-  final VoidCallback? onPressed;
-  final bool primary;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final style =
-        primary
-            ? FilledButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary)
-            : OutlinedButton.styleFrom(foregroundColor: p.link, side: BorderSide(color: p.offBorder));
-    final common = ButtonStyle(
-      minimumSize: const WidgetStatePropertyAll(Size(44, 40)),
-      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 14)),
-      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-      // Keeps the theme's font (web font on the PWA), only size and weight change.
-      textStyle: WidgetStatePropertyAll(
-        (Theme.of(context).textTheme.labelLarge ?? const TextStyle()).copyWith(
-          fontSize: 15,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-    final merged = common.merge(style);
-    return primary
-        ? FilledButton(onPressed: onPressed, style: merged, child: Text(label))
-        : OutlinedButton(onPressed: onPressed, style: merged, child: Text(label));
   }
 }

@@ -111,9 +111,7 @@ import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
-import '../../features/redesign/presentation/pages/rd_member_list_page.dart';
 import '../../features/redesign/presentation/pages/rd_members_page.dart';
-import '../../features/redesign/presentation/pages/rd_parent_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_voice_leader_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
@@ -856,7 +854,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'members',
             pageBuilder: (context, state) => AppPageTransitions.none(
               // REDESIGN: Spieler/Helfer get the read-only list in the new design.
-              child: const _BetaOr(beta: RdMemberListPage(), classic: MembersPage()),
+              child: const _BetaOr(beta: RdMembersPage(), classic: MembersPage()),
               state: state,
             ),
           ),
@@ -867,7 +865,7 @@ final routerProvider = Provider<GoRouter>((ref) {
             name: 'parentsPortal',
             pageBuilder: (context, state) => AppPageTransitions.none(
               // REDESIGN: Eltern get their Termine in the new design.
-              child: const _BetaOr(beta: RdParentEventsPage(), classic: ParentsPortalPage()),
+              child: const _BetaOr(beta: RdEventsPage(), classic: ParentsPortalPage()),
               state: state,
             ),
           ),

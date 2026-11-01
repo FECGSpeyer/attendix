@@ -8,10 +8,12 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/data/repositories/profile_repository.dart';
-import 'package:attendix/features/members/data/providers/members_providers.dart';
 import 'package:attendix/features/parents/data/providers/parents_providers.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_member_list_page.dart';
-import 'package:attendix/features/redesign/presentation/pages/rd_parent_events_page.dart';
+import 'package:attendix/core/providers/debug_providers.dart';
+import 'package:attendix/core/providers/group_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_events_page.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_members_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_voice_leader_page.dart';
 import 'package:attendix/features/voice_leader/data/providers/voice_leader_providers.dart';
 import 'package:attendix/l10n/l10n.dart';
@@ -22,8 +24,9 @@ import 'package:intl/date_symbol_data_local.dart';
 
 import '../../factories/test_factories.dart';
 
-/// REDESIGN: Beta pages of the roles without the Dirigent views
-/// (Mitglieder for Spieler/Helfer, Termine for Eltern, "Meine Stimme").
+/// REDESIGN: the roles without the Dirigent views use the same pages in
+/// the new design: Mitglieder (read-only) for Spieler/Helfer, Termine for
+/// Eltern, and "Meine Stimme".
 
 class _TenantNotifier extends CurrentTenantNotifier {
   _TenantNotifier(super.ref) {
@@ -76,11 +79,13 @@ void main() {
     final ben = _person(2, 'Ben', 'Clas', 1, einteilung: 'Süd');
     final clara = _person(3, 'Clara', 'Dorn', 2, einteilung: 'Nord');
 
-    List<Override> overrides({bool einteilung = true}) => [
-          membersGroupedProvider.overrideWith((ref) async => [
-                MembersGroup(groupId: 1, groupName: 'Flöte', members: [anna, ben]),
-                MembersGroup(groupId: 2, groupName: 'Oboe', members: [clara]),
+    List<Override> overrides({bool einteilung = true, Role role = Role.player}) => [
+          effectiveRoleProvider.overrideWithValue(role),
+          groupsProvider.overrideWith((ref) async => [
+                TestFactories.createGroup(id: 1, name: 'Flöte', index: 0).copyWith(sortOrder: 1),
+                TestFactories.createGroup(id: 2, name: 'Oboe', index: 1).copyWith(sortOrder: 2),
               ]),
+          realtimePlayersProvider.overrideWith((ref) => Stream.value([anna, ben, clara])),
           personExtraFieldsProvider.overrideWith((ref) async => [
                 if (einteilung)
                   const ProfileExtraField(id: 'einteilung', name: 'Einteilung', type: 'select', options: ['Nord', 'Süd']),
@@ -88,11 +93,14 @@ void main() {
         ];
 
     testWidgets('shows registers as cards with the leader tag, no percentages', (tester) async {
-      await tester.pumpWidget(_app(const RdMemberListPage(), overrides()));
+      await tester.pumpWidget(_app(const RdMembersPage(), overrides()));
       await _settle(tester);
 
       expect(find.text('Mitglieder'), findsOneWidget);
-      expect(find.text('3 Personen'), findsOneWidget);
+      // Same page as for the Dirigent, without its tools.
+      expect(find.byType(FloatingActionButton), findsNothing);
+      expect(find.byIcon(Icons.bar_chart_rounded), findsNothing);
+      expect(find.text('Aktiv · 3'), findsNothing);
       expect(find.text('FLÖTE · 2'), findsOneWidget);
       expect(find.text('OBOE · 1'), findsOneWidget);
       expect(find.text('Anna Berg'), findsOneWidget);
@@ -102,8 +110,8 @@ void main() {
       expect(find.byIcon(Icons.chevron_right), findsNothing);
     });
 
-    testWidgets('Einteilung chips filter the list', (tester) async {
-      await tester.pumpWidget(_app(const RdMemberListPage(), overrides()));
+    testWidgets('Einteilung segments filter the list', (tester) async {
+      await tester.pumpWidget(_app(const RdMembersPage(), overrides()));
       await _settle(tester);
 
       expect(find.text('Alle'), findsOneWidget);
@@ -118,7 +126,7 @@ void main() {
     });
 
     testWidgets('no chips without the Einteilung field; search narrows', (tester) async {
-      await tester.pumpWidget(_app(const RdMemberListPage(), overrides(einteilung: false)));
+      await tester.pumpWidget(_app(const RdMembersPage(), overrides(einteilung: false)));
       await _settle(tester);
 
       expect(find.text('Nord'), findsNothing);
@@ -133,8 +141,10 @@ void main() {
     });
 
     testWidgets('load error offers retry', (tester) async {
-      await tester.pumpWidget(_app(const RdMemberListPage(), [
-        membersGroupedProvider.overrideWith((ref) async => throw Exception('offline')),
+      await tester.pumpWidget(_app(const RdMembersPage(), [
+        effectiveRoleProvider.overrideWithValue(Role.helper),
+        groupsProvider.overrideWith((ref) async => const []),
+        realtimePlayersProvider.overrideWith((ref) => Stream.error(Exception('offline'))),
         personExtraFieldsProvider.overrideWith((ref) async => const []),
       ]));
       await _settle(tester);
@@ -200,6 +210,7 @@ void main() {
         );
 
     List<Override> overrides({int? pending}) => [
+          effectiveRoleProvider.overrideWithValue(Role.parent),
           parentChildrenProvider.overrideWith((ref) async => [mia, ben]),
           childrenAttendancesProvider.overrideWith((ref) async => [
                 att(1, mia, _day(3), info: 'Kinderchor'),
@@ -212,8 +223,8 @@ void main() {
           if (pending != null) pendingAttendanceIdProvider.overrideWith((ref) => pending),
         ];
 
-    testWidgets('coming Termin as card with one answer row per child', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), overrides()));
+    testWidgets('same Termine page as Spieler: card with one answer row per open child', (tester) async {
+      await tester.pumpWidget(_app(const RdEventsPage(), overrides()));
       await _settle(tester);
 
       expect(find.text('Termine'), findsOneWidget);
@@ -223,26 +234,27 @@ void main() {
       expect(find.text('Ist dabei'), findsOneWidget);
       expect(find.text('Kann nicht'), findsOneWidget);
       expect(find.text('Doch absagen'), findsOneWidget);
-      expect(find.text('Route'), findsOneWidget);
-      // Rates of the children from the past Termine.
-      expect(find.text('Mia · 100 %'), findsOneWidget);
-      expect(find.text('Ben · 0 %'), findsOneWidget);
+      expect(find.text('Kommend'), findsOneWidget);
+      // "1 Termin wartet auf deine Antwort", like for Spieler.
+      expect(find.textContaining('wartet'), findsOneWidget);
       expect(find.text('Probe alt'), findsNothing);
     });
 
     testWidgets('Vergangen shows the status of each child', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), overrides()));
+      await tester.pumpWidget(_app(const RdEventsPage(), overrides()));
       await _settle(tester);
 
       await tester.tap(find.text('Vergangen'));
       await _settle(tester);
       expect(find.text('Probe alt'), findsOneWidget);
-      expect(find.textContaining('Mia · '), findsWidgets);
+      // Rates of the children and the status line of the Termin.
+      expect(find.textContaining('Mia · 100 %'), findsOneWidget);
+      expect(find.text('Mia ✓ · Ben ✕'), findsOneWidget);
       expect(find.text('Kinderchor'), findsNothing);
     });
 
     testWidgets('a notification opens its Termin as a sheet', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), overrides(pending: 1)));
+      await tester.pumpWidget(_app(const RdEventsPage(), overrides(pending: 1)));
       await _settle(tester);
 
       expect(find.byType(BottomSheet), findsOneWidget);
@@ -250,7 +262,8 @@ void main() {
     });
 
     testWidgets('a failed reload keeps the notification and shows retry', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+      await tester.pumpWidget(_app(const RdEventsPage(), [
+        effectiveRoleProvider.overrideWithValue(Role.parent),
         parentChildrenProvider.overrideWith((ref) async => [mia, ben]),
         childrenAttendancesProvider.overrideWith((ref) async => throw Exception('offline')),
         attendanceTypesProvider.overrideWith((ref) async => const []),
@@ -261,12 +274,13 @@ void main() {
 
       expect(find.text('Erneut versuchen'), findsOneWidget);
       expect(find.byType(BottomSheet), findsNothing);
-      final container = ProviderScope.containerOf(tester.element(find.byType(RdParentEventsPage)));
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
       expect(container.read(pendingAttendanceIdProvider), 1);
     });
 
     testWidgets('answered children keep the changes of the old page', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+      await tester.pumpWidget(_app(const RdEventsPage(), [
+        effectiveRoleProvider.overrideWithValue(Role.parent),
         parentChildrenProvider.overrideWith((ref) async => [mia, ben]),
         childrenAttendancesProvider.overrideWith((ref) async => [
               // Excused: Zusage or another reason / late.
@@ -278,14 +292,19 @@ void main() {
         currentSongsProvider.overrideWith((ref) async => const []),
       ]));
       await _settle(tester);
+      // All answered: the card shows the status line, the sheet the changes.
+      await tester.tap(find.text('Kinderchor'));
+      await _settle(tester);
 
+      expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Doch dabei'), findsNWidgets(2));
       expect(find.text('Ändern'), findsOneWidget);
       expect(find.text('Doch absagen'), findsOneWidget);
     });
 
     testWidgets('multi-day Termine show their date range', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+      await tester.pumpWidget(_app(const RdEventsPage(), [
+        effectiveRoleProvider.overrideWithValue(Role.parent),
         parentChildrenProvider.overrideWith((ref) async => [mia]),
         childrenAttendancesProvider.overrideWith((ref) async => [
               att(1, mia, _day(3), info: 'Freizeit', days: 3),
@@ -299,7 +318,8 @@ void main() {
     });
 
     testWidgets('without linked children shows the hint', (tester) async {
-      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+      await tester.pumpWidget(_app(const RdEventsPage(), [
+        effectiveRoleProvider.overrideWithValue(Role.parent),
         parentChildrenProvider.overrideWith((ref) async => const []),
         childrenAttendancesProvider.overrideWith((ref) async => const []),
         attendanceTypesProvider.overrideWith((ref) async => const []),

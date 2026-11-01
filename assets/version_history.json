@@ -4,8 +4,8 @@
       "version": "0.31.0",
       "date": "1.11.2026",
       "changes": [
-        "✨ Beta-Design, Mitglieder für Spieler und Helfer: schreibgeschützte Liste im neuen Design mit Suche, Registern, „Stimmführung“ und Einteilung (z. B. Nord/Süd) als Filter",
-        "✨ Beta-Design, Termine für Eltern: alle kommenden Termine als Karten mit Zu- und Absage pro Kind, Ablaufplan, Infos, Anhang und Route; „Vergangen“ mit dem Status jedes Kindes",
+        "✨ Beta-Design, Mitglieder für Spieler und Helfer: dieselbe Mitglieder-Seite wie für Dirigenten, nur zum Lesen, mit Suche, Registern, „Stimmführung“ und Einteilung (z. B. Nord/Süd) als Filter",
+        "✨ Beta-Design, Termine für Eltern: dieselbe Termine-Seite wie für Spieler, mit Zu- und Absage pro Kind direkt auf der Karte und Termin-Details mit Ablaufplan, Infos, Anhang und Route",
         "✨ Beta-Design, Stimmführer: „Meine Stimme“ mit Kontakt und kommenden Abwesenheiten im neuen Design",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]

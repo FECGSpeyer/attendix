@@ -24,6 +24,12 @@ import '../../../self_service/presentation/widgets/self_service_event_actions.da
 import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
+import '../widgets/event/rd_parent_event_card.dart';
+import '../widgets/today/rd_parent_today.dart' show rdOpenChildren;
+import '../../../parents/data/providers/parents_providers.dart';
+import '../../../parents/presentation/widgets/parents_header_widgets.dart' show showCurrentSongsSheet;
+import '../../../../core/providers/song_providers.dart';
+import '../../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../widgets/event/rd_own_answer_sheet.dart';
 import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/rd_split_view.dart';
@@ -34,7 +40,8 @@ import '../widgets/today/rd_duty_section.dart';
 
 /// REDESIGN: tab "Termine" (canvas D2 for Dirigent/Helfer/Beobachter, S2
 /// for Spieler). Kommend / Vergangen, filters, and for Spieler the answer
-/// right in the list. Eltern keep the parents portal.
+/// right in the list. Eltern (old `/parents`) see their children's Termine
+/// in the same cards and answer per child.
 class RdEventsPage extends ConsumerStatefulWidget {
   const RdEventsPage({super.key});
 
@@ -73,10 +80,15 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final role = ref.watch(effectiveRoleProvider);
-    final leader = role.canSeeAttendanceTab;
+    final parent = role.isParent;
+    final leader = !parent && role.canSeeAttendanceTab;
     final canCreate = leader && ref.watch(canCreateAttendanceProvider);
     // Helfer are members too: they keep "Abwesend" next to the leader list.
-    final player = leader && !role.canSeeSelfServiceTab ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
+    final player = parent || (leader && !role.canSeeSelfServiceTab)
+        ? null
+        : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
+    // Eltern: "Aktuelle Werke" of the old parents page (no Werke tab).
+    final songs = parent ? ref.watch(currentSongsProvider).valueOrNull ?? const <CurrentSongsGroup>[] : const <CurrentSongsGroup>[];
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
     // Helfer: own answers ("Du ✓") follow recordings and realtime changes.
     final ownInLeaderList = leader && role.canSeeSelfServiceTab;
@@ -86,7 +98,12 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
 
     return RdPage(
       onRefresh: () async {
-        if (leader) {
+        if (parent) {
+          ref.invalidate(currentSongsProvider);
+          ref.invalidate(parentChildrenProvider);
+          ref.invalidate(childrenAttendancesProvider);
+          await ref.read(childrenAttendancesProvider.future).catchError((_) => const <ChildPersonAttendance>[]);
+        } else if (leader) {
           ref.read(attendanceRefetchCounter.notifier).state++;
           if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
@@ -126,6 +143,14 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
               ),
               const SizedBox(width: 8),
             ],
+            if (songs.isNotEmpty) ...[
+              RdCircleButton(
+                icon: Icons.music_note_outlined,
+                label: l10n.selfServiceShowCurrentSongs,
+                onPressed: () => showCurrentSongsSheet(context, songs),
+              ),
+              const SizedBox(width: 8),
+            ],
             RdCircleButton(
               icon: _searching ? Icons.close : Icons.search,
               label: _searching ? l10n.redesignEventsSearchClose : l10n.redesignEventsSearch,
@@ -159,7 +184,12 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
           ),
         ],
         const SizedBox(height: 14),
-        if (leader) _leaderBody(context) else _playerBody(context),
+        if (parent)
+          _parentBody(context)
+        else if (leader)
+          _leaderBody(context)
+        else
+          _playerBody(context),
       ],
     );
   }
@@ -456,6 +486,134 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
       ],
     );
   }
+
+  // ---------------------------------------------------------------------------
+  // Eltern (old parents portal `/parents`)
+  // ---------------------------------------------------------------------------
+
+  /// A notification or push asked for a Termin (`pendingAttendanceId`): open
+  /// it as a sheet once the Termine are loaded (old page: action sheet).
+  /// While the Termine (re)load or after a failed reload the id stays: the
+  /// page shows the load error with "retry" and comes back here once loaded.
+  void _openParentPending() {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      final kids = ref.read(parentChildrenProvider);
+      final atts = ref.read(childrenAttendancesProvider);
+      if (kids.isLoading || atts.isLoading || kids.hasError || atts.hasError) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final all = ref.read(parentAttendanceGroupsProvider);
+      if (all.any((g) => g.attendanceId == pendingId)) {
+        showRdParentEventSheet(context, pendingId);
+      } else {
+        ToastHelper.showInfo(context, context.l10n.redesignEventNotFound);
+      }
+    });
+  }
+
+  Widget _parentBody(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final kidsAsync = ref.watch(parentChildrenProvider);
+    final attsAsync = ref.watch(childrenAttendancesProvider);
+    ref.watch(pendingAttendanceIdProvider);
+    final kids = kidsAsync.valueOrNull;
+    // A failed reload shows the error with "retry" instead of the previous
+    // Termine, so answers never go to a stale list.
+    final error = kidsAsync.hasError || attsAsync.hasError;
+    if (kids == null || !attsAsync.hasValue || error) {
+      return error
+          ? RdInfoCard(
+              text: l10n.redesignTodayLoadFailed,
+              icon: Icons.error_outline,
+              action: RdOutlineButton(
+                label: l10n.redesignCommonRetry,
+                onPressed: () {
+                  ref.invalidate(parentChildrenProvider);
+                  ref.invalidate(childrenAttendancesProvider);
+                },
+              ),
+            )
+          : RdInfoCard(text: l10n.redesignTodayLoading, loading: true);
+    }
+    if (kids.isEmpty) return RdInfoCard(text: l10n.redesignTodayNoChildren, icon: Icons.info_outline);
+    _openParentPending();
+
+    final upcoming = ref.watch(upcomingParentAttendancesProvider);
+    final past = ref.watch(pastParentAttendancesProvider);
+    final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
+    String titleOf(ParentAttendanceGroup g) => rdParentTitle(types.where((t) => t.id == g.typeId).firstOrNull, g);
+    final openCount = upcoming.where((g) => rdOpenChildren(g) > 0).length;
+    final source = _past ? past : upcoming;
+    final list = source
+        .where((g) => _past || !_onlyOpen || rdOpenChildren(g) > 0)
+        .where((g) => _matches(titleOf(g), g.place))
+        .toList();
+    final sections = rdGroupEvents(list, (g) => g.date, past: _past);
+
+    // Rate per child, like "Vergangen · 92 % da" of a Spieler.
+    final rates = [
+      for (final kid in kids)
+        if (kid.id != null && ref.watch(childStatsProvider(kid.id!)).totalCount > 0)
+          (kid.firstName, ref.watch(childStatsProvider(kid.id!)).percentage),
+    ];
+    final pastLabel = kids.length == 1 && rates.length == 1
+        ? l10n.redesignEventsPastOwn(rates.first.$2)
+        : l10n.redesignEventsPast;
+
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        _segments(context, pastLabel: pastLabel),
+        _swipe(Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            if (_past && kids.length > 1 && rates.isNotEmpty)
+              Padding(
+                padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+                child: Text(
+                  rates.map((r) => l10n.redesignParentsChildRate(r.$1, r.$2)).join('   '),
+                  style: RdType.meta(p, size: 13),
+                ),
+              ),
+            if (!_past && openCount > 0) ...[
+              const SizedBox(height: 12),
+              _WaitingBanner(
+                count: openCount,
+                active: _onlyOpen,
+                onTap: () => setState(() => _onlyOpen = !_onlyOpen),
+              ),
+            ],
+            const SizedBox(height: 8),
+            if (sections.isEmpty)
+              Padding(
+                padding: const EdgeInsets.only(top: 12),
+                child: RdInfoCard(
+                  text: _query.isNotEmpty
+                      ? l10n.redesignEventsNoMatch
+                      : (_past ? l10n.redesignEventsNoPast : l10n.redesignTodayNoUpcoming),
+                  icon: Icons.event_available_outlined,
+                ),
+              ),
+            for (final section in sections) ...[
+              _SectionLabel(section: section, past: _past),
+              for (final g in section.items)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 10),
+                  child: RdParentEventCard(
+                    key: ValueKey('rd-parent-${g.attendanceId}'),
+                    group: g,
+                    past: _past,
+                  ),
+                ),
+            ],
+          ],
+        )),
+      ],
+    );
+  }
 }
 
 /// "DIESE WOCHE" / "NOVEMBER".
@@ -477,57 +635,6 @@ class _SectionLabel extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.only(top: 14),
       child: RdGroupLabel(text),
-    );
-  }
-}
-
-/// Date box of a Termin card; multi-day Termine show the range.
-class _DateBox extends StatelessWidget {
-  const _DateBox({required this.date, this.durationDays, this.highlight = false});
-
-  final String? date;
-  final int? durationDays;
-  final bool highlight;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final start = EventListUtils.parse(date);
-    final locale = currentIntlLocale();
-    String wd(DateTime d) => DateFormat.E(locale).format(d).replaceAll('.', '').toUpperCase();
-    var top = start == null ? '' : wd(start);
-    var bottom = start == null ? '–' : '${start.day}';
-    final days = durationDays ?? 1;
-    if (start != null && days > 1) {
-      final end = rdAddDays(start, days - 1);
-      top = '${wd(start)}–${wd(end)}';
-      bottom = '${start.day}–${end.day}';
-    }
-    final fg = highlight ? p.softText : p.text;
-    return Container(
-      width: 52,
-      padding: const EdgeInsets.symmetric(vertical: 6),
-      decoration: BoxDecoration(
-        color: highlight ? p.soft : p.track,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          Text(
-            top,
-            maxLines: 1,
-            style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: highlight ? fg : p.text2),
-          ),
-          FittedBox(
-            fit: BoxFit.scaleDown,
-            child: Text(
-              bottom,
-              style: TextStyle(fontSize: days > 1 ? 16 : 20, fontWeight: FontWeight.w700, color: fg),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
@@ -579,7 +686,7 @@ class _LeaderEventCard extends StatelessWidget {
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          _DateBox(date: attendance.date, durationDays: attendance.durationDays, highlight: today),
+          RdEventDateBox(date: attendance.date, durationDays: attendance.durationDays, highlight: today),
           const SizedBox(width: 14),
           Expanded(
             child: Column(
@@ -712,7 +819,7 @@ class _PlayerEventCardState extends ConsumerState<_PlayerEventCard> {
         children: [
           Row(
             children: [
-              _DateBox(date: att.date, durationDays: att.effectiveDurationDays, highlight: today),
+              RdEventDateBox(date: att.date, durationDays: att.effectiveDurationDays, highlight: today),
               const SizedBox(width: 14),
               Expanded(
                 child: Column(
