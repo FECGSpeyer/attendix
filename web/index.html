@@ -74,6 +74,10 @@
         link.href = 'main.dart.wasm';
         link.as = 'fetch';
         link.crossOrigin = 'anonymous';
+        // Safari does not reuse this preload for the engine's fetch and
+        // downloads the 10 MB twice (seen in Safari 26.2 and 27), so only
+        // Chrome/Edge get it.
+        if (engine !== 'blink') link = null;
         var skwasm = codecs && breakIterators ? 'canvaskit/skwasm' : 'canvaskit/skwasm_heavy';
         window.attendixEngineFiles = ['main.dart.wasm', 'main.dart.mjs', skwasm + '.js', skwasm + '.wasm'];
       } else {
@@ -82,25 +86,44 @@
         var canvaskit = codecs && breakIterators ? 'canvaskit/chromium/canvaskit' : 'canvaskit/canvaskit';
         window.attendixEngineFiles = ['main.dart.js', canvaskit + '.js', canvaskit + '.wasm'];
       }
-      document.head.appendChild(link);
+      if (link) document.head.appendChild(link);
     })();
   </script>
   <!-- PWA_START: the engine asks for these only after main.dart.js has run
        (FontManifest → fonts → .env.app, then AssetManifest → login image),
        one round trip after another. Preloading them in parallel with the
        app code saves those round trips on a cold start. `as="fetch"` +
-       `crossorigin` match the engine's fetch() so the preload is reused.
-       test/web/index_preload_test.dart checks that every file exists. -->
-  <link rel="preload" href="assets/FontManifest.json" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/fonts/MaterialIcons-Regular.otf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/assets/fonts/Roboto-Regular.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/assets/fonts/Roboto-Italic.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/assets/fonts/Roboto-Medium.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/assets/fonts/Roboto-SemiBold.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/assets/fonts/Roboto-Bold.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/packages/cupertino_icons/assets/CupertinoIcons.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/.env.app" as="fetch" crossorigin="anonymous" fetchpriority="low">
-  <link rel="preload" href="assets/AssetManifest.bin.json" as="fetch" crossorigin="anonymous" fetchpriority="low">
+       `crossorigin` match the engine's fetch() so Chrome/Edge reuse the
+       preload. Safari (26.2, 27) does not and loads every file twice, so
+       only Blink gets them. test/web/index_preload_test.dart checks that
+       every file exists. -->
+  <script>
+    (function () {
+      var ua = navigator.userAgent;
+      if (navigator.vendor !== 'Google Inc.' && ua.indexOf('Edg/') < 0) return;
+      var assetPreloads = [
+        'assets/FontManifest.json',
+        'assets/fonts/MaterialIcons-Regular.otf',
+        'assets/assets/fonts/Roboto-Regular.ttf',
+        'assets/assets/fonts/Roboto-Italic.ttf',
+        'assets/assets/fonts/Roboto-Medium.ttf',
+        'assets/assets/fonts/Roboto-SemiBold.ttf',
+        'assets/assets/fonts/Roboto-Bold.ttf',
+        'assets/packages/cupertino_icons/assets/CupertinoIcons.ttf',
+        'assets/.env.app',
+        'assets/AssetManifest.bin.json',
+      ];
+      assetPreloads.forEach(function (href) {
+        var link = document.createElement('link');
+        link.rel = 'preload';
+        link.href = href;
+        link.as = 'fetch';
+        link.crossOrigin = 'anonymous';
+        link.fetchPriority = 'low';
+        document.head.appendChild(link);
+      });
+    })();
+  </script>
   <style>
     /* Shown until Flutter paints its first frame (removed on flutter-first-frame). */
     #app-loading { position: fixed; inset: 0; display: flex; flex-direction: column;

@@ -8,8 +8,9 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   test('every asset preload in web/index.html points at a bundled file', () {
     final html = File('web/index.html').readAsStringSync();
-    final hrefs = RegExp(r'<link rel="preload" href="(assets/[^"]+)"')
-        .allMatches(html)
+    final list = RegExp(r'var assetPreloads = \[([^\]]+)\]').firstMatch(html)!;
+    final hrefs = RegExp(r"'(assets/[^']+)'")
+        .allMatches(list.group(1)!)
         .map((m) => m.group(1)!)
         .toList();
     expect(hrefs, isNotEmpty);
@@ -37,10 +38,19 @@ void main() {
 
   test('asset preloads match the engine fetch (cors, low priority)', () {
     final html = File('web/index.html').readAsStringSync();
-    for (final m in RegExp(r'<link rel="preload" href="assets/[^>]+>')
-        .allMatches(html)) {
-      expect(m.group(0), contains('as="fetch" crossorigin="anonymous"'));
-      expect(m.group(0), contains('fetchpriority="low"'));
-    }
+    expect(html, isNot(contains('<link rel="preload" href="assets/')));
+    final script = RegExp(r'var assetPreloads = [\s\S]*?\}\)\(\);')
+        .firstMatch(html)!
+        .group(0)!;
+    expect(script, contains("link.as = 'fetch';"));
+    expect(script, contains("link.crossOrigin = 'anonymous';"));
+    expect(script, contains("link.fetchPriority = 'low';"));
+  });
+
+  test('preloads are for Chrome/Edge only (Safari loads them twice)', () {
+    final html = File('web/index.html').readAsStringSync();
+    expect(html, contains(
+        "if (navigator.vendor !== 'Google Inc.' && ua.indexOf('Edg/') < 0) return;"));
+    expect(html, contains("if (engine !== 'blink') link = null;"));
   });
 }
