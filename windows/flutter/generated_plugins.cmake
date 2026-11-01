@@ -8,6 +8,7 @@ list(APPEND FLUTTER_PLUGIN_LIST
   desktop_drop
   file_selector_windows
   firebase_core
+  flutter_secure_storage_windows
   pdfx
   printing
   share_plus

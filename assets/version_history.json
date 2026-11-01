@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.32.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Konto wechseln unter Ich > Konto – mehrere Konten auf einem Gerät, Wechsel ohne Passwort",
+        "✨ Neues Design (Beta): Gespeicherte Konten auf der Anmeldeseite, abgelaufene Anmeldungen fragen nur das Passwort neu ab"
+      ]
+    },
+    {
       "version": "0.30.0",
       "date": "1.11.2026",
       "changes": [

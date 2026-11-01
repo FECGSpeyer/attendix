@@ -14099,6 +14099,150 @@ abstract class AppLocalizations {
   /// **'Abwesenheit'**
   String get redesignAbsenceTitle;
 
+  /// redesign.accounts.add
+  ///
+  /// In de, this message translates to:
+  /// **'Konto hinzufügen'**
+  String get redesignAccountsAdd;
+
+  /// redesign.accounts.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.'**
+  String get redesignAccountsAddHint;
+
+  /// redesign.accounts.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Konto hinzufügen'**
+  String get redesignAccountsAddTitle;
+
+  /// redesign.accounts.alreadyActive
+  ///
+  /// In de, this message translates to:
+  /// **'Mit diesem Konto bist du bereits angemeldet.'**
+  String get redesignAccountsAlreadyActive;
+
+  /// redesign.accounts.count
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Konto} other {{count} Konten}}'**
+  String redesignAccountsCount(num count);
+
+  /// redesign.accounts.current
+  ///
+  /// In de, this message translates to:
+  /// **'Angemeldet'**
+  String get redesignAccountsCurrent;
+
+  /// redesign.accounts.email
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get redesignAccountsEmail;
+
+  /// redesign.accounts.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Wechsel fehlgeschlagen. Bitte versuche es erneut.'**
+  String get redesignAccountsFailed;
+
+  /// redesign.accounts.footer
+  ///
+  /// In de, this message translates to:
+  /// **'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.'**
+  String get redesignAccountsFooter;
+
+  /// redesign.accounts.loginAgainHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die gespeicherte Anmeldung von {email} gilt nicht mehr, zum Beispiel nach einer Passwortänderung. Bitte melde dich einmal neu an.'**
+  String redesignAccountsLoginAgainHint(Object email);
+
+  /// redesign.accounts.loginAgainTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut anmelden'**
+  String get redesignAccountsLoginAgainTitle;
+
+  /// redesign.accounts.loginOr
+  ///
+  /// In de, this message translates to:
+  /// **'oder mit einem anderen Konto anmelden'**
+  String get redesignAccountsLoginOr;
+
+  /// redesign.accounts.loginSaved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeicherte Konten'**
+  String get redesignAccountsLoginSaved;
+
+  /// redesign.accounts.more
+  ///
+  /// In de, this message translates to:
+  /// **'Optionen für {name}'**
+  String redesignAccountsMore(Object name);
+
+  /// redesign.accounts.needsLogin
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte erneut anmelden'**
+  String get redesignAccountsNeedsLogin;
+
+  /// redesign.accounts.offline
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Verbindung. Bitte versuche es erneut.'**
+  String get redesignAccountsOffline;
+
+  /// redesign.accounts.password
+  ///
+  /// In de, this message translates to:
+  /// **'Passwort'**
+  String get redesignAccountsPassword;
+
+  /// redesign.accounts.remove
+  ///
+  /// In de, this message translates to:
+  /// **'Von diesem Gerät entfernen'**
+  String get redesignAccountsRemove;
+
+  /// redesign.accounts.removeBody
+  ///
+  /// In de, this message translates to:
+  /// **'{email} wird von diesem Gerät entfernt und dort abgemeldet. Zum Zurückwechseln brauchst du dann wieder das Passwort.'**
+  String redesignAccountsRemoveBody(Object email);
+
+  /// redesign.accounts.removeConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Entfernen'**
+  String get redesignAccountsRemoveConfirm;
+
+  /// redesign.accounts.removeTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Konto entfernen?'**
+  String get redesignAccountsRemoveTitle;
+
+  /// redesign.accounts.signIn
+  ///
+  /// In de, this message translates to:
+  /// **'Anmelden'**
+  String get redesignAccountsSignIn;
+
+  /// redesign.accounts.switched
+  ///
+  /// In de, this message translates to:
+  /// **'Angemeldet als {name}'**
+  String redesignAccountsSwitched(Object name);
+
+  /// redesign.accounts.title
+  ///
+  /// In de, this message translates to:
+  /// **'Konto wechseln'**
+  String get redesignAccountsTitle;
+
   /// redesign.adminTitle
   ///
   /// In de, this message translates to:

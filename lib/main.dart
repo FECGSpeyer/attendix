@@ -11,6 +11,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
 import 'core/config/supabase_config.dart';
+import 'core/providers/account_switch_providers.dart';
 import 'core/providers/locale_provider.dart';
 import 'core/providers/redesign_providers.dart';
 import 'core/router/app_router.dart';
@@ -135,6 +136,15 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
     WidgetsBinding.instance.addPostFrameCallback((_) {
       // PUSH: native push listeners + token registration (no-op on the web)
       if (mounted && isNativePushPlatform) ref.read(pushBootstrapProvider);
+      // ACCOUNT_SWITCH: keep the saved accounts' tokens current (Beta)
+      if (mounted) {
+        try {
+          ref.read(accountSwitchBootstrapProvider);
+        } catch (e) {
+          // Never block the app start (e.g. Supabase not initialised).
+          debugPrint('account switch bootstrap failed: $e');
+        }
+      }
       if (mounted) initAuthLinkHandling(ref, ref.read(routerProvider));
       // LIVE_ACTIVITY: iOS Live Activity for running Ablaufpläne (no-op elsewhere)
       if (mounted) ref.read(liveActivityBootstrapProvider);

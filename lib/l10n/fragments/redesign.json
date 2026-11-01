@@ -613,6 +613,32 @@
         "done": "{count, plural, one {1 Person geändert} other {{count} Personen geändert}}",
         "failed": "{count, plural, one {1 Änderung fehlgeschlagen} other {{count} Änderungen fehlgeschlagen}}",
         "noGroup": "Ohne Register"
+      },
+      "accounts": {
+        "title": "Konto wechseln",
+        "count": "{count, plural, one {1 Konto} other {{count} Konten}}",
+        "current": "Angemeldet",
+        "needsLogin": "Bitte erneut anmelden",
+        "add": "Konto hinzufügen",
+        "addTitle": "Konto hinzufügen",
+        "addHint": "Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.",
+        "loginAgainTitle": "Erneut anmelden",
+        "loginAgainHint": "Die gespeicherte Anmeldung von {email} gilt nicht mehr, zum Beispiel nach einer Passwortänderung. Bitte melde dich einmal neu an.",
+        "email": "E-Mail",
+        "password": "Passwort",
+        "signIn": "Anmelden",
+        "alreadyActive": "Mit diesem Konto bist du bereits angemeldet.",
+        "offline": "Keine Verbindung. Bitte versuche es erneut.",
+        "failed": "Wechsel fehlgeschlagen. Bitte versuche es erneut.",
+        "switched": "Angemeldet als {name}",
+        "remove": "Von diesem Gerät entfernen",
+        "removeTitle": "Konto entfernen?",
+        "removeBody": "{email} wird von diesem Gerät entfernt und dort abgemeldet. Zum Zurückwechseln brauchst du dann wieder das Passwort.",
+        "removeConfirm": "Entfernen",
+        "more": "Optionen für {name}",
+        "footer": "Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.",
+        "loginSaved": "Gespeicherte Konten",
+        "loginOr": "oder mit einem anderen Konto anmelden"
       }
     }
   },
@@ -1230,6 +1256,32 @@
         "done": "{count, plural, one {1 person changed} other {{count} people changed}}",
         "failed": "{count, plural, one {1 change failed} other {{count} changes failed}}",
         "noGroup": "No section"
+      },
+      "accounts": {
+        "title": "Switch account",
+        "count": "{count, plural, one {1 account} other {{count} accounts}}",
+        "current": "Signed in",
+        "needsLogin": "Please sign in again",
+        "add": "Add account",
+        "addTitle": "Add account",
+        "addHint": "Sign in with another account. Afterwards you can switch between your accounts without a password.",
+        "loginAgainTitle": "Sign in again",
+        "loginAgainHint": "The saved sign-in of {email} is no longer valid, for example after a password change. Please sign in once more.",
+        "email": "Email",
+        "password": "Password",
+        "signIn": "Sign in",
+        "alreadyActive": "You are already signed in with this account.",
+        "offline": "No connection. Please try again.",
+        "failed": "Switching failed. Please try again.",
+        "switched": "Signed in as {name}",
+        "remove": "Remove from this device",
+        "removeTitle": "Remove account?",
+        "removeBody": "{email} will be removed from this device and signed out there. To switch back you will need the password again.",
+        "removeConfirm": "Remove",
+        "more": "Options for {name}",
+        "footer": "Accounts are only stored on this device. Logging out removes the signed-in account from the list.",
+        "loginSaved": "Saved accounts",
+        "loginOr": "or sign in with another account"
       }
     }
   }

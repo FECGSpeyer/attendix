@@ -10651,6 +10651,119 @@
   "@redesignAbsenceTitle": {
     "description": "redesign.absence.title"
   },
+  "redesignAccountsAdd": "Konto hinzufügen",
+  "@redesignAccountsAdd": {
+    "description": "redesign.accounts.add"
+  },
+  "redesignAccountsAddHint": "Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.",
+  "@redesignAccountsAddHint": {
+    "description": "redesign.accounts.addHint"
+  },
+  "redesignAccountsAddTitle": "Konto hinzufügen",
+  "@redesignAccountsAddTitle": {
+    "description": "redesign.accounts.addTitle"
+  },
+  "redesignAccountsAlreadyActive": "Mit diesem Konto bist du bereits angemeldet.",
+  "@redesignAccountsAlreadyActive": {
+    "description": "redesign.accounts.alreadyActive"
+  },
+  "redesignAccountsCount": "{count, plural, one {1 Konto} other {{count} Konten}}",
+  "@redesignAccountsCount": {
+    "description": "redesign.accounts.count",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignAccountsCurrent": "Angemeldet",
+  "@redesignAccountsCurrent": {
+    "description": "redesign.accounts.current"
+  },
+  "redesignAccountsEmail": "E-Mail",
+  "@redesignAccountsEmail": {
+    "description": "redesign.accounts.email"
+  },
+  "redesignAccountsFailed": "Wechsel fehlgeschlagen. Bitte versuche es erneut.",
+  "@redesignAccountsFailed": {
+    "description": "redesign.accounts.failed"
+  },
+  "redesignAccountsFooter": "Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.",
+  "@redesignAccountsFooter": {
+    "description": "redesign.accounts.footer"
+  },
+  "redesignAccountsLoginAgainHint": "Die gespeicherte Anmeldung von {email} gilt nicht mehr, zum Beispiel nach einer Passwortänderung. Bitte melde dich einmal neu an.",
+  "@redesignAccountsLoginAgainHint": {
+    "description": "redesign.accounts.loginAgainHint",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "redesignAccountsLoginAgainTitle": "Erneut anmelden",
+  "@redesignAccountsLoginAgainTitle": {
+    "description": "redesign.accounts.loginAgainTitle"
+  },
+  "redesignAccountsLoginOr": "oder mit einem anderen Konto anmelden",
+  "@redesignAccountsLoginOr": {
+    "description": "redesign.accounts.loginOr"
+  },
+  "redesignAccountsLoginSaved": "Gespeicherte Konten",
+  "@redesignAccountsLoginSaved": {
+    "description": "redesign.accounts.loginSaved"
+  },
+  "redesignAccountsMore": "Optionen für {name}",
+  "@redesignAccountsMore": {
+    "description": "redesign.accounts.more",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignAccountsNeedsLogin": "Bitte erneut anmelden",
+  "@redesignAccountsNeedsLogin": {
+    "description": "redesign.accounts.needsLogin"
+  },
+  "redesignAccountsOffline": "Keine Verbindung. Bitte versuche es erneut.",
+  "@redesignAccountsOffline": {
+    "description": "redesign.accounts.offline"
+  },
+  "redesignAccountsPassword": "Passwort",
+  "@redesignAccountsPassword": {
+    "description": "redesign.accounts.password"
+  },
+  "redesignAccountsRemove": "Von diesem Gerät entfernen",
+  "@redesignAccountsRemove": {
+    "description": "redesign.accounts.remove"
+  },
+  "redesignAccountsRemoveBody": "{email} wird von diesem Gerät entfernt und dort abgemeldet. Zum Zurückwechseln brauchst du dann wieder das Passwort.",
+  "@redesignAccountsRemoveBody": {
+    "description": "redesign.accounts.removeBody",
+    "placeholders": {
+      "email": {}
+    }
+  },
+  "redesignAccountsRemoveConfirm": "Entfernen",
+  "@redesignAccountsRemoveConfirm": {
+    "description": "redesign.accounts.removeConfirm"
+  },
+  "redesignAccountsRemoveTitle": "Konto entfernen?",
+  "@redesignAccountsRemoveTitle": {
+    "description": "redesign.accounts.removeTitle"
+  },
+  "redesignAccountsSignIn": "Anmelden",
+  "@redesignAccountsSignIn": {
+    "description": "redesign.accounts.signIn"
+  },
+  "redesignAccountsSwitched": "Angemeldet als {name}",
+  "@redesignAccountsSwitched": {
+    "description": "redesign.accounts.switched",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignAccountsTitle": "Konto wechseln",
+  "@redesignAccountsTitle": {
+    "description": "redesign.accounts.title"
+  },
   "redesignAdminTitle": "Verwaltung",
   "@redesignAdminTitle": {
     "description": "redesign.adminTitle"
