@@ -27,8 +27,8 @@
 //   for a complete one.
 // - No skipWaiting on install: the new worker takes over when the app is
 //   closed, or when it starts again as its only window (a reload; the page
-//   asks with 'activate-if-alone'), or when the user taps "Update
-//   installieren"; then every open tab reloads (activate navigates them;
+//   asks with 'activate-if-alone' before the app starts), or when the user
+//   taps "Update installieren"; then every open tab reloads (activate navigates them;
 //   web/index.html also reloads on controllerchange), so no page keeps
 //   running old code under the new worker. PWA_UPDATE: never while the app
 //   is in use.
@@ -298,13 +298,17 @@ self.addEventListener('message', (event) => {
     self.skipWaiting();
     return;
   }
-  // PWA_UPDATE: a page just started while this worker waits. Take over only
-  // if it is the app's only window: the start is the restart Leon wants
-  // updates to happen at; another open window must not be interrupted.
+  // PWA_UPDATE: a page is starting while this worker waits. It may take
+  // over only if that page is the app's only window (a restart); the page
+  // then answers with 'skipWaiting' if it has not started yet. Any other
+  // window, or a sender that is gone, keeps the update waiting (SOL #274).
   if (data && data.type === 'activate-if-alone') {
+    const source = event.source;
     event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true })
       .then((windows) => {
-        if (windows.length <= 1) return self.skipWaiting();
+        if (!source) return;
+        const alone = windows.length === 1 && windows[0].id === source.id;
+        source.postMessage({ type: alone ? 'alone' : 'stay' });
       }));
     return;
   }

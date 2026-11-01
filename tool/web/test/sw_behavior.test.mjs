@@ -82,15 +82,47 @@ test('a worker already installing when the page starts still shows the update hi
   assert.deepEqual(page.events, ['flutter-update-available']);
 });
 
-test('a page that starts while a new worker waits asks it to take over if it is the only window', async () => {
+/** Runs the PWA_UPDATE start script of web/index.html. */
+function loadStart({ waiting }) {
+  const html = readFileSync('web/index.html', 'utf8');
+  const at = html.indexOf('PWA_UPDATE: updates happen at a (re)start');
+  const body = html.slice(at).match(/<script>([\s\S]*?)<\/script>/)[1];
+  const page = { scripts: [], listeners: [] };
+  const serviceWorker = {
+    controller: {},
+    getRegistration: async () => ({ waiting }),
+    addEventListener: (type, fn) => page.listeners.push(fn),
+    startMessages() {},
+  };
+  const ctx = {
+    navigator: { serviceWorker },
+    document: { createElement: () => ({}), body: { appendChild: (el) => page.scripts.push(el.src) } },
+    setTimeout: () => 0, // the fallback timers are not part of these tests
+  };
+  vm.runInNewContext(body, ctx);
+  page.answer = (type) => page.listeners.forEach((fn) => fn({ data: { type } }));
+  return page;
+}
+
+test('the app starts at once without a waiting worker, else only after the worker\'s answer', async () => {
+  const plain = loadStart({ waiting: null });
+  await settle();
+  assert.deepEqual(plain.scripts, ['flutter_bootstrap.js']);
+
   const waiting = new FakeTarget({ state: 'installed' });
-  const registration = new FakeTarget({ installing: null, waiting, update: async () => {} });
-  const page = loadPage({ controller: {}, registration });
+  const stay = loadStart({ waiting });
   await settle();
   assert.equal(JSON.stringify(waiting.messages), JSON.stringify([{ type: 'activate-if-alone' }]));
-  // The worker takes over: the page reloads into the new version.
-  page.controllerChange();
-  assert.equal(page.reloads, 1);
+  assert.deepEqual(stay.scripts, []);
+  stay.answer('stay'); // another window is open: start this version
+  assert.deepEqual(stay.scripts, ['flutter_bootstrap.js']);
+
+  const next = new FakeTarget({ state: 'installed' });
+  const alone = loadStart({ waiting: next });
+  await settle();
+  alone.answer('alone'); // only window: the new version takes over first
+  assert.deepEqual(next.messages.slice(1), ['skipWaiting']);
+  assert.deepEqual(alone.scripts, []);
 });
 
 test('a worker found later and one already waiting show the hint once', async () => {
@@ -227,7 +259,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
   };
   sw.install = async () => { const ev = extendable(); handlers.install(ev); return ev.done(); };
   sw.activate = async () => { const ev = extendable(); handlers.activate(ev); return ev.done(); };
-  sw.message = (data) => { const ev = extendable(); ev.data = data; handlers.message(ev); return ev.done(); };
+  sw.message = (data, source) => { const ev = extendable(); ev.data = data; ev.source = source; handlers.message(ev); return ev.done(); };
   sw.request = async (path, mode = 'cors') => {
     const ev = extendable();
     ev.request = { method: 'GET', mode, url: ORIGIN + '/' + path };
@@ -378,13 +410,19 @@ test('a failed install of a new worker keeps the active worker\'s cache', async 
   assert.equal(await (await active.request('', 'navigate')).text(), '<html>');
 });
 
-test('a waiting worker takes over at a start only when that page is the only window', async () => {
+test('a waiting worker lets only the app\'s single, still open window switch', async () => {
   const sw = loadWorker({ resources: DEPLOY, network: DEPLOY });
-  await sw.message({ type: 'activate-if-alone' }); // two windows open
-  assert.equal(sw.skipped, 0);
-  sw.clients = sw.clients.slice(0, 1);
-  await sw.message({ type: 'activate-if-alone' });
-  assert.equal(sw.skipped, 1);
+  const ask = async (source) => {
+    const answers = [];
+    await sw.message({ type: 'activate-if-alone' }, { id: source, postMessage: (m) => answers.push(m.type) });
+    return answers[0];
+  };
+  sw.clients = [{ id: 'a' }, { id: 'b' }];
+  assert.equal(await ask('b'), 'stay'); // another window is open
+  sw.clients = [{ id: 'a' }];
+  assert.equal(await ask('b'), 'stay'); // the asking window is already gone
+  assert.equal(await ask('a'), 'alone');
+  assert.equal(sw.skipped, 0); // only the page's 'skipWaiting' switches
 });
 
 test('install takes the page list and stores only verified files', async () => {
