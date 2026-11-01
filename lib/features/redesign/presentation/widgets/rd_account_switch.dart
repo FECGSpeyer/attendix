@@ -111,8 +111,15 @@ Future<void> rdAddAccount(
 /// [userId] – another sign-in won meanwhile; its own flow navigates.
 Future<bool> _openAfterAccountChange(ProviderContainer container, GoRouter router, String userId) async {
   await _waitUntilActive(container, userId);
-  if (container.read(supabaseAuthProvider).currentSession?.user.id != userId) return false;
+  final auth = container.read(supabaseAuthProvider);
+  final service = container.read(accountSwitchServiceProvider);
+  if (auth.currentSession?.user.id != userId) return false;
+  final generation = service.sessionGeneration;
   await container.read(currentTenantProvider.notifier).setTenantLocal(null);
+  // Clearing the group waits for storage: a sign-in meanwhile wins.
+  if (service.sessionGeneration != generation || auth.currentSession?.user.id != userId) {
+    return false;
+  }
   router.go('/tenants');
   if (isNativePushPlatform) {
     unawaited(container.read(pushServiceProvider).promptAndEnable());

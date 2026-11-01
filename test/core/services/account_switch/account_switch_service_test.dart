@@ -643,24 +643,30 @@ void main() {
     late StreamController<AuthState> events;
     late List<String> reactivated;
 
+    late InMemorySwitchStamp stamps;
+
     StaleRefreshGuard guard({Duration window = const Duration(seconds: 90)}) => StaleRefreshGuard(
           events: events.stream,
           leftUserId: 'a',
           target: _session('b', 'rb1'),
           reactivate: (s) async => reactivated.add(s.refreshToken!),
+          stamps: stamps,
+          stamp: stamps.value ?? 's0',
           window: window,
         );
 
     setUp(() {
       events = StreamController<AuthState>.broadcast(sync: true);
       reactivated = [];
+      stamps = InMemorySwitchStamp()..value = 's0';
     });
     tearDown(() => events.close());
 
-    test('a broadcast refresh of the left account brings back the newest session of B', () {
+    test('a broadcast refresh of the left account brings back the newest session of B', () async {
       final g = guard();
       events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('b', 'rb2')));
       events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9'), fromBroadcast: true));
+      await pumpEventQueue();
       expect(reactivated, ['rb2']);
       g.cancel();
     });
@@ -686,6 +692,68 @@ void main() {
       events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9'), fromBroadcast: true));
       expect(reactivated, isEmpty);
       expect(g.isActive, isFalse);
+    });
+
+    test('a newer switch in another tab ends the guard instead of switching back', () async {
+      // Tab 1 switched A→B (stamp s0). Tab 2 now switches B→A: it records
+      // a new stamp first, then its activation reaches tab 1 as a broadcast
+      // TOKEN_REFRESHED of A.
+      final g = guard();
+      await stamps.next();
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9'), fromBroadcast: true));
+      await pumpEventQueue();
+      expect(reactivated, isEmpty);
+      expect(g.isActive, isFalse);
+    });
+
+    test('two tabs switching A→B and B→A do not ping-pong', () async {
+      // One broadcast channel, one shared stamp (localStorage), two tabs.
+      final channel = StreamController<(int, AuthState)>.broadcast(sync: true);
+      final shared = InMemorySwitchStamp();
+      final active = <int, String>{1: 'a', 2: 'b'};
+      final switches = <String>[];
+      final guards = <int, StaleRefreshGuard>{};
+
+      // What a tab sees: its own changes locally, the other tab's as broadcast.
+      Stream<AuthState> eventsOf(int tab) => channel.stream.map((e) {
+            final (from, state) = e;
+            return from == tab ? state : AuthState(state.event, state.session, fromBroadcast: true);
+          });
+      void apply(int from, Session s) {
+        active[1] = s.user.id;
+        active[2] = s.user.id;
+        channel.add((from, AuthState(AuthChangeEvent.tokenRefreshed, s)));
+      }
+
+      Future<void> switchTab(int tab, String left, Session target) async {
+        guards[tab]?.cancel();
+        final stamp = await shared.next();
+        apply(tab, target);
+        switches.add('$tab→${target.user.id}');
+        guards[tab] = StaleRefreshGuard(
+          events: eventsOf(tab),
+          leftUserId: left,
+          target: target,
+          stamps: shared,
+          stamp: stamp,
+          reactivate: (s) async {
+            switches.add('guard$tab→${s.user.id}');
+            apply(tab, s);
+          },
+        );
+      }
+
+      await switchTab(1, 'a', _session('b', 'rb1'));
+      await switchTab(2, 'b', _session('a', 'ra1'));
+      await pumpEventQueue();
+
+      expect(switches, ['1→b', '2→a']);
+      expect(active, {1: 'a', 2: 'a'});
+      expect(guards[1]!.isActive, isFalse);
+      for (final g in guards.values) {
+        g.cancel();
+      }
+      await channel.close();
     });
 
     test('the service tells the adapter which account was left', () async {

@@ -49,7 +49,7 @@ abstract class AccountSwitchAuth {
 }
 
 class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
-  SupabaseAccountSwitchAuth(this._auth) {
+  SupabaseAccountSwitchAuth(this._auth, {SwitchStamp? stamps}) : _stamps = stamps ?? PrefsSwitchStamp() {
     String? userId = _auth.currentUser?.id;
     // Events arrive a microtask after the change; every check of the
     // generation comes after a network call, so they are counted by then.
@@ -65,6 +65,7 @@ class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
   }
 
   final GoTrueClient _auth;
+  final SwitchStamp _stamps;
   StreamSubscription<AuthState>? _sub;
   int _generation = 0;
 
@@ -85,15 +86,22 @@ class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
   Future<void> activate(Session session, {String? leftUserId}) async {
     _guard?.cancel();
     _guard = null;
+    // Marks this switch for the guards of other tabs before they can see it.
+    String? stamp;
+    try {
+      stamp = await _stamps.next();
+    } catch (_) {}
     // Saves the session (supabase_flutter persists it) and emits
     // TOKEN_REFRESHED for the new user; no network call for a fresh session.
     await _recover(session);
-    if (leftUserId != null && leftUserId != session.user.id) {
+    if (stamp != null && leftUserId != null && leftUserId != session.user.id) {
       _guard = StaleRefreshGuard(
         events: _auth.onAuthStateChange,
         leftUserId: leftUserId,
         target: session,
         reactivate: _recover,
+        stamps: _stamps,
+        stamp: stamp,
       );
     }
   }
@@ -356,6 +364,9 @@ class AccountSwitchService {
       throw const AccountSwitchSuperseded();
     }
   }
+
+  /// See [AccountSwitchAuth.sessionGeneration].
+  int get sessionGeneration => _auth.sessionGeneration;
 
   Future<Session> _activate(
     Session next,
