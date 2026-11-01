@@ -8384,13 +8384,15 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAccountsAdd => 'Add account';
 
   @override
-  String get redesignAccountsAddHint => 'Sign in with another account. Afterwards you can switch between your accounts without a password.';
+  String get redesignAccountsAddHint =>
+      'Sign in with another account. Afterwards you can switch between your accounts without a password.';
 
   @override
   String get redesignAccountsAddTitle => 'Add account';
 
   @override
-  String get redesignAccountsAlreadyActive => 'You are already signed in with this account.';
+  String get redesignAccountsAlreadyActive =>
+      'You are already signed in with this account.';
 
   @override
   String redesignAccountsCount(num count) {
@@ -8413,7 +8415,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAccountsFailed => 'Switching failed. Please try again.';
 
   @override
-  String get redesignAccountsFooter => 'Accounts are only stored on this device. Logging out removes the signed-in account from the list.';
+  String get redesignAccountsFooter =>
+      'Accounts are only stored on this device. Logging out removes the signed-in account from the list.';
 
   @override
   String redesignAccountsLoginAgainHint(Object email) {
@@ -8455,7 +8458,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAccountsRemoveConfirm => 'Remove';
 
   @override
-  String get redesignAccountsRemoveFailed => 'The account could not be removed. Please try again.';
+  String get redesignAccountsRemoveFailed =>
+      'The account could not be removed. Please try again.';
 
   @override
   String get redesignAccountsRemoveTitle => 'Remove account?';

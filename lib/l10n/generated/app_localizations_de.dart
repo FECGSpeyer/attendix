@@ -8471,13 +8471,15 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsAdd => 'Konto hinzufügen';
 
   @override
-  String get redesignAccountsAddHint => 'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.';
+  String get redesignAccountsAddHint =>
+      'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.';
 
   @override
   String get redesignAccountsAddTitle => 'Konto hinzufügen';
 
   @override
-  String get redesignAccountsAlreadyActive => 'Mit diesem Konto bist du bereits angemeldet.';
+  String get redesignAccountsAlreadyActive =>
+      'Mit diesem Konto bist du bereits angemeldet.';
 
   @override
   String redesignAccountsCount(num count) {
@@ -8497,10 +8499,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsEmail => 'E-Mail';
 
   @override
-  String get redesignAccountsFailed => 'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
+  String get redesignAccountsFailed =>
+      'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
 
   @override
-  String get redesignAccountsFooter => 'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.';
+  String get redesignAccountsFooter =>
+      'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.';
 
   @override
   String redesignAccountsLoginAgainHint(Object email) {
@@ -8525,7 +8529,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsNeedsLogin => 'Bitte erneut anmelden';
 
   @override
-  String get redesignAccountsOffline => 'Keine Verbindung. Bitte versuche es erneut.';
+  String get redesignAccountsOffline =>
+      'Keine Verbindung. Bitte versuche es erneut.';
 
   @override
   String get redesignAccountsPassword => 'Passwort';
@@ -8542,7 +8547,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAccountsRemoveConfirm => 'Entfernen';
 
   @override
-  String get redesignAccountsRemoveFailed => 'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.';
+  String get redesignAccountsRemoveFailed =>
+      'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.';
 
   @override
   String get redesignAccountsRemoveTitle => 'Konto entfernen?';
