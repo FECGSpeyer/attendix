@@ -59,50 +59,48 @@ class RdParentToday extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Builder(builder: (context) {
-                  final start = rdStartOf(next.date, next.startTime);
-                  final countdown = rdCountdown(
-                    l10n,
-                    start,
-                    hasTime: next.startTime?.isNotEmpty ?? false,
-                  );
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: RdEyebrow(
-                          '${l10n.redesignTodayNextEvent}'
-                          '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                Builder(
+                  builder: (context) {
+                    final start = rdStartOf(next.date, next.startTime);
+                    final countdown = rdCountdown(l10n, start, hasTime: next.startTime?.isNotEmpty ?? false);
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: RdEyebrow(
+                            '${l10n.redesignTodayNextEvent}'
+                            '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                          ),
                         ),
-                      ),
-                      if (countdown != null) RdPill(countdown, tone: RdTone.primary),
-                    ],
-                  );
-                }),
-                const SizedBox(height: 8),
-                Semantics(
-                  header: true,
-                  child: Text(next.displayTitle, style: RdType.cardTitle(p)),
+                        if (countdown != null) RdPill(countdown, tone: RdTone.primary),
+                      ],
+                    );
+                  },
                 ),
-                Builder(builder: (context) {
-                  final meta = [
-                    EventListUtils.timeRange(next.startTime, next.endTime),
-                    next.place ?? '',
-                  ].where((s) => s.isNotEmpty).join(' · ');
-                  if (meta.isEmpty) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(meta, style: RdType.meta(p, size: 15)),
-                  );
-                }),
+                const SizedBox(height: 8),
+                Semantics(header: true, child: Text(next.displayTitle, style: RdType.cardTitle(p))),
+                Builder(
+                  builder: (context) {
+                    final meta = [
+                      EventListUtils.timeRange(next.startTime, next.endTime),
+                      next.place ?? '',
+                    ].where((s) => s.isNotEmpty).join(' · ');
+                    if (meta.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(meta, style: RdType.meta(p, size: 15)),
+                    );
+                  },
+                ),
                 const SizedBox(height: 12),
-                for (final child in next.childAttendances) _ChildAnswerRow(group: next, child: child),
+                for (final child in next.childAttendances) RdChildAnswerRow(group: next, child: child),
+                if (next.childAttendances.length > 1) ...[
+                  Divider(height: 12, color: p.line),
+                  RdAllChildrenAnswer(group: next),
+                ],
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: RdLinkButton(
-                    label: l10n.redesignTodayMore,
-                    onPressed: () => context.go('/parents'),
-                  ),
+                  child: RdLinkButton(label: l10n.redesignTodayMore, onPressed: () => context.go('/parents')),
                 ),
               ],
             ),
@@ -111,10 +109,7 @@ class RdParentToday extends ConsumerWidget {
           const SizedBox(height: 24),
           RdSectionHeader(
             l10n.redesignTodayUpNext,
-            action: RdLinkButton(
-              label: l10n.redesignCommonAll,
-              onPressed: () => context.go('/parents'),
-            ),
+            action: RdLinkButton(label: l10n.redesignCommonAll, onPressed: () => context.go('/parents')),
           ),
           RdGroupedList(
             children: [
@@ -123,9 +118,10 @@ class RdParentToday extends ConsumerWidget {
                   date: g.date,
                   title: g.displayTitle,
                   meta: rdChildrenLine(l10n, g),
-                  trailing: g.allChildrenResponded
-                      ? RdPill(l10n.redesignTodayAnswered, tone: RdTone.present)
-                      : RdPill(l10n.redesignTodayOpenCount(rdOpenChildren(g))),
+                  trailing:
+                      g.allChildrenResponded
+                          ? RdPill(l10n.redesignTodayAnswered, tone: RdTone.present)
+                          : RdPill(l10n.redesignTodayOpenCount(rdOpenChildren(g))),
                   onTap: () => context.go('/parents'),
                 ),
             ],
@@ -144,19 +140,25 @@ String rdChildrenLine(AppLocalizations l10n, ParentAttendanceGroup g) {
   final time = EventListUtils.timeRange(g.startTime, g.endTime);
   if (g.childAttendances.length < 2) return time;
   return g.childAttendances
-      .map((c) => c.status.isNeutral
-          ? l10n.redesignTodayChildOpen(c.childFirstName)
-          : '${c.childFirstName} ${c.status.countsAsPresent ? '✓' : '✕'}')
+      .map(
+        (c) =>
+            c.status.isNeutral
+                ? l10n.redesignTodayChildOpen(c.childFirstName)
+                : '${c.childFirstName} ${c.status.countsAsPresent ? '✓' : '✕'}',
+      )
       .join(' · ');
 }
 
 /// One child of the next Termin: open → "Ist dabei" / "Kann nicht",
 /// answered → status plus "Doch absagen" / "Doch dabei".
-class _ChildAnswerRow extends ConsumerWidget {
-  const _ChildAnswerRow({required this.group, required this.child});
+class RdChildAnswerRow extends ConsumerWidget {
+  const RdChildAnswerRow({super.key, required this.group, required this.child, this.readOnly = false});
 
   final ParentAttendanceGroup group;
   final ChildPersonAttendance child;
+
+  /// Past Termine: the status only, no answers.
+  final bool readOnly;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -167,60 +169,99 @@ class _ChildAnswerRow extends ConsumerWidget {
     final status = child.status;
     final canAnswer = id != null && !busy;
 
-    final Widget answer;
-    if (status.isNeutral) {
-      answer = Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        alignment: WrapAlignment.end,
-        children: [
-          _SmallButton(
-            label: l10n.redesignTodayChildYes,
-            primary: true,
-            onPressed: canAnswer ? () => _signIn(context, ref) : null,
-          ),
-          _SmallButton(
-            label: l10n.redesignTodayChildNo,
-            onPressed: canAnswer ? () => _signOut(context, ref) : null,
-          ),
-        ],
+    final name = Row(
+      children: [
+        RdInitials(rdInitialsOf(child.childName), size: 32),
+        const SizedBox(width: 10),
+        Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
+      ],
+    );
+
+    if (readOnly) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Row(children: [Expanded(child: name), rdOwnStatusPill(l10n, status)]),
       );
-    } else {
-      final yes = status == AttendanceStatus.present;
-      // After "kommt später" both ways stay open: a normal Zusage
-      // (SignInType.late) or cancelling after all.
-      final links = [
-        if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
-          RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
-        if (canAnswer && status.countsAsPresent)
-          RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
-      ];
-      final pill = yes
-          ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
-          : rdOwnStatusPill(l10n, status);
-      answer = links.length < 2
-          ? Wrap(
+    }
+
+    // Open: both answers as equal buttons under the name, so they fit side
+    // by side on a phone instead of wrapping into two rows.
+    if (status.isNeutral) {
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            name,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.only(left: 42),
+              child: Row(
+                children: [
+                  // Same answer buttons as the Termine of Spieler.
+                  Expanded(
+                    child: RdOutlineButton(
+                      label: l10n.redesignTodayChildYes,
+                      icon: Icons.check,
+                      color: p.present,
+                      height: 44,
+                      onPressed: canAnswer ? () => _signIn(context, ref) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: RdOutlineButton(
+                      label: l10n.redesignTodayChildNo,
+                      height: 44,
+                      onPressed: canAnswer ? () => _signOut(context, ref) : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      );
+    }
+
+    final yes = status == AttendanceStatus.present;
+    final type = ref.watch(rdAttendanceTypeProvider(group.typeId));
+    final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
+    // Same changes as the old parents page: a Zusage unless already "Dabei"
+    // (after "verspätet" / "kommt später" too), and the reason sheet (absent
+    // or late) unless already absent without a late option. After a Zusage
+    // it reads "Doch absagen", after an Absage "Ändern" (other reason, or
+    // late after all).
+    final links = [
+      if (canAnswer && !yes) RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
+      if (canAnswer && (status != AttendanceStatus.absent || lateAllowed))
+        RdTextLink(
+          label: status.countsAsPresent ? l10n.redesignTodayNoAfterAll : l10n.redesignTodayChangeAnswer,
+          onTap: () => _signOut(context, ref),
+        ),
+    ];
+    final pill =
+        yes
+            ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
+            : rdOwnStatusPill(l10n, status);
+    final answer =
+        links.length < 2
+            ? Wrap(
               spacing: 4,
               crossAxisAlignment: WrapCrossAlignment.center,
               alignment: WrapAlignment.end,
               children: [pill, ...links],
             )
-          : Column(
+            : Column(
               crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                pill,
-                Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
-              ],
+              children: [pill, Wrap(spacing: 4, alignment: WrapAlignment.end, children: links)],
             );
-    }
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          RdInitials(rdInitialsOf(child.childName), size: 32),
-          const SizedBox(width: 10),
-          Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
+          Expanded(child: name),
           const SizedBox(width: 8),
           Flexible(flex: 2, child: Align(alignment: Alignment.centerRight, child: answer)),
         ],
@@ -228,76 +269,113 @@ class _ChildAnswerRow extends ConsumerWidget {
     );
   }
 
-  Future<void> _signIn(BuildContext context, WidgetRef ref) async {
-    final id = child.id;
-    if (id == null) return;
-    final notifier = ref.read(parentSignInOutNotifierProvider.notifier);
-    final ok = await notifier.signInAll([(id, SignInType.fromStatus(child.status))]);
-    if (!context.mounted) return;
-    if (ok) {
-      ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': 1});
-    } else {
-      _failed(context);
-    }
-  }
+  Future<void> _signIn(BuildContext context, WidgetRef ref) => rdParentSignIn(context, ref, group, [child]);
 
-  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
-    final id = child.id;
-    if (id == null) return;
-    final tenant = ref.read(currentTenantProvider);
-    final type = ref.read(rdAttendanceTypeProvider(group.typeId));
-    final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
-    final choice = await showRdReasonSheet(
-      context,
-      title: '${child.childFirstName} · ${group.displayTitle}',
-      meta: EventListUtils.timeRange(group.startTime, group.endTime),
-      absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
-      lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
-      allowLate: lateAllowed,
-      ownReasonFirst: group.isRunning,
-    );
-    if (choice == null || !context.mounted) return;
-    await ref
-        .read(parentSignInOutNotifierProvider.notifier)
-        .signOut([id], choice.reason, isLateComing: choice.isLate);
-    if (!context.mounted) return;
-    if (ref.read(parentSignInOutNotifierProvider).hasError) {
-      _failed(context);
-    } else {
-      ref
-          .read(trackingServiceProvider)
-          .track(TrackingEvent.parentSignOut, properties: {'count': 1, 'isLate': choice.isLate});
-    }
-  }
+  Future<void> _signOut(BuildContext context, WidgetRef ref) => rdParentSignOut(context, ref, group, [child]);
+}
 
-  void _failed(BuildContext context) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
+/// Zusage for [children] of [group] in one call (old portal: one child or
+/// "Alle Kinder").
+Future<void> rdParentSignIn(
+  BuildContext context,
+  WidgetRef ref,
+  ParentAttendanceGroup group,
+  List<ChildPersonAttendance> children,
+) async {
+  final entries = [
+    for (final c in children)
+      if (c.id != null) (c.id!, SignInType.fromStatus(c.status)),
+  ];
+  if (entries.isEmpty) return;
+  final ok = await ref.read(parentSignInOutNotifierProvider.notifier).signInAll(entries);
+  if (!context.mounted) return;
+  if (ok) {
+    ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': entries.length});
+  } else {
+    _rdParentFailed(context);
   }
 }
 
-/// Compact answer button of a child row (min. 40 px high).
-class _SmallButton extends StatelessWidget {
-  const _SmallButton({required this.label, required this.onPressed, this.primary = false});
+/// Absage (or "kommt später") for [children] of [group] with one reason.
+Future<void> rdParentSignOut(
+  BuildContext context,
+  WidgetRef ref,
+  ParentAttendanceGroup group,
+  List<ChildPersonAttendance> children,
+) async {
+  final ids = [for (final c in children) if (c.id != null) c.id!];
+  if (ids.isEmpty) return;
+  final tenant = ref.read(currentTenantProvider);
+  final type = ref.read(rdAttendanceTypeProvider(group.typeId));
+  final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
+  final who = children.length == 1 ? children.first.childFirstName : context.l10n.redesignParentsAllKids;
+  final choice = await showRdReasonSheet(
+    context,
+    title: '$who · ${group.displayTitle}',
+    meta: EventListUtils.timeRange(group.startTime, group.endTime),
+    absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+    allowLate: lateAllowed,
+    ownReasonFirst: group.isRunning,
+  );
+  if (choice == null || !context.mounted) return;
+  await ref.read(parentSignInOutNotifierProvider.notifier).signOut(ids, choice.reason, isLateComing: choice.isLate);
+  if (!context.mounted) return;
+  if (ref.read(parentSignInOutNotifierProvider).hasError) {
+    _rdParentFailed(context);
+  } else {
+    ref
+        .read(trackingServiceProvider)
+        .track(TrackingEvent.parentSignOut, properties: {'count': ids.length, 'isLate': choice.isLate});
+  }
+}
 
-  final String label;
-  final VoidCallback? onPressed;
-  final bool primary;
+void _rdParentFailed(BuildContext context) {
+  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
+}
+
+/// "Alle Kinder": answer for every child at once, like the old portal.
+class RdAllChildrenAnswer extends ConsumerWidget {
+  const RdAllChildrenAnswer({super.key, required this.group});
+
+  final ParentAttendanceGroup group;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
-    final style = primary
-        ? FilledButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary)
-        : OutlinedButton.styleFrom(foregroundColor: p.link, side: BorderSide(color: p.offBorder));
-    final common = ButtonStyle(
-      minimumSize: const WidgetStatePropertyAll(Size(44, 40)),
-      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 14)),
-      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-      textStyle: const WidgetStatePropertyAll(TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+    final l10n = context.l10n;
+    final busy = ref.watch(parentSignInOutNotifierProvider).isLoading;
+    final kids = group.childAttendances;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.redesignParentsAllKids, style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: RdOutlineButton(
+                  label: l10n.redesignTodayChildYes,
+                  icon: Icons.check,
+                  color: p.present,
+                  height: 44,
+                  onPressed: busy ? null : () => rdParentSignIn(context, ref, group, kids),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: RdOutlineButton(
+                  label: l10n.redesignTodayChildNo,
+                  height: 44,
+                  onPressed: busy ? null : () => rdParentSignOut(context, ref, group, kids),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
-    final merged = common.merge(style);
-    return primary
-        ? FilledButton(onPressed: onPressed, style: merged, child: Text(label))
-        : OutlinedButton(onPressed: onPressed, style: merged, child: Text(label));
   }
 }
