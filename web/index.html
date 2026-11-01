@@ -367,9 +367,13 @@
           // Only before the app started: afterwards the page is in use.
           if (type === 'alone' && !started && !switching) {
             switching = true;
-            waiting.postMessage('skipWaiting');
             // controllerchange reloads; should it never come, start anyway.
             setTimeout(start, 10000);
+            try {
+              waiting.postMessage('skipWaiting');
+            } catch (e) {
+              start(); // replaced by a newer deploy meanwhile (SOL #274)
+            }
           }
         });
         sw.startMessages();

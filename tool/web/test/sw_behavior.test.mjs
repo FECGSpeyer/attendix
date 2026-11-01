@@ -123,6 +123,13 @@ test('the app starts at once without a waiting worker, else only after the worke
   alone.answer('alone'); // only window: the new version takes over first
   assert.deepEqual(next.messages.slice(1), ['skipWaiting']);
   assert.deepEqual(alone.scripts, []);
+
+  const replaced = new FakeTarget({ state: 'installed' });
+  const gone = loadStart({ waiting: replaced });
+  await settle();
+  replaced.postMessage = () => { throw new Error('InvalidStateError'); }; // redundant now
+  gone.answer('alone');
+  assert.deepEqual(gone.scripts, ['flutter_bootstrap.js']);
 });
 
 test('a worker found later and one already waiting show the hint once', async () => {
