@@ -56,7 +56,7 @@ async function fillCache() {
         // Changed in this deploy: download it now, so the cache is complete
         // before this worker takes over (throws, and fails the install,
         // when the file is unreachable or already from a newer deploy).
-        await fetchVerified(cache, key, true);
+        await fetchVerified(cache, key, true, 'no-cache');
       }
     }
   }
@@ -97,9 +97,13 @@ async function matchesHash(response, key) {
   }
 }
 
-/** Fetches [key] and stores it only if it is this deploy's version. */
-async function fetchVerified(cache, key, required) {
-  const response = await fetch(new Request(key, { cache: 'no-cache' }));
+/**
+ * Fetches [key] and stores it only if it is this deploy's version.
+ * [mode] 'default' takes the browser's HTTP cache copy of a file the page
+ * just loaded (no second download); a wrong version is rejected by the hash.
+ */
+async function fetchVerified(cache, key, required, mode) {
+  const response = await fetch(new Request(key, { cache: mode }));
   if (response && response.ok && (await matchesHash(response.clone(), key))) {
     await cache.put(key, response);
     return;
@@ -169,7 +173,7 @@ async function cacheUrls(urls) {
     if (key == null || key === '/' || !RESOURCES[key]) continue;
     if (await cache.match(key)) continue;
     try {
-      await fetchVerified(cache, key, false);
+      await fetchVerified(cache, key, false, 'default');
     } catch (e) {
       // Offline: the file is cached on its next use.
     }
