@@ -215,8 +215,11 @@
         };
 
         // PWA_SW (SOL #272): a new worker may already be waiting from an
-        // earlier visit (it only takes over after "Aktualisieren"), or still
-        // be installing – its updatefound has then already fired.
+        // earlier visit, or still be installing – its updatefound has then
+        // already fired.
+        // PWA_UPDATE: the web app shows no hint, only "Update installieren"
+        // in the settings; a waiting worker takes over at the next start
+        // (see the start script at the end of the body).
         if (registration.waiting && navigator.serviceWorker.controller) {
           notifyUpdate();
         }
@@ -244,7 +247,7 @@
       });
     }
 
-    // Function for Dart to call when user clicks "Update".
+    // Function for Dart to call when user clicks "Update installieren".
     // PWA_SW (SOL #272): the new worker waits (no mixing of two deploys in
     // one page), so it is told to take over; the controllerchange listener
     // above then reloads. A plain reload would keep the old worker.
@@ -334,6 +337,51 @@
     }
   </script>
 
-  <script src="flutter_bootstrap.js" async></script>
+  <!-- PWA_UPDATE: updates happen at a (re)start, never during use. Closing
+       the app lets a waiting worker take over by itself; a reload does not,
+       so a page that starts while a new worker waits asks it first
+       ('activate-if-alone'). Only if this is the app's only window does it
+       let the worker take over ('skipWaiting'); controllerchange then
+       reloads into the new version. The app itself only starts once that is
+       decided, so no reload can hit a page in use (SOL #274). -->
+  <script>
+    (function () {
+      var started = false;
+      var start = function () {
+        if (started) return;
+        started = true;
+        var s = document.createElement('script');
+        s.src = 'flutter_bootstrap.js';
+        s.async = true;
+        document.body.appendChild(s);
+      };
+      var sw = navigator.serviceWorker;
+      if (!sw || !sw.controller) return start();
+      sw.getRegistration().then(function (registration) {
+        var waiting = registration && registration.waiting;
+        if (!waiting) return start();
+        var switching = false;
+        sw.addEventListener('message', function (event) {
+          var type = event.data && event.data.type;
+          if (type === 'stay') start();
+          // Only before the app started: afterwards the page is in use.
+          if (type === 'alone' && !started && !switching) {
+            switching = true;
+            // controllerchange reloads; should it never come, start anyway.
+            setTimeout(start, 10000);
+            try {
+              waiting.postMessage('skipWaiting');
+            } catch (e) {
+              start(); // replaced by a newer deploy meanwhile (SOL #274)
+            }
+          }
+        });
+        sw.startMessages();
+        waiting.postMessage({ type: 'activate-if-alone' });
+        // No answer: start this version (the update waits for the next start).
+        setTimeout(function () { if (!switching) start(); }, 3000);
+      }).catch(start);
+    })();
+  </script>
 </body>
 </html>

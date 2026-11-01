@@ -46,8 +46,9 @@ function loadPage({ controller, registration = null }) {
 
 /** A ServiceWorker / registration stand-in with event listeners. */
 class FakeTarget {
-  constructor(props) { Object.assign(this, props); this.listeners = {}; }
+  constructor(props) { Object.assign(this, props); this.listeners = {}; this.messages = []; }
   addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  postMessage(message) { this.messages.push(message); }
   fire(type) { (this.listeners[type] || []).forEach((fn) => fn()); }
 }
 
@@ -79,6 +80,56 @@ test('a worker already installing when the page starts still shows the update hi
   installing.fire('statechange');
   assert.equal(page.updateAvailable(), true);
   assert.deepEqual(page.events, ['flutter-update-available']);
+});
+
+/** Runs the PWA_UPDATE start script of web/index.html. */
+function loadStart({ waiting }) {
+  const html = readFileSync('web/index.html', 'utf8');
+  const at = html.indexOf('PWA_UPDATE: updates happen at a (re)start');
+  const body = html.slice(at).match(/<script>([\s\S]*?)<\/script>/)[1];
+  const page = { scripts: [], listeners: [] };
+  const serviceWorker = {
+    controller: {},
+    getRegistration: async () => ({ waiting }),
+    addEventListener: (type, fn) => page.listeners.push(fn),
+    startMessages() {},
+  };
+  const ctx = {
+    navigator: { serviceWorker },
+    document: { createElement: () => ({}), body: { appendChild: (el) => page.scripts.push(el.src) } },
+    setTimeout: () => 0, // the fallback timers are not part of these tests
+  };
+  vm.runInNewContext(body, ctx);
+  page.answer = (type) => page.listeners.forEach((fn) => fn({ data: { type } }));
+  return page;
+}
+
+test('the app starts at once without a waiting worker, else only after the worker\'s answer', async () => {
+  const plain = loadStart({ waiting: null });
+  await settle();
+  assert.deepEqual(plain.scripts, ['flutter_bootstrap.js']);
+
+  const waiting = new FakeTarget({ state: 'installed' });
+  const stay = loadStart({ waiting });
+  await settle();
+  assert.equal(JSON.stringify(waiting.messages), JSON.stringify([{ type: 'activate-if-alone' }]));
+  assert.deepEqual(stay.scripts, []);
+  stay.answer('stay'); // another window is open: start this version
+  assert.deepEqual(stay.scripts, ['flutter_bootstrap.js']);
+
+  const next = new FakeTarget({ state: 'installed' });
+  const alone = loadStart({ waiting: next });
+  await settle();
+  alone.answer('alone'); // only window: the new version takes over first
+  assert.deepEqual(next.messages.slice(1), ['skipWaiting']);
+  assert.deepEqual(alone.scripts, []);
+
+  const replaced = new FakeTarget({ state: 'installed' });
+  const gone = loadStart({ waiting: replaced });
+  await settle();
+  replaced.postMessage = () => { throw new Error('InvalidStateError'); }; // redundant now
+  gone.answer('alone');
+  assert.deepEqual(gone.scripts, ['flutter_bootstrap.js']);
 });
 
 test('a worker found later and one already waiting show the hint once', async () => {
@@ -170,7 +221,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
     .replace(/const LIST_WAIT_FIRST_MS = \d+;/, `const LIST_WAIT_FIRST_MS = ${listWaitMs};`);
   const handlers = {};
   // sw.network may be swapped: what the server answers from then on.
-  const sw = { navigated: [], updates: 0, fetched: [], offline: false, network };
+  const sw = { navigated: [], updates: 0, fetched: [], offline: false, network, skipped: 0 };
   const fetchFn = async (req) => {
     if (sw.offline) throw new TypeError('Failed to fetch');
     const url = new URL(typeof req === 'string' ? req : req.url, ORIGIN + '/');
@@ -192,7 +243,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
     location: { origin: ORIGIN },
     navigator: { userAgent: browser[1] }, // a worker has no navigator.vendor
     addEventListener: (type, fn) => { handlers[type] = fn; },
-    skipWaiting: () => {},
+    skipWaiting: () => { sw.skipped++; },
     clients: { claim: async () => {}, matchAll: async () => sw.clients },
     registration: { update: async () => { sw.updates++; } },
   };
@@ -215,7 +266,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
   };
   sw.install = async () => { const ev = extendable(); handlers.install(ev); return ev.done(); };
   sw.activate = async () => { const ev = extendable(); handlers.activate(ev); return ev.done(); };
-  sw.message = (data) => { const ev = extendable(); ev.data = data; handlers.message(ev); return ev.done(); };
+  sw.message = (data, source) => { const ev = extendable(); ev.data = data; ev.source = source; handlers.message(ev); return ev.done(); };
   sw.request = async (path, mode = 'cors') => {
     const ev = extendable();
     ev.request = { method: 'GET', mode, url: ORIGIN + '/' + path };
@@ -364,6 +415,21 @@ test('a failed install of a new worker keeps the active worker\'s cache', async 
   active.offline = true;
   assert.equal(await (await active.request('main.dart.wasm')).text(), 'wasm-B');
   assert.equal(await (await active.request('', 'navigate')).text(), '<html>');
+});
+
+test('a waiting worker lets only the app\'s single, still open window switch', async () => {
+  const sw = loadWorker({ resources: DEPLOY, network: DEPLOY });
+  const ask = async (source) => {
+    const answers = [];
+    await sw.message({ type: 'activate-if-alone' }, { id: source, postMessage: (m) => answers.push(m.type) });
+    return answers[0];
+  };
+  sw.clients = [{ id: 'a' }, { id: 'b' }];
+  assert.equal(await ask('b'), 'stay'); // another window is open
+  sw.clients = [{ id: 'a' }];
+  assert.equal(await ask('b'), 'stay'); // the asking window is already gone
+  assert.equal(await ask('a'), 'alone');
+  assert.equal(sw.skipped, 0); // only the page's 'skipWaiting' switches
 });
 
 test('install takes the page list and stores only verified files', async () => {

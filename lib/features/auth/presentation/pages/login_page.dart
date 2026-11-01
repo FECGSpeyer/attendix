@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/services/app_update_service.dart';
+import '../../../../core/services/update_hint.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
@@ -649,7 +650,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 mainAxisSize: MainAxisSize.min,
                 children: [
                   // NATIVE_MISC: Ionic login update-banner ("Update installieren")
-                  if (ref.watch(appUpdateAvailableProvider))
+                  if (showUpdateHint(ref.watch(appUpdateAvailableProvider)))
                     Padding(
                       padding: const EdgeInsets.only(bottom: 8),
                       child: FilledButton.icon(

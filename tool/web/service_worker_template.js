@@ -26,10 +26,12 @@
 //   writes last, so a cache left by an interrupted install never stands in
 //   for a complete one.
 // - No skipWaiting on install: the new worker takes over when the app is
-//   closed, or when the user taps "Aktualisieren"; then every open tab
-//   reloads (activate navigates them; web/index.html also reloads on
-//   controllerchange), so no page keeps running old code under the new
-//   worker.
+//   closed, or when it starts again as its only window (a reload; the page
+//   asks with 'activate-if-alone' before the app starts), or when the user
+//   taps "Update installieren"; then every open tab reloads (activate navigates them;
+//   web/index.html also reloads on controllerchange), so no page keeps
+//   running old code under the new worker. PWA_UPDATE: never while the app
+//   is in use.
 // - A cache miss that the network answers with another deploy's file still
 //   reaches the page (no other copy exists), but triggers an update check,
 //   so the page offers "Aktualisieren".
@@ -294,6 +296,20 @@ self.addEventListener('message', (event) => {
   const data = event.data;
   if (data === 'skipWaiting') {
     self.skipWaiting();
+    return;
+  }
+  // PWA_UPDATE: a page is starting while this worker waits. It may take
+  // over only if that page is the app's only window (a restart); the page
+  // then answers with 'skipWaiting' if it has not started yet. Any other
+  // window, or a sender that is gone, keeps the update waiting (SOL #274).
+  if (data && data.type === 'activate-if-alone') {
+    const source = event.source;
+    event.waitUntil(self.clients.matchAll({ type: 'window', includeUncontrolled: true })
+      .then((windows) => {
+        if (!source) return;
+        const alone = windows.length === 1 && windows[0].id === source.id;
+        source.postMessage({ type: alone ? 'alone' : 'stay' });
+      }));
     return;
   }
   if (data && data.type === 'cache-urls' && Array.isArray(data.urls)) {
