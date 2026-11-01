@@ -9,8 +9,9 @@ void main() {
     final pubspec = File('pubspec.yaml').readAsStringSync();
     expect(RegExp(r'^\s*-\s*\.env\s*$', multiLine: true).hasMatch(pubspec), isFalse);
     expect(pubspec, contains('- .env.app'));
-    expect(File('lib/main.dart').readAsStringSync(),
-        contains("dotenv.load(fileName: '.env.app')"));
+    expect(File('lib/main.dart').readAsStringSync(), contains('await loadAppEnv();'));
+    expect(File('lib/core/config/app_env.dart').readAsStringSync(),
+        contains("const appEnvFileName = '.env.app';"));
   });
 
   test('write_app_env.sh never copies the service role key', () {

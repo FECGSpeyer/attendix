@@ -55,7 +55,10 @@ jobs:
         run: flutter test
 
       - name: Build web
-        run: flutter build web --release --base-href /
+        # PWA_OFFLINE: CanvasKit from our own origin instead of gstatic.com,
+        # so the service worker caches it and the installed PWA starts
+        # offline like the Ionic PWA (the SW only caches same-origin files).
+        run: flutter build web --release --base-href / --no-web-resources-cdn
 
       - name: Verify Cloudflare _headers (Teams frame-ancestors)
         # flutter build web copies web/* into build/web; fail loudly if not.

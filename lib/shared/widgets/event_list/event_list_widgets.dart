@@ -27,13 +27,11 @@ import '../layout/ionic_ios.dart';
 /// the page ([EventListCard.iosPlain]). Material keeps the theme default.
 /// IOS_THEME2: dark mode = the black page (cards stay #1c1c1d).
 /// IOS_R4: explicit black – the scaffold default is the grouped #222428.
-Color? eventPageBackground(BuildContext context) {
-  final theme = Theme.of(context);
-  if (theme.brightness == Brightness.dark) {
-    return useIosLook(context) ? AppColors.iosPlainPageDark : null;
-  }
-  return theme.colorScheme.surface;
-}
+/// PWA_PARITY: md dark is Ionic's #121212 page; since MD_SWEEP the scaffold
+/// default is the `color="light"` #222428, which made the Termin pages
+/// grey-blue on desktop instead of near-black like the Ionic PWA.
+Color? eventPageBackground(BuildContext context) =>
+    ionPlainContentBackground(context);
 
 /// ATT_SPACING: Ionic type metrics of the Termin pages (`ev-*` classes).
 /// iOS: 1rem = 17px (`html { font: -apple-system-body }`) and CSS

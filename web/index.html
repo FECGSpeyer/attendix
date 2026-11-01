@@ -20,18 +20,25 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Attendix – Anwesenheit, Termine und Werke für Orchester, Chöre und Gruppen">
 
+  <!-- PWA_PARITY: same head as the Ionic PWA (src/index.html): colour
+       scheme, white theme colour, black iOS status bar, title "Attendix". -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="attendix">
+  <meta name="apple-mobile-web-app-title" content="Attendix">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
-  <link rel="shortcut icon" href="favicon.png"/>
+  <!-- PWA_PARITY: Ionic's 256px favicon (assets/icon/favicon.png) -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>attendix</title>
+  <title>Attendix</title>
   <link rel="manifest" href="manifest.json">
   <!-- Start loading the app code right away, in parallel with the bootstrap
        script (it would otherwise only be requested after flutter_bootstrap.js). -->
@@ -52,7 +59,7 @@
   </style>
 </head>
 <body>
-  <div id="app-loading" role="progressbar" aria-label="attendix wird geladen">
+  <div id="app-loading" role="progressbar" aria-label="Attendix wird geladen">
     <img src="icons/Icon-192.png" alt="">
     <div class="spinner"></div>
   </div>
