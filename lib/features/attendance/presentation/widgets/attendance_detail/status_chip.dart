@@ -120,6 +120,10 @@ class AttendanceStatusBadge extends StatelessWidget {
       child: Text(
         badge.text,
         textAlign: TextAlign.center,
+        // PWA_PARITY: ✓ is not in Roboto; the fallback font's taller line
+        // box made the badge ~27 px high instead of Ionic's 19.
+        strutStyle: const StrutStyle(
+            fontSize: 13, height: 1, forceStrutHeight: true),
         textHeightBehavior: const TextHeightBehavior(
           applyHeightToFirstAscent: false,
           applyHeightToLastDescent: false,

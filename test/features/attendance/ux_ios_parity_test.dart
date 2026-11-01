@@ -74,16 +74,14 @@ void main() {
   });
 
   group('iOS helpers', () {
-    testWidgets('IonFabButton uses the white glass circle on iOS only', (tester) async {
+    testWidgets('IonFabButton is the 61 pt theme glass circle on iOS only', (tester) async {
       await tester.pumpWidget(app(IonFabButton(onPressed: () {}, icon: Icons.add),
           platform: TargetPlatform.iOS));
-      var fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
-      expect(fab.foregroundColor, Colors.black);
+      expect(tester.getSize(find.byType(FloatingActionButton)), const Size(61, 61));
 
       await tester.pumpWidget(app(IonFabButton(onPressed: () {}, icon: Icons.add)));
       await tester.pumpAndSettle(); // MaterialApp animates the theme change
-      fab = tester.widget<FloatingActionButton>(find.byType(FloatingActionButton));
-      expect(fab.foregroundColor, isNull);
+      expect(tester.getSize(find.byType(FloatingActionButton)), const Size(56, 56));
     });
 
     testWidgets('large title hides the toolbar title until scrolled', (tester) async {

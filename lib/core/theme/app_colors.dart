@@ -16,7 +16,8 @@ class AppColors {
   static const Color secondaryDark = Color(0xFF0A9ACC);
 
   // Tertiary/Accent
-  static const Color tertiary = Color(0xFF5260FF);
+  // PWA_PARITY: Ionic 4.17 `--ion-color-tertiary` (was the old #5260ff).
+  static const Color tertiary = Color(0xFF6030FF);
   static const Color tertiaryLight = Color(0xFF7A85FF);
   static const Color tertiaryDark = Color(0xFF2A3ACC);
 
@@ -48,7 +49,8 @@ class AppColors {
 
   // Neutral colors
   static const Color dark = Color(0xFF222428);
-  static const Color medium = Color(0xFF92949C);
+  // PWA_PARITY: Ionic 4.17 `--ion-color-medium` in both modes (was #92949c).
+  static const Color medium = Color(0xFF636469);
   static const Color light = Color(0xFFF4F5F8);
 
   // Background colors. Ionic runs the iOS theme with inset lists: grouped
@@ -93,8 +95,7 @@ class AppColors {
   static const Color iosNoteLight = Color(0xFF737373);
   static const Color iosNoteDark = Color(0xFF8C8C8C);
   static const Color iosMediumDark = Color(0xFF989AA2);
-  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469; the md look
-  // keeps [medium]).
+  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469).
   static const Color iosMediumLight = Color(0xFF636469);
   // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
   // var(--ion-color-step-100, …, #e8e8e8) }` – item lines in lists.

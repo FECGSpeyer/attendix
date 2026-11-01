@@ -109,7 +109,7 @@ class IonFabButton extends StatelessWidget {
         child: Icon(icon),
       );
     }
-    final dark = Theme.of(context).brightness == Brightness.dark;
+    // PWA_PARITY: the theme's flat glass FAB (Ionic has no drop shadow).
     return SizedBox(
       width: 61,
       height: 61,
@@ -117,11 +117,6 @@ class IonFabButton extends StatelessWidget {
         heroTag: heroTag,
         onPressed: onPressed,
         tooltip: tooltip,
-        shape: const CircleBorder(),
-        elevation: 4,
-        highlightElevation: 2,
-        backgroundColor: dark ? const Color(0xB8272727) : const Color(0xB8FFFFFF),
-        foregroundColor: dark ? Colors.white : Colors.black,
         child: Icon(icon, size: 28),
       ),
     );

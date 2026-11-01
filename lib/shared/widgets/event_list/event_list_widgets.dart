@@ -185,7 +185,12 @@ class EventPill extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 4),
       decoration: BoxDecoration(
         // IOS_THEME2: Ionic dark palette (brighter) in dark mode
-        color: AppColors.adaptive(context, color).withValues(alpha: 0.2),
+        // PWA_PARITY: `--ion-color-success-rgb` stays 37,177,93 in light mode
+        // too, so the green tint is the dark-palette green in both.
+        color: (color == AppColors.success
+                ? AppColors.successOnDark
+                : AppColors.adaptive(context, color))
+            .withValues(alpha: 0.2),
         borderRadius: BorderRadius.circular(999),
       ),
       child: Text(
