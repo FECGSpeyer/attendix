@@ -14,6 +14,7 @@ import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/features/redesign/data/providers/rd_members_providers.dart';
 import 'package:attendix/data/models/player_absence/player_absence.dart';
 import 'package:attendix/features/people/presentation/pages/person_detail_page.dart'
     show personProvider, personAttendanceStatsProvider, personHistoryProvider;
@@ -108,7 +109,7 @@ List<Override> _common(Role role, MockPlayerRepository repo) => [
       playerRepositoryWithTenantProvider.overrideWithValue(repo),
     ];
 
-Widget _membersApp(Role role, MockPlayerRepository repo) {
+Widget _membersApp(Role role, MockPlayerRepository repo, {List<Person>? people, bool criticalOnly = false}) {
   final router = GoRouter(
     initialLocation: '/mitglieder',
     routes: [
@@ -132,7 +133,8 @@ Widget _membersApp(Role role, MockPlayerRepository repo) {
   return ProviderScope(
     overrides: [
       ..._common(role, repo),
-      realtimePlayersProvider.overrideWith((ref) => Stream.value([_anna, _ben, _clara, _dora])),
+      rdMembersCriticalOnlyProvider.overrideWith((ref) => criticalOnly),
+      realtimePlayersProvider.overrideWith((ref) => Stream.value(people ?? [_anna, _ben, _clara, _dora])),
       realtimePendingPlayersProvider.overrideWith((ref) => Stream.value([_emil])),
       playerAttendancePercentagesProvider.overrideWith((ref) async => const {1: 90, 2: 40, 3: 80, 4: 70}),
       groupsProvider.overrideWith((ref) async => _groups),
@@ -374,6 +376,60 @@ void main() {
       expect(find.text('Dora Ernst'), findsNothing);
       // Leader first in the section.
       expect(tester.getTopLeft(find.text('Anna Berg')).dy, lessThan(tester.getTopLeft(find.text('Ben Clas')).dy));
+    });
+
+    testWidgets('"Fehlen oft" narrows Aktiv to the critical members (UX D3)', (tester) async {
+      await tester.pumpWidget(_membersApp(
+        Role.admin,
+        _repo(),
+        people: [_anna, _ben.copyWith(isCritical: true), _clara, _dora],
+      ));
+      await _settle(tester);
+      expect(find.text('Fehlen oft · 1'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsOneWidget);
+
+      await tester.tap(find.text('Fehlen oft · 1'));
+      await _settle(tester);
+      expect(find.text('Ben Clas'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+      expect(find.text('Clara Dorn'), findsNothing);
+
+      await tester.tap(find.text('Fehlen oft · 1'));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+    });
+
+    testWidgets('"Fehlen oft" from Heute stays on even when nobody active is critical', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo(), criticalOnly: true));
+      await _settle(tester);
+      expect(find.text('Fehlen oft · 0'), findsOneWidget);
+      expect(find.text('Anna Berg'), findsNothing);
+      await tester.tap(find.text('Fehlen oft · 0'));
+      await _settle(tester);
+      expect(find.text('Anna Berg'), findsOneWidget);
+      expect(find.textContaining('Fehlen oft'), findsNothing);
+    });
+
+    testWidgets('Einladen opens the invitation; off without a sign-up link (UX D1)', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      await tester.tap(find.text('Einladen'));
+      await _settle(tester);
+      expect(find.text('Mitglieder einladen'), findsOneWidget);
+      expect(find.text('Die Anmeldung per Link ist für diese Gruppe aus.'), findsOneWidget);
+      expect(find.text('In den Einstellungen einschalten'), findsOneWidget);
+    });
+
+    testWidgets('Beobachter cannot invite', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.viewer, _repo()));
+      await _settle(tester);
+      expect(find.text('Einladen'), findsNothing);
+    });
+
+    testWidgets('no "Fehlen oft" chip without critical members', (tester) async {
+      await tester.pumpWidget(_membersApp(Role.admin, _repo()));
+      await _settle(tester);
+      expect(find.textContaining('Fehlen oft'), findsNothing);
     });
 
     testWidgets('Pausiert lists paused persons with their end date', (tester) async {

@@ -30,6 +30,65 @@
         "switchFailed": "Wechsel fehlgeschlagen. Bitte versuche es erneut.",
         "switchHint": "Gruppe: {name}. Tippen zum Wechseln"
       },
+      "join": {
+        "title": "Gruppe beitreten",
+        "intro": "Füge den Link aus der Einladung ein.",
+        "label": "Einladungslink",
+        "found": "{group} gefunden",
+        "notFound": "Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.",
+        "invalid": "Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).",
+        "continue": "Weiter zur Anmeldung",
+        "scan": "QR-Code scannen",
+        "scanTitle": "Einladung scannen",
+        "scanHint": "Halte die Kamera auf den QR-Code der Einladung.",
+        "scanWrong": "Das ist kein Einladungs-Code von Attendix.",
+        "scanNoCamera": "Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.",
+        "welcomeNoName": "Willkommen",
+        "noGroup": "Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.",
+        "haveInvite": "Ich habe eine Einladung",
+        "haveInviteHint": "Link einfügen oder QR-Code scannen",
+        "create": "Eigene Gruppe gründen",
+        "createHint": "Für Leitungen, die Attendix neu einführen",
+        "createButton": "Gruppe gründen",
+        "stepReceived": "Anmeldung eingegangen am {date}",
+        "stepReceivedNoDate": "Anmeldung eingegangen",
+        "stepCheck": "Die Leitung prüft deine Angaben",
+        "stepNotify": "Du bekommst eine Benachrichtigung, sobald du freigegeben bist"
+      },
+      "invite": {
+        "button": "Einladen",
+        "title": "Mitglieder einladen",
+        "intro": "Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.",
+        "introAuto": "Wer den Link öffnet, meldet sich an und ist gleich dabei.",
+        "copy": "Kopieren",
+        "copied": "Link kopiert",
+        "share": "Link teilen",
+        "shareSubject": "Melde dich bei {group} in Attendix an:",
+        "fullscreen": "Vollbild zeigen",
+        "qrLabel": "QR-Code für die Anmeldung bei {group}",
+        "off": "Die Anmeldung per Link ist für diese Gruppe aus.",
+        "turnOn": "In den Einstellungen einschalten",
+        "emptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+        "addPerson": "Person anlegen"
+      },
+      "remind": {
+        "title": "{count} noch offen",
+        "noApp": "ohne App",
+        "hello": "Hallo {name},",
+        "helloAll": "Hallo zusammen,",
+        "reached": "erinnert",
+        "body": "für „{event}“ am {when} fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+        "shareText": "Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+        "messageLabel": "Nachricht (beginnt mit „Hallo Vorname,“)",
+        "push": "{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}",
+        "share": "Als Text teilen",
+        "hint": "Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.",
+        "sent": "{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}",
+        "partlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
+        "failed": "Senden hat nicht geklappt.",
+        "openLink": "{count} offen",
+        "copied": "Text kopiert"
+      },
       "today": {
         "greeting": "Hallo {name}",
         "notifications": "Benachrichtigungen",
@@ -83,9 +142,18 @@
         "more": "Mehr zum Termin",
         "mySection": "Meine Stimme",
         "mySectionHint": "Anwesenheit deiner Stimmgruppe",
-        "noChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
+        "noChildren": "Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.",
         "answerChildren": "Zu- und absagen",
-        "answered": "Alle geantwortet"
+        "childYes": "Ist dabei",
+        "childNo": "Kann nicht",
+        "childIn": "Dabei",
+        "childOpen": "{name} offen",
+        "childFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
+        "openCount": "{count} offen",
+        "answered": "Alle geantwortet",
+        "deadline": "Antwort bis {date}",
+        "unrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
+        "viewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung."
       },
       "applicant": {
         "title": "Bewerbung",
@@ -110,7 +178,9 @@
         "whatsNew": "Neu in dieser Version",
         "account": "Konto",
         "allSettings": "Alle Einstellungen",
-        "logout": "Abmelden"
+        "logout": "Ausloggen",
+        "attendance": "Deine Anwesenheit",
+        "attendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}"
       },
       "appearance": {
         "title": "Darstellung",
@@ -157,7 +227,9 @@
         "waiting": "{count, plural, one {1 Termin wartet auf deine Antwort} other {{count} Termine warten auf deine Antwort}}",
         "showAll": "Wieder alle Termine zeigen",
         "empty": "Noch keine Termine. Leg die erste Probe an.",
-        "createFirst": "Ersten Termin anlegen"
+        "createFirst": "Ersten Termin anlegen",
+        "you": "Du",
+        "yourAnswerLabel": "Deine Antwort: {status}"
       },
       "event": {
         "details": "Alle Details",
@@ -321,7 +393,8 @@
         "noMatch": "Niemand passt zur Suche.",
         "emptyPaused": "Niemand ist pausiert.",
         "emptyPending": "Niemand wartet auf Freigabe.",
-        "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben."
+        "pendingHint": "Tippe auf eine Person, um sie zu prüfen und freizugeben.",
+        "critical": "Fehlen oft · {count}"
       },
       "person": {
         "edit": "Bearbeiten",
@@ -431,7 +504,22 @@
       "split": {
         "eventsEmpty": "Wähle links einen Termin aus.",
         "membersEmpty": "Wähle links eine Person aus.",
-        "worksEmpty": "Wähle links ein Werk aus."
+        "worksEmpty": "Wähle links ein Werk aus.",
+        "overviewTitle": "Überblick",
+        "worksHint": "Wähle links ein Werk aus oder fang hier an.",
+        "membersHint": "Wähle links eine Person aus.",
+        "worksCount": "Werke",
+        "worksWithFiles": "mit Noten",
+        "worksWithoutFiles": "ohne Noten",
+        "worksNext": "Als Nächstes geplant · {date}",
+        "worksMissing": "Noch ohne Noten",
+        "worksLongAgo": "Am längsten nicht dran",
+        "more": "{count, plural, one {und 1 weiteres} other {und {count} weitere}}",
+        "membersActive": "aktiv",
+        "membersPaused": "pausiert",
+        "membersPending": "Anfragen",
+        "membersBirthdays": "Nächste Geburtstage",
+        "membersCritical": "Auffällige Anwesenheit"
       },
       "files": {
         "title": "Dateien",
@@ -469,7 +557,7 @@
         "replace": "Ersetzen",
         "keepBoth": "Beide behalten",
         "shortcuts": "Tastenkürzel",
-        "shortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen"
+        "shortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht"
       },
       "stats": {
         "title": "Auswertung",
@@ -559,6 +647,65 @@
         "switchFailed": "Switching failed. Please try again.",
         "switchHint": "Group: {name}. Tap to switch"
       },
+      "join": {
+        "title": "Join a group",
+        "intro": "Paste the link from your invitation.",
+        "label": "Invitation link",
+        "found": "{group} found",
+        "notFound": "There is no group for this link. Ask your leaders for a new link.",
+        "invalid": "This does not look like an invitation link (attendix.de/register/…).",
+        "continue": "Continue to sign up",
+        "scan": "Scan QR code",
+        "scanTitle": "Scan invitation",
+        "scanHint": "Point the camera at the invitation's QR code.",
+        "scanWrong": "This is not an Attendix invitation code.",
+        "scanNoCamera": "The camera is not available. Allow access in the settings or paste the link.",
+        "welcomeNoName": "Welcome",
+        "noGroup": "You are not in a group yet. Usually the leaders of your choir or orchestra send you an invitation link.",
+        "haveInvite": "I have an invitation",
+        "haveInviteHint": "Paste the link or scan the QR code",
+        "create": "Start your own group",
+        "createHint": "For leaders introducing Attendix",
+        "createButton": "Start a group",
+        "stepReceived": "Sign-up received on {date}",
+        "stepReceivedNoDate": "Sign-up received",
+        "stepCheck": "The leaders check your details",
+        "stepNotify": "You get a notification as soon as you are approved"
+      },
+      "invite": {
+        "button": "Invite",
+        "title": "Invite members",
+        "intro": "Whoever opens the link signs up. You approve each sign-up afterwards.",
+        "introAuto": "Whoever opens the link signs up and is in right away.",
+        "copy": "Copy",
+        "copied": "Link copied",
+        "share": "Share link",
+        "shareSubject": "Sign up for {group} in Attendix:",
+        "fullscreen": "Show full screen",
+        "qrLabel": "QR code to sign up for {group}",
+        "off": "Signing up by link is turned off for this group.",
+        "turnOn": "Turn it on in the settings",
+        "emptyMembers": "No members yet. Send the invitation link to your group or show the QR code at the next rehearsal.",
+        "addPerson": "Add person"
+      },
+      "remind": {
+        "title": "{count} still open",
+        "noApp": "no app",
+        "hello": "Hi {name},",
+        "helloAll": "Hi all,",
+        "reached": "reminded",
+        "body": "we still need your answer for \"{event}\" on {when}. Please answer briefly in Attendix. Thanks!",
+        "shareText": "Hi all, we still need your answer for \"{event}\" on {when}. Please answer briefly in Attendix. Thanks!",
+        "messageLabel": "Message (starts with \"Hi first name,\")",
+        "push": "{count, plural, one {Send push to 1 person} other {Send push to {count} people}}",
+        "share": "Share as text",
+        "hint": "Push and e-mail only reach people with an app account, each with their name. Share the text for everyone else.",
+        "sent": "{count, plural, one {Reminder sent to 1 person} other {Reminder sent to {count} people}}",
+        "partlyFailed": "{sent} sent, {failed} failed",
+        "failed": "Sending didn't work.",
+        "openLink": "{count} open",
+        "copied": "Text copied"
+      },
       "today": {
         "greeting": "Hi {name}",
         "notifications": "Notifications",
@@ -612,9 +759,18 @@
         "more": "More about this event",
         "mySection": "My section",
         "mySectionHint": "Attendance of your section",
-        "noChildren": "No children are linked to your account yet.",
+        "noChildren": "No child is linked to your account yet. Your group's leaders do that for you.",
         "answerChildren": "Answer for my children",
-        "answered": "All answered"
+        "childYes": "Will attend",
+        "childNo": "Can't come",
+        "childIn": "Attending",
+        "childOpen": "{name} open",
+        "childFailed": "That didn't work. Please try again.",
+        "openCount": "{count} open",
+        "answered": "All answered",
+        "deadline": "Answer by {date}",
+        "unrecorded": "{count, plural, one {1 event not recorded yet} other {{count} events not recorded yet}}",
+        "viewerHint": "As an observer you see the overview. Leaders open single events."
       },
       "applicant": {
         "title": "Application",
@@ -639,7 +795,9 @@
         "whatsNew": "New in this version",
         "account": "Account",
         "allSettings": "All settings",
-        "logout": "Log out"
+        "logout": "Log out",
+        "attendance": "Your attendance",
+        "attendanceLate": "{count, plural, one {late once} other {late {count} times}}"
       },
       "appearance": {
         "title": "Appearance",
@@ -686,7 +844,9 @@
         "waiting": "{count, plural, one {1 event is waiting for your answer} other {{count} events are waiting for your answer}}",
         "showAll": "Show all events again",
         "empty": "No events yet. Create the first rehearsal.",
-        "createFirst": "Create first event"
+        "createFirst": "Create first event",
+        "you": "You",
+        "yourAnswerLabel": "Your answer: {status}"
       },
       "event": {
         "details": "All details",
@@ -850,7 +1010,8 @@
         "noMatch": "Nobody matches the search.",
         "emptyPaused": "Nobody is paused.",
         "emptyPending": "Nobody is waiting for approval.",
-        "pendingHint": "Tap a person to review and approve them."
+        "pendingHint": "Tap a person to review and approve them.",
+        "critical": "Often missing · {count}"
       },
       "person": {
         "edit": "Edit",
@@ -960,7 +1121,22 @@
       "split": {
         "eventsEmpty": "Choose an event on the left.",
         "membersEmpty": "Choose a person on the left.",
-        "worksEmpty": "Choose a work on the left."
+        "worksEmpty": "Choose a work on the left.",
+        "overviewTitle": "Overview",
+        "worksHint": "Choose a work on the left or start here.",
+        "membersHint": "Choose a person on the left.",
+        "worksCount": "Works",
+        "worksWithFiles": "with sheet music",
+        "worksWithoutFiles": "without sheet music",
+        "worksNext": "Planned next · {date}",
+        "worksMissing": "No sheet music yet",
+        "worksLongAgo": "Longest since last time",
+        "more": "{count, plural, one {and 1 more} other {and {count} more}}",
+        "membersActive": "active",
+        "membersPaused": "paused",
+        "membersPending": "requests",
+        "membersBirthdays": "Upcoming birthdays",
+        "membersCritical": "Attendance to watch"
       },
       "files": {
         "title": "Files",
@@ -998,7 +1174,7 @@
         "replace": "Replace",
         "keepBoth": "Keep both",
         "shortcuts": "Keyboard shortcuts",
-        "shortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename"
+        "shortcutsHelp": "↑ ↓ select · Shift+↑↓ several · Enter open · Space preview/play · Del delete · {mod}+U upload · {mod}+A all · {mod}+D download · {mod}+Z undo · F2 rename · ? this overview"
       },
       "stats": {
         "title": "Insights",

@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 
 import 'native_platform_stub.dart'
     if (dart.library.io) 'native_platform_io.dart' as impl;
@@ -26,3 +27,29 @@ bool get isNativeAndroid =>
 /// Test hook: forces [isNativeApp] (null = detect).
 @visibleForTesting
 bool? debugIsNativeAppOverride;
+
+const _platformInfoChannel = MethodChannel('de.attendix/platform_info');
+bool? _iosAppOnMac;
+
+/// Ionic 4.17.20 `Utils.isIosAppOnMac`: the iPhone/iPad app installed on an
+/// Apple silicon Mac reports itself as iOS, but the native file preview
+/// shows nothing there. Asks iOS (`ProcessInfo.isiOSAppOnMac`, channel
+/// `de.attendix/platform_info` in ios/Runner/AppDelegate.swift); false on
+/// every other platform and when the channel is missing. Cached.
+Future<bool> isIosAppOnMac() async {
+  final override = debugIsIosAppOnMacOverride;
+  if (override != null) return override;
+  if (!isNativeIos) return false;
+  final cached = _iosAppOnMac;
+  if (cached != null) return cached;
+  try {
+    return _iosAppOnMac =
+        await _platformInfoChannel.invokeMethod<bool>('isiOSAppOnMac') ?? false;
+  } catch (_) {
+    return _iosAppOnMac = false;
+  }
+}
+
+/// Test hook: forces [isIosAppOnMac] (null = detect).
+@visibleForTesting
+bool? debugIsIosAppOnMacOverride;

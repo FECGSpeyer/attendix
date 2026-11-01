@@ -1625,6 +1625,10 @@
   "@attendancePlace": {
     "description": "attendance.place"
   },
+  "attendancePresentNotAssigned": "Anwesend, nicht eingeteilt",
+  "@attendancePresentNotAssigned": {
+    "description": "attendance.presentNotAssigned"
+  },
   "attendancePresentPeople": "Anwesende",
   "@attendancePresentPeople": {
     "description": "attendance.presentPeople"
@@ -4177,6 +4181,14 @@
   "@extraFieldsYesNo": {
     "description": "extraFields.yesNo"
   },
+  "fileViewerDownloadFailed": "Datei konnte nicht heruntergeladen werden",
+  "@fileViewerDownloadFailed": {
+    "description": "fileViewer.downloadFailed"
+  },
+  "fileViewerNoPreview": "Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.",
+  "@fileViewerNoPreview": {
+    "description": "fileViewer.noPreview"
+  },
   "filesAlmostFull": " · fast voll",
   "@filesAlmostFull": {
     "description": "files.almostFull"
@@ -6642,6 +6654,65 @@
   "@orgFlutterUnlinkFailed": {
     "description": "org.flutter.unlinkFailed"
   },
+  "orgGaBeamerFiles": "Beamer-Dateien im Ablaufplan",
+  "@orgGaBeamerFiles": {
+    "description": "org.gaBeamerFiles"
+  },
+  "orgGaBeamerFilesHint": "Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.",
+  "@orgGaBeamerFilesHint": {
+    "description": "org.gaBeamerFilesHint"
+  },
+  "orgGaCopied": "Schlüssel kopiert",
+  "@orgGaCopied": {
+    "description": "org.gaCopied"
+  },
+  "orgGaCopy": "Kopieren",
+  "@orgGaCopy": {
+    "description": "org.gaCopy"
+  },
+  "orgGaCreateKey": "Verbindungsschlüssel erstellen",
+  "@orgGaCreateKey": {
+    "description": "org.gaCreateKey"
+  },
+  "orgGaHint": "Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.",
+  "@orgGaHint": {
+    "description": "org.gaHint"
+  },
+  "orgGaKeyActive": "Schlüssel aktiv, endet auf …{hint}",
+  "@orgGaKeyActive": {
+    "description": "org.gaKeyActive",
+    "placeholders": {
+      "hint": {}
+    }
+  },
+  "orgGaKeyHeader": "Verbindungsschlüssel",
+  "@orgGaKeyHeader": {
+    "description": "org.gaKeyHeader"
+  },
+  "orgGaKeyMessage": "Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.",
+  "@orgGaKeyMessage": {
+    "description": "org.gaKeyMessage"
+  },
+  "orgGaNoKey": "Noch nicht mit der Gemeinde App verbunden",
+  "@orgGaNoKey": {
+    "description": "org.gaNoKey"
+  },
+  "orgGaRenewButton": "Erneuern",
+  "@orgGaRenewButton": {
+    "description": "org.gaRenewButton"
+  },
+  "orgGaRenewKey": "Schlüssel erneuern",
+  "@orgGaRenewKey": {
+    "description": "org.gaRenewKey"
+  },
+  "orgGaRenewMessage": "Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.",
+  "@orgGaRenewMessage": {
+    "description": "org.gaRenewMessage"
+  },
+  "orgGemeindeApp": "Gemeinde App",
+  "@orgGemeindeApp": {
+    "description": "org.gemeindeApp"
+  },
   "orgHandover": "Übergabe",
   "@orgHandover": {
     "description": "org.handover"
@@ -6713,6 +6784,258 @@
   "orgSongSyncIntro": "Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.",
   "@orgSongSyncIntro": {
     "description": "org.songSyncIntro"
+  },
+  "orgSongsAlreadyOwn": "Schon bei dir",
+  "@orgSongsAlreadyOwn": {
+    "description": "orgSongs.alreadyOwn"
+  },
+  "orgSongsCopiedFrom": "Kopiert aus {tenant} am {date}",
+  "@orgSongsCopiedFrom": {
+    "description": "orgSongs.copiedFrom",
+    "placeholders": {
+      "tenant": {},
+      "date": {}
+    }
+  },
+  "orgSongsCopiedTo": "„{name}“ wurde nach {tenant} kopiert.",
+  "@orgSongsCopiedTo": {
+    "description": "orgSongs.copiedTo",
+    "placeholders": {
+      "name": {},
+      "tenant": {}
+    }
+  },
+  "orgSongsCopyAsNew": "Als neues Werk kopieren",
+  "@orgSongsCopyAsNew": {
+    "description": "orgSongs.copyAsNew"
+  },
+  "orgSongsCopyHint": "Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.",
+  "@orgSongsCopyHint": {
+    "description": "orgSongs.copyHint"
+  },
+  "orgSongsCopyIntoExisting": "In vorhandenes Werk kopieren",
+  "@orgSongsCopyIntoExisting": {
+    "description": "orgSongs.copyIntoExisting"
+  },
+  "orgSongsCurrentValue": "Im Ziel: {value}",
+  "@orgSongsCurrentValue": {
+    "description": "orgSongs.currentValue",
+    "placeholders": {
+      "value": {}
+    }
+  },
+  "orgSongsDuplicateWarning": "{count, plural, one {Im Ziel gibt es schon ein Werk mit diesem Namen.} other {Im Ziel gibt es schon {count} Werke mit diesem Namen.}}",
+  "@orgSongsDuplicateWarning": {
+    "description": "orgSongs.duplicateWarning",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsEntryHint": "Werke anderer Instanzen finden und übernehmen",
+  "@orgSongsEntryHint": {
+    "description": "orgSongs.entryHint"
+  },
+  "orgSongsExistingSong": "Werk",
+  "@orgSongsExistingSong": {
+    "description": "orgSongs.existingSong"
+  },
+  "orgSongsFieldBeamer": "Beamer-Datei",
+  "@orgSongsFieldBeamer": {
+    "description": "orgSongs.fieldBeamer"
+  },
+  "orgSongsFieldCategories": "Kategorien",
+  "@orgSongsFieldCategories": {
+    "description": "orgSongs.fieldCategories"
+  },
+  "orgSongsFieldChoirSolo": "Besetzung",
+  "@orgSongsFieldChoirSolo": {
+    "description": "orgSongs.fieldChoirSolo"
+  },
+  "orgSongsFieldDifficulty": "Schwierigkeit",
+  "@orgSongsFieldDifficulty": {
+    "description": "orgSongs.fieldDifficulty"
+  },
+  "orgSongsFields": "Felder übernehmen",
+  "@orgSongsFields": {
+    "description": "orgSongs.fields"
+  },
+  "orgSongsFileCount": "{count, plural, one {{count} Datei} other {{count} Dateien}}",
+  "@orgSongsFileCount": {
+    "description": "orgSongs.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsFileExists": "Gleichnamige Datei ist schon im Werk",
+  "@orgSongsFileExists": {
+    "description": "orgSongs.fileExists"
+  },
+  "orgSongsFiles": "Dateien ({selected} von {total})",
+  "@orgSongsFiles": {
+    "description": "orgSongs.files",
+    "placeholders": {
+      "selected": {},
+      "total": {}
+    }
+  },
+  "orgSongsFromTenant": "aus {tenant}",
+  "@orgSongsFromTenant": {
+    "description": "orgSongs.fromTenant",
+    "placeholders": {
+      "tenant": {}
+    }
+  },
+  "orgSongsMenuEntry": "In der Organisation suchen",
+  "@orgSongsMenuEntry": {
+    "description": "orgSongs.menuEntry"
+  },
+  "orgSongsMergedInto": "„{name}“ wurde in das vorhandene Werk in {tenant} übernommen.",
+  "@orgSongsMergedInto": {
+    "description": "orgSongs.mergedInto",
+    "placeholders": {
+      "name": {},
+      "tenant": {}
+    }
+  },
+  "orgSongsModeExisting": "In vorhandenes Werk kopieren",
+  "@orgSongsModeExisting": {
+    "description": "orgSongs.modeExisting"
+  },
+  "orgSongsModeNew": "Als neues Werk anlegen",
+  "@orgSongsModeNew": {
+    "description": "orgSongs.modeNew"
+  },
+  "orgSongsNoPermission": "Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.",
+  "@orgSongsNoPermission": {
+    "description": "orgSongs.noPermission"
+  },
+  "orgSongsNoResults": "Keine Werke gefunden.",
+  "@orgSongsNoResults": {
+    "description": "orgSongs.noResults"
+  },
+  "orgSongsNoTargets": "Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.",
+  "@orgSongsNoTargets": {
+    "description": "orgSongs.noTargets"
+  },
+  "orgSongsNumber": "Nummer",
+  "@orgSongsNumber": {
+    "description": "orgSongs.number"
+  },
+  "orgSongsNumberTaken": "Diese Nummer ist im Ziel schon vergeben.",
+  "@orgSongsNumberTaken": {
+    "description": "orgSongs.numberTaken"
+  },
+  "orgSongsOnlyWithFiles": "Nur mit Dateien",
+  "@orgSongsOnlyWithFiles": {
+    "description": "orgSongs.onlyWithFiles"
+  },
+  "orgSongsOverwriteConfirm": "Überschreiben",
+  "@orgSongsOverwriteConfirm": {
+    "description": "orgSongs.overwriteConfirm"
+  },
+  "orgSongsOverwriteHeader": "Werte überschreiben?",
+  "@orgSongsOverwriteHeader": {
+    "description": "orgSongs.overwriteHeader"
+  },
+  "orgSongsOverwriteMessage": "Diese Felder haben im Ziel schon einen Wert und werden überschrieben: {fields}",
+  "@orgSongsOverwriteMessage": {
+    "description": "orgSongs.overwriteMessage",
+    "placeholders": {
+      "fields": {}
+    }
+  },
+  "orgSongsPrefix": "Präfix",
+  "@orgSongsPrefix": {
+    "description": "orgSongs.prefix"
+  },
+  "orgSongsResultCount": "{count, plural, one {{count} Treffer} other {{count} Treffer}}",
+  "@orgSongsResultCount": {
+    "description": "orgSongs.resultCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "orgSongsSearchFailed": "Suche fehlgeschlagen: {error}",
+  "@orgSongsSearchFailed": {
+    "description": "orgSongs.searchFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "orgSongsSearchPh": "Name oder Nummer",
+  "@orgSongsSearchPh": {
+    "description": "orgSongs.searchPh"
+  },
+  "orgSongsSection": "Werke",
+  "@orgSongsSection": {
+    "description": "orgSongs.section"
+  },
+  "orgSongsSelectAll": "Alle",
+  "@orgSongsSelectAll": {
+    "description": "orgSongs.selectAll"
+  },
+  "orgSongsSelectNone": "Keine",
+  "@orgSongsSelectNone": {
+    "description": "orgSongs.selectNone"
+  },
+  "orgSongsSourceGroup": "Dort: {group}",
+  "@orgSongsSourceGroup": {
+    "description": "orgSongs.sourceGroup",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "orgSongsSyncedTarget": "{tenant} nutzt die Werke von {library}. Das Werk wird dort gespeichert.",
+  "@orgSongsSyncedTarget": {
+    "description": "orgSongs.syncedTarget",
+    "placeholders": {
+      "tenant": {},
+      "library": {}
+    }
+  },
+  "orgSongsTarget": "Ziel",
+  "@orgSongsTarget": {
+    "description": "orgSongs.target"
+  },
+  "orgSongsTargetGroup": "Gruppe im Ziel",
+  "@orgSongsTargetGroup": {
+    "description": "orgSongs.targetGroup"
+  },
+  "orgSongsTargetLoadFailed": "Zielinstanz konnte nicht geladen werden: {error}",
+  "@orgSongsTargetLoadFailed": {
+    "description": "orgSongs.targetLoadFailed",
+    "placeholders": {
+      "error": {}
+    }
+  },
+  "orgSongsTargetMissing": "Das Zielwerk wurde nicht gefunden.",
+  "@orgSongsTargetMissing": {
+    "description": "orgSongs.targetMissing"
+  },
+  "orgSongsTitle": "Werke in der Organisation suchen",
+  "@orgSongsTitle": {
+    "description": "orgSongs.title"
+  },
+  "orgSongsUseNextFree": "Tippen für die nächste freie Nummer: {number}",
+  "@orgSongsUseNextFree": {
+    "description": "orgSongs.useNextFree",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "orgSongsWithChoir": "mit Chor",
+  "@orgSongsWithChoir": {
+    "description": "orgSongs.withChoir"
+  },
+  "orgSongsWithSolo": "mit Solo",
+  "@orgSongsWithSolo": {
+    "description": "orgSongs.withSolo"
   },
   "orgSourceTenant": "Quellinstanz",
   "@orgSourceTenant": {
@@ -8801,6 +9124,45 @@
   "@planningBass": {
     "description": "planning.bass"
   },
+  "planningBeamer": "Beamer",
+  "@planningBeamer": {
+    "description": "planning.beamer"
+  },
+  "planningBeamerAutoHint": "Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.",
+  "@planningBeamerAutoHint": {
+    "description": "planning.beamerAutoHint"
+  },
+  "planningBeamerAutoSong": "Automatisch an: Werk",
+  "@planningBeamerAutoSong": {
+    "description": "planning.beamerAutoSong"
+  },
+  "planningBeamerAutoWord": "Automatisch an: Titel enthält „{word}“",
+  "@planningBeamerAutoWord": {
+    "description": "planning.beamerAutoWord",
+    "placeholders": {
+      "word": {}
+    }
+  },
+  "planningBeamerChangeInApp": "Ändern kannst du die Datei in der Gemeinde App.",
+  "@planningBeamerChangeInApp": {
+    "description": "planning.beamerChangeInApp"
+  },
+  "planningBeamerLinkInApp": "Verknüpfen kannst du die Datei in der Gemeinde App.",
+  "@planningBeamerLinkInApp": {
+    "description": "planning.beamerLinkInApp"
+  },
+  "planningBeamerMissing": "Beamer-Datei fehlt",
+  "@planningBeamerMissing": {
+    "description": "planning.beamerMissing"
+  },
+  "planningBeamerNeeded": "Beamer-Datei nötig",
+  "@planningBeamerNeeded": {
+    "description": "planning.beamerNeeded"
+  },
+  "planningBeamerNoFile": "Noch keine Datei verknüpft",
+  "@planningBeamerNoFile": {
+    "description": "planning.beamerNoFile"
+  },
   "planningBlockDurationHint": "Die Dauer ergibt sich aus den Unterpunkten.",
   "@planningBlockDurationHint": {
     "description": "planning.blockDurationHint"
@@ -9426,6 +9788,10 @@
   "@plansAddOrgFailed": {
     "description": "plans.addOrgFailed"
   },
+  "plansAddToOrg": "Zur Organisation hinzufügen",
+  "@plansAddToOrg": {
+    "description": "plans.addToOrg"
+  },
   "plansAddedToOrg": "Plan zur Organisation \"{org}\" hinzugefügt",
   "@plansAddedToOrg": {
     "description": "plans.addedToOrg",
@@ -9528,6 +9894,13 @@
   "plansImageA4": "Bild (A4)",
   "@plansImageA4": {
     "description": "plans.imageA4"
+  },
+  "plansInOrg": "In Organisation \"{org}\"",
+  "@plansInOrg": {
+    "description": "plans.inOrg",
+    "placeholders": {
+      "org": {}
+    }
   },
   "plansLinkCopied": "Link kopiert",
   "@plansLinkCopied": {
@@ -11146,6 +11519,17 @@
   "@redesignEventsYes": {
     "description": "redesign.events.yes"
   },
+  "redesignEventsYou": "Du",
+  "@redesignEventsYou": {
+    "description": "redesign.events.you"
+  },
+  "redesignEventsYourAnswerLabel": "Deine Antwort: {status}",
+  "@redesignEventsYourAnswerLabel": {
+    "description": "redesign.events.yourAnswerLabel",
+    "placeholders": {
+      "status": {}
+    }
+  },
   "redesignFilesActions": "Aktionen für {name}",
   "@redesignFilesActions": {
     "description": "redesign.files.actions",
@@ -11300,7 +11684,7 @@
   "@redesignFilesShortcuts": {
     "description": "redesign.files.shortcuts"
   },
-  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen",
+  "redesignFilesShortcutsHelp": "↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht",
   "@redesignFilesShortcutsHelp": {
     "description": "redesign.files.shortcutsHelp",
     "placeholders": {
@@ -11349,6 +11733,166 @@
   "redesignGroupsTitle": "Gruppe wechseln",
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
+  },
+  "redesignInviteAddPerson": "Person anlegen",
+  "@redesignInviteAddPerson": {
+    "description": "redesign.invite.addPerson"
+  },
+  "redesignInviteButton": "Einladen",
+  "@redesignInviteButton": {
+    "description": "redesign.invite.button"
+  },
+  "redesignInviteCopied": "Link kopiert",
+  "@redesignInviteCopied": {
+    "description": "redesign.invite.copied"
+  },
+  "redesignInviteCopy": "Kopieren",
+  "@redesignInviteCopy": {
+    "description": "redesign.invite.copy"
+  },
+  "redesignInviteEmptyMembers": "Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.",
+  "@redesignInviteEmptyMembers": {
+    "description": "redesign.invite.emptyMembers"
+  },
+  "redesignInviteFullscreen": "Vollbild zeigen",
+  "@redesignInviteFullscreen": {
+    "description": "redesign.invite.fullscreen"
+  },
+  "redesignInviteIntro": "Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.",
+  "@redesignInviteIntro": {
+    "description": "redesign.invite.intro"
+  },
+  "redesignInviteIntroAuto": "Wer den Link öffnet, meldet sich an und ist gleich dabei.",
+  "@redesignInviteIntroAuto": {
+    "description": "redesign.invite.introAuto"
+  },
+  "redesignInviteOff": "Die Anmeldung per Link ist für diese Gruppe aus.",
+  "@redesignInviteOff": {
+    "description": "redesign.invite.off"
+  },
+  "redesignInviteQrLabel": "QR-Code für die Anmeldung bei {group}",
+  "@redesignInviteQrLabel": {
+    "description": "redesign.invite.qrLabel",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignInviteShare": "Link teilen",
+  "@redesignInviteShare": {
+    "description": "redesign.invite.share"
+  },
+  "redesignInviteShareSubject": "Melde dich bei {group} in Attendix an:",
+  "@redesignInviteShareSubject": {
+    "description": "redesign.invite.shareSubject",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignInviteTitle": "Mitglieder einladen",
+  "@redesignInviteTitle": {
+    "description": "redesign.invite.title"
+  },
+  "redesignInviteTurnOn": "In den Einstellungen einschalten",
+  "@redesignInviteTurnOn": {
+    "description": "redesign.invite.turnOn"
+  },
+  "redesignJoinContinue": "Weiter zur Anmeldung",
+  "@redesignJoinContinue": {
+    "description": "redesign.join.continue"
+  },
+  "redesignJoinCreate": "Eigene Gruppe gründen",
+  "@redesignJoinCreate": {
+    "description": "redesign.join.create"
+  },
+  "redesignJoinCreateButton": "Gruppe gründen",
+  "@redesignJoinCreateButton": {
+    "description": "redesign.join.createButton"
+  },
+  "redesignJoinCreateHint": "Für Leitungen, die Attendix neu einführen",
+  "@redesignJoinCreateHint": {
+    "description": "redesign.join.createHint"
+  },
+  "redesignJoinFound": "{group} gefunden",
+  "@redesignJoinFound": {
+    "description": "redesign.join.found",
+    "placeholders": {
+      "group": {}
+    }
+  },
+  "redesignJoinHaveInvite": "Ich habe eine Einladung",
+  "@redesignJoinHaveInvite": {
+    "description": "redesign.join.haveInvite"
+  },
+  "redesignJoinHaveInviteHint": "Link einfügen oder QR-Code scannen",
+  "@redesignJoinHaveInviteHint": {
+    "description": "redesign.join.haveInviteHint"
+  },
+  "redesignJoinIntro": "Füge den Link aus der Einladung ein.",
+  "@redesignJoinIntro": {
+    "description": "redesign.join.intro"
+  },
+  "redesignJoinInvalid": "Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).",
+  "@redesignJoinInvalid": {
+    "description": "redesign.join.invalid"
+  },
+  "redesignJoinLabel": "Einladungslink",
+  "@redesignJoinLabel": {
+    "description": "redesign.join.label"
+  },
+  "redesignJoinNoGroup": "Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.",
+  "@redesignJoinNoGroup": {
+    "description": "redesign.join.noGroup"
+  },
+  "redesignJoinNotFound": "Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.",
+  "@redesignJoinNotFound": {
+    "description": "redesign.join.notFound"
+  },
+  "redesignJoinScan": "QR-Code scannen",
+  "@redesignJoinScan": {
+    "description": "redesign.join.scan"
+  },
+  "redesignJoinScanHint": "Halte die Kamera auf den QR-Code der Einladung.",
+  "@redesignJoinScanHint": {
+    "description": "redesign.join.scanHint"
+  },
+  "redesignJoinScanNoCamera": "Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.",
+  "@redesignJoinScanNoCamera": {
+    "description": "redesign.join.scanNoCamera"
+  },
+  "redesignJoinScanTitle": "Einladung scannen",
+  "@redesignJoinScanTitle": {
+    "description": "redesign.join.scanTitle"
+  },
+  "redesignJoinScanWrong": "Das ist kein Einladungs-Code von Attendix.",
+  "@redesignJoinScanWrong": {
+    "description": "redesign.join.scanWrong"
+  },
+  "redesignJoinStepCheck": "Die Leitung prüft deine Angaben",
+  "@redesignJoinStepCheck": {
+    "description": "redesign.join.stepCheck"
+  },
+  "redesignJoinStepNotify": "Du bekommst eine Benachrichtigung, sobald du freigegeben bist",
+  "@redesignJoinStepNotify": {
+    "description": "redesign.join.stepNotify"
+  },
+  "redesignJoinStepReceived": "Anmeldung eingegangen am {date}",
+  "@redesignJoinStepReceived": {
+    "description": "redesign.join.stepReceived",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignJoinStepReceivedNoDate": "Anmeldung eingegangen",
+  "@redesignJoinStepReceivedNoDate": {
+    "description": "redesign.join.stepReceivedNoDate"
+  },
+  "redesignJoinTitle": "Gruppe beitreten",
+  "@redesignJoinTitle": {
+    "description": "redesign.join.title"
+  },
+  "redesignJoinWelcomeNoName": "Willkommen",
+  "@redesignJoinWelcomeNoName": {
+    "description": "redesign.join.welcomeNoName"
   },
   "redesignManageAnnouncementsHint": "Gesendete Mitteilungen ansehen",
   "@redesignManageAnnouncementsHint": {
@@ -11460,6 +12004,19 @@
   "@redesignMeApp": {
     "description": "redesign.me.app"
   },
+  "redesignMeAttendance": "Deine Anwesenheit",
+  "@redesignMeAttendance": {
+    "description": "redesign.me.attendance"
+  },
+  "redesignMeAttendanceLate": "{count, plural, one {1 × verspätet} other {{count} × verspätet}}",
+  "@redesignMeAttendanceLate": {
+    "description": "redesign.me.attendanceLate",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignMeBeta": "Neues Design (Beta)",
   "@redesignMeBeta": {
     "description": "redesign.me.beta"
@@ -11495,7 +12052,7 @@
   "@redesignMeHelp": {
     "description": "redesign.me.help"
   },
-  "redesignMeLogout": "Abmelden",
+  "redesignMeLogout": "Ausloggen",
   "@redesignMeLogout": {
     "description": "redesign.me.logout"
   },
@@ -11553,6 +12110,13 @@
   "redesignMembersBirthdayTomorrow": "Geburtstag morgen",
   "@redesignMembersBirthdayTomorrow": {
     "description": "redesign.members.birthdayTomorrow"
+  },
+  "redesignMembersCritical": "Fehlen oft · {count}",
+  "@redesignMembersCritical": {
+    "description": "redesign.members.critical",
+    "placeholders": {
+      "count": {}
+    }
   },
   "redesignMembersEmpty": "Noch keine Mitglieder.",
   "@redesignMembersEmpty": {
@@ -11856,6 +12420,101 @@
       "title": {}
     }
   },
+  "redesignRemindBody": "für „{event}“ am {when} fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+  "@redesignRemindBody": {
+    "description": "redesign.remind.body",
+    "placeholders": {
+      "event": {},
+      "when": {}
+    }
+  },
+  "redesignRemindCopied": "Text kopiert",
+  "@redesignRemindCopied": {
+    "description": "redesign.remind.copied"
+  },
+  "redesignRemindFailed": "Senden hat nicht geklappt.",
+  "@redesignRemindFailed": {
+    "description": "redesign.remind.failed"
+  },
+  "redesignRemindHello": "Hallo {name},",
+  "@redesignRemindHello": {
+    "description": "redesign.remind.hello",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignRemindHelloAll": "Hallo zusammen,",
+  "@redesignRemindHelloAll": {
+    "description": "redesign.remind.helloAll"
+  },
+  "redesignRemindHint": "Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.",
+  "@redesignRemindHint": {
+    "description": "redesign.remind.hint"
+  },
+  "redesignRemindMessageLabel": "Nachricht (beginnt mit „Hallo Vorname,“)",
+  "@redesignRemindMessageLabel": {
+    "description": "redesign.remind.messageLabel"
+  },
+  "redesignRemindNoApp": "ohne App",
+  "@redesignRemindNoApp": {
+    "description": "redesign.remind.noApp"
+  },
+  "redesignRemindOpenLink": "{count} offen",
+  "@redesignRemindOpenLink": {
+    "description": "redesign.remind.openLink",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignRemindPartlyFailed": "{sent} gesendet, {failed} fehlgeschlagen",
+  "@redesignRemindPartlyFailed": {
+    "description": "redesign.remind.partlyFailed",
+    "placeholders": {
+      "sent": {},
+      "failed": {}
+    }
+  },
+  "redesignRemindPush": "{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}",
+  "@redesignRemindPush": {
+    "description": "redesign.remind.push",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignRemindReached": "erinnert",
+  "@redesignRemindReached": {
+    "description": "redesign.remind.reached"
+  },
+  "redesignRemindSent": "{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}",
+  "@redesignRemindSent": {
+    "description": "redesign.remind.sent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignRemindShare": "Als Text teilen",
+  "@redesignRemindShare": {
+    "description": "redesign.remind.share"
+  },
+  "redesignRemindShareText": "Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!",
+  "@redesignRemindShareText": {
+    "description": "redesign.remind.shareText",
+    "placeholders": {
+      "event": {},
+      "when": {}
+    }
+  },
+  "redesignRemindTitle": "{count} noch offen",
+  "@redesignRemindTitle": {
+    "description": "redesign.remind.title",
+    "placeholders": {
+      "count": {}
+    }
+  },
   "redesignSignoutCannot": "Ich kann nicht",
   "@redesignSignoutCannot": {
     "description": "redesign.signout.cannot"
@@ -11892,13 +12551,81 @@
   "@redesignSplitEventsEmpty": {
     "description": "redesign.split.eventsEmpty"
   },
+  "redesignSplitMembersActive": "aktiv",
+  "@redesignSplitMembersActive": {
+    "description": "redesign.split.membersActive"
+  },
+  "redesignSplitMembersBirthdays": "Nächste Geburtstage",
+  "@redesignSplitMembersBirthdays": {
+    "description": "redesign.split.membersBirthdays"
+  },
+  "redesignSplitMembersCritical": "Auffällige Anwesenheit",
+  "@redesignSplitMembersCritical": {
+    "description": "redesign.split.membersCritical"
+  },
   "redesignSplitMembersEmpty": "Wähle links eine Person aus.",
   "@redesignSplitMembersEmpty": {
     "description": "redesign.split.membersEmpty"
   },
+  "redesignSplitMembersHint": "Wähle links eine Person aus.",
+  "@redesignSplitMembersHint": {
+    "description": "redesign.split.membersHint"
+  },
+  "redesignSplitMembersPaused": "pausiert",
+  "@redesignSplitMembersPaused": {
+    "description": "redesign.split.membersPaused"
+  },
+  "redesignSplitMembersPending": "Anfragen",
+  "@redesignSplitMembersPending": {
+    "description": "redesign.split.membersPending"
+  },
+  "redesignSplitMore": "{count, plural, one {und 1 weiteres} other {und {count} weitere}}",
+  "@redesignSplitMore": {
+    "description": "redesign.split.more",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignSplitOverviewTitle": "Überblick",
+  "@redesignSplitOverviewTitle": {
+    "description": "redesign.split.overviewTitle"
+  },
+  "redesignSplitWorksCount": "Werke",
+  "@redesignSplitWorksCount": {
+    "description": "redesign.split.worksCount"
+  },
   "redesignSplitWorksEmpty": "Wähle links ein Werk aus.",
   "@redesignSplitWorksEmpty": {
     "description": "redesign.split.worksEmpty"
+  },
+  "redesignSplitWorksHint": "Wähle links ein Werk aus oder fang hier an.",
+  "@redesignSplitWorksHint": {
+    "description": "redesign.split.worksHint"
+  },
+  "redesignSplitWorksLongAgo": "Am längsten nicht dran",
+  "@redesignSplitWorksLongAgo": {
+    "description": "redesign.split.worksLongAgo"
+  },
+  "redesignSplitWorksMissing": "Noch ohne Noten",
+  "@redesignSplitWorksMissing": {
+    "description": "redesign.split.worksMissing"
+  },
+  "redesignSplitWorksNext": "Als Nächstes geplant · {date}",
+  "@redesignSplitWorksNext": {
+    "description": "redesign.split.worksNext",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignSplitWorksWithFiles": "mit Noten",
+  "@redesignSplitWorksWithFiles": {
+    "description": "redesign.split.worksWithFiles"
+  },
+  "redesignSplitWorksWithoutFiles": "ohne Noten",
+  "@redesignSplitWorksWithoutFiles": {
+    "description": "redesign.split.worksWithoutFiles"
   },
   "redesignStatsAvg": "Ø Anwesenheit",
   "@redesignStatsAvg": {
@@ -12057,6 +12784,29 @@
       "count": {}
     }
   },
+  "redesignTodayChildFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
+  "@redesignTodayChildFailed": {
+    "description": "redesign.today.childFailed"
+  },
+  "redesignTodayChildIn": "Dabei",
+  "@redesignTodayChildIn": {
+    "description": "redesign.today.childIn"
+  },
+  "redesignTodayChildNo": "Kann nicht",
+  "@redesignTodayChildNo": {
+    "description": "redesign.today.childNo"
+  },
+  "redesignTodayChildOpen": "{name} offen",
+  "@redesignTodayChildOpen": {
+    "description": "redesign.today.childOpen",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignTodayChildYes": "Ist dabei",
+  "@redesignTodayChildYes": {
+    "description": "redesign.today.childYes"
+  },
   "redesignTodayCountAbsent": "{count} abwesend",
   "@redesignTodayCountAbsent": {
     "description": "redesign.today.countAbsent",
@@ -12112,6 +12862,13 @@
   "redesignTodayDayTomorrow": "Morgen",
   "@redesignTodayDayTomorrow": {
     "description": "redesign.today.dayTomorrow"
+  },
+  "redesignTodayDeadline": "Antwort bis {date}",
+  "@redesignTodayDeadline": {
+    "description": "redesign.today.deadline",
+    "placeholders": {
+      "date": {}
+    }
   },
   "redesignTodayDutyQuestion": "Du bist eingeteilt. Bestätigst du?",
   "@redesignTodayDutyQuestion": {
@@ -12178,7 +12935,7 @@
   "@redesignTodayNoAfterAll": {
     "description": "redesign.today.noAfterAll"
   },
-  "redesignTodayNoChildren": "Es sind noch keine Kinder mit deinem Konto verknüpft.",
+  "redesignTodayNoChildren": "Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.",
   "@redesignTodayNoChildren": {
     "description": "redesign.today.noChildren"
   },
@@ -12213,6 +12970,13 @@
       "count": {
         "type": "num"
       }
+    }
+  },
+  "redesignTodayOpenCount": "{count} offen",
+  "@redesignTodayOpenCount": {
+    "description": "redesign.today.openCount",
+    "placeholders": {
+      "count": {}
     }
   },
   "redesignTodayOtherReason": "Anderer Grund …",
@@ -12261,9 +13025,22 @@
   "@redesignTodayThisWeek": {
     "description": "redesign.today.thisWeek"
   },
+  "redesignTodayUnrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
+  "@redesignTodayUnrecorded": {
+    "description": "redesign.today.unrecorded",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "redesignTodayUpNext": "Als Nächstes",
   "@redesignTodayUpNext": {
     "description": "redesign.today.upNext"
+  },
+  "redesignTodayViewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.",
+  "@redesignTodayViewerHint": {
+    "description": "redesign.today.viewerHint"
   },
   "redesignTodayWeekEmpty": "Diese Woche kommt sonst nichts.",
   "@redesignTodayWeekEmpty": {
@@ -14871,6 +15648,10 @@
   "@signoutNoSongActions": {
     "description": "signout.noSongActions"
   },
+  "signoutNotInvited": "Nicht eingeladen",
+  "@signoutNotInvited": {
+    "description": "signout.notInvited"
+  },
   "signoutNoteChip": "Notiz: {note}",
   "@signoutNoteChip": {
     "description": "signout.noteChip",
@@ -15076,6 +15857,10 @@
   "@songsAllSongs": {
     "description": "songs.allSongs"
   },
+  "songsBeamerFile": "SongBeamer-Datei",
+  "@songsBeamerFile": {
+    "description": "songs.beamerFile"
+  },
   "songsCatalogPdf": "Werkverzeichnis als PDF",
   "@songsCatalogPdf": {
     "description": "songs.catalogPdf"
@@ -15118,6 +15903,14 @@
   "songsChoir": "Chor",
   "@songsChoir": {
     "description": "songs.choir"
+  },
+  "songsChoirAll": "Chor (alle)",
+  "@songsChoirAll": {
+    "description": "songs.choirAll"
+  },
+  "songsChoirAllHint": "Datei für alle Sängerinnen und Sänger",
+  "@songsChoirAllHint": {
+    "description": "songs.choirAllHint"
   },
   "songsChoirOrchShort": "Chor/Orch.",
   "@songsChoirOrchShort": {
@@ -15967,6 +16760,10 @@
   "@statsActiveMembers": {
     "description": "stats.activeMembers"
   },
+  "statsAdditionalFields": "🧩 Zusatzfelder",
+  "@statsAdditionalFields": {
+    "description": "stats.additionalFields"
+  },
   "statsAgeChart": "Altersverteilung 🎂",
   "@statsAgeChart": {
     "description": "stats.ageChart"
@@ -16009,6 +16806,47 @@
   "statsEventsInPeriod": "Termine im Zeitraum",
   "@statsEventsInPeriod": {
     "description": "stats.eventsInPeriod"
+  },
+  "statsFieldAllGroups": "Alle Gruppen",
+  "@statsFieldAllGroups": {
+    "description": "stats.fieldAllGroups"
+  },
+  "statsFieldGroupFilter": "Gruppe",
+  "@statsFieldGroupFilter": {
+    "description": "stats.fieldGroupFilter"
+  },
+  "statsFieldIncludePaused": "Pausierende einbeziehen",
+  "@statsFieldIncludePaused": {
+    "description": "stats.fieldIncludePaused"
+  },
+  "statsFieldNoPersons": "Für diese Auswahl gibt es keine Personen.",
+  "@statsFieldNoPersons": {
+    "description": "stats.fieldNoPersons"
+  },
+  "statsFieldNoValue": "Keine Angabe",
+  "@statsFieldNoValue": {
+    "description": "stats.fieldNoValue"
+  },
+  "statsFieldPerGroupChart": "{field} nach Gruppe (in %)",
+  "@statsFieldPerGroupChart": {
+    "description": "stats.fieldPerGroupChart",
+    "placeholders": {
+      "field": {}
+    }
+  },
+  "statsFieldSelect": "Feld",
+  "@statsFieldSelect": {
+    "description": "stats.fieldSelect"
+  },
+  "statsFieldTooltip": "{count, plural, one {{count} Person} other {{count} Personen}} ({perc}%)",
+  "@statsFieldTooltip": {
+    "description": "stats.fieldTooltip",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "perc": {}
+    }
   },
   "statsFilterTenants": "Instanzen filtern",
   "@statsFilterTenants": {
@@ -16497,6 +17335,10 @@
   "svcSaveFailed": "Fehler beim Speichern",
   "@svcSaveFailed": {
     "description": "svc.saveFailed"
+  },
+  "svcSaveGemeindeAppFailed": "Fehler beim Speichern der Gemeinde-App-Einstellungen",
+  "@svcSaveGemeindeAppFailed": {
+    "description": "svc.saveGemeindeAppFailed"
   },
   "svcSaveOrgFieldsFailed": "Fehler beim Speichern der Organisations-Zusatzfelder",
   "@svcSaveOrgFieldsFailed": {

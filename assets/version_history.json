@@ -1,15 +1,78 @@
 {
   "versions": [
     {
-      "version": "0.27.0",
-      "date": "31.10.2026",
+      "version": "0.30.0",
+      "date": "1.11.2026",
       "changes": [
         "✨ Noten-Upload: Sibelius- und MIDI-Dateien bekommen immer ihr eigenes Label, auch wenn eine Stimme im Namen steht",
-        "✨ Noten-Upload: Neue Labels „MIDI“ und „Solo“",
+        "✨ Noten-Upload: Neues Label „MIDI“; Soli kommen zur Stimme ihres Instruments (Solo-Violine bei Violine 1)",
         "✨ Werke: „Ohne …“ nennt nur noch Gruppen, in denen aktuell jemand spielt",
         "🐛 Noten-Upload: Umlaute in Dateinamen vom Mac oder aus Google Drive werden jetzt erkannt („Flöte“)",
         "✨ Noten-Upload: Erkennt jetzt auch „Generalpartitur“, „Dirigentenauszug“ und „Dirigierpartitur“ als Partitur",
         "✨ Noten-Upload: Erkennt italienische Mehrzahl („Flauti“, „Corni“, „Trombe“) und russische Kürzel („фл“, „гоб“, „валт“, „к-бас“)"
+      ]
+    },
+    {
+      "version": "0.29.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design, Eltern: Auf „Heute“ pro Kind direkt zu- oder absagen („Ist dabei“ / „Kann nicht“, Grund wie bei Spielern; „Doch absagen“ / „Doch dabei“)",
+        "✨ Beta-Design, Heute (Leitung): „5 offen“ zeigt, wer noch nicht geantwortet hat, nach Register; Push-Erinnerung an jede Person mit ihrem Namen oder den Text teilen",
+        "✨ Beta-Design, Mitglieder: „Einladen“ mit Link teilen, Kopieren und QR-Code (auch im Vollbild für die Probe); neue Gruppen starten mit der Einladung",
+        "✨ Beta-Design ohne Gruppe: Einladungslink einfügen oder QR-Code scannen und beitreten, oder eigene Gruppe gründen",
+        "✨ Beta-Design, Bewerber: Die Seite zeigt die nächsten Schritte; „Andere Gruppe beitreten“ öffnet das Beitreten mit Link statt „Neue Instanz“",
+        "💄 Beta-Design, Eltern ohne verknüpftes Kind: klarer Hinweis, dass die Gruppenleitung das übernimmt"
+      ]
+    },
+    {
+      "version": "0.28.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Dienstplan: Anwesenheit und Einteilung sind getrennt. „Anwesend“ teilt niemanden mehr ein, bestätigt aber angefragte Dienste; in der Besetzung gibt es die Liste „Anwesend, nicht eingeteilt“ (Einteilen bestätigt dort direkt ohne Push)",
+        "✨ Übersicht: Termine, zu denen du nicht eingeladen bist, sind grau, gestrichelt und mit „Nicht eingeladen“ gekennzeichnet",
+        "✨ Live Activity auch für ORG-Pläne (Admins und Verantwortliche aller Chöre der Organisation), in der Farbe des Termintyps",
+        "✨ Ablaufplan: Beamer-Dateien für die Gemeinde App (FECG Speyer/Schwegenheim, ORG-Pläne), SongBeamer-Datei am Werk, Bereich „Gemeinde App“ in den Org-Einstellungen",
+        "✨ Werke organisationsweit suchen und in eine andere Instanz kopieren",
+        "✨ Werk-Dateien: eigene Kategorie „Chor (alle)“",
+        "✨ Statistik: neuer Bereich „Zusatzfelder“ mit Ringdiagramm und Verteilung pro Gruppe",
+        "🐛 Werk-Dateien öffnen jetzt auch in der installierten Web-App und in der iPhone-App auf dem Mac",
+        "🐛 Ad-hoc-Ablaufplanung zeigt die Org-Zuordnung zuverlässig an"
+      ]
+    },
+    {
+      "version": "0.27.0",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design, Termine für Helfer: In der Terminliste zeigt ein „Du ✓/?/✕“ die eigene Antwort; antippen öffnet Zusage oder Absage mit denselben Gründen wie auf „Heute“. „Abwesend …“ gibt es jetzt auch für Helfer",
+        "✨ Beta-Design, Ich: Die eigene Anwesenheit steht direkt unter dem Profil (Prozent, Balken, Anzahl Verspätungen)",
+        "✨ Beta-Design, Heute: Die Antwortfrist steht schon vor dem Ablauf beim Termin („Antwort bis Fr 2.11., 18:00“), in den letzten 24 Stunden rot",
+        "✨ Beta-Design, Heute (Leitung): Neuer Hinweis „Termine noch nicht erfasst“ für vergangene Termine der letzten zwei Wochen, bei denen noch Personen ohne Status sind; antippen öffnet die Erfassung",
+        "✨ Beta-Design, Mitglieder: Filter „Fehlen oft“ zeigt nur die als kritisch markierten Mitglieder; der Hinweis auf „Heute“ öffnet die Liste schon gefiltert",
+        "💄 Beta-Design für Beobachter: Ein kurzer Hinweis erklärt, dass Termine nur die Leitung öffnet; Termine sehen nicht mehr antippbar aus",
+        "💄 Beta-Design, Ich: „Abmelden“ heißt jetzt „Ausloggen“, damit „Abmelden“ nur noch Absagen meint"
+      ]
+    },
+    {
+      "version": "0.26.3",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Beta-Design am breiten Bildschirm: Ist links kein Werk oder keine Person gewählt, zeigt die rechte Spalte jetzt einen Überblick (Zahlen, als Nächstes geplant, Werke ohne Noten, lange nicht dran, Geburtstage, auffällige Anwesenheit) statt eines leeren Kastens",
+        "💄 Beta-Design, Werk: Das Tastatur-Symbol über der Dateiliste ist weg; die Tastenkürzel stehen jetzt unter Ich › Hilfe und erscheinen mit „?“ in der Dateiliste"
+      ]
+    },
+    {
+      "version": "0.26.2",
+      "date": "31.10.2026",
+      "changes": [
+        "🐛 Neues Design (Beta): Benachrichtigungen, Push-Nachrichten und Anwesenheits-Links öffnen den Termin jetzt im neuen Design statt auf der alten Termin-Seite bzw. in „Meine Termine“",
+        "🐛 Neues Design (Beta): Benachrichtigungen zu einem Termin, der nicht mehr in deiner Liste steht, zeigen einen Hinweis statt nichts zu tun"
+      ]
+    },
+    {
+      "version": "0.26.1",
+      "date": "31.10.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Die Upload-Leiste bei den Dateien eines Werks blendet sich nach erfolgreichem Hochladen nach kurzer Zeit selbst aus; bei einem Fehler bleibt sie zum erneuten Versuchen stehen"
       ]
     },
     {

@@ -507,6 +507,11 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
       return KeyEventResult.handled;
     }
 
+    if (event.character == '?') {
+      showRdWorkFilesShortcuts(context);
+      return KeyEventResult.handled;
+    }
+
     final cursorFile = files.where((f) => f.url == _cursor).firstOrNull;
     switch (key) {
       case LogicalKeyboardKey.enter:
@@ -543,9 +548,6 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
     // Rows that disappeared (deleted elsewhere) leave the selection.
     final selected = _selected.where(urls.contains).toSet();
     final allSelected = files.isNotEmpty && selected.length == files.length;
-    final isMac = defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;
-    final modLabel = isMac ? '⌘' : (Localizations.localeOf(context).languageCode == 'de' ? 'Strg' : 'Ctrl');
-
     final toolbar = Row(
       children: [
         Expanded(
@@ -583,15 +585,6 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
               label: l10n.redesignFilesDownloadAll,
               onPressed: _busy ? null : () => _download(files),
             ),
-          IconButton(
-            tooltip: l10n.redesignFilesShortcuts,
-            icon: Icon(Icons.keyboard_outlined, color: p.text2),
-            onPressed:
-                () => showAppDialog<void>(
-                  context: context,
-                  builder: (_) => _ShortcutsDialog(help: l10n.redesignFilesShortcutsHelp(modLabel)),
-                ),
-          ),
           const SizedBox(width: 4),
           RdPrimaryButton(
             label: l10n.redesignFilesUpload,
@@ -611,15 +604,24 @@ class _RdWorkFilesState extends ConsumerState<RdWorkFiles> {
         children: [
           toolbar,
           const SizedBox(height: 10),
-          if (state.uploads.isNotEmpty) ...[
-            _UploadQueue(
-              state: state,
-              groups: widget.groups,
-              onRetry: (id) => ref.read(rdWorkFilesProvider(_songId).notifier).retry(id),
-              onDismiss: () => ref.read(rdWorkFilesProvider(_songId).notifier).dismissFinished(),
-            ),
-            const SizedBox(height: 12),
-          ],
+          // Collapses smoothly once everything is uploaded (see rdUploadQueueHideDelay).
+          AnimatedSize(
+            duration: const Duration(milliseconds: 250),
+            curve: Curves.easeOut,
+            alignment: Alignment.topCenter,
+            child:
+                state.uploads.isEmpty
+                    ? const SizedBox(width: double.infinity)
+                    : Padding(
+                      padding: const EdgeInsets.only(bottom: 12),
+                      child: _UploadQueue(
+                        state: state,
+                        groups: widget.groups,
+                        onRetry: (id) => ref.read(rdWorkFilesProvider(_songId).notifier).retry(id),
+                        onDismiss: () => ref.read(rdWorkFilesProvider(_songId).notifier).dismissFinished(),
+                      ),
+                    ),
+          ),
           if (_busy) ...[
             LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
             const SizedBox(height: 8),
@@ -1337,7 +1339,18 @@ class _ReviewDialogState extends State<_ReviewDialog> {
   }
 }
 
-/// The shortcuts of the file table, one per line (the toolbar's keyboard icon).
+/// Shows the file table's keyboard shortcuts (Ich › Hilfe, or "?" in
+/// the file table). Kept out of the toolbar so the main UI stays calm.
+Future<void> showRdWorkFilesShortcuts(BuildContext context) {
+  final isMac = defaultTargetPlatform == TargetPlatform.macOS || defaultTargetPlatform == TargetPlatform.iOS;
+  final modLabel = isMac ? '⌘' : (Localizations.localeOf(context).languageCode == 'de' ? 'Strg' : 'Ctrl');
+  return showAppDialog<void>(
+    context: context,
+    builder: (_) => _ShortcutsDialog(help: context.l10n.redesignFilesShortcutsHelp(modLabel)),
+  );
+}
+
+/// The shortcuts of the file table, one per line.
 class _ShortcutsDialog extends StatelessWidget {
   const _ShortcutsDialog({required this.help});
 

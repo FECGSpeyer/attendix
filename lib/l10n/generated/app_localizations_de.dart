@@ -1256,6 +1256,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendancePlace => 'Ort';
 
   @override
+  String get attendancePresentNotAssigned => 'Anwesend, nicht eingeteilt';
+
+  @override
   String get attendancePresentPeople => 'Anwesende';
 
   @override
@@ -3188,6 +3191,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get extraFieldsYesNo => 'Ja/Nein';
 
   @override
+  String get fileViewerDownloadFailed => 'Datei konnte nicht heruntergeladen werden';
+
+  @override
+  String get fileViewerNoPreview => 'Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.';
+
+  @override
   String get filesAlmostFull => ' · fast voll';
 
   @override
@@ -5063,6 +5072,50 @@ class AppLocalizationsDe extends AppLocalizations {
   String get orgFlutterUnlinkFailed => 'Fehler beim Trennen';
 
   @override
+  String get orgGaBeamerFiles => 'Beamer-Dateien im Ablaufplan';
+
+  @override
+  String get orgGaBeamerFilesHint => 'Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.';
+
+  @override
+  String get orgGaCopied => 'Schlüssel kopiert';
+
+  @override
+  String get orgGaCopy => 'Kopieren';
+
+  @override
+  String get orgGaCreateKey => 'Verbindungsschlüssel erstellen';
+
+  @override
+  String get orgGaHint => 'Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.';
+
+  @override
+  String orgGaKeyActive(Object hint) {
+    return 'Schlüssel aktiv, endet auf …$hint';
+  }
+
+  @override
+  String get orgGaKeyHeader => 'Verbindungsschlüssel';
+
+  @override
+  String get orgGaKeyMessage => 'Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.';
+
+  @override
+  String get orgGaNoKey => 'Noch nicht mit der Gemeinde App verbunden';
+
+  @override
+  String get orgGaRenewButton => 'Erneuern';
+
+  @override
+  String get orgGaRenewKey => 'Schlüssel erneuern';
+
+  @override
+  String get orgGaRenewMessage => 'Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.';
+
+  @override
+  String get orgGemeindeApp => 'Gemeinde App';
+
+  @override
   String get orgHandover => 'Übergabe';
 
   @override
@@ -5115,6 +5168,201 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orgSongSyncIntro => 'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.';
+
+  @override
+  String get orgSongsAlreadyOwn => 'Schon bei dir';
+
+  @override
+  String orgSongsCopiedFrom(Object tenant, Object date) {
+    return 'Kopiert aus $tenant am $date';
+  }
+
+  @override
+  String orgSongsCopiedTo(Object name, Object tenant) {
+    return '„$name“ wurde nach $tenant kopiert.';
+  }
+
+  @override
+  String get orgSongsCopyAsNew => 'Als neues Werk kopieren';
+
+  @override
+  String get orgSongsCopyHint => 'Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.';
+
+  @override
+  String get orgSongsCopyIntoExisting => 'In vorhandenes Werk kopieren';
+
+  @override
+  String orgSongsCurrentValue(Object value) {
+    return 'Im Ziel: $value';
+  }
+
+  @override
+  String orgSongsDuplicateWarning(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Im Ziel gibt es schon $count Werke mit diesem Namen.',
+      one: 'Im Ziel gibt es schon ein Werk mit diesem Namen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSongsEntryHint => 'Werke anderer Instanzen finden und übernehmen';
+
+  @override
+  String get orgSongsExistingSong => 'Werk';
+
+  @override
+  String get orgSongsFieldBeamer => 'Beamer-Datei';
+
+  @override
+  String get orgSongsFieldCategories => 'Kategorien';
+
+  @override
+  String get orgSongsFieldChoirSolo => 'Besetzung';
+
+  @override
+  String get orgSongsFieldDifficulty => 'Schwierigkeit';
+
+  @override
+  String get orgSongsFields => 'Felder übernehmen';
+
+  @override
+  String orgSongsFileCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Dateien',
+      one: '$count Datei',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get orgSongsFileExists => 'Gleichnamige Datei ist schon im Werk';
+
+  @override
+  String orgSongsFiles(Object selected, Object total) {
+    return 'Dateien ($selected von $total)';
+  }
+
+  @override
+  String orgSongsFromTenant(Object tenant) {
+    return 'aus $tenant';
+  }
+
+  @override
+  String get orgSongsMenuEntry => 'In der Organisation suchen';
+
+  @override
+  String orgSongsMergedInto(Object name, Object tenant) {
+    return '„$name“ wurde in das vorhandene Werk in $tenant übernommen.';
+  }
+
+  @override
+  String get orgSongsModeExisting => 'In vorhandenes Werk kopieren';
+
+  @override
+  String get orgSongsModeNew => 'Als neues Werk anlegen';
+
+  @override
+  String get orgSongsNoPermission => 'Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.';
+
+  @override
+  String get orgSongsNoResults => 'Keine Werke gefunden.';
+
+  @override
+  String get orgSongsNoTargets => 'Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.';
+
+  @override
+  String get orgSongsNumber => 'Nummer';
+
+  @override
+  String get orgSongsNumberTaken => 'Diese Nummer ist im Ziel schon vergeben.';
+
+  @override
+  String get orgSongsOnlyWithFiles => 'Nur mit Dateien';
+
+  @override
+  String get orgSongsOverwriteConfirm => 'Überschreiben';
+
+  @override
+  String get orgSongsOverwriteHeader => 'Werte überschreiben?';
+
+  @override
+  String orgSongsOverwriteMessage(Object fields) {
+    return 'Diese Felder haben im Ziel schon einen Wert und werden überschrieben: $fields';
+  }
+
+  @override
+  String get orgSongsPrefix => 'Präfix';
+
+  @override
+  String orgSongsResultCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Treffer',
+      one: '$count Treffer',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String orgSongsSearchFailed(Object error) {
+    return 'Suche fehlgeschlagen: $error';
+  }
+
+  @override
+  String get orgSongsSearchPh => 'Name oder Nummer';
+
+  @override
+  String get orgSongsSection => 'Werke';
+
+  @override
+  String get orgSongsSelectAll => 'Alle';
+
+  @override
+  String get orgSongsSelectNone => 'Keine';
+
+  @override
+  String orgSongsSourceGroup(Object group) {
+    return 'Dort: $group';
+  }
+
+  @override
+  String orgSongsSyncedTarget(Object tenant, Object library) {
+    return '$tenant nutzt die Werke von $library. Das Werk wird dort gespeichert.';
+  }
+
+  @override
+  String get orgSongsTarget => 'Ziel';
+
+  @override
+  String get orgSongsTargetGroup => 'Gruppe im Ziel';
+
+  @override
+  String orgSongsTargetLoadFailed(Object error) {
+    return 'Zielinstanz konnte nicht geladen werden: $error';
+  }
+
+  @override
+  String get orgSongsTargetMissing => 'Das Zielwerk wurde nicht gefunden.';
+
+  @override
+  String get orgSongsTitle => 'Werke in der Organisation suchen';
+
+  @override
+  String orgSongsUseNextFree(Object number) {
+    return 'Tippen für die nächste freie Nummer: $number';
+  }
+
+  @override
+  String get orgSongsWithChoir => 'mit Chor';
+
+  @override
+  String get orgSongsWithSolo => 'mit Solo';
 
   @override
   String get orgSourceTenant => 'Quellinstanz';
@@ -6673,6 +6921,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get planningBass => 'Bass';
 
   @override
+  String get planningBeamer => 'Beamer';
+
+  @override
+  String get planningBeamerAutoHint => 'Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.';
+
+  @override
+  String get planningBeamerAutoSong => 'Automatisch an: Werk';
+
+  @override
+  String planningBeamerAutoWord(Object word) {
+    return 'Automatisch an: Titel enthält „$word“';
+  }
+
+  @override
+  String get planningBeamerChangeInApp => 'Ändern kannst du die Datei in der Gemeinde App.';
+
+  @override
+  String get planningBeamerLinkInApp => 'Verknüpfen kannst du die Datei in der Gemeinde App.';
+
+  @override
+  String get planningBeamerMissing => 'Beamer-Datei fehlt';
+
+  @override
+  String get planningBeamerNeeded => 'Beamer-Datei nötig';
+
+  @override
+  String get planningBeamerNoFile => 'Noch keine Datei verknüpft';
+
+  @override
   String get planningBlockDurationHint => 'Die Dauer ergibt sich aus den Unterpunkten.';
 
   @override
@@ -7143,6 +7420,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get plansAddOrgFailed => 'Fehler beim Hinzufügen zur Organisation';
 
   @override
+  String get plansAddToOrg => 'Zur Organisation hinzufügen';
+
+  @override
   String plansAddedToOrg(Object org) {
     return 'Plan zur Organisation \"$org\" hinzugefügt';
   }
@@ -7217,6 +7497,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get plansImageA4 => 'Bild (A4)';
+
+  @override
+  String plansInOrg(Object org) {
+    return 'In Organisation \"$org\"';
+  }
 
   @override
   String get plansLinkCopied => 'Link kopiert';
@@ -8508,6 +8793,14 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventsYes => 'Dabei';
 
   @override
+  String get redesignEventsYou => 'Du';
+
+  @override
+  String redesignEventsYourAnswerLabel(Object status) {
+    return 'Deine Antwort: $status';
+  }
+
+  @override
   String redesignFilesActions(Object name) {
     return 'Aktionen für $name';
   }
@@ -8635,7 +8928,7 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String redesignFilesShortcutsHelp(Object mod) {
-    return '↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · $mod+U hochladen · $mod+A alle · $mod+D herunterladen · $mod+Z rückgängig · F2 umbenennen';
+    return '↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · $mod+U hochladen · $mod+A alle · $mod+D herunterladen · $mod+Z rückgängig · F2 umbenennen · ? diese Übersicht';
   }
 
   @override
@@ -8669,6 +8962,125 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignGroupsTitle => 'Gruppe wechseln';
+
+  @override
+  String get redesignInviteAddPerson => 'Person anlegen';
+
+  @override
+  String get redesignInviteButton => 'Einladen';
+
+  @override
+  String get redesignInviteCopied => 'Link kopiert';
+
+  @override
+  String get redesignInviteCopy => 'Kopieren';
+
+  @override
+  String get redesignInviteEmptyMembers => 'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.';
+
+  @override
+  String get redesignInviteFullscreen => 'Vollbild zeigen';
+
+  @override
+  String get redesignInviteIntro => 'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.';
+
+  @override
+  String get redesignInviteIntroAuto => 'Wer den Link öffnet, meldet sich an und ist gleich dabei.';
+
+  @override
+  String get redesignInviteOff => 'Die Anmeldung per Link ist für diese Gruppe aus.';
+
+  @override
+  String redesignInviteQrLabel(Object group) {
+    return 'QR-Code für die Anmeldung bei $group';
+  }
+
+  @override
+  String get redesignInviteShare => 'Link teilen';
+
+  @override
+  String redesignInviteShareSubject(Object group) {
+    return 'Melde dich bei $group in Attendix an:';
+  }
+
+  @override
+  String get redesignInviteTitle => 'Mitglieder einladen';
+
+  @override
+  String get redesignInviteTurnOn => 'In den Einstellungen einschalten';
+
+  @override
+  String get redesignJoinContinue => 'Weiter zur Anmeldung';
+
+  @override
+  String get redesignJoinCreate => 'Eigene Gruppe gründen';
+
+  @override
+  String get redesignJoinCreateButton => 'Gruppe gründen';
+
+  @override
+  String get redesignJoinCreateHint => 'Für Leitungen, die Attendix neu einführen';
+
+  @override
+  String redesignJoinFound(Object group) {
+    return '$group gefunden';
+  }
+
+  @override
+  String get redesignJoinHaveInvite => 'Ich habe eine Einladung';
+
+  @override
+  String get redesignJoinHaveInviteHint => 'Link einfügen oder QR-Code scannen';
+
+  @override
+  String get redesignJoinIntro => 'Füge den Link aus der Einladung ein.';
+
+  @override
+  String get redesignJoinInvalid => 'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).';
+
+  @override
+  String get redesignJoinLabel => 'Einladungslink';
+
+  @override
+  String get redesignJoinNoGroup => 'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.';
+
+  @override
+  String get redesignJoinNotFound => 'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.';
+
+  @override
+  String get redesignJoinScan => 'QR-Code scannen';
+
+  @override
+  String get redesignJoinScanHint => 'Halte die Kamera auf den QR-Code der Einladung.';
+
+  @override
+  String get redesignJoinScanNoCamera => 'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.';
+
+  @override
+  String get redesignJoinScanTitle => 'Einladung scannen';
+
+  @override
+  String get redesignJoinScanWrong => 'Das ist kein Einladungs-Code von Attendix.';
+
+  @override
+  String get redesignJoinStepCheck => 'Die Leitung prüft deine Angaben';
+
+  @override
+  String get redesignJoinStepNotify => 'Du bekommst eine Benachrichtigung, sobald du freigegeben bist';
+
+  @override
+  String redesignJoinStepReceived(Object date) {
+    return 'Anmeldung eingegangen am $date';
+  }
+
+  @override
+  String get redesignJoinStepReceivedNoDate => 'Anmeldung eingegangen';
+
+  @override
+  String get redesignJoinTitle => 'Gruppe beitreten';
+
+  @override
+  String get redesignJoinWelcomeNoName => 'Willkommen';
 
   @override
   String get redesignManageAnnouncementsHint => 'Gesendete Mitteilungen ansehen';
@@ -8762,6 +9174,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeApp => 'App';
 
   @override
+  String get redesignMeAttendance => 'Deine Anwesenheit';
+
+  @override
+  String redesignMeAttendanceLate(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count × verspätet',
+      one: '1 × verspätet',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignMeBeta => 'Neues Design (Beta)';
 
   @override
@@ -8788,7 +9214,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignMeHelp => 'Hilfe';
 
   @override
-  String get redesignMeLogout => 'Abmelden';
+  String get redesignMeLogout => 'Ausloggen';
 
   @override
   String get redesignMeNotifications => 'Benachrichtigungen';
@@ -8829,6 +9255,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignMembersBirthdayTomorrow => 'Geburtstag morgen';
+
+  @override
+  String redesignMembersCritical(Object count) {
+    return 'Fehlen oft · $count';
+  }
 
   @override
   String get redesignMembersEmpty => 'Noch keine Mitglieder.';
@@ -9051,6 +9482,82 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String redesignRemindBody(Object event, Object when) {
+    return 'für „$event“ am $when fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!';
+  }
+
+  @override
+  String get redesignRemindCopied => 'Text kopiert';
+
+  @override
+  String get redesignRemindFailed => 'Senden hat nicht geklappt.';
+
+  @override
+  String redesignRemindHello(Object name) {
+    return 'Hallo $name,';
+  }
+
+  @override
+  String get redesignRemindHelloAll => 'Hallo zusammen,';
+
+  @override
+  String get redesignRemindHint => 'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.';
+
+  @override
+  String get redesignRemindMessageLabel => 'Nachricht (beginnt mit „Hallo Vorname,“)';
+
+  @override
+  String get redesignRemindNoApp => 'ohne App';
+
+  @override
+  String redesignRemindOpenLink(Object count) {
+    return '$count offen';
+  }
+
+  @override
+  String redesignRemindPartlyFailed(Object sent, Object failed) {
+    return '$sent gesendet, $failed fehlgeschlagen';
+  }
+
+  @override
+  String redesignRemindPush(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Push an $count Personen senden',
+      one: 'Push an 1 Person senden',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignRemindReached => 'erinnert';
+
+  @override
+  String redesignRemindSent(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Erinnerung an $count Personen gesendet',
+      one: 'Erinnerung an 1 Person gesendet',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignRemindShare => 'Als Text teilen';
+
+  @override
+  String redesignRemindShareText(Object event, Object when) {
+    return 'Hallo zusammen, für „$event“ am $when fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!';
+  }
+
+  @override
+  String redesignRemindTitle(Object count) {
+    return '$count noch offen';
+  }
+
+  @override
   String get redesignSignoutCannot => 'Ich kann nicht';
 
   @override
@@ -9078,10 +9585,65 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignSplitEventsEmpty => 'Wähle links einen Termin aus.';
 
   @override
+  String get redesignSplitMembersActive => 'aktiv';
+
+  @override
+  String get redesignSplitMembersBirthdays => 'Nächste Geburtstage';
+
+  @override
+  String get redesignSplitMembersCritical => 'Auffällige Anwesenheit';
+
+  @override
   String get redesignSplitMembersEmpty => 'Wähle links eine Person aus.';
 
   @override
+  String get redesignSplitMembersHint => 'Wähle links eine Person aus.';
+
+  @override
+  String get redesignSplitMembersPaused => 'pausiert';
+
+  @override
+  String get redesignSplitMembersPending => 'Anfragen';
+
+  @override
+  String redesignSplitMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'und $count weitere',
+      one: 'und 1 weiteres',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignSplitOverviewTitle => 'Überblick';
+
+  @override
+  String get redesignSplitWorksCount => 'Werke';
+
+  @override
   String get redesignSplitWorksEmpty => 'Wähle links ein Werk aus.';
+
+  @override
+  String get redesignSplitWorksHint => 'Wähle links ein Werk aus oder fang hier an.';
+
+  @override
+  String get redesignSplitWorksLongAgo => 'Am längsten nicht dran';
+
+  @override
+  String get redesignSplitWorksMissing => 'Noch ohne Noten';
+
+  @override
+  String redesignSplitWorksNext(Object date) {
+    return 'Als Nächstes geplant · $date';
+  }
+
+  @override
+  String get redesignSplitWorksWithFiles => 'mit Noten';
+
+  @override
+  String get redesignSplitWorksWithoutFiles => 'ohne Noten';
 
   @override
   String get redesignStatsAvg => 'Ø Anwesenheit';
@@ -9202,6 +9764,23 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignTodayChildFailed => 'Das hat nicht geklappt. Bitte versuch es noch einmal.';
+
+  @override
+  String get redesignTodayChildIn => 'Dabei';
+
+  @override
+  String get redesignTodayChildNo => 'Kann nicht';
+
+  @override
+  String redesignTodayChildOpen(Object name) {
+    return '$name offen';
+  }
+
+  @override
+  String get redesignTodayChildYes => 'Ist dabei';
+
+  @override
   String redesignTodayCountAbsent(Object count) {
     return '$count abwesend';
   }
@@ -9245,6 +9824,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignTodayDayTomorrow => 'Morgen';
+
+  @override
+  String redesignTodayDeadline(Object date) {
+    return 'Antwort bis $date';
+  }
 
   @override
   String get redesignTodayDutyQuestion => 'Du bist eingeteilt. Bestätigst du?';
@@ -9304,7 +9888,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayNoAfterAll => 'Doch absagen';
 
   @override
-  String get redesignTodayNoChildren => 'Es sind noch keine Kinder mit deinem Konto verknüpft.';
+  String get redesignTodayNoChildren => 'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.';
 
   @override
   String get redesignTodayNoDone => 'Abgemeldet';
@@ -9333,6 +9917,11 @@ class AppLocalizationsDe extends AppLocalizations {
       one: 'Benachrichtigungen, $count ungelesen',
     );
     return '$_temp0';
+  }
+
+  @override
+  String redesignTodayOpenCount(Object count) {
+    return '$count offen';
   }
 
   @override
@@ -9379,7 +9968,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayThisWeek => 'Diese Woche';
 
   @override
+  String redesignTodayUnrecorded(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine noch nicht erfasst',
+      one: '1 Termin noch nicht erfasst',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get redesignTodayUpNext => 'Als Nächstes';
+
+  @override
+  String get redesignTodayViewerHint => 'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.';
 
   @override
   String get redesignTodayWeekEmpty => 'Diese Woche kommt sonst nichts.';
@@ -11360,6 +11963,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get signoutNoSongActions => 'Für dieses Werk sind keine Aktionen verfügbar.';
 
   @override
+  String get signoutNotInvited => 'Nicht eingeladen';
+
+  @override
   String signoutNoteChip(Object note) {
     return 'Notiz: $note';
   }
@@ -11513,6 +12119,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get songsAllSongs => 'Alle Werke';
 
   @override
+  String get songsBeamerFile => 'SongBeamer-Datei';
+
+  @override
   String get songsCatalogPdf => 'Werkverzeichnis als PDF';
 
   @override
@@ -11543,6 +12152,12 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get songsChoir => 'Chor';
+
+  @override
+  String get songsChoirAll => 'Chor (alle)';
+
+  @override
+  String get songsChoirAllHint => 'Datei für alle Sängerinnen und Sänger';
 
   @override
   String get songsChoirOrchShort => 'Chor/Orch.';
@@ -12188,6 +12803,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get statsActiveMembers => 'Aktive Mitglieder';
 
   @override
+  String get statsAdditionalFields => '🧩 Zusatzfelder';
+
+  @override
   String get statsAgeChart => 'Altersverteilung 🎂';
 
   @override
@@ -12218,6 +12836,40 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get statsEventsInPeriod => 'Termine im Zeitraum';
+
+  @override
+  String get statsFieldAllGroups => 'Alle Gruppen';
+
+  @override
+  String get statsFieldGroupFilter => 'Gruppe';
+
+  @override
+  String get statsFieldIncludePaused => 'Pausierende einbeziehen';
+
+  @override
+  String get statsFieldNoPersons => 'Für diese Auswahl gibt es keine Personen.';
+
+  @override
+  String get statsFieldNoValue => 'Keine Angabe';
+
+  @override
+  String statsFieldPerGroupChart(Object field) {
+    return '$field nach Gruppe (in %)';
+  }
+
+  @override
+  String get statsFieldSelect => 'Feld';
+
+  @override
+  String statsFieldTooltip(num count, Object perc) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '$count Person',
+    );
+    return '$_temp0 ($perc%)';
+  }
 
   @override
   String get statsFilterTenants => 'Instanzen filtern';
@@ -12581,6 +13233,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get svcSaveFailed => 'Fehler beim Speichern';
+
+  @override
+  String get svcSaveGemeindeAppFailed => 'Fehler beim Speichern der Gemeinde-App-Einstellungen';
 
   @override
   String get svcSaveOrgFieldsFailed => 'Fehler beim Speichern der Organisations-Zusatzfelder';

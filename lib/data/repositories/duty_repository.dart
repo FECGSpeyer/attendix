@@ -73,7 +73,14 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Leadership assigns persons; they get a push and have to confirm.
-  Future<void> assign(List<String> personAttendanceIds, int attendanceId) async {
+  ///
+  /// Those listed in [presentIds] are already marked present: they keep their
+  /// status, are confirmed right away and get no request push (Ionic 4.17.9).
+  Future<void> assign(
+    List<String> personAttendanceIds,
+    int attendanceId, {
+    List<String> presentIds = const [],
+  }) async {
     if (personAttendanceIds.isEmpty) return;
     ensureNotDemo('assignDuty'); // DEMO_GUARD
     try {
@@ -81,6 +88,22 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
       if (validIds.isEmpty) {
         throw RepositoryException(message: l10nWithoutContext.coreFlutterRepoNoValidPersons, operation: 'assign');
       }
+      final validIdsPresent = validIds.where(presentIds.contains).toList();
+      final validIdsRequested = validIds.where((id) => !presentIds.contains(id)).toList();
+
+      if (validIdsPresent.isNotEmpty) {
+        // person_attendances has no tenantId: ids validated above via attendance.tenantId
+        await supabase.from('person_attendances').update({
+          'duty_state': DutyState.confirmed,
+          'duty_assigned_by': _userId,
+          'duty_assigned_at': _nowIso(),
+          'duty_reminder_sent': true,
+          'changed_by': _userId,
+          'changed_at': _nowIso(),
+        }).inFilter('id', validIdsPresent);
+      }
+      if (validIdsRequested.isEmpty) return;
+
       // person_attendances has no tenantId: ids validated above via attendance.tenantId
       await supabase.from('person_attendances').update({
         'duty_state': DutyState.requested,
@@ -91,17 +114,18 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
         'duty_reminder_sent': false,
         'changed_by': _userId,
         'changed_at': _nowIso(),
-      }).inFilter('id', validIds);
+      }).inFilter('id', validIdsRequested);
 
-      await notify(DutyNotifyType.assigned, attendanceId, personAttendanceIds: validIds);
+      await notify(DutyNotifyType.assigned, attendanceId, personAttendanceIds: validIdsRequested);
     } catch (e, stack) {
       handleError(e, stack, 'assign');
       rethrow;
     }
   }
 
-  /// Removes an assignment; the person is a stand-in again.
-  Future<void> unassign(String personAttendanceId) async {
+  /// Removes an assignment; the person is a stand-in again. With [keepStatus]
+  /// the attendance (e.g. present) stays as it is (Ionic 4.17.9).
+  Future<void> unassign(String personAttendanceId, {bool keepStatus = false}) async {
     try {
       final validIds = await _validIdsForTenant([personAttendanceId]);
       if (validIds.isEmpty) {
@@ -110,8 +134,10 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
       // person_attendances has no tenantId: id validated above via attendance.tenantId
       await supabase.from('person_attendances').update({
         'duty_state': null,
-        'status': AttendanceStatus.neutral.value,
-        'notes': '',
+        if (!keepStatus) ...{
+          'status': AttendanceStatus.neutral.value,
+          'notes': '',
+        },
         'duty_assigned_by': null,
         'duty_assigned_at': null,
         'changed_by': _userId,

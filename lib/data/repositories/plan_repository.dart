@@ -272,4 +272,26 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
       rethrow;
     }
   }
+
+  /// Ionic 4.17.15 `syncOrgStateFromDb`: the org assignment (`org_id`) of an
+  /// ad-hoc plan of the current user, or null when the row is not found
+  /// (then the local state stays).
+  Future<({int? orgId})?> getMySharedPlanOrg(String id) async {
+    try {
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return null;
+      final row = await supabase
+          .from('shared_plans')
+          .select('org_id')
+          .eq('id', id)
+          .eq('creator_user_id', userId)
+          .maybeSingle();
+      if (row == null) return null;
+      final orgId = row['org_id'];
+      return (orgId: orgId is int ? orgId : int.tryParse('${orgId ?? ''}'));
+    } catch (e, stack) {
+      handleError(e, stack, 'getMySharedPlanOrg');
+      rethrow;
+    }
+  }
 }

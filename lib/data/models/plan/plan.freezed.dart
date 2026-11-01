@@ -48,6 +48,18 @@ mixin _$PlanField {
   @PlanBoolConverter()
   bool get isNote => throw _privateConstructorUsedError;
 
+  /// Stable id of the row (Gemeinde App link); song rows reuse the song id
+  /// as [id], which repeats (see `PlanBeamer.ensureFieldUids`).
+  String? get uid => throw _privateConstructorUsedError;
+
+  /// "Beamer-Datei nötig", set only when switched by hand; otherwise
+  /// derived from the row (see `PlanBeamer.needsBeamer`).
+  bool? get needsBeamer => throw _privateConstructorUsedError;
+
+  /// SongBeamer file linked in the Gemeinde App.
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile => throw _privateConstructorUsedError;
+
   /// Serializes this PlanField to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
 
@@ -75,7 +87,12 @@ abstract class $PlanFieldCopyWith<$Res> {
     @PlanBoolConverter() bool isGroup,
     String? groupId,
     @JsonKey(includeToJson: false) @PlanBoolConverter() bool isNote,
+    String? uid,
+    bool? needsBeamer,
+    @BeamerFileConverter() BeamerFile? beamerFile,
   });
+
+  $BeamerFileCopyWith<$Res>? get beamerFile;
 }
 
 /// @nodoc
@@ -104,6 +121,9 @@ class _$PlanFieldCopyWithImpl<$Res, $Val extends PlanField>
     Object? isGroup = null,
     Object? groupId = freezed,
     Object? isNote = null,
+    Object? uid = freezed,
+    Object? needsBeamer = freezed,
+    Object? beamerFile = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -162,9 +182,38 @@ class _$PlanFieldCopyWithImpl<$Res, $Val extends PlanField>
                     ? _value.isNote
                     : isNote // ignore: cast_nullable_to_non_nullable
                         as bool,
+            uid:
+                freezed == uid
+                    ? _value.uid
+                    : uid // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            needsBeamer:
+                freezed == needsBeamer
+                    ? _value.needsBeamer
+                    : needsBeamer // ignore: cast_nullable_to_non_nullable
+                        as bool?,
+            beamerFile:
+                freezed == beamerFile
+                    ? _value.beamerFile
+                    : beamerFile // ignore: cast_nullable_to_non_nullable
+                        as BeamerFile?,
           )
           as $Val,
     );
+  }
+
+  /// Create a copy of PlanField
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @pragma('vm:prefer-inline')
+  $BeamerFileCopyWith<$Res>? get beamerFile {
+    if (_value.beamerFile == null) {
+      return null;
+    }
+
+    return $BeamerFileCopyWith<$Res>(_value.beamerFile!, (value) {
+      return _then(_value.copyWith(beamerFile: value) as $Val);
+    });
   }
 }
 
@@ -189,7 +238,13 @@ abstract class _$$PlanFieldImplCopyWith<$Res>
     @PlanBoolConverter() bool isGroup,
     String? groupId,
     @JsonKey(includeToJson: false) @PlanBoolConverter() bool isNote,
+    String? uid,
+    bool? needsBeamer,
+    @BeamerFileConverter() BeamerFile? beamerFile,
   });
+
+  @override
+  $BeamerFileCopyWith<$Res>? get beamerFile;
 }
 
 /// @nodoc
@@ -217,6 +272,9 @@ class __$$PlanFieldImplCopyWithImpl<$Res>
     Object? isGroup = null,
     Object? groupId = freezed,
     Object? isNote = null,
+    Object? uid = freezed,
+    Object? needsBeamer = freezed,
+    Object? beamerFile = freezed,
   }) {
     return _then(
       _$PlanFieldImpl(
@@ -275,6 +333,21 @@ class __$$PlanFieldImplCopyWithImpl<$Res>
                 ? _value.isNote
                 : isNote // ignore: cast_nullable_to_non_nullable
                     as bool,
+        uid:
+            freezed == uid
+                ? _value.uid
+                : uid // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        needsBeamer:
+            freezed == needsBeamer
+                ? _value.needsBeamer
+                : needsBeamer // ignore: cast_nullable_to_non_nullable
+                    as bool?,
+        beamerFile:
+            freezed == beamerFile
+                ? _value.beamerFile
+                : beamerFile // ignore: cast_nullable_to_non_nullable
+                    as BeamerFile?,
       ),
     );
   }
@@ -296,6 +369,9 @@ class _$PlanFieldImpl implements _PlanField {
     @PlanBoolConverter() this.isGroup = false,
     this.groupId,
     @JsonKey(includeToJson: false) @PlanBoolConverter() this.isNote = false,
+    this.uid,
+    this.needsBeamer,
+    @BeamerFileConverter() this.beamerFile,
   });
 
   factory _$PlanFieldImpl.fromJson(Map<String, dynamic> json) =>
@@ -341,9 +417,24 @@ class _$PlanFieldImpl implements _PlanField {
   @PlanBoolConverter()
   final bool isNote;
 
+  /// Stable id of the row (Gemeinde App link); song rows reuse the song id
+  /// as [id], which repeats (see `PlanBeamer.ensureFieldUids`).
+  @override
+  final String? uid;
+
+  /// "Beamer-Datei nötig", set only when switched by hand; otherwise
+  /// derived from the row (see `PlanBeamer.needsBeamer`).
+  @override
+  final bool? needsBeamer;
+
+  /// SongBeamer file linked in the Gemeinde App.
+  @override
+  @BeamerFileConverter()
+  final BeamerFile? beamerFile;
+
   @override
   String toString() {
-    return 'PlanField(id: $id, name: $name, time: $time, conductor: $conductor, currentTime: $currentTime, songId: $songId, info: $info, agendaItemId: $agendaItemId, isGroup: $isGroup, groupId: $groupId, isNote: $isNote)';
+    return 'PlanField(id: $id, name: $name, time: $time, conductor: $conductor, currentTime: $currentTime, songId: $songId, info: $info, agendaItemId: $agendaItemId, isGroup: $isGroup, groupId: $groupId, isNote: $isNote, uid: $uid, needsBeamer: $needsBeamer, beamerFile: $beamerFile)';
   }
 
   @override
@@ -364,7 +455,12 @@ class _$PlanFieldImpl implements _PlanField {
                 other.agendaItemId == agendaItemId) &&
             (identical(other.isGroup, isGroup) || other.isGroup == isGroup) &&
             (identical(other.groupId, groupId) || other.groupId == groupId) &&
-            (identical(other.isNote, isNote) || other.isNote == isNote));
+            (identical(other.isNote, isNote) || other.isNote == isNote) &&
+            (identical(other.uid, uid) || other.uid == uid) &&
+            (identical(other.needsBeamer, needsBeamer) ||
+                other.needsBeamer == needsBeamer) &&
+            (identical(other.beamerFile, beamerFile) ||
+                other.beamerFile == beamerFile));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -382,6 +478,9 @@ class _$PlanFieldImpl implements _PlanField {
     isGroup,
     groupId,
     isNote,
+    uid,
+    needsBeamer,
+    beamerFile,
   );
 
   /// Create a copy of PlanField
@@ -411,6 +510,9 @@ abstract class _PlanField implements PlanField {
     @PlanBoolConverter() final bool isGroup,
     final String? groupId,
     @JsonKey(includeToJson: false) @PlanBoolConverter() final bool isNote,
+    final String? uid,
+    final bool? needsBeamer,
+    @BeamerFileConverter() final BeamerFile? beamerFile,
   }) = _$PlanFieldImpl;
 
   factory _PlanField.fromJson(Map<String, dynamic> json) =
@@ -454,11 +556,227 @@ abstract class _PlanField implements PlanField {
   @PlanBoolConverter()
   bool get isNote;
 
+  /// Stable id of the row (Gemeinde App link); song rows reuse the song id
+  /// as [id], which repeats (see `PlanBeamer.ensureFieldUids`).
+  @override
+  String? get uid;
+
+  /// "Beamer-Datei nötig", set only when switched by hand; otherwise
+  /// derived from the row (see `PlanBeamer.needsBeamer`).
+  @override
+  bool? get needsBeamer;
+
+  /// SongBeamer file linked in the Gemeinde App.
+  @override
+  @BeamerFileConverter()
+  BeamerFile? get beamerFile;
+
   /// Create a copy of PlanField
   /// with the given fields replaced by the non-null parameter values.
   @override
   @JsonKey(includeFromJson: false, includeToJson: false)
   _$$PlanFieldImplCopyWith<_$PlanFieldImpl> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+BeamerFile _$BeamerFileFromJson(Map<String, dynamic> json) {
+  return _BeamerFile.fromJson(json);
+}
+
+/// @nodoc
+mixin _$BeamerFile {
+  String get name => throw _privateConstructorUsedError;
+  String get path => throw _privateConstructorUsedError;
+  String? get linkedAt => throw _privateConstructorUsedError;
+
+  /// Serializes this BeamerFile to a JSON map.
+  Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
+
+  /// Create a copy of BeamerFile
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  $BeamerFileCopyWith<BeamerFile> get copyWith =>
+      throw _privateConstructorUsedError;
+}
+
+/// @nodoc
+abstract class $BeamerFileCopyWith<$Res> {
+  factory $BeamerFileCopyWith(
+    BeamerFile value,
+    $Res Function(BeamerFile) then,
+  ) = _$BeamerFileCopyWithImpl<$Res, BeamerFile>;
+  @useResult
+  $Res call({String name, String path, String? linkedAt});
+}
+
+/// @nodoc
+class _$BeamerFileCopyWithImpl<$Res, $Val extends BeamerFile>
+    implements $BeamerFileCopyWith<$Res> {
+  _$BeamerFileCopyWithImpl(this._value, this._then);
+
+  // ignore: unused_field
+  final $Val _value;
+  // ignore: unused_field
+  final $Res Function($Val) _then;
+
+  /// Create a copy of BeamerFile
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? path = null,
+    Object? linkedAt = freezed,
+  }) {
+    return _then(
+      _value.copyWith(
+            name:
+                null == name
+                    ? _value.name
+                    : name // ignore: cast_nullable_to_non_nullable
+                        as String,
+            path:
+                null == path
+                    ? _value.path
+                    : path // ignore: cast_nullable_to_non_nullable
+                        as String,
+            linkedAt:
+                freezed == linkedAt
+                    ? _value.linkedAt
+                    : linkedAt // ignore: cast_nullable_to_non_nullable
+                        as String?,
+          )
+          as $Val,
+    );
+  }
+}
+
+/// @nodoc
+abstract class _$$BeamerFileImplCopyWith<$Res>
+    implements $BeamerFileCopyWith<$Res> {
+  factory _$$BeamerFileImplCopyWith(
+    _$BeamerFileImpl value,
+    $Res Function(_$BeamerFileImpl) then,
+  ) = __$$BeamerFileImplCopyWithImpl<$Res>;
+  @override
+  @useResult
+  $Res call({String name, String path, String? linkedAt});
+}
+
+/// @nodoc
+class __$$BeamerFileImplCopyWithImpl<$Res>
+    extends _$BeamerFileCopyWithImpl<$Res, _$BeamerFileImpl>
+    implements _$$BeamerFileImplCopyWith<$Res> {
+  __$$BeamerFileImplCopyWithImpl(
+    _$BeamerFileImpl _value,
+    $Res Function(_$BeamerFileImpl) _then,
+  ) : super(_value, _then);
+
+  /// Create a copy of BeamerFile
+  /// with the given fields replaced by the non-null parameter values.
+  @pragma('vm:prefer-inline')
+  @override
+  $Res call({
+    Object? name = null,
+    Object? path = null,
+    Object? linkedAt = freezed,
+  }) {
+    return _then(
+      _$BeamerFileImpl(
+        name:
+            null == name
+                ? _value.name
+                : name // ignore: cast_nullable_to_non_nullable
+                    as String,
+        path:
+            null == path
+                ? _value.path
+                : path // ignore: cast_nullable_to_non_nullable
+                    as String,
+        linkedAt:
+            freezed == linkedAt
+                ? _value.linkedAt
+                : linkedAt // ignore: cast_nullable_to_non_nullable
+                    as String?,
+      ),
+    );
+  }
+}
+
+/// @nodoc
+
+@JsonSerializable(includeIfNull: false)
+class _$BeamerFileImpl implements _BeamerFile {
+  const _$BeamerFileImpl({this.name = '', this.path = '', this.linkedAt});
+
+  factory _$BeamerFileImpl.fromJson(Map<String, dynamic> json) =>
+      _$$BeamerFileImplFromJson(json);
+
+  @override
+  @JsonKey()
+  final String name;
+  @override
+  @JsonKey()
+  final String path;
+  @override
+  final String? linkedAt;
+
+  @override
+  String toString() {
+    return 'BeamerFile(name: $name, path: $path, linkedAt: $linkedAt)';
+  }
+
+  @override
+  bool operator ==(Object other) {
+    return identical(this, other) ||
+        (other.runtimeType == runtimeType &&
+            other is _$BeamerFileImpl &&
+            (identical(other.name, name) || other.name == name) &&
+            (identical(other.path, path) || other.path == path) &&
+            (identical(other.linkedAt, linkedAt) ||
+                other.linkedAt == linkedAt));
+  }
+
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  int get hashCode => Object.hash(runtimeType, name, path, linkedAt);
+
+  /// Create a copy of BeamerFile
+  /// with the given fields replaced by the non-null parameter values.
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  @override
+  @pragma('vm:prefer-inline')
+  _$$BeamerFileImplCopyWith<_$BeamerFileImpl> get copyWith =>
+      __$$BeamerFileImplCopyWithImpl<_$BeamerFileImpl>(this, _$identity);
+
+  @override
+  Map<String, dynamic> toJson() {
+    return _$$BeamerFileImplToJson(this);
+  }
+}
+
+abstract class _BeamerFile implements BeamerFile {
+  const factory _BeamerFile({
+    final String name,
+    final String path,
+    final String? linkedAt,
+  }) = _$BeamerFileImpl;
+
+  factory _BeamerFile.fromJson(Map<String, dynamic> json) =
+      _$BeamerFileImpl.fromJson;
+
+  @override
+  String get name;
+  @override
+  String get path;
+  @override
+  String? get linkedAt;
+
+  /// Create a copy of BeamerFile
+  /// with the given fields replaced by the non-null parameter values.
+  @override
+  @JsonKey(includeFromJson: false, includeToJson: false)
+  _$$BeamerFileImplCopyWith<_$BeamerFileImpl> get copyWith =>
       throw _privateConstructorUsedError;
 }
 

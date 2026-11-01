@@ -76,7 +76,8 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     final myPersonId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.id;
 
     final occupants = players.where(occupiesDuty).toList();
-    final available = players.where((p) => (p.dutyState ?? '').isEmpty && !isCancelled(p)).toList();
+    final available = dutyAvailable(players);
+    final presentUnassigned = dutyPresentUnassigned(players);
     final unavailable = players.where(isCancelled).toList();
     final fillColor = dutyFillColor(dutyFill(players, _required));
     final l10n = context.l10n;
@@ -172,6 +173,18 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
               title: Text(l10n.attendanceAssignPerson, style: const TextStyle(color: AppColors.primary)),
               onTap: _busy ? null : () => _openAssign(players, occupants.length),
             ),
+          if (canManage && presentUnassigned.isNotEmpty) ...[
+            _divider(l10n.attendancePresentNotAssigned),
+            for (final pa in presentUnassigned)
+              ListTile(
+                dense: true,
+                title: Text(pa.fullName),
+                trailing: OutlinedButton(
+                  onPressed: _busy ? null : () => _assign([pa.id!], players),
+                  child: IonButtonLabel(l10n.attendanceAssign),
+                ),
+              ),
+          ],
           if (canManage && available.isNotEmpty) ...[
             _divider(l10n.attendanceAvailable),
             for (final pa in available)
@@ -179,7 +192,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
                 dense: true,
                 title: Text(pa.fullName),
                 trailing: OutlinedButton(
-                  onPressed: _busy ? null : () => _assign([pa.id!]),
+                  onPressed: _busy ? null : () => _assign([pa.id!], players),
                   child: IonButtonLabel(l10n.attendanceAssign),
                 ),
               ),
@@ -219,9 +232,15 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
   }
 
-  Future<void> _assign(List<String> ids) async {
+  /// Present persons among [ids] are confirmed directly without a push and
+  /// keep their status (Ionic 4.17.9 assignDuty).
+  Future<void> _assign(List<String> ids, List<PersonAttendance> players) async {
+    final presentIds =
+        players.where((p) => ids.contains(p.id) && isPresentForDuty(p)).map((p) => p.id!).toList();
     setState(() => _busy = true);
-    final ok = await ref.read(dutyNotifierProvider.notifier).assign(ids, _attendanceId);
+    final ok = await ref
+        .read(dutyNotifierProvider.notifier)
+        .assign(ids, _attendanceId, presentIds: presentIds);
     if (!mounted) return;
     setState(() => _busy = false);
     if (ok) {
@@ -243,7 +262,9 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final ok = await ref.read(dutyNotifierProvider.notifier).unassign(pa.id!, _attendanceId);
+    final ok = await ref
+        .read(dutyNotifierProvider.notifier)
+        .unassign(pa.id!, _attendanceId, keepStatus: isPresentForDuty(pa));
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.svcUnassignFailed);
   }
 
@@ -318,7 +339,7 @@ class _DutyStaffingSectionState extends ConsumerState<DutyStaffingSection> {
         monthLabel: DateFormat.MMMM(currentIntlLocale()).format(date),
       );
       if (selected != null && selected.isNotEmpty && mounted) {
-        await _assign(selected);
+        await _assign(selected, players);
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.dutyFlutterErrorWith(friendlyErrorMessage(e)));

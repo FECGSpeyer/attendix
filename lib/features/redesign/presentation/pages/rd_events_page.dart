@@ -14,14 +14,17 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/event_list_utils.dart';
+import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../duty/presentation/widgets/self_service_duty_section.dart' show showOpenDutiesSheet;
 import '../../../self_service/presentation/pages/signout_page.dart'
     show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../data/providers/rd_events_providers.dart';
 import '../../data/providers/rd_today_providers.dart';
 import '../widgets/event/rd_absence_sheet.dart';
+import '../widgets/event/rd_own_answer_sheet.dart';
 import '../widgets/event/rd_signout_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -72,13 +75,20 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final role = ref.watch(effectiveRoleProvider);
     final leader = role.canSeeAttendanceTab;
     final canCreate = leader && ref.watch(canCreateAttendanceProvider);
-    final player = leader ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
+    // Helfer are members too: they keep "Abwesend" next to the leader list.
+    final player = leader && !role.canSeeSelfServiceTab ? null : ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final canReportAbsence = player != null && ref.watch(canSelfReportAbsenceProvider);
+    // Helfer: own answers ("Du ✓") follow recordings and realtime changes.
+    final ownInLeaderList = leader && role.canSeeSelfServiceTab;
+    if (ownInLeaderList) {
+      ref.listen<int>(attendanceRefetchCounter, (_, __) => ref.invalidate(signoutDataProvider));
+    }
 
     return RdPage(
       onRefresh: () async {
         if (leader) {
           ref.read(attendanceRefetchCounter.notifier).state++;
+          if (ownInLeaderList) ref.invalidate(signoutDataProvider);
         } else {
           ref.invalidate(signoutDataProvider);
           await ref.read(rdSignoutDataProvider.future).catchError((_) => const SignoutData());
@@ -188,7 +198,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     }).toList();
     final sections = rdGroupEvents(list, (a) => a.date, past: _past);
     final counts = _past ? const <int, RdStatusCounts>{} : (ref.watch(rdUpcomingCountsProvider).valueOrNull ?? const {});
-    final canOpen = ref.watch(effectiveRoleProvider).canAddAttendance;
+    final role = ref.watch(effectiveRoleProvider);
+    final canOpen = role.canAddAttendance;
+    final own = role.canSeeSelfServiceTab && !_past ? _ownByAttendance() : const <int, CrossTenantPersonAttendance>{};
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -255,6 +267,7 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
                     attendance: a,
                     type: typeById[a.typeId],
                     counts: a.id == null ? null : counts[a.id],
+                    own: a.id == null ? null : own[a.id],
                     past: _past,
                     selected: a.id != null && RdSplitScope.of(context)?.selectedId == a.id,
                     onTap: a.id != null && canOpen
@@ -267,6 +280,19 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
         )),
       ],
     );
+  }
+
+  /// Own upcoming Termine of Helfer in this group by attendance id, for the
+  /// "Du ✓" chips of the leader list.
+  Map<int, CrossTenantPersonAttendance> _ownByAttendance() {
+    final data = ref.watch(rdSignoutDataProvider).valueOrNull;
+    final tenantId = ref.watch(currentTenantProvider)?.id;
+    if (data == null || tenantId == null) return const {};
+    return {
+      for (final att in data.allUpcoming)
+        if (att.isMember && att.tenantId == tenantId && att.attendanceId != null && att.id != null)
+          att.attendanceId!: att,
+    };
   }
 
   void _setPast(bool past) => setState(() {
@@ -301,10 +327,56 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
   // Spieler, Stimmführer
   // ---------------------------------------------------------------------------
 
+  /// Opens the Termin a notification asked for (`pendingAttendanceId`)
+  /// once the own Termine are loaded: the own Termin page, or the sheet
+  /// "Meine Termine" opens for another group, "Offene Dienste" for a duty
+  /// without an own assignment. It looks in
+  /// the unfiltered own Termine, since the list here leaves out duties
+  /// without an own assignment; a Termin that is not there says so.
+  void _openPending(SignoutData data, SelfServiceEventActions actions) {
+    final pendingId = ref.read(pendingAttendanceIdProvider);
+    if (pendingId == null) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
+      // While the Termine (re)load, e.g. after the tenant switch of a push,
+      // they may still be the previous ones: wait, the page rebuilds once
+      // they are loaded and comes back here.
+      // A failed reload keeps the Termin too: the page shows the load error
+      // with "retry" instead of the previous Termine.
+      final source = ref.read(signoutDataProvider);
+      final shown = ref.read(rdSignoutDataProvider);
+      if (source.isLoading || shown.isLoading || source.hasError || shown.hasError) return;
+      ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final all = source.valueOrNull ?? data;
+      final att = [...all.allUpcoming, ...all.past].where((a) => a.attendanceId == pendingId).firstOrNull;
+      if (att == null) {
+        ToastHelper.showInfo(context, context.l10n.redesignEventNotFound);
+        return;
+      }
+      // A duty without an own assignment is taken over only through the
+      // duty process (`duty_take` with its checks), never answered here.
+      if (isUnassignedDutyAttendance(att)) {
+        showOpenDutiesSheet(context);
+        return;
+      }
+      final own = actions.isOwn(att);
+      // The own Termin page reads the filtered list, so only those open it.
+      final listed = [...data.allUpcoming, ...data.past].any((a) => a.id == att.id);
+      if (att.id != null && own && listed) {
+        context.push(RedesignRoutes.ownEvent(att.id!));
+      } else {
+        actions.presentActions(context, att);
+      }
+    });
+  }
+
   Widget _playerBody(BuildContext context) {
     final l10n = context.l10n;
     final async = ref.watch(rdSignoutDataProvider);
-    final data = async.valueOrNull;
+    // A notification waits for its Termin: after a failed reload the
+    // previous Termine would not hold it, so the error shows instead.
+    final pending = ref.watch(pendingAttendanceIdProvider);
+    final data = async.hasError && pending != null ? null : async.valueOrNull;
     if (data == null) {
       return async.hasError
           ? RdInfoCard(
@@ -320,6 +392,9 @@ class _RdEventsPageState extends ConsumerState<RdEventsPage> {
     final tenant = ref.watch(currentTenantProvider);
     final player = ref.watch(currentSelfServicePlayerProvider).valueOrNull;
     final actions = signoutEventActions(context, ref, tenant: tenant, player: player);
+    // A notification, push or "open attendance" link asked for a Termin
+    // (like "Meine Termine" does); also when it arrives while open.
+    _openPending(data, actions);
 
     bool waiting(CrossTenantPersonAttendance att) {
       final qa = actions.quickActions(att);
@@ -467,12 +542,16 @@ class _LeaderEventCard extends StatelessWidget {
     required this.counts,
     required this.past,
     required this.onTap,
+    this.own,
     this.selected = false,
   });
 
   final Attendance attendance;
   final AttendanceType? type;
   final RdStatusCounts? counts;
+
+  /// The Helfer's own answer for this Termin (chip opens the answer sheet).
+  final CrossTenantPersonAttendance? own;
   final bool past;
   final VoidCallback? onTap;
 
@@ -549,6 +628,10 @@ class _LeaderEventCard extends StatelessWidget {
               ],
             ),
           ),
+          if (own != null) ...[
+            const SizedBox(width: 10),
+            RdOwnStatusChip(attendance: own!, onTap: () => showRdOwnAnswerSheet(context, own!.id!)),
+          ],
         ],
       ),
     );

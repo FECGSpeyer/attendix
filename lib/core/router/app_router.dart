@@ -88,6 +88,7 @@ import '../../features/organisation/presentation/pages/org_plan_public_page.dart
 import '../../features/organisation/presentation/pages/org_planning_templates_page.dart';
 import '../../features/organisation/presentation/pages/org_plans_page.dart';
 import '../../features/organisation/presentation/pages/org_settings_page.dart';
+import '../../features/organisation/presentation/pages/org_songs_page.dart';
 import '../../features/planning/presentation/pages/open_attendance_page.dart';
 import '../../features/planning/presentation/pages/public_planning_page.dart';
 import '../../features/planning/presentation/pages/shared_plan_page.dart';
@@ -122,6 +123,7 @@ import '../../features/redesign/presentation/pages/rd_stats_page.dart';
 import '../../features/redesign/data/rd_manage_logic.dart' show RdManageArea;
 import '../../features/redesign/presentation/pages/rd_manage_page.dart';
 import '../../features/redesign/presentation/widgets/rd_split_view.dart';
+import '../../features/redesign/presentation/widgets/rd_overview.dart';
 
 /// Listenable that notifies when auth state changes
 /// Used by GoRouter to re-evaluate redirects without recreating the router
@@ -635,6 +637,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       detail: null,
                       selectedId: null,
                       emptyText: context.l10n.redesignSplitMembersEmpty,
+                      empty: const RdMembersOverviewPanel(),
                     )
                   : const RdMembersPage(),
               state: state,
@@ -654,6 +657,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                         detail: detail,
                         selectedId: id,
                         emptyText: context.l10n.redesignSplitMembersEmpty,
+                        empty: const RdMembersOverviewPanel(),
                       ),
                     );
                   }
@@ -686,6 +690,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                       selectedId: null,
                       emptyText: context.l10n.redesignSplitWorksEmpty,
                       emptyIcon: Icons.library_music_outlined,
+                      empty: const RdWorksOverviewPanel(),
                     )
                   : const RdWorksPage(),
               state: state,
@@ -708,6 +713,7 @@ final routerProvider = Provider<GoRouter>((ref) {
                         selectedId: id,
                         emptyText: context.l10n.redesignSplitWorksEmpty,
                         emptyIcon: Icons.library_music_outlined,
+                        empty: const RdWorksOverviewPanel(),
                       ),
                     );
                   }
@@ -1119,6 +1125,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                     path: 'person-fields',
                     name: 'orgPersonFields',
                     builder: (context, state) => const OrgPersonFieldsPage(),
+                  ),
+                  // Ionic 4.17.13: Werke in der Organisation suchen (?q=)
+                  GoRoute(
+                    path: 'songs',
+                    name: 'orgSongs',
+                    builder: (context, state) => OrgSongsPage(
+                      initialQuery: state.uri.queryParameters['q'],
+                    ),
                   ),
                 ],
               ),

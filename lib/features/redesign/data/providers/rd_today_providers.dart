@@ -1,5 +1,6 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -8,6 +9,7 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/sign_in_out_repository.dart'
     show CrossTenantPersonAttendance;
@@ -104,6 +106,42 @@ final rdAttendanceCountsProvider =
   return RdStatusCounts.fromStatuses(rows.map((r) => r.status));
 });
 
+/// Persons of [rows] still without an answer, as known in [people]
+/// (active members), sorted by group and name (UX D2). In a duty Termin
+/// stand-ins without a duty_state are not asked (see `duty_utils.dart`).
+List<Person> rdOpenPersons(Iterable<PersonAttendance> rows, List<Person> people, {bool duty = false}) {
+  final open = {
+    for (final r in rows)
+      if (r.status == AttendanceStatus.neutral && r.personId != null && !(duty && r.dutyState == null)) r.personId!,
+  };
+  return people.where((p) => p.id != null && open.contains(p.id)).toList()
+    ..sort((a, b) {
+      final g = (a.groupName ?? '').compareTo(b.groupName ?? '');
+      if (g != 0) return g;
+      return '${a.firstName} ${a.lastName}'.compareTo('${b.firstName} ${b.lastName}');
+    });
+}
+
+/// Who has not answered [attendanceId] yet ("6 offen" on Heute, UX D2).
+final rdOpenPersonsProvider = FutureProvider.autoDispose.family<List<Person>, int>((ref, attendanceId) async {
+  ref.watch(attendanceRefetchCounter);
+  final repo = ref.watch(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return const [];
+  final people = await ref.watch(realtimePlayersProvider.future);
+  final types = await ref.watch(attendanceTypesProvider.future);
+  // Watched and awaited, so a type change of the Termin (realtime) is seen.
+  // A Termin or type that is not known counts as duty: then stand-ins are
+  // left out rather than reminded by mistake. Termine without a type (old
+  // data) are never duty Termine.
+  final all = await ref.watch(realtimeAttendanceListProvider.future);
+  final attendance = all.where((a) => a.id == attendanceId).firstOrNull;
+  final typeId = attendance?.typeId;
+  final duty = attendance == null ||
+      (typeId != null && (types.where((t) => t.id == typeId).firstOrNull?.dutyMode ?? true));
+  final rows = await repo.getPersonAttendancesForAttendances([attendanceId]);
+  return rdOpenPersons(rows, people, duty: duty);
+});
+
 /// Title, time and place of a Termin for the cards of "Heute".
 @immutable
 class RdEventInfo {
@@ -147,6 +185,24 @@ RdEventInfo rdEventInfo(Attendance attendance, AttendanceType? type) {
 String rdNotMemberInfo(Tenant? tenant) {
   final text = tenant?.showAllAttendancesInfoText;
   return text != null && text.isNotEmpty ? text : EventListUtils.defaultShowAllInfoText;
+}
+
+/// Answer deadline that is still ahead (UX S5); null without one or once
+/// it has passed (then [EventListUtils.deadlineText] says "abgelaufen").
+DateTime? rdOpenDeadline(String? deadline, {DateTime? now}) {
+  final local = EventListUtils.deadlineLocal(deadline);
+  if (local == null || (now ?? DateTime.now()).isAfter(local)) return null;
+  return local;
+}
+
+/// Less than a day left until [deadline].
+bool rdDeadlineUrgent(DateTime deadline, {DateTime? now}) =>
+    deadline.difference(now ?? DateTime.now()) < const Duration(hours: 24);
+
+/// "Fr 2.11., 18:00".
+String rdDeadlineLabel(DateTime deadline) {
+  final day = DateFormat.E(currentIntlLocale()).format(deadline).replaceAll('.', '');
+  return '$day ${DateFormat('d.M.').format(deadline)}, ${DateFormat('HH:mm').format(deadline)}';
 }
 
 /// [date] plus "HH:mm" [time] in local time.

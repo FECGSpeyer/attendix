@@ -316,6 +316,22 @@ void main() {
       expect(state().uploads, isEmpty);
     });
 
+    test('the queue hides itself once all uploads are stored, but stays with a failure', () async {
+      controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const <SongFile>[])]);
+      await Future<void>.delayed(const Duration(milliseconds: 100));
+      expect(state().doneCount, 1, reason: 'still visible right after the upload');
+      await Future<void>.delayed(rdUploadQueueHideDelay);
+      expect(state().uploads, isEmpty);
+
+      files.failing.add('b.pdf');
+      controller().enqueue([
+        (file: _file('b.pdf'), instrumentId: 11, note: null, replace: const <SongFile>[]),
+        (file: _file('c.pdf'), instrumentId: 12, note: null, replace: const <SongFile>[]),
+      ]);
+      await Future<void>.delayed(const Duration(milliseconds: 100) + rdUploadQueueHideDelay);
+      expect(state().uploads.map((u) => u.status), [RdUploadStatus.failed, RdUploadStatus.done]);
+    });
+
     test('"Ersetzen": a failed upload keeps the old file; a retry does not upload twice', () async {
       files.failing.add('a.pdf');
       controller().enqueue([(file: _file('a.pdf'), instrumentId: 11, note: null, replace: const [_klar])]);
@@ -581,14 +597,22 @@ void main() {
       ]);
     });
 
-    testWidgets('the keyboard icon lists the shortcuts', (tester) async {
+    testWidgets('no keyboard icon in the toolbar; "?" lists the shortcuts', (tester) async {
       _desktop(tester);
-      await tester.pumpWidget(_app(Role.admin, _FakeFiles(), song: const Song(id: 5, name: 'Leer')));
+      await tester.pumpWidget(_app(Role.admin, _FakeFiles()));
       await _settle(tester);
-      await tester.tap(find.byIcon(Icons.keyboard_outlined));
+      // The hint lives under Ich › Hilfe now, not on the main UI.
+      expect(find.byIcon(Icons.keyboard_outlined), findsNothing);
+
+      await tester.tap(find.text('klar.pdf'));
+      await _settle(tester);
+      // "?" is typed with Umschalt (no own key in the test key maps): the
+      // page reacts to the typed character, so send it on the slash key.
+      await tester.sendKeyEvent(LogicalKeyboardKey.slash, character: '?');
       await _settle(tester);
       expect(find.text('Tastenkürzel'), findsOneWidget);
       expect(find.text('F2 umbenennen'), findsOneWidget);
+      expect(find.text('? diese Übersicht'), findsOneWidget);
     });
   });
 

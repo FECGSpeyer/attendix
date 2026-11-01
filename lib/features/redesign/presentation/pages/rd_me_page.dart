@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -25,6 +26,7 @@ import '../../../profile/presentation/widgets/master_data_sheet.dart';
 import '../../../profile/presentation/widgets/profile_helpers.dart';
 import '../../../self_service/presentation/widgets/self_service_absences.dart';
 import '../../../settings/presentation/widgets/calendar_subscription_dialog.dart';
+import '../../data/providers/rd_today_providers.dart' show rdSignoutDataProvider;
 import '../../data/rd_manage_logic.dart';
 import '../rd_actions.dart';
 import '../widgets/manage/rd_manage_entries.dart';
@@ -32,11 +34,20 @@ import '../widgets/event/rd_absence_sheet.dart';
 import '../widgets/rd_group_switch.dart';
 import '../widgets/rd_logo.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/work/rd_work_files.dart' show showRdWorkFilesShortcuts;
 import 'rd_appearance_page.dart' show rdModeName, rdWorldName;
 
 /// REDESIGN: tab "Ich" (canvas E1): own profile, things for me, the app,
 /// help and the account. Verwaltung leads to the old settings sorted into
 /// six areas (rd_manage_page.dart).
+
+/// Desktop and web (where the Werk file table and its keys are used).
+bool get _hasKeyboard =>
+    kIsWeb ||
+    defaultTargetPlatform == TargetPlatform.macOS ||
+    defaultTargetPlatform == TargetPlatform.windows ||
+    defaultTargetPlatform == TargetPlatform.linux;
+
 class RdMePage extends ConsumerWidget {
   const RdMePage({super.key});
 
@@ -168,6 +179,15 @@ class RdMePage extends ConsumerWidget {
               title: l10n.settingsHelp,
               onTap: () => context.push('/settings/help'),
             ),
+            // Keys of the Werk file table: editors on devices with a
+            // keyboard (desktop, web); the table shows once the Werk column
+            // is wide enough. Kept here, off the main UI.
+            if (isLead && _hasKeyboard)
+              RdListRow(
+                leading: const RdRowIcon(Icons.keyboard_outlined),
+                title: l10n.redesignFilesShortcuts,
+                onTap: () => showRdWorkFilesShortcuts(context),
+              ),
             RdListRow(
               leading: const RdRowIcon(Icons.chat_bubble_outline),
               title: l10n.redesignMeFeedback,
@@ -289,37 +309,92 @@ class _ProfileCard extends ConsumerWidget {
     final roleName = profileRoleName(role);
     final group = tenant?.shortName ?? '';
     final name = person == null ? '' : '${person.firstName} ${person.lastName}'.trim();
+    // Own attendance (UX S1): until now only in the label of "Vergangen".
+    final signout = role.canSeeSelfServiceTab ? ref.watch(rdSignoutDataProvider).valueOrNull : null;
+    final showAttendance = person != null && signout != null && signout.past.isNotEmpty;
+
+    final header = Row(
+      children: [
+        Avatar(
+          imageUrl: person != null && hasCustomProfileImage(person.img) ? person.img : null,
+          firstName: person?.firstName ?? '',
+          lastName: person?.lastName ?? '',
+          size: 56,
+        ),
+        const SizedBox(width: 14),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                name.isEmpty ? context.l10n.redesignTabMe : name,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                style: RdType.cardTitle(p),
+              ),
+              const SizedBox(height: 2),
+              Text([roleName, group].where((s) => s.isNotEmpty).join(' · '), style: RdType.meta(p)),
+            ],
+          ),
+        ),
+        if (person != null) Icon(Icons.chevron_right, color: p.text2),
+      ],
+    );
 
     return RdCard(
       onTap: person == null ? null : () => showMasterDataSheet(context),
-      child: Row(
-        children: [
-          Avatar(
-            imageUrl: person != null && hasCustomProfileImage(person.img) ? person.img : null,
-            firstName: person?.firstName ?? '',
-            lastName: person?.lastName ?? '',
-            size: 56,
-          ),
-          const SizedBox(width: 14),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      child: !showAttendance
+          ? header
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
               children: [
-                Text(
-                  name.isEmpty ? context.l10n.redesignTabMe : name,
-                  maxLines: 1,
-                  overflow: TextOverflow.ellipsis,
-                  style: RdType.cardTitle(p),
-                ),
-                const SizedBox(height: 2),
-                Text(
-                  [roleName, group].where((s) => s.isNotEmpty).join(' · '),
-                  style: RdType.meta(p),
-                ),
+                header,
+                const SizedBox(height: 16),
+                _OwnAttendance(percent: signout.percentage, lateCount: signout.lateCount),
               ],
             ),
+    );
+  }
+}
+
+/// "87 % · Deine Anwesenheit" with a bar, below the profile.
+class _OwnAttendance extends StatelessWidget {
+  const _OwnAttendance({required this.percent, required this.lateCount});
+
+  final int percent;
+  final int lateCount;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final color = percent >= 75 ? p.present : (percent >= 50 ? p.late : p.absent);
+    final hint = [l10n.redesignMeAttendance, if (lateCount > 0) l10n.redesignMeAttendanceLate(lateCount)].join(' · ');
+    return Semantics(
+      label: '$hint: $percent %',
+      excludeSemantics: true,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Row(
+            crossAxisAlignment: CrossAxisAlignment.baseline,
+            textBaseline: TextBaseline.alphabetic,
+            children: [
+              Text('$percent %', style: TextStyle(fontSize: 26, fontWeight: FontWeight.w700, color: color)),
+              const SizedBox(width: 8),
+              Expanded(child: Text(hint, style: RdType.meta(p))),
+            ],
           ),
-          if (person != null) Icon(Icons.chevron_right, color: p.text2),
+          const SizedBox(height: 8),
+          ClipRRect(
+            borderRadius: BorderRadius.circular(999),
+            child: LinearProgressIndicator(
+              value: percent.clamp(0, 100) / 100,
+              minHeight: 8,
+              color: color,
+              backgroundColor: p.track,
+            ),
+          ),
         ],
       ),
     );

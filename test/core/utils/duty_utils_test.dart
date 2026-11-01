@@ -11,10 +11,13 @@ PersonAttendance pa(int personId, {String? state, AttendanceStatus status = Atte
 
 void main() {
   group('dutyStateAfterStatus (sync assignment with status)', () {
-    test('present/late confirm a request and turn stand-ins into confirmed', () {
+    test('present/late confirm a request but never assign stand-ins (Ionic 4.17.9)', () {
+      expect(dutyStateAfterStatus(null, AttendanceStatus.present), isNull);
+      expect(dutyStateAfterStatus(null, AttendanceStatus.late), isNull);
+      expect(dutyStateAfterStatus(DutyState.requested, AttendanceStatus.late), DutyState.confirmed);
       expect(dutyStateAfterStatus(DutyState.requested, AttendanceStatus.present), DutyState.confirmed);
-      expect(dutyStateAfterStatus(null, AttendanceStatus.late), DutyState.confirmed);
       expect(dutyStateAfterStatus(DutyState.self, AttendanceStatus.present), DutyState.self);
+      expect(dutyStateAfterStatus(DutyState.confirmed, AttendanceStatus.present), DutyState.confirmed);
     });
 
     test('neutral after confirmation goes back to requested', () {
@@ -25,6 +28,32 @@ void main() {
 
     test('excused keeps the state (cancelled duty)', () {
       expect(dutyStateAfterStatus(DutyState.confirmed, AttendanceStatus.excused), DutyState.confirmed);
+    });
+  });
+
+  group('staffing lists (Ionic 4.17.9)', () {
+    final players = [
+      pa(1, state: DutyState.confirmed, status: AttendanceStatus.present),
+      pa(2, status: AttendanceStatus.present),
+      pa(3, status: AttendanceStatus.late),
+      pa(4),
+      pa(5, status: AttendanceStatus.excused),
+      pa(6, state: DutyState.requested),
+    ];
+
+    test('present/late persons without duty are "Anwesend, nicht eingeteilt"', () {
+      expect(dutyPresentUnassigned(players).map((p) => p.personId), [2, 3]);
+    });
+
+    test('available excludes present, cancelled and assigned persons', () {
+      expect(dutyAvailable(players).map((p) => p.personId), [4]);
+    });
+
+    test('isPresentForDuty is true for present and late only', () {
+      expect(isPresentForDuty(pa(1, status: AttendanceStatus.present)), isTrue);
+      expect(isPresentForDuty(pa(1, status: AttendanceStatus.late)), isTrue);
+      expect(isPresentForDuty(pa(1, status: AttendanceStatus.lateExcused)), isFalse);
+      expect(isPresentForDuty(pa(1)), isFalse);
     });
   });
 

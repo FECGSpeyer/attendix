@@ -12,6 +12,8 @@ import '../../data/repositories/attendance_repository.dart';
 import '../../data/repositories/player_repository.dart';
 import 'attendance_type_providers.dart';
 import 'group_providers.dart';
+import 'player_providers.dart';
+import 'profile_providers.dart';
 import 'tenant_providers.dart';
 import '../utils/paged_query.dart';
 
@@ -170,6 +172,23 @@ final activePlayersForStatsProvider = FutureProvider<List<Person>>((ref) async {
     final isNotLeft = p.left == null || p.left!.isEmpty;
     return isNotLeft && !p.paused;
   }).toList();
+});
+
+/// Ionic 4.17.17 stats `initFieldStats`: current (not left) people incl.
+/// paused ones, with the shared organisation field values hydrated so that
+/// organisation fields are analysed too. When the shared values cannot be
+/// loaded the tenant values are used (Ionic only logs a warning).
+final fieldStatsPersonsProvider =
+    FutureProvider.autoDispose<List<Person>>((ref) async {
+  final people = await ref.watch(playersProvider.future);
+  final repo = ref.watch(profileRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return people;
+  try {
+    return await repo.hydrateSharedPersonFieldValues(people);
+  } catch (e) {
+    debugPrint('Shared person field values could not be loaded: $e');
+    return people;
+  }
 });
 
 /// LOGIC_SETTINGS: attendances of the period with the percentage recomputed

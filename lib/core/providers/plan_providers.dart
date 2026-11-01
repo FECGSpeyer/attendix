@@ -244,6 +244,10 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
 
   Future<bool> updateOrgName(String name) => _updateOrg((repo, id) => repo.updateOrgName(id, name));
 
+  /// Ionic 4.17.10 `db.updateOrgGemeindeApp` (Gemeinde App section).
+  Future<bool> updateOrgGemeindeApp(Map<String, dynamic> updates) =>
+      _updateOrg((repo, id) => repo.updateOrgGemeindeApp(id, updates));
+
   /// Saves org person fields and removes values of deleted fields.
   Future<bool> updateOrgExtraFields(List<OrgExtraField> fields, List<String> deletedFieldIds) =>
       _updateOrg((repo, id) async {

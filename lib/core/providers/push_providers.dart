@@ -15,6 +15,7 @@ import '../../l10n/l10n.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../router/app_router.dart';
+import '../router/redesign_routes.dart';
 import '../services/live_activity_service.dart'
     show endLiveActivitiesBeforeSignOut, liveActivityServiceProvider;
 import '../services/push/firebase_push_messaging_client.dart';
@@ -287,12 +288,14 @@ class RiverpodPushHost implements PushHost {
       _ref.read(pendingAttendanceIdProvider.notifier).state = pending;
     }
 
-    final location = target.location;
-    if (location == null) return;
+    final raw = target.location;
+    if (raw == null) return;
+    // In the new design (Beta) the Termin opens on its new page.
+    final location = RedesignRoutes.betaTarget(raw);
     // Detail pages are pushed like in the notification center, so "back"
     // returns to where the user was; tab roots are opened with go.
     final isDetail = location.startsWith('/messages/') ||
-        RegExp(r'^/attendance/\d+$').hasMatch(location);
+        RegExp(r'^/(attendance|termine)/\d+([?#]|$)').hasMatch(location);
     if (isDetail && !_startupLocations.contains(_location)) {
       unawaited(_router.push(location));
     } else {

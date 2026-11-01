@@ -12,6 +12,8 @@ import 'package:attendix/core/providers/signout_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/features/parents/data/providers/parents_providers.dart';
+import 'package:attendix/features/redesign/data/providers/rd_events_providers.dart';
 import 'package:attendix/features/redesign/data/providers/rd_today_providers.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_today_page.dart';
 import 'package:attendix/features/redesign/presentation/shell/rd_shell.dart';
@@ -55,7 +57,7 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
+Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol, List<Override> extra = const []}) {
   final router = GoRouter(
     initialLocation: '/heute',
     routes: [
@@ -63,6 +65,10 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
         builder: (context, state, child) => RdShell(child: child),
         routes: [
           GoRoute(path: '/heute', builder: (_, __) => const RdTodayPage()),
+          GoRoute(
+            path: '/termine/:id',
+            builder: (_, state) => Scaffold(body: Text('page termin ${state.uri}')),
+          ),
           for (final path in ['/attendance', '/signout', '/people', '/mitglieder', '/members', '/songs-tab', '/werke', '/ich'])
             GoRoute(path: path, builder: (_, __) => Scaffold(body: Text('page $path'))),
         ],
@@ -102,6 +108,13 @@ Widget _app(Role role, {RdFarbwelt world = RdFarbwelt.petrol}) {
         (ref) async => [TestFactories.createPerson(id: 9), TestFactories.createPerson(id: 10)],
       ),
       criticalPlayersProvider.overrideWith((ref) async => const []),
+      rdUnrecordedProvider.overrideWith((ref) async => const [23]),
+      rdOpenPersonsProvider.overrideWith((ref, id) async => [
+            TestFactories.createPerson(id: 31, firstName: 'Tim', lastName: 'Maurer', appId: 'app-tim')
+                .copyWith(groupName: 'Trompete'),
+            TestFactories.createPerson(id: 32, firstName: 'Lukas', lastName: 'Weber').copyWith(groupName: 'Trompete'),
+          ]),
+      ...extra,
       dashboardBirthdaysProvider.overrideWith((ref) async => const []),
     ],
     child: Consumer(
@@ -181,6 +194,113 @@ void main() {
     expect(find.text('3 Abmeldungen für den nächsten Termin'), findsOneWidget);
     expect(find.text('Registerprobe'), findsOneWidget);
     expect(find.text('Vorbei'), findsNothing);
+  });
+
+  testWidgets('Dirigent: past Termine without a status lead to the recording (UX D4)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    final row = find.text('1 Termin noch nicht erfasst');
+    await tester.scrollUntilVisible(row, 200);
+    expect(find.textContaining('Vorbei'), findsOneWidget);
+    await tester.tap(row);
+    await _settle(tester);
+    expect(find.textContaining('page termin /termine/23'), findsOneWidget);
+    expect(find.textContaining('tab=anwesenheit'), findsOneWidget);
+  });
+
+  testWidgets('Dirigent: "5 offen" lists who is open and reminds personally (UX D2)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+
+    await tester.tap(find.text('5 offen'));
+    await _settle(tester);
+    expect(find.text('2 noch offen'), findsOneWidget);
+    expect(find.text('TROMPETE'), findsOneWidget);
+    expect(find.text('Tim Maurer'), findsOneWidget);
+    expect(find.text('ohne App'), findsOneWidget, reason: 'Lukas has no app account');
+    expect(find.text('Push an 1 Person senden'), findsOneWidget);
+    expect(find.text('Als Text teilen'), findsOneWidget);
+  });
+
+  testWidgets('Eltern answer per child right on Heute (UX E1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    final group = ParentAttendanceGroup(
+      attendanceId: 40,
+      date: _day(2),
+      typeInfo: 'Chorprobe',
+      startTime: '16:30',
+      endTime: '17:30',
+      childAttendances: [
+        ChildPersonAttendance(id: 'm', childId: 1, childName: 'Mia Wolf', childFirstName: 'Mia', status: AttendanceStatus.present),
+        ChildPersonAttendance(id: 'b', childId: 2, childName: 'Ben Wolf', childFirstName: 'Ben'),
+      ],
+    );
+    await tester.pumpWidget(_app(Role.parent, extra: [
+      parentChildrenProvider.overrideWith((ref) async => [TestFactories.createPerson(id: 1)]),
+      childrenAttendancesProvider.overrideWith((ref) async => const []),
+      upcomingParentAttendancesProvider.overrideWithValue([group]),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('Chorprobe'), findsOneWidget);
+    expect(find.text('Dabei'), findsOneWidget);
+    expect(find.text('Doch absagen'), findsOneWidget);
+    expect(find.text('Ist dabei'), findsOneWidget);
+    expect(find.text('Kann nicht'), findsOneWidget);
+    expect(find.text('Zu- und absagen'), findsNothing);
+
+    await tester.tap(find.text('Kann nicht'));
+    await _settle(tester);
+    expect(find.text('Ben · Chorprobe'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Eltern: after "kommt später" both Zusage and Absage stay open (UX E1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    final group = ParentAttendanceGroup(
+      attendanceId: 41,
+      date: _day(2),
+      typeInfo: 'Chorprobe',
+      startTime: '16:30',
+      endTime: '17:30',
+      childAttendances: [
+        ChildPersonAttendance(
+          id: 'm',
+          childId: 1,
+          childName: 'Mia Wolf',
+          childFirstName: 'Mia',
+          status: AttendanceStatus.lateExcused,
+        ),
+      ],
+    );
+    await tester.pumpWidget(_app(Role.parent, extra: [
+      parentChildrenProvider.overrideWith((ref) async => [TestFactories.createPerson(id: 1)]),
+      childrenAttendancesProvider.overrideWith((ref) async => const []),
+      upcomingParentAttendancesProvider.overrideWithValue([group]),
+    ]));
+    await _settle(tester);
+
+    expect(find.text('Doch dabei'), findsOneWidget);
+    expect(find.text('Doch absagen'), findsOneWidget);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Beobachter: a hint once, Termine without dead taps (UX V1)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.viewer));
+    await _settle(tester);
+
+    expect(find.text('Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'), findsOneWidget);
+    expect(find.text('Anwesenheit erfassen'), findsNothing);
+    expect(find.textContaining('noch nicht erfasst'), findsNothing);
+    await tester.scrollUntilVisible(find.text('Registerprobe'), 200);
+    await tester.tap(find.text('Registerprobe'));
+    await _settle(tester);
+    expect(find.textContaining('page'), findsNothing);
+    expect(find.text('Registerprobe'), findsOneWidget);
   });
 
   testWidgets('every Farbwelt renders the phone shell without overflow', (tester) async {

@@ -2189,6 +2189,12 @@ abstract class AppLocalizations {
   /// **'Ort'**
   String get attendancePlace;
 
+  /// attendance.presentNotAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend, nicht eingeteilt'**
+  String get attendancePresentNotAssigned;
+
   /// attendance.presentPeople
   ///
   /// In de, this message translates to:
@@ -5597,6 +5603,18 @@ abstract class AppLocalizations {
   /// **'Ja/Nein'**
   String get extraFieldsYesNo;
 
+  /// fileViewer.downloadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Datei konnte nicht heruntergeladen werden'**
+  String get fileViewerDownloadFailed;
+
+  /// fileViewer.noPreview
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Datei gibt es keine Vorschau. Lade sie herunter, um sie zu öffnen.'**
+  String get fileViewerNoPreview;
+
   /// files.almostFull
   ///
   /// In de, this message translates to:
@@ -8879,6 +8897,90 @@ abstract class AppLocalizations {
   /// **'Fehler beim Trennen'**
   String get orgFlutterUnlinkFailed;
 
+  /// org.gaBeamerFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Dateien im Ablaufplan'**
+  String get orgGaBeamerFiles;
+
+  /// org.gaBeamerFilesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zeigt bei Org-Plänen „Beamer-Datei nötig“ an jedem Programmpunkt.'**
+  String get orgGaBeamerFilesHint;
+
+  /// org.gaCopied
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel kopiert'**
+  String get orgGaCopied;
+
+  /// org.gaCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopieren'**
+  String get orgGaCopy;
+
+  /// org.gaCreateKey
+  ///
+  /// In de, this message translates to:
+  /// **'Verbindungsschlüssel erstellen'**
+  String get orgGaCreateKey;
+
+  /// org.gaHint
+  ///
+  /// In de, this message translates to:
+  /// **'Nur für FECG Speyer und FECG Schwegenheim. Ein neuer Schlüssel trennt die alte Verbindung.'**
+  String get orgGaHint;
+
+  /// org.gaKeyActive
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel aktiv, endet auf …{hint}'**
+  String orgGaKeyActive(Object hint);
+
+  /// org.gaKeyHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Verbindungsschlüssel'**
+  String get orgGaKeyHeader;
+
+  /// org.gaKeyMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Nur jetzt sichtbar. Trag ihn in der Gemeinde App unter Mehr › Ablaufpläne ein.'**
+  String get orgGaKeyMessage;
+
+  /// org.gaNoKey
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht mit der Gemeinde App verbunden'**
+  String get orgGaNoKey;
+
+  /// org.gaRenewButton
+  ///
+  /// In de, this message translates to:
+  /// **'Erneuern'**
+  String get orgGaRenewButton;
+
+  /// org.gaRenewKey
+  ///
+  /// In de, this message translates to:
+  /// **'Schlüssel erneuern'**
+  String get orgGaRenewKey;
+
+  /// org.gaRenewMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Der alte Schlüssel funktioniert danach nicht mehr. Du musst den neuen in der Gemeinde App eintragen.'**
+  String get orgGaRenewMessage;
+
+  /// org.gemeindeApp
+  ///
+  /// In de, this message translates to:
+  /// **'Gemeinde App'**
+  String get orgGemeindeApp;
+
   /// org.handover
   ///
   /// In de, this message translates to:
@@ -8986,6 +9088,300 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke einer anderen Instanz verwenden. Alle Änderungen werden dort gespeichert.'**
   String get orgSongSyncIntro;
+
+  /// orgSongs.alreadyOwn
+  ///
+  /// In de, this message translates to:
+  /// **'Schon bei dir'**
+  String get orgSongsAlreadyOwn;
+
+  /// orgSongs.copiedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert aus {tenant} am {date}'**
+  String orgSongsCopiedFrom(Object tenant, Object date);
+
+  /// orgSongs.copiedTo
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde nach {tenant} kopiert.'**
+  String orgSongsCopiedTo(Object name, Object tenant);
+
+  /// orgSongs.copyAsNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk kopieren'**
+  String get orgSongsCopyAsNew;
+
+  /// orgSongs.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien werden kopiert und gehören danach der Zielinstanz. Fehlende Kategorien werden angelegt. Zusatzfelder werden übernommen, wenn es sie im Ziel mit gleichem Namen gibt.'**
+  String get orgSongsCopyHint;
+
+  /// orgSongs.copyIntoExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In vorhandenes Werk kopieren'**
+  String get orgSongsCopyIntoExisting;
+
+  /// orgSongs.currentValue
+  ///
+  /// In de, this message translates to:
+  /// **'Im Ziel: {value}'**
+  String orgSongsCurrentValue(Object value);
+
+  /// orgSongs.duplicateWarning
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Im Ziel gibt es schon ein Werk mit diesem Namen.} other {Im Ziel gibt es schon {count} Werke mit diesem Namen.}}'**
+  String orgSongsDuplicateWarning(num count);
+
+  /// orgSongs.entryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werke anderer Instanzen finden und übernehmen'**
+  String get orgSongsEntryHint;
+
+  /// orgSongs.existingSong
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get orgSongsExistingSong;
+
+  /// orgSongs.fieldBeamer
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei'**
+  String get orgSongsFieldBeamer;
+
+  /// orgSongs.fieldCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien'**
+  String get orgSongsFieldCategories;
+
+  /// orgSongs.fieldChoirSolo
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get orgSongsFieldChoirSolo;
+
+  /// orgSongs.fieldDifficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get orgSongsFieldDifficulty;
+
+  /// orgSongs.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Felder übernehmen'**
+  String get orgSongsFields;
+
+  /// orgSongs.fileCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Datei} other {{count} Dateien}}'**
+  String orgSongsFileCount(num count);
+
+  /// orgSongs.fileExists
+  ///
+  /// In de, this message translates to:
+  /// **'Gleichnamige Datei ist schon im Werk'**
+  String get orgSongsFileExists;
+
+  /// orgSongs.files
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien ({selected} von {total})'**
+  String orgSongsFiles(Object selected, Object total);
+
+  /// orgSongs.fromTenant
+  ///
+  /// In de, this message translates to:
+  /// **'aus {tenant}'**
+  String orgSongsFromTenant(Object tenant);
+
+  /// orgSongs.menuEntry
+  ///
+  /// In de, this message translates to:
+  /// **'In der Organisation suchen'**
+  String get orgSongsMenuEntry;
+
+  /// orgSongs.mergedInto
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ wurde in das vorhandene Werk in {tenant} übernommen.'**
+  String orgSongsMergedInto(Object name, Object tenant);
+
+  /// orgSongs.modeExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In vorhandenes Werk kopieren'**
+  String get orgSongsModeExisting;
+
+  /// orgSongs.modeNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk anlegen'**
+  String get orgSongsModeNew;
+
+  /// orgSongs.noPermission
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Admins und Verantwortliche einer Instanz mit Organisation können Werke organisationsweit suchen.'**
+  String get orgSongsNoPermission;
+
+  /// orgSongs.noResults
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Werke gefunden.'**
+  String get orgSongsNoResults;
+
+  /// orgSongs.noTargets
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist in keiner anderen Instanz Admin oder Verantwortlicher, in die du das Werk kopieren könntest.'**
+  String get orgSongsNoTargets;
+
+  /// orgSongs.number
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get orgSongsNumber;
+
+  /// orgSongs.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Nummer ist im Ziel schon vergeben.'**
+  String get orgSongsNumberTaken;
+
+  /// orgSongs.onlyWithFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Nur mit Dateien'**
+  String get orgSongsOnlyWithFiles;
+
+  /// orgSongs.overwriteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Überschreiben'**
+  String get orgSongsOverwriteConfirm;
+
+  /// orgSongs.overwriteHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Werte überschreiben?'**
+  String get orgSongsOverwriteHeader;
+
+  /// orgSongs.overwriteMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Felder haben im Ziel schon einen Wert und werden überschrieben: {fields}'**
+  String orgSongsOverwriteMessage(Object fields);
+
+  /// orgSongs.prefix
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix'**
+  String get orgSongsPrefix;
+
+  /// orgSongs.resultCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Treffer} other {{count} Treffer}}'**
+  String orgSongsResultCount(num count);
+
+  /// orgSongs.searchFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Suche fehlgeschlagen: {error}'**
+  String orgSongsSearchFailed(Object error);
+
+  /// orgSongs.searchPh
+  ///
+  /// In de, this message translates to:
+  /// **'Name oder Nummer'**
+  String get orgSongsSearchPh;
+
+  /// orgSongs.section
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get orgSongsSection;
+
+  /// orgSongs.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get orgSongsSelectAll;
+
+  /// orgSongs.selectNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get orgSongsSelectNone;
+
+  /// orgSongs.sourceGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Dort: {group}'**
+  String orgSongsSourceGroup(Object group);
+
+  /// orgSongs.syncedTarget
+  ///
+  /// In de, this message translates to:
+  /// **'{tenant} nutzt die Werke von {library}. Das Werk wird dort gespeichert.'**
+  String orgSongsSyncedTarget(Object tenant, Object library);
+
+  /// orgSongs.target
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel'**
+  String get orgSongsTarget;
+
+  /// orgSongs.targetGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe im Ziel'**
+  String get orgSongsTargetGroup;
+
+  /// orgSongs.targetLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Zielinstanz konnte nicht geladen werden: {error}'**
+  String orgSongsTargetLoadFailed(Object error);
+
+  /// orgSongs.targetMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Das Zielwerk wurde nicht gefunden.'**
+  String get orgSongsTargetMissing;
+
+  /// orgSongs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke in der Organisation suchen'**
+  String get orgSongsTitle;
+
+  /// orgSongs.useNextFree
+  ///
+  /// In de, this message translates to:
+  /// **'Tippen für die nächste freie Nummer: {number}'**
+  String orgSongsUseNextFree(Object number);
+
+  /// orgSongs.withChoir
+  ///
+  /// In de, this message translates to:
+  /// **'mit Chor'**
+  String get orgSongsWithChoir;
+
+  /// orgSongs.withSolo
+  ///
+  /// In de, this message translates to:
+  /// **'mit Solo'**
+  String get orgSongsWithSolo;
 
   /// org.sourceTenant
   ///
@@ -11699,6 +12095,60 @@ abstract class AppLocalizations {
   /// **'Bass'**
   String get planningBass;
 
+  /// planning.beamer
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer'**
+  String get planningBeamer;
+
+  /// planning.beamerAutoHint
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an bei Werken und wenn „Lied“ oder „Gedicht“ im Titel steht. Schaltest du es von Hand um, bleibt es so.'**
+  String get planningBeamerAutoHint;
+
+  /// planning.beamerAutoSong
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an: Werk'**
+  String get planningBeamerAutoSong;
+
+  /// planning.beamerAutoWord
+  ///
+  /// In de, this message translates to:
+  /// **'Automatisch an: Titel enthält „{word}“'**
+  String planningBeamerAutoWord(Object word);
+
+  /// planning.beamerChangeInApp
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern kannst du die Datei in der Gemeinde App.'**
+  String get planningBeamerChangeInApp;
+
+  /// planning.beamerLinkInApp
+  ///
+  /// In de, this message translates to:
+  /// **'Verknüpfen kannst du die Datei in der Gemeinde App.'**
+  String get planningBeamerLinkInApp;
+
+  /// planning.beamerMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei fehlt'**
+  String get planningBeamerMissing;
+
+  /// planning.beamerNeeded
+  ///
+  /// In de, this message translates to:
+  /// **'Beamer-Datei nötig'**
+  String get planningBeamerNeeded;
+
+  /// planning.beamerNoFile
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Datei verknüpft'**
+  String get planningBeamerNoFile;
+
   /// planning.blockDurationHint
   ///
   /// In de, this message translates to:
@@ -12551,6 +13001,12 @@ abstract class AppLocalizations {
   /// **'Fehler beim Hinzufügen zur Organisation'**
   String get plansAddOrgFailed;
 
+  /// plans.addToOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Organisation hinzufügen'**
+  String get plansAddToOrg;
+
   /// plans.addedToOrg
   ///
   /// In de, this message translates to:
@@ -12682,6 +13138,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bild (A4)'**
   String get plansImageA4;
+
+  /// plans.inOrg
+  ///
+  /// In de, this message translates to:
+  /// **'In Organisation \"{org}\"'**
+  String plansInOrg(Object org);
 
   /// plans.linkCopied
   ///
@@ -14705,6 +15167,18 @@ abstract class AppLocalizations {
   /// **'Dabei'**
   String get redesignEventsYes;
 
+  /// redesign.events.you
+  ///
+  /// In de, this message translates to:
+  /// **'Du'**
+  String get redesignEventsYou;
+
+  /// redesign.events.yourAnswerLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Antwort: {status}'**
+  String redesignEventsYourAnswerLabel(Object status);
+
   /// redesign.files.actions
   ///
   /// In de, this message translates to:
@@ -14888,7 +15362,7 @@ abstract class AppLocalizations {
   /// redesign.files.shortcutsHelp
   ///
   /// In de, this message translates to:
-  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen'**
+  /// **'↑ ↓ auswählen · Umschalt+↑↓ mehrere · Enter öffnen · Leertaste Vorschau/Abspielen · Entf löschen · {mod}+U hochladen · {mod}+A alle · {mod}+D herunterladen · {mod}+Z rückgängig · F2 umbenennen · ? diese Übersicht'**
   String redesignFilesShortcutsHelp(Object mod);
 
   /// redesign.files.title
@@ -14950,6 +15424,228 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
+
+  /// redesign.invite.addPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Person anlegen'**
+  String get redesignInviteAddPerson;
+
+  /// redesign.invite.button
+  ///
+  /// In de, this message translates to:
+  /// **'Einladen'**
+  String get redesignInviteButton;
+
+  /// redesign.invite.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Link kopiert'**
+  String get redesignInviteCopied;
+
+  /// redesign.invite.copy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopieren'**
+  String get redesignInviteCopy;
+
+  /// redesign.invite.emptyMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Mitglieder. Schick den Einladungslink in eure Gruppe oder zeig den QR-Code in der nächsten Probe.'**
+  String get redesignInviteEmptyMembers;
+
+  /// redesign.invite.fullscreen
+  ///
+  /// In de, this message translates to:
+  /// **'Vollbild zeigen'**
+  String get redesignInviteFullscreen;
+
+  /// redesign.invite.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich an. Du gibst jede Anmeldung danach frei.'**
+  String get redesignInviteIntro;
+
+  /// redesign.invite.introAuto
+  ///
+  /// In de, this message translates to:
+  /// **'Wer den Link öffnet, meldet sich an und ist gleich dabei.'**
+  String get redesignInviteIntroAuto;
+
+  /// redesign.invite.off
+  ///
+  /// In de, this message translates to:
+  /// **'Die Anmeldung per Link ist für diese Gruppe aus.'**
+  String get redesignInviteOff;
+
+  /// redesign.invite.qrLabel
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code für die Anmeldung bei {group}'**
+  String redesignInviteQrLabel(Object group);
+
+  /// redesign.invite.share
+  ///
+  /// In de, this message translates to:
+  /// **'Link teilen'**
+  String get redesignInviteShare;
+
+  /// redesign.invite.shareSubject
+  ///
+  /// In de, this message translates to:
+  /// **'Melde dich bei {group} in Attendix an:'**
+  String redesignInviteShareSubject(Object group);
+
+  /// redesign.invite.title
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder einladen'**
+  String get redesignInviteTitle;
+
+  /// redesign.invite.turnOn
+  ///
+  /// In de, this message translates to:
+  /// **'In den Einstellungen einschalten'**
+  String get redesignInviteTurnOn;
+
+  /// redesign.join.continue
+  ///
+  /// In de, this message translates to:
+  /// **'Weiter zur Anmeldung'**
+  String get redesignJoinContinue;
+
+  /// redesign.join.create
+  ///
+  /// In de, this message translates to:
+  /// **'Eigene Gruppe gründen'**
+  String get redesignJoinCreate;
+
+  /// redesign.join.createButton
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe gründen'**
+  String get redesignJoinCreateButton;
+
+  /// redesign.join.createHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Leitungen, die Attendix neu einführen'**
+  String get redesignJoinCreateHint;
+
+  /// redesign.join.found
+  ///
+  /// In de, this message translates to:
+  /// **'{group} gefunden'**
+  String redesignJoinFound(Object group);
+
+  /// redesign.join.haveInvite
+  ///
+  /// In de, this message translates to:
+  /// **'Ich habe eine Einladung'**
+  String get redesignJoinHaveInvite;
+
+  /// redesign.join.haveInviteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Link einfügen oder QR-Code scannen'**
+  String get redesignJoinHaveInviteHint;
+
+  /// redesign.join.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Füge den Link aus der Einladung ein.'**
+  String get redesignJoinIntro;
+
+  /// redesign.join.invalid
+  ///
+  /// In de, this message translates to:
+  /// **'Das sieht nicht nach einem Einladungslink aus (attendix.de/register/…).'**
+  String get redesignJoinInvalid;
+
+  /// redesign.join.label
+  ///
+  /// In de, this message translates to:
+  /// **'Einladungslink'**
+  String get redesignJoinLabel;
+
+  /// redesign.join.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist noch in keiner Gruppe. Meist schickt dir die Leitung deines Chors oder Orchesters einen Einladungslink.'**
+  String get redesignJoinNoGroup;
+
+  /// redesign.join.notFound
+  ///
+  /// In de, this message translates to:
+  /// **'Zu diesem Link gibt es keine Gruppe. Frag bei der Leitung nach einem neuen Link.'**
+  String get redesignJoinNotFound;
+
+  /// redesign.join.scan
+  ///
+  /// In de, this message translates to:
+  /// **'QR-Code scannen'**
+  String get redesignJoinScan;
+
+  /// redesign.join.scanHint
+  ///
+  /// In de, this message translates to:
+  /// **'Halte die Kamera auf den QR-Code der Einladung.'**
+  String get redesignJoinScanHint;
+
+  /// redesign.join.scanNoCamera
+  ///
+  /// In de, this message translates to:
+  /// **'Die Kamera ist nicht verfügbar. Erlaube den Zugriff in den Einstellungen oder füge den Link ein.'**
+  String get redesignJoinScanNoCamera;
+
+  /// redesign.join.scanTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Einladung scannen'**
+  String get redesignJoinScanTitle;
+
+  /// redesign.join.scanWrong
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist kein Einladungs-Code von Attendix.'**
+  String get redesignJoinScanWrong;
+
+  /// redesign.join.stepCheck
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung prüft deine Angaben'**
+  String get redesignJoinStepCheck;
+
+  /// redesign.join.stepNotify
+  ///
+  /// In de, this message translates to:
+  /// **'Du bekommst eine Benachrichtigung, sobald du freigegeben bist'**
+  String get redesignJoinStepNotify;
+
+  /// redesign.join.stepReceived
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung eingegangen am {date}'**
+  String redesignJoinStepReceived(Object date);
+
+  /// redesign.join.stepReceivedNoDate
+  ///
+  /// In de, this message translates to:
+  /// **'Anmeldung eingegangen'**
+  String get redesignJoinStepReceivedNoDate;
+
+  /// redesign.join.title
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe beitreten'**
+  String get redesignJoinTitle;
+
+  /// redesign.join.welcomeNoName
+  ///
+  /// In de, this message translates to:
+  /// **'Willkommen'**
+  String get redesignJoinWelcomeNoName;
 
   /// redesign.manage.announcementsHint
   ///
@@ -15101,6 +15797,18 @@ abstract class AppLocalizations {
   /// **'App'**
   String get redesignMeApp;
 
+  /// redesign.me.attendance
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get redesignMeAttendance;
+
+  /// redesign.me.attendanceLate
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 × verspätet} other {{count} × verspätet}}'**
+  String redesignMeAttendanceLate(num count);
+
   /// redesign.me.beta
   ///
   /// In de, this message translates to:
@@ -15152,7 +15860,7 @@ abstract class AppLocalizations {
   /// redesign.me.logout
   ///
   /// In de, this message translates to:
-  /// **'Abmelden'**
+  /// **'Ausloggen'**
   String get redesignMeLogout;
 
   /// redesign.me.notifications
@@ -15214,6 +15922,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geburtstag morgen'**
   String get redesignMembersBirthdayTomorrow;
+
+  /// redesign.members.critical
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlen oft · {count}'**
+  String redesignMembersCritical(Object count);
 
   /// redesign.members.empty
   ///
@@ -15599,6 +16313,102 @@ abstract class AppLocalizations {
   /// **'{title} · Pultmodus'**
   String redesignPultTitle(Object title);
 
+  /// redesign.remind.body
+  ///
+  /// In de, this message translates to:
+  /// **'für „{event}“ am {when} fehlt noch deine Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!'**
+  String redesignRemindBody(Object event, Object when);
+
+  /// redesign.remind.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Text kopiert'**
+  String get redesignRemindCopied;
+
+  /// redesign.remind.failed
+  ///
+  /// In de, this message translates to:
+  /// **'Senden hat nicht geklappt.'**
+  String get redesignRemindFailed;
+
+  /// redesign.remind.hello
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {name},'**
+  String redesignRemindHello(Object name);
+
+  /// redesign.remind.helloAll
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo zusammen,'**
+  String get redesignRemindHelloAll;
+
+  /// redesign.remind.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Push und Mail gehen nur an Personen mit App-Konto, jede mit ihrem Namen. Für alle anderen den Text teilen.'**
+  String get redesignRemindHint;
+
+  /// redesign.remind.messageLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht (beginnt mit „Hallo Vorname,“)'**
+  String get redesignRemindMessageLabel;
+
+  /// redesign.remind.noApp
+  ///
+  /// In de, this message translates to:
+  /// **'ohne App'**
+  String get redesignRemindNoApp;
+
+  /// redesign.remind.openLink
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignRemindOpenLink(Object count);
+
+  /// redesign.remind.partlyFailed
+  ///
+  /// In de, this message translates to:
+  /// **'{sent} gesendet, {failed} fehlgeschlagen'**
+  String redesignRemindPartlyFailed(Object sent, Object failed);
+
+  /// redesign.remind.push
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Push an 1 Person senden} other {Push an {count} Personen senden}}'**
+  String redesignRemindPush(num count);
+
+  /// redesign.remind.reached
+  ///
+  /// In de, this message translates to:
+  /// **'erinnert'**
+  String get redesignRemindReached;
+
+  /// redesign.remind.sent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Erinnerung an 1 Person gesendet} other {Erinnerung an {count} Personen gesendet}}'**
+  String redesignRemindSent(num count);
+
+  /// redesign.remind.share
+  ///
+  /// In de, this message translates to:
+  /// **'Als Text teilen'**
+  String get redesignRemindShare;
+
+  /// redesign.remind.shareText
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo zusammen, für „{event}“ am {when} fehlt noch eure Antwort. Bitte kurz in Attendix zu- oder absagen. Danke!'**
+  String redesignRemindShareText(Object event, Object when);
+
+  /// redesign.remind.title
+  ///
+  /// In de, this message translates to:
+  /// **'{count} noch offen'**
+  String redesignRemindTitle(Object count);
+
   /// redesign.signout.cannot
   ///
   /// In de, this message translates to:
@@ -15653,17 +16463,107 @@ abstract class AppLocalizations {
   /// **'Wähle links einen Termin aus.'**
   String get redesignSplitEventsEmpty;
 
+  /// redesign.split.membersActive
+  ///
+  /// In de, this message translates to:
+  /// **'aktiv'**
+  String get redesignSplitMembersActive;
+
+  /// redesign.split.membersBirthdays
+  ///
+  /// In de, this message translates to:
+  /// **'Nächste Geburtstage'**
+  String get redesignSplitMembersBirthdays;
+
+  /// redesign.split.membersCritical
+  ///
+  /// In de, this message translates to:
+  /// **'Auffällige Anwesenheit'**
+  String get redesignSplitMembersCritical;
+
   /// redesign.split.membersEmpty
   ///
   /// In de, this message translates to:
   /// **'Wähle links eine Person aus.'**
   String get redesignSplitMembersEmpty;
 
+  /// redesign.split.membersHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links eine Person aus.'**
+  String get redesignSplitMembersHint;
+
+  /// redesign.split.membersPaused
+  ///
+  /// In de, this message translates to:
+  /// **'pausiert'**
+  String get redesignSplitMembersPaused;
+
+  /// redesign.split.membersPending
+  ///
+  /// In de, this message translates to:
+  /// **'Anfragen'**
+  String get redesignSplitMembersPending;
+
+  /// redesign.split.more
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weiteres} other {und {count} weitere}}'**
+  String redesignSplitMore(num count);
+
+  /// redesign.split.overviewTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Überblick'**
+  String get redesignSplitOverviewTitle;
+
+  /// redesign.split.worksCount
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignSplitWorksCount;
+
   /// redesign.split.worksEmpty
   ///
   /// In de, this message translates to:
   /// **'Wähle links ein Werk aus.'**
   String get redesignSplitWorksEmpty;
+
+  /// redesign.split.worksHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle links ein Werk aus oder fang hier an.'**
+  String get redesignSplitWorksHint;
+
+  /// redesign.split.worksLongAgo
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht dran'**
+  String get redesignSplitWorksLongAgo;
+
+  /// redesign.split.worksMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Noch ohne Noten'**
+  String get redesignSplitWorksMissing;
+
+  /// redesign.split.worksNext
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes geplant · {date}'**
+  String redesignSplitWorksNext(Object date);
+
+  /// redesign.split.worksWithFiles
+  ///
+  /// In de, this message translates to:
+  /// **'mit Noten'**
+  String get redesignSplitWorksWithFiles;
+
+  /// redesign.split.worksWithoutFiles
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Noten'**
+  String get redesignSplitWorksWithoutFiles;
 
   /// redesign.stats.avg
   ///
@@ -15869,6 +16769,36 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day}) +{count}'**
   String redesignTodayBirthdayMore(Object name, Object day, Object count);
 
+  /// redesign.today.childFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das hat nicht geklappt. Bitte versuch es noch einmal.'**
+  String get redesignTodayChildFailed;
+
+  /// redesign.today.childIn
+  ///
+  /// In de, this message translates to:
+  /// **'Dabei'**
+  String get redesignTodayChildIn;
+
+  /// redesign.today.childNo
+  ///
+  /// In de, this message translates to:
+  /// **'Kann nicht'**
+  String get redesignTodayChildNo;
+
+  /// redesign.today.childOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{name} offen'**
+  String redesignTodayChildOpen(Object name);
+
+  /// redesign.today.childYes
+  ///
+  /// In de, this message translates to:
+  /// **'Ist dabei'**
+  String get redesignTodayChildYes;
+
   /// redesign.today.countAbsent
   ///
   /// In de, this message translates to:
@@ -15922,6 +16852,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Morgen'**
   String get redesignTodayDayTomorrow;
+
+  /// redesign.today.deadline
+  ///
+  /// In de, this message translates to:
+  /// **'Antwort bis {date}'**
+  String redesignTodayDeadline(Object date);
 
   /// redesign.today.dutyQuestion
   ///
@@ -16004,7 +16940,7 @@ abstract class AppLocalizations {
   /// redesign.today.noChildren
   ///
   /// In de, this message translates to:
-  /// **'Es sind noch keine Kinder mit deinem Konto verknüpft.'**
+  /// **'Mit deinem Konto ist noch kein Kind verknüpft. Das macht die Gruppenleitung für dich.'**
   String get redesignTodayNoChildren;
 
   /// redesign.today.noDone
@@ -16048,6 +16984,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {Benachrichtigungen, {count} ungelesen} other {Benachrichtigungen, {count} ungelesen}}'**
   String redesignTodayNotificationsUnread(num count);
+
+  /// redesign.today.openCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count} offen'**
+  String redesignTodayOpenCount(Object count);
 
   /// redesign.today.otherReason
   ///
@@ -16103,11 +17045,23 @@ abstract class AppLocalizations {
   /// **'Diese Woche'**
   String get redesignTodayThisWeek;
 
+  /// redesign.today.unrecorded
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}'**
+  String redesignTodayUnrecorded(num count);
+
   /// redesign.today.upNext
   ///
   /// In de, this message translates to:
   /// **'Als Nächstes'**
   String get redesignTodayUpNext;
+
+  /// redesign.today.viewerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.'**
+  String get redesignTodayViewerHint;
 
   /// redesign.today.weekEmpty
   ///
@@ -19601,6 +20555,12 @@ abstract class AppLocalizations {
   /// **'Für dieses Werk sind keine Aktionen verfügbar.'**
   String get signoutNoSongActions;
 
+  /// signout.notInvited
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht eingeladen'**
+  String get signoutNotInvited;
+
   /// signout.noteChip
   ///
   /// In de, this message translates to:
@@ -19895,6 +20855,12 @@ abstract class AppLocalizations {
   /// **'Alle Werke'**
   String get songsAllSongs;
 
+  /// songs.beamerFile
+  ///
+  /// In de, this message translates to:
+  /// **'SongBeamer-Datei'**
+  String get songsBeamerFile;
+
   /// songs.catalogPdf
   ///
   /// In de, this message translates to:
@@ -19954,6 +20920,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Chor'**
   String get songsChoir;
+
+  /// songs.choirAll
+  ///
+  /// In de, this message translates to:
+  /// **'Chor (alle)'**
+  String get songsChoirAll;
+
+  /// songs.choirAllHint
+  ///
+  /// In de, this message translates to:
+  /// **'Datei für alle Sängerinnen und Sänger'**
+  String get songsChoirAllHint;
 
   /// songs.choirOrchShort
   ///
@@ -21077,6 +22055,12 @@ abstract class AppLocalizations {
   /// **'Aktive Mitglieder'**
   String get statsActiveMembers;
 
+  /// stats.additionalFields
+  ///
+  /// In de, this message translates to:
+  /// **'🧩 Zusatzfelder'**
+  String get statsAdditionalFields;
+
   /// stats.ageChart
   ///
   /// In de, this message translates to:
@@ -21136,6 +22120,54 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termine im Zeitraum'**
   String get statsEventsInPeriod;
+
+  /// stats.fieldAllGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Gruppen'**
+  String get statsFieldAllGroups;
+
+  /// stats.fieldGroupFilter
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppe'**
+  String get statsFieldGroupFilter;
+
+  /// stats.fieldIncludePaused
+  ///
+  /// In de, this message translates to:
+  /// **'Pausierende einbeziehen'**
+  String get statsFieldIncludePaused;
+
+  /// stats.fieldNoPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Für diese Auswahl gibt es keine Personen.'**
+  String get statsFieldNoPersons;
+
+  /// stats.fieldNoValue
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Angabe'**
+  String get statsFieldNoValue;
+
+  /// stats.fieldPerGroupChart
+  ///
+  /// In de, this message translates to:
+  /// **'{field} nach Gruppe (in %)'**
+  String statsFieldPerGroupChart(Object field);
+
+  /// stats.fieldSelect
+  ///
+  /// In de, this message translates to:
+  /// **'Feld'**
+  String get statsFieldSelect;
+
+  /// stats.fieldTooltip
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Person} other {{count} Personen}} ({perc}%)'**
+  String statsFieldTooltip(num count, Object perc);
 
   /// stats.filterTenants
   ///
@@ -21838,6 +22870,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fehler beim Speichern'**
   String get svcSaveFailed;
+
+  /// svc.saveGemeindeAppFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehler beim Speichern der Gemeinde-App-Einstellungen'**
+  String get svcSaveGemeindeAppFailed;
 
   /// svc.saveOrgFieldsFailed
   ///

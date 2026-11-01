@@ -15,6 +15,7 @@ void main() {
       StatsSection.members,
       StatsSection.ageDistribution,
       StatsSection.avgAgeInstrument,
+      StatsSection.additionalFields,
       StatsSection.organisation,
     ]);
   });
@@ -26,6 +27,7 @@ void main() {
       StatsSection.members,
       StatsSection.ageDistribution,
       StatsSection.avgAgeInstrument,
+      StatsSection.additionalFields,
       StatsSection.organisation,
     ]);
   });

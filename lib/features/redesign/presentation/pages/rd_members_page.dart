@@ -15,7 +15,9 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
+import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
+import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
@@ -92,8 +94,12 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       RdMembersFilter.paused,
       if (pending.isNotEmpty) RdMembersFilter.pending,
     ];
+    // UX D3: "Fehlen oft · N" narrows Aktiv to the critical members.
+    final critical = rdCriticalMembers(active);
+    // An empty filter stays on (shows nobody) instead of silently showing all.
+    final criticalOnly = filter == RdMembersFilter.active && ref.watch(rdMembersCriticalOnlyProvider);
     final shown = switch (filter) {
-      RdMembersFilter.active => active,
+      RdMembersFilter.active => criticalOnly ? critical : active,
       RdMembersFilter.paused => paused,
       RdMembersFilter.pending => pending,
     };
@@ -124,6 +130,15 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
               child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
             ),
           ),
+          // UX D1: invite right here (Dirigent, Verantwortlich).
+          if (canApprove) ...[
+            RdPillButton(
+              icon: Icons.person_add_alt_outlined,
+              label: l10n.redesignInviteButton,
+              onPressed: () => showRdInviteSheet(context),
+            ),
+            const SizedBox(width: 8),
+          ],
           if (canApprove)
             RdCircleButton(
               icon: Icons.bar_chart_rounded,
@@ -177,6 +192,17 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onChanged: (f) => setState(() => _filter = f),
         ),
       ),
+      if (filter == RdMembersFilter.active && (critical.isNotEmpty || criticalOnly)) ...[
+        const SizedBox(height: 10),
+        Align(
+          alignment: Alignment.centerLeft,
+          child: RdChoiceChip(
+            label: l10n.redesignMembersCritical(critical.length),
+            selected: criticalOnly,
+            onTap: () => ref.read(rdMembersCriticalOnlyProvider.notifier).state = !criticalOnly,
+          ),
+        ),
+      ],
       const SizedBox(height: 16),
     ];
 
@@ -192,10 +218,33 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           onPressed: () => ref.invalidate(realtimePlayersProvider),
         ),
       ));
+    } else if (filtered.isEmpty && people.isEmpty && _query.trim().isEmpty && canApprove) {
+      // UX D1: a new group starts with the invitation.
+      body.add(RdInfoCard(
+        icon: Icons.people_outline,
+        text: l10n.redesignInviteEmptyMembers,
+        action: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            RdPrimaryButton(
+              label: l10n.redesignInviteButton,
+              icon: Icons.person_add_alt_outlined,
+              onPressed: () => showRdInviteSheet(context),
+            ),
+            if (role.canEdit) ...[
+              const SizedBox(height: 8),
+              RdOutlineButton(
+                label: l10n.redesignInviteAddPerson,
+                onPressed: () => context.push('/people/new'),
+              ),
+            ],
+          ],
+        ),
+      ));
     } else if (filtered.isEmpty) {
       body.add(RdInfoCard(
         icon: Icons.people_outline,
-        text: _query.trim().isNotEmpty
+        text: _query.trim().isNotEmpty || criticalOnly
             ? l10n.redesignMembersNoMatch
             : switch (filter) {
                 RdMembersFilter.active => l10n.redesignMembersEmpty,

@@ -2,16 +2,23 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/services/tracking/tracking_event.dart';
+import '../../../../../core/services/tracking/tracking_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
+import '../../../../../data/repositories/sign_in_out_repository.dart' show SignInType;
 import '../../../../../l10n/l10n.dart';
 import '../../../../parents/data/providers/parents_providers.dart';
 import '../../../data/providers/rd_today_providers.dart';
+import '../event/rd_signout_sheet.dart' show showRdReasonSheet;
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
 
 /// REDESIGN: "Heute" of Eltern (canvas R2): the next Termine with the
-/// answer of each child. Zu- und Absagen stay on the parents page.
+/// answer of each child, answered right here per child (UX E1, same writes
+/// as the parents page). More (plan, all Termine) stays on the parents page.
 class RdParentToday extends ConsumerWidget {
   const RdParentToday({super.key});
 
@@ -88,24 +95,12 @@ class RdParentToday extends ConsumerWidget {
                   );
                 }),
                 const SizedBox(height: 12),
-                for (final child in next.childAttendances)
-                  Padding(
-                    padding: const EdgeInsets.symmetric(vertical: 6),
-                    child: Row(
-                      children: [
-                        RdInitials(rdInitialsOf(child.childName), size: 32),
-                        const SizedBox(width: 10),
-                        Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
-                        rdOwnStatusPill(l10n, child.status),
-                      ],
-                    ),
-                  ),
-                const SizedBox(height: 12),
-                SizedBox(
-                  width: double.infinity,
-                  child: RdPrimaryButton(
-                    label: l10n.redesignTodayAnswerChildren,
-                    icon: Icons.how_to_reg_outlined,
+                for (final child in next.childAttendances) _ChildAnswerRow(group: next, child: child),
+                const SizedBox(height: 4),
+                Align(
+                  alignment: Alignment.centerLeft,
+                  child: RdLinkButton(
+                    label: l10n.redesignTodayMore,
                     onPressed: () => context.go('/parents'),
                   ),
                 ),
@@ -127,10 +122,10 @@ class RdParentToday extends ConsumerWidget {
                 RdEventRow(
                   date: g.date,
                   title: g.displayTitle,
-                  meta: EventListUtils.timeRange(g.startTime, g.endTime),
+                  meta: rdChildrenLine(l10n, g),
                   trailing: g.allChildrenResponded
                       ? RdPill(l10n.redesignTodayAnswered, tone: RdTone.present)
-                      : RdPill(l10n.redesignStatusOpen),
+                      : RdPill(l10n.redesignTodayOpenCount(rdOpenChildren(g))),
                   onTap: () => context.go('/parents'),
                 ),
             ],
@@ -138,5 +133,171 @@ class RdParentToday extends ConsumerWidget {
         ],
       ],
     );
+  }
+}
+
+/// Children of [g] without an answer yet.
+int rdOpenChildren(ParentAttendanceGroup g) => g.childAttendances.where((c) => c.status.isNeutral).length;
+
+/// "Mia ✓ · Ben offen" (UX E1); a single child shows only the time.
+String rdChildrenLine(AppLocalizations l10n, ParentAttendanceGroup g) {
+  final time = EventListUtils.timeRange(g.startTime, g.endTime);
+  if (g.childAttendances.length < 2) return time;
+  return g.childAttendances
+      .map((c) => c.status.isNeutral
+          ? l10n.redesignTodayChildOpen(c.childFirstName)
+          : '${c.childFirstName} ${c.status.countsAsPresent ? '✓' : '✕'}')
+      .join(' · ');
+}
+
+/// One child of the next Termin: open → "Ist dabei" / "Kann nicht",
+/// answered → status plus "Doch absagen" / "Doch dabei".
+class _ChildAnswerRow extends ConsumerWidget {
+  const _ChildAnswerRow({required this.group, required this.child});
+
+  final ParentAttendanceGroup group;
+  final ChildPersonAttendance child;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final busy = ref.watch(parentSignInOutNotifierProvider).isLoading;
+    final id = child.id;
+    final status = child.status;
+    final canAnswer = id != null && !busy;
+
+    final Widget answer;
+    if (status.isNeutral) {
+      answer = Wrap(
+        spacing: 8,
+        runSpacing: 8,
+        alignment: WrapAlignment.end,
+        children: [
+          _SmallButton(
+            label: l10n.redesignTodayChildYes,
+            primary: true,
+            onPressed: canAnswer ? () => _signIn(context, ref) : null,
+          ),
+          _SmallButton(
+            label: l10n.redesignTodayChildNo,
+            onPressed: canAnswer ? () => _signOut(context, ref) : null,
+          ),
+        ],
+      );
+    } else {
+      final yes = status == AttendanceStatus.present;
+      // After "kommt später" both ways stay open: a normal Zusage
+      // (SignInType.late) or cancelling after all.
+      final links = [
+        if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
+          RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
+        if (canAnswer && status.countsAsPresent)
+          RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
+      ];
+      final pill = yes
+          ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
+          : rdOwnStatusPill(l10n, status);
+      answer = links.length < 2
+          ? Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.end,
+              children: [pill, ...links],
+            )
+          : Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [
+                pill,
+                Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
+              ],
+            );
+    }
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Row(
+        children: [
+          RdInitials(rdInitialsOf(child.childName), size: 32),
+          const SizedBox(width: 10),
+          Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
+          const SizedBox(width: 8),
+          Flexible(flex: 2, child: Align(alignment: Alignment.centerRight, child: answer)),
+        ],
+      ),
+    );
+  }
+
+  Future<void> _signIn(BuildContext context, WidgetRef ref) async {
+    final id = child.id;
+    if (id == null) return;
+    final notifier = ref.read(parentSignInOutNotifierProvider.notifier);
+    final ok = await notifier.signInAll([(id, SignInType.fromStatus(child.status))]);
+    if (!context.mounted) return;
+    if (ok) {
+      ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': 1});
+    } else {
+      _failed(context);
+    }
+  }
+
+  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
+    final id = child.id;
+    if (id == null) return;
+    final tenant = ref.read(currentTenantProvider);
+    final type = ref.read(rdAttendanceTypeProvider(group.typeId));
+    final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
+    final choice = await showRdReasonSheet(
+      context,
+      title: '${child.childFirstName} · ${group.displayTitle}',
+      meta: EventListUtils.timeRange(group.startTime, group.endTime),
+      absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+      lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+      allowLate: lateAllowed,
+      ownReasonFirst: group.isRunning,
+    );
+    if (choice == null || !context.mounted) return;
+    await ref
+        .read(parentSignInOutNotifierProvider.notifier)
+        .signOut([id], choice.reason, isLateComing: choice.isLate);
+    if (!context.mounted) return;
+    if (ref.read(parentSignInOutNotifierProvider).hasError) {
+      _failed(context);
+    } else {
+      ref
+          .read(trackingServiceProvider)
+          .track(TrackingEvent.parentSignOut, properties: {'count': 1, 'isLate': choice.isLate});
+    }
+  }
+
+  void _failed(BuildContext context) {
+    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
+  }
+}
+
+/// Compact answer button of a child row (min. 40 px high).
+class _SmallButton extends StatelessWidget {
+  const _SmallButton({required this.label, required this.onPressed, this.primary = false});
+
+  final String label;
+  final VoidCallback? onPressed;
+  final bool primary;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final style = primary
+        ? FilledButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary)
+        : OutlinedButton.styleFrom(foregroundColor: p.link, side: BorderSide(color: p.offBorder));
+    final common = ButtonStyle(
+      minimumSize: const WidgetStatePropertyAll(Size(44, 40)),
+      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 14)),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
+      textStyle: const WidgetStatePropertyAll(TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+    );
+    final merged = common.merge(style);
+    return primary
+        ? FilledButton(onPressed: onPressed, style: merged, child: Text(label))
+        : OutlinedButton(onPressed: onPressed, style: merged, child: Text(label));
   }
 }

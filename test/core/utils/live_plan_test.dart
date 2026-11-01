@@ -122,4 +122,31 @@ void main() {
     expect(liveTitle(multi, 'Probe', 1), 'Probe · Abend');
     expect(liveTitle(multi, 'Probe', 0), 'Probe · Plan 1');
   });
+
+  // Ionic 4.17.22 live-plan.spec.ts: 'gives the widget the colour of the Termin type'
+  test('gives the widget the colour of the Termin type', () {
+    expect(liveColor('rosa'), '#be72c0');
+    expect(liveColor('#3880FF'), '#3880ff');
+    expect(liveColor('unbekannt'), isNull);
+    expect(liveColor(null), isNull);
+    final s = buildSchedule(
+      date: '2026-10-17',
+      planTime: '10:00',
+      fields: const [
+        PlanField(id: 'b', name: 'Probe', time: '45'),
+        PlanField(id: 'c', name: 'Pause', time: '10'),
+      ],
+      timezone: 'Europe/Berlin',
+    );
+    final state = liveStateAt(s, DateTime.utc(2026, 10, 17, 8, 5).millisecondsSinceEpoch);
+    expect(state, isNotNull);
+    final colored = withLiveColor(state, 'danger');
+    expect(colored?.color, '#ff4961');
+    expect(colored?.toMap()['color'], '#ff4961');
+    expect(colored!.toMap().keys.last, 'color');
+    expect(iosLiveState(colored).color, '#ff4961');
+    expect(withLiveColor(state, ''), same(state));
+    expect(withLiveColor(null, 'danger'), isNull);
+    expect(state!.toMap().containsKey('color'), isFalse);
+  });
 }

@@ -85,10 +85,57 @@ class PlanField with _$PlanField {
 
     /// Legacy Flutter flag for notes (Ionic only uses the `noteFld` id prefix).
     @JsonKey(includeToJson: false) @PlanBoolConverter() @Default(false) bool isNote,
+
+    /// Stable id of the row (Gemeinde App link); song rows reuse the song id
+    /// as [id], which repeats (see `PlanBeamer.ensureFieldUids`).
+    String? uid,
+
+    /// "Beamer-Datei nötig", set only when switched by hand; otherwise
+    /// derived from the row (see `PlanBeamer.needsBeamer`).
+    bool? needsBeamer,
+
+    /// SongBeamer file linked in the Gemeinde App.
+    @BeamerFileConverter() BeamerFile? beamerFile,
   }) = _PlanField;
 
   factory PlanField.fromJson(Map<String, dynamic> json) =>
       _$PlanFieldFromJson(json);
+}
+
+/// SongBeamer file in the Gemeinde App's Mediathek, written by the Gemeinde
+/// App (Ionic: `BeamerFile`). Attached to a plan row (`beamerFile`) or a
+/// Werk (`songs.beamer_file`).
+@freezed
+class BeamerFile with _$BeamerFile {
+  @JsonSerializable(includeIfNull: false)
+  const factory BeamerFile({
+    @Default('') String name,
+    @Default('') String path,
+    String? linkedAt,
+  }) = _BeamerFile;
+
+  factory BeamerFile.fromJson(Map<String, dynamic> json) =>
+      _$BeamerFileFromJson(json);
+}
+
+/// Reads a [BeamerFile] leniently: anything but an object with a name is null.
+class BeamerFileConverter implements JsonConverter<BeamerFile?, dynamic> {
+  const BeamerFileConverter();
+
+  @override
+  BeamerFile? fromJson(dynamic json) {
+    if (json is! Map) return null;
+    final name = json['name'];
+    if (name is! String || name.isEmpty) return null;
+    return BeamerFile(
+      name: name,
+      path: json['path']?.toString() ?? '',
+      linkedAt: json['linkedAt']?.toString(),
+    );
+  }
+
+  @override
+  dynamic toJson(BeamerFile? object) => object?.toJson();
 }
 
 /// A complete Ablaufplan (Ionic: `Plan`).

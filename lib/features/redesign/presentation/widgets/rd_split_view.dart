@@ -57,6 +57,7 @@ class RdSplitView extends StatelessWidget {
     required this.selectedId,
     required this.emptyText,
     this.emptyIcon = Icons.touch_app_outlined,
+    this.empty,
   });
 
   final Widget list;
@@ -66,6 +67,10 @@ class RdSplitView extends StatelessWidget {
   final int? selectedId;
   final String emptyText;
   final IconData emptyIcon;
+
+  /// Shown instead of [emptyText] while nothing is chosen (an overview, so
+  /// the wide column is not one sentence in a large empty box).
+  final Widget? empty;
 
   @override
   Widget build(BuildContext context) {
@@ -82,7 +87,7 @@ class RdSplitView extends StatelessWidget {
           VerticalDivider(width: 1, thickness: 1, color: p.line),
           Expanded(
             child: detail == null
-                ? Scaffold(
+                ? empty ?? Scaffold(
                     backgroundColor: p.bg,
                     body: Center(
                       child: Padding(

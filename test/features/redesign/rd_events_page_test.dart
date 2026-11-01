@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -57,7 +59,14 @@ CrossTenantPersonAttendance _own(String id, int dayOffset, AttendanceStatus stat
       tenantColor: 'primary',
     );
 
-Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = const []}) {
+Widget _app(
+  Role role, {
+  bool canCreate = true,
+  List<AttendanceType> types = const [],
+  int? pending,
+  List<CrossTenantPersonAttendance> extraUpcoming = const [],
+  Future<SignoutData> Function(Ref ref)? signout,
+}) {
   final router = GoRouter(
     initialLocation: '/termine',
     routes: [
@@ -102,16 +111,18 @@ Widget _app(Role role, {bool canCreate = true, List<AttendanceType> types = cons
       currentSelfServicePlayerProvider.overrideWith(
         (ref) async => TestFactories.createPerson(id: 3, firstName: 'Lea', tenantId: 7),
       ),
-      signoutDataProvider.overrideWith((ref) async => SignoutData(
+      signoutDataProvider.overrideWith(signout ?? (ref) async => SignoutData(
             current: _own('11', 0, AttendanceStatus.neutral),
             upcoming: [
               _own('12', 2, AttendanceStatus.present),
               _own('13', 40, AttendanceStatus.excused),
+              ...extraUpcoming,
             ],
             past: [_own('10', -2, AttendanceStatus.present)],
             percentage: 92,
           )),
       attendanceTypesProvider.overrideWith((ref) async => types),
+      if (pending != null) pendingAttendanceIdProvider.overrideWith((ref) => pending),
       realtimeAttendanceListProvider.overrideWith((ref) async => [
             TestFactories.createAttendance(
               id: 21,
@@ -150,6 +161,9 @@ Future<void> _settle(WidgetTester tester) async {
     await tester.pump(const Duration(milliseconds: 100));
   }
 }
+
+Finder _semantics(String label) =>
+    find.byWidgetPredicate((w) => w is Semantics && w.properties.label == label);
 
 void _size(WidgetTester tester, Size size) {
   tester.view.physicalSize = size;
@@ -325,6 +339,178 @@ void main() {
     await tester.tap(find.text('Gesamtprobe'));
     await _settle(tester);
     expect(find.text('page termin 21'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification for a Termin opens its own Termin page', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 12));
+    await _settle(tester);
+    expect(find.text('page own 12'), findsOneWidget);
+  });
+
+  testWidgets('Spieler: a notification for a duty without assignment opens "Offene Dienste"', (tester) async {
+    _size(tester, const Size(393, 852));
+    final duty = CrossTenantPersonAttendance(
+      id: '14',
+      attendanceId: 14,
+      status: AttendanceStatus.neutral,
+      date: _day(5),
+      typeInfo: 'Dienst 14',
+      tenantId: 7,
+      tenantName: 'SO',
+      tenantColor: 'primary',
+      attendanceType: TestFactories.createAttendanceType(id: 'd', name: 'Dienst').copyWith(dutyMode: true),
+    );
+    await tester.pumpWidget(_app(Role.player, pending: 14, extraUpcoming: [duty]));
+    await _settle(tester);
+    expect(find.text('Offene Dienste'), findsOneWidget, reason: 'taken over via duty_take only');
+    expect(find.text('Dabei'), findsOneWidget, reason: 'no answer sheet, only the list row of Probe 11');
+    expect(find.text('page own 14'), findsNothing);
+  });
+
+  testWidgets('Spieler: a notification waits until the Termine of the new tenant are loaded', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    final reload = Completer<SignoutData>();
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) => ref.watch(generation) == 0
+          ? Future.value(SignoutData(current: _own('11', 0, AttendanceStatus.neutral)))
+          : reload.future,
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    // A push switched the tenant: the Termine reload, the old ones still show.
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await tester.pump();
+    await tester.pump();
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept while loading');
+
+    reload.complete(SignoutData(current: _own('15', 1, AttendanceStatus.neutral)));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
+  });
+
+  testWidgets('Spieler: a failed reload keeps the notification until retry', (tester) async {
+    _size(tester, const Size(393, 852));
+    final generation = StateProvider<int>((ref) => 0);
+    var failed = false;
+    await tester.pumpWidget(_app(
+      Role.player,
+      signout: (ref) async {
+        if (ref.watch(generation) == 0) return SignoutData(current: _own('11', 0, AttendanceStatus.neutral));
+        if (!failed) {
+          failed = true;
+          throw Exception('offline');
+        }
+        return SignoutData(current: _own('15', 1, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+
+    container.read(generation.notifier).state = 1;
+    container.read(pendingAttendanceIdProvider.notifier).state = 15;
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsNothing);
+    expect(container.read(pendingAttendanceIdProvider), 15, reason: 'kept after the error');
+    expect(find.text('Erneut versuchen'), findsOneWidget);
+
+    await tester.tap(find.text('Erneut versuchen'));
+    await _settle(tester);
+    expect(find.text('page own 15'), findsOneWidget);
+    expect(container.read(pendingAttendanceIdProvider), isNull);
+  });
+
+  testWidgets('Spieler: a notification for an unknown Termin says so once', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.player, pending: 99));
+    await _settle(tester);
+    expect(find.text('Dieser Termin wurde nicht gefunden.'), findsOneWidget);
+    expect(find.text('Probe 11'), findsOneWidget, reason: 'the list stays');
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    expect(container.read(pendingAttendanceIdProvider), isNull, reason: 'consumed once');
+  });
+
+  testWidgets('Helfer: own answer as "Du" chip in the leader list, opens a sheet (UX H1/H2)', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async => SignoutData(
+        current: _own('21', 0, AttendanceStatus.neutral),
+        upcoming: [_own('22', 2, AttendanceStatus.present)],
+      ),
+    ));
+    await _settle(tester);
+
+    // Leader list with answers, plus one chip per own Termin.
+    expect(find.textContaining('24 zugesagt'), findsOneWidget);
+    expect(find.text('Du'), findsNWidgets(2));
+    expect(_semantics('Deine Antwort: Zugesagt'), findsOneWidget);
+    expect(_semantics('Deine Antwort: Offen'), findsOneWidget);
+    // Helfer are members: they can report an absence here too.
+    expect(find.text('Abwesend …'), findsOneWidget);
+
+    await tester.tap(_semantics('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('DEINE ZUSAGE'), findsOneWidget);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    expect(find.text('page termin 21'), findsNothing);
+    expect(tester.takeException(), isNull);
+  });
+
+  testWidgets('Helfer: the "Du" chip works with a screen reader, the sheet scrolls on a small screen', (tester) async {
+    _size(tester, const Size(568, 320)); // phone in landscape
+    final semantics = tester.ensureSemantics();
+    var loads = 0;
+    await tester.pumpWidget(_app(
+      Role.helper,
+      signout: (ref) async {
+        loads++;
+        return SignoutData(current: _own('21', 0, AttendanceStatus.neutral));
+      },
+    ));
+    await _settle(tester);
+    expect(
+      tester.getSemantics(_semantics('Deine Antwort: Offen')),
+      matchesSemantics(label: 'Deine Antwort: Offen', isButton: true, hasTapAction: true),
+    );
+
+    // A recording or realtime change reloads the own answers.
+    final before = loads;
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdEventsPage)));
+    container.read(attendanceRefetchCounter.notifier).state++;
+    await _settle(tester);
+    expect(loads, greaterThan(before));
+
+    // Opened through the screen reader action, with the keyboard up.
+    await tester.ensureVisible(_semantics('Deine Antwort: Offen'));
+    await tester.pump();
+    tester.view.viewInsets = const FakeViewPadding(bottom: 120);
+    tester.semantics.tap(find.semantics.byLabel('Deine Antwort: Offen'));
+    await _settle(tester);
+    expect(find.text('Bist du dabei?'), findsOneWidget);
+    // The last control of the sheet scrolls into reach.
+    final more = find.text('Mehr zum Termin');
+    await tester.scrollUntilVisible(
+      more,
+      40,
+      scrollable: find.descendant(of: find.byType(BottomSheet), matching: find.byType(Scrollable)).first,
+    );
+    expect(tester.getRect(more).bottom, lessThanOrEqualTo(320 - 120));
+    expect(tester.takeException(), isNull);
+    semantics.dispose();
+  });
+
+  testWidgets('Dirigent without own Termine sees no "Du" chips', (tester) async {
+    _size(tester, const Size(393, 852));
+    await tester.pumpWidget(_app(Role.admin));
+    await _settle(tester);
+    expect(find.text('Du'), findsNothing);
   });
 
   testWidgets('Spieler: answer open Termine right in the list', (tester) async {
