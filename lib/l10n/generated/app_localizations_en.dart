@@ -9406,12 +9406,26 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignMembersSearchLabel => 'Search members';
 
   @override
+  String get redesignMembersSearchRead => 'Name or section';
+
+  @override
   String redesignMembersSection(Object title, Object count) {
     return '$title · $count';
   }
 
   @override
   String get redesignMembersStats => 'Statistics';
+
+  @override
+  String redesignMembersTotal(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '1 person',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignNotifForMe => 'For me';
@@ -9451,6 +9465,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignOwnRoute => 'Directions';
+
+  @override
+  String get redesignParentsAllKids => 'All children';
+
+  @override
+  String redesignParentsChildRate(Object name, Object percent) {
+    return '$name · $percent %';
+  }
+
+  @override
+  String get redesignParentsRoute => 'Directions';
+
+  @override
+  String get redesignParentsToday => 'Today';
 
   @override
   String get redesignPersonAbsence => 'Away';
@@ -9859,6 +9887,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String redesignTodayBirthdayMore(Object name, Object day, Object count) {
     return 'Birthday: $name ($day) +$count';
   }
+
+  @override
+  String get redesignTodayChangeAnswer => 'Change';
 
   @override
   String get redesignTodayChildFailed => 'That didn\'t work. Please try again.';

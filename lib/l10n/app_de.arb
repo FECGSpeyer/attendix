@@ -12299,6 +12299,10 @@
   "@redesignMembersSearchLabel": {
     "description": "redesign.members.searchLabel"
   },
+  "redesignMembersSearchRead": "Name oder Register",
+  "@redesignMembersSearchRead": {
+    "description": "redesign.members.searchRead"
+  },
   "redesignMembersSection": "{title} · {count}",
   "@redesignMembersSection": {
     "description": "redesign.members.section",
@@ -12310,6 +12314,15 @@
   "redesignMembersStats": "Auswertung",
   "@redesignMembersStats": {
     "description": "redesign.members.stats"
+  },
+  "redesignMembersTotal": "{count, plural, one {1 Person} other {{count} Personen}}",
+  "@redesignMembersTotal": {
+    "description": "redesign.members.total",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignNotifForMe": "Für mich",
   "@redesignNotifForMe": {
@@ -12362,6 +12375,26 @@
   "redesignOwnRoute": "Route",
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
+  },
+  "redesignParentsAllKids": "Alle Kinder",
+  "@redesignParentsAllKids": {
+    "description": "redesign.parents.allKids"
+  },
+  "redesignParentsChildRate": "{name} · {percent} %",
+  "@redesignParentsChildRate": {
+    "description": "redesign.parents.childRate",
+    "placeholders": {
+      "name": {},
+      "percent": {}
+    }
+  },
+  "redesignParentsRoute": "Route",
+  "@redesignParentsRoute": {
+    "description": "redesign.parents.route"
+  },
+  "redesignParentsToday": "Heute",
+  "@redesignParentsToday": {
+    "description": "redesign.parents.today"
   },
   "redesignPersonAbsence": "Abwesend",
   "@redesignPersonAbsence": {
@@ -12900,6 +12933,10 @@
       "day": {},
       "count": {}
     }
+  },
+  "redesignTodayChangeAnswer": "Ändern",
+  "@redesignTodayChangeAnswer": {
+    "description": "redesign.today.changeAnswer"
   },
   "redesignTodayChildFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   "@redesignTodayChildFailed": {

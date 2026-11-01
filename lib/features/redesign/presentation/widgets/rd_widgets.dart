@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 
 import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../l10n/l10n.dart';
 
 /// REDESIGN: building blocks of the new design (canvas "Designsystem").
 /// All colours come from the active Farbwelt (`context.rd`).
@@ -399,7 +400,9 @@ class RdPrimaryButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(p.buttonRadius),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          // Theme font (web font on the PWA), only size and weight change.
+          textStyle: (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
+              .copyWith(fontSize: 16, fontWeight: FontWeight.w600),
           padding: const EdgeInsets.symmetric(horizontal: 16),
         ),
         child: Row(
@@ -449,7 +452,9 @@ class RdOutlineButton extends StatelessWidget {
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(p.buttonRadius),
           ),
-          textStyle: const TextStyle(fontSize: 16, fontWeight: FontWeight.w600),
+          // Theme font (web font on the PWA), only size and weight change.
+          textStyle: (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
+              .copyWith(fontSize: 16, fontWeight: FontWeight.w600),
           padding: const EdgeInsets.symmetric(horizontal: 12),
         ),
         child: Row(
@@ -1267,6 +1272,24 @@ class RdBackLink extends StatelessWidget {
             ),
           ),
         ),
+      ),
+    );
+  }
+}
+
+/// Small "Stimmführung" tag next to a name (Mitglieder, Meine Stimme).
+class RdLeaderTag extends StatelessWidget {
+  const RdLeaderTag({super.key});
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Container(
+      padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
+      decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(6)),
+      child: Text(
+        context.l10n.redesignMembersLeader,
+        style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: p.softText),
       ),
     );
   }
