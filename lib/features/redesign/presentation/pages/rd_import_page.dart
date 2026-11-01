@@ -3,26 +3,31 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../../../shared/widgets/layout/route_leave_guard.dart';
 import '../../data/import/rd_import_ai.dart';
 import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
 import '../widgets/import/rd_import_widgets.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import 'rd_import_work_page.dart';
 
 /// REDESIGN: Werke › "Noten importieren" (canvas "Werke-Import Mock-up",
 /// R2–R6 / H2–H10): a shared Google Drive folder (link) or a ZIP from
 /// Dropbox, OneDrive or the computer is read, unknown part names are asked
 /// once, every Werk can be checked and only then the files are uploaded.
-/// Pops with true when something was uploaded.
+/// Route [RedesignRoutes.worksImport]; the controller refreshes the Werke
+/// after the upload.
 class RdImportPage extends ConsumerStatefulWidget {
   const RdImportPage({super.key});
 
@@ -33,6 +38,12 @@ class RdImportPage extends ConsumerStatefulWidget {
 enum _Filter { open, created, all }
 
 enum _Source { drive, zip }
+
+/// [GoRoute.onExit] of the page in the browser: its back button changes the
+/// address without a pop, so [PopScope] does not see it. Asks the page's
+/// leave guard (tab and account switches ask it too).
+Future<bool> rdImportOnExit(BuildContext context, GoRouterState state) =>
+    ProviderScope.containerOf(context, listen: false).read(routeLeaveGuardRegistryProvider).canLeave();
 
 /// Text of [error].
 String rdImportReadErrorText(AppLocalizations l10n, RdImportReadError error) => switch (error) {
@@ -63,12 +74,71 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   bool _checking = false;
   RdLinkCheck? _check;
 
+  /// Reading the folder or the ZIP failed; shown as a card with a way out.
+  RdImportReadError? _error;
+
+  /// A tab switch replaces the page with `context.go`, which skips
+  /// [PopScope]; the shell asks this guard first (like "Neuer Termin").
+  late final RouteLeaveGuardRegistry _leaveGuards;
+
+  /// Leaving was confirmed (or nothing is lost): the guard lets go.
+  bool _leaving = false;
+
   RdImportController get _controller => ref.read(rdImportProvider.notifier);
 
   @override
+  void initState() {
+    super.initState();
+    _leaveGuards = ref.read(routeLeaveGuardRegistryProvider);
+    _leaveGuards.add(_onLeave);
+  }
+
+  @override
   void dispose() {
+    _leaveGuards.remove(_onLeave);
     _link.dispose();
     super.dispose();
+  }
+
+  /// Stay while uploading; ask before throwing away answers and decisions.
+  Future<bool> _onLeave() async {
+    if (_leaving || !mounted) return true;
+    switch (ref.read(rdImportProvider).step) {
+      case RdImportStep.uploading:
+        ToastHelper.showInfo(context, context.l10n.redesignImportBusy);
+        return false;
+      case RdImportStep.questions:
+      case RdImportStep.review:
+        final ok = await _confirmDiscard();
+        if (ok) _leaving = true;
+        return ok;
+      case RdImportStep.source:
+      case RdImportStep.reading:
+      case RdImportStep.done:
+        return true;
+    }
+  }
+
+  Future<bool> _confirmDiscard() {
+    final l10n = context.l10n;
+    return showAppConfirm(
+      context,
+      title: l10n.redesignImportDiscardTitle,
+      message: l10n.redesignImportDiscardMessage,
+      confirmText: l10n.redesignImportDiscardConfirm,
+      destructive: true,
+    );
+  }
+
+  /// Back to the Werke (or to them when the page was opened directly).
+  void _leave() {
+    _leaving = true;
+    final navigator = Navigator.of(context);
+    if (navigator.canPop()) {
+      navigator.pop();
+    } else {
+      GoRouter.maybeOf(context)?.go(RedesignRoutes.works);
+    }
   }
 
   Future<void> _checkLink(String text) async {
@@ -78,6 +148,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
       _checked = t;
       _checking = true;
       _check = null;
+      _error = null;
     });
     final result = await _controller.checkLink(t);
     if (!mounted || _checked != t) return;
@@ -90,12 +161,22 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   void _linkChanged(String text) {
     if (rdParseDriveLink(text) != null) {
       _checkLink(text);
-    } else if (_checked.isNotEmpty) {
+    } else if (_checked.isNotEmpty || _error != null) {
       setState(() {
         _checked = '';
         _checking = false;
         _check = null;
+        _error = null;
       });
+    }
+  }
+
+  /// "Los" on the keyboard: reads a found folder, else checks the link.
+  void _linkSubmitted(String text) {
+    if (_check?.folder != null && _error == null && text.trim() == _checked) {
+      _readLink();
+    } else {
+      _checkLink(text);
     }
   }
 
@@ -115,9 +196,33 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final check = _check;
     final folder = check?.folder;
     if (folder == null) return;
+    FocusScope.of(context).unfocus();
+    setState(() => _error = null);
     final error = await _controller.readLink(folder, check?.name ?? '');
     if (!mounted || error == null) return;
-    ToastHelper.showError(context, rdImportReadErrorText(context.l10n, error));
+    setState(() => _error = error);
+  }
+
+  /// "Erneut versuchen": the link check or the reading again.
+  void _retry() {
+    if (_mode == _Source.zip) {
+      _pick();
+    } else if (_error != null) {
+      _readLink();
+    } else {
+      final text = _link.text;
+      setState(() => _checked = '');
+      _checkLink(text);
+    }
+  }
+
+  /// Dropbox or the link import not set up: a ZIP instead.
+  void _useZip() {
+    setState(() {
+      _mode = _Source.zip;
+      _error = null;
+    });
+    _pick();
   }
 
   Future<void> _openDrive([RdDriveRef? folder]) async {
@@ -140,44 +245,57 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   }
 
   Future<void> _read(List<PlatformFile> files) async {
-    final l10n = context.l10n;
     final zips = files.where((f) => f.name.toLowerCase().endsWith('.zip')).toList();
     if (zips.isEmpty) {
-      ToastHelper.showError(context, l10n.redesignImportErrorNotZip);
+      setState(() => _error = RdImportReadError.notZip);
       return;
     }
+    setState(() => _error = null);
     final error = await _controller.read(zips);
     if (!mounted || error == null) return;
-    ToastHelper.showError(context, rdImportReadErrorText(l10n, error));
+    setState(() => _error = error);
   }
 
   /// Back link and system back: one step back; leaving the answers asks
   /// first, during the upload it waits.
   Future<void> _back() async {
     final state = ref.read(rdImportProvider);
-    final l10n = context.l10n;
     switch (state.step) {
       case RdImportStep.source when _mode != null:
-        setState(() => _mode = null);
+        setState(() {
+          _mode = null;
+          _error = null;
+        });
       case RdImportStep.source:
       case RdImportStep.reading:
-        Navigator.of(context).pop(false);
+      case RdImportStep.done:
+        _leave();
       case RdImportStep.questions:
-        final ok = await showAppConfirm(
-          context,
-          title: l10n.redesignImportDiscardTitle,
-          message: l10n.redesignImportDiscardMessage,
-          confirmText: l10n.redesignImportDiscardConfirm,
-          destructive: true,
-        );
-        if (ok && mounted) _controller.restart();
+        if (await _confirmDiscard() && mounted) {
+          setState(() {
+            _error = null;
+            _filter = null;
+          });
+          _controller.restart();
+        }
       case RdImportStep.review:
         _controller.goTo(RdImportStep.questions);
       case RdImportStep.uploading:
-        ToastHelper.showInfo(context, l10n.redesignImportBusy);
-      case RdImportStep.done:
-        Navigator.of(context).pop(true);
+        ToastHelper.showInfo(context, context.l10n.redesignImportBusy);
     }
+  }
+
+  /// "Weitere Noten importieren": everything from the start.
+  void _startOver() {
+    setState(() {
+      _mode = null;
+      _link.clear();
+      _checked = '';
+      _check = null;
+      _error = null;
+      _filter = null;
+    });
+    _controller.restart();
   }
 
   Future<void> _startUpload() async {
@@ -189,7 +307,11 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final ok = await showAppConfirm(
       context,
       title: l10n.redesignImportConfirmTitle,
-      message: l10n.redesignImportConfirmMessage(summary.take, summary.ready, summary.newWorks),
+      message: [
+        l10n.redesignImportConfirmMessage(summary.take, l10n.redesignImportConfirmWorks(summary.ready)),
+        if (summary.newWorks > 0) l10n.redesignImportConfirmNewWorks(summary.newWorks),
+        l10n.redesignImportConfirmKeepOpen,
+      ].join(' '),
       confirmText: l10n.redesignImportConfirmButton,
     );
     if (ok && mounted) await _controller.upload();
@@ -201,18 +323,44 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     ref.watch(songsListDataProvider(null));
     final state = ref.watch(rdImportProvider);
     final canPop = (state.step == RdImportStep.source && _mode == null) || state.step == RdImportStep.done;
+    final page = switch (state.step) {
+      RdImportStep.source => _source(context),
+      RdImportStep.reading => _reading(context, state),
+      RdImportStep.questions => _questions(context, state),
+      RdImportStep.review => _review(context, state),
+      RdImportStep.uploading || RdImportStep.done => _upload(context, state),
+    };
     return PopScope(
       canPop: canPop,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _back();
       },
-      child: switch (state.step) {
-        RdImportStep.source => _source(context),
-        RdImportStep.reading => _reading(context, state),
-        RdImportStep.questions => _questions(context, state),
-        RdImportStep.review => _review(context, state),
-        RdImportStep.uploading || RdImportStep.done => _upload(context, state),
-      },
+      // Every step starts at the top.
+      child: KeyedSubtree(key: ValueKey((state.step, _mode)), child: page),
+    );
+  }
+
+  /// Why reading failed, with a way out where there is one.
+  Widget _errorCard(BuildContext context, RdImportReadError error) {
+    final l10n = context.l10n;
+    final Widget? action = _mode == _Source.zip
+        ? null
+        : switch (error) {
+            RdImportReadError.dropbox || RdImportReadError.notSetUp => RdOutlineButton(
+                label: l10n.redesignImportUseZip,
+                icon: Icons.folder_zip_outlined,
+                onPressed: _useZip,
+              ),
+            RdImportReadError.limit ||
+            RdImportReadError.failed ||
+            RdImportReadError.notFound ||
+            RdImportReadError.noData =>
+              RdOutlineButton(label: l10n.redesignCommonRetry, icon: Icons.refresh, onPressed: _retry),
+            _ => null,
+          };
+    return Semantics(
+      liveRegion: true,
+      child: RdInfoCard(text: rdImportReadErrorText(l10n, error), icon: Icons.error_outline, action: action),
     );
   }
 
@@ -264,17 +412,15 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final p = context.rd;
     final l10n = context.l10n;
     final check = _check;
-    final error = check?.error;
+    final error = _error ?? check?.error;
+    final ready = check?.folder != null && _error == null && !_checking;
     return RdImportFrame(
       backLabel: l10n.redesignImportStepSource,
       onBack: _back,
-      title: l10n.redesignImportSourceDrive,
+      title: l10n.redesignImportTitle,
       step: 1,
-      bottom: RdPrimaryButton(
-        label: l10n.redesignImportDriveStart,
-        onPressed: check?.folder == null ? null : _readLink,
-      ),
       children: [
+        RdSectionHeader(l10n.redesignImportSourceDrive),
         RdCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -329,7 +475,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                     hintStyle: TextStyle(color: p.text2),
                   ),
                   onChanged: _linkChanged,
-                  onSubmitted: _checkLink,
+                  onSubmitted: _linkSubmitted,
                 ),
               ),
               const SizedBox(width: 8),
@@ -346,6 +492,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               Text(l10n.redesignImportDriveChecking, style: RdType.meta(p)),
             ],
           )
+        else if (error != null)
+          _errorCard(context, error)
         else if (check?.folder != null)
           Container(
             padding: const EdgeInsets.all(12),
@@ -362,12 +510,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 ),
               ],
             ),
-          )
-        else if (error != null)
-          Semantics(
-            liveRegion: true,
-            child: Text(rdImportReadErrorText(l10n, error), style: RdType.body(p).copyWith(color: p.absent)),
           ),
+        // Right below the link, so it stays in reach with the keyboard open.
+        const SizedBox(height: 16),
+        RdPrimaryButton(label: l10n.redesignImportDriveStart, onPressed: ready ? _readLink : null),
         const SizedBox(height: 12),
         Text(l10n.redesignImportDriveUnshareNote, style: RdType.meta(p, size: 13)),
       ],
@@ -377,12 +523,14 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   Widget _sourceZip(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
+    final error = _error;
     return RdImportFrame(
       backLabel: l10n.redesignImportStepSource,
       onBack: _back,
-      title: l10n.redesignImportSourceZip,
+      title: l10n.redesignImportTitle,
       step: 1,
       children: [
+        RdSectionHeader(l10n.redesignImportSourceZip),
         RdCard(
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -393,6 +541,10 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             ],
           ),
         ),
+        if (error != null) ...[
+          const SizedBox(height: 12),
+          _errorCard(context, error),
+        ],
         const SizedBox(height: 20),
         RdSectionHeader(l10n.redesignImportSourceHowTitle),
         RdCard(
@@ -422,7 +574,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   }
 
   // -------------------------------------------------------------------------
-  // 2 Einlesen
+  // 2 Einlesen und Stimmen
 
   Widget _reading(BuildContext context, RdImportState state) {
     final p = context.rd;
@@ -473,18 +625,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final existing = plan.works.where((w) => w.match.songId != null).length;
     final created = plan.works.where((w) => rdDefaultTarget(plan, w).isNew).length;
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null).length;
     return RdImportFrame(
       backLabel: l10n.redesignImportStepSource,
       onBack: _back,
       title: l10n.redesignImportTitle,
       step: 2,
-      bottom: RdPrimaryButton(
-        label: l10n.redesignImportToReview,
-        onPressed: () {
-          setState(() => _filter = null);
-          _controller.goTo(RdImportStep.review);
-        },
-      ),
       children: [
         RdCard(
           child: Column(
@@ -519,23 +665,39 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(l10n.redesignImportQuestionsIntro, style: RdType.meta(p, size: 13)),
           ),
+          // The switch sits above the questions: the names go to the KI
+          // only while it is on.
+          RdGroupedList(
+            children: [
+              RdSwitchRow(
+                title: l10n.redesignImportAiOption,
+                subtitle: l10n.redesignImportAiOptionDetail,
+                value: state.useAi,
+                onChanged: _controller.setUseAi,
+              ),
+            ],
+          ),
+          const SizedBox(height: 10),
           if (_aiNote(context, state) case final note?)
             Padding(
               padding: const EdgeInsets.only(bottom: 10),
-              child: Row(
-                children: [
-                  if (state.aiStatus == RdImportAiStatus.loading)
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
-                    )
-                  else
-                    Padding(
-                      padding: const EdgeInsets.only(right: 8),
-                      child: Icon(Icons.auto_awesome, size: 16, color: p.primary),
-                    ),
-                  Expanded(child: Text(note, style: RdType.meta(p, size: 13))),
-                ],
+              child: Semantics(
+                liveRegion: true,
+                child: Row(
+                  children: [
+                    if (state.aiStatus == RdImportAiStatus.loading)
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
+                      )
+                    else
+                      Padding(
+                        padding: const EdgeInsets.only(right: 8),
+                        child: ExcludeSemantics(child: Icon(Icons.auto_awesome, size: 16, color: p.primary)),
+                      ),
+                    Expanded(child: Text(note, style: RdType.meta(p, size: 13))),
+                  ],
+                ),
               ),
             ),
           for (final q in plan.questions) ...[
@@ -550,35 +712,51 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           ],
         ],
         const SizedBox(height: 10),
-        RdSectionHeader(l10n.redesignImportKnownTitle),
-        RdCard(child: Text(l10n.redesignImportKnownText(plan.instruments.length), style: RdType.body(p))),
-        const SizedBox(height: 20),
         RdSectionHeader(l10n.redesignImportOptionsTitle),
         RdGroupedList(
           children: [
-            if (plan.questions.isNotEmpty)
-              RdImportSwitchRow(
-                title: l10n.redesignImportAiOption,
-                detail: l10n.redesignImportAiOptionDetail,
-                value: state.useAi,
-                onChanged: _controller.setUseAi,
-              ),
-            RdImportSwitchRow(
+            RdSwitchRow(
               title: l10n.redesignImportOptionFassung,
-              detail: l10n.redesignImportOptionFassungDetail,
+              subtitle: l10n.redesignImportOptionFassungDetail,
               value: d.proposeFassung,
               onChanged: _controller.setProposeFassung,
             ),
-            RdImportSwitchRow(
+            RdSwitchRow(
               title: l10n.redesignImportOptionWord,
-              detail: l10n.redesignImportOptionWordDetail,
+              subtitle: l10n.redesignImportOptionWordDetail,
               value: d.skipWordBesidePdf,
               onChanged: _controller.setSkipWordBesidePdf,
             ),
           ],
         ),
+        const SizedBox(height: 24),
+        if (unanswered > 0) ...[
+          Text(l10n.redesignImportQuestionsOpen(unanswered), style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 10),
+        ],
+        RdPrimaryButton(label: l10n.redesignImportToReview, onPressed: _toReview),
       ],
     );
+  }
+
+  /// "Zur Prüfung": answers the KI filled in are confirmed first (they are
+  /// used for every file with the name and learned as terms).
+  Future<void> _toReview() async {
+    final filled = ref.read(rdImportProvider).aiFilled.length;
+    if (filled > 0) {
+      final l10n = context.l10n;
+      final ok = await showAppConfirm(
+        context,
+        title: l10n.redesignImportAiConfirmTitle,
+        message: l10n.redesignImportAiConfirmMessage(filled),
+        confirmText: l10n.redesignImportAiConfirmButton,
+        cancelText: l10n.redesignImportAiConfirmCancel,
+      );
+      if (!ok || !mounted) return;
+      _controller.confirmAi();
+    }
+    setState(() => _filter = null);
+    await _controller.goTo(RdImportStep.review);
   }
 
   /// What the KI did with the questions; null when it was not asked.
@@ -608,6 +786,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final d = state.decisions;
     final states = {for (final w in plan.works) w.key: rdWorkState(plan, d, w)};
     final summary = rdImportSummary(plan, d);
+    final unanswered = plan.questions.where((q) => d.answers[q.key] == null).length;
     final open = plan.works.where((w) => states[w.key]!.open).toList();
     final created = plan.works.where((w) => states[w.key]!.target.isNew).toList();
     final filter = _filter ?? (open.isNotEmpty ? _Filter.open : _Filter.all);
@@ -619,23 +798,33 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     return RdImportFrame(
       backLabel: l10n.redesignImportStepRead,
       onBack: _back,
-      title: l10n.redesignImportStepReview,
+      title: l10n.redesignImportTitle,
       step: 3,
-      bottom: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: [
-          if (summary.open > 0) ...[
-            Text(l10n.redesignImportOpenHint(summary.open), style: RdType.meta(p, size: 13)),
-            const SizedBox(height: 8),
-          ],
-          RdPrimaryButton(
-            label: l10n.redesignImportUploadButton(summary.take),
-            onPressed: summary.take == 0 ? null : _startUpload,
-          ),
-        ],
-      ),
       children: [
+        if (unanswered > 0) ...[
+          RdInfoCard(
+            text: l10n.redesignImportReviewQuestionsOpen(unanswered),
+            icon: Icons.help_outline,
+            action: RdOutlineButton(
+              label: l10n.redesignImportReviewAnswer,
+              onPressed: () => _controller.goTo(RdImportStep.questions),
+            ),
+          ),
+          const SizedBox(height: 16),
+        ],
+        // The upload stays at the top: the list can be long.
+        if (state.readingDates) ...[
+          Text(l10n.redesignImportDatesReading, style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 8),
+        ] else if (summary.open > 0) ...[
+          Text(l10n.redesignImportOpenHint(summary.open), style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 8),
+        ],
+        RdPrimaryButton(
+          label: l10n.redesignImportUploadButton(summary.take),
+          onPressed: summary.take == 0 || state.readingDates ? null : _startUpload,
+        ),
+        const SizedBox(height: 20),
         RdSegmented<_Filter>(
           values: _Filter.values,
           selected: filter,
@@ -655,14 +844,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           RdGroupedList(
             children: [
               for (final w in shown)
-                _WorkRow(
+                RdListRow(
                   title: w.folderName,
-                  subtitle: [
-                    rdImportTargetText(context, plan, states[w.key]!.target),
-                    if (!states[w.key]!.target.skip)
-                      l10n.redesignImportReviewCounts(states[w.key]!.takeCount, states[w.key]!.skipCount),
-                  ].join(' · '),
-                  pills: rdImportFlagPills(context, states[w.key]!),
+                  subtitle: rdImportWorkSubtitle(context, plan, w, states[w.key]!),
+                  footer: switch (rdImportFlagPills(context, states[w.key]!)) {
+                    final pills when pills.isNotEmpty => Wrap(spacing: 6, runSpacing: 6, children: pills),
+                    _ => null,
+                  },
                   onTap: () => Navigator.of(context).push(
                     MaterialPageRoute<void>(builder: (_) => RdImportWorkPage(workKey: w.key)),
                   ),
@@ -690,9 +878,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     if (!finished) {
       final value = upload.total == 0 ? 0.0 : upload.done / upload.total;
       return RdImportFrame(
-        backLabel: l10n.redesignTabWorks,
-        onBack: _back,
-        title: l10n.redesignImportUploadTitle,
+        title: l10n.redesignImportTitle,
         step: 4,
         children: [
           RdCard(
@@ -701,15 +887,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               children: [
                 Row(
                   children: [
-                    Expanded(
-                      child: Text(
-                        l10n.redesignImportUploadProgress(upload.done, upload.total),
-                        style: RdType.section(p),
-                      ),
-                    ),
+                    Expanded(child: Text(l10n.redesignImportUploadTitle, style: RdType.section(p))),
                     Text('${(value * 100).round()} %', style: RdType.meta(p)),
                   ],
                 ),
+                const SizedBox(height: 4),
+                Text(l10n.redesignImportUploadProgress(upload.done, upload.total), style: RdType.meta(p)),
                 const SizedBox(height: 12),
                 ClipRRect(
                   borderRadius: BorderRadius.circular(999),
@@ -720,11 +903,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                   Text(upload.current!, style: RdType.meta(p, size: 13), maxLines: 2, overflow: TextOverflow.ellipsis),
                 ],
                 const SizedBox(height: 14),
-                Container(
-                  padding: const EdgeInsets.all(12),
-                  decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(14)),
-                  child: Text(l10n.redesignImportKeepOpen, style: TextStyle(color: p.softText, fontSize: 14)),
-                ),
+                RdHintBox(l10n.redesignImportKeepOpen),
               ],
             ),
           ),
@@ -733,12 +912,11 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     }
 
     final failures = upload.failures;
+    // Retrying and the open Werke still need the shared folder.
+    final needsLink = retry.isNotEmpty || summary.open > 0;
     return RdImportFrame(
-      backLabel: l10n.redesignTabWorks,
-      onBack: _back,
-      title: l10n.redesignImportDoneTitle,
+      title: l10n.redesignImportTitle,
       step: 4,
-      bottom: RdPrimaryButton(label: l10n.redesignImportDoneToWorks, onPressed: () => Navigator.of(context).pop(true)),
       children: [
         RdCard(
           child: Row(
@@ -753,7 +931,16 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 child: Icon(failures.isEmpty ? Icons.check : Icons.priority_high, color: failures.isEmpty ? p.present : p.late),
               ),
               const SizedBox(width: 14),
-              Expanded(child: Text(l10n.redesignImportDoneText(ok), style: RdType.body(p))),
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(l10n.redesignImportDoneTitle, style: RdType.section(p)),
+                    const SizedBox(height: 2),
+                    Text(l10n.redesignImportDoneText(ok), style: RdType.body(p)),
+                  ],
+                ),
+              ),
             ],
           ),
         ),
@@ -761,28 +948,9 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           const SizedBox(height: 12),
           RdCard(child: Text(l10n.redesignImportDoneAborted, style: RdType.body(p).copyWith(color: p.absent))),
         ],
-        if (state.driveFolder != null) ...[
-          const SizedBox(height: 12),
-          RdCard(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Text(l10n.redesignImportUnshareTitle, style: RdType.section(p)),
-                const SizedBox(height: 4),
-                Text(l10n.redesignImportUnshareText, style: RdType.body(p)),
-                const SizedBox(height: 12),
-                RdOutlineButton(
-                  label: l10n.redesignImportUnshareOpen,
-                  icon: Icons.open_in_new,
-                  onPressed: () => _openDrive(state.driveFolder),
-                ),
-              ],
-            ),
-          ),
-        ],
         if (upload.learnFailed) ...[
           const SizedBox(height: 12),
-          RdCard(child: Text(l10n.songsFlutterLearnFailed, style: RdType.body(p).copyWith(color: p.late))),
+          RdCard(child: Text(l10n.redesignImportLearnFailed, style: RdType.body(p).copyWith(color: p.late))),
         ],
         const SizedBox(height: 16),
         RdGroupedList(
@@ -824,25 +992,38 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             style: RdType.meta(p, size: 13),
           ),
         ],
-        const SizedBox(height: 16),
-        RdTextLink(
-          label: l10n.redesignImportDoneAnother,
-          onTap: () {
-            setState(() {
-              _mode = null;
-              _link.clear();
-              _checked = '';
-              _check = null;
-            });
-            _controller.restart();
-          },
-        ),
+        // Last: once the folder is no longer shared, retrying fails.
+        if (state.driveFolder != null) ...[
+          const SizedBox(height: 16),
+          RdCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(l10n.redesignImportUnshareTitle, style: RdType.section(p)),
+                const SizedBox(height: 4),
+                Text(needsLink ? l10n.redesignImportUnshareTextLater : l10n.redesignImportUnshareText, style: RdType.body(p)),
+                const SizedBox(height: 12),
+                RdOutlineButton(
+                  label: l10n.redesignImportUnshareOpen,
+                  icon: Icons.open_in_new,
+                  onPressed: () => _openDrive(state.driveFolder),
+                ),
+              ],
+            ),
+          ),
+        ],
+        const SizedBox(height: 24),
+        RdPrimaryButton(label: l10n.redesignImportDoneToWorks, onPressed: _leave),
+        const SizedBox(height: 8),
+        Center(child: RdTextLink(label: l10n.redesignImportDoneAnother, onTap: _startOver)),
       ],
     );
   }
 }
 
-/// A question about an unknown part name with its answers as chips.
+/// A question about an unknown part name with its answers as chips, always
+/// in the same order: suggestion (✦ from the KI), the own pick, "Neue
+/// Gruppe", "Ohne Zuordnung", "Andere …" last.
 class _QuestionCard extends StatelessWidget {
   const _QuestionCard({required this.plan, required this.question, required this.answer, required this.onAnswer, this.ai});
 
@@ -872,8 +1053,14 @@ class _QuestionCard extends StatelessWidget {
         : null;
     // The KI's guess gets its own chip unless one of the fixed ones is it.
     final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
-    IconData? mark(RdImportCategory c) => c == ai ? Icons.auto_awesome : null;
     void toggle(RdImportCategory c) => onAnswer(answer == c ? null : c);
+    RdChoiceChip chip(RdImportCategory c, String text, {VoidCallback? onTap}) => RdChoiceChip(
+          label: text,
+          icon: c == ai ? Icons.auto_awesome : null,
+          semanticLabel: c == ai ? l10n.redesignImportAiMark(text) : null,
+          selected: answer == c,
+          onTap: onTap ?? () => toggle(c),
+        );
     return RdCard(
       padding: const EdgeInsets.all(14),
       child: Column(
@@ -887,35 +1074,15 @@ class _QuestionCard extends StatelessWidget {
             spacing: 8,
             runSpacing: 8,
             children: [
-              if (suggestion != null)
-                RdChoiceChip(
-                  label: rdImportCategoryLabel(context, plan, suggestion),
-                  icon: mark(suggestion),
-                  selected: answer == suggestion,
-                  onTap: () => toggle(suggestion),
-                ),
+              if (suggestion != null) chip(suggestion, rdImportCategoryLabel(context, plan, suggestion)),
               if (aiChip)
-                RdChoiceChip(
-                  label: ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai),
-                  icon: Icons.auto_awesome,
-                  selected: answer == ai,
-                  onTap: () => toggle(ai),
-                ),
+                chip(ai, ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai)),
               if (picked != null)
                 RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: () => onAnswer(null)),
-              RdChoiceChip(
-                label: l10n.redesignImportAnswerOther,
-                selected: false,
-                onTap: () async {
-                  final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
-                  if (c != null) onAnswer(c);
-                },
-              ),
               if (newName.isNotEmpty)
-                RdChoiceChip(
-                  label: l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
-                  icon: mark(newGroup),
-                  selected: answer == newGroup,
+                chip(
+                  newGroup,
+                  l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
                   onTap: () async {
                     if (answer == newGroup) return onAnswer(null);
                     final name = await showAppPrompt(
@@ -927,59 +1094,18 @@ class _QuestionCard extends StatelessWidget {
                     if (name != null && name.trim().isNotEmpty) onAnswer(RdImportCategory(newGroup: name.trim()));
                   },
                 ),
+              chip(RdImportCategory.other, l10n.redesignImportAnswerNone),
               RdChoiceChip(
-                label: l10n.redesignImportAnswerNone,
-                icon: mark(RdImportCategory.other),
-                selected: answer == RdImportCategory.other,
-                onTap: () => toggle(RdImportCategory.other),
+                label: l10n.redesignImportAnswerOther,
+                selected: false,
+                onTap: () async {
+                  final c = await rdPickImportCategory(context, plan, current: answer, title: l10n.redesignImportQuestionTitle(label));
+                  if (c != null) onAnswer(c);
+                },
               ),
             ],
           ),
         ],
-      ),
-    );
-  }
-}
-
-/// A Werk in the review list: name, target and counts, the pills below.
-class _WorkRow extends StatelessWidget {
-  const _WorkRow({required this.title, required this.subtitle, required this.pills, required this.onTap});
-
-  final String title;
-  final String subtitle;
-  final List<Widget> pills;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Material(
-      color: Colors.transparent,
-      child: InkWell(
-        onTap: onTap,
-        child: Padding(
-          padding: const EdgeInsets.fromLTRB(14, 10, 10, 10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
-                    const SizedBox(height: 2),
-                    Text(subtitle, style: RdType.meta(p, size: 13)),
-                    if (pills.isNotEmpty) ...[
-                      const SizedBox(height: 6),
-                      Wrap(spacing: 6, runSpacing: 6, children: pills),
-                    ],
-                  ],
-                ),
-              ),
-              const SizedBox(width: 4),
-              Icon(Icons.chevron_right, size: 20, color: p.text2),
-            ],
-          ),
-        ),
       ),
     );
   }

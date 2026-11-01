@@ -157,14 +157,7 @@ class _RdNotificationsPageState extends ConsumerState<RdNotificationsPage> {
   }
 
   Widget _switch(String title, bool value, ValueChanged<bool> onChanged, {String? subtitle}) {
-    final p = context.rd;
-    return RdListRow(
-      title: title,
-      subtitle: subtitle,
-      showChevron: false,
-      trailing: Switch.adaptive(value: value, activeTrackColor: p.primary, onChanged: onChanged),
-      onTap: () => onChanged(!value),
-    );
+    return RdSwitchRow(title: title, subtitle: subtitle, value: value, onChanged: onChanged);
   }
 
   @override

@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -25,7 +26,6 @@ import '../../data/rd_works_logic.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
-import 'rd_import_page.dart';
 
 /// REDESIGN: tab "Werke" (canvas "WerkeListe"): search, "Gerade geprobt",
 /// categories as chips, the works with PDF / Audio badges. Filter, view,
@@ -117,15 +117,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     return source == null || source == ref.read(currentTenantIdProvider);
   }
 
-  Future<void> _importFiles() async {
-    final imported = await Navigator.of(context, rootNavigator: true).push<bool>(
-      MaterialPageRoute(fullscreenDialog: true, builder: (_) => const RdImportPage()),
-    );
-    if (imported == true) {
-      ref.invalidate(songsProvider);
-      ref.invalidate(songsListDataProvider);
-    }
-  }
+  /// "Noten importieren" as a page of the Beta (address
+  /// [RedesignRoutes.worksImport]); its controller refreshes the Werke.
+  Future<void> _importFiles() => context.push(RedesignRoutes.worksImport);
 
   /// "+": a new Werk, or several from a ZIP ("Noten importieren").
   Future<void> _add(SongsListData data) async {

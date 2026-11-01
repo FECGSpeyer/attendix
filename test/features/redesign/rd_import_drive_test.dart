@@ -179,7 +179,7 @@ void main() {
   test('the function takes its budget before it asks Google and never reads more', () {
     final src = File('supabase/functions/werke-import/index.ts').readAsStringSync();
     final body = src.substring(src.indexOf('switch (action)'));
-    for (final action in ['folder', 'list', 'head', 'copy']) {
+    for (final action in ['folder', 'head', 'copy']) {
       final start = body.indexOf('case "$action"');
       final end = body.indexOf('case "', start + 1);
       final part = body.substring(start, end < 0 ? body.length : end);
@@ -190,6 +190,14 @@ void main() {
         if (at >= 0) expect(take, lessThan(at), reason: '$action: $google');
       }
     }
+    // A list takes one call for every page of every folder, each before
+    // its request to Google.
+    final list = body.substring(body.indexOf('case "list"'), body.indexOf('case "head"'));
+    expect(list, contains('children(f, charge)'));
+    final children = src.substring(src.indexOf('async function children('), src.indexOf('async function readAtMost('));
+    expect(children.indexOf('await charge();'), greaterThan(0));
+    expect(children.indexOf('await charge();'), lessThan(children.indexOf('drive(')));
+    expect(src, contains('if (e instanceof BudgetRefused) return e.response;'));
     // The bytes of a copy are taken before the download, which stops there.
     final copy = body.substring(body.indexOf('case "copy"'));
     expect(copy.indexOf('take(0, m.size)'), lessThan(copy.indexOf('drive(file.id')));

@@ -91,12 +91,16 @@ class RdListRow extends StatelessWidget {
     this.showChevron = true,
     this.titleColor,
     this.selected = false,
+    this.footer,
   });
 
   final String title;
   final String? subtitle;
   final Widget? leading;
   final Widget? trailing;
+
+  /// Below the subtitle (e.g. the pills of a Werk in "Noten importieren").
+  final Widget? footer;
 
   /// Grey value at the end ("Petrol · Automatisch").
   final String? value;
@@ -137,6 +141,11 @@ class RdListRow extends StatelessWidget {
                           Padding(
                             padding: const EdgeInsets.only(top: 2),
                             child: Text(subtitle!, style: RdType.meta(p, size: 13)),
+                          ),
+                        if (footer != null)
+                          Padding(
+                            padding: const EdgeInsets.only(top: 6),
+                            child: footer!,
                           ),
                       ],
                     ),
@@ -1063,6 +1072,7 @@ class RdChoiceChip extends StatelessWidget {
     required this.selected,
     required this.onTap,
     this.icon,
+    this.semanticLabel,
   });
 
   final String label;
@@ -1071,6 +1081,10 @@ class RdChoiceChip extends StatelessWidget {
 
   /// Small icon before the label (e.g. ✦ for a suggestion of the KI).
   final IconData? icon;
+
+  /// Read out instead of [label] (e.g. "Saxophon, Vorschlag der KI" for
+  /// the ✦).
+  final String? semanticLabel;
 
   @override
   Widget build(BuildContext context) {
@@ -1086,6 +1100,8 @@ class RdChoiceChip extends StatelessWidget {
     return Semantics(
       button: true,
       selected: selected,
+      label: semanticLabel,
+      excludeSemantics: semanticLabel != null,
       child: Material(
         color: selected ? p.text : p.surface,
         shape: StadiumBorder(
@@ -1307,4 +1323,102 @@ class RdLeaderTag extends StatelessWidget {
       ),
     );
   }
+}
+
+/// A list row with a switch (Benachrichtigungen, "Noten importieren"): the
+/// whole row toggles, the switch keeps the theme's white knob.
+class RdSwitchRow extends StatelessWidget {
+  const RdSwitchRow({
+    super.key,
+    required this.title,
+    required this.value,
+    required this.onChanged,
+    this.subtitle,
+  });
+
+  final String title;
+  final String? subtitle;
+  final bool value;
+  final ValueChanged<bool>? onChanged;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final onChanged = this.onChanged;
+    return RdListRow(
+      title: title,
+      subtitle: subtitle,
+      showChevron: false,
+      trailing: Switch.adaptive(value: value, activeTrackColor: p.primary, onChanged: onChanged),
+      onTap: onChanged == null ? null : () => onChanged(!value),
+    );
+  }
+}
+
+/// Soft box with a short note ("Lass diese Seite offen …", the summary of
+/// "Neuer Termin").
+class RdHintBox extends StatelessWidget {
+  const RdHintBox(this.text, {super.key, this.liveRegion = false});
+
+  final String text;
+
+  /// Read out again when the text changes.
+  final bool liveRegion;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Semantics(
+      liveRegion: liveRegion,
+      child: Container(
+        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
+        decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(14)),
+        child: Text(text, style: TextStyle(fontSize: 14, color: p.softText, height: 1.35)),
+      ),
+    );
+  }
+}
+
+/// Bottom sheet of the new design (page background, drag handle, at most
+/// 85 % high). [child] usually starts with an [RdSheetTitle].
+Future<T?> showRdSheet<T>(BuildContext context, Widget child) {
+  return showModalBottomSheet<T>(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    showDragHandle: true,
+    backgroundColor: context.rd.bg,
+    builder: (_) => SafeArea(
+      top: false,
+      child: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
+        child: child,
+      ),
+    ),
+  );
+}
+
+/// Title of an [showRdSheet] sheet.
+class RdSheetTitle extends StatelessWidget {
+  const RdSheetTitle(this.text, {super.key});
+
+  final String text;
+
+  @override
+  Widget build(BuildContext context) => Padding(
+        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
+        child: Semantics(header: true, child: Text(text, style: RdType.cardTitle(context.rd))),
+      );
+}
+
+/// Check mark at the end of the picked row of a sheet (keeps its width
+/// when not picked).
+class RdSheetCheck extends StatelessWidget {
+  const RdSheetCheck(this.selected, {super.key});
+
+  final bool selected;
+
+  @override
+  Widget build(BuildContext context) =>
+      selected ? Icon(Icons.check, size: 22, color: context.rd.primary) : const SizedBox(width: 22);
 }

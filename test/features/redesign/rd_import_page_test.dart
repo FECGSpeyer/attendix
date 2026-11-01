@@ -20,8 +20,9 @@ import 'package:attendix/features/redesign/data/import/rd_import_drive.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_source.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_import_page.dart';
-import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip;
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip, RdPrimaryButton;
 import 'package:attendix/l10n/l10n.dart';
+import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -524,6 +525,103 @@ void main() {
     expect(state.aiFilled, isEmpty);
   });
 
+  test('the KI\'s answers count only once the person takes them; late ones wait on the questions', () async {
+    var reply = Completer<Map<String, dynamic>>();
+    final ai = RdImportAi((_) => reply.future);
+    final files = _FakeFiles();
+    final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier(), null, false, ai));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([_zipFile()]);
+    reply.complete({
+      'answers': [
+        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+      ],
+    });
+    await Future<void>.delayed(Duration.zero);
+    expect(c.read(rdImportProvider).aiFilled, {'sax'});
+    // Not to the review (and so not uploaded or learned) before they are taken.
+    await controller.goTo(RdImportStep.review);
+    expect(c.read(rdImportProvider).step, RdImportStep.questions);
+    await controller.upload();
+    expect(files.uploads, isEmpty);
+    controller.confirmAi();
+    expect(c.read(rdImportProvider).aiFilled, isEmpty);
+    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(newGroup: 'Saxophon'));
+    await controller.goTo(RdImportStep.review);
+    expect(c.read(rdImportProvider).step, RdImportStep.review);
+
+    // An answer that comes after the questions is only offered.
+    controller.restart();
+    reply = Completer();
+    await controller.read([_zipFile()]);
+    await controller.goTo(RdImportStep.review);
+    expect(c.read(rdImportProvider).step, RdImportStep.review);
+    reply.complete({
+      'answers': [
+        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+      ],
+    });
+    await Future<void>.delayed(Duration.zero);
+    final state = c.read(rdImportProvider);
+    expect(state.ai['sax']?.sure, isTrue);
+    expect(state.decisions.answers, isEmpty);
+    expect(state.aiFilled, isEmpty);
+  });
+
+  test('"Passt so" and the upload wait for dates read after a change; a Werk whose Fassung changes is checked again', () async {
+    final archive = Archive();
+    void add(String path, String content, DateTime modified) {
+      final bytes = Uint8List.fromList(content.codeUnits);
+      archive.addFile(ArchiveFile(path, bytes.length, bytes)..lastModTime = modified.millisecondsSinceEpoch ~/ 1000);
+    }
+
+    // The file dates prefer the main folder, the dates inside "Fassung B".
+    add('Noten/1 Eins/Viola.pdf', '%PDF a /CreationDate (D:20190101)', DateTime(2026, 1, 1));
+    add('Noten/1 Eins/Fassung B/Qfl1.pdf', '%PDF bb /CreationDate (D:20250301)', DateTime(2020, 1, 1));
+    add('Noten/2 Zwei/Viola.pdf', '%PDF c /CreationDate (D:20190101)', DateTime(2026, 1, 1));
+    add('Noten/2 Zwei/Fassung B/Xyz1.pdf', '%PDF dd /CreationDate (D:20250301)', DateTime(2020, 1, 1));
+    final bytes = Uint8List.fromList(ZipEncoder().encode(archive)!);
+    final files = _FakeFiles();
+    final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    await controller.goTo(RdImportStep.review);
+    RdImportWork work(String title) => c.read(rdImportProvider).plan!.works.firstWhere((w) => w.title == title);
+    final eins = work('Eins').key;
+    final zwei = work('Zwei').key;
+    expect(work('Eins').fassungen, isEmpty);
+
+    // A decided part makes Fassungen; their dates are read now.
+    controller.setCategory('Noten/1 Eins/Fassung B/Qfl1.pdf', const RdImportCategory(instrumentId: 12));
+    expect(c.read(rdImportProvider).readingDates, isTrue);
+    controller.confirm(eins);
+    expect(c.read(rdImportProvider).decisions.confirmed, isEmpty);
+    await controller.upload();
+    expect(files.uploads, isEmpty);
+    expect(c.read(rdImportProvider).step, RdImportStep.review);
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    var state = c.read(rdImportProvider);
+    expect(state.readingDates, isFalse);
+    expect(rdFassungOf(state.decisions, work('Eins')), 'Fassung B');
+    controller.confirm(eins);
+    expect(c.read(rdImportProvider).decisions.confirmed, {eins});
+
+    // Checked before, then the dates change the suggested Fassung: check again.
+    controller.confirm(zwei);
+    controller.setCategory('Noten/2 Zwei/Fassung B/Xyz1.pdf', const RdImportCategory(instrumentId: 12));
+    expect(rdFassungOf(c.read(rdImportProvider).decisions, work('Zwei')), '');
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    state = c.read(rdImportProvider);
+    expect(rdFassungOf(state.decisions, work('Zwei')), 'Fassung B');
+    expect(state.decisions.confirmed, {eins});
+  });
+
   test('link errors: Dropbox, a file, not shared, function missing', () async {
     final c = ProviderContainer(overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), _drive()));
     addTearDown(c.dispose);
@@ -572,11 +670,16 @@ void main() {
     await tester.testTextInput.receiveAction(TextInputAction.go);
     await tester.pump();
     expect(find.textContaining('Dropbox-Links gehen noch nicht'), findsOneWidget);
+    // An error comes with a way out; reading waits for a folder.
+    expect(find.text('Stattdessen ZIP-Datei wählen'), findsOneWidget);
+    expect(tester.widget<RdPrimaryButton>(find.widgetWithText(RdPrimaryButton, 'Einlesen starten')).onPressed, isNull);
 
     await tester.enterText(find.byType(TextField), _driveLink);
     await tester.pump();
     await tester.pump();
     expect(find.text('„Noten“ gefunden'), findsOneWidget);
+    expect(find.text('Stattdessen ZIP-Datei wählen'), findsNothing);
+    expect(tester.widget<RdPrimaryButton>(find.widgetWithText(RdPrimaryButton, 'Einlesen starten')).onPressed, isNotNull);
 
     final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
     final error = await tester.runAsync(
@@ -591,6 +694,11 @@ void main() {
     await tester.pump();
     expect(find.text('Freigabe wieder aufheben'), findsOneWidget);
     expect(find.text('In Google Drive öffnen'), findsOneWidget);
+    // Nothing left to retry or check: the link is no longer needed.
+    expect(find.textContaining('Attendix braucht den Link nicht mehr'), findsOneWidget);
+    // No back link while done; the way back is the button.
+    expect(find.text('Werke'), findsNothing);
+    expect(find.text('Zu den Werken'), findsOneWidget);
   });
 
   testWidgets('steps: source, questions, review with a Werk to check', (tester) async {
@@ -625,7 +733,7 @@ void main() {
     final error = await tester.runAsync(() => container.read(rdImportProvider.notifier).read([_zipFile()]));
     expect(error, isNull);
     await tester.pump();
-    expect(find.text('Schritt 2 von 4 · Einlesen'), findsOneWidget);
+    expect(find.text('Schritt 2 von 4 · Stimmen'), findsOneWidget);
     expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
     await tester.tap(find.text('Neue Gruppe „Sax“'));
     await tester.pumpAndSettle();
@@ -634,9 +742,12 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('Neue Gruppe „Saxophon“'), findsOneWidget);
 
+    await tester.ensureVisible(find.text('Zur Prüfung'));
     await tester.tap(find.text('Zur Prüfung'));
     await tester.pump();
     expect(find.text('Schritt 3 von 4 · Prüfen'), findsOneWidget);
+    // Every answer given: no hint about open questions.
+    expect(find.text('Fragen beantworten'), findsNothing);
     // Nothing open: every Werk is listed, the new one marked.
     expect(find.text('157 Jesus ruft dich'), findsOneWidget);
     expect(find.text('Neu'), findsOneWidget);
@@ -680,11 +791,89 @@ void main() {
     expect(tester.widget<RdChoiceChip>(chip).selected, isTrue);
     expect(tester.widget<RdChoiceChip>(chip).icon, Icons.auto_awesome);
 
+    // The ✦ is read out.
+    expect(tester.widget<RdChoiceChip>(chip).semanticLabel, 'Neue Gruppe „Saxophon“, Vorschlag der KI');
+
+    // The KI's answers are confirmed before the review.
+    await tester.ensureVisible(find.text('Zur Prüfung'));
+    await tester.tap(find.text('Zur Prüfung'));
+    await tester.pumpAndSettle();
+    expect(find.text('Vorschläge der KI übernehmen?'), findsOneWidget);
+    await tester.tap(find.text('Nochmal ansehen'));
+    await tester.pumpAndSettle();
+    expect(container.read(rdImportProvider).step, RdImportStep.questions);
+    expect(container.read(rdImportProvider).aiFilled, {'sax'});
+
+    await tester.ensureVisible(find.text('Vorschläge der KI'));
     await tester.tap(find.text('Vorschläge der KI'));
     await tester.pump();
     expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsNothing);
     expect(find.text('Neue Gruppe „Saxophon“'), findsNothing);
     expect(find.text('Neue Gruppe „Sax“'), findsOneWidget);
     expect(container.read(rdImportProvider).decisions.answers, isEmpty);
+  });
+
+  testWidgets('review: open questions are named, with the way back to them', (tester) async {
+    tester.view.physicalSize = const Size(430, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdImportPage(),
+      ),
+    ));
+    await tester.pump();
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+    await tester.runAsync(() => container.read(rdImportProvider.notifier).read([_zipFile()]));
+    await tester.pump();
+    expect(find.textContaining('Noch 1 Frage offen.'), findsOneWidget);
+    await tester.runAsync(() => container.read(rdImportProvider.notifier).goTo(RdImportStep.review));
+    await tester.pump();
+    expect(find.textContaining('1 Stimmname ist noch offen.'), findsOneWidget);
+    await tester.tap(find.text('Fragen beantworten'));
+    await tester.pump();
+    expect(find.text('„Sax“ gehört zu …'), findsOneWidget);
+  });
+
+  testWidgets('leaving: asks only while there are answers to lose', (tester) async {
+    tester.view.physicalSize = const Size(430, 1400);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(ProviderScope(
+      overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdImportPage(),
+      ),
+    ));
+    await tester.pump();
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+    final guards = container.read(routeLeaveGuardRegistryProvider);
+    // Nothing to lose yet.
+    expect(guards.hasGuards, isTrue);
+    expect(await guards.canLeave(), isTrue);
+
+    await tester.runAsync(() => container.read(rdImportProvider.notifier).read([_zipFile()]));
+    await tester.pump();
+    var leaving = guards.canLeave();
+    await tester.pumpAndSettle();
+    expect(find.text('Import verwerfen?'), findsOneWidget);
+    await tester.tap(find.text('Abbrechen').last);
+    await tester.pumpAndSettle();
+    expect(await leaving, isFalse);
+
+    leaving = guards.canLeave();
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('Verwerfen').last);
+    await tester.pumpAndSettle();
+    expect(await leaving, isTrue);
   });
 }

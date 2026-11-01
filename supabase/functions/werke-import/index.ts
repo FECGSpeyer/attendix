@@ -105,6 +105,13 @@ class DriveError extends Error {
   }
 }
 
+/// The day's budget refused a call; [response] is the answer to send.
+class BudgetRefused extends Error {
+  constructor(readonly response: Response) {
+    super("budget");
+  }
+}
+
 /// A request to the Drive API with the key and the resource keys of [refs].
 async function drive(
   path: string,
@@ -153,11 +160,13 @@ async function meta(file: Ref): Promise<Meta> {
 }
 
 /// Children of one folder, every page; a folder with more pages is refused
-/// (choose a sub-folder) instead of being read in part.
-async function children(folder: Ref): Promise<unknown[]> {
+/// (choose a sub-folder) instead of being read in part. [charge] takes one
+/// call of the day's budget before each request to Google.
+async function children(folder: Ref, charge: () => Promise<void>): Promise<unknown[]> {
   const items: unknown[] = [];
   let pageToken = "";
   for (let page = 0; page < MAX_PAGES_PER_FOLDER; page++) {
+    await charge();
     const params: Record<string, string> = {
       q: `'${folder.id}' in parents and trashed = false`,
       fields: "nextPageToken,files(id,name,mimeType,size,modifiedTime,md5Checksum,resourceKey)",
@@ -321,6 +330,12 @@ Deno.serve(async (req: Request) => {
     return allowed === true ? null : fail("limit", 429);
   }
 
+  /// One call of the budget, or [BudgetRefused].
+  async function charge(): Promise<void> {
+    const refused = await take(1, 0);
+    if (refused) throw new BudgetRefused(refused);
+  }
+
   try {
     switch (action) {
       case "folder": {
@@ -340,9 +355,8 @@ Deno.serve(async (req: Request) => {
         }
         const folders = raw.map(ref);
         if (folders.some((f) => f === null)) return fail("bad_request", 400);
-        const refused = await take(1, 0);
-        if (refused) return refused;
-        const lists = await Promise.all((folders as Ref[]).map(children));
+        // Every page of every folder is one call of the budget.
+        const lists = await Promise.all((folders as Ref[]).map((f) => children(f, charge)));
         const result: Record<string, unknown[]> = {};
         (folders as Ref[]).forEach((f, i) => (result[f.id] = lists[i]));
         return json({ children: result });
@@ -427,6 +441,7 @@ Deno.serve(async (req: Request) => {
         return fail("bad_request", 400);
     }
   } catch (e) {
+    if (e instanceof BudgetRefused) return e.response;
     if (e instanceof DriveError) return fail(e.code, e.status);
     console.error("[werke-import] failed", e);
     return fail("drive_failed", 502);

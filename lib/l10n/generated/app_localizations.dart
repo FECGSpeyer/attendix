@@ -15575,6 +15575,30 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.import.aiConfirmButton
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignImportAiConfirmButton;
+
+  /// redesign.import.aiConfirmCancel
+  ///
+  /// In de, this message translates to:
+  /// **'Nochmal ansehen'**
+  String get redesignImportAiConfirmCancel;
+
+  /// redesign.import.aiConfirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.} other {Die KI hat {count} Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.}}'**
+  String redesignImportAiConfirmMessage(num count);
+
+  /// redesign.import.aiConfirmTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI übernehmen?'**
+  String get redesignImportAiConfirmTitle;
+
   /// redesign.import.aiFailed
   ///
   /// In de, this message translates to:
@@ -15598,6 +15622,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die KI sucht Vorschläge …'**
   String get redesignImportAiLoading;
+
+  /// redesign.import.aiMark
+  ///
+  /// In de, this message translates to:
+  /// **'{label}, Vorschlag der KI'**
+  String redesignImportAiMark(Object label);
 
   /// redesign.import.aiNone
   ///
@@ -15647,6 +15677,12 @@ abstract class AppLocalizations {
   /// **'Bitte warte, bis alles hochgeladen ist.'**
   String get redesignImportBusy;
 
+  /// redesign.import.categoryFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Dateien'**
+  String get redesignImportCategoryFiles;
+
   /// redesign.import.categoryLabel
   ///
   /// In de, this message translates to:
@@ -15665,17 +15701,35 @@ abstract class AppLocalizations {
   /// **'Sonstige'**
   String get redesignImportCategoryOther;
 
+  /// redesign.import.categoryParts
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen'**
+  String get redesignImportCategoryParts;
+
   /// redesign.import.confirmButton
   ///
   /// In de, this message translates to:
   /// **'Übernehmen'**
   String get redesignImportConfirmButton;
 
+  /// redesign.import.confirmKeepOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Lass die Seite offen, bis alles fertig ist.'**
+  String get redesignImportConfirmKeepOpen;
+
   /// redesign.import.confirmMessage
   ///
   /// In de, this message translates to:
-  /// **'{files} Dateien in {works} Werken werden hochgeladen, davon {newWorks} neue Werke. Lass die Seite offen, bis alles fertig ist.'**
-  String redesignImportConfirmMessage(Object files, Object works, Object newWorks);
+  /// **'{files, plural, one {1 Datei wird in {works} hochgeladen.} other {{files} Dateien werden in {works} hochgeladen.}}'**
+  String redesignImportConfirmMessage(num files, Object works);
+
+  /// redesign.import.confirmNewWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Dabei wird 1 neues Werk angelegt.} other {Dabei werden {count} neue Werke angelegt.}}'**
+  String redesignImportConfirmNewWorks(num count);
 
   /// redesign.import.confirmTitle
   ///
@@ -15688,6 +15742,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Passt so'**
   String get redesignImportConfirmWork;
+
+  /// redesign.import.confirmWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werken}}'**
+  String redesignImportConfirmWorks(num count);
+
+  /// redesign.import.datesReading
+  ///
+  /// In de, this message translates to:
+  /// **'Das Datum der Fassungen wird noch gelesen …'**
+  String get redesignImportDatesReading;
 
   /// redesign.import.discardConfirm
   ///
@@ -15740,7 +15806,7 @@ abstract class AppLocalizations {
   /// redesign.import.doneLearned
   ///
   /// In de, this message translates to:
-  /// **'Neue Begriffe gelernt'**
+  /// **'Stimmnamen gemerkt'**
   String get redesignImportDoneLearned;
 
   /// redesign.import.doneNewGroups
@@ -15902,7 +15968,7 @@ abstract class AppLocalizations {
   /// redesign.import.errorLimit
   ///
   /// In de, this message translates to:
-  /// **'Gerade geht es nicht weiter (Tageslimit erreicht oder Google ausgelastet). Bitte versuche es später erneut.'**
+  /// **'Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.'**
   String get redesignImportErrorLimit;
 
   /// redesign.import.errorNoData
@@ -15956,7 +16022,7 @@ abstract class AppLocalizations {
   /// redesign.import.fassungMain
   ///
   /// In de, this message translates to:
-  /// **'Werk-Ordner'**
+  /// **'Hauptordner'**
   String get redesignImportFassungMain;
 
   /// redesign.import.fassungMeta
@@ -15974,7 +16040,7 @@ abstract class AppLocalizations {
   /// redesign.import.fassungOld
   ///
   /// In de, this message translates to:
-  /// **'Alt-Ordner'**
+  /// **'älter'**
   String get redesignImportFassungOld;
 
   /// redesign.import.fassungenIntro
@@ -16022,7 +16088,7 @@ abstract class AppLocalizations {
   /// redesign.import.flagMatch
   ///
   /// In de, this message translates to:
-  /// **'Werk prüfen'**
+  /// **'Zuordnung unsicher'**
   String get redesignImportFlagMatch;
 
   /// redesign.import.flagNew
@@ -16079,17 +16145,11 @@ abstract class AppLocalizations {
   /// **'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.'**
   String get redesignImportKeepOpen;
 
-  /// redesign.import.knownText
+  /// redesign.import.learnFailed
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {Attendix erkennt Stimmen an eurer Gruppe und ihren Begriffen.} other {Attendix erkennt Stimmen an euren {count} Gruppen und ihren Begriffen.}}'**
-  String redesignImportKnownText(num count);
-
-  /// redesign.import.knownTitle
-  ///
-  /// In de, this message translates to:
-  /// **'Schon bekannt aus eurer Gruppe'**
-  String get redesignImportKnownTitle;
+  /// **'Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.'**
+  String get redesignImportLearnFailed;
 
   /// redesign.import.matchAmbiguous
   ///
@@ -16124,7 +16184,7 @@ abstract class AppLocalizations {
   /// redesign.import.openHint
   ///
   /// In de, this message translates to:
-  /// **'{count, plural, one {1 Werk ist noch zu prüfen. Es bleibt draußen, bis du es angeschaut hast.} other {{count} Werke sind noch zu prüfen. Sie bleiben draußen, bis du sie angeschaut hast.}}'**
+  /// **'{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}'**
   String redesignImportOpenHint(num count);
 
   /// redesign.import.optionFassung
@@ -16136,7 +16196,7 @@ abstract class AppLocalizations {
   /// redesign.import.optionFassungDetail
   ///
   /// In de, this message translates to:
-  /// **'Liegen bei einem Werk mehrere Fassungen, wird die mit dem neuesten Datum in den Dateien vorgeschlagen. Du entscheidest beim Prüfen.'**
+  /// **'Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.'**
   String get redesignImportOptionFassungDetail;
 
   /// redesign.import.optionWord
@@ -16196,7 +16256,7 @@ abstract class AppLocalizations {
   /// redesign.import.questionsIntro
   ///
   /// In de, this message translates to:
-  /// **'Diese Namen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen und wird als Begriff der Gruppe gespeichert.'**
+  /// **'Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.'**
   String get redesignImportQuestionsIntro;
 
   /// redesign.import.questionsNone
@@ -16204,6 +16264,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle Stimmen sind bekannt.'**
   String get redesignImportQuestionsNone;
+
+  /// redesign.import.questionsOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.} other {Noch {count} Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.}}'**
+  String redesignImportQuestionsOpen(num count);
 
   /// redesign.import.questionsTitle
   ///
@@ -16283,11 +16349,17 @@ abstract class AppLocalizations {
   /// **'Alle · {count}'**
   String redesignImportReviewAll(Object count);
 
+  /// redesign.import.reviewAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Fragen beantworten'**
+  String get redesignImportReviewAnswer;
+
   /// redesign.import.reviewCounts
   ///
   /// In de, this message translates to:
-  /// **'{take} übernehmen · {skip} weglassen'**
-  String redesignImportReviewCounts(Object take, Object skip);
+  /// **'{count} weggelassen'**
+  String redesignImportReviewCounts(Object count);
 
   /// redesign.import.reviewEmpty
   ///
@@ -16312,6 +16384,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Zu prüfen · {count}'**
   String redesignImportReviewOpen(Object count);
+
+  /// redesign.import.reviewQuestionsOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.} other {{count} Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.}}'**
+  String redesignImportReviewQuestionsOpen(num count);
+
+  /// redesign.import.reviewTarget
+  ///
+  /// In de, this message translates to:
+  /// **'→ {name}'**
+  String redesignImportReviewTarget(Object name);
 
   /// redesign.import.sourceDrive
   ///
@@ -16400,7 +16484,7 @@ abstract class AppLocalizations {
   /// redesign.import.stepRead
   ///
   /// In de, this message translates to:
-  /// **'Einlesen'**
+  /// **'Stimmen'**
   String get redesignImportStepRead;
 
   /// redesign.import.stepReview
@@ -16472,7 +16556,7 @@ abstract class AppLocalizations {
   /// redesign.import.undoConfirm
   ///
   /// In de, this message translates to:
-  /// **'Doch noch nicht geprüft'**
+  /// **'Prüfung zurücknehmen'**
   String get redesignImportUndoConfirm;
 
   /// redesign.import.unshareOpen
@@ -16486,6 +16570,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.'**
   String get redesignImportUnshareText;
+
+  /// redesign.import.unshareTextLater
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.'**
+  String get redesignImportUnshareTextLater;
 
   /// redesign.import.unshareTitle
   ///
@@ -16510,6 +16600,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Wird hochgeladen'**
   String get redesignImportUploadTitle;
+
+  /// redesign.import.useZip
+  ///
+  /// In de, this message translates to:
+  /// **'Stattdessen ZIP-Datei wählen'**
+  String get redesignImportUseZip;
 
   /// redesign.invite.addPerson
   ///

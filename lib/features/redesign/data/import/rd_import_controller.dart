@@ -111,6 +111,7 @@ class RdImportState {
     this.aiStatus = RdImportAiStatus.off,
     this.ai = const {},
     this.aiFilled = const {},
+    this.readingDates = false,
   });
 
   final RdImportStep step;
@@ -140,8 +141,14 @@ class RdImportState {
   /// The KI's guess by question key.
   final Map<String, RdImportAiAnswer> ai;
 
-  /// Questions whose answer the KI filled in and nobody changed since.
+  /// Questions whose answer the KI filled in and nobody confirmed or
+  /// changed since. They must be confirmed before the review
+  /// ([RdImportController.confirmAi]): only then are they used and learned.
   final Set<String> aiFilled;
+
+  /// Dates of Fassungen that only showed after a decision are being read:
+  /// "Passt so" and the upload wait.
+  final bool readingDates;
 
   RdImportState copyWith({
     RdImportStep? step,
@@ -158,6 +165,7 @@ class RdImportState {
     RdImportAiStatus? aiStatus,
     Map<String, RdImportAiAnswer>? ai,
     Set<String>? aiFilled,
+    bool? readingDates,
   }) =>
       RdImportState(
         step: step ?? this.step,
@@ -173,6 +181,7 @@ class RdImportState {
         aiStatus: aiStatus ?? this.aiStatus,
         ai: ai ?? this.ai,
         aiFilled: aiFilled ?? this.aiFilled,
+        readingDates: readingDates ?? this.readingDates,
       );
 }
 
@@ -509,17 +518,38 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// Reads the [_missingDates] and plans again; false when the import
   /// changed meanwhile.
+  /// While they are read, [RdImportState.readingDates] holds "Passt so" and
+  /// the upload; a Werk whose suggested Fassung changes by the new dates
+  /// has to be checked again.
   Future<bool> _completeDates() async {
     final input = _input;
     final source = _source;
     final missing = _missingDates();
     if (input == null || source == null || missing.isEmpty) return true;
     _dated.addAll(missing);
-    await _inspect(source, missing, input.hashes, input.dates, hash: (_) => false, date: (_) => true);
+    _datesRunning++;
+    state = state.copyWith(readingDates: true);
+    try {
+      await _inspect(source, missing, input.hashes, input.dates, hash: (_) => false, date: (_) => true);
+    } finally {
+      _datesRunning--;
+      if (!_disposed && _datesRunning == 0) state = state.copyWith(readingDates: false);
+    }
     if (_disposed || !identical(_input, input)) return false;
+    final before = {for (final w in state.plan?.works ?? const <RdImportWork>[]) w.key: rdFassungOf(state.decisions, w)};
     _replan();
+    final changed = {
+      for (final w in state.plan?.works ?? const <RdImportWork>[])
+        if (before.containsKey(w.key) && before[w.key] != rdFassungOf(state.decisions, w)) w.key,
+    };
+    if (changed.any(state.decisions.confirmed.contains)) {
+      _decide((d) => d.copyWith(confirmed: {...d.confirmed}..removeAll(changed)));
+    }
     return true;
   }
+
+  /// Date reads running ([_completeDates]).
+  int _datesRunning = 0;
 
   /// Counts the KI requests: an answer of an older one is dropped.
   int _aiRun = 0;
@@ -544,7 +574,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     }
     if (_disposed || run != _aiRun || !state.useAi) return;
     state = state.copyWith(ai: result.answers, aiStatus: result.status);
-    _applyAi();
+    // Filled in only while the questions are shown: after them the plan is
+    // made and checked with the answers given.
+    if (state.step == RdImportStep.questions) _applyAi();
+  }
+
+  /// The person takes the answers the KI filled in: from now on they count
+  /// like their own (used for the files and learned as terms).
+  void confirmAi() {
+    if (state.aiFilled.isNotEmpty) state = state.copyWith(aiFilled: const {});
   }
 
   /// Fills in the sure guesses of questions nobody answered yet.
@@ -577,7 +615,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     state = state.copyWith(useAi: true);
     if (state.ai.isNotEmpty) {
       state = state.copyWith(aiStatus: RdImportAiStatus.done);
-      _applyAi();
+      if (state.step == RdImportStep.questions) _applyAi();
     } else {
       unawaited(_suggest());
     }
@@ -619,9 +657,11 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// Goes to [step]. From the questions to the review the plan is made
   /// again with the answers, and dates of Fassungen that only show now are
-  /// read first.
+  /// read first. Answers the KI filled in have to be confirmed before
+  /// ([confirmAi]); until then the questions stay.
   Future<void> goTo(RdImportStep step) async {
     if (step == RdImportStep.review && state.step == RdImportStep.questions) {
+      if (state.aiFilled.isNotEmpty) return;
       _replan();
       if (_missingDates().isNotEmpty) {
         state = state.copyWith(step: RdImportStep.reading, progress: 0);
@@ -661,11 +701,16 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     unawaited(_completeDates());
   }
 
-  void confirm(String workKey, {bool value = true}) => _decide((d) {
-        final confirmed = {...d.confirmed};
-        value ? confirmed.add(workKey) : confirmed.remove(workKey);
-        return d.copyWith(confirmed: confirmed);
-      });
+  /// "Passt so" (not while dates of Fassungen are read: the suggested
+  /// Fassung may still change).
+  void confirm(String workKey, {bool value = true}) {
+    if (value && state.readingDates) return;
+    _decide((d) {
+      final confirmed = {...d.confirmed};
+      value ? confirmed.add(workKey) : confirmed.remove(workKey);
+      return d.copyWith(confirmed: confirmed);
+    });
+  }
 
   /// Uploads the files of the ready Werke: new groups and Werke first, then
   /// the files (three Werke at a time; each upload keeps the Besetzung of
@@ -675,6 +720,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final plan = state.plan;
     final source = _source;
     if (plan == null || source == null) return;
+    // Unconfirmed KI answers and dates still being read are not uploaded.
+    if (state.aiFilled.isNotEmpty || state.readingDates) return;
     // Bound before the first await (tenant switch safety).
     final tenantId = _tenantId;
     if (tenantId == null || ref.read(currentTenantIdProvider) != tenantId) return;
@@ -758,7 +805,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
           for (final item in list) {
             if (tenantChanged()) return;
             final songId = songIds[item.work.key]!;
-            progress = progress.copyWith(current: '${item.work.title} · ${item.file.name}', succeeded: succeeded.length);
+            progress = progress.copyWith(current: '${item.file.name} · ${item.work.title}', succeeded: succeeded.length);
             state = state.copyWith(upload: progress.copyWith(done: done, failures: [...failures]));
             try {
               final c = item.category;

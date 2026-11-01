@@ -9055,6 +9055,26 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String get redesignImportAiConfirmButton => 'Übernehmen';
+
+  @override
+  String get redesignImportAiConfirmCancel => 'Nochmal ansehen';
+
+  @override
+  String redesignImportAiConfirmMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die KI hat $count Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.',
+      one: 'Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportAiConfirmTitle => 'Vorschläge der KI übernehmen?';
+
+  @override
   String get redesignImportAiFailed => 'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.';
 
   @override
@@ -9073,6 +9093,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportAiLoading => 'Die KI sucht Vorschläge …';
+
+  @override
+  String redesignImportAiMark(Object label) {
+    return '$label, Vorschlag der KI';
+  }
 
   @override
   String get redesignImportAiNone => 'Die KI hat keine sicheren Vorschläge gefunden.';
@@ -9101,6 +9126,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportBusy => 'Bitte warte, bis alles hochgeladen ist.';
 
   @override
+  String get redesignImportCategoryFiles => 'Andere Dateien';
+
+  @override
   String get redesignImportCategoryLabel => 'Stimme ändern';
 
   @override
@@ -9112,11 +9140,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportCategoryOther => 'Sonstige';
 
   @override
+  String get redesignImportCategoryParts => 'Stimmen';
+
+  @override
   String get redesignImportConfirmButton => 'Übernehmen';
 
   @override
-  String redesignImportConfirmMessage(Object files, Object works, Object newWorks) {
-    return '$files Dateien in $works Werken werden hochgeladen, davon $newWorks neue Werke. Lass die Seite offen, bis alles fertig ist.';
+  String get redesignImportConfirmKeepOpen => 'Lass die Seite offen, bis alles fertig ist.';
+
+  @override
+  String redesignImportConfirmMessage(num files, Object works) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files Dateien werden in $works hochgeladen.',
+      one: '1 Datei wird in $works hochgeladen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportConfirmNewWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Dabei werden $count neue Werke angelegt.',
+      one: 'Dabei wird 1 neues Werk angelegt.',
+    );
+    return '$_temp0';
   }
 
   @override
@@ -9124,6 +9175,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportConfirmWork => 'Passt so';
+
+  @override
+  String redesignImportConfirmWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werken',
+      one: '1 Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportDatesReading => 'Das Datum der Fassungen wird noch gelesen …';
 
   @override
   String get redesignImportDiscardConfirm => 'Verwerfen';
@@ -9150,7 +9215,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneFailed => 'Fehlgeschlagen';
 
   @override
-  String get redesignImportDoneLearned => 'Neue Begriffe gelernt';
+  String get redesignImportDoneLearned => 'Stimmnamen gemerkt';
 
   @override
   String get redesignImportDoneNewGroups => 'Neue Gruppen';
@@ -9241,7 +9306,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportErrorForbidden => 'Du darfst in dieser Gruppe keine Noten hochladen.';
 
   @override
-  String get redesignImportErrorLimit => 'Gerade geht es nicht weiter (Tageslimit erreicht oder Google ausgelastet). Bitte versuche es später erneut.';
+  String get redesignImportErrorLimit => 'Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.';
 
   @override
   String get redesignImportErrorNoData => 'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.';
@@ -9268,7 +9333,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFassungAll => 'Alle Fassungen übernehmen';
 
   @override
-  String get redesignImportFassungMain => 'Werk-Ordner';
+  String get redesignImportFassungMain => 'Hauptordner';
 
   @override
   String redesignImportFassungMeta(num count, Object date) {
@@ -9293,7 +9358,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportFassungOld => 'Alt-Ordner';
+  String get redesignImportFassungOld => 'älter';
 
   @override
   String get redesignImportFassungenIntro => 'In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.';
@@ -9321,7 +9386,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportFlagFassungen => 'Fassungen';
 
   @override
-  String get redesignImportFlagMatch => 'Werk prüfen';
+  String get redesignImportFlagMatch => 'Zuordnung unsicher';
 
   @override
   String get redesignImportFlagNew => 'Neu';
@@ -9377,18 +9442,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportKeepOpen => 'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.';
 
   @override
-  String redesignImportKnownText(num count) {
-    String _temp0 = intl.Intl.pluralLogic(
-      count,
-      locale: localeName,
-      other: 'Attendix erkennt Stimmen an euren $count Gruppen und ihren Begriffen.',
-      one: 'Attendix erkennt Stimmen an eurer Gruppe und ihren Begriffen.',
-    );
-    return '$_temp0';
-  }
-
-  @override
-  String get redesignImportKnownTitle => 'Schon bekannt aus eurer Gruppe';
+  String get redesignImportLearnFailed => 'Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.';
 
   @override
   String get redesignImportMatchAmbiguous => 'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
@@ -9410,8 +9464,8 @@ class AppLocalizationsDe extends AppLocalizations {
     String _temp0 = intl.Intl.pluralLogic(
       count,
       locale: localeName,
-      other: '$count Werke sind noch zu prüfen. Sie bleiben draußen, bis du sie angeschaut hast.',
-      one: '1 Werk ist noch zu prüfen. Es bleibt draußen, bis du es angeschaut hast.',
+      other: '$count Werke sind noch nicht geprüft und werden nicht hochgeladen.',
+      one: '1 Werk ist noch nicht geprüft und wird nicht hochgeladen.',
     );
     return '$_temp0';
   }
@@ -9420,7 +9474,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportOptionFassung => 'Neueste Fassung vorschlagen';
 
   @override
-  String get redesignImportOptionFassungDetail => 'Liegen bei einem Werk mehrere Fassungen, wird die mit dem neuesten Datum in den Dateien vorgeschlagen. Du entscheidest beim Prüfen.';
+  String get redesignImportOptionFassungDetail => 'Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.';
 
   @override
   String get redesignImportOptionWord => 'Word weglassen, wenn PDF daneben liegt';
@@ -9454,10 +9508,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportQuestionsIntro => 'Diese Namen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen und wird als Begriff der Gruppe gespeichert.';
+  String get redesignImportQuestionsIntro => 'Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.';
 
   @override
   String get redesignImportQuestionsNone => 'Alle Stimmen sind bekannt.';
+
+  @override
+  String redesignImportQuestionsOpen(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Noch $count Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.',
+      one: 'Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String redesignImportQuestionsTitle(num count) {
@@ -9509,8 +9574,11 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String redesignImportReviewCounts(Object take, Object skip) {
-    return '$take übernehmen · $skip weglassen';
+  String get redesignImportReviewAnswer => 'Fragen beantworten';
+
+  @override
+  String redesignImportReviewCounts(Object count) {
+    return '$count weggelassen';
   }
 
   @override
@@ -9527,6 +9595,22 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String redesignImportReviewOpen(Object count) {
     return 'Zu prüfen · $count';
+  }
+
+  @override
+  String redesignImportReviewQuestionsOpen(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.',
+      one: '1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportReviewTarget(Object name) {
+    return '→ $name';
   }
 
   @override
@@ -9574,7 +9658,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportStepRead => 'Einlesen';
+  String get redesignImportStepRead => 'Stimmen';
 
   @override
   String get redesignImportStepReview => 'Prüfen';
@@ -9616,13 +9700,16 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportToReview => 'Zur Prüfung';
 
   @override
-  String get redesignImportUndoConfirm => 'Doch noch nicht geprüft';
+  String get redesignImportUndoConfirm => 'Prüfung zurücknehmen';
 
   @override
   String get redesignImportUnshareOpen => 'In Google Drive öffnen';
 
   @override
   String get redesignImportUnshareText => 'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.';
+
+  @override
+  String get redesignImportUnshareTextLater => 'Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.';
 
   @override
   String get redesignImportUnshareTitle => 'Freigabe wieder aufheben';
@@ -9645,6 +9732,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportUploadTitle => 'Wird hochgeladen';
+
+  @override
+  String get redesignImportUseZip => 'Stattdessen ZIP-Datei wählen';
 
   @override
   String get redesignInviteAddPerson => 'Person anlegen';

@@ -9,137 +9,80 @@ import '../rd_widgets.dart';
 
 /// REDESIGN: pieces shared by the pages of "Noten importieren".
 
-/// Page frame of the assistant: back link, title, step bar, the content in
-/// the usual 720 px column and a button bar at the bottom.
+/// Page frame of the assistant on [RdPage]: back link, title, step line
+/// and bar, then the content. Buttons sit in the content (like "Neuer
+/// Termin"); there is no bar of its own at the bottom.
 class RdImportFrame extends StatelessWidget {
   const RdImportFrame({
     super.key,
-    required this.backLabel,
-    required this.onBack,
     required this.title,
     required this.children,
+    this.backLabel,
+    this.onBack,
     this.step,
     this.subtitle,
-    this.bottom,
+    this.compactTitle = false,
   });
 
-  final String backLabel;
-  final VoidCallback onBack;
+  /// Null = no back link (while uploading and when done).
+  final String? backLabel;
+  final VoidCallback? onBack;
   final String title;
   final String? subtitle;
 
-  /// 1–4, null = no step bar (Werk page).
+  /// Smaller title for a long name (a Werk, like the Werk page).
+  final bool compactTitle;
+
+  /// 1–4, null = no step line (Werk page).
   final int? step;
   final List<Widget> children;
-  final Widget? bottom;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     final names = [l10n.redesignImportStepSource, l10n.redesignImportStepRead, l10n.redesignImportStepReview, l10n.redesignImportStepUpload];
-    Widget column(List<Widget> children) => Center(
-          heightFactor: 1,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(maxWidth: 720),
-            child: Column(mainAxisSize: MainAxisSize.min, crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-          ),
-        );
-    return Scaffold(
-      backgroundColor: p.bg,
-      body: SafeArea(
-        bottom: bottom == null,
-        child: ListView(
-          padding: const EdgeInsets.fromLTRB(20, 4, 20, 32),
-          children: [
-            column([
-              RdBackLink(label: backLabel, onTap: onBack),
-              const SizedBox(height: 4),
-              Semantics(header: true, child: Text(title, style: RdType.title(p))),
-              if (subtitle != null) ...[
-                const SizedBox(height: 4),
-                Text(subtitle!, style: RdType.meta(p)),
-              ],
-              if (step != null) ...[
-                const SizedBox(height: 12),
-                Text(l10n.redesignImportStepOf(step!, names[step! - 1]), style: RdType.meta(p, size: 13)),
-                const SizedBox(height: 6),
-                ExcludeSemantics(
-                  child: Row(
-                    children: [
-                      for (var i = 1; i <= 4; i++) ...[
-                        if (i > 1) const SizedBox(width: 4),
-                        Expanded(
-                          child: Container(
-                            height: 4,
-                            decoration: BoxDecoration(
-                              color: i <= step! ? p.primary : p.track,
-                              borderRadius: BorderRadius.circular(999),
-                            ),
-                          ),
-                        ),
-                      ],
-                    ],
+    final step = this.step;
+    return RdPage(
+      children: [
+        if (backLabel != null && onBack != null) ...[
+          RdBackLink(label: backLabel!, onTap: onBack!),
+          const SizedBox(height: 4),
+        ],
+        Semantics(
+          header: true,
+          child: Text(title, style: compactTitle ? RdType.title(p).copyWith(fontSize: 28) : RdType.largeTitle(p)),
+        ),
+        if (subtitle != null) ...[
+          const SizedBox(height: 4),
+          Text(subtitle!, style: RdType.meta(p)),
+        ],
+        if (step != null) ...[
+          const SizedBox(height: 10),
+          Text(l10n.redesignImportStepOf(step, names[step - 1]), style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 6),
+          ExcludeSemantics(
+            child: Row(
+              children: [
+                for (var i = 1; i <= 4; i++) ...[
+                  if (i > 1) const SizedBox(width: 4),
+                  Expanded(
+                    child: Container(
+                      height: 4,
+                      decoration: BoxDecoration(
+                        color: i <= step ? p.primary : p.track,
+                        borderRadius: BorderRadius.circular(999),
+                      ),
+                    ),
                   ),
-                ),
+                ],
               ],
-              const SizedBox(height: 20),
-              ...children,
-            ]),
-          ],
-        ),
-      ),
-      bottomNavigationBar: bottom == null
-          ? null
-          : Material(
-              color: p.surface,
-              child: SafeArea(
-                top: false,
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 12, 20, 12),
-                  child: column([bottom!]),
-                ),
-              ),
             ),
-    );
-  }
-}
-
-/// A switch row of the new design (title, detail, switch).
-class RdImportSwitchRow extends StatelessWidget {
-  const RdImportSwitchRow({super.key, required this.title, required this.detail, required this.value, required this.onChanged});
-
-  final String title;
-  final String detail;
-  final bool value;
-  final ValueChanged<bool> onChanged;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return MergeSemantics(
-      child: InkWell(
-        onTap: () => onChanged(!value),
-        child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 10),
-          child: Row(
-            children: [
-              Expanded(
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    Text(title, style: TextStyle(fontSize: 16, fontWeight: FontWeight.w500, color: p.text)),
-                    const SizedBox(height: 2),
-                    Text(detail, style: RdType.meta(p, size: 13)),
-                  ],
-                ),
-              ),
-              const SizedBox(width: 12),
-              Switch.adaptive(value: value, activeColor: p.primary, onChanged: onChanged),
-            ],
           ),
-        ),
-      ),
+        ],
+        const SizedBox(height: 18),
+        ...children,
+      ],
     );
   }
 }
@@ -173,38 +116,51 @@ String rdImportCategoryLabel(BuildContext context, RdImportPlan plan, RdImportCa
   return c.note ?? l10n.redesignImportCategoryOther;
 }
 
-/// Bottom sheet with every category; returns the one picked.
-Future<RdImportCategory?> rdPickImportCategory(BuildContext context, RdImportPlan plan, {RdImportCategory? current, String? title}) {
+/// Sheet with every category, the groups ("Stimmen") apart from the other
+/// kinds of files; returns the one picked.
+Future<RdImportCategory?> rdPickImportCategory(
+  BuildContext context,
+  RdImportPlan plan, {
+  required String title,
+  RdImportCategory? current,
+}) {
   final options = rdImportCategoryOptions(context, plan);
-  return showModalBottomSheet<RdImportCategory>(
-    context: context,
-    useRootNavigator: true,
-    showDragHandle: true,
-    isScrollControlled: true,
-    builder: (ctx) {
-      final p = ctx.rd;
-      return SafeArea(
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(ctx).size.height * 0.75),
-          child: ListView(
-            shrinkWrap: true,
-            children: [
-              if (title != null)
-                Padding(
-                  padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                  child: Text(title, style: RdType.section(p)),
-                ),
-              for (final (category, label) in options)
-                ListTile(
-                  title: Text(label),
-                  trailing: category == current ? Icon(Icons.check, color: p.primary) : null,
-                  onTap: () => Navigator.of(ctx).pop(category),
-                ),
-            ],
+  final parts = options.take(plan.instruments.length).toList();
+  final files = options.skip(plan.instruments.length).toList();
+  return showRdSheet<RdImportCategory>(
+    context,
+    Builder(builder: (context) {
+      final l10n = context.l10n;
+      Widget row((RdImportCategory, String) o) => RdListRow(
+            title: o.$2,
+            selected: o.$1 == current,
+            showChevron: false,
+            trailing: RdSheetCheck(o.$1 == current),
+            onTap: () => Navigator.of(context).pop(o.$1),
+          );
+      return ListView(
+        shrinkWrap: true,
+        padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
+        children: [
+          RdSheetTitle(title),
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 16),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                if (parts.isNotEmpty) ...[
+                  RdGroupLabel(l10n.redesignImportCategoryParts),
+                  RdGroupedList(children: [for (final o in parts) row(o)]),
+                  const SizedBox(height: 16),
+                ],
+                RdGroupLabel(l10n.redesignImportCategoryFiles),
+                RdGroupedList(children: [for (final o in files) row(o)]),
+              ],
+            ),
           ),
-        ),
+        ],
       );
-    },
+    }),
   );
 }
 
@@ -254,4 +210,26 @@ String rdImportTargetText(BuildContext context, RdImportPlan plan, RdWorkTarget 
     return l10n.redesignImportTargetNew([if (number.isNotEmpty) number, target.name].join(' '));
   }
   return l10n.redesignImportTargetExisting(plan.songs[target.songId]?.label ?? '');
+}
+
+/// Subtitle of a Werk in the review list: the files taken, those left out
+/// and the target only when it is not the folder's own name
+/// ("4 Dateien · 2 weggelassen · → 66 Du großer Gott").
+String rdImportWorkSubtitle(BuildContext context, RdImportPlan plan, RdImportWork work, RdWorkState state) {
+  final l10n = context.l10n;
+  if (state.target.skip) return '';
+  final target = state.target;
+  final String? name;
+  if (target.isNew) {
+    final number = [if ((target.prefix ?? '').isNotEmpty) target.prefix, if (target.number != null) '${target.number}'].join();
+    name = [if (number.isNotEmpty) number, target.name].join(' ');
+  } else {
+    name = plan.songs[target.songId]?.label;
+  }
+  String plain(String s) => s.toLowerCase().replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), '');
+  return [
+    l10n.redesignImportFoundFiles(state.takeCount),
+    if (state.skipCount > 0) l10n.redesignImportReviewCounts(state.skipCount),
+    if (name != null && name.isNotEmpty && plain(name) != plain(work.folderName)) l10n.redesignImportReviewTarget(name),
+  ].join(' · ');
 }

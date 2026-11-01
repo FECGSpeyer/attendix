@@ -27,7 +27,7 @@ class RdImportWorkPage extends ConsumerWidget {
     if (plan == null || work == null) {
       return RdImportFrame(
         backLabel: l10n.redesignImportStepReview,
-        onBack: () => Navigator.of(context).pop(),
+        onBack: () => Navigator.of(context).maybePop(),
         title: l10n.redesignImportTitle,
         children: const [],
       );
@@ -66,25 +66,27 @@ class RdImportWorkPage extends ConsumerWidget {
                   else
                     Semantics(
                       button: true,
-                      label: l10n.redesignImportCategoryLabel,
+                      label: '${l10n.redesignImportCategoryLabel}: ${rdImportCategoryLabel(context, plan, fs.category)}',
+                      excludeSemantics: true,
                       child: InkWell(
                         borderRadius: BorderRadius.circular(8),
                         onTap: () async {
                           final picked = await rdPickImportCategory(context, plan, current: fs.category, title: f.name);
                           if (picked != null) controller.setCategory(f.path, picked);
                         },
-                        child: Padding(
-                          padding: const EdgeInsets.symmetric(vertical: 4),
+                        // 44 px to tap, like the other links of the new design.
+                        child: ConstrainedBox(
+                          constraints: const BoxConstraints(minHeight: 44),
                           child: Row(
                             mainAxisSize: MainAxisSize.min,
                             children: [
                               Flexible(
                                 child: Text(
                                   rdImportCategoryLabel(context, plan, fs.category),
-                                  style: TextStyle(fontSize: 14, fontWeight: FontWeight.w500, color: p.link),
+                                  style: TextStyle(fontSize: 15, fontWeight: FontWeight.w500, color: p.link),
                                 ),
                               ),
-                              Icon(Icons.arrow_drop_down, color: p.link, size: 20),
+                              Icon(Icons.arrow_drop_down, color: p.link, size: 22),
                             ],
                           ),
                         ),
@@ -110,24 +112,10 @@ class RdImportWorkPage extends ConsumerWidget {
 
     return RdImportFrame(
       backLabel: l10n.redesignImportStepReview,
-      onBack: () => Navigator.of(context).pop(),
+      onBack: () => Navigator.of(context).maybePop(),
       title: work.folderName,
-      subtitle: work.folders.length > 1 ? work.folders.join('\n') : (work.folders.isEmpty ? null : work.folders.first),
-      bottom: ws.target.skip
-          ? null
-          : ws.confirmed
-              ? RdOutlineButton(
-                  label: l10n.redesignImportUndoConfirm,
-                  onPressed: () => controller.confirm(work.key, value: false),
-                )
-              : RdPrimaryButton(
-                  label: l10n.redesignImportConfirmWork,
-                  icon: Icons.check,
-                  onPressed: () {
-                    controller.confirm(work.key);
-                    Navigator.of(context).pop();
-                  },
-                ),
+      compactTitle: true,
+      subtitle: _whereOf(work),
       children: [
         RdSectionHeader(l10n.redesignImportTargetTitle),
         RdCard(
@@ -150,7 +138,7 @@ class RdImportWorkPage extends ConsumerWidget {
               RdTextLink(
                 label: l10n.redesignImportTargetChange,
                 onTap: () async {
-                  final target = await _pickTarget(context, plan, work);
+                  final target = await showRdSheet<RdWorkTarget>(context, _TargetSheet(plan: plan, work: work, current: ws.target));
                   if (target != null) controller.setTarget(work.key, target);
                 },
               ),
@@ -192,24 +180,49 @@ class RdImportWorkPage extends ConsumerWidget {
           RdSectionHeader(l10n.redesignImportFilesSkip(left.length)),
           RdGroupedList(children: [for (final f in left) fileRow(f)]),
         ],
+        if (!ws.target.skip) ...[
+          const SizedBox(height: 24),
+          if (ws.confirmed)
+            RdOutlineButton(
+              label: l10n.redesignImportUndoConfirm,
+              onPressed: () => controller.confirm(work.key, value: false),
+            )
+          else ...[
+            // New dates may still change the suggested Fassung.
+            if (state.readingDates) ...[
+              Text(l10n.redesignImportDatesReading, style: RdType.meta(p, size: 13)),
+              const SizedBox(height: 8),
+            ],
+            RdPrimaryButton(
+              label: l10n.redesignImportConfirmWork,
+              icon: Icons.check,
+              onPressed: state.readingDates
+                  ? null
+                  : () {
+                      controller.confirm(work.key);
+                      Navigator.of(context).maybePop();
+                    },
+            ),
+          ],
+        ],
       ],
     );
+  }
+
+  /// Where the Werk lies: the folders above it ("Noten Speyer › Orchester"),
+  /// or every folder when it comes from several.
+  static String? _whereOf(RdImportWork work) {
+    String path(String f) => f.split('/').where((s) => s.isNotEmpty).join(' › ');
+    if (work.folders.length > 1) return work.folders.map(path).join('\n');
+    final folder = work.folders.firstOrNull;
+    if (folder == null || !folder.contains('/')) return null;
+    final above = path(folder.substring(0, folder.lastIndexOf('/')));
+    return above.isEmpty ? null : above;
   }
 
   /// Sub-folder of [f] inside the Werk ("Alt", "Dirigenten › Stimmen").
   static String _folderOf(RdImportWork work, RdImportFile f) =>
       work.fassungen.where((x) => x.key == f.fassungKey).firstOrNull?.label ?? f.fassungKey.split('|').last;
-
-  /// Sheet: an existing Werk (search), a new Werk or "Nicht übernehmen".
-  Future<RdWorkTarget?> _pickTarget(BuildContext context, RdImportPlan plan, RdImportWork work) {
-    return showModalBottomSheet<RdWorkTarget>(
-      context: context,
-      useRootNavigator: true,
-      showDragHandle: true,
-      isScrollControlled: true,
-      builder: (ctx) => _TargetSheet(plan: plan, work: work),
-    );
-  }
 }
 
 class _RadioRow extends StatelessWidget {
@@ -239,18 +252,28 @@ class _RadioRow extends StatelessWidget {
   }
 }
 
+/// "Werk wählen": a new Werk, "Nicht übernehmen" or an existing Werk
+/// (search like the Werke list); the current target is checked.
 class _TargetSheet extends StatefulWidget {
-  const _TargetSheet({required this.plan, required this.work});
+  const _TargetSheet({required this.plan, required this.work, required this.current});
 
   final RdImportPlan plan;
   final RdImportWork work;
+  final RdWorkTarget current;
 
   @override
   State<_TargetSheet> createState() => _TargetSheetState();
 }
 
 class _TargetSheetState extends State<_TargetSheet> {
+  final _search = TextEditingController();
   String _query = '';
+
+  @override
+  void dispose() {
+    _search.dispose();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -267,64 +290,96 @@ class _TargetSheetState extends State<_TargetSheet> {
         return na != nb ? na.compareTo(nb) : a.name.compareTo(b.name);
       });
     final fallback = rdDefaultTarget(widget.plan, widget.work);
-    return SafeArea(
-      child: Padding(
-        padding: EdgeInsets.only(bottom: MediaQuery.of(context).viewInsets.bottom),
-        child: ConstrainedBox(
-          constraints: BoxConstraints(maxHeight: MediaQuery.of(context).size.height * 0.8),
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              Padding(
-                padding: const EdgeInsets.fromLTRB(20, 0, 20, 8),
-                child: Text(l10n.redesignImportPickTitle, style: RdType.section(p)),
+    final current = widget.current;
+    final border = OutlineInputBorder(borderRadius: BorderRadius.circular(p.buttonRadius), borderSide: BorderSide.none);
+    return Padding(
+      padding: EdgeInsets.only(bottom: MediaQuery.viewInsetsOf(context).bottom),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          RdSheetTitle(l10n.redesignImportPickTitle),
+          Padding(
+            padding: const EdgeInsets.fromLTRB(16, 0, 16, 12),
+            child: TextField(
+              controller: _search,
+              onChanged: (v) => setState(() => _query = v),
+              textInputAction: TextInputAction.search,
+              decoration: InputDecoration(
+                hintText: l10n.redesignImportPickSearch,
+                prefixIcon: Icon(Icons.search, color: p.text2),
+                suffixIcon: _query.isEmpty
+                    ? null
+                    : IconButton(
+                        icon: Icon(Icons.close, color: p.text2),
+                        tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                        onPressed: () {
+                          _search.clear();
+                          setState(() => _query = '');
+                        },
+                      ),
+                filled: true,
+                fillColor: p.surface,
+                border: border,
+                enabledBorder: border,
               ),
-              Padding(
-                padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-                child: TextField(
-                  autofocus: false,
-                  onChanged: (v) => setState(() => _query = v),
-                  decoration: InputDecoration(
-                    hintText: l10n.redesignImportPickSearch,
-                    prefixIcon: Icon(Icons.search, color: p.text2),
-                    isDense: true,
-                  ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.add, color: p.primary),
-                title: Text(l10n.redesignImportPickNew),
-                subtitle: Text(widget.work.folderName),
-                onTap: () => Navigator.of(context).pop(
-                  fallback.isNew
-                      ? fallback
-                      : RdWorkTarget.create(
-                          name: rdParseWorkName(widget.work.folderName).title.isEmpty
-                              ? widget.work.folderName
-                              : rdParseWorkName(widget.work.folderName).title,
-                        ),
-                ),
-              ),
-              ListTile(
-                leading: Icon(Icons.block, color: p.text2),
-                title: Text(l10n.redesignImportPickSkip),
-                onTap: () => Navigator.of(context).pop(const RdWorkTarget.skip()),
-              ),
-              const Divider(height: 1),
-              Flexible(
-                child: ListView.builder(
-                  shrinkWrap: true,
-                  itemCount: songs.length,
-                  itemBuilder: (_, i) => ListTile(
-                    title: Text(songs[i].label),
-                    onTap: () => Navigator.of(context).pop(RdWorkTarget.song(songs[i].id)),
-                  ),
-                ),
-              ),
-            ],
+            ),
           ),
-        ),
+          Flexible(
+            child: ListView(
+              shrinkWrap: true,
+              padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+              children: [
+                RdGroupedList(
+                  children: [
+                    RdListRow(
+                      leading: Icon(Icons.add, color: p.primary),
+                      title: l10n.redesignImportPickNew,
+                      subtitle: widget.work.folderName,
+                      selected: current.isNew,
+                      showChevron: false,
+                      trailing: RdSheetCheck(current.isNew),
+                      onTap: () => Navigator.of(context).pop(
+                        current.isNew
+                            ? current
+                            : fallback.isNew
+                                ? fallback
+                                : RdWorkTarget.create(
+                                    name: rdParseWorkName(widget.work.folderName).title.isEmpty
+                                        ? widget.work.folderName
+                                        : rdParseWorkName(widget.work.folderName).title,
+                                  ),
+                      ),
+                    ),
+                    RdListRow(
+                      leading: Icon(Icons.block, color: p.text2),
+                      title: l10n.redesignImportPickSkip,
+                      selected: current.skip,
+                      showChevron: false,
+                      trailing: RdSheetCheck(current.skip),
+                      onTap: () => Navigator.of(context).pop(const RdWorkTarget.skip()),
+                    ),
+                  ],
+                ),
+                if (songs.isNotEmpty) ...[
+                  const SizedBox(height: 16),
+                  RdGroupedList(
+                    children: [
+                      for (final s in songs)
+                        RdListRow(
+                          title: s.label,
+                          selected: current.songId == s.id,
+                          showChevron: false,
+                          trailing: RdSheetCheck(current.songId == s.id),
+                          onTap: () => Navigator.of(context).pop(RdWorkTarget.song(s.id)),
+                        ),
+                    ],
+                  ),
+                ],
+              ],
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -336,6 +336,18 @@ void main() {
       }
       expect(RedesignRoutes.work(5), '/werke/5');
     });
+
+    test('"Noten importieren" has its own address, for Admins and Verantwortliche', () {
+      expect(RedesignRoutes.worksImport, '/werke/import');
+      for (final role in [Role.admin, Role.responsible]) {
+        expect(RedesignRoutes.roleRedirect('/werke/import', role), isNull, reason: role.name);
+      }
+      for (final role in [Role.viewer, Role.helper, Role.player, Role.voiceLeader, Role.none]) {
+        expect(RedesignRoutes.roleRedirect('/werke/import', role), '/werke', reason: role.name);
+      }
+      expect(RedesignRoutes.roleRedirect('/werke/import', Role.parent), '/heute');
+      expect(RedesignRoutes.isRedesignRoute('/werke/import'), isTrue);
+    });
   });
 
   group('RdWorksPage', () {

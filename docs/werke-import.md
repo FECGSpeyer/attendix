@@ -41,7 +41,7 @@ curl -i -X POST https://ultyjzgwejpehfjuyenr.supabase.co/functions/v1/werke-impo
 - Nur angemeldete Konten mit Bearbeitungsrecht in der Gruppe (wie `part-detect`).
 - Beim Kopieren gehört das Werk zur Gruppe, der Dateiname hat das Muster der App und eine vorhandene Datei wird nie überschrieben.
 - Es wird nur `www.googleapis.com` abgefragt. Google-Dokumente und Dateien über 20 MB werden abgelehnt.
-- Tageslimit je Konto und Gruppe: jeder Aufruf wird gezählt, bevor Google gefragt wird; die Bytes einer Datei vor dem Herunterladen, das dort stoppt.
+- Tageslimit je Konto und Gruppe: jede Anfrage an Google wird gezählt, bevor sie gestellt wird (beim Einlesen jede Seite eines Ordners); die Bytes einer Datei vor dem Herunterladen, das dort stoppt.
 - Ordner mit mehr als 20.000 Einträgen auf einer Ebene werden abgelehnt (Unterordner wählen), nie halb gelesen.
 
 ## KI-Vorschläge für die Fragen
