@@ -10,6 +10,7 @@ import '../../../core/providers/debug_providers.dart';
 import '../../../core/providers/optional_tabs_providers.dart';
 import '../../../core/providers/tenant_providers.dart';
 import '../../../core/services/app_update_service.dart';
+import '../../../core/services/update_hint.dart';
 import '../../../data/models/tenant/tenant.dart';
 import '../../../l10n/l10n.dart';
 import '../adaptive/adaptive_platform.dart';
@@ -210,7 +211,7 @@ class MainShell extends ConsumerWidget {
     final mq = MediaQuery.of(context);
     final bottomOffset = IosTabBar.bottomOffset(context);
     final barInset = IosTabBar.contentInset(context);
-    final showUpdate = ref.watch(appUpdateAvailableProvider) &&
+    final showUpdate = showUpdateHint(ref.watch(appUpdateAvailableProvider)) &&
         !ref.watch(_updateToastDismissedProvider);
     final inset =
         barInset + (showUpdate ? _IosUpdateToast.height + _IosUpdateToast.gap : 0);

@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.33.1",
+      "date": "1.11.2026",
+      "changes": [
+        "🔄 Web-App: Neue Versionen laden still im Hintergrund und gelten ab dem nächsten Start, ohne Hinweis und ohne Unterbrechung"
+      ]
+    },
+    {
       "version": "0.33.0",
       "date": "1.11.2026",
       "changes": [

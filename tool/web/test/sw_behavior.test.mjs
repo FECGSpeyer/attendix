@@ -46,8 +46,9 @@ function loadPage({ controller, registration = null }) {
 
 /** A ServiceWorker / registration stand-in with event listeners. */
 class FakeTarget {
-  constructor(props) { Object.assign(this, props); this.listeners = {}; }
+  constructor(props) { Object.assign(this, props); this.listeners = {}; this.messages = []; }
   addEventListener(type, fn) { (this.listeners[type] ||= []).push(fn); }
+  postMessage(message) { this.messages.push(message); }
   fire(type) { (this.listeners[type] || []).forEach((fn) => fn()); }
 }
 
@@ -79,6 +80,17 @@ test('a worker already installing when the page starts still shows the update hi
   installing.fire('statechange');
   assert.equal(page.updateAvailable(), true);
   assert.deepEqual(page.events, ['flutter-update-available']);
+});
+
+test('a page that starts while a new worker waits asks it to take over if it is the only window', async () => {
+  const waiting = new FakeTarget({ state: 'installed' });
+  const registration = new FakeTarget({ installing: null, waiting, update: async () => {} });
+  const page = loadPage({ controller: {}, registration });
+  await settle();
+  assert.equal(JSON.stringify(waiting.messages), JSON.stringify([{ type: 'activate-if-alone' }]));
+  // The worker takes over: the page reloads into the new version.
+  page.controllerChange();
+  assert.equal(page.reloads, 1);
 });
 
 test('a worker found later and one already waiting show the hint once', async () => {
@@ -170,7 +182,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
     .replace(/const LIST_WAIT_FIRST_MS = \d+;/, `const LIST_WAIT_FIRST_MS = ${listWaitMs};`);
   const handlers = {};
   // sw.network may be swapped: what the server answers from then on.
-  const sw = { navigated: [], updates: 0, fetched: [], offline: false, network };
+  const sw = { navigated: [], updates: 0, fetched: [], offline: false, network, skipped: 0 };
   const fetchFn = async (req) => {
     if (sw.offline) throw new TypeError('Failed to fetch');
     const url = new URL(typeof req === 'string' ? req : req.url, ORIGIN + '/');
@@ -192,7 +204,7 @@ function loadWorker({ resources, network, listWaitMs = 30, browser = UA.chrome, 
     location: { origin: ORIGIN },
     navigator: { userAgent: browser[1] }, // a worker has no navigator.vendor
     addEventListener: (type, fn) => { handlers[type] = fn; },
-    skipWaiting: () => {},
+    skipWaiting: () => { sw.skipped++; },
     clients: { claim: async () => {}, matchAll: async () => sw.clients },
     registration: { update: async () => { sw.updates++; } },
   };
@@ -364,6 +376,15 @@ test('a failed install of a new worker keeps the active worker\'s cache', async 
   active.offline = true;
   assert.equal(await (await active.request('main.dart.wasm')).text(), 'wasm-B');
   assert.equal(await (await active.request('', 'navigate')).text(), '<html>');
+});
+
+test('a waiting worker takes over at a start only when that page is the only window', async () => {
+  const sw = loadWorker({ resources: DEPLOY, network: DEPLOY });
+  await sw.message({ type: 'activate-if-alone' }); // two windows open
+  assert.equal(sw.skipped, 0);
+  sw.clients = sw.clients.slice(0, 1);
+  await sw.message({ type: 'activate-if-alone' });
+  assert.equal(sw.skipped, 1);
 });
 
 test('install takes the page list and stores only verified files', async () => {

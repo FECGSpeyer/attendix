@@ -7,7 +7,7 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Attendix';
-  static const String appVersion = '0.33.0';
+  static const String appVersion = '0.33.1';
 
   /// Demo credentials from environment (Ionic `environment.demoMail` /
   /// `environment.demoPassword`).
