@@ -1062,15 +1062,27 @@ class RdChoiceChip extends StatelessWidget {
     required this.label,
     required this.selected,
     required this.onTap,
+    this.icon,
   });
 
   final String label;
   final bool selected;
   final VoidCallback? onTap;
 
+  /// Small icon before the label (e.g. ✦ for a suggestion of the KI).
+  final IconData? icon;
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
+    final text = Text(
+      label,
+      style: TextStyle(
+        fontSize: 14,
+        fontWeight: FontWeight.w500,
+        color: selected ? p.bg : p.text,
+      ),
+    );
     return Semantics(
       button: true,
       selected: selected,
@@ -1086,14 +1098,16 @@ class RdChoiceChip extends StatelessWidget {
             constraints: const BoxConstraints(minHeight: 40),
             child: Padding(
               padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 8),
-              child: Text(
-                label,
-                style: TextStyle(
-                  fontSize: 14,
-                  fontWeight: FontWeight.w500,
-                  color: selected ? p.bg : p.text,
-                ),
-              ),
+              child: icon == null
+                  ? text
+                  : Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(icon, size: 16, color: selected ? p.bg : p.primary),
+                        const SizedBox(width: 6),
+                        Flexible(child: text),
+                      ],
+                    ),
             ),
           ),
         ),

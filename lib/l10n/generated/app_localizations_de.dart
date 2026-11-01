@@ -9055,6 +9055,38 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignGroupsTitle => 'Gruppe wechseln';
 
   @override
+  String get redesignImportAiFailed => 'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.';
+
+  @override
+  String redesignImportAiFilled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Die KI hat $count Antworten ausgefüllt (✦), bitte kurz prüfen.',
+      one: 'Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportAiLimit => 'Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.';
+
+  @override
+  String get redesignImportAiLoading => 'Die KI sucht Vorschläge …';
+
+  @override
+  String get redesignImportAiNone => 'Die KI hat keine sicheren Vorschläge gefunden.';
+
+  @override
+  String get redesignImportAiOffered => 'Vorschläge der KI sind mit ✦ markiert.';
+
+  @override
+  String get redesignImportAiOption => 'Vorschläge der KI';
+
+  @override
+  String get redesignImportAiOptionDetail => 'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.';
+
+  @override
   String redesignImportAnswerNewGroup(Object name) {
     return 'Neue Gruppe „$name“';
   }

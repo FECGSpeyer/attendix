@@ -595,6 +595,7 @@ class RdImportQuestion {
     required this.label,
     required this.fileCount,
     required this.works,
+    this.files = const [],
     this.suggestion,
   });
 
@@ -606,6 +607,9 @@ class RdImportQuestion {
 
   /// Titles of some Werke it appears in.
   final List<String> works;
+
+  /// Names of some files it appears in ("Sax 1.pdf").
+  final List<String> files;
 
   /// Group the name might mean (unsure match).
   final int? suggestion;
@@ -908,6 +912,7 @@ RdImportPlan rdBuildImportPlan(
       label: labels.isEmpty ? entry.key : top(labels),
       fileCount: list.length,
       works: {for (final q in list) q.work}.take(2).toList(),
+      files: {for (final q in list) q.file.name}.take(3).toList(),
       suggestion: suggestion,
     ));
   }

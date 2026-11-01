@@ -15575,6 +15575,54 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.import.aiFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.'**
+  String get redesignImportAiFailed;
+
+  /// redesign.import.aiFilled
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.} other {Die KI hat {count} Antworten ausgefüllt (✦), bitte kurz prüfen.}}'**
+  String redesignImportAiFilled(num count);
+
+  /// redesign.import.aiLimit
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.'**
+  String get redesignImportAiLimit;
+
+  /// redesign.import.aiLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI sucht Vorschläge …'**
+  String get redesignImportAiLoading;
+
+  /// redesign.import.aiNone
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI hat keine sicheren Vorschläge gefunden.'**
+  String get redesignImportAiNone;
+
+  /// redesign.import.aiOffered
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI sind mit ✦ markiert.'**
+  String get redesignImportAiOffered;
+
+  /// redesign.import.aiOption
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI'**
+  String get redesignImportAiOption;
+
+  /// redesign.import.aiOptionDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
+  String get redesignImportAiOptionDetail;
+
   /// redesign.import.answerNewGroup
   ///
   /// In de, this message translates to:

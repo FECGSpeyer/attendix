@@ -11851,6 +11851,43 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignImportAiFailed": "Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.",
+  "@redesignImportAiFailed": {
+    "description": "redesign.import.aiFailed"
+  },
+  "redesignImportAiFilled": "{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.} other {Die KI hat {count} Antworten ausgefüllt (✦), bitte kurz prüfen.}}",
+  "@redesignImportAiFilled": {
+    "description": "redesign.import.aiFilled",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportAiLimit": "Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.",
+  "@redesignImportAiLimit": {
+    "description": "redesign.import.aiLimit"
+  },
+  "redesignImportAiLoading": "Die KI sucht Vorschläge …",
+  "@redesignImportAiLoading": {
+    "description": "redesign.import.aiLoading"
+  },
+  "redesignImportAiNone": "Die KI hat keine sicheren Vorschläge gefunden.",
+  "@redesignImportAiNone": {
+    "description": "redesign.import.aiNone"
+  },
+  "redesignImportAiOffered": "Vorschläge der KI sind mit ✦ markiert.",
+  "@redesignImportAiOffered": {
+    "description": "redesign.import.aiOffered"
+  },
+  "redesignImportAiOption": "Vorschläge der KI",
+  "@redesignImportAiOption": {
+    "description": "redesign.import.aiOption"
+  },
+  "redesignImportAiOptionDetail": "Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+  "@redesignImportAiOptionDetail": {
+    "description": "redesign.import.aiOptionDetail"
+  },
   "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
   "@redesignImportAnswerNewGroup": {
     "description": "redesign.import.answerNewGroup",

@@ -9061,6 +9061,38 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupsTitle => 'Switch group';
 
   @override
+  String get redesignImportAiFailed => 'The AI cannot be reached right now. The questions work without it.';
+
+  @override
+  String redesignImportAiFilled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The AI filled in $count answers (✦), please check them.',
+      one: 'The AI filled in 1 answer (✦), please check it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportAiLimit => 'The AI suggestions are used up for today. The questions work without them.';
+
+  @override
+  String get redesignImportAiLoading => 'The AI is looking for suggestions …';
+
+  @override
+  String get redesignImportAiNone => 'The AI found no sure suggestions.';
+
+  @override
+  String get redesignImportAiOffered => 'Suggestions from the AI are marked with ✦.';
+
+  @override
+  String get redesignImportAiOption => 'Suggestions from AI';
+
+  @override
+  String get redesignImportAiOptionDetail => 'The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.';
+
+  @override
   String redesignImportAnswerNewGroup(Object name) {
     return 'New group “$name”';
   }

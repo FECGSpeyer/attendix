@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:typed_data';
 
 import 'package:archive/archive.dart';
@@ -13,11 +14,13 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/instrument/instrument.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
+import 'package:attendix/features/redesign/data/import/rd_import_ai.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_controller.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_drive.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_logic.dart';
 import 'package:attendix/features/redesign/data/import/rd_import_source.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_import_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart' show RdChoiceChip;
 import 'package:attendix/l10n/l10n.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
@@ -154,10 +157,14 @@ final _zipBytes = _zip({
   '__MACOSX/Noten/._Viola.pdf': 'x',
 });
 
+/// The KI without suggestions.
+final _noAi = RdImportAi((_) async => {'answers': []});
+
 List<Override> _overrides(_FakeFiles files, _FakeSongs songs, _FakeGroupNotifier groups,
-        [FakeDrive? drive, bool groupsFail = false]) =>
+        [FakeDrive? drive, bool groupsFail = false, RdImportAi? ai]) =>
     [
       if (drive != null) rdDriveApiProvider.overrideWithValue(RdDriveApi(drive.call)),
+      rdImportAiProvider.overrideWithValue(ai ?? _noAi),
       initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       currentTenantIdProvider.overrideWithValue(7),
@@ -438,6 +445,69 @@ void main() {
     expect(() => source.read('Noten/1 Eins/Viola.pdf'), throwsFormatException);
   });
 
+  test('the KI fills in sure answers, offers unsure ones and never overrides a person', () async {
+    final calls = <Map<String, dynamic>>[];
+    var reply = Completer<Map<String, dynamic>>();
+    final ai = RdImportAi((body) {
+      calls.add(body);
+      return reply.future;
+    });
+    final c = ProviderContainer(overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), null, false, ai));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([_zipFile()]);
+    expect(c.read(rdImportProvider).aiStatus, RdImportAiStatus.loading);
+    expect(calls.single['tenantId'], 7);
+    expect((calls.single['questions'] as List).single, {
+      'key': 'sax',
+      'label': 'Sax',
+      'files': ['Sax 1.pdf', 'Sax 2.pdf'],
+      'works': ['Wie wunderbar', 'Jesus ruft dich'],
+    });
+    reply.complete({
+      'answers': [
+        {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+      ],
+    });
+    await Future<void>.delayed(Duration.zero);
+    var state = c.read(rdImportProvider);
+    expect(state.aiStatus, RdImportAiStatus.done);
+    expect(state.decisions.answers, {'sax': const RdImportCategory(newGroup: 'Saxophon')});
+    expect(state.aiFilled, {'sax'});
+
+    // Off takes the filled-in answer back, on puts it in again (no new request).
+    controller.setUseAi(false);
+    expect(c.read(rdImportProvider).decisions.answers, isEmpty);
+    controller.setUseAi(true);
+    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(newGroup: 'Saxophon'));
+    expect(calls, hasLength(1));
+
+    // A person's answer stays, also when the KI is switched off.
+    controller.answer('sax', const RdImportCategory(instrumentId: 12));
+    expect(c.read(rdImportProvider).aiFilled, isEmpty);
+    controller.setUseAi(false);
+    expect(c.read(rdImportProvider).decisions.answers['sax'], const RdImportCategory(instrumentId: 12));
+
+    // A late reply does not override an answer given meanwhile; an unsure one is only offered.
+    controller.restart();
+    controller.setUseAi(true);
+    reply = Completer();
+    await controller.read([_zipFile()]);
+    controller.answer('sax', const RdImportCategory(instrumentId: 30));
+    reply.complete({
+      'answers': [
+        {'key': 'sax', 'kind': 'group', 'groupId': 10, 'confidence': 'low'},
+      ],
+    });
+    await Future<void>.delayed(Duration.zero);
+    state = c.read(rdImportProvider);
+    expect(state.decisions.answers['sax'], const RdImportCategory(instrumentId: 30));
+    expect(state.ai['sax'], const RdImportAiAnswer(RdImportCategory(instrumentId: 10), sure: false));
+    expect(state.aiFilled, isEmpty);
+  });
+
   test('link errors: Dropbox, a file, not shared, function missing', () async {
     final c = ProviderContainer(overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), _drive()));
     addTearDown(c.dispose);
@@ -561,5 +631,44 @@ void main() {
     expect(find.text('Ziel in Attendix'), findsOneWidget);
     expect(find.text('Doppelt vorhanden'), findsOneWidget);
     expect(find.text('Passt so'), findsOneWidget);
+  });
+
+  testWidgets('questions: the KI\'s answer is marked and can be switched off', (tester) async {
+    tester.view.physicalSize = const Size(430, 1600);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    final ai = RdImportAi((_) async => {
+          'answers': [
+            {'key': 'sax', 'kind': 'new', 'newGroup': 'Saxophon', 'confidence': 'high'},
+          ],
+        });
+    await tester.pumpWidget(ProviderScope(
+      overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier(), null, false, ai),
+      child: MaterialApp(
+        locale: const Locale('de'),
+        localizationsDelegates: AppLocalizations.localizationsDelegates,
+        supportedLocales: AppLocalizations.supportedLocales,
+        theme: buildRdTheme(RdFarbwelt.petrol, Brightness.light),
+        home: const RdImportPage(),
+      ),
+    ));
+    await tester.pump();
+    final container = ProviderScope.containerOf(tester.element(find.byType(RdImportPage)));
+    await tester.runAsync(() async {
+      await container.read(rdImportProvider.notifier).read([_zipFile()]);
+      await Future<void>.delayed(Duration.zero);
+    });
+    await tester.pump();
+    expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsOneWidget);
+    final chip = find.ancestor(of: find.text('Neue Gruppe „Saxophon“'), matching: find.byType(RdChoiceChip));
+    expect(tester.widget<RdChoiceChip>(chip).selected, isTrue);
+    expect(tester.widget<RdChoiceChip>(chip).icon, Icons.auto_awesome);
+
+    await tester.tap(find.text('Vorschläge der KI'));
+    await tester.pump();
+    expect(find.text('Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.'), findsNothing);
+    expect(find.text('Neue Gruppe „Saxophon“'), findsNothing);
+    expect(find.text('Neue Gruppe „Sax“'), findsOneWidget);
+    expect(container.read(rdImportProvider).decisions.answers, isEmpty);
   });
 }

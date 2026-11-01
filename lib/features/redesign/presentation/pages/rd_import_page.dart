@@ -10,6 +10,7 @@ import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
+import '../../data/import/rd_import_ai.dart';
 import '../../data/import/rd_import_controller.dart';
 import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
@@ -518,8 +519,33 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
             padding: const EdgeInsets.only(bottom: 10),
             child: Text(l10n.redesignImportQuestionsIntro, style: RdType.meta(p, size: 13)),
           ),
+          if (_aiNote(context, state) case final note?)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 10),
+              child: Row(
+                children: [
+                  if (state.aiStatus == RdImportAiStatus.loading)
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: SizedBox(width: 14, height: 14, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
+                    )
+                  else
+                    Padding(
+                      padding: const EdgeInsets.only(right: 8),
+                      child: Icon(Icons.auto_awesome, size: 16, color: p.primary),
+                    ),
+                  Expanded(child: Text(note, style: RdType.meta(p, size: 13))),
+                ],
+              ),
+            ),
           for (final q in plan.questions) ...[
-            _QuestionCard(plan: plan, question: q, answer: d.answers[q.key], onAnswer: (a) => _controller.answer(q.key, a)),
+            _QuestionCard(
+              plan: plan,
+              question: q,
+              answer: d.answers[q.key],
+              ai: state.useAi ? state.ai[q.key]?.category : null,
+              onAnswer: (a) => _controller.answer(q.key, a),
+            ),
             const SizedBox(height: 10),
           ],
         ],
@@ -530,6 +556,13 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         RdSectionHeader(l10n.redesignImportOptionsTitle),
         RdGroupedList(
           children: [
+            if (plan.questions.isNotEmpty)
+              RdImportSwitchRow(
+                title: l10n.redesignImportAiOption,
+                detail: l10n.redesignImportAiOptionDetail,
+                value: state.useAi,
+                onChanged: _controller.setUseAi,
+              ),
             RdImportSwitchRow(
               title: l10n.redesignImportOptionFassung,
               detail: l10n.redesignImportOptionFassungDetail,
@@ -546,6 +579,23 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         ),
       ],
     );
+  }
+
+  /// What the KI did with the questions; null when it was not asked.
+  String? _aiNote(BuildContext context, RdImportState state) {
+    final l10n = context.l10n;
+    if (!state.useAi) return null;
+    return switch (state.aiStatus) {
+      RdImportAiStatus.off => null,
+      RdImportAiStatus.loading => l10n.redesignImportAiLoading,
+      RdImportAiStatus.limit => l10n.redesignImportAiLimit,
+      RdImportAiStatus.failed => l10n.redesignImportAiFailed,
+      RdImportAiStatus.done => state.aiFilled.isNotEmpty
+          ? l10n.redesignImportAiFilled(state.aiFilled.length)
+          : state.ai.isNotEmpty
+              ? l10n.redesignImportAiOffered
+              : l10n.redesignImportAiNone,
+    };
   }
 
   // -------------------------------------------------------------------------
@@ -794,12 +844,15 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
 
 /// A question about an unknown part name with its answers as chips.
 class _QuestionCard extends StatelessWidget {
-  const _QuestionCard({required this.plan, required this.question, required this.answer, required this.onAnswer});
+  const _QuestionCard({required this.plan, required this.question, required this.answer, required this.onAnswer, this.ai});
 
   final RdImportPlan plan;
   final RdImportQuestion question;
   final RdImportCategory? answer;
   final ValueChanged<RdImportCategory?> onAnswer;
+
+  /// The KI's guess (marked ✦).
+  final RdImportCategory? ai;
 
   @override
   Widget build(BuildContext context) {
@@ -808,8 +861,18 @@ class _QuestionCard extends StatelessWidget {
     final suggestion = question.suggestion == null ? null : RdImportCategory(instrumentId: question.suggestion);
     final label = question.label;
     final newName = label.isEmpty ? label : label[0].toUpperCase() + label.substring(1);
-    final newGroup = answer?.newGroup != null ? answer! : RdImportCategory(newGroup: newName);
-    final picked = answer != null && answer != suggestion && answer?.newGroup == null && answer != RdImportCategory.other ? answer : null;
+    final ai = this.ai;
+    final newGroup = answer?.newGroup != null && answer != ai ? answer! : RdImportCategory(newGroup: newName);
+    final picked = answer != null &&
+            answer != suggestion &&
+            answer != ai &&
+            answer?.newGroup == null &&
+            answer != RdImportCategory.other
+        ? answer
+        : null;
+    // The KI's guess gets its own chip unless one of the fixed ones is it.
+    final aiChip = ai != null && ai != suggestion && ai != RdImportCategory.other && ai != newGroup;
+    IconData? mark(RdImportCategory c) => c == ai ? Icons.auto_awesome : null;
     void toggle(RdImportCategory c) => onAnswer(answer == c ? null : c);
     return RdCard(
       padding: const EdgeInsets.all(14),
@@ -827,8 +890,16 @@ class _QuestionCard extends StatelessWidget {
               if (suggestion != null)
                 RdChoiceChip(
                   label: rdImportCategoryLabel(context, plan, suggestion),
+                  icon: mark(suggestion),
                   selected: answer == suggestion,
                   onTap: () => toggle(suggestion),
+                ),
+              if (aiChip)
+                RdChoiceChip(
+                  label: ai.newGroup != null ? l10n.redesignImportAnswerNewGroup(ai.newGroup!) : rdImportCategoryLabel(context, plan, ai),
+                  icon: Icons.auto_awesome,
+                  selected: answer == ai,
+                  onTap: () => toggle(ai),
                 ),
               if (picked != null)
                 RdChoiceChip(label: rdImportCategoryLabel(context, plan, picked), selected: true, onTap: () => onAnswer(null)),
@@ -843,6 +914,7 @@ class _QuestionCard extends StatelessWidget {
               if (newName.isNotEmpty)
                 RdChoiceChip(
                   label: l10n.redesignImportAnswerNewGroup(newGroup.newGroup!),
+                  icon: mark(newGroup),
                   selected: answer == newGroup,
                   onTap: () async {
                     if (answer == newGroup) return onAnswer(null);
@@ -857,6 +929,7 @@ class _QuestionCard extends StatelessWidget {
                 ),
               RdChoiceChip(
                 label: l10n.redesignImportAnswerNone,
+                icon: mark(RdImportCategory.other),
                 selected: answer == RdImportCategory.other,
                 onTap: () => toggle(RdImportCategory.other),
               ),

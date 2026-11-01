@@ -19,6 +19,7 @@ const _allowed = <String, String>{
   'supabaseClientProvider': 'client',
   'supabaseAuthProvider': 'client',
   'rdDriveApiProvider': 'client (calls the werke-import function, no cached data)',
+  'rdImportAiProvider': 'client (calls the part-suggest function, no cached data)',
   'currentAuthUserIdProvider': 'the account id itself',
   // Read at call time (functions), never cached.
   'offlineQueueUserIdProvider': 'callback read at call time',

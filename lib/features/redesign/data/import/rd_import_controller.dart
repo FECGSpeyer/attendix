@@ -13,6 +13,7 @@ import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/repositories/song_repository.dart';
 import '../../../../l10n/l10n.dart';
+import 'rd_import_ai.dart';
 import 'rd_import_drive.dart';
 import 'rd_import_logic.dart';
 import 'rd_import_source.dart';
@@ -106,6 +107,10 @@ class RdImportState {
     this.error,
     this.fileCount = 0,
     this.driveFolder,
+    this.useAi = true,
+    this.aiStatus = RdImportAiStatus.off,
+    this.ai = const {},
+    this.aiFilled = const {},
   });
 
   final RdImportStep step;
@@ -128,6 +133,16 @@ class RdImportState {
   /// Reading failed (no ZIP, empty ZIP, nothing loaded).
   final String? error;
 
+  /// Suggestions of the KI for the questions (switch "Vorschläge der KI").
+  final bool useAi;
+  final RdImportAiStatus aiStatus;
+
+  /// The KI's guess by question key.
+  final Map<String, RdImportAiAnswer> ai;
+
+  /// Questions whose answer the KI filled in and nobody changed since.
+  final Set<String> aiFilled;
+
   RdImportState copyWith({
     RdImportStep? step,
     String? sourceName,
@@ -139,6 +154,10 @@ class RdImportState {
     bool clearError = false,
     int? fileCount,
     RdDriveRef? driveFolder,
+    bool? useAi,
+    RdImportAiStatus? aiStatus,
+    Map<String, RdImportAiAnswer>? ai,
+    Set<String>? aiFilled,
   }) =>
       RdImportState(
         step: step ?? this.step,
@@ -150,6 +169,10 @@ class RdImportState {
         error: clearError ? null : (error ?? this.error),
         fileCount: fileCount ?? this.fileCount,
         driveFolder: driveFolder ?? this.driveFolder,
+        useAi: useAi ?? this.useAi,
+        aiStatus: aiStatus ?? this.aiStatus,
+        ai: ai ?? this.ai,
+        aiFilled: aiFilled ?? this.aiFilled,
       );
 }
 
@@ -259,6 +282,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// Back to the start (another ZIP).
   void restart() {
+    _aiRun++;
     _source?.close();
     _source = null;
     _input = null;
@@ -448,8 +472,79 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       dates: dates,
       junk: source.junk,
     );
-    state = state.copyWith(step: RdImportStep.questions, progress: 1, plan: plan, decisions: const RdImportDecisions());
+    state = state.copyWith(
+      step: RdImportStep.questions,
+      progress: 1,
+      plan: plan,
+      decisions: const RdImportDecisions(),
+      ai: const {},
+      aiFilled: const {},
+      aiStatus: RdImportAiStatus.off,
+    );
+    unawaited(_suggest());
     return null;
+  }
+
+  /// Counts the KI requests: an answer of an older one is dropped.
+  int _aiRun = 0;
+
+  /// Asks the KI about the questions (one request for all).
+  Future<void> _suggest() async {
+    final plan = state.plan;
+    final tenantId = _tenantId;
+    if (plan == null || tenantId == null || !state.useAi || plan.questions.isEmpty) return;
+    final run = ++_aiRun;
+    state = state.copyWith(aiStatus: RdImportAiStatus.loading);
+    ({Map<String, RdImportAiAnswer> answers, RdImportAiStatus status}) result;
+    try {
+      result = await ref.read(rdImportAiProvider).suggest(
+        tenantId,
+        plan.questions,
+        groups: {for (final g in plan.instruments) g.id},
+        isChoir: plan.isChoir,
+      );
+    } catch (_) {
+      result = (answers: const {}, status: RdImportAiStatus.failed);
+    }
+    if (_disposed || run != _aiRun || !state.useAi) return;
+    state = state.copyWith(ai: result.answers, aiStatus: result.status);
+    _applyAi();
+  }
+
+  /// Fills in the sure guesses of questions nobody answered yet.
+  void _applyAi() {
+    final answers = {...state.decisions.answers};
+    final filled = {...state.aiFilled};
+    for (final e in state.ai.entries) {
+      if (!e.value.sure || answers.containsKey(e.key)) continue;
+      answers[e.key] = e.value.category;
+      filled.add(e.key);
+    }
+    state = state.copyWith(decisions: state.decisions.copyWith(answers: answers), aiFilled: filled);
+  }
+
+  /// Switches the KI suggestions; off takes back the answers it filled in.
+  void setUseAi(bool value) {
+    if (value == state.useAi) return;
+    if (!value) {
+      _aiRun++;
+      final filled = state.aiFilled;
+      final answers = {...state.decisions.answers}..removeWhere((key, _) => filled.contains(key));
+      state = state.copyWith(
+        useAi: false,
+        aiStatus: RdImportAiStatus.off,
+        aiFilled: const {},
+        decisions: state.decisions.copyWith(answers: answers),
+      );
+      return;
+    }
+    state = state.copyWith(useAi: true);
+    if (state.ai.isNotEmpty) {
+      state = state.copyWith(aiStatus: RdImportAiStatus.done);
+      _applyAi();
+    } else {
+      unawaited(_suggest());
+    }
   }
 
   /// The plan again with the parts decided so far: two folders with the
@@ -494,11 +589,14 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void _decide(RdImportDecisions Function(RdImportDecisions d) change) =>
       state = state.copyWith(decisions: change(state.decisions));
 
-  void answer(String questionKey, RdImportCategory? answer) => _decide((d) {
-        final answers = {...d.answers};
-        answer == null ? answers.remove(questionKey) : answers[questionKey] = answer;
-        return d.copyWith(answers: answers);
-      });
+  void answer(String questionKey, RdImportCategory? answer) {
+    if (state.aiFilled.contains(questionKey)) state = state.copyWith(aiFilled: {...state.aiFilled}..remove(questionKey));
+    _decide((d) {
+      final answers = {...d.answers};
+      answer == null ? answers.remove(questionKey) : answers[questionKey] = answer;
+      return d.copyWith(answers: answers);
+    });
+  }
 
   void setSkipWordBesidePdf(bool value) => _decide((d) => d.copyWith(skipWordBesidePdf: value));
 

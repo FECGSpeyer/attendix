@@ -1,4 +1,4 @@
-# Noten importieren: Google-Drive-Link einrichten
+# Noten importieren: Google-Drive-Link und KI-Vorschläge einrichten
 
 Im Beta-Design gibt es unter **Werke › + › Noten importieren** zwei Wege:
 
@@ -42,6 +42,18 @@ curl -i -X POST https://ultyjzgwejpehfjuyenr.supabase.co/functions/v1/werke-impo
 - Beim Kopieren gehört das Werk zur Gruppe, der Dateiname hat das Muster der App und eine vorhandene Datei wird nie überschrieben.
 - Es wird nur `www.googleapis.com` abgefragt. Google-Dokumente und Dateien über 20 MB werden abgelehnt.
 - Tageslimit je Konto und Gruppe.
+
+## KI-Vorschläge für die Fragen
+
+Unbekannte Stimmnamen („Sax“, „фл“) fragt der Import einmal ab. Mit dem Schalter **Vorschläge der KI** (an, wenn es Fragen gibt) schickt die App die Namen, ein paar Datei- und Werknamen an die Edge Function `part-suggest`. Die Gruppen liest die Funktion selbst aus der Datenbank. Sichere Vorschläge werden ausgefüllt und mit ✦ markiert, unsichere nur angeboten. Alles lässt sich ändern, ausschalten nimmt die ausgefüllten Antworten zurück.
+
+Einrichtung wie bei `part-detect` (gleicher Schlüssel `OPEN_AI_KEY`, gleiches Tageslimit aus [`supabase/sql/part_detect_usage.sql`](../supabase/sql/part_detect_usage.sql), ein Aufruf pro Import):
+
+```bash
+supabase functions deploy part-suggest --project-ref ultyjzgwejpehfjuyenr
+```
+
+Ohne die Funktion steht bei den Fragen „Die KI ist gerade nicht erreichbar“, der Import geht normal weiter.
 
 ## Dropbox
 

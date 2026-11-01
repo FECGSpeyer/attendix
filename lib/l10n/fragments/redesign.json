@@ -798,7 +798,15 @@
         "doneAgainHintDrive": "Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.",
         "matchAmbiguous": "Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.",
         "fileBroken": "Die Datei in der ZIP-Datei ist beschädigt.",
-        "errorTooLargeWeb": "Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App."
+        "errorTooLargeWeb": "Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.",
+        "aiOption": "Vorschläge der KI",
+        "aiOptionDetail": "Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+        "aiLoading": "Die KI sucht Vorschläge …",
+        "aiFilled": "{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.} other {Die KI hat {count} Antworten ausgefüllt (✦), bitte kurz prüfen.}}",
+        "aiOffered": "Vorschläge der KI sind mit ✦ markiert.",
+        "aiNone": "Die KI hat keine sicheren Vorschläge gefunden.",
+        "aiLimit": "Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.",
+        "aiFailed": "Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne."
       }
     }
   },
@@ -1601,7 +1609,15 @@
         "doneAgainHintDrive": "You can take over the works you did not check later with the same folder link. Files already in Attendix are skipped.",
         "matchAmbiguous": "Several works in Attendix fit. Please check that this is the right one.",
         "fileBroken": "The file in the ZIP file is damaged.",
-        "errorTooLargeWeb": "Together the ZIP files are larger than 1 GB. This does not work in the browser. Use the Google Drive link or the app."
+        "errorTooLargeWeb": "Together the ZIP files are larger than 1 GB. This does not work in the browser. Use the Google Drive link or the app.",
+        "aiOption": "Suggestions from AI",
+        "aiOptionDetail": "The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.",
+        "aiLoading": "The AI is looking for suggestions …",
+        "aiFilled": "{count, plural, one {The AI filled in 1 answer (✦), please check it.} other {The AI filled in {count} answers (✦), please check them.}}",
+        "aiOffered": "Suggestions from the AI are marked with ✦.",
+        "aiNone": "The AI found no sure suggestions.",
+        "aiLimit": "The AI suggestions are used up for today. The questions work without them.",
+        "aiFailed": "The AI cannot be reached right now. The questions work without it."
       }
     }
   }
