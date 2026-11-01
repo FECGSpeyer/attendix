@@ -387,8 +387,12 @@ class _ProtocolEditorState extends State<ProtocolEditor> {
             showDividers: false,
             showSmallButton: false,
             showLineHeightButton: false,
+            // FLUTTER347: flutter_quill 11.6 marks the clipboard buttons experimental.
+            // ignore: experimental_member_use
             showClipboardCut: false,
+            // ignore: experimental_member_use
             showClipboardCopy: false,
+            // ignore: experimental_member_use
             showClipboardPaste: false,
           ),
         ),

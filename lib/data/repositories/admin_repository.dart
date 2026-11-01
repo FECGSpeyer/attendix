@@ -94,7 +94,7 @@ class AdminRepository extends BaseRepository with TenantAwareRepository {
       final foundId = (found is List && found.isNotEmpty) ? found.first['id'] as String? : null;
       if (foundId != null) {
         await _addAdminToTenant(foundId, email);
-        return _informAdmin(email);
+        return await _informAdmin(email);
       }
 
       // 3. New account via the attendix-user Edge Function.

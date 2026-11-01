@@ -23,7 +23,7 @@ jobs:
       - name: Setup Flutter
         uses: subosito/flutter-action@v2
         with:
-          flutter-version: '3.29.0'
+          flutter-version: '3.47.9'
           channel: 'stable'
           cache: true
 
@@ -58,7 +58,16 @@ jobs:
         # PWA_OFFLINE: CanvasKit from our own origin instead of gstatic.com,
         # so the service worker caches it and the installed PWA starts
         # offline like the Ionic PWA (the SW only caches same-origin files).
-        run: flutter build web --release --base-href / --no-web-resources-cdn
+        # PWA_WASM: --wasm builds a WebAssembly variant next to the JavaScript
+        # one; Flutter's loader picks it per browser (web/flutter_bootstrap.js).
+        run: flutter build web --release --base-href / --no-web-resources-cdn --wasm
+
+      - name: Write service worker
+        # PWA_SW: Flutter 3.47 only ships a self-unregistering worker; write
+        # Attendix's own (offline start, update notice) over it.
+        run: |
+          dart run tool/web/write_service_worker.dart build/web
+          grep -q "attendix-app-cache" build/web/flutter_service_worker.js
 
       - name: Verify Cloudflare _headers (Teams frame-ancestors)
         # flutter build web copies web/* into build/web; fail loudly if not.

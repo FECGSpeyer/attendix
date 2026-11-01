@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.32.1+92
+version: 0.33.0+93
 
 environment:
   sdk: ^3.7.0
@@ -102,7 +102,7 @@ dependencies:
   desktop_drop: ^0.8.4
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.4.3
-  flutter_secure_storage: ^9.2.4
+  flutter_secure_storage: ^10.0.0
 
 dev_dependencies:
   flutter_test:

@@ -77,7 +77,10 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
           borderRadius: BorderRadius.circular(rd.listRadius),
           boxShadow: rd.cardShadow,
         ),
-        child: PageStorage(
+        // FLUTTER347: the tile paints its ink on this Material, not under the card.
+        child: Material(
+          type: MaterialType.transparency,
+          child: PageStorage(
           bucket: _bucket,
           child: ExpansionTile(
             controller: widget.controller,
@@ -102,6 +105,7 @@ class _AttendanceAccordionState extends State<AttendanceAccordion> {
             ),
             children: widget.children,
           ),
+        ),
         ),
       );
     }

@@ -14,6 +14,14 @@ analyzer:
     # Freezed uses @JsonKey on constructor parameters, which is valid for code generation
     # but triggers this warning in newer Dart versions. This is a known false positive.
     invalid_annotation_target: ignore
+  exclude:
+    - build/**
+    - android/**
+    - ios/**
+    - web/**
+    - windows/**
+    - macos/**
+    - linux/**
 
 linter:
   # The lint rules applied to this project can be customized in the
