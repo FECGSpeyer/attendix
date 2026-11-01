@@ -23,12 +23,14 @@ final authTokenApiProvider = Provider<AuthTokenApi>((ref) {
 });
 
 final accountSwitchServiceProvider = Provider<AccountSwitchService>((ref) {
+  final auth = SupabaseAccountSwitchAuth(ref.watch(supabaseAuthProvider));
   final service = AccountSwitchService(
     store: createSavedAccountsStore(),
     api: ref.watch(authTokenApiProvider),
-    auth: SupabaseAccountSwitchAuth(ref.watch(supabaseAuthProvider)),
+    auth: auth,
   );
   ref.onDispose(service.dispose);
+  ref.onDispose(auth.dispose);
   return service;
 });
 

@@ -83,13 +83,30 @@ class _FakeAuth implements AccountSwitchAuth {
   /// Simulates a refresh of the current session that was already running.
   Session? pendingRefresh;
 
+  /// Simulates a sign-in that finishes while the switch waits in settle().
+  Session? loginDuringSettle;
+
+  @override
+  int sessionGeneration = 0;
+
+  /// A sign-in somewhere else in the app (login page).
+  void signInElsewhere(Session s) {
+    currentSession = s;
+    sessionGeneration++;
+  }
+
   @override
   Future<void> settle() async {
     log.add('settle');
     final pending = pendingRefresh;
     if (pending != null) {
       pendingRefresh = null;
-      currentSession = pending;
+      currentSession = pending; // same session, refreshed: no new generation
+    }
+    final login = loginDuringSettle;
+    if (login != null) {
+      loginDuringSettle = null;
+      signInElsewhere(login);
     }
   }
 }
@@ -282,13 +299,56 @@ void main() {
       api.valid['rb1'] = 'b';
       await expectLater(
         service.switchTo('b', beforeActivate: () async {
-          auth.currentSession = _session('c', 'rc1'); // login page
+          auth.signInElsewhere(_session('c', 'rc1')); // login page
         }),
         throwsA(isA<AccountSwitchSuperseded>()),
       );
       expect(auth.currentSession?.user.id, 'c');
       // B's rotated token is not lost.
       expect(tokenOf('b'), 'rb1+');
+    });
+
+    test('a login that finished while the switch waited is not overwritten', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      auth.loginDuringSettle = _session('c', 'rc1');
+      await expectLater(service.switchTo('b'), throwsA(isA<AccountSwitchSuperseded>()));
+      expect(auth.currentSession?.user.id, 'c');
+      expect(api.refreshed, isEmpty);
+    });
+
+    test('a new login of the SAME account meanwhile also wins', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      await expectLater(
+        service.switchTo('b', beforeActivate: () async {
+          auth.signInElsewhere(_session('a', 'ra-new'));
+        }),
+        throwsA(isA<AccountSwitchSuperseded>()),
+      );
+      expect(auth.currentSession?.refreshToken, 'ra-new');
+    });
+
+    test('remove runs after a running switch and uses the fresh token', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      final switching = service.switchTo('b');
+      final removing = service.remove('b');
+      await switching;
+      await removing;
+      // remove waited: B is active, so its session is not revoked.
+      expect(auth.currentSession?.user.id, 'b');
+      expect(api.revoked, isEmpty);
+      expect(api.refreshed, ['rb1']);
     });
 
     test('the target token is read fresh from the store (other tab)', () async {

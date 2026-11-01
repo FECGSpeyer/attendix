@@ -21,6 +21,12 @@ const _storageKey = 'account_switch.accounts';
 /// back the accounts of the old installation.
 const _installMarkerKey = 'account_switch.installed';
 
+/// SharedPreferences report a failed write with `false`: the list in
+/// memory must not then count as stored.
+void _check(bool ok) {
+  if (!ok) throw StateError('saved accounts could not be stored');
+}
+
 List<SavedAccount> decodeSavedAccounts(String? raw) {
   if (raw == null || raw.isEmpty) return const [];
   try {
@@ -69,7 +75,7 @@ class SecureSavedAccountsStore implements SavedAccountsStore {
       return;
     }
     await _storage.write(key: _storageKey, value: encodeSavedAccounts(accounts));
-    await prefs.setBool(_installMarkerKey, true);
+    _check(await prefs.setBool(_installMarkerKey, true));
   }
 }
 
@@ -90,11 +96,9 @@ class PrefsSavedAccountsStore implements SavedAccountsStore {
   @override
   Future<void> save(List<SavedAccount> accounts) async {
     final prefs = await SharedPreferences.getInstance();
-    if (accounts.isEmpty) {
-      await prefs.remove(_storageKey);
-    } else {
-      await prefs.setString(_storageKey, encodeSavedAccounts(accounts));
-    }
+    _check(accounts.isEmpty
+        ? await prefs.remove(_storageKey)
+        : await prefs.setString(_storageKey, encodeSavedAccounts(accounts)));
   }
 }
 

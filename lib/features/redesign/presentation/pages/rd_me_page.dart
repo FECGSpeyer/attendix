@@ -334,9 +334,10 @@ class _ProfileCard extends ConsumerWidget {
     if (userId != null &&
         name.isNotEmpty &&
         !profile.isLoading &&
+        !profile.hasError &&
         person?.appId == userId &&
         tenant != null &&
-        tenant.id == ref.watch(currentTenantIdProvider)) {
+        person?.tenantId == tenant.id) {
       final label = [roleName, group].where((s) => s.isNotEmpty).join(' · ');
       final service = ref.read(accountSwitchServiceProvider);
       scheduleMicrotask(() => service.updateProfile(userId, name: name, label: label).catchError((_) {}));

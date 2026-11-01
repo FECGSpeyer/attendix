@@ -38,12 +38,38 @@ abstract class AccountSwitchAuth {
   /// running finish before the switch replaces the session (its late
   /// result would otherwise bring the old account back).
   Future<void> settle();
+
+  /// Changes on every new sign-in, sign-out or change of account, but not
+  /// on token refreshes of the same session – so a switch can tell "same
+  /// session as when I started" from "someone signed in meanwhile" (also a
+  /// new login of the same account).
+  int get sessionGeneration;
 }
 
 class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
-  SupabaseAccountSwitchAuth(this._auth);
+  SupabaseAccountSwitchAuth(this._auth) {
+    String? userId = _auth.currentUser?.id;
+    // Events arrive a microtask after the change; every check of the
+    // generation comes after a network call, so they are counted by then.
+    _sub = _auth.onAuthStateChange.listen((state) {
+      final nextUser = state.session?.user.id;
+      final newLogin = state.event == AuthChangeEvent.signedIn ||
+          state.event == AuthChangeEvent.signedOut ||
+          state.event == AuthChangeEvent.passwordRecovery ||
+          nextUser != userId;
+      userId = nextUser;
+      if (newLogin) _generation++;
+    }, onError: (_) {});
+  }
 
   final GoTrueClient _auth;
+  StreamSubscription<AuthState>? _sub;
+  int _generation = 0;
+
+  @override
+  int get sessionGeneration => _generation;
+
+  void dispose() => _sub?.cancel();
 
   @override
   Session? get currentSession => _auth.currentSession;
@@ -192,18 +218,21 @@ class AccountSwitchService {
 
   /// Removes an account that is not the signed-in one and ends its saved
   /// session on the server, so the token on this device is worthless.
-  Future<void> remove(String userId) async {
-    await load();
-    final account = _accounts.where((a) => a.userId == userId).firstOrNull;
-    await forget(userId);
-    final token = account?.refreshToken;
-    if (token == null || _auth.currentSession?.user.id == userId) return;
-    try {
-      final session = await _api.refresh(token);
-      await _api.revoke(session.accessToken);
-    } catch (_) {
-      // Already invalid or offline: the token is gone from this device.
-    }
+  /// Runs under the switch lock with the token read fresh from the store,
+  /// so it cannot race a switch that uses the same token.
+  Future<void> remove(String userId) {
+    return _serial(() => _lock(_switchLockName, () async {
+          final stored = await _store.load();
+          final token = stored.where((a) => a.userId == userId).firstOrNull?.refreshToken;
+          await forget(userId);
+          if (token == null || _auth.currentSession?.user.id == userId) return;
+          try {
+            final session = await _api.refresh(token);
+            await _api.revoke(session.accessToken);
+          } catch (_) {
+            // Already invalid or offline: the token is gone from this device.
+          }
+        }));
   }
 
   /// Switches the app to [userId].
@@ -219,7 +248,7 @@ class AccountSwitchService {
     String userId, {
     Future<void> Function()? beforeActivate,
   }) {
-    return _exclusive(() async {
+    return _exclusive((start) async {
       final current = _auth.currentSession;
       if (current != null && current.user.id == userId) return current;
       // Fresh from the store: another tab may have used the token already.
@@ -242,7 +271,7 @@ class AccountSwitchService {
       if (next.user.id != userId) {
         throw const SavedSessionExpired('user_mismatch');
       }
-      return _activate(next, current?.user.id, beforeActivate);
+      return _activate(next, start, beforeActivate);
     });
   }
 
@@ -253,52 +282,71 @@ class AccountSwitchService {
     Future<Session> Function() signIn, {
     Future<void> Function()? beforeActivate,
   }) {
-    return _exclusive(() async {
+    return _exclusive((start) async {
       final current = _auth.currentSession;
       final next = await signIn();
       if (current != null && current.user.id == next.user.id) {
-        // Same account again: use the fresh session (the UI prevents this).
-        await remember(next);
-        await _auth.activate(next);
-        return next;
+        // Same account again (the UI prevents this): no cleanup needed.
+        return _activate(next, start, null);
       }
-      return _activate(next, current?.user.id, beforeActivate);
+      return _activate(next, start, beforeActivate);
     });
   }
 
   /// Common frame of a switch: one at a time (also across browser tabs),
   /// no auto refresh, a running refresh settled and the current account's
-  /// newest token stored first.
-  Future<Session> _exclusive(Future<Session> Function() body) async {
+  /// newest token stored first. [body] gets the session generation taken
+  /// BEFORE the first await (see [_activate]).
+  Future<Session> _exclusive(Future<Session> Function(int startGeneration) body) {
     if (_switching) throw StateError('account switch already running');
+    final startGeneration = _auth.sessionGeneration;
+    final startUserId = _auth.currentSession?.user.id;
     _switching = true;
     _auth.pauseAutoRefresh();
-    try {
-      return await _lock(_switchLockName, () async {
-        await load();
-        await _auth.settle();
-        final current = _auth.currentSession;
-        // Keep the current account's newest token before leaving it.
-        if (current != null) await remember(current);
-        return body();
-      });
-    } finally {
-      _auth.resumeAutoRefresh();
-      _switching = false;
+    return _serial(() async {
+      try {
+        return await _lock(_switchLockName, () async {
+          await load();
+          await _auth.settle();
+          _checkStillCurrent(startGeneration, startUserId);
+          final current = _auth.currentSession;
+          // Keep the current account's newest token before leaving it.
+          if (current != null) await remember(current);
+          return body(startGeneration);
+        });
+      } finally {
+        _auth.resumeAutoRefresh();
+        _switching = false;
+      }
+    });
+  }
+
+  /// One switch/removal at a time within this app instance (the web lock
+  /// covers other tabs; outside the browser it runs [body] directly).
+  Future<T> _serial<T>(Future<T> Function() body) {
+    final run = _switchQueue.then((_) => body());
+    _switchQueue = run.then((_) {}, onError: (_) {});
+    return run;
+  }
+
+  Future<void> _switchQueue = Future.value();
+
+  void _checkStillCurrent(int startGeneration, [String? startUserId]) {
+    if (_auth.sessionGeneration != startGeneration ||
+        (startUserId != null && _auth.currentSession?.user.id != startUserId)) {
+      throw const AccountSwitchSuperseded();
     }
   }
 
   Future<Session> _activate(
     Session next,
-    String? startUserId,
+    int startGeneration,
     Future<void> Function()? beforeActivate,
   ) async {
     // The old token is used up now: store the new one before anything
     // else can fail.
     await remember(next);
-    if (_auth.currentSession?.user.id != startUserId) {
-      throw const AccountSwitchSuperseded();
-    }
+    _checkStillCurrent(startGeneration);
     if (beforeActivate != null) {
       try {
         await beforeActivate();
@@ -306,10 +354,8 @@ class AccountSwitchService {
         // Cleanup of the old account must never block the switch.
       }
     }
-    // A login elsewhere while the cleanup ran wins.
-    if (_auth.currentSession?.user.id != startUserId) {
-      throw const AccountSwitchSuperseded();
-    }
+    // A sign-in elsewhere while the cleanup ran wins.
+    _checkStillCurrent(startGeneration);
     await _auth.activate(next);
     return next;
   }
