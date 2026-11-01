@@ -23,8 +23,10 @@ Läuft als PWA im Browser sowie nativ auf iOS, Android und macOS.
 
 ```bash
 flutter run -d chrome                         # Entwicklung
-flutter build web --release --base-href /     # Release nach build/web
+flutter build web --release --base-href / --no-web-resources-cdn   # Release nach build/web
 ```
+
+`--no-web-resources-cdn` legt CanvasKit in den eigenen Build statt es vom Google-CDN zu laden. Nur so kann die installierte PWA offline starten.
 
 Master und PRs werden per GitHub Actions automatisch auf Cloudflare Pages deployt (`.github/workflows/deploy-cloudflare.yml`).
 

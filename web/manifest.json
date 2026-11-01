@@ -1,12 +1,12 @@
 {
-    "name": "attendix",
-    "short_name": "attendix",
-    "start_url": ".",
+    "name": "Attendix",
+    "short_name": "Attendix",
+    "start_url": "./",
+    "scope": "./",
     "display": "standalone",
-    "background_color": "#438E96",
-    "theme_color": "#438E96",
-    "description": "A new Flutter project.",
-    "orientation": "portrait-primary",
+    "background_color": "#fafafa",
+    "theme_color": "#ffffff",
+    "description": "Attendix – Anwesenheit, Termine und Werke für Orchester, Chöre und Gruppen",
     "prefer_related_applications": false,
     "icons": [
         {
