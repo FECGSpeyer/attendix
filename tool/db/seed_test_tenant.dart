@@ -144,6 +144,41 @@ Future<void> main(List<String> args) async {
     return;
   }
 
+  // `--fix-names`: gives the conductor accounts (admin, Verantwortlicher,
+  // Beobachter) an own person in the main group "Dirigent", so the app
+  // knows their name. Only writes into the existing test tenant.
+  if (opts.containsKey('fix-names')) {
+    final login = await _req('POST', '/auth/v1/token?grant_type=password',
+        body: {'email': emails['admin'], 'password': password}, auth: false);
+    if (login.status >= 300) _die('Login Test-Admin: ${login.body}');
+    _token = (login.json as Map)['access_token'] as String;
+    final t = await _rest('GET',
+        '/rest/v1/tenants?shortName=eq.$_shortName&select=id') as List;
+    if (t.isEmpty) _die('Testgruppe $_shortName nicht gefunden');
+    final tid = t.first['id'] as int;
+    final main = await _rest('GET',
+        '/rest/v1/instruments?tenantId=eq.$tid&maingroup=eq.true&select=id')
+        as List;
+    if (main.isEmpty) _die('Hauptgruppe "Dirigent" nicht gefunden');
+    final rows = <Map<String, dynamic>>[];
+    for (final a in _accounts.where((a) => !a.isPerson && a.role != _parent)) {
+      final uid = await _userId(emails[a.tag]!);
+      final has = await _rest('GET',
+          '/rest/v1/player?tenantId=eq.$tid&appId=eq.$uid&select=id') as List;
+      if (has.isNotEmpty) continue;
+      rows.add({
+        'firstName': a.firstName, 'lastName': a.lastName,
+        'instrument': main.first['id'], 'tenantId': tid,
+        'joined': _day(DateTime.now()), 'history': <Object>[],
+        'appId': uid, 'email': emails[a.tag], 'pending': false,
+        'isLeader': false, 'parent_id': null, 'paused': false,
+      });
+    }
+    if (rows.isNotEmpty) await _rest('POST', '/rest/v1/player', rows);
+    stdout.writeln('Namen ergänzt: ${rows.map((r) => r['lastName']).join(', ')}');
+    return;
+  }
+
   _printPlan(emails, owner);
   if (!_apply) {
     stdout.writeln('\nDry run – nichts geschrieben. Mit --apply ausführen.');
