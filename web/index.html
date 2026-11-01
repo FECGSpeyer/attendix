@@ -20,22 +20,45 @@
   <meta content="IE=Edge" http-equiv="X-UA-Compatible">
   <meta name="description" content="Attendix – Anwesenheit, Termine und Werke für Orchester, Chöre und Gruppen">
 
+  <!-- PWA_PARITY: same head as the Ionic PWA (src/index.html): colour
+       scheme, white theme colour, black iOS status bar, title "Attendix". -->
+  <meta name="color-scheme" content="light dark">
+  <meta name="theme-color" content="#ffffff">
+  <meta name="format-detection" content="telephone=no">
+  <meta name="msapplication-tap-highlight" content="no">
+
   <!-- iOS meta tags & icons -->
   <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
   <meta name="apple-mobile-web-app-status-bar-style" content="black">
-  <meta name="apple-mobile-web-app-title" content="attendix">
+  <meta name="apple-mobile-web-app-title" content="Attendix">
   <link rel="apple-touch-icon" href="icons/Icon-192.png">
 
   <!-- Favicon -->
-  <link rel="icon" type="image/png" sizes="32x32" href="favicon.png"/>
-  <link rel="icon" type="image/png" sizes="16x16" href="favicon.png"/>
-  <link rel="shortcut icon" href="favicon.png"/>
+  <!-- PWA_PARITY: Ionic's 256px favicon (assets/icon/favicon.png) -->
+  <link rel="icon" type="image/png" href="favicon.png"/>
 
-  <title>attendix</title>
+  <title>Attendix</title>
   <link rel="manifest" href="manifest.json">
   <!-- Start loading the app code right away, in parallel with the bootstrap
        script (it would otherwise only be requested after flutter_bootstrap.js). -->
   <link rel="preload" href="main.dart.js" as="script">
+  <!-- PWA_START: the engine asks for these only after main.dart.js has run
+       (FontManifest → fonts → .env.app, then AssetManifest → login image),
+       one round trip after another. Preloading them in parallel with the
+       app code saves those round trips on a cold start. `as="fetch"` +
+       `crossorigin` match the engine's fetch() so the preload is reused.
+       test/web/index_preload_test.dart checks that every file exists. -->
+  <link rel="preload" href="assets/FontManifest.json" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/fonts/MaterialIcons-Regular.otf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/assets/fonts/Roboto-Regular.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/assets/fonts/Roboto-Italic.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/assets/fonts/Roboto-Medium.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/assets/fonts/Roboto-SemiBold.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/assets/fonts/Roboto-Bold.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/packages/cupertino_icons/assets/CupertinoIcons.ttf" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/.env.app" as="fetch" crossorigin="anonymous" fetchpriority="low">
+  <link rel="preload" href="assets/AssetManifest.bin.json" as="fetch" crossorigin="anonymous" fetchpriority="low">
   <style>
     /* Shown until Flutter paints its first frame (removed on flutter-first-frame). */
     #app-loading { position: fixed; inset: 0; display: flex; flex-direction: column;
@@ -52,7 +75,7 @@
   </style>
 </head>
 <body>
-  <div id="app-loading" role="progressbar" aria-label="attendix wird geladen">
+  <div id="app-loading" role="progressbar" aria-label="Attendix wird geladen">
     <img src="icons/Icon-192.png" alt="">
     <div class="spinner"></div>
   </div>
@@ -66,7 +89,7 @@
        be blocked (offline, ad blocker, firewall). Everything below is guarded:
        without pdf.js the app still starts and the PDF viewer shows a friendly
        error with an "open externally" fallback instead of crashing. -->
-  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module'
+  <script src='https://cdn.jsdelivr.net/npm/pdfjs-dist@4.6.82/build/pdf.min.mjs' type='module' fetchpriority='low'
     onerror="console.warn('pdf.js could not be loaded; in-app PDF viewing is disabled.')"></script>
   <script type='module'>
   globalThis.pdfRenderOptions = {

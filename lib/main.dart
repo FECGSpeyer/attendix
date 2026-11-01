@@ -10,6 +10,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
 
+import 'core/config/app_env.dart';
 import 'core/config/supabase_config.dart';
 import 'core/providers/account_switch_providers.dart';
 import 'core/providers/locale_provider.dart';
@@ -68,14 +69,8 @@ void main() async {
   // REDESIGN: "Neues Design (Beta)", Farbwelt and hell/dunkel of this device
   final initialRedesign = await loadInitialRedesignSettings();
 
-  // Load environment variables
-  try {
-    await dotenv.load(fileName: '.env.app');
-  } catch (e) {
-    if (kDebugMode) {
-      print('Warning: Could not load .env file: $e');
-    }
-  }
+  // Load environment variables (PWA_OFFLINE: web keeps a copy for offline starts)
+  await loadAppEnv();
 
   // Error monitoring: no-op without SENTRY_DSN (tests, local builds).
   await ErrorReporter.init(

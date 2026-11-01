@@ -107,7 +107,12 @@ class AppAlertDialog extends StatelessWidget {
         for (final a in actions ?? const <Widget>[])
           if (a is! Spacer) mdAlertActionFrom(context, a),
       ];
-      return AlertDialog(
+      final inset = (insetPadding ??
+              const EdgeInsets.symmetric(horizontal: 48, vertical: 24))
+          .resolve(Directionality.of(context));
+      // PWA_PARITY: Ionic md `ion-alert` is at most 560px wide; a Material
+      // AlertDialog grows with its text (≈930px on desktop).
+      final dialog = AlertDialog(
         icon: icon,
         title: title,
         content: content,
@@ -144,6 +149,13 @@ class AppAlertDialog extends StatelessWidget {
             ),
         semanticLabel: semanticLabel,
       );
+      return Center(
+        child: ConstrainedBox(
+          constraints:
+              BoxConstraints(maxWidth: _ionMdAlertMaxWidth + inset.horizontal),
+          child: dialog,
+        ),
+      );
     }
     return IosAlertCard(
       icon: icon,
@@ -159,6 +171,9 @@ class AppAlertDialog extends StatelessWidget {
     );
   }
 }
+
+/// Ionic md `ion-alert` max width (alert.md.vars `$alert-md-max-width`).
+const double _ionMdAlertMaxWidth = 560;
 
 extension on AppAlertDialog {
   /// Beta-Skin: the dialog of the new design on every platform – white card
