@@ -84,9 +84,18 @@ final pushBootstrapProvider = Provider<void>((ref) {
 
 /// Removes this device's push token before signing out (RLS needs the
 /// session). Use on every logout button before `auth.signOut()`.
-Future<void> removePushTokenBeforeSignOut(WidgetRef ref) async {
+Future<void> removePushTokenBeforeSignOut(WidgetRef ref) =>
+    removePushTokenBeforeAccountChange(ref.read);
+
+/// Reads a provider (`ref.read`, `container.read`).
+typedef ProviderReader = T Function<T>(ProviderListenable<T> provider);
+
+/// [removePushTokenBeforeSignOut] for callers without a WidgetRef
+/// (ACCOUNT_SWITCH: also before switching to another saved account, so the
+/// old account's pushes stop arriving on this device).
+Future<void> removePushTokenBeforeAccountChange(ProviderReader read) async {
   try {
-    await ref.read(pushServiceProvider).removeToken();
+    await read(pushServiceProvider).removeToken();
   } catch (_) {
     // Never block the logout.
   }
@@ -94,8 +103,8 @@ Future<void> removePushTokenBeforeSignOut(WidgetRef ref) async {
   // Activity tokens of the account (same session requirement).
   try {
     await endLiveActivitiesBeforeSignOut(
-      ref.read(liveActivityServiceProvider),
-      ref.read(currentAuthUserIdProvider),
+      read(liveActivityServiceProvider),
+      read(currentAuthUserIdProvider),
     );
   } catch (_) {}
 }

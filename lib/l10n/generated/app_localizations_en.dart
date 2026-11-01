@@ -8094,6 +8094,97 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAbsenceTitle => 'Absence';
 
   @override
+  String get redesignAccountsAdd => 'Add account';
+
+  @override
+  String get redesignAccountsAddHint => 'Sign in with another account. Afterwards you can switch between your accounts without a password.';
+
+  @override
+  String get redesignAccountsAddTitle => 'Add account';
+
+  @override
+  String get redesignAccountsAlreadyActive => 'You are already signed in with this account.';
+
+  @override
+  String redesignAccountsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count accounts',
+      one: '1 account',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignAccountsCurrent => 'Signed in';
+
+  @override
+  String get redesignAccountsEmail => 'Email';
+
+  @override
+  String get redesignAccountsFailed => 'Switching failed. Please try again.';
+
+  @override
+  String get redesignAccountsFooter => 'Accounts are only stored on this device. Logging out removes the signed-in account from the list.';
+
+  @override
+  String redesignAccountsLoginAgainHint(Object email) {
+    return 'The saved sign-in of $email is no longer valid, for example after a password change. Please sign in once more.';
+  }
+
+  @override
+  String get redesignAccountsLoginAgainTitle => 'Sign in again';
+
+  @override
+  String get redesignAccountsLoginOr => 'or sign in with another account';
+
+  @override
+  String get redesignAccountsLoginSaved => 'Saved accounts';
+
+  @override
+  String redesignAccountsMore(Object name) {
+    return 'Options for $name';
+  }
+
+  @override
+  String get redesignAccountsNeedsLogin => 'Please sign in again';
+
+  @override
+  String get redesignAccountsOffline => 'No connection. Please try again.';
+
+  @override
+  String get redesignAccountsPassword => 'Password';
+
+  @override
+  String get redesignAccountsRemove => 'Remove from this device';
+
+  @override
+  String redesignAccountsRemoveBody(Object email) {
+    return '$email will be removed from this device and signed out there. To switch back you will need the password again.';
+  }
+
+  @override
+  String get redesignAccountsRemoveConfirm => 'Remove';
+
+  @override
+  String get redesignAccountsRemoveFailed => 'The account could not be removed. Please try again.';
+
+  @override
+  String get redesignAccountsRemoveTitle => 'Remove account?';
+
+  @override
+  String get redesignAccountsSignIn => 'Sign in';
+
+  @override
+  String redesignAccountsSwitched(Object name) {
+    return 'Signed in as $name';
+  }
+
+  @override
+  String get redesignAccountsTitle => 'Switch account';
+
+  @override
   String get redesignAdminTitle => 'Administration';
 
   @override
