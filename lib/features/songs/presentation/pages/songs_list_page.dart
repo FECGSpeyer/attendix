@@ -10,6 +10,7 @@ import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/optional_tabs_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -157,6 +158,9 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     final role = ref.watch(currentRoleProvider);
     final isAdmin = !_isPublic && (role.isAdmin || role.isResponsible);
     final data = dataAsync.valueOrNull;
+    // "Ohne …" counts only played groups; loaded next to the list, never
+    // for a public share link (other tenant).
+    final playerCounts = _isPublic ? null : ref.watch(missingGroupsPlayerCountsProvider);
 
     // UX_PRELOGIN: while a retry is running show the skeleton again instead
     // of the stale error (provider keeps the error during the refresh).
@@ -517,6 +521,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                         song: song,
                         data: data,
                         view: view,
+                        playerCounts: playerCounts,
                         onTap: song.id == null ? null : () => _openSong(song.id!),
                       );
                     },
@@ -619,10 +624,14 @@ class _SongListItem extends StatelessWidget {
     required this.data,
     required this.view,
     required this.onTap,
+    this.playerCounts,
   });
 
   final Song song;
   final SongsListData data;
+
+  /// Active players per group for "Ohne …"; null = every group counts.
+  final Map<int, int>? playerCounts;
   final SongViewOptions view;
   final VoidCallback? onTap;
 
@@ -643,7 +652,7 @@ class _SongListItem extends StatelessWidget {
         song.instrumentIds!,
         data.groups,
         data.groupCategories,
-        playerCounts: data.playerCounts,
+        playerCounts: playerCounts,
       );
       if (text.isNotEmpty) {
         lines.add(Text(text, style: subtitleStyle?.copyWith(color: AppColors.danger)));

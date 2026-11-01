@@ -1977,6 +1977,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     ref.watch(currentSongsProvider);
     ref.watch(groupsProvider);
     ref.watch(groupCategoriesProvider);
+    ref.watch(missingGroupsPlayerCountsProvider); // "Ohne …" redraws once the counts are there
     ref.watch(protocolTypesProvider); // PROTOCOL: keeps the protocol settings loaded
     final blockTemplates = ref.watch(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
     final role = ref.watch(effectiveRoleProvider);

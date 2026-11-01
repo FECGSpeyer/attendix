@@ -173,6 +173,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     // P10_ATTENDANCE: keep the data of the missing-groups line loaded
     ref.watch(songsProvider);
     ref.watch(groupCategoriesProvider);
+    ref.watch(missingGroupsPlayerCountsProvider);
     final att = _planAttendance();
     final plans = PlanUtils.allPlans(att);
     if (_planIndex < 0 || _planIndex >= plans.length) {

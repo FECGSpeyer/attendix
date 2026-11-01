@@ -12,7 +12,6 @@ import '../config/supabase_config.dart';
 import '../utils/choir_file_utils.dart';
 import 'group_providers.dart';
 import 'locale_provider.dart';
-import 'player_providers.dart' show playerCountByInstrumentProvider;
 import 'tenant_providers.dart';
 import '../../l10n/l10n.dart';
 
@@ -284,7 +283,6 @@ class SongsListData {
     required this.additionalFields,
     this.publicTenant,
     this.songSharingId,
-    this.playerCounts,
   });
 
   /// Tenant used for persisted filter settings (current or shared tenant)
@@ -302,10 +300,6 @@ class SongsListData {
   /// Set when the list is shown via a public share link
   final Tenant? publicTenant;
   final String? songSharingId;
-
-  /// Active players per group ("Ohne …" counts only played groups); null
-  /// when not known (share link, roles that do not see every player).
-  final Map<int, int>? playerCounts;
 
   bool get isPublic => publicTenant != null;
   bool get isOrchestra => tenantType == 'orchestra';
@@ -382,16 +376,6 @@ final songsListDataProvider =
     currentSongs = const [];
   }
   final isOrchestra = tenant!.type == 'orchestra';
-  final role = ref.watch(currentRoleProvider);
-  Map<int, int>? playerCounts;
-  if (isOrchestra && (role.isConductor || role.isHelperRole)) {
-    try {
-      playerCounts = await ref.watch(playerCountByInstrumentProvider.future);
-    } catch (_) {
-      playerCounts = null;
-    }
-  }
-
   return SongsListData(
     tenantId: tenantId,
     tenantType: tenant.type,
@@ -402,7 +386,6 @@ final songsListDataProvider =
     currentSongs: currentSongs,
     additionalFields: settings.additionalFields,
     songSharingId: settings.songSharingId ?? tenant.songSharingId,
-    playerCounts: playerCounts,
   );
 });
 
