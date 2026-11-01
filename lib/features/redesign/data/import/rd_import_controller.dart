@@ -283,6 +283,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// Back to the start (another ZIP).
   void restart() {
     _aiRun++;
+    _dated.clear();
     _source?.close();
     _source = null;
     _input = null;
@@ -297,7 +298,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   /// before they are read into memory.
   Future<RdImportReadError?> read(List<PlatformFile> zips) async {
     if (zips.isEmpty) return null;
-    final streamed = zips.where((z) => z.bytes == null && z.path == null && z.readStream != null);
+    final streamed = zips.where(rdIsStreamed);
     if (streamed.fold<int>(0, (n, z) => n + z.size) > rdImportMaxWebBytes) return RdImportReadError.tooLargeWeb;
     final data = await _data();
     if (_disposed) return null;
@@ -306,7 +307,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     await _pause();
     if (streamed.isNotEmpty) {
       try {
-        zips = [for (final z in zips) z.bytes == null && z.path == null && z.readStream != null ? await _collect(z) : z];
+        zips = [for (final z in zips) rdIsStreamed(z) ? await _collect(z) : z];
       } catch (_) {
         if (!_disposed) state = state.copyWith(step: RdImportStep.source);
         return RdImportReadError.notZip;
@@ -420,44 +421,18 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final hashing = toHash.toSet();
     final dating = toDate.toSet();
     final work = {...hashing, ...dating}.toList()..sort();
-    // A few at a time (a Drive folder answers each over the network).
-    Future<void> inspect(
-      List<String> paths, {
-      required bool Function(String) hash,
-      required bool Function(String) date,
-      double share = 1,
-    }) async {
-      var next = 0;
-      var done = 0;
-      Future<void> worker() async {
-        while (next < paths.length && !_disposed) {
-          final path = paths[next++];
-          try {
-            final r = await source.inspect(path, hash: hash(path), date: date(path));
-            if (r.hash != null) hashes[path] = r.hash!;
-            if (r.date != null) dates[path] = r.date!;
-          } catch (_) {
-            // Unreadable: no duplicate check, date of the listing.
-          }
-          done++;
-          if (done % 8 == 0 && !_disposed) {
-            state = state.copyWith(progress: share * done / (paths.length + 1));
-            await _pause();
-          }
-        }
-      }
-
-      await Future.wait([for (var i = 0; i < 4; i++) worker()]);
-    }
-
-    await inspect(work, hash: hashing.contains, date: dating.contains, share: 0.9);
+    _dated
+      ..clear()
+      ..addAll(dating);
+    await _inspect(source, work, hashes, dates, hash: hashing.contains, date: dating.contains, share: 0.9);
     if (_disposed) return null;
     // Dates of Werke that only show Fassungen once duplicates are known.
     var plan = rdBuildImportPlan(source.entries,
         songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
-    final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p) && !work.contains(p)).toList();
+    final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p) && !_dated.contains(p)).toList();
     if (missing.isNotEmpty) {
-      await inspect(missing, hash: (_) => false, date: (_) => true);
+      _dated.addAll(missing);
+      await _inspect(source, missing, hashes, dates, hash: (_) => false, date: (_) => true);
       if (_disposed) return null;
       plan = rdBuildImportPlan(source.entries,
           songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
@@ -483,6 +458,67 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     );
     unawaited(_suggest());
     return null;
+  }
+
+  /// Paths whose date was read (or tried): not read again.
+  final Set<String> _dated = {};
+
+  /// Reads [paths] of [source] a few at a time (a Drive folder answers each
+  /// over the network): the hash and/or the date inside, as [hash] and
+  /// [date] say. [share] of the progress bar is used.
+  Future<void> _inspect(
+    RdImportFiles source,
+    List<String> paths,
+    Map<String, String> hashes,
+    Map<String, DateTime> dates, {
+    required bool Function(String) hash,
+    required bool Function(String) date,
+    double share = 1,
+  }) async {
+    var next = 0;
+    var done = 0;
+    Future<void> worker() async {
+      while (next < paths.length && !_disposed) {
+        final path = paths[next++];
+        try {
+          final r = await source.inspect(path, hash: hash(path), date: date(path));
+          if (r.hash != null) hashes[path] = r.hash!;
+          if (r.date != null) dates[path] = r.date!;
+        } catch (_) {
+          // Unreadable: no duplicate check, date of the listing.
+        }
+        done++;
+        if (done % 8 == 0 && !_disposed) {
+          state = state.copyWith(progress: share * done / (paths.length + 1));
+          await _pause();
+        }
+      }
+    }
+
+    await Future.wait([for (var i = 0; i < 4; i++) worker()]);
+  }
+
+  /// PDF dates the plan needs and nobody read yet (Fassungen that only
+  /// show once a part is decided).
+  List<String> _missingDates() {
+    final plan = state.plan;
+    final input = _input;
+    if (plan == null || input == null) return const [];
+    return rdImportPathsToDate(plan).where((p) => !input.dates.containsKey(p) && !_dated.contains(p)).toList();
+  }
+
+  /// Reads the [_missingDates] and plans again; false when the import
+  /// changed meanwhile.
+  Future<bool> _completeDates() async {
+    final input = _input;
+    final source = _source;
+    final missing = _missingDates();
+    if (input == null || source == null || missing.isEmpty) return true;
+    _dated.addAll(missing);
+    await _inspect(source, missing, input.hashes, input.dates, hash: (_) => false, date: (_) => true);
+    if (_disposed || !identical(_input, input)) return false;
+    _replan();
+    return true;
   }
 
   /// Counts the KI requests: an answer of an older one is dropped.
@@ -581,8 +617,17 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     return PlatformFile(name: zip.name, size: builder.length, bytes: builder.takeBytes());
   }
 
-  void goTo(RdImportStep step) {
-    if (step == RdImportStep.review && state.step == RdImportStep.questions) _replan();
+  /// Goes to [step]. From the questions to the review the plan is made
+  /// again with the answers, and dates of Fassungen that only show now are
+  /// read first.
+  Future<void> goTo(RdImportStep step) async {
+    if (step == RdImportStep.review && state.step == RdImportStep.questions) {
+      _replan();
+      if (_missingDates().isNotEmpty) {
+        state = state.copyWith(step: RdImportStep.reading, progress: 0);
+        if (!await _completeDates()) return;
+      }
+    }
     state = state.copyWith(step: step);
   }
 
@@ -613,6 +658,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void setCategory(String path, RdImportCategory category) {
     _decide((d) => d.copyWith(categories: {...d.categories, path: category}));
     _replan();
+    unawaited(_completeDates());
   }
 
   void confirm(String workKey, {bool value = true}) => _decide((d) {

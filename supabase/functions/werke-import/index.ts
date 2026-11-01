@@ -13,6 +13,7 @@
 //          first and last 256 KB (the dates inside a PDF), the whole file
 //          when it is smaller
 //   copy   {file: Ref, songId, storageName, contentType?} → {path}
+//          (a file that changed since its size was read is refused: "changed")
 //          stores the file at songs/<tenantId>/<songId>/<storageName>; an
 //          existing object is never replaced. The app then adds the entry to
 //          the song's files (SongFileService.uploadFileVia).
@@ -28,7 +29,8 @@
 //   against Drive's alphabet; Google Docs and files over 20 MB are refused,
 // - a daily budget of calls and bytes per account and per tenant
 //   (`werke_import_take`, see supabase/sql/werke_import_usage.sql; missing →
-//   every call refused).
+//   every call refused). Every action takes its call before it asks Google;
+//   bytes are taken before a download, which stops at the bytes taken.
 //
 // Secrets: GOOGLE_API_KEY (Google Cloud API key, restricted to the Drive
 // API), SUPABASE_URL, SUPABASE_ANON_KEY, SUPABASE_SERVICE_ROLE_KEY (set by
@@ -150,7 +152,8 @@ async function meta(file: Ref): Promise<Meta> {
   };
 }
 
-/// Children of one folder, every page.
+/// Children of one folder, every page; a folder with more pages is refused
+/// (choose a sub-folder) instead of being read in part.
 async function children(folder: Ref): Promise<unknown[]> {
   const items: unknown[] = [];
   let pageToken = "";
@@ -177,21 +180,71 @@ async function children(folder: Ref): Promise<unknown[]> {
       });
     }
     pageToken = typeof body.nextPageToken === "string" ? body.nextPageToken : "";
-    if (!pageToken) break;
+    if (!pageToken) return items;
   }
-  return items;
+  throw new DriveError("too_many", 413);
 }
 
-/// The bytes of [file] from [start] to [end] (inclusive).
+/// The body of [res], refused when it is longer than [limit] bytes (the
+/// rest is not downloaded).
+async function readAtMost(res: Response, limit: number): Promise<Uint8Array> {
+  const length = Number(res.headers.get("content-length") ?? "0");
+  if (length > limit) {
+    await res.body?.cancel();
+    throw new DriveError("changed", 409);
+  }
+  const reader = res.body?.getReader();
+  if (!reader) return new Uint8Array(0);
+  const chunks: Uint8Array[] = [];
+  let total = 0;
+  while (true) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    total += value.length;
+    if (total > limit) {
+      await reader.cancel();
+      throw new DriveError("changed", 409);
+    }
+    chunks.push(value);
+  }
+  const data = new Uint8Array(total);
+  let at = 0;
+  for (const c of chunks) {
+    data.set(c, at);
+    at += c.length;
+  }
+  return data;
+}
+
+/// The bytes of [file] from [start] to [end] (inclusive); never more than
+/// that many are downloaded.
 async function bytes(file: Ref, start: number, end: number): Promise<Uint8Array> {
   const res = await drive(file.id, { alt: "media" }, [file], { Range: `bytes=${start}-${end}` });
-  const length = Number(res.headers.get("content-length") ?? "0");
-  if (length > MAX_FILE_BYTES) throw new DriveError("too_large", 413);
-  const data = new Uint8Array(await res.arrayBuffer());
-  if (data.length > MAX_FILE_BYTES) throw new DriveError("too_large", 413);
-  // A server that ignores the range sends the whole file.
-  if (res.status === 200 && data.length > end - start + 1) return data.subarray(start, end + 1);
-  return data;
+  const want = end - start + 1;
+  if (res.status === 206) return readAtMost(res, want);
+  // A server that ignores the range sends the whole file from its start.
+  if (start > 0) {
+    await res.body?.cancel();
+    throw new DriveError("changed", 409);
+  }
+  return readPrefix(res, want);
+}
+
+/// The first [count] bytes of [res]; the rest is not downloaded.
+async function readPrefix(res: Response, count: number): Promise<Uint8Array> {
+  const reader = res.body?.getReader();
+  if (!reader) return new Uint8Array(0);
+  const data = new Uint8Array(count);
+  let at = 0;
+  while (at < count) {
+    const { done, value } = await reader.read();
+    if (done) break;
+    const take = Math.min(value.length, count - at);
+    data.set(value.subarray(0, take), at);
+    at += take;
+  }
+  if (at >= count) await reader.cancel();
+  return data.subarray(0, at);
 }
 
 function base64(data: Uint8Array): string {
@@ -248,12 +301,14 @@ Deno.serve(async (req: Request) => {
   }
   if (!membership) return fail("forbidden", 403);
 
-  /// Counts one call and [byteCount] bytes; false when the day's budget is used up.
-  async function take(byteCount: number): Promise<Response | null> {
+  /// Counts [calls] calls and [byteCount] bytes; a response when the day's
+  /// budget is used up (or unknown), null when they are taken.
+  async function take(calls: number, byteCount: number): Promise<Response | null> {
     const { data: allowed, error } = await admin.rpc("werke_import_take", {
       p_tenant_id: tenantId,
       p_user_id: userId,
-      p_bytes: Math.max(0, Math.round(byteCount)),
+      p_calls: calls,
+      p_bytes: Math.max(0, Math.ceil(byteCount)),
       p_user_calls: DAILY_CALLS_USER,
       p_tenant_calls: DAILY_CALLS_TENANT,
       p_user_bytes: DAILY_BYTES_USER,
@@ -271,7 +326,7 @@ Deno.serve(async (req: Request) => {
       case "folder": {
         const folder = ref(body.folder);
         if (!folder) return fail("bad_request", 400);
-        const refused = await take(0);
+        const refused = await take(1, 0);
         if (refused) return refused;
         const m = await meta(folder);
         if (m.mimeType !== FOLDER_MIME) return fail("not_folder", 400);
@@ -285,7 +340,7 @@ Deno.serve(async (req: Request) => {
         }
         const folders = raw.map(ref);
         if (folders.some((f) => f === null)) return fail("bad_request", 400);
-        const refused = await take(0);
+        const refused = await take(1, 0);
         if (refused) return refused;
         const lists = await Promise.all((folders as Ref[]).map(children));
         const result: Record<string, unknown[]> = {};
@@ -296,12 +351,13 @@ Deno.serve(async (req: Request) => {
       case "head": {
         const file = ref(body.file);
         if (!file) return fail("bad_request", 400);
+        // At most two windows are read.
+        const refused = await take(1, HEAD_WINDOW * 2);
+        if (refused) return refused;
         const m = await meta(file);
         if (m.mimeType.startsWith("application/vnd.google-apps.")) return fail("not_a_file", 400);
         if (m.size > MAX_FILE_BYTES) return fail("too_large", 413);
         const whole = m.size <= HEAD_WINDOW * 2;
-        const refused = await take(whole ? m.size : HEAD_WINDOW * 2);
-        if (refused) return refused;
         if (m.size === 0) return json({ data: "", size: 0 });
         let data: Uint8Array;
         if (whole) {
@@ -342,17 +398,17 @@ Deno.serve(async (req: Request) => {
         }
         if (!song) return fail("song_not_found", 404);
 
+        const refusedCall = await take(1, 0);
+        if (refusedCall) return refusedCall;
         const m = await meta(file);
         if (m.mimeType.startsWith("application/vnd.google-apps.")) return fail("not_a_file", 400);
         if (m.size > MAX_FILE_BYTES) return fail("too_large", 413);
-        const refused = await take(m.size);
-        if (refused) return refused;
+        // The bytes before the download; a file that grew since is refused.
+        const refusedBytes = await take(0, m.size);
+        if (refusedBytes) return refusedBytes;
 
         const res = await drive(file.id, { alt: "media" }, [file]);
-        const length = Number(res.headers.get("content-length") ?? "0");
-        if (length > MAX_FILE_BYTES) return fail("too_large", 413);
-        const data = new Uint8Array(await res.arrayBuffer());
-        if (data.length > MAX_FILE_BYTES) return fail("too_large", 413);
+        const data = await readAtMost(res, m.size);
 
         const path = `songs/${tenantId}/${songId}/${storageName}`;
         const { error: upErr } = await admin.storage

@@ -198,6 +198,7 @@ class RdDriveApi {
       'drive_busy' => RdDriveError.busy,
       'exists' => RdDriveError.exists,
       'forbidden' => RdDriveError.forbidden,
+      'too_many' => RdDriveError.tooMany,
       _ when status == 404 => RdDriveError.notSetUp,
       _ => RdDriveError.failed,
     };

@@ -3,11 +3,27 @@ import 'dart:typed_data';
 import 'package:archive/archive.dart';
 import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
+import 'package:flutter/foundation.dart' show kIsWeb;
 
 import '../../../../core/services/song_file_service.dart';
 import '../rd_work_files_logic.dart' show rdMaxUploadBytes;
 import 'rd_import_logic.dart';
 import 'rd_import_zip_path_stub.dart' if (dart.library.io) 'rd_import_zip_path_io.dart';
+
+/// The path of a picked file; null in the browser, where file_picker's
+/// `path` getter throws, and when there is none.
+String? rdPickedPath(PlatformFile file) {
+  if (kIsWeb) return null;
+  try {
+    return file.path;
+  } catch (_) {
+    return null;
+  }
+}
+
+/// A picked file that only comes as a stream (the browser with
+/// `withReadStream`): its bytes are read in first.
+bool rdIsStreamed(PlatformFile file) => file.bytes == null && file.readStream != null && rdPickedPath(file) == null;
 
 /// REDESIGN: where the files of an import come from: ZIP files
 /// ([RdImportSource]) or a shared Google Drive folder (RdDriveSource).
@@ -67,8 +83,8 @@ class RdImportSource implements RdImportFiles {
     final streams = <InputStreamBase>[];
     var junk = 0;
     for (final zip in zips) {
-      final InputStreamBase? input =
-          zip.bytes != null ? InputStream(zip.bytes!) : (zip.path == null ? null : rdOpenZipPath(zip.path!));
+      final path = zip.bytes != null ? null : rdPickedPath(zip);
+      final InputStreamBase? input = zip.bytes != null ? InputStream(zip.bytes!) : (path == null ? null : rdOpenZipPath(path));
       if (input == null) throw FormatException(zip.name);
       streams.add(input);
       final Archive archive;

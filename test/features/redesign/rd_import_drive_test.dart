@@ -50,6 +50,8 @@ void main() {
     expect(RdDriveApi.errorOf(429, {'error': 'drive_busy'}), RdDriveError.busy);
     expect(RdDriveApi.errorOf(400, {'error': 'not_folder'}), RdDriveError.notFolder);
     expect(RdDriveApi.errorOf(403, {'error': 'forbidden'}), RdDriveError.forbidden);
+    expect(RdDriveApi.errorOf(413, {'error': 'too_many'}), RdDriveError.tooMany);
+    expect(RdDriveApi.errorOf(409, {'error': 'changed'}), RdDriveError.failed);
     expect(RdDriveApi.errorOf(500, 'boom'), RdDriveError.failed);
   });
 
@@ -172,5 +174,33 @@ void main() {
     final copy = src.substring(src.indexOf('case "copy"'));
     expect(copy.indexOf('.from("songs")'), lessThan(copy.indexOf('admin.storage')));
     expect(copy, contains('.eq("id", songId)'));
+  });
+
+  test('the function takes its budget before it asks Google and never reads more', () {
+    final src = File('supabase/functions/werke-import/index.ts').readAsStringSync();
+    final body = src.substring(src.indexOf('switch (action)'));
+    for (final action in ['folder', 'list', 'head', 'copy']) {
+      final start = body.indexOf('case "$action"');
+      final end = body.indexOf('case "', start + 1);
+      final part = body.substring(start, end < 0 ? body.length : end);
+      final take = part.indexOf('await take(1,');
+      expect(take, greaterThan(0), reason: action);
+      for (final google in ['meta(', 'children', 'bytes(', 'drive(']) {
+        final at = part.indexOf(google);
+        if (at >= 0) expect(take, lessThan(at), reason: '$action: $google');
+      }
+    }
+    // The bytes of a copy are taken before the download, which stops there.
+    final copy = body.substring(body.indexOf('case "copy"'));
+    expect(copy.indexOf('take(0, m.size)'), lessThan(copy.indexOf('drive(file.id')));
+    expect(copy, contains('readAtMost(res, m.size)'));
+    expect(src, isNot(contains('arrayBuffer()')));
+    // A folder with more pages than read is refused, not cut.
+    expect(src, contains('throw new DriveError("too_many", 413)'));
+    // The SQL counts calls and bytes separately.
+    final sql = File('supabase/sql/werke_import_usage.sql').readAsStringSync();
+    expect(sql, contains('p_calls integer'));
+    expect(sql, contains('user_calls + p_calls > p_user_calls'));
+    expect(src, contains('p_calls: calls'));
   });
 }

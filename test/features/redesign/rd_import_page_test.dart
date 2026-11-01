@@ -157,6 +157,14 @@ final _zipBytes = _zip({
   '__MACOSX/Noten/._Viola.pdf': 'x',
 });
 
+/// A file picked in the browser: only a stream, and `path` throws.
+class _BrowserFile extends PlatformFile {
+  _BrowserFile({required super.name, required super.size, super.readStream});
+
+  @override
+  String? get path => throw 'On web `path` is unavailable';
+}
+
 /// The KI without suggestions.
 final _noAi = RdImportAi((_) async => {'answers': []});
 
@@ -392,10 +400,10 @@ void main() {
     expect(upload.failures.every((f) => f.path.isNotEmpty), isTrue);
   });
 
-  test('a part decided by an answer can make Fassungen before the review', () async {
+  test('a part decided by an answer can make Fassungen before the review; their dates are read then', () async {
     final bytes = _zip({
-      'Noten/1 Eins/Qfl1.pdf': '%PDF a',
-      'Noten/1 Eins/Fassung B/Qfl1.pdf': '%PDF bb',
+      'Noten/1 Eins/Qfl1.pdf': '%PDF a /CreationDate (D:20190101)',
+      'Noten/1 Eins/Fassung B/Qfl1.pdf': '%PDF bb /CreationDate (D:20250301)',
     });
     final c = ProviderContainer(overrides: _overrides(_FakeFiles(), _FakeSongs(), _FakeGroupNotifier()));
     addTearDown(c.dispose);
@@ -405,10 +413,17 @@ void main() {
     await controller.read([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
     expect(c.read(rdImportProvider).plan!.works.single.fassungen, isEmpty);
     controller.answer('qfl', const RdImportCategory(instrumentId: 10));
-    controller.goTo(RdImportStep.review);
+    final going = controller.goTo(RdImportStep.review);
+    // The dates inside the PDFs are read first.
+    expect(c.read(rdImportProvider).step, RdImportStep.reading);
+    await going;
     final state = c.read(rdImportProvider);
+    expect(state.step, RdImportStep.review);
     final work = state.plan!.works.single;
     expect(work.fassungen, hasLength(2));
+    expect(work.fassungen.firstWhere((f) => f.key == 'Fassung B').newest, DateTime(2025, 3, 1));
+    expect(work.fassungen.firstWhere((f) => f.key == '').newest, DateTime(2019, 1, 1));
+    expect(work.defaultFassung, 'Fassung B');
     expect(rdWorkState(state.plan!, state.decisions, work).open, isTrue);
   });
 
@@ -429,7 +444,8 @@ void main() {
     );
     expect(await controller.read([huge]), RdImportReadError.tooLargeWeb);
     expect(read, isFalse);
-    final small = PlatformFile(name: 'Noten.zip', size: _zipBytes.length, readStream: Stream.value(_zipBytes));
+    // In the browser file_picker's `path` throws.
+    final small = _BrowserFile(name: 'Noten.zip', size: _zipBytes.length, readStream: Stream.value(_zipBytes));
     expect(await controller.read([small]), isNull);
     expect(c.read(rdImportProvider).plan!.works, hasLength(2));
   });
