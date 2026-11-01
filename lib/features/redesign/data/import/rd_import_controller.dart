@@ -547,7 +547,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   final Map<String, String> _confirmedAs = {};
 
   /// Takes back every "Passt so" whose Werk no longer shows what was
-  /// confirmed. Runs after each change of the plan or the decisions.
+  /// confirmed; the Werk waits for another look ([RdImportDecisions.recheck]),
+  /// even when nothing is flagged any more. Runs after each change of the
+  /// plan or the decisions.
   void _dropStaleConfirmations() {
     final plan = state.plan;
     final d = state.decisions;
@@ -559,7 +561,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     };
     if (stale.isEmpty) return;
     _confirmedAs.removeWhere((key, _) => stale.contains(key));
-    state = state.copyWith(decisions: d.copyWith(confirmed: {...d.confirmed}..removeAll(stale)));
+    state = state.copyWith(
+      decisions: d.copyWith(confirmed: {...d.confirmed}..removeAll(stale), recheck: {...d.recheck, ...stale}),
+    );
   }
 
   /// Date reads running ([_completeDates]).
@@ -738,7 +742,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     _decide((d) {
       final confirmed = {...d.confirmed};
       value ? confirmed.add(workKey) : confirmed.remove(workKey);
-      return d.copyWith(confirmed: confirmed);
+      return d.copyWith(confirmed: confirmed, recheck: value ? ({...d.recheck}..remove(workKey)) : d.recheck);
     });
   }
 

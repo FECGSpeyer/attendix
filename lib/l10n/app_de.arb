@@ -12263,6 +12263,10 @@
   "@redesignImportFlagPartExists": {
     "description": "redesign.import.flagPartExists"
   },
+  "redesignImportFlagRecheck": "Erneut prüfen",
+  "@redesignImportFlagRecheck": {
+    "description": "redesign.import.flagRecheck"
+  },
   "redesignImportFlagSkipped": "Nicht übernehmen",
   "@redesignImportFlagSkipped": {
     "description": "redesign.import.flagSkipped"
@@ -12462,6 +12466,10 @@
   "redesignImportReasonWorkSkipped": "Werk wird nicht übernommen",
   "@redesignImportReasonWorkSkipped": {
     "description": "redesign.import.reasonWorkSkipped"
+  },
+  "redesignImportRecheckHint": "Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.",
+  "@redesignImportRecheckHint": {
+    "description": "redesign.import.recheckHint"
   },
   "redesignImportReviewAll": "Alle · {count}",
   "@redesignImportReviewAll": {

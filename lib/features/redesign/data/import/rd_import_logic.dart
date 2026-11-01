@@ -262,6 +262,20 @@ const Set<String> _versionWords = {'fassung', 'fassungen', 'version', 'versionen
 /// First words of folders with old versions ("Alt", "Alte Version").
 const Set<String> _oldWords = {'alt', 'alte', 'alter', 'altes', 'old', 'older', 'archiv', 'archive', 'veraltet', 'backup', 'frueher'};
 
+/// Choir voices besides "Alt" as folder names: next to them "Alt" is the
+/// voice, not an old version.
+const Set<String> _voiceFolders = {'sopran', 'soprano', 'mezzosopran', 'tenor', 'tenore', 'bass', 'basso', 'bariton', 'baritone'};
+
+final Set<String> _voiceFoldersN = _normalized(_voiceFolders);
+
+/// "Alt", "Alt 1", "Alt II": the voice when the Werk has voice folders.
+bool _isAltVoice(String name) {
+  final words = rdImportTitleWords(name);
+  return words.isNotEmpty &&
+      words.first == 'alt' &&
+      words.skip(1).every((w) => RegExp(r'^\d$').hasMatch(w) || w == 'i' || w == 'ii');
+}
+
 /// "Alt", "Alte Version 2019", "Archiv": files there are older versions.
 bool rdImportIsOldFolder(String name) {
   final words = rdImportTitleWords(name);
@@ -735,7 +749,16 @@ RdImportPlan rdBuildImportPlan(
       return [parent, rel].where((s) => s.isNotEmpty).join(' › ');
     }
 
-    bool isOldKey(String key) => key.split(RegExp(r'[|/]')).any(rdImportIsOldFolder);
+    // "Alt" is the choir voice, not an old version, in a choir, with a
+    // group of that name or next to other voice folders (Sopran, Tenor …).
+    final segments = {
+      for (final e in werkEntries) ...fassungKeyOf(e).split(RegExp(r'[|/]')).where((s) => s.isNotEmpty).map(_folded),
+    };
+    final voices = isChoir ||
+        instruments.any((g) => _folded(g.name) == 'alt') ||
+        segments.any((s) => _voiceFoldersN.contains(s) || _voiceFoldersN.contains(s.split(' ').first));
+    bool isOldSegment(String s) => rdImportIsOldFolder(s) && !(voices && _isAltVoice(s));
+    bool isOldKey(String key) => key.split(RegExp(r'[|/]')).any(isOldSegment);
 
     // Categories and hard reasons.
     final workName = g.parsed.title.isEmpty ? title : g.parsed.title;
@@ -984,6 +1007,7 @@ class RdImportDecisions {
     this.categories = const {},
     this.answers = const {},
     this.confirmed = const {},
+    this.recheck = const {},
     this.skipWordBesidePdf = true,
     this.proposeFassung = true,
   });
@@ -1006,6 +1030,10 @@ class RdImportDecisions {
   /// Werke someone looked at ("Passt so").
   final Set<String> confirmed;
 
+  /// Werke whose "Passt so" a later change took back: they wait for
+  /// another look, even when nothing is flagged any more.
+  final Set<String> recheck;
+
   /// Switch "Word weglassen, wenn PDF daneben liegt".
   final bool skipWordBesidePdf;
 
@@ -1019,6 +1047,7 @@ class RdImportDecisions {
     Map<String, RdImportCategory>? categories,
     Map<String, RdImportCategory>? answers,
     Set<String>? confirmed,
+    Set<String>? recheck,
     bool? skipWordBesidePdf,
     bool? proposeFassung,
   }) =>
@@ -1029,6 +1058,7 @@ class RdImportDecisions {
         categories: categories ?? this.categories,
         answers: answers ?? this.answers,
         confirmed: confirmed ?? this.confirmed,
+        recheck: recheck ?? this.recheck,
         skipWordBesidePdf: skipWordBesidePdf ?? this.skipWordBesidePdf,
         proposeFassung: proposeFassung ?? this.proposeFassung,
       );
@@ -1180,6 +1210,7 @@ class RdWorkState {
     required this.files,
     required this.flags,
     required this.confirmed,
+    this.recheck = false,
   });
 
   final RdWorkTarget target;
@@ -1187,11 +1218,15 @@ class RdWorkState {
   final Set<RdWorkFlag> flags;
   final bool confirmed;
 
+  /// Its "Passt so" was taken back by a change ([RdImportDecisions.recheck]).
+  final bool recheck;
+
   int get takeCount => files.values.where((f) => f.take).length;
   int get skipCount => files.length - takeCount;
 
-  /// Waits for someone to look at it ("bitte prüfen").
-  bool get open => !confirmed && !target.skip && flags.isNotEmpty;
+  /// Waits for someone to look at it ("bitte prüfen"): flagged and not
+  /// confirmed, or changed since it was.
+  bool get open => !confirmed && !target.skip && (flags.isNotEmpty || recheck);
 
   /// Its files are uploaded.
   bool get ready => !open && !target.skip && takeCount > 0;
@@ -1206,7 +1241,13 @@ RdWorkState rdWorkState(RdImportPlan plan, RdImportDecisions d, RdImportWork wor
     if (files.values.any((f) => f.reason == RdSkipReason.partExists)) RdWorkFlag.partExists,
     if (files.values.any((f) => f.unclear)) RdWorkFlag.unclear,
   };
-  return RdWorkState(target: target, files: files, flags: flags, confirmed: d.confirmed.contains(work.key));
+  return RdWorkState(
+    target: target,
+    files: files,
+    flags: flags,
+    confirmed: d.confirmed.contains(work.key),
+    recheck: d.recheck.contains(work.key),
+  );
 }
 
 /// What a Werk shows and will upload, as one text: target, Fassung, flags

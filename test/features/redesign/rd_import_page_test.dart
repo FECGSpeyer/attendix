@@ -689,6 +689,45 @@ void main() {
     expect(state().decisions.confirmed, isEmpty);
   });
 
+  test('a Werk whose "Passt so" a change took back waits for another look, even without flags', () async {
+    final bytes = _zip({
+      'Noten/1 Eins/Viola.pdf': '%PDF a /CreationDate (D:20190101)',
+      'Noten/1 Eins/Fassung B/Viola.pdf': '%PDF b /CreationDate (D:20250301)',
+    });
+    final files = _FakeFiles();
+    final c = ProviderContainer(overrides: _overrides(files, _FakeSongs(), _FakeGroupNotifier()));
+    addTearDown(c.dispose);
+    final sub = c.listen(rdImportProvider, (_, __) {});
+    addTearDown(sub.close);
+    final controller = c.read(rdImportProvider.notifier);
+    await controller.read([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    await controller.goTo(RdImportStep.review);
+    RdImportState state() => c.read(rdImportProvider);
+    RdWorkState ws() => rdWorkState(state().plan!, state().decisions, state().plan!.works.single);
+    final key = state().plan!.works.single.key;
+    expect(ws().flags, contains(RdWorkFlag.fassungen));
+    controller.confirm(key);
+    expect(rdImportUploads(state().plan!, state().decisions).map((u) => u.file.path), ['Noten/1 Eins/Fassung B/Viola.pdf']);
+
+    // The file of the main folder becomes another part: no Fassungen and
+    // no flag any more, both files would go up. Still open until checked.
+    controller.setCategory('Noten/1 Eins/Viola.pdf', const RdImportCategory(instrumentId: 10));
+    await Future<void>.delayed(const Duration(milliseconds: 50));
+    expect(ws().flags, isEmpty);
+    expect(ws().confirmed, isFalse);
+    expect(ws().recheck, isTrue);
+    expect(ws().open, isTrue);
+    expect(rdImportUploads(state().plan!, state().decisions), isEmpty);
+    await controller.upload();
+    expect(files.uploads, isEmpty);
+
+    // Checked again: both go up.
+    controller.confirm(key);
+    expect(ws().recheck, isFalse);
+    expect(ws().open, isFalse);
+    expect(rdImportUploads(state().plan!, state().decisions), hasLength(2));
+  });
+
   test('back to the questions while their dates are read stays there', () async {
     final bytes = _zip({
       'Noten/1 Eins/Qfl1.pdf': '%PDF a /CreationDate (D:20190101)',

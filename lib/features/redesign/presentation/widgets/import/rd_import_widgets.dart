@@ -193,6 +193,7 @@ List<Widget> rdImportFlagPills(BuildContext context, RdWorkState state) {
     if (state.confirmed && state.flags.isNotEmpty)
       RdPill(l10n.redesignImportFlagConfirmed, tone: RdTone.present, icon: Icons.check)
     else ...[
+      if (state.recheck) RdPill(l10n.redesignImportFlagRecheck, tone: RdTone.late),
       if (state.flags.contains(RdWorkFlag.unsureMatch)) RdPill(l10n.redesignImportFlagMatch, tone: RdTone.late),
       if (state.flags.contains(RdWorkFlag.fassungen)) RdPill(l10n.redesignImportFlagFassungen, tone: RdTone.late),
       if (state.flags.contains(RdWorkFlag.partExists)) RdPill(l10n.redesignImportFlagPartExists, tone: RdTone.late),

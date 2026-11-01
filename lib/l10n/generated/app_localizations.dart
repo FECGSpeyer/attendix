@@ -16103,6 +16103,12 @@ abstract class AppLocalizations {
   /// **'Stimme schon da'**
   String get redesignImportFlagPartExists;
 
+  /// redesign.import.flagRecheck
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut prüfen'**
+  String get redesignImportFlagRecheck;
+
   /// redesign.import.flagSkipped
   ///
   /// In de, this message translates to:
@@ -16342,6 +16348,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werk wird nicht übernommen'**
   String get redesignImportReasonWorkSkipped;
+
+  /// redesign.import.recheckHint
+  ///
+  /// In de, this message translates to:
+  /// **'Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.'**
+  String get redesignImportRecheckHint;
 
   /// redesign.import.reviewAll
   ///

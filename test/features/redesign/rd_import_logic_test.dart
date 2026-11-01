@@ -200,6 +200,33 @@ void main() {
       expect(uploads, ['Noten/26 Via dolorosa/Viola.pdf', 'Noten/26 Via dolorosa/Violine 1.pdf']);
     });
 
+    test('"Alt" next to Sopran, Tenor and Bass is the voice, not an old Fassung', () {
+      final plan = _plan([
+        for (final v in ['Sopran', 'Alt', 'Tenor', 'Bass']) _e('Noten/1 Stille Nacht/$v/Stille Nacht $v.pdf'),
+      ]);
+      final work = plan.works.single;
+      expect(work.fassungen, isEmpty);
+      final state = rdWorkState(plan, const RdImportDecisions(), work);
+      expect(state.flags, isNot(contains(RdWorkFlag.fassungen)));
+      expect(state.files.values.where((f) => f.take), hasLength(4));
+
+      // In a choir "Alt" alone is the voice too.
+      final choir = rdBuildImportPlan(
+        [_e('Noten/1 Stille Nacht/Chor.pdf'), _e('Noten/1 Stille Nacht/Alt/Stille Nacht Alt.pdf')],
+        songs: const [],
+        instruments: const [InstrumentInfo(id: 20, name: 'Sopran'), InstrumentInfo(id: 21, name: 'Alt')],
+        isChoir: true,
+      );
+      expect(choir.works.single.fassungen, isEmpty);
+
+      // Elsewhere an "Alt" folder still holds an old version.
+      final orchestra = _plan([
+        _e('Noten/1 Stille Nacht/Viola.pdf'),
+        _e('Noten/1 Stille Nacht/Alt/Viola.pdf'),
+      ]);
+      expect(orchestra.works.single.fassungen.map((f) => (f.label, f.isOld)), [('', false), ('Alt', true)]);
+    });
+
     test('Fassungen without dates inside the files: the ZIP dates decide', () {
       final plan = _plan([
         _e('Noten/26 Via dolorosa/Viola.pdf', modified: DateTime(2020)),

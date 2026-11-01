@@ -191,6 +191,10 @@ class RdImportWorkPage extends ConsumerWidget {
               onPressed: () => controller.confirm(work.key, value: false),
             )
           else ...[
+            if (ws.recheck) ...[
+              RdHintBox(l10n.redesignImportRecheckHint),
+              const SizedBox(height: 12),
+            ],
             // New dates may still change the suggested Fassung.
             if (state.readingDates) ...[
               Text(l10n.redesignImportDatesReading, style: RdType.meta(p, size: 13)),

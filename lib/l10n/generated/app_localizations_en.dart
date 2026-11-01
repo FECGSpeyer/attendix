@@ -9401,6 +9401,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportFlagPartExists => 'Part already there';
 
   @override
+  String get redesignImportFlagRecheck => 'Check again';
+
+  @override
   String get redesignImportFlagSkipped => 'Not imported';
 
   @override
@@ -9573,6 +9576,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportReasonWorkSkipped => 'Work is not imported';
+
+  @override
+  String get redesignImportRecheckHint => 'Something changed here since “Looks good”. Please take another look.';
 
   @override
   String redesignImportReviewAll(Object count) {
