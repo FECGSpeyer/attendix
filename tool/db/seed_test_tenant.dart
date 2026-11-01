@@ -25,6 +25,10 @@
 // confirmation, the script stops after sign-up and asks you to confirm the
 // mails; run it again with the same arguments afterwards.
 //
+// Change the password of all test accounts:
+//   dart run tool/db/seed_test_tenant.dart --base you@example.com \
+//       --password '<alt>' --new-password '<neu>'
+//
 // Removal: delete the tenant "Attendix Test" in the app (Verwaltung →
 // Gruppe löschen) – the database cascades all rows of that tenant.
 import 'dart:convert';
@@ -113,6 +117,33 @@ Future<void> main(List<String> args) async {
   _anon = env['SUPABASE_ANON_KEY'] ?? _die('SUPABASE_ANON_KEY fehlt in .env');
 
   final emails = {for (final a in _accounts) a.tag: _plus(base, a.tag)};
+
+  // `--new-password <neu>`: only changes the password of the existing test
+  // accounts (login with --password, then PUT /auth/v1/user). Nothing else.
+  final newPassword = opts['new-password'];
+  if (newPassword != null) {
+    if (newPassword.isEmpty || opts['password'] == null) {
+      _die('--new-password braucht --password (altes) und ein neues Passwort');
+    }
+    for (final a in _accounts) {
+      final email = emails[a.tag]!;
+      final login = await _req('POST', '/auth/v1/token?grant_type=password',
+          body: {'email': email, 'password': password}, auth: false);
+      if (login.status >= 300) {
+        stdout.writeln('Login fehlgeschlagen: $email (${login.status} '
+            '${login.body})');
+        continue;
+      }
+      _token = (login.json as Map)['access_token'] as String;
+      final res = await _req('PUT', '/auth/v1/user',
+          body: {'password': newPassword});
+      stdout.writeln(res.status < 300
+          ? 'Passwort geändert: $email'
+          : 'Fehler bei $email: ${res.status} ${res.body}');
+    }
+    return;
+  }
+
   _printPlan(emails, owner);
   if (!_apply) {
     stdout.writeln('\nDry run – nichts geschrieben. Mit --apply ausführen.');
