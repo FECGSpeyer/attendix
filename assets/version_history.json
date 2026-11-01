@@ -9,6 +9,7 @@
         "✨ Noten importieren: Mehrere Fassungen eines Werks werden erkannt, vorgeschlagen ist die mit dem neuesten Datum in den Dateien; doppelte Dateien und Stimmen, die schon in Attendix sind, bleiben draußen",
         "✨ Noten importieren: Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn jemand sie geprüft hat",
         "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
+        "✨ Noten importieren: Auf Wunsch schlägt die KI Antworten auf die Fragen vor; sichere Vorschläge sind ausgefüllt und mit ✦ markiert, alle lassen sich ändern",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]
     },
@@ -40,7 +41,6 @@
         "✨ Beta-Design, Termine für Eltern: dieselbe Termine-Seite wie für Spieler, mit Zu- und Absage pro Kind direkt auf der Karte und Termin-Details mit Ablaufplan, Infos, Anhang und Route",
         "✨ Beta-Design, Stimmführer: „Meine Stimme“ mit Kontakt und kommenden Abwesenheiten im neuen Design",
         "✨ Beta-Design, Eltern: „Alle Kinder“ sagt für alle Kinder auf einmal zu oder ab, wie in der bisherigen Eltern-Ansicht",
-        "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]
     },
