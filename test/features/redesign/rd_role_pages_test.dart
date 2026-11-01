@@ -184,7 +184,7 @@ void main() {
     final ben = TestFactories.createPerson(id: 12, firstName: 'Ben', lastName: 'Kurz', tenantId: 7);
 
     ChildPersonAttendance att(int attendanceId, Person child, String date,
-            {AttendanceStatus status = AttendanceStatus.neutral, String? info}) =>
+            {AttendanceStatus status = AttendanceStatus.neutral, String? info, int? days}) =>
         ChildPersonAttendance(
           id: '$attendanceId-${child.id}',
           personId: child.id,
@@ -196,6 +196,7 @@ void main() {
           childName: '${child.firstName} ${child.lastName}',
           childFirstName: child.firstName,
           place: 'Gemeindehaus',
+          durationDays: days,
         );
 
     List<Override> overrides({int? pending}) => [
@@ -246,6 +247,55 @@ void main() {
 
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Kinderchor'), findsNWidgets(2));
+    });
+
+    testWidgets('a failed reload keeps the notification and shows retry', (tester) async {
+      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+        parentChildrenProvider.overrideWith((ref) async => [mia, ben]),
+        childrenAttendancesProvider.overrideWith((ref) async => throw Exception('offline')),
+        attendanceTypesProvider.overrideWith((ref) async => const []),
+        currentSongsProvider.overrideWith((ref) async => const []),
+        pendingAttendanceIdProvider.overrideWith((ref) => 1),
+      ]));
+      await _settle(tester);
+
+      expect(find.text('Erneut versuchen'), findsOneWidget);
+      expect(find.byType(BottomSheet), findsNothing);
+      final container = ProviderScope.containerOf(tester.element(find.byType(RdParentEventsPage)));
+      expect(container.read(pendingAttendanceIdProvider), 1);
+    });
+
+    testWidgets('answered children keep the changes of the old page', (tester) async {
+      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+        parentChildrenProvider.overrideWith((ref) async => [mia, ben]),
+        childrenAttendancesProvider.overrideWith((ref) async => [
+              // Excused: Zusage or another reason / late.
+              att(1, mia, _day(3), status: AttendanceStatus.excused, info: 'Kinderchor'),
+              // Late: Zusage or cancel.
+              att(1, ben, _day(3), status: AttendanceStatus.late, info: 'Kinderchor'),
+            ]),
+        attendanceTypesProvider.overrideWith((ref) async => const []),
+        currentSongsProvider.overrideWith((ref) async => const []),
+      ]));
+      await _settle(tester);
+
+      expect(find.text('Doch dabei'), findsNWidgets(2));
+      expect(find.text('Ändern'), findsOneWidget);
+      expect(find.text('Doch absagen'), findsOneWidget);
+    });
+
+    testWidgets('multi-day Termine show their date range', (tester) async {
+      await tester.pumpWidget(_app(const RdParentEventsPage(), [
+        parentChildrenProvider.overrideWith((ref) async => [mia]),
+        childrenAttendancesProvider.overrideWith((ref) async => [
+              att(1, mia, _day(3), info: 'Freizeit', days: 3),
+            ]),
+        attendanceTypesProvider.overrideWith((ref) async => const []),
+        currentSongsProvider.overrideWith((ref) async => const []),
+      ]));
+      await _settle(tester);
+
+      expect(find.textContaining(' - '), findsOneWidget);
     });
 
     testWidgets('without linked children shows the hint', (tester) async {

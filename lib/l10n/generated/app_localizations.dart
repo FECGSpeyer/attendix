@@ -16799,6 +16799,12 @@ abstract class AppLocalizations {
   /// **'Geburtstag: {name} ({day}) +{count}'**
   String redesignTodayBirthdayMore(Object name, Object day, Object count);
 
+  /// redesign.today.changeAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignTodayChangeAnswer;
+
   /// redesign.today.childFailed
   ///
   /// In de, this message translates to:

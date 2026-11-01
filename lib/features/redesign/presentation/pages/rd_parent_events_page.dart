@@ -56,13 +56,19 @@ class _RdParentEventsPageState extends ConsumerState<RdParentEventsPage> {
 
   /// A notification or push asked for a Termin (`pendingAttendanceId`): open
   /// it as a sheet once the Termine are loaded (old page: action sheet).
-  void _openPending(List<ParentAttendanceGroup> all) {
+  /// While the Termine (re)load or after a failed reload the id stays: the
+  /// page shows the load error with "retry" and comes back here once the
+  /// Termine are loaded.
+  void _openPending() {
     final pendingId = ref.read(pendingAttendanceIdProvider);
     if (pendingId == null) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted || ref.read(pendingAttendanceIdProvider) != pendingId) return;
-      if (ref.read(childrenAttendancesProvider).isLoading) return;
+      final kids = ref.read(parentChildrenProvider);
+      final atts = ref.read(childrenAttendancesProvider);
+      if (kids.isLoading || atts.isLoading || kids.hasError || atts.hasError) return;
       ref.read(pendingAttendanceIdProvider.notifier).state = null;
+      final all = ref.read(parentAttendanceGroupsProvider);
       if (all.any((g) => g.attendanceId == pendingId)) {
         showRdParentEventSheet(context, pendingId);
       } else {
@@ -85,8 +91,10 @@ class _RdParentEventsPageState extends ConsumerState<RdParentEventsPage> {
     ];
 
     final kids = childrenAsync.valueOrNull;
-    if (kids == null || !attendancesAsync.hasValue) {
-      final error = childrenAsync.hasError || attendancesAsync.hasError;
+    // A failed reload shows the error with "retry" instead of the previous
+    // Termine, so answers never go to a stale list.
+    final error = childrenAsync.hasError || attendancesAsync.hasError;
+    if (kids == null || !attendancesAsync.hasValue || error) {
       children.add(
         error
             ? RdInfoCard(
@@ -111,7 +119,7 @@ class _RdParentEventsPageState extends ConsumerState<RdParentEventsPage> {
 
     final upcoming = ref.watch(upcomingParentAttendancesProvider);
     final past = ref.watch(pastParentAttendancesProvider);
-    _openPending([...upcoming, ...past]);
+    _openPending();
 
     final songs = ref.watch(currentSongsProvider).valueOrNull ?? const [];
     children.add(
@@ -297,7 +305,19 @@ class RdParentEventCard extends ConsumerWidget {
     final highlight = type?.highlight ?? group.legacyType == 'vortrag';
     final day = EventListUtils.parse(group.date);
     final locale = currentIntlLocale();
+    // Multi-day Termine show their date range like the old page.
+    final multiDay =
+        EventListUtils.isMultiDay(group.durationDays) || ((type?.allDay ?? false) && (type?.durationDays ?? 1) > 1);
+    final range =
+        multiDay
+            ? EventListUtils.readableDate(
+              group.date,
+              allDay: true,
+              durationDays: group.durationDays ?? type?.durationDays,
+            )
+            : '';
     final meta = [
+      if (range != title) range,
       EventListUtils.timeRange(group.startTime ?? type?.startTime, group.endTime ?? type?.endTime),
       group.place ?? '',
     ].where((s) => s.isNotEmpty).join(' · ');

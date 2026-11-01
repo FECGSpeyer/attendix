@@ -59,50 +59,44 @@ class RdParentToday extends ConsumerWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Builder(builder: (context) {
-                  final start = rdStartOf(next.date, next.startTime);
-                  final countdown = rdCountdown(
-                    l10n,
-                    start,
-                    hasTime: next.startTime?.isNotEmpty ?? false,
-                  );
-                  return Row(
-                    children: [
-                      Expanded(
-                        child: RdEyebrow(
-                          '${l10n.redesignTodayNextEvent}'
-                          '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                Builder(
+                  builder: (context) {
+                    final start = rdStartOf(next.date, next.startTime);
+                    final countdown = rdCountdown(l10n, start, hasTime: next.startTime?.isNotEmpty ?? false);
+                    return Row(
+                      children: [
+                        Expanded(
+                          child: RdEyebrow(
+                            '${l10n.redesignTodayNextEvent}'
+                            '${start == null ? '' : ' · ${rdRelativeDay(l10n, start)}'}',
+                          ),
                         ),
-                      ),
-                      if (countdown != null) RdPill(countdown, tone: RdTone.primary),
-                    ],
-                  );
-                }),
-                const SizedBox(height: 8),
-                Semantics(
-                  header: true,
-                  child: Text(next.displayTitle, style: RdType.cardTitle(p)),
+                        if (countdown != null) RdPill(countdown, tone: RdTone.primary),
+                      ],
+                    );
+                  },
                 ),
-                Builder(builder: (context) {
-                  final meta = [
-                    EventListUtils.timeRange(next.startTime, next.endTime),
-                    next.place ?? '',
-                  ].where((s) => s.isNotEmpty).join(' · ');
-                  if (meta.isEmpty) return const SizedBox.shrink();
-                  return Padding(
-                    padding: const EdgeInsets.only(top: 4),
-                    child: Text(meta, style: RdType.meta(p, size: 15)),
-                  );
-                }),
+                const SizedBox(height: 8),
+                Semantics(header: true, child: Text(next.displayTitle, style: RdType.cardTitle(p))),
+                Builder(
+                  builder: (context) {
+                    final meta = [
+                      EventListUtils.timeRange(next.startTime, next.endTime),
+                      next.place ?? '',
+                    ].where((s) => s.isNotEmpty).join(' · ');
+                    if (meta.isEmpty) return const SizedBox.shrink();
+                    return Padding(
+                      padding: const EdgeInsets.only(top: 4),
+                      child: Text(meta, style: RdType.meta(p, size: 15)),
+                    );
+                  },
+                ),
                 const SizedBox(height: 12),
                 for (final child in next.childAttendances) RdChildAnswerRow(group: next, child: child),
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerLeft,
-                  child: RdLinkButton(
-                    label: l10n.redesignTodayMore,
-                    onPressed: () => context.go('/parents'),
-                  ),
+                  child: RdLinkButton(label: l10n.redesignTodayMore, onPressed: () => context.go('/parents')),
                 ),
               ],
             ),
@@ -111,10 +105,7 @@ class RdParentToday extends ConsumerWidget {
           const SizedBox(height: 24),
           RdSectionHeader(
             l10n.redesignTodayUpNext,
-            action: RdLinkButton(
-              label: l10n.redesignCommonAll,
-              onPressed: () => context.go('/parents'),
-            ),
+            action: RdLinkButton(label: l10n.redesignCommonAll, onPressed: () => context.go('/parents')),
           ),
           RdGroupedList(
             children: [
@@ -123,9 +114,10 @@ class RdParentToday extends ConsumerWidget {
                   date: g.date,
                   title: g.displayTitle,
                   meta: rdChildrenLine(l10n, g),
-                  trailing: g.allChildrenResponded
-                      ? RdPill(l10n.redesignTodayAnswered, tone: RdTone.present)
-                      : RdPill(l10n.redesignTodayOpenCount(rdOpenChildren(g))),
+                  trailing:
+                      g.allChildrenResponded
+                          ? RdPill(l10n.redesignTodayAnswered, tone: RdTone.present)
+                          : RdPill(l10n.redesignTodayOpenCount(rdOpenChildren(g))),
                   onTap: () => context.go('/parents'),
                 ),
             ],
@@ -144,9 +136,12 @@ String rdChildrenLine(AppLocalizations l10n, ParentAttendanceGroup g) {
   final time = EventListUtils.timeRange(g.startTime, g.endTime);
   if (g.childAttendances.length < 2) return time;
   return g.childAttendances
-      .map((c) => c.status.isNeutral
-          ? l10n.redesignTodayChildOpen(c.childFirstName)
-          : '${c.childFirstName} ${c.status.countsAsPresent ? '✓' : '✕'}')
+      .map(
+        (c) =>
+            c.status.isNeutral
+                ? l10n.redesignTodayChildOpen(c.childFirstName)
+                : '${c.childFirstName} ${c.status.countsAsPresent ? '✓' : '✕'}',
+      )
       .join(' · ');
 }
 
@@ -212,31 +207,37 @@ class RdChildAnswerRow extends ConsumerWidget {
     }
 
     final yes = status == AttendanceStatus.present;
-    // After "kommt später" both ways stay open: a normal Zusage
-    // (SignInType.late) or cancelling after all.
+    final type = ref.watch(rdAttendanceTypeProvider(group.typeId));
+    final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
+    // Same changes as the old parents page: a Zusage unless already "Dabei"
+    // (after "verspätet" / "kommt später" too), and the reason sheet (absent
+    // or late) unless already absent without a late option. After a Zusage
+    // it reads "Doch absagen", after an Absage "Ändern" (other reason, or
+    // late after all).
     final links = [
-      if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
-        RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
-      if (canAnswer && status.countsAsPresent)
-        RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
+      if (canAnswer && !yes) RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
+      if (canAnswer && (status != AttendanceStatus.absent || lateAllowed))
+        RdTextLink(
+          label: status.countsAsPresent ? l10n.redesignTodayNoAfterAll : l10n.redesignTodayChangeAnswer,
+          onTap: () => _signOut(context, ref),
+        ),
     ];
-    final pill = yes
-        ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
-        : rdOwnStatusPill(l10n, status);
-    final answer = links.length < 2
-        ? Wrap(
-            spacing: 4,
-            crossAxisAlignment: WrapCrossAlignment.center,
-            alignment: WrapAlignment.end,
-            children: [pill, ...links],
-          )
-        : Column(
-            crossAxisAlignment: CrossAxisAlignment.end,
-            children: [
-              pill,
-              Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
-            ],
-          );
+    final pill =
+        yes
+            ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
+            : rdOwnStatusPill(l10n, status);
+    final answer =
+        links.length < 2
+            ? Wrap(
+              spacing: 4,
+              crossAxisAlignment: WrapCrossAlignment.center,
+              alignment: WrapAlignment.end,
+              children: [pill, ...links],
+            )
+            : Column(
+              crossAxisAlignment: CrossAxisAlignment.end,
+              children: [pill, Wrap(spacing: 4, alignment: WrapAlignment.end, children: links)],
+            );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
@@ -279,9 +280,7 @@ class RdChildAnswerRow extends ConsumerWidget {
       ownReasonFirst: group.isRunning,
     );
     if (choice == null || !context.mounted) return;
-    await ref
-        .read(parentSignInOutNotifierProvider.notifier)
-        .signOut([id], choice.reason, isLateComing: choice.isLate);
+    await ref.read(parentSignInOutNotifierProvider.notifier).signOut([id], choice.reason, isLateComing: choice.isLate);
     if (!context.mounted) return;
     if (ref.read(parentSignInOutNotifierProvider).hasError) {
       _failed(context);
@@ -308,17 +307,20 @@ class _SmallButton extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
-    final style = primary
-        ? FilledButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary)
-        : OutlinedButton.styleFrom(foregroundColor: p.link, side: BorderSide(color: p.offBorder));
+    final style =
+        primary
+            ? FilledButton.styleFrom(backgroundColor: p.primary, foregroundColor: p.onPrimary)
+            : OutlinedButton.styleFrom(foregroundColor: p.link, side: BorderSide(color: p.offBorder));
     final common = ButtonStyle(
       minimumSize: const WidgetStatePropertyAll(Size(44, 40)),
       padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 14)),
       shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
       // Keeps the theme's font (web font on the PWA), only size and weight change.
       textStyle: WidgetStatePropertyAll(
-        (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
-            .copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+        (Theme.of(context).textTheme.labelLarge ?? const TextStyle()).copyWith(
+          fontSize: 15,
+          fontWeight: FontWeight.w600,
+        ),
       ),
     );
     final merged = common.merge(style);

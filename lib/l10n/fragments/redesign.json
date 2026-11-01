@@ -153,7 +153,8 @@
         "answered": "Alle geantwortet",
         "deadline": "Antwort bis {date}",
         "unrecorded": "{count, plural, one {1 Termin noch nicht erfasst} other {{count} Termine noch nicht erfasst}}",
-        "viewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung."
+        "viewerHint": "Als Beobachter siehst du den Überblick. Einzelne Termine öffnet die Leitung.",
+        "changeAnswer": "Ändern"
       },
       "applicant": {
         "title": "Bewerbung",
@@ -777,7 +778,8 @@
         "answered": "All answered",
         "deadline": "Answer by {date}",
         "unrecorded": "{count, plural, one {1 event not recorded yet} other {{count} events not recorded yet}}",
-        "viewerHint": "As an observer you see the overview. Leaders open single events."
+        "viewerHint": "As an observer you see the overview. Leaders open single events.",
+        "changeAnswer": "Change"
       },
       "applicant": {
         "title": "Application",

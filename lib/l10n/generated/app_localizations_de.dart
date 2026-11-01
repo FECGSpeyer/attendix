@@ -9789,6 +9789,9 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignTodayChangeAnswer => 'Ändern';
+
+  @override
   String get redesignTodayChildFailed => 'Das hat nicht geklappt. Bitte versuch es noch einmal.';
 
   @override

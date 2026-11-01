@@ -9795,6 +9795,9 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignTodayChangeAnswer => 'Change';
+
+  @override
   String get redesignTodayChildFailed => 'That didn\'t work. Please try again.';
 
   @override

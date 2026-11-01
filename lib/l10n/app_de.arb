@@ -12813,6 +12813,10 @@
       "count": {}
     }
   },
+  "redesignTodayChangeAnswer": "Ändern",
+  "@redesignTodayChangeAnswer": {
+    "description": "redesign.today.changeAnswer"
+  },
   "redesignTodayChildFailed": "Das hat nicht geklappt. Bitte versuch es noch einmal.",
   "@redesignTodayChildFailed": {
     "description": "redesign.today.childFailed"
