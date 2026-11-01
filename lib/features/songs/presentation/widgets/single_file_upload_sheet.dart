@@ -173,7 +173,7 @@ class _SingleFileUploadSheetState extends ConsumerState<SingleFileUploadSheet> {
 
   /// Ionic `refreshSingleFileConflicts`
   void _refreshConflicts() {
-    _conflicts = findConflictingFiles(widget.existingFiles, _instrumentId, _effectiveNote, fileName: widget.file.name);
+    _conflicts = findConflictingFiles(widget.existingFiles, _instrumentId, _effectiveNote);
     _toReplace = defaultReplaceSelection(_conflicts, widget.file.name);
   }
 

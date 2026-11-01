@@ -90,18 +90,6 @@ void main() {
       expect(findConflictingFiles(existing, 11, null), isEmpty);
     });
 
-    test('solo parts only conflict with a file of the same name', () {
-      final solos = [
-        _file('Violine Solo.pdf', note: 'Solo'),
-        _file('Cello Solo.pdf', note: 'Solo'),
-      ];
-      expect(findConflictingFiles(solos, null, 'Solo', fileName: 'Horn Solo.pdf'), isEmpty);
-      expect(
-        findConflictingFiles(solos, null, 'Solo', fileName: 'cello solo.pdf').single.fileName,
-        'Cello Solo.pdf',
-      );
-    });
-
     test('preselects the same-named file, otherwise all conflicts', () {
       final conflicts = findConflictingFiles(existing, 10, null);
       expect(defaultReplaceSelection(conflicts, 'b.pdf'), {'https://example.com/b.pdf'});

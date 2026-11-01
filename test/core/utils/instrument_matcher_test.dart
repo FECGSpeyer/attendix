@@ -184,10 +184,13 @@ void main() {
       expect(_label('Звуки трубы - Fl.pdf', _orchestra), 'Flöte');
     });
 
-    test('solo parts', () {
+    test('solo parts go to their instrument, no own "Solo" label', () {
       expect(_label('Alt.pdf', ['Sopran', 'Alt']), 'Alt');
-      expect(_label('Solo Sopran.pdf', _orchestra), 'Solo');
       expect(_label('Trompete Solo.pdf', _orchestra), 'Trompete');
+      expect(_label('Solo Violine.pdf', _orchestra), 'Violine 1');
+      expect(_label('Welikij obras - Violin solo.pdf', _orchestra), 'Violine 1');
+      expect(_label('Solo Sopran.pdf', _orchestra), isNull);
+      expect(_label('Solo Sopran.pdf', [..._orchestra, 'Gesang'], synonyms: {'Gesang': 'sopran'}), 'Gesang');
     });
 
     test('Italian plurals and Cyrillic abbreviations', () {

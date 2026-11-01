@@ -50,9 +50,6 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
   if (any(['chor', 'choir', 'choral', 'chorsatz', 'хор', 'khor', 'хоровая'])) {
     return (instrumentId: null, note: kChoirAllNote);
   }
-  if (any(['solo', 'soli', 'solist', 'solostimme', 'соло', 'солист'])) {
-    return (instrumentId: null, note: 'Solo');
-  }
   return null;
 }
 
@@ -71,21 +68,10 @@ const partiturCompounds = [
   return null;
 }
 
-/// Categories that collect files of many parts (a violin solo and a
-/// trumpet solo are both "Solo"): one does not replace another.
-const collectingNotes = {'Solo'};
-
-/// Ionic `findConflictingFiles`: existing files with the same category. In a
-/// [collectingNotes] category only a file of the same name ([fileName]).
-List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, String? note, {String? fileName}) {
+/// Ionic `findConflictingFiles`: existing files with the same category.
+List<SongFile> findConflictingFiles(List<SongFile> files, int? instrumentId, String? note) {
   if (instrumentId != null) {
     return files.where((f) => f.instrumentId == instrumentId).toList();
-  }
-  if (collectingNotes.contains(note)) {
-    final name = fileName?.toLowerCase();
-    return files
-        .where((f) => f.instrumentId == null && f.note == note && name != null && f.fileName.toLowerCase() == name)
-        .toList();
   }
   return files
       .where((f) => f.instrumentId == null && (f.note ?? '') == (note ?? ''))
@@ -270,7 +256,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
 
   void _setCategory(int index, int? instrumentId, String? note) {
     final file = _files[index];
-    final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note, fileName: file.platformFile.name);
+    final conflicts = findConflictingFiles(widget.existingFiles, instrumentId, note);
     setState(() {
       // Also when the suggested (unsure) part is confirmed explicitly.
       if (file.instrumentId != instrumentId || instrumentId != null) {
@@ -327,7 +313,7 @@ class _FileUploadSheetState extends ConsumerState<FileUploadSheet> {
           isChoir: widget.isChoir,
         );
         final conflicts =
-            findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note, fileName: file.name);
+            findConflictingFiles(widget.existingFiles, cat.instrumentId, cat.note);
         final item = _FileToUpload(
           platformFile: file,
           instrumentId: cat.instrumentId,
