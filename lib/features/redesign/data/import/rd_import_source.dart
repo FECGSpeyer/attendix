@@ -134,10 +134,14 @@ class RdImportSource implements RdImportFiles {
       raw.reset();
       final data = raw.toUint8List();
       raw.reset();
+      // Never more than the size the ZIP declares comes out: a manipulated
+      // entry stops while it is unpacked, not after.
       final List<int> unpacked = switch (file.compressionType) {
         ZipFile.zipCompressionStore => data,
-        ZipFile.zipCompressionDeflate => inflateBuffer(data) ?? Inflate(data).getBytes(),
-        ZipFile.zipCompressionBZip2 => BZip2Decoder().decodeBytes(data),
+        ZipFile.zipCompressionDeflate => rdInflateAtMost(data, file.size) ??
+            (Inflate.stream(InputStream(data), _LimitedOutput(file.size)).output as OutputStream).getBytes(),
+        ZipFile.zipCompressionBZip2 =>
+          BZip2Decoder().decodeBuffer(InputStream(data, byteOrder: BIG_ENDIAN), output: _LimitedOutput(file.size)),
         _ => throw FormatException('compression ${file.compressionType}: $path'),
       };
       out = unpacked is Uint8List ? unpacked : Uint8List.fromList(unpacked);
@@ -185,5 +189,35 @@ class RdImportSource implements RdImportFiles {
         await s.close();
       } catch (_) {}
     }
+  }
+}
+
+/// Unpacked bytes of a ZIP entry, refused beyond [limit] (the size the ZIP
+/// declares) while they are written.
+class _LimitedOutput extends OutputStream {
+  _LimitedOutput(this.limit) : super(size: limit < 1 ? 1 : limit);
+
+  final int limit;
+
+  void _check(int more) {
+    if (length + more > limit) throw const FormatException('unpacks to more than declared');
+  }
+
+  @override
+  void writeByte(int value) {
+    _check(1);
+    super.writeByte(value);
+  }
+
+  @override
+  void writeBytes(List<int> bytes, [int? len]) {
+    _check(len ?? bytes.length);
+    super.writeBytes(bytes, len);
+  }
+
+  @override
+  void writeInputStream(InputStreamBase stream) {
+    _check(stream.length);
+    super.writeInputStream(stream);
   }
 }

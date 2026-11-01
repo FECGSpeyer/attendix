@@ -728,7 +728,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// "Passt so" (not while dates of Fassungen are read: the suggested
   /// Fassung may still change). It holds for the selection shown now; when
-  /// that changes later, the Werk is open again.
+  /// that changes later, or the person takes it back ([value] false), the
+  /// Werk is open again until the next "Passt so".
   void confirm(String workKey, {bool value = true}) {
     if (value && state.readingDates) return;
     final plan = state.plan;
@@ -742,7 +743,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     _decide((d) {
       final confirmed = {...d.confirmed};
       value ? confirmed.add(workKey) : confirmed.remove(workKey);
-      return d.copyWith(confirmed: confirmed, recheck: value ? ({...d.recheck}..remove(workKey)) : d.recheck);
+      // Taken back by hand, the Werk waits for another look too.
+      final recheck = {...d.recheck};
+      value ? recheck.remove(workKey) : recheck.add(workKey);
+      return d.copyWith(confirmed: confirmed, recheck: recheck);
     });
   }
 

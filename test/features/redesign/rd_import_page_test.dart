@@ -462,6 +462,23 @@ void main() {
     expect(() => source.read('Noten/1 Eins/Viola.pdf'), throwsFormatException);
   });
 
+  test('an entry that unpacks to more than it declares stops while unpacking', () {
+    final big = Uint8List(4 * 1024 * 1024);
+    final bytes = Uint8List.fromList(ZipEncoder().encode(Archive()..addFile(ArchiveFile('Noten/1 Eins/Viola.pdf', big.length, big)))!);
+    // Declare 100 bytes in the local header and the directory.
+    final data = ByteData.sublistView(bytes);
+    for (var i = 0; i + 4 <= bytes.length; i++) {
+      final sig = data.getUint32(i, Endian.little);
+      if (sig == 0x04034b50) data.setUint32(i + 22, 100, Endian.little);
+      if (sig == 0x02014b50) data.setUint32(i + 24, 100, Endian.little);
+    }
+    final source = RdImportSource.open([PlatformFile(name: 'Noten.zip', size: bytes.length, bytes: bytes)]);
+    expect(
+      () => source.read('Noten/1 Eins/Viola.pdf'),
+      throwsA(isA<FormatException>().having((e) => e.message, 'message', 'unpacks to more than declared')),
+    );
+  });
+
   test('the KI fills in sure answers, offers unsure ones and never overrides a person', () async {
     final calls = <Map<String, dynamic>>[];
     var reply = Completer<Map<String, dynamic>>();
@@ -726,6 +743,11 @@ void main() {
     expect(ws().recheck, isFalse);
     expect(ws().open, isFalse);
     expect(rdImportUploads(state().plan!, state().decisions), hasLength(2));
+
+    // Taken back by hand: open again until the next "Passt so".
+    controller.confirm(key, value: false);
+    expect(ws().recheck, isTrue);
+    expect(rdImportUploads(state().plan!, state().decisions), isEmpty);
   });
 
   test('back to the questions while their dates are read stays there', () async {

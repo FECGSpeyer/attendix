@@ -210,16 +210,16 @@ void main() {
       expect(state.flags, isNot(contains(RdWorkFlag.fassungen)));
       expect(state.files.values.where((f) => f.take), hasLength(4));
 
-      // In a choir "Alt" alone is the voice too.
+      // A lone "Alt" folder still holds an old version, also in a choir.
       final choir = rdBuildImportPlan(
-        [_e('Noten/1 Stille Nacht/Chor.pdf'), _e('Noten/1 Stille Nacht/Alt/Stille Nacht Alt.pdf')],
+        [_e('Noten/1 Stille Nacht/Chor.pdf', modified: DateTime(2020)), _e('Noten/1 Stille Nacht/Alt/Chor.pdf', modified: DateTime(2026))],
         songs: const [],
         instruments: const [InstrumentInfo(id: 20, name: 'Sopran'), InstrumentInfo(id: 21, name: 'Alt')],
         isChoir: true,
       );
-      expect(choir.works.single.fassungen, isEmpty);
+      expect(choir.works.single.fassungen.map((f) => (f.label, f.isOld)), [('', false), ('Alt', true)]);
+      expect(choir.works.single.defaultFassung, '');
 
-      // Elsewhere an "Alt" folder still holds an old version.
       final orchestra = _plan([
         _e('Noten/1 Stille Nacht/Viola.pdf'),
         _e('Noten/1 Stille Nacht/Alt/Viola.pdf'),

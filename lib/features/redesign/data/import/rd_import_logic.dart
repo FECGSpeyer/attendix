@@ -749,14 +749,13 @@ RdImportPlan rdBuildImportPlan(
       return [parent, rel].where((s) => s.isNotEmpty).join(' › ');
     }
 
-    // "Alt" is the choir voice, not an old version, in a choir, with a
-    // group of that name or next to other voice folders (Sopran, Tenor …).
+    // "Alt" is the choir voice, not an old version, only next to other
+    // voice folders (Sopran, Tenor …). A lone "Alt" folder stays an old
+    // version, also in a choir: when in doubt the Werk is checked.
     final segments = {
       for (final e in werkEntries) ...fassungKeyOf(e).split(RegExp(r'[|/]')).where((s) => s.isNotEmpty).map(_folded),
     };
-    final voices = isChoir ||
-        instruments.any((g) => _folded(g.name) == 'alt') ||
-        segments.any((s) => _voiceFoldersN.contains(s) || _voiceFoldersN.contains(s.split(' ').first));
+    final voices = segments.any((s) => _voiceFoldersN.contains(s) || _voiceFoldersN.contains(s.split(' ').first));
     bool isOldSegment(String s) => rdImportIsOldFolder(s) && !(voices && _isAltVoice(s));
     bool isOldKey(String key) => key.split(RegExp(r'[|/]')).any(isOldSegment);
 
