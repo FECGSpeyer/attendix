@@ -10745,6 +10745,10 @@
   "@redesignAccountsRemoveConfirm": {
     "description": "redesign.accounts.removeConfirm"
   },
+  "redesignAccountsRemoveFailed": "Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.",
+  "@redesignAccountsRemoveFailed": {
+    "description": "redesign.accounts.removeFailed"
+  },
   "redesignAccountsRemoveTitle": "Konto entfernen?",
   "@redesignAccountsRemoveTitle": {
     "description": "redesign.accounts.removeTitle"

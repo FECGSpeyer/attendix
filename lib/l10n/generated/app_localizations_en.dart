@@ -8168,6 +8168,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignAccountsRemoveConfirm => 'Remove';
 
   @override
+  String get redesignAccountsRemoveFailed => 'The account could not be removed. Please try again.';
+
+  @override
   String get redesignAccountsRemoveTitle => 'Remove account?';
 
   @override

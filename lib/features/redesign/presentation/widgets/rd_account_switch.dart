@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthException, Session;
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/account_switch_providers.dart';
@@ -60,7 +60,7 @@ Future<RdAccountChange> rdSwitchAccount(BuildContext context, SavedAccount accou
     if (context.mounted) ToastHelper.showError(context, l10n.redesignAccountsFailed);
     return RdAccountChange.failed;
   }
-  await _openAfterAccountChange(container, router);
+  await _openAfterAccountChange(container, router, account.userId);
   if (context.mounted) {
     ToastHelper.showSuccess(context, l10n.redesignAccountsSwitched(account.title));
   }
@@ -81,25 +81,48 @@ Future<void> rdAddAccount(
   final service = container.read(accountSwitchServiceProvider);
   final api = container.read(authTokenApiProvider);
   final hadSession = container.read(supabaseAuthProvider).currentSession != null;
+  final Session next;
   try {
-    await service.addAccount(
+    next = await service.addAccount(
       () => api.signInWithPassword(email, password),
       beforeActivate: hadSession ? () => removePushTokenBeforeAccountChange(container.read) : null,
     );
   } on AuthException catch (e) {
     throw mapLoginError(e);
   }
-  await _openAfterAccountChange(container, router);
+  await _openAfterAccountChange(container, router, next.user.id);
 }
 
 /// Same path as after a login: no group selected, the group selection opens
 /// the account's last group (or shows the list). Push registers the new
 /// account's token (TOKEN_REFRESHED does not trigger it like SIGNED_IN).
-Future<void> _openAfterAccountChange(ProviderContainer container, GoRouter router) async {
+///
+/// The app learns about the new session through the auth event stream a
+/// moment later. Until then every per-account provider (groups, saved
+/// group, role) still holds the OLD account's values, and the group
+/// selection would open with them – a blank start page that only filled
+/// after a tab change. So it first waits until the app runs as [userId].
+Future<void> _openAfterAccountChange(ProviderContainer container, GoRouter router, String userId) async {
+  await _waitUntilActive(container, userId);
   await container.read(currentTenantProvider.notifier).setTenantLocal(null);
   router.go('/tenants');
   if (isNativePushPlatform) {
     unawaited(container.read(pushServiceProvider).promptAndEnable());
+  }
+}
+
+Future<void> _waitUntilActive(ProviderContainer container, String userId) async {
+  if (container.read(currentAuthUserIdProvider) == userId) return;
+  final done = Completer<void>();
+  final sub = container.listen<String?>(currentAuthUserIdProvider, (_, next) {
+    if (next == userId && !done.isCompleted) done.complete();
+  });
+  try {
+    await done.future.timeout(const Duration(seconds: 5));
+  } on TimeoutException {
+    // Go on anyway; the providers follow as soon as the event arrives.
+  } finally {
+    sub.close();
   }
 }
 
@@ -178,8 +201,12 @@ class _RdAccountSwitchSheetState extends ConsumerState<_RdAccountSwitchSheet> {
         ],
       ),
     );
-    if (confirmed != true) return;
-    await ref.read(accountSwitchServiceProvider).remove(account.userId);
+    if (confirmed != true || !mounted) return;
+    try {
+      await ref.read(accountSwitchServiceProvider).remove(account.userId);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, l10n.redesignAccountsRemoveFailed);
+    }
   }
 
   @override

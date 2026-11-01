@@ -2354,6 +2354,7 @@
   "redesignAccountsRemove": "Remove from this device",
   "redesignAccountsRemoveBody": "{email} will be removed from this device and signed out there. To switch back you will need the password again.",
   "redesignAccountsRemoveConfirm": "Remove",
+  "redesignAccountsRemoveFailed": "The account could not be removed. Please try again.",
   "redesignAccountsRemoveTitle": "Remove account?",
   "redesignAccountsSignIn": "Sign in",
   "redesignAccountsSwitched": "Signed in as {name}",

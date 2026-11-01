@@ -7,25 +7,32 @@ import 'package:web/web.dart' as web;
 Future<T> runWithLock<T>(String name, Future<T> Function() body) async {
   final navigator = web.window.navigator as JSObject;
   if (!navigator.has('locks')) return body();
-  final result = Completer<T>();
+  // The body's outcome is kept as plain values (no Completer that could
+  // report an error before anyone listens) and handed out after the lock.
+  var ran = false;
+  T? value;
+  Object? error;
+  StackTrace? stack;
+
   JSPromise<JSAny?> granted(JSAny? _) {
-    final done = Completer<void>();
-    body().then(result.complete, onError: result.completeError).whenComplete(done.complete);
-    return done.future.toJS;
+    ran = true;
+    return () async {
+      try {
+        value = await body();
+      } catch (e, st) {
+        error = e;
+        stack = st;
+      }
+    }()
+        .toJS;
   }
 
   try {
     await web.window.navigator.locks.request(name, granted.toJS).toDart;
-  } catch (e, st) {
-    // Lock API failed before running the body: run without it.
-    if (!result.isCompleted) {
-      try {
-        result.complete(await body());
-      } catch (e2, st2) {
-        result.completeError(e2, st2);
-      }
-    }
-    if (!result.isCompleted) result.completeError(e, st);
+  } catch (_) {
+    // Lock API failed before granting: run without it.
+    if (!ran) return body();
   }
-  return result.future;
+  if (error != null) Error.throwWithStackTrace(error!, stack ?? StackTrace.current);
+  return value as T;
 }

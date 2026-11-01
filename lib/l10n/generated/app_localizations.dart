@@ -14219,6 +14219,12 @@ abstract class AppLocalizations {
   /// **'Entfernen'**
   String get redesignAccountsRemoveConfirm;
 
+  /// redesign.accounts.removeFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.'**
+  String get redesignAccountsRemoveFailed;
+
   /// redesign.accounts.removeTitle
   ///
   /// In de, this message translates to:

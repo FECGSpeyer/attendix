@@ -540,6 +540,54 @@ void main() {
     });
   });
 
+  group('Account switch – session generation of the real auth adapter', () {
+    String jwt(String sub) {
+      String b64(Map<String, dynamic> m) => base64Url.encode(utf8.encode(jsonEncode(m))).replaceAll('=', '');
+      final exp = DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/ 1000;
+      return '${b64({'alg': 'HS256', 'typ': 'JWT'})}.${b64({'sub': sub, 'exp': exp})}.sig';
+    }
+
+    String sessionJson(String user, String refresh) => jsonEncode({
+          'access_token': jwt(user),
+          'token_type': 'bearer',
+          'expires_in': 3600,
+          'refresh_token': refresh,
+          'user': _user(user).toJson(),
+        });
+
+    test('counts account changes and sign-outs, not refreshes of the same account', () async {
+      final client = GoTrueClient(url: 'http://localhost:1/auth/v1', autoRefreshToken: false);
+      final auth = SupabaseAccountSwitchAuth(client);
+      Future<void> settleEvents() => Future<void>.delayed(Duration.zero);
+
+      expect(auth.sessionGeneration, 0);
+      await client.recoverSession(sessionJson('a', 'ra1'));
+      await settleEvents();
+      final afterA = auth.sessionGeneration;
+      expect(afterA, greaterThan(0));
+
+      // Same account, new tokens (refresh): no new generation.
+      await client.recoverSession(sessionJson('a', 'ra2'));
+      await settleEvents();
+      expect(auth.sessionGeneration, afterA);
+
+      // Other account activated: new generation.
+      await client.recoverSession(sessionJson('b', 'rb1'));
+      await settleEvents();
+      expect(auth.sessionGeneration, afterA + 1);
+
+      // The server call fails here (no server); the local sign-out and its
+      // event happen before it.
+      try {
+        await client.signOut();
+      } catch (_) {}
+      await settleEvents();
+      expect(auth.sessionGeneration, afterA + 2);
+      auth.dispose();
+      client.dispose();
+    });
+  });
+
   group('Account switch – storage format', () {
     test('round trip and damaged data', () {
       final list = [

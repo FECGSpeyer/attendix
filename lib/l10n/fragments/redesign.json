@@ -638,7 +638,8 @@
         "more": "Optionen für {name}",
         "footer": "Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.",
         "loginSaved": "Gespeicherte Konten",
-        "loginOr": "oder mit einem anderen Konto anmelden"
+        "loginOr": "oder mit einem anderen Konto anmelden",
+        "removeFailed": "Das Konto konnte nicht entfernt werden. Bitte versuche es erneut."
       }
     }
   },
@@ -1281,7 +1282,8 @@
         "more": "Options for {name}",
         "footer": "Accounts are only stored on this device. Logging out removes the signed-in account from the list.",
         "loginSaved": "Saved accounts",
-        "loginOr": "or sign in with another account"
+        "loginOr": "or sign in with another account",
+        "removeFailed": "The account could not be removed. Please try again."
       }
     }
   }
