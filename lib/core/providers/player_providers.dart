@@ -110,13 +110,15 @@ Map<int, int> countPlayersByGroup(Iterable<Person> players) {
 ///
 /// Derived from [playersProvider], which every player change (create,
 /// archive, reactivate, instrument change) invalidates, so the counts stay
-/// current. While the list loads (or failed) it is null: Ionic behavior.
+/// current. While the list (re)loads or after an error it is null, also
+/// when an older list is still around: every group counts (Ionic behavior)
+/// instead of a stale count.
 final missingGroupsPlayerCountsProvider = Provider<Map<int, int>?>((ref) {
   final role = ref.watch(currentRoleProvider);
   if (!role.isConductor && !role.isHelperRole) return null;
-  final players = ref.watch(playersProvider).valueOrNull;
-  if (players == null) return null;
-  return countPlayersByGroup(players);
+  final players = ref.watch(playersProvider);
+  if (players.isLoading || players.hasError || !players.hasValue) return null;
+  return countPlayersByGroup(players.requireValue);
 });
 
 /// Notifier for player mutations

@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/player_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
@@ -44,24 +46,28 @@ void main() {
       expect(text([10], counts: counts), isNot(contains('Violine 3')));
     });
 
-    test('empty counts (not loaded) fall back to every group', () {
-      expect(text([10, 20], counts: const {}), contains('Saxophon'));
+    test('null (unknown) counts every group, empty counts mean nobody plays', () {
+      expect(text([10, 20]), contains('Saxophon'));
+      expect(text([10, 20], counts: const {}), isEmpty);
+      expect(text([], counts: const {}), isEmpty);
     });
   });
 
   group('missingGroupsPlayerCountsProvider', () {
     List<Person> players = [];
+    Future<List<Person>> Function()? load;
 
     ProviderContainer container(Role role) {
       final c = ProviderContainer(overrides: [
         currentRoleProvider.overrideWithValue(role),
-        playersProvider.overrideWith((ref) async => players),
+        playersProvider.overrideWith((ref) => load?.call() ?? Future.value(players)),
       ]);
       addTearDown(c.dispose);
       return c;
     }
 
     setUp(() {
+      load = null;
       players = [
         TestFactories.createPerson(id: 1, tenantId: 10, instrument: 10),
         TestFactories.createPerson(id: 2, tenantId: 10, instrument: 10),
@@ -101,6 +107,36 @@ void main() {
       c.invalidate(playersProvider);
       await c.read(playersProvider.future);
       expect(c.read(missingGroupsPlayerCountsProvider), {10: 2, 21: 1});
+    });
+
+    test('no stale count while the list reloads or after an error', () async {
+      final c = container(Role.admin);
+      c.listen(missingGroupsPlayerCountsProvider, (_, __) {});
+      await c.read(playersProvider.future);
+      expect(c.read(missingGroupsPlayerCountsProvider), {10: 2, 20: 1});
+
+      // Reload: the old list is still around, the count is not used.
+      final pending = Completer<List<Person>>();
+      load = () => pending.future;
+      c.invalidate(playersProvider);
+      expect(c.read(missingGroupsPlayerCountsProvider), isNull);
+      pending.complete(players);
+      await c.read(playersProvider.future);
+      expect(c.read(missingGroupsPlayerCountsProvider), {10: 2, 20: 1});
+
+      // Error after a successful load: every group counts again.
+      load = () => Future.error(Exception('offline'));
+      c.invalidate(playersProvider);
+      await expectLater(c.read(playersProvider.future), throwsException);
+      expect(c.read(missingGroupsPlayerCountsProvider), isNull);
+    });
+
+    test('everybody archived: an empty count, nothing is missing', () async {
+      players = [];
+      final c = container(Role.admin);
+      c.listen(missingGroupsPlayerCountsProvider, (_, __) {});
+      await c.read(playersProvider.future);
+      expect(c.read(missingGroupsPlayerCountsProvider), isEmpty);
     });
   });
 }
