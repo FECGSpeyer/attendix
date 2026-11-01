@@ -16007,6 +16007,12 @@ abstract class AppLocalizations {
   /// **'Mitglieder suchen'**
   String get redesignMembersSearchLabel;
 
+  /// redesign.members.searchRead
+  ///
+  /// In de, this message translates to:
+  /// **'Name oder Register'**
+  String get redesignMembersSearchRead;
+
   /// redesign.members.section
   ///
   /// In de, this message translates to:
@@ -16018,6 +16024,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Auswertung'**
   String get redesignMembersStats;
+
+  /// redesign.members.total
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
+  String redesignMembersTotal(num count);
 
   /// redesign.notif.forMe
   ///
@@ -16096,6 +16108,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Route'**
   String get redesignOwnRoute;
+
+  /// redesign.parents.allKids
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Kinder'**
+  String get redesignParentsAllKids;
+
+  /// redesign.parents.childRate
+  ///
+  /// In de, this message translates to:
+  /// **'{name} · {percent} %'**
+  String redesignParentsChildRate(Object name, Object percent);
+
+  /// redesign.parents.route
+  ///
+  /// In de, this message translates to:
+  /// **'Route'**
+  String get redesignParentsRoute;
+
+  /// redesign.parents.today
+  ///
+  /// In de, this message translates to:
+  /// **'Heute'**
+  String get redesignParentsToday;
 
   /// redesign.person.absence
   ///
@@ -16768,6 +16804,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Geburtstag: {name} ({day}) +{count}'**
   String redesignTodayBirthdayMore(Object name, Object day, Object count);
+
+  /// redesign.today.changeAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignTodayChangeAnswer;
 
   /// redesign.today.childFailed
   ///

@@ -32,7 +32,7 @@ void main() {
   });
 
   test('web: loads the asset and keeps a copy', () async {
-    await loadAppEnv(bundle: _Bundle("SUPABASE_URL=https://x.supabase.co\nDEMO_PASSWORD='a#b'"), web: true);
+    await loadAppEnv(bundle: _Bundle("SUPABASE_URL=https://x.supabase.co\nSUPABASE_ANON_KEY=k\nDEMO_PASSWORD='a#b'"), web: true);
     expect(dotenv.get('SUPABASE_URL'), 'https://x.supabase.co');
     expect(dotenv.get('DEMO_PASSWORD'), 'a#b');
     final prefs = await SharedPreferences.getInstance();
@@ -41,7 +41,7 @@ void main() {
 
   test('web offline: falls back to the stored copy', () async {
     SharedPreferences.setMockInitialValues({
-      appEnvCacheKey: "SUPABASE_URL=https://x.supabase.co\nDEMO_PASSWORD='a#b'",
+      appEnvCacheKey: "SUPABASE_URL=https://x.supabase.co\nSUPABASE_ANON_KEY=k\nDEMO_PASSWORD='a#b'",
     });
     await loadAppEnv(bundle: _Bundle(null), web: true);
     expect(dotenv.isInitialized, isTrue);
@@ -50,9 +50,34 @@ void main() {
   });
 
   test('native: no copy is stored', () async {
-    await loadAppEnv(bundle: _Bundle('SUPABASE_URL=https://x.supabase.co'), web: false);
+    await loadAppEnv(bundle: _Bundle('SUPABASE_URL=https://x.supabase.co\nSUPABASE_ANON_KEY=k'), web: false);
     expect(dotenv.get('SUPABASE_URL'), 'https://x.supabase.co');
     final prefs = await SharedPreferences.getInstance();
     expect(prefs.getString(appEnvCacheKey), isNull);
+  });
+
+  test('web: an incomplete file keeps the stored copy', () async {
+    const good = "SUPABASE_URL=https://x.supabase.co\nSUPABASE_ANON_KEY=key";
+    SharedPreferences.setMockInitialValues({appEnvCacheKey: good});
+    await loadAppEnv(
+        bundle: _Bundle('SUPABASE_URL=https://x.supabase.co\nSUPABASE_ANON_KEY='),
+        web: true);
+    expect(dotenv.get('SUPABASE_ANON_KEY'), 'key');
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString(appEnvCacheKey), good);
+  });
+
+  test('an incomplete file without a stored copy is still loaded', () async {
+    await loadAppEnv(bundle: _Bundle('SUPABASE_URL=https://x.supabase.co'), web: true);
+    expect(dotenv.isInitialized, isTrue);
+    expect(dotenv.maybeGet('SUPABASE_ANON_KEY'), isNull);
+    final prefs = await SharedPreferences.getInstance();
+    expect(prefs.getString(appEnvCacheKey), isNull);
+  });
+
+  test('isUsableAppEnv needs URL and anon key', () {
+    expect(isUsableAppEnv(null), isFalse);
+    expect(isUsableAppEnv('SUPABASE_URL=a'), isFalse);
+    expect(isUsableAppEnv("SUPABASE_URL=a\nSUPABASE_ANON_KEY='b'"), isTrue);
   });
 }

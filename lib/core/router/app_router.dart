@@ -112,6 +112,7 @@ import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
 import '../../features/redesign/presentation/pages/rd_members_page.dart';
+import '../../features/redesign/presentation/pages/rd_voice_leader_page.dart';
 import '../../features/redesign/presentation/pages/rd_own_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_page.dart';
 import '../../features/redesign/presentation/pages/rd_person_history_page.dart';
@@ -852,7 +853,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/members',
             name: 'members',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const MembersPage(),
+              // REDESIGN: Spieler/Helfer get the read-only list in the new design.
+              child: const _BetaOr(beta: RdMembersPage(), classic: MembersPage()),
               state: state,
             ),
           ),
@@ -862,7 +864,8 @@ final routerProvider = Provider<GoRouter>((ref) {
             path: '/parents',
             name: 'parentsPortal',
             pageBuilder: (context, state) => AppPageTransitions.none(
-              child: const ParentsPortalPage(),
+              // REDESIGN: Eltern get their Termine in the new design.
+              child: const _BetaOr(beta: RdEventsPage(), classic: ParentsPortalPage()),
               state: state,
             ),
           ),
@@ -1065,7 +1068,8 @@ final routerProvider = Provider<GoRouter>((ref) {
               GoRoute(
                 path: 'voice-leader',
                 name: 'voiceLeader',
-                builder: (context, state) => const VoiceLeaderPage(),
+                builder: (context, state) =>
+                    const _BetaOr(beta: RdVoiceLeaderPage(), classic: VoiceLeaderPage()),
               ),
               GoRoute(
                 path: 'shifts',
@@ -1382,4 +1386,17 @@ class _AppShell extends ConsumerWidget {
         ? RdShell(child: child)
         : MainShell(child: child);
   }
+}
+
+/// REDESIGN: [beta] while the new design is on, else [classic] (the
+/// Ionic-parity page). Same route, so links, pushes and role gates stay.
+class _BetaOr extends ConsumerWidget {
+  const _BetaOr({required this.beta, required this.classic});
+
+  final Widget beta;
+  final Widget classic;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) =>
+      ref.watch(redesignEnabledProvider) ? beta : classic;
 }

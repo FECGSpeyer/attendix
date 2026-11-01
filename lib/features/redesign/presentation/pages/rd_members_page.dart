@@ -8,6 +8,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_palette.dart';
@@ -17,14 +18,18 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../l10n/l10n.dart';
 import '../../data/providers/rd_members_providers.dart';
 import '../../data/rd_members_logic.dart';
+import '../../../members/data/providers/members_providers.dart' show membersEinteilungOptionsProvider;
 import '../widgets/members/rd_invite_sheet.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 
-/// REDESIGN: tab "Mitglieder" for Dirigent and Beobachter (canvas
-/// "Menschen"): Aktiv / Pausiert / Wartet (also by swiping the list),
-/// search, registers with Ø attendance, birthdays and absences in the rows.
+/// REDESIGN: tab "Mitglieder" (canvas "Menschen"). Dirigent and Beobachter:
+/// Aktiv / Pausiert / Wartet (also by swiping the list), search, registers
+/// with Ø attendance, birthdays and absences in the rows. Spieler, Helfer
+/// and Stimmführer (old `/members`) get the same page read-only: search,
+/// "Einteilung" (Nord / Süd …) instead of Aktiv / Pausiert, names and the
+/// Stimmführung tag only, no numbers and no person pages.
 class RdMembersPage extends ConsumerStatefulWidget {
   const RdMembersPage({super.key});
 
@@ -35,6 +40,9 @@ class RdMembersPage extends ConsumerStatefulWidget {
 class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   RdMembersFilter _filter = RdMembersFilter.active;
   String _query = '';
+
+  /// Read-only list: selected "Einteilung" ('' = all).
+  String _einteilung = '';
 
   /// Thumb of Aktiv / Pausiert / Wartet while swiping the list.
   /// Notifier so only the segmented control rebuilds while swiping, not
@@ -53,7 +61,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
   Future<void> _checkAndUnpause() async {
     if (!mounted) return;
     final role = ref.read(effectiveRoleProvider);
-    if (!(role.isAdmin || role.isResponsible)) return;
+    if (!role.canSeePeopleTab || !(role.isAdmin || role.isResponsible)) return;
     final repo = ref.read(playerRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
     try {
@@ -73,9 +81,10 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
 
   @override
   Widget build(BuildContext context) {
+    final role = ref.watch(effectiveRoleProvider);
+    if (!role.canSeePeopleTab) return _readOnly(context);
     final p = context.rd;
     final l10n = context.l10n;
-    final role = ref.watch(effectiveRoleProvider);
     final canApprove = role.isAdmin || role.isResponsible;
     final peopleAsync = ref.watch(realtimePlayersProvider);
     final people = peopleAsync.valueOrNull ?? const <Person>[];
@@ -148,35 +157,7 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
         ],
       ),
       const SizedBox(height: 12),
-      TextField(
-        controller: _search,
-        onChanged: (v) => setState(() => _query = v),
-        textInputAction: TextInputAction.search,
-        decoration: InputDecoration(
-          hintText: l10n.redesignMembersSearch,
-          prefixIcon: Icon(Icons.search, color: p.text2),
-          suffixIcon: _query.isEmpty
-              ? null
-              : IconButton(
-                  icon: Icon(Icons.close, color: p.text2),
-                  tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
-                  onPressed: () => setState(() {
-                    _search.clear();
-                    _query = '';
-                  }),
-                ),
-          filled: true,
-          fillColor: p.surface,
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(p.buttonRadius),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(p.buttonRadius),
-            borderSide: BorderSide.none,
-          ),
-        ),
-      ),
+      _searchField(context),
       const SizedBox(height: 12),
       ValueListenableBuilder<double?>(
         valueListenable: _swipePos,
@@ -308,6 +289,143 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
       children: children,
     );
   }
+
+  Widget _searchField(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return TextField(
+        controller: _search,
+        onChanged: (v) => setState(() => _query = v),
+        textInputAction: TextInputAction.search,
+        decoration: InputDecoration(
+          hintText: l10n.redesignMembersSearch,
+          prefixIcon: Icon(Icons.search, color: p.text2),
+          suffixIcon: _query.isEmpty
+              ? null
+              : IconButton(
+                  icon: Icon(Icons.close, color: p.text2),
+                  tooltip: MaterialLocalizations.of(context).deleteButtonTooltip,
+                  onPressed: () => setState(() {
+                    _search.clear();
+                    _query = '';
+                  }),
+                ),
+          filled: true,
+          fillColor: p.surface,
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(p.buttonRadius),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(p.buttonRadius),
+            borderSide: BorderSide.none,
+          ),
+        ),
+      );
+  }
+
+  /// Spieler, Helfer, Stimmführer: the same list, read-only (old `/members`).
+  Widget _readOnly(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final peopleAsync = ref.watch(realtimePlayersProvider);
+    final people = peopleAsync.valueOrNull ?? const <Person>[];
+    final groups = ref.watch(groupsProvider).valueOrNull ?? const [];
+    final options = ref.watch(membersEinteilungOptionsProvider);
+    final einteilung = options.contains(_einteilung) ? _einteilung : '';
+    final values = ['', ...options];
+
+    final shown = einteilung.isEmpty ? people : people.where((x) => rdEinteilungOf(x) == einteilung).toList();
+    final sections = rdMemberSections(shown, groups: groups, percentages: const {}, noGroupLabel: l10n.attendanceNoGroup);
+    final filtered = [
+      for (final s in sections)
+        if (s.people.any((x) => rdPersonMatches(x, _query, register: s.title)))
+          RdMemberSection(
+            title: s.title,
+            people: s.people.where((x) => rdPersonMatches(x, _query, register: s.title)).toList(),
+            isRegister: s.isRegister,
+          ),
+    ];
+
+    final body = <Widget>[];
+    if (peopleAsync.isLoading && people.isEmpty) {
+      body.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
+    } else if (peopleAsync.hasError && people.isEmpty) {
+      body.add(RdInfoCard(
+        text: l10n.redesignTodayLoadFailed,
+        icon: Icons.cloud_off_outlined,
+        action: RdOutlineButton(
+          label: l10n.redesignCommonRetry,
+          onPressed: () => ref.invalidate(realtimePlayersProvider),
+        ),
+      ));
+    } else if (filtered.isEmpty) {
+      body.add(RdInfoCard(
+        icon: Icons.people_outline,
+        text: _query.trim().isNotEmpty || einteilung.isNotEmpty ? l10n.redesignMembersNoMatch : l10n.redesignMembersEmpty,
+      ));
+    } else {
+      for (final s in filtered) {
+        body.add(_SectionHeader(section: s));
+        body.add(RdGroupedList(children: [
+          for (final person in s.people)
+            _MemberRow(
+              key: ValueKey('rd-member-${person.id}'),
+              person: person,
+              showGroup: s.isRegister,
+              percent: null,
+              absence: null,
+              onTap: null,
+              readOnly: true,
+              einteilung: options.isNotEmpty && einteilung.isEmpty ? rdEinteilungOf(person) : null,
+            ),
+        ]));
+        body.add(const SizedBox(height: 18));
+      }
+    }
+
+    final list = Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: body);
+    return RdPage(
+      onRefresh: () async {
+        ref.invalidate(realtimePlayersProvider);
+        ref.invalidate(personExtraFieldsProvider);
+      },
+      children: [
+        Semantics(
+          header: true,
+          child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
+        ),
+        // Ionic "Personen (n)".
+        if (people.isNotEmpty) Text(l10n.redesignMembersTotal(people.length), style: RdType.meta(p, size: 15)),
+        const SizedBox(height: 12),
+        _searchField(context),
+        const SizedBox(height: 12),
+        if (options.isNotEmpty) ...[
+          ValueListenableBuilder<double?>(
+            valueListenable: _swipePos,
+            builder: (context, pos, _) => RdSegmented<String>(
+              values: values,
+              selected: einteilung,
+              position: pos,
+              labelOf: (v) => v.isEmpty ? l10n.redesignCommonAll : v,
+              onChanged: (v) => setState(() => _einteilung = v),
+            ),
+          ),
+          const SizedBox(height: 16),
+          RdSwipeSwitch<String>(
+            values: values,
+            selected: einteilung,
+            onChanged: (v) => setState(() => _einteilung = v),
+            onDrag: (pos) => _swipePos.value = pos,
+            child: list,
+          ),
+        ] else ...[
+          const SizedBox(height: 4),
+          list,
+        ],
+      ],
+    );
+  }
 }
 
 class _SectionHeader extends StatelessWidget {
@@ -346,13 +464,22 @@ Color rdPercentColor(RdPalette p, int percent) =>
 
 class _MemberRow extends StatelessWidget {
   const _MemberRow({
+    super.key,
     required this.person,
     required this.showGroup,
     required this.percent,
     required this.absence,
     required this.onTap,
     this.selected = false,
+    this.readOnly = false,
+    this.einteilung,
   });
+
+  /// Spieler/Helfer view: no birthdays, absences, pauses or mail addresses.
+  final bool readOnly;
+
+  /// "Nord" / "Süd" while all are shown (read-only view).
+  final String? einteilung;
 
   final Person person;
   final bool showGroup;
@@ -373,8 +500,9 @@ class _MemberRow extends StatelessWidget {
 
     final hints = <String>[
       if (showGroup && (person.groupName ?? '').isNotEmpty) person.groupName!,
+      if (einteilung != null) einteilung!,
     ];
-    final birthdayIn = rdDaysToBirthday(person.birthday);
+    final birthdayIn = readOnly ? null : rdDaysToBirthday(person.birthday);
     if (birthdayIn != null && birthdayIn <= 7) {
       hints.add(switch (birthdayIn) {
         0 => l10n.redesignMembersBirthdayToday,
@@ -382,7 +510,9 @@ class _MemberRow extends StatelessWidget {
         _ => l10n.redesignMembersBirthdayIn(birthdayIn),
       });
     }
-    if (person.paused) {
+    if (readOnly) {
+      // Names only, like the old list.
+    } else if (person.paused) {
       final until = DateTime.tryParse(person.pausedUntil ?? '');
       if (until != null) hints.add(l10n.redesignMembersPausedUntil(short.format(until)));
     } else if (absence != null) {
@@ -396,7 +526,7 @@ class _MemberRow extends StatelessWidget {
         hints.add(l10n.redesignMembersAbsentFrom(short.format(from)));
       }
     }
-    if (person.pending && (person.email ?? '').isNotEmpty) hints.add(person.email!);
+    if (!readOnly && person.pending && (person.email ?? '').isNotEmpty) hints.add(person.email!);
 
     final pct = percent;
     final low = pct != null && pct < 50;
@@ -434,17 +564,7 @@ class _MemberRow extends StatelessWidget {
                             ),
                             if (person.isLeader) ...[
                               const SizedBox(width: 6),
-                              Container(
-                                padding: const EdgeInsets.symmetric(horizontal: 6, vertical: 2),
-                                decoration: BoxDecoration(
-                                  color: p.soft,
-                                  borderRadius: BorderRadius.circular(6),
-                                ),
-                                child: Text(
-                                  l10n.redesignMembersLeader,
-                                  style: TextStyle(fontSize: 11, fontWeight: FontWeight.w700, color: p.softText),
-                                ),
-                              ),
+                              const RdLeaderTag(),
                             ],
                           ],
                         ),
@@ -489,4 +609,11 @@ class _MemberRow extends StatelessWidget {
       ),
     );
   }
+}
+
+/// The "einteilung" value of [person] ("Nord"), null when unset or "-".
+String? rdEinteilungOf(Person person) {
+  final value = person.additionalFields?['einteilung']?.toString().trim();
+  if (value == null || value.isEmpty || value == '-') return null;
+  return value;
 }

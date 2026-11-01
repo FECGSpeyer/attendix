@@ -1,17 +1,17 @@
 {
   "versions": [
     {
-      "version": "0.30.2",
+      "version": "0.31.2",
       "date": "1.11.2026",
       "changes": [
         "🎨 Lila und Grau bei den Status wie in der bisherigen Web-App",
         "🐛 Häkchen-Badge beim Termin wieder flach statt zu hoch",
         "🐛 „Zum App Store“ bricht im Hinweisfenster nicht mehr um",
-        "🎨 Plus-Knopf ohne Schatten, Filter-Knopf bei den Werken am Computer wie in der bisherigen Web-App"
+        "🎨 Plus-Knopf ohne Schatten, Filter-Knopf bei den Werken und Anwesenheitsblock in der Übersicht am Computer wie in der bisherigen Web-App"
       ]
     },
     {
-      "version": "0.30.1",
+      "version": "0.31.1",
       "date": "1.11.2026",
       "changes": [
         "🐛 Web-App: Die installierte App startet jetzt auch ohne Internet bis zur Anmeldung, wie die bisherige Web-App",
@@ -19,6 +19,17 @@
         "🎨 Dunkles Design am Computer: Termine, Übersicht und Abmelden haben wieder den fast schwarzen Hintergrund",
         "🎨 Hinweisfenster am Computer sind höchstens so breit wie in der bisherigen App",
         "⚡ Web-App: Schnellerer Start, Schriften und Einstellungen laden parallel zum App-Code"
+      ]
+    },
+    {
+      "version": "0.31.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Beta-Design, Mitglieder für Spieler und Helfer: dieselbe Mitglieder-Seite wie für Dirigenten, nur zum Lesen, mit Suche, Registern, „Stimmführung“ und Einteilung (z. B. Nord/Süd) als Filter",
+        "✨ Beta-Design, Termine für Eltern: dieselbe Termine-Seite wie für Spieler, mit Zu- und Absage pro Kind direkt auf der Karte und Termin-Details mit Ablaufplan, Infos, Anhang und Route",
+        "✨ Beta-Design, Stimmführer: „Meine Stimme“ mit Kontakt und kommenden Abwesenheiten im neuen Design",
+        "✨ Beta-Design, Eltern: „Alle Kinder“ sagt für alle Kinder auf einmal zu oder ab, wie in der bisherigen Eltern-Ansicht",
+        "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]
     },
     {
