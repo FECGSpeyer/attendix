@@ -20,8 +20,9 @@
 //   install, and the old worker with its complete cache stays.
 // - No skipWaiting on install: the new worker takes over when the app is
 //   closed, or when the user taps "Aktualisieren"; then every open tab
-//   reloads (web/index.html, controllerchange), so no page keeps running
-//   old code under the new worker.
+//   reloads (activate navigates them; web/index.html also reloads on
+//   controllerchange), so no page keeps running old code under the new
+//   worker.
 // - A cache miss that the network answers with another deploy's file still
 //   reaches the page (no other copy exists), but triggers an update check,
 //   so the page offers "Aktualisieren".
@@ -91,18 +92,33 @@ async function fillCache() {
 }
 
 self.addEventListener('activate', (event) => {
-  event.waitUntil((async () => {
-    for (const name of await caches.keys()) {
-      const ours = name.startsWith(CACHE_PREFIX) || name === 'attendix-app-cache' ||
-        name === 'attendix-app-manifest';
-      // Older Attendix deploys and Flutter's old worker caches.
-      const flutter = name === 'flutter-app-cache' || name === 'flutter-temp-cache' ||
-        name === 'flutter-app-manifest';
-      if ((ours && name !== CACHE_NAME) || flutter) await caches.delete(name);
-    }
-    await self.clients.claim();
-  })());
+  event.waitUntil(activate());
 });
+
+async function activate() {
+  // An older Attendix deploy or Flutter's old worker was here before: this
+  // is an update, not the first visit.
+  let update = false;
+  for (const name of await caches.keys()) {
+    const ours = name.startsWith(CACHE_PREFIX) || name === 'attendix-app-cache' ||
+      name === 'attendix-app-manifest';
+    const flutter = name === 'flutter-app-cache' || name === 'flutter-temp-cache' ||
+      name === 'flutter-app-manifest';
+    if ((ours && name !== CACHE_NAME) || flutter) {
+      update = true;
+      await caches.delete(name);
+    }
+  }
+  await self.clients.claim();
+  if (!update) return;
+  // SOL (#272): every open tab still runs the previous deploy's code; reload
+  // it into this one. Pages of this index.html reload on controllerchange as
+  // well, but tabs of the Flutter 3.29 deploy only reload on their own
+  // "Aktualisieren", so the worker does it for all of them.
+  for (const client of await self.clients.matchAll({ type: 'window' })) {
+    if (client.navigate) client.navigate(client.url).catch(() => {});
+  }
+}
 
 /** Build-relative path of a same-origin URL ('/' for the app page). */
 function keyFor(url, origin) {

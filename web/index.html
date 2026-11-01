@@ -226,12 +226,16 @@
       // (in this or another tab), so every tab that ran under the previous
       // worker reloads – no page keeps running old code under the new one.
       // The first worker of a fresh visit (no controller before) is no
-      // version change and reloads nothing.
+      // version change and reloads nothing – but every later change does
+      // (tool/web/test/sw_behavior.test.mjs). The new worker also reloads
+      // tabs of the previous deploy itself (activate), for tabs whose page
+      // still has an older version of this handler.
       var hadController = !!navigator.serviceWorker.controller;
       navigator.serviceWorker.addEventListener('controllerchange', () => {
         if (userRequestedUpdate || hadController) {
           window.location.reload();
         }
+        hadController = true;
       });
     }
 
