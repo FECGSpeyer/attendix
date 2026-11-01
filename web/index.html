@@ -165,6 +165,13 @@
         setInterval(checkForUpdate, UPDATE_CHECK_INTERVAL_MS);
         checkForUpdate();
 
+        // PWA_SW (SOL #272): a new worker may already be waiting from an
+        // earlier visit (it only takes over after "Aktualisieren").
+        if (registration.waiting && navigator.serviceWorker.controller) {
+          window.appUpdateAvailable = true;
+          window.dispatchEvent(new CustomEvent('flutter-update-available'));
+        }
+
         // Listen for new service worker waiting
         registration.addEventListener('updatefound', () => {
           const newWorker = registration.installing;
@@ -191,10 +198,21 @@
       });
     }
 
-    // Function for Dart to call when user clicks "Update"
+    // Function for Dart to call when user clicks "Update".
+    // PWA_SW (SOL #272): the new worker waits (no mixing of two deploys in
+    // one page), so it is told to take over; the controllerchange listener
+    // above then reloads. A plain reload would keep the old worker.
     window.applyServiceWorkerUpdate = function() {
       userRequestedUpdate = true;
-      window.location.reload();
+      var reload = function () { window.location.reload(); };
+      if (!('serviceWorker' in navigator)) return reload();
+      navigator.serviceWorker.getRegistration().then(function (registration) {
+        if (!registration || !registration.waiting || !navigator.serviceWorker.controller) {
+          return reload();
+        }
+        registration.waiting.postMessage('skipWaiting');
+        setTimeout(reload, 3000); // in case controllerchange never comes
+      }).catch(reload);
     };
   </script>
 
@@ -227,8 +245,9 @@
 
   <!-- PWA_SW: Attendix's own service worker (tool/web/write_service_worker.dart
        writes it after the build). Registered after the first frame so it
-       never delays the start; then it is told which files this page already
-       loaded, so one visit is enough for an offline start. Not inside an
+       never delays the start; then, on every start, the active worker is
+       told which files this page loaded, so one visit is enough for an
+       offline start (it only stores files of its own deploy). Not inside an
        iframe (Teams tab), like Ionic. -->
   <script>
     if ('serviceWorker' in navigator && !window.attendixInIframe) {

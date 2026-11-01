@@ -5,14 +5,17 @@
 //
 // Replaces build/web/flutter_service_worker.js with
 // tool/web/service_worker_template.js and fills its RESOURCES map with the
-// md5 of every built file. Dotfiles (assets/.env.app) are included on
-// purpose: Flutter's old worker skipped them, which broke the offline start.
+// sha256 of every built file (the worker checks downloads against it) and
+// VERSION, the name of this deploy's cache. Dotfiles (assets/.env.app) are
+// included on purpose: Flutter's old worker skipped them, which broke the
+// offline start.
 import 'dart:convert';
 import 'dart:io';
 
 import 'package:crypto/crypto.dart';
 
 const _placeholder = '/*RESOURCES*/{}';
+const _versionPlaceholder = "/*VERSION*/''";
 
 /// Files that are never requested by the app.
 bool isSkipped(String path) =>
@@ -23,12 +26,18 @@ bool isSkipped(String path) =>
     path == 'assets/NOTICES';
 
 String buildServiceWorker(String template, Map<String, String> resources) {
-  if (!template.contains(_placeholder)) {
-    throw StateError('Template has no $_placeholder');
+  if (!template.contains(_placeholder) ||
+      !template.contains(_versionPlaceholder)) {
+    throw StateError('Template has no $_placeholder or $_versionPlaceholder');
   }
   final sorted = Map.fromEntries(
       resources.entries.toList()..sort((a, b) => a.key.compareTo(b.key)));
-  return template.replaceFirst(_placeholder, jsonEncode(sorted));
+  final json = jsonEncode(sorted);
+  // Changes with every changed file, so each deploy gets its own cache.
+  final version = sha256.convert(utf8.encode(json)).toString().substring(0, 16);
+  return template
+      .replaceFirst(_placeholder, json)
+      .replaceFirst(_versionPlaceholder, "'$version'");
 }
 
 Map<String, String> collectResources(Directory buildDir) {
@@ -40,7 +49,7 @@ Map<String, String> collectResources(Directory buildDir) {
         .substring(root.length + 1)
         .replaceAll(Platform.pathSeparator, '/');
     if (isSkipped(path)) continue;
-    result[path] = md5.convert(entity.readAsBytesSync()).toString();
+    result[path] = sha256.convert(entity.readAsBytesSync()).toString();
   }
   return result;
 }
