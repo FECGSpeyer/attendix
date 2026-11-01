@@ -24,6 +24,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/redesign_providers.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/attendix_logo.dart';
+import '../../../redesign/presentation/widgets/rd_account_switch.dart' show RdSavedAccountsOnLogin;
 import '../../../redesign/presentation/widgets/rd_logo.dart' show rdLogoColors;
 import '../widgets/ion_buttons.dart';
 import '../widgets/ion_input_decoration.dart';
@@ -294,6 +295,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     }
     final user = ref.read(supabaseClientProvider).auth.currentUser;
     if (user != null) await _routeAfterAuth(user);
+  }
+
+  /// ACCOUNT_SWITCH: saved account without a valid session → its e-mail
+  /// goes into the form, the password field gets the focus.
+  void _pickSavedEmail(String email) {
+    if (_mode != AuthMode.password) _setMode(AuthMode.password);
+    setState(() {
+      _emailController.text = email;
+      _passwordController.clear();
+    });
   }
 
   /// Navigate after a successful sign-in (Ionic routeAfterAuth).
@@ -577,9 +588,19 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                                     ? 0
                                     : (_passwordFormHeight ?? 0),
                               ),
-                              child: KeyedSubtree(
-                                key: _formBoxKey,
-                                child: _buildForm(context),
+                              child: Column(
+                                mainAxisSize: MainAxisSize.min,
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  // ACCOUNT_SWITCH (Beta): saved accounts
+                                  // open without password.
+                                  if (ref.watch(redesignEnabledProvider) && !_teamsLinkMode)
+                                    RdSavedAccountsOnLogin(onPickEmail: _pickSavedEmail),
+                                  KeyedSubtree(
+                                    key: _formBoxKey,
+                                    child: _buildForm(context),
+                                  ),
+                                ],
                               ),
                             ),
                           ),

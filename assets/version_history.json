@@ -1,13 +1,22 @@
 {
   "versions": [
     {
-      "version": "0.31.2",
+      "version": "0.32.1",
       "date": "1.11.2026",
       "changes": [
         "🎨 Lila und Grau bei den Status wie in der bisherigen Web-App",
         "🐛 Häkchen-Badge beim Termin wieder flach statt zu hoch",
         "🐛 „Zum App Store“ bricht im Hinweisfenster nicht mehr um",
         "🎨 Plus-Knopf ohne Schatten, Filter-Knopf bei den Werken und Anwesenheitsblock in der Übersicht am Computer wie in der bisherigen Web-App"
+      ]
+    },
+    {
+      "version": "0.32.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Neues Design (Beta): Konto wechseln unter Ich > Konto – mehrere Konten auf einem Gerät, Wechsel ohne Passwort",
+        "✨ Neues Design (Beta): Gespeicherte Konten auf der Anmeldeseite, abgelaufene Anmeldungen fragen nur das Passwort neu ab",
+        "✨ Neues Design (Beta): Eltern-Konten erscheinen im Kontowechsel mit ihrem Namen"
       ]
     },
     {
