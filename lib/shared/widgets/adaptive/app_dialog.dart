@@ -754,6 +754,9 @@ class IosAlertButton extends StatelessWidget {
   TextStyle _labelStyle(Color? color) => TextStyle(
         fontSize: 17,
         fontWeight: bold ? FontWeight.w600 : FontWeight.w500,
+        // PWA_PARITY: no inherited tracking, it is not part of [labelWidth]
+        // and wrapped "Zum App Store" inside the half-width button.
+        letterSpacing: 0,
         color: color,
       );
 

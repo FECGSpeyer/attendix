@@ -146,7 +146,7 @@ class SettingsPage extends ConsumerWidget {
                 heroTag: 'settingsTenantsFab',
                 onPressed: openTenants,
                 tooltip: l10n.settingsSwitchTenant,
-                child: const Icon(Icons.apps),
+                child: const Icon(CupertinoIcons.circle_grid_3x3), // apps-outline
               ),
             )
           : null,
@@ -414,7 +414,7 @@ class SettingsPage extends ConsumerWidget {
             // ============ AUSWERTUNG & DATEN ============
             if (!isApplicant)
               SettingsListSection(
-                icon: Icons.bar_chart,
+                icon: Icons.leaderboard_outlined, // bar-chart-outline
                 title: l10n.settingsAnalyticsData,
                 children: [
                   SettingsListTile(

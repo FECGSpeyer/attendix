@@ -16,7 +16,8 @@ class AppColors {
   static const Color secondaryDark = Color(0xFF0A9ACC);
 
   // Tertiary/Accent
-  static const Color tertiary = Color(0xFF5260FF);
+  // PWA_PARITY: Ionic 4.17 `--ion-color-tertiary` (was the old #5260ff).
+  static const Color tertiary = Color(0xFF6030FF);
   static const Color tertiaryLight = Color(0xFF7A85FF);
   static const Color tertiaryDark = Color(0xFF2A3ACC);
 
@@ -93,8 +94,7 @@ class AppColors {
   static const Color iosNoteLight = Color(0xFF737373);
   static const Color iosNoteDark = Color(0xFF8C8C8C);
   static const Color iosMediumDark = Color(0xFF989AA2);
-  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469; the md look
-  // keeps [medium]).
+  // IOS27_SWEEP: Ionic 9 light `--ion-color-medium` (#636469).
   static const Color iosMediumLight = Color(0xFF636469);
   // IOS27_SWEEP: ionic-theme-ios27 `ion-list.ios { --ion-border-color:
   // var(--ion-color-step-100, …, #e8e8e8) }` – item lines in lists.
@@ -136,7 +136,9 @@ class AppColors {
     if (v == danger.toARGB32()) return dangerOnDark;
     if (v == tertiary.toARGB32()) return tertiaryOnDark;
     if (v == secondary.toARGB32()) return secondaryOnDark;
-    if (v == medium.toARGB32()) return mediumOnDark;
+    if (v == medium.toARGB32() || v == iosMediumLight.toARGB32()) {
+      return mediumOnDark;
+    }
     if (v == dark.toARGB32()) return darkOnDark;
     if (v == light.toARGB32()) return lightOnDark;
     return color;
@@ -159,7 +161,9 @@ class AppColors {
   static const Color statusAbsent = danger;
   static const Color statusExcused = warning;
   static const Color statusLate = tertiary;
-  static const Color statusNeutral = medium;
+  // PWA_PARITY: Ionic 4.17 `--ion-color-medium` (#636469); [medium] itself
+  // stays lighter because it is used unmapped for text on dark pages.
+  static const Color statusNeutral = iosMediumLight;
   static const Color statusLateExcused = rosa;
 
   // Divider

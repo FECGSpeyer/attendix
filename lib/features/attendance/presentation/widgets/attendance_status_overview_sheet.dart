@@ -91,7 +91,7 @@ class StatusOverviewSheet extends StatelessWidget {
         AttendanceStatus.late => AppColors.tertiary,
         AttendanceStatus.lateExcused => AppColors.rosa,
         AttendanceStatus.absent => AppColors.danger,
-        AttendanceStatus.neutral => AppColors.medium,
+        AttendanceStatus.neutral => AppColors.statusNeutral,
       };
 
   @override
@@ -203,7 +203,8 @@ class StatusCountBadge extends StatelessWidget {
     // Ionic palettes: black text on warning; the dark palette also uses
     // black on success and medium.
     final blackText = color == AppColors.warning ||
-        (dark && (color == AppColors.success || color == AppColors.medium));
+        (dark &&
+            (color == AppColors.success || color == AppColors.statusNeutral));
     return Container(
       constraints: const BoxConstraints(minWidth: 32),
       padding: ios

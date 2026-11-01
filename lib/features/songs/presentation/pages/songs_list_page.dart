@@ -426,7 +426,12 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
                     else
                     IconButton(
                       tooltip: context.l10n.songsFlutterFilterAndView,
-                      color: AppColors.primary,
+                      // PWA_PARITY: Ionic md dark icon on a white square.
+                      color: Theme.of(context).colorScheme.onSurface,
+                      style: IconButton.styleFrom(
+                        backgroundColor: Theme.of(context).colorScheme.surface,
+                        shape: const RoundedRectangleBorder(),
+                      ),
                       icon: Badge(
                         isLabelVisible: filter.hasActiveFilters,
                         smallSize: 8,
