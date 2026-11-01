@@ -49,8 +49,7 @@ class AppColors {
 
   // Neutral colors
   static const Color dark = Color(0xFF222428);
-  // PWA_PARITY: Ionic 4.17 `--ion-color-medium` in both modes (was #92949c).
-  static const Color medium = Color(0xFF636469);
+  static const Color medium = Color(0xFF92949C);
   static const Color light = Color(0xFFF4F5F8);
 
   // Background colors. Ionic runs the iOS theme with inset lists: grouped
@@ -137,7 +136,9 @@ class AppColors {
     if (v == danger.toARGB32()) return dangerOnDark;
     if (v == tertiary.toARGB32()) return tertiaryOnDark;
     if (v == secondary.toARGB32()) return secondaryOnDark;
-    if (v == medium.toARGB32()) return mediumOnDark;
+    if (v == medium.toARGB32() || v == iosMediumLight.toARGB32()) {
+      return mediumOnDark;
+    }
     if (v == dark.toARGB32()) return darkOnDark;
     if (v == light.toARGB32()) return lightOnDark;
     return color;
@@ -160,7 +161,9 @@ class AppColors {
   static const Color statusAbsent = danger;
   static const Color statusExcused = warning;
   static const Color statusLate = tertiary;
-  static const Color statusNeutral = medium;
+  // PWA_PARITY: Ionic 4.17 `--ion-color-medium` (#636469); [medium] itself
+  // stays lighter because it is used unmapped for text on dark pages.
+  static const Color statusNeutral = iosMediumLight;
   static const Color statusLateExcused = rosa;
 
   // Divider

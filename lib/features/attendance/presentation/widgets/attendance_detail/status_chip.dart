@@ -15,7 +15,7 @@ const Color ionicRosa = Color(0xFFBE72C0);
 /// (N medium, ✓ success, E warning, L tertiary, LE rosa, A danger).
 ({String text, Color color}) ionicStatusBadge(AttendanceStatus status) {
   return switch (status) {
-    AttendanceStatus.neutral => (text: 'N', color: AppColors.medium),
+    AttendanceStatus.neutral => (text: 'N', color: AppColors.statusNeutral),
     AttendanceStatus.present => (text: '✓', color: AppColors.success),
     AttendanceStatus.excused => (text: 'E', color: AppColors.warning),
     AttendanceStatus.late => (text: 'L', color: AppColors.tertiary),

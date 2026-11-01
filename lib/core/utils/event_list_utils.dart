@@ -174,7 +174,7 @@ abstract final class EventListUtils {
       case AttendanceStatus.lateExcused:
         return rosa;
       case AttendanceStatus.neutral:
-        return AppColors.medium;
+        return AppColors.statusNeutral;
       case AttendanceStatus.excused:
         return AppColors.warning;
     }
