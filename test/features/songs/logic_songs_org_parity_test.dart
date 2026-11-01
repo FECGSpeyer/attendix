@@ -63,7 +63,8 @@ void main() {
     test('unknown extensions have no type (empty fileType like the browser)', () {
       expect(songFileMimeType('mscz'), isNull);
       final src = _read('lib/core/services/song_file_service.dart');
-      expect(src, contains("'fileType': songFileMimeType(file.extension ?? '') ?? '',"));
+      expect(src, contains("'fileType': songFileMimeType(extension) ?? '',"));
+      expect(src, contains("extension: file.extension ?? '',"));
     });
 
     test('file_uploaded tracks the mime', () {

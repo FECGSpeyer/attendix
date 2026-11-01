@@ -104,6 +104,7 @@ class RdImportWorkPage extends ConsumerWidget {
         : switch (work.match.kind) {
             RdMatchKind.numberOnly => l10n.redesignImportMatchNumberOnly,
             RdMatchKind.titleOnly => l10n.redesignImportMatchTitleOnly,
+            RdMatchKind.ambiguous => l10n.redesignImportMatchAmbiguous,
             _ => null,
           };
 

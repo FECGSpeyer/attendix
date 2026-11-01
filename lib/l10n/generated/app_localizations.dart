@@ -15521,10 +15521,16 @@ abstract class AppLocalizations {
   /// **'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.'**
   String get redesignImportDoneAgainHint;
 
+  /// redesign.import.doneAgainHintDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.'**
+  String get redesignImportDoneAgainHintDrive;
+
   /// redesign.import.doneAnother
   ///
   /// In de, this message translates to:
-  /// **'Weitere ZIP-Datei importieren'**
+  /// **'Weitere Noten importieren'**
   String get redesignImportDoneAnother;
 
   /// redesign.import.doneFailed
@@ -15587,11 +15593,119 @@ abstract class AppLocalizations {
   /// **'Zu den Werken'**
   String get redesignImportDoneToWorks;
 
+  /// redesign.import.driveChecking
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner wird gesucht …'**
+  String get redesignImportDriveChecking;
+
+  /// redesign.import.driveFileGone
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ist in Google Drive nicht mehr erreichbar.'**
+  String get redesignImportDriveFileGone;
+
+  /// redesign.import.driveFound
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gefunden'**
+  String redesignImportDriveFound(Object name);
+
+  /// redesign.import.driveLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'https://drive.google.com/drive/folders/…'**
+  String get redesignImportDriveLinkHint;
+
+  /// redesign.import.driveLinkLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Link zum Ordner'**
+  String get redesignImportDriveLinkLabel;
+
+  /// redesign.import.driveOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Google Drive öffnen'**
+  String get redesignImportDriveOpen;
+
+  /// redesign.import.drivePaste
+  ///
+  /// In de, this message translates to:
+  /// **'Einfügen'**
+  String get redesignImportDrivePaste;
+
+  /// redesign.import.driveReading
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix liest die Ordner in Google Drive.'**
+  String get redesignImportDriveReading;
+
+  /// redesign.import.driveStart
+  ///
+  /// In de, this message translates to:
+  /// **'Einlesen starten'**
+  String get redesignImportDriveStart;
+
+  /// redesign.import.driveStep1
+  ///
+  /// In de, this message translates to:
+  /// **'Öffne den Notenordner in Google Drive und wähle „Teilen“.'**
+  String get redesignImportDriveStep1;
+
+  /// redesign.import.driveStep2
+  ///
+  /// In de, this message translates to:
+  /// **'Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.'**
+  String get redesignImportDriveStep2;
+
+  /// redesign.import.driveStep3
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiere den Link und füge ihn hier ein.'**
+  String get redesignImportDriveStep3;
+
+  /// redesign.import.driveUnshareNote
+  ///
+  /// In de, this message translates to:
+  /// **'Nach dem Import kannst du die Freigabe wieder aufheben.'**
+  String get redesignImportDriveUnshareNote;
+
+  /// redesign.import.errorBadLink
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist kein Link zu einem Google-Drive-Ordner.'**
+  String get redesignImportErrorBadLink;
+
+  /// redesign.import.errorDropbox
+  ///
+  /// In de, this message translates to:
+  /// **'Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.'**
+  String get redesignImportErrorDropbox;
+
   /// redesign.import.errorEmpty
   ///
   /// In de, this message translates to:
   /// **'In der ZIP-Datei sind keine Dateien.'**
   String get redesignImportErrorEmpty;
+
+  /// redesign.import.errorFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.'**
+  String get redesignImportErrorFailed;
+
+  /// redesign.import.errorForbidden
+  ///
+  /// In de, this message translates to:
+  /// **'Du darfst in dieser Gruppe keine Noten hochladen.'**
+  String get redesignImportErrorForbidden;
+
+  /// redesign.import.errorLimit
+  ///
+  /// In de, this message translates to:
+  /// **'Gerade geht es nicht weiter (Tageslimit erreicht oder Google ausgelastet). Bitte versuche es später erneut.'**
+  String get redesignImportErrorLimit;
 
   /// redesign.import.errorNoData
   ///
@@ -15599,11 +15713,41 @@ abstract class AppLocalizations {
   /// **'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.'**
   String get redesignImportErrorNoData;
 
+  /// redesign.import.errorNotFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.'**
+  String get redesignImportErrorNotFolder;
+
+  /// redesign.import.errorNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?'**
+  String get redesignImportErrorNotFound;
+
+  /// redesign.import.errorNotSetUp
+  ///
+  /// In de, this message translates to:
+  /// **'Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.'**
+  String get redesignImportErrorNotSetUp;
+
   /// redesign.import.errorNotZip
   ///
   /// In de, this message translates to:
   /// **'Die Datei ist keine ZIP-Datei oder beschädigt.'**
   String get redesignImportErrorNotZip;
+
+  /// redesign.import.errorTooLargeWeb
+  ///
+  /// In de, this message translates to:
+  /// **'Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.'**
+  String get redesignImportErrorTooLargeWeb;
+
+  /// redesign.import.errorTooMany
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner hat zu viele Dateien. Wähle einen Unterordner.'**
+  String get redesignImportErrorTooMany;
 
   /// redesign.import.fassungAll
   ///
@@ -15646,6 +15790,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Fassungen'**
   String get redesignImportFassungenTitle;
+
+  /// redesign.import.fileBroken
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei in der ZIP-Datei ist beschädigt.'**
+  String get redesignImportFileBroken;
 
   /// redesign.import.filesSkip
   ///
@@ -15742,6 +15892,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Schon bekannt aus eurer Gruppe'**
   String get redesignImportKnownTitle;
+
+  /// redesign.import.matchAmbiguous
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.'**
+  String get redesignImportMatchAmbiguous;
 
   /// redesign.import.matchNumberOnly
   ///
@@ -15959,11 +16115,17 @@ abstract class AppLocalizations {
   /// **'Zu prüfen · {count}'**
   String redesignImportReviewOpen(Object count);
 
-  /// redesign.import.sourceDrop
+  /// redesign.import.sourceDrive
   ///
   /// In de, this message translates to:
-  /// **'Oder ZIP-Dateien hierher ziehen'**
-  String get redesignImportSourceDrop;
+  /// **'Google Drive'**
+  String get redesignImportSourceDrive;
+
+  /// redesign.import.sourceDriveDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner-Link einfügen. Nichts wird aufs Gerät geladen.'**
+  String get redesignImportSourceDriveDetail;
 
   /// redesign.import.sourceHowComputer
   ///
@@ -16001,11 +16163,35 @@ abstract class AppLocalizations {
   /// **'ZIP-Datei wählen'**
   String get redesignImportSourcePick;
 
-  /// redesign.import.sourceSoon
+  /// redesign.import.sourceRecommended
   ///
   /// In de, this message translates to:
-  /// **'Bald auch direkt mit einem Google-Drive- oder Dropbox-Link.'**
-  String get redesignImportSourceSoon;
+  /// **'Empfohlen'**
+  String get redesignImportSourceRecommended;
+
+  /// redesign.import.sourceSafe
+  ///
+  /// In de, this message translates to:
+  /// **'In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.'**
+  String get redesignImportSourceSafe;
+
+  /// redesign.import.sourceWhere
+  ///
+  /// In de, this message translates to:
+  /// **'Wo liegen eure Noten?'**
+  String get redesignImportSourceWhere;
+
+  /// redesign.import.sourceZip
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP-Datei'**
+  String get redesignImportSourceZip;
+
+  /// redesign.import.sourceZipDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Aus Dropbox, OneDrive oder vom Rechner.'**
+  String get redesignImportSourceZipDetail;
 
   /// redesign.import.stepOf
   ///
@@ -16090,6 +16276,24 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Doch noch nicht geprüft'**
   String get redesignImportUndoConfirm;
+
+  /// redesign.import.unshareOpen
+  ///
+  /// In de, this message translates to:
+  /// **'In Google Drive öffnen'**
+  String get redesignImportUnshareOpen;
+
+  /// redesign.import.unshareText
+  ///
+  /// In de, this message translates to:
+  /// **'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.'**
+  String get redesignImportUnshareText;
+
+  /// redesign.import.unshareTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Freigabe wieder aufheben'**
+  String get redesignImportUnshareTitle;
 
   /// redesign.import.uploadButton
   ///

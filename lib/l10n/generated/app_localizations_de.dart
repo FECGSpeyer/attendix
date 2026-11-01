@@ -9018,7 +9018,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneAgainHint => 'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
 
   @override
-  String get redesignImportDoneAnother => 'Weitere ZIP-Datei importieren';
+  String get redesignImportDoneAgainHintDrive => 'Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.';
+
+  @override
+  String get redesignImportDoneAnother => 'Weitere Noten importieren';
 
   @override
   String get redesignImportDoneFailed => 'Fehlgeschlagen';
@@ -9059,13 +9062,84 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportDoneToWorks => 'Zu den Werken';
 
   @override
+  String get redesignImportDriveChecking => 'Ordner wird gesucht …';
+
+  @override
+  String get redesignImportDriveFileGone => 'Die Datei ist in Google Drive nicht mehr erreichbar.';
+
+  @override
+  String redesignImportDriveFound(Object name) {
+    return '„$name“ gefunden';
+  }
+
+  @override
+  String get redesignImportDriveLinkHint => 'https://drive.google.com/drive/folders/…';
+
+  @override
+  String get redesignImportDriveLinkLabel => 'Link zum Ordner';
+
+  @override
+  String get redesignImportDriveOpen => 'Google Drive öffnen';
+
+  @override
+  String get redesignImportDrivePaste => 'Einfügen';
+
+  @override
+  String get redesignImportDriveReading => 'Attendix liest die Ordner in Google Drive.';
+
+  @override
+  String get redesignImportDriveStart => 'Einlesen starten';
+
+  @override
+  String get redesignImportDriveStep1 => 'Öffne den Notenordner in Google Drive und wähle „Teilen“.';
+
+  @override
+  String get redesignImportDriveStep2 => 'Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.';
+
+  @override
+  String get redesignImportDriveStep3 => 'Kopiere den Link und füge ihn hier ein.';
+
+  @override
+  String get redesignImportDriveUnshareNote => 'Nach dem Import kannst du die Freigabe wieder aufheben.';
+
+  @override
+  String get redesignImportErrorBadLink => 'Das ist kein Link zu einem Google-Drive-Ordner.';
+
+  @override
+  String get redesignImportErrorDropbox => 'Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.';
+
+  @override
   String get redesignImportErrorEmpty => 'In der ZIP-Datei sind keine Dateien.';
+
+  @override
+  String get redesignImportErrorFailed => 'Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.';
+
+  @override
+  String get redesignImportErrorForbidden => 'Du darfst in dieser Gruppe keine Noten hochladen.';
+
+  @override
+  String get redesignImportErrorLimit => 'Gerade geht es nicht weiter (Tageslimit erreicht oder Google ausgelastet). Bitte versuche es später erneut.';
 
   @override
   String get redesignImportErrorNoData => 'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.';
 
   @override
+  String get redesignImportErrorNotFolder => 'Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.';
+
+  @override
+  String get redesignImportErrorNotFound => 'Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?';
+
+  @override
+  String get redesignImportErrorNotSetUp => 'Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.';
+
+  @override
   String get redesignImportErrorNotZip => 'Die Datei ist keine ZIP-Datei oder beschädigt.';
+
+  @override
+  String get redesignImportErrorTooLargeWeb => 'Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.';
+
+  @override
+  String get redesignImportErrorTooMany => 'Der Ordner hat zu viele Dateien. Wähle einen Unterordner.';
 
   @override
   String get redesignImportFassungAll => 'Alle Fassungen übernehmen';
@@ -9103,6 +9177,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportFassungenTitle => 'Fassungen';
+
+  @override
+  String get redesignImportFileBroken => 'Die Datei in der ZIP-Datei ist beschädigt.';
 
   @override
   String redesignImportFilesSkip(Object count) {
@@ -9189,6 +9266,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportKnownTitle => 'Schon bekannt aus eurer Gruppe';
+
+  @override
+  String get redesignImportMatchAmbiguous => 'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.';
 
   @override
   String get redesignImportMatchNumberOnly => 'Die Nummer passt, der Titel weicht ab.';
@@ -9327,7 +9407,10 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignImportSourceDrop => 'Oder ZIP-Dateien hierher ziehen';
+  String get redesignImportSourceDrive => 'Google Drive';
+
+  @override
+  String get redesignImportSourceDriveDetail => 'Ordner-Link einfügen. Nichts wird aufs Gerät geladen.';
 
   @override
   String get redesignImportSourceHowComputer => 'Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).';
@@ -9348,7 +9431,19 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignImportSourcePick => 'ZIP-Datei wählen';
 
   @override
-  String get redesignImportSourceSoon => 'Bald auch direkt mit einem Google-Drive- oder Dropbox-Link.';
+  String get redesignImportSourceRecommended => 'Empfohlen';
+
+  @override
+  String get redesignImportSourceSafe => 'In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.';
+
+  @override
+  String get redesignImportSourceWhere => 'Wo liegen eure Noten?';
+
+  @override
+  String get redesignImportSourceZip => 'ZIP-Datei';
+
+  @override
+  String get redesignImportSourceZipDetail => 'Aus Dropbox, OneDrive oder vom Rechner.';
 
   @override
   String redesignImportStepOf(Object step, Object name) {
@@ -9399,6 +9494,15 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignImportUndoConfirm => 'Doch noch nicht geprüft';
+
+  @override
+  String get redesignImportUnshareOpen => 'In Google Drive öffnen';
+
+  @override
+  String get redesignImportUnshareText => 'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.';
+
+  @override
+  String get redesignImportUnshareTitle => 'Freigabe wieder aufheben';
 
   @override
   String redesignImportUploadButton(num count) {

@@ -72,6 +72,22 @@ void main() {
     test('nothing fits: new Werk', () {
       expect(rdMatchWork('157 Jesus ruft dich', songs).kind, RdMatchKind.none);
     });
+
+    test('several Werke fit as well: to check, not the first one', () {
+      const twice = [
+        RdImportSong(id: 1, number: 1, prefix: 'A', name: 'Stille Nacht'),
+        RdImportSong(id: 2, number: 1, prefix: 'B', name: 'Stille Nacht'),
+        RdImportSong(id: 3, number: 5, name: 'Großer Gott'),
+        RdImportSong(id: 4, number: 9, name: 'Großer Gott'),
+      ];
+      expect(rdMatchWork('1 Stille Nacht', twice).kind, RdMatchKind.ambiguous);
+      expect(rdMatchWork('1', twice).kind, RdMatchKind.ambiguous);
+      expect(rdMatchWork('Großer Gott', twice).kind, RdMatchKind.ambiguous);
+      // The prefix decides.
+      expect(rdMatchWork('B1 Stille Nacht', twice).kind, RdMatchKind.sure);
+      expect(rdMatchWork('B1 Stille Nacht', twice).songId, 2);
+      expect(rdMatchWork('5 Großer Gott', twice).kind, RdMatchKind.sure);
+    });
   });
 
   group('Werk folders', () {
@@ -216,6 +232,53 @@ void main() {
       expect(on.files['Noten/5 Lied/Liedtext.docx']!.reason, RdSkipReason.wordNextToPdf);
       final off = rdWorkState(plan, const RdImportDecisions(skipWordBesidePdf: false), work);
       expect(off.files['Noten/5 Lied/Liedtext.docx']!.take, isTrue);
+    });
+
+    test('an unsure folder is a Werk of its own, also next to a sure one', () {
+      const songs = [RdImportSong(id: 3, number: 120, name: 'Wie wunderbar')];
+      final plan = _plan([
+        _e('Noten/120 Wie wunderbar/Viola.pdf'),
+        _e('Noten/120 Anderes Lied/Violine 1.pdf'),
+      ], songs: songs);
+      expect(plan.works, hasLength(2));
+      final sure = plan.work('song:3')!;
+      expect(sure.match.kind, RdMatchKind.sure);
+      final other = plan.works.firstWhere((w) => w != sure);
+      expect(other.match.kind, RdMatchKind.numberOnly);
+      expect(other.title, 'Anderes Lied');
+      final state = rdWorkState(plan, const RdImportDecisions(), other);
+      expect(state.flags, contains(RdWorkFlag.unsureMatch));
+      expect(state.open, isTrue);
+      // Not uploaded before it is checked.
+      expect(rdImportUploads(plan, const RdImportDecisions()).map((i) => i.file.name), ['Viola.pdf']);
+    });
+
+    test('folders that only share a part after an answer are Fassungen too', () {
+      final entries = [
+        _e('Noten/1 Eins/Qfl1.pdf', size: 10),
+        _e('Noten/1 Eins/Fassung B/Qfl1.pdf', size: 11),
+      ];
+      final before = _plan(entries);
+      expect(before.works.single.fassungen, isEmpty);
+      expect(before.questions.map((q) => q.key), ['qfl']);
+      final after = rdBuildImportPlan(entries,
+          songs: const [], instruments: _instruments, isChoir: false, answers: {'qfl': const RdImportCategory(instrumentId: 14)});
+      expect(after.works.single.fassungen.map((f) => f.key), unorderedEquals(['', 'Fassung B']));
+      final state = rdWorkState(after, RdImportDecisions(answers: {'qfl': const RdImportCategory(instrumentId: 14)}), after.works.single);
+      expect(state.flags, contains(RdWorkFlag.fassungen));
+    });
+
+    test('files that are never uploaded are never read for duplicates', () {
+      const big = 30 * 1024 * 1024;
+      final paths = rdImportPathsToHash([
+        _e('Noten/1/a.mp4', size: big),
+        _e('Noten/1/b.mp4', size: big),
+        _e('Noten/1/c.exe', size: 5),
+        _e('Noten/1/d.exe', size: 5),
+        _e('Noten/1/x.pdf', size: 5),
+        _e('Noten/2/x.pdf', size: 5),
+      ]);
+      expect(paths, {'Noten/1/x.pdf', 'Noten/2/x.pdf'});
     });
 
     test('unknown part names become one question; the answer fits part numbers', () {

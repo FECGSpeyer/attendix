@@ -9024,7 +9024,10 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportDoneAgainHint => 'You can import the works not reviewed later with the same ZIP file. Files already in Attendix are skipped then.';
 
   @override
-  String get redesignImportDoneAnother => 'Import another ZIP file';
+  String get redesignImportDoneAgainHintDrive => 'You can take over the works you did not check later with the same folder link. Files already in Attendix are skipped.';
+
+  @override
+  String get redesignImportDoneAnother => 'Import more sheet music';
 
   @override
   String get redesignImportDoneFailed => 'Failed';
@@ -9065,13 +9068,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportDoneToWorks => 'Go to works';
 
   @override
+  String get redesignImportDriveChecking => 'Looking for the folder …';
+
+  @override
+  String get redesignImportDriveFileGone => 'The file can no longer be reached in Google Drive.';
+
+  @override
+  String redesignImportDriveFound(Object name) {
+    return '“$name” found';
+  }
+
+  @override
+  String get redesignImportDriveLinkHint => 'https://drive.google.com/drive/folders/…';
+
+  @override
+  String get redesignImportDriveLinkLabel => 'Folder link';
+
+  @override
+  String get redesignImportDriveOpen => 'Open Google Drive';
+
+  @override
+  String get redesignImportDrivePaste => 'Paste';
+
+  @override
+  String get redesignImportDriveReading => 'Attendix is reading the folders in Google Drive.';
+
+  @override
+  String get redesignImportDriveStart => 'Start reading';
+
+  @override
+  String get redesignImportDriveStep1 => 'Open the sheet-music folder in Google Drive and choose “Share”.';
+
+  @override
+  String get redesignImportDriveStep2 => 'Set “General access” to “Anyone with the link”.';
+
+  @override
+  String get redesignImportDriveStep3 => 'Copy the link and paste it here.';
+
+  @override
+  String get redesignImportDriveUnshareNote => 'After the import you can stop sharing the folder again.';
+
+  @override
+  String get redesignImportErrorBadLink => 'This is not a link to a Google Drive folder.';
+
+  @override
+  String get redesignImportErrorDropbox => 'Dropbox links do not work yet. Download the folder from Dropbox as a ZIP and choose “ZIP file”.';
+
+  @override
   String get redesignImportErrorEmpty => 'The ZIP file contains no files.';
+
+  @override
+  String get redesignImportErrorFailed => 'The folder could not be read. Please try again.';
+
+  @override
+  String get redesignImportErrorForbidden => 'You may not upload sheet music in this group.';
+
+  @override
+  String get redesignImportErrorLimit => 'This cannot continue right now (daily limit reached or Google busy). Please try again later.';
 
   @override
   String get redesignImportErrorNoData => 'The works could not be loaded. Please try again.';
 
   @override
+  String get redesignImportErrorNotFolder => 'The link points to a file. Please copy the link of the folder.';
+
+  @override
+  String get redesignImportErrorNotFound => 'The folder was not found. Is it shared with “Anyone with the link”?';
+
+  @override
+  String get redesignImportErrorNotSetUp => 'Importing from a link is not set up yet. Use a ZIP file for now.';
+
+  @override
   String get redesignImportErrorNotZip => 'The file is not a ZIP file or it is damaged.';
+
+  @override
+  String get redesignImportErrorTooLargeWeb => 'Together the ZIP files are larger than 1 GB. This does not work in the browser. Use the Google Drive link or the app.';
+
+  @override
+  String get redesignImportErrorTooMany => 'The folder has too many files. Choose a sub-folder.';
 
   @override
   String get redesignImportFassungAll => 'Import all versions';
@@ -9109,6 +9183,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportFassungenTitle => 'Versions';
+
+  @override
+  String get redesignImportFileBroken => 'The file in the ZIP file is damaged.';
 
   @override
   String redesignImportFilesSkip(Object count) {
@@ -9195,6 +9272,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportKnownTitle => 'Already known from your group';
+
+  @override
+  String get redesignImportMatchAmbiguous => 'Several works in Attendix fit. Please check that this is the right one.';
 
   @override
   String get redesignImportMatchNumberOnly => 'The number fits, the title differs.';
@@ -9333,7 +9413,10 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redesignImportSourceDrop => 'Or drop ZIP files here';
+  String get redesignImportSourceDrive => 'Google Drive';
+
+  @override
+  String get redesignImportSourceDriveDetail => 'Paste the folder link. Nothing is downloaded to your device.';
 
   @override
   String get redesignImportSourceHowComputer => 'Computer: right-click the folder › Compress (Mac) or Send to › Compressed (zipped) folder (Windows).';
@@ -9354,7 +9437,19 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignImportSourcePick => 'Choose ZIP file';
 
   @override
-  String get redesignImportSourceSoon => 'Soon also straight from a Google Drive or Dropbox link.';
+  String get redesignImportSourceRecommended => 'Recommended';
+
+  @override
+  String get redesignImportSourceSafe => 'Nothing is changed in the source. Nothing is saved until you have checked everything.';
+
+  @override
+  String get redesignImportSourceWhere => 'Where is your sheet music?';
+
+  @override
+  String get redesignImportSourceZip => 'ZIP file';
+
+  @override
+  String get redesignImportSourceZipDetail => 'From Dropbox, OneDrive or your computer.';
 
   @override
   String redesignImportStepOf(Object step, Object name) {
@@ -9405,6 +9500,15 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignImportUndoConfirm => 'Not reviewed yet';
+
+  @override
+  String get redesignImportUnshareOpen => 'Open in Google Drive';
+
+  @override
+  String get redesignImportUnshareText => 'Set the folder in Google Drive back to “Restricted”. Attendix no longer needs the link.';
+
+  @override
+  String get redesignImportUnshareTitle => 'Stop sharing';
 
   @override
   String redesignImportUploadButton(num count) {

@@ -169,6 +169,10 @@ enum RdMatchKind {
   /// The title fits, the number is another one or missing.
   titleOnly,
 
+  /// Several Werke fit equally well ("A1 Stille Nacht", "B1 Stille Nacht"
+  /// for the folder "1 Stille Nacht").
+  ambiguous,
+
   /// No Werk fits: a new one is created.
   none,
 }
@@ -185,13 +189,14 @@ class RdWorkMatch {
 /// The Werk in Attendix a folder belongs to.
 RdWorkMatch rdMatchWork(String folderName, List<RdImportSong> songs) {
   final parsed = rdParseWorkName(folderName);
-  ({RdImportSong song, double sim})? bestOf(Iterable<RdImportSong> candidates, String title) {
-    ({RdImportSong song, double sim})? best;
-    for (final s in candidates) {
-      final sim = rdImportTitleSimilarity(title, s.name);
-      if (best == null || sim > best.sim) best = (song: s, sim: sim);
-    }
-    return best;
+  // The best fitting song; [tie] when another one fits as well.
+  ({RdImportSong song, double sim, bool tie})? bestOf(Iterable<RdImportSong> candidates, String title) {
+    final scored = [for (final s in candidates) (song: s, sim: rdImportTitleSimilarity(title, s.name))]
+      ..sort((a, b) => b.sim.compareTo(a.sim));
+    if (scored.isEmpty) return null;
+    final best = scored.first;
+    final tie = scored.length > 1 && scored[1].sim >= best.sim - 0.02;
+    return (song: best.song, sim: best.sim, tie: tie);
   }
 
   final hasTitle = rdImportTitleWords(parsed.title).isNotEmpty;
@@ -203,15 +208,22 @@ RdWorkMatch rdMatchWork(String folderName, List<RdImportSong> songs) {
     final candidates = samePrefix.isNotEmpty ? samePrefix : (parsed.prefix == null ? sameNumber : const <RdImportSong>[]);
     if (candidates.isNotEmpty) {
       final best = bestOf(candidates, parsed.title)!;
-      if (!hasTitle || best.sim >= 0.4) return RdWorkMatch(RdMatchKind.sure, best.song.id);
+      if (!hasTitle || best.sim >= 0.4) {
+        // Without a title, or two Werke with this number fitting as well.
+        final ambiguous = candidates.length > 1 && (!hasTitle || best.tie);
+        return RdWorkMatch(ambiguous ? RdMatchKind.ambiguous : RdMatchKind.sure, best.song.id);
+      }
       final byTitle = bestOf(songs, parsed.title);
-      if (byTitle != null && byTitle.sim >= 0.75) return RdWorkMatch(RdMatchKind.titleOnly, byTitle.song.id);
+      if (byTitle != null && byTitle.sim >= 0.75) {
+        return RdWorkMatch(byTitle.tie ? RdMatchKind.ambiguous : RdMatchKind.titleOnly, byTitle.song.id);
+      }
       return RdWorkMatch(RdMatchKind.numberOnly, best.song.id);
     }
   }
   if (!hasTitle) return RdWorkMatch.none;
   final byTitle = bestOf(songs, parsed.title);
   if (byTitle == null || byTitle.sim < 0.75) return RdWorkMatch.none;
+  if (byTitle.tie) return RdWorkMatch(RdMatchKind.ambiguous, byTitle.song.id);
   if (byTitle.sim >= 0.999 && parsed.number == null) return RdWorkMatch(RdMatchKind.sure, byTitle.song.id);
   return RdWorkMatch(RdMatchKind.titleOnly, byTitle.song.id);
 }
@@ -632,6 +644,8 @@ class RdImportPlan {
 Set<String> rdImportPathsToHash(List<RdImportEntry> entries) {
   final bySize = <int, List<String>>{};
   for (final e in entries) {
+    // Files that are never uploaded are never read.
+    if (!rdImportExtensions.contains(e.extension) || e.size > rdMaxUploadBytes) continue;
     bySize.putIfAbsent(e.size, () => []).add(e.path);
   }
   return {for (final list in bySize.values) if (list.length > 1) ...list};
@@ -657,6 +671,8 @@ RdImportPlan rdBuildImportPlan(
   Map<String, String> hashes = const {},
   Map<String, DateTime> dates = const {},
   int junk = 0,
+  Map<String, RdImportCategory> answers = const {},
+  Map<String, RdImportCategory> categories = const {},
 }) {
   final folderOf = rdFindWorkFolders(entries, songs: songs, instruments: instruments);
 
@@ -671,8 +687,11 @@ RdImportPlan rdBuildImportPlan(
     final name = folder.isEmpty ? '' : folder.split('/').last;
     final match = folder.isEmpty ? RdWorkMatch.none : rdMatchWork(name, songs);
     final parsed = rdParseWorkName(name);
+    // Only sure folders of the same Werk are put together; an unsure one
+    // ("120 Anderes Lied" next to "120 Wie wunderbar") stays a Werk of its
+    // own, to be checked.
     final key = match.songId != null
-        ? 'song:${match.songId}'
+        ? (match.kind == RdMatchKind.sure ? 'song:${match.songId}' : 'song:${match.songId}~${_folded(name)}')
         : folder.isEmpty
             ? 'loose'
             : 'new:${_folded(parsed.title.isEmpty ? name : parsed.title)}';
@@ -681,10 +700,6 @@ RdImportPlan rdBuildImportPlan(
       groups[key] = (folders: [folder], match: match, parsed: parsed);
     } else {
       existing.folders.add(folder);
-      // The surest folder decides how sure the Werk is.
-      if (match.kind.index < existing.match.kind.index) {
-        groups[key] = (folders: existing.folders, match: match, parsed: existing.parsed);
-      }
     }
   }
 
@@ -692,7 +707,10 @@ RdImportPlan rdBuildImportPlan(
   final questionFiles = <String, List<({RdImportFile file, String work, String? label})>>{};
   for (final entry in groups.entries) {
     final g = entry.value;
-    final song = g.match.songId == null ? null : songs.firstWhere((s) => s.id == g.match.songId);
+    // An unsure Werk shows the folder's name; the target names the Werk.
+    final song = g.match.songId == null || g.match.kind != RdMatchKind.sure
+        ? null
+        : songs.firstWhere((s) => s.id == g.match.songId);
     final title = song?.name ?? (g.parsed.title.isEmpty ? (g.folders.first.split('/').last) : g.parsed.title);
     final parents = {for (final f in g.folders) f.contains('/') ? f.substring(0, f.lastIndexOf('/')) : ''};
     final werkEntries = [for (final f in g.folders) ...byFolder[f]!];
@@ -786,10 +804,11 @@ RdImportPlan rdBuildImportPlan(
 
     // Fassungen: sub-folders with the same part, or an "Alt" folder next to
     // others. The newest by date is proposed, "Alt" folders never.
+    // The parts as decided so far (answers, changes by hand) count.
     final live = files.where((f) => f.hardSkip == null).toList();
     final keys = <String, Set<String>>{};
     for (final f in live) {
-      final clash = rdImportClashKey(f.guessed);
+      final clash = rdImportClashKey(_decided(f, categories, answers, instruments, title));
       keys.putIfAbsent(f.fassungKey, () => <String>{});
       if (clash != null) keys[f.fassungKey]!.add(clash);
     }
@@ -1066,14 +1085,25 @@ class RdFileState {
   final bool byHand;
 }
 
-RdImportCategory _categoryOf(RdImportDecisions d, RdImportFile f, RdImportWork work, List<InstrumentInfo> instruments) {
-  final own = d.categories[f.path];
+RdImportCategory _categoryOf(RdImportDecisions d, RdImportFile f, RdImportWork work, List<InstrumentInfo> instruments) =>
+    _decided(f, d.categories, d.answers, instruments, work.title);
+
+/// The part of [f]: chosen by hand, else the answer to its question (with
+/// the file's own part number), else the guess.
+RdImportCategory _decided(
+  RdImportFile f,
+  Map<String, RdImportCategory> categories,
+  Map<String, RdImportCategory> answers,
+  List<InstrumentInfo> instruments,
+  String workTitle,
+) {
+  final own = categories[f.path];
   if (own != null) return own;
-  final answer = f.questionKey == null ? null : d.answers[f.questionKey];
+  final answer = f.questionKey == null ? null : answers[f.questionKey];
   if (answer != null) {
     final id = answer.instrumentId;
     if (id != null && id > InstrumentMatcher.lyricsId) {
-      return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: work.title));
+      return RdImportCategory(instrumentId: rdImportSiblingGroup(id, f.name, instruments, workName: workTitle));
     }
     return answer;
   }

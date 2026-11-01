@@ -59,6 +59,7 @@ class _FakeFiles implements SongFileService {
     int? instrumentId,
     String? note,
     int? mainGroupId,
+    bool keepBesetzung = false,
   }) async {
     await _step('upload ${file.name} $instrumentId ${note ?? '-'}');
     if (failing.remove(file.name)) throw Exception('kaputt');
@@ -678,6 +679,20 @@ void main() {
         expect(src, isNot(contains('supabase')), reason: path);
         expect(src, isNot(contains('.from(')), reason: path);
       }
+    });
+
+    test('a copy from Drive is added under the lock; the Besetzung is kept in the same write', () {
+      final src = File('lib/core/services/song_file_service.dart').readAsStringSync();
+      final via = src.substring(src.indexOf('Future<String> uploadFileVia('), src.indexOf('/// Delete a file from storage'));
+      expect(via, contains('_locked(_tenantId, songId'));
+      expect(via, contains('_addToSong('));
+      expect(via, contains('stored != storagePath'));
+      final add = src.substring(src.indexOf('Future<String> _addToSong('), src.indexOf('static List<int> instrumentIdsFromFiles('));
+      expect(add, contains("keepBesetzung ? 'files, instrument_ids' : 'files'"));
+      expect(".eq('tenantId', tenantId)".allMatches(add).length, 2);
+      expect(".eq('id', songId)".allMatches(add).length, 2);
+      // Every caller of _addToSong holds the lock.
+      expect('_addToSong('.allMatches(src).length, 3);
     });
 
     test('renameFile filters by song id and tenant', () {

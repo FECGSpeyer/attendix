@@ -11809,7 +11809,11 @@
   "@redesignImportDoneAgainHint": {
     "description": "redesign.import.doneAgainHint"
   },
-  "redesignImportDoneAnother": "Weitere ZIP-Datei importieren",
+  "redesignImportDoneAgainHintDrive": "Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.",
+  "@redesignImportDoneAgainHintDrive": {
+    "description": "redesign.import.doneAgainHintDrive"
+  },
+  "redesignImportDoneAnother": "Weitere Noten importieren",
   "@redesignImportDoneAnother": {
     "description": "redesign.import.doneAnother"
   },
@@ -11858,17 +11862,112 @@
   "@redesignImportDoneToWorks": {
     "description": "redesign.import.doneToWorks"
   },
+  "redesignImportDriveChecking": "Ordner wird gesucht …",
+  "@redesignImportDriveChecking": {
+    "description": "redesign.import.driveChecking"
+  },
+  "redesignImportDriveFileGone": "Die Datei ist in Google Drive nicht mehr erreichbar.",
+  "@redesignImportDriveFileGone": {
+    "description": "redesign.import.driveFileGone"
+  },
+  "redesignImportDriveFound": "„{name}“ gefunden",
+  "@redesignImportDriveFound": {
+    "description": "redesign.import.driveFound",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportDriveLinkHint": "https://drive.google.com/drive/folders/…",
+  "@redesignImportDriveLinkHint": {
+    "description": "redesign.import.driveLinkHint"
+  },
+  "redesignImportDriveLinkLabel": "Link zum Ordner",
+  "@redesignImportDriveLinkLabel": {
+    "description": "redesign.import.driveLinkLabel"
+  },
+  "redesignImportDriveOpen": "Google Drive öffnen",
+  "@redesignImportDriveOpen": {
+    "description": "redesign.import.driveOpen"
+  },
+  "redesignImportDrivePaste": "Einfügen",
+  "@redesignImportDrivePaste": {
+    "description": "redesign.import.drivePaste"
+  },
+  "redesignImportDriveReading": "Attendix liest die Ordner in Google Drive.",
+  "@redesignImportDriveReading": {
+    "description": "redesign.import.driveReading"
+  },
+  "redesignImportDriveStart": "Einlesen starten",
+  "@redesignImportDriveStart": {
+    "description": "redesign.import.driveStart"
+  },
+  "redesignImportDriveStep1": "Öffne den Notenordner in Google Drive und wähle „Teilen“.",
+  "@redesignImportDriveStep1": {
+    "description": "redesign.import.driveStep1"
+  },
+  "redesignImportDriveStep2": "Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.",
+  "@redesignImportDriveStep2": {
+    "description": "redesign.import.driveStep2"
+  },
+  "redesignImportDriveStep3": "Kopiere den Link und füge ihn hier ein.",
+  "@redesignImportDriveStep3": {
+    "description": "redesign.import.driveStep3"
+  },
+  "redesignImportDriveUnshareNote": "Nach dem Import kannst du die Freigabe wieder aufheben.",
+  "@redesignImportDriveUnshareNote": {
+    "description": "redesign.import.driveUnshareNote"
+  },
+  "redesignImportErrorBadLink": "Das ist kein Link zu einem Google-Drive-Ordner.",
+  "@redesignImportErrorBadLink": {
+    "description": "redesign.import.errorBadLink"
+  },
+  "redesignImportErrorDropbox": "Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.",
+  "@redesignImportErrorDropbox": {
+    "description": "redesign.import.errorDropbox"
+  },
   "redesignImportErrorEmpty": "In der ZIP-Datei sind keine Dateien.",
   "@redesignImportErrorEmpty": {
     "description": "redesign.import.errorEmpty"
+  },
+  "redesignImportErrorFailed": "Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.",
+  "@redesignImportErrorFailed": {
+    "description": "redesign.import.errorFailed"
+  },
+  "redesignImportErrorForbidden": "Du darfst in dieser Gruppe keine Noten hochladen.",
+  "@redesignImportErrorForbidden": {
+    "description": "redesign.import.errorForbidden"
+  },
+  "redesignImportErrorLimit": "Gerade geht es nicht weiter (Tageslimit erreicht oder Google ausgelastet). Bitte versuche es später erneut.",
+  "@redesignImportErrorLimit": {
+    "description": "redesign.import.errorLimit"
   },
   "redesignImportErrorNoData": "Die Werke konnten nicht geladen werden. Bitte versuche es erneut.",
   "@redesignImportErrorNoData": {
     "description": "redesign.import.errorNoData"
   },
+  "redesignImportErrorNotFolder": "Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.",
+  "@redesignImportErrorNotFolder": {
+    "description": "redesign.import.errorNotFolder"
+  },
+  "redesignImportErrorNotFound": "Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?",
+  "@redesignImportErrorNotFound": {
+    "description": "redesign.import.errorNotFound"
+  },
+  "redesignImportErrorNotSetUp": "Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.",
+  "@redesignImportErrorNotSetUp": {
+    "description": "redesign.import.errorNotSetUp"
+  },
   "redesignImportErrorNotZip": "Die Datei ist keine ZIP-Datei oder beschädigt.",
   "@redesignImportErrorNotZip": {
     "description": "redesign.import.errorNotZip"
+  },
+  "redesignImportErrorTooLargeWeb": "Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.",
+  "@redesignImportErrorTooLargeWeb": {
+    "description": "redesign.import.errorTooLargeWeb"
+  },
+  "redesignImportErrorTooMany": "Der Ordner hat zu viele Dateien. Wähle einen Unterordner.",
+  "@redesignImportErrorTooMany": {
+    "description": "redesign.import.errorTooMany"
   },
   "redesignImportFassungAll": "Alle Fassungen übernehmen",
   "@redesignImportFassungAll": {
@@ -11908,6 +12007,10 @@
   "redesignImportFassungenTitle": "Fassungen",
   "@redesignImportFassungenTitle": {
     "description": "redesign.import.fassungenTitle"
+  },
+  "redesignImportFileBroken": "Die Datei in der ZIP-Datei ist beschädigt.",
+  "@redesignImportFileBroken": {
+    "description": "redesign.import.fileBroken"
   },
   "redesignImportFilesSkip": "Wird weggelassen · {count}",
   "@redesignImportFilesSkip": {
@@ -12001,6 +12104,10 @@
   "redesignImportKnownTitle": "Schon bekannt aus eurer Gruppe",
   "@redesignImportKnownTitle": {
     "description": "redesign.import.knownTitle"
+  },
+  "redesignImportMatchAmbiguous": "Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.",
+  "@redesignImportMatchAmbiguous": {
+    "description": "redesign.import.matchAmbiguous"
   },
   "redesignImportMatchNumberOnly": "Die Nummer passt, der Titel weicht ab.",
   "@redesignImportMatchNumberOnly": {
@@ -12176,9 +12283,13 @@
       "count": {}
     }
   },
-  "redesignImportSourceDrop": "Oder ZIP-Dateien hierher ziehen",
-  "@redesignImportSourceDrop": {
-    "description": "redesign.import.sourceDrop"
+  "redesignImportSourceDrive": "Google Drive",
+  "@redesignImportSourceDrive": {
+    "description": "redesign.import.sourceDrive"
+  },
+  "redesignImportSourceDriveDetail": "Ordner-Link einfügen. Nichts wird aufs Gerät geladen.",
+  "@redesignImportSourceDriveDetail": {
+    "description": "redesign.import.sourceDriveDetail"
   },
   "redesignImportSourceHowComputer": "Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).",
   "@redesignImportSourceHowComputer": {
@@ -12204,9 +12315,25 @@
   "@redesignImportSourcePick": {
     "description": "redesign.import.sourcePick"
   },
-  "redesignImportSourceSoon": "Bald auch direkt mit einem Google-Drive- oder Dropbox-Link.",
-  "@redesignImportSourceSoon": {
-    "description": "redesign.import.sourceSoon"
+  "redesignImportSourceRecommended": "Empfohlen",
+  "@redesignImportSourceRecommended": {
+    "description": "redesign.import.sourceRecommended"
+  },
+  "redesignImportSourceSafe": "In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.",
+  "@redesignImportSourceSafe": {
+    "description": "redesign.import.sourceSafe"
+  },
+  "redesignImportSourceWhere": "Wo liegen eure Noten?",
+  "@redesignImportSourceWhere": {
+    "description": "redesign.import.sourceWhere"
+  },
+  "redesignImportSourceZip": "ZIP-Datei",
+  "@redesignImportSourceZip": {
+    "description": "redesign.import.sourceZip"
+  },
+  "redesignImportSourceZipDetail": "Aus Dropbox, OneDrive oder vom Rechner.",
+  "@redesignImportSourceZipDetail": {
+    "description": "redesign.import.sourceZipDetail"
   },
   "redesignImportStepOf": "Schritt {step} von 4 · {name}",
   "@redesignImportStepOf": {
@@ -12276,6 +12403,18 @@
   "redesignImportUndoConfirm": "Doch noch nicht geprüft",
   "@redesignImportUndoConfirm": {
     "description": "redesign.import.undoConfirm"
+  },
+  "redesignImportUnshareOpen": "In Google Drive öffnen",
+  "@redesignImportUnshareOpen": {
+    "description": "redesign.import.unshareOpen"
+  },
+  "redesignImportUnshareText": "Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.",
+  "@redesignImportUnshareText": {
+    "description": "redesign.import.unshareText"
+  },
+  "redesignImportUnshareTitle": "Freigabe wieder aufheben",
+  "@redesignImportUnshareTitle": {
+    "description": "redesign.import.unshareTitle"
   },
   "redesignImportUploadButton": "{count, plural, one {1 Datei übernehmen} other {{count} Dateien übernehmen}}",
   "@redesignImportUploadButton": {

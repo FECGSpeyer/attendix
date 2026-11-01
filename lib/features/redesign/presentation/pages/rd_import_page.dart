@@ -1,25 +1,27 @@
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/app_dialog.dart';
-import '../../../songs/presentation/widgets/file_drop/file_drop_target.dart';
 import '../../data/import/rd_import_controller.dart';
+import '../../data/import/rd_import_drive.dart';
 import '../../data/import/rd_import_logic.dart';
 import '../widgets/import/rd_import_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import 'rd_import_work_page.dart';
 
 /// REDESIGN: Werke › "Noten importieren" (canvas "Werke-Import Mock-up",
-/// R2–R6 / H2–H10): a ZIP from Google Drive, Dropbox or the computer is read
-/// in the app, unknown part names are asked once, every Werk can be checked
-/// and only then the files are uploaded. Pops with true when something was
-/// uploaded.
+/// R2–R6 / H2–H10): a shared Google Drive folder (link) or a ZIP from
+/// Dropbox, OneDrive or the computer is read, unknown part names are asked
+/// once, every Werk can be checked and only then the files are uploaded.
+/// Pops with true when something was uploaded.
 class RdImportPage extends ConsumerStatefulWidget {
   const RdImportPage({super.key});
 
@@ -29,17 +31,108 @@ class RdImportPage extends ConsumerStatefulWidget {
 
 enum _Filter { open, created, all }
 
+enum _Source { drive, zip }
+
+/// Text of [error].
+String rdImportReadErrorText(AppLocalizations l10n, RdImportReadError error) => switch (error) {
+      RdImportReadError.notZip => l10n.redesignImportErrorNotZip,
+      RdImportReadError.empty => l10n.redesignImportErrorEmpty,
+      RdImportReadError.noData => l10n.redesignImportErrorNoData,
+      RdImportReadError.tooLargeWeb => l10n.redesignImportErrorTooLargeWeb,
+      RdImportReadError.badLink => l10n.redesignImportErrorBadLink,
+      RdImportReadError.notFolder => l10n.redesignImportErrorNotFolder,
+      RdImportReadError.dropbox => l10n.redesignImportErrorDropbox,
+      RdImportReadError.notFound => l10n.redesignImportErrorNotFound,
+      RdImportReadError.notSetUp => l10n.redesignImportErrorNotSetUp,
+      RdImportReadError.tooMany => l10n.redesignImportErrorTooMany,
+      RdImportReadError.limit => l10n.redesignImportErrorLimit,
+      RdImportReadError.forbidden => l10n.redesignImportErrorForbidden,
+      RdImportReadError.failed => l10n.redesignImportErrorFailed,
+    };
+
 class _RdImportPageState extends ConsumerState<RdImportPage> {
   _Filter? _filter;
 
+  /// Which source is being set up (null = the choice).
+  _Source? _mode;
+  final _link = TextEditingController();
+
+  /// The link last checked and the answer.
+  String _checked = '';
+  bool _checking = false;
+  RdLinkCheck? _check;
+
   RdImportController get _controller => ref.read(rdImportProvider.notifier);
+
+  @override
+  void dispose() {
+    _link.dispose();
+    super.dispose();
+  }
+
+  Future<void> _checkLink(String text) async {
+    final t = text.trim();
+    if (t.isEmpty || t == _checked) return;
+    setState(() {
+      _checked = t;
+      _checking = true;
+      _check = null;
+    });
+    final result = await _controller.checkLink(t);
+    if (!mounted || _checked != t) return;
+    setState(() {
+      _checking = false;
+      _check = result;
+    });
+  }
+
+  void _linkChanged(String text) {
+    if (rdParseDriveLink(text) != null) {
+      _checkLink(text);
+    } else if (_checked.isNotEmpty) {
+      setState(() {
+        _checked = '';
+        _checking = false;
+        _check = null;
+      });
+    }
+  }
+
+  Future<void> _paste() async {
+    String? text;
+    try {
+      text = (await Clipboard.getData(Clipboard.kTextPlain))?.text?.trim();
+    } catch (_) {
+      // No clipboard access (PWA): the field takes a long press.
+    }
+    if (text == null || text.isEmpty || !mounted) return;
+    _link.text = text;
+    await _checkLink(text);
+  }
+
+  Future<void> _readLink() async {
+    final check = _check;
+    final folder = check?.folder;
+    if (folder == null) return;
+    final error = await _controller.readLink(folder, check?.name ?? '');
+    if (!mounted || error == null) return;
+    ToastHelper.showError(context, rdImportReadErrorText(context.l10n, error));
+  }
+
+  Future<void> _openDrive([RdDriveRef? folder]) async {
+    final uri = folder == null ? Uri.https('drive.google.com', '/') : rdDriveFolderUrl(folder);
+    try {
+      await launchUrl(uri, mode: LaunchMode.externalApplication);
+    } catch (_) {}
+  }
 
   Future<void> _pick() async {
     final result = await FilePicker.platform.pickFiles(
       type: FileType.custom,
       allowedExtensions: const ['zip'],
       allowMultiple: true,
-      withData: kIsWeb,
+      // In the browser the size is checked before the ZIP is read.
+      withReadStream: kIsWeb,
     );
     if (result == null || !mounted) return;
     await _read(result.files);
@@ -54,14 +147,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     }
     final error = await _controller.read(zips);
     if (!mounted || error == null) return;
-    ToastHelper.showError(
-      context,
-      switch (error) {
-        RdImportReadError.notZip => l10n.redesignImportErrorNotZip,
-        RdImportReadError.empty => l10n.redesignImportErrorEmpty,
-        RdImportReadError.noData => l10n.redesignImportErrorNoData,
-      },
-    );
+    ToastHelper.showError(context, rdImportReadErrorText(l10n, error));
   }
 
   /// Back link and system back: one step back; leaving the answers asks
@@ -70,6 +156,8 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final state = ref.read(rdImportProvider);
     final l10n = context.l10n;
     switch (state.step) {
+      case RdImportStep.source when _mode != null:
+        setState(() => _mode = null);
       case RdImportStep.source:
       case RdImportStep.reading:
         Navigator.of(context).pop(false);
@@ -111,7 +199,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     // The Werke stay loaded while the assistant is open.
     ref.watch(songsListDataProvider(null));
     final state = ref.watch(rdImportProvider);
-    final canPop = state.step == RdImportStep.source || state.step == RdImportStep.done;
+    final canPop = (state.step == RdImportStep.source && _mode == null) || state.step == RdImportStep.done;
     return PopScope(
       canPop: canPop,
       onPopInvokedWithResult: (didPop, _) {
@@ -130,13 +218,168 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
   // -------------------------------------------------------------------------
   // 1 Quelle
 
-  Widget _source(BuildContext context) {
+  Widget _source(BuildContext context) => switch (_mode) {
+        null => _sourceChoice(context),
+        _Source.drive => _sourceDrive(context),
+        _Source.zip => _sourceZip(context),
+      };
+
+  Widget _sourceChoice(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
     return RdImportFrame(
       backLabel: l10n.redesignTabWorks,
       onBack: _back,
       title: l10n.redesignImportTitle,
+      step: 1,
+      children: [
+        RdSectionHeader(l10n.redesignImportSourceWhere),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              leading: const RdRowIcon(Icons.add_to_drive_outlined),
+              title: l10n.redesignImportSourceDrive,
+              subtitle: l10n.redesignImportSourceDriveDetail,
+              trailing: RdPill(l10n.redesignImportSourceRecommended, tone: RdTone.primary),
+              onTap: () => setState(() => _mode = _Source.drive),
+            ),
+            RdListRow(
+              leading: const RdRowIcon(Icons.folder_zip_outlined),
+              title: l10n.redesignImportSourceZip,
+              subtitle: l10n.redesignImportSourceZipDetail,
+              onTap: () => setState(() => _mode = _Source.zip),
+            ),
+          ],
+        ),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+          child: Text(l10n.redesignImportSourceSafe, style: RdType.meta(p, size: 13)),
+        ),
+      ],
+    );
+  }
+
+  Widget _sourceDrive(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final check = _check;
+    final error = check?.error;
+    return RdImportFrame(
+      backLabel: l10n.redesignImportStepSource,
+      onBack: _back,
+      title: l10n.redesignImportSourceDrive,
+      step: 1,
+      bottom: RdPrimaryButton(
+        label: l10n.redesignImportDriveStart,
+        onPressed: check?.folder == null ? null : _readLink,
+      ),
+      children: [
+        RdCard(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              for (final (i, text) in [
+                l10n.redesignImportDriveStep1,
+                l10n.redesignImportDriveStep2,
+                l10n.redesignImportDriveStep3,
+              ].indexed) ...[
+                if (i > 0) const SizedBox(height: 12),
+                Row(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    ExcludeSemantics(child: RdCountBadge(i + 1)),
+                    const SizedBox(width: 12),
+                    Expanded(
+                      child: Padding(
+                        padding: const EdgeInsets.only(top: 5),
+                        child: Text(text, style: RdType.body(p)),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
+              const SizedBox(height: 16),
+              RdOutlineButton(label: l10n.redesignImportDriveOpen, icon: Icons.open_in_new, onPressed: _openDrive),
+            ],
+          ),
+        ),
+        const SizedBox(height: 20),
+        RdSectionHeader(l10n.redesignImportDriveLinkLabel),
+        RdCard(
+          padding: const EdgeInsets.fromLTRB(16, 6, 6, 6),
+          child: Row(
+            children: [
+              Expanded(
+                child: TextField(
+                  controller: _link,
+                  keyboardType: TextInputType.url,
+                  autocorrect: false,
+                  enableSuggestions: false,
+                  textInputAction: TextInputAction.go,
+                  style: TextStyle(fontSize: 16, color: p.text),
+                  decoration: InputDecoration(
+                    isDense: true,
+                    filled: false,
+                    border: InputBorder.none,
+                    enabledBorder: InputBorder.none,
+                    focusedBorder: InputBorder.none,
+                    contentPadding: const EdgeInsets.symmetric(vertical: 10),
+                    hintText: l10n.redesignImportDriveLinkHint,
+                    hintStyle: TextStyle(color: p.text2),
+                  ),
+                  onChanged: _linkChanged,
+                  onSubmitted: _checkLink,
+                ),
+              ),
+              const SizedBox(width: 8),
+              RdPillButton(icon: Icons.content_paste, label: l10n.redesignImportDrivePaste, onPressed: _paste),
+            ],
+          ),
+        ),
+        const SizedBox(height: 12),
+        if (_checking)
+          Row(
+            children: [
+              SizedBox(width: 18, height: 18, child: CircularProgressIndicator(strokeWidth: 2, color: p.primary)),
+              const SizedBox(width: 10),
+              Text(l10n.redesignImportDriveChecking, style: RdType.meta(p)),
+            ],
+          )
+        else if (check?.folder != null)
+          Container(
+            padding: const EdgeInsets.all(12),
+            decoration: BoxDecoration(color: p.presentSoft, borderRadius: BorderRadius.circular(14)),
+            child: Row(
+              children: [
+                Icon(Icons.check, color: p.present),
+                const SizedBox(width: 10),
+                Expanded(
+                  child: Text(
+                    l10n.redesignImportDriveFound(check!.name ?? ''),
+                    style: RdType.body(p).copyWith(fontWeight: FontWeight.w600),
+                  ),
+                ),
+              ],
+            ),
+          )
+        else if (error != null)
+          Semantics(
+            liveRegion: true,
+            child: Text(rdImportReadErrorText(l10n, error), style: RdType.body(p).copyWith(color: p.absent)),
+          ),
+        const SizedBox(height: 12),
+        Text(l10n.redesignImportDriveUnshareNote, style: RdType.meta(p, size: 13)),
+      ],
+    );
+  }
+
+  Widget _sourceZip(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    return RdImportFrame(
+      backLabel: l10n.redesignImportStepSource,
+      onBack: _back,
+      title: l10n.redesignImportSourceZip,
       step: 1,
       children: [
         RdCard(
@@ -146,22 +389,6 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
               Text(l10n.redesignImportSourceIntro, style: RdType.body(p)),
               const SizedBox(height: 16),
               RdPrimaryButton(label: l10n.redesignImportSourcePick, icon: Icons.folder_zip_outlined, onPressed: _pick),
-              if (isFileDropSupported) ...[
-                const SizedBox(height: 12),
-                FileDropTarget(
-                  onFiles: _read,
-                  builder: (context, hovering) => Container(
-                    height: 96,
-                    alignment: Alignment.center,
-                    decoration: BoxDecoration(
-                      color: hovering ? p.soft : p.bg,
-                      borderRadius: BorderRadius.circular(p.buttonRadius),
-                      border: Border.all(color: hovering ? p.primary : p.offBorder, width: hovering ? 2 : 1),
-                    ),
-                    child: Text(l10n.redesignImportSourceDrop, style: RdType.meta(p)),
-                  ),
-                ),
-              ],
             ],
           ),
         ),
@@ -171,11 +398,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              for (final (icon, text) in [
+              for (final (i, (icon, text)) in [
                 (Icons.add_to_drive_outlined, l10n.redesignImportSourceHowDrive),
                 (Icons.cloud_download_outlined, l10n.redesignImportSourceHowDropbox),
                 (Icons.computer_outlined, l10n.redesignImportSourceHowComputer),
-              ]) ...[
+              ].indexed) ...[
+                if (i > 0) const SizedBox(height: 12),
                 Row(
                   crossAxisAlignment: CrossAxisAlignment.start,
                   children: [
@@ -184,9 +412,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                     Expanded(child: Text(text, style: RdType.body(p))),
                   ],
                 ),
-                const SizedBox(height: 12),
               ],
-              Text(l10n.redesignImportSourceSoon, style: RdType.meta(p, size: 13)),
             ],
           ),
         ),
@@ -226,7 +452,12 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
                 ),
               ),
               const SizedBox(height: 12),
-              Text(l10n.redesignImportReadingDetail, style: RdType.meta(p, size: 13)),
+              Text(
+                _mode == _Source.drive && state.progress <= 0
+                    ? l10n.redesignImportDriveReading
+                    : l10n.redesignImportReadingDetail,
+                style: RdType.meta(p, size: 13),
+              ),
             ],
           ),
         ),
@@ -402,7 +633,7 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
     final plan = state.plan;
     if (upload == null || plan == null) return _source(context);
     final finished = state.step == RdImportStep.done;
-    final ok = upload.total - upload.failures.where((f) => f.path.isNotEmpty).length;
+    final ok = upload.succeeded;
     final summary = rdImportSummary(plan, state.decisions);
     final retry = {for (final f in upload.failures) if (f.path.isNotEmpty) f.path};
 
@@ -480,6 +711,25 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
           const SizedBox(height: 12),
           RdCard(child: Text(l10n.redesignImportDoneAborted, style: RdType.body(p).copyWith(color: p.absent))),
         ],
+        if (state.driveFolder != null) ...[
+          const SizedBox(height: 12),
+          RdCard(
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Text(l10n.redesignImportUnshareTitle, style: RdType.section(p)),
+                const SizedBox(height: 4),
+                Text(l10n.redesignImportUnshareText, style: RdType.body(p)),
+                const SizedBox(height: 12),
+                RdOutlineButton(
+                  label: l10n.redesignImportUnshareOpen,
+                  icon: Icons.open_in_new,
+                  onPressed: () => _openDrive(state.driveFolder),
+                ),
+              ],
+            ),
+          ),
+        ],
         if (upload.learnFailed) ...[
           const SizedBox(height: 12),
           RdCard(child: Text(l10n.songsFlutterLearnFailed, style: RdType.body(p).copyWith(color: p.late))),
@@ -519,10 +769,24 @@ class _RdImportPageState extends ConsumerState<RdImportPage> {
         ],
         if (summary.open > 0) ...[
           const SizedBox(height: 16),
-          Text(l10n.redesignImportDoneAgainHint, style: RdType.meta(p, size: 13)),
+          Text(
+            state.driveFolder != null ? l10n.redesignImportDoneAgainHintDrive : l10n.redesignImportDoneAgainHint,
+            style: RdType.meta(p, size: 13),
+          ),
         ],
         const SizedBox(height: 16),
-        RdTextLink(label: l10n.redesignImportDoneAnother, onTap: _controller.restart),
+        RdTextLink(
+          label: l10n.redesignImportDoneAnother,
+          onTap: () {
+            setState(() {
+              _mode = null;
+              _link.clear();
+              _checked = '';
+              _check = null;
+            });
+            _controller.restart();
+          },
+        ),
       ],
     );
   }

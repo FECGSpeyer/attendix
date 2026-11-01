@@ -4,10 +4,11 @@
       "version": "0.34.0",
       "date": "1.11.2026",
       "changes": [
-        "✨ Beta-Design, Werke: „Noten importieren“ liest ganze Ordner aus Google Drive, Dropbox oder vom Rechner als ZIP-Datei ein und ordnet Werke und Stimmen zu",
+        "✨ Beta-Design, Werke: „Noten importieren“ liest ganze Notenordner ein und ordnet Werke und Stimmen zu: per Google-Drive-Link (Dateien werden direkt kopiert, nichts aufs Handy) oder als ZIP-Datei aus Dropbox, OneDrive oder vom Rechner",
         "✨ Noten importieren: Unbekannte Stimmnamen werden einmal für alle Dateien gefragt, die Antwort wird als Begriff der Gruppe gespeichert; auf Wunsch wird eine neue Gruppe angelegt",
         "✨ Noten importieren: Mehrere Fassungen eines Werks werden erkannt, vorgeschlagen ist die mit dem neuesten Datum in den Dateien; doppelte Dateien und Stimmen, die schon in Attendix sind, bleiben draußen",
         "✨ Noten importieren: Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn jemand sie geprüft hat",
+        "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]
     },
@@ -30,6 +31,7 @@
         "✨ Beta-Design, Termine für Eltern: dieselbe Termine-Seite wie für Spieler, mit Zu- und Absage pro Kind direkt auf der Karte und Termin-Details mit Ablaufplan, Infos, Anhang und Route",
         "✨ Beta-Design, Stimmführer: „Meine Stimme“ mit Kontakt und kommenden Abwesenheiten im neuen Design",
         "✨ Beta-Design, Eltern: „Alle Kinder“ sagt für alle Kinder auf einmal zu oder ab, wie in der bisherigen Eltern-Ansicht",
+        "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
         "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
       ]
     },

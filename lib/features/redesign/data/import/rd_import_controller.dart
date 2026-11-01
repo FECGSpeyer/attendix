@@ -1,6 +1,6 @@
 import 'dart:async';
+import 'dart:typed_data';
 
-import 'package:crypto/crypto.dart';
 import 'package:file_picker/file_picker.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -12,11 +12,14 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/instrument_matcher.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/repositories/song_repository.dart';
+import '../../../../l10n/l10n.dart';
+import 'rd_import_drive.dart';
 import 'rd_import_logic.dart';
 import 'rd_import_source.dart';
 
-/// REDESIGN: "Noten importieren": steps of the assistant, reading the ZIP
-/// and the upload. The rules are in [rdBuildImportPlan] and friends.
+/// REDESIGN: "Noten importieren": steps of the assistant, reading the ZIP or
+/// the shared Drive folder and the upload. The rules are in
+/// [rdBuildImportPlan] and friends.
 
 enum RdImportStep { source, reading, questions, review, uploading, done }
 
@@ -34,6 +37,7 @@ class RdImportUpload {
   const RdImportUpload({
     required this.total,
     this.done = 0,
+    this.succeeded = 0,
     this.current,
     this.failures = const [],
     this.newWorks = 0,
@@ -46,6 +50,9 @@ class RdImportUpload {
 
   final int total;
   final int done;
+
+  /// Files that are in Attendix now.
+  final int succeeded;
 
   /// File being uploaded ("120 Wie wunderbar · Viola.pdf").
   final String? current;
@@ -63,6 +70,7 @@ class RdImportUpload {
 
   RdImportUpload copyWith({
     int? done,
+    int? succeeded,
     String? current,
     List<RdImportFailure>? failures,
     int? newWorks,
@@ -75,6 +83,7 @@ class RdImportUpload {
       RdImportUpload(
         total: total,
         done: done ?? this.done,
+        succeeded: succeeded ?? this.succeeded,
         current: current ?? this.current,
         failures: failures ?? this.failures,
         newWorks: newWorks ?? this.newWorks,
@@ -96,12 +105,16 @@ class RdImportState {
     this.upload,
     this.error,
     this.fileCount = 0,
+    this.driveFolder,
   });
 
   final RdImportStep step;
 
-  /// Name of the ZIP ("Noten (Speyer)").
+  /// Name of the ZIP or the Drive folder ("Noten (Speyer)").
   final String? sourceName;
+
+  /// The shared Drive folder read (to stop sharing it afterwards).
+  final RdDriveRef? driveFolder;
 
   /// Reading progress 0–1.
   final double progress;
@@ -125,6 +138,7 @@ class RdImportState {
     String? error,
     bool clearError = false,
     int? fileCount,
+    RdDriveRef? driveFolder,
   }) =>
       RdImportState(
         step: step ?? this.step,
@@ -135,14 +149,83 @@ class RdImportState {
         upload: upload ?? this.upload,
         error: clearError ? null : (error ?? this.error),
         fileCount: fileCount ?? this.fileCount,
+        driveFolder: driveFolder ?? this.driveFolder,
       );
 }
 
+/// ZIPs read in the browser are held in memory: more than this together
+/// is refused there (the Drive link or the app can take it).
+const int rdImportMaxWebBytes = 1024 * 1024 * 1024;
+
 /// Why reading stopped.
-enum RdImportReadError { notZip, empty, noData }
+enum RdImportReadError {
+  notZip,
+  empty,
+  noData,
+
+  /// Too large to hold in the browser's memory ([rdImportMaxWebBytes]).
+  tooLargeWeb,
+
+  /// No link to a folder.
+  badLink,
+
+  /// A Drive link to a file or document, not a folder.
+  notFolder,
+
+  /// Dropbox links are not read yet (ZIP instead).
+  dropbox,
+
+  /// Folder not found or not shared with "Anyone with the link".
+  notFound,
+
+  /// The link import is not set up on the server yet.
+  notSetUp,
+
+  /// More files than one import can take.
+  tooMany,
+
+  /// The day's budget is used up, or Google is busy.
+  limit,
+  forbidden,
+  failed,
+}
+
+RdImportReadError _readErrorOf(RdDriveError error) => switch (error) {
+      RdDriveError.notSetUp => RdImportReadError.notSetUp,
+      RdDriveError.notFound => RdImportReadError.notFound,
+      RdDriveError.notFolder => RdImportReadError.notFolder,
+      RdDriveError.limit || RdDriveError.busy => RdImportReadError.limit,
+      RdDriveError.tooMany => RdImportReadError.tooMany,
+      RdDriveError.forbidden => RdImportReadError.forbidden,
+      RdDriveError.exists || RdDriveError.failed => RdImportReadError.failed,
+    };
+
+/// A checked Drive link: the folder and its name, or why not.
+class RdLinkCheck {
+  const RdLinkCheck({this.folder, this.name, this.error});
+
+  final RdDriveRef? folder;
+  final String? name;
+  final RdImportReadError? error;
+}
+
+/// Text of a failed upload.
+String _uploadError(Object e) {
+  if (e is RdDriveException) {
+    final l10n = l10nWithoutContext;
+    return switch (e.error) {
+      RdDriveError.notFound => l10n.redesignImportDriveFileGone,
+      RdDriveError.limit || RdDriveError.busy => l10n.redesignImportErrorLimit,
+      RdDriveError.notSetUp => l10n.redesignImportErrorNotSetUp,
+      _ => l10n.commonUnknownError,
+    };
+  }
+  if (e is FormatException) return l10nWithoutContext.redesignImportFileBroken;
+  return friendlyErrorMessage(e);
+}
 
 class RdImportController extends AutoDisposeNotifier<RdImportState> {
-  RdImportSource? _source;
+  RdImportFiles? _source;
   KeepAliveLink? _keep;
   bool _disposed = false;
   int? _tenantId;
@@ -153,6 +236,17 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// Groups created by an earlier run.
   final Map<String, int> _createdGroups = {};
+
+  /// What the plan is built from (built again when parts are decided).
+  ({
+    List<RdImportEntry> entries,
+    List<RdImportSong> songs,
+    List<InstrumentInfo> instruments,
+    bool isChoir,
+    Map<String, String> hashes,
+    Map<String, DateTime> dates,
+    int junk,
+  })? _input;
 
   @override
   RdImportState build() {
@@ -167,6 +261,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
   void restart() {
     _source?.close();
     _source = null;
+    _input = null;
     _created.clear();
     _createdGroups.clear();
     state = const RdImportState();
@@ -174,15 +269,26 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   /// Reads [zips], compares duplicate candidates and the dates of Werke
   /// with Fassungen and builds the plan.
+  /// ZIPs picked in the browser come as a stream: their size is checked
+  /// before they are read into memory.
   Future<RdImportReadError?> read(List<PlatformFile> zips) async {
     if (zips.isEmpty) return null;
-    final data = await ref.read(songsListDataProvider(null).future);
+    final streamed = zips.where((z) => z.bytes == null && z.path == null && z.readStream != null);
+    if (streamed.fold<int>(0, (n, z) => n + z.size) > rdImportMaxWebBytes) return RdImportReadError.tooLargeWeb;
+    final data = await _data();
     if (_disposed) return null;
     if (data == null) return RdImportReadError.noData;
-    _tenantId = ref.read(currentTenantIdProvider);
-    _mainGroupId = data.groups.where((g) => g.maingroup == true).firstOrNull?.id;
     state = state.copyWith(step: RdImportStep.reading, progress: 0, clearError: true);
     await _pause();
+    if (streamed.isNotEmpty) {
+      try {
+        zips = [for (final z in zips) z.bytes == null && z.path == null && z.readStream != null ? await _collect(z) : z];
+      } catch (_) {
+        if (!_disposed) state = state.copyWith(step: RdImportStep.source);
+        return RdImportReadError.notZip;
+      }
+      if (_disposed) return null;
+    }
 
     final RdImportSource source;
     try {
@@ -191,6 +297,73 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       state = state.copyWith(step: RdImportStep.source);
       return RdImportReadError.notZip;
     }
+    return _readFrom(source, data);
+  }
+
+  /// Checks a pasted Google Drive link: the folder's name, or why not.
+  Future<RdLinkCheck> checkLink(String text) async {
+    final folder = rdParseDriveLink(text);
+    if (folder == null) {
+      return RdLinkCheck(
+        error: rdIsDropboxLink(text)
+            ? RdImportReadError.dropbox
+            : rdIsDriveLink(text)
+                ? RdImportReadError.notFolder
+                : RdImportReadError.badLink,
+      );
+    }
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (tenantId == null) return const RdLinkCheck(error: RdImportReadError.noData);
+    try {
+      final name = await ref.read(rdDriveApiProvider).folderName(tenantId, folder);
+      return RdLinkCheck(folder: folder, name: name);
+    } on RdDriveException catch (e) {
+      return RdLinkCheck(error: _readErrorOf(e.error));
+    } catch (_) {
+      return const RdLinkCheck(error: RdImportReadError.failed);
+    }
+  }
+
+  /// Reads the shared Drive [folder] (named [name]) level by level, then
+  /// as [read].
+  Future<RdImportReadError?> readLink(RdDriveRef folder, String name) async {
+    final data = await _data();
+    if (_disposed) return null;
+    final tenantId = _tenantId;
+    if (data == null || tenantId == null) return RdImportReadError.noData;
+    state = state.copyWith(step: RdImportStep.reading, progress: 0, sourceName: name, fileCount: 0, clearError: true);
+    final RdDriveSource source;
+    try {
+      source = await RdDriveSource.load(
+        ref.read(rdDriveApiProvider),
+        tenantId,
+        folder,
+        name,
+        onProgress: (files) {
+          if (!_disposed) state = state.copyWith(fileCount: files);
+        },
+        cancelled: () => _disposed || ref.read(currentTenantIdProvider) != tenantId,
+      );
+    } catch (e) {
+      if (_disposed) return null;
+      state = state.copyWith(step: RdImportStep.source);
+      return e is RdDriveException ? _readErrorOf(e.error) : RdImportReadError.failed;
+    }
+    if (_disposed) return null;
+    state = state.copyWith(driveFolder: folder);
+    return _readFrom(source, data);
+  }
+
+  /// The Werke and groups; binds the import to the current group.
+  Future<SongsListData?> _data() async {
+    final data = await ref.read(songsListDataProvider(null).future);
+    if (_disposed || data == null) return data;
+    _tenantId = ref.read(currentTenantIdProvider);
+    _mainGroupId = data.groups.where((g) => g.maingroup == true).firstOrNull?.id;
+    return data;
+  }
+
+  Future<RdImportReadError?> _readFrom(RdImportFiles source, SongsListData data) async {
     if (_disposed) {
       await source.close();
       return null;
@@ -221,48 +394,102 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     final dates = <String, DateTime>{};
     final toDate = rdImportPathsToDate(rdBuildImportPlan(source.entries, songs: songs, instruments: instruments, isChoir: isChoir));
     final hashing = toHash.toSet();
-    final work = {...hashing, ...toDate}.toList()..sort();
-    for (var i = 0; i < work.length; i++) {
-      if (_disposed) return null;
-      final path = work[i];
-      try {
-        final bytes = source.read(path);
-        if (hashing.contains(path)) hashes[path] = sha1.convert(bytes).toString();
-        if (path.toLowerCase().endsWith('.pdf')) {
-          final date = rdPdfDate(bytes);
-          if (date != null) dates[path] = date;
+    final dating = toDate.toSet();
+    final work = {...hashing, ...dating}.toList()..sort();
+    // A few at a time (a Drive folder answers each over the network).
+    Future<void> inspect(
+      List<String> paths, {
+      required bool Function(String) hash,
+      required bool Function(String) date,
+      double share = 1,
+    }) async {
+      var next = 0;
+      var done = 0;
+      Future<void> worker() async {
+        while (next < paths.length && !_disposed) {
+          final path = paths[next++];
+          try {
+            final r = await source.inspect(path, hash: hash(path), date: date(path));
+            if (r.hash != null) hashes[path] = r.hash!;
+            if (r.date != null) dates[path] = r.date!;
+          } catch (_) {
+            // Unreadable: no duplicate check, date of the listing.
+          }
+          done++;
+          if (done % 8 == 0 && !_disposed) {
+            state = state.copyWith(progress: share * done / (paths.length + 1));
+            await _pause();
+          }
         }
-      } catch (_) {
-        // Unreadable: no duplicate check, ZIP date.
       }
-      if (i % 8 == 0) {
-        state = state.copyWith(progress: (i + 1) / (work.length + 1));
-        await _pause();
-      }
+
+      await Future.wait([for (var i = 0; i < 4; i++) worker()]);
     }
+
+    await inspect(work, hash: hashing.contains, date: dating.contains, share: 0.9);
+    if (_disposed) return null;
     // Dates of Werke that only show Fassungen once duplicates are known.
     var plan = rdBuildImportPlan(source.entries,
         songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
-    final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p)).toList();
-    if (missing.any((p) => !work.contains(p))) {
-      for (final path in missing) {
-        if (_disposed) return null;
-        try {
-          final date = rdPdfDate(source.read(path));
-          if (date != null) dates[path] = date;
-        } catch (_) {}
-      }
+    final missing = rdImportPathsToDate(plan).where((p) => !dates.containsKey(p) && !work.contains(p)).toList();
+    if (missing.isNotEmpty) {
+      await inspect(missing, hash: (_) => false, date: (_) => true);
+      if (_disposed) return null;
       plan = rdBuildImportPlan(source.entries,
           songs: songs, instruments: instruments, isChoir: isChoir, hashes: hashes, dates: dates, junk: source.junk);
     }
     if (_disposed) return null;
+    _input = (
+      entries: source.entries,
+      songs: songs,
+      instruments: instruments,
+      isChoir: isChoir,
+      hashes: hashes,
+      dates: dates,
+      junk: source.junk,
+    );
     state = state.copyWith(step: RdImportStep.questions, progress: 1, plan: plan, decisions: const RdImportDecisions());
     return null;
   }
 
+  /// The plan again with the parts decided so far: two folders with the
+  /// same part only after an answer are Fassungen too.
+  void _replan() {
+    final input = _input;
+    if (input == null || state.plan == null) return;
+    final d = state.decisions;
+    state = state.copyWith(
+      plan: rdBuildImportPlan(
+        input.entries,
+        songs: input.songs,
+        instruments: input.instruments,
+        isChoir: input.isChoir,
+        hashes: input.hashes,
+        dates: input.dates,
+        junk: input.junk,
+        answers: d.answers,
+        categories: d.categories,
+      ),
+    );
+  }
+
   Future<void> _pause() => Future<void>.delayed(Duration.zero);
 
-  void goTo(RdImportStep step) => state = state.copyWith(step: step);
+  /// The bytes of a picked file that came as a stream.
+  Future<PlatformFile> _collect(PlatformFile zip) async {
+    final builder = BytesBuilder(copy: false);
+    await for (final chunk in zip.readStream!) {
+      if (_disposed) break;
+      builder.add(chunk);
+      if (builder.length > rdImportMaxWebBytes) throw const FormatException('too large');
+    }
+    return PlatformFile(name: zip.name, size: builder.length, bytes: builder.takeBytes());
+  }
+
+  void goTo(RdImportStep step) {
+    if (step == RdImportStep.review && state.step == RdImportStep.questions) _replan();
+    state = state.copyWith(step: step);
+  }
 
   void _decide(RdImportDecisions Function(RdImportDecisions d) change) =>
       state = state.copyWith(decisions: change(state.decisions));
@@ -285,8 +512,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
 
   void setTake(String path, bool take) => _decide((d) => d.copyWith(take: {...d.take, path: take}));
 
-  void setCategory(String path, RdImportCategory category) =>
-      _decide((d) => d.copyWith(categories: {...d.categories, path: category}));
+  void setCategory(String path, RdImportCategory category) {
+    _decide((d) => d.copyWith(categories: {...d.categories, path: category}));
+    _replan();
+  }
 
   void confirm(String workKey, {bool value = true}) => _decide((d) {
         final confirmed = {...d.confirmed};
@@ -295,9 +524,9 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       });
 
   /// Uploads the files of the ready Werke: new groups and Werke first, then
-  /// the files (three Werke at a time), keeps the Besetzung of existing
-  /// Werke and saves the part names chosen by hand as terms of the groups.
-  /// [only] = paths of an earlier run that failed (retry).
+  /// the files (three Werke at a time; each upload keeps the Besetzung of
+  /// its Werk) and saves the part names chosen by hand as terms of the
+  /// groups. [only] = paths of an earlier run that failed (retry).
   Future<void> upload({Set<String>? only}) async {
     final plan = state.plan;
     final source = _source;
@@ -316,6 +545,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
     var progress = RdImportUpload(total: items.length);
     state = state.copyWith(step: RdImportStep.uploading, upload: progress);
     final failures = <RdImportFailure>[];
+    final succeeded = <String>{};
     bool tenantChanged() => _disposed || ref.read(currentTenantIdProvider) != tenantId;
 
     try {
@@ -369,19 +599,7 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
       }
       state = state.copyWith(upload: progress.copyWith(failures: [...failures]));
 
-      // 3. Besetzung of existing Werke before the upload (the upload
-      //    recomputes it from the files and would drop groups without files).
-      final before = <int, List<int>>{};
-      for (final id in {for (final i in items) if (!(_created.containsValue(songIds[i.work.key]))) songIds[i.work.key]}.whereType<int>()) {
-        if (tenantChanged()) return;
-        try {
-          final song = await songs.getSongById(id);
-          final ids = song?.instrumentIds ?? const <int>[];
-          if (ids.isNotEmpty) before[id] = ids;
-        } catch (_) {}
-      }
-
-      // 4. The files, three Werke at a time, each Werk file by file.
+      // 3. The files, three Werke at a time, each Werk file by file.
       final failed = {for (final f in failures) f.path};
       final byWork = <String, List<RdUploadItem>>{};
       for (final i in items) {
@@ -396,20 +614,22 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
           for (final item in list) {
             if (tenantChanged()) return;
             final songId = songIds[item.work.key]!;
-            progress = progress.copyWith(current: '${item.work.title} · ${item.file.name}');
+            progress = progress.copyWith(current: '${item.work.title} · ${item.file.name}', succeeded: succeeded.length);
             state = state.copyWith(upload: progress.copyWith(done: done, failures: [...failures]));
             try {
-              final bytes = await Future(() => source.read(item.file.path));
               final c = item.category;
-              await service.uploadFile(
+              await source.upload(
+                service,
                 songId: songId,
-                file: PlatformFile(name: item.file.name, size: bytes.length, bytes: bytes),
+                path: item.file.path,
+                fileName: item.file.name,
                 instrumentId: c.newGroup != null ? _createdGroups[c.newGroup] : c.instrumentId,
                 note: c.note,
                 mainGroupId: _mainGroupId,
               );
+              succeeded.add(item.file.path);
             } catch (e) {
-              failures.add(RdImportFailure(path: item.file.path, work: item.work.title, error: friendlyErrorMessage(e)));
+              failures.add(RdImportFailure(path: item.file.path, work: item.work.title, error: _uploadError(e)));
             }
             done++;
           }
@@ -422,19 +642,8 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         return;
       }
 
-      // 5. Keep groups of the old Besetzung that have no files.
-      for (final entry in before.entries) {
-        try {
-          final song = await songs.getSongById(entry.key);
-          if (song == null) continue;
-          final now = song.instrumentIds ?? const <int>[];
-          final missing = entry.value.where((id) => !now.contains(id)).toList();
-          if (missing.isNotEmpty) await songs.updateSong(entry.key, {'instrument_ids': [...now, ...missing]});
-        } catch (_) {}
-      }
-
-      // 6. Part names chosen by hand become terms of their groups.
-      final uploaded = items.where((i) => !failures.any((f) => f.path == i.file.path)).toList();
+      // 4. Part names chosen by hand become terms of their groups.
+      final uploaded = items.where((i) => succeeded.contains(i.file.path)).toList();
       final groups = await ref.read(groupsProvider.future).catchError((_) => existingGroups);
       final instruments = [
         for (final g in groups)
@@ -455,10 +664,15 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         finished: true,
       );
     } catch (e) {
+      // Every file not uploaded yet can be tried again.
+      final error = friendlyErrorMessage(e);
+      final failed = {for (final f in failures) f.path};
       progress = progress.copyWith(
         failures: [
           ...failures,
-          RdImportFailure(path: '', work: '', error: friendlyErrorMessage(e)),
+          for (final i in items)
+            if (!succeeded.contains(i.file.path) && !failed.contains(i.file.path))
+              RdImportFailure(path: i.file.path, work: i.work.title, error: error),
         ],
         finished: true,
       );
@@ -468,7 +682,10 @@ class RdImportController extends AutoDisposeNotifier<RdImportState> {
         ref.invalidate(songsListDataProvider);
         ref.invalidate(groupsProvider);
         final switched = ref.read(currentTenantIdProvider) != tenantId;
-        state = state.copyWith(step: RdImportStep.done, upload: progress.copyWith(finished: true, aborted: progress.aborted || switched));
+        state = state.copyWith(
+          step: RdImportStep.done,
+          upload: progress.copyWith(succeeded: succeeded.length, finished: true, aborted: progress.aborted || switched),
+        );
       }
       _keep?.close();
       _keep = null;
