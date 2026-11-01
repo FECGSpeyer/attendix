@@ -15425,6 +15425,690 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.import.answerNewGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe „{name}“'**
+  String redesignImportAnswerNewGroup(Object name);
+
+  /// redesign.import.answerNone
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Zuordnung'**
+  String get redesignImportAnswerNone;
+
+  /// redesign.import.answerOther
+  ///
+  /// In de, this message translates to:
+  /// **'Andere …'**
+  String get redesignImportAnswerOther;
+
+  /// redesign.import.busy
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte warte, bis alles hochgeladen ist.'**
+  String get redesignImportBusy;
+
+  /// redesign.import.categoryLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme ändern'**
+  String get redesignImportCategoryLabel;
+
+  /// redesign.import.categoryNewGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe: {name}'**
+  String redesignImportCategoryNewGroup(Object name);
+
+  /// redesign.import.categoryOther
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstige'**
+  String get redesignImportCategoryOther;
+
+  /// redesign.import.confirmButton
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignImportConfirmButton;
+
+  /// redesign.import.confirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{files} Dateien in {works} Werken werden hochgeladen, davon {newWorks} neue Werke. Lass die Seite offen, bis alles fertig ist.'**
+  String redesignImportConfirmMessage(Object files, Object works, Object newWorks);
+
+  /// redesign.import.confirmTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Noten übernehmen?'**
+  String get redesignImportConfirmTitle;
+
+  /// redesign.import.confirmWork
+  ///
+  /// In de, this message translates to:
+  /// **'Passt so'**
+  String get redesignImportConfirmWork;
+
+  /// redesign.import.discardConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Verwerfen'**
+  String get redesignImportDiscardConfirm;
+
+  /// redesign.import.discardMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Antworten und Entscheidungen gehen verloren. Hochgeladen wurde noch nichts.'**
+  String get redesignImportDiscardMessage;
+
+  /// redesign.import.discardTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import verwerfen?'**
+  String get redesignImportDiscardTitle;
+
+  /// redesign.import.doneAborted
+  ///
+  /// In de, this message translates to:
+  /// **'Abgebrochen, weil die Gruppe gewechselt wurde.'**
+  String get redesignImportDoneAborted;
+
+  /// redesign.import.doneAgainHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.'**
+  String get redesignImportDoneAgainHint;
+
+  /// redesign.import.doneAnother
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere ZIP-Datei importieren'**
+  String get redesignImportDoneAnother;
+
+  /// redesign.import.doneFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlgeschlagen'**
+  String get redesignImportDoneFailed;
+
+  /// redesign.import.doneLearned
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Begriffe gelernt'**
+  String get redesignImportDoneLearned;
+
+  /// redesign.import.doneNewGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppen'**
+  String get redesignImportDoneNewGroups;
+
+  /// redesign.import.doneNewWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Werke'**
+  String get redesignImportDoneNewWorks;
+
+  /// redesign.import.doneOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht geprüft, nicht übernommen'**
+  String get redesignImportDoneOpen;
+
+  /// redesign.import.doneRetry
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlgeschlagene erneut hochladen'**
+  String get redesignImportDoneRetry;
+
+  /// redesign.import.doneSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Weggelassen'**
+  String get redesignImportDoneSkipped;
+
+  /// redesign.import.doneText
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei ist jetzt in Attendix.} other {{count} Dateien sind jetzt in Attendix.}}'**
+  String redesignImportDoneText(num count);
+
+  /// redesign.import.doneTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import abgeschlossen'**
+  String get redesignImportDoneTitle;
+
+  /// redesign.import.doneToWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Zu den Werken'**
+  String get redesignImportDoneToWorks;
+
+  /// redesign.import.errorEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'In der ZIP-Datei sind keine Dateien.'**
+  String get redesignImportErrorEmpty;
+
+  /// redesign.import.errorNoData
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.'**
+  String get redesignImportErrorNoData;
+
+  /// redesign.import.errorNotZip
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ist keine ZIP-Datei oder beschädigt.'**
+  String get redesignImportErrorNotZip;
+
+  /// redesign.import.fassungAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Fassungen übernehmen'**
+  String get redesignImportFassungAll;
+
+  /// redesign.import.fassungMain
+  ///
+  /// In de, this message translates to:
+  /// **'Werk-Ordner'**
+  String get redesignImportFassungMain;
+
+  /// redesign.import.fassungMeta
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}} · neueste vom {date}'**
+  String redesignImportFassungMeta(num count, Object date);
+
+  /// redesign.import.fassungMetaNoDate
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
+  String redesignImportFassungMetaNoDate(num count);
+
+  /// redesign.import.fassungOld
+  ///
+  /// In de, this message translates to:
+  /// **'Alt-Ordner'**
+  String get redesignImportFassungOld;
+
+  /// redesign.import.fassungenIntro
+  ///
+  /// In de, this message translates to:
+  /// **'In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.'**
+  String get redesignImportFassungenIntro;
+
+  /// redesign.import.fassungenTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Fassungen'**
+  String get redesignImportFassungenTitle;
+
+  /// redesign.import.filesSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Wird weggelassen · {count}'**
+  String redesignImportFilesSkip(Object count);
+
+  /// redesign.import.filesTake
+  ///
+  /// In de, this message translates to:
+  /// **'Wird übernommen · {count}'**
+  String redesignImportFilesTake(Object count);
+
+  /// redesign.import.flagConfirmed
+  ///
+  /// In de, this message translates to:
+  /// **'Geprüft'**
+  String get redesignImportFlagConfirmed;
+
+  /// redesign.import.flagFassungen
+  ///
+  /// In de, this message translates to:
+  /// **'Fassungen'**
+  String get redesignImportFlagFassungen;
+
+  /// redesign.import.flagMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Werk prüfen'**
+  String get redesignImportFlagMatch;
+
+  /// redesign.import.flagNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu'**
+  String get redesignImportFlagNew;
+
+  /// redesign.import.flagPartExists
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme schon da'**
+  String get redesignImportFlagPartExists;
+
+  /// redesign.import.flagSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernehmen'**
+  String get redesignImportFlagSkipped;
+
+  /// redesign.import.flagUnclear
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme unklar'**
+  String get redesignImportFlagUnclear;
+
+  /// redesign.import.foundExisting
+  ///
+  /// In de, this message translates to:
+  /// **'{count} schon in Attendix'**
+  String redesignImportFoundExisting(Object count);
+
+  /// redesign.import.foundFiles
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
+  String redesignImportFoundFiles(num count);
+
+  /// redesign.import.foundNew
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 neues Werk} other {{count} neue Werke}}'**
+  String redesignImportFoundNew(num count);
+
+  /// redesign.import.foundWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignImportFoundWorks(num count);
+
+  /// redesign.import.keepOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.'**
+  String get redesignImportKeepOpen;
+
+  /// redesign.import.knownText
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Attendix erkennt Stimmen an eurer Gruppe und ihren Begriffen.} other {Attendix erkennt Stimmen an euren {count} Gruppen und ihren Begriffen.}}'**
+  String redesignImportKnownText(num count);
+
+  /// redesign.import.knownTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Schon bekannt aus eurer Gruppe'**
+  String get redesignImportKnownTitle;
+
+  /// redesign.import.matchNumberOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nummer passt, der Titel weicht ab.'**
+  String get redesignImportMatchNumberOnly;
+
+  /// redesign.import.matchTitleOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Der Titel passt, die Nummer weicht ab.'**
+  String get redesignImportMatchTitleOnly;
+
+  /// redesign.import.menuHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner aus Google Drive, Dropbox oder vom Rechner'**
+  String get redesignImportMenuHint;
+
+  /// redesign.import.newGroupTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe anlegen'**
+  String get redesignImportNewGroupTitle;
+
+  /// redesign.import.openHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk ist noch zu prüfen. Es bleibt draußen, bis du es angeschaut hast.} other {{count} Werke sind noch zu prüfen. Sie bleiben draußen, bis du sie angeschaut hast.}}'**
+  String redesignImportOpenHint(num count);
+
+  /// redesign.import.optionFassung
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste Fassung vorschlagen'**
+  String get redesignImportOptionFassung;
+
+  /// redesign.import.optionFassungDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Liegen bei einem Werk mehrere Fassungen, wird die mit dem neuesten Datum in den Dateien vorgeschlagen. Du entscheidest beim Prüfen.'**
+  String get redesignImportOptionFassungDetail;
+
+  /// redesign.import.optionWord
+  ///
+  /// In de, this message translates to:
+  /// **'Word weglassen, wenn PDF daneben liegt'**
+  String get redesignImportOptionWord;
+
+  /// redesign.import.optionWordDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Für Liedtexte und Pläne, die es auch als PDF gibt.'**
+  String get redesignImportOptionWordDetail;
+
+  /// redesign.import.optionsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Import'**
+  String get redesignImportOptionsTitle;
+
+  /// redesign.import.pickNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk anlegen'**
+  String get redesignImportPickNew;
+
+  /// redesign.import.pickSearch
+  ///
+  /// In de, this message translates to:
+  /// **'Werk suchen'**
+  String get redesignImportPickSearch;
+
+  /// redesign.import.pickSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernehmen'**
+  String get redesignImportPickSkip;
+
+  /// redesign.import.pickTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Werk wählen'**
+  String get redesignImportPickTitle;
+
+  /// redesign.import.questionTitle
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gehört zu …'**
+  String redesignImportQuestionTitle(Object name);
+
+  /// redesign.import.questionWhere
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Dateien, z. B. in {works}'**
+  String redesignImportQuestionWhere(Object count, Object works);
+
+  /// redesign.import.questionsIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Namen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen und wird als Begriff der Gruppe gespeichert.'**
+  String get redesignImportQuestionsIntro;
+
+  /// redesign.import.questionsNone
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Stimmen sind bekannt.'**
+  String get redesignImportQuestionsNone;
+
+  /// redesign.import.questionsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}'**
+  String redesignImportQuestionsTitle(num count);
+
+  /// redesign.import.readingDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix sucht doppelte Dateien und liest das Datum der Fassungen.'**
+  String get redesignImportReadingDetail;
+
+  /// redesign.import.readingTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wird eingelesen …'**
+  String get redesignImportReadingTitle;
+
+  /// redesign.import.reasonByHand
+  ///
+  /// In de, this message translates to:
+  /// **'Von dir weggelassen'**
+  String get redesignImportReasonByHand;
+
+  /// redesign.import.reasonDuplicate
+  ///
+  /// In de, this message translates to:
+  /// **'Doppelt vorhanden'**
+  String get redesignImportReasonDuplicate;
+
+  /// redesign.import.reasonOtherFassung
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Fassung'**
+  String get redesignImportReasonOtherFassung;
+
+  /// redesign.import.reasonPartExists
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme schon in Attendix'**
+  String get redesignImportReasonPartExists;
+
+  /// redesign.import.reasonSameName
+  ///
+  /// In de, this message translates to:
+  /// **'Schon in Attendix'**
+  String get redesignImportReasonSameName;
+
+  /// redesign.import.reasonTooLarge
+  ///
+  /// In de, this message translates to:
+  /// **'Größer als 20 MB'**
+  String get redesignImportReasonTooLarge;
+
+  /// redesign.import.reasonUnsupported
+  ///
+  /// In de, this message translates to:
+  /// **'Dateityp wird nicht übernommen'**
+  String get redesignImportReasonUnsupported;
+
+  /// redesign.import.reasonWord
+  ///
+  /// In de, this message translates to:
+  /// **'PDF liegt daneben'**
+  String get redesignImportReasonWord;
+
+  /// redesign.import.reasonWorkSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Werk wird nicht übernommen'**
+  String get redesignImportReasonWorkSkipped;
+
+  /// redesign.import.reviewAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle · {count}'**
+  String redesignImportReviewAll(Object count);
+
+  /// redesign.import.reviewCounts
+  ///
+  /// In de, this message translates to:
+  /// **'{take} übernehmen · {skip} weglassen'**
+  String redesignImportReviewCounts(Object take, Object skip);
+
+  /// redesign.import.reviewEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Hier ist nichts mehr zu prüfen.'**
+  String get redesignImportReviewEmpty;
+
+  /// redesign.import.reviewIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn du sie angeschaut hast.'**
+  String get redesignImportReviewIntro;
+
+  /// redesign.import.reviewNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu · {count}'**
+  String redesignImportReviewNew(Object count);
+
+  /// redesign.import.reviewOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Zu prüfen · {count}'**
+  String redesignImportReviewOpen(Object count);
+
+  /// redesign.import.sourceDrop
+  ///
+  /// In de, this message translates to:
+  /// **'Oder ZIP-Dateien hierher ziehen'**
+  String get redesignImportSourceDrop;
+
+  /// redesign.import.sourceHowComputer
+  ///
+  /// In de, this message translates to:
+  /// **'Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).'**
+  String get redesignImportSourceHowComputer;
+
+  /// redesign.import.sourceHowDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Google Drive: Ordner mit rechts anklicken › Herunterladen. Große Ordner kommen als mehrere ZIP-Dateien, wähle sie zusammen aus.'**
+  String get redesignImportSourceHowDrive;
+
+  /// redesign.import.sourceHowDropbox
+  ///
+  /// In de, this message translates to:
+  /// **'Dropbox: beim Ordner auf … › Herunterladen.'**
+  String get redesignImportSourceHowDropbox;
+
+  /// redesign.import.sourceHowTitle
+  ///
+  /// In de, this message translates to:
+  /// **'So bekommst du die ZIP-Datei'**
+  String get redesignImportSourceHowTitle;
+
+  /// redesign.import.sourceIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Lade den Ordner mit euren Noten als ZIP-Datei herunter und wähle sie hier aus. Attendix ordnet die Dateien den Werken und Stimmen zu. Hochgeladen wird erst, wenn du alles geprüft hast.'**
+  String get redesignImportSourceIntro;
+
+  /// redesign.import.sourcePick
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP-Datei wählen'**
+  String get redesignImportSourcePick;
+
+  /// redesign.import.sourceSoon
+  ///
+  /// In de, this message translates to:
+  /// **'Bald auch direkt mit einem Google-Drive- oder Dropbox-Link.'**
+  String get redesignImportSourceSoon;
+
+  /// redesign.import.stepOf
+  ///
+  /// In de, this message translates to:
+  /// **'Schritt {step} von 4 · {name}'**
+  String redesignImportStepOf(Object step, Object name);
+
+  /// redesign.import.stepRead
+  ///
+  /// In de, this message translates to:
+  /// **'Einlesen'**
+  String get redesignImportStepRead;
+
+  /// redesign.import.stepReview
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen'**
+  String get redesignImportStepReview;
+
+  /// redesign.import.stepSource
+  ///
+  /// In de, this message translates to:
+  /// **'Quelle'**
+  String get redesignImportStepSource;
+
+  /// redesign.import.stepUpload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get redesignImportStepUpload;
+
+  /// redesign.import.takeLabel
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ übernehmen'**
+  String redesignImportTakeLabel(Object name);
+
+  /// redesign.import.targetChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignImportTargetChange;
+
+  /// redesign.import.targetExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In Attendix: {name}'**
+  String redesignImportTargetExisting(Object name);
+
+  /// redesign.import.targetNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk: {name}'**
+  String redesignImportTargetNew(Object name);
+
+  /// redesign.import.targetSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Wird nicht übernommen'**
+  String get redesignImportTargetSkip;
+
+  /// redesign.import.targetTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel in Attendix'**
+  String get redesignImportTargetTitle;
+
+  /// redesign.import.title
+  ///
+  /// In de, this message translates to:
+  /// **'Noten importieren'**
+  String get redesignImportTitle;
+
+  /// redesign.import.toReview
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Prüfung'**
+  String get redesignImportToReview;
+
+  /// redesign.import.undoConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Doch noch nicht geprüft'**
+  String get redesignImportUndoConfirm;
+
+  /// redesign.import.uploadButton
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei übernehmen} other {{count} Dateien übernehmen}}'**
+  String redesignImportUploadButton(num count);
+
+  /// redesign.import.uploadProgress
+  ///
+  /// In de, this message translates to:
+  /// **'{done} von {total} Dateien'**
+  String redesignImportUploadProgress(Object done, Object total);
+
+  /// redesign.import.uploadTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wird hochgeladen'**
+  String get redesignImportUploadTitle;
+
   /// redesign.invite.addPerson
   ///
   /// In de, this message translates to:

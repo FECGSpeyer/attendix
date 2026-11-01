@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.34.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Beta-Design, Werke: „Noten importieren“ liest ganze Ordner aus Google Drive, Dropbox oder vom Rechner als ZIP-Datei ein und ordnet Werke und Stimmen zu",
+        "✨ Noten importieren: Unbekannte Stimmnamen werden einmal für alle Dateien gefragt, die Antwort wird als Begriff der Gruppe gespeichert; auf Wunsch wird eine neue Gruppe angelegt",
+        "✨ Noten importieren: Mehrere Fassungen eines Werks werden erkannt, vorgeschlagen ist die mit dem neuesten Datum in den Dateien; doppelte Dateien und Stimmen, die schon in Attendix sind, bleiben draußen",
+        "✨ Noten importieren: Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn jemand sie geprüft hat",
+        "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
+      ]
+    },
+    {
       "version": "0.31.1",
       "date": "1.11.2026",
       "changes": [
