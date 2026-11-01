@@ -42,6 +42,21 @@ class _FakeApi implements AuthTokenApi {
     return _session(user, next);
   }
 
+  /// e-mail → (password, user id)
+  final Map<String, (String, String)> accounts = {};
+
+  @override
+  Future<Session> signInWithPassword(String email, String password) async {
+    if (failWith != null) throw failWith!;
+    final entry = accounts[email];
+    if (entry == null || entry.$1 != password) {
+      throw const AuthException('Invalid login credentials', statusCode: '400', code: 'invalid_credentials');
+    }
+    final token = 'login-${entry.$2}';
+    valid[token] = entry.$2;
+    return _session(entry.$2, token);
+  }
+
   @override
   Future<void> revoke(String accessToken) async => revoked.add(accessToken);
 }
@@ -64,6 +79,19 @@ class _FakeAuth implements AccountSwitchAuth {
 
   @override
   void resumeAutoRefresh() => log.add('resume');
+
+  /// Simulates a refresh of the current session that was already running.
+  Session? pendingRefresh;
+
+  @override
+  Future<void> settle() async {
+    log.add('settle');
+    final pending = pendingRefresh;
+    if (pending != null) {
+      pendingRefresh = null;
+      currentSession = pending;
+    }
+  }
 }
 
 void main() {
@@ -143,7 +171,7 @@ void main() {
       expect(next.user.id, 'b');
       expect(auth.currentSession?.user.id, 'b');
       expect(order, ['before:a:rb1+']);
-      expect(auth.log, ['pause', 'activate:b', 'resume']);
+      expect(auth.log, ['pause', 'settle', 'activate:b', 'resume']);
       // A's newest token was saved before leaving it, B's rotated token too.
       expect(tokenOf('a'), 'ra1');
       expect(tokenOf('b'), 'rb1+');
@@ -178,7 +206,7 @@ void main() {
       );
       expect(auth.currentSession?.user.id, 'a');
       expect(before, isFalse);
-      expect(auth.log, ['pause', 'resume']);
+      expect(auth.log, ['pause', 'settle', 'resume']);
       final b = store.accounts.firstWhere((x) => x.userId == 'b');
       expect(b.canResume, isFalse);
       expect(service.isSwitching, isFalse);
@@ -212,7 +240,7 @@ void main() {
       );
       await service.switchTo('a');
       expect(api.refreshed, isEmpty);
-      expect(auth.log, ['pause', 'resume']);
+      expect(auth.log, ['pause', 'settle', 'resume']);
     });
 
     test('works from the login page (no current session)', () async {
@@ -230,6 +258,101 @@ void main() {
       api.valid['rb1'] = 'b';
       await service.switchTo('b', beforeActivate: () async => throw Exception('push'));
       expect(auth.currentSession?.user.id, 'b');
+    });
+  });
+
+  group('Account switch – races (Sol review)', () {
+    test('a refresh of the old account that was running is settled first and its token kept', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      auth.pendingRefresh = _session('a', 'ra2');
+      await service.switchTo('b');
+      expect(auth.currentSession?.user.id, 'b');
+      expect(tokenOf('a'), 'ra2');
+    });
+
+    test('a login that finished during the switch wins', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      await expectLater(
+        service.switchTo('b', beforeActivate: () async {
+          auth.currentSession = _session('c', 'rc1'); // login page
+        }),
+        throwsA(isA<AccountSwitchSuperseded>()),
+      );
+      expect(auth.currentSession?.user.id, 'c');
+      // B's rotated token is not lost.
+      expect(tokenOf('b'), 'rb1+');
+    });
+
+    test('the target token is read fresh from the store (other tab)', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      await service.load();
+      // Another tab switched to B meanwhile and stored the rotated token.
+      store.accounts = [const SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb2')];
+      api.valid['rb2'] = 'b';
+      await service.switchTo('b');
+      expect(api.refreshed, ['rb2']);
+    });
+
+    test('switches and list updates run under the cross-tab locks', () async {
+      final locks = <String>[];
+      store = InMemorySavedAccountsStore(const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')]);
+      api = _FakeApi()..valid['rb1'] = 'b';
+      auth = _FakeAuth(_session('a', 'ra1'));
+      service = AccountSwitchService(
+        store: store,
+        api: api,
+        auth: auth,
+        lock: <T>(name, body) {
+          locks.add(name);
+          return body();
+        },
+      );
+      await service.switchTo('b');
+      expect(locks.first, 'attendix.account-switch');
+      expect(locks, contains('attendix.saved-accounts'));
+    });
+  });
+
+  group('Account switch – adding', () {
+    test('wrong password changes nothing (no cleanup of the current account)', () async {
+      build(current: _session('a', 'ra1'));
+      api.accounts['b@test.de'] = ('secret', 'b');
+      var cleanup = false;
+      await expectLater(
+        service.addAccount(
+          () => api.signInWithPassword('b@test.de', 'wrong'),
+          beforeActivate: () async => cleanup = true,
+        ),
+        throwsA(isA<AuthException>()),
+      );
+      expect(cleanup, isFalse);
+      expect(auth.currentSession?.user.id, 'a');
+      expect(store.accounts.map((a) => a.userId), ['a']);
+    });
+
+    test('correct password stores both accounts and activates the new one', () async {
+      build(current: _session('a', 'ra1'));
+      api.accounts['b@test.de'] = ('secret', 'b');
+      final order = <String>[];
+      await service.addAccount(
+        () => api.signInWithPassword('b@test.de', 'secret'),
+        beforeActivate: () async => order.add('cleanup:${auth.currentSession?.user.id}'),
+      );
+      expect(order, ['cleanup:a']);
+      expect(auth.currentSession?.user.id, 'b');
+      expect(tokenOf('a'), 'ra1');
+      expect(tokenOf('b'), 'login-b');
     });
   });
 
@@ -322,6 +445,38 @@ void main() {
       await api.revoke('acc');
       expect(seen.url.toString(), 'https://x.supabase.co/auth/v1/logout?scope=local');
       expect(seen.headers['Authorization'], 'Bearer acc');
+    });
+  });
+
+  group('Account switch – password sign-in API', () {
+    test('posts to the password grant and maps rejected credentials to AuthException', () async {
+      late http.Request seen;
+      final api = HttpAuthTokenApi(
+        supabaseUrl: 'https://x.supabase.co',
+        anonKey: 'anon',
+        client: MockClient((req) async {
+          seen = req;
+          return http.Response(
+            jsonEncode({'code': 400, 'error_code': 'invalid_credentials', 'msg': 'Invalid login credentials'}),
+            400,
+          );
+        }),
+      );
+      await expectLater(
+        api.signInWithPassword(' b@test.de ', 'pw'),
+        throwsA(isA<AuthException>().having((e) => e.code, 'code', 'invalid_credentials')),
+      );
+      expect(seen.url.toString(), 'https://x.supabase.co/auth/v1/token?grant_type=password');
+      expect(jsonDecode(seen.body), {'email': 'b@test.de', 'password': 'pw'});
+    });
+
+    test('offline is retryable', () async {
+      final api = HttpAuthTokenApi(
+        supabaseUrl: 'https://x.supabase.co',
+        anonKey: 'anon',
+        client: MockClient((_) async => throw http.ClientException('offline')),
+      );
+      await expectLater(api.signInWithPassword('b@test.de', 'pw'), throwsA(isA<AccountSwitchUnavailable>()));
     });
   });
 

@@ -3,12 +3,23 @@ import 'dart:convert';
 
 import 'package:supabase_flutter/supabase_flutter.dart';
 
+import 'account_switch_lock.dart';
 import 'auth_token_api.dart';
 import 'saved_account.dart';
 import 'saved_accounts_store.dart';
 
 export 'auth_token_api.dart' show AccountSwitchUnavailable, SavedSessionExpired;
 export 'saved_account.dart';
+
+/// ACCOUNT_SWITCH: the app's session changed while the switch was running
+/// (e.g. a login on the login page): the switch does not replace it. The
+/// target's new token is stored, so nothing is lost.
+class AccountSwitchSuperseded implements Exception {
+  const AccountSwitchSuperseded();
+}
+
+/// Runs [body] under a named lock shared by all app instances (browser tabs).
+typedef AccountSwitchLock = Future<T> Function<T>(String name, Future<T> Function() body);
 
 /// ACCOUNT_SWITCH: the app's own auth client, as far as the switcher needs it.
 abstract class AccountSwitchAuth {
@@ -22,6 +33,11 @@ abstract class AccountSwitchAuth {
   /// refresh that finished after [activate] would bring the old account back.
   void pauseAutoRefresh();
   void resumeAutoRefresh();
+
+  /// Lets a token refresh of the current session that may already be
+  /// running finish before the switch replaces the session (its late
+  /// result would otherwise bring the old account back).
+  Future<void> settle();
 }
 
 class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
@@ -52,6 +68,23 @@ class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
       _auth.startAutoRefresh();
     } catch (_) {}
   }
+
+  @override
+  Future<void> settle() async {
+    final session = _auth.currentSession;
+    final expiresAt = session?.expiresAt;
+    if (session == null || expiresAt == null) return;
+    // GoTrue refreshes automatically only within ~30 s of expiry. Within
+    // 60 s a refresh may be running: refreshSession() joins it (or does it
+    // now), so it cannot finish after the switch.
+    final left = DateTime.fromMillisecondsSinceEpoch(expiresAt * 1000).difference(DateTime.now());
+    if (left > const Duration(seconds: 60)) return;
+    try {
+      await _auth.refreshSession();
+    } catch (_) {
+      // Offline or the old session is gone: nothing left to race with.
+    }
+  }
 }
 
 /// ACCOUNT_SWITCH: remembers the accounts signed in on this device and
@@ -69,11 +102,17 @@ class AccountSwitchService {
     required AuthTokenApi api,
     required AccountSwitchAuth auth,
     DateTime Function()? clock,
+    AccountSwitchLock? lock,
   })  : _store = store,
         _api = api,
         _auth = auth,
-        _clock = clock ?? DateTime.now;
+        _clock = clock ?? DateTime.now,
+        _lock = lock ?? runWithAccountSwitchLock;
 
+  static const _switchLockName = 'attendix.account-switch';
+  static const _storeLockName = 'attendix.saved-accounts';
+
+  final AccountSwitchLock _lock;
   final SavedAccountsStore _store;
   final AuthTokenApi _api;
   final AccountSwitchAuth _auth;
@@ -173,26 +212,22 @@ class AccountSwitchService {
   /// old account is still signed in (push token removal needs its session).
   ///
   /// Throws [SavedSessionExpired] (the account stays in the list, without
-  /// token, and needs a login) or [AccountSwitchUnavailable] (nothing
-  /// changed). In both cases the current account stays signed in.
+  /// token, and needs a login), [AccountSwitchUnavailable] (nothing
+  /// changed) or [AccountSwitchSuperseded]. In all cases the app keeps the
+  /// session it has.
   Future<Session> switchTo(
     String userId, {
     Future<void> Function()? beforeActivate,
-  }) async {
-    if (_switching) throw StateError('account switch already running');
-    _switching = true;
-    _auth.pauseAutoRefresh();
-    try {
-      await load();
+  }) {
+    return _exclusive(() async {
       final current = _auth.currentSession;
       if (current != null && current.user.id == userId) return current;
-      final target = _accounts.where((a) => a.userId == userId).firstOrNull;
-      final token = target?.refreshToken;
-      if (target == null || token == null || token.isEmpty) {
+      // Fresh from the store: another tab may have used the token already.
+      final stored = await _store.load();
+      final token = stored.where((a) => a.userId == userId).firstOrNull?.refreshToken;
+      if (token == null || token.isEmpty) {
         throw const SavedSessionExpired('no_saved_session');
       }
-      // Keep the current account's newest token before leaving it.
-      if (current != null) await remember(current);
 
       final Session next;
       try {
@@ -207,37 +242,91 @@ class AccountSwitchService {
       if (next.user.id != userId) {
         throw const SavedSessionExpired('user_mismatch');
       }
-      // The old token is used up now: store the new one before anything
-      // else can fail.
-      await remember(next);
-      if (beforeActivate != null) {
-        try {
-          await beforeActivate();
-        } catch (_) {
-          // Cleanup of the old account must never block the switch.
-        }
+      return _activate(next, current?.user.id, beforeActivate);
+    });
+  }
+
+  /// Signs in another account through [signIn] (which must not touch the
+  /// app's session, see [AuthTokenApi.signInWithPassword]) and switches to
+  /// it. Errors of [signIn] propagate and change nothing.
+  Future<Session> addAccount(
+    Future<Session> Function() signIn, {
+    Future<void> Function()? beforeActivate,
+  }) {
+    return _exclusive(() async {
+      final current = _auth.currentSession;
+      final next = await signIn();
+      if (current != null && current.user.id == next.user.id) {
+        // Same account again: use the fresh session (the UI prevents this).
+        await remember(next);
+        await _auth.activate(next);
+        return next;
       }
-      await _auth.activate(next);
-      return next;
+      return _activate(next, current?.user.id, beforeActivate);
+    });
+  }
+
+  /// Common frame of a switch: one at a time (also across browser tabs),
+  /// no auto refresh, a running refresh settled and the current account's
+  /// newest token stored first.
+  Future<Session> _exclusive(Future<Session> Function() body) async {
+    if (_switching) throw StateError('account switch already running');
+    _switching = true;
+    _auth.pauseAutoRefresh();
+    try {
+      return await _lock(_switchLockName, () async {
+        await load();
+        await _auth.settle();
+        final current = _auth.currentSession;
+        // Keep the current account's newest token before leaving it.
+        if (current != null) await remember(current);
+        return body();
+      });
     } finally {
       _auth.resumeAutoRefresh();
       _switching = false;
     }
   }
 
+  Future<Session> _activate(
+    Session next,
+    String? startUserId,
+    Future<void> Function()? beforeActivate,
+  ) async {
+    // The old token is used up now: store the new one before anything
+    // else can fail.
+    await remember(next);
+    if (_auth.currentSession?.user.id != startUserId) {
+      throw const AccountSwitchSuperseded();
+    }
+    if (beforeActivate != null) {
+      try {
+        await beforeActivate();
+      } catch (_) {
+        // Cleanup of the old account must never block the switch.
+      }
+    }
+    // A login elsewhere while the cleanup ran wins.
+    if (_auth.currentSession?.user.id != startUserId) {
+      throw const AccountSwitchSuperseded();
+    }
+    await _auth.activate(next);
+    return next;
+  }
+
   /// Re-reads the store and applies [change]; serialised, so concurrent
   /// updates (auth events, switch, other browser tabs) do not overwrite
   /// each other.
   Future<void> _mutate(List<SavedAccount> Function(List<SavedAccount>) change) {
-    final run = _queue.then((_) async {
-      final stored = await _store.load();
-      final next = change(List.of(stored));
-      if (!_sameList(next, stored)) await _store.save(next);
-      if (!_sameList(next, _accounts)) {
-        _accounts = List.unmodifiable(next);
-        _changes.add(_accounts);
-      }
-    });
+    final run = _queue.then((_) => _lock(_storeLockName, () async {
+          final stored = await _store.load();
+          final next = change(List.of(stored));
+          if (!_sameList(next, stored)) await _store.save(next);
+          if (!_sameList(next, _accounts)) {
+            _accounts = List.unmodifiable(next);
+            _changes.add(_accounts);
+          }
+        }));
     _queue = run.catchError((Object _) {});
     return run;
   }

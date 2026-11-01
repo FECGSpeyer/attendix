@@ -13,13 +13,19 @@ import 'redesign_providers.dart';
 ///
 /// NOTE (Multi-Tenant): only Supabase Auth sessions of this device, no
 /// tenant data → no tenantId filter.
+
+/// Token calls for accounts other than the signed-in one.
+final authTokenApiProvider = Provider<AuthTokenApi>((ref) {
+  return HttpAuthTokenApi(
+    supabaseUrl: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
+});
+
 final accountSwitchServiceProvider = Provider<AccountSwitchService>((ref) {
   final service = AccountSwitchService(
     store: createSavedAccountsStore(),
-    api: HttpAuthTokenApi(
-      supabaseUrl: SupabaseConfig.supabaseUrl,
-      anonKey: SupabaseConfig.supabaseAnonKey,
-    ),
+    api: ref.watch(authTokenApiProvider),
     auth: SupabaseAccountSwitchAuth(ref.watch(supabaseAuthProvider)),
   );
   ref.onDispose(service.dispose);
@@ -46,22 +52,20 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
 
   void handle(AuthState state) {
     final session = state.session;
-    switch (state.event) {
-      case AuthChangeEvent.signedOut:
-        final userId = activeUserId;
-        activeUserId = null;
-        if (userId != null) unawaited(service.forget(userId).catchError((_) {}));
-      case AuthChangeEvent.signedIn ||
-            AuthChangeEvent.initialSession ||
-            AuthChangeEvent.tokenRefreshed ||
-            AuthChangeEvent.userUpdated:
-        if (session == null) return;
-        activeUserId = session.user.id;
-        final add = ref.read(redesignEnabledProvider);
-        unawaited(service.remember(session, add: add).catchError((_) {}));
-      default:
-        break;
+    if (state.event == AuthChangeEvent.signedOut) {
+      final userId = activeUserId;
+      activeUserId = null;
+      if (userId != null) unawaited(service.forget(userId).catchError((_) {}));
+      return;
     }
+    if (session == null) return;
+    // Every event that carries a session (incl. password recovery, MFA)
+    // names the signed-in account, so a later sign-out removes the right one.
+    activeUserId = session.user.id;
+    // A recovery session only updates a saved account, it never adds one.
+    final add = state.event != AuthChangeEvent.passwordRecovery &&
+        ref.read(redesignEnabledProvider);
+    unawaited(service.remember(session, add: add).catchError((_) {}));
   }
 
   final current = auth.currentSession;

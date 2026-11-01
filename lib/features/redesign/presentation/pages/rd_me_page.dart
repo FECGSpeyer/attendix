@@ -327,8 +327,16 @@ class _ProfileCard extends ConsumerWidget {
     final showAttendance = person != null && signout != null && signout.past.isNotEmpty;
     // ACCOUNT_SWITCH: name, role and group for the account switcher (no-op
     // when unchanged or when the account is not saved).
+    // Only a loaded profile of THIS account (the old account's profile can
+    // still be shown for a moment after a switch).
     final userId = ref.watch(currentAuthUserIdProvider);
-    if (userId != null && name.isNotEmpty) {
+    final profile = ref.watch(ownProfileProvider);
+    if (userId != null &&
+        name.isNotEmpty &&
+        !profile.isLoading &&
+        person?.appId == userId &&
+        tenant != null &&
+        tenant.id == ref.watch(currentTenantIdProvider)) {
       final label = [roleName, group].where((s) => s.isNotEmpty).join(' · ');
       final service = ref.read(accountSwitchServiceProvider);
       scheduleMicrotask(() => service.updateProfile(userId, name: name, label: label).catchError((_) {}));

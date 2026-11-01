@@ -3,6 +3,7 @@ import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show AuthException;
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/account_switch_providers.dart';
@@ -49,6 +50,9 @@ Future<RdAccountChange> rdSwitchAccount(BuildContext context, SavedAccount accou
     );
   } on SavedSessionExpired {
     return RdAccountChange.needsLogin;
+  } on AccountSwitchSuperseded {
+    // Another sign-in finished meanwhile (login page): it wins.
+    return RdAccountChange.cancelled;
   } on AccountSwitchUnavailable {
     if (context.mounted) ToastHelper.showError(context, l10n.redesignAccountsOffline);
     return RdAccountChange.failed;
@@ -64,7 +68,10 @@ Future<RdAccountChange> rdSwitchAccount(BuildContext context, SavedAccount accou
 }
 
 /// Signs in another account with e-mail and password while keeping the
-/// current one saved. Throws [LoginFailure] for wrong credentials etc.
+/// current one saved. The credentials are checked first on their own
+/// (the current session, its push token and Live Activities stay
+/// untouched when they are wrong). Throws [LoginFailure] for rejected
+/// credentials, [AccountSwitchUnavailable] when offline.
 Future<void> rdAddAccount(
   ProviderContainer container,
   GoRouter router, {
@@ -72,29 +79,17 @@ Future<void> rdAddAccount(
   required String password,
 }) async {
   final service = container.read(accountSwitchServiceProvider);
-  final auth = container.read(supabaseAuthProvider);
-  final current = auth.currentSession;
-  if (current != null) {
-    // Its newest token, so it can be opened again later.
-    await service.remember(current);
-    await removePushTokenBeforeAccountChange(container.read);
-  }
+  final api = container.read(authTokenApiProvider);
+  final hadSession = container.read(supabaseAuthProvider).currentSession != null;
   try {
-    await container.read(authFlowServiceProvider).signInWithPassword(email, password);
-  } catch (_) {
-    // Still the old account: register its push token again.
-    if (current != null && auth.currentSession?.user.id == current.user.id) {
-      unawaited(container.read(pushServiceProvider).promptAndEnable());
-    }
-    rethrow;
+    await service.addAccount(
+      () => api.signInWithPassword(email, password),
+      beforeActivate: hadSession ? () => removePushTokenBeforeAccountChange(container.read) : null,
+    );
+  } on AuthException catch (e) {
+    throw mapLoginError(e);
   }
-  final next = auth.currentSession;
-  if (next != null) await service.remember(next);
-  if (current != null && next?.user.id != current.user.id) {
-    await _openAfterAccountChange(container, router);
-  } else if (current == null) {
-    router.go('/tenants');
-  }
+  await _openAfterAccountChange(container, router);
 }
 
 /// Same path as after a login: no group selected, the group selection opens
@@ -376,6 +371,10 @@ class _RdAccountLoginSheetState extends ConsumerState<_RdAccountLoginSheet> {
       if (sheet != null && sheet.isCurrent) navigator.pop(true);
     } on LoginFailure catch (f) {
       if (mounted) setState(() => _error = f.message ?? l10n.redesignAccountsFailed);
+    } on AccountSwitchUnavailable {
+      if (mounted) setState(() => _error = l10n.redesignAccountsOffline);
+    } on AccountSwitchSuperseded {
+      if (sheet != null && sheet.isCurrent) navigator.pop(false);
     } catch (_) {
       if (mounted) setState(() => _error = l10n.redesignAccountsFailed);
     } finally {

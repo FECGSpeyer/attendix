@@ -33,6 +33,12 @@ abstract class AuthTokenApi {
   /// Exchanges [refreshToken] for a new session (the token is used up).
   Future<Session> refresh(String refreshToken);
 
+  /// Signs in with e-mail and password and returns the new session WITHOUT
+  /// touching the app's own session, so a wrong password changes nothing.
+  /// Throws [AuthException] for rejected credentials (map with
+  /// `mapLoginError`) and [AccountSwitchUnavailable] when offline.
+  Future<Session> signInWithPassword(String email, String password);
+
   /// Ends the session of [accessToken] on the server (scope local: only this
   /// device's session of that account).
   Future<void> revoke(String accessToken);
@@ -85,6 +91,45 @@ class HttpAuthTokenApi implements AuthTokenApi {
     // 400/401/403/404: refresh token unknown, used up or revoked.
     final code = body?['error_code'] ?? body?['error'];
     throw SavedSessionExpired(code is String ? code : 'HTTP ${res.statusCode}');
+  }
+
+  @override
+  Future<Session> signInWithPassword(String email, String password) async {
+    final http.Response res;
+    try {
+      res = await _client
+          .post(
+            Uri.parse('$_authUrl/token?grant_type=password'),
+            headers: {
+              'apikey': _anonKey,
+              'Authorization': 'Bearer $_anonKey',
+              'Content-Type': 'application/json',
+            },
+            body: jsonEncode({'email': email.trim(), 'password': password}),
+          )
+          .timeout(_timeout);
+    } catch (e) {
+      throw AccountSwitchUnavailable(e);
+    }
+    final body = _decode(res.body);
+    if (res.statusCode >= 200 && res.statusCode < 300 && body != null) {
+      final session = Session.fromJson(body);
+      if (session != null && (session.refreshToken ?? '').isNotEmpty) {
+        return session;
+      }
+      throw const AccountSwitchUnavailable('no session in response');
+    }
+    if (res.statusCode >= 500) {
+      throw AccountSwitchUnavailable('HTTP ${res.statusCode}');
+    }
+    // Same fields GoTrueClient reads for its AuthException.
+    final message = body?['msg'] ?? body?['message'] ?? body?['error_description'] ?? body?['error'];
+    final code = body?['error_code'] ?? body?['error'];
+    throw AuthException(
+      message is String ? message : 'HTTP ${res.statusCode}',
+      statusCode: '${res.statusCode}',
+      code: code is String ? code : null,
+    );
   }
 
   @override
