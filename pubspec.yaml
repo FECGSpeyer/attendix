@@ -102,6 +102,7 @@ dependencies:
   desktop_drop: ^0.8.4
   qr_flutter: ^4.1.0
   mobile_scanner: ^7.4.3
+  flutter_secure_storage: ^9.2.4
 
 dev_dependencies:
   flutter_test:

@@ -49,6 +49,18 @@ final parentsProvider = FutureProvider<List<ParentModel>>((ref) async {
   return repo.getParents();
 });
 
+/// ACCOUNT_SWITCH: the signed-in account's own parent entry in the current
+/// tenant (`tenantUsers.parent_id`), e.g. for its name in the account
+/// switcher. Null for accounts that are not parents.
+final ownParentProvider = FutureProvider<ParentModel?>((ref) async {
+  final repo = ref.watch(parentRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return null;
+  final tenantUser = await ref.watch(currentTenantUserProvider.future);
+  final parentId = tenantUser?.parentId;
+  if (parentId == null) return null;
+  return repo.getParentById(parentId);
+});
+
 /// Notifier for parent mutations
 class ParentNotifier extends Notifier<AsyncValue<void>> {
   @override

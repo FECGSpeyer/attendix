@@ -8468,6 +8468,97 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignAbsenceTitle => 'Abwesenheit';
 
   @override
+  String get redesignAccountsAdd => 'Konto hinzufügen';
+
+  @override
+  String get redesignAccountsAddHint => 'Melde dich mit einem weiteren Konto an. Danach wechselst du ohne Passwort zwischen deinen Konten.';
+
+  @override
+  String get redesignAccountsAddTitle => 'Konto hinzufügen';
+
+  @override
+  String get redesignAccountsAlreadyActive => 'Mit diesem Konto bist du bereits angemeldet.';
+
+  @override
+  String redesignAccountsCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Konten',
+      one: '1 Konto',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignAccountsCurrent => 'Angemeldet';
+
+  @override
+  String get redesignAccountsEmail => 'E-Mail';
+
+  @override
+  String get redesignAccountsFailed => 'Wechsel fehlgeschlagen. Bitte versuche es erneut.';
+
+  @override
+  String get redesignAccountsFooter => 'Konten bleiben nur auf diesem Gerät gespeichert. Ausloggen entfernt das angemeldete Konto aus der Liste.';
+
+  @override
+  String redesignAccountsLoginAgainHint(Object email) {
+    return 'Die gespeicherte Anmeldung von $email gilt nicht mehr, zum Beispiel nach einer Passwortänderung. Bitte melde dich einmal neu an.';
+  }
+
+  @override
+  String get redesignAccountsLoginAgainTitle => 'Erneut anmelden';
+
+  @override
+  String get redesignAccountsLoginOr => 'oder mit einem anderen Konto anmelden';
+
+  @override
+  String get redesignAccountsLoginSaved => 'Gespeicherte Konten';
+
+  @override
+  String redesignAccountsMore(Object name) {
+    return 'Optionen für $name';
+  }
+
+  @override
+  String get redesignAccountsNeedsLogin => 'Bitte erneut anmelden';
+
+  @override
+  String get redesignAccountsOffline => 'Keine Verbindung. Bitte versuche es erneut.';
+
+  @override
+  String get redesignAccountsPassword => 'Passwort';
+
+  @override
+  String get redesignAccountsRemove => 'Von diesem Gerät entfernen';
+
+  @override
+  String redesignAccountsRemoveBody(Object email) {
+    return '$email wird von diesem Gerät entfernt und dort abgemeldet. Zum Zurückwechseln brauchst du dann wieder das Passwort.';
+  }
+
+  @override
+  String get redesignAccountsRemoveConfirm => 'Entfernen';
+
+  @override
+  String get redesignAccountsRemoveFailed => 'Das Konto konnte nicht entfernt werden. Bitte versuche es erneut.';
+
+  @override
+  String get redesignAccountsRemoveTitle => 'Konto entfernen?';
+
+  @override
+  String get redesignAccountsSignIn => 'Anmelden';
+
+  @override
+  String redesignAccountsSwitched(Object name) {
+    return 'Angemeldet als $name';
+  }
+
+  @override
+  String get redesignAccountsTitle => 'Konto wechseln';
+
+  @override
   String get redesignAdminTitle => 'Verwaltung';
 
   @override
