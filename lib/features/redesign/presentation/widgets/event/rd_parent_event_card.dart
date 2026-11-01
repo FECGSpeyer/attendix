@@ -15,7 +15,7 @@ import '../../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show SelfServiceActionType;
 import '../../../data/rd_dates.dart';
 import '../rd_widgets.dart';
-import '../today/rd_parent_today.dart' show RdChildAnswerRow, rdChildrenLine, rdOpenChildren;
+import '../today/rd_parent_today.dart' show RdAllChildrenAnswer, RdChildAnswerRow, rdChildrenLine, rdOpenChildren;
 import '../today/rd_today_common.dart';
 
 /// REDESIGN: Termine of Eltern in the look of the Spieler Termine (same
@@ -224,6 +224,11 @@ class _ParentEventDetail extends ConsumerWidget {
                   child: child,
                   readOnly: past,
                 ),
+              // "Alle Kinder" like the old portal (one answer for every child).
+              if (!past && group.childAttendances.length > 1) ...[
+                Divider(height: 12, color: p.line),
+                RdAllChildrenAnswer(group: group),
+              ],
             ],
           ),
         ),

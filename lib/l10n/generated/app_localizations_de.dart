@@ -9370,6 +9370,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignOwnRoute => 'Route';
 
   @override
+  String get redesignParentsAllKids => 'Alle Kinder';
+
+  @override
   String redesignParentsChildRate(Object name, Object percent) {
     return '$name · $percent %';
   }

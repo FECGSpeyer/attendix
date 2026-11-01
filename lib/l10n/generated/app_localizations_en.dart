@@ -9376,6 +9376,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnRoute => 'Directions';
 
   @override
+  String get redesignParentsAllKids => 'All children';
+
+  @override
   String redesignParentsChildRate(Object name, Object percent) {
     return '$name · $percent %';
   }

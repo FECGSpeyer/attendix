@@ -395,6 +395,8 @@ class _RdMembersPageState extends ConsumerState<RdMembersPage> {
           header: true,
           child: Text(l10n.redesignTabMembers, style: RdType.largeTitle(p)),
         ),
+        // Ionic "Personen (n)".
+        if (people.isNotEmpty) Text(l10n.redesignMembersTotal(people.length), style: RdType.meta(p, size: 15)),
         const SizedBox(height: 12),
         _searchField(context),
         const SizedBox(height: 12),

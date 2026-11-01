@@ -97,6 +97,8 @@ void main() {
       await _settle(tester);
 
       expect(find.text('Mitglieder'), findsOneWidget);
+      // Ionic "Personen (n)".
+      expect(find.text('3 Personen'), findsOneWidget);
       // Same page as for the Dirigent, without its tools.
       expect(find.byType(FloatingActionButton), findsNothing);
       expect(find.byIcon(Icons.bar_chart_rounded), findsNothing);
@@ -259,6 +261,8 @@ void main() {
 
       expect(find.byType(BottomSheet), findsOneWidget);
       expect(find.text('Kinderchor'), findsNWidgets(2));
+      // "Alle Kinder" like the old portal: one answer for every child.
+      expect(find.text('Alle Kinder'), findsOneWidget);
     });
 
     testWidgets('a failed reload keeps the notification and shows retry', (tester) async {

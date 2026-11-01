@@ -93,6 +93,10 @@ class RdParentToday extends ConsumerWidget {
                 ),
                 const SizedBox(height: 12),
                 for (final child in next.childAttendances) RdChildAnswerRow(group: next, child: child),
+                if (next.childAttendances.length > 1) ...[
+                  Divider(height: 12, color: p.line),
+                  RdAllChildrenAnswer(group: next),
+                ],
                 const SizedBox(height: 4),
                 Align(
                   alignment: Alignment.centerLeft,
@@ -265,47 +269,113 @@ class RdChildAnswerRow extends ConsumerWidget {
     );
   }
 
-  Future<void> _signIn(BuildContext context, WidgetRef ref) async {
-    final id = child.id;
-    if (id == null) return;
-    final notifier = ref.read(parentSignInOutNotifierProvider.notifier);
-    final ok = await notifier.signInAll([(id, SignInType.fromStatus(child.status))]);
-    if (!context.mounted) return;
-    if (ok) {
-      ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': 1});
-    } else {
-      _failed(context);
-    }
-  }
+  Future<void> _signIn(BuildContext context, WidgetRef ref) => rdParentSignIn(context, ref, group, [child]);
 
-  Future<void> _signOut(BuildContext context, WidgetRef ref) async {
-    final id = child.id;
-    if (id == null) return;
-    final tenant = ref.read(currentTenantProvider);
-    final type = ref.read(rdAttendanceTypeProvider(group.typeId));
-    final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
-    final choice = await showRdReasonSheet(
-      context,
-      title: '${child.childFirstName} · ${group.displayTitle}',
-      meta: EventListUtils.timeRange(group.startTime, group.endTime),
-      absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
-      lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
-      allowLate: lateAllowed,
-      ownReasonFirst: group.isRunning,
+  Future<void> _signOut(BuildContext context, WidgetRef ref) => rdParentSignOut(context, ref, group, [child]);
+}
+
+/// Zusage for [children] of [group] in one call (old portal: one child or
+/// "Alle Kinder").
+Future<void> rdParentSignIn(
+  BuildContext context,
+  WidgetRef ref,
+  ParentAttendanceGroup group,
+  List<ChildPersonAttendance> children,
+) async {
+  final entries = [
+    for (final c in children)
+      if (c.id != null) (c.id!, SignInType.fromStatus(c.status)),
+  ];
+  if (entries.isEmpty) return;
+  final ok = await ref.read(parentSignInOutNotifierProvider.notifier).signInAll(entries);
+  if (!context.mounted) return;
+  if (ok) {
+    ref.read(trackingServiceProvider).track(TrackingEvent.parentSignIn, properties: {'count': entries.length});
+  } else {
+    _rdParentFailed(context);
+  }
+}
+
+/// Absage (or "kommt später") for [children] of [group] with one reason.
+Future<void> rdParentSignOut(
+  BuildContext context,
+  WidgetRef ref,
+  ParentAttendanceGroup group,
+  List<ChildPersonAttendance> children,
+) async {
+  final ids = [for (final c in children) if (c.id != null) c.id!];
+  if (ids.isEmpty) return;
+  final tenant = ref.read(currentTenantProvider);
+  final type = ref.read(rdAttendanceTypeProvider(group.typeId));
+  final lateAllowed = type?.availableStatuses == null || type!.availableStatuses!.contains(AttendanceStatus.late);
+  final who = children.length == 1 ? children.first.childFirstName : context.l10n.redesignParentsAllKids;
+  final choice = await showRdReasonSheet(
+    context,
+    title: '$who · ${group.displayTitle}',
+    meta: EventListUtils.timeRange(group.startTime, group.endTime),
+    absenceReasons: EventListUtils.absenceReasonsOf(tenant?.absenceReasons),
+    lateReasons: EventListUtils.lateReasonsOf(tenant?.lateReasons),
+    allowLate: lateAllowed,
+    ownReasonFirst: group.isRunning,
+  );
+  if (choice == null || !context.mounted) return;
+  await ref.read(parentSignInOutNotifierProvider.notifier).signOut(ids, choice.reason, isLateComing: choice.isLate);
+  if (!context.mounted) return;
+  if (ref.read(parentSignInOutNotifierProvider).hasError) {
+    _rdParentFailed(context);
+  } else {
+    ref
+        .read(trackingServiceProvider)
+        .track(TrackingEvent.parentSignOut, properties: {'count': ids.length, 'isLate': choice.isLate});
+  }
+}
+
+void _rdParentFailed(BuildContext context) {
+  ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
+}
+
+/// "Alle Kinder": answer for every child at once, like the old portal.
+class RdAllChildrenAnswer extends ConsumerWidget {
+  const RdAllChildrenAnswer({super.key, required this.group});
+
+  final ParentAttendanceGroup group;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final busy = ref.watch(parentSignInOutNotifierProvider).isLoading;
+    final kids = group.childAttendances;
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 6),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          Text(l10n.redesignParentsAllKids, style: RdType.meta(p, size: 13)),
+          const SizedBox(height: 8),
+          Row(
+            children: [
+              Expanded(
+                child: RdOutlineButton(
+                  label: l10n.redesignTodayChildYes,
+                  icon: Icons.check,
+                  color: p.present,
+                  height: 44,
+                  onPressed: busy ? null : () => rdParentSignIn(context, ref, group, kids),
+                ),
+              ),
+              const SizedBox(width: 8),
+              Expanded(
+                child: RdOutlineButton(
+                  label: l10n.redesignTodayChildNo,
+                  height: 44,
+                  onPressed: busy ? null : () => rdParentSignOut(context, ref, group, kids),
+                ),
+              ),
+            ],
+          ),
+        ],
+      ),
     );
-    if (choice == null || !context.mounted) return;
-    await ref.read(parentSignInOutNotifierProvider.notifier).signOut([id], choice.reason, isLateComing: choice.isLate);
-    if (!context.mounted) return;
-    if (ref.read(parentSignInOutNotifierProvider).hasError) {
-      _failed(context);
-    } else {
-      ref
-          .read(trackingServiceProvider)
-          .track(TrackingEvent.parentSignOut, properties: {'count': 1, 'isLate': choice.isLate});
-    }
-  }
-
-  void _failed(BuildContext context) {
-    ScaffoldMessenger.maybeOf(context)?.showSnackBar(SnackBar(content: Text(context.l10n.redesignTodayChildFailed)));
   }
 }

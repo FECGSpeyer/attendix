@@ -16109,6 +16109,12 @@ abstract class AppLocalizations {
   /// **'Route'**
   String get redesignOwnRoute;
 
+  /// redesign.parents.allKids
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Kinder'**
+  String get redesignParentsAllKids;
+
   /// redesign.parents.childRate
   ///
   /// In de, this message translates to:

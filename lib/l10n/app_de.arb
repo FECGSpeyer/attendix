@@ -12259,6 +12259,10 @@
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
   },
+  "redesignParentsAllKids": "Alle Kinder",
+  "@redesignParentsAllKids": {
+    "description": "redesign.parents.allKids"
+  },
   "redesignParentsChildRate": "{name} · {percent} %",
   "@redesignParentsChildRate": {
     "description": "redesign.parents.childRate",
