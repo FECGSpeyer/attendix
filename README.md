@@ -27,7 +27,7 @@ flutter build web --release --base-href / --no-web-resources-cdn --wasm   # Rele
 dart run tool/web/write_service_worker.dart build/web                      # eigener Service Worker (Offline-Start)
 ```
 
-Der Build enthält eine WebAssembly- und eine JavaScript-Variante; Flutter wählt pro Browser (Chrome/Edge und Safari ab 26.2 WebAssembly, sonst JavaScript). Ohne den zweiten Befehl liefert Flutter 3.47 nur einen Service Worker, der sich selbst abmeldet, dann startet die installierte App nicht offline.
+Der Build enthält eine WebAssembly- und eine JavaScript-Variante; Flutter wählt pro Browser (Chrome/Edge und Safari ab 26.2 WebAssembly, sonst JavaScript). `--no-web-resources-cdn` legt CanvasKit/Skwasm in den eigenen Build statt sie vom Google-CDN zu laden. Ohne den zweiten Befehl liefert Flutter 3.47 nur einen Service Worker, der sich selbst abmeldet. In beiden Fällen startet die installierte App nicht offline.
 
 Master und PRs werden per GitHub Actions automatisch auf Cloudflare Pages deployt (`.github/workflows/deploy-cloudflare.yml`).
 
