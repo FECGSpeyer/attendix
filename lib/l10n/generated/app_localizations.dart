@@ -15590,6 +15590,1050 @@ abstract class AppLocalizations {
   /// **'Gruppe wechseln'**
   String get redesignGroupsTitle;
 
+  /// redesign.import.aiConfirmButton
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignImportAiConfirmButton;
+
+  /// redesign.import.aiConfirmCancel
+  ///
+  /// In de, this message translates to:
+  /// **'Nochmal ansehen'**
+  String get redesignImportAiConfirmCancel;
+
+  /// redesign.import.aiConfirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.} other {Die KI hat {count} Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.}}'**
+  String redesignImportAiConfirmMessage(num count);
+
+  /// redesign.import.aiConfirmTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI übernehmen?'**
+  String get redesignImportAiConfirmTitle;
+
+  /// redesign.import.aiFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.'**
+  String get redesignImportAiFailed;
+
+  /// redesign.import.aiFilled
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.} other {Die KI hat {count} Antworten ausgefüllt (✦), bitte kurz prüfen.}}'**
+  String redesignImportAiFilled(num count);
+
+  /// redesign.import.aiLimit
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.'**
+  String get redesignImportAiLimit;
+
+  /// redesign.import.aiLoading
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI sucht Vorschläge …'**
+  String get redesignImportAiLoading;
+
+  /// redesign.import.aiMark
+  ///
+  /// In de, this message translates to:
+  /// **'{label}, Vorschlag der KI'**
+  String redesignImportAiMark(Object label);
+
+  /// redesign.import.aiNone
+  ///
+  /// In de, this message translates to:
+  /// **'Die KI hat keine sicheren Vorschläge gefunden.'**
+  String get redesignImportAiNone;
+
+  /// redesign.import.aiOffered
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI sind mit ✦ markiert.'**
+  String get redesignImportAiOffered;
+
+  /// redesign.import.aiOption
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschläge der KI'**
+  String get redesignImportAiOption;
+
+  /// redesign.import.aiOptionDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.'**
+  String get redesignImportAiOptionDetail;
+
+  /// redesign.import.answerNewGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe „{name}“'**
+  String redesignImportAnswerNewGroup(Object name);
+
+  /// redesign.import.answerNone
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Zuordnung'**
+  String get redesignImportAnswerNone;
+
+  /// redesign.import.answerOther
+  ///
+  /// In de, this message translates to:
+  /// **'Andere …'**
+  String get redesignImportAnswerOther;
+
+  /// redesign.import.busy
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte warte, bis alles hochgeladen ist.'**
+  String get redesignImportBusy;
+
+  /// redesign.import.categoryFiles
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Dateien'**
+  String get redesignImportCategoryFiles;
+
+  /// redesign.import.categoryLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme ändern'**
+  String get redesignImportCategoryLabel;
+
+  /// redesign.import.categoryNewGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe: {name}'**
+  String redesignImportCategoryNewGroup(Object name);
+
+  /// redesign.import.categoryOther
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstige'**
+  String get redesignImportCategoryOther;
+
+  /// redesign.import.categoryParts
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen'**
+  String get redesignImportCategoryParts;
+
+  /// redesign.import.confirmButton
+  ///
+  /// In de, this message translates to:
+  /// **'Übernehmen'**
+  String get redesignImportConfirmButton;
+
+  /// redesign.import.confirmKeepOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Lass die Seite offen, bis alles fertig ist.'**
+  String get redesignImportConfirmKeepOpen;
+
+  /// redesign.import.confirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{files, plural, one {1 Datei wird in {works} hochgeladen.} other {{files} Dateien werden in {works} hochgeladen.}}'**
+  String redesignImportConfirmMessage(num files, Object works);
+
+  /// redesign.import.confirmNewWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Dabei wird 1 neues Werk angelegt.} other {Dabei werden {count} neue Werke angelegt.}}'**
+  String redesignImportConfirmNewWorks(num count);
+
+  /// redesign.import.confirmTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Noten übernehmen?'**
+  String get redesignImportConfirmTitle;
+
+  /// redesign.import.confirmWork
+  ///
+  /// In de, this message translates to:
+  /// **'Passt so'**
+  String get redesignImportConfirmWork;
+
+  /// redesign.import.confirmWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werken}}'**
+  String redesignImportConfirmWorks(num count);
+
+  /// redesign.import.datesReading
+  ///
+  /// In de, this message translates to:
+  /// **'Das Datum der Fassungen wird noch gelesen …'**
+  String get redesignImportDatesReading;
+
+  /// redesign.import.discardConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Verwerfen'**
+  String get redesignImportDiscardConfirm;
+
+  /// redesign.import.discardMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Antworten und Entscheidungen gehen verloren. Hochgeladen wurde noch nichts.'**
+  String get redesignImportDiscardMessage;
+
+  /// redesign.import.discardTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import verwerfen?'**
+  String get redesignImportDiscardTitle;
+
+  /// redesign.import.doneAborted
+  ///
+  /// In de, this message translates to:
+  /// **'Abgebrochen, weil die Gruppe gewechselt wurde.'**
+  String get redesignImportDoneAborted;
+
+  /// redesign.import.doneAgainHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.'**
+  String get redesignImportDoneAgainHint;
+
+  /// redesign.import.doneAgainHintDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.'**
+  String get redesignImportDoneAgainHintDrive;
+
+  /// redesign.import.doneAnother
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Noten importieren'**
+  String get redesignImportDoneAnother;
+
+  /// redesign.import.doneFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlgeschlagen'**
+  String get redesignImportDoneFailed;
+
+  /// redesign.import.doneLearned
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmnamen gemerkt'**
+  String get redesignImportDoneLearned;
+
+  /// redesign.import.doneNewGroups
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppen'**
+  String get redesignImportDoneNewGroups;
+
+  /// redesign.import.doneNewWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Werke'**
+  String get redesignImportDoneNewWorks;
+
+  /// redesign.import.doneOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht geprüft, nicht übernommen'**
+  String get redesignImportDoneOpen;
+
+  /// redesign.import.doneRetry
+  ///
+  /// In de, this message translates to:
+  /// **'Fehlgeschlagene erneut hochladen'**
+  String get redesignImportDoneRetry;
+
+  /// redesign.import.doneSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Weggelassen'**
+  String get redesignImportDoneSkipped;
+
+  /// redesign.import.doneText
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei ist jetzt in Attendix.} other {{count} Dateien sind jetzt in Attendix.}}'**
+  String redesignImportDoneText(num count);
+
+  /// redesign.import.doneTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Import abgeschlossen'**
+  String get redesignImportDoneTitle;
+
+  /// redesign.import.doneToWorks
+  ///
+  /// In de, this message translates to:
+  /// **'Zu den Werken'**
+  String get redesignImportDoneToWorks;
+
+  /// redesign.import.driveChecking
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner wird gesucht …'**
+  String get redesignImportDriveChecking;
+
+  /// redesign.import.driveFileGone
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ist in Google Drive nicht mehr erreichbar.'**
+  String get redesignImportDriveFileGone;
+
+  /// redesign.import.driveFound
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gefunden'**
+  String redesignImportDriveFound(Object name);
+
+  /// redesign.import.driveLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'https://drive.google.com/drive/folders/…'**
+  String get redesignImportDriveLinkHint;
+
+  /// redesign.import.driveLinkLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Link zum Ordner'**
+  String get redesignImportDriveLinkLabel;
+
+  /// redesign.import.driveOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Google Drive öffnen'**
+  String get redesignImportDriveOpen;
+
+  /// redesign.import.drivePaste
+  ///
+  /// In de, this message translates to:
+  /// **'Einfügen'**
+  String get redesignImportDrivePaste;
+
+  /// redesign.import.driveReading
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix liest die Ordner in Google Drive.'**
+  String get redesignImportDriveReading;
+
+  /// redesign.import.driveStart
+  ///
+  /// In de, this message translates to:
+  /// **'Einlesen starten'**
+  String get redesignImportDriveStart;
+
+  /// redesign.import.driveStep1
+  ///
+  /// In de, this message translates to:
+  /// **'Öffne den Notenordner in Google Drive und wähle „Teilen“.'**
+  String get redesignImportDriveStep1;
+
+  /// redesign.import.driveStep2
+  ///
+  /// In de, this message translates to:
+  /// **'Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.'**
+  String get redesignImportDriveStep2;
+
+  /// redesign.import.driveStep3
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiere den Link und füge ihn hier ein.'**
+  String get redesignImportDriveStep3;
+
+  /// redesign.import.driveUnshareNote
+  ///
+  /// In de, this message translates to:
+  /// **'Nach dem Import kannst du die Freigabe wieder aufheben.'**
+  String get redesignImportDriveUnshareNote;
+
+  /// redesign.import.errorBadLink
+  ///
+  /// In de, this message translates to:
+  /// **'Das ist kein Link zu einem Google-Drive-Ordner.'**
+  String get redesignImportErrorBadLink;
+
+  /// redesign.import.errorDropbox
+  ///
+  /// In de, this message translates to:
+  /// **'Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.'**
+  String get redesignImportErrorDropbox;
+
+  /// redesign.import.errorEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'In der ZIP-Datei sind keine Dateien.'**
+  String get redesignImportErrorEmpty;
+
+  /// redesign.import.errorFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.'**
+  String get redesignImportErrorFailed;
+
+  /// redesign.import.errorForbidden
+  ///
+  /// In de, this message translates to:
+  /// **'Du darfst in dieser Gruppe keine Noten hochladen.'**
+  String get redesignImportErrorForbidden;
+
+  /// redesign.import.errorLimit
+  ///
+  /// In de, this message translates to:
+  /// **'Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.'**
+  String get redesignImportErrorLimit;
+
+  /// redesign.import.errorNoData
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke konnten nicht geladen werden. Bitte versuche es erneut.'**
+  String get redesignImportErrorNoData;
+
+  /// redesign.import.errorNotFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.'**
+  String get redesignImportErrorNotFolder;
+
+  /// redesign.import.errorNotFound
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?'**
+  String get redesignImportErrorNotFound;
+
+  /// redesign.import.errorNotSetUp
+  ///
+  /// In de, this message translates to:
+  /// **'Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.'**
+  String get redesignImportErrorNotSetUp;
+
+  /// redesign.import.errorNotZip
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei ist keine ZIP-Datei oder beschädigt.'**
+  String get redesignImportErrorNotZip;
+
+  /// redesign.import.errorTooLargeWeb
+  ///
+  /// In de, this message translates to:
+  /// **'Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.'**
+  String get redesignImportErrorTooLargeWeb;
+
+  /// redesign.import.errorTooMany
+  ///
+  /// In de, this message translates to:
+  /// **'Der Ordner hat zu viele Dateien. Wähle einen Unterordner.'**
+  String get redesignImportErrorTooMany;
+
+  /// redesign.import.fassungAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Fassungen übernehmen'**
+  String get redesignImportFassungAll;
+
+  /// redesign.import.fassungMain
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptordner'**
+  String get redesignImportFassungMain;
+
+  /// redesign.import.fassungMeta
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}} · neueste vom {date}'**
+  String redesignImportFassungMeta(num count, Object date);
+
+  /// redesign.import.fassungMetaNoDate
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
+  String redesignImportFassungMetaNoDate(num count);
+
+  /// redesign.import.fassungOld
+  ///
+  /// In de, this message translates to:
+  /// **'älter'**
+  String get redesignImportFassungOld;
+
+  /// redesign.import.fassungenIntro
+  ///
+  /// In de, this message translates to:
+  /// **'In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.'**
+  String get redesignImportFassungenIntro;
+
+  /// redesign.import.fassungenTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Fassungen'**
+  String get redesignImportFassungenTitle;
+
+  /// redesign.import.fileBroken
+  ///
+  /// In de, this message translates to:
+  /// **'Die Datei in der ZIP-Datei ist beschädigt.'**
+  String get redesignImportFileBroken;
+
+  /// redesign.import.filesSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Wird weggelassen · {count}'**
+  String redesignImportFilesSkip(Object count);
+
+  /// redesign.import.filesTake
+  ///
+  /// In de, this message translates to:
+  /// **'Wird übernommen · {count}'**
+  String redesignImportFilesTake(Object count);
+
+  /// redesign.import.flagConfirmed
+  ///
+  /// In de, this message translates to:
+  /// **'Geprüft'**
+  String get redesignImportFlagConfirmed;
+
+  /// redesign.import.flagFassungen
+  ///
+  /// In de, this message translates to:
+  /// **'Fassungen'**
+  String get redesignImportFlagFassungen;
+
+  /// redesign.import.flagMatch
+  ///
+  /// In de, this message translates to:
+  /// **'Zuordnung unsicher'**
+  String get redesignImportFlagMatch;
+
+  /// redesign.import.flagNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu'**
+  String get redesignImportFlagNew;
+
+  /// redesign.import.flagPartExists
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme schon da'**
+  String get redesignImportFlagPartExists;
+
+  /// redesign.import.flagRecheck
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut prüfen'**
+  String get redesignImportFlagRecheck;
+
+  /// redesign.import.flagSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernehmen'**
+  String get redesignImportFlagSkipped;
+
+  /// redesign.import.flagUnclear
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme unklar'**
+  String get redesignImportFlagUnclear;
+
+  /// redesign.import.foundExisting
+  ///
+  /// In de, this message translates to:
+  /// **'{count} schon in Attendix'**
+  String redesignImportFoundExisting(Object count);
+
+  /// redesign.import.foundFiles
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
+  String redesignImportFoundFiles(num count);
+
+  /// redesign.import.foundNew
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 neues Werk} other {{count} neue Werke}}'**
+  String redesignImportFoundNew(num count);
+
+  /// redesign.import.foundWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignImportFoundWorks(num count);
+
+  /// redesign.import.keepOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.'**
+  String get redesignImportKeepOpen;
+
+  /// redesign.import.learnFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.'**
+  String get redesignImportLearnFailed;
+
+  /// redesign.import.matchAmbiguous
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.'**
+  String get redesignImportMatchAmbiguous;
+
+  /// redesign.import.matchNumberOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nummer passt, der Titel weicht ab.'**
+  String get redesignImportMatchNumberOnly;
+
+  /// redesign.import.matchTitleOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Der Titel passt, die Nummer weicht ab.'**
+  String get redesignImportMatchTitleOnly;
+
+  /// redesign.import.menuHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner aus Google Drive, Dropbox oder vom Rechner'**
+  String get redesignImportMenuHint;
+
+  /// redesign.import.newGroupTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Gruppe anlegen'**
+  String get redesignImportNewGroupTitle;
+
+  /// redesign.import.openHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}'**
+  String redesignImportOpenHint(num count);
+
+  /// redesign.import.optionFassung
+  ///
+  /// In de, this message translates to:
+  /// **'Neueste Fassung vorschlagen'**
+  String get redesignImportOptionFassung;
+
+  /// redesign.import.optionFassungDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.'**
+  String get redesignImportOptionFassungDetail;
+
+  /// redesign.import.optionWord
+  ///
+  /// In de, this message translates to:
+  /// **'Word weglassen, wenn PDF daneben liegt'**
+  String get redesignImportOptionWord;
+
+  /// redesign.import.optionWordDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Für Liedtexte und Pläne, die es auch als PDF gibt.'**
+  String get redesignImportOptionWordDetail;
+
+  /// redesign.import.optionsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Import'**
+  String get redesignImportOptionsTitle;
+
+  /// redesign.import.pickNew
+  ///
+  /// In de, this message translates to:
+  /// **'Als neues Werk anlegen'**
+  String get redesignImportPickNew;
+
+  /// redesign.import.pickSearch
+  ///
+  /// In de, this message translates to:
+  /// **'Werk suchen'**
+  String get redesignImportPickSearch;
+
+  /// redesign.import.pickSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernehmen'**
+  String get redesignImportPickSkip;
+
+  /// redesign.import.pickTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Werk wählen'**
+  String get redesignImportPickTitle;
+
+  /// redesign.import.questionTitle
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ gehört zu …'**
+  String redesignImportQuestionTitle(Object name);
+
+  /// redesign.import.questionWhere
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Dateien, z. B. in {works}'**
+  String redesignImportQuestionWhere(Object count, Object works);
+
+  /// redesign.import.questionsIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.'**
+  String get redesignImportQuestionsIntro;
+
+  /// redesign.import.questionsNone
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Stimmen sind bekannt.'**
+  String get redesignImportQuestionsNone;
+
+  /// redesign.import.questionsOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.} other {Noch {count} Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.}}'**
+  String redesignImportQuestionsOpen(num count);
+
+  /// redesign.import.questionsTitle
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}'**
+  String redesignImportQuestionsTitle(num count);
+
+  /// redesign.import.readingDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Attendix sucht doppelte Dateien und liest das Datum der Fassungen.'**
+  String get redesignImportReadingDetail;
+
+  /// redesign.import.readingTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wird eingelesen …'**
+  String get redesignImportReadingTitle;
+
+  /// redesign.import.reasonByHand
+  ///
+  /// In de, this message translates to:
+  /// **'Von dir weggelassen'**
+  String get redesignImportReasonByHand;
+
+  /// redesign.import.reasonDuplicate
+  ///
+  /// In de, this message translates to:
+  /// **'Doppelt vorhanden'**
+  String get redesignImportReasonDuplicate;
+
+  /// redesign.import.reasonOtherFassung
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Fassung'**
+  String get redesignImportReasonOtherFassung;
+
+  /// redesign.import.reasonPartExists
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme schon in Attendix'**
+  String get redesignImportReasonPartExists;
+
+  /// redesign.import.reasonSameName
+  ///
+  /// In de, this message translates to:
+  /// **'Schon in Attendix'**
+  String get redesignImportReasonSameName;
+
+  /// redesign.import.reasonTooLarge
+  ///
+  /// In de, this message translates to:
+  /// **'Größer als 20 MB'**
+  String get redesignImportReasonTooLarge;
+
+  /// redesign.import.reasonUnsupported
+  ///
+  /// In de, this message translates to:
+  /// **'Dateityp wird nicht übernommen'**
+  String get redesignImportReasonUnsupported;
+
+  /// redesign.import.reasonWord
+  ///
+  /// In de, this message translates to:
+  /// **'PDF liegt daneben'**
+  String get redesignImportReasonWord;
+
+  /// redesign.import.reasonWorkSkipped
+  ///
+  /// In de, this message translates to:
+  /// **'Werk wird nicht übernommen'**
+  String get redesignImportReasonWorkSkipped;
+
+  /// redesign.import.recheckHint
+  ///
+  /// In de, this message translates to:
+  /// **'Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.'**
+  String get redesignImportRecheckHint;
+
+  /// redesign.import.reviewAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle · {count}'**
+  String redesignImportReviewAll(Object count);
+
+  /// redesign.import.reviewAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Fragen beantworten'**
+  String get redesignImportReviewAnswer;
+
+  /// redesign.import.reviewCounts
+  ///
+  /// In de, this message translates to:
+  /// **'{count} weggelassen'**
+  String redesignImportReviewCounts(Object count);
+
+  /// redesign.import.reviewEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Hier ist nichts mehr zu prüfen.'**
+  String get redesignImportReviewEmpty;
+
+  /// redesign.import.reviewIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn du sie angeschaut hast.'**
+  String get redesignImportReviewIntro;
+
+  /// redesign.import.reviewNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neu · {count}'**
+  String redesignImportReviewNew(Object count);
+
+  /// redesign.import.reviewOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Zu prüfen · {count}'**
+  String redesignImportReviewOpen(Object count);
+
+  /// redesign.import.reviewQuestionsOpen
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.} other {{count} Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.}}'**
+  String redesignImportReviewQuestionsOpen(num count);
+
+  /// redesign.import.reviewTarget
+  ///
+  /// In de, this message translates to:
+  /// **'→ {name}'**
+  String redesignImportReviewTarget(Object name);
+
+  /// redesign.import.sourceDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Google Drive'**
+  String get redesignImportSourceDrive;
+
+  /// redesign.import.sourceDriveDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Ordner-Link einfügen. Nichts wird aufs Gerät geladen.'**
+  String get redesignImportSourceDriveDetail;
+
+  /// redesign.import.sourceHowComputer
+  ///
+  /// In de, this message translates to:
+  /// **'Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).'**
+  String get redesignImportSourceHowComputer;
+
+  /// redesign.import.sourceHowDrive
+  ///
+  /// In de, this message translates to:
+  /// **'Google Drive: Ordner mit rechts anklicken › Herunterladen. Große Ordner kommen als mehrere ZIP-Dateien, wähle sie zusammen aus.'**
+  String get redesignImportSourceHowDrive;
+
+  /// redesign.import.sourceHowDropbox
+  ///
+  /// In de, this message translates to:
+  /// **'Dropbox: beim Ordner auf … › Herunterladen.'**
+  String get redesignImportSourceHowDropbox;
+
+  /// redesign.import.sourceHowTitle
+  ///
+  /// In de, this message translates to:
+  /// **'So bekommst du die ZIP-Datei'**
+  String get redesignImportSourceHowTitle;
+
+  /// redesign.import.sourceIntro
+  ///
+  /// In de, this message translates to:
+  /// **'Lade den Ordner mit euren Noten als ZIP-Datei herunter und wähle sie hier aus. Attendix ordnet die Dateien den Werken und Stimmen zu. Hochgeladen wird erst, wenn du alles geprüft hast.'**
+  String get redesignImportSourceIntro;
+
+  /// redesign.import.sourcePick
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP-Datei wählen'**
+  String get redesignImportSourcePick;
+
+  /// redesign.import.sourceRecommended
+  ///
+  /// In de, this message translates to:
+  /// **'Empfohlen'**
+  String get redesignImportSourceRecommended;
+
+  /// redesign.import.sourceSafe
+  ///
+  /// In de, this message translates to:
+  /// **'In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.'**
+  String get redesignImportSourceSafe;
+
+  /// redesign.import.sourceWhere
+  ///
+  /// In de, this message translates to:
+  /// **'Wo liegen eure Noten?'**
+  String get redesignImportSourceWhere;
+
+  /// redesign.import.sourceZip
+  ///
+  /// In de, this message translates to:
+  /// **'ZIP-Datei'**
+  String get redesignImportSourceZip;
+
+  /// redesign.import.sourceZipDetail
+  ///
+  /// In de, this message translates to:
+  /// **'Aus Dropbox, OneDrive oder vom Rechner.'**
+  String get redesignImportSourceZipDetail;
+
+  /// redesign.import.stepOf
+  ///
+  /// In de, this message translates to:
+  /// **'Schritt {step} von 4 · {name}'**
+  String redesignImportStepOf(Object step, Object name);
+
+  /// redesign.import.stepRead
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen'**
+  String get redesignImportStepRead;
+
+  /// redesign.import.stepReview
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfen'**
+  String get redesignImportStepReview;
+
+  /// redesign.import.stepSource
+  ///
+  /// In de, this message translates to:
+  /// **'Quelle'**
+  String get redesignImportStepSource;
+
+  /// redesign.import.stepUpload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get redesignImportStepUpload;
+
+  /// redesign.import.takeLabel
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ übernehmen'**
+  String redesignImportTakeLabel(Object name);
+
+  /// redesign.import.targetChange
+  ///
+  /// In de, this message translates to:
+  /// **'Ändern'**
+  String get redesignImportTargetChange;
+
+  /// redesign.import.targetExisting
+  ///
+  /// In de, this message translates to:
+  /// **'In Attendix: {name}'**
+  String redesignImportTargetExisting(Object name);
+
+  /// redesign.import.targetNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk: {name}'**
+  String redesignImportTargetNew(Object name);
+
+  /// redesign.import.targetSkip
+  ///
+  /// In de, this message translates to:
+  /// **'Wird nicht übernommen'**
+  String get redesignImportTargetSkip;
+
+  /// redesign.import.targetTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel in Attendix'**
+  String get redesignImportTargetTitle;
+
+  /// redesign.import.title
+  ///
+  /// In de, this message translates to:
+  /// **'Noten importieren'**
+  String get redesignImportTitle;
+
+  /// redesign.import.toReview
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Prüfung'**
+  String get redesignImportToReview;
+
+  /// redesign.import.undoConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Prüfung zurücknehmen'**
+  String get redesignImportUndoConfirm;
+
+  /// redesign.import.unshareOpen
+  ///
+  /// In de, this message translates to:
+  /// **'In Google Drive öffnen'**
+  String get redesignImportUnshareOpen;
+
+  /// redesign.import.unshareText
+  ///
+  /// In de, this message translates to:
+  /// **'Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.'**
+  String get redesignImportUnshareText;
+
+  /// redesign.import.unshareTextLater
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.'**
+  String get redesignImportUnshareTextLater;
+
+  /// redesign.import.unshareTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Freigabe wieder aufheben'**
+  String get redesignImportUnshareTitle;
+
+  /// redesign.import.uploadButton
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Datei übernehmen} other {{count} Dateien übernehmen}}'**
+  String redesignImportUploadButton(num count);
+
+  /// redesign.import.uploadProgress
+  ///
+  /// In de, this message translates to:
+  /// **'{done} von {total} Dateien'**
+  String redesignImportUploadProgress(Object done, Object total);
+
+  /// redesign.import.uploadTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wird hochgeladen'**
+  String get redesignImportUploadTitle;
+
+  /// redesign.import.useZip
+  ///
+  /// In de, this message translates to:
+  /// **'Stattdessen ZIP-Datei wählen'**
+  String get redesignImportUseZip;
+
   /// redesign.invite.addPerson
   ///
   /// In de, this message translates to:

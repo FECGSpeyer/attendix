@@ -554,7 +554,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
       ],
       if (dates.length > 1 || holidayHits.isNotEmpty) ...[
         const SizedBox(height: 16),
-        _Summary(text: _summary(l10n, locale, dates, holidayHits, holidays)),
+        RdHintBox(_summary(l10n, locale, dates, holidayHits, holidays), liveRegion: true),
       ],
       Padding(
         padding: const EdgeInsets.fromLTRB(4, 12, 4, 20),
@@ -892,25 +892,6 @@ class _PlaceChip extends StatelessWidget {
             ),
           ),
         ),
-      ),
-    );
-  }
-}
-
-class _Summary extends StatelessWidget {
-  const _Summary({required this.text});
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      liveRegion: true,
-      child: Container(
-        padding: const EdgeInsets.symmetric(horizontal: 14, vertical: 12),
-        decoration: BoxDecoration(color: p.soft, borderRadius: BorderRadius.circular(14)),
-        child: Text(text, style: TextStyle(fontSize: 14, color: p.softText, height: 1.35)),
       ),
     );
   }

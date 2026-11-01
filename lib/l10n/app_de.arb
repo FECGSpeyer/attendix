@@ -11851,6 +11851,844 @@
   "@redesignGroupsTitle": {
     "description": "redesign.groups.title"
   },
+  "redesignImportAiConfirmButton": "Übernehmen",
+  "@redesignImportAiConfirmButton": {
+    "description": "redesign.import.aiConfirmButton"
+  },
+  "redesignImportAiConfirmCancel": "Nochmal ansehen",
+  "@redesignImportAiConfirmCancel": {
+    "description": "redesign.import.aiConfirmCancel"
+  },
+  "redesignImportAiConfirmMessage": "{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦). Sie gilt für alle Dateien mit diesem Namen, und Attendix merkt sie sich für den nächsten Import.} other {Die KI hat {count} Antworten ausgefüllt (✦). Sie gelten für alle Dateien mit diesen Namen, und Attendix merkt sie sich für den nächsten Import.}}",
+  "@redesignImportAiConfirmMessage": {
+    "description": "redesign.import.aiConfirmMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportAiConfirmTitle": "Vorschläge der KI übernehmen?",
+  "@redesignImportAiConfirmTitle": {
+    "description": "redesign.import.aiConfirmTitle"
+  },
+  "redesignImportAiFailed": "Die KI ist gerade nicht erreichbar. Die Fragen gehen auch ohne.",
+  "@redesignImportAiFailed": {
+    "description": "redesign.import.aiFailed"
+  },
+  "redesignImportAiFilled": "{count, plural, one {Die KI hat 1 Antwort ausgefüllt (✦), bitte kurz prüfen.} other {Die KI hat {count} Antworten ausgefüllt (✦), bitte kurz prüfen.}}",
+  "@redesignImportAiFilled": {
+    "description": "redesign.import.aiFilled",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportAiLimit": "Die Vorschläge der KI sind für heute aufgebraucht. Die Fragen gehen auch ohne.",
+  "@redesignImportAiLimit": {
+    "description": "redesign.import.aiLimit"
+  },
+  "redesignImportAiLoading": "Die KI sucht Vorschläge …",
+  "@redesignImportAiLoading": {
+    "description": "redesign.import.aiLoading"
+  },
+  "redesignImportAiMark": "{label}, Vorschlag der KI",
+  "@redesignImportAiMark": {
+    "description": "redesign.import.aiMark",
+    "placeholders": {
+      "label": {}
+    }
+  },
+  "redesignImportAiNone": "Die KI hat keine sicheren Vorschläge gefunden.",
+  "@redesignImportAiNone": {
+    "description": "redesign.import.aiNone"
+  },
+  "redesignImportAiOffered": "Vorschläge der KI sind mit ✦ markiert.",
+  "@redesignImportAiOffered": {
+    "description": "redesign.import.aiOffered"
+  },
+  "redesignImportAiOption": "Vorschläge der KI",
+  "@redesignImportAiOption": {
+    "description": "redesign.import.aiOption"
+  },
+  "redesignImportAiOptionDetail": "Die unbekannten Stimmnamen und einige Dateinamen gehen an die KI. Sichere Vorschläge werden ausgefüllt, alle lassen sich ändern.",
+  "@redesignImportAiOptionDetail": {
+    "description": "redesign.import.aiOptionDetail"
+  },
+  "redesignImportAnswerNewGroup": "Neue Gruppe „{name}“",
+  "@redesignImportAnswerNewGroup": {
+    "description": "redesign.import.answerNewGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportAnswerNone": "Ohne Zuordnung",
+  "@redesignImportAnswerNone": {
+    "description": "redesign.import.answerNone"
+  },
+  "redesignImportAnswerOther": "Andere …",
+  "@redesignImportAnswerOther": {
+    "description": "redesign.import.answerOther"
+  },
+  "redesignImportBusy": "Bitte warte, bis alles hochgeladen ist.",
+  "@redesignImportBusy": {
+    "description": "redesign.import.busy"
+  },
+  "redesignImportCategoryFiles": "Andere Dateien",
+  "@redesignImportCategoryFiles": {
+    "description": "redesign.import.categoryFiles"
+  },
+  "redesignImportCategoryLabel": "Stimme ändern",
+  "@redesignImportCategoryLabel": {
+    "description": "redesign.import.categoryLabel"
+  },
+  "redesignImportCategoryNewGroup": "Neue Gruppe: {name}",
+  "@redesignImportCategoryNewGroup": {
+    "description": "redesign.import.categoryNewGroup",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportCategoryOther": "Sonstige",
+  "@redesignImportCategoryOther": {
+    "description": "redesign.import.categoryOther"
+  },
+  "redesignImportCategoryParts": "Stimmen",
+  "@redesignImportCategoryParts": {
+    "description": "redesign.import.categoryParts"
+  },
+  "redesignImportConfirmButton": "Übernehmen",
+  "@redesignImportConfirmButton": {
+    "description": "redesign.import.confirmButton"
+  },
+  "redesignImportConfirmKeepOpen": "Lass die Seite offen, bis alles fertig ist.",
+  "@redesignImportConfirmKeepOpen": {
+    "description": "redesign.import.confirmKeepOpen"
+  },
+  "redesignImportConfirmMessage": "{files, plural, one {1 Datei wird in {works} hochgeladen.} other {{files} Dateien werden in {works} hochgeladen.}}",
+  "@redesignImportConfirmMessage": {
+    "description": "redesign.import.confirmMessage",
+    "placeholders": {
+      "files": {
+        "type": "num"
+      },
+      "works": {}
+    }
+  },
+  "redesignImportConfirmNewWorks": "{count, plural, one {Dabei wird 1 neues Werk angelegt.} other {Dabei werden {count} neue Werke angelegt.}}",
+  "@redesignImportConfirmNewWorks": {
+    "description": "redesign.import.confirmNewWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportConfirmTitle": "Noten übernehmen?",
+  "@redesignImportConfirmTitle": {
+    "description": "redesign.import.confirmTitle"
+  },
+  "redesignImportConfirmWork": "Passt so",
+  "@redesignImportConfirmWork": {
+    "description": "redesign.import.confirmWork"
+  },
+  "redesignImportConfirmWorks": "{count, plural, one {1 Werk} other {{count} Werken}}",
+  "@redesignImportConfirmWorks": {
+    "description": "redesign.import.confirmWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportDatesReading": "Das Datum der Fassungen wird noch gelesen …",
+  "@redesignImportDatesReading": {
+    "description": "redesign.import.datesReading"
+  },
+  "redesignImportDiscardConfirm": "Verwerfen",
+  "@redesignImportDiscardConfirm": {
+    "description": "redesign.import.discardConfirm"
+  },
+  "redesignImportDiscardMessage": "Deine Antworten und Entscheidungen gehen verloren. Hochgeladen wurde noch nichts.",
+  "@redesignImportDiscardMessage": {
+    "description": "redesign.import.discardMessage"
+  },
+  "redesignImportDiscardTitle": "Import verwerfen?",
+  "@redesignImportDiscardTitle": {
+    "description": "redesign.import.discardTitle"
+  },
+  "redesignImportDoneAborted": "Abgebrochen, weil die Gruppe gewechselt wurde.",
+  "@redesignImportDoneAborted": {
+    "description": "redesign.import.doneAborted"
+  },
+  "redesignImportDoneAgainHint": "Die nicht geprüften Werke kannst du später mit derselben ZIP-Datei übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.",
+  "@redesignImportDoneAgainHint": {
+    "description": "redesign.import.doneAgainHint"
+  },
+  "redesignImportDoneAgainHintDrive": "Die nicht geprüften Werke kannst du später mit demselben Ordner-Link übernehmen. Dateien, die schon in Attendix sind, werden dabei übersprungen.",
+  "@redesignImportDoneAgainHintDrive": {
+    "description": "redesign.import.doneAgainHintDrive"
+  },
+  "redesignImportDoneAnother": "Weitere Noten importieren",
+  "@redesignImportDoneAnother": {
+    "description": "redesign.import.doneAnother"
+  },
+  "redesignImportDoneFailed": "Fehlgeschlagen",
+  "@redesignImportDoneFailed": {
+    "description": "redesign.import.doneFailed"
+  },
+  "redesignImportDoneLearned": "Stimmnamen gemerkt",
+  "@redesignImportDoneLearned": {
+    "description": "redesign.import.doneLearned"
+  },
+  "redesignImportDoneNewGroups": "Neue Gruppen",
+  "@redesignImportDoneNewGroups": {
+    "description": "redesign.import.doneNewGroups"
+  },
+  "redesignImportDoneNewWorks": "Neue Werke",
+  "@redesignImportDoneNewWorks": {
+    "description": "redesign.import.doneNewWorks"
+  },
+  "redesignImportDoneOpen": "Nicht geprüft, nicht übernommen",
+  "@redesignImportDoneOpen": {
+    "description": "redesign.import.doneOpen"
+  },
+  "redesignImportDoneRetry": "Fehlgeschlagene erneut hochladen",
+  "@redesignImportDoneRetry": {
+    "description": "redesign.import.doneRetry"
+  },
+  "redesignImportDoneSkipped": "Weggelassen",
+  "@redesignImportDoneSkipped": {
+    "description": "redesign.import.doneSkipped"
+  },
+  "redesignImportDoneText": "{count, plural, one {1 Datei ist jetzt in Attendix.} other {{count} Dateien sind jetzt in Attendix.}}",
+  "@redesignImportDoneText": {
+    "description": "redesign.import.doneText",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportDoneTitle": "Import abgeschlossen",
+  "@redesignImportDoneTitle": {
+    "description": "redesign.import.doneTitle"
+  },
+  "redesignImportDoneToWorks": "Zu den Werken",
+  "@redesignImportDoneToWorks": {
+    "description": "redesign.import.doneToWorks"
+  },
+  "redesignImportDriveChecking": "Ordner wird gesucht …",
+  "@redesignImportDriveChecking": {
+    "description": "redesign.import.driveChecking"
+  },
+  "redesignImportDriveFileGone": "Die Datei ist in Google Drive nicht mehr erreichbar.",
+  "@redesignImportDriveFileGone": {
+    "description": "redesign.import.driveFileGone"
+  },
+  "redesignImportDriveFound": "„{name}“ gefunden",
+  "@redesignImportDriveFound": {
+    "description": "redesign.import.driveFound",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportDriveLinkHint": "https://drive.google.com/drive/folders/…",
+  "@redesignImportDriveLinkHint": {
+    "description": "redesign.import.driveLinkHint"
+  },
+  "redesignImportDriveLinkLabel": "Link zum Ordner",
+  "@redesignImportDriveLinkLabel": {
+    "description": "redesign.import.driveLinkLabel"
+  },
+  "redesignImportDriveOpen": "Google Drive öffnen",
+  "@redesignImportDriveOpen": {
+    "description": "redesign.import.driveOpen"
+  },
+  "redesignImportDrivePaste": "Einfügen",
+  "@redesignImportDrivePaste": {
+    "description": "redesign.import.drivePaste"
+  },
+  "redesignImportDriveReading": "Attendix liest die Ordner in Google Drive.",
+  "@redesignImportDriveReading": {
+    "description": "redesign.import.driveReading"
+  },
+  "redesignImportDriveStart": "Einlesen starten",
+  "@redesignImportDriveStart": {
+    "description": "redesign.import.driveStart"
+  },
+  "redesignImportDriveStep1": "Öffne den Notenordner in Google Drive und wähle „Teilen“.",
+  "@redesignImportDriveStep1": {
+    "description": "redesign.import.driveStep1"
+  },
+  "redesignImportDriveStep2": "Stell „Allgemeiner Zugriff“ auf „Jeder, der über den Link verfügt“.",
+  "@redesignImportDriveStep2": {
+    "description": "redesign.import.driveStep2"
+  },
+  "redesignImportDriveStep3": "Kopiere den Link und füge ihn hier ein.",
+  "@redesignImportDriveStep3": {
+    "description": "redesign.import.driveStep3"
+  },
+  "redesignImportDriveUnshareNote": "Nach dem Import kannst du die Freigabe wieder aufheben.",
+  "@redesignImportDriveUnshareNote": {
+    "description": "redesign.import.driveUnshareNote"
+  },
+  "redesignImportErrorBadLink": "Das ist kein Link zu einem Google-Drive-Ordner.",
+  "@redesignImportErrorBadLink": {
+    "description": "redesign.import.errorBadLink"
+  },
+  "redesignImportErrorDropbox": "Dropbox-Links gehen noch nicht. Lade den Ordner bei Dropbox als ZIP herunter und wähle „ZIP-Datei“.",
+  "@redesignImportErrorDropbox": {
+    "description": "redesign.import.errorDropbox"
+  },
+  "redesignImportErrorEmpty": "In der ZIP-Datei sind keine Dateien.",
+  "@redesignImportErrorEmpty": {
+    "description": "redesign.import.errorEmpty"
+  },
+  "redesignImportErrorFailed": "Der Ordner konnte nicht gelesen werden. Bitte versuche es erneut.",
+  "@redesignImportErrorFailed": {
+    "description": "redesign.import.errorFailed"
+  },
+  "redesignImportErrorForbidden": "Du darfst in dieser Gruppe keine Noten hochladen.",
+  "@redesignImportErrorForbidden": {
+    "description": "redesign.import.errorForbidden"
+  },
+  "redesignImportErrorLimit": "Für heute ist das Import-Limit erreicht oder Google Drive ist gerade ausgelastet. Bitte versuche es später noch einmal.",
+  "@redesignImportErrorLimit": {
+    "description": "redesign.import.errorLimit"
+  },
+  "redesignImportErrorNoData": "Die Werke konnten nicht geladen werden. Bitte versuche es erneut.",
+  "@redesignImportErrorNoData": {
+    "description": "redesign.import.errorNoData"
+  },
+  "redesignImportErrorNotFolder": "Der Link zeigt auf eine Datei. Bitte kopiere den Link des Ordners.",
+  "@redesignImportErrorNotFolder": {
+    "description": "redesign.import.errorNotFolder"
+  },
+  "redesignImportErrorNotFound": "Der Ordner wurde nicht gefunden. Ist er für „Jeder, der über den Link verfügt“ freigegeben?",
+  "@redesignImportErrorNotFound": {
+    "description": "redesign.import.errorNotFound"
+  },
+  "redesignImportErrorNotSetUp": "Der Import per Link ist noch nicht eingerichtet. Nimm bis dahin eine ZIP-Datei.",
+  "@redesignImportErrorNotSetUp": {
+    "description": "redesign.import.errorNotSetUp"
+  },
+  "redesignImportErrorNotZip": "Die Datei ist keine ZIP-Datei oder beschädigt.",
+  "@redesignImportErrorNotZip": {
+    "description": "redesign.import.errorNotZip"
+  },
+  "redesignImportErrorTooLargeWeb": "Die ZIP-Dateien sind zusammen größer als 1 GB. Das geht im Browser nicht. Nimm den Google-Drive-Link oder die App.",
+  "@redesignImportErrorTooLargeWeb": {
+    "description": "redesign.import.errorTooLargeWeb"
+  },
+  "redesignImportErrorTooMany": "Der Ordner hat zu viele Dateien. Wähle einen Unterordner.",
+  "@redesignImportErrorTooMany": {
+    "description": "redesign.import.errorTooMany"
+  },
+  "redesignImportFassungAll": "Alle Fassungen übernehmen",
+  "@redesignImportFassungAll": {
+    "description": "redesign.import.fassungAll"
+  },
+  "redesignImportFassungMain": "Hauptordner",
+  "@redesignImportFassungMain": {
+    "description": "redesign.import.fassungMain"
+  },
+  "redesignImportFassungMeta": "{count, plural, one {1 Datei} other {{count} Dateien}} · neueste vom {date}",
+  "@redesignImportFassungMeta": {
+    "description": "redesign.import.fassungMeta",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "date": {}
+    }
+  },
+  "redesignImportFassungMetaNoDate": "{count, plural, one {1 Datei} other {{count} Dateien}}",
+  "@redesignImportFassungMetaNoDate": {
+    "description": "redesign.import.fassungMetaNoDate",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportFassungOld": "älter",
+  "@redesignImportFassungOld": {
+    "description": "redesign.import.fassungOld"
+  },
+  "redesignImportFassungenIntro": "In diesem Werk liegen mehrere Fassungen derselben Stimmen. Vorgeschlagen ist die mit dem neuesten Datum in den Dateien.",
+  "@redesignImportFassungenIntro": {
+    "description": "redesign.import.fassungenIntro"
+  },
+  "redesignImportFassungenTitle": "Fassungen",
+  "@redesignImportFassungenTitle": {
+    "description": "redesign.import.fassungenTitle"
+  },
+  "redesignImportFileBroken": "Die Datei in der ZIP-Datei ist beschädigt.",
+  "@redesignImportFileBroken": {
+    "description": "redesign.import.fileBroken"
+  },
+  "redesignImportFilesSkip": "Wird weggelassen · {count}",
+  "@redesignImportFilesSkip": {
+    "description": "redesign.import.filesSkip",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportFilesTake": "Wird übernommen · {count}",
+  "@redesignImportFilesTake": {
+    "description": "redesign.import.filesTake",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportFlagConfirmed": "Geprüft",
+  "@redesignImportFlagConfirmed": {
+    "description": "redesign.import.flagConfirmed"
+  },
+  "redesignImportFlagFassungen": "Fassungen",
+  "@redesignImportFlagFassungen": {
+    "description": "redesign.import.flagFassungen"
+  },
+  "redesignImportFlagMatch": "Zuordnung unsicher",
+  "@redesignImportFlagMatch": {
+    "description": "redesign.import.flagMatch"
+  },
+  "redesignImportFlagNew": "Neu",
+  "@redesignImportFlagNew": {
+    "description": "redesign.import.flagNew"
+  },
+  "redesignImportFlagPartExists": "Stimme schon da",
+  "@redesignImportFlagPartExists": {
+    "description": "redesign.import.flagPartExists"
+  },
+  "redesignImportFlagRecheck": "Erneut prüfen",
+  "@redesignImportFlagRecheck": {
+    "description": "redesign.import.flagRecheck"
+  },
+  "redesignImportFlagSkipped": "Nicht übernehmen",
+  "@redesignImportFlagSkipped": {
+    "description": "redesign.import.flagSkipped"
+  },
+  "redesignImportFlagUnclear": "Stimme unklar",
+  "@redesignImportFlagUnclear": {
+    "description": "redesign.import.flagUnclear"
+  },
+  "redesignImportFoundExisting": "{count} schon in Attendix",
+  "@redesignImportFoundExisting": {
+    "description": "redesign.import.foundExisting",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportFoundFiles": "{count, plural, one {1 Datei} other {{count} Dateien}}",
+  "@redesignImportFoundFiles": {
+    "description": "redesign.import.foundFiles",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportFoundNew": "{count, plural, one {1 neues Werk} other {{count} neue Werke}}",
+  "@redesignImportFoundNew": {
+    "description": "redesign.import.foundNew",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportFoundWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignImportFoundWorks": {
+    "description": "redesign.import.foundWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportKeepOpen": "Lass diese Seite offen, bis alles hochgeladen ist. Was schon oben ist, bleibt auch bei einem Abbruch erhalten.",
+  "@redesignImportKeepOpen": {
+    "description": "redesign.import.keepOpen"
+  },
+  "redesignImportLearnFailed": "Die Stimmnamen konnten nicht gespeichert werden. Beim nächsten Import wird wieder gefragt.",
+  "@redesignImportLearnFailed": {
+    "description": "redesign.import.learnFailed"
+  },
+  "redesignImportMatchAmbiguous": "Mehrere Werke in Attendix passen. Bitte prüfe, ob es das richtige ist.",
+  "@redesignImportMatchAmbiguous": {
+    "description": "redesign.import.matchAmbiguous"
+  },
+  "redesignImportMatchNumberOnly": "Die Nummer passt, der Titel weicht ab.",
+  "@redesignImportMatchNumberOnly": {
+    "description": "redesign.import.matchNumberOnly"
+  },
+  "redesignImportMatchTitleOnly": "Der Titel passt, die Nummer weicht ab.",
+  "@redesignImportMatchTitleOnly": {
+    "description": "redesign.import.matchTitleOnly"
+  },
+  "redesignImportMenuHint": "Ordner aus Google Drive, Dropbox oder vom Rechner",
+  "@redesignImportMenuHint": {
+    "description": "redesign.import.menuHint"
+  },
+  "redesignImportNewGroupTitle": "Neue Gruppe anlegen",
+  "@redesignImportNewGroupTitle": {
+    "description": "redesign.import.newGroupTitle"
+  },
+  "redesignImportOpenHint": "{count, plural, one {1 Werk ist noch nicht geprüft und wird nicht hochgeladen.} other {{count} Werke sind noch nicht geprüft und werden nicht hochgeladen.}}",
+  "@redesignImportOpenHint": {
+    "description": "redesign.import.openHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportOptionFassung": "Neueste Fassung vorschlagen",
+  "@redesignImportOptionFassung": {
+    "description": "redesign.import.optionFassung"
+  },
+  "redesignImportOptionFassungDetail": "Hat ein Werk mehrere Fassungen, wird die neueste vorgeschlagen. Du entscheidest beim Prüfen.",
+  "@redesignImportOptionFassungDetail": {
+    "description": "redesign.import.optionFassungDetail"
+  },
+  "redesignImportOptionWord": "Word weglassen, wenn PDF daneben liegt",
+  "@redesignImportOptionWord": {
+    "description": "redesign.import.optionWord"
+  },
+  "redesignImportOptionWordDetail": "Für Liedtexte und Pläne, die es auch als PDF gibt.",
+  "@redesignImportOptionWordDetail": {
+    "description": "redesign.import.optionWordDetail"
+  },
+  "redesignImportOptionsTitle": "Für diesen Import",
+  "@redesignImportOptionsTitle": {
+    "description": "redesign.import.optionsTitle"
+  },
+  "redesignImportPickNew": "Als neues Werk anlegen",
+  "@redesignImportPickNew": {
+    "description": "redesign.import.pickNew"
+  },
+  "redesignImportPickSearch": "Werk suchen",
+  "@redesignImportPickSearch": {
+    "description": "redesign.import.pickSearch"
+  },
+  "redesignImportPickSkip": "Nicht übernehmen",
+  "@redesignImportPickSkip": {
+    "description": "redesign.import.pickSkip"
+  },
+  "redesignImportPickTitle": "Werk wählen",
+  "@redesignImportPickTitle": {
+    "description": "redesign.import.pickTitle"
+  },
+  "redesignImportQuestionTitle": "„{name}“ gehört zu …",
+  "@redesignImportQuestionTitle": {
+    "description": "redesign.import.questionTitle",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportQuestionWhere": "{count} Dateien, z. B. in {works}",
+  "@redesignImportQuestionWhere": {
+    "description": "redesign.import.questionWhere",
+    "placeholders": {
+      "count": {},
+      "works": {}
+    }
+  },
+  "redesignImportQuestionsIntro": "Diese Stimmnamen kennt Attendix noch nicht. Deine Antwort gilt für alle Dateien mit diesem Namen – beim nächsten Import weiß Attendix es schon.",
+  "@redesignImportQuestionsIntro": {
+    "description": "redesign.import.questionsIntro"
+  },
+  "redesignImportQuestionsNone": "Alle Stimmen sind bekannt.",
+  "@redesignImportQuestionsNone": {
+    "description": "redesign.import.questionsNone"
+  },
+  "redesignImportQuestionsOpen": "{count, plural, one {Noch 1 Frage offen. Ohne Antwort ordnest du diese Stimme in jedem Werk einzeln zu.} other {Noch {count} Fragen offen. Ohne Antwort ordnest du diese Stimmen in jedem Werk einzeln zu.}}",
+  "@redesignImportQuestionsOpen": {
+    "description": "redesign.import.questionsOpen",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportQuestionsTitle": "{count, plural, one {1 Frage zu euren Stimmen} other {{count} Fragen zu euren Stimmen}}",
+  "@redesignImportQuestionsTitle": {
+    "description": "redesign.import.questionsTitle",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportReadingDetail": "Attendix sucht doppelte Dateien und liest das Datum der Fassungen.",
+  "@redesignImportReadingDetail": {
+    "description": "redesign.import.readingDetail"
+  },
+  "redesignImportReadingTitle": "Wird eingelesen …",
+  "@redesignImportReadingTitle": {
+    "description": "redesign.import.readingTitle"
+  },
+  "redesignImportReasonByHand": "Von dir weggelassen",
+  "@redesignImportReasonByHand": {
+    "description": "redesign.import.reasonByHand"
+  },
+  "redesignImportReasonDuplicate": "Doppelt vorhanden",
+  "@redesignImportReasonDuplicate": {
+    "description": "redesign.import.reasonDuplicate"
+  },
+  "redesignImportReasonOtherFassung": "Andere Fassung",
+  "@redesignImportReasonOtherFassung": {
+    "description": "redesign.import.reasonOtherFassung"
+  },
+  "redesignImportReasonPartExists": "Stimme schon in Attendix",
+  "@redesignImportReasonPartExists": {
+    "description": "redesign.import.reasonPartExists"
+  },
+  "redesignImportReasonSameName": "Schon in Attendix",
+  "@redesignImportReasonSameName": {
+    "description": "redesign.import.reasonSameName"
+  },
+  "redesignImportReasonTooLarge": "Größer als 20 MB",
+  "@redesignImportReasonTooLarge": {
+    "description": "redesign.import.reasonTooLarge"
+  },
+  "redesignImportReasonUnsupported": "Dateityp wird nicht übernommen",
+  "@redesignImportReasonUnsupported": {
+    "description": "redesign.import.reasonUnsupported"
+  },
+  "redesignImportReasonWord": "PDF liegt daneben",
+  "@redesignImportReasonWord": {
+    "description": "redesign.import.reasonWord"
+  },
+  "redesignImportReasonWorkSkipped": "Werk wird nicht übernommen",
+  "@redesignImportReasonWorkSkipped": {
+    "description": "redesign.import.reasonWorkSkipped"
+  },
+  "redesignImportRecheckHint": "Seit „Passt so“ hat sich hier etwas geändert. Bitte noch einmal ansehen.",
+  "@redesignImportRecheckHint": {
+    "description": "redesign.import.recheckHint"
+  },
+  "redesignImportReviewAll": "Alle · {count}",
+  "@redesignImportReviewAll": {
+    "description": "redesign.import.reviewAll",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportReviewAnswer": "Fragen beantworten",
+  "@redesignImportReviewAnswer": {
+    "description": "redesign.import.reviewAnswer"
+  },
+  "redesignImportReviewCounts": "{count} weggelassen",
+  "@redesignImportReviewCounts": {
+    "description": "redesign.import.reviewCounts",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportReviewEmpty": "Hier ist nichts mehr zu prüfen.",
+  "@redesignImportReviewEmpty": {
+    "description": "redesign.import.reviewEmpty"
+  },
+  "redesignImportReviewIntro": "Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn du sie angeschaut hast.",
+  "@redesignImportReviewIntro": {
+    "description": "redesign.import.reviewIntro"
+  },
+  "redesignImportReviewNew": "Neu · {count}",
+  "@redesignImportReviewNew": {
+    "description": "redesign.import.reviewNew",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportReviewOpen": "Zu prüfen · {count}",
+  "@redesignImportReviewOpen": {
+    "description": "redesign.import.reviewOpen",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignImportReviewQuestionsOpen": "{count, plural, one {1 Stimmname ist noch offen. Dateien mit diesem Namen sind „Stimme unklar“.} other {{count} Stimmnamen sind noch offen. Dateien mit diesen Namen sind „Stimme unklar“.}}",
+  "@redesignImportReviewQuestionsOpen": {
+    "description": "redesign.import.reviewQuestionsOpen",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportReviewTarget": "→ {name}",
+  "@redesignImportReviewTarget": {
+    "description": "redesign.import.reviewTarget",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportSourceDrive": "Google Drive",
+  "@redesignImportSourceDrive": {
+    "description": "redesign.import.sourceDrive"
+  },
+  "redesignImportSourceDriveDetail": "Ordner-Link einfügen. Nichts wird aufs Gerät geladen.",
+  "@redesignImportSourceDriveDetail": {
+    "description": "redesign.import.sourceDriveDetail"
+  },
+  "redesignImportSourceHowComputer": "Rechner: Ordner mit rechts anklicken › Komprimieren (Mac) oder Senden an › ZIP-komprimierter Ordner (Windows).",
+  "@redesignImportSourceHowComputer": {
+    "description": "redesign.import.sourceHowComputer"
+  },
+  "redesignImportSourceHowDrive": "Google Drive: Ordner mit rechts anklicken › Herunterladen. Große Ordner kommen als mehrere ZIP-Dateien, wähle sie zusammen aus.",
+  "@redesignImportSourceHowDrive": {
+    "description": "redesign.import.sourceHowDrive"
+  },
+  "redesignImportSourceHowDropbox": "Dropbox: beim Ordner auf … › Herunterladen.",
+  "@redesignImportSourceHowDropbox": {
+    "description": "redesign.import.sourceHowDropbox"
+  },
+  "redesignImportSourceHowTitle": "So bekommst du die ZIP-Datei",
+  "@redesignImportSourceHowTitle": {
+    "description": "redesign.import.sourceHowTitle"
+  },
+  "redesignImportSourceIntro": "Lade den Ordner mit euren Noten als ZIP-Datei herunter und wähle sie hier aus. Attendix ordnet die Dateien den Werken und Stimmen zu. Hochgeladen wird erst, wenn du alles geprüft hast.",
+  "@redesignImportSourceIntro": {
+    "description": "redesign.import.sourceIntro"
+  },
+  "redesignImportSourcePick": "ZIP-Datei wählen",
+  "@redesignImportSourcePick": {
+    "description": "redesign.import.sourcePick"
+  },
+  "redesignImportSourceRecommended": "Empfohlen",
+  "@redesignImportSourceRecommended": {
+    "description": "redesign.import.sourceRecommended"
+  },
+  "redesignImportSourceSafe": "In der Quelle wird nichts verändert. Gespeichert wird erst, nachdem du alles geprüft hast.",
+  "@redesignImportSourceSafe": {
+    "description": "redesign.import.sourceSafe"
+  },
+  "redesignImportSourceWhere": "Wo liegen eure Noten?",
+  "@redesignImportSourceWhere": {
+    "description": "redesign.import.sourceWhere"
+  },
+  "redesignImportSourceZip": "ZIP-Datei",
+  "@redesignImportSourceZip": {
+    "description": "redesign.import.sourceZip"
+  },
+  "redesignImportSourceZipDetail": "Aus Dropbox, OneDrive oder vom Rechner.",
+  "@redesignImportSourceZipDetail": {
+    "description": "redesign.import.sourceZipDetail"
+  },
+  "redesignImportStepOf": "Schritt {step} von 4 · {name}",
+  "@redesignImportStepOf": {
+    "description": "redesign.import.stepOf",
+    "placeholders": {
+      "step": {},
+      "name": {}
+    }
+  },
+  "redesignImportStepRead": "Stimmen",
+  "@redesignImportStepRead": {
+    "description": "redesign.import.stepRead"
+  },
+  "redesignImportStepReview": "Prüfen",
+  "@redesignImportStepReview": {
+    "description": "redesign.import.stepReview"
+  },
+  "redesignImportStepSource": "Quelle",
+  "@redesignImportStepSource": {
+    "description": "redesign.import.stepSource"
+  },
+  "redesignImportStepUpload": "Hochladen",
+  "@redesignImportStepUpload": {
+    "description": "redesign.import.stepUpload"
+  },
+  "redesignImportTakeLabel": "„{name}“ übernehmen",
+  "@redesignImportTakeLabel": {
+    "description": "redesign.import.takeLabel",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportTargetChange": "Ändern",
+  "@redesignImportTargetChange": {
+    "description": "redesign.import.targetChange"
+  },
+  "redesignImportTargetExisting": "In Attendix: {name}",
+  "@redesignImportTargetExisting": {
+    "description": "redesign.import.targetExisting",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportTargetNew": "Neues Werk: {name}",
+  "@redesignImportTargetNew": {
+    "description": "redesign.import.targetNew",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignImportTargetSkip": "Wird nicht übernommen",
+  "@redesignImportTargetSkip": {
+    "description": "redesign.import.targetSkip"
+  },
+  "redesignImportTargetTitle": "Ziel in Attendix",
+  "@redesignImportTargetTitle": {
+    "description": "redesign.import.targetTitle"
+  },
+  "redesignImportTitle": "Noten importieren",
+  "@redesignImportTitle": {
+    "description": "redesign.import.title"
+  },
+  "redesignImportToReview": "Zur Prüfung",
+  "@redesignImportToReview": {
+    "description": "redesign.import.toReview"
+  },
+  "redesignImportUndoConfirm": "Prüfung zurücknehmen",
+  "@redesignImportUndoConfirm": {
+    "description": "redesign.import.undoConfirm"
+  },
+  "redesignImportUnshareOpen": "In Google Drive öffnen",
+  "@redesignImportUnshareOpen": {
+    "description": "redesign.import.unshareOpen"
+  },
+  "redesignImportUnshareText": "Stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Attendix braucht den Link nicht mehr.",
+  "@redesignImportUnshareText": {
+    "description": "redesign.import.unshareText"
+  },
+  "redesignImportUnshareTextLater": "Wenn du fertig bist, stell den Ordner in Google Drive wieder auf „Eingeschränkt“. Solange Dateien fehlen oder Werke offen sind, braucht Attendix den Link noch.",
+  "@redesignImportUnshareTextLater": {
+    "description": "redesign.import.unshareTextLater"
+  },
+  "redesignImportUnshareTitle": "Freigabe wieder aufheben",
+  "@redesignImportUnshareTitle": {
+    "description": "redesign.import.unshareTitle"
+  },
+  "redesignImportUploadButton": "{count, plural, one {1 Datei übernehmen} other {{count} Dateien übernehmen}}",
+  "@redesignImportUploadButton": {
+    "description": "redesign.import.uploadButton",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignImportUploadProgress": "{done} von {total} Dateien",
+  "@redesignImportUploadProgress": {
+    "description": "redesign.import.uploadProgress",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "redesignImportUploadTitle": "Wird hochgeladen",
+  "@redesignImportUploadTitle": {
+    "description": "redesign.import.uploadTitle"
+  },
+  "redesignImportUseZip": "Stattdessen ZIP-Datei wählen",
+  "@redesignImportUseZip": {
+    "description": "redesign.import.useZip"
+  },
   "redesignInviteAddPerson": "Person anlegen",
   "@redesignInviteAddPerson": {
     "description": "redesign.invite.addPerson"

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "0.34.0",
+      "date": "1.11.2026",
+      "changes": [
+        "✨ Beta-Design, Werke: „Noten importieren“ liest ganze Notenordner ein und ordnet Werke und Stimmen zu: per Google-Drive-Link (Dateien werden direkt kopiert, nichts aufs Handy) oder als ZIP-Datei aus Dropbox, OneDrive oder vom Rechner",
+        "✨ Noten importieren: Unbekannte Stimmnamen werden einmal für alle Dateien gefragt, beim nächsten Import weiß Attendix die Antwort schon; auf Wunsch wird eine neue Gruppe angelegt",
+        "✨ Noten importieren: Mehrere Fassungen eines Werks werden erkannt, vorgeschlagen ist die mit dem neuesten Datum in den Dateien; doppelte Dateien und Stimmen, die schon in Attendix sind, bleiben draußen",
+        "✨ Noten importieren: Werke mit Fassungen, unsicherer Zuordnung oder unklaren Stimmen werden erst hochgeladen, wenn jemand sie geprüft hat",
+        "✨ Noten importieren: Nach einem Drive-Import erinnert Attendix daran, die Freigabe des Ordners wieder aufzuheben",
+        "✨ Noten importieren: Auf Wunsch schlägt die KI Antworten auf die Fragen vor; sichere Vorschläge sind ausgefüllt und mit ✦ markiert, alle lassen sich ändern und gelten erst, wenn du sie übernimmst",
+        "💄 Noten importieren: eigene Seite unter Werke im Stil der Beta, Rückfrage beim Verlassen und Fehler mit Ausweg (z. B. ZIP statt Link)",
+        "💄 Ohne Beta-Schalter bleibt alles wie in der Ionic-App"
+      ]
+    },
+    {
       "version": "0.33.1",
       "date": "1.11.2026",
       "changes": [

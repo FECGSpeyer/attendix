@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -105,6 +106,7 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_import_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
 import '../../features/redesign/presentation/pages/rd_works_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
@@ -697,6 +699,15 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              // Before ':id', which would take "import" for a Werk.
+              GoRoute(
+                path: 'import',
+                name: 'redesignWorksImport',
+                // The browser's back button changes the address without a
+                // pop; the page asks before its answers are lost.
+                onExit: kIsWeb ? rdImportOnExit : null,
+                builder: (context, state) => const RdImportPage(),
+              ),
               GoRoute(
                 path: ':id',
                 name: 'redesignWork',

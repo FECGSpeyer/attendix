@@ -13,45 +13,13 @@ import '../rd_widgets.dart';
 /// REDESIGN: sheets of "Termin anlegen" (Art, Abmeldeschluss, weitere
 /// Daten).
 
-Future<T?> _showRdSheet<T>(BuildContext context, Widget child) {
-  return showModalBottomSheet<T>(
-    context: context,
-    useRootNavigator: true,
-    isScrollControlled: true,
-    showDragHandle: true,
-    backgroundColor: context.rd.bg,
-    builder: (_) => SafeArea(
-      top: false,
-      child: ConstrainedBox(
-        constraints: BoxConstraints(maxHeight: MediaQuery.sizeOf(context).height * 0.85),
-        child: child,
-      ),
-    ),
-  );
-}
-
-class _SheetTitle extends StatelessWidget {
-  const _SheetTitle(this.text);
-
-  final String text;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(20, 0, 20, 12),
-        child: Semantics(header: true, child: Text(text, style: RdType.cardTitle(context.rd))),
-      );
-}
-
-Widget _check(BuildContext context, bool selected) =>
-    selected ? Icon(Icons.check, size: 22, color: context.rd.primary) : const SizedBox(width: 22);
-
 /// Picks the Art of the new Termin.
 Future<AttendanceType?> showRdTypePicker(
   BuildContext context, {
   required List<AttendanceType> types,
   AttendanceType? selected,
 }) {
-  return _showRdSheet<AttendanceType>(
+  return showRdSheet<AttendanceType>(
     context,
     Builder(builder: (context) {
       final l10n = context.l10n;
@@ -59,7 +27,7 @@ Future<AttendanceType?> showRdTypePicker(
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
         children: [
-          _SheetTitle(l10n.redesignCreateChooseType),
+          RdSheetTitle(l10n.redesignCreateChooseType),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: RdGroupedList(children: [
@@ -69,7 +37,7 @@ Future<AttendanceType?> showRdTypePicker(
                   title: t.name,
                   selected: t.id == selected?.id,
                   showChevron: false,
-                  trailing: _check(context, t.id == selected?.id),
+                  trailing: RdSheetCheck(t.id == selected?.id),
                   onTap: () => Navigator.of(context).pop(t),
                 ),
             ]),
@@ -89,7 +57,7 @@ String rdDeadlineLabel(AppLocalizations l10n, RdDeadline d) => switch (d) {
 
 /// Picks the Abmeldeschluss (relative to each Termin).
 Future<RdDeadline?> showRdDeadlinePicker(BuildContext context, RdDeadline selected) {
-  return _showRdSheet<RdDeadline>(
+  return showRdSheet<RdDeadline>(
     context,
     Builder(builder: (context) {
       final l10n = context.l10n;
@@ -97,7 +65,7 @@ Future<RdDeadline?> showRdDeadlinePicker(BuildContext context, RdDeadline select
         shrinkWrap: true,
         padding: const EdgeInsets.fromLTRB(0, 0, 0, 16),
         children: [
-          _SheetTitle(l10n.redesignCreateDeadline),
+          RdSheetTitle(l10n.redesignCreateDeadline),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 16),
             child: RdGroupedList(children: [
@@ -106,7 +74,7 @@ Future<RdDeadline?> showRdDeadlinePicker(BuildContext context, RdDeadline select
                   title: rdDeadlineLabel(l10n, d),
                   selected: d == selected,
                   showChevron: false,
-                  trailing: _check(context, d == selected),
+                  trailing: RdSheetCheck(d == selected),
                   onTap: () => Navigator.of(context).pop(d),
                 ),
             ]),
@@ -135,7 +103,7 @@ Future<RdRepeatChoice?> showRdRepeatSheet(
   required bool skipHolidays,
   required HolidayData holidays,
 }) {
-  return _showRdSheet<RdRepeatChoice>(
+  return showRdSheet<RdRepeatChoice>(
     context,
     _RepeatSheet(
       start: start,
@@ -207,7 +175,7 @@ class _RepeatSheetState extends State<_RepeatSheet> {
       shrinkWrap: true,
       padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
       children: [
-        _SheetTitle(l10n.redesignCreateMoreDates),
+        RdSheetTitle(l10n.redesignCreateMoreDates),
         RdSegmented<RdRepeat>(
           values: const [RdRepeat.once, RdRepeat.weekly, RdRepeat.biweekly],
           selected: _repeat,

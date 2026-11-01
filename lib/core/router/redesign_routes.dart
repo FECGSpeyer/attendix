@@ -43,6 +43,10 @@ class RedesignRoutes {
   /// A work of the new design.
   static String work(int id) => '$works/$id';
 
+  /// Werke › "Noten importieren" (Admins and Verantwortliche, like the
+  /// entry in the Werke list).
+  static const String worksImport = '$works/import';
+
   /// Tab "Ich".
   static const String me = '/ich';
 
@@ -136,7 +140,9 @@ class RedesignRoutes {
       return role.canSeePeopleTab ? null : today;
     }
     if (location == works || location.startsWith('$works/')) {
-      return canOpenSongsTab(role) ? null : today;
+      if (!canOpenSongsTab(role)) return today;
+      if (location == worksImport && !(role.isAdmin || role.isResponsible)) return works;
+      return null;
     }
     final isEvents = location == events || location.startsWith('$events/');
     if (!isEvents) return null;

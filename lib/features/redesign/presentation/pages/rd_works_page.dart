@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -80,6 +81,8 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           AppActionSheetAction(value: 'share', icon: Icons.link, label: l10n.songsCopyLink),
         if (isAdmin)
           AppActionSheetAction(value: 'import', icon: Icons.cloud_upload_outlined, label: l10n.songsImportSongs),
+        if (isAdmin && _canImportFiles)
+          AppActionSheetAction(value: 'importFiles', icon: Icons.folder_zip_outlined, label: l10n.redesignImportTitle),
         AppActionSheetAction(value: 'pdf', icon: Icons.description_outlined, label: l10n.songsCatalogPdf),
       ],
     );
@@ -100,9 +103,48 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
           ref.invalidate(songsProvider);
           ref.invalidate(songsListDataProvider);
         }
+      case 'importFiles':
+        await _importFiles();
       case 'pdf':
         await _exportPdf(data, shown);
     }
+  }
+
+  /// "Noten importieren" is for the own library only (a synced instance
+  /// shows the Werke of another one).
+  bool get _canImportFiles {
+    final source = ref.read(songTenantSettingsProvider).valueOrNull?.songSourceTenantId;
+    return source == null || source == ref.read(currentTenantIdProvider);
+  }
+
+  /// "Noten importieren" as a page of the Beta (address
+  /// [RedesignRoutes.worksImport]); its controller refreshes the Werke.
+  Future<void> _importFiles() => context.push(RedesignRoutes.worksImport);
+
+  /// "+": a new Werk, or several from a ZIP ("Noten importieren").
+  Future<void> _add(SongsListData data) async {
+    final l10n = context.l10n;
+    final action = _canImportFiles
+        ? await showAppActionSheet<String>(
+            context,
+            actions: [
+              AppActionSheetAction(value: 'add', icon: Icons.add, label: l10n.redesignWorksAdd),
+              AppActionSheetAction(
+                value: 'importFiles',
+                icon: Icons.folder_zip_outlined,
+                label: l10n.redesignImportTitle,
+                subtitle: l10n.redesignImportMenuHint,
+              ),
+            ],
+          )
+        : 'add';
+    if (!mounted || action == null) return;
+    if (action == 'importFiles') {
+      await _importFiles();
+      return;
+    }
+    final id = await showAddSongSheet(context, data);
+    if (id != null && mounted) _openWork(id);
   }
 
   Future<void> _exportPdf(SongsListData data, List<Song> shown) async {
@@ -234,10 +276,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               backgroundColor: p.primary,
               foregroundColor: p.onPrimary,
               shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(18)),
-              onPressed: () async {
-                final id = await showAddSongSheet(context, data);
-                if (id != null && mounted) _openWork(id);
-              },
+              onPressed: () => _add(data),
               child: const Icon(Icons.add, size: 28),
             )
           : null,

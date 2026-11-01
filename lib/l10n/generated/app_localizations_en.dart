@@ -9370,6 +9370,750 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignGroupsTitle => 'Switch group';
 
   @override
+  String get redesignImportAiConfirmButton => 'Use them';
+
+  @override
+  String get redesignImportAiConfirmCancel => 'Look again';
+
+  @override
+  String redesignImportAiConfirmMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'The AI filled in $count answers (✦). They apply to all files with these names, and Attendix remembers them for the next import.',
+      one:
+          'The AI filled in 1 answer (✦). It applies to all files with this name, and Attendix remembers it for the next import.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportAiConfirmTitle => 'Use the AI’s answers?';
+
+  @override
+  String get redesignImportAiFailed =>
+      'The AI cannot be reached right now. The questions work without it.';
+
+  @override
+  String redesignImportAiFilled(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'The AI filled in $count answers (✦), please check them.',
+      one: 'The AI filled in 1 answer (✦), please check it.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportAiLimit =>
+      'The AI suggestions are used up for today. The questions work without them.';
+
+  @override
+  String get redesignImportAiLoading => 'The AI is looking for suggestions …';
+
+  @override
+  String redesignImportAiMark(Object label) {
+    return '$label, suggested by the AI';
+  }
+
+  @override
+  String get redesignImportAiNone => 'The AI found no sure suggestions.';
+
+  @override
+  String get redesignImportAiOffered =>
+      'Suggestions from the AI are marked with ✦.';
+
+  @override
+  String get redesignImportAiOption => 'Suggestions from AI';
+
+  @override
+  String get redesignImportAiOptionDetail =>
+      'The unknown part names and some file names are sent to the AI. Sure suggestions are filled in, all can be changed.';
+
+  @override
+  String redesignImportAnswerNewGroup(Object name) {
+    return 'New group “$name”';
+  }
+
+  @override
+  String get redesignImportAnswerNone => 'No part';
+
+  @override
+  String get redesignImportAnswerOther => 'Other …';
+
+  @override
+  String get redesignImportBusy => 'Please wait until everything is uploaded.';
+
+  @override
+  String get redesignImportCategoryFiles => 'Other files';
+
+  @override
+  String get redesignImportCategoryLabel => 'Change part';
+
+  @override
+  String redesignImportCategoryNewGroup(Object name) {
+    return 'New group: $name';
+  }
+
+  @override
+  String get redesignImportCategoryOther => 'Other';
+
+  @override
+  String get redesignImportCategoryParts => 'Parts';
+
+  @override
+  String get redesignImportConfirmButton => 'Import';
+
+  @override
+  String get redesignImportConfirmKeepOpen =>
+      'Keep this page open until everything is done.';
+
+  @override
+  String redesignImportConfirmMessage(num files, Object works) {
+    String _temp0 = intl.Intl.pluralLogic(
+      files,
+      locale: localeName,
+      other: '$files files will be uploaded to $works.',
+      one: '1 file will be uploaded to $works.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportConfirmNewWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new works will be created.',
+      one: '1 new work will be created.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportConfirmTitle => 'Import the sheet music?';
+
+  @override
+  String get redesignImportConfirmWork => 'Looks good';
+
+  @override
+  String redesignImportConfirmWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works',
+      one: '1 work',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportDatesReading =>
+      'Still reading the dates of the versions …';
+
+  @override
+  String get redesignImportDiscardConfirm => 'Discard';
+
+  @override
+  String get redesignImportDiscardMessage =>
+      'Your answers and decisions will be lost. Nothing has been uploaded yet.';
+
+  @override
+  String get redesignImportDiscardTitle => 'Discard the import?';
+
+  @override
+  String get redesignImportDoneAborted =>
+      'Stopped because the group was switched.';
+
+  @override
+  String get redesignImportDoneAgainHint =>
+      'You can import the works not reviewed later with the same ZIP file. Files already in Attendix are skipped then.';
+
+  @override
+  String get redesignImportDoneAgainHintDrive =>
+      'You can take over the works you did not check later with the same folder link. Files already in Attendix are skipped.';
+
+  @override
+  String get redesignImportDoneAnother => 'Import more sheet music';
+
+  @override
+  String get redesignImportDoneFailed => 'Failed';
+
+  @override
+  String get redesignImportDoneLearned => 'Part names remembered';
+
+  @override
+  String get redesignImportDoneNewGroups => 'New groups';
+
+  @override
+  String get redesignImportDoneNewWorks => 'New works';
+
+  @override
+  String get redesignImportDoneOpen => 'Not reviewed, not imported';
+
+  @override
+  String get redesignImportDoneRetry => 'Upload failed files again';
+
+  @override
+  String get redesignImportDoneSkipped => 'Left out';
+
+  @override
+  String redesignImportDoneText(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files are now in Attendix.',
+      one: '1 file is now in Attendix.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportDoneTitle => 'Import finished';
+
+  @override
+  String get redesignImportDoneToWorks => 'Go to works';
+
+  @override
+  String get redesignImportDriveChecking => 'Looking for the folder …';
+
+  @override
+  String get redesignImportDriveFileGone =>
+      'The file can no longer be reached in Google Drive.';
+
+  @override
+  String redesignImportDriveFound(Object name) {
+    return '“$name” found';
+  }
+
+  @override
+  String get redesignImportDriveLinkHint =>
+      'https://drive.google.com/drive/folders/…';
+
+  @override
+  String get redesignImportDriveLinkLabel => 'Folder link';
+
+  @override
+  String get redesignImportDriveOpen => 'Open Google Drive';
+
+  @override
+  String get redesignImportDrivePaste => 'Paste';
+
+  @override
+  String get redesignImportDriveReading =>
+      'Attendix is reading the folders in Google Drive.';
+
+  @override
+  String get redesignImportDriveStart => 'Start reading';
+
+  @override
+  String get redesignImportDriveStep1 =>
+      'Open the sheet-music folder in Google Drive and choose “Share”.';
+
+  @override
+  String get redesignImportDriveStep2 =>
+      'Set “General access” to “Anyone with the link”.';
+
+  @override
+  String get redesignImportDriveStep3 => 'Copy the link and paste it here.';
+
+  @override
+  String get redesignImportDriveUnshareNote =>
+      'After the import you can stop sharing the folder again.';
+
+  @override
+  String get redesignImportErrorBadLink =>
+      'This is not a link to a Google Drive folder.';
+
+  @override
+  String get redesignImportErrorDropbox =>
+      'Dropbox links do not work yet. Download the folder from Dropbox as a ZIP and choose “ZIP file”.';
+
+  @override
+  String get redesignImportErrorEmpty => 'The ZIP file contains no files.';
+
+  @override
+  String get redesignImportErrorFailed =>
+      'The folder could not be read. Please try again.';
+
+  @override
+  String get redesignImportErrorForbidden =>
+      'You may not upload sheet music in this group.';
+
+  @override
+  String get redesignImportErrorLimit =>
+      'The import limit for today is reached or Google Drive is busy right now. Please try again later.';
+
+  @override
+  String get redesignImportErrorNoData =>
+      'The works could not be loaded. Please try again.';
+
+  @override
+  String get redesignImportErrorNotFolder =>
+      'The link points to a file. Please copy the link of the folder.';
+
+  @override
+  String get redesignImportErrorNotFound =>
+      'The folder was not found. Is it shared with “Anyone with the link”?';
+
+  @override
+  String get redesignImportErrorNotSetUp =>
+      'Importing from a link is not set up yet. Use a ZIP file for now.';
+
+  @override
+  String get redesignImportErrorNotZip =>
+      'The file is not a ZIP file or it is damaged.';
+
+  @override
+  String get redesignImportErrorTooLargeWeb =>
+      'Together the ZIP files are larger than 1 GB. This does not work in the browser. Use the Google Drive link or the app.';
+
+  @override
+  String get redesignImportErrorTooMany =>
+      'The folder has too many files. Choose a sub-folder.';
+
+  @override
+  String get redesignImportFassungAll => 'Import all versions';
+
+  @override
+  String get redesignImportFassungMain => 'Main folder';
+
+  @override
+  String redesignImportFassungMeta(num count, Object date) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0 · newest from $date';
+  }
+
+  @override
+  String redesignImportFassungMetaNoDate(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportFassungOld => 'older';
+
+  @override
+  String get redesignImportFassungenIntro =>
+      'This work has several versions of the same parts. The one with the newest date inside its files is suggested.';
+
+  @override
+  String get redesignImportFassungenTitle => 'Versions';
+
+  @override
+  String get redesignImportFileBroken => 'The file in the ZIP file is damaged.';
+
+  @override
+  String redesignImportFilesSkip(Object count) {
+    return 'Left out · $count';
+  }
+
+  @override
+  String redesignImportFilesTake(Object count) {
+    return 'To import · $count';
+  }
+
+  @override
+  String get redesignImportFlagConfirmed => 'Reviewed';
+
+  @override
+  String get redesignImportFlagFassungen => 'Versions';
+
+  @override
+  String get redesignImportFlagMatch => 'Match unsure';
+
+  @override
+  String get redesignImportFlagNew => 'New';
+
+  @override
+  String get redesignImportFlagPartExists => 'Part already there';
+
+  @override
+  String get redesignImportFlagRecheck => 'Check again';
+
+  @override
+  String get redesignImportFlagSkipped => 'Not imported';
+
+  @override
+  String get redesignImportFlagUnclear => 'Part unclear';
+
+  @override
+  String redesignImportFoundExisting(Object count) {
+    return '$count already in Attendix';
+  }
+
+  @override
+  String redesignImportFoundFiles(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count files',
+      one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportFoundNew(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count new works',
+      one: '1 new work',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportFoundWorks(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works',
+      one: '1 work',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportKeepOpen =>
+      'Keep this page open until everything is uploaded. What is already up stays there if it stops.';
+
+  @override
+  String get redesignImportLearnFailed =>
+      'The part names could not be saved. The next import will ask again.';
+
+  @override
+  String get redesignImportMatchAmbiguous =>
+      'Several works in Attendix fit. Please check that this is the right one.';
+
+  @override
+  String get redesignImportMatchNumberOnly =>
+      'The number fits, the title differs.';
+
+  @override
+  String get redesignImportMatchTitleOnly =>
+      'The title fits, the number differs.';
+
+  @override
+  String get redesignImportMenuHint =>
+      'Folder from Google Drive, Dropbox or your computer';
+
+  @override
+  String get redesignImportNewGroupTitle => 'Create new group';
+
+  @override
+  String redesignImportOpenHint(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count works are not reviewed yet and will not be uploaded.',
+      one: '1 work is not reviewed yet and will not be uploaded.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportOptionFassung => 'Suggest the newest version';
+
+  @override
+  String get redesignImportOptionFassungDetail =>
+      'If a work has several versions, the newest one is suggested. You decide in the review.';
+
+  @override
+  String get redesignImportOptionWord => 'Leave out Word files next to a PDF';
+
+  @override
+  String get redesignImportOptionWordDetail =>
+      'For lyrics and plans that also exist as PDF.';
+
+  @override
+  String get redesignImportOptionsTitle => 'For this import';
+
+  @override
+  String get redesignImportPickNew => 'Create as new work';
+
+  @override
+  String get redesignImportPickSearch => 'Search work';
+
+  @override
+  String get redesignImportPickSkip => 'Do not import';
+
+  @override
+  String get redesignImportPickTitle => 'Choose work';
+
+  @override
+  String redesignImportQuestionTitle(Object name) {
+    return '“$name” belongs to …';
+  }
+
+  @override
+  String redesignImportQuestionWhere(Object count, Object works) {
+    return '$count files, e.g. in $works';
+  }
+
+  @override
+  String get redesignImportQuestionsIntro =>
+      'Attendix does not know these part names yet. Your answer applies to all files with this name – next time Attendix will know it.';
+
+  @override
+  String get redesignImportQuestionsNone => 'All parts are known.';
+
+  @override
+  String redesignImportQuestionsOpen(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count questions are still open. Without an answer you assign these parts in every work yourself.',
+      one:
+          '1 question is still open. Without an answer you assign this part in every work yourself.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportQuestionsTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count questions about your parts',
+      one: '1 question about your parts',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignImportReadingDetail =>
+      'Attendix looks for duplicate files and reads the dates of the versions.';
+
+  @override
+  String get redesignImportReadingTitle => 'Reading …';
+
+  @override
+  String get redesignImportReasonByHand => 'Left out by you';
+
+  @override
+  String get redesignImportReasonDuplicate => 'Duplicate';
+
+  @override
+  String get redesignImportReasonOtherFassung => 'Other version';
+
+  @override
+  String get redesignImportReasonPartExists => 'Part already in Attendix';
+
+  @override
+  String get redesignImportReasonSameName => 'Already in Attendix';
+
+  @override
+  String get redesignImportReasonTooLarge => 'Larger than 20 MB';
+
+  @override
+  String get redesignImportReasonUnsupported => 'File type is not imported';
+
+  @override
+  String get redesignImportReasonWord => 'PDF next to it';
+
+  @override
+  String get redesignImportReasonWorkSkipped => 'Work is not imported';
+
+  @override
+  String get redesignImportRecheckHint =>
+      'Something changed here since “Looks good”. Please take another look.';
+
+  @override
+  String redesignImportReviewAll(Object count) {
+    return 'All · $count';
+  }
+
+  @override
+  String get redesignImportReviewAnswer => 'Answer questions';
+
+  @override
+  String redesignImportReviewCounts(Object count) {
+    return '$count left out';
+  }
+
+  @override
+  String get redesignImportReviewEmpty => 'Nothing left to review here.';
+
+  @override
+  String get redesignImportReviewIntro =>
+      'Works with several versions, an unsure match or unclear parts are only uploaded once you have looked at them.';
+
+  @override
+  String redesignImportReviewNew(Object count) {
+    return 'New · $count';
+  }
+
+  @override
+  String redesignImportReviewOpen(Object count) {
+    return 'To review · $count';
+  }
+
+  @override
+  String redesignImportReviewQuestionsOpen(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          '$count part names are still open. Files with these names are “Part unclear”.',
+      one:
+          '1 part name is still open. Files with this name are “Part unclear”.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportReviewTarget(Object name) {
+    return '→ $name';
+  }
+
+  @override
+  String get redesignImportSourceDrive => 'Google Drive';
+
+  @override
+  String get redesignImportSourceDriveDetail =>
+      'Paste the folder link. Nothing is downloaded to your device.';
+
+  @override
+  String get redesignImportSourceHowComputer =>
+      'Computer: right-click the folder › Compress (Mac) or Send to › Compressed (zipped) folder (Windows).';
+
+  @override
+  String get redesignImportSourceHowDrive =>
+      'Google Drive: right-click the folder › Download. Large folders come as several ZIP files, choose them together.';
+
+  @override
+  String get redesignImportSourceHowDropbox =>
+      'Dropbox: … next to the folder › Download.';
+
+  @override
+  String get redesignImportSourceHowTitle => 'How to get the ZIP file';
+
+  @override
+  String get redesignImportSourceIntro =>
+      'Download the folder with your sheet music as a ZIP file and choose it here. Attendix sorts the files into works and parts. Nothing is uploaded until you have reviewed it.';
+
+  @override
+  String get redesignImportSourcePick => 'Choose ZIP file';
+
+  @override
+  String get redesignImportSourceRecommended => 'Recommended';
+
+  @override
+  String get redesignImportSourceSafe =>
+      'Nothing is changed in the source. Nothing is saved until you have checked everything.';
+
+  @override
+  String get redesignImportSourceWhere => 'Where is your sheet music?';
+
+  @override
+  String get redesignImportSourceZip => 'ZIP file';
+
+  @override
+  String get redesignImportSourceZipDetail =>
+      'From Dropbox, OneDrive or your computer.';
+
+  @override
+  String redesignImportStepOf(Object step, Object name) {
+    return 'Step $step of 4 · $name';
+  }
+
+  @override
+  String get redesignImportStepRead => 'Parts';
+
+  @override
+  String get redesignImportStepReview => 'Review';
+
+  @override
+  String get redesignImportStepSource => 'Source';
+
+  @override
+  String get redesignImportStepUpload => 'Upload';
+
+  @override
+  String redesignImportTakeLabel(Object name) {
+    return 'Import “$name”';
+  }
+
+  @override
+  String get redesignImportTargetChange => 'Change';
+
+  @override
+  String redesignImportTargetExisting(Object name) {
+    return 'In Attendix: $name';
+  }
+
+  @override
+  String redesignImportTargetNew(Object name) {
+    return 'New work: $name';
+  }
+
+  @override
+  String get redesignImportTargetSkip => 'Not imported';
+
+  @override
+  String get redesignImportTargetTitle => 'Work in Attendix';
+
+  @override
+  String get redesignImportTitle => 'Import sheet music';
+
+  @override
+  String get redesignImportToReview => 'Review';
+
+  @override
+  String get redesignImportUndoConfirm => 'Undo review';
+
+  @override
+  String get redesignImportUnshareOpen => 'Open in Google Drive';
+
+  @override
+  String get redesignImportUnshareText =>
+      'Set the folder in Google Drive back to “Restricted”. Attendix no longer needs the link.';
+
+  @override
+  String get redesignImportUnshareTextLater =>
+      'When you are done, set the folder in Google Drive back to “Restricted”. As long as files are missing or works are open, Attendix still needs the link.';
+
+  @override
+  String get redesignImportUnshareTitle => 'Stop sharing';
+
+  @override
+  String redesignImportUploadButton(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Import $count files',
+      one: 'Import 1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignImportUploadProgress(Object done, Object total) {
+    return '$done of $total files';
+  }
+
+  @override
+  String get redesignImportUploadTitle => 'Uploading';
+
+  @override
+  String get redesignImportUseZip => 'Choose a ZIP file instead';
+
+  @override
   String get redesignInviteAddPerson => 'Add person';
 
   @override
