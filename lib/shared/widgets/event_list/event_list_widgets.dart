@@ -992,7 +992,7 @@ Future<void> showEventLegendSheet(BuildContext context) {
     (l10n.commonStatusAbsent, AppColors.danger, l10n.commonStatusAbsent),
     (l10n.signoutLegendLate, AppColors.tertiary, l10n.commonStatusLate),
     (l10n.signoutLegendLateReported, EventListUtils.rosa, l10n.signoutLegendLateReportedExcused),
-    (l10n.commonStatusNeutral, AppColors.medium, l10n.commonStatusNeutral),
+    (l10n.commonStatusNeutral, AppColors.statusNeutral, l10n.commonStatusNeutral),
   ];
 
   if (ios) {

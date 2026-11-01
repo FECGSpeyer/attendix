@@ -104,6 +104,15 @@ class AttendanceStatusBadge extends StatelessWidget {
     // bold, radius 10 → a ~28×19 pill, never a circle for a single
     // letter.
     final ios = useIosLook(context);
+    // SOL (#271): Ionic's dark palette also for the badge (neutral #989aa2
+    // instead of #636469); black text where that palette has a black
+    // contrast colour, like the status overview sheet.
+    final dark = Theme.of(context).brightness == Brightness.dark;
+    final bg = AppColors.adaptive(context, badge.color);
+    final blackText = badge.color == AppColors.warning ||
+        (dark &&
+            (badge.color == AppColors.success ||
+                badge.color == AppColors.statusNeutral));
     // UX_ATT: Ionic iOS ion-badge: 3/8 padding, radius 10, 13 px bold,
     // color contrast text (black on warning).
     // PARITY_R3: Ionic md ion-badge: padding 3/4/4/4, radius 4, 13 px
@@ -114,7 +123,7 @@ class AttendanceStatusBadge extends StatelessWidget {
           ? const EdgeInsets.symmetric(horizontal: 8, vertical: 3)
           : const EdgeInsets.fromLTRB(4, 3, 4, 4),
       decoration: BoxDecoration(
-        color: badge.color,
+        color: bg,
         borderRadius: BorderRadius.circular(ios ? 10 : 4),
       ),
       child: Text(
@@ -130,7 +139,7 @@ class AttendanceStatusBadge extends StatelessWidget {
         ),
         // PARITY_R8: real bold (700) also on the web
         style: ionBadgeTextStyle(
-          color: badge.color == AppColors.warning ? Colors.black : Colors.white,
+          color: blackText ? Colors.black : Colors.white,
         ),
       ),
     );
