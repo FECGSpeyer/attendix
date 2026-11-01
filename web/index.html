@@ -61,15 +61,26 @@
       try {
         wasmGC = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 95, 1, 120, 0]));
       } catch (e) {}
+      // PWA_SW: the engine files of this variant (flutter.js picks skwasm /
+      // skwasm_heavy and CanvasKit full / chromium with these checks). A new
+      // deploy's waiting service worker caches them even when this page still
+      // runs the previous deploy (web/index.html, 'cache-urls').
+      var codecs = typeof ImageDecoder !== 'undefined' && engine === 'blink';
+      var breakIterators = typeof Intl.v8BreakIterator !== 'undefined' &&
+        typeof Intl.Segmenter !== 'undefined';
       var link = document.createElement('link');
       link.rel = 'preload';
       if (wasmGC && (engine === 'blink' || safariWasm)) {
         link.href = 'main.dart.wasm';
         link.as = 'fetch';
         link.crossOrigin = 'anonymous';
+        var skwasm = codecs && breakIterators ? 'canvaskit/skwasm' : 'canvaskit/skwasm_heavy';
+        window.attendixEngineFiles = ['main.dart.wasm', 'main.dart.mjs', skwasm + '.js', skwasm + '.wasm'];
       } else {
         link.href = 'main.dart.js';
         link.as = 'script';
+        var canvaskit = codecs && breakIterators ? 'canvaskit/chromium/canvaskit' : 'canvaskit/canvaskit';
+        window.attendixEngineFiles = ['main.dart.js', canvaskit + '.js', canvaskit + '.wasm'];
       }
       document.head.appendChild(link);
     })();
@@ -258,9 +269,29 @@
         navigator.serviceWorker.register(swUrl).catch(function (e) {
           console.warn('[SW] registration failed', e);
         });
-        navigator.serviceWorker.ready.then(function (registration) {
+        var postUrls = function (worker) {
+          if (!worker) return;
           var urls = performance.getEntriesByType('resource').map(function (e) { return e.name; });
-          if (registration.active) registration.active.postMessage({ type: 'cache-urls', urls: urls });
+          (window.attendixEngineFiles || []).forEach(function (file) {
+            urls.push(new URL(file, document.baseURI).href);
+          });
+          worker.postMessage({ type: 'cache-urls', urls: urls });
+        };
+        // A new deploy that waits for "Aktualisieren" gets the list too, so
+        // its own cache is complete before it takes over.
+        var whenInstalled = function (worker) {
+          if (!worker) return;
+          worker.addEventListener('statechange', function () {
+            if (worker.state === 'installed') postUrls(worker);
+          });
+        };
+        navigator.serviceWorker.ready.then(function (registration) {
+          postUrls(registration.active);
+          postUrls(registration.waiting);
+          whenInstalled(registration.installing);
+          registration.addEventListener('updatefound', function () {
+            whenInstalled(registration.installing);
+          });
         });
       }, { once: true });
     }
