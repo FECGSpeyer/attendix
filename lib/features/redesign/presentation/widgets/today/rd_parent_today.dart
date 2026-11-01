@@ -167,60 +167,82 @@ class RdChildAnswerRow extends ConsumerWidget {
     final status = child.status;
     final canAnswer = id != null && !busy;
 
-    final Widget answer;
+    final name = Row(
+      children: [
+        RdInitials(rdInitialsOf(child.childName), size: 32),
+        const SizedBox(width: 10),
+        Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
+      ],
+    );
+
+    // Open: both answers as equal buttons under the name, so they fit side
+    // by side on a phone instead of wrapping into two rows.
     if (status.isNeutral) {
-      answer = Wrap(
-        spacing: 8,
-        runSpacing: 8,
-        alignment: WrapAlignment.end,
-        children: [
-          _SmallButton(
-            label: l10n.redesignTodayChildYes,
-            primary: true,
-            onPressed: canAnswer ? () => _signIn(context, ref) : null,
-          ),
-          _SmallButton(
-            label: l10n.redesignTodayChildNo,
-            onPressed: canAnswer ? () => _signOut(context, ref) : null,
-          ),
-        ],
+      return Padding(
+        padding: const EdgeInsets.symmetric(vertical: 6),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            name,
+            const SizedBox(height: 8),
+            Padding(
+              padding: const EdgeInsets.only(left: 42),
+              child: Row(
+                children: [
+                  Expanded(
+                    child: _SmallButton(
+                      label: l10n.redesignTodayChildYes,
+                      primary: true,
+                      onPressed: canAnswer ? () => _signIn(context, ref) : null,
+                    ),
+                  ),
+                  const SizedBox(width: 8),
+                  Expanded(
+                    child: _SmallButton(
+                      label: l10n.redesignTodayChildNo,
+                      onPressed: canAnswer ? () => _signOut(context, ref) : null,
+                    ),
+                  ),
+                ],
+              ),
+            ),
+          ],
+        ),
       );
-    } else {
-      final yes = status == AttendanceStatus.present;
-      // After "kommt später" both ways stay open: a normal Zusage
-      // (SignInType.late) or cancelling after all.
-      final links = [
-        if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
-          RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
-        if (canAnswer && status.countsAsPresent)
-          RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
-      ];
-      final pill = yes
-          ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
-          : rdOwnStatusPill(l10n, status);
-      answer = links.length < 2
-          ? Wrap(
-              spacing: 4,
-              crossAxisAlignment: WrapCrossAlignment.center,
-              alignment: WrapAlignment.end,
-              children: [pill, ...links],
-            )
-          : Column(
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                pill,
-                Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
-              ],
-            );
     }
+
+    final yes = status == AttendanceStatus.present;
+    // After "kommt später" both ways stay open: a normal Zusage
+    // (SignInType.late) or cancelling after all.
+    final links = [
+      if (canAnswer && (!status.countsAsPresent || status == AttendanceStatus.lateExcused))
+        RdTextLink(label: l10n.redesignTodayYesAfterAll, onTap: () => _signIn(context, ref)),
+      if (canAnswer && status.countsAsPresent)
+        RdTextLink(label: l10n.redesignTodayNoAfterAll, onTap: () => _signOut(context, ref)),
+    ];
+    final pill = yes
+        ? RdPill(l10n.redesignTodayChildIn, tone: RdTone.present, icon: Icons.check)
+        : rdOwnStatusPill(l10n, status);
+    final answer = links.length < 2
+        ? Wrap(
+            spacing: 4,
+            crossAxisAlignment: WrapCrossAlignment.center,
+            alignment: WrapAlignment.end,
+            children: [pill, ...links],
+          )
+        : Column(
+            crossAxisAlignment: CrossAxisAlignment.end,
+            children: [
+              pill,
+              Wrap(spacing: 4, alignment: WrapAlignment.end, children: links),
+            ],
+          );
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 6),
       child: Row(
         children: [
-          RdInitials(rdInitialsOf(child.childName), size: 32),
-          const SizedBox(width: 10),
-          Expanded(child: Text(child.childFirstName, style: RdType.body(p))),
+          Expanded(child: name),
           const SizedBox(width: 8),
           Flexible(flex: 2, child: Align(alignment: Alignment.centerRight, child: answer)),
         ],
@@ -293,7 +315,11 @@ class _SmallButton extends StatelessWidget {
       minimumSize: const WidgetStatePropertyAll(Size(44, 40)),
       padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(horizontal: 14)),
       shape: WidgetStatePropertyAll(RoundedRectangleBorder(borderRadius: BorderRadius.circular(12))),
-      textStyle: const WidgetStatePropertyAll(TextStyle(fontSize: 15, fontWeight: FontWeight.w600)),
+      // Keeps the theme's font (web font on the PWA), only size and weight change.
+      textStyle: WidgetStatePropertyAll(
+        (Theme.of(context).textTheme.labelLarge ?? const TextStyle())
+            .copyWith(fontSize: 15, fontWeight: FontWeight.w600),
+      ),
     );
     final merged = common.merge(style);
     return primary

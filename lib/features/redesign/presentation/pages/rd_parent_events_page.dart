@@ -351,7 +351,11 @@ class RdParentEventCard extends ConsumerWidget {
             ],
           ),
           if (links.isNotEmpty)
-            Padding(padding: const EdgeInsets.only(top: 6), child: Wrap(spacing: 4, runSpacing: 0, children: links)),
+            // Under the title (date tile 44 + gap 12), minus the link's own 8 px.
+            Padding(
+              padding: const EdgeInsets.only(top: 2, left: 48),
+              child: Wrap(spacing: 4, runSpacing: 0, children: links),
+            ),
           const SizedBox(height: 4),
           Divider(height: 12, thickness: 1, color: p.line),
           for (final child in group.childAttendances)
