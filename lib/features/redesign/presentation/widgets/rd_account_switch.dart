@@ -60,7 +60,9 @@ Future<RdAccountChange> rdSwitchAccount(BuildContext context, SavedAccount accou
     if (context.mounted) ToastHelper.showError(context, l10n.redesignAccountsFailed);
     return RdAccountChange.failed;
   }
-  await _openAfterAccountChange(container, router, account.userId);
+  if (!await _openAfterAccountChange(container, router, account.userId)) {
+    return RdAccountChange.cancelled;
+  }
   if (context.mounted) {
     ToastHelper.showSuccess(context, l10n.redesignAccountsSwitched(account.title));
   }
@@ -90,7 +92,9 @@ Future<void> rdAddAccount(
   } on AuthException catch (e) {
     throw mapLoginError(e);
   }
-  await _openAfterAccountChange(container, router, next.user.id);
+  if (!await _openAfterAccountChange(container, router, next.user.id)) {
+    throw const AccountSwitchSuperseded();
+  }
 }
 
 /// Same path as after a login: no group selected, the group selection opens
@@ -102,13 +106,18 @@ Future<void> rdAddAccount(
 /// group, role) still holds the OLD account's values, and the group
 /// selection would open with them – a blank start page that only filled
 /// after a tab change. So it first waits until the app runs as [userId].
-Future<void> _openAfterAccountChange(ProviderContainer container, GoRouter router, String userId) async {
+///
+/// Returns false (and does nothing) when the app no longer runs as
+/// [userId] – another sign-in won meanwhile; its own flow navigates.
+Future<bool> _openAfterAccountChange(ProviderContainer container, GoRouter router, String userId) async {
   await _waitUntilActive(container, userId);
+  if (container.read(supabaseAuthProvider).currentSession?.user.id != userId) return false;
   await container.read(currentTenantProvider.notifier).setTenantLocal(null);
   router.go('/tenants');
   if (isNativePushPlatform) {
     unawaited(container.read(pushServiceProvider).promptAndEnable());
   }
+  return true;
 }
 
 Future<void> _waitUntilActive(ProviderContainer container, String userId) async {

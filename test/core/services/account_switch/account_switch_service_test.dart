@@ -1,8 +1,10 @@
+import 'dart:async';
 import 'dart:convert';
 
 import 'package:attendix/core/services/account_switch/account_switch_service.dart';
 import 'package:attendix/core/services/account_switch/auth_token_api.dart';
 import 'package:attendix/core/services/account_switch/saved_accounts_store.dart';
+import 'package:attendix/core/services/account_switch/stale_refresh_guard.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:http/http.dart' as http;
 import 'package:http/testing.dart';
@@ -68,8 +70,11 @@ class _FakeAuth implements AccountSwitchAuth {
   Session? currentSession;
   final List<String> log = [];
 
+  final List<String?> leftUsers = [];
+
   @override
-  Future<void> activate(Session session) async {
+  Future<void> activate(Session session, {String? leftUserId}) async {
+    leftUsers.add(leftUserId);
     log.add('activate:${session.user.id}');
     currentSession = session;
   }
@@ -583,8 +588,114 @@ void main() {
       } catch (_) {}
       await settleEvents();
       expect(auth.sessionGeneration, afterA + 2);
+
+      // A new login of the same account B: new generation.
+      await client.recoverSession(sessionJson('b', 'rb2'));
+      await settleEvents();
+      final afterB = auth.sessionGeneration;
+      await client.recoverSession(sessionJson('b', 'rb3')); // refresh: same
+      await settleEvents();
+      expect(auth.sessionGeneration, afterB);
       auth.dispose();
       client.dispose();
+    });
+  });
+
+  group('Account switch – new login of the same account (real client)', () {
+    test('SIGNED_IN of the same account starts a new generation', () async {
+      String jwt(String sub) {
+        String b64(Map<String, dynamic> m) => base64Url.encode(utf8.encode(jsonEncode(m))).replaceAll('=', '');
+        final exp = DateTime.now().add(const Duration(hours: 1)).millisecondsSinceEpoch ~/ 1000;
+        return '${b64({'alg': 'HS256', 'typ': 'JWT'})}.${b64({'sub': sub, 'exp': exp})}.sig';
+      }
+
+      var n = 0;
+      final client = GoTrueClient(
+        url: 'http://auth.test/auth/v1',
+        autoRefreshToken: false,
+        httpClient: MockClient((req) async {
+          n++;
+          return http.Response(
+            jsonEncode({
+              'access_token': jwt('a'),
+              'token_type': 'bearer',
+              'expires_in': 3600,
+              'refresh_token': 'ra$n',
+              'user': _user('a').toJson(),
+            }),
+            200,
+          );
+        }),
+      );
+      final auth = SupabaseAccountSwitchAuth(client);
+      await client.signInWithPassword(email: 'a@test.de', password: 'pw');
+      await Future<void>.delayed(Duration.zero);
+      final first = auth.sessionGeneration;
+      await client.signInWithPassword(email: 'a@test.de', password: 'pw');
+      await Future<void>.delayed(Duration.zero);
+      expect(auth.sessionGeneration, first + 1);
+      auth.dispose();
+      client.dispose();
+    });
+  });
+
+  group('Account switch – late refresh from another tab', () {
+    late StreamController<AuthState> events;
+    late List<String> reactivated;
+
+    StaleRefreshGuard guard({Duration window = const Duration(seconds: 90)}) => StaleRefreshGuard(
+          events: events.stream,
+          leftUserId: 'a',
+          target: _session('b', 'rb1'),
+          reactivate: (s) async => reactivated.add(s.refreshToken!),
+          window: window,
+        );
+
+    setUp(() {
+      events = StreamController<AuthState>.broadcast(sync: true);
+      reactivated = [];
+    });
+    tearDown(() => events.close());
+
+    test('a broadcast refresh of the left account brings back the newest session of B', () {
+      final g = guard();
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('b', 'rb2')));
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9'), fromBroadcast: true));
+      expect(reactivated, ['rb2']);
+      g.cancel();
+    });
+
+    test('a refresh of A in this tab (not broadcast) is left alone', () {
+      final g = guard();
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9')));
+      expect(reactivated, isEmpty);
+      g.cancel();
+    });
+
+    test('a sign-in or sign-out ends the guard', () {
+      final g = guard();
+      events.add(AuthState(AuthChangeEvent.signedIn, _session('a', 'ra9'), fromBroadcast: true));
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra10'), fromBroadcast: true));
+      expect(reactivated, isEmpty);
+      expect(g.isActive, isFalse);
+    });
+
+    test('the guard ends after its window', () async {
+      final g = guard(window: const Duration(milliseconds: 10));
+      await Future<void>.delayed(const Duration(milliseconds: 30));
+      events.add(AuthState(AuthChangeEvent.tokenRefreshed, _session('a', 'ra9'), fromBroadcast: true));
+      expect(reactivated, isEmpty);
+      expect(g.isActive, isFalse);
+    });
+
+    test('the service tells the adapter which account was left', () async {
+      build(
+        current: _session('a', 'ra1'),
+        saved: const [SavedAccount(userId: 'b', email: 'b@test.de', refreshToken: 'rb1')],
+      );
+      api.valid['rb1'] = 'b';
+      await service.switchTo('b');
+      expect(auth.leftUsers, ['a']);
     });
   });
 

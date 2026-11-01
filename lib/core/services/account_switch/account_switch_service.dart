@@ -7,6 +7,7 @@ import 'account_switch_lock.dart';
 import 'auth_token_api.dart';
 import 'saved_account.dart';
 import 'saved_accounts_store.dart';
+import 'stale_refresh_guard.dart';
 
 export 'auth_token_api.dart' show AccountSwitchUnavailable, SavedSessionExpired;
 export 'saved_account.dart';
@@ -26,8 +27,9 @@ abstract class AccountSwitchAuth {
   Session? get currentSession;
 
   /// Makes [session] the app's session (replaces the current one WITHOUT
-  /// signing it out, so its saved refresh token stays valid).
-  Future<void> activate(Session session);
+  /// signing it out, so its saved refresh token stays valid). [leftUserId]
+  /// is the account that was active before (see [StaleRefreshGuard]).
+  Future<void> activate(Session session, {String? leftUserId});
 
   /// No automatic token refresh of the current session while switching: a
   /// refresh that finished after [activate] would bring the old account back.
@@ -69,17 +71,34 @@ class SupabaseAccountSwitchAuth implements AccountSwitchAuth {
   @override
   int get sessionGeneration => _generation;
 
-  void dispose() => _sub?.cancel();
+  void dispose() {
+    _sub?.cancel();
+    _guard?.cancel();
+  }
 
   @override
   Session? get currentSession => _auth.currentSession;
 
+  StaleRefreshGuard? _guard;
+
   @override
-  Future<void> activate(Session session) async {
+  Future<void> activate(Session session, {String? leftUserId}) async {
+    _guard?.cancel();
+    _guard = null;
     // Saves the session (supabase_flutter persists it) and emits
     // TOKEN_REFRESHED for the new user; no network call for a fresh session.
-    await _auth.recoverSession(jsonEncode(session.toJson()));
+    await _recover(session);
+    if (leftUserId != null && leftUserId != session.user.id) {
+      _guard = StaleRefreshGuard(
+        events: _auth.onAuthStateChange,
+        leftUserId: leftUserId,
+        target: session,
+        reactivate: _recover,
+      );
+    }
   }
+
+  Future<void> _recover(Session session) => _auth.recoverSession(jsonEncode(session.toJson()));
 
   @override
   void pauseAutoRefresh() {
@@ -343,6 +362,7 @@ class AccountSwitchService {
     int startGeneration,
     Future<void> Function()? beforeActivate,
   ) async {
+    final leftUserId = _auth.currentSession?.user.id;
     // The old token is used up now: store the new one before anything
     // else can fail.
     await remember(next);
@@ -356,7 +376,7 @@ class AccountSwitchService {
     }
     // A sign-in elsewhere while the cleanup ran wins.
     _checkStillCurrent(startGeneration);
-    await _auth.activate(next);
+    await _auth.activate(next, leftUserId: leftUserId);
     return next;
   }
 
