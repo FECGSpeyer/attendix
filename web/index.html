@@ -41,8 +41,39 @@
   <title>Attendix</title>
   <link rel="manifest" href="manifest.json">
   <!-- Start loading the app code right away, in parallel with the bootstrap
-       script (it would otherwise only be requested after flutter_bootstrap.js). -->
-  <link rel="preload" href="main.dart.js" as="script">
+       script (it would otherwise only be requested after flutter_bootstrap.js).
+       PWA_WASM: preload the variant Flutter's loader will pick – WebAssembly
+       for Chrome/Edge (and Safari 26.2+), JavaScript elsewhere – with the same
+       browser checks as flutter.js, so no browser downloads both. -->
+  <script>
+    (function () {
+      var ua = navigator.userAgent;
+      var engine = navigator.vendor === 'Google Inc.' || ua.indexOf('Edg/') >= 0
+        ? 'blink'
+        : navigator.vendor === 'Apple Computer, Inc.' ? 'webkit' : 'other';
+      var safariWasm = false;
+      if (engine === 'webkit') {
+        var m = /Version\/(\d+)\.(\d+)/.exec(ua);
+        safariWasm = !!m && (+m[1] > 26 || (+m[1] === 26 && +m[2] >= 2));
+      }
+      window.attendixSafariWasm = safariWasm;
+      var wasmGC = false;
+      try {
+        wasmGC = WebAssembly.validate(new Uint8Array([0, 97, 115, 109, 1, 0, 0, 0, 1, 5, 1, 95, 1, 120, 0]));
+      } catch (e) {}
+      var link = document.createElement('link');
+      link.rel = 'preload';
+      if (wasmGC && (engine === 'blink' || safariWasm)) {
+        link.href = 'main.dart.wasm';
+        link.as = 'fetch';
+        link.crossOrigin = 'anonymous';
+      } else {
+        link.href = 'main.dart.js';
+        link.as = 'script';
+      }
+      document.head.appendChild(link);
+    })();
+  </script>
   <!-- PWA_START: the engine asks for these only after main.dart.js has run
        (FontManifest → fonts → .env.app, then AssetManifest → login image),
        one round trip after another. Preloading them in parallel with the
@@ -192,6 +223,28 @@
         document.head.appendChild(s);
       });
     })();
+  </script>
+
+  <!-- PWA_SW: Attendix's own service worker (tool/web/write_service_worker.dart
+       writes it after the build). Registered after the first frame so it
+       never delays the start; then it is told which files this page already
+       loaded, so one visit is enough for an offline start. Not inside an
+       iframe (Teams tab), like Ionic. -->
+  <script>
+    if ('serviceWorker' in navigator && !window.attendixInIframe) {
+      window.addEventListener('flutter-first-frame', function () {
+        // Split so `flutter build web` does not rewrite it into its legacy
+        // `?v=` registration (the worker's own content changes per deploy).
+        var swUrl = 'flutter_service' + '_worker.js';
+        navigator.serviceWorker.register(swUrl).catch(function (e) {
+          console.warn('[SW] registration failed', e);
+        });
+        navigator.serviceWorker.ready.then(function (registration) {
+          var urls = performance.getEntriesByType('resource').map(function (e) { return e.name; });
+          if (registration.active) registration.active.postMessage({ type: 'cache-urls', urls: urls });
+        });
+      }, { once: true });
+    }
   </script>
 
   <script src="flutter_bootstrap.js" async></script>

@@ -768,7 +768,8 @@ Widget ionBetaCard(RdPalette rd, Widget child, {EdgeInsets margin = const EdgeIn
         borderRadius: BorderRadius.circular(rd.listRadius),
         boxShadow: rd.cardShadow,
       ),
-      child: child,
+      // FLUTTER347: rows paint their ink on this Material, not under the card.
+      child: Material(type: MaterialType.transparency, child: child),
     );
 
 /// Beta-Skin: groups form rows into one card of the new design, with the
@@ -1105,7 +1106,10 @@ class IonInsetList extends StatelessWidget {
           borderRadius: BorderRadius.circular(rd.listRadius),
           boxShadow: rd.cardShadow,
         ),
-        child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+        child: Material(
+          type: MaterialType.transparency,
+          child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
+        ),
       );
     }
     return Container(
@@ -1117,9 +1121,12 @@ class IonInsetList extends StatelessWidget {
             : Colors.white,
         borderRadius: BorderRadius.circular(ionIsIos(context) ? 10 : 2),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.stretch,
-        children: children,
+      child: Material(
+        type: MaterialType.transparency,
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: children,
+        ),
       ),
     );
   }

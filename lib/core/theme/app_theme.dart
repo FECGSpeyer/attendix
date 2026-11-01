@@ -1,6 +1,7 @@
 import 'package:flutter/cupertino.dart'
     show
         CupertinoFullscreenDialogTransition,
+        CupertinoPageTransitionsBuilder,
         CupertinoPageTransition,
         CupertinoRouteTransitionMixin;
 import 'package:flutter/foundation.dart';
