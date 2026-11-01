@@ -189,16 +189,11 @@ class _SelfServiceOverviewPageState
                 // Ionic `.ev-summary.overview-summary`: card, margin 8 16 0
                 // (iOS: card background = white page → plain)
                 if (past.isNotEmpty)
-                  useIosLook(context)
-                      ? Padding(
-                          padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                          child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
-                        )
-                      : Card(
-                          margin: const EdgeInsets.fromLTRB(16, 8, 16, 0),
-                          shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(14)),
-                          child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
-                        ),
+                  // PWA_PARITY: plain block in both modes (no md card shadow).
+                  Padding(
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 0),
+                    child: EventSummary(percentage: stats.percentage, lateCount: stats.lateCount),
+                  ),
                 if (_groupingMode == 'chronological')
                   ..._buildChronological(current, upcoming, past, actions)
                 else
