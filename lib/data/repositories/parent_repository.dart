@@ -34,6 +34,23 @@ class ParentRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// ACCOUNT_SWITCH: one parent of the current tenant (the signed-in
+  /// parent's own entry, for its name). Null when not found.
+  Future<ParentModel?> getParentById(int id) async {
+    try {
+      final response = await supabase
+          .from('parents')
+          .select('*')
+          .eq('id', id)
+          .eq('tenantId', currentTenantId)
+          .maybeSingle();
+      return response == null ? null : ParentModel.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'getParentById');
+      rethrow;
+    }
+  }
+
   /// Create a new parent
   Future<ParentModel> createParent(ParentModel parent) async {
     ensureNotDemo('createParent'); // DEMO_GUARD

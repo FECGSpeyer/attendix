@@ -11,6 +11,8 @@ import '../../../../core/providers/account_switch_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/locale_provider.dart';
+import '../../../../core/providers/parent_providers.dart' show ownParentProvider;
+import '../../../../data/models/parent/parent_model.dart' show ParentModelExtension;
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
@@ -331,6 +333,7 @@ class _ProfileCard extends ConsumerWidget {
     // still be shown for a moment after a switch).
     final userId = ref.watch(currentAuthUserIdProvider);
     final profile = ref.watch(ownProfileProvider);
+    String? accountName;
     if (userId != null &&
         name.isNotEmpty &&
         !profile.isLoading &&
@@ -338,9 +341,26 @@ class _ProfileCard extends ConsumerWidget {
         person?.appId == userId &&
         tenant != null &&
         person?.tenantId == tenant.id) {
+      accountName = name;
+    } else if (userId != null && tenant != null && person == null && role.isParent) {
+      // Parents have no person of their own: their parent entry's name
+      // (read only, same checks: loaded, this account, this group).
+      final parentValue = ref.watch(ownParentProvider);
+      final parent = parentValue.valueOrNull;
+      if (!parentValue.isLoading &&
+          !parentValue.hasError &&
+          parent != null &&
+          parent.appId == userId &&
+          parent.tenantId == tenant.id &&
+          parent.fullName.trim().isNotEmpty) {
+        accountName = parent.fullName.trim();
+      }
+    }
+    if (userId != null && accountName != null) {
       final label = [roleName, group].where((s) => s.isNotEmpty).join(' · ');
       final service = ref.read(accountSwitchServiceProvider);
-      scheduleMicrotask(() => service.updateProfile(userId, name: name, label: label).catchError((_) {}));
+      final n = accountName;
+      scheduleMicrotask(() => service.updateProfile(userId, name: n, label: label).catchError((_) {}));
     }
 
     final header = Row(
