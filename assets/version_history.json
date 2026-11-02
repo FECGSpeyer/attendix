@@ -1,6 +1,21 @@
 {
   "versions": [
     {
+      "version": "0.35.0",
+      "date": "2.11.2026",
+      "changes": [
+        "✨ Automatische Nachrichten: Regeln schreiben Mitglieder nach einem Termin selbst an (z. B. Unentschuldigte), Mitglieder können einen Grund nachtragen oder \"Ich war doch da\" melden (oben in Mitteilungen)",
+        "✨ Termin-Menü: \"Unentschuldigte anschreiben\" sowie Termine archivieren und wiederherstellen (Admins und Verantwortliche)",
+        "✨ Werke je Termin: In \"Meine Termine\" und im Elternportal zeigt jeder Termin seine Werke, mit Noten öffnen und Drucken",
+        "✨ Tablet und Computer: Seitenleiste statt Tab-Leiste, Termine zweispaltig",
+        "✨ Dateiablage: Mehrere Dateien auswählen und in andere Ordner verschieben",
+        "✨ Ablaufplan: \"Aktuelle Werke\" warnt, wenn keine da sind, und fragt bei schon eingefügten Werken nach",
+        "🐛 Termine werden pro Tag nur einmal angelegt, auch bei Doppelklick",
+        "🐛 Beim Übertragen in eine andere Gruppe wird das Profilbild mitgenommen",
+        "🐛 iOS-App auf dem Mac: Noten-Download öffnet den Browser"
+      ]
+    },
+    {
       "version": "0.33.3",
       "date": "2.11.2026",
       "changes": [
