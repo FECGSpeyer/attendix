@@ -223,9 +223,9 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       // IOS_THEME2: Ionic md (desktop / Android) has none either.
       // WEB_SAFE_AREA: on the web, the browser's safe area insets become
       // MediaQuery padding (home indicator / notch), as on native.
-      builder: (context, child) => WebSafeArea(
-        child: TooltipVisibility(
-          visible: false,
+      builder: (context, child) => TooltipVisibility(
+        visible: false,
+        child: WebSafeArea(
           // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
           child: IonModalTheme(
             // IOS_R4: Ionic iOS toolbar height (safe area dependent)
