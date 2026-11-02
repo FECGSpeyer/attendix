@@ -2,7 +2,20 @@
 # Same frame-ancestors list as the Ionic app (vercel.json) so Microsoft Teams /
 # Outlook / M365 can embed the app as a tab. Do NOT add X-Frame-Options: it
 # would block those frames (frame-ancestors supersedes it).
+#
+# PERF_WEB: COOP + COEP make the page cross-origin isolated, the condition for
+# Flutter's multi-threaded Skwasm renderer (WebAssembly build: Chrome, Edge,
+# Safari 26.2+). Without them Skwasm draws every frame on the main thread, so
+# touch, scrolling and Dart code wait for the drawing. Everything the app loads
+# from other origins goes through CORS (Supabase, pdf.js module + cMaps from
+# jsDelivr, Teams SDK with crossorigin, Sentry, Flutter's font fallback) and
+# stays allowed under require-corp. A new cross-origin <img>/<iframe>/no-cors
+# script needs CORS or a Cross-Origin-Resource-Policy header, or it is blocked.
+# Inside the Teams iframe the page is not isolated (Teams is not) and Skwasm
+# simply stays single-threaded.
 /*
+  Cross-Origin-Opener-Policy: same-origin
+  Cross-Origin-Embedder-Policy: require-corp
   Content-Security-Policy: frame-ancestors 'self' *.cloud.microsoft teams.microsoft.com *.teams.microsoft.com *.microsoft365.com *.office.com *.skype.com *.teams.microsoft.us *.gov.teams.microsoft.us local.teams.office.com;
 
 # DB_REVIEW_REST (F1): Universal Links / App Links files (Ionic src/.well-known).

@@ -81,7 +81,7 @@ class TenantSwitcherTitle extends ConsumerWidget {
         // IOS_SHELL: same Liquid Glass capsule as ToolbarButtonGroup.
         ? IosGlassSurface(
             borderRadius: const BorderRadius.all(Radius.circular(22)),
-            blur: 2,
+            blur: IosGlass.headerControlBlur,
             child: SizedBox(
               height: 44,
               child: Padding(

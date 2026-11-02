@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.33.2",
+      "date": "2.11.2026",
+      "changes": [
+        "⚡ Web-App: Zeichnet in Chrome, Edge und Safari ab 26.2 in einem eigenen Thread, Scrollen und Tippen reagieren auch bei vollen Listen sofort",
+        "⚡ Web-App (iPhone-Ansicht): Weniger Unschärfe-Effekte an Stellen, wo man sie nicht sieht, Listen scrollen flüssiger",
+        "⚡ Installierte Web-App auf dem iPhone: nutzt ab iOS 26.2 ebenfalls die schnellere WebAssembly-Version"
+      ]
+    },
+    {
       "version": "0.33.1",
       "date": "1.11.2026",
       "changes": [

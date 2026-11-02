@@ -38,6 +38,16 @@ class IosGlass {
               color: Color(0x14000000), blurRadius: 1, offset: Offset(0, 0.5)),
         ];
 
+  /// PERF_WEB: backdrop blur of glass controls in a header (toolbar button
+  /// groups, back / close circles, tenant switcher). Ionic uses
+  /// `blur(2px)`, but behind a header control lies either the page colour
+  /// (transparent header) or the header's own blurred backdrop
+  /// ([IonTranslucentBarBackground], Cupertino nav bar). 2px more blur
+  /// changes no visible pixel there, while each [BackdropFilter] costs a
+  /// full backdrop read on every frame on the web (measured: ~18 % of the
+  /// drawing time of the iOS member list). 0 = no backdrop filter.
+  static const double headerControlBlur = 0;
+
   /// IOS27_SWEEP: `api.glass-overlay-variables` (alert, action sheet,
   /// popover, toast): `--background: rgba(glass, .67)`; the dark theme
   /// overrides alert / action sheet / toast with `rgba(glass, .52)`.
@@ -186,6 +196,8 @@ class IosGlassSurface extends StatelessWidget {
       child: ClipRRect(
         borderRadius: borderRadius,
         child: BackdropFilter(
+          // PERF_WEB: blur 0 at brightness 1 is no filter at all.
+          enabled: blur > 0 || k != 1,
           filter: filter,
           child: DecoratedBox(
             decoration: BoxDecoration(

@@ -19,6 +19,26 @@ void main() {
       expect(find.byType(AppBar), findsNothing);
     });
 
+    testWidgets('PERF_WEB: nav bar blurs only once content is under it',
+        (tester) async {
+      await tester.pumpWidget(_app(
+        TargetPlatform.iOS,
+        IonPage(title: 'Lehrer', slivers: [
+          SliverList.list(children: [
+            for (var i = 0; i < 60; i++) SizedBox(height: 40, child: Text('$i')),
+          ]),
+        ]),
+      ));
+      bool blur() => tester
+          .widget<CupertinoSliverNavigationBar>(
+              find.byType(CupertinoSliverNavigationBar))
+          .enableBackgroundFilterBlur;
+      expect(blur(), isFalse);
+      await tester.drag(find.text('3'), const Offset(0, -300));
+      await tester.pumpAndSettle();
+      expect(blur(), isTrue);
+    });
+
     testWidgets('IonPage keeps the Material AppBar elsewhere', (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.android,
