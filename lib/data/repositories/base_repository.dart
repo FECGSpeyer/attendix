@@ -4,6 +4,8 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../core/config/supabase_config.dart';
 import '../../core/utils/demo_guard.dart';
+import '../../core/constants/enums.dart';
+import '../../core/providers/tenant_providers.dart' show currentRoleProvider;
 import '../../core/services/error_reporter.dart';
 
 export '../../core/utils/demo_guard.dart' show DemoModeException, kDemoRestrictedMessage;
@@ -89,6 +91,17 @@ abstract class BaseRepository {
 mixin TenantAwareRepository on BaseRepository {
   int? _tenantId;
   bool _tenantLocked = false;
+
+  /// Role of the signed-in user in the current tenant (Ionic
+  /// `tenantUser().role`), e.g. for the archived-Termine filter (4.17.24).
+  /// [Role.none] while loading or without a tenant user.
+  Role get currentUserRole {
+    try {
+      return ref.read(currentRoleProvider);
+    } catch (_) {
+      return Role.none;
+    }
+  }
 
   /// Set the current tenant ID
   ///

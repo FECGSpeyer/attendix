@@ -4,6 +4,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
+import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/duty_utils.dart';
 import '../../core/utils/paged_query.dart';
 import '../../core/utils/shift_utils.dart';
@@ -106,9 +107,12 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
         });
       }
 
-      return rows
-          .map((e) => _parseAttendance(e, withPersonAttendances))
-          .toList();
+      // Ionic 4.17.24 `filterArchivedForRole`.
+      return filterArchivedForRole(
+        rows.map((e) => _parseAttendance(e, withPersonAttendances)).toList(),
+        currentUserRole,
+        (a) => a.archived,
+      );
     } catch (e, stack) {
       handleError(e, stack, 'getAttendances');
       rethrow;
@@ -302,13 +306,15 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
 
       final response = await supabase
           .from('person_attendances')
-          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, tenantId)')
+          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, tenantId, archived)')
           .eq('person_id', personId)
           .eq('attendance.tenantId', currentTenantId)
           .gt('attendance.date', sinceDate.toIso8601String());
 
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return (response as List)
           .where((row) => row['attendance'] != null)
+          .where((row) => showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .map((e) => _parsePersonAttendanceWithAttendance(e as Map<String, dynamic>))
           .toList();
     } catch (e, stack) {
@@ -375,14 +381,17 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
             attendance:attendance_id(
               id, date, type, typeInfo, start_time, end_time, deadline, tenantId,
               type_id, plan, extra_plans, share_plan, duration_days, place,
-              description, attachment_url, attachment_name
+              description, attachment_url, attachment_name, archived
             )
           ''')
           .inFilter('person_id', personIds)
           .eq('attendance.tenantId', currentTenantId)
           .order('attendance(date)', ascending: false);
+      // Ionic 4.17.24: archived Termine only for admins/responsible.
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return (response as List)
           .where((row) => row['attendance'] != null)
+          .where((row) => showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
           .map((e) => Map<String, dynamic>.from(e as Map))
           .toList();
     } catch (e, stack) {

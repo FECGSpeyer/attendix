@@ -24,6 +24,7 @@ class PlanViewerPage extends ConsumerStatefulWidget {
     this.defaultLive = false,
     this.onEdit,
     this.fieldWarning,
+    this.songAction,
   });
 
   /// Termin (date + plans). For ad-hoc plans only `date` and `plan` are set.
@@ -37,6 +38,9 @@ class PlanViewerPage extends ConsumerStatefulWidget {
   /// Shows an edit button; called with the index of the shown plan.
   final void Function(int planIndex)? onEdit;
   final String? Function(PlanField field)? fieldWarning;
+
+  /// Ionic 4.17.26: rows of Werke open the score options (member views).
+  final VoidCallback? Function(PlanField field)? songAction;
 
   @override
   ConsumerState<PlanViewerPage> createState() => _PlanViewerPageState();
@@ -204,6 +208,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
                   date: date,
                   liveMode: _live,
                   fieldWarning: widget.fieldWarning,
+                  songAction: widget.songAction,
                 ),
               ],
             ),
@@ -223,6 +228,7 @@ Future<void> showPlanViewer(
   bool defaultLive = false,
   void Function(int planIndex)? onEdit,
   String? Function(PlanField field)? fieldWarning,
+  VoidCallback? Function(PlanField field)? songAction,
 }) {
   return Navigator.of(context, rootNavigator: true).push(MaterialPageRoute(
     fullscreenDialog: true,
@@ -233,6 +239,7 @@ Future<void> showPlanViewer(
       defaultLive: defaultLive,
       onEdit: onEdit,
       fieldWarning: fieldWarning,
+      songAction: songAction,
     ),
   ));
 }

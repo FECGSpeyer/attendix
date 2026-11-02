@@ -85,6 +85,18 @@ class NativeFileService {
     }
   }
 
+  /// Ionic 4.17.23 `Utils.downloadInMacBrowser`: the iOS app on an Apple
+  /// silicon Mac cannot save files through the native viewer, so the browser
+  /// downloads them (Supabase serves public files as attachment with
+  /// `?download=<name>`). Returns false everywhere else (nothing happened).
+  static Future<bool> downloadInMacBrowser(String url, String fileName) async {
+    if (!url.startsWith('http') || !await isIosAppOnMac()) return false;
+    final separator = url.contains('?') ? '&' : '?';
+    await openExternal(
+        Uri.parse('$url${separator}download=${Uri.encodeQueryComponent(fileName)}'));
+    return true;
+  }
+
   /// Opens [uri] in the browser / external app. Web: Ionic 4.17.18
   /// `Utils.openInNewTab` – installed web apps ignore `window.open`, so a
   /// real link is clicked there.

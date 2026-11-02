@@ -60,6 +60,8 @@ class PublicPlanRepository extends BaseRepository {
           .select(_sharedAttendanceColumns)
           .eq('id', id)
           .eq('share_key', key)
+          // Ionic 4.17.24: archived Termine are not visible via the link.
+          .eq('archived', false)
           .maybeSingle();
       if (response == null) return null;
       return PlanAttendance.fromJson(response);
@@ -252,6 +254,7 @@ class PublicPlanRepository extends BaseRepository {
             .select('id, date, plan, typeInfo, tenantId')
             .inFilter('tenantId', names.keys.toList())
             .eq('is_org_plan', true)
+            .eq('archived', false)
             .not('plan', 'is', null)
             .order('date', ascending: true);
         attendances = (rows as List).map((e) {

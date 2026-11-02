@@ -629,6 +629,44 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Ionic 4.17.26 `HistoryService.getHistoryForAttendances`: Werke of
+  /// several Termine for the members' views (song id, Termin, conductor
+  /// name). Queried in chunks of 150 ids so long Termin lists stay below the
+  /// URL length limit; always restricted to the current tenant.
+  Future<List<SongHistory>> getHistoryForAttendances(List<int> attendanceIds) async {
+    final ids = attendanceIds.where((id) => id != 0).toSet().toList();
+    if (ids.isEmpty) return const [];
+    try {
+      final result = <SongHistory>[];
+      for (var i = 0; i < ids.length; i += 150) {
+        final chunk = ids.sublist(i, i + 150 > ids.length ? ids.length : i + 150);
+        final rows = await supabase
+            .from('history')
+            .select('id, songId, attendance_id, otherConductor, person:person_id(firstName, lastName)')
+            .eq('tenantId', currentTenantId)
+            .inFilter('attendance_id', chunk)
+            .order('id', ascending: true);
+        for (final row in rows as List) {
+          final map = row as Map<String, dynamic>;
+          final person = map['person'];
+          result.add(SongHistory(
+            id: (map['id'] as num?)?.toInt(),
+            songId: (map['songId'] as num?)?.toInt(),
+            attendanceId: (map['attendance_id'] as num?)?.toInt(),
+            otherConductor: map['otherConductor'] as String?,
+            conductorName: person is Map
+                ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
+                : (map['otherConductor'] as String? ?? ''),
+          ));
+        }
+      }
+      return result;
+    } catch (e, stack) {
+      handleError(e, stack, 'getHistoryForAttendances');
+      rethrow;
+    }
+  }
+
   // ==========================================================================
   // Current Songs (all upcoming events)
   // ==========================================================================

@@ -1131,6 +1131,8 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           ToastHelper.showWarning(context, context.l10n.songsFlutterPrintFileFailed);
         }
       case 'download':
+        // Ionic 4.17.23: iOS app on a Mac → the browser downloads the file.
+        if (await NativeFileService.downloadInMacBrowser(file.url, file.fileName)) return;
         await _run(() async {
           final bytes = await ref.read(songFileServiceProvider).downloadFileBytes(file.url);
           if (bytes == null) throw Exception(l10nWithoutContext.songsFlutterDownloadFileFailed);

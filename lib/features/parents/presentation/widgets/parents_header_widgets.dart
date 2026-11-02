@@ -5,7 +5,6 @@ import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -117,7 +116,8 @@ class ParentsWelcomeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (kids.isEmpty) return const SizedBox.shrink();
-    final songs = ref.watch(currentSongsProvider).valueOrNull ?? const [];
+    // Ionic 4.17.26: Werke of the kids' upcoming Termine.
+    final songs = ref.watch(parentUpcomingSongsProvider);
     final theme = Theme.of(context);
 
     // Ionic ion-card: content centered (global ion-card-content rule),

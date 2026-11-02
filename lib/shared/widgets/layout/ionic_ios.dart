@@ -1055,11 +1055,16 @@ class IonSheetHeader extends StatelessWidget {
   const IonSheetHeader({
     super.key,
     required this.title,
+    this.subtitle,
     this.start = const [],
     this.end = const [],
   });
 
   final String title;
+
+  /// Optional small second line under the title (Ionic attendance-songs
+  /// `songs-subtitle`).
+  final String? subtitle;
   final List<Widget> start;
   final List<Widget> end;
 
@@ -1067,7 +1072,7 @@ class IonSheetHeader extends StatelessWidget {
   Widget build(BuildContext context) {
     final rd = context.rdSkin;
     final ios = rd != null || isIosLook(context);
-    final titleWidget = Text(
+    final mainTitle = Text(
       title,
       maxLines: 1,
       overflow: TextOverflow.ellipsis,
@@ -1083,6 +1088,25 @@ class IonSheetHeader extends StatelessWidget {
                 : IonMd.toolbarText(Theme.of(context).brightness)),
       ),
     );
+    final titleWidget = subtitle == null || subtitle!.isEmpty
+        ? mainTitle
+        : Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: ios ? CrossAxisAlignment.center : CrossAxisAlignment.start,
+            children: [
+              mainTitle,
+              Text(
+                subtitle!,
+                maxLines: 1,
+                overflow: TextOverflow.ellipsis,
+                textAlign: ios ? TextAlign.center : TextAlign.start,
+                style: TextStyle(
+                  fontSize: 13,
+                  color: rd?.text2 ?? AppColors.medium,
+                ),
+              ),
+            ],
+          );
     final header = Container(
       // PARITY_R5: iOS sheet toolbar 64pt (ionic-theme-ios27 modal-sheet
       // `--min-height: 64px`, no padding); md toolbar 56.

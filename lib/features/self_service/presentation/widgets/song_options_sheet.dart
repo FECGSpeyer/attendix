@@ -81,6 +81,8 @@ Future<void> _downloadFile(BuildContext context, SongFile file) async {
     }
     return;
   }
+  // Ionic 4.17.23: iOS app on a Mac → the browser downloads the file.
+  if (await NativeFileService.downloadInMacBrowser(file.url, file.fileName)) return;
   final url = file.url.contains('?') ? '${file.url}&download=' : '${file.url}?download=';
   // NATIVE_MISC: native app → cache dir + system viewer (Ionic downloadFileNative).
   final ok = await NativeFileService.openUrl(url, fileName: file.fileName);

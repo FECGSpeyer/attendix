@@ -800,7 +800,21 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
     );
   }
 
+  /// Ionic 4.19.2: a quick double tap must not create the Termine twice
+  /// (the first tap is still checking permissions before [_isLoading]).
+  bool _creating = false;
+
   Future<void> _createAttendances() async {
+    if (_creating || _isLoading) return;
+    _creating = true;
+    try {
+      await _createAttendancesOnce();
+    } finally {
+      _creating = false;
+    }
+  }
+
+  Future<void> _createAttendancesOnce() async {
     // UI_TENANT_HOIST: bind tenant + repositories before the first await.
     final writer = AttendanceCreateWriter(ref);
     final tenant = writer.tenant;
@@ -860,7 +874,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       AttendanceCreateWriter.invalidateAfterCreate(ref, input);
 
       // UX_ATT: Ionic toasts attList.eventAdded / eventsAdded
-      final message = _selectedDates.length == 1
+      final message = uniqueDays(_selectedDates).length == 1
           ? context.l10n.attListEventAdded
           : context.l10n.attListEventsAdded;
       ToastHelper.showSuccess(context, message);

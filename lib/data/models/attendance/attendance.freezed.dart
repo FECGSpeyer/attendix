@@ -91,6 +91,14 @@ mixin _$Attendance {
   @JsonKey(name: 'duty_required')
   @_FlexibleIntConverter()
   int? get dutyRequired => throw _privateConstructorUsedError;
+  @_FlexibleBoolConverter()
+  bool get archived => throw _privateConstructorUsedError;
+  @JsonKey(name: 'archived_at')
+  @_FlexibleStringConverter()
+  String? get archivedAt => throw _privateConstructorUsedError;
+  @JsonKey(name: 'archived_by')
+  @_FlexibleStringConverter()
+  String? get archivedBy => throw _privateConstructorUsedError;
 
   /// Serializes this Attendance to a JSON map.
   Map<String, dynamic> toJson() => throw _privateConstructorUsedError;
@@ -150,6 +158,9 @@ abstract class $AttendanceCopyWith<$Res> {
     @_FlexibleStringConverter()
     String? attachmentName,
     @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @_FlexibleBoolConverter() bool archived,
+    @JsonKey(name: 'archived_at') @_FlexibleStringConverter() String? archivedAt,
+    @JsonKey(name: 'archived_by') @_FlexibleStringConverter() String? archivedBy,
   });
 }
 
@@ -200,6 +211,9 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
     Object? attachmentUrl = freezed,
     Object? attachmentName = freezed,
     Object? dutyRequired = freezed,
+    Object? archived = null,
+    Object? archivedAt = freezed,
+    Object? archivedBy = freezed,
   }) {
     return _then(
       _value.copyWith(
@@ -363,6 +377,21 @@ class _$AttendanceCopyWithImpl<$Res, $Val extends Attendance>
                     ? _value.dutyRequired
                     : dutyRequired // ignore: cast_nullable_to_non_nullable
                         as int?,
+            archived:
+                null == archived
+                    ? _value.archived
+                    : archived // ignore: cast_nullable_to_non_nullable
+                        as bool,
+            archivedAt:
+                freezed == archivedAt
+                    ? _value.archivedAt
+                    : archivedAt // ignore: cast_nullable_to_non_nullable
+                        as String?,
+            archivedBy:
+                freezed == archivedBy
+                    ? _value.archivedBy
+                    : archivedBy // ignore: cast_nullable_to_non_nullable
+                        as String?,
           )
           as $Val,
     );
@@ -419,6 +448,9 @@ abstract class _$$AttendanceImplCopyWith<$Res>
     @_FlexibleStringConverter()
     String? attachmentName,
     @JsonKey(name: 'duty_required') @_FlexibleIntConverter() int? dutyRequired,
+    @_FlexibleBoolConverter() bool archived,
+    @JsonKey(name: 'archived_at') @_FlexibleStringConverter() String? archivedAt,
+    @JsonKey(name: 'archived_by') @_FlexibleStringConverter() String? archivedBy,
   });
 }
 
@@ -468,6 +500,9 @@ class __$$AttendanceImplCopyWithImpl<$Res>
     Object? attachmentUrl = freezed,
     Object? attachmentName = freezed,
     Object? dutyRequired = freezed,
+    Object? archived = null,
+    Object? archivedAt = freezed,
+    Object? archivedBy = freezed,
   }) {
     return _then(
       _$AttendanceImpl(
@@ -631,6 +666,21 @@ class __$$AttendanceImplCopyWithImpl<$Res>
                 ? _value.dutyRequired
                 : dutyRequired // ignore: cast_nullable_to_non_nullable
                     as int?,
+        archived:
+            null == archived
+                ? _value.archived
+                : archived // ignore: cast_nullable_to_non_nullable
+                    as bool,
+        archivedAt:
+            freezed == archivedAt
+                ? _value.archivedAt
+                : archivedAt // ignore: cast_nullable_to_non_nullable
+                    as String?,
+        archivedBy:
+            freezed == archivedBy
+                ? _value.archivedBy
+                : archivedBy // ignore: cast_nullable_to_non_nullable
+                    as String?,
       ),
     );
   }
@@ -680,6 +730,9 @@ class _$AttendanceImpl implements _Attendance {
     @_FlexibleStringConverter()
     this.attachmentName,
     @JsonKey(name: 'duty_required') @_FlexibleIntConverter() this.dutyRequired,
+    @_FlexibleBoolConverter() this.archived = false,
+    @JsonKey(name: 'archived_at') @_FlexibleStringConverter() this.archivedAt,
+    @JsonKey(name: 'archived_by') @_FlexibleStringConverter() this.archivedBy,
   }) : _excused = excused,
        _plan = plan,
        _lateExcused = lateExcused,
@@ -870,10 +923,22 @@ class _$AttendanceImpl implements _Attendance {
   @JsonKey(name: 'duty_required')
   @_FlexibleIntConverter()
   final int? dutyRequired;
+  @override
+  @JsonKey()
+  @_FlexibleBoolConverter()
+  final bool archived;
+  @override
+  @JsonKey(name: 'archived_at')
+  @_FlexibleStringConverter()
+  final String? archivedAt;
+  @override
+  @JsonKey(name: 'archived_by')
+  @_FlexibleStringConverter()
+  final String? archivedBy;
 
   @override
   String toString() {
-    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, place: $place, filesFolder: $filesFolder, description: $description, attachmentUrl: $attachmentUrl, attachmentName: $attachmentName, dutyRequired: $dutyRequired)';
+    return 'Attendance(id: $id, tenantId: $tenantId, createdAt: $createdAt, createdBy: $createdBy, date: $date, type: $type, typeId: $typeId, saveInHistory: $saveInHistory, percentage: $percentage, excused: $excused, typeInfo: $typeInfo, notes: $notes, img: $img, plan: $plan, lateExcused: $lateExcused, songs: $songs, criticalPlayers: $criticalPlayers, playerNotes: $playerNotes, startTime: $startTime, endTime: $endTime, deadline: $deadline, durationDays: $durationDays, checklist: $checklist, conductors: $conductors, players: $players, sharePlan: $sharePlan, place: $place, filesFolder: $filesFolder, description: $description, attachmentUrl: $attachmentUrl, attachmentName: $attachmentName, dutyRequired: $dutyRequired, archived: $archived, archivedAt: $archivedAt, archivedBy: $archivedBy)';
   }
 
   @override
@@ -942,7 +1007,13 @@ class _$AttendanceImpl implements _Attendance {
             (identical(other.attachmentName, attachmentName) ||
                 other.attachmentName == attachmentName) &&
             (identical(other.dutyRequired, dutyRequired) ||
-                other.dutyRequired == dutyRequired));
+                other.dutyRequired == dutyRequired) &&
+            (identical(other.archived, archived) ||
+                other.archived == archived) &&
+            (identical(other.archivedAt, archivedAt) ||
+                other.archivedAt == archivedAt) &&
+            (identical(other.archivedBy, archivedBy) ||
+                other.archivedBy == archivedBy));
   }
 
   @JsonKey(includeFromJson: false, includeToJson: false)
@@ -981,6 +1052,9 @@ class _$AttendanceImpl implements _Attendance {
     attachmentUrl,
     attachmentName,
     dutyRequired,
+    archived,
+    archivedAt,
+    archivedBy,
   ]);
 
   /// Create a copy of Attendance
@@ -1049,6 +1123,13 @@ abstract class _Attendance implements Attendance {
     @JsonKey(name: 'duty_required')
     @_FlexibleIntConverter()
     final int? dutyRequired,
+    @_FlexibleBoolConverter() final bool archived,
+    @JsonKey(name: 'archived_at')
+    @_FlexibleStringConverter()
+    final String? archivedAt,
+    @JsonKey(name: 'archived_by')
+    @_FlexibleStringConverter()
+    final String? archivedBy,
   }) = _$AttendanceImpl;
 
   factory _Attendance.fromJson(Map<String, dynamic> json) =
@@ -1155,6 +1236,17 @@ abstract class _Attendance implements Attendance {
   @JsonKey(name: 'duty_required')
   @_FlexibleIntConverter()
   int? get dutyRequired;
+  @override
+  @_FlexibleBoolConverter()
+  bool get archived;
+  @override
+  @JsonKey(name: 'archived_at')
+  @_FlexibleStringConverter()
+  String? get archivedAt;
+  @override
+  @JsonKey(name: 'archived_by')
+  @_FlexibleStringConverter()
+  String? get archivedBy;
 
   /// Create a copy of Attendance
   /// with the given fields replaced by the non-null parameter values.

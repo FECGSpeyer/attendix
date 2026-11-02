@@ -9,6 +9,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -47,7 +48,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
-import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos;
+import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
@@ -635,6 +636,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       children: [
                         const SizedBox(height: AppDimensions.paddingXS),
 
+                        // Ionic 4.17.24: "Archiviert" banner (medium item).
+                        if (attendance.archived) const _ArchivedBanner(),
+
                         GeneralInfoAccordion(
                           key: const ValueKey('att-acc-general'),
                           attendance: attendance,
@@ -943,6 +947,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'reminder':
         _sendAdHocReminder();
         break;
+      case 'archive':
+        _toggleArchived();
+        break;
     }
   }
 
@@ -1081,7 +1088,73 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (canMutate) item('reminder', Icons.notifications_outlined, context.l10n.attendanceSendReminder),
       // Flutter-only extra (Ionic has the photo upload commented out)
       if (canMutate) item('photo', Icons.camera_alt_outlined, context.l10n.attendanceFlutterPhoto),
+      // Ionic 4.17.24: archive past Termine (admins/responsible).
+      if (canArchiveAttendance(
+        date: attendance.date,
+        durationDays: attendance.durationDays,
+        archived: attendance.archived,
+        role: role,
+      ))
+        item(
+          'archive',
+          attendance.archived ? Icons.undo : Icons.archive_outlined,
+          attendance.archived ? context.l10n.attendanceRestore : context.l10n.attendanceArchive,
+        ),
     ];
+  }
+
+  /// Ionic 4.17.24 `toggleArchived`: archiving asks first; restoring does not.
+  Future<void> _toggleArchived() async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null) return;
+    final role = ref.read(effectiveRoleProvider);
+    if (!canArchiveAttendance(
+      date: attendance.date,
+      durationDays: attendance.durationDays,
+      archived: attendance.archived,
+      role: role,
+    )) {
+      return;
+    }
+    final archive = !attendance.archived;
+    // Read before the first await (tenant switch while the dialog is open).
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final userId = ref.read(currentAuthUserIdProvider);
+    if (archive) {
+      final confirmed = await showAppDialog<bool>(
+        context: context,
+        builder: (ctx) => AppAlertDialog(
+          title: Text(context.l10n.attendanceArchiveConfirmHeader),
+          content: Text(context.l10n.attendanceArchiveConfirmMessage),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(false),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.of(ctx).pop(true),
+              child: Text(context.l10n.attendanceArchive),
+            ),
+          ],
+        ),
+      );
+      if (confirmed != true || !mounted) return;
+    }
+    try {
+      if (!repo.hasTenantId) return;
+      await repo.updateAttendance(widget.attendanceId, {
+        'archived': archive,
+        'archived_at': archive ? DateTime.now().toUtc().toIso8601String() : null,
+        'archived_by': archive ? userId : null,
+      });
+      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
+      ref.invalidate(realtimeAttendanceListProvider);
+      if (!mounted) return;
+      ToastHelper.showSuccess(
+          context, archive ? context.l10n.attendanceArchivedToast : context.l10n.attendanceRestoredToast);
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceArchiveFailed);
+    }
   }
 
   /// PARITY_R3: nested "Status-Filter" popover (Ionic toggleStatusFilter /
@@ -2668,3 +2741,29 @@ bool realtimeDutyStateChanged(Map<String, dynamic> newRecord, List<PersonAttenda
   return (incoming ?? '') != (row.dutyState ?? '');
 }
 
+
+
+/// Ionic 4.17.24 `.archived-banner`: inset list with one medium-coloured item.
+class _ArchivedBanner extends StatelessWidget {
+  const _ArchivedBanner();
+
+  @override
+  Widget build(BuildContext context) {
+    return IonInsetList(
+      children: [
+        Container(
+          color: AppColors.medium,
+          child: ListTile(
+            iconColor: Colors.white,
+            textColor: Colors.white,
+            leading: const Icon(Icons.archive_outlined),
+            title: Text(context.l10n.attendanceArchivedBanner,
+                style: const TextStyle(fontWeight: FontWeight.w600)),
+            subtitle: Text(context.l10n.attendanceArchivedBannerHint,
+                style: const TextStyle(color: Colors.white)),
+          ),
+        ),
+      ],
+    );
+  }
+}

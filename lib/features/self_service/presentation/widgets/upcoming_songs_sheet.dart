@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../core/utils/attendance_songs.dart';
 import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -202,12 +203,21 @@ class _SongListItem extends StatelessWidget {
     this.conductorName,
     this.missingNotes = false,
     this.playerInstrumentId,
+    this.linkOnly = false,
+    this.missingNotesText,
   });
 
   final Song song;
   final String? conductorName;
   final bool missingNotes;
   final int? playerInstrumentId;
+
+  /// Parents (Ionic `linkOnly`): only the Werk link, no score options.
+  final bool linkOnly;
+
+  /// Ionic attendance-songs sheet: "Für dich sind keine Noten hinterlegt"
+  /// instead of the conductor on rows without own scores.
+  final String? missingNotesText;
 
   @override
   Widget build(BuildContext context) {
@@ -225,7 +235,9 @@ class _SongListItem extends StatelessWidget {
         number.isEmpty ? song.name : '$number. ${song.name}',
         style: ios ? const TextStyle(fontSize: 17) : null,
       ),
-      subtitle: conductorName != null && conductorName!.isNotEmpty
+      subtitle: missingNotes && missingNotesText != null
+          ? Text(missingNotesText!, style: ios ? TextStyle(fontSize: 14, color: fg) : null)
+          : conductorName != null && conductorName!.isNotEmpty
           ? Text(
               context.l10n.signoutConductor(conductorName!),
               style: ios
@@ -233,7 +245,7 @@ class _SongListItem extends StatelessWidget {
                   : null,
             )
           : null,
-      trailing: hasLink || ios
+      trailing: hasLink || (ios && !linkOnly)
           ? Row(
               mainAxisSize: MainAxisSize.min,
               children: [
@@ -243,17 +255,19 @@ class _SongListItem extends StatelessWidget {
                     tooltip: context.l10n.signoutOpenScoreLink,
                     onPressed: () => openSongLink(context, song.link!),
                   ),
-                if (ios)
+                if (ios && (!linkOnly || hasLink))
                   Icon(Icons.chevron_right,
                       color: (fg ?? AppColors.medium).withValues(alpha: 0.6)),
               ],
             )
           : null,
-      onTap: () => showSongOptionsSheet(
-        context,
-        song: song,
-        playerInstrumentId: playerInstrumentId,
-      ),
+      onTap: linkOnly
+          ? (hasLink ? () => openSongLink(context, song.link!) : null)
+          : () => showSongOptionsSheet(
+                context,
+                song: song,
+                playerInstrumentId: playerInstrumentId,
+              ),
     );
   }
 }
@@ -290,5 +304,168 @@ Future<void> showUpcomingSongsSheet(BuildContext context) {
     useSafeArea: true,
     backgroundColor: Colors.transparent,
     builder: (context) => const UpcomingSongsSheet(),
+  );
+}
+
+
+/// Ionic 4.17.26 `AttendanceSongsComponent`: the Werke of one Termin for
+/// members and parents. Tapping a Werk opens the score options (parents:
+/// only the Werk link); the toolbar prints all own scores of the Termin.
+class AttendanceSongsSheet extends ConsumerWidget {
+  const AttendanceSongsSheet({
+    super.key,
+    required this.title,
+    required this.subtitle,
+    required this.entries,
+    this.instrumentId,
+    this.linkOnly = false,
+    this.onOpenPlan,
+  });
+
+  final String title;
+  final String subtitle;
+  final List<AttendanceSong> entries;
+
+  /// Instrument / Stimme of the person; without it no red marking.
+  final int? instrumentId;
+  final bool linkOnly;
+
+  /// "Ablaufplan öffnen" (only when the Termin has a shared plan).
+  final VoidCallback? onOpenPlan;
+
+  Future<void> _print(BuildContext context, WidgetRef ref, bool isChoir) async {
+    final entries = collectCurrentSongPrintEntries(
+      [
+        UpcomingSongGroup(
+          date: '',
+          songs: [for (final e in this.entries) e.toHistory(0)],
+        ),
+      ],
+      instrumentId,
+      isChoir: isChoir,
+    );
+    if (entries.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.signoutNoScoresFound);
+      return;
+    }
+    final base = (subtitle.isEmpty ? 'noten' : subtitle)
+        .replaceAll(RegExp(r'[^\p{L}\p{N}]+', unicode: true), '_');
+    final result = await ref.read(songPrintServiceProvider).printEntries(entries, '$base.pdf');
+    if (!context.mounted || result == null) return;
+    if (result.pageCount == 0) {
+      ToastHelper.showWarning(context, context.l10n.signoutFlutterNoPrintableScores);
+    } else if (result.skipped > 0) {
+      ToastHelper.showWarning(context, context.l10n.signoutFlutterFilesSkipped(result.skipped));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isChoir = ref.watch(currentTenantProvider)?.type == 'choir';
+    final theme = Theme.of(context);
+    final heading = [title, subtitle].where((t) => t.isNotEmpty).join(' · ');
+    return DraggableScrollableSheet(
+      // Ionic: initialBreakpoint 0.75, breakpoints [0, 0.75, 1]
+      initialChildSize: 0.75,
+      minChildSize: 0.3,
+      maxChildSize: 1,
+      expand: false,
+      builder: (context, scrollController) => Container(
+        decoration: BoxDecoration(
+          color: theme.scaffoldBackgroundColor,
+          borderRadius: const BorderRadius.vertical(top: Radius.circular(16)),
+        ),
+        child: Column(
+          children: [
+            IonSheetHeader(
+              title: context.l10n.attendanceSongsTitle,
+              subtitle: heading.isEmpty ? null : heading,
+              start: [
+                IconButton(
+                  tooltip: context.l10n.commonClose,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.of(context).pop(),
+                ),
+              ],
+              end: [
+                if (!linkOnly && entries.isNotEmpty)
+                  IconButton(
+                    tooltip: context.l10n.attendanceSongsPrintAll,
+                    icon: const Icon(Icons.print_outlined),
+                    onPressed: () => _print(context, ref, isChoir),
+                  ),
+              ],
+            ),
+            Expanded(
+              child: ListView(
+                controller: scrollController,
+                padding: const EdgeInsets.only(bottom: AppDimensions.paddingL),
+                children: [
+                  IonInsetList(
+                    children: [
+                      for (final entry in entries)
+                        _SongListItem(
+                          song: entry.song,
+                          conductorName: entry.conductorName,
+                          missingNotes: !linkOnly &&
+                              instrumentId != null &&
+                              !hasSongNotesForPlayer(entry.song, instrumentId, isChoir: isChoir),
+                          missingNotesText: context.l10n.attendanceSongsNoScoresForYou,
+                          playerInstrumentId: instrumentId,
+                          linkOnly: linkOnly,
+                        ),
+                    ],
+                  ),
+                  if (onOpenPlan != null)
+                    IonInsetList(
+                      children: [
+                        ListTile(
+                          leading: const Icon(Icons.description_outlined, color: AppColors.primary),
+                          title: Text(
+                            context.l10n.attendanceSongsOpenRunSheet,
+                            style: const TextStyle(color: AppColors.primary),
+                          ),
+                          trailing: const Icon(Icons.chevron_right),
+                          onTap: () {
+                            Navigator.of(context).pop();
+                            onOpenPlan!();
+                          },
+                        ),
+                      ],
+                    ),
+                ],
+              ),
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Shows the Werke of one Termin (Ionic `openAttendanceSongs`).
+Future<void> showAttendanceSongsSheet(
+  BuildContext context, {
+  required String title,
+  required String subtitle,
+  required List<AttendanceSong> entries,
+  int? instrumentId,
+  bool linkOnly = false,
+  VoidCallback? onOpenPlan,
+}) {
+  return showModalBottomSheet(
+    context: context,
+    useRootNavigator: true,
+    isScrollControlled: true,
+    useSafeArea: true,
+    backgroundColor: Colors.transparent,
+    builder: (context) => AttendanceSongsSheet(
+      title: title,
+      subtitle: subtitle,
+      entries: entries,
+      instrumentId: instrumentId,
+      linkOnly: linkOnly,
+      onOpenPlan: onOpenPlan,
+    ),
   );
 }
