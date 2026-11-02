@@ -23,6 +23,9 @@ class RedesignRoutes {
   static String event(int id, {bool record = false}) =>
       record ? '$events/$id?tab=anwesenheit' : '$events/$id';
 
+  /// "Termin bearbeiten" of the new design.
+  static String eventEdit(int id) => '$events/$id/bearbeiten';
+
   /// An own Termin of a Spieler (person_attendances id).
   static String ownEvent(String personAttendanceId) =>
       '$events/meine/${Uri.encodeComponent(personAttendanceId)}';

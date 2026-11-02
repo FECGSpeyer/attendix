@@ -1,0 +1,714 @@
+import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
+
+import '../../../../../core/providers/attendance_detail_providers.dart';
+import '../../../../../core/providers/attendance_providers.dart';
+import '../../../../../core/providers/conductor_providers.dart';
+import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/debug_providers.dart';
+import '../../../../../core/providers/role_permission_providers.dart';
+import '../../../../../core/providers/song_providers.dart';
+import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/router/redesign_routes.dart';
+import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
+import '../../../../../core/theme/redesign/rd_theme.dart';
+import '../../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
+import '../../../../../core/utils/dialog_helper.dart';
+import '../../../../../core/utils/error_message.dart';
+import '../../../../../core/utils/event_list_utils.dart';
+import '../../../../../core/utils/haptic_helper.dart';
+import '../../../../../core/utils/toast_helper.dart';
+import '../../../../../data/models/attendance/attendance.dart';
+import '../../../../../data/models/person/person.dart';
+import '../../../../../l10n/l10n.dart';
+import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../shared/widgets/event_list/event_list_widgets.dart' show openEventNavigation;
+import '../../../../attendance/presentation/attendance_song_history.dart';
+import '../../../../attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart'
+    show showConductorChangeDialog;
+import '../../../../attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart';
+import '../../../../attendance/presentation/widgets/songs_selection_sheet.dart';
+import '../../../../planning/presentation/attendance_plan_viewer.dart';
+import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
+import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
+import '../../../data/rd_event_details_logic.dart';
+import '../../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
+import '../rd_widgets.dart';
+import '../today/rd_today_common.dart';
+
+/// REDESIGN: sections of a Termin's "Überblick" for Dirigent and Helfer
+/// (Programm/Werke, Ablauf, Vorbereitung, Infos zum Termin). They replace
+/// the old Termin page ("Alle Details") in the new design. Every write
+/// goes through the tenant repositories like the old Termin page.
+
+/// Uppercase label with an optional text action on the right ("+ Werk").
+class RdSectionLabel extends StatelessWidget {
+  const RdSectionLabel(this.text, {super.key, this.actionLabel, this.actionSemantics, this.onAction});
+
+  final String text;
+  final String? actionLabel;
+  final String? actionSemantics;
+  final VoidCallback? onAction;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Row(
+      crossAxisAlignment: CrossAxisAlignment.end,
+      children: [
+        Expanded(child: RdGroupLabel(text)),
+        if (actionLabel != null && onAction != null)
+          Padding(
+            padding: const EdgeInsets.only(bottom: 2),
+            child: Semantics(
+              button: true,
+              label: actionSemantics,
+              excludeSemantics: actionSemantics != null,
+              child: InkWell(
+                onTap: onAction,
+                borderRadius: BorderRadius.circular(10),
+                child: ConstrainedBox(
+                  constraints: const BoxConstraints(minHeight: 40),
+                  child: Padding(
+                    padding: const EdgeInsets.symmetric(horizontal: 6),
+                    child: Row(
+                      mainAxisSize: MainAxisSize.min,
+                      children: [
+                        Icon(Icons.add, size: 18, color: p.link),
+                        const SizedBox(width: 2),
+                        Text(actionLabel!, style: TextStyle(fontSize: 15, color: p.link)),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+          ),
+      ],
+    );
+  }
+}
+
+/// Round number in front of a Werk ("1").
+class RdProgramNumber extends StatelessWidget {
+  const RdProgramNumber(this.number, {super.key});
+
+  final int number;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    return Container(
+      width: 28,
+      height: 28,
+      decoration: BoxDecoration(color: p.soft, shape: BoxShape.circle),
+      alignment: Alignment.center,
+      child: Text('$number', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: p.softText)),
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Programm / Werke
+// ---------------------------------------------------------------------------
+
+/// Werke of the Termin: numbered, "+ Werk", tap → Zum Werk / Dirigent
+/// ändern / Werk entfernen (with Rückgängig). Shown for types that manage
+/// Werke (Ionic `manageSongs && !isGeneral`).
+class RdEventProgramSection extends ConsumerStatefulWidget {
+  const RdEventProgramSection({super.key, required this.attendance, required this.type});
+
+  final Attendance attendance;
+  final AttendanceType? type;
+
+  @override
+  ConsumerState<RdEventProgramSection> createState() => _RdEventProgramSectionState();
+}
+
+class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
+  bool _saving = false;
+
+  int get _id => widget.attendance.id!;
+
+  /// Writes [entries] as the Werke of the Termin; false when it failed.
+  Future<bool> _save(List<SongHistoryEntry> entries) async {
+    if (_saving) return false;
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return false;
+    final container = ProviderScope.containerOf(context, listen: false);
+    setState(() => _saving = true);
+    try {
+      await syncAttendanceSongHistory(repo, _id, widget.attendance.date, entries);
+      return true;
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      return false;
+    } finally {
+      container
+        ..invalidate(attendanceSongEntriesProvider(_id))
+        ..invalidate(currentSongsProvider)
+        ..invalidate(songHistoryProvider(null));
+      if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  Future<void> _add(List<SongHistoryEntry> current) async {
+    final result = await SongsSelectionSheet.show(context, existingEntries: current);
+    if (result == null || !mounted) return;
+    await _save(result);
+  }
+
+  Future<void> _open(List<SongHistoryEntry> entries, int index) async {
+    final entry = entries[index];
+    final l10n = context.l10n;
+    final canOpenWork = canOpenSongsTab(ref.read(effectiveRoleProvider));
+    final action = await showModalBottomSheet<String>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      showDragHandle: true,
+      backgroundColor: context.rd.bg,
+      builder: (ctx) {
+        final p = ctx.rd;
+        return SafeArea(
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(20, 0, 20, 16),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Semantics(header: true, child: Text(entry.songName, style: RdType.cardTitle(p))),
+                const SizedBox(height: 4),
+                Text(
+                  [
+                    l10n.redesignEventWorkNumber('${index + 1}'),
+                    if (entry.otherConductor != null || entry.conductorName != null)
+                      l10n.signoutConductor(entry.displayConductor),
+                  ].join(' · '),
+                  style: RdType.meta(p, size: 15),
+                ),
+                const SizedBox(height: 16),
+                RdGroupedList(children: [
+                  if (canOpenWork)
+                    RdListRow(
+                      leading: const RdRowIcon(Icons.music_note_outlined),
+                      title: l10n.attendanceToSong,
+                      subtitle: l10n.redesignEventToWorkHint,
+                      onTap: () => Navigator.of(ctx).pop('song'),
+                    ),
+                  RdListRow(
+                    leading: const RdRowIcon(Icons.person_outline),
+                    title: l10n.attendanceChangeConductor,
+                    subtitle: l10n.redesignEventChangeConductorHint,
+                    onTap: () => Navigator.of(ctx).pop('conductor'),
+                  ),
+                  RdListRow(
+                    key: const Key('rd-program-remove'),
+                    leading: RdRowIcon(Icons.remove, color: p.absent, background: p.absentSoft),
+                    title: l10n.redesignEventRemoveWork,
+                    titleColor: p.absent,
+                    showChevron: false,
+                    onTap: () => Navigator.of(ctx).pop('remove'),
+                  ),
+                ]),
+              ],
+            ),
+          ),
+        );
+      },
+    );
+    if (!mounted || action == null) return;
+    switch (action) {
+      case 'song':
+        context.push(RedesignRoutes.work(entry.songId));
+      case 'conductor':
+        await _changeConductor(entries, index);
+      case 'remove':
+        await _remove(entries, index);
+    }
+  }
+
+  Future<void> _changeConductor(List<SongHistoryEntry> entries, int index) async {
+    final entry = entries[index];
+    final List<Person> conductors;
+    try {
+      conductors = await ref.read(activeConductorsProvider.future);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, friendlyErrorMessage(e));
+      return;
+    }
+    if (!mounted) return;
+    final choice = await showConductorChangeDialog(
+      context,
+      conductors: conductors,
+      currentConductorId: entry.conductorId,
+      currentOtherConductor: entry.otherConductor,
+    );
+    if (choice == null || !mounted) return;
+    final updated = [...entries];
+    updated[index] = choice.person != null
+        ? entry.copyWith(conductorId: choice.person!.id, conductorName: choice.person!.fullName, otherConductor: null)
+        : entry.copyWith(conductorId: null, conductorName: null, otherConductor: choice.otherConductor);
+    await _save(updated);
+  }
+
+  Future<void> _remove(List<SongHistoryEntry> entries, int index) async {
+    final entry = entries[index];
+    HapticHelper.light();
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final l10n = context.l10n;
+    final ok = await _save([...entries]..removeAt(index));
+    if (!ok || !mounted) return;
+    messenger?.showSnackBar(SnackBar(
+      content: Text(l10n.redesignEventWorkRemoved(entry.songName)),
+      action: SnackBarAction(
+        label: l10n.redesignEventUndo,
+        // Rückgängig: the old list again (the removed row is re-inserted).
+        onPressed: () {
+          if (mounted) _save(entries);
+        },
+      ),
+    ));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final async = ref.watch(attendanceSongEntriesProvider(_id));
+    final entries = async.valueOrNull;
+    final title = rdProgramTitle(l10n, widget.type);
+    final Widget body;
+    if (entries == null) {
+      body = async.hasError
+          ? RdInfoCard(
+              text: l10n.redesignEventWorksLoadFailed,
+              icon: Icons.error_outline,
+              action: RdOutlineButton(
+                label: l10n.redesignCommonRetry,
+                onPressed: () => ref.invalidate(attendanceSongEntriesProvider(_id)),
+              ),
+            )
+          : RdInfoCard(text: l10n.redesignTodayLoading, loading: true);
+    } else if (entries.isEmpty) {
+      body = RdGroupedList(children: [
+        RdListRow(
+          leading: const RdRowIcon(Icons.music_note_outlined),
+          title: l10n.redesignEventAddWorkLabel,
+          onTap: _saving ? null : () => _add(entries),
+        ),
+      ]);
+    } else {
+      body = RdGroupedList(children: [
+        for (var i = 0; i < entries.length; i++)
+          RdListRow(
+            key: ValueKey('rd-program-$i-${entries[i].songId}'),
+            leading: RdProgramNumber(i + 1),
+            title: entries[i].songName,
+            subtitle: entries[i].otherConductor != null || entries[i].conductorName != null
+                ? l10n.signoutConductor(entries[i].displayConductor)
+                : null,
+            onTap: _saving ? null : () => _open(entries, i),
+          ),
+      ]);
+    }
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdSectionLabel(
+          entries == null || entries.isEmpty ? title : l10n.redesignEventSectionCount(title, '${entries.length}'),
+          actionLabel: entries != null && entries.isNotEmpty ? l10n.redesignEventAddWork : null,
+          actionSemantics: l10n.redesignEventAddWorkLabel,
+          onAction: entries == null || _saving ? null : () => _add(entries),
+        ),
+        if (_saving) LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
+        body,
+      ],
+    );
+  }
+}
+
+/// Whether the Termin shows the Werke section (Ionic `manageSongs && !isGeneral`).
+bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
+    showSongsForType(type, ref.watch(currentTenantProvider)?.type);
+
+// ---------------------------------------------------------------------------
+// Ablauf
+// ---------------------------------------------------------------------------
+
+/// Ablauf ansehen / bearbeiten / "Für Mitglieder sichtbar"; "Ablauf
+/// anlegen" without one. Helfer only look at an existing Ablauf.
+class RdEventPlanSection extends ConsumerStatefulWidget {
+  const RdEventPlanSection({super.key, required this.attendance});
+
+  final Attendance attendance;
+
+  @override
+  ConsumerState<RdEventPlanSection> createState() => _RdEventPlanSectionState();
+}
+
+class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
+  bool? _share;
+
+  void _edit() => context.push<bool>('/planning?attendanceId=${widget.attendance.id}');
+
+  Future<void> _toggleShare(bool value) async {
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    final id = widget.attendance.id!;
+    setState(() => _share = value);
+    try {
+      await repo.updateAttendance(id, {'share_plan': value});
+      ref.invalidate(attendanceDetailProvider(id));
+    } catch (e) {
+      if (!mounted) return;
+      setState(() => _share = !value);
+      ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    final att = widget.attendance;
+    final hasPlan = attendanceHasPlan(att);
+    final share = _share ?? att.sharePlan;
+    final role = ref.watch(effectiveRoleProvider);
+    // Helfer only look at the Ablauf; Beobachter do not see it.
+    final canEdit = canMutateAttendanceDetail(role);
+    if (role == Role.viewer || (!hasPlan && !canEdit)) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        const SizedBox(height: 24),
+        RdGroupLabel(l10n.redesignEventPlanSection),
+        RdGroupedList(children: [
+          if (hasPlan) ...[
+            RdListRow(
+              leading: const RdRowIcon(Icons.view_timeline_outlined),
+              title: l10n.redesignEventPlan,
+              subtitle: l10n.redesignEventPlanHint,
+              onTap: () => openAttendancePlanViewer(context, att),
+            ),
+            if (canEdit) ...[
+            RdListRow(
+              leading: const RdRowIcon(Icons.edit_outlined),
+              title: l10n.redesignEventPlanEdit,
+              subtitle: l10n.redesignEventPlanEditHint,
+              onTap: _edit,
+            ),
+            RdListRow(
+              leading: const RdRowIcon(Icons.visibility_outlined),
+              title: l10n.redesignEventPlanShare,
+              subtitle: l10n.redesignEventPlanShareHint,
+              showChevron: false,
+              onTap: () => _toggleShare(!share),
+              trailing: Switch.adaptive(value: share, onChanged: _toggleShare),
+            ),
+            ],
+          ] else
+            RdListRow(
+              leading: const RdRowIcon(Icons.view_timeline_outlined),
+              title: l10n.redesignEventPlanCreate,
+              onTap: _edit,
+            ),
+        ]),
+      ],
+    );
+  }
+}
+
+// ---------------------------------------------------------------------------
+// Vorbereitung (Checkliste)
+// ---------------------------------------------------------------------------
+
+/// The Termin's checklist: tick off, "+ Aufgabe", delete. Only shown while
+/// it has items (an empty one is started from "Aktionen", like the Termin
+/// page menu).
+class RdEventChecklistSection extends ConsumerStatefulWidget {
+  const RdEventChecklistSection({super.key, required this.attendance});
+
+  final Attendance attendance;
+
+  @override
+  ConsumerState<RdEventChecklistSection> createState() => _RdEventChecklistSectionState();
+}
+
+class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSection> {
+  /// Local list while a write is in flight (or after it failed: the
+  /// stored one comes back with the next refresh).
+  List<ChecklistItem>? _local;
+
+  List<ChecklistItem> get _items => _local ?? widget.attendance.checklist ?? const [];
+
+  @override
+  void didUpdateWidget(RdEventChecklistSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (oldWidget.attendance.checklist != widget.attendance.checklist) _local = null;
+  }
+
+  Future<void> _save(List<ChecklistItem> items) async {
+    setState(() => _local = items);
+    await rdSaveChecklist(context, ref, widget.attendance.id!, items);
+  }
+
+  Future<void> _add() async {
+    final item = await rdAskChecklistItem(context, widget.attendance);
+    if (item == null || !mounted) return;
+    await _save([..._items, item]);
+  }
+
+  Future<void> _delete(int index) async {
+    final l10n = context.l10n;
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.attendanceFlutterDeleteTodoTitle,
+      message: l10n.attendanceDeleteTodoConfirm,
+      confirmText: l10n.commonDelete,
+      isDestructive: true,
+    );
+    if (confirmed != true || !mounted) return;
+    await _save([..._items]..removeAt(index));
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final items = _items;
+    if (items.isEmpty) return const SizedBox.shrink();
+    final done = items.where((i) => i.completed).length;
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdSectionLabel(
+          l10n.redesignEventPrep('$done', '${items.length}'),
+          actionLabel: l10n.redesignEventAddTask,
+          actionSemantics: l10n.redesignEventAddTaskLabel,
+          onAction: _add,
+        ),
+        RdGroupedList(children: [
+          for (var i = 0; i < items.length; i++)
+            _ChecklistRow(
+              key: ValueKey('rd-check-${items[i].id}'),
+              item: items[i],
+              onToggle: () {
+                HapticHelper.light();
+                final next = [...items];
+                next[i] = items[i].copyWith(completed: !items[i].completed);
+                _save(next);
+              },
+              onDelete: () => _delete(i),
+            ),
+        ]),
+        if (_local != null && _local != widget.attendance.checklist)
+          LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
+      ],
+    );
+  }
+}
+
+class _ChecklistRow extends StatelessWidget {
+  const _ChecklistRow({super.key, required this.item, required this.onToggle, required this.onDelete});
+
+  final ChecklistItem item;
+  final VoidCallback onToggle;
+  final VoidCallback onDelete;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final due = rdChecklistDue(item);
+    final dueText = item.completed ? '' : rdChecklistDueText(l10n, item);
+    return Semantics(
+      checked: item.completed,
+      child: InkWell(
+        onTap: onToggle,
+        child: ConstrainedBox(
+          constraints: const BoxConstraints(minHeight: 52),
+          child: Padding(
+            padding: const EdgeInsets.fromLTRB(14, 6, 4, 6),
+            child: Row(
+              children: [
+                Container(
+                  width: 22,
+                  height: 22,
+                  decoration: BoxDecoration(
+                    color: item.completed ? p.primary : Colors.transparent,
+                    borderRadius: BorderRadius.circular(7),
+                    border: Border.all(color: item.completed ? p.primary : p.text2, width: 2),
+                  ),
+                  child: item.completed ? Icon(Icons.check, size: 15, color: p.onPrimary) : null,
+                ),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Text(
+                    item.text,
+                    style: TextStyle(
+                      fontSize: 16,
+                      color: item.completed ? p.text2 : p.text,
+                      decoration: item.completed ? TextDecoration.lineThrough : null,
+                    ),
+                  ),
+                ),
+                if (dueText.isNotEmpty) ...[
+                  const SizedBox(width: 8),
+                  RdPill(
+                    dueText,
+                    tone: switch (due) {
+                      RdDue.overdue => RdTone.absent,
+                      RdDue.soon => RdTone.late,
+                      RdDue.none => null,
+                    },
+                  ),
+                ],
+                IconButton(
+                  icon: Icon(Icons.close, size: 18, color: p.text2),
+                  tooltip: l10n.redesignEventDeleteTask,
+                  onPressed: onDelete,
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Writes the checklist of [attendanceId] (whole list, like the Termin page).
+Future<void> rdSaveChecklist(BuildContext context, WidgetRef ref, int attendanceId, List<ChecklistItem> items) async {
+  final repo = ref.read(attendanceRepositoryWithTenantProvider);
+  if (!repo.hasTenantId) return;
+  try {
+    await repo.updateAttendance(attendanceId, {'checklist': [for (final i in items) i.toJson()]});
+  } catch (e) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+    }
+  }
+  ref.invalidate(attendanceDetailProvider(attendanceId));
+}
+
+/// "Aufgabe hinzufügen": text and optional "Stunden vorher" (Termin page dialog).
+Future<ChecklistItem?> rdAskChecklistItem(BuildContext context, Attendance attendance) async {
+  final l10n = context.l10n;
+  final text = TextEditingController();
+  final hours = TextEditingController();
+  final result = await showAppDialog<({String text, int? hours})>(
+    context: context,
+    builder: (ctx) => AppAlertDialog(
+      title: Text(l10n.attendanceAddTodo),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          TextField(
+            controller: text,
+            autofocus: true,
+            textCapitalization: TextCapitalization.sentences,
+            decoration: InputDecoration(hintText: l10n.attendanceTodoText),
+          ),
+          const SizedBox(height: 8),
+          TextField(
+            controller: hours,
+            keyboardType: TextInputType.number,
+            decoration: InputDecoration(hintText: l10n.attendanceDeadlineHours),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(l10n.commonCancel)),
+        TextButton(
+          onPressed: () {
+            if (text.text.trim().isEmpty) {
+              ToastHelper.showWarning(ctx, l10n.attendanceEnterText);
+              return;
+            }
+            Navigator.pop(ctx, (text: text.text.trim(), hours: int.tryParse(hours.text.trim())));
+          },
+          child: Text(l10n.attendanceAdd),
+        ),
+      ],
+    ),
+  );
+  text.dispose();
+  hours.dispose();
+  if (result == null) return null;
+  return rdNewChecklistItem(result.text, result.hours, rdChecklistEventStart(attendance));
+}
+
+// ---------------------------------------------------------------------------
+// Infos zum Termin
+// ---------------------------------------------------------------------------
+
+/// Whether [RdEventInfoSection] has a row for [attendance].
+bool rdHasInfos(WidgetRef ref, Attendance attendance) =>
+    (attendance.place ?? '').trim().isNotEmpty ||
+    rdPlainText(attendance.description).isNotEmpty ||
+    (attendance.attachmentUrl ?? '').isNotEmpty ||
+    ((attendance.filesFolder ?? '').trim().isNotEmpty && ref.watch(canAccessFilesProvider)) ||
+    EventListUtils.deadlineLocal(attendance.deadline) != null;
+
+/// Navigation, Beschreibung & Anhang, Ordner, Abmeldeschluss: only rows
+/// with content (all of them are edited in "Termin bearbeiten").
+class RdEventInfoSection extends ConsumerWidget {
+  const RdEventInfoSection({super.key, required this.attendance});
+
+  final Attendance attendance;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final l10n = context.l10n;
+    final att = attendance;
+    final place = (att.place ?? '').trim();
+    final description = rdPlainText(att.description);
+    final attachment = (att.attachmentName ?? '').trim();
+    final hasDescription = description.isNotEmpty || (att.attachmentUrl ?? '').isNotEmpty;
+    final folder = (att.filesFolder ?? '').trim();
+    final canFiles = ref.watch(canAccessFilesProvider);
+    final deadline = EventListUtils.deadlineLocal(att.deadline);
+    final rows = <Widget>[
+      if (place.isNotEmpty)
+        RdListRow(
+          leading: const RdRowIcon(Icons.navigation_outlined),
+          title: l10n.signoutOpenNavigation,
+          subtitle: place,
+          onTap: () => openEventNavigation(context, place),
+        ),
+      if (hasDescription)
+        RdListRow(
+          leading: const RdRowIcon(Icons.info_outline),
+          title: l10n.redesignEventDescription,
+          subtitle: [
+            if (description.isNotEmpty) description,
+            if (attachment.isNotEmpty) attachment,
+          ].join(' · '),
+          onTap: () => showDescriptionAttachmentSheet(context, attendance: att),
+        ),
+      if (folder.isNotEmpty && canFiles)
+        RdListRow(
+          leading: const RdRowIcon(Icons.folder_outlined),
+          title: l10n.attendanceFilesFolder,
+          subtitle: folder,
+          onTap: () => openFilesFolderRoute(context, folder),
+        ),
+      if (deadline != null)
+        RdListRow(
+          leading: const RdRowIcon(Icons.schedule),
+          title: l10n.redesignCreateDeadline,
+          subtitle: rdDeadlineLabel(deadline),
+          showChevron: false,
+        ),
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        RdGroupLabel(l10n.redesignOwnInfos),
+        RdGroupedList(children: rows),
+      ],
+    );
+  }
+}

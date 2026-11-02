@@ -1,6 +1,7 @@
 import 'dart:async';
 import 'dart:io';
 
+import 'package:attendix/core/config/supabase_config.dart';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_detail_providers.dart';
 import 'package:attendix/core/providers/attendance_providers.dart';
@@ -15,7 +16,9 @@ import 'package:attendix/core/services/offline_queue_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/core/providers/team_org_providers.dart';
 import 'package:attendix/data/models/person/person.dart';
+import 'package:attendix/features/attendance/presentation/attendance_song_history.dart';
 import 'package:attendix/features/redesign/data/rd_event_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_event_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/event/rd_pult_view.dart';
@@ -33,6 +36,20 @@ import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 
 import '../../factories/test_factories.dart';
 import '../../mocks/repository_mocks.dart';
+import '../../mocks/supabase_mocks.dart';
+
+MockGoTrueClient _auth() {
+  final auth = MockGoTrueClient();
+  when(() => auth.currentUser).thenReturn(null);
+  when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
+  return auth;
+}
+
+class _TenantNotifier extends CurrentTenantNotifier {
+  _TenantNotifier(super.ref) {
+    state = TestFactories.createTenant(id: 7, shortName: 'SO', longName: 'Stadtorchester');
+  }
+}
 
 String _day(int offset) {
   final d = DateTime.now().add(Duration(days: offset));
@@ -135,6 +152,10 @@ class _Harness {
           builder: (_, __) => const Scaffold(body: Text('page termine')),
           routes: [
             GoRoute(
+              path: ':id/bearbeiten',
+              builder: (_, state) => Scaffold(body: Text('page edit ${state.pathParameters['id']}')),
+            ),
+            GoRoute(
               path: ':id',
               builder: (_, __) {
                 final page = RdEventPage(attendanceId: 21, initialTab: tab);
@@ -183,6 +204,12 @@ class _Harness {
         mainGroupProvider.overrideWith((ref) async => null),
         attendanceGroupScopeProvider.overrideWith((ref) async => scope),
         canViewAttendanceNotesProvider.overrideWithValue(canViewNotes),
+        supabaseAuthProvider.overrideWithValue(_auth()),
+        currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
+        canViewAttendanceChecklistProvider.overrideWithValue(false),
+        canAccessFilesProvider.overrideWithValue(false),
+        protocolTypeByIdProvider.overrideWith((ref, id) => null),
+        attendanceSongEntriesProvider.overrideWith((ref, id) async => const []),
       ],
       child: MaterialApp.router(
         locale: const Locale('de'),
@@ -199,6 +226,12 @@ Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
   }
+}
+
+/// Scrolls [finder] to the middle (the bottom edge sits under the tab bar).
+Future<void> _reveal(WidgetTester tester, Finder finder) async {
+  await Scrollable.ensureVisible(tester.element(finder), alignment: 0.5);
+  await tester.pump();
 }
 
 void _size(WidgetTester tester, Size size) {
@@ -327,7 +360,8 @@ void main() {
     expect(find.text('5 eingeladen'), findsOneWidget);
     expect(find.text('0 zugesagt'), findsOneWidget);
     expect(find.text('2 entschuldigt'), findsWidgets);
-    expect(find.text('2 ohne Antwort'), findsOneWidget);
+    // Once in the counts, once on "Offene erinnern".
+    expect(find.text('2 ohne Antwort'), findsNWidgets(2));
     expect(find.textContaining('Trompete: 0 von 2 da.'), findsOneWidget);
     expect(find.textContaining('Max Huber, Jan Ott haben abgesagt.'), findsOneWidget);
     expect(find.text('ABMELDUNGEN'), findsOneWidget);
@@ -337,9 +371,9 @@ void main() {
     expect(tester.takeException(), isNull);
     expect(h.writes, isEmpty);
 
-    await tester.tap(find.text('Alle Details'));
+    await tester.tap(find.text('Bearbeiten'));
     await _settle(tester);
-    expect(find.text('page attendance 21'), findsOneWidget);
+    expect(find.text('page edit 21'), findsOneWidget);
   });
 
   testWidgets('Anwesenheit: tap writes the status, Rückgängig writes it back', (tester) async {
@@ -729,7 +763,7 @@ void main() {
     await _settle(tester);
     expect(find.text('Gesamtprobe'), findsOneWidget);
     expect(find.bySemanticsLabel('Termine'), findsNothing);
-    expect(find.text('Alle Details'), findsOneWidget);
+    expect(find.text('Bearbeiten'), findsOneWidget);
   });
 
   testWidgets('fits on a 320 px phone', (tester) async {
@@ -755,7 +789,7 @@ void main() {
       await tester.pumpWidget(h.app());
       await _settle(tester);
 
-      await tester.ensureVisible(find.text('Termin löschen'));
+      await _reveal(tester, find.text('Termin löschen'));
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
       expect(find.text('Möchtest du den Termin wirklich entfernen?'), findsOneWidget);
@@ -763,6 +797,7 @@ void main() {
       await _settle(tester);
       verifyNever(() => h.repo.deleteAttendance(any()));
 
+      await _reveal(tester, find.text('Termin löschen'));
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
       await tester.tap(find.text('Fortfahren'));
@@ -777,7 +812,7 @@ void main() {
       when(() => h.repo.deleteAttendance(21)).thenThrow(Exception('Netzwerk weg'));
       await tester.pumpWidget(h.app());
       await _settle(tester);
-      await tester.ensureVisible(find.text('Termin löschen'));
+      await _reveal(tester, find.text('Termin löschen'));
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
       await tester.tap(find.text('Fortfahren'));
@@ -792,8 +827,7 @@ void main() {
       await _settle(tester);
       expect(find.text('Ablauf ansehen'), findsOneWidget);
       expect(find.text('Termin löschen'), findsOneWidget);
-      // "Alle Details" stays the button of the empty card, not a second row.
-      expect(find.text('Ablauf, Checkliste, Werke und Notizen'), findsNothing);
+
     });
 
     testWidgets('switching to Anwesenheit while deleting still finishes', (tester) async {
@@ -803,7 +837,7 @@ void main() {
       when(() => h.repo.deleteAttendance(21)).thenAnswer((_) => gate.future);
       await tester.pumpWidget(h.app());
       await _settle(tester);
-      await tester.ensureVisible(find.text('Termin löschen'));
+      await _reveal(tester, find.text('Termin löschen'));
       await tester.tap(find.text('Termin löschen'));
       await _settle(tester);
       await tester.tap(find.text('Fortfahren'));

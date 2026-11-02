@@ -25,7 +25,6 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/person_attendance_writes.dart';
-import '../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../attendance/presentation/widgets/attendance_detail/attendance_grid.dart'
     show mainGroupIdOf, sortPersonsByGroup;
 import '../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
@@ -33,7 +32,17 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
 import '../../data/rd_write_queue.dart';
+import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/services/export_service.dart';
+import '../../../attendance/presentation/attendance_add_persons.dart';
+import '../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
+import '../../../duty/presentation/widgets/duty_staffing_section.dart';
+import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
+import '../../data/rd_event_details_logic.dart';
+import '../widgets/event/rd_event_sections.dart';
 import '../widgets/event/rd_pult_view.dart';
+import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
@@ -448,11 +457,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               }),
             )
           else
-            Flexible(
-              child: _TextLink(
-                label: l10n.redesignEventDetails,
-                onTap: () => context.push('/attendance/$_id'),
-              ),
+            RdTextLink(
+              key: const Key('rd-event-edit'),
+              label: l10n.redesignEventEdit,
+              onTap: () => context.push(RedesignRoutes.eventEdit(_id)),
             ),
         ],
       ),
@@ -491,17 +499,31 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (members == null) {
       children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (members.isEmpty) {
+      final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
       children.add(RdInfoCard(
         text: l10n.redesignEventNoPersons,
         icon: Icons.group_off_outlined,
-        action: RdOutlineButton(label: l10n.redesignEventMore, onPressed: () => context.push('/attendance/$_id')),
+        action: canMutate
+            ? RdOutlineButton(
+                label: l10n.attendanceAddPerson,
+                onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: const {}),
+              )
+            : null,
       ));
-      children
-        ..add(const SizedBox(height: 16))
-        ..add(_EventActions(attendance: attendance, showMore: false));
+      // Programm and Ablauf can be prepared before anyone is invited.
+      children.addAll([
+        if (rdShowsProgram(ref, type) && attendance.id != null) ...[
+          const SizedBox(height: 24),
+          RdEventProgramSection(attendance: attendance, type: type),
+        ],
+        RdEventPlanSection(attendance: attendance),
+        const SizedBox(height: 24),
+        _EventActions(attendance: attendance, members: const [], showAddPerson: false),
+      ]);
     } else if (_tab == RdEventTab.overview) {
       children.add(_Overview(
         attendance: attendance,
+        type: type,
         members: members,
         onRecord: () => setState(() => _tab = RdEventTab.record),
       ));
@@ -848,11 +870,14 @@ class _Header extends StatelessWidget {
   }
 }
 
-/// Canvas D4: answers, empty registers, sign-outs, notes, all details.
+/// Canvas D4 plus the Termin details (concept "Vortrag im Beta-Design"):
+/// answers, empty registers, Programm/Werke, Ablauf, Vorbereitung, Infos,
+/// sign-outs, notes, Dienst and Protokoll, actions.
 class _Overview extends ConsumerWidget {
-  const _Overview({required this.attendance, required this.members, required this.onRecord});
+  const _Overview({required this.attendance, required this.type, required this.members, required this.onRecord});
 
   final Attendance attendance;
+  final AttendanceType? type;
   final List<RdMember> members;
   final VoidCallback onRecord;
 
@@ -961,6 +986,19 @@ class _Overview extends ConsumerWidget {
             ),
           ),
         ],
+        if (rdShowsProgram(ref, type) && attendance.id != null) ...[
+          const SizedBox(height: 24),
+          RdEventProgramSection(attendance: attendance, type: type),
+        ],
+        RdEventPlanSection(attendance: attendance),
+        if (ref.watch(canViewAttendanceChecklistProvider) && (attendance.checklist?.isNotEmpty ?? false)) ...[
+          const SizedBox(height: 24),
+          RdEventChecklistSection(attendance: attendance),
+        ],
+        if (rdHasInfos(ref, attendance)) ...[
+          const SizedBox(height: 24),
+          RdEventInfoSection(attendance: attendance),
+        ],
         if (signouts.isNotEmpty) ...[
           const SizedBox(height: 24),
           RdGroupLabel(l10n.redesignEventSignouts),
@@ -990,60 +1028,148 @@ class _Overview extends ConsumerWidget {
             child: Text(notes, style: RdType.body(p)),
           ),
         ],
+        // Dienstplan "Besetzung" and Protokoll as on the Termin page.
+        if (type != null && type!.dutyMode && attendance.id != null) ...[
+          const SizedBox(height: 24),
+          DutyStaffingSection(attendance: attendance, attendanceType: type!),
+        ],
+        if (attendance.id != null && (ref.watch(protocolTypeByIdProvider(attendance.typeId))?.enableProtocol ?? false)) ...[
+          const SizedBox(height: 24),
+          AttendanceProtocolSection(attendanceId: attendance.id!, typeId: attendance.typeId),
+        ],
         const SizedBox(height: 24),
-        _EventActions(attendance: attendance),
+        _EventActions(attendance: attendance, members: members, openCount: ended ? 0 : counts.open),
       ],
     );
   }
 }
 
-/// Ablauf ansehen · Alle Details und Bearbeiten · Termin löschen (also
-/// shown when the Termin has no persons yet).
+/// "Aktionen": Offene erinnern, Person hinzufügen, Checkliste starten,
+/// Als Excel exportieren, Termin löschen (also shown when the Termin has
+/// no persons yet). Like the Termin page menu, the mutating entries are
+/// for Admins and Verantwortliche only.
 class _EventActions extends ConsumerWidget {
-  const _EventActions({required this.attendance, this.showMore = true});
+  const _EventActions({
+    required this.attendance,
+    required this.members,
+    this.openCount = 0,
+    this.showAddPerson = true,
+  });
 
   final Attendance attendance;
+  final List<RdMember> members;
 
-  /// False where "Alle Details" already is a button (empty Termin).
-  final bool showMore;
+  /// Persons without an answer (0 once the Termin is over).
+  final int openCount;
+
+  /// False where "Person hinzufügen" already is the empty state's button.
+  final bool showAddPerson;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
     final role = ref.watch(effectiveRoleProvider);
-    // Like the old Termine list: Beobachter never see the Ablaufplan; only
-    // the Dirigent (Admin, Verantwortliche) deletes a Termin.
-    final hasPlan = !role.isViewer && attendanceHasPlan(attendance);
+    final canMutate = canMutateAttendanceDetail(role);
     final canDelete = role.isAdmin || role.isResponsible;
-    if (!hasPlan && !showMore && !canDelete) return const SizedBox.shrink();
-    return RdGroupedList(
+    final id = attendance.id;
+    final type = ref.watch(attendanceTypeForAttendanceProvider(id ?? -1)).valueOrNull;
+    final canStartChecklist = canMutate &&
+        ref.watch(canViewAttendanceChecklistProvider) &&
+        (attendance.checklist?.isEmpty ?? true);
+    final rows = <Widget>[
+      if (canMutate && openCount > 0 && id != null)
+        RdListRow(
+          leading: const RdRowIcon(Icons.notifications_none),
+          title: l10n.redesignEventRemindOpen,
+          subtitle: l10n.redesignEventCountNoAnswer(openCount),
+          onTap: () {
+            final info = rdEventInfo(attendance, type);
+            final hasTime = (attendance.startTime ?? type?.startTime)?.isNotEmpty ?? false;
+            showRdRemindOpenSheet(
+              context,
+              attendanceId: id,
+              title: info.title,
+              when: rdRemindWhen(info.start, hasTime: hasTime),
+            );
+          },
+        ),
+      if (canMutate && showAddPerson && id != null)
+        RdListRow(
+          leading: const RdRowIcon(Icons.person_add_alt_1_outlined),
+          title: l10n.attendanceAddPerson,
+          onTap: () => addPersonsToAttendance(
+            context,
+            ref,
+            attendanceId: id,
+            currentPersonIds: {for (final m in members) m.id},
+          ),
+        ),
+      if (canStartChecklist && id != null)
+        RdListRow(
+          leading: const RdRowIcon(Icons.check_box_outlined),
+          title: l10n.attendanceStartChecklist,
+          onTap: () => _startChecklist(context, ref, type),
+        ),
+      if (members.isNotEmpty)
+        RdListRow(
+          leading: const RdRowIcon(Icons.file_download_outlined),
+          title: l10n.redesignEventExportExcel,
+          onTap: () => _exportExcel(context, ref),
+        ),
+      if (canDelete)
+        RdListRow(
+          key: const Key('rd-event-delete'),
+          leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
+          title: l10n.redesignEventDelete,
+          titleColor: p.absent,
+          showChevron: false,
+          onTap: () => _delete(context, ref),
+        ),
+    ];
+    if (rows.isEmpty) return const SizedBox.shrink();
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        if (hasPlan)
-          RdListRow(
-            leading: const RdRowIcon(Icons.view_timeline_outlined),
-            title: l10n.redesignEventPlan,
-            subtitle: l10n.redesignEventPlanHint,
-            onTap: () => openAttendancePlanViewer(context, attendance),
-          ),
-        if (showMore)
-          RdListRow(
-            leading: const RdRowIcon(Icons.tune),
-            title: l10n.redesignEventMore,
-            subtitle: l10n.redesignEventMoreHint,
-            onTap: () => context.push('/attendance/${attendance.id}'),
-          ),
-        if (canDelete)
-          RdListRow(
-            key: const Key('rd-event-delete'),
-            leading: RdRowIcon(Icons.delete_outline, color: p.absent, background: p.absentSoft),
-            title: l10n.redesignEventDelete,
-            titleColor: p.absent,
-            showChevron: false,
-            onTap: () => _delete(context, ref),
-          ),
+        RdGroupLabel(l10n.redesignEventActions),
+        RdGroupedList(children: rows),
       ],
     );
+  }
+
+  /// "Checkliste starten": the type's default checklist when it has one,
+  /// else a first task.
+  Future<void> _startChecklist(BuildContext context, WidgetRef ref, AttendanceType? type) async {
+    final id = attendance.id!;
+    if (type != null && (type.checklist?.isNotEmpty ?? false)) {
+      await rdSaveChecklist(context, ref, id, rdDefaultChecklist(type, attendance));
+      if (context.mounted) ToastHelper.showSuccess(context, context.l10n.attendanceChecklistRestored);
+      return;
+    }
+    final item = await rdAskChecklistItem(context, attendance);
+    if (item == null || !context.mounted) return;
+    await rdSaveChecklist(context, ref, id, [item]);
+  }
+
+  /// "Als Excel exportieren" with the statuses shown on this page.
+  Future<void> _exportExcel(BuildContext context, WidgetRef ref) async {
+    final tenant = ref.read(currentTenantProvider);
+    if (tenant == null) {
+      ToastHelper.showError(context, context.l10n.attendanceFlutterDataUnavailable);
+      return;
+    }
+    ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
+    try {
+      await ExportService().exportAttendanceToExcel(
+        context: context,
+        attendance: attendance,
+        persons: [for (final m in members) m.person],
+        statuses: {for (final m in members) m.id: m.status},
+        tenantName: tenant.shortName,
+      );
+    } catch (e) {
+      if (context.mounted) ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));
+    }
   }
 
   /// "Termin löschen" (old Termine list: Dirigent only, i.e. Admin and
@@ -1086,40 +1212,5 @@ class _EventActions extends ConsumerWidget {
       ..invalidate(playerAttendancePercentagesProvider);
     if (context.mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
     router.go(RedesignRoutes.events);
-  }
-}
-
-/// Plain text link in the header ("Alle Details").
-class _TextLink extends StatelessWidget {
-  const _TextLink({required this.label, required this.onTap});
-
-  final String label;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      child: InkWell(
-        onTap: onTap,
-        borderRadius: BorderRadius.circular(10),
-        child: ConstrainedBox(
-          constraints: const BoxConstraints(minHeight: 44),
-          child: Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 8),
-            child: Center(
-              widthFactor: 1,
-              child: Text(
-                label,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 17, color: p.link),
-              ),
-            ),
-          ),
-        ),
-      ),
-    );
   }
 }
