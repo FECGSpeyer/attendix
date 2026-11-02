@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.33.3",
+      "date": "2.11.2026",
+      "changes": [
+        "🐛 Web-App auf dem iPhone: Die Tab-Leiste und andere Elemente halten jetzt Abstand zum unteren Rand (Home-Balken), wie in der App",
+        "🐛 Anmeldung: Die Zeile mit Version und Demo rutscht bei offener Tastatur nicht mehr über die Anmeldekarte"
+      ]
+    },
+    {
       "version": "0.33.2",
       "date": "2.11.2026",
       "changes": [

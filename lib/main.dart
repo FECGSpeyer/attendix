@@ -19,6 +19,7 @@ import 'core/router/app_router.dart';
 import 'core/router/legacy_url.dart';
 import 'core/services/app_update_service.dart';
 import 'core/services/update_hint.dart';
+import 'core/services/web_safe_area.dart';
 import 'core/services/offline_queue_service.dart';
 import 'core/services/attendance_detail_cache.dart'
     show clearOfflineReadCaches, shouldClearOfflineReadCaches;
@@ -95,6 +96,8 @@ void main() async {
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)
   if (kIsWeb) promoteLegacyPathToHash();
+  // WEB_SAFE_AREA: viewport-fit=cover + browser safe area insets (web only)
+  initWebSafeArea();
   // TEAMS: detect a Microsoft Teams tab (no-op outside an iframe / on native).
   // Not awaited (REVIEW_FIX2): a non-Teams iframe would otherwise keep the
   // app blank until the SDK timeouts; SSO/theme react once it completes.
@@ -218,12 +221,16 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       // IOS_SHELL: Ionic iOS has no tooltips – hide Material tooltips (tap /
       // long-press / hover) on iOS; their semantics labels stay.
       // IOS_THEME2: Ionic md (desktop / Android) has none either.
-      builder: (context, child) => TooltipVisibility(
-        visible: false,
-        // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
-        child: IonModalTheme(
-          // IOS_R4: Ionic iOS toolbar height (safe area dependent)
-          child: IonToolbarMetrics(child: child ?? const SizedBox.shrink()),
+      // WEB_SAFE_AREA: on the web, the browser's safe area insets become
+      // MediaQuery padding (home indicator / notch), as on native.
+      builder: (context, child) => WebSafeArea(
+        child: TooltipVisibility(
+          visible: false,
+          // PARITY_R3: Ionic ion-modal sheet sizes (600 wide on desktop).
+          child: IonModalTheme(
+            // IOS_R4: Ionic iOS toolbar height (safe area dependent)
+            child: IonToolbarMetrics(child: child ?? const SizedBox.shrink()),
+          ),
         ),
       ),
       // I18N_INFRA: UI language from localeProvider (de default, en optional)
