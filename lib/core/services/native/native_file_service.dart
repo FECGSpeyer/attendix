@@ -116,6 +116,23 @@ class NativeFileService {
     }
   }
 
+  /// Ionic `Browser.open` (@capacitor/browser): web links (song links,
+  /// Termin attachments, help pages, links in messages) open in an in-app
+  /// browser sheet (SFSafariViewController / Custom Tabs) instead of
+  /// switching apps. Web and the iOS app on a Mac open the browser as before.
+  static Future<bool> openLinkInApp(Uri uri) async {
+    final isHttp = uri.isScheme('http') || uri.isScheme('https');
+    try {
+      if (!kIsWeb && isHttp && !await isIosAppOnMac() &&
+          await supportsLaunchMode(LaunchMode.inAppBrowserView)) {
+        if (await launchUrl(uri, mode: LaunchMode.inAppBrowserView)) return true;
+      }
+    } catch (_) {
+      // Fall back to the external browser below.
+    }
+    return openExternal(uri);
+  }
+
   /// Ionic `Utils.openFileNative(url, fileName)`: native → download to the
   /// cache dir and open the system viewer; web → open the URL externally.
   /// Returns false when nothing could open the file.

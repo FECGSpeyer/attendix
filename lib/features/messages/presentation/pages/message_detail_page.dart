@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -23,6 +22,7 @@ import '../message_format.dart';
 import '../widgets/message_termin_section.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 enum _Filter { all, read, open, problems }
 
@@ -527,11 +527,8 @@ class _MessageCardState extends State<_MessageCard> {
   Future<void> _openLink(String url) async {
     final uri = Uri.tryParse(url);
     if (uri == null) return;
-    try {
-      await launchUrl(uri, mode: LaunchMode.externalApplication);
-    } catch (_) {
-      // ignore
-    }
+    // Ionic message-detail Browser.open: in-app browser in the native app.
+    await NativeFileService.openLinkInApp(uri);
   }
 
   @override

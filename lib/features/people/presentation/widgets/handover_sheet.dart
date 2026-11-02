@@ -744,6 +744,31 @@ class _HandoverSheetState extends ConsumerState<HandoverSheet> {
     final playerCount = playersToTransfer.length;
     final isTransfer = !_stayInInstance;
     if (!mounted) return;
+
+    // Ionic person.page transferPerson: a single person that already exists
+    // in the target instance (e-mail or name) is blocked before asking.
+    if (playerCount == 1) {
+      final person = playersToTransfer.first;
+      bool exists = false;
+      try {
+        exists = await playerRepo.playerExistsInTenant(person, targetTenant.id!);
+      } catch (_) {
+        // The handover itself checks again and reports it as a duplicate.
+      }
+      if (!mounted) return;
+      if (exists) {
+        final email = (person.email ?? '').trim();
+        await DialogHelper.showAlert(
+          context,
+          title: isTransfer ? context.l10n.personTransferNotPossible : context.l10n.personCopyNotPossible,
+          message: email.isNotEmpty
+              ? context.l10n.personExistsWithEmail(targetTenant.longName, email)
+              : context.l10n.personExistsWithName(
+                  targetTenant.longName, '${person.firstName} ${person.lastName}'),
+        );
+        return;
+      }
+    }
     final confirmed = await DialogHelper.showConfirmation(
       context,
       title: isTransfer ? context.l10n.peopleFlutterHandoverTransferQuestion : context.l10n.peopleFlutterHandoverCopyQuestion,

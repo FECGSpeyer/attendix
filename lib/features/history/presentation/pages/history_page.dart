@@ -288,6 +288,16 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     int? selectedConductorId = defaultHistoryConductorId(conductors);
     String? otherConductor;
     DateTime selectedDate = DateTime.now();
+    // Ionic onManualDateInput: the date can also be typed (TT.MM.JJJJ);
+    // invalid input falls back to the last valid date on blur.
+    final dateController =
+        TextEditingController(text: DateFormat(dateFmt()).format(selectedDate));
+    var sheetClosed = false;
+    void applyTypedDate() {
+      final typed = parseTypedHistoryDate(dateController.text);
+      if (typed != null) selectedDate = typed;
+      dateController.text = DateFormat(dateFmt()).format(selectedDate);
+    }
 
     final result = await showModalBottomSheet<bool>(
       context: context,
@@ -386,9 +396,23 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                     l10n.attendanceDate,
                     style: const TextStyle(fontSize: 12.75),
                   ),
-                  subtitle: Text(
-                    DateFormat(dateFmt()).format(selectedDate),
-                    style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
+                  subtitle: Focus(
+                    onFocusChange: (hasFocus) {
+                      if (!hasFocus && !sheetClosed) setSheetState(applyTypedDate);
+                    },
+                    child: TextField(
+                      controller: dateController,
+                      keyboardType: TextInputType.datetime,
+                      textInputAction: TextInputAction.done,
+                      onSubmitted: (_) => setSheetState(applyTypedDate),
+                      style: TextStyle(fontSize: 17, color: Theme.of(sheetContext).colorScheme.onSurface),
+                      decoration: InputDecoration(
+                        hintText: l10n.historyDatePlaceholder,
+                        isDense: true,
+                        border: InputBorder.none,
+                        contentPadding: EdgeInsets.zero,
+                      ),
+                    ),
                   ),
                   trailing: IconButton(
                     icon: Icon(Icons.calendar_today_outlined, color: AppColors.primary, semanticLabel: context.l10n.a11ySelectDate),
@@ -399,7 +423,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
                         firstDate: DateTime(2000),
                         lastDate: DateTime.now().add(const Duration(days: 365)),
                       );
-                      if (date != null) setSheetState(() => selectedDate = date);
+                      if (date != null) {
+                        setSheetState(() {
+                          selectedDate = date;
+                          dateController.text = DateFormat(dateFmt()).format(date);
+                        });
+                      }
                     },
                   ),
                 ),
@@ -428,6 +457,13 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
         },
       ),
     );
+
+    // A date typed without leaving the field still counts (Ionic ionBlur
+    // fires before the button tap).
+    // The controller is not disposed here: the sheet's TextField still uses
+    // it during the closing animation; without listeners it is collected.
+    sheetClosed = true;
+    applyTypedDate();
 
     if (result == true && selectedSongIds.isNotEmpty) {
       await _addEntries(
@@ -838,5 +874,27 @@ class _HistorySongPickerState extends State<_HistorySongPicker> {
         ],
       ),
     );
+  }
+}
+
+/// Ionic `onManualDateInput`: `T.M.JJJJ` / `TT.MM.JJJJ`, day 1–31 and
+/// month 1–12; anything else is rejected (null). Other app date formats
+/// (e.g. English) are accepted too.
+@visibleForTesting
+DateTime? parseTypedHistoryDate(String input) {
+  final value = input.trim();
+  if (value.isEmpty) return null;
+  final m = RegExp(r'^(\d{1,2})\.(\d{1,2})\.(\d{4})$').firstMatch(value);
+  if (m != null) {
+    final day = int.parse(m.group(1)!);
+    final month = int.parse(m.group(2)!);
+    final year = int.parse(m.group(3)!);
+    if (month < 1 || month > 12 || day < 1 || day > 31) return null;
+    return DateTime(year, month, day);
+  }
+  try {
+    return DateFormat(dateFmt()).parseStrict(value);
+  } catch (_) {
+    return null;
   }
 }

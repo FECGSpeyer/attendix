@@ -152,7 +152,9 @@ class _OrgPlanPublicPageState extends ConsumerState<OrgPlanPublicPage> {
   }
 
   Future<void> _subscribeCalendar() async {
-    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=${widget.publicKey}';
+    // Ionic: calendar texts in the app language (German is the default).
+    final lang = currentLanguage() != 'de' ? '&lang=${currentLanguage()}' : '';
+    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=${widget.publicKey}$lang';
     final link = await showPlanActionSheet<String>(
       context,
       title: context.l10n.plansSubscribeCalendar,

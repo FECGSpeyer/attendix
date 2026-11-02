@@ -21,3 +21,10 @@ bool openInNewTab(String url) => impl.openInNewTab(url);
 /// outside the web.
 bool downloadBytesInBrowser(Uint8List bytes, String fileName) =>
     impl.downloadBytesInBrowser(bytes, fileName);
+
+/// Ionic `@HostListener('window:beforeunload')` on the settings pages:
+/// while any [owner] has unsaved changes, closing or reloading the browser
+/// tab asks first. Call with `false` (or from dispose) to release it.
+/// Does nothing outside the web.
+void setUnloadWarning(Object owner, bool unsaved) =>
+    impl.setUnloadWarning(owner, unsaved);

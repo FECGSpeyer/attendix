@@ -18,7 +18,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 Future<void> openSongLink(BuildContext context, String link) async {
   final uri = Uri.tryParse(link);
   // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
-  final ok = uri != null && await NativeFileService.openExternal(uri);
+  // Ionic Browser.open: in-app browser in the native app.
+  final ok = uri != null && await NativeFileService.openLinkInApp(uri);
   if (!ok && context.mounted) {
     ToastHelper.showError(context, context.l10n.signoutFlutterLinkOpenFailed);
   }

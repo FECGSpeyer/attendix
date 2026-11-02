@@ -82,7 +82,10 @@ class SelfServiceDutySection extends ConsumerWidget {
 
     // "Bitte bestätigen"
     if (_shows(SelfServiceDutyPart.requests) && overview.requests.isNotEmpty) {
-      children.add(_SectionTitle(title: context.l10n.signoutPleaseConfirm, count: overview.requests.length));
+      children.add(_DutyAnchor(
+        id: 'duty-requests',
+        child: _SectionTitle(title: context.l10n.signoutPleaseConfirm, count: overview.requests.length),
+      ));
       for (final r in overview.requests) {
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
@@ -159,7 +162,7 @@ class SelfServiceDutySection extends ConsumerWidget {
       // "Offene Dienste" (preview, urgent first)
       final preview = [...overview.openDuties]
         ..sort((a, b) => (isUrgentDuty(b) ? 1 : 0) - (isUrgentDuty(a) ? 1 : 0));
-      children.add(_SectionTitle(
+      children.add(_DutyAnchor(id: 'duty-open', child: _SectionTitle(
         title: context.l10n.signoutOpenDuties,
         action: overview.openDuties.length > 3
             ? TextButton(
@@ -167,7 +170,7 @@ class SelfServiceDutySection extends ConsumerWidget {
                 child: Text(context.l10n.signoutAllCount(overview.openDuties.length)),
               )
             : null,
-      ));
+      )));
       children.add(Card(
         margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
         child: Column(
@@ -192,7 +195,10 @@ class SelfServiceDutySection extends ConsumerWidget {
       // "Meine Dienste"
       final mine = overview.confirmed.skip(1).toList();
       if (mine.isNotEmpty) {
-        children.add(_SectionTitle(title: context.l10n.signoutMyDuties, count: mine.length));
+        children.add(_DutyAnchor(
+          id: 'duty-mine',
+          child: _SectionTitle(title: context.l10n.signoutMyDuties, count: mine.length),
+        ));
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: Column(
@@ -213,6 +219,9 @@ class SelfServiceDutySection extends ConsumerWidget {
             ],
           ),
         ));
+      } else if (next == null) {
+        // Ionic: empty `duty-mine` anchor at this position.
+        children.add(const _DutyAnchor(id: 'duty-mine', child: SizedBox.shrink()));
       }
 
       children.add(Card(
@@ -356,6 +365,48 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
   );
 }
 
+/// Ionic `scrollToSection(id)` targets (`duty-mine`, `duty-requests`,
+/// `duty-open`): each section title registers its context, a tap on a stat
+/// tile scrolls it into view. A registry instead of GlobalKeys, so two
+/// mounted sections never clash.
+class _DutyAnchor extends StatefulWidget {
+  const _DutyAnchor({required this.id, required this.child});
+
+  final String id;
+  final Widget child;
+
+  static final Map<String, BuildContext> _contexts = {};
+
+  static void scrollTo(String id) {
+    final ctx = _contexts[id];
+    if (ctx == null || !ctx.mounted) return;
+    Scrollable.ensureVisible(
+      ctx,
+      duration: const Duration(milliseconds: 300),
+      curve: Curves.easeInOut,
+    );
+  }
+
+  @override
+  State<_DutyAnchor> createState() => _DutyAnchorState();
+}
+
+class _DutyAnchorState extends State<_DutyAnchor> {
+  @override
+  Widget build(BuildContext context) {
+    _DutyAnchor._contexts[widget.id] = context;
+    return widget.child;
+  }
+
+  @override
+  void dispose() {
+    if (identical(_DutyAnchor._contexts[widget.id], context)) {
+      _DutyAnchor._contexts.remove(widget.id);
+    }
+    super.dispose();
+  }
+}
+
 class _DutyStats extends StatelessWidget {
   const _DutyStats({required this.overview});
 
@@ -363,10 +414,13 @@ class _DutyStats extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    Widget stat(int value, String label, {bool warn = false}) => Expanded(
+    Widget stat(int value, String label, String section, {bool warn = false}) => Expanded(
           child: Card(
             color: warn ? AppColors.warning.withAlpha(46) : null,
-            child: Padding(
+            clipBehavior: Clip.antiAlias,
+            child: InkWell(
+              onTap: () => _DutyAnchor.scrollTo(section),
+              child: Padding(
               padding: const EdgeInsets.symmetric(vertical: AppDimensions.paddingM, horizontal: 4),
               child: Column(
                 children: [
@@ -375,6 +429,7 @@ class _DutyStats extends StatelessWidget {
                 ],
               ),
             ),
+            ),
           ),
         );
 
@@ -382,9 +437,10 @@ class _DutyStats extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingS),
       child: Row(
         children: [
-          stat(overview.dutiesThisMonth, context.l10n.signoutDutiesThisMonth(overview.dutiesThisMonth)),
-          stat(overview.requests.length, context.l10n.signoutToConfirm, warn: overview.requests.isNotEmpty),
-          stat(overview.openDuties.length, context.l10n.signoutOpenInTeam),
+          stat(overview.dutiesThisMonth, context.l10n.signoutDutiesThisMonth(overview.dutiesThisMonth), 'duty-mine'),
+          stat(overview.requests.length, context.l10n.signoutToConfirm, 'duty-requests',
+              warn: overview.requests.isNotEmpty),
+          stat(overview.openDuties.length, context.l10n.signoutOpenInTeam, 'duty-open'),
         ],
       ),
     );

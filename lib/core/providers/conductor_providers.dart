@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/person/person.dart';
 import 'group_providers.dart';
 import 'player_providers.dart';
+import '../services/offline_list_cache.dart';
 
 /// Provider for conductors (main group members)
 /// Conductors are members of the "main group" (Hauptgruppe/Dirigenten)
@@ -14,7 +15,17 @@ final conductorsProvider = FutureProvider<List<Person>>((ref) async {
     return [];
   }
 
-  return repo.getConductors(mainGroup.id!, includeLeft: true);
+  // Ionic conductor.service `offline_conductors_v1_`: the last loaded list
+  // while offline (song history with conductor, songs selection sheet).
+  final mainGroupId = mainGroup.id!;
+  return OfflineListCache.read<Person>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'conductors',
+    fetch: () => repo.getConductors(mainGroupId, includeLeft: true),
+    toJson: (p) => p.toJson(),
+    fromJson: Person.fromJson,
+  );
 });
 
 /// Provider for active conductors only (not left)

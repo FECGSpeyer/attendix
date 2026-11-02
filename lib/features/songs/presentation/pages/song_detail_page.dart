@@ -347,7 +347,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   detail: true,
                   // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
                   onTap: () =>
-                      NativeFileService.openExternal(Uri.parse(song.link!)),
+                      NativeFileService.openLinkInApp(Uri.parse(song.link!)),
                 ),
               ]),
             if (!data.readOnly)
