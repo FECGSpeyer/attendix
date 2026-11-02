@@ -243,7 +243,7 @@ class SettingsPage extends ConsumerWidget {
                   SettingsListTile(
                     icon: Icons.mail_outline,
                     title: l10n.settingsAnnouncements,
-                    subtitle: l10n.settingsMessageAll,
+                    subtitle: l10n.settingsMessagesHint,
                     onTap: () => context.push('/settings/messages'),
                   ),
                 ],

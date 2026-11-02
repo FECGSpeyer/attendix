@@ -477,6 +477,20 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attListAddSongs => 'Add piece(s)';
 
   @override
+  String get attListArchived => 'Archived';
+
+  @override
+  String attListArchivedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count archived events',
+      one: '$count archived event',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get attListAverage => 'Average';
 
   @override
@@ -616,6 +630,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attListShowAll => 'Show all';
 
   @override
+  String get attListShowArchived => 'Show archived';
+
+  @override
   String get attListSongs => 'Pieces';
 
   @override
@@ -682,6 +699,29 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get attendanceAllAlreadyIncluded =>
       'Everyone is already part of this attendance.';
+
+  @override
+  String get attendanceArchive => 'Archive';
+
+  @override
+  String get attendanceArchiveConfirmHeader => 'Archive event?';
+
+  @override
+  String get attendanceArchiveConfirmMessage =>
+      'Members will no longer see this event or their attendance for it. Admins and responsibles still see it and can restore it at any time.';
+
+  @override
+  String get attendanceArchiveFailed => 'The event could not be changed.';
+
+  @override
+  String get attendanceArchivedBanner => 'Archived';
+
+  @override
+  String get attendanceArchivedBannerHint =>
+      'Hidden from members. Only admins and responsibles can see this event.';
+
+  @override
+  String get attendanceArchivedToast => 'Event archived';
 
   @override
   String get attendanceAssign => 'Assign';
@@ -1351,6 +1391,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceResetChecklist => 'Reset checklist';
 
   @override
+  String get attendanceRestore => 'Restore';
+
+  @override
+  String get attendanceRestoredToast => 'Event restored';
+
+  @override
   String get attendanceRunSheetAgenda => 'Run sheet & agenda';
 
   @override
@@ -1393,9 +1439,46 @@ class AppLocalizationsEn extends AppLocalizations {
   String get attendanceSignedOut => 'signed out';
 
   @override
+  String attendanceSongsChip(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count pieces',
+      one: '$count piece',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String attendanceSongsCount(Object count) {
     return 'Pieces ($count)';
   }
+
+  @override
+  String get attendanceSongsNoScoresForYou => 'No sheet music for you';
+
+  @override
+  String get attendanceSongsOpenRunSheet => 'Open run sheet';
+
+  @override
+  String get attendanceSongsPrintAll => 'Print all sheet music';
+
+  @override
+  String get attendanceSongsShow => 'Show pieces';
+
+  @override
+  String attendanceSongsTileEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: 'Next event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendanceSongsTitle => 'Pieces';
 
   @override
   String get attendanceSorting => 'Sorting';
@@ -1518,6 +1601,697 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get authUserNotFound => 'User not found';
+
+  @override
+  String get autoMessagesActive => 'Active';
+
+  @override
+  String get autoMessagesActiveHint =>
+      'A rule that is switched on applies from now on. Past events are not sent afterwards. Check the preview below first.';
+
+  @override
+  String get autoMessagesAllTypes => 'all event types';
+
+  @override
+  String get autoMessagesAllowResponses => 'Members can reply';
+
+  @override
+  String get autoMessagesAllowResponsesHint =>
+      'Buttons “Add reason” and “I was there” in the message';
+
+  @override
+  String get autoMessagesChannelEmail => 'Email';
+
+  @override
+  String get autoMessagesChannelPush => 'Push / Telegram';
+
+  @override
+  String get autoMessagesChannels => 'Channels';
+
+  @override
+  String get autoMessagesChipCopy => 'Copy';
+
+  @override
+  String get autoMessagesChipEmail => 'Email';
+
+  @override
+  String get autoMessagesChipPush => 'Push';
+
+  @override
+  String get autoMessagesChipResponses => 'Add reason';
+
+  @override
+  String get autoMessagesCopy => 'Copy (optional)';
+
+  @override
+  String get autoMessagesCopyHint =>
+      'One summary per event of who was contacted.';
+
+  @override
+  String get autoMessagesCopyResponsibles => 'Admins and people in charge';
+
+  @override
+  String get autoMessagesCopyVoiceLeaders =>
+      'Section leaders (their group only)';
+
+  @override
+  String get autoMessagesCustomHint =>
+      'Your own text is sent as you write it, in every language. Tap a placeholder to insert it.';
+
+  @override
+  String get autoMessagesCustomText => 'Own text';
+
+  @override
+  String autoMessagesDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count days',
+      one: '$count day',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesDecideAcceptPresent =>
+      'Set the status to “present”? The person will be notified.';
+
+  @override
+  String get autoMessagesDecideAcceptReason =>
+      'Set the status to “excused”? The person will be notified.';
+
+  @override
+  String get autoMessagesDecideReject =>
+      'Reject the reply? The status stays, the reason stays as a note.';
+
+  @override
+  String get autoMessagesDecidedAccepted => 'Accepted';
+
+  @override
+  String get autoMessagesDecidedRejected => 'Rejected';
+
+  @override
+  String get autoMessagesDelay => 'Wait after the event ends';
+
+  @override
+  String get autoMessagesDelayHint =>
+      'During this time you can still correct the attendance or suspend the message for this event.';
+
+  @override
+  String autoMessagesDelayHours(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count hrs',
+      one: '$count hr',
+    );
+    return '$_temp0 later';
+  }
+
+  @override
+  String autoMessagesDelayMinutes(Object count) {
+    return '$count min later';
+  }
+
+  @override
+  String get autoMessagesDelayNone => 'Right after the end';
+
+  @override
+  String get autoMessagesDeleteConfirm => 'Delete rule?';
+
+  @override
+  String get autoMessagesDeleteHint => 'Messages already sent are kept.';
+
+  @override
+  String get autoMessagesDeleteRule => 'Delete rule';
+
+  @override
+  String get autoMessagesDisabledToast => 'Rule switched off';
+
+  @override
+  String get autoMessagesEnabledToast => 'Rule switched on';
+
+  @override
+  String get autoMessagesErrChannel => 'Please choose at least one channel';
+
+  @override
+  String get autoMessagesErrName => 'Please give the rule a name';
+
+  @override
+  String get autoMessagesErrStatus => 'Please choose at least one trigger';
+
+  @override
+  String get autoMessagesErrText => 'Please enter a title and a text';
+
+  @override
+  String get autoMessagesExcuse => 'Excuse';
+
+  @override
+  String get autoMessagesExcuseAfterCheck => 'Excused after confirmation';
+
+  @override
+  String get autoMessagesExcuseInstant => 'Excused right away';
+
+  @override
+  String get autoMessagesFreqCount => 'From how many times';
+
+  @override
+  String get autoMessagesFreqDays => 'Period';
+
+  @override
+  String get autoMessagesFreqEach => 'Every time';
+
+  @override
+  String get autoMessagesFreqHintEach => 'For every matching event.';
+
+  @override
+  String autoMessagesFreqHintStreak(Object count) {
+    return 'Only when someone misses $count times in a row. After that only again once they attended in between.';
+  }
+
+  @override
+  String autoMessagesFreqHintWindow(Object days, Object count) {
+    return 'When someone matches for the ${count}th time within $days days.';
+  }
+
+  @override
+  String get autoMessagesFreqStreak => 'In a row';
+
+  @override
+  String autoMessagesFreqStreakShort(Object count) {
+    return 'from $count× in a row';
+  }
+
+  @override
+  String get autoMessagesFreqWindow => 'In a period';
+
+  @override
+  String autoMessagesFreqWindowShort(Object count, Object days) {
+    return 'from $count× in $days days';
+  }
+
+  @override
+  String get autoMessagesGeneral => 'General';
+
+  @override
+  String get autoMessagesGroups => 'Groups';
+
+  @override
+  String get autoMessagesGroupsAll =>
+      'Nothing selected: applies to all groups.';
+
+  @override
+  String get autoMessagesGroupsSome =>
+      'Applies only to people from the selected groups.';
+
+  @override
+  String get autoMessagesHistEmpty => 'This rule has not sent anything yet.';
+
+  @override
+  String get autoMessagesHistRead => 'read';
+
+  @override
+  String get autoMessagesHistResponses => 'replies';
+
+  @override
+  String get autoMessagesHistRowNone => 'Nobody matched';
+
+  @override
+  String get autoMessagesHistRowNotRecorded =>
+      'Not sent: attendance was not taken';
+
+  @override
+  String autoMessagesHistRowSent(num count, Object read, Object responses) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '$count person',
+    );
+    return '$_temp0 · $read read · $responses replies';
+  }
+
+  @override
+  String autoMessagesHistRowSuspended(Object name) {
+    return 'Suspended by $name';
+  }
+
+  @override
+  String get autoMessagesHistSent => 'people contacted';
+
+  @override
+  String get autoMessagesHistory => 'History';
+
+  @override
+  String get autoMessagesHowOften => 'How often?';
+
+  @override
+  String get autoMessagesIntro =>
+      'Automatically send members a message after an event, for example when they were absent without cancelling. All rules stay off until you switch them on.';
+
+  @override
+  String autoMessagesLastWeek(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people contacted',
+      one: '$count person contacted',
+    );
+    return 'Last 7 days: $_temp0';
+  }
+
+  @override
+  String get autoMessagesLess => 'Less';
+
+  @override
+  String get autoMessagesLoadFailed => 'Automatic messages could not be loaded';
+
+  @override
+  String autoMessagesManualBody(Object termin, Object datum, Object instanz) {
+    return 'Hi,\n\nyou were not at $termin on $datum and had not cancelled.\n\nIf you had a reason, feel free to add it in the app. Please cancel in advance next time.\nYour team at $instanz';
+  }
+
+  @override
+  String autoMessagesManualRecipients(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unexcused people',
+      one: '$count unexcused person',
+    );
+    return '$_temp0 of this event';
+  }
+
+  @override
+  String get autoMessagesManualTitle => 'We missed you';
+
+  @override
+  String get autoMessagesMessage => 'Message';
+
+  @override
+  String get autoMessagesMore => 'More';
+
+  @override
+  String get autoMessagesName => 'Name';
+
+  @override
+  String get autoMessagesNewRule => 'New rule';
+
+  @override
+  String get autoMessagesOnlyEmail => 'email only';
+
+  @override
+  String get autoMessagesOpenTermin => 'Open event';
+
+  @override
+  String autoMessagesPanelNone(Object rule) {
+    return '“$rule”: nobody matched';
+  }
+
+  @override
+  String autoMessagesPanelNotRecorded(Object rule) {
+    return '“$rule” not sent: attendance was not taken';
+  }
+
+  @override
+  String autoMessagesPanelPending(Object rule) {
+    return '“$rule” will be checked shortly';
+  }
+
+  @override
+  String get autoMessagesPanelPendingHint =>
+      'The message only goes out when attendance has been taken.';
+
+  @override
+  String autoMessagesPanelResponses(Object count) {
+    return 'Replies ($count open)';
+  }
+
+  @override
+  String get autoMessagesPanelSaysPresent => 'Says: “I was there”';
+
+  @override
+  String autoMessagesPanelSent(Object rule, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people',
+      one: '$count person',
+    );
+    return '“$rule” went to $_temp0';
+  }
+
+  @override
+  String autoMessagesPanelSuspended(Object rule) {
+    return '“$rule” is suspended for this event';
+  }
+
+  @override
+  String autoMessagesPanelWillSend(Object rule, Object time) {
+    return '“$rule” goes out at $time';
+  }
+
+  @override
+  String get autoMessagesPanelWillSendHint =>
+      'Until then you can still correct the attendance.';
+
+  @override
+  String get autoMessagesPreview => 'Preview';
+
+  @override
+  String autoMessagesPreviewAt(Object time) {
+    return 'It would have been sent on $time';
+  }
+
+  @override
+  String autoMessagesPreviewExcluded(Object excused, Object paused) {
+    return 'Not contacted: $excused cancelled, $paused paused';
+  }
+
+  @override
+  String get autoMessagesPreviewFailed => 'Preview could not be loaded';
+
+  @override
+  String get autoMessagesPreviewHint =>
+      'The preview sends nothing. With “In a row”, earlier events count too.';
+
+  @override
+  String get autoMessagesPreviewNoTermine =>
+      'No matching events in the last 60 days.';
+
+  @override
+  String get autoMessagesPreviewNotRecorded =>
+      'Skipped: attendance was not taken';
+
+  @override
+  String autoMessagesPreviewWould(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count people would have got the message',
+      one: '$count person would have got the message',
+      zero: 'Nobody would have got the message',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesReasonFamily => 'Family';
+
+  @override
+  String get autoMessagesReasonForgot => 'Forgot to cancel';
+
+  @override
+  String get autoMessagesReasonOther => 'Other';
+
+  @override
+  String get autoMessagesReasonSick => 'Sick';
+
+  @override
+  String get autoMessagesReasonWork => 'Work / school';
+
+  @override
+  String get autoMessagesReject => 'Reject';
+
+  @override
+  String get autoMessagesResetToTemplate => 'Reset to template';
+
+  @override
+  String get autoMessagesRespAddReason => 'Add reason';
+
+  @override
+  String get autoMessagesRespAlreadyDecided =>
+      'Your reply has already been handled';
+
+  @override
+  String get autoMessagesRespChange => 'Change reply';
+
+  @override
+  String get autoMessagesRespDone => 'Thanks! Your reply was sent.';
+
+  @override
+  String get autoMessagesRespDoneInstant => 'Thanks! You are now excused.';
+
+  @override
+  String get autoMessagesRespExpired =>
+      'Replies are no longer possible for this event';
+
+  @override
+  String get autoMessagesRespFailed => 'The reply could not be sent';
+
+  @override
+  String get autoMessagesRespHadReason => 'I had a reason';
+
+  @override
+  String get autoMessagesRespHint =>
+      'The people in charge see your reason as a note on the event.';
+
+  @override
+  String get autoMessagesRespReason => 'Reason';
+
+  @override
+  String get autoMessagesRespSend => 'Send';
+
+  @override
+  String get autoMessagesRespStateAccepted => 'Accepted';
+
+  @override
+  String get autoMessagesRespStatePending => 'Being checked';
+
+  @override
+  String get autoMessagesRespStateRejected => 'Not accepted';
+
+  @override
+  String get autoMessagesRespText => 'Details (optional)';
+
+  @override
+  String get autoMessagesRespTitle => 'Reply';
+
+  @override
+  String get autoMessagesRespWasThere => 'I was there';
+
+  @override
+  String get autoMessagesRespWasThereHint =>
+      'The people in charge get a notice and can correct the attendance.';
+
+  @override
+  String get autoMessagesRespWasThereShort =>
+      '“I was there” is sent as a notice to the people in charge.';
+
+  @override
+  String get autoMessagesResponses => 'Add reason';
+
+  @override
+  String autoMessagesResponsesHint(Object days) {
+    return 'Replies are possible up to $days days after the event. “I was there” is always checked first.';
+  }
+
+  @override
+  String get autoMessagesRule => 'Rule';
+
+  @override
+  String get autoMessagesRules => 'Rules';
+
+  @override
+  String get autoMessagesSafety =>
+      'Messages are only sent when attendance was taken for the event. People who cancelled, paused or left never get a message.';
+
+  @override
+  String get autoMessagesSampleFirstName => 'Lena';
+
+  @override
+  String get autoMessagesSampleName => 'Lena Sample';
+
+  @override
+  String get autoMessagesSampleTermin => 'Rehearsal';
+
+  @override
+  String get autoMessagesSaveFailed => 'Saving failed';
+
+  @override
+  String get autoMessagesSaved => 'Rule saved';
+
+  @override
+  String get autoMessagesSetPresent => 'Mark present';
+
+  @override
+  String get autoMessagesShowPreview => 'Preview with the last events';
+
+  @override
+  String get autoMessagesStartFromTemplate => 'Start from a template';
+
+  @override
+  String get autoMessagesStatus0 => 'No reply';
+
+  @override
+  String get autoMessagesStatus1 => 'Present';
+
+  @override
+  String get autoMessagesStatus2 => 'Excused';
+
+  @override
+  String get autoMessagesStatus3 => 'Late';
+
+  @override
+  String get autoMessagesStatus4 => 'Unexcused';
+
+  @override
+  String get autoMessagesStatus5 => 'Late, excused';
+
+  @override
+  String get autoMessagesSuspend => 'Skip this time';
+
+  @override
+  String get autoMessagesTemplate => 'Template';
+
+  @override
+  String get autoMessagesTemplateHint =>
+      'The template exists in several languages. Every member gets it in their app language.';
+
+  @override
+  String get autoMessagesTitle => 'Automatic messages';
+
+  @override
+  String autoMessagesTplAbsentBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hi $vorname,\n\nyou were not at $termin on $datum and had not cancelled.\n\nIs everything alright? If you had a reason, feel free to add it in the app.\n\nPlease cancel in advance next time so we can plan better.\nYour team at $instanz';
+  }
+
+  @override
+  String autoMessagesTplAbsentTitle(Object vorname) {
+    return 'We missed you, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplHintAbsent =>
+      'After every event where someone is absent without excuse';
+
+  @override
+  String get autoMessagesTplHintLate =>
+      'When someone arrives late without letting you know';
+
+  @override
+  String get autoMessagesTplHintNoAnswer =>
+      'When someone has not replied by the end of the event';
+
+  @override
+  String get autoMessagesTplHintStreak => 'Only from the 2nd absence in a row';
+
+  @override
+  String autoMessagesTplLateBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hi $vorname,\n\nyou arrived late at $termin on $datum without letting us know.\n\nIf you had a reason, feel free to add it in the app. Please tell us in advance next time.\nYour team at $instanz';
+  }
+
+  @override
+  String autoMessagesTplLateTitle(Object vorname) {
+    return 'You were late, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplNameAbsent => 'Absent without excuse';
+
+  @override
+  String get autoMessagesTplNameLate => 'Late without notice';
+
+  @override
+  String get autoMessagesTplNameNoAnswer => 'No reply';
+
+  @override
+  String get autoMessagesTplNameStreak => 'Missed several times in a row';
+
+  @override
+  String autoMessagesTplNoAnswerBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hi $vorname,\n\nwe did not get a reply from you for $termin on $datum.\n\nPlease let us know in the app whether you are coming. If you had a reason, you can add it here.\nYour team at $instanz';
+  }
+
+  @override
+  String autoMessagesTplNoAnswerTitle(Object termin) {
+    return 'No reply for $termin';
+  }
+
+  @override
+  String autoMessagesTplStreakBody(
+    Object vorname,
+    Object anzahl,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hi $vorname,\n\nyou have now missed $anzahl times in a row without cancelling, most recently $termin on $datum.\n\nIs everything alright? Feel free to get in touch. If you had a reason, add it in the app.\nYour team at $instanz';
+  }
+
+  @override
+  String autoMessagesTplStreakTitle(Object vorname) {
+    return '$vorname, we miss you';
+  }
+
+  @override
+  String get autoMessagesTrigger0 => 'No reply';
+
+  @override
+  String get autoMessagesTrigger3 => 'Late without notice';
+
+  @override
+  String get autoMessagesTrigger4 => 'Absent without excuse';
+
+  @override
+  String get autoMessagesTriggerHint0 =>
+      'Status still “neutral” after the event';
+
+  @override
+  String get autoMessagesTriggerHint3 => 'Status “late”, not “late, excused”';
+
+  @override
+  String get autoMessagesTriggerHint4 => 'Status “unexcused” after the event';
+
+  @override
+  String get autoMessagesTypesAll =>
+      'Nothing selected: applies to all event types.';
+
+  @override
+  String get autoMessagesTypesSome =>
+      'Applies only to the selected event types.';
+
+  @override
+  String get autoMessagesUnreachable => 'not reachable';
+
+  @override
+  String get autoMessagesUnsuspend => 'Switch back on';
+
+  @override
+  String get autoMessagesUseTemplate => 'Template';
+
+  @override
+  String get autoMessagesWhen => 'When is it sent?';
+
+  @override
+  String get autoMessagesWhichTermine => 'For which events?';
+
+  @override
+  String get autoMessagesWhoCanUse =>
+      'Admins and people in charge can create and change rules.';
+
+  @override
+  String get autoMessagesWhoRead => 'Who read it?';
+
+  @override
+  String autoMessagesWriteUnexcusedMenu(Object count) {
+    return 'Message the unexcused ($count)';
+  }
 
   @override
   String get bellCurrentInstance => 'Current instance';
@@ -3347,7 +4121,46 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String filesDeleteSelectedHeader(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Delete $count entries?',
+      one: 'Delete $count entry?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSelectedMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'The $count selected entries will be deleted permanently, folders including all their content.',
+      one: 'The selected entry will be deleted permanently.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSummary(Object ok, Object failed) {
+    return '$ok deleted, $failed failed.';
+  }
+
+  @override
   String get filesDeleted => 'Entry deleted.';
+
+  @override
+  String filesDeletedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries deleted.',
+      one: 'Entry deleted.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesDescending => 'descending';
@@ -3435,16 +4248,82 @@ class AppLocalizationsEn extends AppLocalizations {
   String get filesMove => 'Move';
 
   @override
+  String get filesMoveBeingMoved => 'Being moved';
+
+  @override
+  String get filesMoveChooseTarget => 'Choose a target folder.';
+
+  @override
+  String get filesMoveCollapse => 'Collapse';
+
+  @override
+  String get filesMoveCurrentFolder => 'Current folder';
+
+  @override
+  String filesMoveExists(Object name) {
+    return '“$name” already exists in the target folder. Nothing was moved.';
+  }
+
+  @override
+  String get filesMoveExpand => 'Expand';
+
+  @override
   String filesMoveFailed(Object error) {
     return 'Moving failed: $error';
   }
 
   @override
   String get filesMoveHint =>
-      'Target folder relative to the root. Leave empty for root.';
+      'Tap a folder to choose it as the target. Use the arrow to expand subfolders.';
+
+  @override
+  String filesMoveMoveHere(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Move $count entries here',
+      one: 'Move here',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesMoveRoot => 'File storage';
+
+  @override
+  String filesMoveSummary(Object ok, Object skipped, Object failed) {
+    return '$ok moved, $skipped skipped (already in target), $failed failed.';
+  }
+
+  @override
+  String filesMoveTarget(Object path) {
+    return 'Target: $path';
+  }
+
+  @override
+  String filesMoveTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Move $count entries',
+      one: 'Move',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesMoved => 'Entry moved.';
+
+  @override
+  String filesMovedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count entries moved.',
+      one: 'Entry moved.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesName => 'Name';
@@ -3541,6 +4420,33 @@ class AppLocalizationsEn extends AppLocalizations {
   @override
   String get filesSearchType =>
       '<strong>type:&lt;value&gt;</strong> · Filters by file type or kind (e.g. <strong>type:pdf</strong>, <strong>type:folder</strong>, <strong>type:file</strong>).';
+
+  @override
+  String get filesSelect => 'Select';
+
+  @override
+  String get filesSelectAll => 'All';
+
+  @override
+  String get filesSelectMultiple => 'Select multiple';
+
+  @override
+  String get filesSelectNone => 'None';
+
+  @override
+  String filesSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count selected',
+      one: '$count selected',
+      zero: 'Nothing selected',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesSelectionDone => 'End selection';
 
   @override
   String get filesSend => 'Send';
@@ -4749,6 +5655,21 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String messagesAutoActive(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count rules active',
+      one: '$count rule active',
+      zero: 'No rule active',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get messagesAutoEntry => 'Automatic messages';
+
+  @override
   String get messagesCountsFailed => 'The recipients could not be loaded.';
 
   @override
@@ -5039,6 +5960,44 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get messagesWriteFirst => 'Write first message';
+
+  @override
+  String get navClose => 'Close menu';
+
+  @override
+  String get navCollapse => 'Collapse sidebar';
+
+  @override
+  String get navExpand => 'Expand sidebar';
+
+  @override
+  String get navGroupAccount => 'Account';
+
+  @override
+  String get navGroupAdmin => 'Administration';
+
+  @override
+  String get navGroupOverview => 'Overview';
+
+  @override
+  String get navGroupTeam => 'Team';
+
+  @override
+  String navInstances(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count instances',
+      one: '$count instance',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get navLabel => 'Main navigation';
+
+  @override
+  String get navShortcut => 'Ctrl/⌘ + B';
 
   @override
   String get notifAnnouncements => 'Announcements';
@@ -7118,6 +8077,12 @@ class AppLocalizationsEn extends AppLocalizations {
   String get personVoiceLeaderStatusOnly => 'Section leader status only';
 
   @override
+  String get planViewerOpenScores => 'Open sheet music';
+
+  @override
+  String get planningAddAgain => 'Add again';
+
+  @override
   String get planningAddAnotherPlan => 'Add another run sheet';
 
   @override
@@ -7267,6 +8232,13 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningCurrent => 'Current';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedHeader => 'Already added';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedMessage =>
+      'All current pieces are already in this run sheet. Do you want to add them again?';
 
   @override
   String get planningDefaultTitle => 'Use default title';
@@ -7534,6 +8506,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get planningNext => 'Next';
+
+  @override
+  String get planningNoCurrentSongs => 'No current pieces available';
 
   @override
   String get planningNoPlan => 'No plan available';
@@ -11534,7 +12509,8 @@ class AppLocalizationsEn extends AppLocalizations {
   String get settingsLogout => 'Log out';
 
   @override
-  String get settingsMessageAll => 'Send a message to everyone';
+  String get settingsMessagesHint =>
+      'Send messages and follow up automatically';
 
   @override
   String get settingsMobile => 'Mobile number';

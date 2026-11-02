@@ -878,6 +878,18 @@ abstract class AppLocalizations {
   /// **'Werk(e) hinzufügen'**
   String get attListAddSongs;
 
+  /// attList.archived
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get attListArchived;
+
+  /// attList.archivedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} archivierter Termin} other {{count} archivierte Termine}}'**
+  String attListArchivedCount(num count);
+
   /// attList.average
   ///
   /// In de, this message translates to:
@@ -1112,6 +1124,12 @@ abstract class AppLocalizations {
   /// **'Alle anzeigen'**
   String get attListShowAll;
 
+  /// attList.showArchived
+  ///
+  /// In de, this message translates to:
+  /// **'Archivierte anzeigen'**
+  String get attListShowArchived;
+
   /// attList.songs
   ///
   /// In de, this message translates to:
@@ -1213,6 +1231,48 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Alle Personen sind bereits in dieser Anwesenheit enthalten.'**
   String get attendanceAllAlreadyIncluded;
+
+  /// attendance.archive
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren'**
+  String get attendanceArchive;
+
+  /// attendance.archiveConfirmHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Termin archivieren?'**
+  String get attendanceArchiveConfirmHeader;
+
+  /// attendance.archiveConfirmMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.'**
+  String get attendanceArchiveConfirmMessage;
+
+  /// attendance.archiveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin konnte nicht geändert werden.'**
+  String get attendanceArchiveFailed;
+
+  /// attendance.archivedBanner
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get attendanceArchivedBanner;
+
+  /// attendance.archivedBannerHint
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.'**
+  String get attendanceArchivedBannerHint;
+
+  /// attendance.archivedToast
+  ///
+  /// In de, this message translates to:
+  /// **'Termin archiviert'**
+  String get attendanceArchivedToast;
 
   /// attendance.assign
   ///
@@ -2300,6 +2360,18 @@ abstract class AppLocalizations {
   /// **'Checkliste zurücksetzen'**
   String get attendanceResetChecklist;
 
+  /// attendance.restore
+  ///
+  /// In de, this message translates to:
+  /// **'Wiederherstellen'**
+  String get attendanceRestore;
+
+  /// attendance.restoredToast
+  ///
+  /// In de, this message translates to:
+  /// **'Termin wiederhergestellt'**
+  String get attendanceRestoredToast;
+
   /// attendance.runSheetAgenda
   ///
   /// In de, this message translates to:
@@ -2384,11 +2456,53 @@ abstract class AppLocalizations {
   /// **'abgemeldet'**
   String get attendanceSignedOut;
 
+  /// attendanceSongs.chip
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Werk} other {{count} Werke}}'**
+  String attendanceSongsChip(num count);
+
   /// attendance.songsCount
   ///
   /// In de, this message translates to:
   /// **'Werke ({count})'**
   String attendanceSongsCount(Object count);
+
+  /// attendanceSongs.noScoresForYou
+  ///
+  /// In de, this message translates to:
+  /// **'Für dich sind keine Noten hinterlegt'**
+  String get attendanceSongsNoScoresForYou;
+
+  /// attendanceSongs.openRunSheet
+  ///
+  /// In de, this message translates to:
+  /// **'Ablaufplan öffnen'**
+  String get attendanceSongsOpenRunSheet;
+
+  /// attendanceSongs.printAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Noten drucken'**
+  String get attendanceSongsPrintAll;
+
+  /// attendanceSongs.show
+  ///
+  /// In de, this message translates to:
+  /// **'Werke anzeigen'**
+  String get attendanceSongsShow;
+
+  /// attendanceSongs.tileEvents
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Nächster Termin} other {{count} Termine}}'**
+  String attendanceSongsTileEvents(num count);
+
+  /// attendanceSongs.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get attendanceSongsTitle;
 
   /// attendance.sorting
   ///
@@ -2599,6 +2713,1089 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Benutzer nicht gefunden'**
   String get authUserNotFound;
+
+  /// autoMessages.active
+  ///
+  /// In de, this message translates to:
+  /// **'Aktiv'**
+  String get autoMessagesActive;
+
+  /// autoMessages.activeHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.'**
+  String get autoMessagesActiveHint;
+
+  /// autoMessages.allTypes
+  ///
+  /// In de, this message translates to:
+  /// **'alle Termintypen'**
+  String get autoMessagesAllTypes;
+
+  /// autoMessages.allowResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglied kann antworten'**
+  String get autoMessagesAllowResponses;
+
+  /// autoMessages.allowResponsesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht'**
+  String get autoMessagesAllowResponsesHint;
+
+  /// autoMessages.channelEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get autoMessagesChannelEmail;
+
+  /// autoMessages.channelPush
+  ///
+  /// In de, this message translates to:
+  /// **'Push / Telegram'**
+  String get autoMessagesChannelPush;
+
+  /// autoMessages.channels
+  ///
+  /// In de, this message translates to:
+  /// **'Kanäle'**
+  String get autoMessagesChannels;
+
+  /// autoMessages.chipCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie'**
+  String get autoMessagesChipCopy;
+
+  /// autoMessages.chipEmail
+  ///
+  /// In de, this message translates to:
+  /// **'E-Mail'**
+  String get autoMessagesChipEmail;
+
+  /// autoMessages.chipPush
+  ///
+  /// In de, this message translates to:
+  /// **'Push'**
+  String get autoMessagesChipPush;
+
+  /// autoMessages.chipResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesChipResponses;
+
+  /// autoMessages.copy
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie (optional)'**
+  String get autoMessagesCopy;
+
+  /// autoMessages.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eine Sammelinfo pro Termin, wer angeschrieben wurde.'**
+  String get autoMessagesCopyHint;
+
+  /// autoMessages.copyResponsibles
+  ///
+  /// In de, this message translates to:
+  /// **'Admins und Verantwortliche'**
+  String get autoMessagesCopyResponsibles;
+
+  /// autoMessages.copyVoiceLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmführer (nur ihre Gruppe)'**
+  String get autoMessagesCopyVoiceLeaders;
+
+  /// autoMessages.customHint
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.'**
+  String get autoMessagesCustomHint;
+
+  /// autoMessages.customText
+  ///
+  /// In de, this message translates to:
+  /// **'Eigener Text'**
+  String get autoMessagesCustomText;
+
+  /// autoMessages.days
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Tag} other {{count} Tage}}'**
+  String autoMessagesDays(num count);
+
+  /// autoMessages.decideAcceptPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Status auf „anwesend“ setzen? Die Person bekommt Bescheid.'**
+  String get autoMessagesDecideAcceptPresent;
+
+  /// autoMessages.decideAcceptReason
+  ///
+  /// In de, this message translates to:
+  /// **'Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.'**
+  String get autoMessagesDecideAcceptReason;
+
+  /// autoMessages.decideReject
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.'**
+  String get autoMessagesDecideReject;
+
+  /// autoMessages.decidedAccepted
+  ///
+  /// In de, this message translates to:
+  /// **'Übernommen'**
+  String get autoMessagesDecidedAccepted;
+
+  /// autoMessages.decidedRejected
+  ///
+  /// In de, this message translates to:
+  /// **'Abgelehnt'**
+  String get autoMessagesDecidedRejected;
+
+  /// autoMessages.delay
+  ///
+  /// In de, this message translates to:
+  /// **'Wartezeit nach Terminende'**
+  String get autoMessagesDelay;
+
+  /// autoMessages.delayHint
+  ///
+  /// In de, this message translates to:
+  /// **'In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.'**
+  String get autoMessagesDelayHint;
+
+  /// autoMessages.delayHours
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Std.} other {{count} Std.}} danach'**
+  String autoMessagesDelayHours(num count);
+
+  /// autoMessages.delayMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min. danach'**
+  String autoMessagesDelayMinutes(Object count);
+
+  /// autoMessages.delayNone
+  ///
+  /// In de, this message translates to:
+  /// **'Direkt nach Ende'**
+  String get autoMessagesDelayNone;
+
+  /// autoMessages.deleteConfirm
+  ///
+  /// In de, this message translates to:
+  /// **'Regel löschen?'**
+  String get autoMessagesDeleteConfirm;
+
+  /// autoMessages.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits verschickte Nachrichten bleiben erhalten.'**
+  String get autoMessagesDeleteHint;
+
+  /// autoMessages.deleteRule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel löschen'**
+  String get autoMessagesDeleteRule;
+
+  /// autoMessages.disabledToast
+  ///
+  /// In de, this message translates to:
+  /// **'Regel ausgeschaltet'**
+  String get autoMessagesDisabledToast;
+
+  /// autoMessages.enabledToast
+  ///
+  /// In de, this message translates to:
+  /// **'Regel eingeschaltet'**
+  String get autoMessagesEnabledToast;
+
+  /// autoMessages.errChannel
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte wähle mindestens einen Kanal'**
+  String get autoMessagesErrChannel;
+
+  /// autoMessages.errName
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib der Regel einen Namen'**
+  String get autoMessagesErrName;
+
+  /// autoMessages.errStatus
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte wähle mindestens einen Auslöser'**
+  String get autoMessagesErrStatus;
+
+  /// autoMessages.errText
+  ///
+  /// In de, this message translates to:
+  /// **'Bitte gib einen Titel und einen Text ein'**
+  String get autoMessagesErrText;
+
+  /// autoMessages.excuse
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigen'**
+  String get autoMessagesExcuse;
+
+  /// autoMessages.excuseAfterCheck
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Bestätigung entschuldigt'**
+  String get autoMessagesExcuseAfterCheck;
+
+  /// autoMessages.excuseInstant
+  ///
+  /// In de, this message translates to:
+  /// **'Sofort entschuldigt'**
+  String get autoMessagesExcuseInstant;
+
+  /// autoMessages.freqCount
+  ///
+  /// In de, this message translates to:
+  /// **'Ab wie vielen Malen'**
+  String get autoMessagesFreqCount;
+
+  /// autoMessages.freqDays
+  ///
+  /// In de, this message translates to:
+  /// **'Zeitraum'**
+  String get autoMessagesFreqDays;
+
+  /// autoMessages.freqEach
+  ///
+  /// In de, this message translates to:
+  /// **'Jedes Mal'**
+  String get autoMessagesFreqEach;
+
+  /// autoMessages.freqHint.each
+  ///
+  /// In de, this message translates to:
+  /// **'Bei jedem passenden Termin.'**
+  String get autoMessagesFreqHintEach;
+
+  /// autoMessages.freqHint.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Erst beim {count}. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.'**
+  String autoMessagesFreqHintStreak(Object count);
+
+  /// autoMessages.freqHint.window
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand innerhalb von {days} Tagen zum {count}. Mal passt.'**
+  String autoMessagesFreqHintWindow(Object days, Object count);
+
+  /// autoMessages.freqStreak
+  ///
+  /// In de, this message translates to:
+  /// **'In Folge'**
+  String get autoMessagesFreqStreak;
+
+  /// autoMessages.freqStreakShort
+  ///
+  /// In de, this message translates to:
+  /// **'ab {count}× in Folge'**
+  String autoMessagesFreqStreakShort(Object count);
+
+  /// autoMessages.freqWindow
+  ///
+  /// In de, this message translates to:
+  /// **'Im Zeitraum'**
+  String get autoMessagesFreqWindow;
+
+  /// autoMessages.freqWindowShort
+  ///
+  /// In de, this message translates to:
+  /// **'ab {count}× in {days} Tagen'**
+  String autoMessagesFreqWindowShort(Object count, Object days);
+
+  /// autoMessages.general
+  ///
+  /// In de, this message translates to:
+  /// **'Allgemein'**
+  String get autoMessagesGeneral;
+
+  /// autoMessages.groups
+  ///
+  /// In de, this message translates to:
+  /// **'Gruppen'**
+  String get autoMessagesGroups;
+
+  /// autoMessages.groupsAll
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts ausgewählt: gilt für alle Gruppen.'**
+  String get autoMessagesGroupsAll;
+
+  /// autoMessages.groupsSome
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für Personen aus den ausgewählten Gruppen.'**
+  String get autoMessagesGroupsSome;
+
+  /// autoMessages.histEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Diese Regel hat noch nichts verschickt.'**
+  String get autoMessagesHistEmpty;
+
+  /// autoMessages.histRead
+  ///
+  /// In de, this message translates to:
+  /// **'gelesen'**
+  String get autoMessagesHistRead;
+
+  /// autoMessages.histResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Antworten'**
+  String get autoMessagesHistResponses;
+
+  /// autoMessages.histRowNone
+  ///
+  /// In de, this message translates to:
+  /// **'Niemand passte'**
+  String get autoMessagesHistRowNone;
+
+  /// autoMessages.histRowNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht verschickt: Anwesenheit wurde nicht erfasst'**
+  String get autoMessagesHistRowNotRecorded;
+
+  /// autoMessages.histRowSent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Person} other {{count} Personen}} · {read} gelesen · {responses} Antworten'**
+  String autoMessagesHistRowSent(num count, Object read, Object responses);
+
+  /// autoMessages.histRowSuspended
+  ///
+  /// In de, this message translates to:
+  /// **'Ausgesetzt von {name}'**
+  String autoMessagesHistRowSuspended(Object name);
+
+  /// autoMessages.histSent
+  ///
+  /// In de, this message translates to:
+  /// **'Personen angeschrieben'**
+  String get autoMessagesHistSent;
+
+  /// autoMessages.history
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get autoMessagesHistory;
+
+  /// autoMessages.howOften
+  ///
+  /// In de, this message translates to:
+  /// **'Wie oft?'**
+  String get autoMessagesHowOften;
+
+  /// autoMessages.intro
+  ///
+  /// In de, this message translates to:
+  /// **'Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.'**
+  String get autoMessagesIntro;
+
+  /// autoMessages.lastWeek
+  ///
+  /// In de, this message translates to:
+  /// **'Letzte 7 Tage: {count, plural, one {{count} Person angeschrieben} other {{count} Personen angeschrieben}}'**
+  String autoMessagesLastWeek(num count);
+
+  /// autoMessages.less
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger'**
+  String get autoMessagesLess;
+
+  /// autoMessages.loadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten konnten nicht geladen werden'**
+  String get autoMessagesLoadFailed;
+
+  /// autoMessages.manualBody
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo,\n\nbei {termin} am {datum} wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von {instanz}'**
+  String autoMessagesManualBody(Object termin, Object datum, Object instanz);
+
+  /// autoMessages.manualRecipients
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} unentschuldigte Person} other {{count} unentschuldigte Personen}} dieses Termins'**
+  String autoMessagesManualRecipients(num count);
+
+  /// autoMessages.manualTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben euch vermisst'**
+  String get autoMessagesManualTitle;
+
+  /// autoMessages.message
+  ///
+  /// In de, this message translates to:
+  /// **'Nachricht'**
+  String get autoMessagesMessage;
+
+  /// autoMessages.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr'**
+  String get autoMessagesMore;
+
+  /// autoMessages.name
+  ///
+  /// In de, this message translates to:
+  /// **'Name'**
+  String get autoMessagesName;
+
+  /// autoMessages.newRule
+  ///
+  /// In de, this message translates to:
+  /// **'Neue Regel'**
+  String get autoMessagesNewRule;
+
+  /// autoMessages.onlyEmail
+  ///
+  /// In de, this message translates to:
+  /// **'nur E-Mail'**
+  String get autoMessagesOnlyEmail;
+
+  /// autoMessages.openTermin
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Termin'**
+  String get autoMessagesOpenTermin;
+
+  /// autoMessages.panelNone
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“: niemand passte'**
+  String autoMessagesPanelNone(Object rule);
+
+  /// autoMessages.panelNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ nicht verschickt: Anwesenheit wurde nicht erfasst'**
+  String autoMessagesPanelNotRecorded(Object rule);
+
+  /// autoMessages.panelPending
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ wird gleich geprüft'**
+  String autoMessagesPanelPending(Object rule);
+
+  /// autoMessages.panelPendingHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.'**
+  String get autoMessagesPanelPendingHint;
+
+  /// autoMessages.panelResponses
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldungen ({count} offen)'**
+  String autoMessagesPanelResponses(Object count);
+
+  /// autoMessages.panelSaysPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Sagt: „Ich war doch da“'**
+  String get autoMessagesPanelSaysPresent;
+
+  /// autoMessages.panelSent
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ ging an {count, plural, one {{count} Person} other {{count} Personen}}'**
+  String autoMessagesPanelSent(Object rule, num count);
+
+  /// autoMessages.panelSuspended
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ ist für diesen Termin ausgesetzt'**
+  String autoMessagesPanelSuspended(Object rule);
+
+  /// autoMessages.panelWillSend
+  ///
+  /// In de, this message translates to:
+  /// **'„{rule}“ geht um {time} raus'**
+  String autoMessagesPanelWillSend(Object rule, Object time);
+
+  /// autoMessages.panelWillSendHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bis dahin kannst du die Anwesenheit noch korrigieren.'**
+  String get autoMessagesPanelWillSendHint;
+
+  /// autoMessages.preview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau'**
+  String get autoMessagesPreview;
+
+  /// autoMessages.previewAt
+  ///
+  /// In de, this message translates to:
+  /// **'Versand wäre am {time} gewesen'**
+  String autoMessagesPreviewAt(Object time);
+
+  /// autoMessages.previewExcluded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht angeschrieben: {excused} abgemeldet, {paused} pausiert'**
+  String autoMessagesPreviewExcluded(Object excused, Object paused);
+
+  /// autoMessages.previewFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau konnte nicht geladen werden'**
+  String get autoMessagesPreviewFailed;
+
+  /// autoMessages.previewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.'**
+  String get autoMessagesPreviewHint;
+
+  /// autoMessages.previewNoTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Keine passenden Termine in den letzten 60 Tagen.'**
+  String get autoMessagesPreviewNoTermine;
+
+  /// autoMessages.previewNotRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Übersprungen: Anwesenheit nicht erfasst'**
+  String get autoMessagesPreviewNotRecorded;
+
+  /// autoMessages.previewWould
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Niemand hätte die Nachricht bekommen} one {{count} Person hätte die Nachricht bekommen} other {{count} Personen hätten die Nachricht bekommen}}'**
+  String autoMessagesPreviewWould(num count);
+
+  /// autoMessages.reason.family
+  ///
+  /// In de, this message translates to:
+  /// **'Familie'**
+  String get autoMessagesReasonFamily;
+
+  /// autoMessages.reason.forgot
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden vergessen'**
+  String get autoMessagesReasonForgot;
+
+  /// autoMessages.reason.other
+  ///
+  /// In de, this message translates to:
+  /// **'Sonstiges'**
+  String get autoMessagesReasonOther;
+
+  /// autoMessages.reason.sick
+  ///
+  /// In de, this message translates to:
+  /// **'Krank'**
+  String get autoMessagesReasonSick;
+
+  /// autoMessages.reason.work
+  ///
+  /// In de, this message translates to:
+  /// **'Arbeit / Schule'**
+  String get autoMessagesReasonWork;
+
+  /// autoMessages.reject
+  ///
+  /// In de, this message translates to:
+  /// **'Ablehnen'**
+  String get autoMessagesReject;
+
+  /// autoMessages.resetToTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Auf Vorlage zurücksetzen'**
+  String get autoMessagesResetToTemplate;
+
+  /// autoMessages.respAddReason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesRespAddReason;
+
+  /// autoMessages.respAlreadyDecided
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Rückmeldung wurde schon bearbeitet'**
+  String get autoMessagesRespAlreadyDecided;
+
+  /// autoMessages.respChange
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung ändern'**
+  String get autoMessagesRespChange;
+
+  /// autoMessages.respDone
+  ///
+  /// In de, this message translates to:
+  /// **'Danke! Deine Rückmeldung wurde geschickt.'**
+  String get autoMessagesRespDone;
+
+  /// autoMessages.respDoneInstant
+  ///
+  /// In de, this message translates to:
+  /// **'Danke! Du bist jetzt entschuldigt.'**
+  String get autoMessagesRespDoneInstant;
+
+  /// autoMessages.respExpired
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Termin ist keine Rückmeldung mehr möglich'**
+  String get autoMessagesRespExpired;
+
+  /// autoMessages.respFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung konnte nicht gesendet werden'**
+  String get autoMessagesRespFailed;
+
+  /// autoMessages.respHadReason
+  ///
+  /// In de, this message translates to:
+  /// **'Ich hatte einen Grund'**
+  String get autoMessagesRespHadReason;
+
+  /// autoMessages.respHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Verantwortlichen sehen deinen Grund als Notiz am Termin.'**
+  String get autoMessagesRespHint;
+
+  /// autoMessages.respReason
+  ///
+  /// In de, this message translates to:
+  /// **'Grund'**
+  String get autoMessagesRespReason;
+
+  /// autoMessages.respSend
+  ///
+  /// In de, this message translates to:
+  /// **'Senden'**
+  String get autoMessagesRespSend;
+
+  /// autoMessages.respState.accepted
+  ///
+  /// In de, this message translates to:
+  /// **'Übernommen'**
+  String get autoMessagesRespStateAccepted;
+
+  /// autoMessages.respState.pending
+  ///
+  /// In de, this message translates to:
+  /// **'Wird geprüft'**
+  String get autoMessagesRespStatePending;
+
+  /// autoMessages.respState.rejected
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht übernommen'**
+  String get autoMessagesRespStateRejected;
+
+  /// autoMessages.respText
+  ///
+  /// In de, this message translates to:
+  /// **'Ergänzung (optional)'**
+  String get autoMessagesRespText;
+
+  /// autoMessages.respTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldung'**
+  String get autoMessagesRespTitle;
+
+  /// autoMessages.respWasThere
+  ///
+  /// In de, this message translates to:
+  /// **'Ich war doch da'**
+  String get autoMessagesRespWasThere;
+
+  /// autoMessages.respWasThereHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.'**
+  String get autoMessagesRespWasThereHint;
+
+  /// autoMessages.respWasThereShort
+  ///
+  /// In de, this message translates to:
+  /// **'„Ich war doch da“ geht als Hinweis an die Verantwortlichen.'**
+  String get autoMessagesRespWasThereShort;
+
+  /// autoMessages.responses
+  ///
+  /// In de, this message translates to:
+  /// **'Grund nachtragen'**
+  String get autoMessagesResponses;
+
+  /// autoMessages.responsesHint
+  ///
+  /// In de, this message translates to:
+  /// **'Antworten sind bis {days} Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.'**
+  String autoMessagesResponsesHint(Object days);
+
+  /// autoMessages.rule
+  ///
+  /// In de, this message translates to:
+  /// **'Regel'**
+  String get autoMessagesRule;
+
+  /// autoMessages.rules
+  ///
+  /// In de, this message translates to:
+  /// **'Regeln'**
+  String get autoMessagesRules;
+
+  /// autoMessages.safety
+  ///
+  /// In de, this message translates to:
+  /// **'Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.'**
+  String get autoMessagesSafety;
+
+  /// autoMessages.sampleFirstName
+  ///
+  /// In de, this message translates to:
+  /// **'Lena'**
+  String get autoMessagesSampleFirstName;
+
+  /// autoMessages.sampleName
+  ///
+  /// In de, this message translates to:
+  /// **'Lena Muster'**
+  String get autoMessagesSampleName;
+
+  /// autoMessages.sampleTermin
+  ///
+  /// In de, this message translates to:
+  /// **'Probe'**
+  String get autoMessagesSampleTermin;
+
+  /// autoMessages.saveFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Speichern fehlgeschlagen'**
+  String get autoMessagesSaveFailed;
+
+  /// autoMessages.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Regel gespeichert'**
+  String get autoMessagesSaved;
+
+  /// autoMessages.setPresent
+  ///
+  /// In de, this message translates to:
+  /// **'Auf anwesend'**
+  String get autoMessagesSetPresent;
+
+  /// autoMessages.showPreview
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschau mit den letzten Terminen'**
+  String get autoMessagesShowPreview;
+
+  /// autoMessages.startFromTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlagen zum Start'**
+  String get autoMessagesStartFromTemplate;
+
+  /// autoMessages.status.0
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesStatus0;
+
+  /// autoMessages.status.1
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesend'**
+  String get autoMessagesStatus1;
+
+  /// autoMessages.status.2
+  ///
+  /// In de, this message translates to:
+  /// **'Entschuldigt'**
+  String get autoMessagesStatus2;
+
+  /// autoMessages.status.3
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät'**
+  String get autoMessagesStatus3;
+
+  /// autoMessages.status.4
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt'**
+  String get autoMessagesStatus4;
+
+  /// autoMessages.status.5
+  ///
+  /// In de, this message translates to:
+  /// **'Verspätet entschuldigt'**
+  String get autoMessagesStatus5;
+
+  /// autoMessages.suspend
+  ///
+  /// In de, this message translates to:
+  /// **'Diesmal aussetzen'**
+  String get autoMessagesSuspend;
+
+  /// autoMessages.template
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get autoMessagesTemplate;
+
+  /// autoMessages.templateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.'**
+  String get autoMessagesTemplateHint;
+
+  /// autoMessages.title
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten'**
+  String get autoMessagesTitle;
+
+  /// autoMessages.tpl.absent.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nbei {termin} am {datum} warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von {instanz}'**
+  String autoMessagesTplAbsentBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.absent.title
+  ///
+  /// In de, this message translates to:
+  /// **'Wir haben dich vermisst, {vorname}'**
+  String autoMessagesTplAbsentTitle(Object vorname);
+
+  /// autoMessages.tplHint.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Nach jedem Termin, bei dem jemand unentschuldigt fehlt'**
+  String get autoMessagesTplHintAbsent;
+
+  /// autoMessages.tplHint.late
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand zu spät kommt, ohne Bescheid zu geben'**
+  String get autoMessagesTplHintLate;
+
+  /// autoMessages.tplHint.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Wenn jemand bis nach dem Termin nicht reagiert hat'**
+  String get autoMessagesTplHintNoAnswer;
+
+  /// autoMessages.tplHint.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Erst ab dem 2. Fehlen hintereinander'**
+  String get autoMessagesTplHintStreak;
+
+  /// autoMessages.tpl.late.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nbei {termin} am {datum} bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von {instanz}'**
+  String autoMessagesTplLateBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.late.title
+  ///
+  /// In de, this message translates to:
+  /// **'Du warst zu spät, {vorname}'**
+  String autoMessagesTplLateTitle(Object vorname);
+
+  /// autoMessages.tplName.absent
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt gefehlt'**
+  String get autoMessagesTplNameAbsent;
+
+  /// autoMessages.tplName.late
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät ohne Abmeldung'**
+  String get autoMessagesTplNameLate;
+
+  /// autoMessages.tplName.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesTplNameNoAnswer;
+
+  /// autoMessages.tplName.streak
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrmals in Folge gefehlt'**
+  String get autoMessagesTplNameStreak;
+
+  /// autoMessages.tpl.noAnswer.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\nfür {termin} am {datum} haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von {instanz}'**
+  String autoMessagesTplNoAnswerBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.noAnswer.title
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung zu {termin}'**
+  String autoMessagesTplNoAnswerTitle(Object termin);
+
+  /// autoMessages.tpl.streak.body
+  ///
+  /// In de, this message translates to:
+  /// **'Hallo {vorname},\n\ndu hast jetzt {anzahl} Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei {termin} am {datum}.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von {instanz}'**
+  String autoMessagesTplStreakBody(
+    Object vorname,
+    Object anzahl,
+    Object termin,
+    Object datum,
+    Object instanz,
+  );
+
+  /// autoMessages.tpl.streak.title
+  ///
+  /// In de, this message translates to:
+  /// **'{vorname}, wir vermissen dich'**
+  String autoMessagesTplStreakTitle(Object vorname);
+
+  /// autoMessages.trigger.0
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Rückmeldung'**
+  String get autoMessagesTrigger0;
+
+  /// autoMessages.trigger.3
+  ///
+  /// In de, this message translates to:
+  /// **'Zu spät ohne Abmeldung'**
+  String get autoMessagesTrigger3;
+
+  /// autoMessages.trigger.4
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigt gefehlt'**
+  String get autoMessagesTrigger4;
+
+  /// autoMessages.triggerHint.0
+  ///
+  /// In de, this message translates to:
+  /// **'Status nach dem Termin noch „neutral“'**
+  String get autoMessagesTriggerHint0;
+
+  /// autoMessages.triggerHint.3
+  ///
+  /// In de, this message translates to:
+  /// **'Status „zu spät“, nicht „verspätet entschuldigt“'**
+  String get autoMessagesTriggerHint3;
+
+  /// autoMessages.triggerHint.4
+  ///
+  /// In de, this message translates to:
+  /// **'Status „unentschuldigt“ nach dem Termin'**
+  String get autoMessagesTriggerHint4;
+
+  /// autoMessages.typesAll
+  ///
+  /// In de, this message translates to:
+  /// **'Nichts ausgewählt: gilt für alle Termintypen.'**
+  String get autoMessagesTypesAll;
+
+  /// autoMessages.typesSome
+  ///
+  /// In de, this message translates to:
+  /// **'Gilt nur für die ausgewählten Termintypen.'**
+  String get autoMessagesTypesSome;
+
+  /// autoMessages.unreachable
+  ///
+  /// In de, this message translates to:
+  /// **'nicht erreichbar'**
+  String get autoMessagesUnreachable;
+
+  /// autoMessages.unsuspend
+  ///
+  /// In de, this message translates to:
+  /// **'Wieder einschalten'**
+  String get autoMessagesUnsuspend;
+
+  /// autoMessages.useTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage'**
+  String get autoMessagesUseTemplate;
+
+  /// autoMessages.when
+  ///
+  /// In de, this message translates to:
+  /// **'Wann wird geschickt?'**
+  String get autoMessagesWhen;
+
+  /// autoMessages.whichTermine
+  ///
+  /// In de, this message translates to:
+  /// **'Für welche Termine?'**
+  String get autoMessagesWhichTermine;
+
+  /// autoMessages.whoCanUse
+  ///
+  /// In de, this message translates to:
+  /// **'Admins und Verantwortliche können Regeln anlegen und ändern.'**
+  String get autoMessagesWhoCanUse;
+
+  /// autoMessages.whoRead
+  ///
+  /// In de, this message translates to:
+  /// **'Wer hat gelesen?'**
+  String get autoMessagesWhoRead;
+
+  /// autoMessages.writeUnexcusedMenu
+  ///
+  /// In de, this message translates to:
+  /// **'Unentschuldigte anschreiben ({count})'**
+  String autoMessagesWriteUnexcusedMenu(Object count);
 
   /// bell.currentInstance
   ///
@@ -5684,11 +6881,35 @@ abstract class AppLocalizations {
   /// **'Möchtest du {name} wirklich löschen?'**
   String filesDeleteMessage(Object name);
 
+  /// files.deleteSelectedHeader
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Eintrag löschen?} other {{count} Einträge löschen?}}'**
+  String filesDeleteSelectedHeader(num count);
+
+  /// files.deleteSelectedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Der ausgewählte Eintrag wird endgültig gelöscht.} other {Die {count} ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.}}'**
+  String filesDeleteSelectedMessage(num count);
+
+  /// files.deleteSummary
+  ///
+  /// In de, this message translates to:
+  /// **'{ok} gelöscht, {failed} fehlgeschlagen.'**
+  String filesDeleteSummary(Object ok, Object failed);
+
   /// files.deleted
   ///
   /// In de, this message translates to:
   /// **'Eintrag wurde gelöscht.'**
   String get filesDeleted;
+
+  /// files.deletedMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Eintrag wurde gelöscht.} other {{count} Einträge wurden gelöscht.}}'**
+  String filesDeletedMany(num count);
 
   /// files.descending
   ///
@@ -5840,23 +7061,95 @@ abstract class AppLocalizations {
   /// **'Verschieben'**
   String get filesMove;
 
+  /// filesMove.beingMoved
+  ///
+  /// In de, this message translates to:
+  /// **'Wird verschoben'**
+  String get filesMoveBeingMoved;
+
+  /// filesMove.chooseTarget
+  ///
+  /// In de, this message translates to:
+  /// **'Wähle einen Zielordner.'**
+  String get filesMoveChooseTarget;
+
+  /// filesMove.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Zuklappen'**
+  String get filesMoveCollapse;
+
+  /// filesMove.currentFolder
+  ///
+  /// In de, this message translates to:
+  /// **'Aktueller Ordner'**
+  String get filesMoveCurrentFolder;
+
+  /// files.moveExists
+  ///
+  /// In de, this message translates to:
+  /// **'Im Zielordner gibt es schon „{name}“. Nichts verschoben.'**
+  String filesMoveExists(Object name);
+
+  /// filesMove.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Aufklappen'**
+  String get filesMoveExpand;
+
   /// files.moveFailed
   ///
   /// In de, this message translates to:
   /// **'Verschieben fehlgeschlagen: {error}'**
   String filesMoveFailed(Object error);
 
-  /// files.moveHint
+  /// filesMove.hint
   ///
   /// In de, this message translates to:
-  /// **'Zielordner relativ zum Tenant-Root. Leer lassen für Root.'**
+  /// **'Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.'**
   String get filesMoveHint;
+
+  /// filesMove.moveHere
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Hierher verschieben} other {{count} Einträge hierher verschieben}}'**
+  String filesMoveMoveHere(num count);
+
+  /// filesMove.root
+  ///
+  /// In de, this message translates to:
+  /// **'Dateiablage'**
+  String get filesMoveRoot;
+
+  /// files.moveSummary
+  ///
+  /// In de, this message translates to:
+  /// **'{ok} verschoben, {skipped} übersprungen (gibt es im Ziel schon), {failed} fehlgeschlagen.'**
+  String filesMoveSummary(Object ok, Object skipped, Object failed);
+
+  /// filesMove.target
+  ///
+  /// In de, this message translates to:
+  /// **'Ziel: {path}'**
+  String filesMoveTarget(Object path);
+
+  /// filesMove.title
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Verschieben} other {{count} Einträge verschieben}}'**
+  String filesMoveTitle(num count);
 
   /// files.moved
   ///
   /// In de, this message translates to:
   /// **'Eintrag wurde verschoben.'**
   String get filesMoved;
+
+  /// files.movedMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Eintrag wurde verschoben.} other {{count} Einträge wurden verschoben.}}'**
+  String filesMovedMany(num count);
 
   /// files.name
   ///
@@ -6019,6 +7312,42 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).'**
   String get filesSearchType;
+
+  /// files.select
+  ///
+  /// In de, this message translates to:
+  /// **'Auswählen'**
+  String get filesSelect;
+
+  /// files.selectAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get filesSelectAll;
+
+  /// files.selectMultiple
+  ///
+  /// In de, this message translates to:
+  /// **'Mehrere auswählen'**
+  String get filesSelectMultiple;
+
+  /// files.selectNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keine'**
+  String get filesSelectNone;
+
+  /// files.selectedCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Nichts ausgewählt} one {{count} ausgewählt} other {{count} ausgewählt}}'**
+  String filesSelectedCount(num count);
+
+  /// files.selectionDone
+  ///
+  /// In de, this message translates to:
+  /// **'Auswahl beenden'**
+  String get filesSelectionDone;
 
   /// files.send
   ///
@@ -8090,6 +9419,18 @@ abstract class AppLocalizations {
   /// **'Alle {count}'**
   String messagesAllCount(Object count);
 
+  /// messages.autoActive
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Keine Regel aktiv} one {{count} Regel aktiv} other {{count} Regeln aktiv}}'**
+  String messagesAutoActive(num count);
+
+  /// messages.autoEntry
+  ///
+  /// In de, this message translates to:
+  /// **'Automatische Nachrichten'**
+  String get messagesAutoEntry;
+
   /// messages.countsFailed
   ///
   /// In de, this message translates to:
@@ -8515,6 +9856,66 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Erste Mitteilung schreiben'**
   String get messagesWriteFirst;
+
+  /// nav.close
+  ///
+  /// In de, this message translates to:
+  /// **'Menü schließen'**
+  String get navClose;
+
+  /// nav.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Seitenleiste einklappen'**
+  String get navCollapse;
+
+  /// nav.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Seitenleiste ausklappen'**
+  String get navExpand;
+
+  /// nav.groupAccount
+  ///
+  /// In de, this message translates to:
+  /// **'Konto'**
+  String get navGroupAccount;
+
+  /// nav.groupAdmin
+  ///
+  /// In de, this message translates to:
+  /// **'Verwaltung'**
+  String get navGroupAdmin;
+
+  /// nav.groupOverview
+  ///
+  /// In de, this message translates to:
+  /// **'Übersicht'**
+  String get navGroupOverview;
+
+  /// nav.groupTeam
+  ///
+  /// In de, this message translates to:
+  /// **'Team'**
+  String get navGroupTeam;
+
+  /// nav.instances
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {{count} Instanz} other {{count} Instanzen}}'**
+  String navInstances(num count);
+
+  /// nav.label
+  ///
+  /// In de, this message translates to:
+  /// **'Hauptnavigation'**
+  String get navLabel;
+
+  /// nav.shortcut
+  ///
+  /// In de, this message translates to:
+  /// **'Strg/⌘ + B'**
+  String get navShortcut;
 
   /// notif.announcements
   ///
@@ -12002,6 +13403,18 @@ abstract class AppLocalizations {
   /// **'Nur Stimmführer-Status'**
   String get personVoiceLeaderStatusOnly;
 
+  /// planViewer.openScores
+  ///
+  /// In de, this message translates to:
+  /// **'Noten öffnen'**
+  String get planViewerOpenScores;
+
+  /// planning.addAgain
+  ///
+  /// In de, this message translates to:
+  /// **'Erneut hinzufügen'**
+  String get planningAddAgain;
+
   /// planning.addAnotherPlan
   ///
   /// In de, this message translates to:
@@ -12247,6 +13660,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Aktuelle'**
   String get planningCurrent;
+
+  /// planning.currentSongsAlreadyAddedHeader
+  ///
+  /// In de, this message translates to:
+  /// **'Bereits hinzugefügt'**
+  String get planningCurrentSongsAlreadyAddedHeader;
+
+  /// planning.currentSongsAlreadyAddedMessage
+  ///
+  /// In de, this message translates to:
+  /// **'Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?'**
+  String get planningCurrentSongsAlreadyAddedMessage;
 
   /// planning.defaultTitle
   ///
@@ -12721,6 +14146,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Nächste'**
   String get planningNext;
+
+  /// planning.noCurrentSongs
+  ///
+  /// In de, this message translates to:
+  /// **'Keine aktuellen Werke vorhanden'**
+  String get planningNoCurrentSongs;
 
   /// planning.noPlan
   ///
@@ -19172,11 +20603,11 @@ abstract class AppLocalizations {
   /// **'Ausloggen'**
   String get settingsLogout;
 
-  /// settings.messageAll
+  /// settings.messagesHint
   ///
   /// In de, this message translates to:
-  /// **'Nachricht an alle senden'**
-  String get settingsMessageAll;
+  /// **'Nachrichten senden und automatisch nachfassen'**
+  String get settingsMessagesHint;
 
   /// settings.mobile
   ///

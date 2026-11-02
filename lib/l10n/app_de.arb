@@ -620,6 +620,19 @@
   "@attListAddSongs": {
     "description": "attList.addSongs"
   },
+  "attListArchived": "Archiviert",
+  "@attListArchived": {
+    "description": "attList.archived"
+  },
+  "attListArchivedCount": "{count, plural, one {{count} archivierter Termin} other {{count} archivierte Termine}}",
+  "@attListArchivedCount": {
+    "description": "attList.archivedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "attListAverage": "Durchschnitt",
   "@attListAverage": {
     "description": "attList.average"
@@ -800,6 +813,10 @@
   "@attListShowAll": {
     "description": "attList.showAll"
   },
+  "attListShowArchived": "Archivierte anzeigen",
+  "@attListShowArchived": {
+    "description": "attList.showArchived"
+  },
   "attListSongs": "Werke",
   "@attListSongs": {
     "description": "attList.songs"
@@ -875,6 +892,34 @@
   "attendanceAllAlreadyIncluded": "Alle Personen sind bereits in dieser Anwesenheit enthalten.",
   "@attendanceAllAlreadyIncluded": {
     "description": "attendance.allAlreadyIncluded"
+  },
+  "attendanceArchive": "Archivieren",
+  "@attendanceArchive": {
+    "description": "attendance.archive"
+  },
+  "attendanceArchiveConfirmHeader": "Termin archivieren?",
+  "@attendanceArchiveConfirmHeader": {
+    "description": "attendance.archiveConfirmHeader"
+  },
+  "attendanceArchiveConfirmMessage": "Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.",
+  "@attendanceArchiveConfirmMessage": {
+    "description": "attendance.archiveConfirmMessage"
+  },
+  "attendanceArchiveFailed": "Der Termin konnte nicht geändert werden.",
+  "@attendanceArchiveFailed": {
+    "description": "attendance.archiveFailed"
+  },
+  "attendanceArchivedBanner": "Archiviert",
+  "@attendanceArchivedBanner": {
+    "description": "attendance.archivedBanner"
+  },
+  "attendanceArchivedBannerHint": "Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.",
+  "@attendanceArchivedBannerHint": {
+    "description": "attendance.archivedBannerHint"
+  },
+  "attendanceArchivedToast": "Termin archiviert",
+  "@attendanceArchivedToast": {
+    "description": "attendance.archivedToast"
   },
   "attendanceAssign": "Einteilen",
   "@attendanceAssign": {
@@ -1709,6 +1754,14 @@
   "@attendanceResetChecklist": {
     "description": "attendance.resetChecklist"
   },
+  "attendanceRestore": "Wiederherstellen",
+  "@attendanceRestore": {
+    "description": "attendance.restore"
+  },
+  "attendanceRestoredToast": "Termin wiederhergestellt",
+  "@attendanceRestoredToast": {
+    "description": "attendance.restoredToast"
+  },
   "attendanceRunSheetAgenda": "Ablaufplan & Tagesordnung",
   "@attendanceRunSheetAgenda": {
     "description": "attendance.runSheetAgenda"
@@ -1765,12 +1818,50 @@
   "@attendanceSignedOut": {
     "description": "attendance.signedOut"
   },
+  "attendanceSongsChip": "{count, plural, one {{count} Werk} other {{count} Werke}}",
+  "@attendanceSongsChip": {
+    "description": "attendanceSongs.chip",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
   "attendanceSongsCount": "Werke ({count})",
   "@attendanceSongsCount": {
     "description": "attendance.songsCount",
     "placeholders": {
       "count": {}
     }
+  },
+  "attendanceSongsNoScoresForYou": "Für dich sind keine Noten hinterlegt",
+  "@attendanceSongsNoScoresForYou": {
+    "description": "attendanceSongs.noScoresForYou"
+  },
+  "attendanceSongsOpenRunSheet": "Ablaufplan öffnen",
+  "@attendanceSongsOpenRunSheet": {
+    "description": "attendanceSongs.openRunSheet"
+  },
+  "attendanceSongsPrintAll": "Alle Noten drucken",
+  "@attendanceSongsPrintAll": {
+    "description": "attendanceSongs.printAll"
+  },
+  "attendanceSongsShow": "Werke anzeigen",
+  "@attendanceSongsShow": {
+    "description": "attendanceSongs.show"
+  },
+  "attendanceSongsTileEvents": "{count, plural, one {Nächster Termin} other {{count} Termine}}",
+  "@attendanceSongsTileEvents": {
+    "description": "attendanceSongs.tileEvents",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "attendanceSongsTitle": "Werke",
+  "@attendanceSongsTitle": {
+    "description": "attendanceSongs.title"
   },
   "attendanceSorting": "Sortierung",
   "@attendanceSorting": {
@@ -1922,6 +2013,846 @@
   "authUserNotFound": "Benutzer nicht gefunden",
   "@authUserNotFound": {
     "description": "auth.userNotFound"
+  },
+  "autoMessagesActive": "Aktiv",
+  "@autoMessagesActive": {
+    "description": "autoMessages.active"
+  },
+  "autoMessagesActiveHint": "Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.",
+  "@autoMessagesActiveHint": {
+    "description": "autoMessages.activeHint"
+  },
+  "autoMessagesAllTypes": "alle Termintypen",
+  "@autoMessagesAllTypes": {
+    "description": "autoMessages.allTypes"
+  },
+  "autoMessagesAllowResponses": "Mitglied kann antworten",
+  "@autoMessagesAllowResponses": {
+    "description": "autoMessages.allowResponses"
+  },
+  "autoMessagesAllowResponsesHint": "Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht",
+  "@autoMessagesAllowResponsesHint": {
+    "description": "autoMessages.allowResponsesHint"
+  },
+  "autoMessagesChannelEmail": "E-Mail",
+  "@autoMessagesChannelEmail": {
+    "description": "autoMessages.channelEmail"
+  },
+  "autoMessagesChannelPush": "Push / Telegram",
+  "@autoMessagesChannelPush": {
+    "description": "autoMessages.channelPush"
+  },
+  "autoMessagesChannels": "Kanäle",
+  "@autoMessagesChannels": {
+    "description": "autoMessages.channels"
+  },
+  "autoMessagesChipCopy": "Kopie",
+  "@autoMessagesChipCopy": {
+    "description": "autoMessages.chipCopy"
+  },
+  "autoMessagesChipEmail": "E-Mail",
+  "@autoMessagesChipEmail": {
+    "description": "autoMessages.chipEmail"
+  },
+  "autoMessagesChipPush": "Push",
+  "@autoMessagesChipPush": {
+    "description": "autoMessages.chipPush"
+  },
+  "autoMessagesChipResponses": "Grund nachtragen",
+  "@autoMessagesChipResponses": {
+    "description": "autoMessages.chipResponses"
+  },
+  "autoMessagesCopy": "Kopie (optional)",
+  "@autoMessagesCopy": {
+    "description": "autoMessages.copy"
+  },
+  "autoMessagesCopyHint": "Eine Sammelinfo pro Termin, wer angeschrieben wurde.",
+  "@autoMessagesCopyHint": {
+    "description": "autoMessages.copyHint"
+  },
+  "autoMessagesCopyResponsibles": "Admins und Verantwortliche",
+  "@autoMessagesCopyResponsibles": {
+    "description": "autoMessages.copyResponsibles"
+  },
+  "autoMessagesCopyVoiceLeaders": "Stimmführer (nur ihre Gruppe)",
+  "@autoMessagesCopyVoiceLeaders": {
+    "description": "autoMessages.copyVoiceLeaders"
+  },
+  "autoMessagesCustomHint": "Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.",
+  "@autoMessagesCustomHint": {
+    "description": "autoMessages.customHint"
+  },
+  "autoMessagesCustomText": "Eigener Text",
+  "@autoMessagesCustomText": {
+    "description": "autoMessages.customText"
+  },
+  "autoMessagesDays": "{count, plural, one {{count} Tag} other {{count} Tage}}",
+  "@autoMessagesDays": {
+    "description": "autoMessages.days",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesDecideAcceptPresent": "Status auf „anwesend“ setzen? Die Person bekommt Bescheid.",
+  "@autoMessagesDecideAcceptPresent": {
+    "description": "autoMessages.decideAcceptPresent"
+  },
+  "autoMessagesDecideAcceptReason": "Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.",
+  "@autoMessagesDecideAcceptReason": {
+    "description": "autoMessages.decideAcceptReason"
+  },
+  "autoMessagesDecideReject": "Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.",
+  "@autoMessagesDecideReject": {
+    "description": "autoMessages.decideReject"
+  },
+  "autoMessagesDecidedAccepted": "Übernommen",
+  "@autoMessagesDecidedAccepted": {
+    "description": "autoMessages.decidedAccepted"
+  },
+  "autoMessagesDecidedRejected": "Abgelehnt",
+  "@autoMessagesDecidedRejected": {
+    "description": "autoMessages.decidedRejected"
+  },
+  "autoMessagesDelay": "Wartezeit nach Terminende",
+  "@autoMessagesDelay": {
+    "description": "autoMessages.delay"
+  },
+  "autoMessagesDelayHint": "In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.",
+  "@autoMessagesDelayHint": {
+    "description": "autoMessages.delayHint"
+  },
+  "autoMessagesDelayHours": "{count, plural, one {{count} Std.} other {{count} Std.}} danach",
+  "@autoMessagesDelayHours": {
+    "description": "autoMessages.delayHours",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesDelayMinutes": "{count} Min. danach",
+  "@autoMessagesDelayMinutes": {
+    "description": "autoMessages.delayMinutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesDelayNone": "Direkt nach Ende",
+  "@autoMessagesDelayNone": {
+    "description": "autoMessages.delayNone"
+  },
+  "autoMessagesDeleteConfirm": "Regel löschen?",
+  "@autoMessagesDeleteConfirm": {
+    "description": "autoMessages.deleteConfirm"
+  },
+  "autoMessagesDeleteHint": "Bereits verschickte Nachrichten bleiben erhalten.",
+  "@autoMessagesDeleteHint": {
+    "description": "autoMessages.deleteHint"
+  },
+  "autoMessagesDeleteRule": "Regel löschen",
+  "@autoMessagesDeleteRule": {
+    "description": "autoMessages.deleteRule"
+  },
+  "autoMessagesDisabledToast": "Regel ausgeschaltet",
+  "@autoMessagesDisabledToast": {
+    "description": "autoMessages.disabledToast"
+  },
+  "autoMessagesEnabledToast": "Regel eingeschaltet",
+  "@autoMessagesEnabledToast": {
+    "description": "autoMessages.enabledToast"
+  },
+  "autoMessagesErrChannel": "Bitte wähle mindestens einen Kanal",
+  "@autoMessagesErrChannel": {
+    "description": "autoMessages.errChannel"
+  },
+  "autoMessagesErrName": "Bitte gib der Regel einen Namen",
+  "@autoMessagesErrName": {
+    "description": "autoMessages.errName"
+  },
+  "autoMessagesErrStatus": "Bitte wähle mindestens einen Auslöser",
+  "@autoMessagesErrStatus": {
+    "description": "autoMessages.errStatus"
+  },
+  "autoMessagesErrText": "Bitte gib einen Titel und einen Text ein",
+  "@autoMessagesErrText": {
+    "description": "autoMessages.errText"
+  },
+  "autoMessagesExcuse": "Entschuldigen",
+  "@autoMessagesExcuse": {
+    "description": "autoMessages.excuse"
+  },
+  "autoMessagesExcuseAfterCheck": "Nach Bestätigung entschuldigt",
+  "@autoMessagesExcuseAfterCheck": {
+    "description": "autoMessages.excuseAfterCheck"
+  },
+  "autoMessagesExcuseInstant": "Sofort entschuldigt",
+  "@autoMessagesExcuseInstant": {
+    "description": "autoMessages.excuseInstant"
+  },
+  "autoMessagesFreqCount": "Ab wie vielen Malen",
+  "@autoMessagesFreqCount": {
+    "description": "autoMessages.freqCount"
+  },
+  "autoMessagesFreqDays": "Zeitraum",
+  "@autoMessagesFreqDays": {
+    "description": "autoMessages.freqDays"
+  },
+  "autoMessagesFreqEach": "Jedes Mal",
+  "@autoMessagesFreqEach": {
+    "description": "autoMessages.freqEach"
+  },
+  "autoMessagesFreqHintEach": "Bei jedem passenden Termin.",
+  "@autoMessagesFreqHintEach": {
+    "description": "autoMessages.freqHint.each"
+  },
+  "autoMessagesFreqHintStreak": "Erst beim {count}. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.",
+  "@autoMessagesFreqHintStreak": {
+    "description": "autoMessages.freqHint.streak",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesFreqHintWindow": "Wenn jemand innerhalb von {days} Tagen zum {count}. Mal passt.",
+  "@autoMessagesFreqHintWindow": {
+    "description": "autoMessages.freqHint.window",
+    "placeholders": {
+      "days": {},
+      "count": {}
+    }
+  },
+  "autoMessagesFreqStreak": "In Folge",
+  "@autoMessagesFreqStreak": {
+    "description": "autoMessages.freqStreak"
+  },
+  "autoMessagesFreqStreakShort": "ab {count}× in Folge",
+  "@autoMessagesFreqStreakShort": {
+    "description": "autoMessages.freqStreakShort",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesFreqWindow": "Im Zeitraum",
+  "@autoMessagesFreqWindow": {
+    "description": "autoMessages.freqWindow"
+  },
+  "autoMessagesFreqWindowShort": "ab {count}× in {days} Tagen",
+  "@autoMessagesFreqWindowShort": {
+    "description": "autoMessages.freqWindowShort",
+    "placeholders": {
+      "count": {},
+      "days": {}
+    }
+  },
+  "autoMessagesGeneral": "Allgemein",
+  "@autoMessagesGeneral": {
+    "description": "autoMessages.general"
+  },
+  "autoMessagesGroups": "Gruppen",
+  "@autoMessagesGroups": {
+    "description": "autoMessages.groups"
+  },
+  "autoMessagesGroupsAll": "Nichts ausgewählt: gilt für alle Gruppen.",
+  "@autoMessagesGroupsAll": {
+    "description": "autoMessages.groupsAll"
+  },
+  "autoMessagesGroupsSome": "Gilt nur für Personen aus den ausgewählten Gruppen.",
+  "@autoMessagesGroupsSome": {
+    "description": "autoMessages.groupsSome"
+  },
+  "autoMessagesHistEmpty": "Diese Regel hat noch nichts verschickt.",
+  "@autoMessagesHistEmpty": {
+    "description": "autoMessages.histEmpty"
+  },
+  "autoMessagesHistRead": "gelesen",
+  "@autoMessagesHistRead": {
+    "description": "autoMessages.histRead"
+  },
+  "autoMessagesHistResponses": "Antworten",
+  "@autoMessagesHistResponses": {
+    "description": "autoMessages.histResponses"
+  },
+  "autoMessagesHistRowNone": "Niemand passte",
+  "@autoMessagesHistRowNone": {
+    "description": "autoMessages.histRowNone"
+  },
+  "autoMessagesHistRowNotRecorded": "Nicht verschickt: Anwesenheit wurde nicht erfasst",
+  "@autoMessagesHistRowNotRecorded": {
+    "description": "autoMessages.histRowNotRecorded"
+  },
+  "autoMessagesHistRowSent": "{count, plural, one {{count} Person} other {{count} Personen}} · {read} gelesen · {responses} Antworten",
+  "@autoMessagesHistRowSent": {
+    "description": "autoMessages.histRowSent",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      },
+      "read": {},
+      "responses": {}
+    }
+  },
+  "autoMessagesHistRowSuspended": "Ausgesetzt von {name}",
+  "@autoMessagesHistRowSuspended": {
+    "description": "autoMessages.histRowSuspended",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "autoMessagesHistSent": "Personen angeschrieben",
+  "@autoMessagesHistSent": {
+    "description": "autoMessages.histSent"
+  },
+  "autoMessagesHistory": "Verlauf",
+  "@autoMessagesHistory": {
+    "description": "autoMessages.history"
+  },
+  "autoMessagesHowOften": "Wie oft?",
+  "@autoMessagesHowOften": {
+    "description": "autoMessages.howOften"
+  },
+  "autoMessagesIntro": "Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.",
+  "@autoMessagesIntro": {
+    "description": "autoMessages.intro"
+  },
+  "autoMessagesLastWeek": "Letzte 7 Tage: {count, plural, one {{count} Person angeschrieben} other {{count} Personen angeschrieben}}",
+  "@autoMessagesLastWeek": {
+    "description": "autoMessages.lastWeek",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesLess": "Weniger",
+  "@autoMessagesLess": {
+    "description": "autoMessages.less"
+  },
+  "autoMessagesLoadFailed": "Automatische Nachrichten konnten nicht geladen werden",
+  "@autoMessagesLoadFailed": {
+    "description": "autoMessages.loadFailed"
+  },
+  "autoMessagesManualBody": "Hallo,\n\nbei {termin} am {datum} wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von {instanz}",
+  "@autoMessagesManualBody": {
+    "description": "autoMessages.manualBody",
+    "placeholders": {
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesManualRecipients": "{count, plural, one {{count} unentschuldigte Person} other {{count} unentschuldigte Personen}} dieses Termins",
+  "@autoMessagesManualRecipients": {
+    "description": "autoMessages.manualRecipients",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesManualTitle": "Wir haben euch vermisst",
+  "@autoMessagesManualTitle": {
+    "description": "autoMessages.manualTitle"
+  },
+  "autoMessagesMessage": "Nachricht",
+  "@autoMessagesMessage": {
+    "description": "autoMessages.message"
+  },
+  "autoMessagesMore": "Mehr",
+  "@autoMessagesMore": {
+    "description": "autoMessages.more"
+  },
+  "autoMessagesName": "Name",
+  "@autoMessagesName": {
+    "description": "autoMessages.name"
+  },
+  "autoMessagesNewRule": "Neue Regel",
+  "@autoMessagesNewRule": {
+    "description": "autoMessages.newRule"
+  },
+  "autoMessagesOnlyEmail": "nur E-Mail",
+  "@autoMessagesOnlyEmail": {
+    "description": "autoMessages.onlyEmail"
+  },
+  "autoMessagesOpenTermin": "Zum Termin",
+  "@autoMessagesOpenTermin": {
+    "description": "autoMessages.openTermin"
+  },
+  "autoMessagesPanelNone": "„{rule}“: niemand passte",
+  "@autoMessagesPanelNone": {
+    "description": "autoMessages.panelNone",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelNotRecorded": "„{rule}“ nicht verschickt: Anwesenheit wurde nicht erfasst",
+  "@autoMessagesPanelNotRecorded": {
+    "description": "autoMessages.panelNotRecorded",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelPending": "„{rule}“ wird gleich geprüft",
+  "@autoMessagesPanelPending": {
+    "description": "autoMessages.panelPending",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelPendingHint": "Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.",
+  "@autoMessagesPanelPendingHint": {
+    "description": "autoMessages.panelPendingHint"
+  },
+  "autoMessagesPanelResponses": "Rückmeldungen ({count} offen)",
+  "@autoMessagesPanelResponses": {
+    "description": "autoMessages.panelResponses",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "autoMessagesPanelSaysPresent": "Sagt: „Ich war doch da“",
+  "@autoMessagesPanelSaysPresent": {
+    "description": "autoMessages.panelSaysPresent"
+  },
+  "autoMessagesPanelSent": "„{rule}“ ging an {count, plural, one {{count} Person} other {{count} Personen}}",
+  "@autoMessagesPanelSent": {
+    "description": "autoMessages.panelSent",
+    "placeholders": {
+      "rule": {},
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesPanelSuspended": "„{rule}“ ist für diesen Termin ausgesetzt",
+  "@autoMessagesPanelSuspended": {
+    "description": "autoMessages.panelSuspended",
+    "placeholders": {
+      "rule": {}
+    }
+  },
+  "autoMessagesPanelWillSend": "„{rule}“ geht um {time} raus",
+  "@autoMessagesPanelWillSend": {
+    "description": "autoMessages.panelWillSend",
+    "placeholders": {
+      "rule": {},
+      "time": {}
+    }
+  },
+  "autoMessagesPanelWillSendHint": "Bis dahin kannst du die Anwesenheit noch korrigieren.",
+  "@autoMessagesPanelWillSendHint": {
+    "description": "autoMessages.panelWillSendHint"
+  },
+  "autoMessagesPreview": "Vorschau",
+  "@autoMessagesPreview": {
+    "description": "autoMessages.preview"
+  },
+  "autoMessagesPreviewAt": "Versand wäre am {time} gewesen",
+  "@autoMessagesPreviewAt": {
+    "description": "autoMessages.previewAt",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "autoMessagesPreviewExcluded": "Nicht angeschrieben: {excused} abgemeldet, {paused} pausiert",
+  "@autoMessagesPreviewExcluded": {
+    "description": "autoMessages.previewExcluded",
+    "placeholders": {
+      "excused": {},
+      "paused": {}
+    }
+  },
+  "autoMessagesPreviewFailed": "Vorschau konnte nicht geladen werden",
+  "@autoMessagesPreviewFailed": {
+    "description": "autoMessages.previewFailed"
+  },
+  "autoMessagesPreviewHint": "Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.",
+  "@autoMessagesPreviewHint": {
+    "description": "autoMessages.previewHint"
+  },
+  "autoMessagesPreviewNoTermine": "Keine passenden Termine in den letzten 60 Tagen.",
+  "@autoMessagesPreviewNoTermine": {
+    "description": "autoMessages.previewNoTermine"
+  },
+  "autoMessagesPreviewNotRecorded": "Übersprungen: Anwesenheit nicht erfasst",
+  "@autoMessagesPreviewNotRecorded": {
+    "description": "autoMessages.previewNotRecorded"
+  },
+  "autoMessagesPreviewWould": "{count, plural, =0 {Niemand hätte die Nachricht bekommen} one {{count} Person hätte die Nachricht bekommen} other {{count} Personen hätten die Nachricht bekommen}}",
+  "@autoMessagesPreviewWould": {
+    "description": "autoMessages.previewWould",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "autoMessagesReasonFamily": "Familie",
+  "@autoMessagesReasonFamily": {
+    "description": "autoMessages.reason.family"
+  },
+  "autoMessagesReasonForgot": "Abmelden vergessen",
+  "@autoMessagesReasonForgot": {
+    "description": "autoMessages.reason.forgot"
+  },
+  "autoMessagesReasonOther": "Sonstiges",
+  "@autoMessagesReasonOther": {
+    "description": "autoMessages.reason.other"
+  },
+  "autoMessagesReasonSick": "Krank",
+  "@autoMessagesReasonSick": {
+    "description": "autoMessages.reason.sick"
+  },
+  "autoMessagesReasonWork": "Arbeit / Schule",
+  "@autoMessagesReasonWork": {
+    "description": "autoMessages.reason.work"
+  },
+  "autoMessagesReject": "Ablehnen",
+  "@autoMessagesReject": {
+    "description": "autoMessages.reject"
+  },
+  "autoMessagesResetToTemplate": "Auf Vorlage zurücksetzen",
+  "@autoMessagesResetToTemplate": {
+    "description": "autoMessages.resetToTemplate"
+  },
+  "autoMessagesRespAddReason": "Grund nachtragen",
+  "@autoMessagesRespAddReason": {
+    "description": "autoMessages.respAddReason"
+  },
+  "autoMessagesRespAlreadyDecided": "Deine Rückmeldung wurde schon bearbeitet",
+  "@autoMessagesRespAlreadyDecided": {
+    "description": "autoMessages.respAlreadyDecided"
+  },
+  "autoMessagesRespChange": "Rückmeldung ändern",
+  "@autoMessagesRespChange": {
+    "description": "autoMessages.respChange"
+  },
+  "autoMessagesRespDone": "Danke! Deine Rückmeldung wurde geschickt.",
+  "@autoMessagesRespDone": {
+    "description": "autoMessages.respDone"
+  },
+  "autoMessagesRespDoneInstant": "Danke! Du bist jetzt entschuldigt.",
+  "@autoMessagesRespDoneInstant": {
+    "description": "autoMessages.respDoneInstant"
+  },
+  "autoMessagesRespExpired": "Für diesen Termin ist keine Rückmeldung mehr möglich",
+  "@autoMessagesRespExpired": {
+    "description": "autoMessages.respExpired"
+  },
+  "autoMessagesRespFailed": "Rückmeldung konnte nicht gesendet werden",
+  "@autoMessagesRespFailed": {
+    "description": "autoMessages.respFailed"
+  },
+  "autoMessagesRespHadReason": "Ich hatte einen Grund",
+  "@autoMessagesRespHadReason": {
+    "description": "autoMessages.respHadReason"
+  },
+  "autoMessagesRespHint": "Die Verantwortlichen sehen deinen Grund als Notiz am Termin.",
+  "@autoMessagesRespHint": {
+    "description": "autoMessages.respHint"
+  },
+  "autoMessagesRespReason": "Grund",
+  "@autoMessagesRespReason": {
+    "description": "autoMessages.respReason"
+  },
+  "autoMessagesRespSend": "Senden",
+  "@autoMessagesRespSend": {
+    "description": "autoMessages.respSend"
+  },
+  "autoMessagesRespStateAccepted": "Übernommen",
+  "@autoMessagesRespStateAccepted": {
+    "description": "autoMessages.respState.accepted"
+  },
+  "autoMessagesRespStatePending": "Wird geprüft",
+  "@autoMessagesRespStatePending": {
+    "description": "autoMessages.respState.pending"
+  },
+  "autoMessagesRespStateRejected": "Nicht übernommen",
+  "@autoMessagesRespStateRejected": {
+    "description": "autoMessages.respState.rejected"
+  },
+  "autoMessagesRespText": "Ergänzung (optional)",
+  "@autoMessagesRespText": {
+    "description": "autoMessages.respText"
+  },
+  "autoMessagesRespTitle": "Rückmeldung",
+  "@autoMessagesRespTitle": {
+    "description": "autoMessages.respTitle"
+  },
+  "autoMessagesRespWasThere": "Ich war doch da",
+  "@autoMessagesRespWasThere": {
+    "description": "autoMessages.respWasThere"
+  },
+  "autoMessagesRespWasThereHint": "Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.",
+  "@autoMessagesRespWasThereHint": {
+    "description": "autoMessages.respWasThereHint"
+  },
+  "autoMessagesRespWasThereShort": "„Ich war doch da“ geht als Hinweis an die Verantwortlichen.",
+  "@autoMessagesRespWasThereShort": {
+    "description": "autoMessages.respWasThereShort"
+  },
+  "autoMessagesResponses": "Grund nachtragen",
+  "@autoMessagesResponses": {
+    "description": "autoMessages.responses"
+  },
+  "autoMessagesResponsesHint": "Antworten sind bis {days} Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.",
+  "@autoMessagesResponsesHint": {
+    "description": "autoMessages.responsesHint",
+    "placeholders": {
+      "days": {}
+    }
+  },
+  "autoMessagesRule": "Regel",
+  "@autoMessagesRule": {
+    "description": "autoMessages.rule"
+  },
+  "autoMessagesRules": "Regeln",
+  "@autoMessagesRules": {
+    "description": "autoMessages.rules"
+  },
+  "autoMessagesSafety": "Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.",
+  "@autoMessagesSafety": {
+    "description": "autoMessages.safety"
+  },
+  "autoMessagesSampleFirstName": "Lena",
+  "@autoMessagesSampleFirstName": {
+    "description": "autoMessages.sampleFirstName"
+  },
+  "autoMessagesSampleName": "Lena Muster",
+  "@autoMessagesSampleName": {
+    "description": "autoMessages.sampleName"
+  },
+  "autoMessagesSampleTermin": "Probe",
+  "@autoMessagesSampleTermin": {
+    "description": "autoMessages.sampleTermin"
+  },
+  "autoMessagesSaveFailed": "Speichern fehlgeschlagen",
+  "@autoMessagesSaveFailed": {
+    "description": "autoMessages.saveFailed"
+  },
+  "autoMessagesSaved": "Regel gespeichert",
+  "@autoMessagesSaved": {
+    "description": "autoMessages.saved"
+  },
+  "autoMessagesSetPresent": "Auf anwesend",
+  "@autoMessagesSetPresent": {
+    "description": "autoMessages.setPresent"
+  },
+  "autoMessagesShowPreview": "Vorschau mit den letzten Terminen",
+  "@autoMessagesShowPreview": {
+    "description": "autoMessages.showPreview"
+  },
+  "autoMessagesStartFromTemplate": "Vorlagen zum Start",
+  "@autoMessagesStartFromTemplate": {
+    "description": "autoMessages.startFromTemplate"
+  },
+  "autoMessagesStatus0": "Keine Rückmeldung",
+  "@autoMessagesStatus0": {
+    "description": "autoMessages.status.0"
+  },
+  "autoMessagesStatus1": "Anwesend",
+  "@autoMessagesStatus1": {
+    "description": "autoMessages.status.1"
+  },
+  "autoMessagesStatus2": "Entschuldigt",
+  "@autoMessagesStatus2": {
+    "description": "autoMessages.status.2"
+  },
+  "autoMessagesStatus3": "Zu spät",
+  "@autoMessagesStatus3": {
+    "description": "autoMessages.status.3"
+  },
+  "autoMessagesStatus4": "Unentschuldigt",
+  "@autoMessagesStatus4": {
+    "description": "autoMessages.status.4"
+  },
+  "autoMessagesStatus5": "Verspätet entschuldigt",
+  "@autoMessagesStatus5": {
+    "description": "autoMessages.status.5"
+  },
+  "autoMessagesSuspend": "Diesmal aussetzen",
+  "@autoMessagesSuspend": {
+    "description": "autoMessages.suspend"
+  },
+  "autoMessagesTemplate": "Vorlage",
+  "@autoMessagesTemplate": {
+    "description": "autoMessages.template"
+  },
+  "autoMessagesTemplateHint": "Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.",
+  "@autoMessagesTemplateHint": {
+    "description": "autoMessages.templateHint"
+  },
+  "autoMessagesTitle": "Automatische Nachrichten",
+  "@autoMessagesTitle": {
+    "description": "autoMessages.title"
+  },
+  "autoMessagesTplAbsentBody": "Hallo {vorname},\n\nbei {termin} am {datum} warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von {instanz}",
+  "@autoMessagesTplAbsentBody": {
+    "description": "autoMessages.tpl.absent.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplAbsentTitle": "Wir haben dich vermisst, {vorname}",
+  "@autoMessagesTplAbsentTitle": {
+    "description": "autoMessages.tpl.absent.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTplHintAbsent": "Nach jedem Termin, bei dem jemand unentschuldigt fehlt",
+  "@autoMessagesTplHintAbsent": {
+    "description": "autoMessages.tplHint.absent"
+  },
+  "autoMessagesTplHintLate": "Wenn jemand zu spät kommt, ohne Bescheid zu geben",
+  "@autoMessagesTplHintLate": {
+    "description": "autoMessages.tplHint.late"
+  },
+  "autoMessagesTplHintNoAnswer": "Wenn jemand bis nach dem Termin nicht reagiert hat",
+  "@autoMessagesTplHintNoAnswer": {
+    "description": "autoMessages.tplHint.noAnswer"
+  },
+  "autoMessagesTplHintStreak": "Erst ab dem 2. Fehlen hintereinander",
+  "@autoMessagesTplHintStreak": {
+    "description": "autoMessages.tplHint.streak"
+  },
+  "autoMessagesTplLateBody": "Hallo {vorname},\n\nbei {termin} am {datum} bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von {instanz}",
+  "@autoMessagesTplLateBody": {
+    "description": "autoMessages.tpl.late.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplLateTitle": "Du warst zu spät, {vorname}",
+  "@autoMessagesTplLateTitle": {
+    "description": "autoMessages.tpl.late.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTplNameAbsent": "Unentschuldigt gefehlt",
+  "@autoMessagesTplNameAbsent": {
+    "description": "autoMessages.tplName.absent"
+  },
+  "autoMessagesTplNameLate": "Zu spät ohne Abmeldung",
+  "@autoMessagesTplNameLate": {
+    "description": "autoMessages.tplName.late"
+  },
+  "autoMessagesTplNameNoAnswer": "Keine Rückmeldung",
+  "@autoMessagesTplNameNoAnswer": {
+    "description": "autoMessages.tplName.noAnswer"
+  },
+  "autoMessagesTplNameStreak": "Mehrmals in Folge gefehlt",
+  "@autoMessagesTplNameStreak": {
+    "description": "autoMessages.tplName.streak"
+  },
+  "autoMessagesTplNoAnswerBody": "Hallo {vorname},\n\nfür {termin} am {datum} haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von {instanz}",
+  "@autoMessagesTplNoAnswerBody": {
+    "description": "autoMessages.tpl.noAnswer.body",
+    "placeholders": {
+      "vorname": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplNoAnswerTitle": "Keine Rückmeldung zu {termin}",
+  "@autoMessagesTplNoAnswerTitle": {
+    "description": "autoMessages.tpl.noAnswer.title",
+    "placeholders": {
+      "termin": {}
+    }
+  },
+  "autoMessagesTplStreakBody": "Hallo {vorname},\n\ndu hast jetzt {anzahl} Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei {termin} am {datum}.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von {instanz}",
+  "@autoMessagesTplStreakBody": {
+    "description": "autoMessages.tpl.streak.body",
+    "placeholders": {
+      "vorname": {},
+      "anzahl": {},
+      "termin": {},
+      "datum": {},
+      "instanz": {}
+    }
+  },
+  "autoMessagesTplStreakTitle": "{vorname}, wir vermissen dich",
+  "@autoMessagesTplStreakTitle": {
+    "description": "autoMessages.tpl.streak.title",
+    "placeholders": {
+      "vorname": {}
+    }
+  },
+  "autoMessagesTrigger0": "Keine Rückmeldung",
+  "@autoMessagesTrigger0": {
+    "description": "autoMessages.trigger.0"
+  },
+  "autoMessagesTrigger3": "Zu spät ohne Abmeldung",
+  "@autoMessagesTrigger3": {
+    "description": "autoMessages.trigger.3"
+  },
+  "autoMessagesTrigger4": "Unentschuldigt gefehlt",
+  "@autoMessagesTrigger4": {
+    "description": "autoMessages.trigger.4"
+  },
+  "autoMessagesTriggerHint0": "Status nach dem Termin noch „neutral“",
+  "@autoMessagesTriggerHint0": {
+    "description": "autoMessages.triggerHint.0"
+  },
+  "autoMessagesTriggerHint3": "Status „zu spät“, nicht „verspätet entschuldigt“",
+  "@autoMessagesTriggerHint3": {
+    "description": "autoMessages.triggerHint.3"
+  },
+  "autoMessagesTriggerHint4": "Status „unentschuldigt“ nach dem Termin",
+  "@autoMessagesTriggerHint4": {
+    "description": "autoMessages.triggerHint.4"
+  },
+  "autoMessagesTypesAll": "Nichts ausgewählt: gilt für alle Termintypen.",
+  "@autoMessagesTypesAll": {
+    "description": "autoMessages.typesAll"
+  },
+  "autoMessagesTypesSome": "Gilt nur für die ausgewählten Termintypen.",
+  "@autoMessagesTypesSome": {
+    "description": "autoMessages.typesSome"
+  },
+  "autoMessagesUnreachable": "nicht erreichbar",
+  "@autoMessagesUnreachable": {
+    "description": "autoMessages.unreachable"
+  },
+  "autoMessagesUnsuspend": "Wieder einschalten",
+  "@autoMessagesUnsuspend": {
+    "description": "autoMessages.unsuspend"
+  },
+  "autoMessagesUseTemplate": "Vorlage",
+  "@autoMessagesUseTemplate": {
+    "description": "autoMessages.useTemplate"
+  },
+  "autoMessagesWhen": "Wann wird geschickt?",
+  "@autoMessagesWhen": {
+    "description": "autoMessages.when"
+  },
+  "autoMessagesWhichTermine": "Für welche Termine?",
+  "@autoMessagesWhichTermine": {
+    "description": "autoMessages.whichTermine"
+  },
+  "autoMessagesWhoCanUse": "Admins und Verantwortliche können Regeln anlegen und ändern.",
+  "@autoMessagesWhoCanUse": {
+    "description": "autoMessages.whoCanUse"
+  },
+  "autoMessagesWhoRead": "Wer hat gelesen?",
+  "@autoMessagesWhoRead": {
+    "description": "autoMessages.whoRead"
+  },
+  "autoMessagesWriteUnexcusedMenu": "Unentschuldigte anschreiben ({count})",
+  "@autoMessagesWriteUnexcusedMenu": {
+    "description": "autoMessages.writeUnexcusedMenu",
+    "placeholders": {
+      "count": {}
+    }
   },
   "bellCurrentInstance": "Aktuelle Instanz",
   "@bellCurrentInstance": {
@@ -4245,9 +5176,44 @@
       "name": {}
     }
   },
+  "filesDeleteSelectedHeader": "{count, plural, one {{count} Eintrag löschen?} other {{count} Einträge löschen?}}",
+  "@filesDeleteSelectedHeader": {
+    "description": "files.deleteSelectedHeader",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesDeleteSelectedMessage": "{count, plural, one {Der ausgewählte Eintrag wird endgültig gelöscht.} other {Die {count} ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.}}",
+  "@filesDeleteSelectedMessage": {
+    "description": "files.deleteSelectedMessage",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesDeleteSummary": "{ok} gelöscht, {failed} fehlgeschlagen.",
+  "@filesDeleteSummary": {
+    "description": "files.deleteSummary",
+    "placeholders": {
+      "ok": {},
+      "failed": {}
+    }
+  },
   "filesDeleted": "Eintrag wurde gelöscht.",
   "@filesDeleted": {
     "description": "files.deleted"
+  },
+  "filesDeletedMany": "{count, plural, one {Eintrag wurde gelöscht.} other {{count} Einträge wurden gelöscht.}}",
+  "@filesDeletedMany": {
+    "description": "files.deletedMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesDescending": "absteigend",
   "@filesDescending": {
@@ -4364,6 +5330,33 @@
   "@filesMove": {
     "description": "files.move"
   },
+  "filesMoveBeingMoved": "Wird verschoben",
+  "@filesMoveBeingMoved": {
+    "description": "filesMove.beingMoved"
+  },
+  "filesMoveChooseTarget": "Wähle einen Zielordner.",
+  "@filesMoveChooseTarget": {
+    "description": "filesMove.chooseTarget"
+  },
+  "filesMoveCollapse": "Zuklappen",
+  "@filesMoveCollapse": {
+    "description": "filesMove.collapse"
+  },
+  "filesMoveCurrentFolder": "Aktueller Ordner",
+  "@filesMoveCurrentFolder": {
+    "description": "filesMove.currentFolder"
+  },
+  "filesMoveExists": "Im Zielordner gibt es schon „{name}“. Nichts verschoben.",
+  "@filesMoveExists": {
+    "description": "files.moveExists",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "filesMoveExpand": "Aufklappen",
+  "@filesMoveExpand": {
+    "description": "filesMove.expand"
+  },
   "filesMoveFailed": "Verschieben fehlgeschlagen: {error}",
   "@filesMoveFailed": {
     "description": "files.moveFailed",
@@ -4371,13 +5364,60 @@
       "error": {}
     }
   },
-  "filesMoveHint": "Zielordner relativ zum Tenant-Root. Leer lassen für Root.",
+  "filesMoveHint": "Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.",
   "@filesMoveHint": {
-    "description": "files.moveHint"
+    "description": "filesMove.hint"
+  },
+  "filesMoveMoveHere": "{count, plural, one {Hierher verschieben} other {{count} Einträge hierher verschieben}}",
+  "@filesMoveMoveHere": {
+    "description": "filesMove.moveHere",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesMoveRoot": "Dateiablage",
+  "@filesMoveRoot": {
+    "description": "filesMove.root"
+  },
+  "filesMoveSummary": "{ok} verschoben, {skipped} übersprungen (gibt es im Ziel schon), {failed} fehlgeschlagen.",
+  "@filesMoveSummary": {
+    "description": "files.moveSummary",
+    "placeholders": {
+      "ok": {},
+      "skipped": {},
+      "failed": {}
+    }
+  },
+  "filesMoveTarget": "Ziel: {path}",
+  "@filesMoveTarget": {
+    "description": "filesMove.target",
+    "placeholders": {
+      "path": {}
+    }
+  },
+  "filesMoveTitle": "{count, plural, one {Verschieben} other {{count} Einträge verschieben}}",
+  "@filesMoveTitle": {
+    "description": "filesMove.title",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesMoved": "Eintrag wurde verschoben.",
   "@filesMoved": {
     "description": "files.moved"
+  },
+  "filesMovedMany": "{count, plural, one {Eintrag wurde verschoben.} other {{count} Einträge wurden verschoben.}}",
+  "@filesMovedMany": {
+    "description": "files.movedMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "filesName": "Name",
   "@filesName": {
@@ -4501,6 +5541,35 @@
   "filesSearchType": "<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).",
   "@filesSearchType": {
     "description": "files.searchType"
+  },
+  "filesSelect": "Auswählen",
+  "@filesSelect": {
+    "description": "files.select"
+  },
+  "filesSelectAll": "Alle",
+  "@filesSelectAll": {
+    "description": "files.selectAll"
+  },
+  "filesSelectMultiple": "Mehrere auswählen",
+  "@filesSelectMultiple": {
+    "description": "files.selectMultiple"
+  },
+  "filesSelectNone": "Keine",
+  "@filesSelectNone": {
+    "description": "files.selectNone"
+  },
+  "filesSelectedCount": "{count, plural, =0 {Nichts ausgewählt} one {{count} ausgewählt} other {{count} ausgewählt}}",
+  "@filesSelectedCount": {
+    "description": "files.selectedCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "filesSelectionDone": "Auswahl beenden",
+  "@filesSelectionDone": {
+    "description": "files.selectionDone"
   },
   "filesSend": "Senden",
   "@filesSend": {
@@ -6037,6 +7106,19 @@
       "count": {}
     }
   },
+  "messagesAutoActive": "{count, plural, =0 {Keine Regel aktiv} one {{count} Regel aktiv} other {{count} Regeln aktiv}}",
+  "@messagesAutoActive": {
+    "description": "messages.autoActive",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "messagesAutoEntry": "Automatische Nachrichten",
+  "@messagesAutoEntry": {
+    "description": "messages.autoEntry"
+  },
   "messagesCountsFailed": "Die Empfänger konnten nicht geladen werden.",
   "@messagesCountsFailed": {
     "description": "messages.countsFailed"
@@ -6386,6 +7468,51 @@
   "messagesWriteFirst": "Erste Mitteilung schreiben",
   "@messagesWriteFirst": {
     "description": "messages.writeFirst"
+  },
+  "navClose": "Menü schließen",
+  "@navClose": {
+    "description": "nav.close"
+  },
+  "navCollapse": "Seitenleiste einklappen",
+  "@navCollapse": {
+    "description": "nav.collapse"
+  },
+  "navExpand": "Seitenleiste ausklappen",
+  "@navExpand": {
+    "description": "nav.expand"
+  },
+  "navGroupAccount": "Konto",
+  "@navGroupAccount": {
+    "description": "nav.groupAccount"
+  },
+  "navGroupAdmin": "Verwaltung",
+  "@navGroupAdmin": {
+    "description": "nav.groupAdmin"
+  },
+  "navGroupOverview": "Übersicht",
+  "@navGroupOverview": {
+    "description": "nav.groupOverview"
+  },
+  "navGroupTeam": "Team",
+  "@navGroupTeam": {
+    "description": "nav.groupTeam"
+  },
+  "navInstances": "{count, plural, one {{count} Instanz} other {{count} Instanzen}}",
+  "@navInstances": {
+    "description": "nav.instances",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "navLabel": "Hauptnavigation",
+  "@navLabel": {
+    "description": "nav.label"
+  },
+  "navShortcut": "Strg/⌘ + B",
+  "@navShortcut": {
+    "description": "nav.shortcut"
   },
   "notifAnnouncements": "Mitteilungen",
   "@notifAnnouncements": {
@@ -9046,6 +10173,14 @@
   "@personVoiceLeaderStatusOnly": {
     "description": "person.voiceLeaderStatusOnly"
   },
+  "planViewerOpenScores": "Noten öffnen",
+  "@planViewerOpenScores": {
+    "description": "planViewer.openScores"
+  },
+  "planningAddAgain": "Erneut hinzufügen",
+  "@planningAddAgain": {
+    "description": "planning.addAgain"
+  },
   "planningAddAnotherPlan": "Weiteren Ablaufplan anlegen",
   "@planningAddAnotherPlan": {
     "description": "planning.addAnotherPlan"
@@ -9230,6 +10365,14 @@
   "planningCurrent": "Aktuelle",
   "@planningCurrent": {
     "description": "planning.current"
+  },
+  "planningCurrentSongsAlreadyAddedHeader": "Bereits hinzugefügt",
+  "@planningCurrentSongsAlreadyAddedHeader": {
+    "description": "planning.currentSongsAlreadyAddedHeader"
+  },
+  "planningCurrentSongsAlreadyAddedMessage": "Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?",
+  "@planningCurrentSongsAlreadyAddedMessage": {
+    "description": "planning.currentSongsAlreadyAddedMessage"
   },
   "planningDefaultTitle": "Standardtitel verwenden",
   "@planningDefaultTitle": {
@@ -9579,6 +10722,10 @@
   "planningNext": "Nächste",
   "@planningNext": {
     "description": "planning.next"
+  },
+  "planningNoCurrentSongs": "Keine aktuellen Werke vorhanden",
+  "@planningNoCurrentSongs": {
+    "description": "planning.noCurrentSongs"
   },
   "planningNoPlan": "Kein Plan verfügbar",
   "@planningNoPlan": {
@@ -14583,9 +15730,9 @@
   "@settingsLogout": {
     "description": "settings.logout"
   },
-  "settingsMessageAll": "Nachricht an alle senden",
-  "@settingsMessageAll": {
-    "description": "settings.messageAll"
+  "settingsMessagesHint": "Nachrichten senden und automatisch nachfassen",
+  "@settingsMessagesHint": {
+    "description": "settings.messagesHint"
   },
   "settingsMobile": "Handynummer",
   "@settingsMobile": {
