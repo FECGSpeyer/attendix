@@ -525,6 +525,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     );
     // Ionic login.page.scss `.around` in rem: on the iPhone 1rem = 17px.
     final rem = ios ? 17.0 : 16.0;
+    final keyboardOpen = MediaQuery.viewInsetsOf(context).bottom > 0;
     _measurePasswordForm();
 
     // Ionic login: background photo, centered card (60 % / 95 % under
@@ -640,60 +641,64 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               );
             },
           ),
-          Positioned(
-            left: 0,
-            right: 0,
-            bottom: rem, // .version { bottom: 1rem }
-            child: SafeArea(
-              top: false,
-              child: Column(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  // NATIVE_MISC: Ionic login update-banner ("Update installieren")
-                  if (showUpdateHint(ref.watch(appUpdateAvailableProvider)))
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: 8),
-                      child: FilledButton.icon(
-                        style: FilledButton.styleFrom(
-                          backgroundColor: AppColors.success,
-                          foregroundColor: Colors.white,
-                          visualDensity: VisualDensity.compact,
+          // KEYBOARD_FOOTER: while the keyboard is open the body shrinks and
+          // the line would slide over the card (Ionic leaves it behind the
+          // keyboard), so it is hidden then.
+          if (!keyboardOpen)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: rem, // .version { bottom: 1rem }
+              child: SafeArea(
+                top: false,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    // NATIVE_MISC: Ionic login update-banner ("Update installieren")
+                    if (showUpdateHint(ref.watch(appUpdateAvailableProvider)))
+                      Padding(
+                        padding: const EdgeInsets.only(bottom: 8),
+                        child: FilledButton.icon(
+                          style: FilledButton.styleFrom(
+                            backgroundColor: AppColors.success,
+                            foregroundColor: Colors.white,
+                            visualDensity: VisualDensity.compact,
+                          ),
+                          onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
+                          icon: const Icon(Icons.cloud_download_outlined, size: 18),
+                          label: IonButtonLabel(context.l10n.loginInstallUpdate),
                         ),
-                        onPressed: () => ref.read(appUpdateServiceProvider).applyUpdate(),
-                        icon: const Icon(Icons.cloud_download_outlined, size: 18),
-                        label: IonButtonLabel(context.l10n.loginInstallUpdate),
+                      ),
+                    // Ionic always shows "Demo starten" (environment.demoMail);
+                    // LEGAL_HELP: Impressum & Datenschutz modal.
+                    Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 8),
+                      child: Text.rich(
+                        TextSpan(
+                          style: footerStyle,
+                          children: [
+                            TextSpan(
+                                text: context.l10n
+                                    .loginVersion(AppConstants.appVersion)),
+                            const TextSpan(text: ' | '),
+                            TextSpan(
+                              text: context.l10n.loginStartDemo,
+                              recognizer: _demoTap,
+                            ),
+                            const TextSpan(text: ' | '),
+                            TextSpan(
+                              text: context.l10n.loginLegal,
+                              recognizer: _legalTap,
+                            ),
+                          ],
+                        ),
+                        textAlign: TextAlign.center,
                       ),
                     ),
-                  // Ionic always shows "Demo starten" (environment.demoMail);
-                  // LEGAL_HELP: Impressum & Datenschutz modal.
-                  Padding(
-                    padding: const EdgeInsets.symmetric(horizontal: 8),
-                    child: Text.rich(
-                      TextSpan(
-                        style: footerStyle,
-                        children: [
-                          TextSpan(
-                              text: context.l10n
-                                  .loginVersion(AppConstants.appVersion)),
-                          const TextSpan(text: ' | '),
-                          TextSpan(
-                            text: context.l10n.loginStartDemo,
-                            recognizer: _demoTap,
-                          ),
-                          const TextSpan(text: ' | '),
-                          TextSpan(
-                            text: context.l10n.loginLegal,
-                            recognizer: _legalTap,
-                          ),
-                        ],
-                      ),
-                      textAlign: TextAlign.center,
-                    ),
-                  ),
-                ],
+                  ],
+                ),
               ),
             ),
-          ),
         ],
       ),
     );
