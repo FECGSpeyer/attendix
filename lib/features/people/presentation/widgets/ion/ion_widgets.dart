@@ -523,47 +523,111 @@ Widget ionCondenseHeader(
   Widget? trailing,
 }) {
   final bg = ionContentBackground(context);
-  return CupertinoSliverNavigationBar(
-    largeTitle: Text(
-      title,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-    ),
-    middle: Text(
-      title,
-      maxLines: 1,
-      overflow: TextOverflow.ellipsis,
-      style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
-    ),
-    alwaysShowMiddle: false,
-    leading: leading == null
-        ? null
-        : Material(type: MaterialType.transparency, child: leading),
-    automaticallyImplyLeading: leading == null,
-    trailing: trailing == null
-        ? null
-        : Material(
-            type: MaterialType.transparency,
-            // same icon color as the AppBar header buttons
-            child: IconTheme.merge(
-              data: Theme.of(context).appBarTheme.actionsIconTheme ??
-                  const IconThemeData(),
-              child: trailing,
+  return _BlurWhenScrolledUnder(
+    builder: (blur) => CupertinoSliverNavigationBar(
+      // PERF_WEB: see [_BlurWhenScrolledUnder].
+      enableBackgroundFilterBlur: blur,
+      largeTitle: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      ),
+      middle: Text(
+        title,
+        maxLines: 1,
+        overflow: TextOverflow.ellipsis,
+        style: TextStyle(color: Theme.of(context).colorScheme.onSurface),
+      ),
+      alwaysShowMiddle: false,
+      leading: leading == null
+          ? null
+          : Material(type: MaterialType.transparency, child: leading),
+      automaticallyImplyLeading: leading == null,
+      trailing: trailing == null
+          ? null
+          : Material(
+              type: MaterialType.transparency,
+              // same icon color as the AppBar header buttons
+              child: IconTheme.merge(
+                data: Theme.of(context).appBarTheme.actionsIconTheme ??
+                    const IconThemeData(),
+                child: trailing,
+              ),
             ),
-          ),
-    // IOS_SHELL2: a header button group brings its own 12pt edge margin
-    // (like in the AppBar); Cupertino's 16pt bar padding would push the
-    // capsule 28pt from the right.
-    padding: trailing is ToolbarButtonGroup
-        ? const EdgeInsetsDirectional.only(start: 16)
-        : null,
-    transitionBetweenRoutes: false,
-    // PARITY_R5: ios27 translucent header – 20 % page colour + blur.
-    backgroundColor: bg.withValues(alpha: 0.2),
-    // ios26 toolbars have no hairline
-    border: null,
+      // IOS_SHELL2: a header button group brings its own 12pt edge margin
+      // (like in the AppBar); Cupertino's 16pt bar padding would push the
+      // capsule 28pt from the right.
+      padding: trailing is ToolbarButtonGroup
+          ? const EdgeInsetsDirectional.only(start: 16)
+          : null,
+      transitionBetweenRoutes: false,
+      // PARITY_R5: ios27 translucent header – 20 % page colour + blur.
+      backgroundColor: bg.withValues(alpha: 0.2),
+      // ios26 toolbars have no hairline
+      border: null,
+    ),
   );
+}
+
+/// PERF_WEB: the translucent nav bar of [ionCondenseHeader] blurs its
+/// backdrop on every frame (a full-width [BackdropFilter]), but content
+/// only lies under it once the large title has scrolled away – before
+/// that its backdrop is the plain page colour, where the blur changes
+/// nothing. So the blur is switched on only after [_portraitThreshold]
+/// pixels of scrolling: less than the shortest large title (52pt, damped
+/// for small text). In landscape Cupertino shows no large title, so the
+/// blur follows the first pixel of scrolling.
+class _BlurWhenScrolledUnder extends StatefulWidget {
+  const _BlurWhenScrolledUnder({required this.builder});
+
+  final Widget Function(bool blur) builder;
+
+  @override
+  State<_BlurWhenScrolledUnder> createState() => _BlurWhenScrolledUnderState();
+}
+
+class _BlurWhenScrolledUnderState extends State<_BlurWhenScrolledUnder> {
+  static const double _portraitThreshold = 24;
+
+  ScrollPosition? _position;
+  double _threshold = _portraitThreshold;
+  bool _blur = false;
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _threshold = MediaQuery.orientationOf(context) == Orientation.portrait
+        ? _portraitThreshold
+        : 0;
+    final position = Scrollable.maybeOf(context)?.position;
+    if (position != _position) {
+      _position?.removeListener(_update);
+      _position = position?..addListener(_update);
+    }
+    _blur = _scrolledUnder;
+  }
+
+  @override
+  void dispose() {
+    _position?.removeListener(_update);
+    super.dispose();
+  }
+
+  /// Outside a scroll view the blur stays on (the previous behaviour).
+  bool get _scrolledUnder {
+    final p = _position;
+    if (p == null) return true;
+    return p.hasPixels && p.pixels > _threshold;
+  }
+
+  void _update() {
+    final blur = _scrolledUnder;
+    if (blur != _blur) setState(() => _blur = blur);
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.builder(_blur);
 }
 
 /// Ionic `.noDataContainer .noPersons` empty state: 80px icon, label,

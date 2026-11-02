@@ -156,6 +156,8 @@ const UA = {
   safari27: ['Apple Computer, Inc.', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/27.0 Safari/605.1.15'],
   safari261: ['Apple Computer, Inc.', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/605.1.15 (KHTML, like Gecko) Version/26.1 Safari/605.1.15'],
   chromeIos: ['Apple Computer, Inc.', 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) CriOS/141.0.0.0 Mobile/15E148 Safari/604.1'],
+  iosWebApp262: ['Apple Computer, Inc.', 'Mozilla/5.0 (iPhone; CPU iPhone OS 26_2 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'],
+  iosWebApp261: ['Apple Computer, Inc.', 'Mozilla/5.0 (iPad; CPU OS 26_1 like Mac OS X) AppleWebKit/605.1.15 (KHTML, like Gecko) Mobile/15E148'],
   firefox: ['', 'Mozilla/5.0 (Macintosh; Intel Mac OS X 10.15; rv:144.0) Gecko/20100101 Firefox/144.0'],
 };
 const isBlink = (vendor) => vendor === 'Google Inc.';
@@ -317,6 +319,9 @@ test('the worker picks the same engine files as the page in every browser', () =
   assert.deepEqual(pageEngineFiles(UA.chrome), ['main.dart.wasm', 'main.dart.mjs', 'canvaskit/skwasm.js', 'canvaskit/skwasm.wasm']);
   assert.deepEqual(pageEngineFiles(UA.safari262), ['main.dart.wasm', 'main.dart.mjs', 'canvaskit/skwasm_heavy.js', 'canvaskit/skwasm_heavy.wasm']);
   assert.deepEqual(pageEngineFiles(UA.safari261), ['main.dart.js', 'canvaskit/canvaskit.js', 'canvaskit/canvaskit.wasm']);
+  // PERF_WEB: home screen web app (no Version/) follows the iOS version.
+  assert.deepEqual(pageEngineFiles(UA.iosWebApp262), pageEngineFiles(UA.safari262));
+  assert.deepEqual(pageEngineFiles(UA.iosWebApp261), pageEngineFiles(UA.safari261));
   assert.deepEqual(pageEngineFiles(UA.chrome, false), ['main.dart.js', 'canvaskit/chromium/canvaskit.js', 'canvaskit/chromium/canvaskit.wasm']);
 });
 

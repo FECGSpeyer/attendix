@@ -32,7 +32,7 @@ class ToolbarButtonGroup extends StatelessWidget {
       padding: const EdgeInsets.symmetric(horizontal: 12),
       child: IosGlassSurface(
         borderRadius: const BorderRadius.all(Radius.circular(22)),
-        blur: 2,
+        blur: IosGlass.headerControlBlur,
         child: SizedBox(
           height: 44,
           child: IconButtonTheme(
@@ -169,7 +169,7 @@ class IosCircleIcon extends StatelessWidget {
       height: size,
       child: IosGlassSurface(
         borderRadius: BorderRadius.circular(size / 2),
-        blur: 2,
+        blur: IosGlass.headerControlBlur,
         child: Center(child: glyph),
       ),
     );

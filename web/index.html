@@ -53,7 +53,11 @@
         : navigator.vendor === 'Apple Computer, Inc.' ? 'webkit' : 'other';
       var safariWasm = false;
       if (engine === 'webkit') {
-        var m = /Version\/(\d+)\.(\d+)/.exec(ua);
+        // PERF_WEB: the installed iPhone/iPad web app (home screen) and
+        // in-app browsers send no "Version/x.y" – there WebKit is the iOS
+        // version ("CPU iPhone OS 26_2"), so those get WebAssembly too.
+        var m = /Version\/(\d+)\.(\d+)/.exec(ua) ||
+          /\bCPU (?:iPhone )?OS (\d+)_(\d+)/.exec(ua);
         safariWasm = !!m && (+m[1] > 26 || (+m[1] === 26 && +m[2] >= 2));
       }
       window.attendixSafariWasm = safariWasm;

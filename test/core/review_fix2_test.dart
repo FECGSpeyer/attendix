@@ -85,6 +85,9 @@ void main() {
     expect(rules, contains('frame-ancestors'));
     expect(rules, contains('teams.microsoft.com'));
     expect(rules, isNot(contains('X-Frame-Options')));
+    // PERF_WEB: cross-origin isolation → multi-threaded Skwasm renderer
+    expect(rules, contains('Cross-Origin-Opener-Policy: same-origin'));
+    expect(rules, contains('Cross-Origin-Embedder-Policy: require-corp'));
   });
 
   test('locale-dependent provider labels watch localeProvider', () {
