@@ -890,7 +890,10 @@ DateTime? parseTypedHistoryDate(String input) {
     final month = int.parse(m.group(2)!);
     final year = int.parse(m.group(3)!);
     if (month < 1 || month > 12 || day < 1 || day > 31) return null;
-    return DateTime(year, month, day);
+    final date = DateTime(year, month, day);
+    // 31.02. would roll over into March: such a day is rejected.
+    if (date.year != year || date.month != month || date.day != day) return null;
+    return date;
   }
   try {
     return DateFormat(dateFmt()).parseStrict(value);

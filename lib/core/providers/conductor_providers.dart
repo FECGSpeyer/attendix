@@ -9,20 +9,22 @@ import '../services/offline_list_cache.dart';
 /// Conductors are members of the "main group" (Hauptgruppe/Dirigenten)
 final conductorsProvider = FutureProvider<List<Person>>((ref) async {
   final repo = ref.watch(playerRepositoryWithTenantProvider);
-  final mainGroup = await ref.watch(mainGroupProvider.future);
-
-  if (!repo.hasTenantId || mainGroup == null || mainGroup.id == null) {
-    return [];
-  }
+  if (!repo.hasTenantId) return [];
 
   // Ionic conductor.service `offline_conductors_v1_`: the last loaded list
   // while offline (song history with conductor, songs selection sheet).
-  final mainGroupId = mainGroup.id!;
+  // The main group is loaded inside the fetch, so an offline start (main
+  // group not reachable) still falls back to the cached list.
   return OfflineListCache.read<Person>(
     ref,
     tenantId: repo.currentTenantId,
     part: 'conductors',
-    fetch: () => repo.getConductors(mainGroupId, includeLeft: true),
+    fetch: () async {
+      final mainGroup = await ref.read(mainGroupProvider.future);
+      final mainGroupId = mainGroup?.id;
+      if (mainGroupId == null) return <Person>[];
+      return repo.getConductors(mainGroupId, includeLeft: true);
+    },
     toJson: (p) => p.toJson(),
     fromJson: Person.fromJson,
   );

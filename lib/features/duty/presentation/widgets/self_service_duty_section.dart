@@ -125,7 +125,12 @@ class SelfServiceDutySection extends ConsumerWidget {
       // "Nächster Dienst"
       final next = overview.confirmed.isNotEmpty ? overview.confirmed.first : null;
       if (next != null) {
-        children.add(_SectionTitle(title: context.l10n.signoutNextDuty));
+        // Ionic has no duty-mine anchor here; with a single confirmed duty
+        // the month tile scrolls to "Nächster Dienst" instead of nothing.
+        final title = _SectionTitle(title: context.l10n.signoutNextDuty);
+        children.add(overview.confirmed.length > 1
+            ? title
+            : _DutyAnchor(id: 'duty-mine', child: title));
         children.add(Card(
           margin: const EdgeInsets.symmetric(horizontal: AppDimensions.paddingM, vertical: AppDimensions.paddingXS),
           child: Padding(
