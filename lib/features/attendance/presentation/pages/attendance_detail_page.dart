@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -17,7 +16,6 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
-import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
 import '../widgets/attendance_detail/attendance_view_options.dart';
 import '../widgets/attendance_detail/description_attachment_sheet.dart';
@@ -38,7 +36,6 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
@@ -51,7 +48,6 @@ import '../widgets/ios_condense_header.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
-import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -62,6 +58,7 @@ import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
 import '../attendance_song_history.dart';
 import '../attendance_add_persons.dart';
+import '../attendance_extra_actions.dart';
 export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays;
 
 /// Attendance detail/taking page
@@ -1007,10 +1004,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Id of the `bfecg_church` extra field, if the tenant has one.
-  String? _churchFieldId() {
-    final fields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
-    return fields.where((f) => f.type == 'bfecg_church').firstOrNull?.id;
-  }
+  String? _churchFieldId() => attendanceChurchFieldId(ref);
 
   List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(Attendance attendance) {
     final role = ref.read(effectiveRoleProvider);
@@ -1229,30 +1223,13 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       );
 
   /// "Gemeinde-Übersicht" of the present persons.
-  Future<void> _showChurchOverview() async {
-    final fieldId = _churchFieldId();
-    if (fieldId == null) return;
-    const present = {AttendanceStatus.present, AttendanceStatus.late, AttendanceStatus.lateExcused};
-    final persons = _personsInAttendance(
-        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
-    final churchIds = persons
-        .where((p) => present.contains(_localStatuses[p.id]))
-        .map((p) => churchIdOf(p.additionalFields, fieldId))
-        .toList();
-    List<Church> churches;
-    try {
-      churches = await ref.read(churchesProvider.future);
-    } catch (_) {
-      churches = const [];
-    }
-    if (!mounted) return;
-    await showChurchOverviewSheet(
-      context,
-      churchIds: churchIds,
-      churches: churches,
-      subtitle: context.l10n.attendancePresentPeople,
-    );
-  }
+  Future<void> _showChurchOverview() => showAttendanceChurchOverview(
+        context,
+        ref,
+        persons: _personsInAttendance(
+            ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []),
+        statusOf: (p) => _localStatuses[p.id],
+      );
 
   /// "Erinnerung versenden" for the Termin or one person
   /// (`send-ad-hoc-reminder` Edge Function, push + e-mail).
@@ -2403,76 +2380,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
   }
 
-  Future<void> _takePhoto() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final source = await showAppDialog<ImageSource>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.attendanceFlutterAddPhoto),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(context.l10n.attendanceFlutterCamera),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(context.l10n.attendanceFlutterGallery),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(context.l10n.commonCancel),
-          ),
-        ],
-      ),
-    );
-
-    if (source == null) return;
-    if (DemoGuard.blocked()) return; // DEMO_GUARD
-
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (image == null) return;
-
-      if (!mounted) return;
-      ToastHelper.showInfo(context, context.l10n.attendanceFlutterUploadingPhoto);
-
-      final bytes = await image.readAsBytes();
-
-      if (!repo.hasTenantId) {
-        if (mounted) {
-          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
-        }
-        return;
-      }
-
-      // DB_REVIEW_REST (H4): bucket `attendances`, key `<id>`, upsert (Ionic).
-      await repo.uploadAttendanceImage(widget.attendanceId, bytes);
-
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterPhotoUploaded);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(friendlyErrorMessage(e)));
-      }
-    }
-  }
+  Future<void> _takePhoto() => addAttendancePhoto(context, ref, widget.attendanceId);
 
   /// Save a single person's attendance status immediately
   Future<void> _savePersonStatus(

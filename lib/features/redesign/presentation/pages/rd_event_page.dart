@@ -36,6 +36,8 @@ import '../../../../core/providers/team_org_providers.dart' show protocolTypeByI
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/export_service.dart';
 import '../../../attendance/presentation/attendance_add_persons.dart';
+import '../../../attendance/presentation/attendance_extra_actions.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
 import '../../../duty/presentation/widgets/duty_staffing_section.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
@@ -999,6 +1001,11 @@ class _Overview extends ConsumerWidget {
           const SizedBox(height: 24),
           RdEventInfoSection(attendance: attendance),
         ],
+        if ((attendance.img ?? '').isNotEmpty) ...[
+          const SizedBox(height: 24),
+          RdGroupLabel(l10n.attendanceFlutterPhoto),
+          _EventPhoto(url: attendance.img!),
+        ],
         if (signouts.isNotEmpty) ...[
           const SizedBox(height: 24),
           RdGroupLabel(l10n.redesignEventSignouts),
@@ -1074,6 +1081,9 @@ class _EventActions extends ConsumerWidget {
     final canDelete = role.isAdmin || role.isResponsible;
     final id = attendance.id;
     final type = ref.watch(attendanceTypeForAttendanceProvider(id ?? -1)).valueOrNull;
+    // Gemeinde-Übersicht only where persons have a BFECG Gemeinde field.
+    ref.watch(personExtraFieldsProvider);
+    final hasChurch = attendanceChurchFieldId(ref) != null;
     final canStartChecklist = canMutate &&
         ref.watch(canViewAttendanceChecklistProvider) &&
         (attendance.checklist?.isEmpty ?? true);
@@ -1110,6 +1120,23 @@ class _EventActions extends ConsumerWidget {
           leading: const RdRowIcon(Icons.check_box_outlined),
           title: l10n.attendanceStartChecklist,
           onTap: () => _startChecklist(context, ref, type),
+        ),
+      if (canMutate && id != null)
+        RdListRow(
+          leading: const RdRowIcon(Icons.photo_camera_outlined),
+          title: l10n.attendanceFlutterAddPhoto,
+          onTap: () => addAttendancePhoto(context, ref, id),
+        ),
+      if (hasChurch && members.isNotEmpty)
+        RdListRow(
+          leading: const RdRowIcon(Icons.business_outlined),
+          title: l10n.attendanceChurchOverview,
+          onTap: () => showAttendanceChurchOverview(
+            context,
+            ref,
+            persons: [for (final m in members) m.person],
+            statusOf: (person) => members.firstWhere((m) => m.id == person.id).status,
+          ),
         ),
       if (members.isNotEmpty)
         RdListRow(
@@ -1212,5 +1239,49 @@ class _EventActions extends ConsumerWidget {
       ..invalidate(playerAttendancePercentagesProvider);
     if (context.mounted) ToastHelper.showSuccess(context, l10n.redesignEventDeleted);
     router.go(RedesignRoutes.events);
+  }
+}
+
+/// The Termin's photo ("Foto hinzufügen"); a tap shows it full size.
+class _EventPhoto extends StatelessWidget {
+  const _EventPhoto({required this.url});
+
+  final String url;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final image = Image.network(
+      url,
+      fit: BoxFit.cover,
+      errorBuilder: (_, __, ___) => SizedBox(
+        height: 120,
+        child: Center(child: Icon(Icons.broken_image_outlined, color: p.text2)),
+      ),
+    );
+    return Semantics(
+      button: true,
+      label: context.l10n.attendanceFlutterPhoto,
+      child: GestureDetector(
+        onTap: () => showDialog<void>(
+          context: context,
+          builder: (ctx) => Dialog(
+            insetPadding: const EdgeInsets.all(12),
+            clipBehavior: Clip.antiAlias,
+            child: GestureDetector(
+              onTap: () => Navigator.of(ctx).pop(),
+              child: InteractiveViewer(child: Image.network(url, fit: BoxFit.contain)),
+            ),
+          ),
+        ),
+        child: ClipRRect(
+          borderRadius: BorderRadius.circular(14),
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(maxHeight: 260),
+            child: SizedBox(width: double.infinity, child: image),
+          ),
+        ),
+      ),
+    );
   }
 }

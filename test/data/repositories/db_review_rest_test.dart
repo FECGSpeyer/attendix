@@ -36,9 +36,12 @@ void main() {
     });
 
     test('detail page no longer uses the unknown attendance-images bucket', () {
+      // Shared with the Beta Termin (attendance_extra_actions.dart).
       final page = read('lib/features/attendance/presentation/pages/attendance_detail_page.dart');
-      expect(page, isNot(contains('attendance-images')));
-      expect(page, contains('repo.uploadAttendanceImage(widget.attendanceId, bytes)'));
+      final shared = read('lib/features/attendance/presentation/attendance_extra_actions.dart');
+      expect(page, contains('addAttendancePhoto(context, ref, widget.attendanceId)'));
+      expect(shared, isNot(contains('attendance-images')));
+      expect(shared, contains('repo.uploadAttendanceImage(attendanceId, bytes)'));
     });
   });
 
