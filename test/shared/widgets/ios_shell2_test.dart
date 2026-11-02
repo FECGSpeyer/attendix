@@ -8,6 +8,7 @@ import 'package:attendix/core/theme/app_theme.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/layout/main_shell.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
@@ -178,9 +179,11 @@ void main() {
     expect(inShell, 16 + 34);
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
+  // SIDE_NAV (Ionic 4.19.0): from 768px the side panel replaces the tab bar,
+  // so the widest tab bar is 767px.
   testWidgets('Material: md tab bar clusters 168px tabs, no tooltips',
       (tester) async {
-    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.physicalSize = const Size(760, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app());
@@ -189,7 +192,7 @@ void main() {
     final tabs =
         tester.widgetList(find.byType(NavigationDestination)).length;
     expect(bar.width, 168.0 * tabs);
-    expect(bar.center.dx, 720);
+    expect(bar.center.dx, 380);
     for (final d in tester
         .widgetList<NavigationDestination>(find.byType(NavigationDestination))) {
       expect(d.tooltip, '');
@@ -199,7 +202,7 @@ void main() {
 
   testWidgets('PARITY_R9 md: tab bar background and hairline span the full width',
       (tester) async {
-    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.physicalSize = const Size(760, 900);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
     await tester.pumpWidget(_app());
@@ -212,7 +215,7 @@ void main() {
     });
     final rect = tester.getRect(find.byWidget(bar));
     expect(rect.left, 0);
-    expect(rect.width, 1440);
+    expect(rect.width, 760);
     final deco = bar.decoration as BoxDecoration;
     expect(deco.color, Colors.white);
     expect((deco.border! as Border).top.width, 1);
@@ -221,6 +224,31 @@ void main() {
     final nav = tester.getRect(find.byType(NavigationBar));
     expect(nav.top, rect.top + 1);
     expect(nav.height, 56);
+  });
+
+  testWidgets('SIDE_NAV: computer width → fixed side panel, no tab bar',
+      (tester) async {
+    tester.view.physicalSize = const Size(1440, 900);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(SideNav), findsOneWidget);
+    // The page gets the room next to the 272px panel.
+    expect(_pageSize!.width, 1440 - 272);
+  });
+
+  testWidgets('SIDE_NAV: tablet portrait → overlay panel, no tab bar',
+      (tester) async {
+    tester.view.physicalSize = const Size(820, 1180);
+    tester.view.devicePixelRatio = 1;
+    addTearDown(tester.view.reset);
+    await tester.pumpWidget(_app());
+    await tester.pumpAndSettle();
+    expect(find.byType(NavigationBar), findsNothing);
+    expect(find.byType(SideNav), findsNothing);
+    expect(_pageSize!.width, 820);
   });
 
   group('source', () {

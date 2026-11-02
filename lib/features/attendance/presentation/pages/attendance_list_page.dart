@@ -29,6 +29,8 @@ import '../widgets/ios_condense_header.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
+import '../widgets/att_list_columns.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
     show IonTranslucentBarBackground, ionTranslucentTopPadding;
 
@@ -250,6 +252,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           builder: (context, collapsed, _) =>
               IonTranslucentBarBackground(visible: collapsed || !largeTitle),
         ),
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+        leading: SideNavMenuButton.maybe(context),
         // UX_AUTH: Ionic keeps the tenant switcher left (ion-buttons slot=start).
         centerTitle: TenantSwitcherTitle.centerTitle(ref),
         // SETTINGS2: Ionic att-list header tenant switcher
@@ -435,20 +439,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           final currentDuty = current == null ? null : dutyTermine[current.id];
           final averageRounded = averagePercent?.round() ?? 0;
 
-          return Builder(builder: (body) => RefreshIndicator.adaptive(
-            edgeOffset: ionTranslucentTopPadding(body, ios),
-            onRefresh: () async {
-              // FN-008: invalidate to trigger fresh fetch from realtime provider
-              ref.invalidate(realtimeAttendanceListProvider);
-            },
-            child: _condense.listen(
-              child: ListView(
-                // Room for the FAB below the last card (Ionic marginBottom)
-                padding: EdgeInsets.only(
-                    top: ionTranslucentTopPadding(body, ios),
-                    bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
-                children: [
-                  if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+          // Ionic 4.19.0 att-col--main: next Termin and upcoming ones.
+          final mainColumn = <Widget>[
                   // DUTY: own duties waiting for confirmation
                   const MyDutyRequestsSection(),
                   // "Heute" / "Nächster Termin" – filled card (Ionic ev-today--filled),
@@ -535,7 +527,10 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       ]),
                     ],
                   ],
+          ];
 
+          // Ionic 4.19.0 att-col--side: past Termine with the average.
+          final sideColumn = <Widget>[
                   if (past.isNotEmpty) ...[
                     EventSectionHeader(
                         title: staff ? context.l10n.signoutPast : context.l10n.attListEvents, count: past.length),
@@ -571,6 +566,28 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         ),
                     ]),
                   ],
+          ];
+
+          return Builder(builder: (body) => RefreshIndicator.adaptive(
+            edgeOffset: ionTranslucentTopPadding(body, ios),
+            onRefresh: () async {
+              // FN-008: invalidate to trigger fresh fetch from realtime provider
+              ref.invalidate(realtimeAttendanceListProvider);
+            },
+            child: _condense.listen(
+              child: ListView(
+                // Room for the FAB below the last card (Ionic marginBottom)
+                padding: EdgeInsets.only(
+                    top: ionTranslucentTopPadding(body, ios),
+                    bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
+                children: [
+                  if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+                  AttListColumns(
+                    // Ionic att-grid--two: (isConductor || isHelper) && past ones
+                    twoColumns: staff && past.isNotEmpty,
+                    main: mainColumn,
+                    side: sideColumn,
+                  ),
                 ],
               ),
             ),

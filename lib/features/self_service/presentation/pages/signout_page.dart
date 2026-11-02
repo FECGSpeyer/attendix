@@ -36,6 +36,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -157,6 +158,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
       centerTitle: tenants.length > 1 ? false : null,
       automaticallyImplyLeading: false,
+      // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+      leading: SideNavMenuButton.maybe(context),
       // IOS_THEME2: toolbar matches the white (dark: black) Termin page.
       // PARITY_R5: iOS translucent header (blur once condensed).
       backgroundColor: isIosLook(context)

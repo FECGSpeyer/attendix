@@ -24,6 +24,7 @@ import '../../../messages/presentation/widgets/notification_bell.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// Parents Portal Page (Ionic `selfService/parents`) in the card layout:
 /// children with percentage, "Heute" card with one row per child, upcoming
@@ -133,9 +134,16 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
             ? null
             : CondenseTitle(condensed: condensed, child: const ParentsTenantTitle()),
         automaticallyImplyLeading: false,
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
         leading: multiTenant
-            ? const Align(alignment: Alignment.centerLeft, child: ParentsTenantTitle())
-            : null,
+            ? Align(
+                alignment: Alignment.centerLeft,
+                child: Row(mainAxisSize: MainAxisSize.min, children: [
+                  if (SideNavMenuButton.maybe(context) case final menu?) menu,
+                  const Flexible(child: ParentsTenantTitle()),
+                ]),
+              )
+            : SideNavMenuButton.maybe(context),
         leadingWidth: multiTenant ? MediaQuery.sizeOf(context).width * 0.55 : null,
         // IOS_SHELL: iOS → one glass capsule (ion-buttons slot="end")
         actions: [

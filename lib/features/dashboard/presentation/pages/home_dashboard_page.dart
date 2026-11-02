@@ -18,6 +18,7 @@ import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../../shared/widgets/adaptive/adaptive_platform.dart';
 
 /// Home dashboard tab (Ionic `home-dashboard`): configurable set of cards in a
@@ -63,6 +64,8 @@ class HomeDashboardPage extends ConsumerWidget {
       appBar: IonTranslucentAppBar(
         condensed: condensed,
         child: AppBar(
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+        leading: SideNavMenuButton.maybe(context),
         // P10_SELF_PLAN: shared Ionic tenant switcher (ion-buttons slot="start").
         title: tenants.length > 1
             ? TenantSwitcherTitle(

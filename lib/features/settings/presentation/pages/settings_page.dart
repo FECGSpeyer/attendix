@@ -48,6 +48,7 @@ import '../widgets/language_picker_tile.dart';
 import '../widgets/redesign_beta_tile.dart';
 import '../../../../core/providers/push_providers.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
@@ -111,6 +112,9 @@ class SettingsPage extends ConsumerWidget {
     void openTeamOrg(String tab) => context.push('/settings/team-organization?tab=$tab');
 
     final ios = ionIsIos(context);
+    // SIDE_NAV (Ionic 4.19.0 `sp`): with the side panel (tablet/desktop)
+    // every entry the panel already shows is left out here.
+    final sp = SideNavScope.isActive(context);
     // IOS_SETTINGS2: Ionic `isInstancesModalOpen = true` (sheet, not a page).
     void openTenants() => showTenantsSheet(context);
 
@@ -130,11 +134,16 @@ class SettingsPage extends ConsumerWidget {
             : (Theme.of(context).brightness == Brightness.dark
                 ? AppColors.iosPageDark
                 : AppColors.light),
-        centerTitle: ios ? false : TenantSwitcherTitle.centerTitle(ref),
-        titleSpacing: ios ? 12 : null,
-        title: ios && TenantSwitcherTitle.centerTitle(ref) == null
-            ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
-            : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
+        // SIDE_NAV: the menu button of the overlay panel (tablet portrait).
+        leading: SideNavMenuButton.maybe(context),
+        centerTitle: sp ? null : (ios ? false : TenantSwitcherTitle.centerTitle(ref)),
+        titleSpacing: ios && !sp ? 12 : null,
+        // SIDE_NAV: with the side panel the instance switcher sits there.
+        title: sp
+            ? Text(l10n.settingsSettings)
+            : ios && TenantSwitcherTitle.centerTitle(ref) == null
+                ? IonHeaderPill(child: TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings))
+                : TenantSwitcherTitle(fallbackTitle: l10n.settingsSettings),
         // IOS_SHELL: iOS → bell in a glass circle
         actions: const [ToolbarButtonGroup(children: [NotificationBell()])],
       )),
@@ -186,7 +195,7 @@ class SettingsPage extends ConsumerWidget {
             const ProfileHeroCard(),
 
             // ============ STIMMFÜHRER ============
-            if (isVoiceLeader && !isGeneral)
+            if (isVoiceLeader && !isGeneral && !sp)
               SettingsListSection(
                 icon: CupertinoIcons.music_note_2, // musical-notes-outline
                 title: l10n.settingsVoiceLeader,
@@ -235,7 +244,7 @@ class SettingsPage extends ConsumerWidget {
               ),
 
             // ============ KOMMUNIKATION ============
-            if (isAdmin)
+            if (isAdmin && !sp)
               SettingsListSection(
                 icon: Icons.campaign_outlined,
                 title: l10n.settingsCommunication,
@@ -293,17 +302,18 @@ class SettingsPage extends ConsumerWidget {
               ),
 
             // ============ WERKE & PROBEN ============
-            if (!isGeneral && !isApplicant)
+            if (!isGeneral && !isApplicant && (!sp || isAdmin || isHelper))
               SettingsListSection(
                 icon: CupertinoIcons.music_note_2, // musical-notes-outline
                 title: l10n.settingsSongsRehearsals,
                 children: [
-                  SettingsListTile(
-                    // Ionic library-outline: books on a shelf.
-                    iconWidget: const IonLibraryOutlineIcon(),
-                    title: l10n.settingsSongs,
-                    onTap: () => context.push('/settings/songs'),
-                  ),
+                  if (!sp)
+                    SettingsListTile(
+                      // Ionic library-outline: books on a shelf.
+                      iconWidget: const IonLibraryOutlineIcon(),
+                      title: l10n.settingsSongs,
+                      onTap: () => context.push('/settings/songs'),
+                    ),
                   if (isAdmin || isHelper)
                     SettingsListTile(
                       icon: Icons.schedule,
@@ -312,7 +322,7 @@ class SettingsPage extends ConsumerWidget {
                       // IOS_FORMS2: Ionic modal (iOS card sheet)
                       onTap: () => showHistoryModal(context),
                     ),
-                  if (canAccessFiles)
+                  if (canAccessFiles && !sp)
                     SettingsListTile(
                       icon: Icons.folder_outlined,
                       title: l10n.settingsFileStorage,
@@ -322,7 +332,7 @@ class SettingsPage extends ConsumerWidget {
               ),
 
             // Allgemeine Instanzen: Dateiablage steht allein
-            if (isGeneral && canAccessFiles)
+            if (isGeneral && canAccessFiles && !sp)
               SettingsListSection(
                 icon: Icons.folder_outlined,
                 title: l10n.settingsFiles,
@@ -342,12 +352,13 @@ class SettingsPage extends ConsumerWidget {
                 title: l10n.settingsPlanning,
                 children: [
                   if (showPlanning) ...[
-                    SettingsListTile(
-                      icon: Icons.list,
-                      title: l10n.settingsRunSheets,
-                      detail: false,
-                      onTap: () => context.push('/planning'),
-                    ),
+                    if (!sp)
+                      SettingsListTile(
+                        icon: Icons.list,
+                        title: l10n.settingsRunSheets,
+                        detail: false,
+                        onTap: () => context.push('/planning'),
+                      ),
                     SettingsListTile(
                       icon: Icons.calendar_today_outlined,
                       title: l10n.settingsAdHocPlanning,
@@ -424,12 +435,13 @@ class SettingsPage extends ConsumerWidget {
                     onTap: () => showCalendarSubscriptionDialog(context, ref),
                   ),
                   if (isAdmin) ...[
-                    SettingsListTile(
-                      icon: Icons.insert_chart_outlined,
-                      title: l10n.statsTitle,
-                      detail: false,
-                      onTap: () => showStatisticsModal(context), // PARITY_R5: modal like Ionic
-                    ),
+                    if (!sp)
+                      SettingsListTile(
+                        icon: Icons.insert_chart_outlined,
+                        title: l10n.statsTitle,
+                        detail: false,
+                        onTap: () => showStatisticsModal(context), // PARITY_R5: modal like Ionic
+                      ),
                     SettingsListTile(
                       icon: Icons.download_outlined,
                       title: l10n.settingsExport,
@@ -516,12 +528,13 @@ class SettingsPage extends ConsumerWidget {
                 ),
                 // Ionic offers no "E-Mail ändern" here (nor anywhere else),
                 // so the Mehr tab shows only "Passwort ändern".
-                // LEGAL_HELP: help center
-                SettingsListTile(
-                  icon: Icons.help_outline,
-                  title: l10n.settingsHelp,
-                  onTap: () => context.push('/settings/help'),
-                ),
+                // LEGAL_HELP: help center (SIDE_NAV: in the panel)
+                if (!sp)
+                  SettingsListTile(
+                    icon: Icons.help_outline,
+                    title: l10n.settingsHelp,
+                    onTap: () => context.push('/settings/help'),
+                  ),
                 SettingsListTile(
                   // Ionic chatbubble-ellipses-outline (bubble with dots).
                   icon: Icons.sms_outlined,
@@ -555,6 +568,8 @@ class SettingsPage extends ConsumerWidget {
                 // Ionic: red `ion-item color="danger" button` row. IOS_R4: no
                 // detail="false" → iOS shows the faint detail chevron
                 // (--detail-icon-color: initial = white, opacity .25).
+                // SIDE_NAV: in the panel's foot.
+                if (!sp)
                 SettingsListTile(
                   icon: Icons.logout,
                   title: l10n.settingsLogout,
