@@ -22,6 +22,7 @@ import '../../../../core/utils/attendance_logic_utils.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
+import '../widgets/attendance_detail/auto_message_panel.dart';
 import '../widgets/attendance_detail/add_persons_sheet.dart';
 import '../widgets/attendance_detail/attendance_view_options.dart';
 import '../widgets/attendance_detail/description_attachment_sheet.dart';
@@ -635,6 +636,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                       children: [
                         const SizedBox(height: AppDimensions.paddingXS),
 
+                        // AUTO_MESSAGES (Ionic 4.18): automatic messages of
+                        // this Termin + members' answers (admins/responsibles).
+                        AutoMessagePanel(
+                          key: const ValueKey('att-auto-messages'),
+                          attendance: attendance,
+                          attendanceType: attendanceType,
+                          people: _autoMessagePeople(persons),
+                        ),
+
                         GeneralInfoAccordion(
                           key: const ValueKey('att-acc-general'),
                           attendance: attendance,
@@ -943,7 +953,52 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       case 'reminder':
         _sendAdHocReminder();
         break;
+      case 'write_unexcused':
+        _writeUnexcused();
+        break;
     }
+  }
+
+  // ============== AUTO_MESSAGES (Ionic 4.18) ==============
+
+  /// Persons of this Termin with their current (local) status for the
+  /// automatic-messages panel and "Unentschuldigte anschreiben".
+  List<AutoMessagePanelPerson> _autoMessagePeople(List<Person> persons) => [
+        for (final p in _personsInAttendance(persons))
+          if (p.id != null)
+            AutoMessagePanelPerson(
+              personId: p.id!,
+              personAttendanceId: _personAttendanceIds[p.id],
+              name: p.fullName.trim(),
+              status: _localStatuses[p.id] ?? AttendanceStatus.neutral,
+              left: p.left != null && p.left!.isNotEmpty,
+            ),
+      ];
+
+  int _unexcusedCount() {
+    final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    return persons == null ? 0 : unexcusedPeople(_autoMessagePeople(persons)).length;
+  }
+
+  bool _canWriteUnexcused(Attendance attendance, AttendanceType? type) {
+    final role = ref.read(effectiveRoleProvider);
+    if (!(role.isAdmin || role.isResponsible)) return false;
+    if (autoMessageTerminStart(attendance, type).isAfter(DateTime.now())) return false;
+    return _unexcusedCount() > 0;
+  }
+
+  Future<void> _writeUnexcused() async {
+    final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
+    final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    if (attendance == null || persons == null) return;
+    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    await openWriteUnexcused(
+      context,
+      ref,
+      attendance: attendance,
+      typeName: type?.name ?? '',
+      people: _autoMessagePeople(persons),
+    );
   }
 
   // ============== ATT_DETAIL ==============
@@ -1079,6 +1134,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (hasChurch) item('church', Icons.business_outlined, context.l10n.attendanceChurchOverview),
       item('legend', Icons.info_outline, context.l10n.signoutLegend),
       if (canMutate) item('reminder', Icons.notifications_outlined, context.l10n.attendanceSendReminder),
+      // AUTO_MESSAGES (Ionic 4.18 b1977e29): "Unentschuldigte anschreiben (n)"
+      // for admins/responsibles once the Termin has started.
+      if (_canWriteUnexcused(attendance, type))
+        item('write_unexcused', Icons.chat_bubble_outline,
+            context.l10n.autoMessagesWriteUnexcusedMenu(_unexcusedCount())),
       // Flutter-only extra (Ionic has the photo upload commented out)
       if (canMutate) item('photo', Icons.camera_alt_outlined, context.l10n.attendanceFlutterPhoto),
     ];

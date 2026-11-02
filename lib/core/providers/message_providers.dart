@@ -100,6 +100,9 @@ class MessageNotifier extends Notifier<AsyncValue<void>> {
     required List<int>? groupIds,
     required bool push,
     required bool email,
+    List<int>? playerIds,
+    int? attendanceId,
+    bool allowResponses = false,
   }) async {
     state = const AsyncValue.loading();
     try {
@@ -109,6 +112,9 @@ class MessageNotifier extends Notifier<AsyncValue<void>> {
         groupIds: groupIds,
         push: push,
         email: email,
+        playerIds: playerIds,
+        attendanceId: attendanceId,
+        allowResponses: allowResponses,
       );
       state = const AsyncValue.data(null);
       ref.invalidate(messagesProvider);

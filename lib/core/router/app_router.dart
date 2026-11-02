@@ -74,6 +74,8 @@ import '../../features/settings/presentation/pages/link_persons_page.dart';
 // END SETTINGS_EXT
 import '../../features/messages/presentation/pages/message_detail_page.dart';
 import '../../features/messages/presentation/pages/message_list_page.dart';
+import '../../features/messages/presentation/pages/auto_message_list_page.dart';
+import '../../features/messages/presentation/pages/auto_message_rule_page.dart';
 import '../providers/dashboard_providers.dart';
 import '../../features/dashboard/presentation/pages/home_dashboard_page.dart';
 import '../../features/dashboard/presentation/pages/dashboard_settings_page.dart';
@@ -166,6 +168,8 @@ const Map<String, RoleCheck> _protectedRoutes = {
   // (/settings/files prüft den Zugriff selbst: abhängig von tenants.files_shared)
   // END SETTINGS_EXT
   '/settings/messages': _isAdminOrResponsible,
+  // AUTO_MESSAGES (Ionic 4.18): rules are admin/responsible only (RLS too)
+  '/settings/auto-messages': _isAdminOrResponsible,
   '/settings/handover': _isAdminOrResponsible,
   // ORG_PLANS: Ablaufplanung & Organisation (Ionic: admin/responsible)
   '/settings/planung': _isAdminOrResponsible,
@@ -989,6 +993,23 @@ final routerProvider = Provider<GoRouter>((ref) {
                 path: 'messages',
                 name: 'messages',
                 builder: (context, state) => const MessageListPage(),
+              ),
+              // AUTO_MESSAGES (Ionic 4.18): /tabs/settings/auto-messages(/:id)
+              GoRoute(
+                path: 'auto-messages',
+                name: 'autoMessages',
+                builder: (context, state) => const AutoMessageListPage(),
+                routes: [
+                  GoRoute(
+                    path: ':id',
+                    name: 'autoMessageRule',
+                    builder: (context, state) => AutoMessageRulePage(
+                      ruleId: state.pathParameters['id'] ?? 'new',
+                      template: state.uri.queryParameters['template'],
+                      initialTab: state.uri.queryParameters['tab'],
+                    ),
+                  ),
+                ],
               ),
               GoRoute(
                 path: 'team-organization',
