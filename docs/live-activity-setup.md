@@ -93,7 +93,8 @@ FCM → APNs (`apns.live_activity_token`). That needs push on the **app** target
 6. Push-to-start (iOS 17.2+, app closed) needs step 2 above. Check `live_activity_tokens`
    for a `start` row of your user.
 
-## Not ported
+## Android
 
-- Android "live notification" (Ionic `LiveActivityPlugin.java`): the Flutter service is a
-  no-op on Android.
+The Android live notification (Ionic `LiveActivityPlugin.java`) is ported:
+`android/app/src/main/kotlin/de/attendix/attendix/liveplan/*` plus the Android branch of
+`lib/core/services/live_activity_service.dart` (updates via `live_plan` data pushes).
