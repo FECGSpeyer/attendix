@@ -5,6 +5,7 @@ import '../models/auto_message/auto_message.dart';
 import '../models/message/message.dart';
 import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
+import '../../core/utils/archived_attendance.dart';
 
 /// Provider for AutoMessageRepository
 final autoMessageRepositoryProvider = Provider<AutoMessageRepository>((ref) {
@@ -242,11 +243,16 @@ class AutoMessageRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('attendance')
-          .select('id, date, typeInfo, type_id')
+          .select('id, date, typeInfo, type_id, archived')
           .inFilter('id', ids)
           .eq('tenantId', currentTenantId);
+      // Ionic 4.17.24: archived Termine stay hidden for every role except
+      // admins/responsible (no Termin card and no answer actions).
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
       return (response as List)
-          .map((e) => AutoMessageTerminInfo.fromJson(e as Map<String, dynamic>))
+          .cast<Map<String, dynamic>>()
+          .where((e) => showArchived || !isArchivedRow(e))
+          .map(AutoMessageTerminInfo.fromJson)
           .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getAttendanceInfo');

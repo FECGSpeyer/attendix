@@ -84,6 +84,7 @@ class PublicPlanRepository extends BaseRepository {
           .eq('id', id)
           .eq('share_key', key)
           .eq('share_edit_key', editKey)
+          .eq('archived', false)
           .maybeSingle();
       return response != null;
     } catch (e, stack) {
@@ -111,6 +112,9 @@ class PublicPlanRepository extends BaseRepository {
           .eq('id', id)
           .eq('share_key', key)
           .eq('share_edit_key', editKey)
+          // Ionic 4.17.24: an archived Termin is no longer reachable via
+          // its links, so an edit view that was already open cannot write.
+          .eq('archived', false)
           .select('id');
       if ((rows as List).isEmpty) {
         throw StateError('shared plan of attendance $id is no longer editable');

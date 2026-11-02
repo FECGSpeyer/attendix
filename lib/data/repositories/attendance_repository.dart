@@ -250,6 +250,17 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
   /// Update an existing attendance
   Future<Attendance> updateAttendance(int id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateAttendance'); // DEMO_GUARD
+    // Ionic 4.17.24: only admins/responsible archive or restore Termine
+    // (also checked here, not only in the menu).
+    if ((updates.containsKey('archived') ||
+            updates.containsKey('archived_at') ||
+            updates.containsKey('archived_by')) &&
+        !canSeeArchivedAttendances(currentUserRole)) {
+      throw RepositoryException(
+        message: 'Archiving Termine needs the admin or responsible role',
+        operation: 'updateAttendance',
+      );
+    }
     try {
       // Remove read-only fields
       updates.remove('id');

@@ -15,6 +15,7 @@ import '../../core/services/attendance_detail_cache.dart'
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
 import '../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
+import '../../core/utils/paged_query.dart';
 import '../models/song/song.dart';
 import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
@@ -638,15 +639,19 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
     if (ids.isEmpty) return const [];
     try {
       final result = <SongHistory>[];
+      final tenantId = currentTenantId;
       for (var i = 0; i < ids.length; i += 150) {
         final chunk = ids.sublist(i, i + 150 > ids.length ? ids.length : i + 150);
-        final rows = await supabase
+        // Paged as well: one chunk can hold more rows than PostgREST
+        // returns at once (max-rows 1000).
+        final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
             .from('history')
             .select('id, songId, attendance_id, otherConductor, person:person_id(firstName, lastName)')
-            .eq('tenantId', currentTenantId)
+            .eq('tenantId', tenantId)
             .inFilter('attendance_id', chunk)
-            .order('id', ascending: true);
-        for (final row in rows as List) {
+            .order('id', ascending: true)
+            .range(from, to) as List);
+        for (final row in rows) {
           final map = row as Map<String, dynamic>;
           final person = map['person'];
           result.add(SongHistory(

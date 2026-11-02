@@ -215,10 +215,22 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
 
   // --- Save / delete ---------------------------------------------------------
 
-  AutoMessageRule _currentRule() => _rule.copyWith(
-    name: _nameController.text.trim(),
-    title: _titleController.text.trim().isEmpty ? null : _titleController.text.trim(),
-  );
+  /// The rule as shown, with the text fields and the editor content read
+  /// directly: option callbacks of an older build may have written an
+  /// older `bodyJson` back into [_rule] (the editor listener updates it
+  /// without a rebuild).
+  AutoMessageRule _currentRule() {
+    final quill = _quill;
+    return _rule.copyWith(
+      name: _nameController.text.trim(),
+      title: _titleController.text.trim().isEmpty ? null : _titleController.text.trim(),
+      bodyJson: quill == null
+          ? _rule.bodyJson
+          : TiptapConverter.fromDeltaOps(
+              quill.document.toDelta().toJson().cast<Map<String, dynamic>>(),
+            ),
+    );
+  }
 
   List<String> _problems(AutoMessageRule rule) {
     final l10n = context.l10n;
@@ -363,7 +375,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
           SwitchListTile.adaptive(
             value: rule.enabled,
             title: Text(l10n.autoMessagesActive),
-            onChanged: (v) => _update(rule.copyWith(enabled: v)),
+            onChanged: (v) => _update(_rule.copyWith(enabled: v)),
           ),
         ],
       ),
@@ -382,7 +394,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               subtitle: Text(l10n.autoMessageTriggerHint(s)),
               onChanged:
                   (_) => _update(
-                    rule.copyWith(
+                    _rule.copyWith(
                       statuses:
                           rule.statuses.contains(s)
                               ? rule.statuses.where((x) => x != s).toList()
@@ -409,7 +421,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
           ),
         ],
         value: rule.frequency,
-        onChanged: (v) => _update(rule.copyWith(frequency: v), resetPreview: true),
+        onChanged: (v) => _update(_rule.copyWith(frequency: v), resetPreview: true),
       ),
       const SizedBox(height: 12),
       if (rule.frequency != AutoMessageFrequency.each)
@@ -421,12 +433,12 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               value: '${rule.frequencyCount}×',
               onLess:
                   () => _update(
-                    rule.copyWith(frequencyCount: (rule.frequencyCount - 1).clamp(2, 50)),
+                    _rule.copyWith(frequencyCount: (rule.frequencyCount - 1).clamp(2, 50)),
                     resetPreview: true,
                   ),
               onMore:
                   () => _update(
-                    rule.copyWith(frequencyCount: (rule.frequencyCount + 1).clamp(2, 50)),
+                    _rule.copyWith(frequencyCount: (rule.frequencyCount + 1).clamp(2, 50)),
                     resetPreview: true,
                   ),
             ),
@@ -436,12 +448,12 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
                 value: l10n.autoMessagesDays(rule.frequencyDays),
                 onLess:
                     () => _update(
-                      rule.copyWith(frequencyDays: (rule.frequencyDays - 7).clamp(1, 365)),
+                      _rule.copyWith(frequencyDays: (rule.frequencyDays - 7).clamp(1, 365)),
                       resetPreview: true,
                     ),
                 onMore:
                     () => _update(
-                      rule.copyWith(frequencyDays: (rule.frequencyDays + 7).clamp(1, 365)),
+                      _rule.copyWith(frequencyDays: (rule.frequencyDays + 7).clamp(1, 365)),
                       resetPreview: true,
                     ),
               ),
@@ -460,7 +472,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               onTap: () {
                 final ids = [...?rule.typeIds];
                 ids.contains(type.id) ? ids.remove(type.id) : ids.add(type.id!);
-                _update(rule.copyWith(typeIds: ids.isEmpty ? null : ids), resetPreview: true);
+                _update(_rule.copyWith(typeIds: ids.isEmpty ? null : ids), resetPreview: true);
               },
             ),
         ],
@@ -482,7 +494,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               onTap: () {
                 final ids = [...?rule.groupIds];
                 ids.contains(group.id) ? ids.remove(group.id) : ids.add(group.id!);
-                _update(rule.copyWith(groupIds: ids.isEmpty ? null : ids), resetPreview: true);
+                _update(_rule.copyWith(groupIds: ids.isEmpty ? null : ids), resetPreview: true);
               },
             ),
         ],
@@ -504,7 +516,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               for (final d in autoMessageDelayOptions)
                 AppSelectOption(value: d, label: l10n.autoMessageDelayLabel(d)),
             ],
-            onChanged: (v) => _update(rule.copyWith(delayMinutes: v)),
+            onChanged: (v) => _update(_rule.copyWith(delayMinutes: v)),
           ),
         ],
       ),
@@ -555,7 +567,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
                 for (final tpl in autoMessageTemplates)
                   AppSelectOption(value: tpl, label: l10n.autoMessageTemplateName(tpl)),
               ],
-              onChanged: (v) => _update(rule.copyWith(templateKey: v)),
+              onChanged: (v) => _update(_rule.copyWith(templateKey: v)),
             ),
             Builder(
               builder: (context) {
@@ -685,7 +697,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
               title: Text(label),
               onChanged:
                   (on) => _update(
-                    rule.copyWith(
+                    _rule.copyWith(
                       channels:
                           on
                               ? {...rule.channels, channel}.toList()
@@ -705,7 +717,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             value: rule.allowResponses,
             title: Text(l10n.autoMessagesAllowResponses),
             subtitle: Text(l10n.autoMessagesAllowResponsesHint),
-            onChanged: (v) => _update(rule.copyWith(allowResponses: v)),
+            onChanged: (v) => _update(_rule.copyWith(allowResponses: v)),
           ),
           if (rule.allowResponses)
             for (final (instant, label) in [
@@ -720,7 +732,7 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
                 controlAffinity: ListTileControlAffinity.leading,
                 title: Text(label),
                 // ignore: deprecated_member_use
-                onChanged: (v) => _update(rule.copyWith(instantExcuse: v)),
+                onChanged: (v) => _update(_rule.copyWith(instantExcuse: v)),
               ),
         ],
       ),
@@ -736,13 +748,13 @@ class _AutoMessageRulePageState extends ConsumerState<AutoMessageRulePage> {
             value: rule.copyResponsibles,
             controlAffinity: ListTileControlAffinity.leading,
             title: Text(l10n.autoMessagesCopyResponsibles),
-            onChanged: (v) => _update(rule.copyWith(copyResponsibles: v ?? false)),
+            onChanged: (v) => _update(_rule.copyWith(copyResponsibles: v ?? false)),
           ),
           CheckboxListTile(
             value: rule.copyVoiceLeaders,
             controlAffinity: ListTileControlAffinity.leading,
             title: Text(l10n.autoMessagesCopyVoiceLeaders),
-            onChanged: (v) => _update(rule.copyWith(copyVoiceLeaders: v ?? false)),
+            onChanged: (v) => _update(_rule.copyWith(copyVoiceLeaders: v ?? false)),
           ),
         ],
       ),

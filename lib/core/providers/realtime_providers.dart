@@ -180,7 +180,9 @@ final realtimeAttendanceListProvider = FutureProvider.autoDispose<List<Attendanc
     if (authUserId != null && authUserId != cacheUserId) return null;
     final cached = await cache.load(cacheUserId, tenantId);
     if (cached == null || !cacheGuard.isCurrent) return null;
-    return cached;
+    // The copy may be from before a role change: filter it for the
+    // current role as well (Ionic 4.17.24 archived Termine).
+    return filterArchivedForRole(cached, role, (a) => a.archived);
   }
 
   // LOGIC_SELF: Ionic att-list getAttendance — offline the cached list is

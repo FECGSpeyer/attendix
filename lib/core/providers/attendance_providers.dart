@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utils/event_list_utils.dart';
+import '../utils/archived_attendance.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
@@ -72,6 +73,9 @@ final attendanceListTypeFilterProvider = StateProvider<String?>((ref) {
 /// list until "Archivierte anzeigen" is switched on (admins/responsible).
 final attendanceListShowArchivedProvider = StateProvider<bool>((ref) {
   ref.watch(currentTenantIdProvider);
+  // A role change switches it off again (only admins/responsible may see
+  // archived Termine).
+  ref.watch(currentRoleProvider);
   return false;
 });
 
@@ -194,7 +198,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
       typeFilter == null ? all : all.where((a) => a.typeId == typeFilter).toList();
   // Ionic 4.17.24: archived Termine are hidden by default but keep counting
   // in the average.
-  final showArchived = ref.watch(attendanceListShowArchivedProvider);
+  final showArchived = ref.watch(attendanceListShowArchivedProvider) &&
+      canSeeArchivedAttendances(ref.watch(currentRoleProvider));
   final archivedCount = byType.where((a) => a.archived).length;
   final attendances = showArchived ? byType : byType.where((a) => !a.archived).toList();
 
