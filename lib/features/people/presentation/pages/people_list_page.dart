@@ -40,6 +40,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// People list page
 class PeopleListPage extends ConsumerStatefulWidget {
@@ -494,6 +495,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         ionCondenseHeader(
           context,
           title: tenantTitle,
+          // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+          leading: SideNavMenuButton.maybe(context),
           // IOS_SHELL: bell alone → glass circle
           trailing: const ToolbarButtonGroup(children: [NotificationBell()]),
         ),
@@ -722,6 +725,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return AppBar(
         centerTitle: false,
         automaticallyImplyLeading: false,
+        leading: SideNavMenuButton.maybe(context),
         titleSpacing: 8,
         title: DefaultTextStyle.merge(
           style: const TextStyle(
@@ -740,6 +744,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     // Ionic: only the notification bell in the header; filter, sort, view
     // and admin actions live in the options popover next to the search bar.
     return AppBar(
+      // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+      leading: SideNavMenuButton.maybe(context),
       title: TenantSwitcherTitle(fallbackTitle: context.l10n.commonPeople),
       centerTitle: TenantSwitcherTitle.centerTitle(ref),
       actions: const [ToolbarButtonGroup(children: [NotificationBell()])], // MESSAGES, IOS_SHELL

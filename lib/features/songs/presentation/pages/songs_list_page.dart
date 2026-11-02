@@ -34,6 +34,7 @@ import '../../../../shared/widgets/common/error_state_view.dart';
 import '../../../../shared/widgets/adaptive/app_segmented_button.dart';
 import '../../../../shared/widgets/adaptive/app_toolbar.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Songs list (Ionic `songs.page`).
@@ -255,6 +256,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
         child: AppBar(
         title: CondenseTitle(condensed: condensed, child: Text(title)),
         automaticallyImplyLeading: !data.isPublic,
+        // SIDE_NAV: Werke as a main area – menu button of the overlay panel
+        leading: _isStandaloneTab ? SideNavMenuButton.maybe(context) : null,
         // IOS_SHELL: iOS → menu button in a glass circle
         actions: [
           ToolbarButtonGroup(children: [
