@@ -141,7 +141,8 @@ class RdOwnProgramSection extends ConsumerWidget {
     final l10n = context.l10n;
     final song = item.song;
     final mine = personId != null && item.conductorPersonId == personId;
-    final missing = song != null && !mine && program.instrumentId != null && notes.isEmpty;
+    // Parents may have children in several groups: no per-child hint.
+    final missing = !readOnly && song != null && !mine && program.instrumentId != null && notes.isEmpty;
     return RdListRow(
       key: ValueKey('rd-own-program-$index'),
       leading: RdProgramNumber(index + 1),

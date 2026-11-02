@@ -2,6 +2,7 @@ import 'package:uuid/uuid.dart';
 
 import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/song/song.dart';
+import '../../songs/presentation/utils/song_utils.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/utils/choir_file_utils.dart';
 
@@ -167,4 +168,4 @@ List<SongFile> rdMyNotes(Song? song, int? instrumentId, {required bool isChoir})
 
 /// The recording of [song] (file category "Aufnahme").
 SongFile? rdRecordingOf(Song? song) =>
-    (song?.files ?? const <SongFile>[]).where((f) => f.instrumentId == 1).firstOrNull;
+    (song?.files ?? const <SongFile>[]).where((f) => f.instrumentId == 1 && SongUtils.isAudio(f)).firstOrNull;

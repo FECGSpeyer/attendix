@@ -66,6 +66,10 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   late final AttendanceRepository _repo;
   late final ProviderContainer _container;
 
+  /// #232: the acting user's session; text saved when the page closes
+  /// after a sign-out or account switch is dropped, not written.
+  late final OfflineWriteSession _session;
+
   int get _id => widget.attendanceId;
 
   @override
@@ -73,6 +77,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     super.initState();
     _repo = ref.read(attendanceRepositoryWithTenantProvider);
     _container = ProviderScope.containerOf(context, listen: false);
+    _session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     for (final (focus, save) in [
       (_titleFocus, _saveTitle),
       (_placeFocus, _savePlace),
@@ -118,7 +123,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
 
   /// Writes [updates]; reports a failure while the page is open.
   Future<bool> _write(Map<String, dynamic> updates) async {
-    if (!_repo.hasTenantId) return false;
+    if (!_repo.hasTenantId || !_session.isCurrent()) return false;
     try {
       await _repo.updateAttendance(_id, updates);
       _refresh();
@@ -129,25 +134,25 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     }
   }
 
-  void _saveTitle() {
+  Future<void> _saveTitle() async {
     final value = _title.text.trim();
     if (_storedTitle == null || value == _storedTitle) return;
-    _storedTitle = value;
-    _write({'typeInfo': value.isEmpty ? null : value});
+    // Marked as stored only once written, so a failed save is tried again.
+    if (await _write({'typeInfo': value.isEmpty ? null : value})) _storedTitle = value;
   }
 
-  void _savePlace() {
+  Future<void> _savePlace() async {
     final value = _place.text.trim();
     if (_storedPlace == null || value == _storedPlace) return;
-    _storedPlace = value;
-    _write({'place': value.isEmpty ? null : value});
+    // Marked as stored only once written, so a failed save is tried again.
+    if (await _write({'place': value.isEmpty ? null : value})) _storedPlace = value;
   }
 
-  void _saveNotes() {
+  Future<void> _saveNotes() async {
     final value = _notes.text;
     if (_storedNotes == null || value == _storedNotes) return;
-    _storedNotes = value;
-    _write({'notes': value.isEmpty ? null : value});
+    // Marked as stored only once written, so a failed save is tried again.
+    if (await _write({'notes': value.isEmpty ? null : value})) _storedNotes = value;
   }
 
   void _done() {

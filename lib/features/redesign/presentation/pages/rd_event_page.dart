@@ -508,7 +508,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         action: canMutate
             ? RdOutlineButton(
                 label: l10n.attendanceAddPerson,
-                onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: const {}),
+                onPressed: () => addPersonsToAttendance(context, ref, attendanceId: _id, currentPersonIds: _rowPersonIds ?? const {}),
               )
             : null,
       ));
@@ -520,13 +520,19 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         ],
         RdEventPlanSection(attendance: attendance),
         const SizedBox(height: 24),
-        _EventActions(attendance: attendance, members: const [], showAddPerson: false),
+        _EventActions(
+          attendance: attendance,
+          members: const [],
+          rowPersonIds: _rowPersonIds ?? const {},
+          showAddPerson: false,
+        ),
       ]);
     } else if (_tab == RdEventTab.overview) {
       children.add(_Overview(
         attendance: attendance,
         type: type,
         members: members,
+        rowPersonIds: _rowPersonIds ?? const {},
         onRecord: () => setState(() => _tab = RdEventTab.record),
       ));
     } else {
@@ -876,11 +882,20 @@ class _Header extends StatelessWidget {
 /// answers, empty registers, Programm/Werke, Ablauf, Vorbereitung, Infos,
 /// sign-outs, notes, Dienst and Protokoll, actions.
 class _Overview extends ConsumerWidget {
-  const _Overview({required this.attendance, required this.type, required this.members, required this.onRecord});
+  const _Overview({
+    required this.attendance,
+    required this.type,
+    required this.members,
+    required this.rowPersonIds,
+    required this.onRecord,
+  });
 
   final Attendance attendance;
   final AttendanceType? type;
   final List<RdMember> members;
+
+  /// Every person with a row in this Termin (also outside the shown scope).
+  final Set<int> rowPersonIds;
   final VoidCallback onRecord;
 
   @override
@@ -1041,7 +1056,12 @@ class _Overview extends ConsumerWidget {
           AttendanceProtocolSection(attendanceId: attendance.id!, typeId: attendance.typeId),
         ],
         const SizedBox(height: 24),
-        _EventActions(attendance: attendance, members: members, openCount: ended ? 0 : counts.open),
+        _EventActions(
+          attendance: attendance,
+          members: members,
+          rowPersonIds: rowPersonIds,
+          openCount: ended ? 0 : counts.open,
+        ),
       ],
     );
   }
@@ -1055,12 +1075,17 @@ class _EventActions extends ConsumerWidget {
   const _EventActions({
     required this.attendance,
     required this.members,
+    required this.rowPersonIds,
     this.openCount = 0,
     this.showAddPerson = true,
   });
 
   final Attendance attendance;
   final List<RdMember> members;
+
+  /// Every person with a row in this Termin: never offered again by
+  /// "Person hinzufügen" (Stimmführer only see their own group).
+  final Set<int> rowPersonIds;
 
   /// Persons without an answer (0 once the Termin is over).
   final int openCount;
@@ -1108,7 +1133,7 @@ class _EventActions extends ConsumerWidget {
             context,
             ref,
             attendanceId: id,
-            currentPersonIds: {for (final m in members) m.id},
+            currentPersonIds: rowPersonIds,
           ),
         ),
       if (canStartChecklist && id != null)

@@ -33,7 +33,6 @@ import '../../../../planning/presentation/attendance_plan_viewer.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show openFilesFolderRoute;
 import '../../../data/providers/rd_today_providers.dart' show rdDeadlineLabel;
 import '../../../data/rd_event_details_logic.dart';
-import '../../../../attendance/presentation/pages/attendance_detail_page.dart' show canMutateAttendanceDetail;
 import '../rd_widgets.dart';
 import '../today/rd_today_common.dart';
 
@@ -128,6 +127,10 @@ class RdEventProgramSection extends ConsumerStatefulWidget {
 
 class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
   bool _saving = false;
+
+  /// Werk hidden while its "Rückgängig" is offered; deleted only once the
+  /// SnackBar closes without Rückgängig (keeps its row, number and flags).
+  int? _removingSongId;
 
   int get _id => widget.attendance.id!;
 
@@ -256,20 +259,51 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
   Future<void> _remove(List<SongHistoryEntry> entries, int index) async {
     final entry = entries[index];
     HapticHelper.light();
-    final messenger = ScaffoldMessenger.maybeOf(context);
     final l10n = context.l10n;
-    final ok = await _save([...entries]..removeAt(index));
-    if (!ok || !mounted) return;
-    messenger?.showSnackBar(SnackBar(
-      content: Text(l10n.redesignEventWorkRemoved(entry.songName)),
-      action: SnackBarAction(
-        label: l10n.redesignEventUndo,
-        // Rückgängig: the old list again (the removed row is re-inserted).
-        onPressed: () {
-          if (mounted) _save(entries);
-        },
-      ),
-    ));
+    final messenger = ScaffoldMessenger.maybeOf(context);
+    final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    if (!repo.hasTenantId) return;
+    // Bound now: the delete may run after the page was left.
+    final container = ProviderScope.containerOf(context, listen: false);
+    final id = _id;
+    final date = widget.attendance.date;
+    setState(() => _removingSongId = entry.songId);
+    final reason = messenger == null
+        ? SnackBarClosedReason.timeout
+        : await messenger
+            .showSnackBar(SnackBar(
+              content: Text(l10n.redesignEventWorkRemoved(entry.songName)),
+              duration: const Duration(seconds: 5),
+              persist: false,
+              action: SnackBarAction(label: l10n.redesignEventUndo, onPressed: () {}),
+            ))
+            .closed;
+    if (reason == SnackBarClosedReason.action) {
+      if (mounted) setState(() => _removingSongId = null);
+      return;
+    }
+    try {
+      // The latest stored list without this Werk: nothing else changes.
+      final latest = await loadAttendanceSongEntries(
+        repo: repo,
+        songsFuture: container.read(songsProvider.future),
+        conductorsFuture: container.read(conductorsProvider.future),
+        attendanceId: id,
+      );
+      if (latest == null) return;
+      await syncAttendanceSongHistory(repo, id, date, [
+        for (final e in latest)
+          if (e.songId != entry.songId) e,
+      ]);
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+    } finally {
+      container
+        ..invalidate(attendanceSongEntriesProvider(id))
+        ..invalidate(currentSongsProvider)
+        ..invalidate(songHistoryProvider(null));
+      if (mounted) setState(() => _removingSongId = null);
+    }
   }
 
   @override
@@ -277,7 +311,9 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final p = context.rd;
     final l10n = context.l10n;
     final async = ref.watch(attendanceSongEntriesProvider(_id));
-    final entries = async.valueOrNull;
+    final entries = async.valueOrNull?.where((e) => e.songId != _removingSongId).toList();
+    // A removal waiting for its Rückgängig counts as a write in flight.
+    final busy = _saving || _removingSongId != null;
     final title = rdProgramTitle(l10n, widget.type);
     final Widget body;
     if (entries == null) {
@@ -296,7 +332,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
         RdListRow(
           leading: const RdRowIcon(Icons.music_note_outlined),
           title: l10n.redesignEventAddWorkLabel,
-          onTap: _saving ? null : () => _add(entries),
+          onTap: busy ? null : () => _add(entries),
         ),
       ]);
     } else {
@@ -309,7 +345,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
             subtitle: entries[i].otherConductor != null || entries[i].conductorName != null
                 ? l10n.signoutConductor(entries[i].displayConductor)
                 : null,
-            onTap: _saving ? null : () => _open(entries, i),
+            onTap: busy ? null : () => _open(entries, i),
           ),
       ]);
     }
@@ -320,7 +356,7 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
           entries == null || entries.isEmpty ? title : l10n.redesignEventSectionCount(title, '${entries.length}'),
           actionLabel: entries != null && entries.isNotEmpty ? l10n.redesignEventAddWork : null,
           actionSemantics: l10n.redesignEventAddWorkLabel,
-          onAction: entries == null || _saving ? null : () => _add(entries),
+          onAction: entries == null || busy ? null : () => _add(entries),
         ),
         if (_saving) LinearProgressIndicator(minHeight: 2, color: p.primary, backgroundColor: p.track),
         body,
@@ -338,7 +374,8 @@ bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
 // ---------------------------------------------------------------------------
 
 /// Ablauf ansehen / bearbeiten / "Für Mitglieder sichtbar"; "Ablauf
-/// anlegen" without one. Helfer only look at an existing Ablauf.
+/// anlegen" without one. Everyone who edits Termine (Helfer too, like
+/// Ionic); Beobachter do not see it.
 class RdEventPlanSection extends ConsumerStatefulWidget {
   const RdEventPlanSection({super.key, required this.attendance});
 
@@ -353,19 +390,36 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
 
   void _edit() => context.push<bool>('/planning?attendanceId=${widget.attendance.id}');
 
+  bool _sharing = false;
+
   Future<void> _toggleShare(bool value) async {
+    if (_sharing) return; // one write at a time, see below
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
+    final container = ProviderScope.containerOf(context, listen: false);
     final id = widget.attendance.id!;
-    setState(() => _share = value);
+    setState(() {
+      _share = value;
+      _sharing = true;
+    });
     try {
       await repo.updateAttendance(id, {'share_plan': value});
-      ref.invalidate(attendanceDetailProvider(id));
     } catch (e) {
-      if (!mounted) return;
-      setState(() => _share = !value);
-      ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+      if (mounted) {
+        setState(() => _share = !value);
+        ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
+      }
+    } finally {
+      container.invalidate(attendanceDetailProvider(id));
+      if (mounted) setState(() => _sharing = false);
     }
+  }
+
+  @override
+  void didUpdateWidget(RdEventPlanSection oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    // The stored value wins again once no write is running.
+    if (!_sharing && oldWidget.attendance.sharePlan != widget.attendance.sharePlan) _share = null;
   }
 
   @override
@@ -375,8 +429,9 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     final hasPlan = attendanceHasPlan(att);
     final share = _share ?? att.sharePlan;
     final role = ref.watch(effectiveRoleProvider);
-    // Helfer only look at the Ablauf; Beobachter do not see it.
-    final canEdit = canMutateAttendanceDetail(role);
+    // Like Ionic (`@if (!isViewer)`): Helfer edit the Ablauf too,
+    // Beobachter do not see it.
+    final canEdit = role.canEdit;
     if (role == Role.viewer || (!hasPlan && !canEdit)) return const SizedBox.shrink();
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -403,8 +458,8 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
               title: l10n.redesignEventPlanShare,
               subtitle: l10n.redesignEventPlanShareHint,
               showChevron: false,
-              onTap: () => _toggleShare(!share),
-              trailing: Switch.adaptive(value: share, onChanged: _toggleShare),
+              onTap: _sharing ? null : () => _toggleShare(!share),
+              trailing: Switch.adaptive(value: share, onChanged: _sharing ? null : _toggleShare),
             ),
             ],
           ] else
@@ -442,15 +497,28 @@ class _RdEventChecklistSectionState extends ConsumerState<RdEventChecklistSectio
 
   List<ChecklistItem> get _items => _local ?? widget.attendance.checklist ?? const [];
 
+  /// Writes still running; they run one after another (each sends the
+  /// whole list) so a later tick never loses to an earlier one.
+  int _pending = 0;
+  Future<void> _queue = Future.value();
+
   @override
   void didUpdateWidget(RdEventChecklistSection oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.attendance.checklist != widget.attendance.checklist) _local = null;
+    if (_pending == 0 && oldWidget.attendance.checklist != widget.attendance.checklist) _local = null;
   }
 
-  Future<void> _save(List<ChecklistItem> items) async {
+  Future<void> _save(List<ChecklistItem> items) {
     setState(() => _local = items);
-    await rdSaveChecklist(context, ref, widget.attendance.id!, items);
+    _pending++;
+    final write = rdChecklistWriter(context, ref, widget.attendance.id!);
+    final done = _queue.then((_) => write(items)).then((ok) {
+      _pending--;
+      // Failed: show the stored list again once nothing else is pending.
+      if (!ok && _pending == 0 && mounted) setState(() => _local = null);
+    });
+    _queue = done;
+    return done;
   }
 
   Future<void> _add() async {
@@ -579,17 +647,29 @@ class _ChecklistRow extends StatelessWidget {
 }
 
 /// Writes the checklist of [attendanceId] (whole list, like the Termin page).
-Future<void> rdSaveChecklist(BuildContext context, WidgetRef ref, int attendanceId, List<ChecklistItem> items) async {
+Future<void> rdSaveChecklist(BuildContext context, WidgetRef ref, int attendanceId, List<ChecklistItem> items) =>
+    rdChecklistWriter(context, ref, attendanceId)(items);
+
+/// Binds repository and provider container now, so the write still
+/// finishes (and refreshes the Termin) when the page is left meanwhile.
+/// The returned writer answers false when the write failed.
+Future<bool> Function(List<ChecklistItem>) rdChecklistWriter(BuildContext context, WidgetRef ref, int attendanceId) {
   final repo = ref.read(attendanceRepositoryWithTenantProvider);
-  if (!repo.hasTenantId) return;
-  try {
-    await repo.updateAttendance(attendanceId, {'checklist': [for (final i in items) i.toJson()]});
-  } catch (e) {
-    if (context.mounted) {
-      ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+  final container = ProviderScope.containerOf(context, listen: false);
+  return (items) async {
+    if (!repo.hasTenantId) return false;
+    var ok = true;
+    try {
+      await repo.updateAttendance(attendanceId, {'checklist': [for (final i in items) i.toJson()]});
+    } catch (e) {
+      ok = false;
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
+      }
     }
-  }
-  ref.invalidate(attendanceDetailProvider(attendanceId));
+    container.invalidate(attendanceDetailProvider(attendanceId));
+    return ok;
+  };
 }
 
 /// "Aufgabe hinzufügen": text and optional "Stunden vorher" (Termin page dialog).
