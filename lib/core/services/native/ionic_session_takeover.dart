@@ -19,8 +19,10 @@ const _doneKey = 'ionic_session_takeover_done';
 const _attemptsKey = 'ionic_session_takeover_attempts';
 const _maxAttempts = 3;
 
-/// Same key as `CurrentTenantNotifier` (tenant_providers.dart).
-const _tenantIdKey = 'current_tenant_id';
+/// Group of the Ionic app (its localStorage `currentTenantId`). Ionic
+/// preferred it over `user_metadata`, so `CurrentTenantNotifier` restores it
+/// first and keeps the key until the group is synced (tenant_providers.dart).
+const ionicTakeoverTenantKey = 'ionic_session_takeover_tenant';
 
 typedef IonicSession = ({String refreshToken, int? tenantId});
 
@@ -69,10 +71,10 @@ Future<void> takeOverIonicSession({
       headers: {'apikey': anonKey, 'Authorization': 'Bearer $anonKey'},
       autoRefreshToken: false,
     );
-    final session = (await refresher
+    final session =
+        (await refresher
             .setSession(ionic.refreshToken)
-            .timeout(const Duration(seconds: 10)))
-        .session;
+            .timeout(const Duration(seconds: 10))).session;
     // Not after a timeout: the pending refresh may still finish.
     refresher.dispose();
     if (session == null || client.auth.currentSession != null) return;
@@ -82,8 +84,9 @@ Future<void> takeOverIonicSession({
     await client.auth.setInitialSession(jsonEncode(session.toJson()));
     await prefs.setBool(_doneKey, true);
 
+    // Restored (and synced) by CurrentTenantNotifier; kept until then.
     final tenantId = ionic.tenantId;
-    if (tenantId != null) await _adoptIonicTenant(client, tenantId, prefs);
+    if (tenantId != null) await prefs.setInt(ionicTakeoverTenantKey, tenantId);
   } on AuthRetryableFetchException catch (e) {
     debugPrint('Ionic session takeover: offline, retry next start ($e)');
   } on AuthException catch (e) {
@@ -92,36 +95,6 @@ Future<void> takeOverIonicSession({
     await prefs?.setBool(_doneKey, true);
   } catch (e) {
     debugPrint('Ionic session takeover failed: $e');
-  }
-}
-
-/// Ionic preferred its local `currentTenantId` over `user_metadata`; the
-/// Flutter tenant restore prefers the metadata. So a group the user still
-/// belongs to is written to both (like Ionic's setTenant). Best effort.
-Future<void> _adoptIonicTenant(
-  SupabaseClient client,
-  int tenantId,
-  SharedPreferences prefs,
-) async {
-  try {
-    await prefs.setInt(_tenantIdKey, tenantId);
-    final user = client.auth.currentUser;
-    if (user == null || user.userMetadata?['currentTenantId'] == tenantId) {
-      return;
-    }
-    final member = await client
-        .from('tenantUsers')
-        .select('tenantId')
-        .eq('tenantId', tenantId)
-        .eq('userId', user.id)
-        .maybeSingle()
-        .timeout(const Duration(seconds: 5));
-    if (member == null) return;
-    await client.auth
-        .updateUser(UserAttributes(data: {'currentTenantId': tenantId}))
-        .timeout(const Duration(seconds: 5));
-  } catch (e) {
-    debugPrint('Ionic session takeover: tenant not synced ($e)');
   }
 }
 
@@ -139,7 +112,8 @@ IonicSession? parseIonicStorage(String? raw, {required String supabaseUrl}) {
     final keys = [
       if (storage.containsKey(ownKey)) ownKey,
       ...storage.keys.whereType<String>().where(
-          (k) => k != ownKey && k.startsWith('sb-') && k.endsWith('-auth-token')),
+        (k) => k != ownKey && k.startsWith('sb-') && k.endsWith('-auth-token'),
+      ),
     ];
     for (final key in keys) {
       final value = storage[key];
