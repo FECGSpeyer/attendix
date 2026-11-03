@@ -18137,6 +18137,456 @@ abstract class AppLocalizations {
   /// **'morgen'**
   String get redesignPersonTomorrow;
 
+  /// redesign.plan.add
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt hinzufügen'**
+  String get redesignPlanAdd;
+
+  /// redesign.plan.addAfter
+  ///
+  /// In de, this message translates to:
+  /// **'Wird nach „{name}“ eingefügt'**
+  String redesignPlanAddAfter(Object name);
+
+  /// redesign.plan.addBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Block'**
+  String get redesignPlanAddBlock;
+
+  /// redesign.plan.addBlockHint
+  ///
+  /// In de, this message translates to:
+  /// **'Fasst mehrere Punkte zusammen'**
+  String get redesignPlanAddBlockHint;
+
+  /// redesign.plan.addCurrent
+  ///
+  /// In de, this message translates to:
+  /// **'Aktuelle Werke'**
+  String get redesignPlanAddCurrent;
+
+  /// redesign.plan.addCurrentHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke, die gerade dran sind'**
+  String get redesignPlanAddCurrentHint;
+
+  /// redesign.plan.addEnd
+  ///
+  /// In de, this message translates to:
+  /// **'Wird ans Ende gesetzt'**
+  String get redesignPlanAddEnd;
+
+  /// redesign.plan.addItem
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt'**
+  String get redesignPlanAddItem;
+
+  /// redesign.plan.addItemHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Dauer, z. B. „Einsingen“'**
+  String get redesignPlanAddItemHint;
+
+  /// redesign.plan.addNote
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz'**
+  String get redesignPlanAddNote;
+
+  /// redesign.plan.addNoteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Dauer und Uhrzeit'**
+  String get redesignPlanAddNoteHint;
+
+  /// redesign.plan.addPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Plan'**
+  String get redesignPlanAddPlan;
+
+  /// redesign.plan.addSong
+  ///
+  /// In de, this message translates to:
+  /// **'Werk aus der Liste'**
+  String get redesignPlanAddSong;
+
+  /// redesign.plan.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get redesignPlanAddTitle;
+
+  /// redesign.plan.afterBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt nach dem Block einfügen'**
+  String get redesignPlanAfterBlock;
+
+  /// redesign.plan.back
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignPlanBack;
+
+  /// redesign.plan.blockTemplateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Block · {count} Min'**
+  String redesignPlanBlockTemplateHint(Object count);
+
+  /// redesign.plan.collapse
+  ///
+  /// In de, this message translates to:
+  /// **'Block einklappen'**
+  String get redesignPlanCollapse;
+
+  /// redesign.plan.collapsed
+  ///
+  /// In de, this message translates to:
+  /// **'eingeklappt'**
+  String get redesignPlanCollapsed;
+
+  /// redesign.plan.copied
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf vom {date} übernommen'**
+  String redesignPlanCopied(Object date);
+
+  /// redesign.plan.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get redesignPlanDelete;
+
+  /// redesign.plan.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Rückgängig'**
+  String get redesignPlanDeleteHint;
+
+  /// redesign.plan.drag
+  ///
+  /// In de, this message translates to:
+  /// **'Ziehen zum Sortieren'**
+  String get redesignPlanDrag;
+
+  /// redesign.plan.duration
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer'**
+  String get redesignPlanDuration;
+
+  /// redesign.plan.durationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Die Zeiten darunter rechnen sich sofort neu'**
+  String get redesignPlanDurationHint;
+
+  /// redesign.plan.durationLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Dauer von {name}: {count} Minuten'**
+  String redesignPlanDurationLabel(Object name, Object count);
+
+  /// redesign.plan.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignPlanEdit;
+
+  /// redesign.plan.editHint
+  ///
+  /// In de, this message translates to:
+  /// **'Bezeichnung, Info, Dauer'**
+  String get redesignPlanEditHint;
+
+  /// redesign.plan.emptyCopy
+  ///
+  /// In de, this message translates to:
+  /// **'Wie letzter Termin'**
+  String get redesignPlanEmptyCopy;
+
+  /// redesign.plan.emptyCopyHint
+  ///
+  /// In de, this message translates to:
+  /// **'Kopie vom {date} · {count}'**
+  String redesignPlanEmptyCopyHint(Object date, Object count);
+
+  /// redesign.plan.emptyTemplate
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage der Organisation'**
+  String get redesignPlanEmptyTemplate;
+
+  /// redesign.plan.emptyTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Womit beginnen?'**
+  String get redesignPlanEmptyTitle;
+
+  /// redesign.plan.end
+  ///
+  /// In de, this message translates to:
+  /// **'Ende'**
+  String get redesignPlanEnd;
+
+  /// redesign.plan.expand
+  ///
+  /// In de, this message translates to:
+  /// **'Block aufklappen'**
+  String get redesignPlanExpand;
+
+  /// redesign.plan.heading
+  ///
+  /// In de, this message translates to:
+  /// **'Überschrift'**
+  String get redesignPlanHeading;
+
+  /// redesign.plan.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
+  String get redesignPlanHint;
+
+  /// redesign.plan.hours
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Std.'**
+  String redesignPlanHours(Object count);
+
+  /// redesign.plan.hoursMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{hours} Std. {minutes} Min'**
+  String redesignPlanHoursMinutes(Object hours, Object minutes);
+
+  /// redesign.plan.inBlock
+  ///
+  /// In de, this message translates to:
+  /// **'im Block „{name}“'**
+  String redesignPlanInBlock(Object name);
+
+  /// redesign.plan.insertAfter
+  ///
+  /// In de, this message translates to:
+  /// **'Punkt danach einfügen'**
+  String get redesignPlanInsertAfter;
+
+  /// redesign.plan.invalid
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nicht gespeichert: jeder Punkt braucht eine Dauer'**
+  String get redesignPlanInvalid;
+
+  /// redesign.plan.itemCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Punkt} other {{count} Punkte}}'**
+  String redesignPlanItemCount(num count);
+
+  /// redesign.plan.joinBlock
+  ///
+  /// In de, this message translates to:
+  /// **'In den Block darüber'**
+  String get redesignPlanJoinBlock;
+
+  /// redesign.plan.leaveBlock
+  ///
+  /// In de, this message translates to:
+  /// **'Aus dem Block nehmen'**
+  String get redesignPlanLeaveBlock;
+
+  /// redesign.plan.less
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten weniger'**
+  String get redesignPlanLess;
+
+  /// redesign.plan.minUnit
+  ///
+  /// In de, this message translates to:
+  /// **'Min'**
+  String get redesignPlanMinUnit;
+
+  /// redesign.plan.minutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min'**
+  String redesignPlanMinutes(Object count);
+
+  /// redesign.plan.more
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignPlanMore;
+
+  /// redesign.plan.more5
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten mehr'**
+  String get redesignPlanMore5;
+
+  /// redesign.plan.moveDown
+  ///
+  /// In de, this message translates to:
+  /// **'Nach unten'**
+  String get redesignPlanMoveDown;
+
+  /// redesign.plan.moveUp
+  ///
+  /// In de, this message translates to:
+  /// **'Nach oben'**
+  String get redesignPlanMoveUp;
+
+  /// redesign.plan.next
+  ///
+  /// In de, this message translates to:
+  /// **'Nächster Termin'**
+  String get redesignPlanNext;
+
+  /// redesign.plan.notes
+  ///
+  /// In de, this message translates to:
+  /// **'Notizen zum Termin'**
+  String get redesignPlanNotes;
+
+  /// redesign.plan.orgFieldHint
+  ///
+  /// In de, this message translates to:
+  /// **'Feld der Organisation · {count} Min'**
+  String redesignPlanOrgFieldHint(Object count);
+
+  /// redesign.plan.orgHint
+  ///
+  /// In de, this message translates to:
+  /// **'Erscheint im Plan der Organisation'**
+  String get redesignPlanOrgHint;
+
+  /// redesign.plan.orgTemplateHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage der Organisation'**
+  String get redesignPlanOrgTemplateHint;
+
+  /// redesign.plan.other
+  ///
+  /// In de, this message translates to:
+  /// **'Weiteres'**
+  String get redesignPlanOther;
+
+  /// redesign.plan.planPick
+  ///
+  /// In de, this message translates to:
+  /// **'Termin wählen'**
+  String get redesignPlanPlanPick;
+
+  /// redesign.plan.planSection
+  ///
+  /// In de, this message translates to:
+  /// **'Plan „{name}“'**
+  String redesignPlanPlanSection(Object name);
+
+  /// redesign.plan.prev
+  ///
+  /// In de, this message translates to:
+  /// **'Vorheriger Termin'**
+  String get redesignPlanPrev;
+
+  /// redesign.plan.publicLink
+  ///
+  /// In de, this message translates to:
+  /// **'Öffentlicher Link'**
+  String get redesignPlanPublicLink;
+
+  /// redesign.plan.publicLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Ansehen oder Mitbearbeiten ohne Konto'**
+  String get redesignPlanPublicLinkHint;
+
+  /// redesign.plan.publicLinkShared
+  ///
+  /// In de, this message translates to:
+  /// **'Geteilt · zum Ändern oder Beenden tippen'**
+  String get redesignPlanPublicLinkShared;
+
+  /// redesign.plan.removed
+  ///
+  /// In de, this message translates to:
+  /// **'„{name}“ entfernt'**
+  String redesignPlanRemoved(Object name);
+
+  /// redesign.plan.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert'**
+  String get redesignPlanSaved;
+
+  /// redesign.plan.saving
+  ///
+  /// In de, this message translates to:
+  /// **'Speichert …'**
+  String get redesignPlanSaving;
+
+  /// redesign.plan.settings
+  ///
+  /// In de, this message translates to:
+  /// **'Für diesen Plan'**
+  String get redesignPlanSettings;
+
+  /// redesign.plan.shareExport
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen & Export'**
+  String get redesignPlanShareExport;
+
+  /// redesign.plan.shareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Ablauf im Termin'**
+  String get redesignPlanShareHint;
+
+  /// redesign.plan.start
+  ///
+  /// In de, this message translates to:
+  /// **'Beginn'**
+  String get redesignPlanStart;
+
+  /// redesign.plan.templateDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Vorlage löschen'**
+  String get redesignPlanTemplateDelete;
+
+  /// redesign.plan.title
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get redesignPlanTitle;
+
+  /// redesign.plan.titleHint
+  ///
+  /// In de, this message translates to:
+  /// **'Steht über dem Ablauf und im PDF'**
+  String get redesignPlanTitleHint;
+
+  /// redesign.plan.undo
+  ///
+  /// In de, this message translates to:
+  /// **'Rückgängig'**
+  String get redesignPlanUndo;
+
+  /// redesign.plan.until
+  ///
+  /// In de, this message translates to:
+  /// **'bis {time}'**
+  String redesignPlanUntil(Object time);
+
   /// redesign.pult.allOpen
   ///
   /// In de, this message translates to:
