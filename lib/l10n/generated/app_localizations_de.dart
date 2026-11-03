@@ -10041,6 +10041,21 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignCreateType => 'Art';
 
   @override
+  String get redesignEventActions => 'Aktionen';
+
+  @override
+  String get redesignEventAddTask => 'Aufgabe';
+
+  @override
+  String get redesignEventAddTaskLabel => 'Aufgabe hinzufügen';
+
+  @override
+  String get redesignEventAddWork => 'Werk';
+
+  @override
+  String get redesignEventAddWorkLabel => 'Werk hinzufügen';
+
+  @override
   String redesignEventAllDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -10060,6 +10075,10 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get redesignEventBusyLeave =>
       'Bitte warte, bis alles gespeichert ist.';
+
+  @override
+  String get redesignEventChangeConductorHint =>
+      'Aus der Gruppe oder Gastdirigent';
 
   @override
   String redesignEventCountAbsent(Object count) {
@@ -10095,10 +10114,50 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventDelete => 'Termin löschen';
 
   @override
+  String get redesignEventDeleteTask => 'Aufgabe löschen';
+
+  @override
   String get redesignEventDeleted => 'Termin gelöscht';
 
   @override
+  String get redesignEventDescription => 'Beschreibung & Anhang';
+
+  @override
   String get redesignEventDetails => 'Alle Details';
+
+  @override
+  String get redesignEventEdit => 'Bearbeiten';
+
+  @override
+  String get redesignEventEditBack => 'Termin';
+
+  @override
+  String get redesignEventEditDeadlineLocked =>
+      'Der Termin liegt in der Vergangenheit.';
+
+  @override
+  String get redesignEventEditDeadlinePick => 'Datum und Uhrzeit wählen';
+
+  @override
+  String redesignEventEditDeadlineSuggested(Object date) {
+    return 'Vorschlag: $date';
+  }
+
+  @override
+  String get redesignEventEditFolderNone => 'Keiner';
+
+  @override
+  String get redesignEventEditHint =>
+      'Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.';
+
+  @override
+  String get redesignEventEditSaved => 'Gespeichert';
+
+  @override
+  String get redesignEventEditTitle => 'Termin bearbeiten';
+
+  @override
+  String get redesignEventExportExcel => 'Als Excel exportieren';
 
   @override
   String redesignEventInvited(Object count) {
@@ -10143,7 +10202,34 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventPlan => 'Ablauf ansehen';
 
   @override
+  String get redesignEventPlanCreate => 'Ablauf anlegen';
+
+  @override
+  String get redesignEventPlanEdit => 'Ablauf bearbeiten';
+
+  @override
+  String get redesignEventPlanEditHint => 'Punkte, Zeiten, PDF und Telegram';
+
+  @override
   String get redesignEventPlanHint => 'Ablaufplan, am Termin-Tag live';
+
+  @override
+  String get redesignEventPlanSection => 'Ablauf';
+
+  @override
+  String get redesignEventPlanShare => 'Für Mitglieder sichtbar';
+
+  @override
+  String get redesignEventPlanShareHint =>
+      'Mitglieder sehen den Ablauf beim Termin';
+
+  @override
+  String redesignEventPrep(Object done, Object total) {
+    return 'Vorbereitung · $done von $total erledigt';
+  }
+
+  @override
+  String get redesignEventProgram => 'Programm';
 
   @override
   String redesignEventRegisterEmpty(Object group, Object count) {
@@ -10162,6 +10248,12 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignEventRemindOpen => 'Offene erinnern';
+
+  @override
+  String get redesignEventRemoveWork => 'Werk entfernen';
+
+  @override
   String get redesignEventSaving => 'Wird gespeichert …';
 
   @override
@@ -10174,6 +10266,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventSearchHint => 'Name';
 
   @override
+  String redesignEventSectionCount(Object title, Object count) {
+    return '$title · $count';
+  }
+
+  @override
   String get redesignEventSignouts => 'Abmeldungen';
 
   @override
@@ -10184,6 +10281,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventTabRecord => 'Anwesenheit';
+
+  @override
+  String get redesignEventToWorkHint => 'Noten und Stimmen';
 
   @override
   String redesignEventToastReset(Object name) {
@@ -10200,6 +10300,23 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventUndone => 'Rückgängig gemacht';
+
+  @override
+  String redesignEventWorkNumber(Object number) {
+    return 'Nr. $number';
+  }
+
+  @override
+  String redesignEventWorkRemoved(Object name) {
+    return '$name entfernt';
+  }
+
+  @override
+  String get redesignEventWorks => 'Werke';
+
+  @override
+  String get redesignEventWorksLoadFailed =>
+      'Die Werke konnten nicht geladen werden.';
 
   @override
   String get redesignEventsAbsent => 'Abwesend …';
@@ -10870,11 +10987,35 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignOwnMore => 'Mehr';
 
   @override
+  String get redesignOwnNoNotes => 'Keine Noten';
+
+  @override
+  String get redesignOwnNoNotesFor =>
+      'Für deine Stimme sind keine Noten hinterlegt.';
+
+  @override
   String get redesignOwnNotFound =>
       'Dieser Termin ist nicht mehr in deiner Liste.';
 
   @override
+  String get redesignOwnOpenMine => 'Deine Noten öffnen';
+
+  @override
+  String get redesignOwnPrintMine => 'Meine Noten als ein PDF';
+
+  @override
+  String redesignOwnPrintMineHint(Object count, Object total) {
+    return '$count von $total Werken';
+  }
+
+  @override
+  String get redesignOwnProgramPending => 'Das Programm steht noch nicht fest.';
+
+  @override
   String get redesignOwnRoute => 'Route';
+
+  @override
+  String get redesignOwnYouConduct => 'Du dirigierst';
 
   @override
   String get redesignParentsAllKids => 'Alle Kinder';

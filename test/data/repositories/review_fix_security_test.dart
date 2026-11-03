@@ -134,7 +134,10 @@ void main() {
     // LOGIC_ATT: rows are synced one by one (Ionic add/update/remove
     // history entry) – no bulk delete, and no early return in between.
     test('song history sync never stops half-way', () {
-      final sync = body(source, 'Future<void> _syncHistoryEntries(', 2400);
+      // Shared by the old page and the Beta Termin (attendance_song_history.dart).
+      final shared = read('lib/features/attendance/presentation/attendance_song_history.dart');
+      expect(source, contains('syncAttendanceSongHistory('));
+      final sync = body(shared, 'Future<void> syncAttendanceSongHistory(', 2400);
       expect(sync, contains('deleteHistoryEntry'));
       expect(sync, contains('addHistoryEntries'));
       expect(sync, isNot(contains('if (!mounted) return;')));

@@ -9940,6 +9940,21 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignCreateType => 'Type';
 
   @override
+  String get redesignEventActions => 'Actions';
+
+  @override
+  String get redesignEventAddTask => 'Task';
+
+  @override
+  String get redesignEventAddTaskLabel => 'Add task';
+
+  @override
+  String get redesignEventAddWork => 'Work';
+
+  @override
+  String get redesignEventAddWorkLabel => 'Add work';
+
+  @override
   String redesignEventAllDone(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -9958,6 +9973,10 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventBusyLeave => 'Please wait until everything is saved.';
+
+  @override
+  String get redesignEventChangeConductorHint =>
+      'From the group or a guest conductor';
 
   @override
   String redesignEventCountAbsent(Object count) {
@@ -9993,10 +10012,49 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventDelete => 'Delete event';
 
   @override
+  String get redesignEventDeleteTask => 'Delete task';
+
+  @override
   String get redesignEventDeleted => 'Event deleted';
 
   @override
+  String get redesignEventDescription => 'Description & attachment';
+
+  @override
   String get redesignEventDetails => 'All details';
+
+  @override
+  String get redesignEventEdit => 'Edit';
+
+  @override
+  String get redesignEventEditBack => 'Event';
+
+  @override
+  String get redesignEventEditDeadlineLocked => 'The event is in the past.';
+
+  @override
+  String get redesignEventEditDeadlinePick => 'Choose date and time';
+
+  @override
+  String redesignEventEditDeadlineSuggested(Object date) {
+    return 'Suggested: $date';
+  }
+
+  @override
+  String get redesignEventEditFolderNone => 'None';
+
+  @override
+  String get redesignEventEditHint =>
+      'Changes are saved right away. Works, schedule and preparation are changed in the overview.';
+
+  @override
+  String get redesignEventEditSaved => 'Saved';
+
+  @override
+  String get redesignEventEditTitle => 'Edit event';
+
+  @override
+  String get redesignEventExportExcel => 'Export as Excel';
 
   @override
   String redesignEventInvited(Object count) {
@@ -10041,7 +10099,34 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventPlan => 'View schedule';
 
   @override
+  String get redesignEventPlanCreate => 'Create schedule';
+
+  @override
+  String get redesignEventPlanEdit => 'Edit schedule';
+
+  @override
+  String get redesignEventPlanEditHint => 'Items, times, PDF and Telegram';
+
+  @override
   String get redesignEventPlanHint => 'Run sheet, live on the day';
+
+  @override
+  String get redesignEventPlanSection => 'Schedule';
+
+  @override
+  String get redesignEventPlanShare => 'Visible to members';
+
+  @override
+  String get redesignEventPlanShareHint =>
+      'Members see the schedule with the event';
+
+  @override
+  String redesignEventPrep(Object done, Object total) {
+    return 'Preparation · $done of $total done';
+  }
+
+  @override
+  String get redesignEventProgram => 'Programme';
 
   @override
   String redesignEventRegisterEmpty(Object group, Object count) {
@@ -10060,6 +10145,12 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignEventRemindOpen => 'Remind open';
+
+  @override
+  String get redesignEventRemoveWork => 'Remove work';
+
+  @override
   String get redesignEventSaving => 'Saving …';
 
   @override
@@ -10072,6 +10163,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignEventSearchHint => 'Name';
 
   @override
+  String redesignEventSectionCount(Object title, Object count) {
+    return '$title · $count';
+  }
+
+  @override
   String get redesignEventSignouts => 'Sign-outs';
 
   @override
@@ -10082,6 +10178,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventTabRecord => 'Attendance';
+
+  @override
+  String get redesignEventToWorkHint => 'Scores and parts';
 
   @override
   String redesignEventToastReset(Object name) {
@@ -10098,6 +10197,22 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignEventUndone => 'Undone';
+
+  @override
+  String redesignEventWorkNumber(Object number) {
+    return 'No. $number';
+  }
+
+  @override
+  String redesignEventWorkRemoved(Object name) {
+    return '$name removed';
+  }
+
+  @override
+  String get redesignEventWorks => 'Works';
+
+  @override
+  String get redesignEventWorksLoadFailed => 'The works could not be loaded.';
 
   @override
   String get redesignEventsAbsent => 'Away …';
@@ -10763,10 +10878,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnMore => 'More';
 
   @override
+  String get redesignOwnNoNotes => 'No scores';
+
+  @override
+  String get redesignOwnNoNotesFor => 'There are no scores for your part.';
+
+  @override
   String get redesignOwnNotFound => 'This event is no longer in your list.';
 
   @override
+  String get redesignOwnOpenMine => 'Open your scores';
+
+  @override
+  String get redesignOwnPrintMine => 'My scores as one PDF';
+
+  @override
+  String redesignOwnPrintMineHint(Object count, Object total) {
+    return '$count of $total works';
+  }
+
+  @override
+  String get redesignOwnProgramPending => 'The programme has not been set yet.';
+
+  @override
   String get redesignOwnRoute => 'Directions';
+
+  @override
+  String get redesignOwnYouConduct => 'You conduct';
 
   @override
   String get redesignParentsAllKids => 'All children';

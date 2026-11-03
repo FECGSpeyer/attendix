@@ -307,6 +307,46 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// REDESIGN: Werke (history rows with song and conductor) of one own
+  /// Termin, the group of [personId] in that tenant and the tenant's type
+  /// (choir, orchestra, general …). Cross-tenant by design like "Meine Termine": every query is
+  /// filtered by the Termin's [tenantId] (one of the user's memberships).
+  Future<({List<Map<String, dynamic>> rows, int? instrumentId, String? tenantType})> getOwnProgram({
+    required int tenantId,
+    required int attendanceId,
+    required int? personId,
+  }) async {
+    try {
+      final rows = await supabase
+          .from('history')
+          .select('id, songId, person_id, otherConductor, '
+              'song:songId(id, name, number, prefix, link, instrument_ids, files), '
+              'person:person_id(firstName, lastName)')
+          .eq('attendance_id', attendanceId)
+          .eq('tenantId', tenantId)
+          .order('id', ascending: true);
+      int? instrumentId;
+      if (personId != null) {
+        final person = await supabase
+            .from('player')
+            .select('instrument')
+            .eq('id', personId)
+            .eq('tenantId', tenantId)
+            .maybeSingle();
+        instrumentId = _toInt(person?['instrument']);
+      }
+      final tenant = await supabase.from('tenants').select('type').eq('id', tenantId).maybeSingle();
+      return (
+        rows: List<Map<String, dynamic>>.from(rows as List),
+        instrumentId: instrumentId,
+        tenantType: tenant?['type'] as String?,
+      );
+    } catch (e, stack) {
+      handleError(e, stack, 'getOwnProgram');
+      rethrow;
+    }
+  }
+
   AttendanceType? _parseType(dynamic json) {
     if (json is! Map<String, dynamic>) return null;
     try {

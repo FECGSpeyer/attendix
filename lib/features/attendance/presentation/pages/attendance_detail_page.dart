@@ -3,7 +3,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 import 'package:uuid/uuid.dart';
@@ -17,14 +16,9 @@ import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/profile_providers.dart';
-import '../../../../core/utils/shift_utils.dart';
-import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
-import '../../../../data/models/shift/shift_plan.dart';
-import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
 import '../widgets/attendance_detail/auto_message_panel.dart';
-import '../widgets/attendance_detail/add_persons_sheet.dart';
 import '../widgets/attendance_detail/attendance_view_options.dart';
 import '../widgets/attendance_detail/description_attachment_sheet.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -44,9 +38,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
-import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
-import '../../../../data/models/song/song.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
@@ -58,7 +50,6 @@ import '../widgets/ios_condense_header.dart';
 import '../widgets/attendance_legend_sheet.dart';
 import '../widgets/attendance_status_overview_sheet.dart';
 import '../widgets/songs_selection_sheet.dart';
-import '../../../../core/utils/demo_guard.dart';
 import '../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -67,6 +58,9 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
+import '../attendance_song_history.dart';
+import '../attendance_add_persons.dart';
+import '../attendance_extra_actions.dart';
 export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays;
 
 /// Attendance detail/taking page
@@ -180,28 +174,16 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (attendance == null || !mounted) return;
 
     // LOGIC_ATT: like Ionic (getHistoryByAttendanceId) the history table is
-    // the only source; the legacy attendance.songs/conductors arrays are
-    // neither read nor written.
+    // the only source (shared with the new design).
     try {
-      final songs = await ref.read(songsProvider.future);
-      final allConductors = await ref.read(conductorsProvider.future);
       if (!repo.hasTenantId) return;
-      final rows = await repo.getHistoryForAttendance(widget.attendanceId);
-      if (!mounted) return;
-      final fromHistory = rows.map((row) {
-        final songId = (row['songId'] as num).toInt();
-        final personId = (row['person_id'] as num?)?.toInt();
-        final other = row['otherConductor'] as String?;
-        final song = songs.where((s) => s.id == songId).firstOrNull;
-        final conductor = allConductors.where((c) => c.id == personId).firstOrNull;
-        return SongHistoryEntry(
-          songId: songId,
-          songName: song?.displayName ?? context.l10n.historyFlutterUnknownSong,
-          conductorId: personId,
-          conductorName: conductor?.fullName,
-          otherConductor: other?.isNotEmpty == true ? other : null,
-        );
-      }).toList();
+      final fromHistory = await loadAttendanceSongEntries(
+        repo: repo,
+        songsFuture: ref.read(songsProvider.future),
+        conductorsFuture: ref.read(conductorsProvider.future),
+        attendanceId: widget.attendanceId,
+      );
+      if (!mounted || fromHistory == null) return;
       setState(() => _songEntries = fromHistory);
     } catch (_) {
       // songs accordion stays empty
@@ -1084,10 +1066,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Id of the `bfecg_church` extra field, if the tenant has one.
-  String? _churchFieldId() {
-    final fields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
-    return fields.where((f) => f.type == 'bfecg_church').firstOrNull?.id;
-  }
+  String? _churchFieldId() => attendanceChurchFieldId(ref);
 
   List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(Attendance attendance) {
     final role = ref.read(effectiveRoleProvider);
@@ -1367,104 +1346,23 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     ];
   }
 
-  /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance).
-  Future<void> _openAddPersons() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final AddPersonCandidates candidates;
-    try {
-      final allPersons = await ref.read(allPersonsForAttendanceProvider.future);
-      final type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
-      final groups = await ref.read(groupsProvider.future);
-      final extraFields = ref.read(personExtraFieldsProvider).valueOrNull ?? const [];
-      candidates = computeAddPersonCandidates(
-        allPersons: allPersons,
-        currentPersonIds: _personAttendanceIds.keys.toSet(),
-        type: type,
-        groups: groups,
-        extraFieldDefaults: {for (final f in extraFields) f.id: f.defaultValue},
-      );
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceLoadPeopleFailed);
-      return;
-    }
-    if (!mounted) return;
-    final selected = await showAddPersonsSheet(
-      context,
-      candidates: candidates,
-      groupNameOf: (p) => p.groupName ?? context.l10n.attendanceNoGroup,
-    );
-    if (selected == null || selected.isEmpty || !mounted) return;
-
-    try {
-      final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
-      final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
-      final defaultStatus = type?.defaultStatus ?? AttendanceStatus.neutral;
-      final date = DateTime.tryParse(attendance?.date ?? '') ?? DateTime.now();
-      final shifts = await ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]);
-      final all = [...candidates.matching, ...candidates.others];
-      final records = <PersonAttendance>[];
-      for (final personId in selected) {
-        final person = all.where((p) => p.id == personId).firstOrNull;
-        if (person == null) continue;
-        var status = defaultStatus;
-        var notes = '';
-        if (person.shiftId != null && type?.allDay != true) {
-          final result = ShiftUtils.statusByShiftOrDefault(
-            shift: ShiftUtils.findShift(shifts, person.shiftId),
-            attendanceDate: date,
-            attendanceStart: type?.startTime ?? '19:00',
-            attendanceEnd: type?.endTime ?? '21:00',
-            defaultStatus: defaultStatus,
-            shiftStart: person.shiftStart,
-            shiftName: person.shiftName,
-          );
-          status = result.status;
-          notes = result.note;
-        }
-        records.add(PersonAttendance(
-          attendanceId: widget.attendanceId,
-          personId: personId,
-          status: status,
-          notes: notes,
-        ));
-      }
-      await repo.createPersonAttendances(records);
-      ref.invalidate(personAttendancesForAttendanceProvider(widget.attendanceId));
-      if (!mounted) return;
-      ToastHelper.showSuccess(
+  /// "Person hinzufügen" (Ionic openAddPersonModal / addPersonsToAttendance),
+  /// shared with the new design.
+  Future<void> _openAddPersons() => addPersonsToAttendance(
         context,
-        context.l10n.attendancePeopleAdded(records.length),
+        ref,
+        attendanceId: widget.attendanceId,
+        currentPersonIds: _personAttendanceIds.keys.toSet(),
       );
-    } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.attendanceAddPeopleFailed);
-    }
-  }
 
   /// "Gemeinde-Übersicht" of the present persons.
-  Future<void> _showChurchOverview() async {
-    final fieldId = _churchFieldId();
-    if (fieldId == null) return;
-    const present = {AttendanceStatus.present, AttendanceStatus.late, AttendanceStatus.lateExcused};
-    final persons = _personsInAttendance(
-        ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []);
-    final churchIds = persons
-        .where((p) => present.contains(_localStatuses[p.id]))
-        .map((p) => churchIdOf(p.additionalFields, fieldId))
-        .toList();
-    List<Church> churches;
-    try {
-      churches = await ref.read(churchesProvider.future);
-    } catch (_) {
-      churches = const [];
-    }
-    if (!mounted) return;
-    await showChurchOverviewSheet(
-      context,
-      churchIds: churchIds,
-      churches: churches,
-      subtitle: context.l10n.attendancePresentPeople,
-    );
-  }
+  Future<void> _showChurchOverview() => showAttendanceChurchOverview(
+        context,
+        ref,
+        persons: _personsInAttendance(
+            ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull ?? const []),
+        statusOf: (p) => _localStatuses[p.id],
+      );
 
   /// "Erinnerung versenden" for the Termin or one person
   /// (`send-ad-hoc-reminder` Edge Function, push + e-mail).
@@ -2208,55 +2106,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   /// Sync the history rows of this Termin with [_songEntries].
-  Future<void> _syncHistoryEntries(String date) async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final attendanceId = widget.attendanceId;
-    final songEntries = List.of(_songEntries);
-
-    final rows = await repo.getHistoryForAttendance(attendanceId);
-    final plan = planHistorySync(
-      [
-        for (final r in rows)
-          (
-            id: (r['id'] as num).toInt(),
-            songId: (r['songId'] as num).toInt(),
-            personId: (r['person_id'] as num?)?.toInt(),
-            otherConductor: r['otherConductor'] as String?,
-          ),
-      ],
-      [
-        for (final e in songEntries)
-          (
-            songId: e.songId,
-            personId: e.otherConductor?.isNotEmpty == true ? null : e.conductorId,
-            otherConductor: e.otherConductor?.isNotEmpty == true ? e.otherConductor : null,
-          ),
-      ],
-    );
-
-    for (final id in plan.delete) {
-      await repo.deleteHistoryEntry(id);
-    }
-    for (final u in plan.update) {
-      await repo.updateHistoryEntry(u.id, {
-        'person_id': u.entry.personId,
-        'otherConductor': u.entry.otherConductor,
-      });
-    }
-    // Ionic addSongsToHistory: History columns songId (camelCase),
-    // person_id, otherConductor, visible: true, date of the Termin.
-    await repo.addHistoryEntries([
-      for (final e in plan.insert)
-        {
-          'songId': e.songId,
-          'attendance_id': attendanceId,
-          'date': date,
-          'person_id': e.personId,
-          'otherConductor': e.otherConductor,
-          'visible': true,
-        },
-    ]);
-  }
+  Future<void> _syncHistoryEntries(String date) => syncAttendanceSongHistory(
+        ref.read(attendanceRepositoryWithTenantProvider),
+        widget.attendanceId,
+        date,
+        _songEntries,
+      );
 
   // ATTENDANCE_SIGNOUT: conductor change, date change, place, files folder,
   // registration fields (Ionic attendance.page.ts parity)
@@ -2658,76 +2513,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     );
   }
 
-  Future<void> _takePhoto() async {
-    final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final source = await showAppDialog<ImageSource>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.attendanceFlutterAddPhoto),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.camera_alt),
-              title: Text(context.l10n.attendanceFlutterCamera),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.camera),
-            ),
-            ListTile(
-              leading: const Icon(Icons.photo_library),
-              title: Text(context.l10n.attendanceFlutterGallery),
-              onTap: () => Navigator.of(ctx).pop(ImageSource.gallery),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(context.l10n.commonCancel),
-          ),
-        ],
-      ),
-    );
-
-    if (source == null) return;
-    if (DemoGuard.blocked()) return; // DEMO_GUARD
-
-    try {
-      final picker = ImagePicker();
-      final image = await picker.pickImage(
-        source: source,
-        maxWidth: 1920,
-        maxHeight: 1080,
-        imageQuality: 85,
-      );
-
-      if (image == null) return;
-
-      if (!mounted) return;
-      ToastHelper.showInfo(context, context.l10n.attendanceFlutterUploadingPhoto);
-
-      final bytes = await image.readAsBytes();
-
-      if (!repo.hasTenantId) {
-        if (mounted) {
-          ToastHelper.showError(context, context.l10n.historyFlutterNoTenant);
-        }
-        return;
-      }
-
-      // DB_REVIEW_REST (H4): bucket `attendances`, key `<id>`, upsert (Ionic).
-      await repo.uploadAttendanceImage(widget.attendanceId, bytes);
-
-      ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterPhotoUploaded);
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.attendanceFlutterUploadFailedWith(friendlyErrorMessage(e)));
-      }
-    }
-  }
+  Future<void> _takePhoto() => addAttendancePhoto(context, ref, widget.attendanceId);
 
   /// Save a single person's attendance status immediately
   Future<void> _savePersonStatus(

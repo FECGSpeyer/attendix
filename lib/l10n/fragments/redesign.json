@@ -272,13 +272,46 @@
         "noteHint": "z. B. Grund oder Uhrzeit",
         "saving": "Wird gespeichert …",
         "busyLeave": "Bitte warte, bis alles gespeichert ist.",
-        "keyboardHint": "Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig"
+        "keyboardHint": "Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig",
+        "edit": "Bearbeiten",
+        "program": "Programm",
+        "works": "Werke",
+        "sectionCount": "{title} · {count}",
+        "addWork": "Werk",
+        "addWorkLabel": "Werk hinzufügen",
+        "workNumber": "Nr. {number}",
+        "toWorkHint": "Noten und Stimmen",
+        "changeConductorHint": "Aus der Gruppe oder Gastdirigent",
+        "removeWork": "Werk entfernen",
+        "workRemoved": "{name} entfernt",
+        "worksLoadFailed": "Die Werke konnten nicht geladen werden.",
+        "planSection": "Ablauf",
+        "planEdit": "Ablauf bearbeiten",
+        "planEditHint": "Punkte, Zeiten, PDF und Telegram",
+        "planCreate": "Ablauf anlegen",
+        "planShare": "Für Mitglieder sichtbar",
+        "planShareHint": "Mitglieder sehen den Ablauf beim Termin",
+        "prep": "Vorbereitung · {done} von {total} erledigt",
+        "addTask": "Aufgabe",
+        "addTaskLabel": "Aufgabe hinzufügen",
+        "deleteTask": "Aufgabe löschen",
+        "description": "Beschreibung & Anhang",
+        "actions": "Aktionen",
+        "remindOpen": "Offene erinnern",
+        "exportExcel": "Als Excel exportieren"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
         "more": "Mehr",
         "infos": "Infos zum Termin",
-        "route": "Route"
+        "route": "Route",
+        "programPending": "Das Programm steht noch nicht fest.",
+        "noNotes": "Keine Noten",
+        "youConduct": "Du dirigierst",
+        "printMine": "Meine Noten als ein PDF",
+        "printMineHint": "{count} von {total} Werken",
+        "openMine": "Deine Noten öffnen",
+        "noNotesFor": "Für deine Stimme sind keine Noten hinterlegt."
       },
       "signout": {
         "cannot": "Ich kann nicht",
@@ -649,6 +682,16 @@
         "allKids": "Alle Kinder",
         "route": "Route",
         "today": "Heute"
+      },
+      "eventEdit": {
+        "title": "Termin bearbeiten",
+        "back": "Termin",
+        "hint": "Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.",
+        "deadlineSuggested": "Vorschlag: {date}",
+        "deadlinePick": "Datum und Uhrzeit wählen",
+        "deadlineLocked": "Der Termin liegt in der Vergangenheit.",
+        "folderNone": "Keiner",
+        "saved": "Gespeichert"
       }
     }
   },
@@ -925,13 +968,46 @@
         "noteHint": "e.g. reason or time",
         "saving": "Saving …",
         "busyLeave": "Please wait until everything is saved.",
-        "keyboardHint": "Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo"
+        "keyboardHint": "Keyboard: A present · V late · F absent · ↑↓ next person · ⌘Z or Ctrl+Z undo",
+        "edit": "Edit",
+        "program": "Programme",
+        "works": "Works",
+        "sectionCount": "{title} · {count}",
+        "addWork": "Work",
+        "addWorkLabel": "Add work",
+        "workNumber": "No. {number}",
+        "toWorkHint": "Scores and parts",
+        "changeConductorHint": "From the group or a guest conductor",
+        "removeWork": "Remove work",
+        "workRemoved": "{name} removed",
+        "worksLoadFailed": "The works could not be loaded.",
+        "planSection": "Schedule",
+        "planEdit": "Edit schedule",
+        "planEditHint": "Items, times, PDF and Telegram",
+        "planCreate": "Create schedule",
+        "planShare": "Visible to members",
+        "planShareHint": "Members see the schedule with the event",
+        "prep": "Preparation · {done} of {total} done",
+        "addTask": "Task",
+        "addTaskLabel": "Add task",
+        "deleteTask": "Delete task",
+        "description": "Description & attachment",
+        "actions": "Actions",
+        "remindOpen": "Remind open",
+        "exportExcel": "Export as Excel"
       },
       "own": {
         "notFound": "This event is no longer in your list.",
         "more": "More",
         "infos": "Event info",
-        "route": "Directions"
+        "route": "Directions",
+        "programPending": "The programme has not been set yet.",
+        "noNotes": "No scores",
+        "youConduct": "You conduct",
+        "printMine": "My scores as one PDF",
+        "printMineHint": "{count} of {total} works",
+        "openMine": "Open your scores",
+        "noNotesFor": "There are no scores for your part."
       },
       "signout": {
         "cannot": "I can't come",
@@ -1302,6 +1378,16 @@
         "allKids": "All children",
         "route": "Directions",
         "today": "Today"
+      },
+      "eventEdit": {
+        "title": "Edit event",
+        "back": "Event",
+        "hint": "Changes are saved right away. Works, schedule and preparation are changed in the overview.",
+        "deadlineSuggested": "Suggested: {date}",
+        "deadlinePick": "Choose date and time",
+        "deadlineLocked": "The event is in the past.",
+        "folderNone": "None",
+        "saved": "Saved"
       }
     }
   }
