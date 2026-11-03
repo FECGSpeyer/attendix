@@ -574,7 +574,7 @@ extension _PlanningBeta on _PlanningPageState {
     // moved field, see [PlanUtils.moveField]).
     final next = newIndex + 1 < reordered.length ? reordered[newIndex + 1] : null;
     final to = next == null ? _fields.length - 1 : (next > from ? next - 1 : next);
-    final result = PlanUtils.moveField(_fields, from, to);
+    final result = _rdMoveField(from, to);
     _rdOpenBlocksOf(result);
     _rdApply(result);
   }
@@ -616,10 +616,26 @@ extension _PlanningBeta on _PlanningPageState {
       if (block != null && block != field.groupId && _rdCollapsed.contains(block)) {
         to = direction > 0 ? PlanUtils.lastIndexOfGroup(_fields, block) : _fields.indexWhere((f) => f.id == block);
       }
-      result = PlanUtils.moveField(_fields, index, to);
+      result = _rdMoveField(index, to);
     }
     _rdOpenBlocksOf(result);
     _rdApply(result);
+  }
+
+  /// [PlanUtils.moveField] for one item. The Tagesordnung marker never joins
+  /// a block: it passes a block as a whole (behind it going down, before its
+  /// head going up).
+  List<PlanField> _rdMoveField(int from, int to) {
+    final moved = _fields[from];
+    if (!PlanUtils.isAgendaPlaceholder(moved)) return PlanUtils.moveField(_fields, from, to);
+    final rows = [..._fields]..removeAt(from);
+    var at = to.clamp(0, rows.length);
+    final block = at < rows.length ? rows[at].groupId : null;
+    if (block != null) {
+      at = to >= from ? PlanUtils.lastIndexOfGroup(rows, block) + 1 : rows.indexWhere((f) => f.id == block);
+    }
+    rows.insert(at, moved.copyWith(groupId: null));
+    return PlanUtils.normalizeGroups(rows);
   }
 
   /// Removes fields with "Rückgängig" in the SnackBar (like "Werk entfernen").
@@ -675,9 +691,12 @@ extension _PlanningBeta on _PlanningPageState {
     final subtitle = anchor == null ? l10n.redesignPlanAddEnd : l10n.redesignPlanAddAfter(anchor.name);
     final action = await _rdAddSheet(subtitle);
     if (action == null || !mounted) return;
+    // Another plan was loaded meanwhile (conflict, draft, other Termin): the
+    // choice was made for the old one, so nothing is added or replaced.
+    if (loadGen != _loadGen) return;
     final before = [..._fields];
     // The plan changed while the sheet was open: add at the end.
-    if (after != null && (loadGen != _loadGen || after >= before.length || !_rdSame(before[after], anchor!))) {
+    if (after != null && (after >= before.length || !_rdSame(before[after], anchor!))) {
       after = null;
     }
     if (group != null && !before.any((f) => f.id == group)) group = null;

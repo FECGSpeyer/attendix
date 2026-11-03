@@ -1998,13 +1998,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _resetPlan() async {
+    final loadGen = _loadGen;
     final ok = await showPlanConfirm(
       context,
       title: context.l10n.planningResetPlan,
       message: context.l10n.planningResetPlanMessage,
       confirmText: context.l10n.dateDialogReset,
     );
-    if (ok && _att != null) _applyTypeDefaultPlan(_att!);
+    // Only the plan the dialog was opened for (no reload or conflict meanwhile).
+    if (ok && mounted && loadGen == _loadGen && _att != null) _applyTypeDefaultPlan(_att!);
   }
 
   Future<void> _pickTime() async {
