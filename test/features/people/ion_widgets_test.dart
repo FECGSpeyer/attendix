@@ -19,7 +19,7 @@ void main() {
       expect(find.byType(AppBar), findsNothing);
     });
 
-    testWidgets('PERF_WEB: nav bar blurs only once content is under it',
+    testWidgets('PERF_GLASS: nav bar turns solid once content is under it, no blur',
         (tester) async {
       await tester.pumpWidget(_app(
         TargetPlatform.iOS,
@@ -29,14 +29,15 @@ void main() {
           ]),
         ]),
       ));
-      bool blur() => tester
+      CupertinoSliverNavigationBar bar() => tester
           .widget<CupertinoSliverNavigationBar>(
-              find.byType(CupertinoSliverNavigationBar))
-          .enableBackgroundFilterBlur;
-      expect(blur(), isFalse);
+              find.byType(CupertinoSliverNavigationBar));
+      expect(bar().enableBackgroundFilterBlur, isFalse);
+      expect(bar().backgroundColor!.a, lessThan(1));
       await tester.drag(find.text('3'), const Offset(0, -300));
       await tester.pumpAndSettle();
-      expect(blur(), isTrue);
+      expect(bar().enableBackgroundFilterBlur, isFalse);
+      expect(bar().backgroundColor!.a, 1);
     });
 
     testWidgets('IonPage keeps the Material AppBar elsewhere', (tester) async {

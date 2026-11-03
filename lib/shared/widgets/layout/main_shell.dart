@@ -685,6 +685,8 @@ class _IosUpdateToast extends StatelessWidget {
           overlay: true,
           blur: 20,
           shadowOpacity: 0.06,
+          // a toast does not dim the page
+          scrim: Colors.transparent,
           padding: const EdgeInsets.only(left: 16, right: 4),
           child: Row(
             children: [

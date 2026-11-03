@@ -1,4 +1,3 @@
-import 'dart:ui' as ui;
 
 import 'package:flutter/cupertino.dart' show CupertinoIcons;
 import 'package:flutter/foundation.dart' show ValueListenable;
@@ -245,7 +244,8 @@ class _CondenseHeaderState extends State<CondenseHeader> {
 /// under the toolbar (use with `Scaffold.extendBodyBehindAppBar` and
 /// [ionTranslucentTopPadding]); once the large title is condensed the
 /// toolbar shows the page colour at 20 % over an 8pt backdrop blur with a
-/// hairline in `rgba(text, .08)`. Use as `AppBar.flexibleSpace` with a
+/// hairline in `rgba(text, .08)` (PERF_GLASS: painted as the solid
+/// page colour, [IosGlass.frosted]). Use as `AppBar.flexibleSpace` with a
 /// transparent app bar background. Renders nothing outside iOS or while
 /// the large title is visible.
 class IonTranslucentBarBackground extends StatelessWidget {
@@ -281,23 +281,21 @@ class IonTranslucentBarBackground extends StatelessWidget {
       );
     }
     final dark = theme.brightness == Brightness.dark;
-    return ClipRect(
-      child: BackdropFilter(
-        filter: ui.ImageFilter.blur(sigmaX: blurSigma, sigmaY: blurSigma),
-        child: DecoratedBox(
-          decoration: BoxDecoration(
-            color: (color ?? (dark ? Colors.black : Colors.white))
-                .withValues(alpha: tintOpacity),
-            border: Border(
-              bottom: BorderSide(
-                color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
-                width: 0.5,
-              ),
-            ),
+    final page = color ?? (dark ? Colors.black : Colors.white);
+    // PERF_GLASS: the page colour, solid, instead of the live blur (see
+    // [IosGlass.liveBlur]).
+    return DecoratedBox(
+      decoration: BoxDecoration(
+        color: IosGlass.frosted(page.withValues(alpha: tintOpacity),
+            page: page),
+        border: Border(
+          bottom: BorderSide(
+            color: theme.colorScheme.onSurface.withValues(alpha: 0.08),
+            width: 0.5,
           ),
-          child: const SizedBox.expand(),
         ),
       ),
+      child: const SizedBox.expand(),
     );
   }
 }
@@ -719,17 +717,18 @@ class IonSearchbarGlass extends StatelessWidget {
               color: Color(0x09000000), blurRadius: 8, offset: Offset(0, 3)),
         ],
       ),
+      // PERF_GLASS: solid frosted colour instead of the live blur(2px).
       child: ClipRRect(
         borderRadius: radius,
-        child: BackdropFilter(
-          filter: ui.ImageFilter.blur(sigmaX: 2, sigmaY: 2),
-          child: Container(
-            width: width,
-            height: IonSearchbar.height,
-            alignment: Alignment.center,
-            color: background(b),
-            child: child,
+        child: Container(
+          width: width,
+          height: IonSearchbar.height,
+          alignment: Alignment.center,
+          color: IosGlass.frosted(
+            background(b),
+            page: IosGlass.pageColor(context),
           ),
+          child: child,
         ),
       ),
     );

@@ -125,7 +125,10 @@ class IosTabBar extends StatelessWidget {
     final primary = theme.colorScheme.primary;
     final text = unselectedColor(b);
 
-    return SizedBox(
+    // PERF_GLASS: the bar is static while the page scrolls below it – its
+    // own layer keeps it from being repainted with every scroll frame.
+    return RepaintBoundary(
+      child: SizedBox(
       height: barHeight + bottom + 6,
       child: Stack(
         children: [
@@ -135,7 +138,8 @@ class IosTabBar extends StatelessWidget {
             width: barWidth,
             height: barHeight,
             // ios27: blur(6px) saturate(180%) brightness(1.05); dark
-            // saturate(150%) brightness(1.23) (saturation not emulated).
+            // saturate(150%) brightness(1.23) (saturation not emulated;
+            // PERF_GLASS: frosted tint instead of the live blur outside Beta).
             child: IosGlassSurface(
               borderRadius:
                   const BorderRadius.all(Radius.circular(barRadius)),
@@ -163,6 +167,7 @@ class IosTabBar extends StatelessWidget {
             ),
           ),
         ],
+      ),
       ),
     );
   }

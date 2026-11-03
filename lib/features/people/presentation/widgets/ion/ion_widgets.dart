@@ -523,10 +523,14 @@ Widget ionCondenseHeader(
   Widget? trailing,
 }) {
   final bg = ionContentBackground(context);
+  // PERF_GLASS: outside Beta the scrolled-under bar gets the solid page
+  // colour instead of the live blur (see [IosGlass.liveBlur]).
+  final live = IosGlass.liveBlur(context);
+  final translucent = bg.withValues(alpha: 0.2);
   return _BlurWhenScrolledUnder(
     builder: (blur) => CupertinoSliverNavigationBar(
       // PERF_WEB: see [_BlurWhenScrolledUnder].
-      enableBackgroundFilterBlur: blur,
+      enableBackgroundFilterBlur: live && blur,
       largeTitle: Text(
         title,
         maxLines: 1,
@@ -563,7 +567,9 @@ Widget ionCondenseHeader(
           : null,
       transitionBetweenRoutes: false,
       // PARITY_R5: ios27 translucent header – 20 % page colour + blur.
-      backgroundColor: bg.withValues(alpha: 0.2),
+      backgroundColor: live || !blur
+          ? translucent
+          : IosGlass.frosted(translucent, page: bg),
       // ios26 toolbars have no hairline
       border: null,
     ),
