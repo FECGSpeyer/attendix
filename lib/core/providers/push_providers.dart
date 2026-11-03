@@ -60,9 +60,12 @@ final pushBootstrapProvider = Provider<void>((ref) {
 
   unawaited(service.start());
 
+  var firstEvent = true;
   ref.listen<AsyncValue<AuthState>>(authStateProvider, (_, next) {
     final state = next.valueOrNull;
     if (state == null) return;
+    final isFirst = firstEvent;
+    firstEvent = false;
     switch (state.event) {
       case AuthChangeEvent.signedIn:
         unawaited(service.promptAndEnable());
@@ -74,7 +77,12 @@ final pushBootstrapProvider = Provider<void>((ref) {
         // session); the next sign-in's registration waits for it.
         unawaited(service.removeToken());
       default:
-        break;
+        // IONIC_SESSION: the replayed last event at bootstrap can be another
+        // type (userUpdated after the Ionic takeover synced the group). A
+        // session that is already there still gets its token registered.
+        if (isFirst && state.session != null) {
+          unawaited(service.promptAndEnable());
+        }
     }
   }, fireImmediately: true);
 
