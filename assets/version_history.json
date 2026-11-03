@@ -17,7 +17,11 @@
         "🐛 Tippen neben ein Eingabefeld schließt die Tastatur (auch die Zahlentastatur)",
         "🐛 Statistik: Altersverteilung mit allen Altersgruppen, Verlauf mit Datum wie TT.MM.",
         "🐛 Web: Wer die alte Web-App installiert hat, bekommt beim nächsten Öffnen die neue App",
-        "🐛 Android: App heißt wieder \"Attendix\" und das Symbol auf dem Startbildschirm bleibt nach dem Update erhalten"
+        "🐛 Android: App heißt wieder \"Attendix\" und das Symbol auf dem Startbildschirm bleibt nach dem Update erhalten",
+        "🐛 Web-App: Excel-Export und Excel-Import funktionieren wieder (schlugen in Chrome und aktuellem Safari fehl)",
+        "🐛 Web-App: Noten als ZIP herunterladen funktioniert wieder",
+        "🐛 Web-App: \"Person hinzufügen\" öffnet wieder das Formular statt einer grauen Seite",
+        "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand"
       ]
     },
     {

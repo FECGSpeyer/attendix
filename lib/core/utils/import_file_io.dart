@@ -4,7 +4,7 @@ import 'package:file_picker/file_picker.dart';
 
 import '../services/zip_service_stub.dart'
     if (dart.library.io) '../services/zip_service_io.dart'
-    if (dart.library.html) '../services/zip_service_web.dart' as platform;
+    if (dart.library.js_interop) '../services/zip_service_web.dart' as platform;
 
 /// Let the user pick an .xlsx/.xls/.csv file. Returns null when cancelled.
 Future<({Uint8List bytes, String name})?> pickSpreadsheetFile() async {

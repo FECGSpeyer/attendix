@@ -1,0 +1,12 @@
+name: archive
+description: >-
+  archive 3.6.1 with a WebAssembly fix (Attendix, see README.attendix.md).
+version: 3.6.1
+publish_to: none
+
+environment:
+  sdk: ^3.0.0
+
+dependencies:
+  crypto: ^3.0.3
+  path: ^1.8.0

@@ -104,6 +104,13 @@ dependencies:
   mobile_scanner: ^7.4.3
   flutter_secure_storage: ^10.0.0
 
+
+# WEB_WASM: archive 3.6.1 with the web code enabled for WebAssembly builds
+# (excel 4.0.6 needs archive 3.x). See third_party/archive/README.attendix.md.
+dependency_overrides:
+  archive:
+    path: third_party/archive
+
 dev_dependencies:
   flutter_test:
     sdk: flutter

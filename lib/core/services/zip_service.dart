@@ -6,7 +6,7 @@ import 'package:http/http.dart' as http;
 import '../../data/models/song/song.dart';
 import 'zip_service_stub.dart'
     if (dart.library.io) 'zip_service_io.dart'
-    if (dart.library.html) 'zip_service_web.dart' as platform;
+    if (dart.library.js_interop) 'zip_service_web.dart' as platform;
 import '../../l10n/l10n.dart';
 
 /// Service for creating and sharing ZIP archives
