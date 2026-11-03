@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.35.1",
+      "date": "3.11.2026",
+      "changes": [
+        "⚡ iPhone-Design: Tab-Leiste, Kopfzeilen, Suchfeld, Dialoge, Aktionsmenüs und Popover zeichnen ihr Milchglas jetzt ohne Live-Unschärfe – Scrollen, Seitenwechsel und das Öffnen von Dialogen laufen flüssiger, das Aussehen bleibt fast gleich"
+      ]
+    },
+    {
       "version": "0.34.0",
       "date": "2.11.2026",
       "changes": [

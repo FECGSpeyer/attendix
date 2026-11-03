@@ -176,7 +176,7 @@ void main() {
       (tester) async {
     await openMenu(tester);
     expect(
-      find.ancestor(of: find.text('Legende'), matching: find.byType(BackdropFilter)),
+      find.ancestor(of: find.text('Legende'), matching: find.byType(IosGlassSurface)),
       findsOneWidget,
     );
   });

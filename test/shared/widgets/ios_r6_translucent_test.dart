@@ -46,11 +46,17 @@ void main() {
     return finder.evaluate().isEmpty ? 0 : tester.getSize(finder).height;
   }
 
+  // PERF_GLASS: the condensed bar is a solid tint, no live blur.
+  final tint = find.descendant(
+      of: find.byType(IonTranslucentBarBackground),
+      matching: find.byType(DecoratedBox));
+
   group('IonTranslucentAppBar', () {
-    testWidgets('iOS condensed: blur over transparent bar, content under it',
+    testWidgets('iOS condensed: solid tint over transparent bar, content under it',
         (tester) async {
       await tester.pumpWidget(page(condensed: true));
-      expect(find.byType(BackdropFilter), findsOneWidget);
+      expect(tint, findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
       final material = tester.widget<Material>(find
           .descendant(of: find.byType(AppBar), matching: find.byType(Material))
           .first);
@@ -66,34 +72,31 @@ void main() {
     testWidgets('iOS large title visible: no blur, no hairline',
         (tester) async {
       await tester.pumpWidget(page(condensed: false));
-      expect(find.byType(BackdropFilter), findsNothing);
+      expect(tint, findsNothing);
       final material = tester.widget<Material>(find
           .descendant(of: find.byType(AppBar), matching: find.byType(Material))
           .first);
       expect(material.shape, const Border());
     }, variant: ios);
 
-    testWidgets('iOS dark: tint is the dark page colour at 20 %',
+    testWidgets('iOS dark: the condensed bar is the solid dark page colour',
         (tester) async {
       final dark = AppTheme.dark;
       await tester.pumpWidget(page(condensed: true, theme: dark));
-      final box = tester.widget<DecoratedBox>(find.descendant(
-          of: find.byType(BackdropFilter),
-          matching: find.byType(DecoratedBox)));
-      final color = (box.decoration as BoxDecoration).color!;
-      expect(color.a, closeTo(IonTranslucentBarBackground.tintOpacity, 0.01));
-      expect(color.withValues(alpha: 1), dark.scaffoldBackgroundColor);
+      final box = tester.widget<DecoratedBox>(tint);
+      expect((box.decoration as BoxDecoration).color,
+          dark.scaffoldBackgroundColor.withValues(alpha: 1));
     }, variant: ios);
 
-    testWidgets('condensedListenable toggles the blur', (tester) async {
+    testWidgets('condensedListenable toggles the tint', (tester) async {
       final condensed = ValueNotifier(false);
       addTearDown(condensed.dispose);
       await tester
           .pumpWidget(page(condensed: false, listenable: condensed));
-      expect(find.byType(BackdropFilter), findsNothing);
+      expect(tint, findsNothing);
       condensed.value = true;
       await tester.pump();
-      expect(find.byType(BackdropFilter), findsOneWidget);
+      expect(tint, findsOneWidget);
     }, variant: ios);
 
     testWidgets('md: plain AppBar, no blur, no inset, default refresher',

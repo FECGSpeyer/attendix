@@ -526,6 +526,8 @@ class _PopoverCard extends StatelessWidget {
       // .42) over blur(12px) brightness(1.35).
       return IosGlassSurface.popover(
         brightness: Theme.of(context).brightness,
+        // ios27 popovers don't dim the page ([barrierColor])
+        scrim: Colors.transparent,
         child: Material(type: MaterialType.transparency, child: list),
       );
     }

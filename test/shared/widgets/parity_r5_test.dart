@@ -111,16 +111,25 @@ void main() {
   }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
   group('IonTranslucentBarBackground', () {
-    testWidgets('iOS condensed: blur + 20 % tint', (tester) async {
+    testWidgets('iOS condensed: solid tint, no live blur', (tester) async {
       await tester.pumpWidget(
           app(const IonTranslucentBarBackground(visible: true)));
-      expect(find.byType(BackdropFilter), findsOneWidget);
+      expect(find.byType(BackdropFilter), findsNothing);
+      expect(
+          find.descendant(
+              of: find.byType(IonTranslucentBarBackground),
+              matching: find.byType(DecoratedBox)),
+          findsOneWidget);
     }, variant: TargetPlatformVariant.only(TargetPlatform.iOS));
 
     testWidgets('large title visible or md: nothing', (tester) async {
       await tester.pumpWidget(
           app(const IonTranslucentBarBackground(visible: false)));
-      expect(find.byType(BackdropFilter), findsNothing);
+      expect(
+          find.descendant(
+              of: find.byType(IonTranslucentBarBackground),
+              matching: find.byType(DecoratedBox)),
+          findsNothing);
     });
   });
 
