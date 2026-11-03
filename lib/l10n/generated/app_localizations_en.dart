@@ -11016,6 +11016,257 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPersonTomorrow => 'tomorrow';
 
   @override
+  String get redesignPlanAdd => 'Add item';
+
+  @override
+  String redesignPlanAddAfter(Object name) {
+    return 'Inserted after “$name”';
+  }
+
+  @override
+  String get redesignPlanAddBlock => 'Block';
+
+  @override
+  String get redesignPlanAddBlockHint => 'Groups several items';
+
+  @override
+  String get redesignPlanAddCurrent => 'Current works';
+
+  @override
+  String get redesignPlanAddCurrentHint => 'The works currently in rehearsal';
+
+  @override
+  String get redesignPlanAddEnd => 'Added at the end';
+
+  @override
+  String get redesignPlanAddItem => 'Item';
+
+  @override
+  String get redesignPlanAddItemHint => 'With a duration, e.g. “Warm-up”';
+
+  @override
+  String get redesignPlanAddNote => 'Note';
+
+  @override
+  String get redesignPlanAddNoteHint => 'No duration or time';
+
+  @override
+  String get redesignPlanAddPlan => 'Plan';
+
+  @override
+  String get redesignPlanAddSong => 'Work from the list';
+
+  @override
+  String get redesignPlanAddTitle => 'Add';
+
+  @override
+  String get redesignPlanAfterBlock => 'Insert item after the block';
+
+  @override
+  String get redesignPlanBack => 'Event';
+
+  @override
+  String redesignPlanBlockRange(Object range, Object count) {
+    return '$range · $count';
+  }
+
+  @override
+  String redesignPlanBlockTemplateHint(Object count) {
+    return 'Block · $count min';
+  }
+
+  @override
+  String get redesignPlanCollapse => 'Collapse block';
+
+  @override
+  String get redesignPlanCollapsed => 'collapsed';
+
+  @override
+  String redesignPlanCopied(Object date) {
+    return 'Run sheet of $date copied';
+  }
+
+  @override
+  String get redesignPlanDelete => 'Delete';
+
+  @override
+  String get redesignPlanDeleteHint => 'Can be undone';
+
+  @override
+  String get redesignPlanDrag => 'Drag to reorder';
+
+  @override
+  String get redesignPlanDuration => 'Duration';
+
+  @override
+  String get redesignPlanDurationHint => 'Times below update right away';
+
+  @override
+  String redesignPlanDurationLabel(Object name, Object count) {
+    return 'Duration of $name: $count minutes';
+  }
+
+  @override
+  String get redesignPlanEdit => 'Edit';
+
+  @override
+  String get redesignPlanEditHint => 'Name, info, duration';
+
+  @override
+  String get redesignPlanEmptyCopy => 'Like the last event';
+
+  @override
+  String redesignPlanEmptyCopyHint(Object date, Object count) {
+    return 'Copy of $date · $count';
+  }
+
+  @override
+  String get redesignPlanEmptyTemplate => 'Organisation template';
+
+  @override
+  String get redesignPlanEmptyTitle => 'How to start?';
+
+  @override
+  String get redesignPlanEnd => 'End';
+
+  @override
+  String get redesignPlanExpand => 'Expand block';
+
+  @override
+  String get redesignPlanHeading => 'Heading';
+
+  @override
+  String get redesignPlanHint =>
+      'Tap a duration to change it, tap an item for everything else. Hold the handle and drag to reorder.';
+
+  @override
+  String redesignPlanInBlock(Object name) {
+    return 'in block “$name”';
+  }
+
+  @override
+  String get redesignPlanInsertAfter => 'Insert item after';
+
+  @override
+  String get redesignPlanInvalid =>
+      'Not saved yet: every item needs a duration';
+
+  @override
+  String redesignPlanItemCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count items',
+      one: '1 item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanJoinBlock => 'Into the block above';
+
+  @override
+  String get redesignPlanLeaveBlock => 'Take out of the block';
+
+  @override
+  String get redesignPlanMinUnit => 'min';
+
+  @override
+  String redesignPlanMinutes(Object count) {
+    return '$count min';
+  }
+
+  @override
+  String get redesignPlanMore => 'More actions';
+
+  @override
+  String get redesignPlanMoveDown => 'Move down';
+
+  @override
+  String get redesignPlanMoveUp => 'Move up';
+
+  @override
+  String get redesignPlanNext => 'Next event';
+
+  @override
+  String get redesignPlanNotes => 'Event notes';
+
+  @override
+  String redesignPlanOrgFieldHint(Object count) {
+    return 'Organisation field · $count min';
+  }
+
+  @override
+  String get redesignPlanOrgHint => 'Shown in the organisation\'s plan';
+
+  @override
+  String get redesignPlanOrgTemplateHint => 'Organisation template';
+
+  @override
+  String get redesignPlanOther => 'More';
+
+  @override
+  String get redesignPlanPlanPick => 'Choose event';
+
+  @override
+  String redesignPlanPlanSection(Object name) {
+    return 'Plan “$name”';
+  }
+
+  @override
+  String get redesignPlanPrev => 'Previous event';
+
+  @override
+  String get redesignPlanPublicLink => 'Public link';
+
+  @override
+  String get redesignPlanPublicLinkHint => 'View or co-edit without an account';
+
+  @override
+  String get redesignPlanPublicLinkShared => 'Shared · tap to change or stop';
+
+  @override
+  String redesignPlanRemoved(Object name) {
+    return '“$name” removed';
+  }
+
+  @override
+  String get redesignPlanSaved => 'Saved';
+
+  @override
+  String get redesignPlanSaving => 'Saving …';
+
+  @override
+  String get redesignPlanSettings => 'For this plan';
+
+  @override
+  String get redesignPlanShareExport => 'Share & export';
+
+  @override
+  String get redesignPlanShareHint => 'Members see the run sheet in the event';
+
+  @override
+  String get redesignPlanStart => 'Start';
+
+  @override
+  String get redesignPlanTemplateDelete => 'Delete template';
+
+  @override
+  String get redesignPlanTitle => 'Run sheet';
+
+  @override
+  String get redesignPlanTitleHint =>
+      'Shown above the run sheet and in the PDF';
+
+  @override
+  String get redesignPlanUndo => 'Undo';
+
+  @override
+  String redesignPlanUntil(Object time) {
+    return 'until $time';
+  }
+
+  @override
   String get redesignPultAllOpen => 'All open present';
 
   @override

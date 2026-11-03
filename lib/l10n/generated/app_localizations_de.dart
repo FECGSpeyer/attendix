@@ -11127,6 +11127,259 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignPersonTomorrow => 'morgen';
 
   @override
+  String get redesignPlanAdd => 'Punkt hinzufügen';
+
+  @override
+  String redesignPlanAddAfter(Object name) {
+    return 'Wird nach „$name“ eingefügt';
+  }
+
+  @override
+  String get redesignPlanAddBlock => 'Block';
+
+  @override
+  String get redesignPlanAddBlockHint => 'Fasst mehrere Punkte zusammen';
+
+  @override
+  String get redesignPlanAddCurrent => 'Aktuelle Werke';
+
+  @override
+  String get redesignPlanAddCurrentHint => 'Die Werke, die gerade dran sind';
+
+  @override
+  String get redesignPlanAddEnd => 'Wird ans Ende gesetzt';
+
+  @override
+  String get redesignPlanAddItem => 'Punkt';
+
+  @override
+  String get redesignPlanAddItemHint => 'Mit Dauer, z. B. „Einsingen“';
+
+  @override
+  String get redesignPlanAddNote => 'Notiz';
+
+  @override
+  String get redesignPlanAddNoteHint => 'Ohne Dauer und Uhrzeit';
+
+  @override
+  String get redesignPlanAddPlan => 'Plan';
+
+  @override
+  String get redesignPlanAddSong => 'Werk aus der Liste';
+
+  @override
+  String get redesignPlanAddTitle => 'Hinzufügen';
+
+  @override
+  String get redesignPlanAfterBlock => 'Punkt nach dem Block einfügen';
+
+  @override
+  String get redesignPlanBack => 'Termin';
+
+  @override
+  String redesignPlanBlockRange(Object range, Object count) {
+    return '$range · $count';
+  }
+
+  @override
+  String redesignPlanBlockTemplateHint(Object count) {
+    return 'Block · $count Min';
+  }
+
+  @override
+  String get redesignPlanCollapse => 'Block einklappen';
+
+  @override
+  String get redesignPlanCollapsed => 'eingeklappt';
+
+  @override
+  String redesignPlanCopied(Object date) {
+    return 'Ablauf vom $date übernommen';
+  }
+
+  @override
+  String get redesignPlanDelete => 'Löschen';
+
+  @override
+  String get redesignPlanDeleteHint => 'Mit Rückgängig';
+
+  @override
+  String get redesignPlanDrag => 'Ziehen zum Sortieren';
+
+  @override
+  String get redesignPlanDuration => 'Dauer';
+
+  @override
+  String get redesignPlanDurationHint =>
+      'Die Zeiten darunter rechnen sich sofort neu';
+
+  @override
+  String redesignPlanDurationLabel(Object name, Object count) {
+    return 'Dauer von $name: $count Minuten';
+  }
+
+  @override
+  String get redesignPlanEdit => 'Bearbeiten';
+
+  @override
+  String get redesignPlanEditHint => 'Bezeichnung, Info, Dauer';
+
+  @override
+  String get redesignPlanEmptyCopy => 'Wie letzter Termin';
+
+  @override
+  String redesignPlanEmptyCopyHint(Object date, Object count) {
+    return 'Kopie vom $date · $count';
+  }
+
+  @override
+  String get redesignPlanEmptyTemplate => 'Vorlage der Organisation';
+
+  @override
+  String get redesignPlanEmptyTitle => 'Womit beginnen?';
+
+  @override
+  String get redesignPlanEnd => 'Ende';
+
+  @override
+  String get redesignPlanExpand => 'Block aufklappen';
+
+  @override
+  String get redesignPlanHeading => 'Überschrift';
+
+  @override
+  String get redesignPlanHint =>
+      'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.';
+
+  @override
+  String redesignPlanInBlock(Object name) {
+    return 'im Block „$name“';
+  }
+
+  @override
+  String get redesignPlanInsertAfter => 'Punkt danach einfügen';
+
+  @override
+  String get redesignPlanInvalid =>
+      'Noch nicht gespeichert: jeder Punkt braucht eine Dauer';
+
+  @override
+  String redesignPlanItemCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Punkte',
+      one: '1 Punkt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignPlanJoinBlock => 'In den Block darüber';
+
+  @override
+  String get redesignPlanLeaveBlock => 'Aus dem Block nehmen';
+
+  @override
+  String get redesignPlanMinUnit => 'Min';
+
+  @override
+  String redesignPlanMinutes(Object count) {
+    return '$count Min';
+  }
+
+  @override
+  String get redesignPlanMore => 'Weitere Aktionen';
+
+  @override
+  String get redesignPlanMoveDown => 'Nach unten';
+
+  @override
+  String get redesignPlanMoveUp => 'Nach oben';
+
+  @override
+  String get redesignPlanNext => 'Nächster Termin';
+
+  @override
+  String get redesignPlanNotes => 'Notizen zum Termin';
+
+  @override
+  String redesignPlanOrgFieldHint(Object count) {
+    return 'Feld der Organisation · $count Min';
+  }
+
+  @override
+  String get redesignPlanOrgHint => 'Erscheint im Plan der Organisation';
+
+  @override
+  String get redesignPlanOrgTemplateHint => 'Vorlage der Organisation';
+
+  @override
+  String get redesignPlanOther => 'Weiteres';
+
+  @override
+  String get redesignPlanPlanPick => 'Termin wählen';
+
+  @override
+  String redesignPlanPlanSection(Object name) {
+    return 'Plan „$name“';
+  }
+
+  @override
+  String get redesignPlanPrev => 'Vorheriger Termin';
+
+  @override
+  String get redesignPlanPublicLink => 'Öffentlicher Link';
+
+  @override
+  String get redesignPlanPublicLinkHint =>
+      'Zum Ansehen oder Mitbearbeiten ohne Konto';
+
+  @override
+  String get redesignPlanPublicLinkShared =>
+      'Geteilt · zum Ändern oder Beenden tippen';
+
+  @override
+  String redesignPlanRemoved(Object name) {
+    return '„$name“ entfernt';
+  }
+
+  @override
+  String get redesignPlanSaved => 'Gespeichert';
+
+  @override
+  String get redesignPlanSaving => 'Speichert …';
+
+  @override
+  String get redesignPlanSettings => 'Für diesen Plan';
+
+  @override
+  String get redesignPlanShareExport => 'Teilen & Export';
+
+  @override
+  String get redesignPlanShareHint => 'Mitglieder sehen den Ablauf im Termin';
+
+  @override
+  String get redesignPlanStart => 'Beginn';
+
+  @override
+  String get redesignPlanTemplateDelete => 'Vorlage löschen';
+
+  @override
+  String get redesignPlanTitle => 'Ablauf';
+
+  @override
+  String get redesignPlanTitleHint => 'Steht über dem Ablauf und im PDF';
+
+  @override
+  String get redesignPlanUndo => 'Rückgängig';
+
+  @override
+  String redesignPlanUntil(Object time) {
+    return 'bis $time';
+  }
+
+  @override
   String get redesignPultAllOpen => 'Alle Offenen da';
 
   @override

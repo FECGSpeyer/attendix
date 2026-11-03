@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
@@ -43,6 +44,12 @@ import '../../../../core/services/offline_queue_service.dart' show rootScaffoldM
 import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/services/planning_draft_store.dart';
 import '../../data/planning_write_sync.dart';
+import '../../../../core/providers/redesign_providers.dart' show redesignEnabledProvider;
+import '../../../../core/theme/redesign/rd_theme.dart';
+import '../../../redesign/presentation/widgets/rd_widgets.dart';
+import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+
+part 'planning_page_beta.dart';
 
 /// Provider for songs list (for adding to plan)
 final planSongsProvider = FutureProvider<List<Song>>((ref) async {
@@ -175,6 +182,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   ScaffoldMessengerState? _messenger;
   OverlayState? _rootOverlay;
   bool _iosLook = false;
+
+  /// REDESIGN (Beta editor, [_PlanningBeta]): collapsed blocks and the row
+  /// whose duration field is open.
+  final Set<String> _rdCollapsed = {};
+  int? _rdDurationIndex;
 
   @override
   void initState() {
@@ -783,6 +795,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           : (isPractice ? (tenant?.practiceStart ?? '17:50') : '10:00');
       final formatted = PlanUtils.formatTime(start);
       setState(() {
+        _rdDurationIndex = null;
         _time = formatted.isEmpty ? '17:50' : formatted;
         _titleController.text = _defaultTitle(att);
         _fields = [PlanField(id: 'Wort', name: context.l10n.planningDefaultWord.trim(), time: '10')];
@@ -805,6 +818,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _dirty = false;
     _restoredDraft = null;
     setState(() {
+      _rdDurationIndex = null;
       _titleController.text = plan.title ?? _defaultTitle(att);
       final t = PlanUtils.formatTime(plan.time);
       if (t.isNotEmpty) _time = t;
@@ -833,6 +847,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _restoredDraft = null;
     setState(() {
       _planIndex = 0;
+      _rdDurationIndex = null;
       _titleController.text = _defaultTitle(att);
       _fields = [];
     });
@@ -882,6 +897,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // ---------------------------------------------------------------------------
   // Saving
   // ---------------------------------------------------------------------------
+
+  /// REDESIGN: `setState` for the Beta editor ([_PlanningBeta]).
+  void _rdSet(VoidCallback fn) => setState(fn);
 
   void _changed() {
     _fields = PlanUtils.normalizeGroups(_fields);
@@ -1017,6 +1035,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         if (mounted && baseIndex != _planIndex) setState(() => _planIndex = baseIndex);
         _savedTitle = title;
         if (editGen == _editGen) _dirty = false;
+        // REDESIGN: the Beta editor shows "Gespeichert".
+        if (mounted) setState(() {});
         // SOL_FIX26: the restored draft is stored now.
         // SOL_FIX27: removed only while it still holds the restored revision.
         final draft = _restoredDraft;
@@ -1279,13 +1299,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
-  Future<void> _showPlanOptions() async {
+  /// [preset]: the action chosen in the Beta "•••" sheet (no own sheet).
+  Future<void> _showPlanOptions({String? preset}) async {
     final att = _att;
     if (att == null) return;
     final plans = PlanUtils.allPlans(att);
     final shownIndex = _planIndex;
     final loadGen = _loadGen;
-    final action = await showPlanActionSheet<String>(
+    final action = preset ?? await showPlanActionSheet<String>(
       context,
       title: context.l10n.planningPlanHeader(PlanUtils.planLabel(att, shownIndex, plans)),
       subtitle: context.l10n.planningFlutterPlanPosition(shownIndex + 1, plans.length),
@@ -1674,6 +1695,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ],
     );
     if (action == null || !mounted) return;
+    await _runAddAction(action);
+  }
+
+  /// Runs an entry of the "+" menu (classic popover and Beta sheet).
+  Future<void> _runAddAction(String action) async {
+    final blockTemplates = ref.read(planBlockTemplatesProvider).valueOrNull ?? const <PlanBlockTemplate>[];
+    final org = ref.read(currentOrganisationProvider).valueOrNull;
+    final orgTemplates = org?.planningTemplates ?? const <Plan>[];
+    final orgFields = org?.defaultFields ?? const <PlanField>[];
     if (action.startsWith('block:')) {
       final tpl = blockTemplates.where((t) => t.id == action.substring(6)).firstOrNull;
       if (tpl != null) _insertBlockTemplate(tpl);
@@ -1685,11 +1715,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       return;
     }
     if (action.startsWith('tpl:')) {
-      _applyOrgTemplate(orgTemplates[int.parse(action.substring(4))]);
+      final i = int.parse(action.substring(4));
+      if (i < orgTemplates.length) _applyOrgTemplate(orgTemplates[i]);
       return;
     }
     if (action.startsWith('orgfield:')) {
-      _addOrgField(orgFields[int.parse(action.substring(9))]);
+      final i = int.parse(action.substring(9));
+      if (i < orgFields.length) _addOrgField(orgFields[i]);
       return;
     }
     switch (action) {
@@ -2022,6 +2054,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         ? const <String>[]
         : [for (var i = 0; i < plans.length; i++) PlanUtils.planLabel(att, i, plans)];
 
+    final beta = ref.watch(redesignEnabledProvider);
     return PopScope(
       canPop: false,
       onPopInvokedWithResult: (didPop, _) async {
@@ -2041,7 +2074,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           excluding: _busy,
           child: AbsorbPointer(
             absorbing: _busy,
-            child: Scaffold(
+            child: beta
+                ? _rdScaffold(attendancesAsync, isAdmin: role.isAdmin, blockTemplates: blockTemplates, showBeamer: showBeamer)
+                : Scaffold(
         // Ionic: modal toolbar [Link teilen, Schließen]; actions in the FAB (…).
         appBar: AppBar(
           automaticallyImplyLeading: false,
