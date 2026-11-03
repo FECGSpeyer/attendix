@@ -23,9 +23,17 @@ import 'store_update_stub.dart'
 ///   to the Play Store page.
 /// Web keeps the service-worker update flow (`app_update_service_web.dart`).
 class StoreUpdateService {
-  StoreUpdateService({http.Client? client}) : _client = client;
+  StoreUpdateService({
+    http.Client? client,
+    Future<String?> Function()? installedVersion,
+  })  : _client = client,
+        _installedVersion = installedVersion ?? nativeIosAppVersion;
 
   final http.Client? _client;
+
+  /// Version of the installed app (native build name); falls back to
+  /// [AppConstants.appVersion] when the platform cannot tell.
+  final Future<String?> Function() _installedVersion;
 
   /// Bundle id / applicationId: the Ionic store ID, so the Flutter app ships
   /// as an update of the existing store apps.
@@ -64,7 +72,8 @@ class StoreUpdateService {
       if (res.statusCode != 200) return null;
       final store = parseItunesLookup(res.body);
       if (store == null) return null;
-      if (!isUpdateFor(store.version, AppConstants.appVersion)) return null;
+      final installed = await _installedVersion() ?? AppConstants.appVersion;
+      if (!isUpdateFor(store.version, installed)) return null;
       return () => _openStore(store.url);
     } finally {
       if (_client == null) client.close();

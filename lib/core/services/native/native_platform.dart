@@ -53,3 +53,18 @@ Future<bool> isIosAppOnMac() async {
 /// Test hook: forces [isIosAppOnMac] (null = detect).
 @visibleForTesting
 bool? debugIsIosAppOnMacOverride;
+
+/// Version of the installed iOS app (CFBundleShortVersionString, i.e. the
+/// `--build-name`), which can differ from [AppConstants.appVersion]: store
+/// builds start at 5.0.0 because the store entry is shared with the Ionic
+/// app. Null on other platforms or when the channel is missing.
+Future<String?> nativeIosAppVersion() async {
+  if (!isNativeIos) return null;
+  try {
+    final version =
+        await _platformInfoChannel.invokeMethod<String>('appVersion');
+    return (version == null || version.isEmpty) ? null : version;
+  } catch (_) {
+    return null;
+  }
+}
