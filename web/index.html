@@ -92,6 +92,18 @@
       var lastHref = location.href;
       var cover = null;
       var coverTimer = 0;
+      var coverGen = 0;
+      // Account and group the pictures belong to (set by the app). A change
+      // drops them, also pictures still being taken.
+      var context = '';
+      window.attendixSetNavContext = function (key) {
+        if (key === context) return;
+        context = key;
+        while (shots.length) {
+          try { shots.pop().bitmap.close(); } catch (e) {}
+        }
+        removeCover();
+      };
 
       function appCanvas() {
         var pane = document.querySelector('flt-glass-pane');
@@ -109,7 +121,12 @@
       function capture(href) {
         var canvas = appCanvas();
         if (!canvas || !canvas.width) return;
+        var takenFor = context;
         createImageBitmap(canvas).then(function (bitmap) {
+          if (takenFor !== context) {
+            try { bitmap.close(); } catch (e) {}
+            return;
+          }
           forget(href);
           shots.push({ href: href, bitmap: bitmap });
           while (shots.length > 4) {
@@ -117,7 +134,8 @@
           }
         }, function () {});
       }
-      function removeCover() {
+      function removeCover(gen) {
+        if (gen !== undefined && (!cover || cover.gen !== gen)) return;
         clearTimeout(coverTimer);
         if (cover && cover.parentNode) cover.parentNode.removeChild(cover);
         cover = null;
@@ -144,14 +162,16 @@
           return;
         }
         document.body.appendChild(c);
+        c.gen = ++coverGen;
         cover = c;
-        coverTimer = setTimeout(removeCover, 700);
+        coverTimer = setTimeout(removeCover, 700, c.gen);
       }
       // The app has drawn the page (frame done, two more for the GPU).
       window.attendixUaNavShown = function () {
         if (!cover) return;
+        var gen = cover.gen;
         requestAnimationFrame(function () {
-          requestAnimationFrame(removeCover);
+          requestAnimationFrame(function () { removeCover(gen); });
         });
       };
 
@@ -176,6 +196,8 @@
           ? e.hasUAVisualTransition === true
           : edgeSwipe || Date.now() - edgeEndAt < 1000;
         edgeEndAt = 0;
+        edgeStartX = -1;
+        edgeSwipe = false;
         if (browserAnimated) window.attendixUaNavAt = Date.now();
         if (snapshots) {
           try {

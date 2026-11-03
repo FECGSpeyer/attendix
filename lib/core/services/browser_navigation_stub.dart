@@ -2,3 +2,5 @@
 int? lastBrowserAnimatedNavigationMs() => null;
 
 void browserNavigationShown() {}
+
+void setBrowserNavigationContext(String key) {}

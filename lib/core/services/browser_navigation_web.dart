@@ -21,3 +21,12 @@ void browserNavigationShown() {
     }
   } catch (_) {}
 }
+
+/// Hands the account/group key to the SWIPE_BACK_WEB script.
+void setBrowserNavigationContext(String key) {
+  try {
+    if (globalContext.has('attendixSetNavContext')) {
+      globalContext.callMethod('attendixSetNavContext'.toJS, key.toJS);
+    }
+  } catch (_) {}
+}

@@ -39,6 +39,28 @@ bool browserAnimatedNavigationJustHappened({
 /// Mark whose route change already started (one frame per browser step).
 int? _handledMark;
 
+/// SWIPE_BACK_WEB: the router's location changed. A pending browser step
+/// counts as handled after this frame, also when the change plays no
+/// transition (e.g. a tab switch) and so never asks
+/// [browserAnimatedNavigationJustHappened].
+void browserNavigationRouteChanged() {
+  if (!kIsWeb) return;
+  final at = impl.lastBrowserAnimatedNavigationMs();
+  if (at == null || at == _handledMark || at == _pendingMark) return;
+  _pendingMark = at;
+  SchedulerBinding.instance.addPostFrameCallback((_) {
+    _handledMark = at;
+  });
+  SchedulerBinding.instance.scheduleFrame();
+}
+
+/// SWIPE_BACK_WEB: who sees the app (account and group). The page script
+/// drops its page pictures when this changes, so a swipe back after a
+/// logout or group switch never shows the previous account's data.
+void setBrowserNavigationContext(String key) {
+  if (kIsWeb) impl.setBrowserNavigationContext(key);
+}
+
 /// Mark whose "handled" post-frame callback is scheduled.
 int? _pendingMark;
 
