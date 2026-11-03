@@ -39,6 +39,37 @@
   <link rel="icon" type="image/png" href="favicon.png"/>
 
   <title>Attendix</title>
+  <!-- SWIPE_BACK_WEB: Safari's edge swipe (and Chrome's back gesture) slides
+       the previous page in itself before it fires popstate. Mark those steps
+       so the app shows the page without playing its own transition again
+       (lib/core/services/browser_navigation.dart). Registered before the
+       Flutter engine, so the mark is set before the app handles popstate. -->
+  <script>
+    (function () {
+      var EDGE = 30;
+      var edgeTouch = false;
+      var edgeEndAt = 0;
+      var opts = { capture: true, passive: true };
+      window.addEventListener('touchstart', function (e) {
+        var t = e.touches && e.touches[0];
+        edgeTouch = !!t && e.touches.length === 1 &&
+          (t.clientX <= EDGE || t.clientX >= window.innerWidth - EDGE);
+      }, opts);
+      function touchDone() {
+        if (!edgeTouch) return;
+        edgeTouch = false;
+        edgeEndAt = Date.now();
+      }
+      window.addEventListener('touchend', touchDone, opts);
+      window.addEventListener('touchcancel', touchDone, opts);
+      window.addEventListener('popstate', function (e) {
+        if (e.hasUAVisualTransition === true || edgeTouch ||
+            Date.now() - edgeEndAt < 1000) {
+          window.attendixUaNavAt = Date.now();
+        }
+      }, true);
+    })();
+  </script>
   <link rel="manifest" href="manifest.json">
   <!-- Start loading the app code right away, in parallel with the bootstrap
        script (it would otherwise only be requested after flutter_bootstrap.js).

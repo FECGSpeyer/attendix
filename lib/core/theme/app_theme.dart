@@ -14,6 +14,7 @@ import '../../shared/widgets/adaptive/app_toolbar.dart'
 import '../../shared/widgets/layout/ionic_md.dart' show IonMd; // MD_SWEEP
 import '../services/native/native_platform.dart' show isNativeIos;
 import 'app_colors.dart';
+import 'browser_navigation_transition_gate.dart';
 
 /// App theme configuration.
 ///
@@ -273,7 +274,7 @@ class AppTheme {
       // defaults.
       pageTransitionsTheme: const PageTransitionsTheme(
         builders: <TargetPlatform, PageTransitionsBuilder>{
-          TargetPlatform.android: ZoomPageTransitionsBuilder(),
+          TargetPlatform.android: IonMdPageTransitionsBuilder(),
           TargetPlatform.iOS: IonIosPageTransitionsBuilder(),
           TargetPlatform.macOS: CupertinoPageTransitionsBuilder(),
         },
@@ -842,15 +843,22 @@ class _IonToggleAdaptation extends Adaptation<SwitchThemeData> {
 /// Ionic with `swipeBackEnabled: false` (Safari's own swipe would go back
 /// twice).
 ///
+/// SWIPE_BACK_WEB: Safari's swipe back already slides the previous page in;
+/// the app then shows it without sliding the old page out again.
+///
 /// SWIPE_BACK: the installed iOS app swipes back from the left edge like
 /// every native iOS app. Flutter's Cupertino gesture already stays off for
 /// full-screen dialogs, the first page of a navigator and pages whose
 /// [PopScope] blocks the pop (e.g. unsaved changes).
 class IonIosPageTransitionsBuilder extends PageTransitionsBuilder {
-  const IonIosPageTransitionsBuilder({this.swipeBack});
+  const IonIosPageTransitionsBuilder({this.swipeBack, this.skipCheck});
 
   /// Defaults to [isNativeIos]; tests set it explicitly.
   final bool? swipeBack;
+
+  /// SWIPE_BACK_WEB: whether the browser just animated a history step
+  /// itself; defaults to the browser check, tests set it explicitly.
+  final bool Function()? skipCheck;
 
   @override
   Widget buildTransitions<T>(
@@ -864,19 +872,58 @@ class IonIosPageTransitionsBuilder extends PageTransitionsBuilder {
       return CupertinoRouteTransitionMixin.buildPageTransitions<T>(
           route, context, animation, secondaryAnimation, child);
     }
-    if (route.fullscreenDialog) {
-      return CupertinoFullscreenDialogTransition(
-        primaryRouteAnimation: animation,
-        secondaryRouteAnimation: secondaryAnimation,
-        linearTransition: false,
-        child: child,
-      );
+    // SWIPE_BACK_WEB: no second slide after Safari's own swipe back.
+    return BrowserNavigationTransitionGate(
+      animation: animation,
+      secondaryAnimation: secondaryAnimation,
+      skipCheck: skipCheck,
+      builder: (animation, secondaryAnimation) {
+        if (route.fullscreenDialog) {
+          return CupertinoFullscreenDialogTransition(
+            primaryRouteAnimation: animation,
+            secondaryRouteAnimation: secondaryAnimation,
+            linearTransition: false,
+            child: child,
+          );
+        }
+        return CupertinoPageTransition(
+          primaryRouteAnimation: animation,
+          secondaryRouteAnimation: secondaryAnimation,
+          linearTransition: false,
+          child: child,
+        );
+      },
+    );
+  }
+}
+
+/// md (Android / desktop look): Flutter's zoom transition. SWIPE_BACK_WEB:
+/// on the web it is skipped after a history step the browser animated itself
+/// (e.g. Chrome's back gesture with its own preview), like the iOS slide.
+class IonMdPageTransitionsBuilder extends ZoomPageTransitionsBuilder {
+  const IonMdPageTransitionsBuilder({this.skipCheck});
+
+  /// Defaults to the browser check; tests set it explicitly.
+  final bool Function()? skipCheck;
+
+  @override
+  Widget buildTransitions<T>(
+    PageRoute<T> route,
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+    Widget child,
+  ) {
+    if (!kIsWeb && skipCheck == null) {
+      return super.buildTransitions(
+          route, context, animation, secondaryAnimation, child);
     }
-    return CupertinoPageTransition(
-      primaryRouteAnimation: animation,
-      secondaryRouteAnimation: secondaryAnimation,
-      linearTransition: false,
-      child: child,
+    return BrowserNavigationTransitionGate(
+      animation: animation,
+      secondaryAnimation: secondaryAnimation,
+      skipCheck: skipCheck,
+      builder: (animation, secondaryAnimation) => super.buildTransitions(
+          route, context, animation, secondaryAnimation, child),
     );
   }
 }
