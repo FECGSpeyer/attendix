@@ -11,6 +11,13 @@
       ]
     },
     {
+      "version": "0.36.1",
+      "date": "3.11.2026",
+      "changes": [
+        "🐛 Web-App: Nach dem Zurückwischen in Safari (z. B. aus den Einstellungen) springt die alte Seite nicht mehr zurück und gleitet ein zweites Mal hinaus"
+      ]
+    },
+    {
       "version": "0.36.0",
       "date": "3.11.2026",
       "changes": [
