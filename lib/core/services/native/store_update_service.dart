@@ -27,11 +27,21 @@ class StoreUpdateService {
 
   final http.Client? _client;
 
-  /// Bundle id / applicationId of the Flutter app.
+  /// iOS bundle id: the Ionic store ID, so the Flutter app ships as an
+  /// update of the existing App Store app.
   static const bundleId = 'io.stephanus.attendix';
 
+  /// Android applicationId: stays on the Flutter ID until the Ionic upload
+  /// key is available (see docs/push-setup.md).
+  static const androidPackage = 'de.attendix.attendix';
+
   static const playStoreUrl =
-      'https://play.google.com/store/apps/details?id=$bundleId';
+      'https://play.google.com/store/apps/details?id=$androidPackage';
+
+  /// The App Store entry is shared with the Ionic app (4.x). Flutter store
+  /// releases start at 5.0.0, so a lower store version is the Ionic app and
+  /// never an update for this one.
+  static const firstFlutterStoreVersion = '5.0.0';
 
   /// Returns the action that installs the update, or null when the app is
   /// up to date (or the store could not be asked). Never throws.
@@ -58,7 +68,7 @@ class StoreUpdateService {
       if (res.statusCode != 200) return null;
       final store = parseItunesLookup(res.body);
       if (store == null) return null;
-      if (compareVersions(store.version, AppConstants.appVersion) <= 0) return null;
+      if (!isUpdateFor(store.version, AppConstants.appVersion)) return null;
       return () => _openStore(store.url);
     } finally {
       if (_client == null) client.close();
@@ -80,6 +90,11 @@ class StoreUpdateService {
       if (kDebugMode) debugPrint('[StoreUpdate] open store failed: $e');
     }
   }
+
+  /// Whether [storeVersion] is a newer Flutter release than [appVersion].
+  static bool isUpdateFor(String storeVersion, String appVersion) =>
+      compareVersions(storeVersion, firstFlutterStoreVersion) >= 0 &&
+      compareVersions(storeVersion, appVersion) > 0;
 
   /// Parses an iTunes lookup response into store version and App Store URL.
   static ({String version, String url})? parseItunesLookup(String body) {
