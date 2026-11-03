@@ -1,11 +1,10 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:url_launcher/url_launcher.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
-import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -117,7 +116,8 @@ class ParentsWelcomeCard extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     if (kids.isEmpty) return const SizedBox.shrink();
-    final songs = ref.watch(currentSongsProvider).valueOrNull ?? const [];
+    // Ionic 4.17.26: Werke of the kids' upcoming Termine.
+    final songs = ref.watch(parentUpcomingSongsProvider);
     final theme = Theme.of(context);
 
     // Ionic ion-card: content centered (global ion-card-content rule),
@@ -277,8 +277,8 @@ Future<void> showCurrentSongsSheet(
                               onTap: () {
                                 final link = his.song!.link ?? '';
                                 if (link.isEmpty) return;
-                                launchUrl(Uri.parse(link),
-                                    mode: LaunchMode.externalApplication);
+                                // Ionic parents Browser.open (in-app browser).
+                                NativeFileService.openLinkInApp(Uri.parse(link));
                               },
                             ),
                       ],

@@ -25,6 +25,7 @@ import '../../../../shared/widgets/sheets/image_viewer_sheet.dart';
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/files_move_modal.dart';
 import '../widgets/settings_list.dart';
 import '../../../../shared/widgets/layout/ionic_md.dart' show IonMd;
 import '../../../../core/utils/file_mime.dart';
@@ -182,6 +183,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
   bool _ascending = true;
   int? _usedBytes;
 
+  // Ionic 4.19.1: multi-select
+  bool _selectionMode = false;
+  Set<String> _selectedPaths = {};
+  String _selectionFolder = '';
+
   @override
   void initState() {
     super.initState();
@@ -266,7 +272,10 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     try {
       final loaded = await repo.listEntries(_currentPath);
       if (!mounted) return;
-      setState(() => _entries = FilesSearch.sort(loaded, _sortBy, _ascending));
+      setState(() {
+        _entries = FilesSearch.sort(loaded, _sortBy, _ascending);
+        _syncSelection();
+      });
       await _loadImagePreviews();
       if (_canEdit) await _loadUsage();
     } catch (e) {
@@ -469,40 +478,173 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     }
   }
 
-  Future<void> _moveEntry(StorageEntry entry) async {
-    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
-    final controller = TextEditingController();
-    final target = await showAppDialog<String>(
+  Future<void> _moveEntry(StorageEntry entry) => _moveEntries([entry]);
+
+  /// Ionic `Utils.getLoadingElement()`: blocking spinner until [work] is done.
+  Future<void> _withLoading(Future<void> Function() work) async {
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
       context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.filesMove),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(context.l10n.filesMoveHint),
-            TextField(
-              controller: controller,
-              autofocus: true,
-              decoration: InputDecoration(hintText: ctx.l10n.filesFlutterMovePh),
-            ),
-          ],
-        ),
-        actions: [
-          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(context.l10n.commonCancel)),
-          ElevatedButton(onPressed: () => Navigator.pop(ctx, controller.text), child: Text(context.l10n.filesMove)),
-        ],
-      ),
+      barrierDismissible: false,
+      builder: (_) => const PopScope(canPop: false, child: Center(child: AppSpinner())),
     );
-    controller.dispose();
-    if (target == null || !mounted) return;
     try {
-      await repo.moveEntry(entry.path, target, isFolder: entry.isFolder);
-      if (mounted) ToastHelper.showSuccess(context, context.l10n.filesMoved);
-      await _loadEntries();
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.filesMoveFailed(_errorText(e)));
+      await work();
+    } finally {
+      navigator.pop();
     }
+  }
+
+  // ---- Ionic 4.19.1: Mehrfachauswahl ----
+
+  List<StorageEntry> get _selectedEntries =>
+      _entries.where((e) => _selectedPaths.contains(e.path)).toList();
+
+  bool get _allVisibleSelected {
+    final visible = _filteredEntries;
+    return visible.isNotEmpty && visible.every((e) => _selectedPaths.contains(e.path));
+  }
+
+  void _startSelection([StorageEntry? entry]) {
+    if (!_canEdit) {
+      ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
+      return;
+    }
+    setState(() {
+      _selectionMode = true;
+      _selectionFolder = _currentPath;
+      _selectedPaths = {if (entry != null) entry.path};
+    });
+  }
+
+  void _exitSelection() => setState(() {
+        _selectionMode = false;
+        _selectedPaths = {};
+      });
+
+  void _toggleSelection(StorageEntry entry) => setState(() {
+        _selectedPaths = {..._selectedPaths};
+        if (!_selectedPaths.remove(entry.path)) _selectedPaths.add(entry.path);
+      });
+
+  void _toggleSelectAll() {
+    final visible = _filteredEntries.map((e) => e.path);
+    setState(() {
+      _selectedPaths = _allVisibleSelected
+          ? (_selectedPaths.difference(visible.toSet()))
+          : {..._selectedPaths, ...visible};
+    });
+  }
+
+  /// The selection only holds in the folder it started in; entries that no
+  /// longer exist drop out.
+  void _syncSelection() {
+    if (!_selectionMode) return;
+    if (_currentPath != _selectionFolder) {
+      _selectionMode = false;
+      _selectedPaths = {};
+      return;
+    }
+    final existing = {for (final e in _entries) e.path};
+    _selectedPaths = _selectedPaths.where(existing.contains).toSet();
+  }
+
+  Future<void> _moveSelected() async {
+    final entries = _selectedEntries;
+    if (entries.isEmpty) return;
+    if (await _moveEntries(entries) && mounted) _exitSelection();
+  }
+
+  Future<void> _deleteSelected() async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
+    final entries = _selectedEntries;
+    if (entries.isEmpty || !_canEdit) return;
+    final l10n = context.l10n;
+    final confirmed = await DialogHelper.showConfirmation(
+      context,
+      title: l10n.filesDeleteSelectedHeader(entries.length),
+      message: l10n.filesDeleteSelectedMessage(entries.length),
+      confirmText: l10n.commonDelete,
+      isDestructive: true,
+    );
+    if (!confirmed || !mounted) return;
+    var failed = 0;
+    await _withLoading(() async {
+      for (final entry in entries) {
+        try {
+          await repo.deleteEntry(entry.path, isFolder: entry.isFolder);
+        } catch (_) {
+          failed++;
+        }
+      }
+    });
+    if (!mounted) return;
+    final ok = entries.length - failed;
+    if (failed > 0) {
+      ToastHelper.showWarning(context, l10n.filesDeleteSummary(ok, failed));
+    } else {
+      ToastHelper.showSuccess(context, l10n.filesDeletedMany(ok));
+    }
+    _exitSelection();
+    await _loadEntries();
+  }
+
+  /// Ionic `moveEntries`: picks the target in the folder tree and moves the
+  /// entries; entries whose name already exists in the target are skipped
+  /// instead of overwritten. True when something was moved.
+  Future<bool> _moveEntries(List<StorageEntry> entries) async {
+    final repo = _repo; // UI_TENANT_HOIST: bind before the first await
+    if (!_canEdit) {
+      ToastHelper.showWarning(context, context.l10n.filesNoEditRights);
+      return false;
+    }
+    final target = await showFilesMoveModal(
+      context,
+      repo: repo,
+      items: entries,
+      currentPath: _currentPath,
+    );
+    if (target == null || !mounted) return false;
+    final l10n = context.l10n;
+
+    var ok = 0;
+    var skipped = 0;
+    var failed = 0;
+    var lastError = '';
+    try {
+      await _withLoading(() async {
+        final existingNames = {for (final e in await repo.listEntries(target)) e.name};
+        for (final entry in entries) {
+          if (existingNames.contains(entry.name)) {
+            skipped++;
+            continue;
+          }
+          try {
+            await repo.moveEntry(entry.path, target, isFolder: entry.isFolder);
+            ok++;
+          } catch (e) {
+            failed++;
+            lastError = _errorText(e);
+          }
+        }
+      });
+    } catch (e) {
+      if (mounted) ToastHelper.showError(context, l10n.filesMoveFailed(_errorText(e)));
+      return false;
+    }
+    if (!mounted) return ok > 0;
+
+    if (entries.length == 1 && failed > 0) {
+      ToastHelper.showError(context, l10n.filesMoveFailed(lastError));
+    } else if (entries.length == 1 && skipped > 0) {
+      ToastHelper.showWarning(context, l10n.filesMoveExists(entries.first.name));
+    } else if (skipped > 0 || failed > 0) {
+      ToastHelper.showWarning(context, l10n.filesMoveSummary(ok, skipped, failed));
+    } else {
+      ToastHelper.showSuccess(context, l10n.filesMovedMany(ok));
+    }
+    await _loadEntries();
+    return ok > 0;
   }
 
   Future<void> _deleteEntry(StorageEntry entry) async {
@@ -781,6 +923,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             icon: Icons.swap_horiz,
             label: context.l10n.filesMove,
           ),
+          // Ionic 4.19.1: "Mehrere auswählen" (starts with this entry)
+          AppActionSheetAction(
+            value: () => _startSelection(entry),
+            icon: Icons.check_circle_outline,
+            label: context.l10n.filesSelectMultiple,
+          ),
           AppActionSheetAction(
             value: () => _deleteEntry(entry),
             icon: Icons.delete_outline,
@@ -800,6 +948,8 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         _upload();
       case 'folder':
         _createFolder();
+      case 'select':
+        _startSelection();
       case 'share':
         _shareEntry();
       case 'sort_name':
@@ -836,7 +986,26 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     final canEdit = ref.watch(canEditFilesProvider);
 
     return Scaffold(
-      appBar: AppBar(
+      // Ionic 4.19.1: selection toolbar (✕, "n ausgewählt", Alle/Keine)
+      appBar: _selectionMode
+          ? AppBar(
+              automaticallyImplyLeading: false,
+              leading: IconButton(
+                icon: const Icon(Icons.close),
+                tooltip: context.l10n.filesSelectionDone,
+                onPressed: _exitSelection,
+              ),
+              title: Text(context.l10n.filesSelectedCount(_selectedPaths.length)),
+              actions: [
+                TextButton(
+                  onPressed: _toggleSelectAll,
+                  child: IonButtonLabel(_allVisibleSelected
+                      ? context.l10n.filesSelectNone
+                      : context.l10n.filesSelectAll),
+                ),
+              ],
+            )
+          : AppBar(
         title: Text(context.l10n.filesTitle),
         // UX_SETTINGS (WAVE 8): files.page.html — arrow-back button.
         // IOS_FORMS2: iOS → start/end ion-buttons in Liquid Glass circles
@@ -862,6 +1031,13 @@ class _FilesPageState extends ConsumerState<FilesPage> {
         actions: [
           if (canAccess)
             ToolbarButtonGroup(children: [
+            // Ionic 4.19.1: "Auswählen" (checkmark-circle-outline)
+            if (canEdit && _entries.isNotEmpty)
+              IconButton(
+                icon: const Icon(Icons.check_circle_outline),
+                tooltip: context.l10n.filesSelect,
+                onPressed: () => _startSelection(),
+              ),
             PopupMenuButton<String>(
               icon: const Icon(Icons.more_vert),
               onSelected: _onMenuSelected,
@@ -875,6 +1051,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                     value: 'folder',
                     child: ListTile(leading: const Icon(Icons.create_new_folder_outlined), title: Text(context.l10n.filesCreateFolder), contentPadding: EdgeInsets.zero),
                   ),
+                  // Ionic 4.19.1: "Mehrere auswählen"
+                  if (_entries.isNotEmpty)
+                    PopupMenuItem(
+                      value: 'select',
+                      child: ListTile(leading: const Icon(Icons.check_circle_outline), title: Text(context.l10n.filesSelectMultiple), contentPadding: EdgeInsets.zero),
+                    ),
                 ],
                 PopupMenuItem(
                   value: 'share',
@@ -914,6 +1096,31 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ]),
         ],
       ),
+      // Ionic 4.19.1: footer of the selection – move / delete together.
+      bottomNavigationBar: _selectionMode
+          ? SafeArea(
+              top: false,
+              child: Padding(
+                padding: const EdgeInsets.symmetric(vertical: 4),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceAround,
+                  children: [
+                    TextButton.icon(
+                      onPressed: _selectedPaths.isEmpty ? null : _moveSelected,
+                      icon: const Icon(Icons.swap_horiz),
+                      label: IonButtonLabel(context.l10n.filesMove),
+                    ),
+                    TextButton.icon(
+                      style: TextButton.styleFrom(foregroundColor: AppColors.danger),
+                      onPressed: _selectedPaths.isEmpty ? null : _deleteSelected,
+                      icon: const Icon(Icons.delete_outline),
+                      label: IonButtonLabel(context.l10n.commonDelete),
+                    ),
+                  ],
+                ),
+              ),
+            )
+          : null,
       // IOS_PAGES3: Ionic has no FAB in either mode – upload lives in the
       // toolbar menu (⋮ → Hochladen).
       body: isRoleLoading
@@ -1119,17 +1326,34 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       }
     }
 
+    final Widget leadingBox = ios
+        ? (preview != null ? leading : SizedBox(width: IonIos.itemIconSize, child: Center(child: leading)))
+        : SizedBox(width: 40, height: 40, child: Center(child: leading));
+    final selected = _selectionMode && _selectedPaths.contains(entry.path);
+
     return ListTile(
-      leading: ios
-          ? (preview != null ? leading : SizedBox(width: IonIos.itemIconSize, child: Center(child: leading)))
-          : SizedBox(width: 40, height: 40, child: Center(child: leading)),
+      // Ionic 4.19.1: checkbox in front while selecting, row tinted.
+      leading: _selectionMode
+          ? Row(mainAxisSize: MainAxisSize.min, children: [
+              ExcludeSemantics(
+                child: IgnorePointer(
+                  child: Checkbox(value: selected, onChanged: (_) {}),
+                ),
+              ),
+              const SizedBox(width: 4),
+              leadingBox,
+            ])
+          : leadingBox,
       title: Text(entry.name),
       subtitle: subtitle != null ? Text(subtitle) : null,
-      onTap: () => _openEntry(entry),
-      trailing: IconButton(
-        icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
-        onPressed: () => _showEntryActions(entry),
-      ),
+      tileColor: selected ? AppColors.primary.withValues(alpha: 0.1) : null,
+      onTap: () => _selectionMode ? _toggleSelection(entry) : _openEntry(entry),
+      trailing: _selectionMode
+          ? null
+          : IconButton(
+              icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
+              onPressed: () => _showEntryActions(entry),
+            ),
     );
   }
 }

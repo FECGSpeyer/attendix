@@ -132,6 +132,11 @@ void main() {
       expect(StoreUpdateService.compareVersions('1.2', '1.2.0'), 0);
       expect(StoreUpdateService.compareVersions('0.6.0', '0.10.0'), -1);
       expect(StoreUpdateService.compareVersions('1.0.0+5', '1.0.0'), 0);
+      // Shared App Store entry: the Ionic 4.x version is never an update.
+      expect(StoreUpdateService.isUpdateFor('4.19.6', '0.35.0'), isFalse);
+      expect(StoreUpdateService.isUpdateFor('5.0.1', '5.0.0'), isTrue);
+      expect(StoreUpdateService.isUpdateFor('5.0.0', '5.0.0'), isFalse);
+      expect(StoreUpdateService.isUpdateFor('5.0.0', '5.1.0'), isFalse);
     });
 
     test('parseItunesLookup reads version and store URL', () {

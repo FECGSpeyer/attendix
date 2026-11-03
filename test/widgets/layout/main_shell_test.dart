@@ -65,6 +65,16 @@ class MockCurrentTenantNotifier extends CurrentTenantNotifier {
 }
 
 void main() {
+  // SIDE_NAV (Ionic 4.19.0): the tab bar exists below 768px only; the
+  // default test surface (800×600) would show the side panel.
+  final binding = TestWidgetsFlutterBinding.ensureInitialized();
+  setUp(() {
+    final view = binding.platformDispatcher.implicitView!;
+    view.physicalSize = const Size(390, 844);
+    view.devicePixelRatio = 1;
+  });
+  tearDown(() => binding.platformDispatcher.implicitView!.reset());
+
   widgetTestGroup('MainShell', () {
     group('navigation destinations for different roles', () {
       widgetTest('admin sees Personen, Termine, Mehr tabs', (tester) async {

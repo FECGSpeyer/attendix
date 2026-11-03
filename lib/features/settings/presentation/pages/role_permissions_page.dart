@@ -16,6 +16,7 @@ import '../widgets/settings_list.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// Konfigurierbare Rollen (Reihenfolge wie Ionic)
 List<(Role, String)> _configurableRoles(AppLocalizations l10n) => [
@@ -129,11 +130,19 @@ class _RolePermissionsPageState extends ConsumerState<RolePermissionsPage> {
   }
 
   @override
+  void dispose() {
+    setUnloadWarning(this, false);
+    super.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     final permissionsAsync = ref.watch(rolePermissionsProvider);
     final isAdmin = ref.watch(effectiveRoleProvider).isAdmin;
     final saving = ref.watch(rolePermissionNotifierProvider).isLoading;
 
+    // Ionic beforeunload: closing/reloading the browser tab warns too.
+    setUnloadWarning(this, _hasUnsavedChanges);
     return PopScope(
       canPop: !_hasUnsavedChanges,
       onPopInvokedWithResult: (didPop, _) {

@@ -65,6 +65,8 @@ class OrgPlanRepository extends BaseRepository {
           .select('id, date, duration_days, plan, extra_plans, typeInfo, type_id, tenantId, is_org_plan')
           .inFilter('tenantId', tenantIds)
           .eq('is_org_plan', true)
+          // Ionic 4.17.24: archived Termine leave the org plans.
+          .eq('archived', false)
           .not('plan', 'is', null)
           .order('date', ascending: true);
 

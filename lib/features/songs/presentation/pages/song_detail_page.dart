@@ -347,7 +347,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                   detail: true,
                   // Ionic 4.17.18 openLink: web → Utils.openInNewTab.
                   onTap: () =>
-                      NativeFileService.openExternal(Uri.parse(song.link!)),
+                      NativeFileService.openLinkInApp(Uri.parse(song.link!)),
                 ),
               ]),
             if (!data.readOnly)
@@ -1131,6 +1131,8 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
           ToastHelper.showWarning(context, context.l10n.songsFlutterPrintFileFailed);
         }
       case 'download':
+        // Ionic 4.17.23: iOS app on a Mac → the browser downloads the file.
+        if (await NativeFileService.downloadInMacBrowser(file.url, file.fileName)) return;
         await _run(() async {
           final bytes = await ref.read(songFileServiceProvider).downloadFileBytes(file.url);
           if (bytes == null) throw Exception(l10nWithoutContext.songsFlutterDownloadFileFailed);

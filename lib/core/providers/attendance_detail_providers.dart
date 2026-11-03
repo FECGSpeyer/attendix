@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/attendance/attendance.dart';
 import '../../data/models/person/person.dart';
 import '../config/supabase_config.dart';
+import '../utils/archived_attendance.dart';
 import 'tenant_providers.dart';
 import '../services/attendance_detail_cache.dart';
 import '../services/offline_queue_service.dart'
@@ -35,6 +36,9 @@ OfflineCacheScope? _cacheScope(Ref ref, int tenantId) {
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
+  // Ionic 4.17.24: archived Termine only for admins/responsible, also via
+  // a direct /attendance/:id route (network and offline copy).
+  final role = ref.watch(currentRoleProvider);
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
 
@@ -55,6 +59,7 @@ final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, 
   );
 
   if (response == null) return null;
+  if (isArchivedRow(response) && !canSeeArchivedAttendances(role)) return null;
   return Attendance.fromJson(response);
 });
 

@@ -3,7 +3,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -22,6 +21,7 @@ import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart' show scrollEndPadding, TabBarFab;
+import '../../../../core/services/native/native_file_service.dart';
 
 /// Short date "Mo, 03.11.2026" (Ionic dayjs `dd, ${dateFmt()}`).
 String orgPlanDate(String date) {
@@ -75,7 +75,9 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
   }
 
   Future<void> _subscribeCalendar(String key) async {
-    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=$key';
+    // Ionic: calendar texts in the app language (German is the default).
+    final lang = currentLanguage() != 'de' ? '&lang=${currentLanguage()}' : '';
+    final base = '${SupabaseConfig.supabaseUrl}/functions/v1/ical-org-plans?key=$key$lang';
     final link = await showPlanActionSheet<String>(
       context,
       title: context.l10n.plansSubscribeCalendar,
@@ -98,11 +100,10 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
           TextButton(
             onPressed: () {
               final ios = !kIsWeb && defaultTargetPlatform == TargetPlatform.iOS;
-              launchUrl(
+              NativeFileService.openLinkInApp(
                 Uri.parse(ios
                     ? 'https://support.apple.com/de-de/102301'
                     : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),
-                mode: LaunchMode.externalApplication,
               );
             },
             child: Text(ctx.l10n.plansOpenGuide),

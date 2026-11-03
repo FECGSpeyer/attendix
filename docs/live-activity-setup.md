@@ -14,43 +14,22 @@ Everything that can be done without Xcode is in the repo already:
 | `NSSupportsLiveActivities`, `NSSupportsLiveActivitiesFrequentUpdates`, URL scheme `attendix` | `ios/Runner/Info.plist` |
 | Widget extension sources (copied 1:1 from Ionic) | `ios/AttendixLiveActivity/` |
 
-`ios/AttendixLiveActivity/PlanActivityAttributes.swift` is already compiled into the
-**Runner** target. The widget extension target itself is **not** in
-`Runner.xcodeproj` yet, because hand-editing a new target into the project file is
-error-prone. Until you add it, the app builds and runs, but iOS has no UI to show the
-activity, so `Activity.request` produces nothing visible.
+The widget extension target `AttendixLiveActivity` is in `Runner.xcodeproj`
+(added with the `xcodeproj` gem, November 2026). `PlanActivityAttributes.swift` is
+compiled into both targets.
 
-## 1. Add the widget extension target
+## 1. Widget extension target (done, for reference)
 
-1. Open `ios/Runner.xcworkspace` in Xcode.
-2. File → New → Target… → **Widget Extension**.
-   - Product Name: `AttendixLiveActivity`
-   - Check **Include Live Activity**. Uncheck *Include Configuration App Intent*.
-   - Embed in Application: **Runner**.
-   - When Xcode asks to activate the scheme, choose *Activate*.
-3. Xcode creates a folder `ios/AttendixLiveActivity` with template files. Delete the
-   template Swift files Xcode generated (choose *Move to Trash*), but keep the folder.
-   Keep the 4 files from the repo: `AttendixLiveActivityBundle.swift`,
-   `PlanLiveActivity.swift`, `PlanActivityAttributes.swift`, `Info.plist`.
-   If Xcode overwrote `Info.plist`, run `git checkout ios/AttendixLiveActivity/Info.plist`.
-4. Make sure these files are in the target (File inspector → Target Membership):
-   - `AttendixLiveActivityBundle.swift` → AttendixLiveActivity
-   - `PlanLiveActivity.swift` → AttendixLiveActivity
-   - `PlanActivityAttributes.swift` → **AttendixLiveActivity and Runner** (both!)
-5. Build settings of the **AttendixLiveActivity** target:
-   - `PRODUCT_BUNDLE_IDENTIFIER` = `de.attendix.attendix.LiveActivity`
-   - `INFOPLIST_FILE` = `AttendixLiveActivity/Info.plist`
-   - `IPHONEOS_DEPLOYMENT_TARGET` = `16.2` (same as Ionic)
-   - `SWIFT_VERSION` = `5.0`, `TARGETED_DEVICE_FAMILY` = `1,2`
-   - `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION`: set them to `$(FLUTTER_BUILD_NAME)`
-     and `$(FLUTTER_BUILD_NUMBER)` so they match the app (App Store rejects mismatches).
-   - Signing: same team as Runner (`MXM3YWAKPL`), automatic signing.
-6. Frameworks of the extension: `WidgetKit.framework` and `SwiftUI.framework`
-   (the template adds them).
-7. Build Phases of **Runner**: the *Embed Foundation Extensions* phase must contain
-   `AttendixLiveActivity.appex`, and it must come **before** the *Thin Binary* /
-   *Run Script* phases. If Flutter complains about a "Cycle inside Runner", drag
-   *Embed Foundation Extensions* directly below *Copy Bundle Resources*.
+- Sources: `AttendixLiveActivityBundle.swift`, `PlanLiveActivity.swift`,
+  `PlanActivityAttributes.swift` (also in Runner), `Info.plist`.
+- `PRODUCT_BUNDLE_IDENTIFIER` = `io.stephanus.attendix.LiveActivity` (same as Ionic),
+  `IPHONEOS_DEPLOYMENT_TARGET` = `16.2`, `SWIFT_VERSION` = `5.0`, `TARGETED_DEVICE_FAMILY` = `1,2`.
+- `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` = `$(FLUTTER_BUILD_NAME)` /
+  `$(FLUTTER_BUILD_NUMBER)`. The base configuration is `Flutter/Generated.xcconfig`, so the
+  values match the app (App Store rejects mismatches).
+- Signing: team `MXM3YWAKPL`, automatic. Frameworks: `WidgetKit`, `SwiftUI`.
+- Runner build phases: *Embed Foundation Extensions* sits directly after *Resources*,
+  before *Thin Binary* (otherwise Flutter reports a "Cycle inside Runner").
 
 ## 2. Capabilities and entitlements (Runner)
 
@@ -63,10 +42,9 @@ FCM → APNs (`apns.live_activity_token`). That needs push on the **app** target
    the `PlanActivityAttributes` type, and all data reaches the widget via ActivityKit.
 3. There is no separate "liveactivity" push capability in Xcode. The APNs push type
    `liveactivity` is set by the server (FCM `apns.live_activity_token`).
-   Requirement: the iOS app `de.attendix.attendix` is registered in the Firebase project
-   (`FIREBASE_PROJECT_ID`, default `app-attendix`) with the APNs auth key (.p8) uploaded.
-   Ionic's bundle id was `io.stephanus.attendix`; if the Flutter app ships under
-   `de.attendix.attendix`, add it as an additional iOS app in Firebase.
+   Requirement: the iOS app `io.stephanus.attendix` (same ID as Ionic) is registered in
+   the Firebase project (`FIREBASE_PROJECT_ID`, default `app-attendix`) with the APNs auth
+   key (.p8) uploaded. That is the existing Ionic entry.
 4. `Info.plist` keys are already set (`NSSupportsLiveActivities`,
    `NSSupportsLiveActivitiesFrequentUpdates`, URL scheme `attendix` for the tap on the
    activity → `attendix://live-plan?attendance=…&plan=…` → plan viewer in live mode).
@@ -93,7 +71,8 @@ FCM → APNs (`apns.live_activity_token`). That needs push on the **app** target
 6. Push-to-start (iOS 17.2+, app closed) needs step 2 above. Check `live_activity_tokens`
    for a `start` row of your user.
 
-## Not ported
+## Android
 
-- Android "live notification" (Ionic `LiveActivityPlugin.java`): the Flutter service is a
-  no-op on Android.
+The Android live notification (Ionic `LiveActivityPlugin.java`) is ported:
+`android/app/src/main/kotlin/de/attendix/attendix/liveplan/*` plus the Android branch of
+`lib/core/services/live_activity_service.dart` (updates via `live_plan` data pushes).

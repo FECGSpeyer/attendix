@@ -84,6 +84,70 @@ class TiptapConverter {
     return {'type': 'doc', 'content': blocks};
   }
 
+  /// The reverse of [fromDeltaOps]: a Tiptap document as Quill Delta ops
+  /// (Ionic 4.18: the own text of an automatic-message rule is edited
+  /// again, the "Unentschuldigte anschreiben" text is prefilled).
+  /// `hardBreak` becomes a plain line break.
+  static List<Map<String, dynamic>> toDeltaOps(Map<String, dynamic>? doc) {
+    final ops = <Map<String, dynamic>>[];
+
+    void inline(List? content) {
+      for (final node in content ?? const []) {
+        if (node is! Map) continue;
+        if (node['type'] == 'hardBreak') {
+          ops.add({'insert': '\n'});
+          continue;
+        }
+        final text = node['text'];
+        if (node['type'] != 'text' || text is! String || text.isEmpty) continue;
+        final attrs = <String, dynamic>{};
+        for (final mark in (node['marks'] as List? ?? const [])) {
+          if (mark is! Map) continue;
+          switch (mark['type']) {
+            case 'bold':
+            case 'italic':
+            case 'underline':
+            case 'strike':
+              attrs[mark['type'] as String] = true;
+            case 'link':
+              final href = (mark['attrs'] as Map?)?['href'];
+              if (href is String && href.isNotEmpty) attrs['link'] = href;
+          }
+        }
+        ops.add({'insert': text, if (attrs.isNotEmpty) 'attributes': attrs});
+      }
+    }
+
+    void line([Map<String, dynamic>? attrs]) =>
+        ops.add({'insert': '\n', if (attrs != null) 'attributes': attrs});
+
+    for (final block in (doc?['content'] as List? ?? const [])) {
+      if (block is! Map) continue;
+      switch (block['type']) {
+        case 'heading':
+          inline(block['content'] as List?);
+          final level = (block['attrs'] as Map?)?['level'];
+          line({'header': level is int && level >= 3 ? 3 : 2});
+        case 'bulletList':
+        case 'orderedList':
+          final list = block['type'] == 'bulletList' ? 'bullet' : 'ordered';
+          for (final item in (block['content'] as List? ?? const [])) {
+            if (item is! Map) continue;
+            for (final para in (item['content'] as List? ?? const [])) {
+              if (para is! Map) continue;
+              inline(para['content'] as List?);
+              line({'list': list});
+            }
+          }
+        default:
+          inline(block['content'] as List?);
+          line();
+      }
+    }
+    if (ops.isEmpty) ops.add({'insert': '\n'});
+    return ops;
+  }
+
   /// Whether the document contains any non-whitespace text.
   static bool hasText(Map<String, dynamic> node) {
     if (node['type'] == 'text') {

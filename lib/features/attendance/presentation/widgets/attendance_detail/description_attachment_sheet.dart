@@ -2,7 +2,6 @@ import 'package:file_picker/file_picker.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../../core/providers/attendance_providers.dart';
@@ -13,6 +12,7 @@ import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../../core/utils/error_message.dart';
 import '../../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../../core/services/native/native_file_service.dart';
 
 /// "Beschreibung & Anhang" editor of a Termin (Ionic descriptionModal):
 /// rich text description (stored as HTML like the Ionic quill editor) and
@@ -149,9 +149,10 @@ class _DescriptionAttachmentEditorState extends ConsumerState<DescriptionAttachm
   Future<void> _open() async {
     final url = _attachmentUrl;
     if (url == null) return;
-    try {
-      await launchUrl(Uri.parse(url), mode: LaunchMode.externalApplication);
-    } catch (_) {}
+    final uri = Uri.tryParse(url);
+    if (uri == null) return;
+    // Ionic Browser.open: in-app browser in the native app.
+    await NativeFileService.openLinkInApp(uri);
   }
 
   @override

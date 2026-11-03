@@ -17,15 +17,25 @@ unavailable, and in debug builds the log shows
 
 ### 1. Register the Flutter app IDs in Firebase (project `app-attendix`)
 
-The Flutter app currently uses the bundle ID / package name
-**`de.attendix.attendix`**. Ionic uses `io.stephanus.attendix`.
+Since November 2026 the app uses the Ionic ID **`io.stephanus.attendix`** on iOS and
+Android, so it reuses the existing Ionic apps in Firebase (and the iOS APNs key). It
+replaces the Ionic app on a device and ships as an update of the store app "Attendix".
+Store versions must be higher than Ionic's (4.19.6, Android versionCode 227), e.g.
+`--build-name 5.0.0 --build-number 228`.
 
-- **Option A (new apps):** In the Firebase console, open *Project settings → Your apps*
-  and add an **iOS app** and an **Android app** with `de.attendix.attendix`.
-- **Option B (replace the store apps):** Change the Flutter IDs to
-  `io.stephanus.attendix` (`PRODUCT_BUNDLE_IDENTIFIER` in
-  `ios/Runner.xcodeproj`, plus `applicationId`/`namespace` in
-  `android/app/build.gradle.kts`) and reuse the existing Firebase apps.
+**Android signing:** Play App Signing is active, so Play only needs our *upload* key.
+Put it in `android/key.properties` (gitignored, never commit):
+
+```properties
+storeFile=/absolute/path/to/upload.jks
+storePassword=...
+keyAlias=...
+keyPassword=...
+```
+
+Without that file the release build is signed with the debug key. Such an APK
+cannot replace the Play Store Ionic app on a device (uninstall it first) and
+App Links to attendix.de are not verified.
 
 ### 2. Config files (not committed, both are in `.gitignore` like in Ionic)
 
@@ -37,10 +47,8 @@ The Flutter app currently uses the bundle ID / package name
 - **Android:** placing the file is enough. `android/app/build.gradle.kts`
   applies the `com.google.gms.google-services` plugin only when the file
   exists, which is the same conditional as Ionic's `build.gradle`.
-- **iOS:** open `ios/Runner.xcworkspace` in Xcode and drag
-  `GoogleService-Info.plist` into the *Runner* group. Tick
-  *Copy items if needed* and target *Runner*. Without that step the file is
-  not in the app bundle.
+- **iOS:** placing the file is enough. The Runner build phase
+  *Copy GoogleService-Info.plist* copies it into the app bundle when it exists.
 
 **Alternative without files (CI):** pass the options with `--dart-define`.
 They are read by `lib/core/config/firebase_options.dart`:
@@ -60,9 +68,9 @@ resources. Prefer the files.
 
 ### 3. APNs key in Firebase (iOS)
 
-Firebase stores the APNs key per iOS app. With option B, the existing Ionic
-iOS app already has it. With option A, the new `de.attendix.attendix` app
-needs it too. The team-wide `.p8` key of the Ionic app can be reused.
+Firebase stores the APNs key per iOS app. The existing Ionic iOS app
+`io.stephanus.attendix` already has it, so nothing is needed for iOS. An APNs key
+belongs to the whole team, so a new app ID could reuse it.
 
 Apple Developer → *Keys* → use the existing key, or create one with **Apple
 Push Notifications service (APNs)** → download the `.p8`. Then in Firebase →

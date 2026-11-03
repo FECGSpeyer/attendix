@@ -168,10 +168,13 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Recipient counts for the compose screen (send-message dry run).
+  /// [playerIds]: only these people instead of groups (Ionic 4.18
+  /// "Unentschuldigte anschreiben").
   Future<MessageRecipientCounts> getRecipientCounts({
     required List<int>? groupIds,
     required bool push,
     required bool email,
+    List<int>? playerIds,
   }) async {
     try {
       final response = await supabase.functions.invoke(
@@ -179,6 +182,7 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
         body: {
           'tenantId': currentTenantId,
           'groupIds': groupIds,
+          'playerIds': playerIds,
           'channels': {'push': push, 'email': email},
           'dryRun': true,
         },
@@ -194,12 +198,19 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
   ///
   /// [content] is a Tiptap document (`{type: 'doc', content: [...]}`); the
   /// server renders the allowlisted HTML/plain text from it.
+  ///
+  /// Ionic 4.18: [playerIds] sends to these people only, [attendanceId]
+  /// links the message to a Termin and [allowResponses] lets recipients
+  /// answer ("Grund nachtragen" / "Ich war doch da").
   Future<String> send({
     required String title,
     required Map<String, dynamic> content,
     required List<int>? groupIds,
     required bool push,
     required bool email,
+    List<int>? playerIds,
+    int? attendanceId,
+    bool allowResponses = false,
   }) async {
     ensureNotDemo('sendMessage'); // DEMO_GUARD
     try {
@@ -211,6 +222,9 @@ class MessageRepository extends BaseRepository with TenantAwareRepository {
           'content': content,
           'groupIds': groupIds,
           'channels': {'push': push, 'email': email},
+          if (playerIds != null) 'playerIds': playerIds,
+          if (attendanceId != null) 'attendanceId': attendanceId,
+          if (attendanceId != null) 'allowResponses': allowResponses,
         },
       );
       final data = response.data;

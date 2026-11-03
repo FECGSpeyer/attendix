@@ -85,6 +85,18 @@ class NativeFileService {
     }
   }
 
+  /// Ionic 4.17.23 `Utils.downloadInMacBrowser`: the iOS app on an Apple
+  /// silicon Mac cannot save files through the native viewer, so the browser
+  /// downloads them (Supabase serves public files as attachment with
+  /// `?download=<name>`). Returns false everywhere else (nothing happened).
+  static Future<bool> downloadInMacBrowser(String url, String fileName) async {
+    if (!url.startsWith('http') || !await isIosAppOnMac()) return false;
+    final separator = url.contains('?') ? '&' : '?';
+    await openExternal(
+        Uri.parse('$url${separator}download=${Uri.encodeQueryComponent(fileName)}'));
+    return true;
+  }
+
   /// Opens [uri] in the browser / external app. Web: Ionic 4.17.18
   /// `Utils.openInNewTab` – installed web apps ignore `window.open`, so a
   /// real link is clicked there.
@@ -102,6 +114,23 @@ class NativeFileService {
     } catch (_) {
       return false;
     }
+  }
+
+  /// Ionic `Browser.open` (@capacitor/browser): web links (song links,
+  /// Termin attachments, help pages, links in messages) open in an in-app
+  /// browser sheet (SFSafariViewController / Custom Tabs) instead of
+  /// switching apps. Web and the iOS app on a Mac open the browser as before.
+  static Future<bool> openLinkInApp(Uri uri) async {
+    final isHttp = uri.isScheme('http') || uri.isScheme('https');
+    try {
+      if (!kIsWeb && isHttp && !await isIosAppOnMac() &&
+          await supportsLaunchMode(LaunchMode.inAppBrowserView)) {
+        if (await launchUrl(uri, mode: LaunchMode.inAppBrowserView)) return true;
+      }
+    } catch (_) {
+      // Fall back to the external browser below.
+    }
+    return openExternal(uri);
   }
 
   /// Ionic `Utils.openFileNative(url, fileName)`: native → download to the

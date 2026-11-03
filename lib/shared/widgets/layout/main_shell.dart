@@ -1,3 +1,5 @@
+import 'dart:math' as math;
+
 import 'package:flutter/cupertino.dart' show CupertinoButton;
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
@@ -21,6 +23,8 @@ import 'ios_tab_bar.dart';
 import 'root_back_button_scope.dart';
 import 'ionic_md.dart' show IonMd;
 import 'route_leave_guard.dart';
+import 'side_nav/side_nav.dart';
+import 'side_nav/side_nav_layout.dart';
 
 /// Represents a navigation destination with its route
 class _NavDestination {
@@ -330,6 +334,12 @@ class MainShell extends ConsumerWidget {
     // IOS_SHELL: pages put their ion-fab into the tab bar row (TabBarFab).
     final ios = useIosLook(context);
     final Widget page = NativeAppAdGate(child: child);
+    // SIDE_NAV (Ionic 4.19.0): from tablet width a side panel replaces the
+    // tab bar – an overlay below 992px, next to the content above.
+    final sideMode = sideNavModeFor(MediaQuery.sizeOf(context).width);
+    if (sideMode != SideNavMode.none) {
+      return _SidePanelShell(mode: sideMode, child: page);
+    }
     if (ios) {
       return _buildIos(context, ref, page, destinations, selectedIndex);
     }
@@ -354,6 +364,89 @@ class MainShell extends ConsumerWidget {
               onSelected: (index) => _onItemTapped(context, ref, index, destinations),
               destinations: destinations,
             ),
+      ),
+    );
+  }
+}
+
+/// SIDE_NAV (Ionic 4.19.0 tabs.page: `ion-split-pane` + `ion-menu`): the
+/// shell on tablets and computers. Tablet portrait (768–991px): the side
+/// panel is an overlay (menu button in the pages, swipe from the edge);
+/// from 992px it stands next to the content, 272px wide or as a 72px icon
+/// rail. The pages see the room next to the panel as their screen size.
+class _SidePanelShell extends ConsumerStatefulWidget {
+  const _SidePanelShell({required this.mode, required this.child});
+
+  final SideNavMode mode;
+  final Widget child;
+
+  @override
+  ConsumerState<_SidePanelShell> createState() => _SidePanelShellState();
+}
+
+class _SidePanelShellState extends ConsumerState<_SidePanelShell> {
+  final _scaffoldKey = GlobalKey<ScaffoldState>();
+
+  @override
+  Widget build(BuildContext context) {
+    final mq = MediaQuery.of(context);
+    final fixed = widget.mode == SideNavMode.fixed;
+    final collapsed =
+        sideNavCollapsed(mq.size.width, ref.watch(sideNavCollapsedChoiceProvider));
+    final navWidth = collapsed ? sidePanelRailWidth : sidePanelWidth;
+
+    Widget content = Column(
+      children: [
+        Expanded(child: widget.child),
+        const AudioPlayerWidget(),
+      ],
+    );
+    if (fixed) {
+      content = MediaQuery(
+        data: mq.copyWith(
+          size: Size(mq.size.width - navWidth, mq.size.height),
+          padding: mq.padding.copyWith(left: 0),
+          viewPadding: mq.viewPadding.copyWith(left: 0),
+        ),
+        child: content,
+      );
+    }
+    content = SideNavScope(
+      mode: widget.mode,
+      openOverlay: () => _scaffoldKey.currentState?.openDrawer(),
+      child: content,
+    );
+
+    return RootBackButtonScope(
+      child: Scaffold(
+        key: _scaffoldKey,
+        drawer: fixed
+            ? null
+            : Drawer(
+                width: math.min(sidePanelOverlayWidth, mq.size.width * 0.85),
+                shape: const RoundedRectangleBorder(),
+                child: SideNav(
+                  mode: SideNavMode.overlay,
+                  collapsed: false,
+                  onClose: () => _scaffoldKey.currentState?.closeDrawer(),
+                ),
+              ),
+        body: fixed
+            ? Row(
+                children: [
+                  SizedBox(
+                    width: navWidth,
+                    child: SideNav(
+                      mode: SideNavMode.fixed,
+                      collapsed: collapsed,
+                      onClose: () {},
+                    ),
+                  ),
+                  Expanded(child: content),
+                ],
+              )
+            : content,
+        floatingActionButton: kDebugMode ? const DebugRoleFab() : null,
       ),
     );
   }

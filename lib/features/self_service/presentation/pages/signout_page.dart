@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:cached_network_image/cached_network_image.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/constants/enums.dart';
@@ -9,10 +10,12 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
+import '../../../../core/providers/song_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/attendance_songs.dart';
 import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
@@ -36,6 +39,7 @@ import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import 'package:attendix/shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// "Meine Termine" – self-service sign in/out of the current tenant
 /// (Ionic `selfService/signout`).
@@ -83,7 +87,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
   Future<void> _refresh() async {
     ref.invalidate(signoutDataProvider);
     ref.invalidate(currentSelfServicePlayerProvider);
-    ref.invalidate(upcomingSongsProvider);
+    ref.invalidate(signoutAttendanceSongsProvider);
     ref.invalidate(myTasksProvider);
     await ref.read(signoutDataProvider.future);
   }
@@ -157,6 +161,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
       // IOS_SHELL: tenant capsule left like ion-buttons slot="start"
       centerTitle: tenants.length > 1 ? false : null,
       automaticallyImplyLeading: false,
+      // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+      leading: SideNavMenuButton.maybe(context),
       // IOS_THEME2: toolbar matches the white (dark: black) Termin page.
       // PARITY_R5: iOS translucent header (blur once condensed).
       backgroundColor: isIosLook(context)
@@ -180,6 +186,8 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     final playerAsync = ref.watch(currentSelfServicePlayerProvider);
     final dataAsync = ref.watch(signoutDataProvider);
     ref.watch(canAccessFilesProvider);
+    // Ionic 4.17.26: "♪ n Werke" chips appear once the Werke are loaded.
+    ref.watch(signoutAttendanceSongsProvider);
     final useDutyView =
         ref.watch(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false;
 
@@ -427,9 +435,7 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
         _GreetTile(
           icon: Icons.music_note_outlined,
           title: context.l10n.signoutCurrentSongs,
-          subtitle: songs.length == 1
-              ? context.l10n.teamOrgNextEvent
-              : context.l10n.signoutFlutterEventsCount(songs.length),
+          subtitle: context.l10n.attendanceSongsTileEvents(songs.length),
           onTap: () => showUpcomingSongsSheet(context),
         ),
       if (canPlannedAbsence)
@@ -572,6 +578,17 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
               subtitle: att.readableDate,
               past: true,
               highlight: att.highlight,
+              // Ionic 4.17.26: "♪ n Werke" chip on past Termine too.
+              extra: [
+                if (actions.songCount(att) case final count when count > 0)
+                  EventChips(chips: [
+                    EventChip(
+                      label: context.l10n.attendanceSongsChip(count),
+                      icon: Icons.music_note_outlined,
+                      onTap: () => actions.openSongs!(att),
+                    ),
+                  ]),
+              ],
               onTap: att.isExcusedStatus ? () => actions.presentActions(context, att) : null,
               trailing: [
                 if (actions.hasFilesFolder(att))
@@ -700,7 +717,36 @@ SelfServiceEventActions signoutEventActions(
       context,
       attendance: att,
       playerInstrumentId: player?.instrument,
+      memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+    ),
+    // Ionic 4.17.26: Werke selected for the Termin.
+    songCountOf: (att) => _songsOf(ref, att).length,
+    openSongs: (att) => showAttendanceSongsSheet(
+      context,
+      title: att.eventTitle,
+      subtitle: _songsSubtitle(att),
+      entries: _songsOf(ref, att),
+      instrumentId: player?.instrument,
+      onOpenPlan: att.hasPlan
+          ? () => showPlanViewerSheet(
+                context,
+                attendance: att,
+                playerInstrumentId: player?.instrument,
+                memberSongs: ref.read(songsProvider).valueOrNull ?? const [],
+              )
+          : null,
     ),
     canAccessFiles: (_) => canAccessFiles,
   );
+}
+
+List<AttendanceSong> _songsOf(WidgetRef ref, CrossTenantPersonAttendance att) {
+  final id = att.attendanceId;
+  if (id == null) return const [];
+  return ref.read(signoutAttendanceSongsProvider).valueOrNull?[id] ?? const [];
+}
+
+String _songsSubtitle(CrossTenantPersonAttendance att) {
+  final date = EventListUtils.parse(att.date);
+  return date == null ? '' : DateFormat(dateFmt()).format(date);
 }

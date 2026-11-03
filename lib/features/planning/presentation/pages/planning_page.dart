@@ -1472,14 +1472,36 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     _changed();
   }
 
-  void _addCurrentSongs() {
-    final added = PlanSongHelper.currentSongFields(
+  /// Ionic 4.17.25 `addCurrentSongs`: adds the current Werke missing in the
+  /// open plan; when all are already there, asks whether to add them again.
+  Future<void> _addCurrentSongs() async {
+    final prefix = _songPrefix(_typeOf(_att));
+    final all = PlanSongHelper.currentSongFields(
+      const [],
+      history: _history,
+      songs: _songs,
+      prefix: prefix,
+    );
+    if (all.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.planningNoCurrentSongs);
+      return;
+    }
+    var added = PlanSongHelper.currentSongFields(
       _fields,
       history: _history,
       songs: _songs,
-      prefix: _songPrefix(_typeOf(_att)),
+      prefix: prefix,
     );
-    if (added.isEmpty) return;
+    if (added.isEmpty) {
+      final again = await showPlanConfirm(
+        context,
+        title: context.l10n.planningCurrentSongsAlreadyAddedHeader,
+        message: context.l10n.planningCurrentSongsAlreadyAddedMessage,
+        confirmText: context.l10n.planningAddAgain,
+      );
+      if (!again || !mounted) return;
+      added = all;
+    }
     setState(() => _fields = [..._fields, ...added]);
     _changed();
   }
@@ -1678,7 +1700,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       case 'note':
         await _addNote();
       case 'current':
-        _addCurrentSongs();
+        await _addCurrentSongs();
       case 'song':
         await _addSong();
       case 'plan':

@@ -480,6 +480,20 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListAddSongs => 'Werk(e) hinzufügen';
 
   @override
+  String get attListArchived => 'Archiviert';
+
+  @override
+  String attListArchivedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count archivierte Termine',
+      one: '$count archivierter Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String get attListAverage => 'Durchschnitt';
 
   @override
@@ -622,6 +636,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attListShowAll => 'Alle anzeigen';
 
   @override
+  String get attListShowArchived => 'Archivierte anzeigen';
+
+  @override
   String get attListSongs => 'Werke';
 
   @override
@@ -682,6 +699,30 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get attendanceAllAlreadyIncluded =>
       'Alle Personen sind bereits in dieser Anwesenheit enthalten.';
+
+  @override
+  String get attendanceArchive => 'Archivieren';
+
+  @override
+  String get attendanceArchiveConfirmHeader => 'Termin archivieren?';
+
+  @override
+  String get attendanceArchiveConfirmMessage =>
+      'Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen.';
+
+  @override
+  String get attendanceArchiveFailed =>
+      'Der Termin konnte nicht geändert werden.';
+
+  @override
+  String get attendanceArchivedBanner => 'Archiviert';
+
+  @override
+  String get attendanceArchivedBannerHint =>
+      'Für Mitglieder unsichtbar. Nur Admins und Verantwortliche sehen diesen Termin.';
+
+  @override
+  String get attendanceArchivedToast => 'Termin archiviert';
 
   @override
   String get attendanceAssign => 'Einteilen';
@@ -1358,6 +1399,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceResetChecklist => 'Checkliste zurücksetzen';
 
   @override
+  String get attendanceRestore => 'Wiederherstellen';
+
+  @override
+  String get attendanceRestoredToast => 'Termin wiederhergestellt';
+
+  @override
   String get attendanceRunSheetAgenda => 'Ablaufplan & Tagesordnung';
 
   @override
@@ -1400,9 +1447,47 @@ class AppLocalizationsDe extends AppLocalizations {
   String get attendanceSignedOut => 'abgemeldet';
 
   @override
+  String attendanceSongsChip(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Werke',
+      one: '$count Werk',
+    );
+    return '$_temp0';
+  }
+
+  @override
   String attendanceSongsCount(Object count) {
     return 'Werke ($count)';
   }
+
+  @override
+  String get attendanceSongsNoScoresForYou =>
+      'Für dich sind keine Noten hinterlegt';
+
+  @override
+  String get attendanceSongsOpenRunSheet => 'Ablaufplan öffnen';
+
+  @override
+  String get attendanceSongsPrintAll => 'Alle Noten drucken';
+
+  @override
+  String get attendanceSongsShow => 'Werke anzeigen';
+
+  @override
+  String attendanceSongsTileEvents(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: 'Nächster Termin',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get attendanceSongsTitle => 'Werke';
 
   @override
   String get attendanceSorting => 'Sortierung';
@@ -1528,6 +1613,705 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get authUserNotFound => 'Benutzer nicht gefunden';
+
+  @override
+  String get autoMessagesActive => 'Aktiv';
+
+  @override
+  String get autoMessagesActiveHint =>
+      'Eine eingeschaltete Regel gilt ab jetzt. Vergangene Termine werden nicht nachgeschickt. Schau dir vorher unten die Vorschau an.';
+
+  @override
+  String get autoMessagesAllTypes => 'alle Termintypen';
+
+  @override
+  String get autoMessagesAllowResponses => 'Mitglied kann antworten';
+
+  @override
+  String get autoMessagesAllowResponsesHint =>
+      'Knöpfe „Grund nachtragen“ und „Ich war doch da“ in der Nachricht';
+
+  @override
+  String get autoMessagesChannelEmail => 'E-Mail';
+
+  @override
+  String get autoMessagesChannelPush => 'Push / Telegram';
+
+  @override
+  String get autoMessagesChannels => 'Kanäle';
+
+  @override
+  String get autoMessagesChipCopy => 'Kopie';
+
+  @override
+  String get autoMessagesChipEmail => 'E-Mail';
+
+  @override
+  String get autoMessagesChipPush => 'Push';
+
+  @override
+  String get autoMessagesChipResponses => 'Grund nachtragen';
+
+  @override
+  String get autoMessagesCopy => 'Kopie (optional)';
+
+  @override
+  String get autoMessagesCopyHint =>
+      'Eine Sammelinfo pro Termin, wer angeschrieben wurde.';
+
+  @override
+  String get autoMessagesCopyResponsibles => 'Admins und Verantwortliche';
+
+  @override
+  String get autoMessagesCopyVoiceLeaders => 'Stimmführer (nur ihre Gruppe)';
+
+  @override
+  String get autoMessagesCustomHint =>
+      'Eigener Text geht in allen Sprachen so raus, wie du ihn schreibst. Tippe auf einen Platzhalter, um ihn einzufügen.';
+
+  @override
+  String get autoMessagesCustomText => 'Eigener Text';
+
+  @override
+  String autoMessagesDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Tage',
+      one: '$count Tag',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesDecideAcceptPresent =>
+      'Status auf „anwesend“ setzen? Die Person bekommt Bescheid.';
+
+  @override
+  String get autoMessagesDecideAcceptReason =>
+      'Status auf „entschuldigt“ setzen? Die Person bekommt Bescheid.';
+
+  @override
+  String get autoMessagesDecideReject =>
+      'Rückmeldung ablehnen? Der Status bleibt, der Grund bleibt als Notiz stehen.';
+
+  @override
+  String get autoMessagesDecidedAccepted => 'Übernommen';
+
+  @override
+  String get autoMessagesDecidedRejected => 'Abgelehnt';
+
+  @override
+  String get autoMessagesDelay => 'Wartezeit nach Terminende';
+
+  @override
+  String get autoMessagesDelayHint =>
+      'In dieser Zeit kannst du die Anwesenheit noch korrigieren oder die Nachricht für den Termin aussetzen.';
+
+  @override
+  String autoMessagesDelayHours(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Std.',
+      one: '$count Std.',
+    );
+    return '$_temp0 danach';
+  }
+
+  @override
+  String autoMessagesDelayMinutes(Object count) {
+    return '$count Min. danach';
+  }
+
+  @override
+  String get autoMessagesDelayNone => 'Direkt nach Ende';
+
+  @override
+  String get autoMessagesDeleteConfirm => 'Regel löschen?';
+
+  @override
+  String get autoMessagesDeleteHint =>
+      'Bereits verschickte Nachrichten bleiben erhalten.';
+
+  @override
+  String get autoMessagesDeleteRule => 'Regel löschen';
+
+  @override
+  String get autoMessagesDisabledToast => 'Regel ausgeschaltet';
+
+  @override
+  String get autoMessagesEnabledToast => 'Regel eingeschaltet';
+
+  @override
+  String get autoMessagesErrChannel => 'Bitte wähle mindestens einen Kanal';
+
+  @override
+  String get autoMessagesErrName => 'Bitte gib der Regel einen Namen';
+
+  @override
+  String get autoMessagesErrStatus => 'Bitte wähle mindestens einen Auslöser';
+
+  @override
+  String get autoMessagesErrText => 'Bitte gib einen Titel und einen Text ein';
+
+  @override
+  String get autoMessagesExcuse => 'Entschuldigen';
+
+  @override
+  String get autoMessagesExcuseAfterCheck => 'Nach Bestätigung entschuldigt';
+
+  @override
+  String get autoMessagesExcuseInstant => 'Sofort entschuldigt';
+
+  @override
+  String get autoMessagesFreqCount => 'Ab wie vielen Malen';
+
+  @override
+  String get autoMessagesFreqDays => 'Zeitraum';
+
+  @override
+  String get autoMessagesFreqEach => 'Jedes Mal';
+
+  @override
+  String get autoMessagesFreqHintEach => 'Bei jedem passenden Termin.';
+
+  @override
+  String autoMessagesFreqHintStreak(Object count) {
+    return 'Erst beim $count. Fehlen hintereinander. Danach erst wieder, wenn die Person zwischendurch da war.';
+  }
+
+  @override
+  String autoMessagesFreqHintWindow(Object days, Object count) {
+    return 'Wenn jemand innerhalb von $days Tagen zum $count. Mal passt.';
+  }
+
+  @override
+  String get autoMessagesFreqStreak => 'In Folge';
+
+  @override
+  String autoMessagesFreqStreakShort(Object count) {
+    return 'ab $count× in Folge';
+  }
+
+  @override
+  String get autoMessagesFreqWindow => 'Im Zeitraum';
+
+  @override
+  String autoMessagesFreqWindowShort(Object count, Object days) {
+    return 'ab $count× in $days Tagen';
+  }
+
+  @override
+  String get autoMessagesGeneral => 'Allgemein';
+
+  @override
+  String get autoMessagesGroups => 'Gruppen';
+
+  @override
+  String get autoMessagesGroupsAll =>
+      'Nichts ausgewählt: gilt für alle Gruppen.';
+
+  @override
+  String get autoMessagesGroupsSome =>
+      'Gilt nur für Personen aus den ausgewählten Gruppen.';
+
+  @override
+  String get autoMessagesHistEmpty => 'Diese Regel hat noch nichts verschickt.';
+
+  @override
+  String get autoMessagesHistRead => 'gelesen';
+
+  @override
+  String get autoMessagesHistResponses => 'Antworten';
+
+  @override
+  String get autoMessagesHistRowNone => 'Niemand passte';
+
+  @override
+  String get autoMessagesHistRowNotRecorded =>
+      'Nicht verschickt: Anwesenheit wurde nicht erfasst';
+
+  @override
+  String autoMessagesHistRowSent(num count, Object read, Object responses) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '$count Person',
+    );
+    return '$_temp0 · $read gelesen · $responses Antworten';
+  }
+
+  @override
+  String autoMessagesHistRowSuspended(Object name) {
+    return 'Ausgesetzt von $name';
+  }
+
+  @override
+  String get autoMessagesHistSent => 'Personen angeschrieben';
+
+  @override
+  String get autoMessagesHistory => 'Verlauf';
+
+  @override
+  String get autoMessagesHowOften => 'Wie oft?';
+
+  @override
+  String get autoMessagesIntro =>
+      'Schicke Mitgliedern automatisch eine Nachricht nach einem Termin, zum Beispiel wenn sie gefehlt haben, ohne sich abzumelden. Alle Regeln sind aus, bis du sie einschaltest.';
+
+  @override
+  String autoMessagesLastWeek(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen angeschrieben',
+      one: '$count Person angeschrieben',
+    );
+    return 'Letzte 7 Tage: $_temp0';
+  }
+
+  @override
+  String get autoMessagesLess => 'Weniger';
+
+  @override
+  String get autoMessagesLoadFailed =>
+      'Automatische Nachrichten konnten nicht geladen werden';
+
+  @override
+  String autoMessagesManualBody(Object termin, Object datum, Object instanz) {
+    return 'Hallo,\n\nbei $termin am $datum wart ihr nicht da und hattet euch nicht abgemeldet.\n\nWenn ihr einen Grund hattet, tragt ihn gern direkt in der App nach. Bitte meldet euch nächstes Mal vorher ab.\nEuer Team von $instanz';
+  }
+
+  @override
+  String autoMessagesManualRecipients(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count unentschuldigte Personen',
+      one: '$count unentschuldigte Person',
+    );
+    return '$_temp0 dieses Termins';
+  }
+
+  @override
+  String get autoMessagesManualTitle => 'Wir haben euch vermisst';
+
+  @override
+  String get autoMessagesMessage => 'Nachricht';
+
+  @override
+  String get autoMessagesMore => 'Mehr';
+
+  @override
+  String get autoMessagesName => 'Name';
+
+  @override
+  String get autoMessagesNewRule => 'Neue Regel';
+
+  @override
+  String get autoMessagesOnlyEmail => 'nur E-Mail';
+
+  @override
+  String get autoMessagesOpenTermin => 'Zum Termin';
+
+  @override
+  String autoMessagesPanelNone(Object rule) {
+    return '„$rule“: niemand passte';
+  }
+
+  @override
+  String autoMessagesPanelNotRecorded(Object rule) {
+    return '„$rule“ nicht verschickt: Anwesenheit wurde nicht erfasst';
+  }
+
+  @override
+  String autoMessagesPanelPending(Object rule) {
+    return '„$rule“ wird gleich geprüft';
+  }
+
+  @override
+  String get autoMessagesPanelPendingHint =>
+      'Die Nachricht geht nur raus, wenn die Anwesenheit erfasst ist.';
+
+  @override
+  String autoMessagesPanelResponses(Object count) {
+    return 'Rückmeldungen ($count offen)';
+  }
+
+  @override
+  String get autoMessagesPanelSaysPresent => 'Sagt: „Ich war doch da“';
+
+  @override
+  String autoMessagesPanelSent(Object rule, num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen',
+      one: '$count Person',
+    );
+    return '„$rule“ ging an $_temp0';
+  }
+
+  @override
+  String autoMessagesPanelSuspended(Object rule) {
+    return '„$rule“ ist für diesen Termin ausgesetzt';
+  }
+
+  @override
+  String autoMessagesPanelWillSend(Object rule, Object time) {
+    return '„$rule“ geht um $time raus';
+  }
+
+  @override
+  String get autoMessagesPanelWillSendHint =>
+      'Bis dahin kannst du die Anwesenheit noch korrigieren.';
+
+  @override
+  String get autoMessagesPreview => 'Vorschau';
+
+  @override
+  String autoMessagesPreviewAt(Object time) {
+    return 'Versand wäre am $time gewesen';
+  }
+
+  @override
+  String autoMessagesPreviewExcluded(Object excused, Object paused) {
+    return 'Nicht angeschrieben: $excused abgemeldet, $paused pausiert';
+  }
+
+  @override
+  String get autoMessagesPreviewFailed =>
+      'Vorschau konnte nicht geladen werden';
+
+  @override
+  String get autoMessagesPreviewHint =>
+      'Die Vorschau verschickt nichts. Mit Häufigkeit „In Folge“ zählen auch frühere Termine.';
+
+  @override
+  String get autoMessagesPreviewNoTermine =>
+      'Keine passenden Termine in den letzten 60 Tagen.';
+
+  @override
+  String get autoMessagesPreviewNotRecorded =>
+      'Übersprungen: Anwesenheit nicht erfasst';
+
+  @override
+  String autoMessagesPreviewWould(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Personen hätten die Nachricht bekommen',
+      one: '$count Person hätte die Nachricht bekommen',
+      zero: 'Niemand hätte die Nachricht bekommen',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get autoMessagesReasonFamily => 'Familie';
+
+  @override
+  String get autoMessagesReasonForgot => 'Abmelden vergessen';
+
+  @override
+  String get autoMessagesReasonOther => 'Sonstiges';
+
+  @override
+  String get autoMessagesReasonSick => 'Krank';
+
+  @override
+  String get autoMessagesReasonWork => 'Arbeit / Schule';
+
+  @override
+  String get autoMessagesReject => 'Ablehnen';
+
+  @override
+  String get autoMessagesResetToTemplate => 'Auf Vorlage zurücksetzen';
+
+  @override
+  String get autoMessagesRespAddReason => 'Grund nachtragen';
+
+  @override
+  String get autoMessagesRespAlreadyDecided =>
+      'Deine Rückmeldung wurde schon bearbeitet';
+
+  @override
+  String get autoMessagesRespChange => 'Rückmeldung ändern';
+
+  @override
+  String get autoMessagesRespDone =>
+      'Danke! Deine Rückmeldung wurde geschickt.';
+
+  @override
+  String get autoMessagesRespDoneInstant =>
+      'Danke! Du bist jetzt entschuldigt.';
+
+  @override
+  String get autoMessagesRespExpired =>
+      'Für diesen Termin ist keine Rückmeldung mehr möglich';
+
+  @override
+  String get autoMessagesRespFailed =>
+      'Rückmeldung konnte nicht gesendet werden';
+
+  @override
+  String get autoMessagesRespHadReason => 'Ich hatte einen Grund';
+
+  @override
+  String get autoMessagesRespHint =>
+      'Die Verantwortlichen sehen deinen Grund als Notiz am Termin.';
+
+  @override
+  String get autoMessagesRespReason => 'Grund';
+
+  @override
+  String get autoMessagesRespSend => 'Senden';
+
+  @override
+  String get autoMessagesRespStateAccepted => 'Übernommen';
+
+  @override
+  String get autoMessagesRespStatePending => 'Wird geprüft';
+
+  @override
+  String get autoMessagesRespStateRejected => 'Nicht übernommen';
+
+  @override
+  String get autoMessagesRespText => 'Ergänzung (optional)';
+
+  @override
+  String get autoMessagesRespTitle => 'Rückmeldung';
+
+  @override
+  String get autoMessagesRespWasThere => 'Ich war doch da';
+
+  @override
+  String get autoMessagesRespWasThereHint =>
+      'Die Verantwortlichen bekommen einen Hinweis und können die Anwesenheit korrigieren.';
+
+  @override
+  String get autoMessagesRespWasThereShort =>
+      '„Ich war doch da“ geht als Hinweis an die Verantwortlichen.';
+
+  @override
+  String get autoMessagesResponses => 'Grund nachtragen';
+
+  @override
+  String autoMessagesResponsesHint(Object days) {
+    return 'Antworten sind bis $days Tage nach dem Termin möglich. „Ich war doch da“ wird immer erst geprüft.';
+  }
+
+  @override
+  String get autoMessagesRule => 'Regel';
+
+  @override
+  String get autoMessagesRules => 'Regeln';
+
+  @override
+  String get autoMessagesSafety =>
+      'Es wird nur geschickt, wenn bei dem Termin Anwesenheit erfasst wurde. Abgemeldete, Pausierte und Ausgetretene bekommen nie eine Nachricht.';
+
+  @override
+  String get autoMessagesSampleFirstName => 'Lena';
+
+  @override
+  String get autoMessagesSampleName => 'Lena Muster';
+
+  @override
+  String get autoMessagesSampleTermin => 'Probe';
+
+  @override
+  String get autoMessagesSaveFailed => 'Speichern fehlgeschlagen';
+
+  @override
+  String get autoMessagesSaved => 'Regel gespeichert';
+
+  @override
+  String get autoMessagesSetPresent => 'Auf anwesend';
+
+  @override
+  String get autoMessagesShowPreview => 'Vorschau mit den letzten Terminen';
+
+  @override
+  String get autoMessagesStartFromTemplate => 'Vorlagen zum Start';
+
+  @override
+  String get autoMessagesStatus0 => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesStatus1 => 'Anwesend';
+
+  @override
+  String get autoMessagesStatus2 => 'Entschuldigt';
+
+  @override
+  String get autoMessagesStatus3 => 'Zu spät';
+
+  @override
+  String get autoMessagesStatus4 => 'Unentschuldigt';
+
+  @override
+  String get autoMessagesStatus5 => 'Verspätet entschuldigt';
+
+  @override
+  String get autoMessagesSuspend => 'Diesmal aussetzen';
+
+  @override
+  String get autoMessagesTemplate => 'Vorlage';
+
+  @override
+  String get autoMessagesTemplateHint =>
+      'Die Vorlage gibt es in mehreren Sprachen. Jedes Mitglied bekommt sie in seiner App-Sprache.';
+
+  @override
+  String get autoMessagesTitle => 'Automatische Nachrichten';
+
+  @override
+  String autoMessagesTplAbsentBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nbei $termin am $datum warst du nicht da und hattest dich nicht abgemeldet.\n\nIst alles in Ordnung? Wenn du einen Grund hattest, trag ihn gern direkt in der App nach.\n\nBitte melde dich nächstes Mal vorher ab, damit wir besser planen können.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplAbsentTitle(Object vorname) {
+    return 'Wir haben dich vermisst, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplHintAbsent =>
+      'Nach jedem Termin, bei dem jemand unentschuldigt fehlt';
+
+  @override
+  String get autoMessagesTplHintLate =>
+      'Wenn jemand zu spät kommt, ohne Bescheid zu geben';
+
+  @override
+  String get autoMessagesTplHintNoAnswer =>
+      'Wenn jemand bis nach dem Termin nicht reagiert hat';
+
+  @override
+  String get autoMessagesTplHintStreak =>
+      'Erst ab dem 2. Fehlen hintereinander';
+
+  @override
+  String autoMessagesTplLateBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nbei $termin am $datum bist du zu spät gekommen, ohne dich vorher zu melden.\n\nWenn du einen Grund hattest, trag ihn gern direkt in der App nach. Gib uns nächstes Mal bitte vorher Bescheid.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplLateTitle(Object vorname) {
+    return 'Du warst zu spät, $vorname';
+  }
+
+  @override
+  String get autoMessagesTplNameAbsent => 'Unentschuldigt gefehlt';
+
+  @override
+  String get autoMessagesTplNameLate => 'Zu spät ohne Abmeldung';
+
+  @override
+  String get autoMessagesTplNameNoAnswer => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesTplNameStreak => 'Mehrmals in Folge gefehlt';
+
+  @override
+  String autoMessagesTplNoAnswerBody(
+    Object vorname,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\nfür $termin am $datum haben wir keine Rückmeldung von dir bekommen.\n\nBitte gib künftig in der App Bescheid, ob du kommst. Wenn du einen Grund hattest, kannst du ihn hier nachtragen.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplNoAnswerTitle(Object termin) {
+    return 'Keine Rückmeldung zu $termin';
+  }
+
+  @override
+  String autoMessagesTplStreakBody(
+    Object vorname,
+    Object anzahl,
+    Object termin,
+    Object datum,
+    Object instanz,
+  ) {
+    return 'Hallo $vorname,\n\ndu hast jetzt $anzahl Mal in Folge gefehlt, ohne dich abzumelden, zuletzt bei $termin am $datum.\n\nIst alles in Ordnung? Melde dich gern bei uns. Wenn du einen Grund hattest, trag ihn direkt in der App nach.\nDein Team von $instanz';
+  }
+
+  @override
+  String autoMessagesTplStreakTitle(Object vorname) {
+    return '$vorname, wir vermissen dich';
+  }
+
+  @override
+  String get autoMessagesTrigger0 => 'Keine Rückmeldung';
+
+  @override
+  String get autoMessagesTrigger3 => 'Zu spät ohne Abmeldung';
+
+  @override
+  String get autoMessagesTrigger4 => 'Unentschuldigt gefehlt';
+
+  @override
+  String get autoMessagesTriggerHint0 =>
+      'Status nach dem Termin noch „neutral“';
+
+  @override
+  String get autoMessagesTriggerHint3 =>
+      'Status „zu spät“, nicht „verspätet entschuldigt“';
+
+  @override
+  String get autoMessagesTriggerHint4 =>
+      'Status „unentschuldigt“ nach dem Termin';
+
+  @override
+  String get autoMessagesTypesAll =>
+      'Nichts ausgewählt: gilt für alle Termintypen.';
+
+  @override
+  String get autoMessagesTypesSome =>
+      'Gilt nur für die ausgewählten Termintypen.';
+
+  @override
+  String get autoMessagesUnreachable => 'nicht erreichbar';
+
+  @override
+  String get autoMessagesUnsuspend => 'Wieder einschalten';
+
+  @override
+  String get autoMessagesUseTemplate => 'Vorlage';
+
+  @override
+  String get autoMessagesWhen => 'Wann wird geschickt?';
+
+  @override
+  String get autoMessagesWhichTermine => 'Für welche Termine?';
+
+  @override
+  String get autoMessagesWhoCanUse =>
+      'Admins und Verantwortliche können Regeln anlegen und ändern.';
+
+  @override
+  String get autoMessagesWhoRead => 'Wer hat gelesen?';
+
+  @override
+  String autoMessagesWriteUnexcusedMenu(Object count) {
+    return 'Unentschuldigte anschreiben ($count)';
+  }
 
   @override
   String get bellCurrentInstance => 'Aktuelle Instanz';
@@ -3385,7 +4169,46 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String filesDeleteSelectedHeader(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge löschen?',
+      one: '$count Eintrag löschen?',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSelectedMessage(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other:
+          'Die $count ausgewählten Einträge werden endgültig gelöscht, Ordner mit ihrem ganzen Inhalt.',
+      one: 'Der ausgewählte Eintrag wird endgültig gelöscht.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String filesDeleteSummary(Object ok, Object failed) {
+    return '$ok gelöscht, $failed fehlgeschlagen.';
+  }
+
+  @override
   String get filesDeleted => 'Eintrag wurde gelöscht.';
+
+  @override
+  String filesDeletedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge wurden gelöscht.',
+      one: 'Eintrag wurde gelöscht.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesDescending => 'absteigend';
@@ -3474,16 +4297,82 @@ class AppLocalizationsDe extends AppLocalizations {
   String get filesMove => 'Verschieben';
 
   @override
+  String get filesMoveBeingMoved => 'Wird verschoben';
+
+  @override
+  String get filesMoveChooseTarget => 'Wähle einen Zielordner.';
+
+  @override
+  String get filesMoveCollapse => 'Zuklappen';
+
+  @override
+  String get filesMoveCurrentFolder => 'Aktueller Ordner';
+
+  @override
+  String filesMoveExists(Object name) {
+    return 'Im Zielordner gibt es schon „$name“. Nichts verschoben.';
+  }
+
+  @override
+  String get filesMoveExpand => 'Aufklappen';
+
+  @override
   String filesMoveFailed(Object error) {
     return 'Verschieben fehlgeschlagen: $error';
   }
 
   @override
   String get filesMoveHint =>
-      'Zielordner relativ zum Tenant-Root. Leer lassen für Root.';
+      'Tippe auf einen Ordner, um ihn als Ziel zu wählen. Mit dem Pfeil klappst du Unterordner auf.';
+
+  @override
+  String filesMoveMoveHere(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge hierher verschieben',
+      one: 'Hierher verschieben',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesMoveRoot => 'Dateiablage';
+
+  @override
+  String filesMoveSummary(Object ok, Object skipped, Object failed) {
+    return '$ok verschoben, $skipped übersprungen (gibt es im Ziel schon), $failed fehlgeschlagen.';
+  }
+
+  @override
+  String filesMoveTarget(Object path) {
+    return 'Ziel: $path';
+  }
+
+  @override
+  String filesMoveTitle(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge verschieben',
+      one: 'Verschieben',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesMoved => 'Eintrag wurde verschoben.';
+
+  @override
+  String filesMovedMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Einträge wurden verschoben.',
+      one: 'Eintrag wurde verschoben.',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get filesName => 'Name';
@@ -3581,6 +4470,33 @@ class AppLocalizationsDe extends AppLocalizations {
   @override
   String get filesSearchType =>
       '<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>).';
+
+  @override
+  String get filesSelect => 'Auswählen';
+
+  @override
+  String get filesSelectAll => 'Alle';
+
+  @override
+  String get filesSelectMultiple => 'Mehrere auswählen';
+
+  @override
+  String get filesSelectNone => 'Keine';
+
+  @override
+  String filesSelectedCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count ausgewählt',
+      one: '$count ausgewählt',
+      zero: 'Nichts ausgewählt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get filesSelectionDone => 'Auswahl beenden';
 
   @override
   String get filesSend => 'Senden';
@@ -4801,6 +5717,21 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String messagesAutoActive(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Regeln aktiv',
+      one: '$count Regel aktiv',
+      zero: 'Keine Regel aktiv',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get messagesAutoEntry => 'Automatische Nachrichten';
+
+  @override
   String get messagesCountsFailed =>
       'Die Empfänger konnten nicht geladen werden.';
 
@@ -5094,6 +6025,44 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get messagesWriteFirst => 'Erste Mitteilung schreiben';
+
+  @override
+  String get navClose => 'Menü schließen';
+
+  @override
+  String get navCollapse => 'Seitenleiste einklappen';
+
+  @override
+  String get navExpand => 'Seitenleiste ausklappen';
+
+  @override
+  String get navGroupAccount => 'Konto';
+
+  @override
+  String get navGroupAdmin => 'Verwaltung';
+
+  @override
+  String get navGroupOverview => 'Übersicht';
+
+  @override
+  String get navGroupTeam => 'Team';
+
+  @override
+  String navInstances(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Instanzen',
+      one: '$count Instanz',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get navLabel => 'Hauptnavigation';
+
+  @override
+  String get navShortcut => 'Strg/⌘ + B';
 
   @override
   String get notifAnnouncements => 'Mitteilungen';
@@ -7195,6 +8164,12 @@ class AppLocalizationsDe extends AppLocalizations {
   String get personVoiceLeaderStatusOnly => 'Nur Stimmführer-Status';
 
   @override
+  String get planViewerOpenScores => 'Noten öffnen';
+
+  @override
+  String get planningAddAgain => 'Erneut hinzufügen';
+
+  @override
   String get planningAddAnotherPlan => 'Weiteren Ablaufplan anlegen';
 
   @override
@@ -7345,6 +8320,13 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planningCurrent => 'Aktuelle';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedHeader => 'Bereits hinzugefügt';
+
+  @override
+  String get planningCurrentSongsAlreadyAddedMessage =>
+      'Alle aktuellen Werke sind schon in diesem Ablaufplan. Möchtest du sie noch einmal hinzufügen?';
 
   @override
   String get planningDefaultTitle => 'Standardtitel verwenden';
@@ -7612,6 +8594,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get planningNext => 'Nächste';
+
+  @override
+  String get planningNoCurrentSongs => 'Keine aktuellen Werke vorhanden';
 
   @override
   String get planningNoPlan => 'Kein Plan verfügbar';
@@ -11795,7 +12780,8 @@ class AppLocalizationsDe extends AppLocalizations {
   String get settingsLogout => 'Ausloggen';
 
   @override
-  String get settingsMessageAll => 'Nachricht an alle senden';
+  String get settingsMessagesHint =>
+      'Nachrichten senden und automatisch nachfassen';
 
   @override
   String get settingsMobile => 'Handynummer';

@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utils/event_list_utils.dart';
+import '../utils/archived_attendance.dart';
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
@@ -66,6 +67,16 @@ final personAttendancesProvider = FutureProvider.family<List<PersonAttendance>, 
 final attendanceListTypeFilterProvider = StateProvider<String?>((ref) {
   ref.watch(currentTenantIdProvider);
   return null;
+});
+
+/// Ionic 4.17.24 att-list `showArchived`: archived Termine are hidden in the
+/// list until "Archivierte anzeigen" is switched on (admins/responsible).
+final attendanceListShowArchivedProvider = StateProvider<bool>((ref) {
+  ref.watch(currentTenantIdProvider);
+  // A role change switches it off again (only admins/responsible may see
+  // archived Termine).
+  ref.watch(currentRoleProvider);
+  return false;
 });
 
 /// Status counts (anwesend / entschuldigt / abwesend) of one Termin, used by
@@ -162,10 +173,19 @@ class CategorizedAttendances {
   final List<Attendance> upcoming;
   final List<Attendance> past;
 
+  /// Ionic 4.17.24: archived Termine of the type filter (hidden or not).
+  final int archivedCount;
+
+  /// Past Termine of the type filter incl. archived ones – archived Termine
+  /// still count in the average (Ionic `pastForAverage`).
+  final List<Attendance> pastForAverage;
+
   const CategorizedAttendances({
     this.current,
     required this.upcoming,
     required this.past,
+    this.archivedCount = 0,
+    this.pastForAverage = const [],
   });
 }
 
@@ -174,10 +194,19 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
   final all = ref.watch(realtimeAttendanceListProvider).valueOrNull ?? [];
   // ATT_DETAIL: Termintyp filter of the list ("Alle anzeigen" = null)
   final typeFilter = ref.watch(attendanceListTypeFilterProvider);
-  final attendances =
+  final byType =
       typeFilter == null ? all : all.where((a) => a.typeId == typeFilter).toList();
+  // Ionic 4.17.24: archived Termine are hidden by default but keep counting
+  // in the average.
+  final showArchived = ref.watch(attendanceListShowArchivedProvider) &&
+      canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+  final archivedCount = byType.where((a) => a.archived).length;
+  final attendances = showArchived ? byType : byType.where((a) => !a.archived).toList();
 
   final now = DateTime.now();
+  final pastForAverage = byType
+      .where((a) => EventListUtils.hasEnded(a.date, a.durationDays, now: now))
+      .toList();
 
   final upcoming = <Attendance>[];
   final past = <Attendance>[];
@@ -214,6 +243,8 @@ final categorizedAttendancesProvider = Provider<CategorizedAttendances>((ref) {
     current: current,
     upcoming: remainingUpcoming,
     past: past,
+    archivedCount: archivedCount,
+    pastForAverage: pastForAverage,
   );
 });
 
@@ -223,7 +254,7 @@ final averageAttendancePercentProvider = Provider<double?>((ref) {
   // BL-005: Include 0% attendances in average calculation (changed > 0 to != null)
   // LOGIC_SELF: duty Termine with nobody assigned have percentage == null
   // (attendanceListPercentage) and are left out like in Ionic applyAttendances.
-  final pastAttendances = categorized.past
+  final pastAttendances = categorized.pastForAverage
       .where((a) => a.percentage != null)
       .toList();
 

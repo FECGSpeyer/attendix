@@ -26,6 +26,7 @@ export 'extra_fields_repository.dart';
 export 'organisation_settings_repository.dart';
 // END SETTINGS_EXT
 export 'message_repository.dart';
+export 'auto_message_repository.dart';
 export 'user_notification_repository.dart';
 export 'dashboard_repository.dart';
 export 'administration_repository.dart';

@@ -9,6 +9,7 @@ import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/utils/color_utils.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/haptic_helper.dart';
@@ -29,6 +30,8 @@ import '../widgets/ios_condense_header.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
+import '../widgets/att_list_columns.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart'
     show IonTranslucentBarBackground, ionTranslucentTopPadding;
 
@@ -103,11 +106,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   Widget _buildTypeFilterButton(List<AttendanceType> types) {
     final filter = ref.watch(attendanceListTypeFilterProvider);
     final active = filter != null;
+    // Ionic 4.17.24: "Archivierte anzeigen" for admins/responsible.
+    final canSeeArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+    final showArchived = canSeeArchived && ref.watch(attendanceListShowArchivedProvider);
+    final archivedCount = ref.watch(categorizedAttendancesProvider.select((c) => c.archivedCount));
     return PopupMenuButton<String>(
       tooltip: context.l10n.teamOrgFilter,
-      icon: Icon(Icons.tune, color: active ? AppColors.primary : null),
-      onSelected: (value) => ref.read(attendanceListTypeFilterProvider.notifier).state =
-          value == '__all__' ? null : value,
+      icon: Icon(Icons.tune, color: active || showArchived ? AppColors.primary : null),
+      onSelected: (value) {
+        if (value == '__archived__') {
+          ref.read(attendanceListShowArchivedProvider.notifier).state = !showArchived;
+          return;
+        }
+        ref.read(attendanceListTypeFilterProvider.notifier).state =
+            value == '__all__' ? null : value;
+      },
       itemBuilder: (context) => [
         PopupMenuItem<String>(
           value: '__all__',
@@ -144,6 +157,34 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                 ],
               ),
             ),
+        if (canSeeArchived)
+          PopupMenuItem<String>(
+            value: '__archived__',
+            child: Row(
+              children: [
+                Icon(Icons.archive_outlined, size: 20, color: showArchived ? AppColors.primary : null),
+                const SizedBox(width: 12),
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(
+                        context.l10n.attListShowArchived,
+                        style: TextStyle(color: showArchived ? AppColors.primary : null),
+                      ),
+                      if (archivedCount > 0)
+                        Text(
+                          context.l10n.attListArchivedCount(archivedCount),
+                          style: const TextStyle(fontSize: 13, color: AppColors.medium),
+                        ),
+                    ],
+                  ),
+                ),
+                if (showArchived) const Icon(Icons.check, color: AppColors.primary, size: 20),
+              ],
+            ),
+          ),
       ],
     );
   }
@@ -250,6 +291,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           builder: (context, collapsed, _) =>
               IonTranslucentBarBackground(visible: collapsed || !largeTitle),
         ),
+        // SIDE_NAV: menu button of the overlay panel (tablet portrait)
+        leading: SideNavMenuButton.maybe(context),
         // UX_AUTH: Ionic keeps the tenant switcher left (ion-buttons slot=start).
         centerTitle: TenantSwitcherTitle.centerTitle(ref),
         // SETTINGS2: Ionic att-list header tenant switcher
@@ -435,20 +478,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
           final currentDuty = current == null ? null : dutyTermine[current.id];
           final averageRounded = averagePercent?.round() ?? 0;
 
-          return Builder(builder: (body) => RefreshIndicator.adaptive(
-            edgeOffset: ionTranslucentTopPadding(body, ios),
-            onRefresh: () async {
-              // FN-008: invalidate to trigger fresh fetch from realtime provider
-              ref.invalidate(realtimeAttendanceListProvider);
-            },
-            child: _condense.listen(
-              child: ListView(
-                // Room for the FAB below the last card (Ionic marginBottom)
-                padding: EdgeInsets.only(
-                    top: ionTranslucentTopPadding(body, ios),
-                    bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
-                children: [
-                  if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+          // Ionic 4.19.0 att-col--main: next Termin and upcoming ones.
+          final mainColumn = <Widget>[
                   // DUTY: own duties waiting for confirmation
                   const MyDutyRequestsSection(),
                   // "Heute" / "Nächster Termin" – filled card (Ionic ev-today--filled),
@@ -535,7 +566,10 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       ]),
                     ],
                   ],
+          ];
 
+          // Ionic 4.19.0 att-col--side: past Termine with the average.
+          final sideColumn = <Widget>[
                   if (past.isNotEmpty) ...[
                     EventSectionHeader(
                         title: staff ? context.l10n.signoutPast : context.l10n.attListEvents, count: past.length),
@@ -551,17 +585,28 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                       for (final att in pastPreview)
                         slidable(
                           att,
-                          EventRow(
-                            date: att.date,
-                            title: title(att),
-                            subtitle: [readableDate(att), countText(att)]
-                                .whereType<String>()
-                                .join(' · '),
-                            past: true,
-                            highlight: highlightedTypeIds.contains(att.typeId),
-                            // Ionic [button]="isConductor || isHelper"
-                            onTap: staff ? () => _navigateToDetail(att.id!) : null,
-                            trailing: [percentPill(att)],
+                          // Ionic 4.17.24 `.ev-archived`: dimmed, archive icon.
+                          Opacity(
+                            opacity: att.archived ? 0.6 : 1,
+                            child: EventRow(
+                              date: att.date,
+                              title: title(att),
+                              titleLeading: att.archived
+                                  ? Semantics(
+                                      label: context.l10n.attListArchived,
+                                      child: const Icon(Icons.archive_outlined,
+                                          size: 16, color: AppColors.medium),
+                                    )
+                                  : null,
+                              subtitle: [readableDate(att), countText(att)]
+                                  .whereType<String>()
+                                  .join(' · '),
+                              past: true,
+                              highlight: highlightedTypeIds.contains(att.typeId),
+                              // Ionic [button]="isConductor || isHelper"
+                              onTap: staff ? () => _navigateToDetail(att.id!) : null,
+                              trailing: [percentPill(att)],
+                            ),
                           ),
                         ),
                       if (past.length > EventListUtils.pastPreviewCount)
@@ -571,6 +616,28 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
                         ),
                     ]),
                   ],
+          ];
+
+          return Builder(builder: (body) => RefreshIndicator.adaptive(
+            edgeOffset: ionTranslucentTopPadding(body, ios),
+            onRefresh: () async {
+              // FN-008: invalidate to trigger fresh fetch from realtime provider
+              ref.invalidate(realtimeAttendanceListProvider);
+            },
+            child: _condense.listen(
+              child: ListView(
+                // Room for the FAB below the last card (Ionic marginBottom)
+                padding: EdgeInsets.only(
+                    top: ionTranslucentTopPadding(body, ios),
+                    bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),
+                children: [
+                  if (largeTitle) IosLargeTitle(context.l10n.attListEvents),
+                  AttListColumns(
+                    // Ionic att-grid--two: (isConductor || isHelper) && past ones
+                    twoColumns: staff && past.isNotEmpty,
+                    main: mainColumn,
+                    side: sideColumn,
+                  ),
                 ],
               ),
             ),
