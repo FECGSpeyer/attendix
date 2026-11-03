@@ -1431,10 +1431,15 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   // Adding fields
   // ---------------------------------------------------------------------------
 
+  /// A dialog opened for the plan loaded at [loadGen] still applies: no other
+  /// plan was loaded meanwhile (conflict reload, draft, other Termin).
+  bool _samePlan(int loadGen) => mounted && loadGen == _loadGen;
+
   Future<void> _addField() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(context,
         title: context.l10n.planningAddField, nameHint: context.l10n.planningEnterFreeText, initialMinutes: 20);
-    if (r == null) return;
+    if (r == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [
           ..._fields,
           PlanField(id: r.name, name: r.name, conductor: r.conductor, info: r.info, time: '${r.minutes ?? 20}'),
@@ -1443,6 +1448,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _addNote() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(context,
         title: context.l10n.planningAddNoteField,
         nameLabel: context.l10n.planningNote,
@@ -1451,12 +1457,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         withConductor: false,
         withInfo: false,
         withMinutes: false);
-    if (r == null) return;
+    if (r == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [..._fields, PlanField(id: 'noteFld ${r.name}', name: r.name, conductor: '', time: '0')]);
     _changed();
   }
 
   Future<void> _addGroup() async {
+    final loadGen = _loadGen;
     final r = await showPlanFieldDialog(
       context,
       title: context.l10n.planningAddBlock,
@@ -1469,7 +1476,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       emptyNameMessage: context.l10n.planningEnterNamePlease,
       withMinutes: false,
     );
-    if (r == null || !mounted) return;
+    if (r == null || !mounted || !_samePlan(loadGen)) return;
     final head = PlanUtils.newGroupHead(r.name, conductor: r.conductor, info: r.info);
     setState(() => _fields = [..._fields, head]);
     _changed();
@@ -1481,7 +1488,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       infoHint: context.l10n.planningSubItemInfoPlaceholder,
       initialMinutes: 5,
     );
-    if (sub == null) return;
+    // The block may be gone meanwhile (deleted, other plan loaded).
+    if (sub == null || !_samePlan(loadGen) || !_fields.any((f) => f.id == head.id)) return;
     setState(() => _fields = PlanUtils.addSubItem(
           _fields,
           head.id,
@@ -1517,13 +1525,14 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       prefix: prefix,
     );
     if (added.isEmpty) {
+      final loadGen = _loadGen;
       final again = await showPlanConfirm(
         context,
         title: context.l10n.planningCurrentSongsAlreadyAddedHeader,
         message: context.l10n.planningCurrentSongsAlreadyAddedMessage,
         confirmText: context.l10n.planningAddAgain,
       );
-      if (!again || !mounted) return;
+      if (!again || !_samePlan(loadGen)) return;
       added = all;
     }
     setState(() => _fields = [..._fields, ...added]);
@@ -1531,8 +1540,9 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   }
 
   Future<void> _addSong() async {
+    final loadGen = _loadGen;
     final song = await showPlanSongPicker(context, _songs);
-    if (song == null) return;
+    if (song == null || !_samePlan(loadGen)) return;
     setState(() => _fields = [
           ..._fields,
           PlanSongHelper.songField(song, history: _history, prefix: _songPrefix(_typeOf(_att))),
