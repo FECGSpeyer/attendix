@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.37.2",
+      "date": "3.11.2026",
+      "changes": [
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig"
+      ]
+    },
+    {
       "version": "0.36.2",
       "date": "3.11.2026",
       "changes": [

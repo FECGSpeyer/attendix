@@ -27,6 +27,7 @@ import 'core/services/public_plan_draft_storage.dart'
     show clearPublicPlanDrafts;
 import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
 import 'core/services/live_activity_service.dart';
+import 'core/services/native/ionic_session_takeover.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -92,6 +93,8 @@ void main() async {
 
   // Initialize Supabase
   await SupabaseConfig.initialize();
+  // IONIC_SESSION: keep the Ionic login after the store update (once, native)
+  await takeOverIonicSession(supabaseUrl: SupabaseConfig.supabaseUrl);
 
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)
