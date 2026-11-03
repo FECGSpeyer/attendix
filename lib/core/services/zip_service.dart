@@ -49,9 +49,6 @@ class ZipService {
 
     // Encode to ZIP
     final zipData = ZipEncoder().encode(archive);
-    if (zipData == null) {
-      throw Exception(l10nWithoutContext.coreFlutterZipFailed);
-    }
 
     // Generate safe filename
     final safeName = _sanitizeFileName(songName);
