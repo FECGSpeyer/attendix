@@ -31,7 +31,8 @@ typedef IonicSession = ({String refreshToken, int? tenantId});
 ///
 /// The refresh runs on a separate client without storage: a late answer
 /// after the timeout can never change the app's session (Sol #285). Only a
-/// fresh session that arrives in time is handed to the app's client.
+/// fresh session that arrives in time is handed to the app's client
+/// (supabase_flutter persists it on that event).
 Future<void> takeOverIonicSession({
   required String supabaseUrl,
   required String anonKey,
@@ -75,7 +76,10 @@ Future<void> takeOverIonicSession({
     // Not after a timeout: the pending refresh may still finish.
     refresher.dispose();
     if (session == null || client.auth.currentSession != null) return;
-    await client.auth.recoverSession(jsonEncode(session.toJson()));
+    // Like a session restored at app start (initialSession, not
+    // tokenRefreshed): the push bootstrap registers this device's token on
+    // that event, which listeners added after runApp get replayed.
+    await client.auth.setInitialSession(jsonEncode(session.toJson()));
     await prefs.setBool(_doneKey, true);
 
     final tenantId = ionic.tenantId;
