@@ -194,9 +194,10 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
     """
 
   private var webView: WKWebView?
-  private var completion: ((String?) -> Void)?
+  // String (the keys as JSON) or FlutterError when the origin could not be read.
+  private var completion: ((Any?) -> Void)?
 
-  func read(completion: @escaping (String?) -> Void) {
+  func read(completion: @escaping (Any?) -> Void) {
     self.completion = completion
     let config = WKWebViewConfiguration()
     // Same store as Capacitor's WKWebView (WKWebsiteDataStore.default()).
@@ -207,11 +208,15 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
     self.webView = webView
     webView.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
     DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-      self?.finish(nil)
+      self?.finish(Self.unavailable("timeout"))
     }
   }
 
-  private func finish(_ value: String?) {
+  private static func unavailable(_ reason: String) -> FlutterError {
+    FlutterError(code: "unavailable", message: reason, details: nil)
+  }
+
+  private func finish(_ value: Any?) {
     guard let completion = completion else { return }
     self.completion = nil
     webView?.navigationDelegate = nil
@@ -222,21 +227,21 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
     webView.evaluateJavaScript(Self.script) { [weak self] value, _ in
-      self?.finish(value as? String)
+      self?.finish((value as? String) ?? Self.unavailable("script"))
     }
   }
 
   func webView(
     _ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error
   ) {
-    finish(nil)
+    finish(Self.unavailable(error.localizedDescription))
   }
 
   func webView(
     _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
     withError error: Error
   ) {
-    finish(nil)
+    finish(Self.unavailable(error.localizedDescription))
   }
 
   // Empty page for capacitor://localhost/ – only the origin matters.

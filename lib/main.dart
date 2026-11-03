@@ -94,7 +94,10 @@ void main() async {
   // Initialize Supabase
   await SupabaseConfig.initialize();
   // IONIC_SESSION: keep the Ionic login after the store update (once, native)
-  await takeOverIonicSession(supabaseUrl: SupabaseConfig.supabaseUrl);
+  await takeOverIonicSession(
+    supabaseUrl: SupabaseConfig.supabaseUrl,
+    anonKey: SupabaseConfig.supabaseAnonKey,
+  );
 
   // LINKS_STARTUP: path links (/tabs/..., /open-attendance?..) → #/... so the
   // hash-based router sees them (after Supabase read auth params from the URL)

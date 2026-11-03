@@ -38,7 +38,7 @@ class IonicSessionPlugin(
 
     fun dispose() {
         channel.setMethodCallHandler(null)
-        finish(null)
+        fail("disposed")
     }
 
     override fun onMethodCall(call: MethodCall, result: MethodChannel.Result) {
@@ -54,7 +54,7 @@ class IonicSessionPlugin(
         try {
             read()
         } catch (e: Exception) {
-            finish(null)
+            fail(e.toString())
         }
     }
 
@@ -86,7 +86,7 @@ class IonicSessionPlugin(
                     } catch (e: Exception) {
                         null
                     }
-                    finish(decoded)
+                    if (decoded != null) finish(decoded) else fail("script")
                 }
             }
 
@@ -95,14 +95,17 @@ class IonicSessionPlugin(
                 request: WebResourceRequest,
                 error: WebResourceError,
             ) {
-                if (request.isForMainFrame) finish(null)
+                if (request.isForMainFrame) fail("load")
             }
         }
-        handler.postDelayed({ finish(null) }, 5000)
+        handler.postDelayed({ fail("timeout") }, 5000)
         view.loadUrl("https://localhost/")
     }
 
-    private fun finish(value: String?) {
+    // Read errors are not "no Ionic session": Dart retries them on the next start.
+    private fun fail(reason: String) = finish(null, reason)
+
+    private fun finish(value: String?, error: String? = null) {
         val result = pending ?: return
         pending = null
         handler.removeCallbacksAndMessages(null)
@@ -111,7 +114,7 @@ class IonicSessionPlugin(
             it.destroy()
         }
         webView = null
-        result.success(value)
+        if (error != null) result.error("unavailable", error, null) else result.success(value)
     }
 
     private companion object {

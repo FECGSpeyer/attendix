@@ -25,17 +25,24 @@ const _tenantIdKey = 'current_tenant_id';
 typedef IonicSession = ({String refreshToken, int? tenantId});
 
 /// Runs once, before `runApp`, so the router already sees the session.
-/// Every failure falls back to the normal login. Network errors are retried
-/// on the next starts (at most [_maxAttempts]); a missing or rejected Ionic
-/// session ends the takeover for good.
-Future<void> takeOverIonicSession({required String supabaseUrl}) async {
+/// Every failure falls back to the normal login. Read and network errors are
+/// retried on the next starts (at most [_maxAttempts]); an empty Ionic
+/// storage or a rejected token ends the takeover for good.
+///
+/// The refresh runs on a separate client without storage: a late answer
+/// after the timeout can never change the app's session (Sol #285). Only a
+/// fresh session that arrives in time is handed to the app's client.
+Future<void> takeOverIonicSession({
+  required String supabaseUrl,
+  required String anonKey,
+}) async {
   if (!isNativeApp) return;
   SharedPreferences? prefs;
   try {
     prefs = await SharedPreferences.getInstance();
     if (prefs.getBool(_doneKey) ?? false) return;
-    final auth = Supabase.instance.client.auth;
-    if (auth.currentSession != null) {
+    final client = Supabase.instance.client;
+    if (client.auth.currentSession != null) {
       await prefs.setBool(_doneKey, true);
       return;
     }
@@ -46,21 +53,33 @@ Future<void> takeOverIonicSession({required String supabaseUrl}) async {
       return;
     }
 
+    // PlatformException (read error, timeout) -> retry on the next start.
     final raw = await _channel
         .invokeMethod<String>('read')
         .timeout(const Duration(seconds: 6));
-    final session = parseIonicStorage(raw, supabaseUrl: supabaseUrl);
-    if (session == null) {
+    final ionic = parseIonicStorage(raw, supabaseUrl: supabaseUrl);
+    if (ionic == null) {
       await prefs.setBool(_doneKey, true);
       return;
     }
 
-    await auth
-        .setSession(session.refreshToken)
-        .timeout(const Duration(seconds: 10));
-    final tenantId = session.tenantId;
-    if (tenantId != null) await prefs.setInt(_tenantIdKey, tenantId);
+    final refresher = GoTrueClient(
+      url: '$supabaseUrl/auth/v1',
+      headers: {'apikey': anonKey, 'Authorization': 'Bearer $anonKey'},
+      autoRefreshToken: false,
+    );
+    final session = (await refresher
+            .setSession(ionic.refreshToken)
+            .timeout(const Duration(seconds: 10)))
+        .session;
+    // Not after a timeout: the pending refresh may still finish.
+    refresher.dispose();
+    if (session == null || client.auth.currentSession != null) return;
+    await client.auth.recoverSession(jsonEncode(session.toJson()));
     await prefs.setBool(_doneKey, true);
+
+    final tenantId = ionic.tenantId;
+    if (tenantId != null) await _adoptIonicTenant(client, tenantId, prefs);
   } on AuthRetryableFetchException catch (e) {
     debugPrint('Ionic session takeover: offline, retry next start ($e)');
   } on AuthException catch (e) {
@@ -69,6 +88,36 @@ Future<void> takeOverIonicSession({required String supabaseUrl}) async {
     await prefs?.setBool(_doneKey, true);
   } catch (e) {
     debugPrint('Ionic session takeover failed: $e');
+  }
+}
+
+/// Ionic preferred its local `currentTenantId` over `user_metadata`; the
+/// Flutter tenant restore prefers the metadata. So a group the user still
+/// belongs to is written to both (like Ionic's setTenant). Best effort.
+Future<void> _adoptIonicTenant(
+  SupabaseClient client,
+  int tenantId,
+  SharedPreferences prefs,
+) async {
+  try {
+    await prefs.setInt(_tenantIdKey, tenantId);
+    final user = client.auth.currentUser;
+    if (user == null || user.userMetadata?['currentTenantId'] == tenantId) {
+      return;
+    }
+    final member = await client
+        .from('tenantUsers')
+        .select('tenantId')
+        .eq('tenantId', tenantId)
+        .eq('userId', user.id)
+        .maybeSingle()
+        .timeout(const Duration(seconds: 5));
+    if (member == null) return;
+    await client.auth
+        .updateUser(UserAttributes(data: {'currentTenantId': tenantId}))
+        .timeout(const Duration(seconds: 5));
+  } catch (e) {
+    debugPrint('Ionic session takeover: tenant not synced ($e)');
   }
 }
 
