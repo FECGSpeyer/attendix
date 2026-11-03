@@ -14978,6 +14978,36 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get redesignCreateType;
 
+  /// redesign.event.actions
+  ///
+  /// In de, this message translates to:
+  /// **'Aktionen'**
+  String get redesignEventActions;
+
+  /// redesign.event.addTask
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe'**
+  String get redesignEventAddTask;
+
+  /// redesign.event.addTaskLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe hinzufügen'**
+  String get redesignEventAddTaskLabel;
+
+  /// redesign.event.addWork
+  ///
+  /// In de, this message translates to:
+  /// **'Werk'**
+  String get redesignEventAddWork;
+
+  /// redesign.event.addWorkLabel
+  ///
+  /// In de, this message translates to:
+  /// **'Werk hinzufügen'**
+  String get redesignEventAddWorkLabel;
+
   /// redesign.event.allDone
   ///
   /// In de, this message translates to:
@@ -15001,6 +15031,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Bitte warte, bis alles gespeichert ist.'**
   String get redesignEventBusyLeave;
+
+  /// redesign.event.changeConductorHint
+  ///
+  /// In de, this message translates to:
+  /// **'Aus der Gruppe oder Gastdirigent'**
+  String get redesignEventChangeConductorHint;
 
   /// redesign.event.countAbsent
   ///
@@ -15044,17 +15080,89 @@ abstract class AppLocalizations {
   /// **'Termin löschen'**
   String get redesignEventDelete;
 
+  /// redesign.event.deleteTask
+  ///
+  /// In de, this message translates to:
+  /// **'Aufgabe löschen'**
+  String get redesignEventDeleteTask;
+
   /// redesign.event.deleted
   ///
   /// In de, this message translates to:
   /// **'Termin gelöscht'**
   String get redesignEventDeleted;
 
+  /// redesign.event.description
+  ///
+  /// In de, this message translates to:
+  /// **'Beschreibung & Anhang'**
+  String get redesignEventDescription;
+
   /// redesign.event.details
   ///
   /// In de, this message translates to:
   /// **'Alle Details'**
   String get redesignEventDetails;
+
+  /// redesign.event.edit
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignEventEdit;
+
+  /// redesign.eventEdit.back
+  ///
+  /// In de, this message translates to:
+  /// **'Termin'**
+  String get redesignEventEditBack;
+
+  /// redesign.eventEdit.deadlineLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Der Termin liegt in der Vergangenheit.'**
+  String get redesignEventEditDeadlineLocked;
+
+  /// redesign.eventEdit.deadlinePick
+  ///
+  /// In de, this message translates to:
+  /// **'Datum und Uhrzeit wählen'**
+  String get redesignEventEditDeadlinePick;
+
+  /// redesign.eventEdit.deadlineSuggested
+  ///
+  /// In de, this message translates to:
+  /// **'Vorschlag: {date}'**
+  String redesignEventEditDeadlineSuggested(Object date);
+
+  /// redesign.eventEdit.folderNone
+  ///
+  /// In de, this message translates to:
+  /// **'Keiner'**
+  String get redesignEventEditFolderNone;
+
+  /// redesign.eventEdit.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.'**
+  String get redesignEventEditHint;
+
+  /// redesign.eventEdit.saved
+  ///
+  /// In de, this message translates to:
+  /// **'Gespeichert'**
+  String get redesignEventEditSaved;
+
+  /// redesign.eventEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Termin bearbeiten'**
+  String get redesignEventEditTitle;
+
+  /// redesign.event.exportExcel
+  ///
+  /// In de, this message translates to:
+  /// **'Als Excel exportieren'**
+  String get redesignEventExportExcel;
 
   /// redesign.event.invited
   ///
@@ -15128,11 +15236,59 @@ abstract class AppLocalizations {
   /// **'Ablauf ansehen'**
   String get redesignEventPlan;
 
+  /// redesign.event.planCreate
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf anlegen'**
+  String get redesignEventPlanCreate;
+
+  /// redesign.event.planEdit
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf bearbeiten'**
+  String get redesignEventPlanEdit;
+
+  /// redesign.event.planEditHint
+  ///
+  /// In de, this message translates to:
+  /// **'Punkte, Zeiten, PDF und Telegram'**
+  String get redesignEventPlanEditHint;
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:
   /// **'Ablaufplan, am Termin-Tag live'**
   String get redesignEventPlanHint;
+
+  /// redesign.event.planSection
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf'**
+  String get redesignEventPlanSection;
+
+  /// redesign.event.planShare
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder sichtbar'**
+  String get redesignEventPlanShare;
+
+  /// redesign.event.planShareHint
+  ///
+  /// In de, this message translates to:
+  /// **'Mitglieder sehen den Ablauf beim Termin'**
+  String get redesignEventPlanShareHint;
+
+  /// redesign.event.prep
+  ///
+  /// In de, this message translates to:
+  /// **'Vorbereitung · {done} von {total} erledigt'**
+  String redesignEventPrep(Object done, Object total);
+
+  /// redesign.event.program
+  ///
+  /// In de, this message translates to:
+  /// **'Programm'**
+  String get redesignEventProgram;
 
   /// redesign.event.registerEmpty
   ///
@@ -15145,6 +15301,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}'**
   String redesignEventRegisterNames(num count, Object names);
+
+  /// redesign.event.remindOpen
+  ///
+  /// In de, this message translates to:
+  /// **'Offene erinnern'**
+  String get redesignEventRemindOpen;
+
+  /// redesign.event.removeWork
+  ///
+  /// In de, this message translates to:
+  /// **'Werk entfernen'**
+  String get redesignEventRemoveWork;
 
   /// redesign.event.saving
   ///
@@ -15170,6 +15338,12 @@ abstract class AppLocalizations {
   /// **'Name'**
   String get redesignEventSearchHint;
 
+  /// redesign.event.sectionCount
+  ///
+  /// In de, this message translates to:
+  /// **'{title} · {count}'**
+  String redesignEventSectionCount(Object title, Object count);
+
   /// redesign.event.signouts
   ///
   /// In de, this message translates to:
@@ -15194,6 +15368,12 @@ abstract class AppLocalizations {
   /// **'Anwesenheit'**
   String get redesignEventTabRecord;
 
+  /// redesign.event.toWorkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Noten und Stimmen'**
+  String get redesignEventToWorkHint;
+
   /// redesign.event.toastReset
   ///
   /// In de, this message translates to:
@@ -15217,6 +15397,30 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückgängig gemacht'**
   String get redesignEventUndone;
+
+  /// redesign.event.workNumber
+  ///
+  /// In de, this message translates to:
+  /// **'Nr. {number}'**
+  String redesignEventWorkNumber(Object number);
+
+  /// redesign.event.workRemoved
+  ///
+  /// In de, this message translates to:
+  /// **'{name} entfernt'**
+  String redesignEventWorkRemoved(Object name);
+
+  /// redesign.event.works
+  ///
+  /// In de, this message translates to:
+  /// **'Werke'**
+  String get redesignEventWorks;
+
+  /// redesign.event.worksLoadFailed
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werke konnten nicht geladen werden.'**
+  String get redesignEventWorksLoadFailed;
 
   /// redesign.events.absent
   ///
@@ -16262,17 +16466,59 @@ abstract class AppLocalizations {
   /// **'Mehr'**
   String get redesignOwnMore;
 
+  /// redesign.own.noNotes
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Noten'**
+  String get redesignOwnNoNotes;
+
+  /// redesign.own.noNotesFor
+  ///
+  /// In de, this message translates to:
+  /// **'Für deine Stimme sind keine Noten hinterlegt.'**
+  String get redesignOwnNoNotesFor;
+
   /// redesign.own.notFound
   ///
   /// In de, this message translates to:
   /// **'Dieser Termin ist nicht mehr in deiner Liste.'**
   String get redesignOwnNotFound;
 
+  /// redesign.own.openMine
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Noten öffnen'**
+  String get redesignOwnOpenMine;
+
+  /// redesign.own.printMine
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Noten als ein PDF'**
+  String get redesignOwnPrintMine;
+
+  /// redesign.own.printMineHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count} von {total} Werken'**
+  String redesignOwnPrintMineHint(Object count, Object total);
+
+  /// redesign.own.programPending
+  ///
+  /// In de, this message translates to:
+  /// **'Das Programm steht noch nicht fest.'**
+  String get redesignOwnProgramPending;
+
   /// redesign.own.route
   ///
   /// In de, this message translates to:
   /// **'Route'**
   String get redesignOwnRoute;
+
+  /// redesign.own.youConduct
+  ///
+  /// In de, this message translates to:
+  /// **'Du dirigierst'**
+  String get redesignOwnYouConduct;
 
   /// redesign.parents.allKids
   ///

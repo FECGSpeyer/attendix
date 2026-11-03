@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../../core/providers/attendance_type_providers.dart';
+import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
@@ -15,6 +16,7 @@ import '../../../../self_service/presentation/widgets/plan_viewer_sheet.dart';
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart' show SelfServiceActionType;
 import '../../../data/rd_dates.dart';
 import '../rd_widgets.dart';
+import 'rd_own_program.dart';
 import '../today/rd_parent_today.dart' show RdAllChildrenAnswer, RdChildAnswerRow, rdChildrenLine, rdOpenChildren;
 import '../today/rd_today_common.dart';
 
@@ -231,6 +233,15 @@ class _ParentEventDetail extends ConsumerWidget {
               ],
             ],
           ),
+        ),
+        // The Programm read only (scores belong to the child's own app).
+        RdOwnProgramSection(
+          tenantId: ref.watch(currentTenantIdProvider) ?? 0,
+          attendanceId: group.attendanceId,
+          personId: group.childAttendances.firstOrNull?.personId,
+          highlight: type?.highlight ?? group.legacyType == 'vortrag',
+          past: past,
+          readOnly: true,
         ),
         if (infos.isNotEmpty) ...[
           const SizedBox(height: 24),

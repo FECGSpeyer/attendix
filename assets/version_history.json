@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.34.0",
+      "date": "2.11.2026",
+      "changes": [
+        "✨ Beta: Termin-Überblick zeigt Programm/Werke, Ablauf, Vorbereitung und Infos direkt an, mit Aktionen wie Offene erinnern und Excel-Export",
+        "✨ Beta: Neue Seite \"Termin bearbeiten\" (Titel, Ort, Datum, Zeit, Abmeldeschluss, Beschreibung, Ordner) ersetzt \"Alle Details\"",
+        "✨ Beta: Werke im Programm hinzufügen, entfernen und Dirigent ändern über ein eigenes Werk-Blatt",
+        "✨ Beta: Gemeinde-Übersicht der Anwesenden im Termin (wie in Ionic)",
+        "✨ Beta: Spieler sehen das Programm ihres Termins mit ihren Noten, Aufnahme und \"Meine Noten als ein PDF\"; Eltern sehen es zum Lesen"
+      ]
+    },
+    {
       "version": "0.33.3",
       "date": "2.11.2026",
       "changes": [

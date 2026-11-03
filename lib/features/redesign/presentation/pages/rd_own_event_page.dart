@@ -14,6 +14,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../self_service/presentation/pages/signout_page.dart' show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../widgets/event/rd_signout_sheet.dart';
+import '../widgets/event/rd_own_program.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../widgets/today/rd_player_today.dart' show RdOwnAnswerSection;
@@ -162,6 +163,14 @@ class RdOwnEventPage extends ConsumerWidget {
           attendance: att,
           showHeader: false,
           showEvent: false,
+        ),
+      if (att.attendanceId != null)
+        RdOwnProgramSection(
+          tenantId: att.tenantId,
+          attendanceId: att.attendanceId!,
+          personId: att.personId,
+          highlight: att.highlight,
+          past: past,
         ),
       if (split.answer.isNotEmpty) ...[
         const SizedBox(height: 24),

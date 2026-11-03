@@ -108,6 +108,7 @@ import '../../features/redesign/presentation/pages/rd_today_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
 import '../../features/redesign/presentation/pages/rd_works_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
+import '../../features/redesign/presentation/pages/rd_event_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_page.dart';
 import '../../features/redesign/presentation/pages/rd_events_page.dart';
 import '../../features/redesign/presentation/pages/rd_me_page.dart';
@@ -595,6 +596,14 @@ final routerProvider = Provider<GoRouter>((ref) {
                 builder: (context, state) => RdOwnEventPage(
                   personAttendanceId: state.pathParameters['paId'] ?? '',
                 ),
+              ),
+              GoRoute(
+                path: ':id/bearbeiten',
+                name: 'redesignEventEdit',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return id == null ? const RdEventsPage() : RdEventEditPage(attendanceId: id);
+                },
               ),
               GoRoute(
                 path: ':id',

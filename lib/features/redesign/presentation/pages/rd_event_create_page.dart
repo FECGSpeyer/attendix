@@ -12,7 +12,6 @@ import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/services/holiday_service.dart';
-import '../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/demo_guard.dart';
 import '../../../../core/utils/error_message.dart';
@@ -27,6 +26,7 @@ import '../../../attendance/presentation/widgets/multi_date_calendar.dart';
 import '../../../attendance/presentation/widgets/songs_selection_sheet.dart';
 import '../../data/rd_create_logic.dart';
 import '../widgets/event/rd_create_sheets.dart';
+import '../widgets/event/rd_form_widgets.dart';
 import '../widgets/rd_widgets.dart';
 import '../widgets/today/rd_today_common.dart' show RdInfoCard;
 import '../../data/rd_dates.dart';
@@ -339,11 +339,11 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
 
     final Widget body;
     if (!canCreate) {
-      body = _Body(children: [RdInfoCard(text: l10n.redesignCreateNoPermission, icon: Icons.lock_outline)]);
+      body = RdFormBody(children: [RdInfoCard(text: l10n.redesignCreateNoPermission, icon: Icons.lock_outline)]);
     } else if (typesAsync.isLoading && types.isEmpty) {
-      body = _Body(children: [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)]);
+      body = RdFormBody(children: [RdInfoCard(text: l10n.redesignTodayLoading, loading: true)]);
     } else if (types.isEmpty) {
-      body = _Body(children: [
+      body = RdFormBody(children: [
         RdInfoCard(
           text: typesAsync.hasError ? l10n.redesignTodayLoadFailed : l10n.redesignCreateNoTypes,
           icon: Icons.event_busy_outlined,
@@ -370,7 +370,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
           bottom: false,
           child: Column(
             children: [
-              _TopBar(
+              RdFormTopBar(
                 title: l10n.redesignCreateTitle,
                 cancel: l10n.redesignCommonCancel,
                 submit: l10n.redesignCreateSubmit,
@@ -402,7 +402,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
     final places = rdRecentPlaces(history).where((s) => s != _place.text.trim()).toList();
     final holidayHits = [for (final d in dates) if (rdHolidayOn(holidays, d) != null) d];
 
-    return _Body(children: [
+    return RdFormBody(children: [
       if (templates.length > 1) ...[
         _Label(l10n.redesignCreateTemplate),
         Wrap(
@@ -424,13 +424,13 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         const SizedBox(height: 16),
       ],
       RdGroupedList(children: [
-        _FieldRow(
+        RdFieldRow(
           label: l10n.redesignCreateTitleLabel,
           child: TextField(
             controller: _title,
             textCapitalization: TextCapitalization.sentences,
             style: TextStyle(fontSize: 17, color: p.text),
-            decoration: _inputDecoration(p, type?.name ?? ''),
+            decoration: rdInputDecoration(p, type?.name ?? ''),
             onChanged: (_) => _touch(() => _templateTitle = null),
           ),
         ),
@@ -441,7 +441,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         ),
         RdListRow(
           title: l10n.redesignCreateDate,
-          trailing: _ValueBox(DateFormat.yMMMEd(locale).format(_date)),
+          trailing: RdValueBox(DateFormat.yMMMEd(locale).format(_date)),
           showChevron: false,
           onTap: _pickDate,
         ),
@@ -464,17 +464,17 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
             trailing: Row(
               mainAxisSize: MainAxisSize.min,
               children: [
-                _ValueBox(_start ?? '–', semantics: l10n.redesignCreateStart, onTap: () => _pickTime(start: true)),
+                RdValueBox(_start ?? '–', semantics: l10n.redesignCreateStart, onTap: () => _pickTime(start: true)),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 6),
                   child: Text('–', style: TextStyle(color: p.text2)),
                 ),
-                _ValueBox(_end ?? '–', semantics: l10n.redesignCreateEnd, onTap: () => _pickTime(start: false)),
+                RdValueBox(_end ?? '–', semantics: l10n.redesignCreateEnd, onTap: () => _pickTime(start: false)),
               ],
             ),
           ),
         if (type?.placeEnabled == true)
-          _FieldRow(
+          RdFieldRow(
             label: l10n.redesignCreatePlace,
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
@@ -483,7 +483,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
                   controller: _place,
                   textCapitalization: TextCapitalization.sentences,
                   style: TextStyle(fontSize: 17, color: p.text),
-                  decoration: _inputDecoration(p, l10n.redesignCreatePlaceHint),
+                  decoration: rdInputDecoration(p, l10n.redesignCreatePlaceHint),
                   onChanged: (_) => _touch(() {}),
                 ),
                 if (places.isNotEmpty)
@@ -494,7 +494,7 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
                       runSpacing: 6,
                       children: [
                         for (final place in places)
-                          _PlaceChip(place, onTap: () => _touch(() => _place.text = place)),
+                          RdPlaceChip(place, onTap: () => _touch(() => _place.text = place)),
                       ],
                     ),
                   ),
@@ -615,121 +615,9 @@ class _RdEventCreatePageState extends ConsumerState<RdEventCreatePage> {
         (weekday: wd, count: counts[wd]!, required: _duty[wd] ?? type.dutyRequired ?? 1),
     ];
   }
-
-  InputDecoration _inputDecoration(RdPalette p, String hint) => InputDecoration(
-        isDense: true,
-        filled: false,
-        border: InputBorder.none,
-        enabledBorder: InputBorder.none,
-        focusedBorder: InputBorder.none,
-        disabledBorder: InputBorder.none,
-        contentPadding: const EdgeInsets.only(top: 4, bottom: 2),
-        hintText: hint,
-        hintStyle: TextStyle(color: p.text2),
-      );
 }
 
-/// Scrolling content of the page (max width on tablets).
-class _Body extends StatelessWidget {
-  const _Body({required this.children});
 
-  final List<Widget> children;
-
-  @override
-  Widget build(BuildContext context) => ListView(
-        padding: EdgeInsets.fromLTRB(16, 4, 16, 32 + MediaQuery.paddingOf(context).bottom),
-        children: [
-          Center(
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(maxWidth: 640),
-              child: Column(crossAxisAlignment: CrossAxisAlignment.stretch, children: children),
-            ),
-          ),
-        ],
-      );
-}
-
-/// "Abbrechen · Neuer Termin · Anlegen".
-class _TopBar extends StatelessWidget {
-  const _TopBar({
-    required this.title,
-    required this.cancel,
-    required this.submit,
-    required this.saving,
-    required this.onCancel,
-    required this.onSubmit,
-  });
-
-  final String title;
-  final String cancel;
-  final String submit;
-  final bool saving;
-  final VoidCallback? onCancel;
-  final VoidCallback? onSubmit;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    Widget link(String label, VoidCallback? onTap, {bool bold = false}) => Semantics(
-          button: true,
-          enabled: onTap != null,
-          child: InkWell(
-            onTap: onTap,
-            borderRadius: BorderRadius.circular(10),
-            child: ConstrainedBox(
-              constraints: const BoxConstraints(minHeight: 44, minWidth: 44),
-              child: Padding(
-                padding: const EdgeInsets.symmetric(horizontal: 8),
-                child: Center(
-                  widthFactor: 1,
-                  child: Text(
-                    label,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    style: TextStyle(
-                      fontSize: 17,
-                      fontWeight: bold ? FontWeight.w600 : FontWeight.w400,
-                      color: onTap == null ? p.text2 : p.link,
-                    ),
-                  ),
-                ),
-              ),
-            ),
-          ),
-        );
-    return Padding(
-      padding: const EdgeInsets.fromLTRB(8, 4, 8, 6),
-      child: Row(
-        children: [
-          link(cancel, onCancel),
-          Expanded(
-            child: Semantics(
-              header: true,
-              child: Text(
-                title,
-                textAlign: TextAlign.center,
-                maxLines: 1,
-                overflow: TextOverflow.ellipsis,
-                style: TextStyle(fontSize: 17, fontWeight: FontWeight.w600, color: p.text),
-              ),
-            ),
-          ),
-          if (saving)
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 20),
-              child: SizedBox(
-                width: 18,
-                height: 18,
-                child: CircularProgressIndicator(strokeWidth: 2, color: p.primary),
-              ),
-            )
-          else
-            link(submit, onSubmit, bold: true),
-        ],
-      ),
-    );
-  }
-}
 
 class _Label extends StatelessWidget {
   const _Label(this.text);
@@ -743,58 +631,7 @@ class _Label extends StatelessWidget {
       );
 }
 
-/// A text field row with a small label above ("Titel", "Ort").
-class _FieldRow extends StatelessWidget {
-  const _FieldRow({required this.label, required this.child});
 
-  final String label;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) => Padding(
-        padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text(label, style: RdType.meta(context.rd, size: 12)),
-            child,
-          ],
-        ),
-      );
-}
-
-/// Grey value box (date, time) like the canvas.
-class _ValueBox extends StatelessWidget {
-  const _ValueBox(this.text, {this.onTap, this.semantics});
-
-  final String text;
-  final VoidCallback? onTap;
-  final String? semantics;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final box = Container(
-      constraints: const BoxConstraints(minHeight: 36),
-      padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 6),
-      alignment: Alignment.center,
-      decoration: BoxDecoration(color: p.track, borderRadius: BorderRadius.circular(8)),
-      child: Text(
-        text,
-        maxLines: 1,
-        overflow: TextOverflow.ellipsis,
-        style: TextStyle(fontSize: 15, color: p.text, fontFeatures: const [FontFeature.tabularFigures()]),
-      ),
-    );
-    if (onTap == null) return Flexible(child: box);
-    return Semantics(
-      button: true,
-      label: semantics == null ? null : '$semantics $text',
-      excludeSemantics: semantics != null,
-      child: InkWell(onTap: onTap, borderRadius: BorderRadius.circular(8), child: box),
-    );
-  }
-}
 
 /// "− 2 Tage +".
 class _Stepper extends StatelessWidget {
@@ -866,36 +703,6 @@ class _InvitedRow extends ConsumerWidget {
   }
 }
 
-/// A place used before ("Gemeindesaal"), fills the Ort field.
-class _PlaceChip extends StatelessWidget {
-  const _PlaceChip(this.place, {required this.onTap});
-
-  final String place;
-  final VoidCallback onTap;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    return Semantics(
-      button: true,
-      child: Material(
-        color: p.track,
-        shape: const StadiumBorder(),
-        child: InkWell(
-          customBorder: const StadiumBorder(),
-          onTap: onTap,
-          child: ConstrainedBox(
-            constraints: const BoxConstraints(minHeight: 32),
-            child: Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
-              child: Text(place, style: TextStyle(fontSize: 13, color: p.text)),
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-}
 
 class _Summary extends StatelessWidget {
   const _Summary({required this.text});

@@ -11340,6 +11340,26 @@
   "@redesignCreateType": {
     "description": "redesign.create.type"
   },
+  "redesignEventActions": "Aktionen",
+  "@redesignEventActions": {
+    "description": "redesign.event.actions"
+  },
+  "redesignEventAddTask": "Aufgabe",
+  "@redesignEventAddTask": {
+    "description": "redesign.event.addTask"
+  },
+  "redesignEventAddTaskLabel": "Aufgabe hinzufügen",
+  "@redesignEventAddTaskLabel": {
+    "description": "redesign.event.addTaskLabel"
+  },
+  "redesignEventAddWork": "Werk",
+  "@redesignEventAddWork": {
+    "description": "redesign.event.addWork"
+  },
+  "redesignEventAddWorkLabel": "Werk hinzufügen",
+  "@redesignEventAddWorkLabel": {
+    "description": "redesign.event.addWorkLabel"
+  },
   "redesignEventAllDone": "{count, plural, one {1 Person als anwesend} other {{count} Personen als anwesend}}",
   "@redesignEventAllDone": {
     "description": "redesign.event.allDone",
@@ -11360,6 +11380,10 @@
   "redesignEventBusyLeave": "Bitte warte, bis alles gespeichert ist.",
   "@redesignEventBusyLeave": {
     "description": "redesign.event.busyLeave"
+  },
+  "redesignEventChangeConductorHint": "Aus der Gruppe oder Gastdirigent",
+  "@redesignEventChangeConductorHint": {
+    "description": "redesign.event.changeConductorHint"
   },
   "redesignEventCountAbsent": "{count} fehlt",
   "@redesignEventCountAbsent": {
@@ -11407,13 +11431,64 @@
   "@redesignEventDelete": {
     "description": "redesign.event.delete"
   },
+  "redesignEventDeleteTask": "Aufgabe löschen",
+  "@redesignEventDeleteTask": {
+    "description": "redesign.event.deleteTask"
+  },
   "redesignEventDeleted": "Termin gelöscht",
   "@redesignEventDeleted": {
     "description": "redesign.event.deleted"
   },
+  "redesignEventDescription": "Beschreibung & Anhang",
+  "@redesignEventDescription": {
+    "description": "redesign.event.description"
+  },
   "redesignEventDetails": "Alle Details",
   "@redesignEventDetails": {
     "description": "redesign.event.details"
+  },
+  "redesignEventEdit": "Bearbeiten",
+  "@redesignEventEdit": {
+    "description": "redesign.event.edit"
+  },
+  "redesignEventEditBack": "Termin",
+  "@redesignEventEditBack": {
+    "description": "redesign.eventEdit.back"
+  },
+  "redesignEventEditDeadlineLocked": "Der Termin liegt in der Vergangenheit.",
+  "@redesignEventEditDeadlineLocked": {
+    "description": "redesign.eventEdit.deadlineLocked"
+  },
+  "redesignEventEditDeadlinePick": "Datum und Uhrzeit wählen",
+  "@redesignEventEditDeadlinePick": {
+    "description": "redesign.eventEdit.deadlinePick"
+  },
+  "redesignEventEditDeadlineSuggested": "Vorschlag: {date}",
+  "@redesignEventEditDeadlineSuggested": {
+    "description": "redesign.eventEdit.deadlineSuggested",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignEventEditFolderNone": "Keiner",
+  "@redesignEventEditFolderNone": {
+    "description": "redesign.eventEdit.folderNone"
+  },
+  "redesignEventEditHint": "Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.",
+  "@redesignEventEditHint": {
+    "description": "redesign.eventEdit.hint"
+  },
+  "redesignEventEditSaved": "Gespeichert",
+  "@redesignEventEditSaved": {
+    "description": "redesign.eventEdit.saved"
+  },
+  "redesignEventEditTitle": "Termin bearbeiten",
+  "@redesignEventEditTitle": {
+    "description": "redesign.eventEdit.title"
+  },
+  "redesignEventExportExcel": "Als Excel exportieren",
+  "@redesignEventExportExcel": {
+    "description": "redesign.event.exportExcel"
   },
   "redesignEventInvited": "{count} eingeladen",
   "@redesignEventInvited": {
@@ -11469,9 +11544,45 @@
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
   },
+  "redesignEventPlanCreate": "Ablauf anlegen",
+  "@redesignEventPlanCreate": {
+    "description": "redesign.event.planCreate"
+  },
+  "redesignEventPlanEdit": "Ablauf bearbeiten",
+  "@redesignEventPlanEdit": {
+    "description": "redesign.event.planEdit"
+  },
+  "redesignEventPlanEditHint": "Punkte, Zeiten, PDF und Telegram",
+  "@redesignEventPlanEditHint": {
+    "description": "redesign.event.planEditHint"
+  },
   "redesignEventPlanHint": "Ablaufplan, am Termin-Tag live",
   "@redesignEventPlanHint": {
     "description": "redesign.event.planHint"
+  },
+  "redesignEventPlanSection": "Ablauf",
+  "@redesignEventPlanSection": {
+    "description": "redesign.event.planSection"
+  },
+  "redesignEventPlanShare": "Für Mitglieder sichtbar",
+  "@redesignEventPlanShare": {
+    "description": "redesign.event.planShare"
+  },
+  "redesignEventPlanShareHint": "Mitglieder sehen den Ablauf beim Termin",
+  "@redesignEventPlanShareHint": {
+    "description": "redesign.event.planShareHint"
+  },
+  "redesignEventPrep": "Vorbereitung · {done} von {total} erledigt",
+  "@redesignEventPrep": {
+    "description": "redesign.event.prep",
+    "placeholders": {
+      "done": {},
+      "total": {}
+    }
+  },
+  "redesignEventProgram": "Programm",
+  "@redesignEventProgram": {
+    "description": "redesign.event.program"
   },
   "redesignEventRegisterEmpty": "{group}: 0 von {count} da.",
   "@redesignEventRegisterEmpty": {
@@ -11491,6 +11602,14 @@
       "names": {}
     }
   },
+  "redesignEventRemindOpen": "Offene erinnern",
+  "@redesignEventRemindOpen": {
+    "description": "redesign.event.remindOpen"
+  },
+  "redesignEventRemoveWork": "Werk entfernen",
+  "@redesignEventRemoveWork": {
+    "description": "redesign.event.removeWork"
+  },
   "redesignEventSaving": "Wird gespeichert …",
   "@redesignEventSaving": {
     "description": "redesign.event.saving"
@@ -11507,6 +11626,14 @@
   "@redesignEventSearchHint": {
     "description": "redesign.event.searchHint"
   },
+  "redesignEventSectionCount": "{title} · {count}",
+  "@redesignEventSectionCount": {
+    "description": "redesign.event.sectionCount",
+    "placeholders": {
+      "title": {},
+      "count": {}
+    }
+  },
   "redesignEventSignouts": "Abmeldungen",
   "@redesignEventSignouts": {
     "description": "redesign.event.signouts"
@@ -11522,6 +11649,10 @@
   "redesignEventTabRecord": "Anwesenheit",
   "@redesignEventTabRecord": {
     "description": "redesign.event.tabRecord"
+  },
+  "redesignEventToWorkHint": "Noten und Stimmen",
+  "@redesignEventToWorkHint": {
+    "description": "redesign.event.toWorkHint"
   },
   "redesignEventToastReset": "{name}: zurückgesetzt",
   "@redesignEventToastReset": {
@@ -11545,6 +11676,28 @@
   "redesignEventUndone": "Rückgängig gemacht",
   "@redesignEventUndone": {
     "description": "redesign.event.undone"
+  },
+  "redesignEventWorkNumber": "Nr. {number}",
+  "@redesignEventWorkNumber": {
+    "description": "redesign.event.workNumber",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignEventWorkRemoved": "{name} entfernt",
+  "@redesignEventWorkRemoved": {
+    "description": "redesign.event.workRemoved",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignEventWorks": "Werke",
+  "@redesignEventWorks": {
+    "description": "redesign.event.works"
+  },
+  "redesignEventWorksLoadFailed": "Die Werke konnten nicht geladen werden.",
+  "@redesignEventWorksLoadFailed": {
+    "description": "redesign.event.worksLoadFailed"
   },
   "redesignEventsAbsent": "Abwesend …",
   "@redesignEventsAbsent": {
@@ -12368,13 +12521,45 @@
   "@redesignOwnMore": {
     "description": "redesign.own.more"
   },
+  "redesignOwnNoNotes": "Keine Noten",
+  "@redesignOwnNoNotes": {
+    "description": "redesign.own.noNotes"
+  },
+  "redesignOwnNoNotesFor": "Für deine Stimme sind keine Noten hinterlegt.",
+  "@redesignOwnNoNotesFor": {
+    "description": "redesign.own.noNotesFor"
+  },
   "redesignOwnNotFound": "Dieser Termin ist nicht mehr in deiner Liste.",
   "@redesignOwnNotFound": {
     "description": "redesign.own.notFound"
   },
+  "redesignOwnOpenMine": "Deine Noten öffnen",
+  "@redesignOwnOpenMine": {
+    "description": "redesign.own.openMine"
+  },
+  "redesignOwnPrintMine": "Meine Noten als ein PDF",
+  "@redesignOwnPrintMine": {
+    "description": "redesign.own.printMine"
+  },
+  "redesignOwnPrintMineHint": "{count} von {total} Werken",
+  "@redesignOwnPrintMineHint": {
+    "description": "redesign.own.printMineHint",
+    "placeholders": {
+      "count": {},
+      "total": {}
+    }
+  },
+  "redesignOwnProgramPending": "Das Programm steht noch nicht fest.",
+  "@redesignOwnProgramPending": {
+    "description": "redesign.own.programPending"
+  },
   "redesignOwnRoute": "Route",
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
+  },
+  "redesignOwnYouConduct": "Du dirigierst",
+  "@redesignOwnYouConduct": {
+    "description": "redesign.own.youConduct"
   },
   "redesignParentsAllKids": "Alle Kinder",
   "@redesignParentsAllKids": {
