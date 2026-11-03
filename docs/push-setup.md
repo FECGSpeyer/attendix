@@ -37,10 +37,8 @@ The Flutter app currently uses the bundle ID / package name
 - **Android:** placing the file is enough. `android/app/build.gradle.kts`
   applies the `com.google.gms.google-services` plugin only when the file
   exists, which is the same conditional as Ionic's `build.gradle`.
-- **iOS:** open `ios/Runner.xcworkspace` in Xcode and drag
-  `GoogleService-Info.plist` into the *Runner* group. Tick
-  *Copy items if needed* and target *Runner*. Without that step the file is
-  not in the app bundle.
+- **iOS:** placing the file is enough. The Runner build phase
+  *Copy GoogleService-Info.plist* copies it into the app bundle when it exists.
 
 **Alternative without files (CI):** pass the options with `--dart-define`.
 They are read by `lib/core/config/firebase_options.dart`:
