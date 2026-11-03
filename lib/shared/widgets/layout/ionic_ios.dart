@@ -726,7 +726,7 @@ class IonSearchbarGlass extends StatelessWidget {
           alignment: Alignment.center,
           color: IosGlass.frosted(
             background(b),
-            page: Theme.of(context).scaffoldBackgroundColor,
+            page: IosGlass.pageColor(context),
           ),
           child: child,
         ),

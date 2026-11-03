@@ -84,6 +84,13 @@ class IosGlass {
     );
   }
 
+  /// PERF_GLASS: the page colour behind [context]: the background of the
+  /// nearest [Scaffold] (pages with their own `ion-content` colour), else
+  /// the theme's scaffold background (overlay routes).
+  static Color pageColor(BuildContext context) =>
+      Scaffold.maybeOf(context)?.widget.backgroundColor ??
+      Theme.of(context).scaffoldBackgroundColor;
+
   /// PERF_GLASS: barrier of iOS alerts, action sheets and selects
   /// (`--backdrop-opacity: .2`), the backdrop their [frosted] glass is
   /// matched against.
@@ -170,11 +177,13 @@ class IosGlassSurface extends StatelessWidget {
     required Widget child,
     BorderRadius borderRadius = const BorderRadius.all(Radius.circular(34)),
     EdgeInsetsGeometry? padding,
+    Color? scrim,
   }) =>
       IosGlassSurface(
         key: key,
         borderRadius: borderRadius,
         overlay: true,
+        scrim: scrim,
         opacity: brightness == Brightness.dark ? 0.08 : 0.42,
         blur: 12,
         backdropBrightness: brightness == Brightness.dark ? 0.9 : 1.35,
@@ -233,7 +242,7 @@ class IosGlassSurface extends StatelessWidget {
             ? glass
             : IosGlass.frosted(
                 glass,
-                page: theme.scaffoldBackgroundColor,
+                page: IosGlass.pageColor(context),
                 backdropBrightness: backdropBrightness,
                 scrim: scrim ??
                     (overlay ? IosGlass.overlayScrim : Colors.transparent),
@@ -244,7 +253,19 @@ class IosGlassSurface extends StatelessWidget {
           width: 0.5,
         ),
       ),
-      child: padding == null ? child : Padding(padding: padding!, child: child),
+      child: live
+          ? padding == null
+              ? child
+              : Padding(padding: padding!, child: child)
+          // PERF_GLASS: the surface is opaque now – ink of pressed rows
+          // must paint on a Material above it, not on one behind it.
+          : Material(
+              type: MaterialType.transparency,
+              textStyle: DefaultTextStyle.of(context).style,
+              child: padding == null
+                  ? child
+                  : Padding(padding: padding!, child: child),
+            ),
     );
     final painter = shadows.isEmpty
         ? null
