@@ -44,6 +44,7 @@
        so the app shows the page without playing its own transition again
        (lib/core/services/browser_navigation.dart). Registered before the
        Flutter engine, so the mark is set before the app handles popstate.
+       A browser that reports hasUAVisualTransition decides on its own.
 
        iPhone Safari also drops its snapshot right after popstate, before the
        app has drawn the page – the page swiped away flashed up for a moment.
@@ -52,22 +53,35 @@
        (attendixUaNavShown, called from the app) or 700 ms at most. -->
   <script>
     (function () {
+      // Browsers without PopStateEvent.hasUAVisualTransition: a swipe that
+      // starts at the screen edge and moves (or that the browser takes over,
+      // touchcancel) before popstate. A plain tap at the edge does not count.
       var EDGE = 30;
-      var edgeTouch = false;
+      var edgeStartX = -1;
+      var edgeSwipe = false;
       var edgeEndAt = 0;
       var opts = { capture: true, passive: true };
       window.addEventListener('touchstart', function (e) {
         var t = e.touches && e.touches[0];
-        edgeTouch = !!t && e.touches.length === 1 &&
-          (t.clientX <= EDGE || t.clientX >= window.innerWidth - EDGE);
+        edgeSwipe = false;
+        edgeStartX = !!t && e.touches.length === 1 &&
+          (t.clientX <= EDGE || t.clientX >= window.innerWidth - EDGE)
+          ? t.clientX : -1;
       }, opts);
-      function touchDone() {
-        if (!edgeTouch) return;
-        edgeTouch = false;
-        edgeEndAt = Date.now();
+      window.addEventListener('touchmove', function (e) {
+        var t = e.touches && e.touches[0];
+        if (edgeStartX >= 0 && t && Math.abs(t.clientX - edgeStartX) > 30) {
+          edgeSwipe = true;
+        }
+      }, opts);
+      function touchDone(cancelled) {
+        if (edgeStartX < 0) return;
+        if (cancelled || edgeSwipe) edgeEndAt = Date.now();
+        edgeStartX = -1;
+        edgeSwipe = false;
       }
-      window.addEventListener('touchend', touchDone, opts);
-      window.addEventListener('touchcancel', touchDone, opts);
+      window.addEventListener('touchend', function () { touchDone(false); }, opts);
+      window.addEventListener('touchcancel', function () { touchDone(true); }, opts);
 
       // Only Safari in a browser tab swipes through the history (the home
       // screen app has no swipe; other browsers keep the page until drawn).
@@ -158,8 +172,10 @@
       }
 
       window.addEventListener('popstate', function (e) {
-        var browserAnimated = e.hasUAVisualTransition === true || edgeTouch ||
-          Date.now() - edgeEndAt < 1000;
+        var browserAnimated = 'hasUAVisualTransition' in e
+          ? e.hasUAVisualTransition === true
+          : edgeSwipe || Date.now() - edgeEndAt < 1000;
+        edgeEndAt = 0;
         if (browserAnimated) window.attendixUaNavAt = Date.now();
         if (snapshots) {
           try {
