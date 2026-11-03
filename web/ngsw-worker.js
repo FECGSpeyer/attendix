@@ -19,11 +19,16 @@ self.addEventListener('activate', function (event) {
     await Promise.all(names
       .filter(function (name) { return /^ngsw:/.test(name); })
       .map(function (name) { return caches.delete(name); }));
-    await self.registration.unregister();
+    // A Flutter page may have registered flutter_service_worker.js on the
+    // same scope meanwhile: that newer worker replaces this one, so keep the
+    // registration instead of unregistering it with the new worker.
+    var reg = self.registration;
+    if (!reg.installing && !reg.waiting) await reg.unregister();
     var windows = await self.clients.matchAll({ type: 'window' });
     windows.forEach(function (client) {
-      // The pages still run the old Ionic app, whose lazy chunks are gone
-      // with the cache: reload them into the new app right away.
+      // Only the old Ionic pages (path routes; Flutter uses #/ routes): their
+      // lazy chunks are gone with the cache, so load the new app right away.
+      if (new URL(client.url).hash.indexOf('#/') === 0) return;
       client.navigate(client.url).catch(function () {});
     });
   })());

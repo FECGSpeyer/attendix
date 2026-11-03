@@ -88,6 +88,29 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Persons (archived ones too) on the shift plan [shiftId], filtered on
+  /// the server and fully paged (Ionic deleteShift: getPlayers(true)
+  /// filtered by shift_id).
+  Future<List<Person>> getPlayersByShift(String shiftId) async {
+    try {
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('player')
+            .select('*')
+            .eq('tenantId', currentTenantId)
+            .eq('shift_id', shiftId)
+            .isFilter('pending', false)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      return rows.map(Person.fromJson).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlayersByShift');
+      rethrow;
+    }
+  }
+
   /// Get a single player by ID
   Future<Person?> getPlayerById(int id) async {
     try {

@@ -112,10 +112,11 @@ class ShiftNotifier extends Notifier<AsyncValue<void>> {
       // every person on this plan (updateShiftAssignmentsForPerson with
       // shift_id null), then delete the plan.
       final repo = _repo; // bound before the awaits (tenant switch safety)
+      // Ionic checkDemoRestriction() comes before every write.
+      repo.ensureNotDemo('deleteShift'); // DEMO_GUARD
       final players = ref.read(playerRepositoryWithTenantProvider);
       if (players.hasTenantId) {
-        final affected =
-            (await players.getPlayers(all: true)).where((p) => p.shiftId == id);
+        final affected = await players.getPlayersByShift(id);
         await Future.wait(affected.map((p) => players
             .updateShiftAssignmentsForPerson(p.copyWith(shiftId: null))));
       }
