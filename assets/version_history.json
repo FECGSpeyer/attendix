@@ -8,6 +8,16 @@
       ]
     },
     {
+      "version": "0.37.0",
+      "date": "3.11.2026",
+      "changes": [
+        "✨ Beta: Neuer Ablauf-Editor im neuen Design mit Zeitstrahl, Beginn/Dauer/Ende oben und Speicherstatus",
+        "✨ Beta: Dauer direkt an der Zeile ändern (5 bis 60 Minuten mit einem Tipp, Zahlenfeld, −/+)",
+        "✨ Beta: Punkte danach einfügen, ohne Ziehen nach oben/unten schieben, Löschen mit Rückgängig",
+        "✨ Beta: Leerer Ablauf bietet Vorlagen und den Ablauf des letzten Termins gleicher Art an"
+      ]
+    },
+    {
       "version": "0.36.2",
       "date": "3.11.2026",
       "changes": [

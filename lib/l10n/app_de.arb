@@ -13859,6 +13859,353 @@
   "@redesignPersonTomorrow": {
     "description": "redesign.person.tomorrow"
   },
+  "redesignPlanAdd": "Punkt hinzufügen",
+  "@redesignPlanAdd": {
+    "description": "redesign.plan.add"
+  },
+  "redesignPlanAddAfter": "Wird nach „{name}“ eingefügt",
+  "@redesignPlanAddAfter": {
+    "description": "redesign.plan.addAfter",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanAddBlock": "Block",
+  "@redesignPlanAddBlock": {
+    "description": "redesign.plan.addBlock"
+  },
+  "redesignPlanAddBlockHint": "Fasst mehrere Punkte zusammen",
+  "@redesignPlanAddBlockHint": {
+    "description": "redesign.plan.addBlockHint"
+  },
+  "redesignPlanAddCurrent": "Aktuelle Werke",
+  "@redesignPlanAddCurrent": {
+    "description": "redesign.plan.addCurrent"
+  },
+  "redesignPlanAddCurrentHint": "Die Werke, die gerade dran sind",
+  "@redesignPlanAddCurrentHint": {
+    "description": "redesign.plan.addCurrentHint"
+  },
+  "redesignPlanAddEnd": "Wird ans Ende gesetzt",
+  "@redesignPlanAddEnd": {
+    "description": "redesign.plan.addEnd"
+  },
+  "redesignPlanAddItem": "Punkt",
+  "@redesignPlanAddItem": {
+    "description": "redesign.plan.addItem"
+  },
+  "redesignPlanAddItemHint": "Mit Dauer, z. B. „Einsingen“",
+  "@redesignPlanAddItemHint": {
+    "description": "redesign.plan.addItemHint"
+  },
+  "redesignPlanAddNote": "Notiz",
+  "@redesignPlanAddNote": {
+    "description": "redesign.plan.addNote"
+  },
+  "redesignPlanAddNoteHint": "Ohne Dauer und Uhrzeit",
+  "@redesignPlanAddNoteHint": {
+    "description": "redesign.plan.addNoteHint"
+  },
+  "redesignPlanAddPlan": "Plan",
+  "@redesignPlanAddPlan": {
+    "description": "redesign.plan.addPlan"
+  },
+  "redesignPlanAddSong": "Werk aus der Liste",
+  "@redesignPlanAddSong": {
+    "description": "redesign.plan.addSong"
+  },
+  "redesignPlanAddTitle": "Hinzufügen",
+  "@redesignPlanAddTitle": {
+    "description": "redesign.plan.addTitle"
+  },
+  "redesignPlanAfterBlock": "Punkt nach dem Block einfügen",
+  "@redesignPlanAfterBlock": {
+    "description": "redesign.plan.afterBlock"
+  },
+  "redesignPlanBack": "Termin",
+  "@redesignPlanBack": {
+    "description": "redesign.plan.back"
+  },
+  "redesignPlanBlockTemplateHint": "Block · {count} Min",
+  "@redesignPlanBlockTemplateHint": {
+    "description": "redesign.plan.blockTemplateHint",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanCollapse": "Block einklappen",
+  "@redesignPlanCollapse": {
+    "description": "redesign.plan.collapse"
+  },
+  "redesignPlanCollapsed": "eingeklappt",
+  "@redesignPlanCollapsed": {
+    "description": "redesign.plan.collapsed"
+  },
+  "redesignPlanCopied": "Ablauf vom {date} übernommen",
+  "@redesignPlanCopied": {
+    "description": "redesign.plan.copied",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignPlanDelete": "Löschen",
+  "@redesignPlanDelete": {
+    "description": "redesign.plan.delete"
+  },
+  "redesignPlanDeleteHint": "Mit Rückgängig",
+  "@redesignPlanDeleteHint": {
+    "description": "redesign.plan.deleteHint"
+  },
+  "redesignPlanDrag": "Ziehen zum Sortieren",
+  "@redesignPlanDrag": {
+    "description": "redesign.plan.drag"
+  },
+  "redesignPlanDuration": "Dauer",
+  "@redesignPlanDuration": {
+    "description": "redesign.plan.duration"
+  },
+  "redesignPlanDurationHint": "Die Zeiten darunter rechnen sich sofort neu",
+  "@redesignPlanDurationHint": {
+    "description": "redesign.plan.durationHint"
+  },
+  "redesignPlanDurationLabel": "Dauer von {name}: {count} Minuten",
+  "@redesignPlanDurationLabel": {
+    "description": "redesign.plan.durationLabel",
+    "placeholders": {
+      "name": {},
+      "count": {}
+    }
+  },
+  "redesignPlanEdit": "Bearbeiten",
+  "@redesignPlanEdit": {
+    "description": "redesign.plan.edit"
+  },
+  "redesignPlanEditHint": "Bezeichnung, Info, Dauer",
+  "@redesignPlanEditHint": {
+    "description": "redesign.plan.editHint"
+  },
+  "redesignPlanEmptyCopy": "Wie letzter Termin",
+  "@redesignPlanEmptyCopy": {
+    "description": "redesign.plan.emptyCopy"
+  },
+  "redesignPlanEmptyCopyHint": "Kopie vom {date} · {count}",
+  "@redesignPlanEmptyCopyHint": {
+    "description": "redesign.plan.emptyCopyHint",
+    "placeholders": {
+      "date": {},
+      "count": {}
+    }
+  },
+  "redesignPlanEmptyTemplate": "Vorlage der Organisation",
+  "@redesignPlanEmptyTemplate": {
+    "description": "redesign.plan.emptyTemplate"
+  },
+  "redesignPlanEmptyTitle": "Womit beginnen?",
+  "@redesignPlanEmptyTitle": {
+    "description": "redesign.plan.emptyTitle"
+  },
+  "redesignPlanEnd": "Ende",
+  "@redesignPlanEnd": {
+    "description": "redesign.plan.end"
+  },
+  "redesignPlanExpand": "Block aufklappen",
+  "@redesignPlanExpand": {
+    "description": "redesign.plan.expand"
+  },
+  "redesignPlanHeading": "Überschrift",
+  "@redesignPlanHeading": {
+    "description": "redesign.plan.heading"
+  },
+  "redesignPlanHint": "Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.",
+  "@redesignPlanHint": {
+    "description": "redesign.plan.hint"
+  },
+  "redesignPlanHours": "{count} Std.",
+  "@redesignPlanHours": {
+    "description": "redesign.plan.hours",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanHoursMinutes": "{hours} Std. {minutes} Min",
+  "@redesignPlanHoursMinutes": {
+    "description": "redesign.plan.hoursMinutes",
+    "placeholders": {
+      "hours": {},
+      "minutes": {}
+    }
+  },
+  "redesignPlanInBlock": "im Block „{name}“",
+  "@redesignPlanInBlock": {
+    "description": "redesign.plan.inBlock",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanInsertAfter": "Punkt danach einfügen",
+  "@redesignPlanInsertAfter": {
+    "description": "redesign.plan.insertAfter"
+  },
+  "redesignPlanInvalid": "Noch nicht gespeichert: jeder Punkt braucht eine Dauer",
+  "@redesignPlanInvalid": {
+    "description": "redesign.plan.invalid"
+  },
+  "redesignPlanItemCount": "{count, plural, one {1 Punkt} other {{count} Punkte}}",
+  "@redesignPlanItemCount": {
+    "description": "redesign.plan.itemCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignPlanJoinBlock": "In den Block darüber",
+  "@redesignPlanJoinBlock": {
+    "description": "redesign.plan.joinBlock"
+  },
+  "redesignPlanLeaveBlock": "Aus dem Block nehmen",
+  "@redesignPlanLeaveBlock": {
+    "description": "redesign.plan.leaveBlock"
+  },
+  "redesignPlanLess": "5 Minuten weniger",
+  "@redesignPlanLess": {
+    "description": "redesign.plan.less"
+  },
+  "redesignPlanMinUnit": "Min",
+  "@redesignPlanMinUnit": {
+    "description": "redesign.plan.minUnit"
+  },
+  "redesignPlanMinutes": "{count} Min",
+  "@redesignPlanMinutes": {
+    "description": "redesign.plan.minutes",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanMore": "Weitere Aktionen",
+  "@redesignPlanMore": {
+    "description": "redesign.plan.more"
+  },
+  "redesignPlanMore5": "5 Minuten mehr",
+  "@redesignPlanMore5": {
+    "description": "redesign.plan.more5"
+  },
+  "redesignPlanMoveDown": "Nach unten",
+  "@redesignPlanMoveDown": {
+    "description": "redesign.plan.moveDown"
+  },
+  "redesignPlanMoveUp": "Nach oben",
+  "@redesignPlanMoveUp": {
+    "description": "redesign.plan.moveUp"
+  },
+  "redesignPlanNext": "Nächster Termin",
+  "@redesignPlanNext": {
+    "description": "redesign.plan.next"
+  },
+  "redesignPlanNotes": "Notizen zum Termin",
+  "@redesignPlanNotes": {
+    "description": "redesign.plan.notes"
+  },
+  "redesignPlanOrgFieldHint": "Feld der Organisation · {count} Min",
+  "@redesignPlanOrgFieldHint": {
+    "description": "redesign.plan.orgFieldHint",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanOrgHint": "Erscheint im Plan der Organisation",
+  "@redesignPlanOrgHint": {
+    "description": "redesign.plan.orgHint"
+  },
+  "redesignPlanOrgTemplateHint": "Vorlage der Organisation",
+  "@redesignPlanOrgTemplateHint": {
+    "description": "redesign.plan.orgTemplateHint"
+  },
+  "redesignPlanOther": "Weiteres",
+  "@redesignPlanOther": {
+    "description": "redesign.plan.other"
+  },
+  "redesignPlanPlanPick": "Termin wählen",
+  "@redesignPlanPlanPick": {
+    "description": "redesign.plan.planPick"
+  },
+  "redesignPlanPlanSection": "Plan „{name}“",
+  "@redesignPlanPlanSection": {
+    "description": "redesign.plan.planSection",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanPrev": "Vorheriger Termin",
+  "@redesignPlanPrev": {
+    "description": "redesign.plan.prev"
+  },
+  "redesignPlanPublicLink": "Öffentlicher Link",
+  "@redesignPlanPublicLink": {
+    "description": "redesign.plan.publicLink"
+  },
+  "redesignPlanPublicLinkHint": "Zum Ansehen oder Mitbearbeiten ohne Konto",
+  "@redesignPlanPublicLinkHint": {
+    "description": "redesign.plan.publicLinkHint"
+  },
+  "redesignPlanPublicLinkShared": "Geteilt · zum Ändern oder Beenden tippen",
+  "@redesignPlanPublicLinkShared": {
+    "description": "redesign.plan.publicLinkShared"
+  },
+  "redesignPlanRemoved": "„{name}“ entfernt",
+  "@redesignPlanRemoved": {
+    "description": "redesign.plan.removed",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignPlanSaved": "Gespeichert",
+  "@redesignPlanSaved": {
+    "description": "redesign.plan.saved"
+  },
+  "redesignPlanSaving": "Speichert …",
+  "@redesignPlanSaving": {
+    "description": "redesign.plan.saving"
+  },
+  "redesignPlanSettings": "Für diesen Plan",
+  "@redesignPlanSettings": {
+    "description": "redesign.plan.settings"
+  },
+  "redesignPlanShareExport": "Teilen & Export",
+  "@redesignPlanShareExport": {
+    "description": "redesign.plan.shareExport"
+  },
+  "redesignPlanShareHint": "Mitglieder sehen den Ablauf im Termin",
+  "@redesignPlanShareHint": {
+    "description": "redesign.plan.shareHint"
+  },
+  "redesignPlanStart": "Beginn",
+  "@redesignPlanStart": {
+    "description": "redesign.plan.start"
+  },
+  "redesignPlanTemplateDelete": "Vorlage löschen",
+  "@redesignPlanTemplateDelete": {
+    "description": "redesign.plan.templateDelete"
+  },
+  "redesignPlanTitle": "Ablauf",
+  "@redesignPlanTitle": {
+    "description": "redesign.plan.title"
+  },
+  "redesignPlanTitleHint": "Steht über dem Ablauf und im PDF",
+  "@redesignPlanTitleHint": {
+    "description": "redesign.plan.titleHint"
+  },
+  "redesignPlanUndo": "Rückgängig",
+  "@redesignPlanUndo": {
+    "description": "redesign.plan.undo"
+  },
+  "redesignPlanUntil": "bis {time}",
+  "@redesignPlanUntil": {
+    "description": "redesign.plan.until",
+    "placeholders": {
+      "time": {}
+    }
+  },
   "redesignPultAllOpen": "Alle Offenen da",
   "@redesignPultAllOpen": {
     "description": "redesign.pult.allOpen"
