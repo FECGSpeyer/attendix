@@ -92,13 +92,16 @@
       var lastHref = location.href;
       var cover = null;
       var coverTimer = 0;
-      var coverGen = 0;
       // Account and group the pictures belong to (set by the app). A change
-      // drops them, also pictures still being taken.
+      // drops them, also pictures still being taken, and no pictures are
+      // taken for 2 s after it (the old account's page may still be on
+      // screen) nor while signed out.
       var context = '';
+      var captureBlockedUntil = 0;
       window.attendixSetNavContext = function (key) {
         if (key === context) return;
         context = key;
+        captureBlockedUntil = Date.now() + 2000;
         while (shots.length) {
           try { shots.pop().bitmap.close(); } catch (e) {}
         }
@@ -119,6 +122,8 @@
         }
       }
       function capture(href) {
+        if (!context || context.indexOf('null:') === 0 ||
+            Date.now() < captureBlockedUntil) return;
         var canvas = appCanvas();
         if (!canvas || !canvas.width) return;
         var takenFor = context;
@@ -134,13 +139,13 @@
           }
         }, function () {});
       }
-      function removeCover(gen) {
-        if (gen !== undefined && (!cover || cover.gen !== gen)) return;
+      function removeCover(mark) {
+        if (mark !== undefined && (!cover || cover.mark !== mark)) return;
         clearTimeout(coverTimer);
         if (cover && cover.parentNode) cover.parentNode.removeChild(cover);
         cover = null;
       }
-      function showCover(href) {
+      function showCover(href, mark) {
         var shot = null;
         for (var i = 0; i < shots.length; i++) {
           if (shots[i].href === href) shot = shots[i];
@@ -162,16 +167,16 @@
           return;
         }
         document.body.appendChild(c);
-        c.gen = ++coverGen;
+        c.mark = mark;
         cover = c;
-        coverTimer = setTimeout(removeCover, 700, c.gen);
+        coverTimer = setTimeout(removeCover, 700, mark);
       }
-      // The app has drawn the page (frame done, two more for the GPU).
-      window.attendixUaNavShown = function () {
-        if (!cover) return;
-        var gen = cover.gen;
+      // The app has drawn the page of the step with this mark (frame done,
+      // two more for the GPU). An older step's call leaves a newer cover.
+      window.attendixUaNavShown = function (mark) {
+        if (!cover || cover.mark !== mark) return;
         requestAnimationFrame(function () {
-          requestAnimationFrame(function () { removeCover(gen); });
+          requestAnimationFrame(function () { removeCover(mark); });
         });
       };
 
@@ -198,12 +203,16 @@
         edgeEndAt = 0;
         edgeStartX = -1;
         edgeSwipe = false;
-        if (browserAnimated) window.attendixUaNavAt = Date.now();
+        if (browserAnimated) {
+          // Also the id of this step (strictly increasing).
+          window.attendixUaNavAt =
+            Math.max(Date.now(), (window.attendixUaNavAt || 0) + 1);
+        }
         if (snapshots) {
           try {
             // The page being left, for a swipe forward again.
             if (browserAnimated) capture(lastHref);
-            if (browserAnimated) showCover(location.href);
+            if (browserAnimated) showCover(location.href, window.attendixUaNavAt);
           } catch (err) {}
           lastHref = location.href;
         }

@@ -71,6 +71,10 @@ int? _pendingMark;
 /// snapshot (`web/index.html`).
 void notifyBrowserNavigationShown() {
   if (!kIsWeb) return;
+  // The step this transition belongs to; the script only removes its own
+  // picture, never one of a newer step.
+  final mark = impl.lastBrowserAnimatedNavigationMs();
+  if (mark == null) return;
   final binding = SchedulerBinding.instance;
   var frames = 0;
   void afterFrame(Duration _) {
@@ -80,7 +84,7 @@ void notifyBrowserNavigationShown() {
       binding.scheduleFrame();
       return;
     }
-    impl.browserNavigationShown();
+    impl.browserNavigationShown(mark);
   }
 
   binding.addPostFrameCallback(afterFrame);
