@@ -1,4 +1,5 @@
 import 'package:flutter/foundation.dart';
+import 'package:flutter/scheduler.dart';
 
 import 'browser_navigation_stub.dart'
     if (dart.library.js_interop) 'browser_navigation_web.dart'
@@ -22,4 +23,27 @@ bool browserAnimatedNavigationJustHappened({
   if (at == null) return false;
   final age = DateTime.now().millisecondsSinceEpoch - at;
   return age >= 0 && age < window.inMilliseconds;
+}
+
+/// SWIPE_BACK_WEB: call when a transition was skipped after such a step.
+/// Once the app has drawn the page (two frames: the one that starts the
+/// transition and the one that shows its end), the page script removes the
+/// picture it laid over the app to bridge the moment Safari drops its
+/// snapshot (`web/index.html`).
+void notifyBrowserNavigationShown() {
+  if (!kIsWeb) return;
+  final binding = SchedulerBinding.instance;
+  var frames = 0;
+  void afterFrame(Duration _) {
+    frames++;
+    if (frames < 2) {
+      binding.addPostFrameCallback(afterFrame);
+      binding.scheduleFrame();
+      return;
+    }
+    impl.browserNavigationShown();
+  }
+
+  binding.addPostFrameCallback(afterFrame);
+  binding.scheduleFrame();
 }

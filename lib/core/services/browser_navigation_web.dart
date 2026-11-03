@@ -12,3 +12,12 @@ int? lastBrowserAnimatedNavigationMs() {
     return null;
   }
 }
+
+/// Lets the SWIPE_BACK_WEB script remove its picture of the page.
+void browserNavigationShown() {
+  try {
+    if (globalContext.has('attendixUaNavShown')) {
+      globalContext.callMethod('attendixUaNavShown'.toJS);
+    }
+  } catch (_) {}
+}

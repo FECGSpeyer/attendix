@@ -97,8 +97,10 @@ class _SkippableAnimation extends Animation<double>
     switch (status) {
       case AnimationStatus.forward:
         _skipTo = _shouldSkip() ? 1.0 : null;
+        if (_skipTo != null) notifyBrowserNavigationShown();
       case AnimationStatus.reverse:
         _skipTo = _shouldSkip() ? 0.0 : null;
+        if (_skipTo != null) notifyBrowserNavigationShown();
       case AnimationStatus.completed:
       case AnimationStatus.dismissed:
         _skipTo = null;

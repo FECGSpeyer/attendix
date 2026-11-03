@@ -43,7 +43,13 @@
        the previous page in itself before it fires popstate. Mark those steps
        so the app shows the page without playing its own transition again
        (lib/core/services/browser_navigation.dart). Registered before the
-       Flutter engine, so the mark is set before the app handles popstate. -->
+       Flutter engine, so the mark is set before the app handles popstate.
+
+       iPhone Safari also drops its snapshot right after popstate, before the
+       app has drawn the page – the page swiped away flashed up for a moment.
+       So the app keeps a picture of each page it leaves (last 4) and, after
+       such a swipe, lays it over the app until the app has drawn the page
+       (attendixUaNavShown, called from the app) or 700 ms at most. -->
   <script>
     (function () {
       var EDGE = 30;
@@ -62,10 +68,106 @@
       }
       window.addEventListener('touchend', touchDone, opts);
       window.addEventListener('touchcancel', touchDone, opts);
+
+      // Only Safari in a browser tab swipes through the history (the home
+      // screen app has no swipe; other browsers keep the page until drawn).
+      var snapshots = navigator.vendor === 'Apple Computer, Inc.' &&
+        navigator.maxTouchPoints > 0 && !navigator.standalone &&
+        typeof createImageBitmap === 'function';
+      var shots = [];
+      var lastHref = location.href;
+      var cover = null;
+      var coverTimer = 0;
+
+      function appCanvas() {
+        var pane = document.querySelector('flt-glass-pane');
+        var root = pane && (pane.shadowRoot || pane);
+        var canvases = root ? root.querySelectorAll('canvas') : [];
+        return canvases.length === 1 ? canvases[0] : null;
+      }
+      function forget(href) {
+        for (var i = shots.length - 1; i >= 0; i--) {
+          if (shots[i].href !== href) continue;
+          try { shots[i].bitmap.close(); } catch (e) {}
+          shots.splice(i, 1);
+        }
+      }
+      function capture(href) {
+        var canvas = appCanvas();
+        if (!canvas || !canvas.width) return;
+        createImageBitmap(canvas).then(function (bitmap) {
+          forget(href);
+          shots.push({ href: href, bitmap: bitmap });
+          while (shots.length > 4) {
+            try { shots.shift().bitmap.close(); } catch (e) {}
+          }
+        }, function () {});
+      }
+      function removeCover() {
+        clearTimeout(coverTimer);
+        if (cover && cover.parentNode) cover.parentNode.removeChild(cover);
+        cover = null;
+      }
+      function showCover(href) {
+        var shot = null;
+        for (var i = 0; i < shots.length; i++) {
+          if (shots[i].href === href) shot = shots[i];
+        }
+        var canvas = appCanvas();
+        if (!shot || !canvas) return;
+        var rect = canvas.getBoundingClientRect();
+        removeCover();
+        var c = document.createElement('canvas');
+        c.setAttribute('aria-hidden', 'true');
+        c.width = shot.bitmap.width;
+        c.height = shot.bitmap.height;
+        c.style.cssText = 'position:fixed;z-index:2147483647;pointer-events:none;' +
+          'left:' + rect.left + 'px;top:' + rect.top + 'px;' +
+          'width:' + rect.width + 'px;height:' + rect.height + 'px;';
+        try {
+          c.getContext('2d').drawImage(shot.bitmap, 0, 0);
+        } catch (e) {
+          return;
+        }
+        document.body.appendChild(c);
+        cover = c;
+        coverTimer = setTimeout(removeCover, 700);
+      }
+      // The app has drawn the page (frame done, two more for the GPU).
+      window.attendixUaNavShown = function () {
+        if (!cover) return;
+        requestAnimationFrame(function () {
+          requestAnimationFrame(removeCover);
+        });
+      };
+
+      if (snapshots) {
+        var push = history.pushState;
+        history.pushState = function () {
+          try { capture(lastHref); } catch (e) {}
+          var result = push.apply(this, arguments);
+          lastHref = location.href;
+          return result;
+        };
+        var replace = history.replaceState;
+        history.replaceState = function () {
+          var result = replace.apply(this, arguments);
+          lastHref = location.href;
+          return result;
+        };
+      }
+
       window.addEventListener('popstate', function (e) {
-        if (e.hasUAVisualTransition === true || edgeTouch ||
-            Date.now() - edgeEndAt < 1000) {
-          window.attendixUaNavAt = Date.now();
+        var browserAnimated = e.hasUAVisualTransition === true || edgeTouch ||
+          Date.now() - edgeEndAt < 1000;
+        if (browserAnimated) window.attendixUaNavAt = Date.now();
+        if (snapshots) {
+          try {
+            // The page being left, for a swipe forward again.
+            if (browserAnimated) capture(lastHref);
+            if (browserAnimated) showCover(location.href);
+          } catch (err) {}
+          lastHref = location.href;
         }
       }, true);
     })();
