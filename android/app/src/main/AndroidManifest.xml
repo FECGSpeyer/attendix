@@ -31,7 +31,7 @@
             </intent-filter>
             <!-- DB_REVIEW_REST (F1): App Links like Ionic AndroidManifest.xml.
                  attendix.de/.well-known/assetlinks.json must list this package
-                 (de.attendix.attendix) with its release signing fingerprint. -->
+                 (io.stephanus.attendix) with its signing fingerprint (Play App Signing). -->
             <intent-filter android:autoVerify="true">
                 <action android:name="android.intent.action.VIEW" />
                 <category android:name="android.intent.category.DEFAULT" />

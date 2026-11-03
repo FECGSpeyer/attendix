@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:url_launcher/url_launcher.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -10,6 +9,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/native/native_file_service.dart';
 
 /// iCal feed URL of the Supabase edge function `ical-tenant`
 /// (Ionic settings `openCalendarSubscription()`).
@@ -148,11 +148,10 @@ Future<void> showCalendarSubscriptionDialog(BuildContext context, WidgetRef ref)
               // IOS_PAGES3: Ionic handler returns nothing → the alert closes.
               Navigator.of(ctx).pop();
               try {
-                await launchUrl(
+                await NativeFileService.openLinkInApp(
                   Uri.parse(isIos
                       ? 'https://support.apple.com/de-de/102301'
                       : 'https://support.google.com/calendar/answer/37100?hl=de&co=GENIE.Platform%3DAndroid'),
-                  mode: LaunchMode.externalApplication,
                 );
               } catch (_) {}
             },

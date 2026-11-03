@@ -26,6 +26,16 @@ import '../../../data/repositories/player_absence_repository.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
 import 'widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 
+/// Ionic 4.19.2 `uniqueDates`: keeps one entry per calendar day (local time)
+/// in the original order, so the same day picked twice is created once.
+List<DateTime> uniqueDays(Iterable<DateTime> dates) {
+  final seen = <DateTime>{};
+  return [
+    for (final d in dates)
+      if (seen.add(DateTime(d.year, d.month, d.day))) d,
+  ];
+}
+
 /// What "Termin(e) hinzufügen" creates: one Termin of [type] for every day
 /// in [dates]. Shared by the Termin sheet and the new design.
 class AttendanceCreateInput {
@@ -137,7 +147,8 @@ class AttendanceCreateWriter {
     }
 
     final ids = <int>[];
-    for (final date in input.dates) {
+    // Ionic 4.19.2 `uniqueDates`: one Termin per calendar day.
+    for (final date in uniqueDays(input.dates)) {
       ids.add(await _createSingleAttendance(input, date));
     }
     return ids;

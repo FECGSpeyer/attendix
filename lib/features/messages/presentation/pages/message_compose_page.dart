@@ -18,20 +18,48 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 
 /// Opens the full-screen compose dialog. Returns the new message id when sent.
-Future<String?> openMessageCompose(BuildContext context) {
+/// [preset]: fixed recipients and prefilled text (Ionic 4.18
+/// "Unentschuldigte anschreiben").
+Future<String?> openMessageCompose(BuildContext context, {MessageComposePreset? preset}) {
   return Navigator.of(context, rootNavigator: true).push<String>(
     MaterialPageRoute(
       fullscreenDialog: true,
-      builder: (_) => const MessageComposePage(),
+      builder: (_) => MessageComposePage(preset: preset),
     ),
   );
+}
+
+/// Preset mode of the compose dialog (Ionic MessageComposeComponent inputs
+/// playerIds / attendanceId / allowResponses / recipientsLabel /
+/// presetTitle / presetContent): fixed recipients, prefilled text, linked
+/// to the Termin so recipients can answer. No draft is saved.
+class MessageComposePreset {
+  const MessageComposePreset({
+    required this.playerIds,
+    required this.recipientsLabel,
+    required this.title,
+    required this.content,
+    this.attendanceId,
+    this.allowResponses = false,
+  });
+
+  final List<int> playerIds;
+  final String recipientsLabel;
+  final String title;
+
+  /// Tiptap document.
+  final Map<String, dynamic> content;
+  final int? attendanceId;
+  final bool allowResponses;
 }
 
 enum _Audience { all, groups }
 
 /// Write and send a Mitteilung (port of Ionic `MessageComposeComponent`).
 class MessageComposePage extends ConsumerStatefulWidget {
-  const MessageComposePage({super.key});
+  const MessageComposePage({super.key, this.preset});
+
+  final MessageComposePreset? preset;
 
   @override
   ConsumerState<MessageComposePage> createState() => _MessageComposePageState();
@@ -53,10 +81,23 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
 
   String get _draftKey => 'message-draft-$_tenantId';
 
+  MessageComposePreset? get _preset => widget.preset;
+  bool get _isPreset => _preset?.playerIds.isNotEmpty ?? false;
+
   @override
   void initState() {
     super.initState();
     _tenantId = ref.read(currentTenantIdProvider);
+    if (_isPreset) {
+      _titleController.text = _preset!.title;
+      _quill = QuillController(
+        document: Document.fromJson(TiptapConverter.toDeltaOps(_preset!.content)),
+        selection: const TextSelection.collapsed(offset: 0),
+      );
+      _quill.document.changes.listen((_) => _onContentChange());
+      _loadCounts();
+      return;
+    }
     _quill = QuillController.basic();
     _quill.document.changes.listen((_) => _onContentChange());
     _restoreDraft();
@@ -97,6 +138,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   }
 
   Future<void> _saveDraft() async {
+    if (_isPreset) return;
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setString(
@@ -112,6 +154,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
   }
 
   Future<void> _clearDraft() async {
+    if (_isPreset) return; // keep the user's normal draft
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.remove(_draftKey);
@@ -129,28 +172,34 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
     _quill.document.toDelta().toJson().cast<Map<String, dynamic>>(),
   );
 
-  List<int>? get _groupIds =>
-      _audience == _Audience.groups ? _selectedGroups.toList() : null;
+  List<int>? get _groupIds => !_isPreset && _audience == _Audience.groups
+      ? _selectedGroups.toList()
+      : null;
 
   bool get _canSend =>
       !_sending &&
       _titleController.text.trim().isNotEmpty &&
       TiptapConverter.hasText(_content) &&
       (_push || _email) &&
-      (_audience == _Audience.all || _selectedGroups.isNotEmpty) &&
+      (_isPreset || _audience == _Audience.all || _selectedGroups.isNotEmpty) &&
       (_counts?.recipients ?? 0) > 0;
 
   Future<void> _loadCounts() async {
     final request = ++_countsRequest;
     setState(() => _countsError = false);
-    if (_audience == _Audience.groups && _selectedGroups.isEmpty) {
+    if (!_isPreset && _audience == _Audience.groups && _selectedGroups.isEmpty) {
       setState(() => _counts = const MessageRecipientCounts());
       return;
     }
     try {
       final counts = await ref
           .read(messageRepositoryWithTenantProvider)
-          .getRecipientCounts(groupIds: _groupIds, push: _push, email: _email);
+          .getRecipientCounts(
+            groupIds: _groupIds,
+            push: _push,
+            email: _email,
+            playerIds: _preset?.playerIds,
+          );
       if (mounted && request == _countsRequest) {
         setState(() => _counts = counts);
       }
@@ -205,6 +254,9 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
           groupIds: _groupIds,
           push: _push,
           email: _email,
+          playerIds: _preset?.playerIds,
+          attendanceId: _preset?.attendanceId,
+          allowResponses: _preset?.allowResponses ?? false,
         );
     if (!mounted) return;
     setState(() => _sending = false);
@@ -340,6 +392,14 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
                 ),
               ),
               header(l10n.messagesRecipients),
+              if (_isPreset)
+                _ComposeBox(
+                  child: ListTile(
+                    leading: const Icon(Icons.people_outline),
+                    title: Text(_preset!.recipientsLabel),
+                  ),
+                )
+              else
               _ComposeBox(
                 child: Builder(
                   builder: (context) {

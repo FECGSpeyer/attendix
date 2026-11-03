@@ -57,3 +57,28 @@ bool downloadBytesInBrowser(Uint8List bytes, String fileName) {
       const Duration(seconds: 1), () => web.URL.revokeObjectURL(url));
   return true;
 }
+
+final Set<Object> _unsavedOwners = {};
+bool _unloadListenerAdded = false;
+
+void setUnloadWarning(Object owner, bool unsaved) {
+  if (unsaved) {
+    _unsavedOwners.add(owner);
+  } else {
+    _unsavedOwners.remove(owner);
+  }
+  if (_unloadListenerAdded) return;
+  _unloadListenerAdded = true;
+  try {
+    web.window.addEventListener(
+      'beforeunload',
+      ((web.Event event) {
+        if (_unsavedOwners.isEmpty) return;
+        event.preventDefault();
+        try {
+          (event as web.BeforeUnloadEvent).returnValue = '';
+        } catch (_) {}
+      }).toJS,
+    );
+  } catch (_) {}
+}

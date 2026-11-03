@@ -60,6 +60,8 @@ class PublicPlanRepository extends BaseRepository {
           .select(_sharedAttendanceColumns)
           .eq('id', id)
           .eq('share_key', key)
+          // Ionic 4.17.24: archived Termine are not visible via the link.
+          .eq('archived', false)
           .maybeSingle();
       if (response == null) return null;
       return PlanAttendance.fromJson(response);
@@ -82,6 +84,7 @@ class PublicPlanRepository extends BaseRepository {
           .eq('id', id)
           .eq('share_key', key)
           .eq('share_edit_key', editKey)
+          .eq('archived', false)
           .maybeSingle();
       return response != null;
     } catch (e, stack) {
@@ -109,6 +112,9 @@ class PublicPlanRepository extends BaseRepository {
           .eq('id', id)
           .eq('share_key', key)
           .eq('share_edit_key', editKey)
+          // Ionic 4.17.24: an archived Termin is no longer reachable via
+          // its links, so an edit view that was already open cannot write.
+          .eq('archived', false)
           .select('id');
       if ((rows as List).isEmpty) {
         throw StateError('shared plan of attendance $id is no longer editable');
@@ -252,6 +258,7 @@ class PublicPlanRepository extends BaseRepository {
             .select('id, date, plan, typeInfo, tenantId')
             .inFilter('tenantId', names.keys.toList())
             .eq('is_org_plan', true)
+            .eq('archived', false)
             .not('plan', 'is', null)
             .order('date', ascending: true);
         attendances = (rows as List).map((e) {

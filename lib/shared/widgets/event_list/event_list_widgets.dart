@@ -1139,13 +1139,9 @@ Future<void> openEventNavigation(BuildContext context, String place) async {
 /// Opens an attachment URL in the browser.
 Future<void> openEventAttachment(String url) async {
   try {
-    final uri = Uri.parse(url);
-    // Ionic 4.17.18: installed web apps ignore window.open → real link click.
-    if (kIsWeb) {
-      await NativeFileService.openExternal(uri);
-      return;
-    }
-    await launchUrl(uri, mode: LaunchMode.externalApplication);
+    // Ionic Browser.open: in-app browser in the native app; web: new tab
+    // (4.17.18 installed web apps → real link click).
+    await NativeFileService.openLinkInApp(Uri.parse(url));
   } catch (e) {
     if (kDebugMode) debugPrint('openEventAttachment failed: $e');
   }

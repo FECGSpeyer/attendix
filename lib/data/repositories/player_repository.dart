@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart' show FileOptions;
 
 import '../../core/constants/enums.dart';
 import '../../core/constants/table_names.dart' show SupabaseBuckets;
+import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/profile_image_path.dart';
 import '../models/person/person.dart';
 import '../models/instrument/instrument.dart';
@@ -411,6 +412,53 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       handleError(e, stack, 'updateImage');
       rethrow;
     }
+  }
+
+  /// Ionic 4.19.3 `ImageService.copyProfileImage`: copies a person's picture
+  /// to another player row (handover). Pictures of the `profiles` bucket are
+  /// duplicated to `profiles/<targetId>` so both rows own their file; other
+  /// URLs are reused as they are. Default avatars, empty values and `data:`
+  /// URLs are skipped. Returns the URL written to the target row, or null.
+  Future<String?> copyProfileImage(
+    String? sourceImg,
+    int targetId, {
+    required int targetTenantId,
+  }) async {
+    if (sourceImg == null ||
+        sourceImg.isEmpty ||
+        sourceImg.startsWith('data:') ||
+        sourceImg == kDefaultPersonImage) {
+      return null;
+    }
+    var url = sourceImg;
+    const marker = '/storage/v1/object/public/profiles/';
+    final markerIndex = sourceImg.indexOf(marker);
+    if (markerIndex != -1) {
+      final sourcePath = Uri.decodeComponent(
+          sourceImg.substring(markerIndex + marker.length).split('?').first);
+      final targetPath = profileImageStoragePath(targetId);
+      if (sourcePath.isNotEmpty && sourcePath != targetPath) {
+        final bucket = supabase.storage.from(SupabaseBuckets.profiles);
+        try {
+          await bucket.remove([targetPath]);
+        } catch (_) {
+          // Nothing stored under the new id yet.
+        }
+        try {
+          await bucket.copy(sourcePath, targetPath);
+          // Cache-bust in case an older picture with the same id was cached.
+          url = '${bucket.getPublicUrl(targetPath)}?v=${DateTime.now().millisecondsSinceEpoch}';
+        } catch (e) {
+          debugPrint('copyProfileImage: storage copy failed, keeping URL: $e');
+        }
+      }
+    }
+    await supabase
+        .from('player')
+        .update({'img': url})
+        .eq('id', targetId)
+        .eq('tenantId', targetTenantId);
+    return url;
   }
 
   /// DB_FIX: insert / reactivate payload like Ionic addPlayer:
@@ -1439,11 +1487,16 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final response = await supabase
           .from('person_attendances')
           .select('status, notes, duty_state, '
-              'attendance:attendance_id!inner(id, date, tenantId, '
+              'attendance:attendance_id!inner(id, date, tenantId, archived, '
               'attType:type_id(include_in_average, duty_mode))')
           .eq('person_id', personId)
           .eq('attendance.tenantId', currentTenantId);
-      return List<Map<String, dynamic>>.from(response as List);
+      // Ionic 4.17.24 getPersonAttendances: archived only for admins/responsible.
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
+      return List<Map<String, dynamic>>.from(response as List)
+          .where((row) =>
+              showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
+          .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPersonAttendanceStatsRows');
       rethrow;
@@ -1457,12 +1510,16 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     try {
       var query = supabase
           .from('person_attendances')
-          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId)')
+          .select('*, attendance:attendance_id!inner(id, date, type, typeInfo, type_id, tenantId, archived)')
           .eq('person_id', personId)
           .eq('attendance.tenantId', currentTenantId);
       if (fromDate != null) query = query.gte('attendance.date', fromDate);
       final response = await query;
-      return List<Map<String, dynamic>>.from(response as List);
+      final showArchived = canSeeArchivedAttendances(currentUserRole);
+      return List<Map<String, dynamic>>.from(response as List)
+          .where((row) =>
+              showArchived || !isArchivedRow(row['attendance'] as Map<String, dynamic>?))
+          .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPersonAttendanceHistoryRows');
       rethrow;
@@ -1660,6 +1717,16 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       final createdPerson = Person.fromJson(created);
       await addPlayerToAttendancesByDate(createdPerson,
           tenantId: targetTenantId);
+
+      // Ionic 4.19.3: the new row gets its own copy of the profile picture.
+      if (createdPerson.id != null) {
+        try {
+          await copyProfileImage(player.img, createdPerson.id!,
+              targetTenantId: targetTenantId);
+        } catch (e) {
+          debugPrint('handoverPlayer: copying profile image failed: $e');
+        }
+      }
 
       // 2. Update the source (history; transfer also sets `left`).
       final sourceHistory = List<Map<String, dynamic>>.from(

@@ -1,6 +1,32 @@
 {
   "versions": [
     {
+      "version": "0.36.0",
+      "date": "3.11.2026",
+      "changes": [
+        "✨ Automatische Nachrichten: Regeln schreiben Mitglieder nach einem Termin selbst an (z. B. Unentschuldigte), Mitglieder können einen Grund nachtragen oder \"Ich war doch da\" melden (oben in Mitteilungen)",
+        "✨ Termin-Menü: \"Unentschuldigte anschreiben\" sowie Termine archivieren und wiederherstellen (Admins und Verantwortliche)",
+        "✨ Werke je Termin: In \"Meine Termine\" und im Elternportal zeigt jeder Termin seine Werke, mit Noten öffnen und Drucken",
+        "✨ Tablet und Computer: Seitenleiste statt Tab-Leiste, Termine zweispaltig",
+        "✨ Dateiablage: Mehrere Dateien auswählen und in andere Ordner verschieben",
+        "✨ Ablaufplan: \"Aktuelle Werke\" warnt, wenn keine da sind, und fragt bei schon eingefügten Werken nach",
+        "🐛 Termine werden pro Tag nur einmal angelegt, auch bei Doppelklick",
+        "🐛 Beim Übertragen in eine andere Gruppe wird das Profilbild mitgenommen",
+        "🐛 iOS-App auf dem Mac: Noten-Download öffnet den Browser",
+        "✨ Links zu Werken, Anhängen und Hilfeseiten öffnen sich in der App statt im Browser",
+        "✨ Werkhistorie: Datum lässt sich auch eintippen (TT.MM.JJJJ)",
+        "✨ Meine Termine: Die Dienst-Kacheln springen beim Antippen zum passenden Abschnitt",
+        "✨ Übertragen oder Kopieren einer Person wird gleich gestoppt, wenn es sie in der Zielgruppe schon gibt",
+        "✨ Web: Beim Schließen des Tabs warnt die App vor ungespeicherten Einstellungen",
+        "✨ Hilfe: neue Artikel zu automatischen Nachrichten, Archiv, Werken je Termin und Seitenleiste",
+        "🐛 Kalender-Abo der Organisationspläne kommt in der App-Sprache",
+        "🐛 Dirigenten sind auch ohne Netz verfügbar",
+        "✨ iPhone: Laufender Ablaufplan als Live-Aktivität auf dem Sperrbildschirm und in der Dynamic Island",
+        "✨ iPhone und Android: Die App nutzt die App-ID der bisherigen Attendix-App und kommt später als Update im Store, Push läuft weiter"
+
+      ]
+    },
+    {
       "version": "0.35.1",
       "date": "3.11.2026",
       "changes": [

@@ -27,6 +27,7 @@ import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 
 /// Attendance Type Edit Page
@@ -185,6 +186,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   @override
   void dispose() {
+    setUnloadWarning(this, false);
     _nameController.dispose();
     _durationDaysController.dispose();
     _planningTitleController.dispose();
@@ -207,6 +209,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       );
     }
 
+    // Ionic beforeunload: closing/reloading the browser tab warns too.
+    setUnloadWarning(this, _hasChanges);
     return PopScope(
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, _) {

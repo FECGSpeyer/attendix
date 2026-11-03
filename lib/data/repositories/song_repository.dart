@@ -15,6 +15,7 @@ import '../../core/services/attendance_detail_cache.dart'
 import '../../core/services/offline_queue_service.dart'
     show connectivityCheckProvider;
 import '../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
+import '../../core/utils/paged_query.dart';
 import '../models/song/song.dart';
 import '../models/song/song_additional_field.dart';
 import 'base_repository.dart';
@@ -625,6 +626,48 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
       return _historyFromRow(response);
     } catch (e, stack) {
       handleError(e, stack, 'addSongHistory');
+      rethrow;
+    }
+  }
+
+  /// Ionic 4.17.26 `HistoryService.getHistoryForAttendances`: Werke of
+  /// several Termine for the members' views (song id, Termin, conductor
+  /// name). Queried in chunks of 150 ids so long Termin lists stay below the
+  /// URL length limit; always restricted to the current tenant.
+  Future<List<SongHistory>> getHistoryForAttendances(List<int> attendanceIds) async {
+    final ids = attendanceIds.where((id) => id != 0).toSet().toList();
+    if (ids.isEmpty) return const [];
+    try {
+      final result = <SongHistory>[];
+      final tenantId = currentTenantId;
+      for (var i = 0; i < ids.length; i += 150) {
+        final chunk = ids.sublist(i, i + 150 > ids.length ? ids.length : i + 150);
+        // Paged as well: one chunk can hold more rows than PostgREST
+        // returns at once (max-rows 1000).
+        final rows = await fetchAllPages<dynamic>((from, to) async => await supabase
+            .from('history')
+            .select('id, songId, attendance_id, otherConductor, person:person_id(firstName, lastName)')
+            .eq('tenantId', tenantId)
+            .inFilter('attendance_id', chunk)
+            .order('id', ascending: true)
+            .range(from, to) as List);
+        for (final row in rows) {
+          final map = row as Map<String, dynamic>;
+          final person = map['person'];
+          result.add(SongHistory(
+            id: (map['id'] as num?)?.toInt(),
+            songId: (map['songId'] as num?)?.toInt(),
+            attendanceId: (map['attendance_id'] as num?)?.toInt(),
+            otherConductor: map['otherConductor'] as String?,
+            conductorName: person is Map
+                ? '${person['firstName'] ?? ''} ${person['lastName'] ?? ''}'.trim()
+                : (map['otherConductor'] as String? ?? ''),
+          ));
+        }
+      }
+      return result;
+    } catch (e, stack) {
+      handleError(e, stack, 'getHistoryForAttendances');
       rethrow;
     }
   }

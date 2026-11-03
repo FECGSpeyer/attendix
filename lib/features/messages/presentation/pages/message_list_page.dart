@@ -4,6 +4,7 @@ import 'package:flutter_slidable/flutter_slidable.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/auto_message_providers.dart';
 import '../../../../core/providers/message_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -56,7 +57,10 @@ class MessageListPage extends ConsumerWidget {
         child: const Icon(Icons.add),
       )),
       body: RefreshIndicator.adaptive(
-        onRefresh: () => ref.refresh(messagesProvider.future),
+        onRefresh: () {
+          ref.invalidate(autoMessageRulesProvider);
+          return ref.refresh(messagesProvider.future);
+        },
         child: messagesAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error:
@@ -71,8 +75,10 @@ class MessageListPage extends ConsumerWidget {
             if (messages.isEmpty) {
               return ListView(
                 physics: const AlwaysScrollableScrollPhysics(),
+                padding: const EdgeInsets.all(AppDimensions.paddingM),
                 children: [
-                  const SizedBox(height: 48),
+                  const _AutoMessagesEntry(),
+                  const SizedBox(height: 32),
                   _MessagesEmptyState(onCompose: () => _compose(context)),
                 ],
               );
@@ -83,6 +89,7 @@ class MessageListPage extends ConsumerWidget {
               // UX_SETTINGS (WAVE 8): message-list.page.html — list header
               // "Gesendet" + one inset list of sliding detail items.
               children: [
+                const _AutoMessagesEntry(),
                 SettingsListSection(
                   title: l10n.messagesSent,
                   icons: false,
@@ -100,6 +107,28 @@ class MessageListPage extends ConsumerWidget {
           },
         ),
       ),
+    );
+  }
+}
+
+/// Ionic 4.18 (302dc143): link to the automatic messages with the number
+/// of switched-on rules, above the sent messages.
+class _AutoMessagesEntry extends ConsumerWidget {
+  const _AutoMessagesEntry();
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final active = ref.watch(activeAutoMessageRulesCountProvider).valueOrNull;
+    return SettingsListSection(
+      children: [
+        SettingsListTile(
+          icon: Icons.timer_outlined,
+          iconColor: AppColors.primary,
+          title: context.l10n.messagesAutoEntry,
+          subtitle: active == null ? null : context.l10n.messagesAutoActive(active),
+          onTap: () => context.push('/settings/auto-messages'),
+        ),
+      ],
     );
   }
 }

@@ -26,6 +26,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 /// German holiday regions
 const _holidayRegions = [
@@ -106,6 +107,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   @override
   void dispose() {
+    setUnloadWarning(this, false);
     _shortNameController.dispose();
     _longNameController.dispose();
     _practiceStartController.dispose();
@@ -408,6 +410,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
 
   @override
   Widget build(BuildContext context) {
+    // Ionic beforeunload: closing/reloading the browser tab warns too.
+    setUnloadWarning(this, _hasChanges);
     return PopScope(
       canPop: !_hasChanges,
       onPopInvokedWithResult: (didPop, _) {

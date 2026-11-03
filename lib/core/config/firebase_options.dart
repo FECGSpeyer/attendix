@@ -38,7 +38,7 @@ class DefaultFirebaseOptions {
   static const String _iosAppId = String.fromEnvironment('FIREBASE_IOS_APP_ID');
   static const String _iosBundleId = String.fromEnvironment(
     'FIREBASE_IOS_BUNDLE_ID',
-    defaultValue: 'de.attendix.attendix',
+    defaultValue: 'io.stephanus.attendix',
   );
   static const String _storageBucket =
       String.fromEnvironment('FIREBASE_STORAGE_BUCKET');

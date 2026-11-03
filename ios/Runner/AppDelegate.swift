@@ -80,11 +80,15 @@ public class PlatformInfoPlugin: NSObject, FlutterPlugin {
   }
 
   public func handle(_ call: FlutterMethodCall, result: @escaping FlutterResult) {
-    guard call.method == "isiOSAppOnMac" else {
+    switch call.method {
+    case "isiOSAppOnMac":
+      result(ProcessInfo.processInfo.isiOSAppOnMac)
+    case "appVersion":
+      // STORE_UPDATE: installed version (--build-name) for the update check
+      result(Bundle.main.infoDictionary?["CFBundleShortVersionString"] as? String)
+    default:
       result(FlutterMethodNotImplemented)
-      return
     }
-    result(ProcessInfo.processInfo.isiOSAppOnMac)
   }
 }
 // MAC_FILES end

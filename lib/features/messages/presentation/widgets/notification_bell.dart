@@ -17,13 +17,19 @@ import '../../../../data/models/user_notification/user_notification.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/layout/ion_modal_handle.dart';
+import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 
 /// Notification bell for page app bars (port of Ionic `NotificationBellComponent`).
 ///
 /// Shows the unread count of the current instance and opens the notification
 /// center (current instance / all instances) as a bottom sheet.
-class NotificationBell extends ConsumerWidget {
-  const NotificationBell({super.key});
+class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
+  const NotificationBell({super.key, this.inSideNav = false});
+
+  /// SIDE_NAV: the bell in the side panel's head. While the side panel is
+  /// shown, the bells of the pages are hidden (Ionic
+  /// `body.side-panel-active app-notification-bell:not(.in-side-nav)`).
+  final bool inSideNav;
 
   /// REDESIGN: opens the notification centre from another button (the
   /// bell on "Heute" of the new design).
@@ -147,6 +153,7 @@ class NotificationBell extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    if (!inSideNav && SideNavScope.isActive(context)) return const SizedBox.shrink();
     ref.watch(userNotificationsRealtimeProvider);
     final unread = ref.watch(unreadNotificationCountProvider).valueOrNull ?? 0;
 

@@ -391,7 +391,14 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
 
   void _onAttendanceUpdate(Map<String, dynamic> row) {
     final att = _att;
-    if (!mounted || att == null || row['plan'] == null) return;
+    if (!mounted || att == null) return;
+    // Ionic 4.17.24: archiving the Termin closes an open link view (the
+    // repository also refuses writes to archived Termine).
+    if (row['archived'] == true) {
+      _onLinkGone();
+      return;
+    }
+    if (row['plan'] == null) return;
     // SOL_FIX26: a delayed echo of an older own write would re-apply an
     // older state (and a follow-up save would store it): ignore it.
     if (_ownWrites.classify(row) == EchoKind.olderOwn) return;

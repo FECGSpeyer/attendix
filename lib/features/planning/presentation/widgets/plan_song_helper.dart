@@ -37,8 +37,13 @@ class PlanSongHelper {
     required List<SongHistory> history,
     required List<Song> songs,
     required String Function(Song song) prefix,
+    bool includeExisting = false,
   }) {
-    final existing = fields.map((f) => int.tryParse(f.id)).whereType<int>().toSet();
+    // Ionic 4.17.25: [includeExisting] adds the current Werke again even when
+    // they are already in the open plan ("Erneut hinzufügen").
+    final existing = includeExisting
+        ? <int>{}
+        : fields.map((f) => int.tryParse(f.id)).whereType<int>().toSet();
     final result = <PlanField>[];
     for (final h in history) {
       final id = h.songId;

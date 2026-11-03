@@ -61,6 +61,11 @@ _$AttendanceImpl _$$AttendanceImplFromJson(
     json['attachment_name'],
   ),
   dutyRequired: const _FlexibleIntConverter().fromJson(json['duty_required']),
+  archived: json['archived'] == null
+      ? false
+      : const _FlexibleBoolConverter().fromJson(json['archived']),
+  archivedAt: const _FlexibleStringConverter().fromJson(json['archived_at']),
+  archivedBy: const _FlexibleStringConverter().fromJson(json['archived_by']),
 );
 
 Map<String, dynamic> _$$AttendanceImplToJson(
@@ -108,6 +113,9 @@ Map<String, dynamic> _$$AttendanceImplToJson(
     instance.attachmentName,
   ),
   'duty_required': const _FlexibleIntConverter().toJson(instance.dutyRequired),
+  'archived': const _FlexibleBoolConverter().toJson(instance.archived),
+  'archived_at': const _FlexibleStringConverter().toJson(instance.archivedAt),
+  'archived_by': const _FlexibleStringConverter().toJson(instance.archivedBy),
 };
 
 _$PersonAttendanceImpl _$$PersonAttendanceImplFromJson(
