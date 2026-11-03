@@ -11,6 +11,13 @@
       ]
     },
     {
+      "version": "0.36.2",
+      "date": "3.11.2026",
+      "changes": [
+        "🐛 Web-App: Nach dem Zurückwischen in Safari verschwindet das Seitenbild auch bei Tabwechseln sofort; nach einem Konto- oder Gruppenwechsel werden Seitenbilder erst wieder aufgenommen, wenn die neue Ansicht gezeichnet ist"
+      ]
+    },
+    {
       "version": "0.36.1",
       "date": "3.11.2026",
       "changes": [
