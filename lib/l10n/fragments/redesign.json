@@ -732,7 +732,6 @@
         "removed": "„{name}“ entfernt",
         "undo": "Rückgängig",
         "inBlock": "im Block „{name}“",
-        "blockRange": "{range} · {count}",
         "more": "Weitere Aktionen",
         "shareExport": "Teilen & Export",
         "publicLink": "Öffentlicher Link",
@@ -765,7 +764,11 @@
         "orgTemplateHint": "Vorlage der Organisation",
         "heading": "Überschrift",
         "afterBlock": "Punkt nach dem Block einfügen",
-        "minUnit": "Min"
+        "minUnit": "Min",
+        "hours": "{count} Std.",
+        "hoursMinutes": "{hours} Std. {minutes} Min",
+        "less": "5 Minuten weniger",
+        "more5": "5 Minuten mehr"
       }
     }
   },
@@ -1502,7 +1505,6 @@
         "removed": "“{name}” removed",
         "undo": "Undo",
         "inBlock": "in block “{name}”",
-        "blockRange": "{range} · {count}",
         "more": "More actions",
         "shareExport": "Share & export",
         "publicLink": "Public link",
@@ -1535,7 +1537,11 @@
         "orgTemplateHint": "Organisation template",
         "heading": "Heading",
         "afterBlock": "Insert item after the block",
-        "minUnit": "min"
+        "minUnit": "min",
+        "hours": "{count} h",
+        "hoursMinutes": "{hours} h {minutes} min",
+        "less": "5 minutes less",
+        "more5": "5 minutes more"
       }
     }
   }

@@ -90,7 +90,7 @@ extension _PlanningBeta on _PlanningPageState {
       // Termin with ‹ › (Ionic "Vorheriger" / "Nächster"); tap: choose.
       Row(
         children: [
-          _rdIconButton(Icons.chevron_left, l10n.redesignPlanPrev, () => _navigate(-1)),
+          _rdArrow(Icons.chevron_left, l10n.redesignPlanPrev, () => _navigate(-1)),
           Expanded(
             child: Semantics(
               button: true,
@@ -113,7 +113,7 @@ extension _PlanningBeta on _PlanningPageState {
               ),
             ),
           ),
-          _rdIconButton(Icons.chevron_right, l10n.redesignPlanNext, () => _navigate(1)),
+          _rdArrow(Icons.chevron_right, l10n.redesignPlanNext, () => _navigate(1)),
         ],
       ),
       _rdStatus(),
@@ -178,33 +178,27 @@ extension _PlanningBeta on _PlanningPageState {
               onTap: () => _rdSetOrgPlan(!_isOrgPlan),
               trailing: Switch.adaptive(value: _isOrgPlan, onChanged: _rdSetOrgPlan),
             ),
-          Padding(
-            padding: const EdgeInsets.fromLTRB(14, 10, 14, 10),
-            child: Row(
+          RdFieldRow(
+            label: l10n.redesignPlanHeading,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                const RdRowIcon(Icons.title),
-                const SizedBox(width: 12),
-                Expanded(
-                  child: Focus(
-                    onFocusChange: (focused) {
-                      if (!focused) _onTitleFocusLost();
-                    },
-                    child: TextField(
-                      key: const Key('rd-plan-heading'),
-                      controller: _titleController,
-                      textInputAction: TextInputAction.done,
-                      onSubmitted: (_) => FocusManager.instance.primaryFocus?.unfocus(),
-                      style: TextStyle(fontSize: 16, color: p.text),
-                      decoration: InputDecoration(
-                        labelText: l10n.redesignPlanHeading,
-                        hintText: l10n.planningDefaultTitle,
-                        helperText: l10n.redesignPlanTitleHint,
-                        isDense: true,
-                        border: InputBorder.none,
-                      ),
-                    ),
+                Focus(
+                  onFocusChange: (focused) {
+                    if (!focused) _onTitleFocusLost();
+                  },
+                  child: TextField(
+                    key: const Key('rd-plan-heading'),
+                    controller: _titleController,
+                    textCapitalization: TextCapitalization.sentences,
+                    textInputAction: TextInputAction.done,
+                    onSubmitted: (_) => FocusManager.instance.primaryFocus?.unfocus(),
+                    style: TextStyle(fontSize: 17, color: p.text),
+                    decoration: rdInputDecoration(p, l10n.planningDefaultTitle),
                   ),
                 ),
+                const SizedBox(height: 2),
+                Text(l10n.redesignPlanTitleHint, style: RdType.meta(p, size: 12)),
               ],
             ),
           ),
@@ -220,7 +214,7 @@ extension _PlanningBeta on _PlanningPageState {
     ];
   }
 
-  Widget _rdIconButton(IconData icon, String label, VoidCallback onPressed) => IconButton(
+  Widget _rdArrow(IconData icon, String label, VoidCallback onPressed) => IconButton(
     tooltip: label,
     onPressed: onPressed,
     constraints: const BoxConstraints(minWidth: 44, minHeight: 44),
@@ -305,10 +299,11 @@ extension _PlanningBeta on _PlanningPageState {
     );
   }
 
-  static String _rdDuration(int minutes) {
-    if (minutes < 60) return '$minutes min';
+  String _rdDuration(int minutes) {
+    final l10n = context.l10n;
+    if (minutes < 60) return l10n.redesignPlanMinutes(minutes);
     final rest = minutes % 60;
-    return rest == 0 ? '${minutes ~/ 60} h' : '${minutes ~/ 60} h $rest min';
+    return rest == 0 ? l10n.redesignPlanHours(minutes ~/ 60) : l10n.redesignPlanHoursMinutes(minutes ~/ 60, rest);
   }
 
   // ---------------------------------------------------------------------------
@@ -391,7 +386,7 @@ extension _PlanningBeta on _PlanningPageState {
       index: row,
       child: Semantics(
         label: l10n.redesignPlanDrag,
-        child: SizedBox(width: 40, height: 44, child: Icon(Icons.drag_indicator, color: p.text2)),
+        child: SizedBox(width: 44, height: 44, child: Icon(Icons.drag_indicator, color: p.text2)),
       ),
     );
 
@@ -445,14 +440,23 @@ extension _PlanningBeta on _PlanningPageState {
     final minutes = PlanUtils.displayMinutes(field, _fields);
     final open = _rdDurationIndex == index;
     Widget? trailing;
-    if (isAgenda) {
-      trailing = _canAddTopics ? TextButton(onPressed: _openAgendaPicker, child: Text(l10n.attendanceAddTopics)) : null;
-    } else if (isHead) {
+    if (isAgenda && _canAddTopics) {
+      sub.add(
+        Align(
+          alignment: Alignment.centerLeft,
+          child: TextButton(onPressed: _openAgendaPicker, child: Text(l10n.attendanceAddTopics)),
+        ),
+      );
+    }
+    if (isHead) {
       trailing = _RdDurationPill(label: l10n.redesignPlanMinutes(minutes), selected: false);
     } else if (!isNote) {
       trailing = Semantics(
         button: true,
-        label: l10n.redesignPlanDurationLabel(field.name, field.time),
+        label: l10n.redesignPlanDurationLabel(
+          PlanUtils.fieldDisplayName(field, numbers),
+          field.time.trim().isEmpty ? '–' : field.time.trim(),
+        ),
         excludeSemantics: true,
         child: _RdDurationPill(
           key: ValueKey('rd-plan-dur-$index'),
@@ -524,7 +528,7 @@ extension _PlanningBeta on _PlanningPageState {
         children: [
           InkWell(
             key: ValueKey('rd-plan-row-$index'),
-            onTap: isAgenda ? null : () => isHead ? _rdBlockSheet(index) : _rdItemSheet(index),
+            onTap: () => isHead ? _rdBlockSheet(index) : _rdItemSheet(index),
             child: content,
           ),
           if (open)
@@ -619,11 +623,14 @@ extension _PlanningBeta on _PlanningPageState {
   }
 
   /// Removes fields with "Rückgängig" in the SnackBar (like "Werk entfernen").
+  /// Same row; the Gemeinde App uid a write may add meanwhile does not count.
+  static bool _rdSame(PlanField a, PlanField b) => a.copyWith(uid: null) == b.copyWith(uid: null);
+
   void _rdRemove(List<PlanField> next, String name) {
     final before = _fields;
     final loadGen = _loadGen;
     _rdApply(next);
-    final after = _fields;
+    final editGen = _editGen;
     final messenger = ScaffoldMessenger.maybeOf(context);
     if (messenger == null) return;
     final l10n = context.l10n;
@@ -638,7 +645,7 @@ extension _PlanningBeta on _PlanningPageState {
             label: l10n.redesignPlanUndo,
             onPressed: () {
               // Only while nothing else changed the plan meanwhile.
-              if (!mounted || loadGen != _loadGen || !identical(_fields, after)) return;
+              if (!mounted || loadGen != _loadGen || editGen != _editGen) return;
               _rdApply(before);
             },
           ),
@@ -656,20 +663,24 @@ extension _PlanningBeta on _PlanningPageState {
   /// then moved to the chosen place.
   Future<void> _rdAdd({int? after, String? group}) async {
     final l10n = context.l10n;
-    final subtitle =
-        after == null || after >= _fields.length
-            ? l10n.redesignPlanAddEnd
-            : l10n.redesignPlanAddAfter(_fields[after].name);
+    if (after != null && after >= _fields.length) after = null;
+    final anchor = after == null ? null : _fields[after];
+    final loadGen = _loadGen;
+    final subtitle = anchor == null ? l10n.redesignPlanAddEnd : l10n.redesignPlanAddAfter(anchor.name);
     final action = await _rdAddSheet(subtitle);
     if (action == null || !mounted) return;
     final before = [..._fields];
-    final loadGen = _loadGen;
+    // The plan changed while the sheet was open: add at the end.
+    if (after != null && (loadGen != _loadGen || after >= before.length || !_rdSame(before[after], anchor!))) {
+      after = null;
+    }
+    if (group != null && !before.any((f) => f.id == group)) group = null;
     await _runAddAction(action);
     if (!mounted || after == null || loadGen != _loadGen) return;
     final now = _fields;
     if (now.length <= before.length) return;
     for (var i = 0; i < before.length; i++) {
-      if (now[i] != before[i]) return; // replaced (Vorlage): nothing to move
+      if (!_rdSame(now[i], before[i])) return; // replaced (Vorlage): nothing to move
     }
     var tail = now.sublist(before.length);
     var pos = (after + 1).clamp(0, before.length);
@@ -680,10 +691,16 @@ extension _PlanningBeta on _PlanningPageState {
       join = null;
     }
     if (join != null) {
-      tail = [for (final f in tail) PlanUtils.isGroupHead(f) || f.groupId != null ? f : f.copyWith(groupId: join)];
+      tail = [
+        for (final f in tail)
+          // The Tagesordnung marker never sits inside a block.
+          PlanUtils.isGroupHead(f) || PlanUtils.isAgendaPlaceholder(f) || f.groupId != null
+              ? f
+              : f.copyWith(groupId: join),
+      ];
       _rdCollapsed.remove(join);
     }
-    _rdApply([...before.sublist(0, pos), ...tail, ...before.sublist(pos)]);
+    _rdApply([...now.sublist(0, pos), ...tail, ...now.sublist(pos, before.length)]);
   }
 
   Future<String?> _rdAddSheet(String subtitle) {
@@ -799,21 +816,24 @@ extension _PlanningBeta on _PlanningPageState {
       if (head != null) l10n.redesignPlanInBlock(head.name),
     ].join(' · ');
     final canIndent = PlanUtils.canIndent(_fields, index);
+    final isAgenda = PlanUtils.isAgendaPlaceholder(field);
     final action = await _rdSheet<String>(
-      title: field.name,
+      title: isAgenda ? l10n.planningAgendaInsertPos : field.name,
       subtitle: meta.isEmpty ? null : meta,
       builder:
           (ctx, pop) => [
             RdGroupedList(
               children: [
-                _rdSheetRow(
-                  Icons.edit_outlined,
-                  l10n.redesignPlanEdit,
-                  isNote ? null : l10n.redesignPlanEditHint,
-                  () => pop('edit'),
-                  key: const Key('rd-plan-item-edit'),
-                ),
-                _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
+                if (!isAgenda) ...[
+                  _rdSheetRow(
+                    Icons.edit_outlined,
+                    l10n.redesignPlanEdit,
+                    isNote ? null : l10n.redesignPlanEditHint,
+                    () => pop('edit'),
+                    key: const Key('rd-plan-item-edit'),
+                  ),
+                  _rdSheetRow(Icons.add, l10n.redesignPlanInsertAfter, null, () => pop('insert')),
+                ],
                 if (index > 0) _rdSheetRow(Icons.arrow_upward, l10n.redesignPlanMoveUp, null, () => pop('up')),
                 if (index < _fields.length - 1)
                   _rdSheetRow(Icons.arrow_downward, l10n.redesignPlanMoveDown, null, () => pop('down')),
@@ -843,7 +863,7 @@ extension _PlanningBeta on _PlanningPageState {
           ],
     );
     // The plan may have changed meanwhile (draft restored, reload).
-    if (action == null || !mounted || index >= _fields.length || _fields[index] != field) return;
+    if (action == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], field)) return;
     switch (action) {
       case 'edit':
         await _rdEditField(index);
@@ -888,7 +908,7 @@ extension _PlanningBeta on _PlanningPageState {
               ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: _beamerFileOf(field))
               : null,
     );
-    if (result == null || !mounted || index >= _fields.length || _fields[index] != field) return;
+    if (result == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], field)) return;
     final updated = [..._fields];
     updated[index] =
         isNote
@@ -917,10 +937,10 @@ extension _PlanningBeta on _PlanningPageState {
     final end = PlanUtils.lastIndexOfGroup(_fields, head.id);
     final action = await _rdSheet<String>(
       title: head.name,
-      subtitle: l10n.redesignPlanBlockRange(
-        start == null ? '' : PlanUtils.groupRange(start, _fields, index),
+      subtitle: [
+        if (start != null) PlanUtils.groupRange(start, _fields, index),
         l10n.redesignPlanItemCount(children.length),
-      ),
+      ].join(' · '),
       builder:
           (ctx, pop) => [
             RdGroupedList(
@@ -962,7 +982,7 @@ extension _PlanningBeta on _PlanningPageState {
             ),
           ],
     );
-    if (action == null || !mounted || index >= _fields.length || _fields[index] != head) return;
+    if (action == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], head)) return;
     switch (action) {
       case 'edit':
         final r = await showPlanFieldDialog(
@@ -1036,7 +1056,7 @@ extension _PlanningBeta on _PlanningPageState {
                     child: Text(ctx.l10n.planningOnlyDissolve),
                   ),
                   FilledButton(
-                    style: FilledButton.styleFrom(backgroundColor: Theme.of(ctx).colorScheme.error),
+                    style: FilledButton.styleFrom(backgroundColor: ctx.rd.absent, foregroundColor: ctx.rd.onStatus),
                     onPressed: () => Navigator.pop(ctx, 'all'),
                     child: Text(ctx.l10n.planningDeleteAll),
                   ),
@@ -1506,7 +1526,7 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
           const SizedBox(height: 10),
           Row(
             children: [
-              step(Icons.remove, '−5', m % 5 == 0 ? m - 5 : m - m % 5),
+              step(Icons.remove, l10n.redesignPlanLess, m % 5 == 0 ? m - 5 : m - m % 5),
               const SizedBox(width: 8),
               Expanded(
                 child: TextField(
@@ -1521,19 +1541,24 @@ class _RdDurationEditorState extends State<_RdDurationEditor> {
                     isDense: true,
                     filled: true,
                     fillColor: p.surface,
-                    suffixText:
-                        start == null
-                            ? l10n.redesignPlanMinUnit
-                            : '${l10n.redesignPlanMinUnit} · ${l10n.redesignPlanUntil(PlanUtils.formatMinutes(start + m))}',
+                    suffixText: l10n.redesignPlanMinUnit,
                     border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
                   ),
                   onChanged: widget.onChanged,
                 ),
               ),
               const SizedBox(width: 8),
-              step(Icons.add, '+5', m + (5 - m % 5)),
+              step(Icons.add, l10n.redesignPlanMore5, m + (5 - m % 5)),
             ],
           ),
+          if (start != null) ...[
+            const SizedBox(height: 6),
+            Text(
+              l10n.redesignPlanUntil(PlanUtils.formatMinutes(start + m)),
+              textAlign: TextAlign.center,
+              style: RdType.meta(p, size: 13),
+            ),
+          ],
         ],
       ),
     );

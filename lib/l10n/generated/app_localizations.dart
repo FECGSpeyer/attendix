@@ -18233,12 +18233,6 @@ abstract class AppLocalizations {
   /// **'Termin'**
   String get redesignPlanBack;
 
-  /// redesign.plan.blockRange
-  ///
-  /// In de, this message translates to:
-  /// **'{range} · {count}'**
-  String redesignPlanBlockRange(Object range, Object count);
-
   /// redesign.plan.blockTemplateHint
   ///
   /// In de, this message translates to:
@@ -18359,6 +18353,18 @@ abstract class AppLocalizations {
   /// **'Tipp auf die Dauer ändert sie direkt, Tipp auf einen Punkt öffnet alles Weitere. Am Griff halten und ziehen sortiert um.'**
   String get redesignPlanHint;
 
+  /// redesign.plan.hours
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Std.'**
+  String redesignPlanHours(Object count);
+
+  /// redesign.plan.hoursMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{hours} Std. {minutes} Min'**
+  String redesignPlanHoursMinutes(Object hours, Object minutes);
+
   /// redesign.plan.inBlock
   ///
   /// In de, this message translates to:
@@ -18395,6 +18401,12 @@ abstract class AppLocalizations {
   /// **'Aus dem Block nehmen'**
   String get redesignPlanLeaveBlock;
 
+  /// redesign.plan.less
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten weniger'**
+  String get redesignPlanLess;
+
   /// redesign.plan.minUnit
   ///
   /// In de, this message translates to:
@@ -18412,6 +18424,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Weitere Aktionen'**
   String get redesignPlanMore;
+
+  /// redesign.plan.more5
+  ///
+  /// In de, this message translates to:
+  /// **'5 Minuten mehr'**
+  String get redesignPlanMore5;
 
   /// redesign.plan.moveDown
   ///

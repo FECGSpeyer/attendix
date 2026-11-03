@@ -11066,11 +11066,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanBack => 'Event';
 
   @override
-  String redesignPlanBlockRange(Object range, Object count) {
-    return '$range · $count';
-  }
-
-  @override
   String redesignPlanBlockTemplateHint(Object count) {
     return 'Block · $count min';
   }
@@ -11140,6 +11135,16 @@ class AppLocalizationsEn extends AppLocalizations {
       'Tap a duration to change it, tap an item for everything else. Hold the handle and drag to reorder.';
 
   @override
+  String redesignPlanHours(Object count) {
+    return '$count h';
+  }
+
+  @override
+  String redesignPlanHoursMinutes(Object hours, Object minutes) {
+    return '$hours h $minutes min';
+  }
+
+  @override
   String redesignPlanInBlock(Object name) {
     return 'in block “$name”';
   }
@@ -11169,6 +11174,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignPlanLeaveBlock => 'Take out of the block';
 
   @override
+  String get redesignPlanLess => '5 minutes less';
+
+  @override
   String get redesignPlanMinUnit => 'min';
 
   @override
@@ -11178,6 +11186,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignPlanMore => 'More actions';
+
+  @override
+  String get redesignPlanMore5 => '5 minutes more';
 
   @override
   String get redesignPlanMoveDown => 'Move down';

@@ -13926,14 +13926,6 @@
   "@redesignPlanBack": {
     "description": "redesign.plan.back"
   },
-  "redesignPlanBlockRange": "{range} · {count}",
-  "@redesignPlanBlockRange": {
-    "description": "redesign.plan.blockRange",
-    "placeholders": {
-      "range": {},
-      "count": {}
-    }
-  },
   "redesignPlanBlockTemplateHint": "Block · {count} Min",
   "@redesignPlanBlockTemplateHint": {
     "description": "redesign.plan.blockTemplateHint",
@@ -14028,6 +14020,21 @@
   "@redesignPlanHint": {
     "description": "redesign.plan.hint"
   },
+  "redesignPlanHours": "{count} Std.",
+  "@redesignPlanHours": {
+    "description": "redesign.plan.hours",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignPlanHoursMinutes": "{hours} Std. {minutes} Min",
+  "@redesignPlanHoursMinutes": {
+    "description": "redesign.plan.hoursMinutes",
+    "placeholders": {
+      "hours": {},
+      "minutes": {}
+    }
+  },
   "redesignPlanInBlock": "im Block „{name}“",
   "@redesignPlanInBlock": {
     "description": "redesign.plan.inBlock",
@@ -14060,6 +14067,10 @@
   "@redesignPlanLeaveBlock": {
     "description": "redesign.plan.leaveBlock"
   },
+  "redesignPlanLess": "5 Minuten weniger",
+  "@redesignPlanLess": {
+    "description": "redesign.plan.less"
+  },
   "redesignPlanMinUnit": "Min",
   "@redesignPlanMinUnit": {
     "description": "redesign.plan.minUnit"
@@ -14074,6 +14085,10 @@
   "redesignPlanMore": "Weitere Aktionen",
   "@redesignPlanMore": {
     "description": "redesign.plan.more"
+  },
+  "redesignPlanMore5": "5 Minuten mehr",
+  "@redesignPlanMore5": {
+    "description": "redesign.plan.more5"
   },
   "redesignPlanMoveDown": "Nach unten",
   "@redesignPlanMoveDown": {

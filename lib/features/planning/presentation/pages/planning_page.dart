@@ -48,6 +48,7 @@ import '../../../../core/providers/redesign_providers.dart' show redesignEnabled
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../redesign/presentation/widgets/rd_widgets.dart';
 import '../../../redesign/presentation/widgets/today/rd_today_common.dart' show RdInfoCard;
+import '../../../redesign/presentation/widgets/event/rd_form_widgets.dart' show RdFieldRow, rdInputDecoration;
 
 part 'planning_page_beta.dart';
 
@@ -584,6 +585,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       if (!mounted) return;
       setState(() {
+        _rdDurationIndex = null;
         _time = time;
         _fields = fields;
         _titleController.text = title;
@@ -871,6 +873,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   void _applyTypeDefaultPlan(PlanAttendance att, {bool save = true}) {
     final type = _typeOf(att);
     final defaults = type?.defaultPlan?.fields ?? const <PlanField>[];
+    _rdDurationIndex = null;
     if (defaults.isNotEmpty) {
       setState(() {
         final t = PlanUtils.formatTime(type?.startTime);
