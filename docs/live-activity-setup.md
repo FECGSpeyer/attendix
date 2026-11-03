@@ -22,7 +22,7 @@ compiled into both targets.
 
 - Sources: `AttendixLiveActivityBundle.swift`, `PlanLiveActivity.swift`,
   `PlanActivityAttributes.swift` (also in Runner), `Info.plist`.
-- `PRODUCT_BUNDLE_IDENTIFIER` = `de.attendix.attendix.LiveActivity`,
+- `PRODUCT_BUNDLE_IDENTIFIER` = `io.stephanus.attendix.LiveActivity` (same as Ionic),
   `IPHONEOS_DEPLOYMENT_TARGET` = `16.2`, `SWIFT_VERSION` = `5.0`, `TARGETED_DEVICE_FAMILY` = `1,2`.
 - `MARKETING_VERSION` / `CURRENT_PROJECT_VERSION` = `$(FLUTTER_BUILD_NAME)` /
   `$(FLUTTER_BUILD_NUMBER)`. The base configuration is `Flutter/Generated.xcconfig`, so the
@@ -42,10 +42,9 @@ FCM → APNs (`apns.live_activity_token`). That needs push on the **app** target
    the `PlanActivityAttributes` type, and all data reaches the widget via ActivityKit.
 3. There is no separate "liveactivity" push capability in Xcode. The APNs push type
    `liveactivity` is set by the server (FCM `apns.live_activity_token`).
-   Requirement: the iOS app `de.attendix.attendix` is registered in the Firebase project
-   (`FIREBASE_PROJECT_ID`, default `app-attendix`) with the APNs auth key (.p8) uploaded.
-   Ionic's bundle id was `io.stephanus.attendix`; if the Flutter app ships under
-   `de.attendix.attendix`, add it as an additional iOS app in Firebase.
+   Requirement: the iOS app `io.stephanus.attendix` (same ID as Ionic) is registered in
+   the Firebase project (`FIREBASE_PROJECT_ID`, default `app-attendix`) with the APNs auth
+   key (.p8) uploaded. That is the existing Ionic entry.
 4. `Info.plist` keys are already set (`NSSupportsLiveActivities`,
    `NSSupportsLiveActivitiesFrequentUpdates`, URL scheme `attendix` for the tap on the
    activity → `attendix://live-plan?attendance=…&plan=…` → plan viewer in live mode).

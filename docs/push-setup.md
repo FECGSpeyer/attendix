@@ -17,15 +17,12 @@ unavailable, and in debug builds the log shows
 
 ### 1. Register the Flutter app IDs in Firebase (project `app-attendix`)
 
-The Flutter app currently uses the bundle ID / package name
-**`de.attendix.attendix`**. Ionic uses `io.stephanus.attendix`.
-
-- **Option A (new apps):** In the Firebase console, open *Project settings → Your apps*
-  and add an **iOS app** and an **Android app** with `de.attendix.attendix`.
-- **Option B (replace the store apps):** Change the Flutter IDs to
-  `io.stephanus.attendix` (`PRODUCT_BUNDLE_IDENTIFIER` in
-  `ios/Runner.xcodeproj`, plus `applicationId`/`namespace` in
-  `android/app/build.gradle.kts`) and reuse the existing Firebase apps.
+Since November 2026 the iOS app uses the Ionic bundle ID **`io.stephanus.attendix`**,
+so it reuses the existing Ionic iOS app in Firebase (and its APNs key). It replaces the
+Ionic app on a device and ships as an update of the store app "Attendix".
+Android still uses `de.attendix.attendix` until the Ionic upload keystore is available
+(Play only accepts updates signed with it); then `applicationId` moves to
+`io.stephanus.attendix` too.
 
 ### 2. Config files (not committed, both are in `.gitignore` like in Ionic)
 
@@ -58,9 +55,9 @@ resources. Prefer the files.
 
 ### 3. APNs key in Firebase (iOS)
 
-Firebase stores the APNs key per iOS app. With option B, the existing Ionic
-iOS app already has it. With option A, the new `de.attendix.attendix` app
-needs it too. The team-wide `.p8` key of the Ionic app can be reused.
+Firebase stores the APNs key per iOS app. The existing Ionic iOS app
+`io.stephanus.attendix` already has it, so nothing is needed for iOS. An APNs key
+belongs to the whole team, so a new app ID could reuse it.
 
 Apple Developer → *Keys* → use the existing key, or create one with **Apple
 Push Notifications service (APNs)** → download the `.p8`. Then in Firebase →

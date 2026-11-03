@@ -28,7 +28,7 @@ class StoreUpdateService {
   final http.Client? _client;
 
   /// Bundle id / applicationId of the Flutter app.
-  static const bundleId = 'de.attendix.attendix';
+  static const bundleId = 'io.stephanus.attendix';
 
   static const playStoreUrl =
       'https://play.google.com/store/apps/details?id=$bundleId';
