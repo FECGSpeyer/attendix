@@ -14,6 +14,17 @@ import '../../l10n/l10n.dart';
 
 const _tenantIdKey = 'current_tenant_id';
 
+/// IONIC_SESSION: group of the Ionic app still waiting to be restored after
+/// the store update (null otherwise). The automatic tenant choice on
+/// `/tenants` prefers it, like `CurrentTenantNotifier` does.
+Future<int?> pendingIonicTenantId() async {
+  try {
+    return (await SharedPreferences.getInstance()).getInt(ionicTakeoverTenantKey);
+  } catch (_) {
+    return null;
+  }
+}
+
 /// Provider for current selected tenant
 final currentTenantProvider =
     StateNotifierProvider<CurrentTenantNotifier, Tenant?>((ref) {

@@ -90,7 +90,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
+      // IONIC_SESSION: after the store update the Ionic group wins (only if
+      // the user still belongs to it, i.e. it is in this list); setting it
+      // below also ends the pending restore in CurrentTenantNotifier. A
+      // group that restore set meanwhile is kept.
+      final ionicTenantId = await pendingIonicTenantId();
+      final restoredId = container.read(currentTenantProvider)?.id;
       final savedTenant =
+          tenants.where((t) => t.id == restoredId).firstOrNull ??
+          tenants.where((t) => t.id == ionicTenantId).firstOrNull ??
           tenants.where((t) => t.id == userPrefs.currentTenantId).firstOrNull ??
           tenants.firstOrNull;
 
