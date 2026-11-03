@@ -450,7 +450,7 @@ extension _PlanningBeta on _PlanningPageState {
     }
     if (isHead) {
       trailing = _RdDurationPill(label: l10n.redesignPlanMinutes(minutes), selected: false);
-    } else if (!isNote) {
+    } else if (!isNote && !isAgenda) {
       trailing = Semantics(
         button: true,
         label: l10n.redesignPlanDurationLabel(
@@ -623,6 +623,12 @@ extension _PlanningBeta on _PlanningPageState {
   }
 
   /// Removes fields with "Rückgängig" in the SnackBar (like "Werk entfernen").
+  /// The sheet / dialog opened for row [index] ([field]) still applies: the
+  /// same plan is loaded (no reload, conflict or draft meanwhile) and the
+  /// row is unchanged.
+  bool _rdStill(int loadGen, int index, PlanField field) =>
+      mounted && loadGen == _loadGen && index < _fields.length && _rdSame(_fields[index], field);
+
   /// Same row; the Gemeinde App uid a write may add meanwhile does not count.
   static bool _rdSame(PlanField a, PlanField b) => a.copyWith(uid: null) == b.copyWith(uid: null);
 
@@ -685,7 +691,8 @@ extension _PlanningBeta on _PlanningPageState {
     var tail = now.sublist(before.length);
     var pos = (after + 1).clamp(0, before.length);
     var join = group;
-    if (tail.any(PlanUtils.isGroupHead) && join != null) {
+    // Blocks and the Tagesordnung marker never sit inside a block.
+    if (join != null && tail.any((f) => PlanUtils.isGroupHead(f) || PlanUtils.isAgendaPlaceholder(f))) {
       // Blocks are never nested: behind the whole block.
       pos = PlanUtils.lastIndexOfGroup(before, join) + 1;
       join = null;
@@ -817,6 +824,7 @@ extension _PlanningBeta on _PlanningPageState {
     ].join(' · ');
     final canIndent = PlanUtils.canIndent(_fields, index);
     final isAgenda = PlanUtils.isAgendaPlaceholder(field);
+    final loadGen = _loadGen;
     final action = await _rdSheet<String>(
       title: isAgenda ? l10n.planningAgendaInsertPos : field.name,
       subtitle: meta.isEmpty ? null : meta,
@@ -863,7 +871,7 @@ extension _PlanningBeta on _PlanningPageState {
           ],
     );
     // The plan may have changed meanwhile (draft restored, reload).
-    if (action == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], field)) return;
+    if (action == null || !mounted || !_rdStill(loadGen, index, field)) return;
     switch (action) {
       case 'edit':
         await _rdEditField(index);
@@ -889,6 +897,7 @@ extension _PlanningBeta on _PlanningPageState {
     final isNote = PlanUtils.isNote(field);
     final org = ref.read(currentOrganisationProvider).valueOrNull;
     final showBeamer = PlanBeamer.active(org, _isOrgPlan) && !isNote;
+    final loadGen = _loadGen;
     final result = await showPlanFieldDialog(
       context,
       title: context.l10n.planningEditField,
@@ -908,7 +917,7 @@ extension _PlanningBeta on _PlanningPageState {
               ? PlanFieldBeamerOptions(manual: field.needsBeamer, songId: field.songId, file: _beamerFileOf(field))
               : null,
     );
-    if (result == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], field)) return;
+    if (result == null || !mounted || !_rdStill(loadGen, index, field)) return;
     final updated = [..._fields];
     updated[index] =
         isNote
@@ -935,6 +944,7 @@ extension _PlanningBeta on _PlanningPageState {
       (t) => t.name == head.name,
     );
     final end = PlanUtils.lastIndexOfGroup(_fields, head.id);
+    final loadGen = _loadGen;
     final action = await _rdSheet<String>(
       title: head.name,
       subtitle: [
@@ -982,7 +992,7 @@ extension _PlanningBeta on _PlanningPageState {
             ),
           ],
     );
-    if (action == null || !mounted || index >= _fields.length || !_rdSame(_fields[index], head)) return;
+    if (action == null || !mounted || !_rdStill(loadGen, index, head)) return;
     switch (action) {
       case 'edit':
         final r = await showPlanFieldDialog(
@@ -999,7 +1009,7 @@ extension _PlanningBeta on _PlanningPageState {
           initialInfo: head.info,
           withMinutes: false,
         );
-        if (r == null || !mounted) return;
+        if (r == null || !mounted || !_rdStill(loadGen, index, head)) return;
         _rdApply([
           for (final f in _fields) f.id == head.id ? f.copyWith(name: r.name, conductor: r.conductor, info: r.info) : f,
         ]);
@@ -1012,7 +1022,7 @@ extension _PlanningBeta on _PlanningPageState {
           infoHint: context.l10n.planningSubItemInfoPlaceholder,
           initialMinutes: 5,
         );
-        if (r == null || !mounted || !_fields.any((f) => f.id == head.id)) return;
+        if (r == null || !mounted || !_rdStill(loadGen, index, head)) return;
         _rdCollapsed.remove(head.id);
         _rdApply(
           PlanUtils.addSubItem(
@@ -1063,7 +1073,7 @@ extension _PlanningBeta on _PlanningPageState {
                 ],
               ),
         );
-        if (!mounted || !_fields.any((f) => f.id == head.id)) return;
+        if (!mounted || !_rdStill(loadGen, index, head)) return;
         _rdCollapsed.remove(head.id);
         if (choice == 'dissolve') {
           _rdApply(PlanUtils.dissolveGroup(_fields, head.id));
@@ -1088,6 +1098,7 @@ extension _PlanningBeta on _PlanningPageState {
     final hasExports = _fields.isNotEmpty;
     final multi = plans.length > 1;
     final planName = multi ? PlanUtils.planLabel(att, _planIndex, plans) : '';
+    final loadGen = _loadGen;
     final action = await _rdSheet<String>(
       title: l10n.redesignPlanTitle,
       builder:
@@ -1165,7 +1176,8 @@ extension _PlanningBeta on _PlanningPageState {
             ),
           ],
     );
-    if (action == null || !mounted) return;
+    // Another plan or Termin was loaded meanwhile: the sheet was for the old one.
+    if (action == null || !mounted || loadGen != _loadGen) return;
     switch (action) {
       case 'link':
         await _shareLink();
