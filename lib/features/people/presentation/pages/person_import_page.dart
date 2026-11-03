@@ -12,13 +12,14 @@ import '../../../../core/utils/import_mapper.dart';
 import '../../../../core/utils/spreadsheet_reader.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
+import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../widgets/import_widgets.dart';
+import '../../people_list_utils.dart' show accountRoleForGroup;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../core/utils/error_message.dart';
-import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 enum _Step { file, mapping, preview }
@@ -164,7 +165,6 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       return;
     }
 
-    final importRepo = ref.read(importRepositoryWithTenantProvider);
     final playerRepo = ref.read(playerRepositoryWithTenantProvider);
     // AUTH: accounts are created server-side (attendix-user Edge Function)
     final registrationRepo =
@@ -181,23 +181,18 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     for (var i = 0; i < toImport.length; i++) {
       final row = toImport[i];
       try {
-        final person = await importRepo.insertPlayer(row.data);
-        // Ionic addPlayer → addPlayerToAttendancesByDate: add the person to
-        // all Termine after their join date (best effort).
-        try {
-          await playerRepo.addPlayerToAttendancesByDate(person);
-        } catch (e, st) {
-          ErrorReporter.report(e, st, where: 'person_import_page');
-        }
-        // Accounts only when the toggle is on and an email exists.
-        if (_createAccounts &&
-            (person.email?.isNotEmpty ?? false) &&
-            registrationRepo.hasTenantId) {
-          await registrationRepo.createPlayerAccount(
-            person,
-            mainGroupId: mainGroupId,
-          );
-        }
+        // Ionic importPlayers → addPlayer(player, register, role): the
+        // account is registered first (a failed registration inserts no
+        // person), an existing row of that account is reactivated instead
+        // of duplicated, and the person is added to later Termine.
+        final register = _createAccounts &&
+            (row.email?.trim().isNotEmpty ?? false) &&
+            registrationRepo.hasTenantId;
+        await playerRepo.addPlayer(
+          Person.fromJson({...row.data, 'tenantId': playerRepo.currentTenantId}),
+          register: register,
+          role: accountRoleForGroup(row.instrument, mainGroupId),
+        );
         imported++;
       } catch (e) {
         failed.add('${row.firstName} ${row.lastName}: $e');

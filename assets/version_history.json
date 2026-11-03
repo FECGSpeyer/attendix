@@ -1,6 +1,26 @@
 {
   "versions": [
     {
+      "version": "0.37.1",
+      "date": "3.11.2026",
+      "changes": [
+        "🐛 Excel-Exporte öffnen direkt mit den Daten (kein leeres erstes Blatt mehr), Termin-Excel wie bisher mit Nachname, Vorname, Gruppe, Status-Kürzel und Bemerkung",
+        "🐛 Export nach Gruppe sortiert innerhalb der Gruppe wieder nach Name, Umlaute richtig einsortiert",
+        "🐛 Schichtplan löschen setzt die schichtbedingten Entschuldigungen in kommenden Terminen zurück",
+        "🐛 Meine Termine und Stimmführer-Seite funktionieren auch, wenn ein Konto mehrere Personen in einer Gruppe hat",
+        "🐛 Gruppenwechsel nimmt die Stimmführer-Rolle weg, neue Personen starten in der ersten Gruppe",
+        "🐛 Person: \"Andere Instanzen\" zeigt nur verknüpfte Gruppen mit der richtigen Rolle",
+        "🐛 Import legt zuerst das Konto an und übernimmt vorhandene Personen dieses Kontos",
+        "🐛 \"Instanzauswahl aktivieren\" zeigt die Auswahl nur nach dem Anmelden, nicht bei jedem App-Start",
+        "🐛 Instanz wechseln in den Einstellungen öffnet die Startseite der Rolle",
+        "🐛 Mail- und Telefon-Links bei Stimmführern und im Account öffnen wieder die Mail- bzw. Telefon-App",
+        "🐛 Tippen neben ein Eingabefeld schließt die Tastatur (auch die Zahlentastatur)",
+        "🐛 Statistik: Altersverteilung mit allen Altersgruppen, Verlauf mit Datum wie TT.MM.",
+        "🐛 Web: Wer die alte Web-App installiert hat, bekommt beim nächsten Öffnen die neue App",
+        "🐛 Android: App heißt wieder \"Attendix\" und das Symbol auf dem Startbildschirm bleibt nach dem Update erhalten"
+      ]
+    },
+    {
       "version": "0.36.1",
       "date": "3.11.2026",
       "changes": [

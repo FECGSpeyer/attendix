@@ -237,12 +237,16 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('player')
-          .select('id, instrument, additional_fields, shift_id, shift_start, shift_name')
+          .select('id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')
           .eq('tenantId', currentTenantId)
           .isFilter('left', null)
-          .eq('pending', false)
-          .eq('paused', false);
-      return (response as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+          .eq('pending', false);
+      // `paused` is nullable: NULL means not paused (Ionic `!p.paused`),
+      // which `.eq('paused', false)` would have dropped.
+      return (response as List)
+          .map((e) => Map<String, dynamic>.from(e as Map))
+          .where((p) => p['paused'] != true)
+          .toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPersonsForNewAttendance');
       rethrow;

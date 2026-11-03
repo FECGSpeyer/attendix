@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -215,6 +216,11 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     _wireStreams(player);
 
     try {
+      // Web: the page is cross-origin isolated (COEP require-corp in
+      // web/_headers). A no-cors <audio> request to Supabase Storage would
+      // need a CORP header; as a CORS request the storage's
+      // Access-Control-Allow-Origin is enough.
+      if (kIsWeb) await player.setWebCrossOrigin(WebCrossOrigin.anonymous);
       final loadedDuration = await player.setUrl(url);
       if (_speed != 1.0) await player.setSpeed(_speed);
 

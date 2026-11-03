@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -22,6 +23,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../attendance/presentation/person_attendance_writes.dart';
@@ -1203,12 +1205,21 @@ class _EventActions extends ConsumerWidget {
     }
     ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
     try {
+      final type = ref.read(attendanceTypeForAttendanceProvider(attendance.id ?? -1)).valueOrNull;
+      final churchFieldId = attendanceChurchFieldId(ref);
+      final churches = churchFieldId == null
+          ? const <Church>[]
+          : await ref.read(churchesProvider.future);
+      if (!context.mounted) return;
       await ExportService().exportAttendanceToExcel(
         context: context,
         attendance: attendance,
+        typeName: type?.name ?? '',
         persons: [for (final m in members) m.person],
         statuses: {for (final m in members) m.id: m.status},
-        tenantName: tenant.shortName,
+        notes: {for (final m in members) m.id: m.note},
+        churches: churches,
+        churchFieldId: churchFieldId,
       );
     } catch (e) {
       if (context.mounted) ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));

@@ -8,6 +8,7 @@ import '../../../../core/providers/attendance_providers.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/plan_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/team_org_providers.dart';
@@ -21,6 +22,7 @@ import '../../../../data/models/player_absence/player_absence.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../../../../data/models/team_org/team_org.dart';
 import '../../../../data/models/tenant/tenant.dart';
+import '../../../../data/repositories/profile_repository.dart' show ProfileExtraField;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -250,10 +252,22 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       dutyRepo.getUnavailabilityForTenant(),
       ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
     ]);
+    // Ionic getPersonExtraFields: organisation fields count too, so a type
+    // filtering on one does not invite everybody.
+    final tenantFields = tenant?.additionalFields ?? const <ExtraField>[];
+    final orgFields = await ref
+        .read(personExtraFieldsProvider.future)
+        .catchError((_) => <ProfileExtraField>[]);
     final persons = personsForAttendanceType(
       results[0] as List<Map<String, dynamic>>,
       type,
-      tenant?.additionalFields ?? const [],
+      [
+        ...tenantFields,
+        for (final f in orgFields)
+          if (!tenantFields.any((t) => t.id == f.id))
+            ExtraField(
+                id: f.id, name: f.name, type: f.type, defaultValue: f.defaultValue),
+      ],
     );
     final id = await repo.createAttendance(newAttendanceRow(
       type,
