@@ -12,6 +12,7 @@ import '../../../../../core/providers/song_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/router/redesign_routes.dart';
 import '../../../../../core/router/route_access.dart' show canOpenSongsTab;
+import '../../../../../core/services/offline_queue_service.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/attendance_logic_utils.dart' show showSongsForType;
 import '../../../../../core/utils/dialog_helper.dart';
@@ -130,7 +131,8 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
 
   /// Werk hidden while its "Rückgängig" is offered; deleted only once the
   /// SnackBar closes without Rückgängig (keeps its row, number and flags).
-  int? _removingSongId;
+  /// Only this one entry: a Werk may be in the list more than once.
+  SongHistoryEntry? _removing;
 
   int get _id => widget.attendance.id!;
 
@@ -140,19 +142,32 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return false;
     final container = ProviderScope.containerOf(context, listen: false);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     setState(() => _saving = true);
     try {
+      if (!session.isCurrent()) return false;
       await syncAttendanceSongHistory(repo, _id, widget.attendance.date, entries);
       return true;
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
       return false;
     } finally {
-      container
-        ..invalidate(attendanceSongEntriesProvider(_id))
-        ..invalidate(currentSongsProvider)
-        ..invalidate(songHistoryProvider(null));
+      await _reload(container, _id);
       if (mounted) setState(() => _saving = false);
+    }
+  }
+
+  /// Refreshes the Werke and waits for the new list: until then the shown
+  /// list is the old one, and another change must not build on it.
+  static Future<void> _reload(ProviderContainer container, int id) async {
+    container
+      ..invalidate(attendanceSongEntriesProvider(id))
+      ..invalidate(currentSongsProvider)
+      ..invalidate(songHistoryProvider(null));
+    try {
+      await container.read(attendanceSongEntriesProvider(id).future);
+    } catch (_) {
+      // The section shows the load error with "Erneut versuchen".
     }
   }
 
@@ -265,9 +280,11 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     if (!repo.hasTenantId) return;
     // Bound now: the delete may run after the page was left.
     final container = ProviderScope.containerOf(context, listen: false);
+    // #232: captured now, checked before the (later) delete.
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final id = _id;
     final date = widget.attendance.date;
-    setState(() => _removingSongId = entry.songId);
+    setState(() => _removing = entry);
     final reason = messenger == null
         ? SnackBarClosedReason.timeout
         : await messenger
@@ -278,8 +295,8 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
               action: SnackBarAction(label: l10n.redesignEventUndo, onPressed: () {}),
             ))
             .closed;
-    if (reason == SnackBarClosedReason.action) {
-      if (mounted) setState(() => _removingSongId = null);
+    if (reason == SnackBarClosedReason.action || !session.isCurrent()) {
+      if (mounted) setState(() => _removing = null);
       return;
     }
     try {
@@ -291,18 +308,14 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
         attendanceId: id,
       );
       if (latest == null) return;
-      await syncAttendanceSongHistory(repo, id, date, [
-        for (final e in latest)
-          if (e.songId != entry.songId) e,
-      ]);
+      final at = latest.indexOf(entry);
+      if (at < 0) return; // already gone (other device)
+      await syncAttendanceSongHistory(repo, id, date, [...latest]..removeAt(at));
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));
     } finally {
-      container
-        ..invalidate(attendanceSongEntriesProvider(id))
-        ..invalidate(currentSongsProvider)
-        ..invalidate(songHistoryProvider(null));
-      if (mounted) setState(() => _removingSongId = null);
+      await _reload(container, id);
+      if (mounted) setState(() => _removing = null);
     }
   }
 
@@ -311,9 +324,11 @@ class _RdEventProgramSectionState extends ConsumerState<RdEventProgramSection> {
     final p = context.rd;
     final l10n = context.l10n;
     final async = ref.watch(attendanceSongEntriesProvider(_id));
-    final entries = async.valueOrNull?.where((e) => e.songId != _removingSongId).toList();
+    final all = async.valueOrNull;
+    final hidden = all == null || _removing == null ? -1 : all.indexOf(_removing!);
+    final entries = hidden < 0 ? all : ([...all!]..removeAt(hidden));
     // A removal waiting for its Rückgängig counts as a write in flight.
-    final busy = _saving || _removingSongId != null;
+    final busy = _saving || _removing != null;
     final title = rdProgramTitle(l10n, widget.type);
     final Widget body;
     if (entries == null) {
@@ -397,6 +412,7 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
     final container = ProviderScope.containerOf(context, listen: false);
+    if (!ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession().isCurrent()) return;
     final id = widget.attendance.id!;
     setState(() {
       _share = value;
@@ -656,8 +672,10 @@ Future<void> rdSaveChecklist(BuildContext context, WidgetRef ref, int attendance
 Future<bool> Function(List<ChecklistItem>) rdChecklistWriter(BuildContext context, WidgetRef ref, int attendanceId) {
   final repo = ref.read(attendanceRepositoryWithTenantProvider);
   final container = ProviderScope.containerOf(context, listen: false);
+  // #232: a queued write of a signed-out / switched account is dropped.
+  final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
   return (items) async {
-    if (!repo.hasTenantId) return false;
+    if (!repo.hasTenantId || !session.isCurrent()) return false;
     var ok = true;
     try {
       await repo.updateAttendance(attendanceId, {'checklist': [for (final i in items) i.toJson()]});

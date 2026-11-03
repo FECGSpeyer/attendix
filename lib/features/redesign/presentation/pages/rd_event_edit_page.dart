@@ -61,6 +61,14 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
   String? _storedPlace;
   String? _storedNotes;
 
+  /// Text saves run one after another; each compares its value with what
+  /// is stored when it runs, so the last typed value always wins.
+  Future<void> _textQueue = Future.value();
+
+  void _enqueue(Future<void> Function() save) {
+    _textQueue = _textQueue.then((_) => save());
+  }
+
   // UI_TENANT_HOIST: bound when the page opens, so text that is saved when
   // the page closes still goes to this Termin's tenant.
   late final AttendanceRepository _repo;
@@ -134,25 +142,31 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     }
   }
 
-  Future<void> _saveTitle() async {
-    final value = _title.text.trim();
-    if (_storedTitle == null || value == _storedTitle) return;
-    // Marked as stored only once written, so a failed save is tried again.
-    if (await _write({'typeInfo': value.isEmpty ? null : value})) _storedTitle = value;
+  void _saveTitle() {
+    final value = _title.text.trim(); // read now: the page may be gone when it runs
+    _enqueue(() async {
+      if (_storedTitle == null || value == _storedTitle) return;
+      // Marked as stored only once written, so a failed save is tried again.
+      if (await _write({'typeInfo': value.isEmpty ? null : value})) _storedTitle = value;
+    });
   }
 
-  Future<void> _savePlace() async {
-    final value = _place.text.trim();
-    if (_storedPlace == null || value == _storedPlace) return;
-    // Marked as stored only once written, so a failed save is tried again.
-    if (await _write({'place': value.isEmpty ? null : value})) _storedPlace = value;
+  void _savePlace() {
+    final value = _place.text.trim(); // read now: the page may be gone when it runs
+    _enqueue(() async {
+      if (_storedPlace == null || value == _storedPlace) return;
+      // Marked as stored only once written, so a failed save is tried again.
+      if (await _write({'place': value.isEmpty ? null : value})) _storedPlace = value;
+    });
   }
 
-  Future<void> _saveNotes() async {
-    final value = _notes.text;
-    if (_storedNotes == null || value == _storedNotes) return;
-    // Marked as stored only once written, so a failed save is tried again.
-    if (await _write({'notes': value.isEmpty ? null : value})) _storedNotes = value;
+  void _saveNotes() {
+    final value = _notes.text; // read now: the page may be gone when it runs
+    _enqueue(() async {
+      if (_storedNotes == null || value == _storedNotes) return;
+      // Marked as stored only once written, so a failed save is tried again.
+      if (await _write({'notes': value.isEmpty ? null : value})) _storedNotes = value;
+    });
   }
 
   void _done() {
