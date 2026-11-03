@@ -50,7 +50,7 @@ Bekannte Eigenheiten:
 
 Voraussetzungen: Mac mit Xcode und CocoaPods, Apple-Developer-Account.
 
-1. `ios/Runner.xcworkspace` in Xcode öffnen und unter *Runner → Signing & Capabilities* das eigene **Apple-Team** wählen. Bundle-ID ist `io.stephanus.attendix` (wie die Ionic-App; Android vorerst noch `de.attendix.attendix`); mit einem anderen Team muss die Bundle-ID ggf. angepasst werden.
+1. `ios/Runner.xcworkspace` in Xcode öffnen und unter *Runner → Signing & Capabilities* das eigene **Apple-Team** wählen. Bundle-ID ist `io.stephanus.attendix` (wie die Ionic-App, auch auf Android); mit einem anderen Team muss die Bundle-ID ggf. angepasst werden.
 2. Bauen und installieren:
    ```bash
    flutter build ios --release

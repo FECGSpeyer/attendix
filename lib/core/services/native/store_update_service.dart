@@ -27,16 +27,12 @@ class StoreUpdateService {
 
   final http.Client? _client;
 
-  /// iOS bundle id: the Ionic store ID, so the Flutter app ships as an
-  /// update of the existing App Store app.
+  /// Bundle id / applicationId: the Ionic store ID, so the Flutter app ships
+  /// as an update of the existing store apps.
   static const bundleId = 'io.stephanus.attendix';
 
-  /// Android applicationId: stays on the Flutter ID until the Ionic upload
-  /// key is available (see docs/push-setup.md).
-  static const androidPackage = 'de.attendix.attendix';
-
   static const playStoreUrl =
-      'https://play.google.com/store/apps/details?id=$androidPackage';
+      'https://play.google.com/store/apps/details?id=$bundleId';
 
   /// The App Store entry is shared with the Ionic app (4.x). Flutter store
   /// releases start at 5.0.0, so a lower store version is the Ionic app and

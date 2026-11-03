@@ -196,7 +196,7 @@ Prüfung via `role.isConductor`, `role.canSeePeopleTab`, etc.
 flutter build ios --release
 
 # 2. Auf iPhone installieren und starten (Device-ID anpassen).
-#    iOS-Bundle-ID ist io.stephanus.attendix (ersetzt die Ionic-App); Android vorerst de.attendix.attendix
+#    App-ID ist io.stephanus.attendix auf iOS und Android (ersetzt die Ionic-App)
 xcrun devicectl device install app --device 00008120-000C4D5C0205A01E build/ios/iphoneos/Runner.app
 xcrun devicectl device process launch --device 00008120-000C4D5C0205A01E io.stephanus.attendix
 ```
