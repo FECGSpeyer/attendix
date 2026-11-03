@@ -204,6 +204,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
     if (!mounted) return;
     setState(() => _busy = false);
+    // Also after failures: addPlayer saves the person before adding it to
+    // the Termine, so a failed row may already exist (duplicate check of a
+    // second import must see it).
+    ref.invalidate(playersProvider);
 
     final parts = [
       context.l10n.peopleImportedCount(imported),
@@ -216,10 +220,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       await showImportFailures(context, title: context.l10n.peopleNotImported, lines: failed);
     }
 
-    if (imported > 0) {
-      ref.invalidate(playersProvider);
-      if (mounted) Navigator.of(context).pop(true);
-    }
+    if (imported > 0 && mounted) Navigator.of(context).pop(true);
   }
 
   @override

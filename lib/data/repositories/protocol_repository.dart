@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../models/team_org/team_org.dart';
+import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
 
@@ -235,18 +236,22 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   /// Active persons a new Termin can be created for (not archived, pending or paused).
   Future<List<Map<String, dynamic>>> getPersonsForNewAttendance() async {
     try {
-      final response = await supabase
-          .from('player')
-          .select('id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')
-          .eq('tenantId', currentTenantId)
-          .isFilter('left', null)
-          .eq('pending', false);
-      // `paused` is nullable: NULL means not paused (Ionic `!p.paused`),
-      // which `.eq('paused', false)` would have dropped.
-      return (response as List)
-          .map((e) => Map<String, dynamic>.from(e as Map))
-          .where((p) => p['paused'] != true)
-          .toList();
+      // `paused` is nullable: NULL means not paused (Ionic `!p.paused`), so
+      // filter with `not.is.true` on the server (`.eq('paused', false)` would
+      // drop NULL) and page in a stable order past the PostgREST row limit.
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('player')
+            .select('id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')
+            .eq('tenantId', currentTenantId)
+            .isFilter('left', null)
+            .eq('pending', false)
+            .not('paused', 'is', true)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
+      });
+      return rows.where((p) => p['paused'] != true).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPersonsForNewAttendance');
       rethrow;
