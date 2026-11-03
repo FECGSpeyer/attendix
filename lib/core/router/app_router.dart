@@ -11,6 +11,8 @@ import 'page_transitions.dart';
 import 'tracking_observer.dart';
 import 'package:supabase_flutter/supabase_flutter.dart' show AuthChangeEvent;
 import '../services/tracking/tracking_event.dart';
+import '../services/browser_navigation.dart'
+    show browserNavigationRouteChanged, setBrowserNavigationContext;
 import '../services/tracking/tracking_service.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/auth/presentation/pages/register_page.dart';
@@ -1368,6 +1370,19 @@ final routerProvider = Provider<GoRouter>((ref) {
   // (Ionic app.component trackPageViews).
   final pageViewTracker = PageViewTracker(ref.container, router);
   ref.onDispose(pageViewTracker.dispose);
+
+  // SWIPE_BACK_WEB: a browser-animated history step counts as handled after
+  // the frame of its route change, also when that change has no transition
+  // (tab switch). The page pictures for Safari's swipe belong to one account
+  // and group; switching either drops them.
+  router.routerDelegate.addListener(browserNavigationRouteChanged);
+  ref.onDispose(
+      () => router.routerDelegate.removeListener(browserNavigationRouteChanged));
+  void updateNavigationContext() => setBrowserNavigationContext(
+      '${ref.read(currentAuthUserIdProvider)}:${ref.read(currentTenantIdProvider)}');
+  ref.listen(currentAuthUserIdProvider, (_, __) => updateNavigationContext());
+  ref.listen(currentTenantIdProvider, (_, __) => updateNavigationContext());
+  updateNavigationContext();
   return router;
 });
 
