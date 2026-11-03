@@ -22,11 +22,28 @@ void browserNavigationShown(int mark) {
   } catch (_) {}
 }
 
-/// Hands the account/group key to the SWIPE_BACK_WEB script.
-void setBrowserNavigationContext(String key) {
+/// Hands the account/group key to the SWIPE_BACK_WEB script; returns the
+/// script's context generation.
+int? setBrowserNavigationContext(String key) {
   try {
     if (globalContext.has('attendixSetNavContext')) {
-      globalContext.callMethod('attendixSetNavContext'.toJS, key.toJS);
+      final gen = globalContext.callMethod(
+        'attendixSetNavContext'.toJS,
+        key.toJS,
+      );
+      if (gen != null && gen.isA<JSNumber>()) {
+        return (gen as JSNumber).toDartDouble.toInt();
+      }
+    }
+  } catch (_) {}
+  return null;
+}
+
+/// The app has drawn a page for context generation [gen].
+void browserNavigationContextDrawn(int gen) {
+  try {
+    if (globalContext.has('attendixNavContextDrawn')) {
+      globalContext.callMethod('attendixNavContextDrawn'.toJS, gen.toJS);
     }
   } catch (_) {}
 }

@@ -3,4 +3,6 @@ int? lastBrowserAnimatedNavigationMs() => null;
 
 void browserNavigationShown(int mark) {}
 
-void setBrowserNavigationContext(String key) {}
+int? setBrowserNavigationContext(String key) => null;
+
+void browserNavigationContextDrawn(int gen) {}

@@ -93,19 +93,27 @@
       var cover = null;
       var coverTimer = 0;
       // Account and group the pictures belong to (set by the app). A change
-      // drops them, also pictures still being taken, and no pictures are
-      // taken for 2 s after it (the old account's page may still be on
-      // screen) nor while signed out.
+      // starts a new generation: it drops all pictures, also ones still being
+      // taken, and none are taken until the app reports a page drawn for the
+      // new generation (attendixNavContextDrawn) and 2 s have passed – the
+      // old account's page may still be on screen. None while signed out.
       var context = '';
+      var contextGen = 0;
+      var drawnGen = -1;
       var captureBlockedUntil = 0;
       window.attendixSetNavContext = function (key) {
-        if (key === context) return;
+        if (key === context) return contextGen;
         context = key;
+        contextGen++;
         captureBlockedUntil = Date.now() + 2000;
         while (shots.length) {
           try { shots.pop().bitmap.close(); } catch (e) {}
         }
         removeCover();
+        return contextGen;
+      };
+      window.attendixNavContextDrawn = function (gen) {
+        if (gen === contextGen) drawnGen = gen;
       };
 
       function appCanvas() {
@@ -123,12 +131,12 @@
       }
       function capture(href) {
         if (!context || context.indexOf('null:') === 0 ||
-            Date.now() < captureBlockedUntil) return;
+            drawnGen !== contextGen || Date.now() < captureBlockedUntil) return;
         var canvas = appCanvas();
         if (!canvas || !canvas.width) return;
-        var takenFor = context;
+        var takenFor = contextGen;
         createImageBitmap(canvas).then(function (bitmap) {
-          if (takenFor !== context) {
+          if (takenFor !== contextGen) {
             try { bitmap.close(); } catch (e) {}
             return;
           }

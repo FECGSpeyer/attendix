@@ -42,9 +42,16 @@ int? _handledMark;
 /// SWIPE_BACK_WEB: the router's location changed. A pending browser step
 /// counts as handled after this frame, also when the change plays no
 /// transition (e.g. a tab switch) and so never asks
-/// [browserAnimatedNavigationJustHappened].
+/// [browserAnimatedNavigationJustHappened]; its picture is then removed like
+/// after a skipped transition. The first route change after an account or
+/// group switch, once drawn, lets the page script take pictures again.
 void browserNavigationRouteChanged() {
   if (!kIsWeb) return;
+  final contextGen = _contextGenAwaitingDraw;
+  if (contextGen != null) {
+    _contextGenAwaitingDraw = null;
+    _afterFrames(() => impl.browserNavigationContextDrawn(contextGen));
+  }
   final at = impl.lastBrowserAnimatedNavigationMs();
   if (at == null || at == _handledMark || at == _pendingMark) return;
   _pendingMark = at;
@@ -52,17 +59,44 @@ void browserNavigationRouteChanged() {
     _handledMark = at;
   });
   SchedulerBinding.instance.scheduleFrame();
+  notifyBrowserNavigationShown();
 }
 
 /// SWIPE_BACK_WEB: who sees the app (account and group). The page script
-/// drops its page pictures when this changes, so a swipe back after a
-/// logout or group switch never shows the previous account's data.
+/// drops its page pictures when this changes and takes no new ones until the
+/// app has drawn a page for the new account or group (see
+/// [browserNavigationRouteChanged]), so a swipe back never shows the
+/// previous account's data.
 void setBrowserNavigationContext(String key) {
-  if (kIsWeb) impl.setBrowserNavigationContext(key);
+  if (!kIsWeb) return;
+  final gen = impl.setBrowserNavigationContext(key);
+  if (gen != null) _contextGenAwaitingDraw = gen;
 }
+
+/// Context generation whose first drawn route change is still to come.
+int? _contextGenAwaitingDraw;
 
 /// Mark whose "handled" post-frame callback is scheduled.
 int? _pendingMark;
+
+/// Runs [callback] after the next two frames (the one in progress or next,
+/// and the one after it).
+void _afterFrames(VoidCallback callback) {
+  final binding = SchedulerBinding.instance;
+  var frames = 0;
+  void afterFrame(Duration _) {
+    frames++;
+    if (frames < 2) {
+      binding.addPostFrameCallback(afterFrame);
+      binding.scheduleFrame();
+      return;
+    }
+    callback();
+  }
+
+  binding.addPostFrameCallback(afterFrame);
+  binding.scheduleFrame();
+}
 
 /// SWIPE_BACK_WEB: call when a transition was skipped after such a step.
 /// Once the app has drawn the page (two frames: the one that starts the
@@ -75,18 +109,5 @@ void notifyBrowserNavigationShown() {
   // picture, never one of a newer step.
   final mark = impl.lastBrowserAnimatedNavigationMs();
   if (mark == null) return;
-  final binding = SchedulerBinding.instance;
-  var frames = 0;
-  void afterFrame(Duration _) {
-    frames++;
-    if (frames < 2) {
-      binding.addPostFrameCallback(afterFrame);
-      binding.scheduleFrame();
-      return;
-    }
-    impl.browserNavigationShown(mark);
-  }
-
-  binding.addPostFrameCallback(afterFrame);
-  binding.scheduleFrame();
+  _afterFrames(() => impl.browserNavigationShown(mark));
 }
