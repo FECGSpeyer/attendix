@@ -10427,7 +10427,7 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
-  String get redesignFilesTitle => 'Files';
+  String get redesignFilesTitle => 'Sheet music & files';
 
   @override
   String get redesignFilesUpload => 'Upload';
@@ -11843,13 +11843,123 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignTodayYourAnswer => 'Your answer';
 
   @override
+  String get redesignWorkAbout => 'About this work';
+
+  @override
+  String get redesignWorkAdd => 'Add';
+
+  @override
+  String get redesignWorkAddDrop => 'On a computer: just drag files here';
+
+  @override
+  String get redesignWorkAddHint =>
+      'Choose parts, score, recording or lyrics. The part is detected from the file name, for unclear names from page 1.';
+
+  @override
+  String get redesignWorkAddPick => 'Choose files';
+
+  @override
+  String get redesignWorkAddTitle => 'Add sheet music';
+
+  @override
   String get redesignWorkAllFiles => 'All files';
 
   @override
   String get redesignWorkAllParts => 'All parts';
 
   @override
+  String get redesignWorkCopiedFrom => 'Copied from';
+
+  @override
+  String get redesignWorkCopy => 'Copy to another group';
+
+  @override
+  String get redesignWorkCopyHint =>
+      'To groups of your organisation that you lead';
+
+  @override
+  String get redesignWorkDifficulty => 'Difficulty';
+
+  @override
   String get redesignWorkEdit => 'Edit';
+
+  @override
+  String get redesignWorkEditCategories => 'Categories';
+
+  @override
+  String get redesignWorkEditDelete => 'Delete work';
+
+  @override
+  String get redesignWorkEditDifficulty => 'Difficulty';
+
+  @override
+  String get redesignWorkEditDifficultyNone => 'Open';
+
+  @override
+  String get redesignWorkEditEasy => 'Easy';
+
+  @override
+  String get redesignWorkEditFields => 'Additional fields';
+
+  @override
+  String get redesignWorkEditHard => 'Hard';
+
+  @override
+  String get redesignWorkEditHint =>
+      'Changes are saved right away. Sheet music and files are managed on the work page.';
+
+  @override
+  String get redesignWorkEditInstrumentation => 'Instrumentation';
+
+  @override
+  String get redesignWorkEditInstrumentationHint =>
+      'Which groups play follows from the uploaded sheet music. If a part is missing, upload it on the work page.';
+
+  @override
+  String get redesignWorkEditLink => 'Link';
+
+  @override
+  String get redesignWorkEditLinkHint => 'Video, recording or publisher';
+
+  @override
+  String get redesignWorkEditManageCategories => 'Manage categories';
+
+  @override
+  String get redesignWorkEditMedium => 'Medium';
+
+  @override
+  String get redesignWorkEditName => 'Title';
+
+  @override
+  String get redesignWorkEditNameEmpty =>
+      'A work without a title is not saved.';
+
+  @override
+  String get redesignWorkEditNoCategories => 'No categories yet.';
+
+  @override
+  String get redesignWorkEditNotAllowed => 'Only leaders can edit works.';
+
+  @override
+  String get redesignWorkEditNumber => 'Number';
+
+  @override
+  String get redesignWorkEditNumberLocked =>
+      'The work list could not be loaded, so the number cannot be checked.';
+
+  @override
+  String redesignWorkEditNumberTaken(Object number, Object name) {
+    return 'No. $number already belongs to “$name”. The number is not saved like this.';
+  }
+
+  @override
+  String get redesignWorkEditPrefix => 'Prefix';
+
+  @override
+  String get redesignWorkEditPrefixHint => 'e.g. C';
+
+  @override
+  String get redesignWorkEditTitle => 'Edit work';
 
   @override
   String redesignWorkFileCount(num count) {
@@ -11858,6 +11968,71 @@ class AppLocalizationsEn extends AppLocalizations {
       locale: localeName,
       other: '$count files',
       one: '1 file',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkFileDelete => 'Delete';
+
+  @override
+  String get redesignWorkFileDownload => 'Download';
+
+  @override
+  String redesignWorkFileMore(Object name) {
+    return 'More for $name';
+  }
+
+  @override
+  String get redesignWorkFilePart => 'Change part';
+
+  @override
+  String get redesignWorkFilePrint => 'Print';
+
+  @override
+  String get redesignWorkFileRename => 'Rename';
+
+  @override
+  String get redesignWorkFileShare => 'Share';
+
+  @override
+  String get redesignWorkFileTelegram => 'Send to me via Telegram';
+
+  @override
+  String get redesignWorkFiles => 'Sheet music & files';
+
+  @override
+  String get redesignWorkForConductors => 'For conductors';
+
+  @override
+  String get redesignWorkHistory => 'History';
+
+  @override
+  String redesignWorkHistoryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkInstrumentation => 'Instrumentation';
+
+  @override
+  String redesignWorkInstrumentationHint(Object names) {
+    return 'from the sheet music: $names';
+  }
+
+  @override
+  String redesignWorkInstrumentationValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count groups',
+      one: '1 group',
     );
     return '$_temp0';
   }
@@ -11875,10 +12050,57 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkLyrics => 'Lyrics';
 
   @override
+  String redesignWorkMissingMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count parts are still missing',
+      one: '1 part is still missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingOne(Object name) {
+    return '$name is still missing';
+  }
+
+  @override
+  String redesignWorkMissingOneHint(Object name) {
+    return 'Someone in the group plays $name, but there is no sheet music yet.';
+  }
+
+  @override
+  String redesignWorkMissingPillMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count missing',
+      one: '1 missing',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingPillOne(Object name) {
+    return '$name missing';
+  }
+
+  @override
+  String get redesignWorkMore => 'More about this work';
+
+  @override
   String get redesignWorkNever => 'Never';
 
   @override
+  String get redesignWorkNext => 'Up next';
+
+  @override
   String get redesignWorkNoFiles => 'There are no files for this work yet.';
+
+  @override
+  String get redesignWorkNoFilesYet =>
+      'There is no sheet music for this work yet.';
 
   @override
   String get redesignWorkNoPart => 'There is no sheet music for your part yet.';
@@ -11898,6 +12120,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkOpen => 'Open';
 
   @override
+  String get redesignWorkPartOwn => 'your part';
+
+  @override
   String get redesignWorkPause => 'Pause';
 
   @override
@@ -11905,6 +12130,11 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignWorkPlay => 'Play';
+
+  @override
+  String redesignWorkPractice(Object name) {
+    return 'Practice recording · $name';
+  }
 
   @override
   String get redesignWorkRecording => 'Recording';
@@ -11926,10 +12156,31 @@ class AppLocalizationsEn extends AppLocalizations {
   }
 
   @override
+  String get redesignWorkShareLink => 'Share link to this work';
+
+  @override
+  String get redesignWorkShareLinkHint => 'Public page, no sign-in needed';
+
+  @override
   String get redesignWorkSlower => 'Play slower';
 
   @override
+  String get redesignWorkUpload => 'Upload';
+
+  @override
+  String get redesignWorkWithChoir => 'With choir';
+
+  @override
+  String get redesignWorkWithOrchestra => 'With orchestra';
+
+  @override
+  String get redesignWorkWithSolo => 'With solo vocals';
+
+  @override
   String get redesignWorkYourPart => 'Your part';
+
+  @override
+  String get redesignWorkZip => 'All files as ZIP';
 
   @override
   String get redesignWorksAdd => 'Add work';

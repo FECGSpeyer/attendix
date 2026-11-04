@@ -1,10 +1,38 @@
 {
   "versions": [
     {
-      "version": "0.37.2",
-      "date": "3.11.2026",
+      "version": "0.39.2",
+      "date": "4.11.2026",
       "changes": [
-        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig"
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
+        "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
+      "version": "0.39.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Neues Formular „Werk bearbeiten“ mit Titel, Präfix und Nummer, Kategorien, Schwierigkeit, Chor/Solo, Link und Zusatzfeldern; jede Änderung wird sofort gespeichert",
+        "✨ Beta: Ist eine Nummer schon vergeben, zeigt das Formular, welches Werk sie hat, und speichert sie nicht",
+        "✨ Beta: Keine Besetzungs-Auswahl mehr, die Gruppen ergeben sich aus den hochgeladenen Noten; „Werk löschen“ steht unten im Formular",
+        "✨ Beta: Tipp auf „Zuletzt gespielt“ zeigt den ganzen Verlauf; alte Werk-Links öffnen die neue Werk-Seite"
+      ]
+    },
+    {
+      "version": "0.38.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Web: Aufnahmen lassen sich wieder abspielen"
+      ]
+    },
+    {
+      "version": "0.38.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Neue Werk-Seite mit „Noten & Dateien“, Tipp auf eine Stimme öffnet sie direkt im Viewer",
+        "✨ Beta: ••• neben jeder Datei mit Teilen, Herunterladen, Drucken und Telegram; die Leitung kann dort auch Stimme ändern, umbenennen und löschen (mit Rückgängig)",
+        "✨ Beta: Noten auch am Handy hinzufügen, mit Stimmen-Erkennung und Hinweis, welche Stimme noch fehlt",
+        "✨ Beta: Abschnitt „Über das Werk“ mit Besetzung aus den Noten, Als Nächstes und Zuletzt gespielt; ••• oben mit Link teilen, ZIP, Gruppen-PDFs und Kopieren"
       ]
     },
     {

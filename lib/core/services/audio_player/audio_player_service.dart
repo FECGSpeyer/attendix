@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -45,6 +46,10 @@ class AudioQueueInfo {
 /// [AudioPlayerState] so the player bar can show next/previous buttons).
 final audioQueueInfoProvider = StateProvider<AudioQueueInfo>((_) => const AudioQueueInfo());
 
+/// REDESIGN: playback speed of [AudioPlayerService.setSpeed], so every
+/// "0,8×" button on a page shows the same value.
+final audioPlaybackSpeedProvider = StateProvider<double>((_) => 1.0);
+
 /// Cross-cutting audio playback service.
 ///
 /// Mirrors Ionic v4.0.5 `AudioPlayerService` (`audio-player.service.ts`).
@@ -89,6 +94,7 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
 
   Future<void> setSpeed(double speed) async {
     _speed = speed;
+    ref.read(audioPlaybackSpeedProvider.notifier).state = speed;
     await _player?.setSpeed(speed);
   }
 
@@ -215,6 +221,13 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     _wireStreams(player);
 
     try {
+      // Web: the page is cross-origin isolated (COEP require-corp in
+      // web/_headers, needed for multi-threaded Skwasm). A plain <audio>
+      // request is no-cors and gets blocked because Supabase Storage sends
+      // no Cross-Origin-Resource-Policy header. As a CORS request
+      // (crossorigin="anonymous") it is allowed: Storage answers with
+      // Access-Control-Allow-Origin.
+      if (kIsWeb) await player.setWebCrossOrigin(WebCrossOrigin.anonymous);
       final loadedDuration = await player.setUrl(url);
       if (_speed != 1.0) await player.setSpeed(_speed);
 
