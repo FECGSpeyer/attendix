@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -28,6 +27,7 @@ import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
 import '../widgets/handover_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
+import '../widgets/archive_person_modal.dart';
 import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
@@ -1169,66 +1169,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// Ionic archive modal (full screen, "{Name} Archivieren", X, FAB).
   Future<void> _showArchiveDialog() async {
-    final noteController = TextEditingController();
-    DateTime archiveDate = DateTime.now();
-
-    try {
-      final result = await showAppDialog<Map<String, dynamic>>(
-        context: context,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AppAlertDialog(
-            title: Text(context.l10n.peopleArchiveTitle(widget.person.fullName)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(context.l10n.peopleLeaveDate),
-                  subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showAppDatePicker(
-                      context: context,
-                      initialDate: archiveDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      setDialogState(() => archiveDate = date);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                TextField(
-                  controller: noteController,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.dutyReasonOptional,
-                    hintText: context.l10n.personFlutterArchiveReasonHint,
-                  ),
-                  maxLines: 2,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                onPressed: () {
-                  Navigator.pop(context, {'date': archiveDate.toIso8601String(), 'note': noteController.text});
-                },
-                child: Text(context.l10n.peopleArchive),
-              ),
-            ],
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _archivePerson(result['date'], result['note']);
-      }
-    } finally {
-      noteController.dispose();
+    final result = await showArchivePersonModal(context, widget.person.fullName);
+    if (result != null && mounted) {
+      await _archivePerson(result.date, result.note);
     }
   }
 
