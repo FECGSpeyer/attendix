@@ -5,6 +5,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/team_org/team_org.dart';
 import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
+import 'shared_person_fields.dart' show hydrateSharedFieldValuesForRows;
 import '../../l10n/l10n.dart';
 
 /// Provider for ProtocolRepository
@@ -234,7 +235,11 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
   // ── Quick-create Termin (Ionic promptCreateProtocolAttendance) ──
 
   /// Active persons a new Termin can be created for (not archived, pending or paused).
-  Future<List<Map<String, dynamic>>> getPersonsForNewAttendance() async {
+  /// [withSharedFields]: merge the organisation's shared person field
+  /// values (needed when the type filters on an extra field).
+  Future<List<Map<String, dynamic>>> getPersonsForNewAttendance({
+    bool withSharedFields = false,
+  }) async {
     try {
       // `paused` is nullable: NULL means not paused (Ionic `!p.paused`), so
       // filter with `not.is.true` on the server (`.eq('paused', false)` would
@@ -242,7 +247,7 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
       final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
         final page = await supabase
             .from('player')
-            .select('id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')
+            .select('id, appId, global_person_id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')
             .eq('tenantId', currentTenantId)
             .isFilter('left', null)
             .eq('pending', false)
@@ -251,7 +256,10 @@ class ProtocolRepository extends BaseRepository with TenantAwareRepository {
             .range(from, to);
         return (page as List).map((e) => Map<String, dynamic>.from(e as Map)).toList();
       });
-      return rows.where((p) => p['paused'] != true).toList();
+      final active = rows.where((p) => p['paused'] != true).toList();
+      if (!withSharedFields) return active;
+      return await hydrateSharedFieldValuesForRows(
+          supabase, currentTenantId, active);
     } catch (e, stack) {
       handleError(e, stack, 'getPersonsForNewAttendance');
       rethrow;

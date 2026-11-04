@@ -11537,6 +11537,12 @@ abstract class AppLocalizations {
   /// **'Hinweis'**
   String get peopleFlutterHint;
 
+  /// people.flutter.importNotAssigned
+  ///
+  /// In de, this message translates to:
+  /// **'{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})'**
+  String peopleFlutterImportNotAssigned(Object name, Object error);
+
   /// people.flutter.lastNameRequired
   ///
   /// In de, this message translates to:

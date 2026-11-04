@@ -21,6 +21,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../data/repositories/player_repository.dart' show PersonNotAddedToAttendancesException;
 
 enum _Step { file, mapping, preview }
 
@@ -46,6 +47,11 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   bool _createAccounts = false;
   bool _busy = false;
   String _progress = '';
+
+  /// Rows (by file row) that were saved, but could not be added to the
+  /// Termine. A second click only retries the Termine for them, so the
+  /// person is not saved twice.
+  final Map<int, Person> _savedWithoutTermine = {};
 
   List<Group> get _groups => ref.read(groupsProvider).valueOrNull ?? [];
 
@@ -90,6 +96,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       setState(() {
         _fileName = picked.name;
         _rawRows = data.rows;
+        _savedWithoutTermine.clear();
         _headers = data.headers;
         _ctx = ctx;
         _options = _buildOptions();
@@ -180,22 +187,35 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     final failed = <String>[];
     for (var i = 0; i < toImport.length; i++) {
       final row = toImport[i];
+      final name = '${row.firstName} ${row.lastName}';
       try {
-        // Ionic importPlayers → addPlayer(player, register, role): the
-        // account is registered first (a failed registration inserts no
-        // person), an existing row of that account is reactivated instead
-        // of duplicated, and the person is added to later Termine.
-        final register = _createAccounts &&
-            (row.email?.trim().isNotEmpty ?? false) &&
-            registrationRepo.hasTenantId;
-        await playerRepo.addPlayer(
-          Person.fromJson({...row.data, 'tenantId': playerRepo.currentTenantId}),
-          register: register,
-          role: accountRoleForGroup(row.instrument, mainGroupId),
-        );
+        final saved = _savedWithoutTermine[row.rowIndex];
+        if (saved != null) {
+          // Saved by an earlier click: only add it to the Termine.
+          await playerRepo.addPlayerToAttendancesByDate(saved);
+        } else {
+          // Ionic importPlayers → addPlayer(player, register, role): the
+          // account is registered first (a failed registration inserts no
+          // person), an existing row of that account is reactivated instead
+          // of duplicated, and the person is added to later Termine.
+          final register = _createAccounts &&
+              (row.email?.trim().isNotEmpty ?? false) &&
+              registrationRepo.hasTenantId;
+          await playerRepo.addPlayer(
+            Person.fromJson({...row.data, 'tenantId': playerRepo.currentTenantId}),
+            register: register,
+            role: accountRoleForGroup(row.instrument, mainGroupId),
+          );
+        }
+        _savedWithoutTermine.remove(row.rowIndex);
         imported++;
+      } on PersonNotAddedToAttendancesException catch (e) {
+        _savedWithoutTermine[row.rowIndex] = e.person;
+        if (mounted) {
+          failed.add(context.l10n.peopleFlutterImportNotAssigned(name, e.cause.toString()));
+        }
       } catch (e) {
-        failed.add('${row.firstName} ${row.lastName}: $e');
+        failed.add('$name: $e');
       }
       if (mounted) {
         setState(() => _progress = context.l10n.peopleImportProgress(i + 1, toImport.length));

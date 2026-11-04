@@ -24,6 +24,7 @@ import '../../../data/models/tenant/tenant.dart';
 import '../../../data/repositories/duty_repository.dart';
 import '../../../data/repositories/player_absence_repository.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
+import '../../../data/repositories/shared_person_fields.dart' show hydrateSharedFieldValuesForRows;
 import 'widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 
 /// Ionic 4.19.2 `uniqueDates`: keeps one entry per calendar day (local time)
@@ -281,13 +282,22 @@ class AttendanceCreateWriter {
     // still counts as not paused.
     final players = await supabase
         .from('player')
-        .select('id, instrument, paused, shift_id, shift_start, shift_name, additional_fields')
+        .select('id, appId, global_person_id, instrument, paused, shift_id, shift_start, shift_name, additional_fields')
         .eq('tenantId', tenant.id!)
         .isFilter('left', null) // null = not archived
         .isFilter('pending', false); // not pending
 
-    final playerList = (players as List).where((p) => p['paused'] != true).toList();
+    var playerList = (players as List)
+        .map((p) => Map<String, dynamic>.from(p as Map))
+        .where((p) => p['paused'] != true)
+        .toList();
     if (playerList.isEmpty) return;
+    // Organisation field values are shared across the organisation's groups;
+    // merge them so the type's field filter sees them (not just the default).
+    if (type.additionalFieldsFilter != null) {
+      playerList =
+          await hydrateSharedFieldValuesForRows(supabase, tenant.id!, playerList);
+    }
 
     // Get default status from attendance type
     // DUTY: nobody is expected until assigned → Neutral for duty types

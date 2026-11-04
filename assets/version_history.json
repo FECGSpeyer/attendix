@@ -21,7 +21,9 @@
         "🐛 Web-App: Excel-Export und Excel-Import funktionieren wieder (schlugen in Chrome und aktuellem Safari fehl)",
         "🐛 Web-App: Noten als ZIP herunterladen funktioniert wieder",
         "🐛 Web-App: \"Person hinzufügen\" öffnet wieder das Formular statt einer grauen Seite",
-        "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand"
+        "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand",
+        "🐛 Termine anlegen: Ein Filter auf ein Organisationsfeld nutzt den gemeinsamen Wert der Person statt des Standardwerts",
+        "🐛 Personen-Import: Erneut importieren legt schon gespeicherte Personen nicht doppelt an, sondern trägt sie nur noch in die Termine ein"
       ]
     },
     {

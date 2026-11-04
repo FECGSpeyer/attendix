@@ -143,7 +143,7 @@ void main() {
       ], type, DateTime(2026, 11, 3));
       expect(rows, hasLength(2));
       final repo = _read('lib/data/repositories/protocol_repository.dart');
-      expect(repo, contains("select('id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')"));
+      expect(repo, contains("select('id, appId, global_person_id, instrument, additional_fields, shift_id, shift_start, shift_name, paused')"));
     });
   });
 

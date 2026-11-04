@@ -409,7 +409,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     if (!person.pending) {
-      await addPlayerToAttendancesByDate(result);
+      try {
+        await addPlayerToAttendancesByDate(result);
+      } catch (e) {
+        // The person is saved; only the Termine are missing. Callers that
+        // retry (import) must not save it a second time.
+        throw PersonNotAddedToAttendancesException(result, e);
+      }
     }
     return result;
   }
@@ -2380,4 +2386,16 @@ class _TypeFilter {
   final bool allDay;
   final String? startTime;
   final String? endTime;
+}
+
+/// [PlayerRepository.addPlayer] saved [person] but could not add it to the
+/// Termine since its join date ([cause]).
+class PersonNotAddedToAttendancesException implements Exception {
+  PersonNotAddedToAttendancesException(this.person, this.cause);
+
+  final Person person;
+  final Object cause;
+
+  @override
+  String toString() => cause.toString();
 }

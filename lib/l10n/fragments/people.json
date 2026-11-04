@@ -68,7 +68,8 @@
           "whatsAppHint": "Per WhatsApp schreiben",
           "telegramHint": "Per Telegram schreiben",
           "mailHint": "E-Mail schreiben"
-        }
+        },
+        "importNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})"
       }
     },
     "teachers": {
@@ -237,7 +238,8 @@
           "whatsAppHint": "Message on WhatsApp",
           "telegramHint": "Message on Telegram",
           "mailHint": "Write an email"
-        }
+        },
+        "importNotAssigned": "{name}: saved, but not added to the events ({error})"
       }
     },
     "teachers": {

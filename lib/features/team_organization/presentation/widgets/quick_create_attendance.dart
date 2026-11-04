@@ -245,7 +245,10 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       ErrorReporter.report(e, st, where: 'quick_create_attendance');
     }
     final results = await Future.wait([
-      repo.getPersonsForNewAttendance(),
+      // Organisation field values are shared across the organisation's
+      // groups; merge them so the type's field filter sees them.
+      repo.getPersonsForNewAttendance(
+          withSharedFields: type.additionalFieldsFilter != null),
       absenceRepo
           .getAbsencesForTenant()
           .catchError((_) => <PlayerAbsence>[]),
