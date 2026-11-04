@@ -91,16 +91,11 @@ class RdWorkPage extends ConsumerWidget {
 
     final canEdit = !data.readOnly && !data.isPublic;
     final filesState = canEdit ? ref.watch(rdWorkFilesProvider(songId)) : null;
-    final hidden = filesState?.hidden ?? const <String>{};
     final groups = ref.watch(groupsProvider).valueOrNull ?? data.instruments;
 
     // Last played / planned come from the list (enriched with the history).
-    // Files deleted a moment ago are gone at once (until "Rückgängig").
     final listed = ref.watch(songsProvider).valueOrNull?.where((s) => s.id == songId).firstOrNull;
-    final files = SongUtils.sortedFiles([
-      for (final f in data.song.files ?? const <SongFile>[])
-        if (!hidden.contains(f.url)) f,
-    ], groups);
+    final files = _visibleFiles(ref, data, groups);
     final song = data.song.copyWith(
       files: files,
       lastSung: listed?.lastSung,
@@ -226,7 +221,7 @@ class RdWorkPage extends ConsumerWidget {
               eyebrow: l10n.redesignWorkAllParts,
               title: l10n.redesignWorkFileCount(files.where(rdIsGroupPart).length),
               detail: song.name,
-              onOpen: () => _showParts(context, ref, data, song, files.where(rdIsGroupPart).toList(), groups),
+              onOpen: () => _showParts(context, ref, song, groups, groupId),
             ),
             const SizedBox(height: 12),
           ],
@@ -345,13 +340,7 @@ class RdWorkPage extends ConsumerWidget {
               _FileRow(
                 file: f,
                 label: SongUtils.fileLabel(f, groups),
-                detail:
-                    canEdit
-                        ? f.fileName
-                        : [
-                          rdFileKind(f),
-                          if (groupId != null && f.instrumentId == groupId) l10n.redesignWorkPartOwn,
-                        ].join(' · '),
+                detail: _fileDetail(context, f, rows, groups, canEdit: canEdit, groupId: groupId),
                 onOpen: () => rdOpenWorkFile(context, ref, song, f),
                 onMore: (button) => more(button, f),
               ),
@@ -365,11 +354,42 @@ class RdWorkPage extends ConsumerWidget {
                 title: l10n.redesignWorkAllParts,
                 subtitle: {for (final f in member.others) SongUtils.fileLabel(f, groups)}.join(', '),
                 value: '${member.others.length}',
-                onTap: () => _showParts(context, ref, data, song, files.where(rdIsGroupPart).toList(), groups),
+                onTap: () => _showParts(context, ref, song, groups, groupId),
               ),
           ],
         ),
     ];
+  }
+
+  /// The files of the Werk in list order; files deleted a moment ago are
+  /// gone at once (until "Rückgängig").
+  List<SongFile> _visibleFiles(WidgetRef ref, SongDetailData data, List<Group> groups) {
+    final canEdit = !data.readOnly && !data.isPublic;
+    final hidden = canEdit ? ref.watch(rdWorkFilesProvider(songId)).hidden : const <String>{};
+    return SongUtils.sortedFiles([
+      for (final f in data.song.files ?? const <SongFile>[])
+        if (!hidden.contains(f.url)) f,
+    ], groups);
+  }
+
+  /// Second line of a file row: the file name for editors; for members the
+  /// kind ("PDF · deine Stimme"), or the file name when another file of
+  /// [list] has the same label (two Klarinette PDFs stay apart).
+  String _fileDetail(
+    BuildContext context,
+    SongFile file,
+    List<SongFile> list,
+    List<Group> groups, {
+    required bool canEdit,
+    int? groupId,
+  }) {
+    if (canEdit) return file.fileName;
+    final label = SongUtils.fileLabel(file, groups);
+    final twin = list.where((o) => SongUtils.fileLabel(o, groups) == label).length > 1;
+    return [
+      twin ? file.fileName : rdFileKind(file),
+      if (groupId != null && file.instrumentId == groupId) context.l10n.redesignWorkPartOwn,
+    ].join(' · ');
   }
 
   /// "Über das Werk": the quiet details. Termine only as "Als Nächstes" and
@@ -466,15 +486,10 @@ class RdWorkPage extends ConsumerWidget {
   }
 
   /// "Alle Stimmen": the parts of every group; a tap opens one, "•••" has
-  /// the rest.
-  Future<void> _showParts(
-    BuildContext context,
-    WidgetRef ref,
-    SongDetailData data,
-    Song song,
-    List<SongFile> files,
-    List<Group> groups,
-  ) {
+  /// the rest. The list follows renames and part changes; deleting closes
+  /// the sheet, so "Rückgängig" on the page can be reached.
+  Future<void> _showParts(BuildContext context, WidgetRef ref, Song song, List<Group> groups, int? groupId) {
+    final params = (songId: songId, sharingId: null);
     return showModalBottomSheet<void>(
       context: context,
       useRootNavigator: true,
@@ -489,37 +504,55 @@ class RdWorkPage extends ConsumerWidget {
           initialChildSize: 0.7,
           maxChildSize: 0.95,
           builder:
-              (sheet, controller) => ListView(
-                controller: controller,
-                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
-                children: [
-                  Center(
-                    child: Container(
-                      width: 36,
-                      height: 5,
-                      margin: const EdgeInsets.only(bottom: 12),
-                      decoration: BoxDecoration(color: p.track, borderRadius: BorderRadius.circular(3)),
-                    ),
-                  ),
-                  Text(sheet.l10n.redesignWorkAllParts, style: RdType.section(p)),
-                  Text(song.name, style: RdType.meta(p, size: 14)),
-                  const SizedBox(height: 12),
-                  RdGroupedList(
+              (sheet, controller) => Consumer(
+                builder: (sheet, sheetRef, _) {
+                  final data = sheetRef.watch(songDetailDataProvider(params)).valueOrNull;
+                  final files =
+                      data == null
+                          ? const <SongFile>[]
+                          : _visibleFiles(sheetRef, data, groups).where(rdIsGroupPart).toList();
+                  final canEdit = data != null && !data.readOnly && !data.isPublic;
+                  return ListView(
+                    controller: controller,
+                    padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
                     children: [
-                      for (final f in files)
-                        _FileRow(
-                          file: f,
-                          label: SongUtils.fileLabel(f, groups),
-                          detail: rdFileKind(f),
-                          onOpen: () {
-                            Navigator.of(sheet).pop();
-                            rdOpenWorkFile(context, ref, song, f);
-                          },
-                          onMore: (button) => rdShowWorkFileActions(button, ref, data, f, groups),
+                      Center(
+                        child: Container(
+                          width: 36,
+                          height: 5,
+                          margin: const EdgeInsets.only(bottom: 12),
+                          decoration: BoxDecoration(color: p.track, borderRadius: BorderRadius.circular(3)),
                         ),
+                      ),
+                      Text(sheet.l10n.redesignWorkAllParts, style: RdType.section(p)),
+                      Text(song.name, style: RdType.meta(p, size: 14)),
+                      const SizedBox(height: 12),
+                      RdGroupedList(
+                        children: [
+                          for (final f in files)
+                            _FileRow(
+                              file: f,
+                              label: SongUtils.fileLabel(f, groups),
+                              detail: _fileDetail(sheet, f, files, groups, canEdit: canEdit, groupId: groupId),
+                              onOpen: () {
+                                Navigator.of(sheet).pop();
+                                rdOpenWorkFile(context, ref, song, f);
+                              },
+                              onMore:
+                                  (button) => rdShowWorkFileActions(
+                                    button,
+                                    ref,
+                                    data!,
+                                    f,
+                                    groups,
+                                    beforeDelete: () => Navigator.of(sheet).pop(),
+                                  ),
+                            ),
+                        ],
+                      ),
                     ],
-                  ),
-                ],
+                  );
+                },
               ),
         );
       },
@@ -799,8 +832,6 @@ class _RecordingCard extends ConsumerStatefulWidget {
 }
 
 class _RecordingCardState extends ConsumerState<_RecordingCard> {
-  late double _speed = ref.read(audioPlayerServiceProvider.notifier).speed;
-
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
@@ -819,7 +850,8 @@ class _RecordingCardState extends ConsumerState<_RecordingCard> {
         (created == null
             ? l10n.redesignWorkRecording
             : l10n.redesignWorkRecordingFrom(DateFormat.Md(currentIntlLocale()).format(created.toLocal())));
-    final slow = _speed < 1;
+    // One speed for every card: they all drive the same player.
+    final slow = ref.watch(audioPlaybackSpeedProvider) < 1;
 
     return RdCard(
       padding: const EdgeInsets.all(14),
@@ -934,11 +966,7 @@ class _RecordingCardState extends ConsumerState<_RecordingCard> {
                     foregroundColor: slow ? p.softText : p.text,
                     textStyle: const TextStyle(fontSize: 13, fontWeight: FontWeight.w600),
                   ),
-                  onPressed: () {
-                    final next = slow ? 1.0 : 0.8;
-                    setState(() => _speed = next);
-                    service.setSpeed(next);
-                  },
+                  onPressed: () => service.setSpeed(slow ? 1.0 : 0.8),
                   child: Text('${NumberFormat.decimalPattern(currentIntlLocale()).format(slow ? 0.8 : 1)}×'),
                 ),
               ),

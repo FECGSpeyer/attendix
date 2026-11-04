@@ -57,14 +57,16 @@ enum _FileAction { share, download, print, telegram, part, rename, delete }
 
 /// "•••" of one file, anchored at [button]: Teilen, Herunterladen, Drucken
 /// and Telegram for everybody; people who may edit the Werk also change the
-/// part, rename and delete (with "Rückgängig" on the page).
+/// part, rename and delete (with "Rückgängig" on the page). A sheet passes
+/// [beforeDelete] to close itself, so "Rückgängig" can be reached.
 Future<void> rdShowWorkFileActions(
   BuildContext button,
   WidgetRef ref,
   SongDetailData data,
   SongFile file,
-  List<Group> groups,
-) async {
+  List<Group> groups, {
+  VoidCallback? beforeDelete,
+}) async {
   final l10n = button.l10n;
   final song = data.song;
   final songId = song.id;
@@ -190,6 +192,7 @@ Future<void> rdShowWorkFileActions(
       if (name == null) return;
       await run(() => ref.read(rdWorkFilesProvider(songId!).notifier).rename(file, name));
     case _FileAction.delete:
+      beforeDelete?.call();
       ref
           .read(rdWorkFilesProvider(songId!).notifier)
           .delete([file], mainGroupId: data.mainGroupId, notice: l10n.redesignFilesDeletedOne(file.fileName));

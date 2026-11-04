@@ -813,6 +813,49 @@ void main() {
       await tester.pump(const Duration(seconds: 7));
     });
 
+    testWidgets('admin: deleting in Alle Stimmen closes the sheet, Rückgängig is reachable', (tester) async {
+      _phone(tester);
+      final noScore = _ouverture.copyWith(files: [for (final f in _ouverture.files!) if (f.note != 'Partitur') f]);
+      await tester.pumpWidget(_workApp(Role.admin, song: noScore, instrument: null));
+      await _settle(tester);
+
+      await tester.tap(find.text('Öffnen'));
+      await _settle(tester);
+      await tester.tap(find.byTooltip('Mehr zu Flöte').last);
+      await _settle(tester);
+      await tester.tap(find.text('Löschen'));
+      await _settle(tester);
+      expect(find.text('Alle Stimmen'), findsNothing); // sheet closed
+      await tester.tap(find.text('Rückgängig'));
+      await _settle(tester);
+      expect(find.text('floete.pdf'), findsOneWidget);
+      await tester.pump(const Duration(seconds: 7));
+    });
+
+    testWidgets('member: two files of the same part keep their names, one speed for both recordings', (
+      tester,
+    ) async {
+      _phone(tester);
+      final twins = _ouverture.copyWith(
+        files: [
+          ..._ouverture.files!,
+          const SongFile(fileName: 'klar_2.pdf', fileType: _pdf, url: 'https://x/klar_2.pdf', instrumentId: 11),
+          const SongFile(fileName: 'klar.mp3', fileType: 'audio/mpeg', url: 'https://x/klar.mp3', instrumentId: 11),
+        ],
+      );
+      final player = _FakePlayer();
+      await tester.pumpWidget(_workApp(Role.player, song: twins, player: player));
+      await _settle(tester);
+
+      expect(find.text('klar.pdf · deine Stimme'), findsOneWidget);
+      expect(find.text('klar_2.pdf · deine Stimme'), findsOneWidget);
+
+      expect(find.bySemanticsLabel('Langsamer abspielen'), findsNWidgets(2));
+      await tester.tap(find.bySemanticsLabel('Langsamer abspielen').first);
+      await _settle(tester);
+      expect(find.bySemanticsLabel('Normal abspielen'), findsNWidgets(2));
+    });
+
     testWidgets('admin: missing parts and the Besetzung from the Noten', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_workApp(
