@@ -32,6 +32,7 @@ List<Song> rdFilteredWorks({
     groups: data.groups,
     playerCounts: playerCounts,
     orchestra: data.isOrchestra,
+    choir: data.isChoir,
   );
   if (filter.sortOption != SongSortOption.lastSungAsc) return filtered;
   bool never(Song s) => DateTime.tryParse(s.lastSung ?? '') == null;

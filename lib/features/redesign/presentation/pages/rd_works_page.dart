@@ -106,7 +106,12 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   /// the organisation.
   Future<void> _add(SongsListData data) async {
     final l10n = context.l10n;
-    final org = ref.read(currentOrganisationProvider).valueOrNull != null;
+    // "Aus der Organisation" needs the organisation: wait for it to load.
+    var org = false;
+    try {
+      org = await ref.read(currentOrganisationProvider.future).timeout(const Duration(seconds: 5)) != null;
+    } catch (_) {}
+    if (!mounted) return;
     final action = await showAppActionSheet<String>(
       context,
       title: l10n.redesignWorksAdd,
@@ -293,10 +298,10 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
         ].join(' · ');
       }
       final files = song.files ?? const <SongFile>[];
-      final part = ownGroup != null && rdPartFiles(song, ownGroup.id).isNotEmpty;
+      final part = ownGroup != null && rdMemberPartFiles(song, ownGroup.id, choir: data.isChoir).isNotEmpty;
       // What is missing first, the categories last (cut on small phones).
       return [
-        if (files.isEmpty)
+        if (!rdHasNotes(song))
           l10n.redesignWorksStatusNoFiles
         else if (!part && ownGroup != null && files.any(rdIsGroupPart))
           l10n.redesignWorksStatusNoPart(ownGroup.name),
@@ -308,10 +313,9 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
 
     Widget? pill(Song song) {
       if (!lead) return null;
-      final files = song.files ?? const <SongFile>[];
-      if (files.isEmpty) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.absent);
+      if (!rdHasNotes(song)) return RdPill(l10n.redesignWorksNoFilesPill, tone: RdTone.absent);
       if (!data.isOrchestra) return null;
-      final missing = rdMissingGroups(files, data.groups, counts);
+      final missing = rdWorkMissingGroups(song, data.groups, counts);
       if (missing.isEmpty) return null;
       return RdPill(
         missing.length == 1
@@ -356,7 +360,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
               ],
             )
           else
-            ..._memberNext(context, events, ownGroup, status),
+            ..._memberNext(context, events, ownGroup, data.isChoir, status),
           const SizedBox(height: 18),
         ],
         if (categories.isNotEmpty) ...[
@@ -451,6 +455,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     BuildContext context,
     List<RdNextEvent> events,
     Group? ownGroup,
+    bool choir,
     String Function(Song) status,
   ) {
     final l10n = context.l10n;
@@ -459,7 +464,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final mine = [
       if (ownGroup != null)
         for (final song in first.songs)
-          for (final f in rdPartFiles(song, ownGroup.id))
+          for (final f in rdMemberPartFiles(song, ownGroup.id, choir: choir))
             if (SongUtils.isPdf(f) || SongUtils.isImage(f)) SongPrintEntry(song: song, file: f),
     ];
     return [

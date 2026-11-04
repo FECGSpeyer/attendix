@@ -376,6 +376,41 @@ void main() {
       expect(split.others.map((f) => f.fileName), ['floete.pdf']);
     });
 
+    test('Termine of one day stay apart; a recording is no Noten; Chor (alle) is everyone\'s part', () {
+      final events = rdNextEvents([
+        (
+          date: '05.11.2026 | Probe',
+          history: const [
+            SongHistory(songId: 5, attendanceId: 31, attendanceDate: '2026-11-05T10:00:00Z'),
+            SongHistory(songId: 6, attendanceId: 32, attendanceDate: '2026-11-05T18:00:00Z'),
+          ],
+        ),
+      ], [_ouverture, _ave]);
+      expect(events.map((e) => '${e.attendanceId}: ${e.songs.map((s) => s.id).join(',')}'), ['31: 5', '32: 6']);
+
+      const mp3 = SongFile(fileName: 'take.mp3', fileType: 'audio/mpeg', url: 'https://x/take.mp3', instrumentId: 1);
+      const recordingOnly = Song(id: 8, name: 'Nur Aufnahme', files: [mp3]);
+      expect(rdWorkLacksNotes(recordingOnly, _groups, null, orchestra: false), isTrue);
+      expect(rdWorkLacksNotes(_abend, _groups, {12: 1}, orchestra: true), isFalse);
+
+      const choirAll = SongFile(fileName: 'chor.pdf', fileType: _pdf, url: 'https://x/chor.pdf', note: 'Chor');
+      const choirWork = Song(id: 9, name: 'Chorsatz', files: [choirAll, mp3]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: true), [choirAll]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: false), isEmpty);
+      expect(
+        rdApplyOnly(
+          [choirWork, recordingOnly],
+          {RdWorksOnly.myPart},
+          groupId: 11,
+          groups: _groups,
+          playerCounts: null,
+          orchestra: false,
+          choir: true,
+        ).map((s) => s.id),
+        [9],
+      );
+    });
+
     test('Werke routes follow the /songs-tab guard', () {
       for (final role in [Role.parent, Role.applicant]) {
         expect(RedesignRoutes.roleRedirect('/werke', role), '/heute', reason: role.name);

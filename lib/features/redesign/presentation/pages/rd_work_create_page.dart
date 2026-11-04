@@ -36,8 +36,10 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
   bool _withChoir = false;
   bool _withSolo = false;
   bool _saving = false;
-  List<String>? _categoryIds;
-  String? _preselected;
+
+  /// Categories once a chip was tapped; until then the one the list is
+  /// filtered to (it may load after the page opens).
+  List<String>? _pickedCategories;
 
   @override
   void dispose() {
@@ -55,16 +57,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
     }
   }
 
-  /// The category the list is filtered to is chosen from the start.
-  void _initCategory(List<SongCategory> categories) {
-    if (_categoryIds != null) return;
-    final tenantId = ref.read(currentTenantIdProvider);
-    final filtered = tenantId == null ? null : ref.read(songFilterProvider(tenantId)).category;
-    _preselected = categories.any((c) => c.id == filtered) ? filtered : null;
-    _categoryIds = [if (_preselected != null) _preselected!];
-  }
-
-  Future<void> _create(List<Song> songs) async {
+  Future<void> _create(List<Song> songs, List<String> categoryIds) async {
     final number = int.tryParse(_number.text.trim());
     final name = _name.text.trim();
     final prefix = _prefix.text.trim();
@@ -80,7 +73,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
             number: number,
             withChoir: _withChoir,
             withSolo: _withSolo,
-            categoryIds: [...?_categoryIds],
+            categoryIds: categoryIds,
             // The Besetzung follows from the uploaded Noten.
             instrumentIds: const [],
           ),
@@ -99,23 +92,28 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    final songs = ref.watch(songsProvider).valueOrNull ?? const <Song>[];
+    // Number suggestion and check need every Werk: no Werk is created
+    // before they are loaded.
+    final songsAsync = ref.watch(songsProvider);
+    final songs = songsAsync.valueOrNull;
     final categories = [...?ref.watch(songCategoriesProvider).valueOrNull?.where((c) => c.id != null)]
       ..sort((a, b) => a.index.compareTo(b.index));
-    _initCategory(categories);
+    final tenantId = ref.watch(currentTenantIdProvider);
+    final filtered = tenantId == null ? null : ref.watch(songFilterProvider(tenantId)).category;
+    final preselected = categories.where((c) => c.id == filtered).firstOrNull;
+    final categoryIds = _pickedCategories ?? [if (preselected != null) preselected.id!];
     final prefix = _prefix.text.trim();
-    final next = rdNextFreeNumber(songs, prefix);
+    final next = songs == null ? null : rdNextFreeNumber(songs, prefix);
     // Until a number is typed, the field shows the next free one.
-    if (!_numberTouched && _number.text != '$next') {
+    if (next != null && !_numberTouched && _number.text != '$next') {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !_numberTouched) _number.text = '$next';
       });
     }
     final number = _numberTouched ? int.tryParse(_number.text.trim()) : next;
-    final taken = rdNumberTakenBy(songs, null, prefix, number);
-    final canCreate = !_saving && _name.text.trim().isNotEmpty && number != null && taken == null;
+    final taken = songs == null ? null : rdNumberTakenBy(songs, null, prefix, number);
+    final canCreate = songs != null && !_saving && _name.text.trim().isNotEmpty && number != null && taken == null;
     final textStyle = TextStyle(fontSize: 17, color: p.text);
-    final preselected = categories.where((c) => c.id == _preselected).firstOrNull;
 
     Widget hint(String text, {Color? color}) => Padding(
       padding: const EdgeInsets.fromLTRB(4, 8, 4, 0),
@@ -134,7 +132,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
               submit: l10n.redesignWorkCreateCreate,
               saving: _saving,
               onCancel: _cancel,
-              onSubmit: canCreate ? () => _create(songs) : null,
+              onSubmit: canCreate ? () => _create(songs, categoryIds) : null,
             ),
             Expanded(
               child: RdFormBody(
@@ -164,6 +162,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                               child: TextField(
                                 key: const Key('rd-work-create-prefix'),
                                 controller: _prefix,
+                                readOnly: songs == null,
                                 textCapitalization: TextCapitalization.characters,
                                 textInputAction: TextInputAction.next,
                                 style: textStyle,
@@ -178,6 +177,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                               child: TextField(
                                 key: const Key('rd-work-create-number'),
                                 controller: _number,
+                                readOnly: songs == null,
                                 keyboardType: TextInputType.number,
                                 inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                                 textInputAction: TextInputAction.done,
@@ -193,8 +193,18 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                   ),
                   if (taken != null)
                     hint(l10n.redesignWorkEditNumberTaken(taken.fullNumber, taken.name), color: p.absent)
-                  else
-                    hint('${l10n.redesignWorkCreateNextNumber('$prefix$next')} ${l10n.redesignWorkCreatePrefixHint}'),
+                  else if (next != null)
+                    hint('${l10n.redesignWorkCreateNextNumber('$prefix$next')} ${l10n.redesignWorkCreatePrefixHint}')
+                  else if (songsAsync.hasError)
+                    Padding(
+                      padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+                      child: Row(
+                        children: [
+                          Expanded(child: Text(l10n.redesignWorkEditNumberLocked, style: RdType.meta(p, size: 13))),
+                          RdTextLink(label: l10n.redesignCommonRetry, onTap: () => ref.invalidate(songsProvider)),
+                        ],
+                      ),
+                    ),
                   if (categories.isNotEmpty) ...[
                     const SizedBox(height: 20),
                     RdGroupLabel(l10n.redesignWorkCreateCategory),
@@ -205,17 +215,17 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                         for (final c in categories)
                           RdChoiceChip(
                             label: c.name,
-                            selected: _categoryIds!.contains(c.id),
+                            selected: categoryIds.contains(c.id),
                             onTap:
                                 () => setState(
                                   () =>
-                                      _categoryIds =
-                                          _categoryIds!.contains(c.id)
+                                      _pickedCategories =
+                                          categoryIds.contains(c.id)
                                               ? [
-                                                for (final id in _categoryIds!)
+                                                for (final id in categoryIds)
                                                   if (id != c.id) id,
                                               ]
-                                              : [..._categoryIds!, c.id!],
+                                              : [...categoryIds, c.id!],
                                 ),
                           ),
                       ],
@@ -253,7 +263,7 @@ class _RdWorkCreatePageState extends ConsumerState<RdWorkCreatePage> {
                   RdPrimaryButton(
                     key: const Key('rd-work-create-submit'),
                     label: l10n.redesignWorkCreateCreateAndAdd,
-                    onPressed: canCreate ? () => _create(songs) : null,
+                    onPressed: canCreate ? () => _create(songs, categoryIds) : null,
                   ),
                   Padding(
                     padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),

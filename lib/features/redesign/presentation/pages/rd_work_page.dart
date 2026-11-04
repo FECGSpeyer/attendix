@@ -104,8 +104,8 @@ class RdWorkPage extends ConsumerWidget {
     );
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
-    final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false);
-    final part = rdPartFiles(song, groupId);
+    final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false, choir: data.isChoir);
+    final part = rdMemberPartFiles(song, groupId, choir: data.isChoir);
     final recording = rdRecording(song);
     final score = rdScore(song);
     // Choirs: the practice recording of the voice ("Sopran.mp3").
@@ -135,7 +135,8 @@ class RdWorkPage extends ConsumerWidget {
     final header = Row(
       children: [
         Expanded(child: back),
-        if (canEdit) RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
+        if (canEdit)
+          RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
         if (rdWorkMenuHasActions(data, files, copyTargets)) ...[
           const SizedBox(width: 4),
           Builder(
@@ -194,7 +195,11 @@ class RdWorkPage extends ConsumerWidget {
           RdWorkLead.part => [
             _PartCard(
               eyebrow: l10n.redesignWorkYourPart,
-              title: ownGroup?.name ?? SongUtils.fileLabel(part.first, groups),
+              // A choir without an own file gets "Chor (alle)".
+              title:
+                  part.first.instrumentId == groupId
+                      ? ownGroup?.name ?? SongUtils.fileLabel(part.first, groups)
+                      : SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir),
               detail: [
                 rdFileKind(part.first),
                 if (part.length > 1) l10n.redesignWorkFileCount(part.length),

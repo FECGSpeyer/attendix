@@ -8,7 +8,8 @@
         "✨ Beta: Jedes Werk mit einer Statuszeile (deine Stimme, Aufnahme, fehlende Noten); die Leitung sieht, wo noch Noten fehlen",
         "✨ Beta: „Sortieren & Filtern“ mit Nummer, Titel, Zuletzt gespielt und Am längsten nicht gespielt, dazu Nur-zeigen-Filter",
         "✨ Beta: „+“ mit Neues Werk, Werkliste importieren und Aus anderer Gruppe übernehmen; „Neues Werk“ schlägt die nächste freie Nummer vor und fragt keine Besetzung ab",
-        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken"
+        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken",
+        "🐛 Beta: Im Chor gelten „Chor (alle)“-Noten als eigene Stimme, wenn es keine Datei für die Stimme gibt (Werk-Seite, Werke-Liste, Meine Noten)"
       ]
     },
     {

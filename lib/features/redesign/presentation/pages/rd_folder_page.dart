@@ -8,7 +8,6 @@ import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/redesign/rd_theme.dart';
-import '../../../../core/utils/choir_file_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/song/song.dart';
@@ -39,17 +38,14 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
   bool _all = false;
   bool _printing = false;
 
-  /// Files of [groupId] in [song]; choirs fall back to "Chor (alle)".
-  List<SongFile> _files(Song song, int groupId, bool choir) {
-    final own = [
-      for (final e in filesForGroup([song], groupId)) e.file,
-    ];
-    if (own.isNotEmpty || !choir || groupId < 0) return own;
-    return [
-      for (final f in song.files ?? const <SongFile>[])
-        if (isChoirAllFile(instrumentId: f.instrumentId, note: f.note)) f,
-    ];
-  }
+  /// Files of [groupId] in [song]; choirs fall back to "Chor (alle)". The
+  /// virtual groups (Dirigenten −1, Chor (alle) −2) list their files.
+  List<SongFile> _files(Song song, int groupId, bool choir) =>
+      groupId < 0
+          ? [
+            for (final e in filesForGroup([song], groupId)) e.file,
+          ]
+          : rdMemberPartFiles(song, groupId, choir: choir);
 
   Future<void> _pick(List<Group> groups) async {
     final l10n = context.l10n;
@@ -115,7 +111,7 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
       );
     }
 
-    final choir = data.tenantType == 'choir';
+    final choir = data.isChoir;
     final groups = buildGroupsWithFiles(
       data.songs,
       data.groups,
