@@ -6,7 +6,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/config/supabase_config.dart' show currentAuthUserIdProvider;
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
@@ -15,7 +14,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
-import '../../../../core/services/offline_queue_service.dart' show rootScaffoldMessengerKey;
+import '../../../../core/services/offline_queue_service.dart' show offlineQueueNotifierProvider, rootScaffoldMessengerKey;
 import '../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -128,9 +127,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   /// Pultmodus: big tiles instead of the list (rd_pult_view.dart).
   bool _pult = false;
 
-  // Keyboard (canvas "Desktop"): the row the keys act on, the rows shown
-  // and their keys for scrolling.
-  int? _kbIndex;
+  // Keyboard (canvas "Desktop"): the person the keys act on (by id, so a
+  // filter that drops a changed row does not skip the next one), the rows
+  // shown and their keys for scrolling.
+  int? _kbId;
   List<RdMember> _kbRows = const [];
   List<AttendanceStatus> _kbAvailable = const [];
   final Map<int, GlobalKey> _rowKeys = {};
@@ -449,6 +449,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     // Bound before the dialog (tenant switch safety); the container
     // outlives this page.
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final container = ProviderScope.containerOf(context, listen: false);
     final paId = _paIds[member.id];
     if (paId == null) {
@@ -462,18 +463,23 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       confirmText: l10n.commonRemove,
       isDestructive: true,
     );
-    if (!confirmed || !mounted) return;
+    if (!confirmed || !mounted || !session.isCurrent()) return;
     try {
       if (!repo.hasTenantId || !await repo.validatePersonAttendanceTenant(paId)) {
         if (mounted) ToastHelper.showError(context, l10n.attendanceFlutterNoPermission);
         return;
       }
+      // Account switched while the check ran: never delete for the new one.
+      if (!session.isCurrent()) return;
       await repo.deletePersonAttendance(paId);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, l10n.attendancePersonRemoveFailed);
       return;
     }
     container.invalidate(personAttendancesForAttendanceProvider(_id));
+    // The Termin list's realtime channel only sees updates, not deletes:
+    // reload it so its counts and percentages drop the person too.
+    container.read(attendanceRefetchCounter.notifier).state++;
     if (!mounted) return;
     setState(() {
       _rowPersonIds = {...?_rowPersonIds}..remove(member.id);
@@ -619,7 +625,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final archive = !attendance.archived;
     // Read before the first await (tenant switch while the dialog is open).
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
-    final userId = ref.read(currentAuthUserIdProvider);
+    final session = ref.read(offlineQueueNotifierProvider.notifier).captureWriteSession();
     final container = ProviderScope.containerOf(context, listen: false);
     if (archive) {
       final confirmed = await DialogHelper.showConfirmation(
@@ -631,11 +637,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       if (!confirmed || !mounted) return;
     }
     try {
-      if (!repo.hasTenantId) return;
+      // Account or tenant switched while the dialog was open: no write.
+      if (!repo.hasTenantId || !session.isCurrent()) return;
       await repo.updateAttendance(_id, {
         'archived': archive,
         'archived_at': archive ? DateTime.now().toUtc().toIso8601String() : null,
-        'archived_by': archive ? userId : null,
+        'archived_by': archive ? session.userId : null,
       });
       container
         ..invalidate(attendanceDetailProvider(_id))
@@ -873,12 +880,12 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
     final rows = _kbRows;
     if (rows.isEmpty) return KeyEventResult.ignored;
+    final current = rows.indexWhere((m) => m.id == _kbId);
     if (key == LogicalKeyboardKey.arrowDown || key == LogicalKeyboardKey.arrowUp) {
-      final current = _kbIndex;
-      final next = current == null
+      final next = current < 0
           ? 0
           : (current + (key == LogicalKeyboardKey.arrowDown ? 1 : -1)).clamp(0, rows.length - 1);
-      _focusRow(next);
+      _focusRow(rows[next].id);
       return KeyEventResult.handled;
     }
     final status = switch (key) {
@@ -891,16 +898,18 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       return KeyEventResult.ignored;
     }
     if (!_kbAvailable.contains(status)) return KeyEventResult.handled;
-    final index = (_kbIndex ?? 0).clamp(0, rows.length - 1);
+    final index = current < 0 ? 0 : current;
     final member = rows[index];
+    // The next person is chosen before the write: with a status filter the
+    // changed row leaves the list.
+    final nextId = index + 1 < rows.length ? rows[index + 1].id : member.id;
     _setStatus(member, rdToggleTarget(member.status, status, initial: _initial[member.id]));
-    _focusRow((index + 1).clamp(0, rows.length - 1));
+    _focusRow(nextId);
     return KeyEventResult.handled;
   }
 
-  void _focusRow(int index) {
-    setState(() => _kbIndex = index);
-    final id = _kbRows[index].id;
+  void _focusRow(int id) {
+    setState(() => _kbId = id);
     WidgetsBinding.instance.addPostFrameCallback((_) {
       final rowContext = _rowKeys[id]?.currentContext;
       if (rowContext != null && rowContext.mounted) {
@@ -1170,9 +1179,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
 
   Widget _recordRow(RdMember m, List<AttendanceStatus> available, bool canViewNotes) {
     final p = context.rd;
-    final rows = _kbRows;
-    final kbIndex = _kbIndex == null || rows.isEmpty ? null : _kbIndex!.clamp(0, rows.length - 1);
-    final focused = kbIndex != null && rows[kbIndex].id == m.id;
+    final focused = _kbId == m.id;
     return DecoratedBox(
       key: _rowKeys.putIfAbsent(m.id, GlobalKey.new),
       decoration: BoxDecoration(border: focused ? Border.all(color: p.primary, width: 2) : null),
