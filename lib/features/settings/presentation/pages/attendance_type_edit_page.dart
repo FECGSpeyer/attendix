@@ -93,6 +93,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   String _planningTitle = '';
   bool _planningPrefixInstanceName = false;
   bool _isDefaultOrgPlan = false;
+  /// Only write is_default_org_plan when it was loaded, so a failed load
+  /// never overwrites a stored `true`.
+  bool _isDefaultOrgPlanLoaded = false;
 
   /// Ionic `end`: computed by calculateEnd() after a change to the plan.
   String? _planEnd;
@@ -141,6 +144,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         final planTypes = await ref.read(planAttendanceTypesProvider.future);
         _isDefaultOrgPlan =
             planTypes.where((t) => t.id == widget.typeId).firstOrNull?.isDefaultOrgPlan ?? false;
+        _isDefaultOrgPlanLoaded = true;
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
       }
@@ -1225,16 +1229,34 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   List<PlanField> get _planFieldModels => [for (final f in _planFields) PlanField.fromJson(f)];
 
-  /// Back to the stored map: unknown keys of the original row survive, the
+  /// Back to the stored map: the original row (matched by id) is kept and
+  /// only updated, so unknown keys and the legacy `isNote` flag survive. The
   /// Flutter-only `isGroup: false` default is not written.
   void _setPlanFields(List<PlanField> fields) {
+    final originals = [..._planFields];
     setState(() {
       _planFields = [
-        for (final f in fields) {...f.toJson()}..removeWhere((k, v) => k == 'isGroup' && v == false),
+        for (final f in fields) _mergePlanRow(originals, f),
       ];
       _calculateEnd();
       _hasChanges = true;
     });
+  }
+
+  static const _planFieldKeys = {
+    'id', 'name', 'time', 'conductor', 'currentTime', 'songId', 'info', 'agendaItemId',
+    'isGroup', 'groupId', 'uid', 'needsBeamer', 'beamerFile',
+  };
+
+  Map<String, dynamic> _mergePlanRow(List<Map<String, dynamic>> originals, PlanField field) {
+    final json = field.toJson();
+    final idx = originals.indexWhere((o) => '${o['id']}' == '${json['id']}');
+    final original = idx >= 0 ? originals.removeAt(idx) : const <String, dynamic>{};
+    // Keys PlanField knows but dropped (cleared to null) must not come back
+    // from the original row.
+    final merged = {...original, ...json}..removeWhere((k, _) => _planFieldKeys.contains(k) && !json.containsKey(k));
+    if (merged['isGroup'] == false && !original.containsKey('isGroup')) merged.remove('isGroup');
+    return merged;
   }
 
   /// Ionic calculateEnd(): start time + all minutes, shown as "Ende".
@@ -1702,7 +1724,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'planning_title': _planningTitle.isEmpty && _originalType?.planningTitle == null
             ? null
             : _planningTitle,
-        'is_default_org_plan': _isDefaultOrgPlan,
+        if (_isDefaultOrgPlanLoaded) 'is_default_org_plan': _isDefaultOrgPlan,
         'planning_prefix_instance_name': _planningPrefixInstanceName,
         // LOGIC_SETTINGS: Ionic keeps relevant_groups as [] (never null);
         // Ionic code calls relevant_groups.length without null check.
