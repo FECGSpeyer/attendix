@@ -113,11 +113,6 @@
         "userIdCopied": "Benutzer-Id kopiert"
       }
     },
-    "admin": {
-      "flutter": {
-        "addFailed": "Fehler beim Hinzufügen"
-      }
-    },
     "dashSettings": {
       "flutter": {
         "saveFailed": "Fehler beim Speichern: {error}",
@@ -246,11 +241,6 @@
         "telegramOpenFailed": "Could not open Telegram",
         "configNotFound": "Configuration not found",
         "userIdCopied": "User ID copied"
-      }
-    },
-    "admin": {
-      "flutter": {
-        "addFailed": "Error while adding"
       }
     },
     "dashSettings": {
