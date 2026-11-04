@@ -57,11 +57,38 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     ToastHelper.showError(context, context.l10n.messagesLoadFailed);
   }
 
+  static bool _failed(AsyncValue<Object?>? value) =>
+      value != null && value.hasError && !value.isLoading;
+
+  /// Toast on every load that ends in an error, also error → reload → error.
   void _listenLoadError<T>(ProviderListenable<AsyncValue<T>> provider) {
     ref.listen<AsyncValue<T>>(provider, (prev, next) {
-      if (next.hasError && !next.isLoading && !(prev?.hasError ?? false)) {
+      if (_failed(next) && (prev == null || prev.isLoading || !prev.hasError)) {
         _showLoadError();
       }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ref.listen only reports changes: an error state that already exists
+    // when the page opens (e.g. a cached failed load) is reported once here.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final messageAsync = ref.read(messageByIdProvider(widget.messageId));
+      final message = messageAsync.valueOrNull;
+      var failed = _failed(messageAsync);
+      if (message != null) {
+        final role = ref.read(effectiveRoleProvider);
+        final isManager = (role.isAdmin || role.isResponsible) &&
+            message.tenantId == ref.read(currentTenantIdProvider);
+        failed = failed ||
+            _failed(isManager
+                ? ref.read(messageRecipientsProvider(message.id))
+                : ref.read(receivedMessagesProvider));
+      }
+      if (failed) _showLoadError();
     });
   }
 
