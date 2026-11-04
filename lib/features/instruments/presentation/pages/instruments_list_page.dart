@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../../../data/repositories/base_repository.dart' show RepositoryException;
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -54,7 +55,9 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
     final ok =
         await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
     if (!mounted) return;
-    if (!ok) {
+    if (ok) {
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
+    } else {
       ToastHelper.showError(context, context.l10n.instrumentsOrderFailed);
     }
   }
@@ -280,7 +283,7 @@ class _GroupListItem extends StatelessWidget {
     if (group.maingroup == true) {
       title = context.l10n.instrumentsMainGroup(group.name);
     } else if (!_isChoirOrGeneral) {
-      title = '${group.name} (${group.tuning ?? 'C'})';
+      title = '${group.name} (${group.tuning ?? ''})';
     } else {
       title = group.name;
     }
@@ -441,7 +444,7 @@ Future<void> _openInstrumentPage(
   List<GroupCategory> categories, {
   String? tenantType,
 }) async {
-  final result = await Navigator.of(context, rootNavigator: true).push<Map<String, dynamic>>(
+  final result = await Navigator.of(context, rootNavigator: true).push<bool>(
     MaterialPageRoute(
       fullscreenDialog: true,
       builder: (_) => _InstrumentEditDialog(
@@ -451,32 +454,9 @@ Future<void> _openInstrumentPage(
       ),
     ),
   );
+  // Ionic InstrumentPage saves/deletes itself and dismisses with
+  // {updated: true}; the list then reloads.
   if (result == null || !context.mounted) return;
-
-  final cannotDelete = context.l10n.instrumentsCannotDelete;
-  final notifier = ref.read(groupNotifierProvider.notifier);
-  if (result['_delete'] == true) {
-    final count =
-        ref.read(playerCountsForGroupsProvider).valueOrNull?[group.id] ?? 0;
-    if (count > 0) {
-      ToastHelper.showError(context, cannotDelete);
-      return;
-    }
-    await notifier.deleteGroup(group.id!);
-    if (!context.mounted) return;
-    if (ref.read(groupNotifierProvider).hasError) {
-      ToastHelper.showError(context, cannotDelete);
-    }
-  } else {
-    final updated = await notifier.updateGroup(group.id!, result);
-    if (!context.mounted) return;
-    if (updated != null) {
-      ToastHelper.showSuccess(
-          context, context.l10n.instrumentsUpdated(result['name'] as Object));
-    } else {
-      ToastHelper.showError(context, context.l10n.peopleSaveFailed);
-    }
-  }
   ref.invalidate(playerCountsForGroupsProvider);
 }
 
@@ -710,13 +690,13 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             // so every group save failed with PGRST204.
             const SizedBox(height: AppDimensions.paddingL),
             FilledButton(
-              onPressed: _save,
+              onPressed: _busy ? null : _save,
               child: IonButtonLabel(isEditing ? context.l10n.instrumentsUpdate : context.l10n.attendanceAdd),
             ),
             if (isEditing && !_isMain) ...[
               const SizedBox(height: AppDimensions.paddingS),
               FilledButton(
-                onPressed: () => _confirmDelete(context),
+                onPressed: _busy ? null : () => _confirmDelete(context),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
                 child: IonButtonLabel(context.l10n.commonRemove),
               ),
@@ -727,32 +707,84 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     );
   }
 
-  void _save() {
-    if (_formKey.currentState!.validate()) {
-      final result = <String, dynamic>{
-        'name': _nameController.text.trim(),
-        'tuning': _selectedTuning,
-        'clefs': _selectedClefs.map((c) => c.toLowerCase()).toList(),
-      };
+  /// Shared lock for save and delete (incl. count check and confirm
+  /// dialog), so one cannot close or confirm the other.
+  bool _busy = false;
 
-      // Category — send the value even if null to clear it
-      result['category'] = _selectedCategoryId;
+  /// Ionic InstrumentPage.update(): saves, shows "{name} wurde erfolgreich
+  /// aktualisiert" and closes only after the save. On an error the service
+  /// toasts "Es kann nur eine Hauptgruppe existieren" (23505) or "Fehler beim
+  /// updaten des Instruments" and the page stays open with the input.
+  Future<void> _save() async {
+    if (_busy || !_formKey.currentState!.validate()) return;
+    final result = <String, dynamic>{
+      'name': _nameController.text.trim(),
+      'tuning': _selectedTuning,
+      'clefs': _selectedClefs.map((c) => c.toLowerCase()).toList(),
+    };
 
-      final range = _rangeController.text.trim();
-      result['range'] = range.isNotEmpty ? range : null;
+    // Category — send the value even if null to clear it
+    result['category'] = _selectedCategoryId;
 
-      final synonyms = _synonymsController.text.trim();
-      result['synonyms'] = synonyms.isNotEmpty ? synonyms : null;
+    final range = _rangeController.text.trim();
+    result['range'] = range.isNotEmpty ? range : null;
 
-      final notes = _notesController.text.trim();
-      result['notes'] = notes.isNotEmpty ? notes : null;
+    final synonyms = _synonymsController.text.trim();
+    result['synonyms'] = synonyms.isNotEmpty ? synonyms : null;
 
-      Navigator.of(context).pop(result);
+    final notes = _notesController.text.trim();
+    result['notes'] = notes.isNotEmpty ? notes : null;
+
+    final notifier = ref.read(groupNotifierProvider.notifier);
+    setState(() => _busy = true);
+    final updated = await notifier.updateGroup(widget.group!.id!, result);
+    if (!mounted) return;
+    setState(() => _busy = false);
+    if (updated == null) {
+      final error = ref.read(groupNotifierProvider).error;
+      ToastHelper.showError(
+        context,
+        error is RepositoryException && error.code == '23505'
+            ? context.l10n.svcOnlyOneMainGroup
+            : context.l10n.svcUpdateGroupFailed,
+      );
+      return;
+    }
+    ToastHelper.showSuccess(
+        context, context.l10n.instrumentsUpdated(result['name'] as Object));
+    Navigator.of(context).pop(true);
+  }
+
+  /// Ionic InstrumentPage.delete(): first checks right away whether anyone
+  /// (incl. archived, without pending registrations) is or was in the group
+  /// → toast, page stays open. Otherwise alert "Bestätigen" / "Gruppe
+  /// wirklich löschen?" → Abbrechen / Ja → delete and close.
+  Future<void> _confirmDelete(BuildContext context) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await _delete(context);
+    } finally {
+      if (mounted) setState(() => _busy = false);
     }
   }
 
-  /// Ionic: alert "Bestätigen" / "Gruppe wirklich löschen?" → Abbrechen / Ja.
-  void _confirmDelete(BuildContext context) async {
+  Future<void> _delete(BuildContext context) async {
+    final group = widget.group!;
+    final repo = ref.read(groupRepositoryWithTenantProvider);
+    final notifier = ref.read(groupNotifierProvider.notifier);
+    final cannotDelete = context.l10n.instrumentsCannotDelete;
+    int count;
+    try {
+      count = await repo.getPlayerCountInGroup(group.id!, includeArchived: true);
+    } catch (_) {
+      count = 0;
+    }
+    if (!context.mounted) return;
+    if (count > 0) {
+      ToastHelper.showError(context, cannotDelete);
+      return;
+    }
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (ctx) => AppAlertDialog(
@@ -770,8 +802,13 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
         ],
       ),
     );
-    if (confirmed == true && context.mounted) {
-      Navigator.of(context).pop({'_delete': true});
+    if (confirmed != true || !context.mounted) return;
+    await notifier.deleteGroup(group.id!);
+    if (!context.mounted) return;
+    if (ref.read(groupNotifierProvider).hasError) {
+      ToastHelper.showError(context, cannotDelete);
+      return;
     }
+    Navigator.of(context).pop(true);
   }
 }
