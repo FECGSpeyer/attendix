@@ -304,7 +304,7 @@ void main() {
       final manifest = read('android/app/src/main/AndroidManifest.xml');
       expect(manifest, contains('com.ryanheise.audioservice.AudioService'));
       expect(manifest, contains('FOREGROUND_SERVICE_MEDIA_PLAYBACK'));
-      expect(read('android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt'),
+      expect(read('android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt'),
           contains('AudioServiceActivity()'));
     });
   });

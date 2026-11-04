@@ -60,6 +60,21 @@
     "lib/features/teachers/presentation/pages/teachers_list_page.dart"
    ],
    "n": "behoben in #292"
+  },
+  "people/person/person.page#text-408e4921": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+   ],
+   "n": "behoben in #284"
+  },
+  "people/person/person.page#text-a48aa58c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart",
+    "lib/data/repositories/user_registration_repository.dart"
+   ],
+   "n": "behoben in #284"
   }
  },
  "extraOverride": [
