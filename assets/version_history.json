@@ -5,7 +5,6 @@
       "date": "4.11.2026",
       "changes": [
         "🐛 Instanzen: Der Schalter „Instanzauswahl aktivieren“ springt nicht mehr zurück und lässt sich beliebig oft umschalten",
-        "🐛 Einstellungen: „Ablaufpläne“ öffnet sich wie in der bisherigen App als Fenster mit Schließen-Knopf",
         "🐛 Meine Stammdaten: Speichern lässt das Fenster offen; in der App kann das Passbild auch mit der Kamera aufgenommen werden"
       ]
     },

@@ -16,8 +16,6 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../features/messages/presentation/widgets/notification_bell.dart';
-import '../../../../features/planning/presentation/pages/planning_page.dart'
-    show showPlanningModal;
 import '../../../../features/statistics/presentation/pages/statistics_page.dart'
     show showStatisticsModal;
 import '../../../../l10n/l10n.dart';
@@ -109,8 +107,7 @@ class _SideNavState extends ConsumerState<SideNav> {
       _closeOverlay();
       switch (action) {
         case NavAction.planning:
-          // Ionic side-nav: PlanningPage as modal (planningModal).
-          showPlanningModal(context, ref);
+          context.push('/planning');
         case NavAction.stats:
           showStatisticsModal(context);
       }
