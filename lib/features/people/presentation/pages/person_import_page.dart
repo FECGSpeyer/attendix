@@ -1,3 +1,5 @@
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -5,7 +7,9 @@ import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/import_providers.dart';
 import '../../../../core/providers/player_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/providers/organisation_providers.dart';
+import '../../../../core/providers/profile_providers.dart';
+import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/import_file_io.dart';
 import '../../../../core/utils/import_mapper.dart';
@@ -19,7 +23,7 @@ import '../widgets/import_widgets.dart';
 import '../../people_list_utils.dart' show accountRoleForGroup;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/providers/demo_providers.dart'; // DEMO_GUARD
-import '../../../../core/utils/error_message.dart';
+import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../data/repositories/player_repository.dart' show PersonNotAddedToAttendancesException;
 
@@ -61,11 +65,11 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   Future<PersonMapContext> _buildContext() async {
     final groups = await ref.read(groupsProvider.future);
     final mainGroup = await ref.read(mainGroupProvider.future);
-    final tenant = ref.read(currentTenantProvider);
+    // Ionic db.getPersonExtraFields(): organisation + instance fields.
     return PersonMapContext(
       groups: groups,
       mainGroupId: mainGroup?.id,
-      additionalFields: tenant?.additionalFields ?? const <ExtraField>[],
+      additionalFields: await _extraFields(),
     );
   }
 
@@ -116,10 +120,17 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     }
   }
 
+  Future<List<ExtraField>> _extraFields() async {
+    try {
+      await ref.read(currentOrganisationProvider.future);
+    } catch (_) {
+      // Without the organisation only the instance fields are offered.
+    }
+    return ref.read(personListExtraFieldsProvider);
+  }
+
   Future<void> _downloadTemplate() async {
-    final tenant = ref.read(currentTenantProvider);
-    final headers =
-        buildPersonImportTemplateHeaders(tenant?.additionalFields ?? const []);
+    final headers = buildPersonImportTemplateHeaders(await _extraFields());
     final groups = await ref.read(groupsProvider.future);
     final example = [
       'Anna',
@@ -133,10 +144,13 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
     ];
     final bytes = buildTemplateXlsx(headers, example);
     if (bytes == null) return;
+    // Ionic Utils.saveWorkbook: native → system file viewer, mobile web →
+    // share sheet, desktop → download; no message on failure.
     try {
-      await saveGeneratedFile(bytes, 'Personen_Import_Vorlage.xlsx');
-    } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+      await NativeFileService.saveBytes(
+          Uint8List.fromList(bytes), 'Personen_Import_Vorlage.xlsx');
+    } catch (e, st) {
+      ErrorReporter.report(e, st, where: 'person_import_template');
     }
   }
 
