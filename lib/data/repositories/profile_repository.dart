@@ -19,6 +19,29 @@ final profileRepositoryProvider = Provider<ProfileRepository>((ref) {
 const String kDefaultProfileImage =
     'https://ionicframework.com/docs/img/demos/avatar.svg';
 
+/// Ionic `ImageService.updateImage(..., appId, currentUserId)` with the own
+/// account: `update({img}).match({appId})` – every player row of [userId]
+/// (all instances) gets [img]. Each row is updated by id + its tenantId.
+Future<void> syncOwnPlayerImage(
+  SupabaseClient supabase, {
+  required String userId,
+  required String img,
+}) async {
+  final rows = await supabase
+      .from('player')
+      .select('id, tenantId')
+      .eq('appId', userId);
+  for (final row in (rows as List).cast<Map<String, dynamic>>()) {
+    final targetTenantId = row['tenantId'] as int;
+    await supabase
+        .from('player')
+        .update({'img': img})
+        .eq('id', row['id'] as int)
+        .eq('tenantId', targetTenantId)
+        .eq('appId', userId);
+  }
+}
+
 /// Extra (additional) field definition as configured on the tenant or the
 /// organisation (`tenants.additional_fields` / `tenant_groups.additional_fields`).
 ///
@@ -472,28 +495,5 @@ class ProfileRepository extends BaseRepository
       handleError(e, stack, 'removeOwnImage');
       rethrow;
     }
-  }
-}
-
-/// Ionic `ImageService.updateImage(..., appId, currentUserId)` with the own
-/// account: `update({img}).match({appId})` – every player row of [userId]
-/// (all instances) gets [img]. Each row is updated by id + its tenantId.
-Future<void> syncOwnPlayerImage(
-  SupabaseClient supabase, {
-  required String userId,
-  required String img,
-}) async {
-  final rows = await supabase
-      .from('player')
-      .select('id, tenantId')
-      .eq('appId', userId);
-  for (final row in (rows as List).cast<Map<String, dynamic>>()) {
-    final targetTenantId = row['tenantId'] as int;
-    await supabase
-        .from('player')
-        .update({'img': img})
-        .eq('id', row['id'] as int)
-        .eq('tenantId', targetTenantId)
-        .eq('appId', userId);
   }
 }
