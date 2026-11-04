@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
@@ -30,6 +31,24 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
   /// Ionic `load()` shows one red toast per (re)load, whether the rules or
   /// the recent runs failed.
   bool _loadFailedShown = false;
+
+  /// Tenant whose rules / recent runs the providers delivered last. After a
+  /// refresh error the earlier data stays visible, but never another
+  /// tenant's (the providers keep it as previous value on a tenant switch).
+  int? _rulesTenantId;
+  int? _lastWeekTenantId;
+
+  @override
+  void initState() {
+    super.initState();
+    // The Mitteilungen page preloads the rules: an error that happened
+    // before this page opened doesn't reach the ref.listen callbacks.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _onLoadResult(null, ref.read(autoMessageRulesProvider));
+      _onLoadResult(null, ref.read(autoMessageLastWeekProvider));
+    });
+  }
 
   void _onLoadResult(AsyncValue<Object?>? previous, AsyncValue<Object?> next) {
     if (!next.hasError || next.isLoading || _loadFailedShown || !mounted) return;
@@ -80,16 +99,24 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // A tenant switch reloads both providers: one new toast per tenant.
+    ref.listen(currentTenantIdProvider, (_, _) => _loadFailedShown = false);
     ref.listen(autoMessageRulesProvider, _onLoadResult);
     ref.listen(autoMessageLastWeekProvider, _onLoadResult);
+    final tenantId = ref.watch(currentTenantIdProvider);
     final rulesAsync = ref.watch(autoMessageRulesProvider);
-    // Ionic: spinner only for the first load; after an error the page stays
-    // usable (toast, see _onLoadResult) with the rules loaded before (none
-    // on the first load).
-    final firstLoad = rulesAsync.isLoading && !rulesAsync.hasValue && !rulesAsync.hasError;
-    final rules = rulesAsync.valueOrNull ?? const <AutoMessageRule>[];
+    final lastWeekAsync = ref.watch(autoMessageLastWeekProvider);
+    if (rulesAsync is AsyncData && !rulesAsync.isLoading) _rulesTenantId = tenantId;
+    if (lastWeekAsync is AsyncData && !lastWeekAsync.isLoading) _lastWeekTenantId = tenantId;
+    // Ionic: spinner for the first load (and after a tenant switch, which
+    // reloads the providers); a refresh keeps the page. After an error the
+    // page stays usable (toast, see _onLoadResult) with the rules loaded
+    // before for this tenant (none otherwise).
+    final firstLoad = rulesAsync is AsyncLoading;
+    final rules =
+        (_rulesTenantId == tenantId ? rulesAsync.valueOrNull : null) ?? const <AutoMessageRule>[];
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
-    final lastWeek = ref.watch(autoMessageLastWeekProvider).valueOrNull;
+    final lastWeek = _lastWeekTenantId == tenantId ? lastWeekAsync.valueOrNull : null;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.autoMessagesTitle)),
