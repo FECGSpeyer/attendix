@@ -1,0 +1,148 @@
+{
+ "batch": "zz-fixed-app",
+ "items": {
+  "register/tenant-register/tenant-register.page#field-ac71b961": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#logic-b461582a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#toast-23c76f81": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#actionsheet-ab6f737a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#field-9f610a4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#field-a9922b49": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/register.page#popover-f947f492": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app-routing.module#route-d98e9634": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#alert-df60fa5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#nav-3a7bceb6-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#logic-4a296d90": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart",
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "tabs/side-nav/side-nav.component#modal-186fad14": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart",
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "terms/terms.page#nav-4df0f2ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart",
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart",
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "app-routing.module",
+   "title": "Legacy-Schichten-URLs ins Leere",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "app.component",
+   "title": "Passwort-Recovery als Seite statt Alert",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Gruppen-Auswahl",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Zusatzfelder",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Default von Auswahl-Zusatzfeldern nicht gespeichert",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "terms/terms.page",
+   "title": "Ziel nach Zustimmung zu den Bedingungen",
+   "drop": true,
+   "why": "behoben in #296"
+  }
+ ]
+}
