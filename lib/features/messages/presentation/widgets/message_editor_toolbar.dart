@@ -91,8 +91,15 @@ Future<void> editMessageLink(BuildContext context, QuillController controller) a
   var index = selection.start;
   var length = selection.end - selection.start;
   if (hasLink) {
-    final leaf = controller.document.querySegmentLeafNode(index).leaf;
-    if (leaf != null) {
+    // The selection style already counts the link when the cursor sits
+    // right behind it at the end of a line, but the leaf lookup there finds
+    // nothing (or the next, unlinked leaf) – take the leaf before the cursor.
+    bool isLink(Leaf? l) => l?.style.attributes[Attribute.link.key] != null;
+    var leaf = controller.document.querySegmentLeafNode(index).leaf;
+    if (!isLink(leaf) && index > 0) {
+      leaf = controller.document.querySegmentLeafNode(index - 1).leaf;
+    }
+    if (leaf != null && isLink(leaf)) {
       final range = getLinkRange(leaf);
       index = range.start;
       length = range.end - range.start;
