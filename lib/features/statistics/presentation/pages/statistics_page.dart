@@ -1,4 +1,5 @@
 import 'package:fl_chart/fl_chart.dart';
+import '../widgets/horizontal_bar_chart.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -527,7 +528,12 @@ class _TrendLineChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title + y axis title '%' like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsHistoryChart),
+          SizedBox(
           height: 200,
           child: LineChart(
             LineChartData(
@@ -554,6 +560,8 @@ class _TrendLineChart extends ConsumerWidget {
                   ),
                 ),
                 leftTitles: AxisTitles(
+                  axisNameWidget: Text('%', style: statsAxisTitleStyle(context)),
+                  axisNameSize: 18,
                   sideTitles: SideTitles(
                     showTitles: true,
                     reservedSize: 40,
@@ -590,6 +598,8 @@ class _TrendLineChart extends ConsumerWidget {
               ],
             ),
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -620,7 +630,12 @@ class _StatusPieChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsStatusChart),
+          SizedBox(
           height: 200,
           child: Row(
             children: [
@@ -694,6 +709,8 @@ class _StatusPieChart extends ConsumerWidget {
               ),
             ],
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -745,79 +762,20 @@ class _InstrumentBarChart extends ConsumerWidget {
       return const _EmptyChartPlaceholder();
     }
 
-    final chartHeight = (data.length * 30.0).clamp(150.0, 400.0);
-
+    // PARITY_STATS: Ionic horizontal bars (indexAxis y), 30 px per entry,
+    // min 300 px, x 0–100 with title '%'.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: 100,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.round()}%',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}%', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 100,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 11),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.primary,
-                      width: 16,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsInstrumentChart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.instrument,
+          maxValue: 100,
+          axisTitle: '%',
+          rowHeight: 30,
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\n${b.value.round()}%',
         ),
       ),
     );
@@ -835,79 +793,18 @@ class _TopPlayersChart extends ConsumerWidget {
       return const _EmptyChartPlaceholder();
     }
 
-    final chartHeight = (data.length * 28.0).clamp(150.0, 560.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 300 px.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: 100,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${rod.toY.round()}%',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}%', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 90,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.success,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsTop20Chart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.top20,
+          maxValue: 100,
+          axisTitle: '%',
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\n${b.value.round()}%',
         ),
       ),
     );
@@ -931,7 +828,12 @@ class _AgeDistributionChart extends ConsumerWidget {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
+        // PARITY_STATS: Chart.js title like Ionic.
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+          StatsChartTitle(context.l10n.statsAgeChart),
+          SizedBox(
           height: 200,
           child: BarChart(
             BarChartData(
@@ -999,6 +901,8 @@ class _AgeDistributionChart extends ConsumerWidget {
             ),
             duration: const Duration(milliseconds: 150),
           ),
+          ),
+          ],
         ),
       ),
     );
@@ -1016,81 +920,18 @@ class _AvgAgePerInstrumentChart extends ConsumerWidget {
       return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoBirthdays);
     }
 
-    // BL-006: Use fold instead of reduce for safety
-    final maxAge = data.map((e) => e.percentage).fold(0.0, (a, b) => a > b ? a : b);
-    final chartHeight = (data.length * 28.0).clamp(150.0, 400.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 300 px,
+    // x axis title 'Jahre'.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: maxAge + 10,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\nØ ${rod.toY.round()} ${context.l10n.statsYears}',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 40,
-                    getTitlesWidget: (value, meta) {
-                      return Text('${value.toInt()}', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 110,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.warning,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsAvgAgeChart,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.avgAge,
+          axisTitle: context.l10n.statsYears,
+          minHeight: 300,
+          tooltip: (b) => '${b.label}\nØ ${b.value.round()} ${context.l10n.statsYears}',
         ),
       ),
     );
@@ -1108,82 +949,15 @@ class _DivaIndexChart extends ConsumerWidget {
       return _EmptyChartPlaceholder(message: context.l10n.statsFlutterNoUnexcused);
     }
 
-    // BL-006: Use fold instead of reduce for safety
-    final maxAbsences = data.map((e) => e.percentage).fold(0.0, (a, b) => a > b ? a : b);
-    final chartHeight = (data.length * 28.0).clamp(150.0, 420.0);
-
+    // PARITY_STATS: Ionic horizontal bars, 28 px per entry, min 250 px.
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(AppDimensions.paddingM),
-        child: SizedBox(
-          height: chartHeight,
-          child: BarChart(
-            BarChartData(
-              alignment: BarChartAlignment.spaceAround,
-              maxY: maxAbsences + 2,
-              barTouchData: BarTouchData(
-                enabled: true,
-                touchTooltipData: BarTouchTooltipData(
-                  getTooltipItem: (group, groupIndex, rod, rodIndex) {
-                    return BarTooltipItem(
-                      '${data[groupIndex].name}\n${context.l10n.statsFlutterAbsencesCount(rod.toY.toInt())}',
-                      const TextStyle(color: Colors.white, fontSize: 12),
-                    );
-                  },
-                ),
-              ),
-              titlesData: FlTitlesData(
-                show: true,
-                bottomTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                topTitles: const AxisTitles(sideTitles: SideTitles(showTitles: false)),
-                rightTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 30,
-                    getTitlesWidget: (value, meta) {
-                      if (value != value.roundToDouble()) return const SizedBox.shrink();
-                      return Text('${value.toInt()}', style: const TextStyle(fontSize: 10));
-                    },
-                  ),
-                ),
-                leftTitles: AxisTitles(
-                  sideTitles: SideTitles(
-                    showTitles: true,
-                    reservedSize: 90,
-                    getTitlesWidget: (value, meta) {
-                      final index = value.toInt();
-                      if (index < 0 || index >= data.length) return const SizedBox.shrink();
-                      return Padding(
-                        padding: const EdgeInsets.only(right: 8),
-                        child: Text(
-                          data[index].name,
-                          style: const TextStyle(fontSize: 10),
-                          textAlign: TextAlign.right,
-                          overflow: TextOverflow.ellipsis,
-                        ),
-                      );
-                    },
-                  ),
-                ),
-              ),
-              borderData: FlBorderData(show: false),
-              gridData: const FlGridData(show: true, drawVerticalLine: false),
-              barGroups: data.asMap().entries.map((e) {
-                return BarChartGroupData(
-                  x: e.key,
-                  barRods: [
-                    BarChartRodData(
-                      toY: e.value.percentage,
-                      color: AppColors.danger,
-                      width: 14,
-                      borderRadius: const BorderRadius.horizontal(right: Radius.circular(4)),
-                    ),
-                  ],
-                );
-              }).toList(),
-            ),
-            duration: const Duration(milliseconds: 150),
-          ),
+        child: StatsHorizontalBarChart(
+          title: context.l10n.statsUnexcusedAbsences,
+          bars: [for (final d in data) (label: d.name, value: d.percentage)],
+          color: StatsChartColors.unexcused,
+          tooltip: (b) => '${b.label}\n${context.l10n.statsFlutterAbsencesCount(b.value.toInt())}',
         ),
       ),
     );
