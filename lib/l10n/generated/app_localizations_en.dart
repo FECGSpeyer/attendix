@@ -6988,6 +6988,11 @@ class AppLocalizationsEn extends AppLocalizations {
   String get peopleFlutterHint => 'Note';
 
   @override
+  String peopleFlutterImportNotAssigned(Object name, Object error) {
+    return '$name: saved, but not added to the events ($error)';
+  }
+
+  @override
   String get peopleFlutterLastNameRequired => 'Last name is required';
 
   @override

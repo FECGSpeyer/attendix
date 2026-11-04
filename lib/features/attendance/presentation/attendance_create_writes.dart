@@ -24,6 +24,7 @@ import '../../../data/models/tenant/tenant.dart';
 import '../../../data/repositories/duty_repository.dart';
 import '../../../data/repositories/player_absence_repository.dart';
 import '../../../data/repositories/profile_repository.dart' show ProfileExtraField;
+import '../../../data/repositories/shared_person_fields.dart' show hydrateSharedFieldValuesForRows;
 import 'widgets/songs_selection_sheet.dart' show SongHistoryEntry;
 
 /// Ionic 4.19.2 `uniqueDates`: keeps one entry per calendar day (local time)
@@ -109,6 +110,7 @@ class AttendanceCreateWriter {
   List<PlayerAbsence> _absences = const [];
   List<ShiftPlan> _shifts = const [];
   List<ProfileExtraField> _extraFields = const [];
+  List<Map<String, dynamic>> _players = const [];
 
   /// Creates one Termin per day of [input] and returns their ids in the
   /// same order. Throws on the first failed write.
@@ -139,12 +141,15 @@ class AttendanceCreateWriter {
     } catch (_) {
       _shifts = const [];
     }
-    // LOGIC_ATT: organisation + tenant extra fields (Ionic getPersonExtraFields)
-    try {
-      _extraFields = await _ref.read(personExtraFieldsProvider.future);
-    } catch (_) {
-      _extraFields = const [];
-    }
+    // LOGIC_ATT: organisation + tenant extra fields (Ionic getPersonExtraFields).
+    // Only needed for a field filter; a failed load then fails the creation
+    // instead of inviting everybody.
+    _extraFields = input.type.additionalFieldsFilter == null
+        ? const []
+        : await _ref.read(personExtraFieldsProvider.future);
+    // Participants are loaded before the first Termin is written, so a failed
+    // read cannot leave a Termin without persons behind.
+    _players = await _loadActivePlayers(input.type);
 
     final ids = <int>[];
     // Ionic 4.19.2 `uniqueDates`: one Termin per calendar day.
@@ -263,6 +268,38 @@ class AttendanceCreateWriter {
     return attendanceId;
   }
 
+  /// Active players of the bound tenant for a new Termin of [type], with the
+  /// organisation's shared field values when the type filters on a field.
+  Future<List<Map<String, dynamic>>> _loadActivePlayers(AttendanceType type) async {
+    final supabase = _saveClient;
+    final tenant = _saveTenant!;
+
+    if (tenant.id == null) return const [];
+
+    // Get all active players (not left, not pending). Paused persons are
+    // dropped below like Ionic (`if (player.paused)`), so paused = NULL
+    // still counts as not paused.
+    final players = await supabase
+        .from('player')
+        .select('id, appId, global_person_id, instrument, paused, shift_id, shift_start, shift_name, additional_fields')
+        .eq('tenantId', tenant.id!)
+        .isFilter('left', null) // null = not archived
+        .isFilter('pending', false); // not pending
+
+    var playerList = (players as List)
+        .map((p) => Map<String, dynamic>.from(p as Map))
+        .where((p) => p['paused'] != true)
+        .toList();
+    if (playerList.isEmpty) return playerList;
+    // Organisation field values are shared across the organisation's groups;
+    // merge them so the type's field filter sees them (not just the default).
+    if (type.additionalFieldsFilter != null) {
+      playerList =
+          await hydrateSharedFieldValuesForRows(supabase, tenant.id!, playerList);
+    }
+    return playerList;
+  }
+
   /// Create PersonAttendance records for players based on relevant groups
   Future<void> _createPersonAttendancesForRelevant(
     AttendanceType type,
@@ -271,22 +308,7 @@ class AttendanceCreateWriter {
     String? startTime,
     String? endTime,
   }) async {
-    final supabase = _saveClient;
-    final tenant = _saveTenant!;
-
-    if (tenant.id == null) return;
-
-    // Get all active players (not left, not pending). Paused persons are
-    // dropped below like Ionic (`if (player.paused)`), so paused = NULL
-    // still counts as not paused.
-    final players = await supabase
-        .from('player')
-        .select('id, instrument, paused, shift_id, shift_start, shift_name, additional_fields')
-        .eq('tenantId', tenant.id!)
-        .isFilter('left', null) // null = not archived
-        .isFilter('pending', false); // not pending
-
-    final playerList = (players as List).where((p) => p['paused'] != true).toList();
+    final playerList = _players;
     if (playerList.isEmpty) return;
 
     // Get default status from attendance type
@@ -384,7 +406,7 @@ class AttendanceCreateWriter {
     }
 
     // Batch insert all records
-    await supabase.from('person_attendances').insert(records);
+    await _saveClient.from('person_attendances').insert(records);
   }
 
   /// Create song history entries for the attendance

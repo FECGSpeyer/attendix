@@ -1901,6 +1901,7 @@
   "peopleFlutterHandoverTransferred": "{count} players transferred successfully",
   "peopleFlutterHandoverTransferring": "Transferring...",
   "peopleFlutterHint": "Note",
+  "peopleFlutterImportNotAssigned": "{name}: saved, but not added to the events ({error})",
   "peopleFlutterLastNameRequired": "Last name is required",
   "peopleFlutterListLoadFailed": "The list of people could not be loaded.",
   "peopleFlutterLoadFailed": "Loading failed",

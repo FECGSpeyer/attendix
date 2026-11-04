@@ -88,6 +88,29 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Persons (archived ones too) on the shift plan [shiftId], filtered on
+  /// the server and fully paged (Ionic deleteShift: getPlayers(true)
+  /// filtered by shift_id).
+  Future<List<Person>> getPlayersByShift(String shiftId) async {
+    try {
+      final rows = await fetchAllPages<Map<String, dynamic>>((from, to) async {
+        final page = await supabase
+            .from('player')
+            .select('*')
+            .eq('tenantId', currentTenantId)
+            .eq('shift_id', shiftId)
+            .isFilter('pending', false)
+            .order('id', ascending: true)
+            .range(from, to);
+        return (page as List).cast<Map<String, dynamic>>();
+      });
+      return rows.map(Person.fromJson).toList();
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlayersByShift');
+      rethrow;
+    }
+  }
+
   /// Get a single player by ID
   Future<Person?> getPlayerById(int id) async {
     try {
@@ -107,17 +130,24 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Get player by app ID (user ID)
+  ///
+  /// One account can own several rows in a tenant (siblings registered with
+  /// the parents' e-mail, an archived row next to a new one). Like Ionic
+  /// PlayerService.getPlayerByAppId this prefers the active (not pending, not
+  /// archived) row instead of failing on `maybeSingle`.
   Future<Person?> getPlayerByAppId(String appId) async {
     try {
       final response = await supabase
           .from('player')
           .select('*')
           .eq('appId', appId)
-          .eq('tenantId', currentTenantId)
-          .maybeSingle();
+          .eq('tenantId', currentTenantId);
 
-      if (response == null) return null;
-      return Person.fromJson(response);
+      final rows = (response as List).cast<Map<String, dynamic>>();
+      if (rows.isEmpty) return null;
+      final active = rows.where((p) =>
+          p['pending'] != true && (p['left'] == null || p['left'] == ''));
+      return Person.fromJson(active.isNotEmpty ? active.first : rows.first);
     } catch (e, stack) {
       handleError(e, stack, 'getPlayerByAppId');
       rethrow;
@@ -379,7 +409,13 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     }
 
     if (!person.pending) {
-      await addPlayerToAttendancesByDate(result);
+      try {
+        await addPlayerToAttendancesByDate(result);
+      } catch (e) {
+        // The person is saved; only the Termine are missing. Callers that
+        // retry (import) must not save it a second time.
+        throw PersonNotAddedToAttendancesException(result, e);
+      }
     }
     return result;
   }
@@ -2350,4 +2386,16 @@ class _TypeFilter {
   final bool allDay;
   final String? startTime;
   final String? endTime;
+}
+
+/// [PlayerRepository.addPlayer] saved [person] but could not add it to the
+/// Termine since its join date ([cause]).
+class PersonNotAddedToAttendancesException implements Exception {
+  PersonNotAddedToAttendancesException(this.person, this.cause);
+
+  final Person person;
+  final Object cause;
+
+  @override
+  String toString() => cause.toString();
 }
