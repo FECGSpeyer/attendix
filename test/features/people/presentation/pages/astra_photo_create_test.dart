@@ -134,10 +134,10 @@ void main() {
       final page = _read(
           'lib/features/people/presentation/pages/person_create_page.dart');
       expect(page, contains('imageBytes: _pickedImage'));
-      expect(page, contains('ref.read(personImagePickerProvider)()'));
+      expect(page, contains('pickPersonImage(context, ref)'));
       final header = _read(
           'lib/features/people/presentation/widgets/person_detail/person_header.dart');
-      expect(header, contains('ref.read(personImagePickerProvider)()'));
+      expect(header, contains('pickPersonImage(context, ref)'));
       expect(header, contains('repo.updateImage(personId, bytes)'));
       expect(header, isNot(contains('ImagePicker()')));
     });

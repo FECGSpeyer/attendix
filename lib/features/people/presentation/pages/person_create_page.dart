@@ -883,7 +883,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   /// Ionic onImageSelect (new person): max 2 MB, kept locally until save.
   Future<void> _pickImage() async {
     try {
-      final image = await ref.read(personImagePickerProvider)();
+      final image = await pickPersonImage(context, ref);
       if (image == null) return;
       final bytes = await image.readAsBytes();
       if (!mounted) return;
