@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart' show PostgrestException;
+import '../../../../data/repositories/base_repository.dart' show RepositoryException;
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
@@ -690,13 +690,13 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
             // so every group save failed with PGRST204.
             const SizedBox(height: AppDimensions.paddingL),
             FilledButton(
-              onPressed: _saving ? null : _save,
+              onPressed: _busy ? null : _save,
               child: IonButtonLabel(isEditing ? context.l10n.instrumentsUpdate : context.l10n.attendanceAdd),
             ),
             if (isEditing && !_isMain) ...[
               const SizedBox(height: AppDimensions.paddingS),
               FilledButton(
-                onPressed: () => _confirmDelete(context),
+                onPressed: _busy ? null : () => _confirmDelete(context),
                 style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
                 child: IonButtonLabel(context.l10n.commonRemove),
               ),
@@ -707,14 +707,16 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     );
   }
 
-  bool _saving = false;
+  /// Shared lock for save and delete (incl. count check and confirm
+  /// dialog), so one cannot close or confirm the other.
+  bool _busy = false;
 
   /// Ionic InstrumentPage.update(): saves, shows "{name} wurde erfolgreich
   /// aktualisiert" and closes only after the save. On an error the service
   /// toasts "Es kann nur eine Hauptgruppe existieren" (23505) or "Fehler beim
   /// updaten des Instruments" and the page stays open with the input.
   Future<void> _save() async {
-    if (_saving || !_formKey.currentState!.validate()) return;
+    if (_busy || !_formKey.currentState!.validate()) return;
     final result = <String, dynamic>{
       'name': _nameController.text.trim(),
       'tuning': _selectedTuning,
@@ -734,15 +736,15 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
     result['notes'] = notes.isNotEmpty ? notes : null;
 
     final notifier = ref.read(groupNotifierProvider.notifier);
-    setState(() => _saving = true);
+    setState(() => _busy = true);
     final updated = await notifier.updateGroup(widget.group!.id!, result);
     if (!mounted) return;
-    setState(() => _saving = false);
+    setState(() => _busy = false);
     if (updated == null) {
       final error = ref.read(groupNotifierProvider).error;
       ToastHelper.showError(
         context,
-        error is PostgrestException && error.code == '23505'
+        error is RepositoryException && error.code == '23505'
             ? context.l10n.svcOnlyOneMainGroup
             : context.l10n.svcUpdateGroupFailed,
       );
@@ -758,6 +760,16 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   /// → toast, page stays open. Otherwise alert "Bestätigen" / "Gruppe
   /// wirklich löschen?" → Abbrechen / Ja → delete and close.
   Future<void> _confirmDelete(BuildContext context) async {
+    if (_busy) return;
+    setState(() => _busy = true);
+    try {
+      await _delete(context);
+    } finally {
+      if (mounted) setState(() => _busy = false);
+    }
+  }
+
+  Future<void> _delete(BuildContext context) async {
     final group = widget.group!;
     final repo = ref.read(groupRepositoryWithTenantProvider);
     final notifier = ref.read(groupNotifierProvider.notifier);

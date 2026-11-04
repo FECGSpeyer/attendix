@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/services/error_reporter.dart';
 import '../../core/utils/duty_utils.dart';
 import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
@@ -465,8 +466,9 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
     try {
       ids = (await _futureMatches(rule, types)).map((r) => r['id'].toString()).toList();
     } catch (e, stack) {
-      // Ionic: a failed lookup changes nothing and reports 0 Termine.
-      handleError(e, stack, 'applyUnavailabilityToFuture');
+      // Ionic: a failed lookup only logs, changes nothing and reports 0
+      // Termine (handleError would rethrow).
+      ErrorReporter.report(e, stack, where: 'DutyRepository.applyUnavailabilityToFuture');
       return 0;
     }
     if (ids.isEmpty) return 0;
