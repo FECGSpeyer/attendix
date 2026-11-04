@@ -6,7 +6,7 @@
       "f": [
         "lib/features/planning/presentation/pages/planning_page.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #301"
     },
     "planning/planning.page#alert-75ab0ccf": {
       "s": "ok",
@@ -14,7 +14,7 @@
         "lib/features/planning/presentation/pages/planning_page.dart",
         "lib/shared/widgets/adaptive/app_select.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #301"
     }
   },
   "extraOverride": [
@@ -22,19 +22,19 @@
       "unit": "planning/planning.page",
       "title": "Standardplan bei Termin ohne Ablaufplan",
       "drop": true,
-      "why": "behoben in #NNN"
+      "why": "behoben in #301"
     },
     {
       "unit": "planning/planning.page",
       "title": "Start-Termin ohne kommenden Termin",
       "drop": true,
-      "why": "behoben in #NNN"
+      "why": "behoben in #301"
     },
     {
       "unit": "planning/planning.page",
       "title": "Archivierte Termine in der Terminauswahl für Helfer",
       "drop": true,
-      "why": "behoben in #NNN"
+      "why": "behoben in #301"
     }
   ]
 }
