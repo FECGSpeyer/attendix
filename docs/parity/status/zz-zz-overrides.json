@@ -1,5 +1,8 @@
 {
  "batch": "zz-zz-overrides",
+ "afterRound": 2,
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
  "note": "Korrekturen nach der zweiten Prüfung: Duplikate und widerlegte Annahmen bei zusätzlichen Befunden (items: Urteil unter der Befund-ID x-…, extraOverride: ältere Form nach Baustein und Titel).",
  "items": {
   "x-72494b483e": {
@@ -31,6 +34,21 @@
    "sev": "niedrig",
    "n": "Zusammenfassung der Klasse: Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Einzige Abweichung (Ziel nach Zustimmung) steht und wird angeglichen bei nav-4df0f2ac; hier nicht doppelt gezählt.",
    "v": "korrigiert"
+  },
+  "x-312c3d991b": {
+   "s": "na",
+   "n": "Zurückgenommen: widerlegt durch x-3fa2a4cf82 (Flutter-Launcher-Activity liegt im Namespace de.attendix.attendix, nicht io.stephanus.attendix). Die übrigen Punkte stehen als eigene Befunde da.",
+   "v": "korrigiert"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79"
+   ],
+   "v": "korrigiert",
+   "n": "Rollen/Bedingung gleich (Leitung, Thema geladen oder neu); gleiche Spalten (title, description, status, priority, responsible_person_id, default_duration, beim Anlegen tenant_id), Prüfung „Bitte einen Titel eingeben“, Toast „Gespeichert“. Abweichung bei der Dauer – Ionic: Number() + Math.round („7.5“ → 8) / Flutter: int.tryParse → bei Dezimaleingabe 0 → default_duration = null, eine bestehende Dauer wird gelöscht. Randfall (Android/Web; der iOS-Ziffernblock hat kein Komma). Der Unterschied beim Ladeoverlay gehört zum eigenen loading-Eintrag. [Umgestuft auf mittel: Eine bestehende Dauer wird beim Speichern gelöscht (Datenverlust).]"
   }
  },
  "extra": [],

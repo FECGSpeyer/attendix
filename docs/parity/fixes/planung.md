@@ -1,6 +1,6 @@
 # Fix-Paket „planung“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 32
@@ -148,10 +148,10 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `public-planning/my-plans/my-plans.component` `x-38ebb805fc` **Ladefehler „Meine Pläne“** [src/app/public-planning/my-plans/my-plans.component.ts:36](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/my-plans/my-plans.component.ts#L36)
   Flutter besser: Ionic: Fehler beim Laden ergibt still eine leere Liste („Keine Pläne“) / Flutter: zeigt „Fehler: …“.
   Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:1022
-- [ ] **niedrig** `public-planning/public-planning.page` `x-d381b2c451` **Lokaler Entwurf je Konto** [src/app/public-planning/public-planning.page.ts:1021-1060](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L1021-1060)
+- [ ] **niedrig** `public-planning/public-planning.page` `x-d381b2c451` **Lokaler Entwurf je Konto** [src/app/public-planning/public-planning.page.ts:1021-1060](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L1021-L1060)
   Flutter besser: Ionic: ein gemeinsamer localStorage-Eintrag „attendix-public-plan“ für anonym und alle Konten (Entwurf samt Plan-ID/Bearbeitungsschlüssel wandert zwischen /planung und App bzw. Konten) / Flutter: Entwurf je Auth-Nutzer bzw. anonym getrennt, alter globaler Eintrag wird verworfen, beim Abmelden gelöscht
   Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:144-147, lib/features/planning/presentation/pages/public_planning_page.dart:221-256, lib/core/services/public_plan_draft_storage.dart:15-38
-- [ ] **niedrig** `shared-plan/shared-plan.page` `x-b4914284ac` **Aktualisierung bei Nur-Lesen-Links** [src/app/shared-plan/shared-plan.page.ts:114-117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L114-117)
+- [ ] **niedrig** `shared-plan/shared-plan.page` `x-b4914284ac` **Aktualisierung bei Nur-Lesen-Links** [src/app/shared-plan/shared-plan.page.ts:114-117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L114-L117)
   Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
 
@@ -543,19 +543,19 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `public-planning/public-planning.page` `x-baf4e996fa` **Quelle und Reihenfolge der aktuellen Werke** [src/app/services/db.service.ts:3189](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3189)
   Ionic: getUpcomingHistory – alle Historie-Einträge der Instanz, deren Termindatum (sonst history.date) nach heute 0 Uhr liegt, ohne Sortierung (DB-Reihenfolge) / Flutter: currentSongsProvider – Server-Filter history.date > heute 0 Uhr, nach Datum gruppiert und sortiert; Platzhalter „Chor/Orchester“/„Werk N“ und „Aktuelle Werke hinzufügen“ können dadurch andere Werke bzw. eine andere Reihenfolge ergeben
   Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:376-377, lib/data/repositories/song_repository.dart:738-811
-- [ ] **niedrig** `public-planning/public-planning.page` `x-ad78dde98b` **Platzhalter-Auflösung beim Öffnen nicht gespeichert** [src/app/public-planning/public-planning.page.ts:129-132](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L129-132)
+- [ ] **niedrig** `public-planning/public-planning.page` `x-ad78dde98b` **Platzhalter-Auflösung beim Öffnen nicht gespeichert** [src/app/public-planning/public-planning.page.ts:129-132](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L129-L132)
   Ionic: ngOnInit ersetzt Platzhalter nach dem Laden von Werken/Historie und ruft calculateEnd → lokale Sicherung + DB-Speicherung / Flutter: ersetzt nur im Speicher (setState), gespeichert erst bei der nächsten Änderung
   Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:823-833
-- [ ] **niedrig** `public-planning/public-planning.page` `x-8685373170` **Leerer Ablauf zeigt Hinweis** [src/app/public-planning/public-planning.page.html:193-255](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L193-255)
+- [ ] **niedrig** `public-planning/public-planning.page` `x-8685373170` **Leerer Ablauf zeigt Hinweis** [src/app/public-planning/public-planning.page.html:193-255](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L193-L255)
   Ionic: ohne Felder ist die Liste leer / Flutter: grauer Text „Keine Programmpunkte“
   Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:346-352
-- [ ] **niedrig** `shared-plan/shared-plan.page` `x-5d0d5aa900` **Live-Modus vor Beginn** [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-312)
+- [ ] **niedrig** `shared-plan/shared-plan.page` `x-5d0d5aa900` **Live-Modus vor Beginn** [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-L312)
   Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld, stattdessen „beginnt in X Min.“ in der Start-Zeile
   Flutter: lib/core/utils/plan_utils.dart:455-467, lib/features/planning/presentation/widgets/plan_view_list.dart:86-103
-- [ ] **niedrig** `shared-plan/shared-plan.page` `x-f05948c5cf` **Kein Auto-Scroll zum aktiven Programmpunkt** [src/app/shared-plan/shared-plan.page.ts:316-324](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L316-324)
+- [ ] **niedrig** `shared-plan/shared-plan.page` `x-f05948c5cf` **Kein Auto-Scroll zum aktiven Programmpunkt** [src/app/shared-plan/shared-plan.page.ts:316-324](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L316-L324)
   Ionic: scrollToActive scrollt im Live-Modus einmal das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen
   Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:80-228
-- [ ] **niedrig** `shared-plan/shared-plan.page` `x-165ef614cc` **Live-Modus: Programmblock-Kopf** [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-312)
+- [ ] **niedrig** `shared-plan/shared-plan.page` `x-165ef614cc` **Live-Modus: Programmblock-Kopf** [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-L312)
   Ionic: Block-Köpfe zählen als normale Zeilen (vor dem aktiven Feld ausgegraut, vor Start ggf. selbst aktiv) / Flutter: Köpfe werden übersprungen, der Kopf des laufenden Blocks bleibt voll sichtbar und bekommt einen blauen linken Rand
   Flutter: lib/core/utils/plan_utils.dart:455-467, lib/features/planning/presentation/widgets/plan_view_list.dart:112-114, lib/features/planning/presentation/widgets/plan_view_list.dart:191-203
 - [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `x-7ea8e45361` **Feld-Dialog in Vorlagen: Button-Text** [src/app/org-settings/org-planning-templates/org-planning-templates.page.ts:348](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.ts#L348)

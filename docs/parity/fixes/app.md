@@ -1,6 +1,6 @@
 # Fix-Paket „app“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 13
@@ -20,7 +20,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `app.component` `nav-3a7bceb6-2` [app.component.ts:352](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L352) (2. Prüfung: bestätigt)
   Ionic: Recovery-Link → /login; LoginGuard leitet Nutzer mit Instanz weiter auf die Startseite, der Alert erscheint dort / Flutter: Recovery-Link → Seite /new-password.
   Flutter: lib/features/auth/data/auth_link_listener.dart:119-120
-- [ ] **mittel** `app.component` `x-fde4d51685` **Passwort-Recovery als Seite statt Alert** [src/app/app.component.ts:108-160](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L108-160) (2. Prüfung: bestätigt)
+- [ ] **mittel** `app.component` `x-fde4d51685` **Passwort-Recovery als Seite statt Alert** [src/app/app.component.ts:108-160](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L108-L160) (2. Prüfung: bestätigt)
   Echt: Ionic: Recovery-Link/PASSWORD_RECOVERY öffnet Alert "Neues Passwort eingeben" (Passwortfeld, "Abbrechen"/"Passwort ändern") über der aktuellen Seite (nach /login leitet LoginGuard angemeldete Nutzer auf ihre Startseite); Abbrechen/Erfolg lässt den Nutzer dort / Flutter: eigene Seite /new-password (Feld mit Anzeigen-Schalter, "Passwort ändern", "Abbrechen"), Erfolg und Abbrechen führen auf /tenants. Funktion (min. 6 Zeichen, updatePassword, Toasts) gleich.
   Flutter: lib/features/auth/data/auth_link_listener.dart:28-32, lib/features/auth/data/auth_link_listener.dart:118-120, lib/features/auth/presentation/pages/new_password_page.dart:34-115
 - [ ] **mittel** `register/register.page` `popover-f947f492` [register/register.page.html:130](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.html#L130) (2. Prüfung: bestätigt)
@@ -142,28 +142,28 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `tabs/tabs.page` `nav-0ccaf6f8` [tabs/tabs.page.ts:71](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs.page.ts#L71) (2. Prüfung: korrigiert)
   Flutter besser: Prinzip und Ziel gleich (nicht erlaubte URL -> Startseite der Rolle, defaultRoute = Utils.getUrl). Ionic prüft nur beim Laden/Instanzwechsel mit isUrlAccessAllowed, dessen Liste Lücken hat: '/tabs/attendance' nur Admin/Verantw./Beobachter -> Helfer und Helfer-Stimmführer landen beim Neuladen der Termine-Liste auf 'Meine Termine'; '/tabs/overview' fehlt ganz -> Spieler/Helfer verlieren beim Neuladen die 'Übersicht'. Flutter (Redirect bei jeder Navigation) lässt beides passend zu den sichtbaren Tabs zu. Strenger in Flutter: Beobachter wird bei Direkt-URL /attendance/<id> auf /people umgeleitet (Ionic erlaubt die URL, per UI aber nicht erreichbar); /members verlangt zusätzlich showMembersList.
   Flutter: lib/core/router/app_router.dart:212-239, lib/core/router/app_router.dart:192, lib/core/router/route_access.dart:76-88, lib/core/router/attendance_detail_guard.dart:23-28, lib/core/constants/enums.dart:137-141
-- [ ] **niedrig** `app-routing.module` `x-e01a452bb2` **Reload/Deep-Link-Rollenprüfung** [src/app/services/auth.guard.ts:16-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L16-45)
+- [ ] **niedrig** `app-routing.module` `x-e01a452bb2` **Reload/Deep-Link-Rollenprüfung** [src/app/services/auth.guard.ts:16-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L16-L45)
   Flutter besser: Ionic: AuthGuard läuft nur beim Betreten von /tabs; für viele Unterseiten (messages, team-organization, tasks/:id, agenda-items/:id, messages/:id, auto-messages, overview, delete-account, general/extra-fields, general/shifts, org-settings/person-fields, org-settings/songs) bricht ein Reload die Navigation ab (leere Seite) oder TabsPage-effect leitet auf getUrl(role) um, obwohl die UI der Rolle den Zugang erlaubt / Flutter: Redirect prüft die Rolle bei jeder Navigation und schickt abgelehnte Rollen auf role.defaultRoute.
   Flutter: lib/core/router/app_router.dart:214-246, lib/core/router/route_access.dart:127-139
 - [ ] **niedrig** `app.component` `x-0cf36be089` **Auth-Link-Fehlertexte** [src/app/app.component.ts:297](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L297)
   Flutter besser: Ionic zeigt error_description (englisch) direkt / Flutter übersetzt bekannte Fehler ins Deutsche.
   Flutter: lib/features/auth/data/auth_link_listener.dart:152-165
-- [ ] **niedrig** `app.component` `x-b0bab159d8` **OTP-Link-Typen** [src/app/app.component.ts:303-323](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L303-323)
+- [ ] **niedrig** `app.component` `x-b0bab159d8` **OTP-Link-Typen** [src/app/app.component.ts:303-323](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L303-L323)
   Flutter besser: Ionic verifyOtp nur recovery|signup / Flutter unterstützt weitere Link-Typen (invite, magiclink, email_change).
   Flutter: lib/features/auth/data/auth_flow_service.dart:296-310
-- [ ] **niedrig** `login/legal-modal/legal-content.component` `x-3220e0da51` **Fehleransicht mit Wiederholen** [src/app/login/legal-modal/legal-content.component.ts:18-24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts#L18-24)
+- [ ] **niedrig** `login/legal-modal/legal-content.component` `x-3220e0da51` **Fehleransicht mit Wiederholen** [src/app/login/legal-modal/legal-content.component.ts:18-24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts#L18-L24)
   Flutter besser: Ionic setzt nur error=true (Fehlertext) / Flutter: Fehleransicht mit "Erneut versuchen".
   Flutter: lib/features/legal/presentation/widgets/legal_content_view.dart:61-83
-- [ ] **niedrig** `login/register-modal/register-modal.component` `x-42a640abf6` **Fehlermeldungen signUp** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
+- [ ] **niedrig** `login/register-modal/register-modal.component` `x-42a640abf6` **Fehlermeldungen signUp** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-L205)
   Flutter besser: Ionic: allgemeine Fehlertoasts aus db.register / Flutter: spezifischere Meldungen je Supabase-Fehler.
   Flutter: lib/features/auth/presentation/pages/register_page.dart:212-242
-- [ ] **niedrig** `login/register-modal/register-modal.component` `x-07e8d524e9` **Bestehendes Konto mit richtigem Passwort** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
+- [ ] **niedrig** `login/register-modal/register-modal.component` `x-07e8d524e9` **Bestehendes Konto mit richtigem Passwort** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-L205)
   Flutter besser: Ionic zeigt "Registrierung erfolgreich…"-Toast, obwohl der Nutzer direkt angemeldet ist / Flutter leitet den angemeldeten Nutzer weiter.
   Flutter: lib/features/auth/presentation/pages/register_page.dart:212-242
-- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6584f621dd` **Fortsetzen nach Login** [src/app/open-attendance/open-attendance.page.ts:62-67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L62-67)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6584f621dd` **Fortsetzen nach Login** [src/app/open-attendance/open-attendance.page.ts:62-67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L62-L67)
   Flutter besser: Ionic merkt sich die ID nur in pendingAttendanceId (geht bei Reload verloren) / Flutter setzt den Link nach dem Login fort.
   Flutter: lib/core/router/app_router.dart:311-316, lib/features/planning/presentation/pages/open_attendance_page.dart:40-43
-- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6bc1c2c22d` **Beobachter** [src/app/open-attendance/open-attendance.page.ts:70-85](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L70-85)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6bc1c2c22d` **Beobachter** [src/app/open-attendance/open-attendance.page.ts:70-85](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L70-L85)
   Flutter besser: Ionic bleibt für Beobachter ohne Termin-Zugriff auf dem Spinner hängen / Flutter leitet auf /people um.
   Flutter: lib/features/planning/presentation/pages/open_attendance_page.dart:60-94
 - [ ] **niedrig** `register/register.page` `x-4bc57ec809` **Schließen der Route-Variante** [src/app/register/register.page.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L53)
@@ -176,7 +176,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic speichert firstName/lastName ungetrimmt und akzeptiert reine Leerzeichen / Flutter: onSaved trimmt, reine Leerzeichen scheitern an „Name erforderlich“.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:307, lib/features/registration/presentation/pages/tenant_registration_page.dart:318, lib/features/registration/presentation/pages/tenant_registration_page.dart:1060-1062
 
-## Kleinigkeiten (niedrig): 76
+## Kleinigkeiten (niedrig): 75
 
 - [ ] **niedrig** `app-redirect/app-redirect.page` `action-f6aa44fd` [app-redirect/app-redirect.page.html:13](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.html#L13) (2. Prüfung: bestätigt)
   Ionic: Icon logo-google-playstore / Flutter: Icons.shop. Text und Ziel (Play-Store-Link im selben Tab) gleich.
@@ -346,9 +346,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `tabs/tabs.page` `action-8d0f89f7` [tabs/tabs.page.html:66](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs.page.html#L66)
   Ionic Tabbar: 'Werke' bei aktivierter Option für alle außer Bewerber (auch Eltern) / Flutter: zusätzlich für Eltern ausgeblendet (canOpenSongsTab). Ionic-Route/Sidepanel sperren Eltern ebenfalls.
   Flutter: lib/shared/widgets/layout/main_shell.dart:145, lib/core/providers/optional_tabs_providers.dart:87
-- [ ] **niedrig** `terms/terms.page` `logic-e0824f5f` [terms/terms.page.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L1) (2. Prüfung: korrigiert)
-  Zusammenfassung der Klasse: Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Einzige Abweichung (Ziel nach Zustimmung) steht und wird angeglichen bei nav-4df0f2ac; hier nicht doppelt gezählt.
-  Flutter: lib/features/legal/presentation/pages/terms_page.dart:48-72, lib/data/repositories/account_repository.dart:52-72, lib/core/router/app_router.dart:366-375
 - [ ] **niedrig** `terms/terms.page` `nav-4d7988a7` [terms/terms.page.ts:28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L28)
   Ionic: bereits akzeptiert -> Utils.getUrl(role) / Flutter: Router leitet auf gemerkten Link oder /tenants; ist schon eine Instanz aktiv, erscheint dort die Instanzauswahl statt der Startseite.
   Flutter: lib/core/router/app_router.dart:370
@@ -358,25 +355,25 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `terms/terms.page` `effect-9680384f` [terms/terms.page.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L61)
   Wie nav-4df0f2ac: Ziel wird nicht aus der Rolle berechnet, sondern über /tenants bzw. homeRouteFor (inkl. Dashboard-Startseite).
   Flutter: lib/features/legal/presentation/pages/terms_page.dart:58
-- [ ] **niedrig** `app-routing.module` `x-9b8dcb3d86` **Beobachter kann Termin-Detail nicht öffnen** [src/app/utilities/Utils.ts:1312-1317](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1312-1317)
+- [ ] **niedrig** `app-routing.module` `x-9b8dcb3d86` **Beobachter kann Termin-Detail nicht öffnen** [src/app/utilities/Utils.ts:1312-1317](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1312-L1317)
   Ionic: VIEWER darf attendance/:id öffnen (AuthGuard, isUrlAccessAllowed), Einstieg aus Anwesenheitsliste, Themen-Tab und Nachrichten / Flutter: attendanceDetailRedirect verlangt canAddAttendance, Beobachter wird auf /people umgeleitet. [2. Prüfung: Beobachter erreichen /tabs/attendance/:id in Ionic nur per eingetippter URL (Liste, Themen-Tab und Nachrichten zeigen den Einstieg nur anderen Rollen); siehe zz-verify-app]
   Flutter: lib/core/router/attendance_detail_guard.dart:22-27
-- [ ] **niedrig** `app-redirect/app-redirect.page` `x-2f39f5c631` **Store-Weiterleitung legt History-Eintrag an** [src/app/app-redirect/app-redirect.page.ts:38-42](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.ts#L38-42)
+- [ ] **niedrig** `app-redirect/app-redirect.page` `x-2f39f5c631` **Store-Weiterleitung legt History-Eintrag an** [src/app/app-redirect/app-redirect.page.ts:38-42](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.ts#L38-L42)
   Ionic: window.location.replace(storeUrl) – Zurück führt nicht wieder auf /app / Flutter: launchUrl(webOnlyWindowName: "_self") legt einen Eintrag an, Zurück öffnet /app und leitet erneut weiter.
   Flutter: lib/features/public_links/presentation/pages/app_redirect_page.dart:31-54
-- [ ] **niedrig** `app.component` `x-5a9899a9e3` **Web-Update-Modell** [src/app/app.component.ts:178-199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L178-199)
+- [ ] **niedrig** `app.component` `x-5a9899a9e3` **Web-Update-Modell** [src/app/app.component.ts:178-199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L178-L199)
   Ionic: SwUpdate prüft regelmäßig/bei Sichtbarkeitswechsel, aktiviert eine neue Version und lädt die Seite sofort neu / Flutter: neue Version wird erst beim nächsten Start geladen.
   Flutter: lib/core/services/app_update_service_web.dart
-- [ ] **niedrig** `app.component` `x-426ed5e6fe` **Native-App-Hinweis in Teams** [src/app/app.component.ts:203-207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L203-207)
+- [ ] **niedrig** `app.component` `x-426ed5e6fe` **Native-App-Hinweis in Teams** [src/app/app.component.ts:203-207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L203-L207)
   Ionic: showNativeAppAd kehrt in Teams zurück (isInTeams) / Flutter: keine Teams-Prüfung, Hinweis erscheint auch im Teams-Tab.
   Flutter: lib/shared/widgets/dialogs/native_app_ad.dart:30-97
-- [ ] **niedrig** `app.component` `x-796b20e6b2` **Page-View-Tracking** [src/app/app.component.ts:375-385](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L375-385)
+- [ ] **niedrig** `app.component` `x-796b20e6b2` **Page-View-Tracking** [src/app/app.component.ts:375-385](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L375-L385)
   Ionic: trackt router.url roh (/tabs/...) / Flutter: tracking_observer bereinigt IDs/Query und trackt Flutter-Pfade (andere URLs in der Auswertung).
   Flutter: lib/core/router/tracking_observer.dart:14-40
 - [ ] **niedrig** `login/legal-modal/legal-content.component` `x-d36569e6fc` **HTML-Rendering** [src/app/login/legal-modal/legal-content.component.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts)
   Ionic: innerHTML / Flutter: Umwandlung über HtmlToDelta/Quill; Darstellung komplexer HTML-Elemente (Tabellen, Listen) nicht geprüft (Paketquellen nicht im Container).
   Flutter: lib/features/legal/presentation/widgets/legal_content_view.dart:61-83
-- [ ] **niedrig** `login/login.page` `x-ffab6fe794` **E-Mail-Validierung inline** [src/app/login/login.page.ts:164-166](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L164-166)
+- [ ] **niedrig** `login/login.page` `x-ffab6fe794` **E-Mail-Validierung inline** [src/app/login/login.page.ts:164-166](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L164-L166)
   Ionic: ungültige E-Mail → Toast / Flutter: Fehlertext direkt am Feld.
   Flutter: lib/features/auth/presentation/pages/login_page.dart:151-168
 - [ ] **niedrig** `login/login.page` `x-5885f9560e` **Reset-Toast-Texte** [src/app/login/login.page.ts:334](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L334)
@@ -385,10 +382,10 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `login/login.page` `x-e022710cfa` **Registrieren mit E-Mail vorbefüllt** [src/app/login/login.page.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts)
   Ionic: Registrieren-Modal startet leer / Flutter: übernimmt die eingegebene E-Mail.
   Flutter: lib/features/auth/presentation/pages/login_page.dart:333-347
-- [ ] **niedrig** `open-attendance/open-attendance.page` `x-8b3ba571f2` **Link ohne gültige ID** [src/app/open-attendance/open-attendance.page.ts:49-55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L49-55)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-8b3ba571f2` **Link ohne gültige ID** [src/app/open-attendance/open-attendance.page.ts:49-55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L49-L55)
   Ionic: ungültige ID angemeldet → routeAfterAuth (Dashboard-Logik) / Flutter: → role.defaultRoute.
   Flutter: lib/features/planning/presentation/pages/open_attendance_page.dart:37-50
-- [ ] **niedrig** `register/register.page` `x-530439cff7` **Namen werden getrimmt** [src/app/register/register.page.ts:40-58](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L40-58)
+- [ ] **niedrig** `register/register.page` `x-530439cff7` **Namen werden getrimmt** [src/app/register/register.page.ts:40-58](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L40-L58)
   Ionic speichert Instanz-/Namensfelder ungetrimmt / Flutter trimmt Leerzeichen.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-189b5776c0` **Textarea- und Datums-Zusatzfelder** [src/app/register/tenant-register/tenant-register.page.html:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L157)

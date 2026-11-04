@@ -1,6 +1,6 @@
 # Fix-Paket „selbstservice“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 17
@@ -65,7 +65,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `selfService/signout/signout.page` `field-4434ae39` [selfService/signout/signout.page.html:644](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.html#L644)
   Flutter besser: Kalender erst ab heute (vergangene Daten nicht wählbar) / Ionic ion-datetime ohne min, vergangene "bis"-Daten möglich (führen zur sofortigen Auto-Reaktivierung).
   Flutter: lib/features/self_service/presentation/widgets/self_service_absences.dart:455
-- [ ] **niedrig** `selfService/overview/overview.page` `x-68b090e7ef` **Typfilter im Aktionsblatt** [src/app/selfService/overview/overview.page.ts:218-240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/overview/overview.page.ts#L218-240)
+- [ ] **niedrig** `selfService/overview/overview.page` `x-68b090e7ef` **Typfilter im Aktionsblatt** [src/app/selfService/overview/overview.page.ts:218-240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/overview/overview.page.ts#L218-L240)
   Flutter besser: Ionic prüft available_statuses nur in einer else-if-Kette (nur wenn Anmelden möglich; 'Verspätung' ungeprüft, wenn 'Entschuldigt' fehlt; bei Zugesagt oder abgelaufener Frist gar nicht; in 'Weitere Optionen' bleibt 'Abmelden', wenn der Typ 'Entschuldigt' nicht erlaubt) → zeigt gesperrte Status-Aktionen / Flutter filtert immer nach den erlaubten Status des Typs
   Flutter: lib/features/self_service/presentation/widgets/self_service_event_actions.dart:146-150, lib/features/self_service/presentation/widgets/self_service_event_actions.dart:395-400
 - [ ] **niedrig** `selfService/overview/overview.page` `x-ef8455052e` **Archivierte Termine** [src/app/services/db.service.ts:4172](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L4172)

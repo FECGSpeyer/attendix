@@ -71,62 +71,150 @@ const makeBatches = (inv, max = 230) => {
 // Extra findings (hidden logic) get a stable id from unit + title, so the
 // same finding reported twice is one entry and a later pass can rate it.
 const extraId = (e) => `x-${createHash('sha1').update(`${e.unit}|${e.title}`).digest('hex').slice(0, 10)}`;
+
+// Ionic versions in which items changed (`diff --stale` appends a step):
+// { base, steps: [{ from, to, ids }] }. A verdict made at an earlier Ionic
+// commit than a step that lists its item no longer counts.
+const CHANGES = join(DIR, 'changes.json');
+const loadChanges = () => (existsSync(CHANGES) ? load(CHANGES) : null);
+const sameCommit = (a, b) => Boolean(a && b) && (String(a).startsWith(String(b)) || String(b).startsWith(String(a)));
+const stepOf = (changes, commit) => {
+  if (!changes || sameCommit(commit, changes.base)) return -1;
+  for (let k = changes.steps.length - 1; k >= 0; k--) if (sameCommit(commit, changes.steps[k].to)) return k;
+  return -1; // unknown commit: treated as the base version
+};
+const changedAfter = (changes, commit) => {
+  const ids = new Set();
+  if (!changes) return ids;
+  changes.steps.slice(stepOf(changes, commit) + 1).forEach((st) => st.ids.forEach((id) => ids.add(id)));
+  return ids;
+};
+
+// Reading order of status files: first pass (b*), verification rounds
+// (zz-verify-* = 1, zz-verifyN-* = N), correction files after the round named
+// in their "afterRound", fixed items from fix PRs (zz-fixed-*) last.
+const rankOf = (f, s) => {
+  if (f.startsWith('zz-fixed-')) return 1e6;
+  if (s.afterRound !== undefined) return s.afterRound + 0.5;
+  const m = f.match(/^zz-verify(\d*)-/);
+  if (m) return m[1] ? Number(m[1]) : 1;
+  return 0;
+};
 const readStatuses = () => {
-  const out = { items: {}, extra: [], files: [] };
+  const out = { items: {}, extra: [], extraAll: [], extraUnits: new Set(), files: [] };
   if (!existsSync(STATUS_DIR)) return out;
+  const files = readdirSync(STATUS_DIR).filter((x) => x.endsWith('.json')).map((f) => ({ f, s: load(join(STATUS_DIR, f)) }));
+  files.forEach((x) => { x.rank = rankOf(x.f, x.s); });
+  files.sort((a, b) => a.rank - b.rank || (a.f < b.f ? -1 : 1));
+  const changes = loadChanges();
   const extras = new Map();
-  const extraVerdicts = [];
-  // Order: first pass, zz-verify*, zz-zz-overrides, then zz-fixed-<bereich>
-  // (fix PRs mark items/extras as fixed; that must win over any earlier verdict).
-  const rank = (f) => (f.startsWith('zz-fixed-') ? `~${f}` : f);
-  for (const f of readdirSync(STATUS_DIR).filter((x) => x.endsWith('.json')).sort((a, b) => (rank(a) < rank(b) ? -1 : 1))) {
-    const s = load(join(STATUS_DIR, f));
+  for (const { f, s } of files) {
     out.files.push({ file: f, batch: s.batch, flutter: s.flutter, ionic: s.ionic });
-    // later files (e.g. verification passes "zz-verify-*") override earlier ones
-    for (const [id, st] of Object.entries(s.items ?? {})) {
-      if (id.startsWith('x-')) extraVerdicts.push({ id, ...st, src: f });
-      else out.items[id] = { ...out.items[id], ...st, src: f, ionicAt: s.ionic };
-    }
+    // 1. extra findings defined in this file (a later definition re-opens it)
     for (const e of s.extra ?? []) {
       const id = extraId(e);
-      extras.set(id, { ...extras.get(id), ...e, id, src: f });
+      extras.set(id, { ...extras.get(id), ...e, id, src: f, ionicAt: s.ionic, flutterAt: s.flutter, withdrawn: false });
     }
-    for (const o of s.extraOverride ?? []) (out.overrides ??= []).push({ ...o, src: f });
-  }
-  // second pass on an extra: s ok/na withdraws it, otherwise sev/n/f are updated
-  for (const v of extraVerdicts) {
-    const e = extras.get(v.id);
-    if (!e) continue;
-    if (v.s === 'ok' || v.s === 'na') extras.delete(v.id);
-    else extras.set(v.id, { ...e, sev: v.sev ?? e.sev, n: v.n ?? e.n, f: v.f ?? e.f, v: v.v, vsrc: v.src });
-  }
-  out.extra = [...extras.values()];
-  // A later pass can withdraw or re-rate an extra finding (duplicate of an
-  // item, disproved): { unit, title (prefix), drop: true | sev, why }.
-  for (const o of out.overrides ?? []) {
-    const hit = (e) => e.unit === o.unit && e.title.startsWith(o.title) && e.src !== o.src;
-    if (o.drop) out.extra = out.extra.filter((e) => !hit(e));
-    else out.extra.forEach((e) => { if (hit(e)) Object.assign(e, { sev: o.sev ?? e.sev, n: o.why ? `${e.n} [2. Prüfung: ${o.why}]` : e.n }); });
-  }
-  // `diff --stale` lists items that are new or changed in a newer Ionic
-  // version; a verdict from before that version no longer counts.
-  const staleFile = join(DIR, 'stale.json');
-  if (existsSync(staleFile)) {
-    const stale = load(staleFile);
-    for (const id of stale.ids) {
-      const s = out.items[id];
-      if (s && !String(stale.ionicCommit).startsWith(String(s.ionicAt ?? '-'))) delete out.items[id];
+    // 2. verdicts: a new status replaces the old verdict (f and n are kept
+    // only when the status itself did not change); without s it amends it
+    for (const [id, st] of Object.entries(s.items ?? {})) {
+      if (id.startsWith('x-')) {
+        const e = extras.get(id);
+        if (!e) continue;
+        if (st.s === 'ok' || st.s === 'na') extras.set(id, { ...e, withdrawn: true, wsrc: f, wAt: s.ionic, wn: st.n ?? null });
+        else extras.set(id, { ...e, withdrawn: false, sev: st.sev ?? e.sev, n: st.n ?? e.n, f: st.f ?? e.f, v: st.v, vsrc: f, flutterAt: s.flutter ?? e.flutterAt });
+        continue;
+      }
+      const prev = out.items[id];
+      if (st.s === undefined) out.items[id] = { ...prev, ...st, src: f, ionicAt: s.ionic ?? prev?.ionicAt, flutterAt: s.flutter ?? prev?.flutterAt };
+      else {
+        const same = prev?.s === st.s;
+        out.items[id] = { s: st.s, sev: st.sev, f: st.f ?? (same ? prev.f : undefined), n: st.n ?? (same ? prev.n : undefined), v: st.v, src: f, ionicAt: s.ionic, flutterAt: s.flutter };
+      }
+    }
+    // 3. older form: withdraw or re-rate an extra by unit + title prefix
+    for (const o of s.extraOverride ?? []) {
+      for (const [id, e] of extras) {
+        if (e.unit !== o.unit || !e.title.startsWith(o.title) || e.src === f) continue;
+        if (o.drop) extras.set(id, { ...e, withdrawn: true, wsrc: f, wAt: s.ionic, wn: o.why ?? null });
+        else extras.set(id, { ...e, sev: o.sev ?? e.sev, n: o.why ? `${e.n} [2. Prüfung: ${o.why}]` : e.n });
+      }
     }
   }
+  // verdicts older than a later Ionic change of their item no longer count
+  if (changes) {
+    for (const [id, st] of Object.entries(out.items)) if (changedAfter(changes, st.ionicAt).has(id)) delete out.items[id];
+    // extras and withdrawals: their unit changed later → open again, flagged
+    for (const [id, e] of extras) {
+      const unitChanged = (at) => [...changedAfter(changes, at)].some((x) => x.split('#')[0] === e.unit);
+      if (e.withdrawn && unitChanged(e.wAt)) extras.set(id, { ...e, withdrawn: false, stale: true });
+      else if (!e.withdrawn && unitChanged(e.ionicAt)) extras.set(id, { ...e, stale: true });
+    }
+  }
+  out.extraAll = [...extras.values()];
+  out.extra = out.extraAll.filter((e) => !e.withdrawn);
+  // units whose logic item only summarises: their findings are the extras
+  out.extraAll.forEach((e) => out.extraUnits.add(e.unit));
   return out;
 };
 
 // Content fingerprint of an inventory item: what a user sees or the code
-// does, without position. Logic items use the method body hashes.
+// does, without position; keys sorted, so the order of fields does not matter.
+const stable = (v) => {
+  if (Array.isArray(v)) return `[${v.map(stable).join(',')}]`;
+  if (v && typeof v === 'object') return `{${Object.keys(v).filter((k) => v[k] !== undefined).sort().map((k) => `${JSON.stringify(k)}:${stable(v[k])}`).join(',')}}`;
+  return JSON.stringify(v ?? null);
+};
 const fpOf = (i) => {
   const { id, line, methods, bodies, ...rest } = i;
   const body = bodies ?? (i.kind === 'logic' ? methods?.map((m) => m.replace(/:\d+-\d+$/, '')) : undefined);
-  return createHash('sha1').update(JSON.stringify({ ...rest, body })).digest('hex').slice(0, 12);
+  return createHash('sha1').update(stable({ ...rest, body })).digest('hex').slice(0, 12);
+};
+// Shape (field names, nested) of all items of one kind in an inventory: a
+// newer extractor's extra fields are cut away before comparing.
+const shapeAdd = (shape, v) => {
+  if (Array.isArray(v)) { v.forEach((x) => { shape.items = shapeAdd(shape.items ?? {}, x); }); return shape; }
+  if (v && typeof v === 'object') {
+    shape.keys ??= {};
+    for (const [k, x] of Object.entries(v)) shape.keys[k] = shapeAdd(shape.keys[k] ?? {}, x);
+  }
+  return shape;
+};
+const project = (v, shape) => {
+  if (!shape) return v;
+  if (Array.isArray(v)) return shape.items ? v.map((x) => project(x, shape.items)) : v;
+  if (v && typeof v === 'object' && shape.keys) return Object.fromEntries(Object.entries(v).filter(([k]) => k in shape.keys).map(([k, x]) => [k, project(x, shape.keys[k])]));
+  return v;
+};
+
+// Differences between two inventories: new, removed and changed items (same
+// id, other content: texts, conditions, DB payloads, method bodies), changed
+// translations and the items using them. Fields only a newer extractor emits
+// are cut away (shape of the old inventory per kind), so they are no change.
+const diffInv = (a, b) => {
+  const ids = (inv) => new Map(inv.units.flatMap((u) => u.items.map((i) => [i.id, { unit: u.id, i }])));
+  const A = ids(a);
+  const B = ids(b);
+  const added = [...B.keys()].filter((k) => !A.has(k));
+  const removed = [...A.keys()].filter((k) => !B.has(k));
+  const shapes = {};
+  A.forEach(({ i }) => { const { id, line, methods, ...r } = i; shapes[i.kind] = shapeAdd(shapes[i.kind] ?? {}, r); });
+  const changed = [...B.keys()].filter((k) => A.has(k) && fpOf(A.get(k).i) !== fpOf({ ...project(B.get(k).i, shapes[B.get(k).i.kind]), id: k, line: 0, methods: B.get(k).i.methods }));
+  const i18nChanged = Object.keys(b.i18n ?? {}).filter((k) => a.i18n?.[k] && a.i18n[k].de !== b.i18n[k].de);
+  const viaText = [...B.keys()].filter((k) => A.has(k) && !changed.includes(k) && i18nChanged.some((key) => JSON.stringify(B.get(k).i).includes(`"${key}"`)));
+  return { A, B, added, removed, changed, i18nChanged, viaText };
+};
+
+// Top-level names under src/app (inventory files are relative to it); paths
+// starting elsewhere (android/, ios/, supabase/ …) keep their own root.
+const appTopOf = (inv) => [...new Set(inv.units.flatMap((u) => u.items.map((i) => i.file.split('/')[0])))].sort();
+const ionicUrlOf = (inv) => {
+  const top = new Set(appTopOf(inv));
+  return (ref) => {
+    const m = String(ref).replace(/^src\/app\//, '').match(/^(.*?)(?::(\d+)(?:-(\d+))?)?$/);
+    const path = top.has(m[1].split('/')[0]) ? `src/app/${m[1]}` : m[1];
+    return `https://github.com/FECGSpeyer/attendance/blob/${inv.meta.ionicCommit}/${path}${m[2] ? `#L${m[2]}${m[3] ? `-L${m[3]}` : ''}` : ''}`;
+  };
 };
 
 if (cmd === 'batches') {
@@ -165,22 +253,18 @@ if (cmd === 'batches') {
   const [oldFile, newFile = INVENTORY] = rest.filter((x) => x !== '--stale');
   const a = load(oldFile);
   const b = load(newFile);
-  const ids = (inv) => new Map(inv.units.flatMap((u) => u.items.map((i) => [i.id, { unit: u.id, i }])));
-  const A = ids(a);
-  const B = ids(b);
-  const added = [...B.keys()].filter((k) => !A.has(k));
-  const removed = [...A.keys()].filter((k) => !B.has(k));
-  // same id, different content: changed texts, conditions, DB payloads, method bodies
-  // Fields a newer extractor adds (e.g. bindings, bodies) are not a change: compare only keys the old item has.
-  const onlyOld = (o, n) => Object.fromEntries(Object.entries(n).filter(([k]) => k in o));
-  const changed = [...B.keys()].filter((k) => A.has(k) && fpOf(A.get(k).i) !== fpOf(onlyOld(A.get(k).i, B.get(k).i)));
-  // translations: same key, other German text
-  const i18nChanged = Object.keys(b.i18n ?? {}).filter((k) => a.i18n?.[k] && a.i18n[k].de !== b.i18n[k].de);
+  const { A, B, added, removed, changed, i18nChanged, viaText } = diffInv(a, b);
   console.log(`Ionic ${a.meta.ionicVersion} (${a.meta.ionicCommit}) → ${b.meta.ionicVersion} (${b.meta.ionicCommit})`);
-  console.log(`added ${added.length}, removed ${removed.length}, changed ${changed.length}, texts changed ${i18nChanged.length}`);
+  console.log(`added ${added.length}, removed ${removed.length}, changed ${changed.length}, texts changed ${i18nChanged.length} (${viaText.length} items)`);
   if (writeStale) {
-    writeFileSync(join(DIR, 'stale.json'), `${JSON.stringify({ ionicCommit: b.meta.ionicCommit, from: a.meta.ionicCommit, ids: [...added, ...changed].sort() }, null, 1)}\n`);
-    console.log(`stale.json: ${added.length + changed.length} items need a new verdict`);
+    if (sameCommit(a.meta.ionicCommit, b.meta.ionicCommit)) console.log('same Ionic commit: nothing to record in changes.json; items changed by a newer extractor are re-checked with verify-round … --since <old.json>');
+    else {
+      const ledger = loadChanges() ?? { base: a.meta.ionicCommit, steps: [] };
+      ledger.steps = ledger.steps.filter((st) => !(sameCommit(st.from, a.meta.ionicCommit) && sameCommit(st.to, b.meta.ionicCommit)));
+      ledger.steps.push({ from: a.meta.ionicCommit, to: b.meta.ionicCommit, ids: [...new Set([...added, ...changed, ...viaText])].sort() });
+      writeFileSync(CHANGES, `${JSON.stringify(ledger, null, 1)}\n`);
+      console.log(`changes.json: ${ledger.steps.at(-1).ids.length} items need a new verdict`);
+    }
   }
   const show = (list, M, sign) => {
     const byUnit = {};
@@ -234,22 +318,48 @@ if (cmd === 'batches') {
     total += pick.length;
   }
   console.log(`${total} items to verify`);
-} else if (cmd === 'verify2-slices') {
-  // Round 2 (after Sol's review of round 1), one file per batch: zz-verify2-<batch>.
-  // Fully, not sampled: every hoch/mittel extra finding without a second
-  // verdict, every ok/na item whose visibility depends on role or tenant
-  // settings, every unresolved DB call and every item without a verdict
-  // (new in the inventory). Items already checked in a second pass are skipped.
-  const [outDir, perFile = '40'] = rest;
+} else if (cmd === 'verify-round' || cmd === 'verify2-slices') {
+  // Full verification round N (after round 1's sample), one file per batch:
+  // zz-verify<N>-<batch>. Not sampled: every item without a verdict (new in
+  // the inventory) or changed since the inventory given with --since, every
+  // hoch/mittel/missing/unclear verdict without a second check, every ok/na
+  // item whose visibility or reachability depends on role or tenant settings
+  // (template conditions, role members of the class, role checks in TS code),
+  // every unresolved DB call, every hoch/mittel extra finding without a
+  // second verdict and every extra whose page changed in Ionic later.
+  const since = rest.includes('--since') ? rest[rest.indexOf('--since') + 1] : null;
+  const args = rest.filter((x, k) => x !== '--since' && rest[k - 1] !== '--since');
+  const [N, outDir, perFile = '40'] = cmd === 'verify2-slices' ? ['2', ...args] : args;
+  if (!/^\d+$/.test(N ?? '') || !outDir) throw new Error('usage: verify-round <N> <outDir> [perFile] [--since <old-inventory.json>]');
   const inv = load(INVENTORY);
   const st = readStatuses();
   const { batches } = load(join(DIR, 'batches.json'));
-  const ROLE = /\b(isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isOrganizer|isManager|isLeader|isSuperAdmin|readOnly|canEdit)\b|role|Role|tenant/;
-  const verified = (s) => s?.v || s?.src?.startsWith('zz-verify');
+  const recheck = new Set();
+  if (since) { const d = diffInv(load(since), inv); [...d.changed, ...d.viaText].forEach((id) => recheck.add(id)); }
+  // role and tenant-setting names (template conditions); class members that
+  // read role or tenant data come from the inventory (unit.roleMembers)
+  const ROLE = /\b(isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isOrganizer|isManager|isLeader|isTeamLeader|isSuperAdmin|isGeneral|isChoir|isOrchestra|isDemo|isMainGroup|isLoggedIn|hasOrg|readOnly|can[A-Z]\w*|enable_\w+|manage[A-Z]\w*|show(Planning|Team|Beamer|GemeindeApp|Landing))\b|role|Role|tenant|Tenant|permission/;
+  const identsOf = (txt) => new Set(String(txt).match(/[A-Za-z_]\w*/g) ?? []);
   const unitOf = new Map(inv.units.map((u) => [u.id, u]));
   const n = Number(perFile);
   let total = 0;
   const why = {};
+  const roleDependent = (u, i) => {
+    const cond = (i.cond ?? []).join(' ');
+    if (ROLE.test(cond)) return true;
+    if (i.roleGuarded) return true;
+    const members = new Set(u.roleMembers ?? []);
+    return [...identsOf(cond)].some((x) => members.has(x));
+  };
+  const extraEntry = (e, reason) => {
+    const u = unitOf.get(e.unit);
+    return { reason, unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [], stale: e.stale ?? false } };
+  };
+  const extraReason = (e) => (e.stale ? 'zusatzbefund-ionic-geaendert' : !e.v && ['hoch', 'mittel'].includes(e.sev) ? 'zusatzbefund' : null);
+  const write = (name, part) => {
+    writeFileSync(join(outDir, `${name}.json`), `${JSON.stringify({ batch: name, ionicCommit: inv.meta.ionicCommit, items: part }, null, 1)}\n`);
+    console.log(`${name} ${part.length}`);
+  };
   for (const b of batches) {
     const pick = [];
     for (const u of inv.units.filter((x) => b.units.includes(x.id))) {
@@ -257,36 +367,31 @@ if (cmd === 'batches') {
         const s0 = st.items[i.id];
         let reason = null;
         if (!s0) reason = 'neu';
-        else if (verified(s0)) continue;
+        else if (recheck.has(i.id)) reason = 'geaendert';
+        else if (s0.v || s0.src?.startsWith('zz-fixed-')) continue;
         else if (i.unresolved) reason = 'db-unaufgeloest';
-        else if ((s0.s === 'ok' || s0.s === 'na') && ROLE.test((i.cond ?? []).join(' '))) reason = 'rolle-mandant';
+        else if (s0.s === 'missing' || s0.s === 'unclear' || (s0.s === 'diff' && s0.sev !== 'niedrig')) reason = 'abweichung-ungeprueft';
+        else if ((s0.s === 'ok' || s0.s === 'na') && roleDependent(u, i)) reason = 'rolle-mandant';
         if (!reason) continue;
         why[reason] = (why[reason] ?? 0) + 1;
-        pick.push({ reason, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev } : null });
+        pick.push({ reason, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev, v: s0.v ?? null } : null });
       }
     }
     for (const e of st.extra) {
-      if (!b.units.includes(e.unit) || e.v || !['hoch', 'mittel'].includes(e.sev)) continue;
-      why.zusatzbefund = (why.zusatzbefund ?? 0) + 1;
-      const u = unitOf.get(e.unit);
-      pick.push({ reason: 'zusatzbefund', unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [] } });
+      const reason = b.units.includes(e.unit) && extraReason(e);
+      if (!reason) continue;
+      why[reason] = (why[reason] ?? 0) + 1;
+      pick.push(extraEntry(e, reason));
     }
-    for (let k = 0; k * n < pick.length; k++) {
-      const part = pick.slice(k * n, (k + 1) * n);
-      const name = `zz-verify2-${b.id}${k ? `-${k + 1}` : ''}`;
-      writeFileSync(join(outDir, `${name}.json`), `${JSON.stringify({ batch: name, ionicCommit: inv.meta.ionicCommit, items: part }, null, 1)}\n`);
-      console.log(`${name} ${part.length}`);
-    }
+    for (let k = 0; k * n < pick.length; k++) write(`zz-verify${N}-${b.id}${k ? `-${k + 1}` : ''}`, pick.slice(k * n, (k + 1) * n));
     total += pick.length;
   }
   // native/* findings (store build, permissions, icons) belong to no page batch
-  const orphan = st.extra.filter((e) => !batches.some((b) => b.units.includes(e.unit)) && !e.v && ['hoch', 'mittel'].includes(e.sev));
+  const orphan = st.extra.filter((e) => !batches.some((b) => b.units.includes(e.unit)) && extraReason(e));
   if (orphan.length) {
-    const part = orphan.map((e) => ({ reason: 'zusatzbefund', unit: e.unit, ionic: {}, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [] } }));
-    writeFileSync(join(outDir, 'zz-verify2-native.json'), `${JSON.stringify({ batch: 'zz-verify2-native', ionicCommit: inv.meta.ionicCommit, items: part }, null, 1)}\n`);
-    console.log(`zz-verify2-native ${part.length}`);
-    total += part.length;
-    why.zusatzbefund = (why.zusatzbefund ?? 0) + part.length;
+    write(`zz-verify${N}-native`, orphan.map((e) => extraEntry(e, extraReason(e))));
+    total += orphan.length;
+    orphan.forEach((e) => { why[extraReason(e)] = (why[extraReason(e)] ?? 0) + 1; });
   }
   console.log(`${total} items to verify`, why);
 } else if (cmd === 'report') {
@@ -298,7 +403,9 @@ if (cmd === 'batches') {
       const s = st.items[i.id];
       // a DB call whose table/operation the extractor could not resolve is never proven equal
       const status = i.unresolved && s?.s === 'ok' ? 'unclear' : s?.s ?? 'offen';
-      rows.push({ unit: u.id, unitKind: u.kind, routes: u.routes, item: i, status, sev: s?.sev ?? null, flutter: s?.f ?? [], note: s?.n ?? '', verified: s?.v ?? null });
+      // a logic item only summarises when the page's findings are listed as extras
+      const summary = i.kind === 'logic' && st.extraUnits.has(u.id);
+      rows.push({ unit: u.id, unitKind: u.kind, routes: u.routes, item: i, status, summary, sev: s?.sev ?? null, flutter: s?.f ?? [], note: s?.n ?? '', verified: s?.v ?? null, flutterAt: s?.flutterAt ?? null });
     }
   }
   const count = (list, key) => list.reduce((m, r) => { m[r[key]] = (m[r[key]] ?? 0) + 1; return m; }, {});
@@ -308,14 +415,16 @@ if (cmd === 'batches') {
   lines.push(`Ionic ${inv.meta.ionicVersion} (${inv.meta.ionicCommit}), ${inv.meta.items} Punkte in ${inv.meta.units} Bausteinen.`, '');
   lines.push('| Status | Anzahl |', '|---|---|');
   for (const [k, v] of Object.entries(total).sort()) lines.push(`| ${k} | ${v} |`);
-  lines.push('', `Zusätzliche Befunde: ${st.extra.length}`, '');
-  lines.push('## Offene Abweichungen nach Schwere', '');
+  const summaries = rows.filter((r) => r.summary && (r.status === 'diff' || r.status === 'missing')).length;
+  lines.push('', `Zusätzliche Befunde: ${st.extra.length}${st.extra.some((e) => e.stale) ? ` (davon ${st.extra.filter((e) => e.stale).length} auf seither geänderten Ionic-Seiten)` : ''}`);
+  if (summaries) lines.push(`Logik-Einträge, die nur zusammenfassen (Befunde stehen einzeln als Zusatzbefunde, hier nicht gezählt): ${summaries}`);
+  lines.push('', '## Offene Abweichungen nach Schwere', '');
   for (const sev of ['hoch', 'mittel', 'niedrig']) {
-    const list = rows.filter((r) => (r.status === 'diff' || r.status === 'missing') && r.sev === sev);
-    lines.push(`### ${sev} (${list.length})`, '');
-    for (const r of list) lines.push(`- **${r.unit}** \`${r.item.kind}\` ${r.item.file}:${r.item.line} – ${r.note}`);
+    const list = rows.filter((r) => (r.status === 'diff' || r.status === 'missing') && r.sev === sev && !r.summary);
     const ex = st.extra.filter((e) => e.sev === sev);
-    for (const e of ex) lines.push(`- **${e.unit}** zusätzlicher Befund: ${e.title} – ${e.n}`);
+    lines.push(`### ${sev} (${list.length + ex.length})`, '');
+    for (const r of list) lines.push(`- **${r.unit}** \`${r.item.kind}\` ${r.item.file}:${r.item.line} – ${r.note}`);
+    for (const e of ex) lines.push(`- **${e.unit}** zusätzlicher Befund${e.stale ? ' (Ionic-Seite seither geändert)' : ''}: ${e.title} – ${e.n}`);
     lines.push('');
   }
   writeFileSync(join(DIR, 'summary.md'), `${lines.join('\n')}\n`);
@@ -338,15 +447,18 @@ if (cmd === 'batches') {
     const lit = i.literals?.length ? i.literals : [];
     return short(de.length ? de : lit.length ? lit : i.bound ?? i.tag ?? i.kind, 140);
   };
-  const flutterCommits = [...new Set(st.files.map((f) => f.flutter).filter(Boolean))];
+  // newest first: index 0 is the default for links without a known commit
+  const flutterCommits = [...new Set(st.files.map((f) => f.flutter).filter(Boolean).reverse())];
+  const fcOf = (sha) => (sha && flutterCommits.includes(sha) ? flutterCommits.indexOf(sha) : null);
   const unitIdx = new Map(inv.units.map((u, k) => [u.id, k]));
   const tracker = {
-    meta: { ...inv.meta, flutterCommits, generatedAt: new Date().toISOString(), batches: st.files.map((f) => f.batch) },
+    meta: { ...inv.meta, flutterCommits, appTop: appTopOf(inv), generatedAt: new Date().toISOString(), batches: st.files.map((f) => f.batch) },
     units: inv.units.map((u) => [u.id, u.kind, u.routes, family(u.id)]),
-    // [id, unit, kind, file, line, label, status, sev, flutterRefs, note, cond, verified]
-    rows: rows.map((r) => [r.item.id, unitIdx.get(r.unit), r.item.kind, r.item.file, r.item.line, labelOf(r.item), r.status, r.sev, r.flutter, short(r.note, 600), short(r.item.cond ?? [], 200), r.verified]),
-    // [id, unit, title, note, sev, ionicRef, flutterRefs, verified]
-    extra: st.extra.map((e) => [e.id, e.unit, e.title, short(e.n, 700), e.sev, e.ionic ?? null, e.f ?? [], e.v ?? null]),
+    summaryUnits: [...st.extraUnits].sort(),
+    // [id, unit, kind, file, line, label, status, sev, flutterRefs, note, cond, verified, flutterCommitIdx]
+    rows: rows.map((r) => [r.item.id, unitIdx.get(r.unit), r.item.kind, r.item.file, r.item.line, labelOf(r.item), r.status, r.sev, r.flutter, short(r.note, 600), short(r.item.cond ?? [], 200), r.verified, fcOf(r.flutterAt)]),
+    // [id, unit, title, note, sev, ionicRef, flutterRefs, verified, flutterCommitIdx, stale]
+    extra: st.extra.map((e) => [e.id, e.unit, e.title, short(e.n, 700), e.sev, e.ionic ?? null, e.f ?? [], e.v ?? null, fcOf(e.flutterAt), e.stale ? 1 : 0]),
   };
   // the tracker stores Leon's decisions under these ids: they must stay unique
   const docId = (id) => id.replace(/[^A-Za-z0-9_.~:@+-]/g, (c) => (c === '/' ? '~' : c === '#' ? '@' : '+'));
@@ -367,7 +479,7 @@ if (cmd === 'batches') {
       'planning-org': 'planung', selfService: 'selbstservice', 'settings-general': 'einstellungen', 'settings-main': 'einstellungen',
       'settings-other': 'einstellungen', songs: 'werke', team: 'team', services: 'querschnitt', shared: 'querschnitt' })[f] ?? f;
   };
-  const ionicUrl = (file, line) => `https://github.com/FECGSpeyer/attendance/blob/${inv.meta.ionicCommit}/src/app/${file}${line ? `#L${line}` : ''}`;
+  const ionicUrl = ionicUrlOf(inv);
   const pk = {};
   const add = (p, k, entry) => { ((pk[p] ??= { fix: [], better: [], low: [] })[k]).push(entry); };
   for (const u of inv.units) {
@@ -375,8 +487,8 @@ if (cmd === 'batches') {
       const s = st.items[i.id];
       if (!s || !['diff', 'missing'].includes(s.s)) continue;
       // a logic item only summarises; its findings are listed as extras
-      if (i.kind === 'logic' && st.extra.some((x) => x.unit === u.id)) continue;
-      const e = { unit: u.id, id: i.id, kind: i.kind, where: `[${i.file}:${i.line}](${ionicUrl(i.file, i.line)})`, s: s.s, sev: s.sev, f: s.f ?? [], n: s.n ?? '', v: s.v };
+      if (i.kind === 'logic' && st.extraUnits.has(u.id)) continue;
+      const e = { unit: u.id, id: i.id, kind: i.kind, where: `[${i.file}:${i.line}](${ionicUrl(`${i.file}:${i.line}`)})`, s: s.s, sev: s.sev, f: s.f ?? [], n: s.n ?? '', v: s.v };
       const p = pkgOf(u.id);
       if (/^Flutter besser/i.test(e.n)) add(p, 'better', e);
       else if (s.sev === 'hoch' || s.sev === 'mittel') add(p, 'fix', e);
@@ -384,7 +496,7 @@ if (cmd === 'batches') {
     }
   }
   for (const x of st.extra) {
-    const e = { unit: x.unit, id: x.id, title: x.title, v: x.v, kind: 'extra', where: x.ionic ? `[${x.ionic}](${ionicUrl(x.ionic.replace(/^src\/app\//, '').split(':')[0], x.ionic.split(':')[1])})` : '', s: 'diff', sev: x.sev, f: x.f ?? [], n: x.n ?? '' };
+    const e = { unit: x.unit, id: x.id, title: x.title, v: x.v, stale: x.stale, kind: 'extra', where: x.ionic ? `[${x.ionic}](${ionicUrl(x.ionic)})` : '', s: 'diff', sev: x.sev, f: x.f ?? [], n: x.n ?? '' };
     const p = pkgOf(x.unit);
     if (/^Flutter besser/i.test(e.n) || /^Flutter besser/i.test(x.title)) add(p, 'better', e);
     else if (x.sev === 'hoch' || x.sev === 'mittel') add(p, 'fix', e);
@@ -393,7 +505,7 @@ if (cmd === 'batches') {
   const out = join(DIR, 'fixes');
   if (!existsSync(out)) mkdirSync(out, { recursive: true });
   const order = { hoch: 0, mittel: 1, niedrig: 2 };
-  const line = (e) => `- [ ] **${e.sev ?? '–'}** \`${e.unit}\` ${e.kind === 'extra' ? `\`${e.id}\` **${e.title}** ` : `\`${e.id.split('#')[1]}\` `}${e.where}${e.v ? ` (2. Prüfung: ${e.v})` : ''}\n  ${e.n.replace(/\n/g, ' ')}${e.f.length ? `\n  Flutter: ${e.f.join(', ')}` : ''}`;
+  const line = (e) => `- [ ] **${e.sev ?? '–'}** \`${e.unit}\` ${e.kind === 'extra' ? `\`${e.id}\` **${e.title}** ` : `\`${e.id.split('#')[1]}\` `}${e.where}${e.v ? ` (2. Prüfung: ${e.v})` : ''}${e.stale ? ' (Ionic-Seite seither geändert)' : ''}\n  ${e.n.replace(/\n/g, ' ')}${e.f.length ? `\n  Flutter: ${e.f.join(', ')}` : ''}`;
   const index = [];
   for (const [p, l] of Object.entries(pk).sort()) {
     l.fix.sort((a, b) => order[a.sev] - order[b.sev] || a.unit.localeCompare(b.unit));
@@ -408,6 +520,6 @@ if (cmd === 'batches') {
   }
   index.forEach((x) => console.log(x));
 } else {
-  console.error('usage: node tool/parity/parity.mjs batches|slice|todo|diff|verify-slices|verify2-slices|report|fixlists');
+  console.error('usage: node tool/parity/parity.mjs batches|slice|todo|diff <old> [new] [--stale]|verify-slices|verify-round <N> <dir> [n] [--since <old>]|report|fixlists');
   process.exit(64);
 }

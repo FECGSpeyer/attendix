@@ -12,7 +12,7 @@ Beta-Seiten zählen nicht.
 | 1. Soll-Liste | `tool/parity/extract_ionic.mjs` | `ionic-inventory.json` |
 | 2. Prüfpakete | `tool/parity/parity.mjs batches` | `batches.json` |
 | 3. Nachweis je Punkt | Review nach `tool/parity/review-brief.md` | `status/<paket>.json` |
-| 4. Gegenprüfung | `parity.mjs verify-slices` + `tool/parity/verify-brief.md` | `status/zz-verify-*.json` |
+| 4. Gegenprüfung | `parity.mjs verify-slices`, `verify-round <N>` + `tool/parity/verify-brief.md` | `status/zz-verify*-*.json` |
 | 5. Bericht | `tool/parity/parity.mjs report` | `summary.md`, `tracker-data.json`, Tracker-Seite |
 | 5b. Arbeitslisten | `tool/parity/parity.mjs fixlists` | `fixes/<bereich>.md` |
 | 6. Bildvergleich | `tool/parity/screens/compare.mjs` (Mac) | Bildpaare je Rolle und Seite |
@@ -40,10 +40,15 @@ sich in Ionic geändert hat. `node tool/parity/parity.mjs diff <alt.json>`
 listet neue, entfernte und **geänderte** Elemente (gleiche ID, aber anderer
 Inhalt: Texte, Bedingungen, Bindungen, DB-Spalten und -Filter, Methodenrümpfe
 als Hash) sowie geänderte Übersetzungen. Felder, die erst ein neuerer
-Extraktor liefert, zählen nicht als Änderung. Mit `--stale` entsteht
-`stale.json`: Urteile für diese Elemente, die vor der neuen Ionic-Version
-gefällt wurden, gelten nicht mehr, und die Elemente stehen wieder als offen
-im Bericht. Bilder (`media`) und alle gebundenen Attribute (`bindings`, z. B.
+Extraktor liefert, zählen nicht als Änderung (Vergleich nur über die Felder,
+die die alte Liste je Art kennt; Reihenfolge der Felder egal). Mit `--stale`
+kommt ein Schritt `{from, to, ids}` in das fortlaufende Änderungsprotokoll
+`changes.json`: Ein Urteil, das an einer Ionic-Version vor einem Schritt
+gefällt wurde, der sein Element nennt, gilt nicht mehr, und das Element
+steht wieder als offen im Bericht; das gilt über beliebig viele
+Ionic-Versionen hinweg. Zusätzliche Befunde und ihre Rücknahmen auf einer
+seither geänderten Seite werden wieder geöffnet und als „Ionic geändert“
+markiert. Bilder (`media`) und alle gebundenen Attribute (`bindings`, z. B.
 `[src]`, `[buttons]`) sind Teil der Soll-Liste. Datenbankaufrufe, deren
 Tabelle oder Operation nicht auflösbar ist, tragen `unresolved` und gelten
 nie als `ok` (Bericht: `unclear`).
@@ -69,14 +74,24 @@ Bericht die Erstbewertung. Zusätzliche Befunde, die sich als Duplikat oder
 widerlegt herausstellen, werden in `zz-zz-overrides.json` (`extraOverride`)
 zurückgenommen oder umgestuft.
 
-Zweite Runde (`parity.mjs verify2-slices <dir> [n]`, Ergebnisse
-`zz-verify2-*.json`), vollständig statt Stichprobe: jeder zusätzliche Befund
-mit Schwere hoch/mittel, jedes `ok`/`na`, dessen Sichtbarkeit von Rolle oder
-Mandanten-Einstellung abhängt, jeder nicht auflösbare Datenbankaufruf und
-jedes neue Element. Zusätzliche Befunde haben eine stabile ID
+Weitere Runden (`parity.mjs verify-round <N> <dir> [n] [--since <alt.json>]`,
+Ergebnisse `zz-verify<N>-*.json`), vollständig statt Stichprobe: jedes neue
+Element und jedes seit `--since` geänderte, jede hoch/mittel-Abweichung ohne
+zweite Prüfung, jeder zusätzliche Befund mit Schwere hoch/mittel ohne
+zweites Urteil oder auf einer seither geänderten Ionic-Seite, jeder nicht
+auflösbare Datenbankaufruf und jedes `ok`/`na`, das von Rolle oder
+Mandanten-Einstellung abhängt: Bedingung im Template, eine Klassen-Eigenschaft
+oder -Methode, die Rolle oder Mandant liest (`unit.roleMembers`), oder eine
+Rollenprüfung in der TypeScript-Methode um das Element (`roleGuarded`). Zusätzliche Befunde haben eine stabile ID
 (`x-<sha1(Baustein|Titel)>`); gleiche Befunde aus mehreren Dateien werden
 zusammengeführt, und eine Prüfung schreibt ihr Urteil unter dieser ID
 (`s` ok/na nimmt den Befund zurück).
+
+Lesereihenfolge der Urteile: Erstprüfung (`b*`), dann die Runden
+(`zz-verify-*` = 1, `zz-verifyN-*` = N), Korrekturdateien nach der Runde in
+ihrem Feld `afterRound`, zuletzt `zz-fixed-*`. Ein späteres Urteil mit Status
+ersetzt das frühere ganz (Fundstelle und Notiz bleiben nur, wenn der Status
+gleich bleibt und keine neuen kommen).
 
 ### 4b. Behobene Punkte
 

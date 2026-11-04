@@ -1,6 +1,6 @@
 # Fix-Paket „einstellungen“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 87
@@ -218,7 +218,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `settings/general/types/types.page` `modal-c0d2c05c` [settings/general/types/types.page.ts:49](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/types/types.page.ts#L49) (2. Prüfung: bestätigt)
   Ionic: TypePage (isNew) als Card-Modal mit allen Einstellungen, Insert erst über den „+“-FAB / Flutter: Dialog „Neuer Anwesenheitstyp“ nur mit Name (Abbrechen/Erstellen), legt den Typ mit den Ionic-Standardwerten an und öffnet danach die Bearbeiten-Seite.
   Flutter: lib/features/settings/presentation/pages/attendance_types_page.dart:180-242, lib/features/settings/presentation/pages/attendance_types_page.dart:246-271
-- [ ] **mittel** `settings/handover-detail/handover-detail.page` `x-6fbc5fbd93` **Reihenfolge der Zielgruppen** [src/app/settings/handover-detail/handover-detail.page.ts:39-56](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/handover-detail/handover-detail.page.ts#L39-56) (2. Prüfung: bestätigt)
+- [ ] **mittel** `settings/handover-detail/handover-detail.page` `x-6fbc5fbd93` **Reihenfolge der Zielgruppen** [src/app/settings/handover-detail/handover-detail.page.ts:39-56](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/handover-detail/handover-detail.page.ts#L39-L56) (2. Prüfung: bestätigt)
   Echt: Ionic GroupService.getGroups sortiert nach category, sort_order (nulls last), name / Flutter getTargetTenantGroups nur nach name. Die Zuordnung nimmt die erste Gruppe mit gleichem Namen oder Teiltreffer in dieser Reihenfolge, sonst die erste Gruppe → andere Reihenfolge im Auswahldialog und ggf. andere vorbelegte Zielgruppe (z. B. „Bb Trompete“ vor „Trompete“). Die Vorbelegung ist vor dem Übertragen sichtbar und änderbar → mittel.
   Flutter: lib/data/repositories/player_repository.dart:1568-1582, lib/features/settings/presentation/pages/handover_detail_page.dart:26-36, lib/features/settings/presentation/pages/handover_detail_page.dart:72-78
 - [ ] **mittel** `settings/handover/handover.page` `x-bb2ef2fc5d` **Sortierung der Personenliste** [src/app/settings/handover/handover.page.ts:40](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/handover/handover.page.ts#L40) (2. Prüfung: bestätigt)
@@ -257,7 +257,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `settings/voice-leader/voice-leader.page` `x-6eff6305bb` **Sortierung der Mitglieder bei Umlauten** [src/app/settings/voice-leader/voice-leader.page.ts:83](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/voice-leader/voice-leader.page.ts#L83) (2. Prüfung: bestätigt)
   Echt: Ionic localeCompare (ICU, Umlaute wie Grundbuchstabe) / Flutter toLowerCase().compareTo (Code-Einheiten): „Müller“ steht nach „Mustermann“, „Özdemir“ nach „Zimmer“. Andere Reihenfolge bei Namen mit Umlauten.
   Flutter: lib/features/voice_leader/data/providers/voice_leader_providers.dart:138, lib/features/voice_leader/data/providers/voice_leader_providers.dart:141
-- [ ] **mittel** `settings/voice-leader/voice-leader.page` `x-7da9b986f8` **Abwesenheiten ungepagt über alle Mitglieder** [src/app/settings/voice-leader/voice-leader.page.ts:63-72](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/voice-leader/voice-leader.page.ts#L63-72) (2. Prüfung: bestätigt)
+- [ ] **mittel** `settings/voice-leader/voice-leader.page` `x-7da9b986f8` **Abwesenheiten ungepagt über alle Mitglieder** [src/app/settings/voice-leader/voice-leader.page.ts:63-72](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/voice-leader/voice-leader.page.ts#L63-L72) (2. Prüfung: bestätigt)
   Echt, Grenzfall: Ionic lädt je Mitglied alle person_attendances (der .gt auf attendance.date ohne !inner leert nur das Embed, Filter dann in JS) – Limit 1000 gilt pro Person / Flutter: eine Abfrage für ALLE Mitglieder, nur Status 2/4/5, ohne Datumsfilter, ohne order, ohne fetchAllPages; ab > 1000 Abwesenheitszeilen der ganzen Stimme kappt PostgREST willkürlich, kommende Abwesenheiten können fehlen. Nebenbei: Ionic blendet für Stimmführer archivierte Termine aus, Flutter nicht.
   Flutter: lib/data/repositories/attendance_repository.dart:348, lib/data/repositories/attendance_repository.dart:357, lib/features/voice_leader/data/providers/voice_leader_providers.dart:80
 
@@ -323,13 +323,13 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/shifts/shift/shift.page` `x-e9a63ed372` **Ungespeicherte Änderungen im Cache** [src/app/settings/general/shifts/shift/shift.page.ts:34](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shift/shift.page.ts#L34)
   Flutter besser: Ionic bearbeitet das Objekt aus db.shifts() direkt – ungespeicherte Änderungen erscheinen nach Zurück in der Liste bis zum Neuladen / Flutter arbeitet auf einer lokalen Kopie, die Liste bleibt unverändert.
   Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:65
-- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-63c823b827` **Navigation zum neuen Plan per ID** [src/app/services/db.service.ts:3913-3918](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3913-3918)
+- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-63c823b827` **Navigation zum neuen Plan per ID** [src/app/services/db.service.ts:3913-3918](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3913-L3918)
   Flutter besser: Ionic sucht den neuen Plan nach Namen (db.addShift → shifts().find(name)), bei gleichnamigen Plänen ggf. der falsche / Flutter navigiert zur zurückgegebenen ID.
   Flutter: lib/features/shifts/presentation/pages/shifts_list_page.dart:194-202
-- [ ] **niedrig** `settings/general/types/types.page` `x-cacb75d561` **Fehler beim Speichern der Reihenfolge** [src/app/settings/general/types/types.page.ts:31-46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/types/types.page.ts#L31-46)
+- [ ] **niedrig** `settings/general/types/types.page` `x-cacb75d561` **Fehler beim Speichern der Reihenfolge** [src/app/settings/general/types/types.page.ts:31-46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/types/types.page.ts#L31-L46)
   Flutter besser: Ionic ohne Fehlerbehandlung (Loading bleibt bei Fehler offen) / Flutter: Toast „Fehler beim Speichern. Bitte erneut versuchen.“, Sortiermodus bleibt erhalten.
   Flutter: lib/features/settings/presentation/pages/attendance_types_page.dart:163-173
-- [ ] **niedrig** `settings/general/type/type.page` `x-0f8c22baa3` **System-Zurück fragt nach** [src/app/settings/general/type/type.page.ts:148-154](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L148-154)
+- [ ] **niedrig** `settings/general/type/type.page` `x-0f8c22baa3` **System-Zurück fragt nach** [src/app/settings/general/type/type.page.ts:148-154](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L148-L154)
   Flutter besser: PopScope fragt auch bei Android-Zurück/iOS-Wischgeste nach ungespeicherten Änderungen / Ionic nur beim Zurück-Button.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:214-218
 - [ ] **niedrig** `settings/administration/administration.page` `x-8e4f4f2cf3` **Duplikate nach Hinzufügen einer Gemeinde** [src/app/settings/administration/administration.page.ts:86](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/administration/administration.page.ts#L86)
@@ -341,7 +341,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/dashboard/dashboard-settings.page` `x-e0812326f3` **Fehler beim Speichern der Dashboard-Einstellungen** [src/app/services/db.service.ts:801](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L801)
   Flutter besser: Ionic wertet das Ergebnis von supabase.auth.updateUser nicht aus (supabase-js wirft nicht; kein Hinweis, Schalter/Reihenfolge bleiben lokal geändert, obwohl nicht gespeichert) / Flutter setzt den Zustand zurück und zeigt roten Toast (dashSettingsFlutterSaveFailed).
   Flutter: lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:38, lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:42, lib/core/providers/dashboard_providers.dart:155
-- [ ] **niedrig** `settings/handover-detail/handover-detail.page` `x-c62672af53` **Fehler beim Laden der Zielgruppen** [src/app/services/group/group.service.ts:18-28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group/group.service.ts#L18-28)
+- [ ] **niedrig** `settings/handover-detail/handover-detail.page` `x-c62672af53` **Fehler beim Laden der Zielgruppen** [src/app/services/group/group.service.ts:18-28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group/group.service.ts#L18-L28)
   Flutter besser: Ionic ignoriert den Fehler von getGroups (data null → Laufzeitfehler, Zuordnung bleibt leer) / Flutter zeigt einen Fehler-Toast und beendet das Laden.
   Flutter: lib/features/settings/presentation/pages/handover_detail_page.dart:81-85
 - [ ] **niedrig** `settings/role-permissions/role-permissions.page` `x-104b424f87` **Rückfrage auch bei Zurück-Geste** [src/app/settings/role-permissions/role-permissions.page.ts:83](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/role-permissions/role-permissions.page.ts#L83)
@@ -845,22 +845,22 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/link-persons/link-persons.page` `x-2fb83d6081` **Ignorier-Liste nicht übernommen** [src/app/settings/general/link-persons/link-persons.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/link-persons/link-persons.page.ts#L43)
   Ionic: localStorage-Schlüssel 'link-persons-ignored' / Flutter: SharedPreferences (Web: 'flutter.link-persons-ignored', nativ eigener Speicher) – in Ionic ignorierte Vorschläge erscheinen nach dem Umstieg wieder.
   Flutter: lib/features/settings/presentation/pages/link_persons_page.dart:92, lib/features/settings/presentation/pages/link_persons_page.dart:110
-- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-22546d78c2` **Erfolgs-Toast nur in Flutter** [src/app/settings/general/shifts/shifts.page.ts:47-50](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shifts.page.ts#L47-50)
+- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-22546d78c2` **Erfolgs-Toast nur in Flutter** [src/app/settings/general/shifts/shifts.page.ts:47-50](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shifts.page.ts#L47-L50)
   Ionic: nach dem Anlegen kein Toast, direkt Navigation / Flutter: zusätzlich grüner Toast „Schichtplan "<Name>" erstellt“.
   Flutter: lib/features/shifts/presentation/pages/shifts_list_page.dart:198
-- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-f357eb8375` **Name/Beschreibung getrimmt** [src/app/settings/general/shifts/shifts.page.ts:40-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shifts.page.ts#L40-45)
+- [ ] **niedrig** `settings/general/shifts/shifts.page` `x-f357eb8375` **Name/Beschreibung getrimmt** [src/app/settings/general/shifts/shifts.page.ts:40-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shifts.page.ts#L40-L45)
   Ionic: speichert name/description ungetrimmt / Flutter: trim() vor dem Insert.
   Flutter: lib/features/shifts/presentation/pages/shifts_list_page.dart:173-178
-- [ ] **niedrig** `settings/general/type/type.page` `x-b41f2f171e` **Agenda-Marker-Zeit nicht normalisiert** [src/app/settings/general/type/type.page.ts:113-119](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L113-119)
+- [ ] **niedrig** `settings/general/type/type.page` `x-b41f2f171e` **Agenda-Marker-Zeit nicht normalisiert** [src/app/settings/general/type/type.page.ts:113-119](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L113-L119)
   Ionic: setzt beim Laden die Zeit des Tagesordnungs-Markers auf 0 (ältere Pläne: 30 Min.) / Flutter: übernimmt die gespeicherte Zeit, zählt sie in „Gesamt“ mit und speichert sie wieder.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1228-1235
-- [ ] **niedrig** `settings/general/type/type.page` `x-f8e7ccbb61` **Speichern schreibt null statt Werte** [src/app/settings/general/type/type.page.ts:189-196](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L189-196)
+- [ ] **niedrig** `settings/general/type/type.page` `x-f8e7ccbb61` **Speichern schreibt null statt Werte** [src/app/settings/general/type/type.page.ts:189-196](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L189-L196)
   Ionic: schreibt das ganze Typ-Objekt (reminders [], planning_title '', end_time/duration_days bleiben) / Flutter: reminders/checklist/planning_title leer → null, end_time bei ganztägig → null, duration_days bei nicht-ganztägig → null.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1470-1511
-- [ ] **niedrig** `settings/general/type/type.page` `x-c9929afd0d` **Änderungserkennung per Flag** [src/app/settings/general/type/type.page.ts:131-143](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L131-143)
+- [ ] **niedrig** `settings/general/type/type.page` `x-c9929afd0d` **Änderungserkennung per Flag** [src/app/settings/general/type/type.page.ts:131-143](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L131-L143)
   Ionic: Vergleich mit Original-JSON (Zurückändern = keine Änderung) / Flutter: Flag _hasChanges bleibt nach Zurückändern gesetzt → Rückfrage beim Verlassen trotz unverändertem Stand.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:95, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:245
-- [ ] **niedrig** `settings/general/type/type.page` `x-975297fc93` **Nutzungs-Hinweiskarte nur in Flutter** [src/app/settings/general/type/type.page.html:26-34](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L26-34)
+- [ ] **niedrig** `settings/general/type/type.page` `x-975297fc93` **Nutzungs-Hinweiskarte nur in Flutter** [src/app/settings/general/type/type.page.html:26-34](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L26-L34)
   Ionic: kein Hinweis / Flutter: Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:251-271
 - [ ] **niedrig** `settings/general/type/type.page` `x-c81359471b` **Veralteter Zusatzfeld-Filter** [src/app/settings/general/type/type.page.ts:122](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L122)
@@ -884,7 +884,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/files/files-move-modal/files-move-modal.component` `x-3718a3ace3` **Sortierung der Ordner im Baum** [src/app/settings/files/files-move-modal/files-move-modal.component.ts:172](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files-move-modal/files-move-modal.component.ts#L172)
   Ionic: a.name.localeCompare(b.name) (sprachabhängig, Umlaute/Groß-Klein einsortiert) / Flutter: a.name.compareTo(b.name) (Codepoint: Großbuchstaben vor Kleinbuchstaben, Umlaute hinter z).
   Flutter: lib/features/settings/presentation/widgets/files_move_modal.dart:103-104
-- [ ] **niedrig** `settings/files/files.page` `x-0f583f0feb` **Ladeanzeige beim Ordnerwechsel** [src/app/settings/files/files.page.html:159-163](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L159-163)
+- [ ] **niedrig** `settings/files/files.page` `x-0f583f0feb` **Ladeanzeige beim Ordnerwechsel** [src/app/settings/files/files.page.html:159-163](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L159-L163)
   Ionic: während loadEntries ersetzt ein Spinner die Liste / Flutter: Spinner nur bei leerer Liste; beim Ordnerwechsel bleibt die alte Liste sichtbar (Breadcrumb zeigt schon den neuen Ordner), bis die neue geladen ist.
   Flutter: lib/features/settings/presentation/pages/files_page.dart:1257-1260
 - [ ] **niedrig** `settings/help/content/index` `x-ed039cfb84` **Hilfeartikel songs-add bewusst abweichend** [src/app/settings/help/content/articles/songs.articles.ts:11](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/help/content/articles/songs.articles.ts#L11)

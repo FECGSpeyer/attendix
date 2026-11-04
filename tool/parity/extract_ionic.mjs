@@ -158,6 +158,18 @@ const parseTs = (file) => {
   return sourceFiles.get(file);
 };
 const nodeText = (sf, n) => n.getText(sf);
+// Hash of the whole class member (method, getter, property initializer) or
+// function around a node: a change anywhere in it marks its items as changed.
+const enclosingMemberHash = (sf, node) => {
+  let n = node;
+  while (n) {
+    if (ts.isMethodDeclaration(n) || ts.isGetAccessor(n) || ts.isSetAccessor(n) || ts.isConstructorDeclaration(n)
+      || (ts.isPropertyDeclaration(n) && n.initializer) || ts.isFunctionDeclaration(n)) return hash(squash(n.getText(sf)));
+    n = n.parent;
+  }
+  return null;
+};
+const ROLE_TEXT = /\brole\b|\bRole\.|isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isTeamLeader|isLeader|isManager|isSuperAdmin|permission|\bperm|tenantData|tenant\(\)\??\.\w|\btenant\.\w|isGeneral|isChoir|isDemo|isMainGroup|hasOrg|organisation\(\)/;
 const enclosingMethod = (node) => {
   let n = node;
   let methodName = null;
@@ -241,6 +253,12 @@ const STORAGE_OPS = new Set(['upload', 'remove', 'download', 'getPublicUrl', 'cr
 const skipWrappers = (n) => {
   // (supabase.from('x') as any).select(…): walk up through casts and parentheses
   while (n.parent && (ts.isParenthesizedExpression(n.parent) || ts.isAsExpression(n.parent) || ts.isNonNullExpression(n.parent) || ts.isTypeAssertionExpression?.(n.parent))) n = n.parent;
+  return n;
+};
+// Top of a call chain a.from('x').select().eq(): the full, untruncated statement part.
+const chainTop = (startCall) => {
+  let n = skipWrappers(startCall);
+  while (n.parent && ts.isPropertyAccessExpression(n.parent) && n.parent.parent && ts.isCallExpression(n.parent.parent)) n = skipWrappers(n.parent.parent);
   return n;
 };
 const chainCalls = (sf, startCall) => {
@@ -327,17 +345,24 @@ const scanTs = (file) => {
   // role flags) is compared method by method, not only the visible parts.
   const methods = [];
   const bodies = {};
+  // members whose code depends on role, permissions or tenant settings: a
+  // template condition using one of them is role/tenant dependent (verify2)
+  const roleMembers = new Set();
   const visitMembers = (n) => {
     if (ts.isClassDeclaration(n)) {
       for (const m of n.members) {
         const isFn = ts.isMethodDeclaration(m) || ts.isGetAccessor(m) || ts.isSetAccessor(m) || ts.isConstructorDeclaration(m)
           || (ts.isPropertyDeclaration(m) && m.initializer && (ts.isArrowFunction(m.initializer) || ts.isFunctionExpression(m.initializer) || /^(computed|effect|signal)\(/.test(m.initializer.getText(sf))));
-        if (!isFn) continue;
+        if (!isFn) {
+          if (ts.isPropertyDeclaration(m) && m.initializer && ROLE_TEXT.test(m.initializer.getText(sf))) roleMembers.add(m.name?.getText(sf));
+          continue;
+        }
         const start = lineOf(src, m.getStart(sf));
         const end = lineOf(src, m.getEnd());
         const name = ts.isConstructorDeclaration(m) ? 'constructor' : `${ts.isGetAccessor(m) ? 'get ' : ts.isSetAccessor(m) ? 'set ' : ''}${m.name?.getText(sf)}`;
         methods.push(`${name}:${start}-${end}`);
         bodies[name] = hash(m.getText(sf).replace(/\s+/g, ' '));
+        if (ROLE_TEXT.test(m.getText(sf))) roleMembers.add(m.name?.getText(sf) ?? name);
       }
     } else if (ts.isFunctionDeclaration(n) && n.name) {
       methods.push(`function ${n.name.getText(sf)}:${lineOf(src, n.getStart(sf))}-${lineOf(src, n.getEnd())}`);
@@ -349,8 +374,17 @@ const scanTs = (file) => {
   if (methods.length) {
     addItem(unit, { kind: 'logic', file: rel(file), line: 1, cond: [], methods, bodies, sig: 'logic' });
   }
+  // assignments in methods (this.isAdmin = … role …) count as well
+  const visitAssign = (n) => {
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.EqualsToken && ts.isPropertyAccessExpression(n.left)
+      && n.left.expression.kind === ts.SyntaxKind.ThisKeyword && ROLE_TEXT.test(n.right.getText(sf))) roleMembers.add(n.left.name.getText(sf));
+    ts.forEachChild(n, visitAssign);
+  };
+  visitAssign(sf);
+  if (roleMembers.size) unit.roleMembers = [...roleMembers].filter(Boolean).sort();
 
-  const push = (kind, node, data, sig) => {
+  const push = (kind, node, data, sig, fullNode = node) => {
+    const member = enclosingMemberHash(sf, node);
     addItem(unit, {
       kind,
       file: rel(file),
@@ -358,8 +392,18 @@ const scanTs = (file) => {
       method: enclosingMethod(node),
       cond: conditionsTs(sf, node),
       ...data,
+      // untruncated call text and the surrounding method: payloads built in
+      // variables, long handlers and early-return role checks change these
+      src: hash(squash(nodeText(sf, fullNode))),
+      mbody: member,
+      roleGuarded: ROLE_TEXT.test(memberText(node)) || undefined,
       sig: sig ?? `${enclosingMethod(node)}|${clip(nodeText(sf, node), 300)}`,
     });
+  };
+  const memberText = (node) => {
+    let n = node;
+    while (n && !(ts.isMethodDeclaration(n) || ts.isGetAccessor(n) || ts.isSetAccessor(n) || ts.isConstructorDeclaration(n) || (ts.isPropertyDeclaration(n) && n.initializer) || ts.isFunctionDeclaration(n))) n = n.parent;
+    return n ? n.getText(sf) : '';
   };
 
   const visit = (n) => {
@@ -414,7 +458,9 @@ const scanTs = (file) => {
         push('loading', n, { message: textField(sf, p ? p.message : n.arguments[1]), duration: p?.duration ? nodeText(sf, p.duration) : (arg0 ? nodeText(sf, arg0) : '3000') });
       }
       // ---- navigation
-      else if (/^(navigate|navigateByUrl)$/.test(last) && /router/i.test(target)) {
+      else if (/^(window\.)?location\.(replace|assign|reload)$/.test(calleeText)) {
+        push('nav', n, { via: calleeText, to: clip(n.arguments.map((a) => nodeText(sf, a)).join(', '), 200) });
+      } else if (/^(navigate|navigateByUrl)$/.test(last) && /router/i.test(target)) {
         push('nav', n, { via: calleeText.replace(/^this\./, ''), to: clip(n.arguments.map((a) => nodeText(sf, a)).join(', '), 200) });
       } else if (/^(navigateForward|navigateBack|navigateRoot|back|pop)$/.test(last) && /nav(Ctrl|Controller)|location/i.test(target)) {
         push('nav', n, { via: calleeText.replace(/^this\./, ''), to: clip(n.arguments.map((a) => nodeText(sf, a)).join(', '), 200) });
@@ -433,7 +479,7 @@ const scanTs = (file) => {
           columns: op?.name === 'select' ? op.args[0] ?? '*' : calls.find((c) => c.name === 'select')?.args[0] ?? null,
           filters: calls.filter((c) => FILTERS.has(c.name)).map((c) => `${c.name}(${c.args.join(', ')})`),
           tenantFilter: calls.some((c) => c.name === 'eq' && /tenant[_]?id/i.test(c.args[0] ?? '')),
-        }, `${enclosingMethod(n)}|${table}|${op?.name}|${calls.map((c) => c.name).join('.')}`);
+        }, `${enclosingMethod(n)}|${table}|${op?.name}|${calls.map((c) => c.name).join('.')}`, chainTop(n));
       } else if (last === 'from' && arg0 && !/\bstorage$/.test(target) && /supabase|client|\bsb\b|getSupabase\(\)|\bdb\b/i.test(target)) {
         // .from(tableVariable): table not resolvable statically
         const calls = chainCalls(sf, n);
@@ -441,12 +487,12 @@ const scanTs = (file) => {
         push('db', n, { table: `?:${clip(nodeText(sf, arg0), 80)}`, op: op?.name ?? 'select?', unresolved: true,
           payload: op && op.name !== 'select' && op.name !== 'delete' ? op.args[0] ?? null : null,
           filters: calls.filter((c) => FILTERS.has(c.name)).map((c) => `${c.name}(${c.args.join(', ')})`) },
-          `${enclosingMethod(n)}|?${nodeText(sf, arg0)}|${op?.name}|${calls.map((c) => c.name).join('.')}`);
+          `${enclosingMethod(n)}|?${nodeText(sf, arg0)}|${op?.name}|${calls.map((c) => c.name).join('.')}`, chainTop(n));
       } else if (last === 'from' && arg0 && /\bstorage$/.test(target)) {
         const calls = chainCalls(sf, n);
         const op = calls.find((c) => STORAGE_OPS.has(c.name));
         push('db', n, { table: `storage:${tableName(sf, arg0)}`, op: op?.name ?? '?', payload: op?.args.join(', ') ?? null, filters: [] },
-          `${enclosingMethod(n)}|storage|${nodeText(sf, arg0)}|${op?.name}`);
+          `${enclosingMethod(n)}|storage|${nodeText(sf, arg0)}|${op?.name}`, chainTop(n));
       } else if (last === 'rpc' && arg0) {
         push('db', n, { table: `rpc:${ts.isStringLiteralLike(arg0) ? arg0.text : nodeText(sf, arg0)}`, op: 'rpc', payload: n.arguments[1] ? clip(nodeText(sf, n.arguments[1]), 300) : null, filters: [] });
       } else if (last === 'invoke' && /functions$/.test(target) && arg0) {
@@ -461,11 +507,15 @@ const scanTs = (file) => {
         // platform checks show up in conditions; not an item of their own
       } else if (ts.isPropertyAccessExpression(callee) && NATIVE.includes(target)) {
         push('native', n, { plugin: target, call: last, args: clip(n.arguments.map((a) => nodeText(sf, a)).join(', '), 160) }, `${enclosingMethod(n)}|${target}.${last}`);
-      } else if (/^Utils\.(downloadFileNative|openFileNative|openNavigation|createPlanExport|getUrl)$/.test(calleeText)
+      } else if (/^Utils\.(downloadFileNative|openFileNative|openNavigation|createPlanExport|getUrl|openInNewTab|saveWorkbook|export\w+|generate\w*Certificates?\w*)$/.test(calleeText)
         || /^(window\.open|window\.print|navigator\.clipboard\.writeText|navigator\.share|saveAs|FileSaver\.saveAs)$/.test(calleeText)
         || (last === 'writeFile' && /XLSX|xlsx/.test(target)) || (/^(save|output|autoPrint|open)$/.test(last) && /\b(doc|pdf|jsPDF)\b/.test(target))) {
         push('effect', n, { call: calleeText.replace(/^this\./, ''), args: clip(n.arguments.map((a) => nodeText(sf, a)).join(', '), 160) });
       }
+    }
+    // window.location.href = … (assignment, not a call)
+    if (ts.isBinaryExpression(n) && n.operatorToken.kind === ts.SyntaxKind.EqualsToken && /^(window\.)?location\.href$/.test(n.left.getText(sf))) {
+      push('nav', n, { via: n.left.getText(sf), to: clip(n.right.getText(sf), 200) });
     }
     ts.forEachChild(n, visit);
   };
@@ -506,7 +556,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
   };
   const attrText = (el) => [
     ...el.attributes.filter((a) => /^(label|placeholder|title|aria-label|helperText|helper-text|cancelText|okText|doneText|header|text|value|description|message|subHeader)$/i.test(a.name)).map((a) => `"${a.value}"`),
-    ...el.inputs.filter((a) => /^(label|placeholder|title|helperText|cancelText|okText|doneText|header|text|subHeader|message|interfaceOptions|description)$/i.test(a.name)).map((a) => slice(a.sourceSpan)),
+    ...el.inputs.filter((a) => /^(label|placeholder|title|helperText|cancelText|okText|doneText|header|text|subHeader|message|interfaceOptions|description|innerHTML|innerText)$/i.test(a.name)).map((a) => slice(a.sourceSpan)),
   ].join(' ');
   const icons = (el) => {
     const out = [];
@@ -527,7 +577,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
   const keyAttrs = (el) => {
     const out = {};
     for (const a of el.attributes) {
-      if (/^(routerLink|href|tab|slot|color|fill|expand|shape|size|type|interface|presentation|side|vertical|horizontal|lines|mode|trigger|id|lang|value|button|detail|multiple|disabled|readonly|required|inputmode|autocomplete|class)$/i.test(a.name)) out[a.name] = clip(a.value, 120);
+      if (/^(routerLink|href|defaultHref|tab|slot|color|fill|expand|shape|size|type|interface|presentation|side|vertical|horizontal|lines|mode|trigger|id|lang|value|button|detail|multiple|disabled|readonly|required|inputmode|autocomplete|class)$/i.test(a.name)) out[a.name] = clip(a.value, 120);
     }
     for (const a of el.inputs) {
       if (/^(routerLink|href|color|disabled|isOpen|trigger|value|multiple|readonly|interface|hidden|button|detail|max|min|presentation|class\..+|style\..+)$/i.test(a.name)) out[`[${a.name}]`] = clip(slice(a.sourceSpan).replace(/^[^=]*=\s*/, ''), 160);
@@ -576,7 +626,28 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
       return;
     }
     if ((n instanceof ng.TmplAstBoundText || n instanceof ng.TmplAstText) && !claimed.has(n)) {
-      // loose text directly inside a block: handled by the parent element
+      // loose text directly inside @if/@else/@for/@switch (no element of its
+      // own): an item with the block's condition
+      const raw = n instanceof ng.TmplAstText ? `"${n.value}"` : slice(n.sourceSpan);
+      if (squash(raw.replace(/^"|"$/g, ''))) {
+        const lab = label(raw);
+        const bound = n instanceof ng.TmplAstBoundText && !keysIn(raw).length ? [clip(raw, 120)] : [];
+        if (lab.keys.length || lab.literals.length || bound.length || n instanceof ng.TmplAstText) {
+          addItem(unit, {
+            kind: 'text',
+            file: unit.html,
+            line: ln(n.sourceSpan),
+            cond: [...cond],
+            tag: '#text',
+            ...lab,
+            literals: n instanceof ng.TmplAstText ? uniq([...lab.literals, squash(n.value)]).slice(0, 12) : lab.literals,
+            bound: bound.length ? bound : undefined,
+            text: clip(squash(raw), 200),
+            sig: `#text|${lab.keys.join(',')}|${squash(raw)}`,
+          });
+        }
+      }
+      return;
     }
     if (n.children) visitNodes(n.children, cond);
   };
@@ -662,6 +733,20 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
     }
 
     // images (avatar, logo, passport photo, …)
+    if (name === 'canvas' || name === 'ion-progress-bar') {
+      const binds = el.inputs.map((i) => clip(slice(i.sourceSpan), 160));
+      addItem(unit, {
+        kind: 'media',
+        file: unit.html,
+        line: ln(el.sourceSpan),
+        cond: condHere,
+        tag: name,
+        attrs: attrsMap,
+        chart: el.attributes.some((a) => a.name === 'baseChart') || undefined,
+        bindings: binds,
+        sig: `${name}|${binds.join(',')}`,
+      });
+    }
     if (name === 'img' || name === 'ion-img') {
       const src = el.attributes.find((a) => a.name === 'src')?.value ?? slice(el.inputs.find((a) => a.name === 'src')?.sourceSpan).replace(/^[^=]*=\s*/, '');
       const alt = el.attributes.find((a) => a.name === 'alt')?.value ?? slice(el.inputs.find((a) => a.name === 'alt')?.sourceSpan).replace(/^[^=]*=\s*/, '');
@@ -694,7 +779,8 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
       });
     }
 
-    // texts directly owned by this element
+    // texts directly owned by this element (not repeated as loose block text)
+    el.children.forEach((c) => { if (c instanceof ng.TmplAstText || c instanceof ng.TmplAstBoundText) claimed.add(c); });
     const direct = el.children.filter((c) => c instanceof ng.TmplAstText || c instanceof ng.TmplAstBoundText).map((c) => (c instanceof ng.TmplAstText ? `"${c.value}"` : slice(c.sourceSpan))).join(' ') + ` ${attrText(el)}`;
     const lab = label(direct);
     // data shown without a translated label ({{ person.firstName }}, {{ x | date }})
@@ -708,6 +794,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
         tag: name,
         attrs: Object.fromEntries(Object.entries(attrsMap).filter(([k]) => /slot|color|size|class/.test(k))),
         icons: name === 'ion-item' ? icons(el) : undefined,
+        bindings: el.inputs.length ? el.inputs.map((i) => clip(slice(i.sourceSpan), 160)) : undefined,
         ...lab,
         bound: bound.length ? bound : undefined,
         text: clip(direct, 200),
@@ -720,7 +807,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
   // Inside an action, only nested interactive elements become items.
   const visitInteractiveOnly = (n, cond) => {
     if (n instanceof ng.TmplAstElement) {
-      if (n.outputs.length || FIELD_TAGS.has(n.name) || /^ion-(modal|popover)$/.test(n.name) || n.name === 'img' || n.name === 'ion-img') return visitElement(n, cond);
+      if (n.outputs.length || FIELD_TAGS.has(n.name) || /^ion-(modal|popover)$/.test(n.name) || /^(img|ion-img|canvas|ion-progress-bar)$/.test(n.name)) return visitElement(n, cond);
       return n.children.forEach((c) => visitInteractiveOnly(c, cond));
     }
     if (n.branches) {

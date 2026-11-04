@@ -1,13 +1,16 @@
 # Fix-Paket „team“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 11
+## Angleichen (hoch/mittel): 12
 
 - [ ] **hoch** `protocols/protocol/protocol-pdf` `x-152ac6b928` **PDF-Schrift ohne Unicode** [src/app/protocols/protocol/protocol-pdf.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/protocols/protocol/protocol-pdf.ts#L38) (2. Prüfung: bestätigt)
   Bestätigt: pw.Document() ohne Theme, in ganz lib/ keine PDF-Schrift → Helvetica Type1, isRuneSupported nur U+0000–00FF (pdf-3.13.1 type1_font.dart:126), sonst ein durchgekreuzter Platzhalter-Kasten (widgets/text.dart:790/905). Schon die App-eigenen Zeichen sind betroffen: der Listenpunkt „•“ (docToLines-Marker, „Weitere Aufgaben“) und die Zitatzeichen „ “ bei Blockquotes – also jedes Protokoll mit Aufzählung. Dazu Namen und Notizen mit ł, č, ő, ş usw., Kyrillisch komplett, „–“, „…“ und iOS-Smart-Quotes. Ionics vollständige NotoSans (cmap geprüft) deckt all das ab. Präzisierung: Emojis fehlen auch in Ionic (NotoSans ohne Emoji), also kein Unterschied. Das PDF geht bei der Freigabe an das Team → hoch bleibt.
   Flutter: lib/features/team_organization/protocol_pdf.dart:54, lib/features/team_organization/protocol_pdf.dart:68, lib/features/team_organization/protocol_pdf.dart:148, lib/features/team_organization/tiptap_delta.dart:435
+- [ ] **mittel** `agenda-items/agenda-item-detail/agenda-item-detail.page` `action-288e4f1d` [agenda-items/agenda-item-detail/agenda-item-detail.page.html:167](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html#L167) (2. Prüfung: korrigiert)
+  Rollen/Bedingung gleich (Leitung, Thema geladen oder neu); gleiche Spalten (title, description, status, priority, responsible_person_id, default_duration, beim Anlegen tenant_id), Prüfung „Bitte einen Titel eingeben“, Toast „Gespeichert“. Abweichung bei der Dauer – Ionic: Number() + Math.round („7.5“ → 8) / Flutter: int.tryParse → bei Dezimaleingabe 0 → default_duration = null, eine bestehende Dauer wird gelöscht. Randfall (Android/Web; der iOS-Ziffernblock hat kein Komma). Der Unterschied beim Ladeoverlay gehört zum eigenen loading-Eintrag. [Umgestuft auf mittel: Eine bestehende Dauer wird beim Speichern gelöscht (Datenverlust).]
+  Flutter: lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79
 - [ ] **mittel** `agenda-items/agenda-item-detail/agenda-item-detail.page` `x-e667e885b5` **Verlauf/Thema veralten (Cache)** [src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts:122](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts#L122) (2. Prüfung: bestätigt)
   Bestätigt. agendaItemHistoryProvider wird nur nach eigenem Einplanen auf dieser Seite invalidiert, agendaItemByIdProvider nur über AgendaItemNotifier.update (eigenes Speichern, Vorschlag entscheiden, Thema schließen bei Freigabe). Beide sind nicht autoDispose, die Seite hat kein Pull-to-Refresh. Wer im Protokoll ein Ergebnis setzt (_setOutcome) und zurückgeht, sieht im Verlauf weiter „Geplant“/„Ohne Ergebnis“ statt z. B. „Beschlossen“. Änderungen anderer Leitungen an Thema/Verlauf/Aufgaben erscheinen erst nach App-Neustart oder Konto-/Instanzwechsel. Ionic lädt Verlauf und Aufgaben bei jedem ionViewWillEnter und das Thema bei jedem Öffnen.
   Flutter: lib/core/providers/team_org_providers.dart:212, lib/core/providers/team_org_providers.dart:221, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:191, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:384, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:448
@@ -51,7 +54,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic öffnet den Freigabe-Dialog und gibt frei, auch wenn das Speichern eines Abschnitts fehlschlug (nur Fehler-Toast) / Flutter bricht Öffnen und Freigabe mit „Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.“ ab.
   Flutter: lib/features/team_organization/presentation/pages/protocol_page.dart:788, lib/features/team_organization/presentation/pages/protocol_page.dart:977
 
-## Kleinigkeiten (niedrig): 41
+## Kleinigkeiten (niedrig): 40
 
 - [ ] **niedrig** `agenda-items/agenda-item-detail/agenda-item-detail.page` `loading-ff407ba2` [agenda-items/agenda-item-detail/agenda-item-detail.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts#L275)
   Ionic: blockierendes Lade-Overlay beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während des Speicherns deaktiviert.
@@ -68,9 +71,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `agenda-items/agenda-item-detail/agenda-item-detail.page` `action-7ec0a004` [agenda-items/agenda-item-detail/agenda-item-detail.page.html:121](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html#L121)
   Zeile „Typ · dd.MM.yyyy“ mit Status-Badge und Navigation gleich. Ionic: Badge „Besprochen“ grau (medium) / Flutter: outcomeColor('discussed') = primary (blau).
   Flutter: lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:391, lib/features/team_organization/presentation/widgets/tasks_tab.dart:283
-- [ ] **niedrig** `agenda-items/agenda-item-detail/agenda-item-detail.page` `action-288e4f1d` [agenda-items/agenda-item-detail/agenda-item-detail.page.html:167](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html#L167) (2. Prüfung: korrigiert)
-  Rollen/Bedingung gleich (Leitung, Thema geladen oder neu); gleiche Spalten (title, description, status, priority, responsible_person_id, default_duration, beim Anlegen tenant_id), Prüfung „Bitte einen Titel eingeben“, Toast „Gespeichert“. Abweichung bei der Dauer – Ionic: Number() + Math.round („7.5“ → 8) / Flutter: int.tryParse → bei Dezimaleingabe 0 → default_duration = null, eine bestehende Dauer wird gelöscht. Randfall (Android/Web; der iOS-Ziffernblock hat kein Komma). Der Unterschied beim Ladeoverlay gehört zum eigenen loading-Eintrag.
-  Flutter: lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230, lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79
 - [ ] **niedrig** `agenda-items/agenda-picker/agenda-picker.component` `action-5756d23e` [agenda-items/agenda-picker/agenda-picker.component.html:87](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-picker/agenda-picker.component.html#L87)
   Text, Deaktivierung (keine Änderung/speichert) und Wirkung gleich. Ionic: Spinner im Button während des Speicherns / Flutter: Button nur deaktiviert, kein Spinner.
   Flutter: lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:384

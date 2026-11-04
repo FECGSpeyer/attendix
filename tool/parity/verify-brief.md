@@ -1,7 +1,7 @@
 # Verification brief (second, independent pass)
 
 Placeholders: `{BATCH}`, `{SLICE}` (from `parity.mjs verify-slices` or
-`verify2-slices`), `{IONIC}` (Ionic checkout), `{FLUTTER}` (this repo),
+`verify-round <N>`), `{IONIC}` (Ionic checkout), `{FLUTTER}` (this repo),
 `{PUB_CACHE}` (Dart package cache, `$PUB_CACHE` or `~/.pub-cache`), `{OUT}`,
 `{IONIC_SHA}`, `{FLUTTER_SHA}`.
 
@@ -46,25 +46,35 @@ Write `{OUT}`:
 }
 ```
 
-### Round 2 slices (`zz-verify2-*`)
+### Full rounds (`zz-verify2-*`, `zz-verify3-*`, …)
 
 Each entry has a `reason`:
 
-- `rolle-mandant`: the first verdict is `ok`/`na`, but the Ionic element is
-  only shown or enabled for certain roles or tenant settings (see
-  `item.cond`). Work out for every role (Admin/Dirigent, Verantwortlich,
-  Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber, and the
-  tenant flags involved) whether it sees/can use the element in Ionic, then
-  check the same in Flutter (role getters, route guards, tenant settings).
-  A role that sees or can do more or less than in Ionic is a gap; a role
-  that can write data it could not write in Ionic is at least `mittel`.
+- `rolle-mandant`: the verdict is `ok`/`na`, but the Ionic element is only
+  shown, enabled or executed for certain roles or tenant settings: see
+  `item.cond`, and if `item.roleGuarded` is true, the role or tenant check
+  sits in the TypeScript method that contains the element (an early
+  `return`, an `if` around it, a getter it calls). Work out for every role
+  (Admin/Dirigent, Verantwortlich, Helfer, Stimmführer, Spieler, Eltern,
+  Beobachter, Bewerber, and the tenant flags involved) whether it sees, can
+  use or triggers the element in Ionic, then check the same in Flutter (role
+  getters, route guards, tenant settings, provider checks). A role that sees
+  or can do more or less than in Ionic is a gap; a role that can write data
+  it could not write in Ionic is at least `mittel`.
 - `neu`: the item is new in the inventory (`first` is `null`). Give a full
   first verdict; leave out `v`.
-- `zusatzbefund`: instead of `item` the entry has `extra` (`id`, `title`,
-  `n`, `sev`, `ionic`, `f`), a finding a first reviewer added outside the
-  item list. Check whether it is real and correctly rated. Write it under its
-  `id` (`x-…`) in `items`: `s` `diff` or `missing` with `sev` keeps it,
-  `s` `ok` or `na` withdraws it (say why in `n`), always with `v`.
+- `geaendert`: the item's content changed since its verdict (a newer Ionic
+  version or a more complete extraction, e.g. text inside an element).
+  Judge it again from scratch against `first`, with `v`.
+- `abweichung-ungeprueft`, `db-unaufgeloest`: a gap or a DB call without a
+  second check. Check as in the main steps above.
+- `zusatzbefund`, `zusatzbefund-ionic-geaendert`: instead of `item` the
+  entry has `extra` (`id`, `title`, `n`, `sev`, `ionic`, `f`, `stale`), a
+  finding a reviewer added outside the item list (`stale`: its Ionic page
+  changed after the finding). Check whether it is real and correctly rated.
+  Write it under its `id` (`x-…`) in `items`: `s` `diff` or `missing` with
+  `sev` keeps it, `s` `ok` or `na` withdraws it (say why in `n`), always
+  with `v`.
 
 Every item id (and every `x-…` id) of the slice appears once. Notes in German, short and concrete.
 Write the file regularly and validate it at the end. Do not edit anything
