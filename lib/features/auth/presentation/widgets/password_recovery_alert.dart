@@ -23,8 +23,43 @@ Future<void> presentPasswordRecoveryAlert(AuthFlowService authFlow, GoRouter rou
     router.go('/login');
     // Ionic: closes on "Abbrechen", a tap outside or after the update.
     var closedByUser = false;
+    // While the password update runs, "Abbrechen", a tap outside and back
+    // are ignored.
+    var busy = false;
+    BuildContext? shownDialog;
+
+    // Pops only the alert itself: once it is no longer the current route
+    // (already popped, or replaced by a page change) a pop would close the
+    // page below.
+    void popShownDialog() {
+      final dialogContext = shownDialog;
+      if (dialogContext == null || !dialogContext.mounted) return;
+      if (ModalRoute.of(dialogContext)?.isCurrent == true) {
+        Navigator.of(dialogContext).pop();
+      }
+    }
+
+    void close() {
+      if (busy) return;
+      closedByUser = true;
+      popShownDialog();
+    }
+
+    // Reported even when the alert that sent the request was replaced in the
+    // meantime, so it is not shown again after the update.
+    void succeeded(String message) {
+      busy = false;
+      closedByUser = true;
+      final dialogContext = shownDialog;
+      if (dialogContext != null && dialogContext.mounted) {
+        ToastHelper.showSuccess(dialogContext, message);
+      }
+      popShownDialog();
+    }
+
     for (var attempt = 0; attempt < 5 && !closedByUser; attempt++) {
       await SchedulerBinding.instance.endOfFrame;
+      if (closedByUser) break;
       final context = router.routerDelegate.navigatorKey.currentContext;
       if (context == null || !context.mounted) continue;
       // Closing by the user (buttons, tap outside, back) is tracked
@@ -33,11 +68,7 @@ Future<void> presentPasswordRecoveryAlert(AuthFlowService authFlow, GoRouter rou
         context: context,
         barrierDismissible: false,
         builder: (dialogContext) {
-          void close() {
-            closedByUser = true;
-            Navigator.of(dialogContext).pop();
-          }
-
+          shownDialog = dialogContext;
           return PopScope(
             canPop: false,
             onPopInvokedWithResult: (didPop, _) {
@@ -48,7 +79,12 @@ Future<void> presentPasswordRecoveryAlert(AuthFlowService authFlow, GoRouter rou
                 Positioned.fill(
                   child: GestureDetector(behavior: HitTestBehavior.opaque, onTap: close),
                 ),
-                PasswordRecoveryDialog(authFlow: authFlow, onClose: close),
+                PasswordRecoveryDialog(
+                  authFlow: authFlow,
+                  onClose: close,
+                  onSuccess: succeeded,
+                  onBusyChanged: (value) => busy = value,
+                ),
               ],
             ),
           );
@@ -65,12 +101,25 @@ Future<void> presentPasswordRecoveryAlert(AuthFlowService authFlow, GoRouter rou
 /// stays open on a too short password or a failed update so the user can
 /// retry without losing the recovery session.
 class PasswordRecoveryDialog extends StatefulWidget {
-  const PasswordRecoveryDialog({super.key, required this.authFlow, required this.onClose});
+  const PasswordRecoveryDialog({
+    super.key,
+    required this.authFlow,
+    required this.onClose,
+    required this.onSuccess,
+    required this.onBusyChanged,
+  });
 
   final AuthFlowService authFlow;
 
-  /// Closes the alert (cancel or after a successful update).
+  /// Closes the alert ("Abbrechen"; ignored while the update runs).
   final VoidCallback onClose;
+
+  /// Successful update with its toast message; called even when this alert
+  /// is no longer mounted. Shows the toast and closes the alert.
+  final ValueChanged<String> onSuccess;
+
+  /// The update request starts (true) or finishes (false).
+  final ValueChanged<bool> onBusyChanged;
 
   @override
   State<PasswordRecoveryDialog> createState() => _PasswordRecoveryDialogState();
@@ -86,7 +135,9 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
     super.dispose();
   }
 
-  void _cancel() => widget.onClose();
+  void _cancel() {
+    if (!_busy) widget.onClose();
+  }
 
   Future<void> _confirm() async {
     if (_busy) return;
@@ -95,14 +146,16 @@ class _PasswordRecoveryDialogState extends State<PasswordRecoveryDialog> {
       ToastHelper.showError(context, context.l10n.appPasswordMin);
       return;
     }
+    final onSuccess = widget.onSuccess;
+    final onBusyChanged = widget.onBusyChanged;
     _busy = true;
+    onBusyChanged(true);
     final (ok, message) = await widget.authFlow.updatePassword(password);
     _busy = false;
-    if (!mounted) return;
+    onBusyChanged(false);
     if (ok) {
-      ToastHelper.showSuccess(context, message);
-      widget.onClose();
-    } else {
+      onSuccess(message);
+    } else if (mounted) {
       ToastHelper.showError(context, message);
     }
   }
