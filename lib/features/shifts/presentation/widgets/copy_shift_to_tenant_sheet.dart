@@ -4,6 +4,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/shift_utils.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_plan.dart';
@@ -31,9 +32,18 @@ Future<void> copyShiftToTenant(
   final shiftId = shift.id;
   if (currentTenantId == null || shiftId == null) return;
 
-  final tenants = (await ref.read(userTenantsProvider.future))
-      .where((t) => t.id != currentTenantId && t.id != null)
-      .toList();
+  final List<Tenant> tenants;
+  try {
+    tenants = (await ref.read(userTenantsProvider.future))
+        .where((t) => t.id != currentTenantId && t.id != null)
+        .toList();
+  } catch (_) {
+    // e.g. offline: tell the user instead of failing silently.
+    if (context.mounted) {
+      ToastHelper.showError(context, l10n.coreFlutterLoadFailed);
+    }
+    return;
+  }
   if (!context.mounted) return;
   if (tenants.isEmpty) {
     ToastHelper.showWarning(context, l10n.shiftsNoOtherTenants);
@@ -155,6 +165,7 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    final ios = useIosLook(context);
     return AppAlertDialog(
       title: Text(l10n.shiftsCopyToTenant),
       scrollable: true,
@@ -167,12 +178,29 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
           children: [
             Text(l10n.shiftsChooseTarget),
             const SizedBox(height: 8),
-            for (final t in widget.tenants)
-              RadioListTile<int>(
-                value: t.id!,
-                title: Text(t.longName),
-                contentPadding: EdgeInsets.zero,
-              ),
+            // Ionic iOS alert radio: label left, primary checkmark right
+            // (like teams_config_page `_TenantRadioList`); md keeps the
+            // radio circles.
+            if (ios)
+              for (var i = 0; i < widget.tenants.length; i++) ...[
+                if (i > 0) const Divider(height: 1),
+                ListTile(
+                  title: Text(widget.tenants[i].longName),
+                  contentPadding: EdgeInsets.zero,
+                  trailing: widget.tenants[i].id == _selected
+                      ? const Icon(Icons.check, color: AppColors.primary)
+                      : null,
+                  onTap: () =>
+                      setState(() => _selected = widget.tenants[i].id),
+                ),
+              ]
+            else
+              for (final t in widget.tenants)
+                RadioListTile<int>(
+                  value: t.id!,
+                  title: Text(t.longName),
+                  contentPadding: EdgeInsets.zero,
+                ),
           ],
         ),
       ),
