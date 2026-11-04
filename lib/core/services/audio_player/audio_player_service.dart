@@ -222,9 +222,11 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
 
     try {
       // Web: the page is cross-origin isolated (COEP require-corp in
-      // web/_headers). A no-cors <audio> request to Supabase Storage would
-      // need a CORP header; as a CORS request the storage's
-      // Access-Control-Allow-Origin is enough.
+      // web/_headers, needed for multi-threaded Skwasm). A plain <audio>
+      // request is no-cors and gets blocked because Supabase Storage sends
+      // no Cross-Origin-Resource-Policy header. As a CORS request
+      // (crossorigin="anonymous") it is allowed: Storage answers with
+      // Access-Control-Allow-Origin.
       if (kIsWeb) await player.setWebCrossOrigin(WebCrossOrigin.anonymous);
       final loadedDuration = await player.setUrl(url);
       if (_speed != 1.0) await player.setSpeed(_speed);

@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.38.1",
+      "version": "0.38.2",
       "date": "4.11.2026",
       "changes": [
         "🐛 Excel-Exporte öffnen direkt mit den Daten (kein leeres erstes Blatt mehr), Termin-Excel wie bisher mit Nachname, Vorname, Gruppe, Status-Kürzel und Bemerkung",
@@ -22,6 +22,13 @@
         "🐛 Web-App: Noten als ZIP herunterladen funktioniert wieder",
         "🐛 Web-App: \"Person hinzufügen\" öffnet wieder das Formular statt einer grauen Seite",
         "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand"
+      ]
+    },
+    {
+      "version": "0.38.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Web: Aufnahmen lassen sich wieder abspielen"
       ]
     },
     {
