@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.39.6",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Organisation: Leere Namen beim Anlegen oder Umbenennen von Organisation und Vorlagen zeigen wieder einen Hinweis im Dialog",
+        "🐛 Organisation: Beim Anlegen einer Organisation erscheint ein Ladehinweis",
+        "🐛 Planungsvorlagen: Minuten der Standardfelder direkt in der Zeile änderbar, „Feld hinzufügen“ öffnet ein Menü am Button mit eigener Rubrik für Standardfelder",
+        "🐛 Personenfelder: Doppelte Namen werden vor dem Schließen gemeldet, Standardwert passt sich dem Feldtyp an (inkl. Datumsauswahl)",
+        "🐛 Org-Pläne: Verlauf aktualisiert sich, öffentlicher Plan bietet wieder „Anleitung öffnen“"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

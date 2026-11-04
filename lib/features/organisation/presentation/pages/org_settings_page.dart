@@ -33,12 +33,9 @@ class OrgSettingsPage extends ConsumerWidget {
       title: context.l10n.orgRename,
       initialValue: org.name,
       hint: context.l10n.orgNamePh,
+      emptyMessage: context.l10n.orgValidName,
     );
-    if (name == null) return;
-    if (name.trim().isEmpty) {
-      if (context.mounted) ToastHelper.showWarning(context, context.l10n.orgValidName);
-      return;
-    }
+    if (name == null || name.trim().isEmpty) return;
     final ok = await ref.read(planSettingsNotifierProvider.notifier).updateOrgName(name.trim());
     if (!context.mounted) return;
     ok ? ToastHelper.showSuccess(context, context.l10n.orgRenamed) : ToastHelper.showError(context, context.l10n.plansSaveFailed);

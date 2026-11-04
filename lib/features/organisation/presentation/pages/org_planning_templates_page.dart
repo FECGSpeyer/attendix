@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
@@ -124,12 +125,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       title: context.l10n.orgTemplatesAddTemplate,
       hint: context.l10n.orgTemplatesTemplateNamePh,
       confirmText: context.l10n.attendanceAdd,
+      emptyMessage: context.l10n.orgTemplatesEnterName,
     );
-    if (title == null) return;
-    if (title.trim().isEmpty) {
-      if (mounted) ToastHelper.showWarning(context, context.l10n.orgTemplatesEnterName);
-      return;
-    }
+    if (title == null || title.trim().isEmpty) return;
     setState(() {
       _templates = [..._templates!, Plan(title: title.trim(), time: '', end: '', fields: const [])];
       _selected = _templates!.length - 1;
@@ -163,6 +161,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       initialValue: tpl.title,
       hint: context.l10n.orgTemplatesTemplateNamePh,
       confirmText: context.l10n.commonSave,
+      emptyMessage: context.l10n.orgTemplatesEnterName,
     );
     if (title == null || title.trim().isEmpty) return;
     _updateTemplate(index, tpl.copyWith(title: title.trim()));
@@ -189,17 +188,24 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     });
   }
 
-  Future<void> _addToTemplate(int index) async {
+  /// Ionic: `ion-popover` at the "Feld hinzufügen" button; the Standardfelder
+  /// follow a divider and a small bold header.
+  Future<void> _addToTemplate(int index, BuildContext buttonContext) async {
     final tpl = _templates![index];
     final isGeneral = ref.read(currentTenantProvider)?.type == 'general';
-    final action = await showPlanActionSheet<String>(
-      context,
-      actions: [
-        PlanSheetAction('field', context.l10n.typeSettingsAddField, icon: Icons.add),
-        PlanSheetAction('note', context.l10n.typeSettingsAddNoteField, icon: Icons.sticky_note_2_outlined),
-        if (!isGeneral) PlanSheetAction('song', context.l10n.orgTemplatesSongPlaceholder, icon: Icons.music_note_outlined),
+    final action = await showAppPopoverMenu<String>(
+      context: buttonContext,
+      items: [
+        AppPopoverMenuItem(value: 'field', label: context.l10n.typeSettingsAddField),
+        AppPopoverMenuItem(value: 'note', label: context.l10n.typeSettingsAddNoteField),
+        if (!isGeneral) AppPopoverMenuItem(value: 'song', label: context.l10n.orgTemplatesSongPlaceholder),
+        if (_defaultFields.isNotEmpty) AppPopoverMenuItem.header(context.l10n.orgTemplatesDefaultFields, ''),
         for (var i = 0; i < _defaultFields.length; i++)
-          PlanSheetAction('default:$i', '${_defaultFields[i].name} (${context.l10n.planningMinShort(_defaultFields[i].time)})'),
+          AppPopoverMenuItem(
+            value: 'default:$i',
+            label: _defaultFields[i].name,
+            subtitle: context.l10n.planningMinShort(_defaultFields[i].time),
+          ),
       ],
     );
     if (action == null || !mounted) return;
@@ -381,7 +387,20 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                   trailing: Row(
                                     mainAxisSize: MainAxisSize.min,
                                     children: [
-                                      Text(context.l10n.planningMinShort(_defaultFields[i].time)),
+                                      // Ionic: inline number input "min", saved on blur.
+                                      _DefaultMinutesInput(
+                                        key: ValueKey('dfm-${_defaultFields[i].id}-$i'),
+                                        value: _defaultFields[i].time,
+                                        onSubmitted: (v) {
+                                          if (v == _defaultFields[i].time) return;
+                                          setState(() {
+                                            final list = [..._defaultFields];
+                                            list[i] = list[i].copyWith(time: v);
+                                            _defaultFields = list;
+                                          });
+                                          _saveDefaultFields();
+                                        },
+                                      ),
                                       const SizedBox(width: 8),
                                       ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
                                     ],
@@ -463,10 +482,12 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
             _saveTemplates();
           },
         ),
-        ListTile(
-          leading: const Icon(Icons.add, color: AppColors.primary),
-          title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
-          onTap: () => _addToTemplate(i),
+        Builder(
+          builder: (buttonContext) => ListTile(
+            leading: const Icon(Icons.add, color: AppColors.primary),
+            title: Text(context.l10n.typeSettingsAddField, style: const TextStyle(color: AppColors.primary)),
+            onTap: () => _addToTemplate(i, buttonContext),
+          ),
         ),
         if (end.isNotEmpty)
           ListTile(
@@ -476,5 +497,64 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
         const Divider(height: 1),
       ],
     ];
+  }
+}
+
+/// Inline minutes of a Standardfeld (Ionic `ion-input type="number"`
+/// placeholder "min", `(ionBlur)="saveDefaultFields()"`).
+class _DefaultMinutesInput extends StatefulWidget {
+  const _DefaultMinutesInput({super.key, required this.value, required this.onSubmitted});
+
+  final String value;
+  final ValueChanged<String> onSubmitted;
+
+  @override
+  State<_DefaultMinutesInput> createState() => _DefaultMinutesInputState();
+}
+
+class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
+  late final TextEditingController _controller = TextEditingController(text: widget.value);
+  final FocusNode _focus = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+    _focus.addListener(() {
+      if (!_focus.hasFocus) widget.onSubmitted(_controller.text.trim());
+    });
+  }
+
+  @override
+  void didUpdateWidget(covariant _DefaultMinutesInput oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    if (!_focus.hasFocus && widget.value != _controller.text) _controller.text = widget.value;
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    _focus.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return SizedBox(
+      width: 48,
+      child: TextField(
+        controller: _controller,
+        focusNode: _focus,
+        keyboardType: TextInputType.number,
+        inputFormatters: [FilteringTextInputFormatter.digitsOnly],
+        textAlign: TextAlign.center,
+        decoration: InputDecoration(
+          hintText: context.l10n.planningMinPlaceholder,
+          isDense: true,
+          border: InputBorder.none,
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+        ),
+        onSubmitted: (_) => _focus.unfocus(),
+      ),
+    );
   }
 }
