@@ -158,7 +158,11 @@ class StatsHorizontalBarChart extends StatelessWidget {
                       children: [
                         for (final t in ticks)
                           Positioned(
-                            left: (t / axis.max * width).clamp(0, width - 1),
+                            // max(0, …): no throw while the area is < 1 px
+                            left: (t / axis.max * width).clamp(
+                              0,
+                              math.max(0, width - 1),
+                            ),
                             top: 0,
                             bottom: 0,
                             child: Container(width: 1, color: gridColor),
