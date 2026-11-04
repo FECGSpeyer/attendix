@@ -283,7 +283,9 @@ final playerAttendancePercentagesProvider =
   final tenant = ref.watch(currentTenantProvider);
   if (tenant == null || tenant.id == null) return {};
 
-  final now = DateTime.now().toUtc().toIso8601String();
+  // Ionic getModifiedPlayersForList: Termine with date before now + 1 day
+  // count (dates are stored at 12:00 → today always, tomorrow from noon).
+  final tomorrow = DateTime.now().add(const Duration(days: 1)).toUtc().toIso8601String();
   final seasonStart = tenant.seasonStart;
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
@@ -297,7 +299,7 @@ final playerAttendancePercentagesProvider =
         .from('person_attendances')
         .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id)')
         .eq('attendance.tenantId', tenant.id!)
-        .lte('attendance.date', now);
+        .lt('attendance.date', tomorrow);
 
     // Only count attendances from the current season
     if (seasonStart != null) {

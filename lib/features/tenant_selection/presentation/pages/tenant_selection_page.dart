@@ -319,6 +319,16 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final rootContext = router.routerDelegate.navigatorKey.currentContext;
       final sheetNavigator = widget.sheet ? Navigator.of(context) : null;
       final wasCurrent = tenant.id == ref.read(currentTenantProvider)?.id;
+      // Ionic deleteInstance: setTenant() + Utils.getUrl(role) after every
+      // delete – the open instance's start page (read before the sheet closes).
+      final currentId = ref.read(currentTenantIdProvider);
+      final home = currentId == null
+          ? null
+          : homeRouteFor(
+              ref.read(currentRoleProvider),
+              currentId,
+              ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+            );
       await deleteTenant(ref, tenant.id!);
       sheetNavigator?.pop();
       final toastContext = widget.sheet ? rootContext : (mounted ? context : null);
@@ -326,6 +336,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         ToastHelper.showSuccess(toastContext, toastContext.l10n.dbInstanceDeleted);
       }
       if (wasCurrent) router.go('/tenants');
+      if (!wasCurrent && home != null) goReplacingHistory(router, home);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.dbDeleteInstanceFailed);
     } finally {

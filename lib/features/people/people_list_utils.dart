@@ -3,6 +3,7 @@ import '../../core/utils/instrument_sort.dart';
 import '../../data/models/instrument/instrument.dart';
 import '../../data/models/person/person.dart';
 import '../../data/models/tenant/tenant.dart';
+import '../../core/utils/people_sort.dart';
 
 /// Search people by first/last name, group name and the values of text and
 /// number extra fields (Ionic people/list filter()).
@@ -72,9 +73,8 @@ List<Person> sortPeopleByGroup(List<Person> people, List<Group> groups) {
       final c = ga!.sortOrder!.compareTo(gb!.sortOrder!);
       if (c != 0) return c;
     }
-    final nameCmp = (a.groupName ?? ga?.name ?? '')
-        .toLowerCase()
-        .compareTo((b.groupName ?? gb?.name ?? '').toLowerCase());
+    // Ionic getModifiedPlayersForList: localeCompare (Ä/Ö/Ü with A/O/U).
+    final nameCmp = localeCompareDe(a.groupName ?? ga?.name ?? '', b.groupName ?? gb?.name ?? '');
     if (nameCmp != 0) return nameCmp;
     // Same group (or same name)
     if (a.instrument != b.instrument) {
@@ -82,7 +82,7 @@ List<Person> sortPeopleByGroup(List<Person> people, List<Group> groups) {
     }
     final c = compareSortOrder(a.sortOrder, b.sortOrder);
     if (c != 0) return c;
-    return a.lastName.toLowerCase().compareTo(b.lastName.toLowerCase());
+    return localeCompareDe(a.lastName, b.lastName);
   });
   return list;
 }

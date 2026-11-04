@@ -884,7 +884,8 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .select('id, songId, person_id, otherConductor, date')
           .eq('attendance_id', attendanceId)
           .eq('tenantId', currentTenantId)
-          .order('id', ascending: true);
+          // Ionic getHistoryByAttendanceId: order('songId').
+          .order('songId', ascending: true);
       return List<Map<String, dynamic>>.from(response as List);
     } catch (e, stack) {
       handleError(e, stack, 'getHistoryForAttendance');

@@ -97,8 +97,14 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
   /// Opens the target of a tapped notification (switches instance if needed).
   Future<void> _navigate(BuildContext context, WidgetRef ref, UserNotification n) async {
     final router = GoRouter.of(context);
-    final targetTenant = n.targetTenantId;
-    if (targetTenant != ref.read(currentTenantIdProvider)) {
+    final isMessage = n.type == 'message' && n.messageId != null;
+    // Ionic onTap: entries without a target (criticals / birthdays) only
+    // close the sheet; route and Termin entries switch the instance only
+    // when data.tenantId is set.
+    if (!isMessage && n.route == null && n.attendanceId == null) return;
+    final explicitTenant = int.tryParse(n.data['tenantId']?.toString() ?? '');
+    final int? targetTenant = isMessage ? n.targetTenantId : explicitTenant;
+    if (targetTenant != null && targetTenant != ref.read(currentTenantIdProvider)) {
       final tenants = await ref.read(userTenantsProvider.future);
       Tenant? tenant;
       for (final t in tenants) {

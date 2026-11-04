@@ -48,14 +48,17 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     final userMetadata = auth.currentUser?.userMetadata;
     final serverTenantId = userMetadata?['currentTenantId'] as int?;
 
-    // Step 3: Determine which tenant ID to use (server takes precedence)
-    final tenantIdToLoad = serverTenantId ?? cachedTenantId;
+    // Step 3: Ionic setTenant – the same-device value (localStorage) wins
+    // over user_metadata.currentTenantId when they disagree (a switch via
+    // setTenantLocal does not write the metadata); metadata is the
+    // cross-device fallback.
+    final tenantIdToLoad = cachedTenantId ?? serverTenantId;
 
     if (tenantIdToLoad != null) {
       await _loadAndValidateTenant(tenantIdToLoad);
 
-      // Sync cache if server had different value
-      if (serverTenantId != null && serverTenantId != cachedTenantId) {
+      // Fill the cache from the server value on a new device.
+      if (cachedTenantId == null && serverTenantId != null) {
         await prefs.setInt(_tenantIdKey, serverTenantId);
       }
     }

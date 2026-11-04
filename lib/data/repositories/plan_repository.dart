@@ -83,6 +83,28 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// Ionic live-activity `openFromUrl` loads the tapped Termin without a
+  /// tenant filter (ORG-Plan of another choir, Termin of another instance).
+  /// Here the lookup is limited to [tenantIds] (the user's instances and the
+  /// instances of the organisation).
+  Future<PlanAttendance?> getPlanAttendanceByIdInTenants(int id, List<int> tenantIds) async {
+    try {
+      for (final tenantId in tenantIds) {
+        final response = await supabase
+            .from('attendance')
+            .select(planAttendanceColumns)
+            .eq('id', id)
+            .eq('tenantId', tenantId)
+            .maybeSingle();
+        if (response != null) return PlanAttendance.fromJson(response);
+      }
+      return null;
+    } catch (e, stack) {
+      handleError(e, stack, 'getPlanAttendanceByIdInTenants');
+      rethrow;
+    }
+  }
+
   /// Updates plan related columns of a Termin (plan, extra_plans, share flags).
   Future<PlanAttendance> updateAttendancePlanFields(int id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateAttendancePlanFields'); // DEMO_GUARD
