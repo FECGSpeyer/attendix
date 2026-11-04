@@ -396,7 +396,10 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
                       crossAxisAlignment: CrossAxisAlignment.start,
                       children: [
                         if (row.email != null) Text(row.email!),
-                        if (row.errors.isEmpty)
+                        // A saved row (Termine pending) keeps its group: the
+                        // retry adds the saved person to the Termine as is.
+                        if (row.errors.isEmpty &&
+                            !_savedWithoutTermine.containsKey(row.rowIndex))
                           AppDropdownButton<int>(
                             value: groups.any((g) => g.id == row.instrument)
                                 ? row.instrument

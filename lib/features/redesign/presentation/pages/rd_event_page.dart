@@ -1210,14 +1210,23 @@ class _EventActions extends ConsumerWidget {
       final churches = churchFieldId == null
           ? const <Church>[]
           : await ref.read(churchesProvider.future);
+      final persons = [for (final m in members) m.person];
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? persons
+          : await ref
+              .read(profileRepositoryWithTenantProvider)
+              .hydrateSharedPersonFieldValues(persons);
+      // Notes stay hidden for roles that may not see them in the view.
+      final canViewNotes = ref.read(canViewAttendanceNotesProvider);
       if (!context.mounted) return;
       await ExportService().exportAttendanceToExcel(
         context: context,
         attendance: attendance,
         typeName: type?.name ?? '',
-        persons: [for (final m in members) m.person],
+        persons: exported,
         statuses: {for (final m in members) m.id: m.status},
-        notes: {for (final m in members) m.id: m.note},
+        notes: canViewNotes ? {for (final m in members) m.id: m.note} : const {},
         churches: churches,
         churchFieldId: churchFieldId,
       );

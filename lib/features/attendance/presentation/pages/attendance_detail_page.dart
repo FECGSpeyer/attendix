@@ -2422,15 +2422,23 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final churches = churchFieldId == null
           ? const <Church>[]
           : await ref.read(churchesProvider.future);
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? _personsInAttendance(persons)
+          : await ref
+              .read(profileRepositoryWithTenantProvider)
+              .hydrateSharedPersonFieldValues(_personsInAttendance(persons));
+      // Notes stay hidden for roles that may not see them in the view.
+      final canViewNotes = ref.read(canViewAttendanceNotesProvider);
       if (!mounted) return;
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
         context: context,
         attendance: attendance,
         typeName: type?.name ?? '',
-        persons: _personsInAttendance(persons),
+        persons: exported,
         statuses: _localStatuses,
-        notes: _personNotes,
+        notes: canViewNotes ? _personNotes : const {},
         churches: churches,
         churchFieldId: churchFieldId,
       );
