@@ -22,7 +22,9 @@ class HelpMarkdown extends StatefulWidget {
   });
 
   final String data;
-  final void Function(String term)? onGlossaryTap;
+  /// Called with the term and the global tap position (anchor of the
+  /// glossary popover, Ionic `popoverController.create({event})`).
+  final void Function(String term, Offset globalPosition)? onGlossaryTap;
   final TextStyle? style;
 
   @override
@@ -112,7 +114,7 @@ class _HelpMarkdownState extends State<HelpMarkdown> {
           spans.add(TextSpan(text: token.text, style: style));
         } else {
           final recognizer = TapGestureRecognizer()
-            ..onTap = () => onTap(glossaryTerm);
+            ..onTapUp = (details) => onTap(glossaryTerm, details.globalPosition);
           _recognizers.add(recognizer);
           spans.add(TextSpan(
             text: token.text,

@@ -1,6 +1,20 @@
 {
   "versions": [
     {
+      "version": "0.39.4",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Dateiablage: „Link teilen“ öffnet zuerst das Teilen-Menü des Systems, nur ohne Teilen-Menü wird der Link kopiert",
+        "🐛 Dateiablage: Hilfe zur Suche und das ⋯-Menü erscheinen als kleines Fenster direkt am Knopf, Tippen daneben schließt es",
+        "🐛 Hilfe: Fachbegriffe öffnen ihre Erklärung als kleines Fenster direkt am Begriff",
+        "🐛 Hilfe: Artikel „Beamer-Dateien im Ablaufplan“ nennt, welche ORG-Pläne die Gemeinde App zeigt",
+        "🐛 Schichtpläne: „In Instanz kopieren“ fragt die Ziel-Instanz und danach, ob die Zuweisungen mitkopiert werden sollen (wie in der bisherigen App)",
+        "🐛 Schichtpläne: Beim Löschen erklärt die Rückfrage wieder, was dabei mitgelöscht wird",
+        "🐛 Übergabe: Personen und Gruppen der Ziel-Instanz stehen in derselben Reihenfolge wie sonst in der App",
+        "🐛 Stimmführer: Namen mit Umlauten werden richtig einsortiert, und kommende Abwesenheiten fehlen auch in großen Gruppen nicht mehr"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

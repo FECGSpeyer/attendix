@@ -106,16 +106,9 @@ Future<T?> showAppPopoverMenu<T>({
   // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
   double iosWidth = 200,
 }) {
-  final button = context.findRenderObject()! as RenderBox;
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
-  final anchor = Rect.fromPoints(
-    button.localToGlobal(Offset.zero, ancestor: overlay),
-    button.localToGlobal(
-      button.size.bottomRight(Offset.zero),
-      ancestor: overlay,
-    ),
-  );
+  final anchor = _anchorOf(context, overlay);
   final ios = useIosLook(context);
 
   return navigator.push<T>(
@@ -133,6 +126,245 @@ Future<T?> showAppPopoverMenu<T>({
       ),
     ),
   );
+}
+
+/// Global rect of [context]'s widget inside [overlay].
+Rect _anchorOf(BuildContext context, RenderBox overlay) {
+  final box = context.findRenderObject()! as RenderBox;
+  return Rect.fromPoints(
+    box.localToGlobal(Offset.zero, ancestor: overlay),
+    box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay),
+  );
+}
+
+/// Ionic `ion-popover` with free content (a help text, a glossary card)
+/// instead of a menu – same surface, backdrop and animation as
+/// [showAppPopoverMenu]. There is no button: a tap outside closes it.
+///
+/// Placement follows Ionic:
+/// - anchored on [context]'s widget (the trigger button), or on [anchor]
+///   (global coordinates, e.g. the point of a tapped text link – Ionic
+///   `popoverController.create({event})`);
+/// - md: below the anchor, left edge at the anchor;
+/// - iOS: a button trigger ([anchor] null) is covered by the popover,
+///   right-aligned with it (ios27 "replace", like [showAppPopoverMenu]);
+///   any other anchor gets the popover below it, centred;
+/// - pushed back into the viewport, and above the anchor when there is no
+///   room below.
+///
+/// [width] is Ionic `--width` (default iOS 200 / md 250), [maxHeight] is
+/// Ionic `--max-height`.
+Future<T?> showAppPopover<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  Rect? anchor,
+  double? width,
+  double? maxHeight,
+}) {
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
+  final ios = useIosLook(context);
+  return navigator.push<T>(
+    _ContentPopoverRoute<T>(
+      ios: ios,
+      anchor: anchor == null
+          ? _anchorOf(context, overlay)
+          : Rect.fromPoints(
+              overlay.globalToLocal(anchor.topLeft),
+              overlay.globalToLocal(anchor.bottomRight),
+            ),
+      coverAnchor: ios && anchor == null,
+      width: width ?? (ios ? 200 : 250),
+      maxHeight: maxHeight,
+      builder: builder,
+      barrierLabel: context.l10n.commonClose,
+      capturedThemes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
+    ),
+  );
+}
+
+class _ContentPopoverRoute<T> extends PopupRoute<T> {
+  _ContentPopoverRoute({
+    required this.ios,
+    required this.anchor,
+    required this.coverAnchor,
+    required this.width,
+    required this.maxHeight,
+    required this.builder,
+    required this.barrierLabel,
+    required this.capturedThemes,
+  });
+
+  final bool ios;
+  final Rect anchor;
+  final bool coverAnchor;
+  final double width;
+  final double? maxHeight;
+  final WidgetBuilder builder;
+  final CapturedThemes capturedThemes;
+
+  @override
+  final String barrierLabel;
+
+  // Same backdrop as [_PopoverRoute].
+  @override
+  Color? get barrierColor =>
+      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 220);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 150);
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    final padding = MediaQuery.of(context).padding;
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeIn,
+    );
+    return capturedThemes.wrap(
+      MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        removeBottom: true,
+        child: CustomSingleChildLayout(
+          delegate: _ContentPopoverLayout(
+            ios: ios,
+            anchor: anchor,
+            coverAnchor: coverAnchor,
+            width: width,
+            maxHeight: maxHeight,
+            topPadding: padding.top,
+            bottomPadding: padding.bottom,
+          ),
+          child: FadeTransition(
+            opacity: curved,
+            child: ScaleTransition(
+              scale: Tween<double>(begin: ios ? 0.85 : 0.8, end: 1)
+                  .animate(curved),
+              alignment: Alignment.topCenter,
+              child: _PopoverCard(
+                ios: ios,
+                children: [Builder(builder: builder)],
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+class _ContentPopoverLayout extends SingleChildLayoutDelegate {
+  _ContentPopoverLayout({
+    required this.ios,
+    required this.anchor,
+    required this.coverAnchor,
+    required this.width,
+    required this.maxHeight,
+    required this.topPadding,
+    required this.bottomPadding,
+  });
+
+  static const _margin = 8.0;
+
+  final bool ios;
+  final Rect anchor;
+  final bool coverAnchor;
+  final double width;
+  final double? maxHeight;
+  final double topPadding;
+  final double bottomPadding;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final size = constraints.biggest;
+    final w = math.min(width, size.width - 2 * _margin);
+    final room = math.max(
+      120.0,
+      size.height - topPadding - bottomPadding - 2 * _margin,
+    );
+    return BoxConstraints(
+      minWidth: w,
+      maxWidth: w,
+      maxHeight: maxHeight == null ? room : math.min(maxHeight!, room),
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final w = childSize.width;
+    final double preferredLeft;
+    if (!ios) {
+      preferredLeft = anchor.left;
+    } else if (coverAnchor) {
+      preferredLeft = anchor.right - w;
+    } else {
+      preferredLeft = anchor.center.dx - w / 2;
+    }
+    final left = preferredLeft
+        .clamp(_margin, math.max(_margin, size.width - w - _margin))
+        .toDouble();
+
+    final minTop = topPadding + _margin;
+    final maxBottom = size.height - bottomPadding - _margin;
+    var top = coverAnchor ? anchor.top : anchor.bottom;
+    if (top + childSize.height > maxBottom) {
+      // No room below: above the anchor (covering: bottom at its bottom).
+      final above =
+          (coverAnchor ? anchor.bottom : anchor.top) - childSize.height;
+      top = above >= minTop ? above : maxBottom - childSize.height;
+    }
+    return Offset(left, math.max(minTop, top));
+  }
+
+  @override
+  bool shouldRelayout(_ContentPopoverLayout old) =>
+      old.anchor != anchor ||
+      old.ios != ios ||
+      old.coverAnchor != coverAnchor ||
+      old.width != width ||
+      old.maxHeight != maxHeight ||
+      old.topPadding != topPadding ||
+      old.bottomPadding != bottomPadding;
+}
+
+/// Text styles of an `ion-label` inside a popover list (h3 heading and `p`
+/// lines), shared by content popovers.
+class AppPopoverText {
+  const AppPopoverText._();
+
+  static TextStyle heading(BuildContext context) => TextStyle(
+        fontSize: useIosLook(context) ? 17 : 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  static TextStyle paragraph(BuildContext context) {
+    final ios = useIosLook(context);
+    final brightness = Theme.of(context).brightness;
+    return TextStyle(
+      fontSize: ios ? IonIos.pFontSize : 14,
+      height: ios ? null : 20 / 14,
+      color: ios
+          ? IonIos.labelP(brightness)
+          : (brightness == Brightness.dark
+              ? const Color(0xFF999999)
+              : const Color(0xFF666666)),
+    );
+  }
 }
 
 Color? _itemColor(AppPopoverMenuItem<dynamic> item) =>

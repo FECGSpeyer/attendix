@@ -117,14 +117,14 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
             return IconButton(
               icon: const Icon(Icons.copy_outlined),
               tooltip: context.l10n.shiftsCopyToTenant,
-              onPressed: () => _showCopySheet(context, shiftAsync.valueOrNull),
+              onPressed: () => _copyToTenant(context, shiftAsync.valueOrNull),
             );
           },
         ),
         IconButton(
           icon: const Icon(Icons.delete_outline, color: AppColors.danger),
           tooltip: context.l10n.commonDelete,
-          onPressed: () => _confirmDelete(context, usageCount.valueOrNull ?? 0),
+          onPressed: () => _confirmDelete(context),
         ),
       ],
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
@@ -465,12 +465,10 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     }
   }
 
-  Future<void> _confirmDelete(BuildContext context, int usageCount) async {
+  Future<void> _confirmDelete(BuildContext context) async {
     final l10n = context.l10n;
-    String message = l10n.shiftsFlutterDeleteConfirm;
-    if (usageCount > 0) {
-      message = l10n.shiftsFlutterDeleteConfirmUsed(usageCount);
-    }
+    // Ionic shifts.deleteMessage (warns about the shifts and assignments).
+    final message = l10n.shiftsDeleteMessage;
 
     final confirmed = await showAppDialog<bool>(
       context: context,
@@ -518,10 +516,10 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     showShiftPreviewSheet(context, previewPlan, startInstance: startInstance);
   }
 
-  Future<void> _showCopySheet(BuildContext context, ShiftPlan? shift) async {
+  Future<void> _copyToTenant(BuildContext context, ShiftPlan? shift) async {
     if (shift == null) return;
 
-    // Create updated plan with current edits
+    // Ionic copies the bound model, i.e. including unsaved edits.
     final currentPlan = shift.copyWith(
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
@@ -529,13 +527,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       shifts: _shifts,
     );
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => CopyShiftToTenantSheet(shift: currentPlan),
-    );
+    await copyShiftToTenant(context, ref, currentPlan);
   }
 }
 
