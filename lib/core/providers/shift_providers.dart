@@ -5,6 +5,7 @@ import '../config/supabase_config.dart'
 
 import '../../data/models/shift/shift_plan.dart';
 import '../../data/repositories/repositories.dart';
+import 'player_providers.dart';
 import 'tenant_providers.dart';
 
 /// Initialized shift repository with tenant context
@@ -107,7 +108,19 @@ class ShiftNotifier extends Notifier<AsyncValue<void>> {
   Future<bool> deleteShift(String id) async {
     state = const AsyncValue.loading();
     try {
-      await _repo.deleteShift(id);
+      // Ionic deleteShift: first reset the future "Schichtbedingt" excuses of
+      // every person on this plan (updateShiftAssignmentsForPerson with
+      // shift_id null), then delete the plan.
+      final repo = _repo; // bound before the awaits (tenant switch safety)
+      // Ionic checkDemoRestriction() comes before every write.
+      repo.ensureNotDemo('deleteShift'); // DEMO_GUARD
+      final players = ref.read(playerRepositoryWithTenantProvider);
+      if (players.hasTenantId) {
+        final affected = await players.getPlayersByShift(id);
+        await Future.wait(affected.map((p) => players
+            .updateShiftAssignmentsForPerson(p.copyWith(shiftId: null))));
+      }
+      await repo.deleteShift(id);
       state = const AsyncValue.data(null);
       ref.invalidate(shiftsProvider);
       ref.invalidate(shiftByIdProvider(id));

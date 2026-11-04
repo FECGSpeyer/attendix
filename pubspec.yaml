@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.39.2+110
+version: 0.39.3+111
 
 environment:
   sdk: ^3.7.0
@@ -45,13 +45,13 @@ dependencies:
   image: ^4.3.0
 
   # ZIP
-  archive: ^3.6.1
+  archive: ^4.0.9
 
   # SHA-256 of the Gemeinde App connection key (already used transitively)
   crypto: ^3.0.6
 
   # Excel
-  excel: ^4.0.6
+  excel_community: ^2.6.2
 
   # Date & Time
   intl: any
