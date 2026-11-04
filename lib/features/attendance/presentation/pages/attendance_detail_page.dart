@@ -2405,6 +2405,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _exportAttendanceToExcel() async {
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
     try {
       final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
       final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
@@ -2425,11 +2428,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       // The Gemeinde can be an organisation field (shared value).
       final exported = churchFieldId == null
           ? _personsInAttendance(persons)
-          : await ref
-              .read(profileRepositoryWithTenantProvider)
+          : await profileRepo
               .hydrateSharedPersonFieldValues(_personsInAttendance(persons));
-      // Notes stay hidden for roles that may not see them in the view.
-      final canViewNotes = ref.read(canViewAttendanceNotesProvider);
       if (!mounted) return;
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
@@ -2438,6 +2438,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         typeName: type?.name ?? '',
         persons: exported,
         statuses: _localStatuses,
+        // Notes stay hidden for roles that may not see them in the view.
         notes: canViewNotes ? _personNotes : const {},
         churches: churches,
         churchFieldId: churchFieldId,

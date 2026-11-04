@@ -1199,6 +1199,9 @@ class _EventActions extends ConsumerWidget {
   /// "Als Excel exportieren" with the statuses shown on this page.
   Future<void> _exportExcel(BuildContext context, WidgetRef ref) async {
     final tenant = ref.read(currentTenantProvider);
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
     if (tenant == null) {
       ToastHelper.showError(context, context.l10n.attendanceFlutterDataUnavailable);
       return;
@@ -1214,11 +1217,7 @@ class _EventActions extends ConsumerWidget {
       // The Gemeinde can be an organisation field (shared value).
       final exported = churchFieldId == null
           ? persons
-          : await ref
-              .read(profileRepositoryWithTenantProvider)
-              .hydrateSharedPersonFieldValues(persons);
-      // Notes stay hidden for roles that may not see them in the view.
-      final canViewNotes = ref.read(canViewAttendanceNotesProvider);
+          : await profileRepo.hydrateSharedPersonFieldValues(persons);
       if (!context.mounted) return;
       await ExportService().exportAttendanceToExcel(
         context: context,
@@ -1226,6 +1225,7 @@ class _EventActions extends ConsumerWidget {
         typeName: type?.name ?? '',
         persons: exported,
         statuses: {for (final m in members) m.id: m.status},
+        // Notes stay hidden for roles that may not see them in the view.
         notes: canViewNotes ? {for (final m in members) m.id: m.note} : const {},
         churches: churches,
         churchFieldId: churchFieldId,
