@@ -12,7 +12,8 @@
         "✨ Eltern: Kinder in derselben Reihenfolge wie bisher, Anmeldungen benachrichtigen die Dirigenten wieder",
         "✨ Statistik: Balken waagrecht mit Namen, Diagramme mit Titel und Achsenbeschriftung",
         "🐛 Verlauf: „+“ öffnet sofort, das erste Werk ist vorausgewählt",
-        "✨ Mitteilungen, Instanzwechsel im Dashboard und Live-Activity-Text wie bisher"
+        "✨ Mitteilungen, Instanzwechsel im Dashboard und Live-Activity-Text wie bisher",
+        "🐛 Aktuelle Werke: Noten-Markierung nach dem Instrument der aktuellen Instanz"
       ]
     },
     {

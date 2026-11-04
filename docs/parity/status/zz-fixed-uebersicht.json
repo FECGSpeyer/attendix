@@ -42,26 +42,27 @@
     "lib/features/statistics/presentation/pages/statistics_page.dart:1029"
    ],
    "n": "behoben in #298"
-  }
- },
- "extraOverride": [
-  {
-   "unit": "stats/stats.page",
-   "title": "Balkendiagramme ohne zuordenbare Namen",
-   "drop": true,
-   "why": "behoben in #298"
   },
-  {
-   "unit": "stats/stats.page",
-   "title": "Diagrammtitel und Achsentitel fehlen",
-   "drop": true,
-   "why": "behoben in #298"
+  "x-6a02894975": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart:48"
+   ],
+   "n": "behoben in #298"
   },
-  {
-   "unit": "messages/message-detail/message-detail.page",
-   "title": "Archivierter Termin: keine Termin-Karte/Antwort",
-   "drop": true,
-   "why": "behoben in #298"
+  "x-ab8ae02d16": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "behoben in #298"
+  },
+  "x-ad6a974bce": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:248"
+   ],
+   "n": "behoben in #298"
   }
- ]
+ }
 }
