@@ -679,21 +679,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _init(List<PlanAttendance> attendances) async {
     _loaded = true;
-    // SOL_FIX25: the repository (tenant) the Termine were loaded with, read
-    // before any await.
-    final disposeRepo = ref.read(planRepositoryWithTenantProvider);
-    final tenantId = ref.read(currentTenantIdProvider);
-    final userId = ref.read(currentAuthUserIdProvider);
-    // Ionic ngOnInit loads Werke and history before choosing the start plan
-    // (the type template only applies with history).
-    try {
-      await Future.wait([ref.read(currentSongsProvider.future), ref.read(planSongsProvider.future)]);
-    } catch (_) {}
-    if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
     _attendances = [...attendances];
-    _disposeRepo = disposeRepo;
-    _tenantId = tenantId;
-    _userId = userId;
+    // SOL_FIX25: the repository (tenant) the Termine were loaded with.
+    _disposeRepo = ref.read(planRepositoryWithTenantProvider);
+    _tenantId = ref.read(currentTenantIdProvider);
+    _userId = ref.read(currentAuthUserIdProvider);
     // SOL_FIX29: the cached rows hold the commits up to the last cache
     // refresh; newer commits are adopted when a Termin is loaded.
     for (final a in _attendances) {
@@ -734,7 +724,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     if (att != null) {
       _loadAttendance(att);
     } else {
-      setState(() {});
+      // Ionic keeps its start field `{ id: '', name: 'Wort ', time: '10' }`.
+      setState(() => _fields = [PlanField(id: '', name: context.l10n.planningDefaultWord, time: '10')]);
     }
   }
 
@@ -1397,7 +1388,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
             confirmText: context.l10n.commonSave,
           );
           final day = picked?.value;
-          if (day == null || !mounted) return;
+          if (day == null || day == list[index].day || !mounted) return;
           await _whileBusy(() async {
             final open = await _writePlanOp(attId, planKey, (att, plans, i) {
               final moved = plans[i!].copyWith(day: day);
@@ -2065,7 +2056,13 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
     // SOL_FIX26: not from the previous value while the Termine reload after
     // an invalidation (that would edit the stale plan).
-    if (!_loaded && attendancesAsync.hasValue && !attendancesAsync.isLoading && !typesAsync.isLoading) {
+    // Ionic ngOnInit loads Werke and history before choosing the start plan
+    // (the type template only applies with history); the role decides
+    // whether archived Termine can be opened.
+    final startReady = !ref.watch(currentSongsProvider).isLoading &&
+        !ref.watch(planSongsProvider).isLoading &&
+        !ref.watch(currentTenantUserProvider).isLoading;
+    if (!_loaded && startReady && attendancesAsync.hasValue && !attendancesAsync.isLoading && !typesAsync.isLoading) {
       WidgetsBinding.instance.addPostFrameCallback((_) {
         if (mounted && !_loaded) unawaited(_init(attendancesAsync.value!));
       });
