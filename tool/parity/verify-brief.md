@@ -1,7 +1,9 @@
 # Verification brief (second, independent pass)
 
-Placeholders: `{BATCH}`, `{SLICE}` (from `parity.mjs verify-slices`),
-`{IONIC}`, `{FLUTTER}`, `{OUT}`, `{IONIC_SHA}`, `{FLUTTER_SHA}`.
+Placeholders: `{BATCH}`, `{SLICE}` (from `parity.mjs verify-slices` or
+`verify2-slices`), `{IONIC}` (Ionic checkout), `{FLUTTER}` (this repo),
+`{PUB_CACHE}` (Dart package cache, `$PUB_CACHE` or `~/.pub-cache`), `{OUT}`,
+`{IONIC_SHA}`, `{FLUTTER_SHA}`.
 
 ---
 
@@ -17,8 +19,8 @@ Ionic `item` (kind, file, line, conditions, texts …) and the first verdict
 Sources: Ionic `{IONIC}/src/app/…` (translations `{IONIC}/src/i18n/de.json`),
 Flutter `{FLUTTER}/lib/…` (Beta code under `lib/features/redesign/`,
 `lib/core/theme/redesign/`, `rd_*.dart` does not count). Package sources:
-`/root/.pub-cache/hosted/pub.dev/`. Status and severity definitions are in
-`/home/user/attendix/tool/parity/review-brief.md`; read it first.
+`{PUB_CACHE}/hosted/pub.dev/`. Status and severity definitions are in
+`{FLUTTER}/tool/parity/review-brief.md`; read it first.
 
 For every item:
 
@@ -44,7 +46,27 @@ Write `{OUT}`:
 }
 ```
 
-Every item id of the slice appears once. Notes in German, short and concrete.
+### Round 2 slices (`zz-verify2-*`)
+
+Each entry has a `reason`:
+
+- `rolle-mandant`: the first verdict is `ok`/`na`, but the Ionic element is
+  only shown or enabled for certain roles or tenant settings (see
+  `item.cond`). Work out for every role (Admin/Dirigent, Verantwortlich,
+  Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber, and the
+  tenant flags involved) whether it sees/can use the element in Ionic, then
+  check the same in Flutter (role getters, route guards, tenant settings).
+  A role that sees or can do more or less than in Ionic is a gap; a role
+  that can write data it could not write in Ionic is at least `mittel`.
+- `neu`: the item is new in the inventory (`first` is `null`). Give a full
+  first verdict; leave out `v`.
+- `zusatzbefund`: instead of `item` the entry has `extra` (`id`, `title`,
+  `n`, `sev`, `ionic`, `f`), a finding a first reviewer added outside the
+  item list. Check whether it is real and correctly rated. Write it under its
+  `id` (`x-…`) in `items`: `s` `diff` or `missing` with `sev` keeps it,
+  `s` `ok` or `na` withdraws it (say why in `n`), always with `v`.
+
+Every item id (and every `x-…` id) of the slice appears once. Notes in German, short and concrete.
 Write the file regularly and validate it at the end. Do not edit anything
 else; no git, no network, no builds.
 

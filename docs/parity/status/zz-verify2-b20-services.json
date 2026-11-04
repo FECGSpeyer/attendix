@@ -1,0 +1,50 @@
+{
+  "batch": "zz-verify2-b20-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "services/user-registration/user-registration.service#db-80d3e75d": {
+      "s": "na",
+      "n": "toter Code bestätigt: validateUserExistsInRoleTable nur aus UserRegistrationService.getAppIdByEmail, das nur aus dessen registerUser/createPlayerAccount kommt; DbService nutzt vom Service nur informUserAboutApproval/Reject und addUserToTenant, eigene registerUser/getAppIdByEmail.",
+      "v": "bestätigt"
+    },
+    "services/user-registration/user-registration.service#db-55cccb61": {
+      "s": "na",
+      "n": "toter Code bestätigt (wie db-80d3e75d): Service-eigenes getAppIdByEmail/registerUser wird nirgends aufgerufen.",
+      "v": "bestätigt"
+    },
+    "services/user-registration/user-registration.service#db-b3bd98e0": {
+      "s": "na",
+      "n": "toter Code bestätigt (wie db-80d3e75d).",
+      "v": "bestätigt"
+    },
+    "x-6360d343ea": {
+      "s": "na",
+      "n": "Zurückgenommen als Duplikat: gleicher Befund wie x-f8c0f7deaa (fehlende Sortierung nach index in loadShifts), dort bestätigt (mittel). Beispiel [2,3,2] ist korrekt (zwei Segmente gelöscht, eins ergänzt).",
+      "v": "korrigiert"
+    },
+    "x-0df39acfdc": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:95",
+        "lib/features/teachers/presentation/pages/teachers_list_page.dart:172",
+        "lib/data/repositories/teacher_repository.dart:98"
+      ],
+      "n": "Befund real. Ionic: Lehrerliste ohne Lösch-Aktion (TeacherService.deleteTeacher ohne Aufrufer). Flutter: Admin und Verantwortlich können Lehrer per Wischen mit Bestätigung löschen (delete teachers nach id + tenantId) – zusätzliche Schreibmöglichkeit.",
+      "v": "bestätigt"
+    },
+    "x-f8c0f7deaa": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/data/repositories/shift_repository.dart:25",
+        "lib/data/models/shift/shift_plan.dart:15",
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:374"
+      ],
+      "n": "Befund real. Ionic loadShifts sortiert definition nach index; Editor vergibt index = Länge, nach Löschen von mindestens zwei Segmenten und Ergänzen entsteht z. B. [2,3,2] → Ionic zeigt/rechnet nach dem Laden [A,C,B]. Flutter übernimmt die gespeicherte Array-Reihenfolge [A,B,C] (kein Sortieren in fromJson/Repository, Editor vergibt index ebenso). Andere Segmentfolge und ggf. andere 'Schichtbedingt'-Status für solche Pläne.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

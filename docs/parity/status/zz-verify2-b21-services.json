@@ -1,0 +1,71 @@
+{
+  "batch": "zz-verify2-b21-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "x-327176cf3d": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/utils/instrument_matcher.dart:40",
+        "lib/core/utils/instrument_matcher.dart:48"
+      ],
+      "n": "Befund real. Ionic: drei Durchgänge (Name/Synonyme, Übersetzungs-Varianten, Kürzel) mit Teilstring-Abgleich, erste Gruppe gewinnt. Flutter: bewertet alle Gruppen (ganze Wörter, Stimmnummern, Konfidenz, Synonyme, part-detect). In Flutter fehlen u. a. Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte und Transliterationen (skripka, fleita, truba, valtorna, litavry) sowie к-б/ф-но/уд → solche Dateien werden anders oder gar nicht automatisch zugeordnet (Name/Synonym der Gruppe greift weiter).",
+      "v": "bestätigt"
+    },
+    "x-689f15c9e6": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/utils/spreadsheet_reader.dart:43",
+        "lib/core/utils/import_file_io.dart:13"
+      ],
+      "n": "Befund real. Ionic: SheetJS liest .xlsx, .xls, .csv (Personen- und Werk-Import, accept='.xlsx,.xls,.csv'). Flutter: Dateiauswahl erlaubt xls, readSpreadsheet bricht bei .xls mit coreFlutterXlsUnsupported ab – Nutzer muss nach xlsx/csv umwandeln.",
+      "v": "bestätigt"
+    },
+    "x-b0bfc0b3f4": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/utils/spreadsheet_reader.dart:186"
+      ],
+      "n": "Befund real (Flutter-Code eindeutig, Paket excel-4.0.6 nicht im Pub-Cache, Verhalten nach bekanntem 4.x-Parser): cellToDart gibt bei FormulaCellValue value.formula zurück. Numerische Formelzellen liefern damit den Formeltext (z. B. 'A2+1'), Formeln mit Text-Ergebnis (t='str') den gespeicherten Wert. Ionic SheetJS liefert immer den berechneten Wert → importierte Zahlen/Daten aus Formeln falsch.",
+      "v": "bestätigt"
+    },
+    "x-5195e84084": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/services/plan_export_service.dart:60",
+        "lib/core/services/export_service.dart:251",
+        "lib/core/services/export_service.dart:486",
+        "lib/features/songs/data/song_print_service.dart:164",
+        "lib/features/team_organization/protocol_pdf.dart:54"
+      ],
+      "n": "Befund real (Ionic-Schrift ist DejaVu Sans, nicht NotoSans). Ionic registerExportFont bettet die Unicode-Schrift in Plan-, Export-, Werk- und Protokoll-PDFs ein. Flutter: kein pw.ThemeData/TTF in irgendeinem pw.Document; Standard-Helvetica (pdf-3.13.1 type1_font.dart:126 nur U+0000–00FF) → kyrillische Namen/Titel (App hat russische Nutzer, Ionic ru.json), „ “, – und € werden als Platzhalter gedruckt. Umlaute/ß gehen.",
+      "v": "bestätigt"
+    },
+    "x-b0b447ee66": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/people/people_list_utils.dart:77",
+        "lib/features/people/people_list_utils.dart:85",
+        "lib/features/people/presentation/pages/people_list_page.dart:397",
+        "lib/features/members/data/providers/members_providers.dart:28"
+      ],
+      "n": "Befund real. Ionic: Gruppenname und Nachname per localeCompare (Ä/Ö/Ü bei A/O/U). Flutter sortPeopleByGroup: toLowerCase().compareTo (Codepunkt) → 'Özdemir' nach 'Zimmer', Gruppe 'Ältere' nach 'Zupfer'. Betrifft Personenliste (Sortierung Gruppe, auch Liste/Export daraus) und Mitglieder-Tab; localeCompareDe (core/utils/people_sort.dart:8) existiert, wird hier nicht genutzt.",
+      "v": "bestätigt"
+    },
+    "x-3edcb533f9": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/providers/attendance_providers.dart:300"
+      ],
+      "n": "Befund real. Termine werden mit 12:00 gespeichert (attendance-create.ts:56). Ionic zählt Termine vor jetzt + 24 h → heutiger Termin immer, morgiger ab 12 Uhr. Flutter .lte('attendance.date', now) → heutiger erst ab 12 Uhr, morgiger nie. Prozentwerte der Personenliste weichen an Termin-Tagen ab.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

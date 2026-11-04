@@ -238,13 +238,18 @@ const FILTERS = new Set(['eq', 'neq', 'gt', 'gte', 'lt', 'lte', 'in', 'is', 'not
 const STORAGE_OPS = new Set(['upload', 'remove', 'download', 'getPublicUrl', 'createSignedUrl', 'createSignedUrls', 'list', 'move', 'copy', 'update']);
 
 // Walks up a call chain a.from('x').select().eq().… and returns the calls.
+const skipWrappers = (n) => {
+  // (supabase.from('x') as any).select(…): walk up through casts and parentheses
+  while (n.parent && (ts.isParenthesizedExpression(n.parent) || ts.isAsExpression(n.parent) || ts.isNonNullExpression(n.parent) || ts.isTypeAssertionExpression?.(n.parent))) n = n.parent;
+  return n;
+};
 const chainCalls = (sf, startCall) => {
   const calls = [];
-  let n = startCall;
+  let n = skipWrappers(startCall);
   while (n.parent && ts.isPropertyAccessExpression(n.parent) && n.parent.parent && ts.isCallExpression(n.parent.parent)) {
     const call = n.parent.parent;
     calls.push({ name: n.parent.name.getText(sf), args: call.arguments.map((a) => clip(nodeText(sf, a), 160)) });
-    n = call;
+    n = skipWrappers(call);
   }
   return calls;
 };
@@ -321,6 +326,7 @@ const scanTs = (file) => {
   // behaviour behind the UI (loading, sorting, filtering, calculations,
   // role flags) is compared method by method, not only the visible parts.
   const methods = [];
+  const bodies = {};
   const visitMembers = (n) => {
     if (ts.isClassDeclaration(n)) {
       for (const m of n.members) {
@@ -331,15 +337,17 @@ const scanTs = (file) => {
         const end = lineOf(src, m.getEnd());
         const name = ts.isConstructorDeclaration(m) ? 'constructor' : `${ts.isGetAccessor(m) ? 'get ' : ts.isSetAccessor(m) ? 'set ' : ''}${m.name?.getText(sf)}`;
         methods.push(`${name}:${start}-${end}`);
+        bodies[name] = hash(m.getText(sf).replace(/\s+/g, ' '));
       }
     } else if (ts.isFunctionDeclaration(n) && n.name) {
       methods.push(`function ${n.name.getText(sf)}:${lineOf(src, n.getStart(sf))}-${lineOf(src, n.getEnd())}`);
+      bodies[`function ${n.name.getText(sf)}`] = hash(n.getText(sf).replace(/\s+/g, ' '));
     }
     ts.forEachChild(n, visitMembers);
   };
   visitMembers(sf);
   if (methods.length) {
-    addItem(unit, { kind: 'logic', file: rel(file), line: 1, cond: [], methods, sig: 'logic' });
+    addItem(unit, { kind: 'logic', file: rel(file), line: 1, cond: [], methods, bodies, sig: 'logic' });
   }
 
   const push = (kind, node, data, sig) => {
@@ -426,6 +434,14 @@ const scanTs = (file) => {
           filters: calls.filter((c) => FILTERS.has(c.name)).map((c) => `${c.name}(${c.args.join(', ')})`),
           tenantFilter: calls.some((c) => c.name === 'eq' && /tenant[_]?id/i.test(c.args[0] ?? '')),
         }, `${enclosingMethod(n)}|${table}|${op?.name}|${calls.map((c) => c.name).join('.')}`);
+      } else if (last === 'from' && arg0 && !/\bstorage$/.test(target) && /supabase|client|\bsb\b|getSupabase\(\)|\bdb\b/i.test(target)) {
+        // .from(tableVariable): table not resolvable statically
+        const calls = chainCalls(sf, n);
+        const op = calls.find((c) => DB_OPS.has(c.name));
+        push('db', n, { table: `?:${clip(nodeText(sf, arg0), 80)}`, op: op?.name ?? 'select?', unresolved: true,
+          payload: op && op.name !== 'select' && op.name !== 'delete' ? op.args[0] ?? null : null,
+          filters: calls.filter((c) => FILTERS.has(c.name)).map((c) => `${c.name}(${c.args.join(', ')})`) },
+          `${enclosingMethod(n)}|?${nodeText(sf, arg0)}|${op?.name}|${calls.map((c) => c.name).join('.')}`);
       } else if (last === 'from' && arg0 && /\bstorage$/.test(target)) {
         const calls = chainCalls(sf, n);
         const op = calls.find((c) => STORAGE_OPS.has(c.name));
@@ -584,6 +600,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
         tag: name,
         attrs: attrsMap,
         events: el.outputs.map((o) => `(${o.name})=${clip(slice(o.handlerSpan), 160)}`),
+        bindings: el.inputs.map((i) => clip(slice(i.sourceSpan), 200)),
         ...label(own),
         sig: `${name}|${JSON.stringify(attrsMap)}|${keysIn(own).join(',')}`,
       });
@@ -623,6 +640,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
         events,
         link: link ?? null,
         model: model ? clip(slice(model.sourceSpan), 160) : modelAttr ? `${modelAttr.name}=${modelAttr.value}` : null,
+        bindings: el.inputs.filter((i) => !(`[${i.name}]` in attrsMap) && !/^(ngModel|formControlName|formControl)$/.test(i.name)).map((i) => clip(slice(i.sourceSpan), 160)),
         icons: icons(el),
         options: options.length ? options : undefined,
         ...label(fullText),
@@ -641,6 +659,24 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
         }
       }
       return;
+    }
+
+    // images (avatar, logo, passport photo, …)
+    if (name === 'img' || name === 'ion-img') {
+      const src = el.attributes.find((a) => a.name === 'src')?.value ?? slice(el.inputs.find((a) => a.name === 'src')?.sourceSpan).replace(/^[^=]*=\s*/, '');
+      const alt = el.attributes.find((a) => a.name === 'alt')?.value ?? slice(el.inputs.find((a) => a.name === 'alt')?.sourceSpan).replace(/^[^=]*=\s*/, '');
+      addItem(unit, {
+        kind: 'media',
+        file: unit.html,
+        line: ln(el.sourceSpan),
+        cond: condHere,
+        tag: name,
+        src: clip(src, 200),
+        alt: alt ? clip(alt, 120) : undefined,
+        bindings: el.inputs.map((i) => clip(slice(i.sourceSpan), 160)),
+        events: el.outputs.map((o) => `(${o.name})=${clip(slice(o.handlerSpan), 160)}`),
+        sig: `${name}|${src}`,
+      });
     }
 
     // custom component embeds
@@ -684,7 +720,7 @@ const scanTemplate = (unit, htmlFile, text, baseOffset = 0, baseLine = 0) => {
   // Inside an action, only nested interactive elements become items.
   const visitInteractiveOnly = (n, cond) => {
     if (n instanceof ng.TmplAstElement) {
-      if (n.outputs.length || FIELD_TAGS.has(n.name) || /^ion-(modal|popover)$/.test(n.name)) return visitElement(n, cond);
+      if (n.outputs.length || FIELD_TAGS.has(n.name) || /^ion-(modal|popover)$/.test(n.name) || n.name === 'img' || n.name === 'ion-img') return visitElement(n, cond);
       return n.children.forEach((c) => visitInteractiveOnly(c, cond));
     }
     if (n.branches) {
@@ -768,6 +804,12 @@ for (const u of units.values()) {
 // Templates not referenced by any component (should not happen; listed for completeness)
 const usedHtml = new Set([...units.values()].map((u) => u.html).filter(Boolean));
 const orphanHtml = [...htmlFiles].map(rel).filter((h) => !usedHtml.has(h) && !h.endsWith('index.html'));
+for (const h of orphanHtml) {
+  const u = unitFor(join(appDir, h), 'template');
+  u.html = h;
+  u.orphan = true; // no component references it: review decides whether it is reachable
+  scanTemplate(u, h, readFileSync(join(appDir, h), 'utf8'));
+}
 
 parseRoutes(join(appDir, 'app-routing.module.ts'), '');
 for (const r of routes) {

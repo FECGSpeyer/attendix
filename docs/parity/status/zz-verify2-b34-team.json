@@ -1,0 +1,175 @@
+{
+ "batch": "zz-verify2-b34-team",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-03443e7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:222",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:114"
+   ],
+   "v": "bestätigt",
+   "n": "Rollen: isLeader = Admin/Verantwortlich in beiden (Ionic isTeamLeaderRole, Flutter isTeamLeaderProvider über effectiveRole); Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber sehen den Button in beiden nicht. Bedingung !isNew && item gleich. Dialog „Thema wirklich löschen?“ mit Hinweistext, Abbrechen/Löschen (destruktiv), Toast „Gelöscht“ (grün), zurück zum Themen-Tab; Löschen mit id + tenant_id (Ionic ohne tenant-Filter, RLS)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-219c0bba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:290"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Admin/Verantwortlich in beiden (isTeamLeaderRole ↔ isTeamLeaderProvider), alle anderen Rollen bekommen die Nur-Lese-Ansicht. Label „Titel“, Platzhalter „Worum geht es?“, Satzanfang groß."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-39a93a68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:291"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Admin/Verantwortlich in beiden. „Beschreibung“ / „Hintergrund, Ziel, offene Fragen …“, mehrzeilig ab 3 Zeilen (Flutter max. 10 Zeilen sichtbar statt autoGrow)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-2f9c0ed7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:302"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Admin/Verantwortlich in beiden. Dropdown statt Popover-Select; Offen/Erledigt/Verworfen in gleicher Reihenfolge, gleiche Werte (open/completed/dropped)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-3a89b9b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:310"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Admin/Verantwortlich in beiden. Dropdown statt Popover-Select; Hoch/Mittel/Niedrig in gleicher Reihenfolge."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-7e0c435f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:347",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:248"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht für alle Nicht-Leitungsrollen (Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber) in beiden gleich; Route ohne Rollen-Guard in beiden. Titel 20px/600."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8b87f4b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:350"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich. Status-Badge Offen/Erledigt/Verworfen, Farben primary/success/medium wie getStatusColor."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-c1d2d5c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:358"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich. Prioritäts-Badge Hoch/Mittel/Niedrig, Farben danger/warning/medium wie getPriorityColor."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-048e6c66": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:363"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; „Verantwortlich“ nur wenn ein Name vorhanden ist. Ionic-Fallback auf persons greift für Nicht-Leitung nie (persons nur für Leitung geladen), beide nutzen den gejointen responsible_person."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-24277623": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:366"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; „Vorname Nachname“ als Note rechts."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-073edee5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:368"
+   ],
+   "v": "bestätigt",
+   "n": "Nur-Lese-Ansicht (Nicht-Leitung) in beiden gleich; Beschreibung grau, Zeilenumbrüche bleiben erhalten (pre-wrap ↔ Text)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:133"
+   ],
+   "v": "korrigiert",
+   "n": "Rollen gleich (nur Admin/Verantwortlich). Ionic: Bedingung nutzt das per ngModel gebundene item.status – ein ungespeicherter Wechsel im Status-Dropdown blendet „Einplanen“ sofort aus bzw. ein, eingeplant werden die ungespeicherten Titel/Dauer. / Flutter: prüft den gespeicherten Status (item?.status statt _status) und plant den gespeicherten Stand ein – der Button bleibt bis zum Speichern sichtbar bzw. erscheint erst danach. Sheet (bis 6 Termine, „ (bereits eingeplant)“ gesperrt, „Neuen Termin anlegen“, Abbrechen) und Toast „Eingeplant für …“ sonst gleich; veraltete Terminliste siehe x-c0aa3c047c. Die Erstprüfung hat die Status-Bindung übersehen."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-991adfdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:477"
+   ],
+   "v": "bestätigt",
+   "n": "Nur Admin/Verantwortlich, nur bei bestehendem Thema – in beiden gleich. Öffnet das Aufgaben-Sheet (volle Höhe) mit agendaItemId, Kontext = Thema-Titel, vorbelegter verantwortlicher Person; die neue Aufgabe erscheint per Invalidierung von tasksForAgendaItemProvider."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79"
+   ],
+   "v": "korrigiert",
+   "n": "Rollen/Bedingung gleich (Leitung, Thema geladen oder neu); gleiche Spalten (title, description, status, priority, responsible_person_id, default_duration, beim Anlegen tenant_id), Prüfung „Bitte einen Titel eingeben“, Toast „Gespeichert“. Abweichung bei der Dauer – Ionic: Number() + Math.round („7.5“ → 8) / Flutter: int.tryParse → bei Dezimaleingabe 0 → default_duration = null, eine bestehende Dauer wird gelöscht. Randfall (Android/Web; der iOS-Ziffernblock hat kein Komma). Der Unterschied beim Ladeoverlay gehört zum eigenen loading-Eintrag."
+  },
+  "x-e667e885b5": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:212",
+    "lib/core/providers/team_org_providers.dart:221",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:191",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:384",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:448"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt. agendaItemHistoryProvider wird nur nach eigenem Einplanen auf dieser Seite invalidiert, agendaItemByIdProvider nur über AgendaItemNotifier.update (eigenes Speichern, Vorschlag entscheiden, Thema schließen bei Freigabe). Beide sind nicht autoDispose, die Seite hat kein Pull-to-Refresh. Wer im Protokoll ein Ergebnis setzt (_setOutcome) und zurückgeht, sieht im Verlauf weiter „Geplant“/„Ohne Ergebnis“ statt z. B. „Beschlossen“. Änderungen anderer Leitungen an Thema/Verlauf/Aufgaben erscheinen erst nach App-Neustart oder Konto-/Instanzwechsel. Ionic lädt Verlauf und Aufgaben bei jedem ionViewWillEnter und das Thema bei jedem Öffnen."
+  },
+  "x-152ac6b928": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:54",
+    "lib/features/team_organization/protocol_pdf.dart:68",
+    "lib/features/team_organization/protocol_pdf.dart:148",
+    "lib/features/team_organization/tiptap_delta.dart:435"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt: pw.Document() ohne Theme, in ganz lib/ keine PDF-Schrift → Helvetica Type1, isRuneSupported nur U+0000–00FF (pdf-3.13.1 type1_font.dart:126), sonst ein durchgekreuzter Platzhalter-Kasten (widgets/text.dart:790/905). Schon die App-eigenen Zeichen sind betroffen: der Listenpunkt „•“ (docToLines-Marker, „Weitere Aufgaben“) und die Zitatzeichen „ “ bei Blockquotes – also jedes Protokoll mit Aufzählung. Dazu Namen und Notizen mit ł, č, ő, ş usw., Kyrillisch komplett, „–“, „…“ und iOS-Smart-Quotes. Ionics vollständige NotoSans (cmap geprüft) deckt all das ab. Präzisierung: Emojis fehlen auch in Ionic (NotoSans ohne Emoji), also kein Unterschied. Das PDF geht bei der Freigabe an das Team → hoch bleibt."
+  },
+  "x-fdf18ca23d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:797",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:374",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:693",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:744"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt. _openPublish überspringt jede Sektion mit vorhandenem QuillController; _controllers bleibt nach dem ersten Öffnen bis dispose bestehen, auch ohne Eingabe. _hasNotes und _currentDoc (Zusammenfassung, PDF) lesen den Controller. Ionic mergeServerRow übernimmt Server-Notizen für alle Sektionen ohne ungespeicherte Änderung und setzt editorContent (tiptap-editor ngOnChanges → setContent), dazu nochmals nach publish(); Flutter übernimmt nach publish nur Metadaten. Folge: fremde Notizen fehlen in der Zusammenfassung („ohne Notizen“) und im versendeten PDF, spätere Eingaben in der Sektion überschreiben sie in der DB. Tritt nur auf, wenn mehrere Leitungen gleichzeitig schreiben → mittel."
+  },
+  "x-c0aa3c047c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:138",
+    "lib/core/providers/team_org_providers.dart:255",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:158",
+    "lib/features/planning/presentation/pages/planning_page.dart:1162"
+   ],
+   "v": "bestätigt",
+   "n": "Bestätigt. upcomingProtocolAttendancesProvider (nicht autoDispose) wird nur in Team-Org-Pfaden invalidiert: Einplanen, Agenda-Picker, spontaner TOP im Protokoll, Schnellanlage, Themen-Tab-Refresh/Datum ändern, Tagesordnung im Termin. Normale Terminanlage (invalidateAfterCreate/createAttendance: nur attendancesProvider/upcomingAttendancesProvider), Termin löschen und Speichern im Ablaufplan-Editor invalidieren ihn nicht. Folgen: neue Termine fehlen im Einplanen-Sheet; gelöschte bleiben, und Einplanen scheitert dort (updateAttendancePlan wirft → „Thema konnte nicht eingeplant werden“); im Editor entfernte TOPs bleiben als „ (bereits eingeplant)“ gesperrt. Ionic lädt bei jedem Tippen neu."
+  }
+ },
+ "extra": []
+}

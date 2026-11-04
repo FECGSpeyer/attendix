@@ -1,0 +1,379 @@
+{
+ "batch": "zz-verify2-b09-people",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "people/person/person.page#alert-77f37654": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:568",
+    "lib/features/people/presentation/pages/person_detail_page.dart:754",
+    "lib/features/people/presentation/pages/person_detail_page.dart:807"
+   ],
+   "n": "Bedingung gleich (!general, Person hat Konto, Stimmführer neu eingeschaltet); Titel „Stimmführer aktivieren“, Text mit Name, Buttons Abbrechen (setzt Schalter zurück, speichert nicht) / „Nur Stimmführer-Status“ / „Mit Rolle speichern“ (Helfer→Stimmführer & Helfer, sonst Stimmführer). Erreichbar nur für Admin/Verantwortliche (canEdit) wie Ionic (!readOnly)."
+  },
+  "people/person/person.page#alert-b55317e3": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1393",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1454",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1476"
+   ],
+   "n": "Option „Entfernen“ nur wenn Person nicht der eigene Account (isSelf über auth-User-ID) wie Ionic; Menü nur Admin/Verantwortliche. Dialog „Person entfernen“, Text gleich, Abbrechen/Ja; löscht player (id + tenantId) und entzieht Konto-Zugang wie db.removePlayer."
+  },
+  "people/person/person.page#toast-7d104b56": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1481"
+   ],
+   "n": "Erfolgs-Toast „Die Person wurde erfolgreich entfernt“, Fehler als danger-Toast."
+  },
+  "people/person/person.page#text-14657460": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1766"
+   ],
+   "n": "Titel nur bei canEdit (Admin/Verantwortliche, nicht archiviert) und nicht pending; Beobachter/archivierte Person ohne Titel wie Ionic readOnly."
+  },
+  "people/person/person.page#action-f2320b9a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:147",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1806"
+   ],
+   "n": "Stift nur bei canEdit && !editingName (Ionic existingPlayer && !readOnly && !editingName); öffnet Vor-/Nachname + „Fertig“. Icon edit_note statt create-outline (gleiche Bedeutung)."
+  },
+  "people/person/person.page#action-caeb0a85": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:52",
+    "lib/features/people/presentation/pages/person_create_page.dart:397",
+    "lib/features/people/presentation/pages/person_create_page.dart:224",
+    "lib/features/people/presentation/pages/person_create_page.dart:1028",
+    "lib/features/people/presentation/pages/people_list_page.dart:563"
+   ],
+   "n": "Für Admin/Verantwortliche gleich (Icon/Farbe nach Konto/E-Mail, Name, Gruppe · Instanz, Grund, Badge Konto/E-Mail, Prozent; Tipp übernimmt Daten, Toast „Die Daten wurden erfolgreich übernommen“). Erstprüfer übersah die Rolle Beobachter: bei leerer Personenliste zeigt die Liste „Person hinzufügen“ ohne Rollenprüfung (people_list_page:563, wie Ionic list.page.html:461), Ionic öffnet die Neu-Seite dann aber readOnly (list.page.ts:238: Felder gesperrt, onNameInput bricht ab → keine Vorschläge, Anlegen scheitert an leeren Namen) / Flutter-Neu-Seite hat keinen Rollen-Check → Beobachter sieht Vorschläge aus verknüpften Instanzen, kann übernehmen und Anlegen versuchen (Insert nur noch durch RLS blockiert, falls aktiv). Nebenbei Flutter besser: übernommenes Passbild wird beim Anlegen gespeichert (Ionic pickPersonFields ohne img → nur Vorschau)."
+  },
+  "people/person/person.page#text-df85d683": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:38",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1839"
+   ],
+   "n": "Label „Problemfall“, nur canEdit && isCritical wie Ionic (!readOnly && isCritical), aufgeklappt. Der zusätzliche Kasten „Grund“ mit Rohwert ist eigener Befund x-c8b7613536."
+  },
+  "people/person/person.page#text-e7801fc0": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:103"
+   ],
+   "n": "„Anmerkungen“ nur bei aktivem „Mit Person gesprochen“ und canEdit."
+  },
+  "people/person/person.page#field-36a3bcfe": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:100",
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:108"
+   ],
+   "n": "Mehrzeiliges Textfeld (zusätzlicher Hinweis „Was wurde besprochen?“), nur wenn gelöst; Text wird als Historien-Eintrag Typ 3 gespeichert. Abweichender Speicherweg (eigener Button statt Speichern-FAB) ist bei field-fe3a2971 erfasst."
+  },
+  "people/person/person.page#text-e678fd99": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:33",
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:47",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1853"
+   ],
+   "n": "Nur canEdit (Admin/Verantwortliche) und lateCount ≥ Schwelle der ersten critical_rule mit Status Verspätet (sonst 999) wie Ionic."
+  },
+  "people/person/person.page#text-ad6357dd": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:64"
+   ],
+   "n": "„Zusätzlich {n}x entschuldigt zu spät.“ nur bei lateCountExcused > 0."
+  },
+  "people/person/person.page#action-0de19419": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:78",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1148"
+   ],
+   "n": "Label/Icon gleich; setzt lastSolve, Toast „Verspätungszähler zurückgesetzt“, Karte verschwindet. Fehlendes Loading und kleinerer Schreibumfang sind separat erfasst (loading-be5cc2f1, Extra „Flutter besser“)."
+  },
+  "people/person/person.page#field-8d1cf99a": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:210",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:662"
+   ],
+   "n": "Bedingung gleich (VoS, nicht Hauptgruppe, bearbeitbar oder Wert vorhanden); Mehrfachauswahl SoS/GoS/BoS per Checkbox-Dialog, markiert Änderung, gespeichert in otherOrchestras; leer „Keine“."
+  },
+  "people/person/person.page#field-be17a89b": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:214",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:870"
+   ],
+   "n": "Bedingung gleich (VoS, nicht Hauptgruppe, canEdit oder examinee); Schalter „Prüfling“ markiert Änderung, nur bei canEdit änderbar."
+  },
+  "people/person/person.page#text-79d104bf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:223",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:644"
+   ],
+   "n": "Bedingung nicht ganz gleich. Ionic: !readOnly || otherExercise (leerer String gilt als leer) / Flutter: otherExercise != null || canEdit → Beobachter und archivierte Personen sehen bei gespeichertem '' eine leere Zeile „Sonstige Dienste“."
+  },
+  "people/person/person.page#text-e65374d2": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:66",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1865"
+   ],
+   "n": "Nur canEdit (Admin/Verantwortliche) && !pending; Eltern/Beobachter/Bewerbungsmodus ohne Account-Bereich wie Ionic (!isParent && !readOnly && !approveMode)."
+  },
+  "people/person/person.page#text-a6284510": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:86"
+   ]
+  },
+  "people/person/person.page#action-eec7f233": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:182"
+   ],
+   "n": "Button „Hilfe“ mit Hilfe-Icon im Account-Bereich (nur dort sichtbar, canEdit)."
+  },
+  "people/person/person.page#text-569fac2e": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:282"
+   ],
+   "n": "Titel „Hilfe“; Darstellung als Dialog mit „Schließen“ statt Sheet (50 %) betrifft das Modal, nicht den Text."
+  },
+  "people/person/person.page#text-b4cb386f": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:288"
+   ],
+   "n": "Nur ohne Konto (appId null) wie Ionic."
+  },
+  "people/person/person.page#text-67d8ca5f": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:291"
+   ]
+  },
+  "people/person/person.page#text-408e4921": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:24",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:33",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:222"
+   ],
+   "n": "Erstprüfer prüfte nur die Anzeige, nicht die Instanzliste. Ionic getTenantsFromUser: nur Instanzen, die über die Organisation mit der aktuellen verknüpft sind (getLinkedTenants), und nicht, wenn die Person dort Beobachter ist / Flutter: alle tenantUsers-Instanzen der Person außer der aktuellen, auch ohne Organisations-Verknüpfung und mit Rolle Beobachter → zusätzliche Zeilen (Instanzname, Rolle, Quote) für alle, die die Seite öffnen (Admin, Verantwortliche, Beobachter); bei aktiver RLS begrenzt auf Instanzen, die der Betrachter selbst verwaltet. Name longName (Fallback shortName) sonst gleich."
+  },
+  "people/person/person.page#text-a48aa58c": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:94",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:110",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:225"
+   ],
+   "n": "Ionic Utils.getRoleText: Elternteil, Stimmführer, Stimmführer & Helfer, unbekannte Rolle (z. B. Bewerber) „Unbekannt“ / Flutter: nur Rollen 1–5 übersetzt, Rollen 6–9 und alle anderen als „Mitglied“ → z. B. Stimmführer in der anderen Instanz erscheint als „Mitglied“."
+  },
+  "people/person/person.page#action-a6446ca3": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:226",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:257",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:275"
+   ],
+   "n": "Wischaktion (Papierkorb, rot) nur canEdit und kein Termin-Eintrag; Bestätigung „Eintrag unwiderruflich entfernen?“ Abbrechen/Ja, entfernt den Eintrag (Datum+Typ+Text statt nur Datum) aus history, Toasts gleich."
+  },
+  "people/person/person.page#text-9102c4ae": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:328",
+    "lib/features/people/presentation/widgets/planned_absences.dart:337",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1911"
+   ],
+   "n": "Nur canEdit und canManagePlannedAbsences (Admin/Verantwortliche oder Rechte-Flag) – effektiv Admin/Verantwortliche wie Ionic (!readOnly ⇒ Admin); „Abwesenheiten ({n})“ bzw. „Abwesenheiten“."
+  },
+  "people/person/person.page#text-9bed7686-3": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:291"
+   ],
+   "n": "„dd.MM.yyyy – dd.MM.yyyy“, gleiche Datenquelle (player_absences der Person, tenant_id, order from_date)."
+  },
+  "people/person/person.page#text-e09c40a1": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:292"
+   ]
+  },
+  "people/person/person.page#action-99512786": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:296",
+    "lib/features/people/presentation/widgets/planned_absences.dart:248"
+   ],
+   "n": "Roter Papierkorb; Bestätigung „Abwesenheit löschen“ mit gleichem Text, Löschen (destruktiv); löscht und setzt entschuldigte Termine zurück, Toast „Abwesenheit gelöscht“."
+  },
+  "people/person/person.page#text-d7650994": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:352"
+   ]
+  },
+  "people/person/person.page#action-9ebb72e0": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:359",
+    "lib/features/people/presentation/widgets/planned_absences.dart:362"
+   ],
+   "n": "Eintrag mit Plus-Icon (primär) öffnet „Abwesenheit eintragen“ für die Person (Hinweis für andere Person)."
+  },
+  "people/person/person.page#action-c210ff08": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1915",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1920"
+   ],
+   "n": "Nur wenn Dienst-Typen (duty_mode) existieren, letzter Eintrag der Liste; öffnet „Regelmäßig verhindert“ (personId, Name, forOther) als Vollbild-Dialog."
+  },
+  "people/person/person.page#action-a75ff037": {
+   "s": "ok",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1737",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1351"
+   ],
+   "n": "„…“-FAB nur bei canEdit, ohne Änderungen, nicht pending und (Konto vorhanden oder keine E-Mail) wie Ionic."
+  },
+  "x-51a2c3a242": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:294",
+    "lib/features/people/presentation/pages/person_detail_page.dart:357",
+    "lib/features/people/presentation/pages/person_detail_page.dart:650",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1690",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:91"
+   ],
+   "n": "Bestätigt: _PersonDetailContent hat kein didUpdateWidget, _draft wird nur in initState gesetzt; nach ref.invalidate bleibt der State erhalten (Riverpod 2.6 when: skipLoadingOnRefresh) → Bild, rote Leiste, Problemfall, Account (Verknüpft/Rolle, E-Mail) und Geburtstags-Markierung bleiben veraltet. Zusätzlich: ein späteres Speichern schreibt 'email': _draft.email → nach „In anderer Instanz suchen“, „Meinen Benutzer zuweisen“ oder „Verknüpfung aufheben“ wird die alte E-Mail zurückgeschrieben."
+  },
+  "x-c4faf6c06b": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:603",
+    "lib/features/people/presentation/pages/person_detail_page.dart:625"
+   ],
+   "n": "Bestätigt: _draft.notes ist bei Person ohne Notiz null, Vergleich null != '' → jedes Speichern hängt einen Eintrag „Keine Notiz“ (Typ Notiz geändert) an. Verstärkt, weil Flutter leere Notizen selbst als null speichert (Zeile 625)."
+  },
+  "x-70a0612c36": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:366",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:752"
+   ],
+   "n": "Bestätigt (Ionic person.page.ts:169-175 mit Utils.getFieldTypeDefaultValue): Ionic zeigt fehlende Zusatzfelder vorbelegt (Ja/Nein an, Auswahl erste Option, Datum heute …) und schreibt sie beim nächsten Speichern / Flutter zeigt „Nicht angegeben“ bzw. Schalter aus und schreibt nichts."
+  },
+  "x-9a5e7d5318": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:238",
+    "lib/features/people/presentation/pages/person_create_page.dart:291"
+   ],
+   "n": "Bestätigt: Ionic 9f9b82af übergibt field.defaultValue und Gemeinden (person.page.ts:223, Utils.ts:1446) / Flutter ignoriert defaultValue (z. B. Ja/Nein mit Standard „Nein“ wird true), Gemeinde '' („Nicht gelistet“) statt erste Gemeinde, Datum YYYY-MM-DD statt ISO-Zeitstempel."
+  },
+  "x-ab8dec14f2": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:60",
+    "lib/features/people/presentation/pages/person_create_page.dart:85",
+    "lib/features/people/presentation/pages/person_create_page.dart:1025",
+    "lib/features/people/presentation/pages/person_create_page.dart:1043"
+   ],
+   "n": "Bestätigt: Ionic newPlayer setzt Geburtstag und „Spielt seit“ auf heute (correctBirthday false, später gelb markiert) / Flutter leer (null), correctBirthday = birthday != null. Spalten sind nullable, Anlegen funktioniert."
+  },
+  "x-8ce7bfd4a3": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:471"
+   ],
+   "n": "Bestätigt: Ionic addPerson prüft nur Vor-/Nachname / Flutter-Validator ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$ blockiert „+“ und TLDs über 4 Zeichen (Detailseite erlaubt sie, Zeile 531)."
+  },
+  "x-78e8317eac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "v": "korrigiert",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:866",
+    "lib/features/people/presentation/pages/person_detail_page.dart:873",
+    "lib/features/people/presentation/pages/person_detail_page.dart:874"
+   ],
+   "n": "Zu hoch bewertet: Ionic speichert img beim Aktualisieren nie (pickPersonFields ohne img, db-helpers.ts:86) – das übernommene Passbild ist dort nur bis zum Schließen im Header sichtbar. Bleibt: fehlende Header-Vorschau; Ionic überschreibt otherExercise/range mit den Werten des Treffers auch wenn null (leert vorhandene Werte), Flutter nur wenn gesetzt (hier Flutter besser)."
+  },
+  "x-c8b7613536": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "bestätigt",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:58",
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:79"
+   ],
+   "n": "Bestätigt: Kasten „Grund“ zeigt person.criticalReason roh (int-Spalte als Text, z. B. „2“); DashboardUtils.criticalReasonText wird hier nicht genutzt. Ionic zeigt im Problemfall-Bereich keinen Grund."
+  }
+ },
+ "extra": []
+}

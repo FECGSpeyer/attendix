@@ -1,0 +1,94 @@
+{
+  "batch": "zz-verify2-b17-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "services/db.service#db-7acf6dfb": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:375",
+        "lib/data/repositories/user_registration_repository.dart:393",
+        "lib/data/repositories/user_registration_repository.dart:401",
+        "lib/data/repositories/user_registration_repository.dart:424"
+      ],
+      "n": "Flutter besser: Abfrage selbst gleich (player, tenantId + appId). Rollenbedingung weicht ab, vom Erstreview übersehen: Ionic prüft player nur für Spieler/Verantwortlich/Bewerber/Helfer; Stimmführer und Stimmführer-Helfer fallen in den else-Zweig → immer 'Der Benutzer ist bereits in diesem Mandanten', verwaiste tenantUsers-Zeile bleibt (Konto nie neu anlegbar). Flutter behandelt beide Stimmführer-Rollen wie Spieler: verknüpfte Person → '…in diesem Mandanten: Name (Stimmführer)', verwaiste Zeile → gelöscht und neu registriert. Zusätzlich (SOL_FIX25) wird ein Konto, das bereits mit genau dieser Person verknüpft ist, wiederverwendet statt Fehler.",
+      "v": "korrigiert"
+    },
+    "services/db.service#db-760ae443": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:382",
+        "lib/data/repositories/user_registration_repository.dart:393",
+        "lib/data/repositories/user_registration_repository.dart:419"
+      ],
+      "n": "Elternteil: parents nach tenantId + appId; verknüpft → 'Der Benutzer ist bereits in dieser Instanz: Name (Elternteil)', sonst tenantUsers-Zeile (tenantId + userId) löschen – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/db.service#db-b3d6fa91": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:383",
+        "lib/data/repositories/user_registration_repository.dart:393",
+        "lib/data/repositories/user_registration_repository.dart:424"
+      ],
+      "n": "Beobachter: viewers nach tenantId + appId; verknüpft → 'Der Benutzer ist bereits in diesem Mandanten: Name (Beobachter)', sonst Zeile löschen – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/db.service#nav-7f5eeeac": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:344",
+        "lib/core/router/app_router.dart:369",
+        "lib/features/public_links/presentation/pages/open_file_page.dart:82",
+        "lib/features/public_links/presentation/pages/open_file_page.dart:96"
+      ],
+      "n": "Gemerkter Datei-Link wird nach Login (auch nach /terms) eingelöst; /open-file wechselt die Instanz und prüft Dateizugriff (Toast 'files.noAccess' → Startseite) wie Ionic. Randfall ohne jede Instanz: Ionic → /register, Link bleibt gespeichert; Flutter löst ihn sofort ein → Toast 'Du hast keinen Zugriff auf diese Instanz.' → Instanz anlegen (Zugriff in beiden Fällen nicht möglich). Persistenz über Reload: x-8fea36599e.",
+      "v": "bestätigt"
+    },
+    "services/db.service#nav-138a96fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:312",
+        "lib/features/auth/presentation/pages/login_page.dart:458",
+        "lib/core/utils/dashboard_logic.dart:46",
+        "lib/core/constants/enums.dart:137"
+      ],
+      "n": "Ziel je Rolle gleich: Admin/Verantwortlich mit showDashboardTab_<Instanz> → Dashboard; Admin/Verantwortlich/Beobachter → Personen; Eltern → Elternportal; Helfer, Stimmführer(-Helfer), Spieler, Bewerber, NONE → Meine Termine. Instanzauswahl nach Login (Ionic Alert, Flutter Seite /tenants) ist unter alert-f27cc642 erfasst.",
+      "v": "bestätigt"
+    },
+    "services/db.service#nav-8f636066": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:328",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:361",
+        "lib/core/providers/tenant_providers.dart:315"
+      ],
+      "n": "Letzte Instanz gelöscht → /tenants zeigt ohne Instanzen die nicht schließbare Seite 'Neue Instanz anlegen' (= Ionic /register mit Konto-Menü). Löschen nur Admin und nicht Demo, wie Ionic canDeleteTenant.",
+      "v": "bestätigt"
+    },
+    "x-48f72edd36": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:52",
+        "lib/features/auth/presentation/pages/login_page.dart:316",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:93"
+      ],
+      "n": "Befund real. Ionic setTenant: tenantId || localStorage || user_metadata.currentTenantId (Gerät behält seine Instanz, Metadaten werden nachgezogen). Flutter: _initializeTenant serverTenantId ?? cachedTenantId; Login-Navigation und Auto-Navigation der Instanzauswahl lesen nur user_metadata. Nutzt jemand zwei Geräte mit verschiedenen Instanzen, öffnet Flutter beim Start die zuletzt auf irgendeinem Gerät gewählte Instanz, Ionic die des Geräts.",
+      "v": "bestätigt"
+    },
+    "x-ca607be234": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1953",
+        "lib/data/repositories/player_repository.dart:1969",
+        "lib/data/repositories/player_repository.dart:1979"
+      ],
+      "n": "Befund real. Ionic mergePendingPlayerIntoExisting: updateTenantUser({role: PLAYER}) und Freigabe-Mail mit Rolle Mitglied, unabhängig von der Gruppe (wie approvePlayer). Flutter: accountRoleFor → Verantwortlich, wenn die Zielperson in der Hauptgruppe ist, sonst Spieler; schreibt diese Rolle in tenantUsers und die Mail. Ein zusammengeführtes Konto der Hauptgruppe erhält damit Verantwortlich-Rechte, die es in Ionic nicht hätte. Normales Genehmigen setzt in Flutter weiter Spieler.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

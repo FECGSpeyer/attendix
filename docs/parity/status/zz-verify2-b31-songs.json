@@ -1,0 +1,329 @@
+{
+  "batch": "zz-verify2-b31-songs",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "songs/song/song.page#text-0685e298": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:252-254",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:264",
+        "lib/core/providers/song_providers.dart:466-468"
+      ],
+      "n": "Titel „{Nummer} {Name}“ nur lesend (alle Rollen außer Admin/Verantwortlich, Freigabe-Link) – wie Ionic; Flutter trimmt bei fehlender Nummer das führende Leerzeichen.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-3f41f257": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:252-254",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:264",
+        "lib/core/providers/song_providers.dart:466-468"
+      ],
+      "n": "„Werk bearbeiten“ nur für Admin/Verantwortlich, gleiche Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-5a44841e": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:267-274",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:170-174",
+        "lib/core/providers/song_providers.dart:501",
+        "lib/core/providers/song_providers.dart:461"
+      ],
+      "n": "Keine Rollenbedingung in beiden: sichtbar für alle Rollen, wenn der Tenant eine song_sharing_id hat (Flutter liest sie frisch aus tenants), in der Freigabe-Ansicht mit der ID aus der URL. Link https://attendix.de/{id}/{songId}, Tracking, Toast „Der Link wurde in die Zwischenablage kopiert“ (grün).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-bb723d59": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:275-280",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:176-202",
+        "lib/core/providers/song_providers.dart:466-468"
+      ],
+      "n": "Papierkorb nur Admin/Verantwortlich (nicht in Freigabe-Ansicht) wie Ionic; Dialog/Overlay-Abweichungen in alert-877b5429/loading-a35a4f12.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-0685e298-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:305",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:252-254"
+      ],
+      "n": "Großer Titel (iOS condense) mit gleicher readOnly-Bedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-3f41f257-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:305",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:252-254"
+      ],
+      "n": "Großer Titel „Werk bearbeiten“, gleiche Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-0dee90a4": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:404",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:307",
+        "lib/core/providers/song_providers.dart:466-468"
+      ],
+      "n": "„Präfix (optional)“; Formular nur Admin/Verantwortlich. ",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-a1c5c8c4": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:397-408",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:382-387",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:144"
+      ],
+      "n": "Textfeld mit Hilfetext „Bspw. um Weihnachtslieder …“, Satzanfang groß, speichert beim Verlassen; nur Admin/Verantwortlich. Flutter schreibt getrimmt.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-93272c94": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:415"
+      ],
+      "n": "„Nummer“, gleiche Bedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-8bb7c59d": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:410-417",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:145"
+      ],
+      "n": "Zahlenfeld, speichert beim Verlassen (int.tryParse); nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-7af4a9f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:424"
+      ],
+      "n": "„Name“, gleiche Bedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-4e7c4cef": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:419-426",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:146"
+      ],
+      "n": "Textfeld, speichert beim Verlassen; nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-4caddb91": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:429-442"
+      ],
+      "n": "„Schwierigkeitsgrad“ mit „Nicht definiert“, „1 - Leicht“, „2 - Mittel“, „3 - Schwer“ in gleicher Reihenfolge, speichert bei Änderung; nur Admin/Verantwortlich (Speicher-Race s. x-65c1fb4b3b).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-92ca11e1": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:444-452"
+      ],
+      "n": "Schalter „Chor & Orchester“, speichert sofort; nur Admin/Verantwortlich (Speicher-Race s. x-65c1fb4b3b).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-996c74c9": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:454-462"
+      ],
+      "n": "Schalter „Mit Solo-Gesang“, speichert sofort; nur Admin/Verantwortlich (Speicher-Race s. x-65c1fb4b3b).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-75d32e34": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:464-478",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:718-807",
+        "lib/core/providers/song_providers.dart:494-497"
+      ],
+      "n": "„Besetzung“ nur Orchester (tenant.type) und Admin/Verantwortlich wie Ionic; Gruppen ohne Hauptgruppe, Gruppen mit Dateien gesperrt, Mehrfachauswahl im Dialog, speichert nach OK. Veraltete Auswahl nach Datei-Änderungen s. x-47806f440c.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-12d333a5": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:479-490"
+      ],
+      "n": "„Kategorien“ (Kategorien der Werk-Bibliothek inkl. Sync-Quelle), Mehrfachauswahl, speichert nach OK; nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-2352fce9": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:308-309"
+      ],
+      "n": "Überschrift „Kategorien“ nur lesend und mit Kategorien – alle Nur-Lese-Rollen und Freigabe-Link wie Ionic (Kategorienamen in der Freigabe-Ansicht s. text-21178ee6).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-5406c8fa": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:328-332",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:516-517"
+      ],
+      "n": "Chip „Chor & Orchester“ (primary) für Nur-Lese-Rollen/Freigabe wie Ionic.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-65a55078": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:328-332",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:518-519"
+      ],
+      "n": "Chip „Mit Solo-Gesang“ (primary), gleiche Bedingung.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-74dfef04": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:575-586",
+        "lib/core/providers/song_providers.dart:498"
+      ],
+      "n": "Eingeloggt: Ja/Nein-Zusatzfeld für alle Rollen, nur Admin/Verantwortlich änderbar (sonst deaktiviert), Default wie Ionic. Abweichende Abschnitts-Sichtbarkeit in der Freigabe-Ansicht ist in text-e14adf08 erfasst.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-141ebaeb": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:588-604"
+      ],
+      "n": "Auswahl-Zusatzfeld mit Feldname und Optionen, nur Admin/Verantwortlich änderbar, speichert bei Änderung. Freigabe-Ansicht s. text-e14adf08.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-3398e748": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:605-616",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:136-140"
+      ],
+      "n": "Zahl-Zusatzfeld (Zahlentastatur), Nur-Lese-Rollen readOnly, speichert beim Verlassen. Freigabe-Ansicht s. text-e14adf08.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-3398e748-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:605-616",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:136-140"
+      ],
+      "n": "Text-Zusatzfeld, Nur-Lese-Rollen readOnly, speichert beim Verlassen. Freigabe-Ansicht s. text-e14adf08.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-cfeeaff1": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1010-1015",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:967-972",
+        "lib/core/services/zip_service.dart:15-48"
+      ],
+      "n": "Flutter besser: Knopf gleich (nur lesend + Dateien, alle Nur-Lese-Rollen und Freigabe-Link). In der öffentlichen Freigabe-Ansicht ohne Login bricht Ionic ab: downloadSongFile → effectiveSongTenantId() greift auf db.tenant().id zu (undefined) → Fehler, Overlay „Dateien werden heruntergeladen...“ bleibt hängen (eingeloggt in anderem Tenant: falscher Pfad). Flutter lädt über die öffentlichen URLs und funktioniert. Erstreview übersah den Freigabe-Fall.",
+      "v": "korrigiert"
+    },
+    "songs/song/song.page#action-59e01f20": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1016-1021",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:911-929"
+      ],
+      "n": "Upload-Knopf nur Admin/Verantwortlich, bei vorhandenen Dateien vor dem …-Menü; öffnet das Upload-Sheet.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-59e01f20-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:1016-1021",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:911-929"
+      ],
+      "n": "Ohne Dateien ebenfalls nur für Admin/Verantwortlich (Flutter: ein Knopf für beide Ionic-Zweige).",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#action-1c80f6e4": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:342-352"
+      ],
+      "n": "„Externen Noten-Link öffnen“ (primary) nur lesend und mit Link – alle Nur-Lese-Rollen und Freigabe-Link wie Ionic; Öffnen wie openLink.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#text-6c47a33d": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:366",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:353"
+      ],
+      "n": "„Link“ nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/song/song.page#field-9b3e97d3": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:353-370",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:147"
+      ],
+      "n": "Mehrzeiliges Feld (1–5 Zeilen), speichert beim Verlassen (leer → null); nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "x-65c1fb4b3b": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:130-160",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:382-387",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:444-462"
+      ],
+      "n": "Real. _update bricht bei _saving ohne Nachholen ab. Im Web/PWA und Desktop entfernt PointerDown außerhalb des Textfelds den Fokus (Standard onTapOutside) → Blur-Speichern startet, der Schalter-Tap (onChanged bei PointerUp) trifft auf _saving und wird nicht geschrieben, obwohl der Schalter umgelegt angezeigt wird; Verlassen der Seite → Änderung verloren. Ionic schreibt jede Änderung. Bewertung hoch bleibt.",
+      "v": "bestätigt"
+    },
+    "x-47806f440c": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart:98-121",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:130-154",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:464-476",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:984-987",
+        "lib/core/services/song_file_service.dart:298",
+        "lib/core/services/song_file_service.dart:379",
+        "lib/core/services/song_file_service.dart:470"
+      ],
+      "n": "Real. Ionic DbService.uploadSongFile/deleteSongFile und saveFileChange setzen instrument_ids aus den Dateien, die Seite lädt das Werk neu. Flutter schreibt dieselben Werte, aber _instrumentIds wird nach _refresh nicht neu gesetzt (_init nur einmal pro Werk-ID): „Besetzung“ zeigt alte Gruppen (z. B. nach Kategorie ändern A→B weiter A, nach „Alle löschen“ alle alten), neue Datei-Gruppen gesperrt aber nicht angehakt; das nächste Speichern eines beliebigen Feldes schreibt die alten Gruppen zurück. Bewertung hoch bleibt.",
+      "v": "bestätigt"
+    },
+    "x-1a9462e316": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:446-465",
+        "lib/features/songs/presentation/widgets/file_upload_sheet.dart:506-509",
+        "lib/features/songs/presentation/pages/song_detail_page.dart:928"
+      ],
+      "n": "Real. Ionic performUpload lädt das Werk auch bei Teil-Fehlern neu. Flutter: bei Teil-Fehler bleibt das Sheet offen, X gibt false zurück → kein _refresh; erfolgreich hochgeladene Dateien fehlen in der Liste – wegen gecachtem songByIdProvider auch nach erneutem Öffnen, bis Pull-to-Refresh oder ein erfolgreicher Wiederholversuch.",
+      "v": "bestätigt"
+    },
+    "x-6e2b231559": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/providers/song_providers.dart:141-147",
+        "lib/core/providers/song_providers.dart:160-168",
+        "lib/core/providers/song_providers.dart:471-485",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2097-2098",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:87-96"
+      ],
+      "n": "Real, aber zu niedrig bewertet. songByIdProvider/songHistoryProvider(id) sind family ohne autoDispose und leben die ganze App-Sitzung; nur Änderungen auf dieser Seite invalidieren sie (Realtime und Pull-to-Refresh der Werkliste nur songsProvider). Ionic lädt bei jedem Öffnen frisch. Folge für alle Rollen: Spieler sehen nach Upload/Ersetzen durch Dirigent beim erneuten Öffnen die alte Dateiliste (ersetzte Dateien → gelöschte Storage-URLs), ohne Hinweis; nur Pull-to-Refresh auf der Werkseite hilft. Falsche/fehlende Daten → hoch.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

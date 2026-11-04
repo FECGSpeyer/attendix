@@ -1,31 +1,28 @@
 # Fix-Paket „app“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be,  (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0,  (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 17
+## Angleichen (hoch/mittel): 13
 
 - [ ] **hoch** `register/tenant-register/tenant-register.page` `field-ac71b961` [register/tenant-register/tenant-register.page.html:165](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L165) (2. Prüfung: bestätigt)
   Ionic: ion-select mit defaultValue vorbelegt, Wert wird immer in additional_fields gespeichert / Flutter: Default nur angezeigt, ohne aktive Auswahl fehlt der Schlüssel in additional_fields (anderer DB-Wert; Leser fallen zwar auf defaultValue zurück, der gespeicherte Datensatz unterscheidet sich).
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:525-549
-- [ ] **hoch** `register/tenant-register/tenant-register.page` [src/app/register/tenant-register/tenant-register.page.ts:304](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L304)
-  Ionic: additional_fields[id] = field.value (mit defaultValue vorbelegt) für jedes Feld / Flutter: Auswahlfeld wird nur nach aktiver Auswahl in additional_fields geschrieben; unverändert fehlt der Default im gespeicherten Datensatz.
-  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:527, lib/features/registration/data/providers/registration_providers.dart:334
 - [ ] **mittel** `app-routing.module` `route-d98e9634` [register/register-routing.module.ts:7](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register-routing.module.ts#L7) (2. Prüfung: bestätigt)
   Ionic: /register = Instanz anlegen mit RegisterGuard (abgemeldet → /login, ohne Instanz → Anlegen, mit Instanz → getUrl(role)) / Flutter: /register ist das öffentliche Konto-Registrierungsformular; angemeldet ohne Instanz → /tenants (Liste mit „Neue Instanz anlegen“), mit Instanz → homeRouteFor. Instanz anlegen liegt unter /tenants/new.
   Flutter: lib/core/router/app_router.dart:449-455, lib/core/router/app_router.dart:289-310
-- [ ] **mittel** `app-routing.module` [src/app/tabs/tabs-routing.module.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs-routing.module.ts)
-  Ionic: /tabs/settings/general/shifts(/:id) öffnet Schichten / Flutter: legacyRouteRedirect → /settings/general/shifts, keine solche Route → Fehlerseite "Seite nicht gefunden".
-  Flutter: lib/core/router/legacy_routes.dart:93-98, lib/core/router/app_router.dart:1109-1124
+- [ ] **mittel** `app-routing.module` `x-d8a12e46b9` **Legacy-Schichten-URLs ins Leere** [src/app/tabs/tabs-routing.module.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs-routing.module.ts) (2. Prüfung: bestätigt)
+  Echt: Ionic /tabs/settings/general/shifts(/:id) öffnet Schichten bzw. Schicht (general-routing → shifts-routing) / Flutter: legacyRouteRedirect → /settings/general/shifts (ID fällt weg), keine solche Route (Schichten liegen unter /settings/shifts) → Fehlerseite "Seite nicht gefunden" für Admin/Verantwortlich. Betrifft nur Lesezeichen/alte PWA-URLs, in der App wird /settings/shifts direkt geöffnet; keine Edge-Function verschickt diese URL. Zeilenangaben des Erstbefunds veraltet.
+  Flutter: lib/core/router/legacy_routes.dart:86-91, lib/core/router/app_router.dart:1074-1078, lib/core/router/app_router.dart:1122-1136
 - [ ] **mittel** `app.component` `alert-df60fa5d` [app.component.ts:113](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L113) (2. Prüfung: bestätigt)
   Ionic: Alert „Neues Passwort“ mit Passwortfeld (Platzhalter „Min. 6 Zeichen eingeben...“), Buttons Abbrechen/Passwort ändern, bleibt bei Fehler offen / Flutter: eigene Seite /new-password, nach Erfolg oder Abbrechen → /tenants. Gleiche Mindestlänge, anderer Dialogtyp/Flow.
   Flutter: lib/features/auth/presentation/pages/new_password_page.dart:34-115
 - [ ] **mittel** `app.component` `nav-3a7bceb6-2` [app.component.ts:352](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L352) (2. Prüfung: bestätigt)
   Ionic: Recovery-Link → /login; LoginGuard leitet Nutzer mit Instanz weiter auf die Startseite, der Alert erscheint dort / Flutter: Recovery-Link → Seite /new-password.
   Flutter: lib/features/auth/data/auth_link_listener.dart:119-120
-- [ ] **mittel** `app.component` [src/app/app.component.ts:108-160](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L108-160)
-  Ionic: PASSWORD_RECOVERY-Event/Recovery-Link öffnet Alert "Neues Passwort" über der Login-Seite / Flutter: Navigation auf eigene Seite /new-password.
-  Flutter: lib/features/auth/data/auth_link_listener.dart:119-120, lib/features/auth/presentation/pages/new_password_page.dart:34-115
+- [ ] **mittel** `app.component` `x-fde4d51685` **Passwort-Recovery als Seite statt Alert** [src/app/app.component.ts:108-160](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L108-160) (2. Prüfung: bestätigt)
+  Echt: Ionic: Recovery-Link/PASSWORD_RECOVERY öffnet Alert "Neues Passwort eingeben" (Passwortfeld, "Abbrechen"/"Passwort ändern") über der aktuellen Seite (nach /login leitet LoginGuard angemeldete Nutzer auf ihre Startseite); Abbrechen/Erfolg lässt den Nutzer dort / Flutter: eigene Seite /new-password (Feld mit Anzeigen-Schalter, "Passwort ändern", "Abbrechen"), Erfolg und Abbrechen führen auf /tenants. Funktion (min. 6 Zeichen, updatePassword, Toasts) gleich.
+  Flutter: lib/features/auth/data/auth_link_listener.dart:28-32, lib/features/auth/data/auth_link_listener.dart:118-120, lib/features/auth/presentation/pages/new_password_page.dart:34-115
 - [ ] **mittel** `register/register.page` `popover-f947f492` [register/register.page.html:130](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.html#L130) (2. Prüfung: bestätigt)
   Ionic: Info-Popover am Info-Icon (Hauptgruppe) / Flutter: AlertDialog mit gleichem Text und OK-Button.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:347-351, lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:541-558
@@ -40,23 +37,14 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `register/tenant-register/tenant-register.page` `field-a9922b49` [register/tenant-register/tenant-register.page.html:149](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L149) (2. Prüfung: bestätigt)
   Ionic: Reihenfolge Kategorie, sort_order, Name; Filter maingroup !== true / Flutter: nur nach Name, Filter maingroup = false (NULL fällt raus). Dadurch ist auch die vorausgewählte erste Gruppe eine andere.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:350-395, lib/features/registration/data/providers/registration_providers.dart:33-46
-- [ ] **mittel** `register/tenant-register/tenant-register.page` [src/app/services/group/group.service.ts:18](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group/group.service.ts#L18)
-  Ionic: getGroups sortiert nach Kategorie, sort_order, Name und filtert maingroup !== true / Flutter: registrationGroupsProvider sortiert nur nach Name, Filter .eq('maingroup', false) schließt NULL aus.
-  Flutter: lib/features/registration/data/providers/registration_providers.dart:33
-- [ ] **mittel** `register/tenant-register/tenant-register.page` [src/app/register/tenant-register/tenant-register.page.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L77)
-  Ionic: Zusatzfelder in der Reihenfolge von registration_fields / Flutter: in der Reihenfolge von tenant.additional_fields (gefiltert auf registration_fields).
-  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:468
 - [ ] **mittel** `tabs/side-nav/side-nav.component` `modal-186fad14` [tabs/side-nav/side-nav.component.ts:144](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/side-nav/side-nav.component.ts#L144) (2. Prüfung: bestätigt)
   Ionic: „Ablaufpläne“ öffnet PlanningPage als Modal / Flutter: context.push('/planning') – normale Seite im Shell.
   Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:109, lib/core/router/app_router.dart:899-912
 - [ ] **mittel** `terms/terms.page` `nav-4df0f2ac` [terms/terms.page.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L61) (2. Prüfung: bestätigt)
   Ionic: nach Zustimmung direkt Utils.getUrl(role) / Flutter: gemerkter Link oder /tenants; nach Login ist die Instanz meist schon gesetzt, dann bleibt die Instanzauswahl stehen statt zur Startseite zu gehen.
   Flutter: lib/features/legal/presentation/pages/terms_page.dart:58, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:78-80
-- [ ] **mittel** `terms/terms.page` [src/app/terms/terms.page.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L61)
-  Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) / Flutter: PendingFileLink oder /tenants; die Instanzauswahl leitet nur ohne aktive Instanz automatisch zur Startseite weiter.
-  Flutter: lib/features/legal/presentation/pages/terms_page.dart:58, lib/core/router/app_router.dart:371, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:80
 
-## Flutter besser – Leon entscheidet: 39
+## Flutter besser – Leon entscheidet: 43
 
 - [ ] **niedrig** `app-routing.module` `route-b64546c1` [tabs/tabs-routing.module.ts:9](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs-routing.module.ts#L9)
   Flutter besser: /tabs ohne Anmeldung → Ionic: AuthGuard → /login, nach Login routeAfterAuth (Link geht verloren) / Flutter: Link wird gemerkt (PendingFileLink) und nach Login fortgesetzt; /tabs → /open-link → Rollen-Startseite.
@@ -145,38 +133,50 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `register/register.page` `toast-535997f4` [register/register.page.ts:57](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L57)
   Flutter besser: Ionic: Toast mit roher Fehlermeldung (register.createFailed + error.message), teils doppelt / Flutter: verständlicher deutscher Fehlertext.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:596-599
-- [ ] **niedrig** `app-routing.module` [src/app/services/auth.guard.ts:16-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L16-45)
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-a282574a` [register/tenant-register/tenant-register.page.html:113](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L113) (2. Prüfung: korrigiert)
+  Flutter besser: Vorname wird beim Speichern getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired', angehängtes Leerzeichen der Tastatur wird nicht gespeichert) / Ionic prüft !firstName und speichert ungetrimmt. Prefill und Sichtbarkeit gleich.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:299, lib/features/registration/presentation/pages/tenant_registration_page.dart:307, lib/features/registration/presentation/pages/tenant_registration_page.dart:1060
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-3669e571` [register/tenant-register/tenant-register.page.html:117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L117) (2. Prüfung: korrigiert)
+  Flutter besser: Nachname wird getrimmt (nur Leerzeichen → Toast 'tenantRegister.nameRequired') / Ionic speichert ungetrimmt. Prefill und Sichtbarkeit gleich.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:310, lib/features/registration/presentation/pages/tenant_registration_page.dart:318, lib/features/registration/presentation/pages/tenant_registration_page.dart:1060
+- [ ] **niedrig** `tabs/tabs.page` `nav-0ccaf6f8` [tabs/tabs.page.ts:71](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs.page.ts#L71) (2. Prüfung: korrigiert)
+  Flutter besser: Prinzip und Ziel gleich (nicht erlaubte URL -> Startseite der Rolle, defaultRoute = Utils.getUrl). Ionic prüft nur beim Laden/Instanzwechsel mit isUrlAccessAllowed, dessen Liste Lücken hat: '/tabs/attendance' nur Admin/Verantw./Beobachter -> Helfer und Helfer-Stimmführer landen beim Neuladen der Termine-Liste auf 'Meine Termine'; '/tabs/overview' fehlt ganz -> Spieler/Helfer verlieren beim Neuladen die 'Übersicht'. Flutter (Redirect bei jeder Navigation) lässt beides passend zu den sichtbaren Tabs zu. Strenger in Flutter: Beobachter wird bei Direkt-URL /attendance/<id> auf /people umgeleitet (Ionic erlaubt die URL, per UI aber nicht erreichbar); /members verlangt zusätzlich showMembersList.
+  Flutter: lib/core/router/app_router.dart:212-239, lib/core/router/app_router.dart:192, lib/core/router/route_access.dart:76-88, lib/core/router/attendance_detail_guard.dart:23-28, lib/core/constants/enums.dart:137-141
+- [ ] **niedrig** `app-routing.module` `x-e01a452bb2` **Reload/Deep-Link-Rollenprüfung** [src/app/services/auth.guard.ts:16-45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L16-45)
   Flutter besser: Ionic: AuthGuard läuft nur beim Betreten von /tabs; für viele Unterseiten (messages, team-organization, tasks/:id, agenda-items/:id, messages/:id, auto-messages, overview, delete-account, general/extra-fields, general/shifts, org-settings/person-fields, org-settings/songs) bricht ein Reload die Navigation ab (leere Seite) oder TabsPage-effect leitet auf getUrl(role) um, obwohl die UI der Rolle den Zugang erlaubt / Flutter: Redirect prüft die Rolle bei jeder Navigation und schickt abgelehnte Rollen auf role.defaultRoute.
   Flutter: lib/core/router/app_router.dart:214-246, lib/core/router/route_access.dart:127-139
-- [ ] **niedrig** `app.component` [src/app/app.component.ts:297](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L297)
+- [ ] **niedrig** `app.component` `x-0cf36be089` **Auth-Link-Fehlertexte** [src/app/app.component.ts:297](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L297)
   Flutter besser: Ionic zeigt error_description (englisch) direkt / Flutter übersetzt bekannte Fehler ins Deutsche.
   Flutter: lib/features/auth/data/auth_link_listener.dart:152-165
-- [ ] **niedrig** `app.component` [src/app/app.component.ts:303-323](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L303-323)
+- [ ] **niedrig** `app.component` `x-b0bab159d8` **OTP-Link-Typen** [src/app/app.component.ts:303-323](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L303-323)
   Flutter besser: Ionic verifyOtp nur recovery|signup / Flutter unterstützt weitere Link-Typen (invite, magiclink, email_change).
   Flutter: lib/features/auth/data/auth_flow_service.dart:296-310
-- [ ] **niedrig** `login/legal-modal/legal-content.component` [src/app/login/legal-modal/legal-content.component.ts:18-24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts#L18-24)
+- [ ] **niedrig** `login/legal-modal/legal-content.component` `x-3220e0da51` **Fehleransicht mit Wiederholen** [src/app/login/legal-modal/legal-content.component.ts:18-24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts#L18-24)
   Flutter besser: Ionic setzt nur error=true (Fehlertext) / Flutter: Fehleransicht mit "Erneut versuchen".
   Flutter: lib/features/legal/presentation/widgets/legal_content_view.dart:61-83
-- [ ] **niedrig** `login/register-modal/register-modal.component` [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
+- [ ] **niedrig** `login/register-modal/register-modal.component` `x-42a640abf6` **Fehlermeldungen signUp** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
   Flutter besser: Ionic: allgemeine Fehlertoasts aus db.register / Flutter: spezifischere Meldungen je Supabase-Fehler.
   Flutter: lib/features/auth/presentation/pages/register_page.dart:212-242
-- [ ] **niedrig** `login/register-modal/register-modal.component` [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
+- [ ] **niedrig** `login/register-modal/register-modal.component` `x-07e8d524e9` **Bestehendes Konto mit richtigem Passwort** [src/app/login/register-modal/register-modal.component.ts:196-205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/register-modal/register-modal.component.ts#L196-205)
   Flutter besser: Ionic zeigt "Registrierung erfolgreich…"-Toast, obwohl der Nutzer direkt angemeldet ist / Flutter leitet den angemeldeten Nutzer weiter.
   Flutter: lib/features/auth/presentation/pages/register_page.dart:212-242
-- [ ] **niedrig** `open-attendance/open-attendance.page` [src/app/open-attendance/open-attendance.page.ts:62-67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L62-67)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6584f621dd` **Fortsetzen nach Login** [src/app/open-attendance/open-attendance.page.ts:62-67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L62-67)
   Flutter besser: Ionic merkt sich die ID nur in pendingAttendanceId (geht bei Reload verloren) / Flutter setzt den Link nach dem Login fort.
   Flutter: lib/core/router/app_router.dart:311-316, lib/features/planning/presentation/pages/open_attendance_page.dart:40-43
-- [ ] **niedrig** `open-attendance/open-attendance.page` [src/app/open-attendance/open-attendance.page.ts:70-85](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L70-85)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-6bc1c2c22d` **Beobachter** [src/app/open-attendance/open-attendance.page.ts:70-85](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L70-85)
   Flutter besser: Ionic bleibt für Beobachter ohne Termin-Zugriff auf dem Spinner hängen / Flutter leitet auf /people um.
   Flutter: lib/features/planning/presentation/pages/open_attendance_page.dart:60-94
-- [ ] **niedrig** `register/register.page` [src/app/register/register.page.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L53)
+- [ ] **niedrig** `register/register.page` `x-4bc57ec809` **Schließen der Route-Variante** [src/app/register/register.page.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L53)
   Flutter besser: Ionic ruft modalController.dismiss() auch in der Route-Variante (/tabs/settings/register) auf, wo kein Modal existiert (Fehler/kein Schließen) / Flutter navigiert korrekt zurück.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:561-564
-- [ ] **niedrig** `register/tenant-register/tenant-register.page` [src/app/register/tenant-register/tenant-register.page.ts:411](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L411)
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-18e88de740` **Reihenfolge der Zusatzfelder** [src/app/register/tenant-register/tenant-register.page.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L77) (2. Prüfung: korrigiert)
+  Flutter besser: Abweichung nur nach Umsortieren der Zusatzfelder. Ionic speichert registration_fields in Optionsreihenfolge (= additional_fields-Reihenfolge beim Speichern, ion-select multiple), das Umsortieren auf der Zusatzfelder-Seite passt registration_fields nicht an -> Ionic zeigt die alte Reihenfolge. Flutter folgt der aktuellen additional_fields-Reihenfolge. Erstreviewer: mittel.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:461-470
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-3a348a3a0e` **Vor-/Nachname getrimmt** [src/app/register/tenant-register/tenant-register.page.ts:411](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L411)
   Flutter besser: Ionic speichert firstName/lastName ungetrimmt und akzeptiert reine Leerzeichen / Flutter: onSaved trimmt, reine Leerzeichen scheitern an „Name erforderlich“.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:307, lib/features/registration/presentation/pages/tenant_registration_page.dart:318, lib/features/registration/presentation/pages/tenant_registration_page.dart:1060-1062
 
-## Kleinigkeiten (niedrig): 68
+## Kleinigkeiten (niedrig): 76
 
 - [ ] **niedrig** `app-redirect/app-redirect.page` `action-f6aa44fd` [app-redirect/app-redirect.page.html:13](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.html#L13) (2. Prüfung: bestätigt)
   Ionic: Icon logo-google-playstore / Flutter: Icons.shop. Text und Ziel (Play-Store-Link im selben Tab) gleich.
@@ -268,6 +268,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `register/register.page` `loading-14fb6abb` [register/register.page.ts:111](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L111)
   Ionic: blockierendes Loading-Overlay beim Löschen / Flutter: nur Info-Toast, nicht blockierend.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:524
+- [ ] **niedrig** `register/register.page` `text-f594a3e2` [register/register.page.html:156](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.html#L156) (2. Prüfung: korrigiert)
+  Kürzel " (MV)" gleich. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393
+- [ ] **niedrig** `register/register.page` `text-0d484e0a` [register/register.page.html:156](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.html#L156) (2. Prüfung: korrigiert)
+  Name fett wie Ionic. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `toast-3163772f` [register/tenant-register/tenant-register.page.ts:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L65)
   Ionic: Toast 'Ungültiger Freigabe-Link.' auf leerer Seite (nur 'Registrierung abschließen' sichtbar) / Flutter: Fehleransicht 'Ungültiger Registrierungslink.' mit Button 'Zur Anmeldung', kein Toast.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:146, lib/features/registration/presentation/pages/tenant_registration_page.dart:171
@@ -307,12 +313,24 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `toast-2a68da3c` [register/tenant-register/tenant-register.page.ts:505](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L505)
   Gleicher Text. Ionic prüft die Originaldatei (>15 MB) / Flutter prüft erst nach Verkleinerung auf 800 px, Qualität 80 – greift praktisch nie, große Bilder werden angenommen.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:604
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-0ebc2a01` [register/tenant-register/tenant-register.page.html:55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L55) (2. Prüfung: korrigiert)
+  Sichtbarkeit (ohne Anmeldung, Passwort-Modus) gleich. Übersehen: Ionic bindet [(ngModel)]="password", nach Wechsel zu 'Code per E-Mail' und zurück steht das Passwort wieder im Feld / Flutter: TextFormField ohne Controller wird beim Moduswechsel neu aufgebaut, Feld ist danach leer.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:846, lib/features/registration/presentation/pages/tenant_registration_page.dart:845
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-f2f670d0` [register/tenant-register/tenant-register.page.html:59](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L59) (2. Prüfung: korrigiert)
+  Wie field-0ebc2a01: Ionic behält 'Passwort bestätigen' beim Hin- und Herwechseln des Modus / Flutter: Feld nach Moduswechsel leer (kein Controller).
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:857
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `action-56c2bb62` [register/tenant-register/tenant-register.page.html:102](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L102)
   Ionic: Label bleibt 'Wähle ein Passbild aus (max. 15 MB)' / Flutter: nach Auswahl Label 'Passbild ersetzen'.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:282
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `action-86975787` [register/tenant-register/tenant-register.page.html:104](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L104)
   Ionic: Avatar-Grafik (DEFAULT_IMAGE, Fallback avatar-placeholder.svg) / Flutter: graues Kreis-Avatar mit Personen-Icon.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:284
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-3bbd0e84` [register/tenant-register/tenant-register.page.html:122](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L122) (2. Prüfung: korrigiert)
+  Bedingung und Vorbelegung gleich. Anzeigeformat: Ionic ion-datetime-button (locale de-DE, Standard-formatOptions month:'short') → '4. Nov. 2008' / Flutter DateFormat('dd.MM.yyyy') → '04.11.2008'. Ionic-Paket nicht im Container, Standardformat aus Ionic 9 datetime-button.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:324, lib/l10n/languages.dart:65
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `field-3d36f520-2` [register/tenant-register/tenant-register.page.html:163](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L163) (2. Prüfung: korrigiert)
+  Label/Default gleich. Ionic: type=number (Dezimal/Minus eingebbar), NumericValueAccessor speichert parseFloat-Zahl / Flutter: TextInputType.number ohne Dezimal/Vorzeichen (Mobil kein ',' '.' '-'), int.tryParse – Dezimalwerte (z. B. Web) werden als String gespeichert. Leer-Prüfung bei toast-b918f4e0.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:494, lib/features/registration/presentation/pages/tenant_registration_page.dart:498, lib/features/registration/presentation/pages/tenant_registration_page.dart:502
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `modal-6f647b7b` [register/tenant-register/tenant-register.page.html:178](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L178)
   Ionic: Vollbild-ion-modal / Flutter: Bottom-Sheet mit 95 % Höhe (Inhalt gleich).
   Flutter: lib/features/profile/presentation/widgets/church_picker.dart:25
@@ -322,9 +340,15 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `tabs/side-nav/side-nav.component` `loading-e9133cc5` [tabs/side-nav/side-nav.component.ts:124](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/side-nav/side-nav.component.ts#L124) (2. Prüfung: bestätigt)
   Ionic: Loading-Overlay während Instanzwechsel / Flutter: switchTenant ohne Ladeanzeige.
   Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:128, lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405
+- [ ] **niedrig** `tabs/side-nav/side-nav.component` `media-8fae1184` [tabs/side-nav/side-nav.component.html:27](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/side-nav/side-nav.component.html#L27)
+  Ionic: ist tenants.logo_url gesetzt (Alt-Branding je Instanz), zeigt der Instanz-Button im Sidepanel das Logo-Bild statt der Initialen / Flutter: Tenant-Modell kennt logo_url nicht, Sidepanel zeigt immer Initialen. Nur Tablet/Desktop, alle Rollen.
+  Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:614-626
 - [ ] **niedrig** `tabs/tabs.page` `action-8d0f89f7` [tabs/tabs.page.html:66](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/tabs.page.html#L66)
   Ionic Tabbar: 'Werke' bei aktivierter Option für alle außer Bewerber (auch Eltern) / Flutter: zusätzlich für Eltern ausgeblendet (canOpenSongsTab). Ionic-Route/Sidepanel sperren Eltern ebenfalls.
   Flutter: lib/shared/widgets/layout/main_shell.dart:145, lib/core/providers/optional_tabs_providers.dart:87
+- [ ] **niedrig** `terms/terms.page` `logic-e0824f5f` [terms/terms.page.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L1) (2. Prüfung: korrigiert)
+  Zusammenfassung der Klasse: Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Einzige Abweichung (Ziel nach Zustimmung) steht und wird angeglichen bei nav-4df0f2ac; hier nicht doppelt gezählt.
+  Flutter: lib/features/legal/presentation/pages/terms_page.dart:48-72, lib/data/repositories/account_repository.dart:52-72, lib/core/router/app_router.dart:366-375
 - [ ] **niedrig** `terms/terms.page` `nav-4d7988a7` [terms/terms.page.ts:28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L28)
   Ionic: bereits akzeptiert -> Utils.getUrl(role) / Flutter: Router leitet auf gemerkten Link oder /tenants; ist schon eine Instanz aktiv, erscheint dort die Instanzauswahl statt der Startseite.
   Flutter: lib/core/router/app_router.dart:370
@@ -334,48 +358,48 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `terms/terms.page` `effect-9680384f` [terms/terms.page.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/terms/terms.page.ts#L61)
   Wie nav-4df0f2ac: Ziel wird nicht aus der Rolle berechnet, sondern über /tenants bzw. homeRouteFor (inkl. Dashboard-Startseite).
   Flutter: lib/features/legal/presentation/pages/terms_page.dart:58
-- [ ] **niedrig** `app-routing.module` [src/app/utilities/Utils.ts:1312-1317](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1312-1317)
+- [ ] **niedrig** `app-routing.module` `x-9b8dcb3d86` **Beobachter kann Termin-Detail nicht öffnen** [src/app/utilities/Utils.ts:1312-1317](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1312-1317)
   Ionic: VIEWER darf attendance/:id öffnen (AuthGuard, isUrlAccessAllowed), Einstieg aus Anwesenheitsliste, Themen-Tab und Nachrichten / Flutter: attendanceDetailRedirect verlangt canAddAttendance, Beobachter wird auf /people umgeleitet. [2. Prüfung: Beobachter erreichen /tabs/attendance/:id in Ionic nur per eingetippter URL (Liste, Themen-Tab und Nachrichten zeigen den Einstieg nur anderen Rollen); siehe zz-verify-app]
   Flutter: lib/core/router/attendance_detail_guard.dart:22-27
-- [ ] **niedrig** `app-redirect/app-redirect.page` [src/app/app-redirect/app-redirect.page.ts:38-42](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.ts#L38-42)
+- [ ] **niedrig** `app-redirect/app-redirect.page` `x-2f39f5c631` **Store-Weiterleitung legt History-Eintrag an** [src/app/app-redirect/app-redirect.page.ts:38-42](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app-redirect/app-redirect.page.ts#L38-42)
   Ionic: window.location.replace(storeUrl) – Zurück führt nicht wieder auf /app / Flutter: launchUrl(webOnlyWindowName: "_self") legt einen Eintrag an, Zurück öffnet /app und leitet erneut weiter.
   Flutter: lib/features/public_links/presentation/pages/app_redirect_page.dart:31-54
-- [ ] **niedrig** `app.component` [src/app/app.component.ts:178-199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L178-199)
+- [ ] **niedrig** `app.component` `x-5a9899a9e3` **Web-Update-Modell** [src/app/app.component.ts:178-199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L178-199)
   Ionic: SwUpdate prüft regelmäßig/bei Sichtbarkeitswechsel, aktiviert eine neue Version und lädt die Seite sofort neu / Flutter: neue Version wird erst beim nächsten Start geladen.
   Flutter: lib/core/services/app_update_service_web.dart
-- [ ] **niedrig** `app.component` [src/app/app.component.ts:203-207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L203-207)
+- [ ] **niedrig** `app.component` `x-426ed5e6fe` **Native-App-Hinweis in Teams** [src/app/app.component.ts:203-207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L203-207)
   Ionic: showNativeAppAd kehrt in Teams zurück (isInTeams) / Flutter: keine Teams-Prüfung, Hinweis erscheint auch im Teams-Tab.
   Flutter: lib/shared/widgets/dialogs/native_app_ad.dart:30-97
-- [ ] **niedrig** `app.component` [src/app/app.component.ts:375-385](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L375-385)
+- [ ] **niedrig** `app.component` `x-796b20e6b2` **Page-View-Tracking** [src/app/app.component.ts:375-385](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/app.component.ts#L375-385)
   Ionic: trackt router.url roh (/tabs/...) / Flutter: tracking_observer bereinigt IDs/Query und trackt Flutter-Pfade (andere URLs in der Auswertung).
   Flutter: lib/core/router/tracking_observer.dart:14-40
-- [ ] **niedrig** `login/legal-modal/legal-content.component` [src/app/login/legal-modal/legal-content.component.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts)
+- [ ] **niedrig** `login/legal-modal/legal-content.component` `x-d36569e6fc` **HTML-Rendering** [src/app/login/legal-modal/legal-content.component.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/legal-modal/legal-content.component.ts)
   Ionic: innerHTML / Flutter: Umwandlung über HtmlToDelta/Quill; Darstellung komplexer HTML-Elemente (Tabellen, Listen) nicht geprüft (Paketquellen nicht im Container).
   Flutter: lib/features/legal/presentation/widgets/legal_content_view.dart:61-83
-- [ ] **niedrig** `login/login.page` [src/app/login/login.page.ts:164-166](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L164-166)
+- [ ] **niedrig** `login/login.page` `x-ffab6fe794` **E-Mail-Validierung inline** [src/app/login/login.page.ts:164-166](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L164-166)
   Ionic: ungültige E-Mail → Toast / Flutter: Fehlertext direkt am Feld.
   Flutter: lib/features/auth/presentation/pages/login_page.dart:151-168
-- [ ] **niedrig** `login/login.page` [src/app/login/login.page.ts:334](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L334)
+- [ ] **niedrig** `login/login.page` `x-5885f9560e` **Reset-Toast-Texte** [src/app/login/login.page.ts:334](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts#L334)
   Ionic: db.resetPassword-Toasts / Flutter: eigene, leicht anders formulierte Toasts im Reset-Dialog.
   Flutter: lib/features/auth/presentation/widgets/reset_password_dialog.dart
-- [ ] **niedrig** `login/login.page` [src/app/login/login.page.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts)
+- [ ] **niedrig** `login/login.page` `x-e022710cfa` **Registrieren mit E-Mail vorbefüllt** [src/app/login/login.page.ts](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/login/login.page.ts)
   Ionic: Registrieren-Modal startet leer / Flutter: übernimmt die eingegebene E-Mail.
   Flutter: lib/features/auth/presentation/pages/login_page.dart:333-347
-- [ ] **niedrig** `open-attendance/open-attendance.page` [src/app/open-attendance/open-attendance.page.ts:49-55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L49-55)
+- [ ] **niedrig** `open-attendance/open-attendance.page` `x-8b3ba571f2` **Link ohne gültige ID** [src/app/open-attendance/open-attendance.page.ts:49-55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/open-attendance/open-attendance.page.ts#L49-55)
   Ionic: ungültige ID angemeldet → routeAfterAuth (Dashboard-Logik) / Flutter: → role.defaultRoute.
   Flutter: lib/features/planning/presentation/pages/open_attendance_page.dart:37-50
-- [ ] **niedrig** `register/register.page` [src/app/register/register.page.ts:40-58](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L40-58)
+- [ ] **niedrig** `register/register.page` `x-530439cff7` **Namen werden getrimmt** [src/app/register/register.page.ts:40-58](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/register.page.ts#L40-58)
   Ionic speichert Instanz-/Namensfelder ungetrimmt / Flutter trimmt Leerzeichen.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490
-- [ ] **niedrig** `register/tenant-register/tenant-register.page` [src/app/register/tenant-register/tenant-register.page.html:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L157)
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-189b5776c0` **Textarea- und Datums-Zusatzfelder** [src/app/register/tenant-register/tenant-register.page.html:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.html#L157)
   Ionic: Template rendert für Typ 'textarea' und 'date' kein Eingabeelement (leeres ion-item), Validierung prüft nur den Default / Flutter: mehrzeiliges Textfeld bzw. Datumsauswahl vorhanden.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:473, lib/features/registration/presentation/pages/tenant_registration_page.dart:552
-- [ ] **niedrig** `register/tenant-register/tenant-register.page` [src/app/services/db.service.ts:1730](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1730)
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-5f87a1fa54` **Bestandskonto bei Passwort-Registrierung** [src/app/services/db.service.ts:1730](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1730)
   Ionic: E-Mail existiert + Passwort stimmt -> addUserToTenant direkt (auch wenn bereits Mitglied) / Flutter: registerUser(selfRegister) -> bei bestehender Mitgliedschaft kein zweiter tenantUsers-Eintrag. Randfall, Flutter vermeidet Duplikat.
   Flutter: lib/features/registration/data/providers/registration_providers.dart:150
-- [ ] **niedrig** `tabs/side-nav/side-nav.component` [src/app/tabs/side-nav/side-nav.component.html:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/side-nav/side-nav.component.html#L26)
+- [ ] **niedrig** `tabs/side-nav/side-nav.component` `x-20bbe67ad6` **Instanzlogo im Sidepanel fehlt** [src/app/tabs/side-nav/side-nav.component.html:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/tabs/side-nav/side-nav.component.html#L26)
   Ionic: tenants.logo_url gesetzt -> Logo-Bild statt Initialen im Instanz-Button / Flutter: Tenant-Modell kennt logo_url nicht, es werden immer die Initialen gezeigt.
   Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:614
-- [ ] **niedrig** `register/tenant-register/tenant-register.page` [src/app/register/tenant-register/tenant-register.page.ts:329](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L329)
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `x-eed3ad9724` **img bei Selbstregistrierung ohne Bild** [src/app/register/tenant-register/tenant-register.page.ts:329](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/register/tenant-register/tenant-register.page.ts#L329)
   Ionic: addPlayer schreibt img = DEFAULT_IMAGE (https://ionicframework.com/docs/img/demos/avatar.svg), wenn kein Passbild gewählt wurde / Flutter: buildRegistrationPlayerData setzt kein img (DB-Default). Anzeige gleich, da Flutter .svg-Avatar als „kein Bild“ behandelt.
   Flutter: lib/features/registration/data/providers/registration_providers.dart:303-330

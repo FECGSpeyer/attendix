@@ -37,7 +37,16 @@ Texte und wo der normale Flutter-Code denselben Übersetzungsschlüssel nutzt.
 
 Eine Zeile je Element: Ein `git diff` nach einem neuen Lauf zeigt genau, was
 sich in Ionic geändert hat. `node tool/parity/parity.mjs diff <alt.json>`
-listet neue und entfernte Elemente; nur diese müssen neu geprüft werden.
+listet neue, entfernte und **geänderte** Elemente (gleiche ID, aber anderer
+Inhalt: Texte, Bedingungen, Bindungen, DB-Spalten und -Filter, Methodenrümpfe
+als Hash) sowie geänderte Übersetzungen. Felder, die erst ein neuerer
+Extraktor liefert, zählen nicht als Änderung. Mit `--stale` entsteht
+`stale.json`: Urteile für diese Elemente, die vor der neuen Ionic-Version
+gefällt wurden, gelten nicht mehr, und die Elemente stehen wieder als offen
+im Bericht. Bilder (`media`) und alle gebundenen Attribute (`bindings`, z. B.
+`[src]`, `[buttons]`) sind Teil der Soll-Liste. Datenbankaufrufe, deren
+Tabelle oder Operation nicht auflösbar ist, tragen `unresolved` und gelten
+nie als `ok` (Bericht: `unclear`).
 
 ### 3. Nachweis je Punkt
 
@@ -59,6 +68,15 @@ an der Element-ID (Hash) und ist damit wiederholbar. Die Ergebnisse heißen
 Bericht die Erstbewertung. Zusätzliche Befunde, die sich als Duplikat oder
 widerlegt herausstellen, werden in `zz-zz-overrides.json` (`extraOverride`)
 zurückgenommen oder umgestuft.
+
+Zweite Runde (`parity.mjs verify2-slices <dir> [n]`, Ergebnisse
+`zz-verify2-*.json`), vollständig statt Stichprobe: jeder zusätzliche Befund
+mit Schwere hoch/mittel, jedes `ok`/`na`, dessen Sichtbarkeit von Rolle oder
+Mandanten-Einstellung abhängt, jeder nicht auflösbare Datenbankaufruf und
+jedes neue Element. Zusätzliche Befunde haben eine stabile ID
+(`x-<sha1(Baustein|Titel)>`); gleiche Befunde aus mehreren Dateien werden
+zusammengeführt, und eine Prüfung schreibt ihr Urteil unter dieser ID
+(`s` ok/na nimmt den Befund zurück).
 
 ### 5. Bericht, Tracker und Arbeitslisten
 

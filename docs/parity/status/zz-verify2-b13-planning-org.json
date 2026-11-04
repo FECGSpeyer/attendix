@@ -1,0 +1,16 @@
+{
+ "batch": "zz-verify2-b13-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "public-planning/public-planning.page#db-f6ff5ae6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:260",
+    "lib/data/repositories/plan_repository.dart:279"
+   ],
+   "n": "Beim Wiederherstellen (eingeloggt, gespeicherte currentPlanId) liest Flutter wie Ionic shared_plans.org_id per id (maybeSingle) und übernimmt isOrgPlan + lokales Backup. shared_plans hat keine tenantId; Flutter filtert zusätzlich creator_user_id = eigener Nutzer – gleiche Daten, da die Plan-ID nur aus eigenen Plänen stammt (Meine Pläne: creator_user_id)."
+  }
+ },
+ "extra": []
+}

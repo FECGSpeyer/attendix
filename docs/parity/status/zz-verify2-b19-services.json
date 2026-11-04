@@ -1,0 +1,89 @@
+{
+  "batch": "zz-verify2-b19-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "services/organisation/organisation.service#toast-f7ddf57e": {
+      "s": "na",
+      "n": "toter Code bestätigt: OrganisationService.getLinkedTenants(tenantId) hat keinen Aufrufer; alle Stellen (song.page, list.page, org-settings, db.service) rufen DbService.getLinkedTenants() (db.service.ts:3432) mit eigenem gleichem Toast.",
+      "v": "bestätigt"
+    },
+    "services/player/player.service#toast-8594ccfa": {
+      "s": "na",
+      "n": "toter Code bestätigt: PlayerService.getPlayers wird nirgends aufgerufen (playerSvc nur für update*/reset*-Methoden genutzt); Eltern-Zweig mit gleichem Toast lebt in DbService.getPlayers (db.service.ts:1578).",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-3df4da0a": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:124"
+      ],
+      "n": "Geburtstag: Admin/Verantwortlich/Beobachter → Personenliste; alle anderen Rollen bleiben, wo sie sind (Mitteilung trotzdem gelesen markiert) – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-115b9103": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:73",
+        "lib/core/constants/enums.dart:130",
+        "lib/core/router/attendance_detail_guard.dart:25"
+      ],
+      "n": "canAddAttendance = Admin, Verantwortlich, Helfer, Stimmführer-Helfer (= Ionic-Liste) → Termin-Detail /attendance/<id>; Route lässt genau diese Rollen zu.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-b578f3e6": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:81",
+        "lib/core/providers/push_providers.dart:295",
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:388"
+      ],
+      "n": "Eltern → /parents mit pendingAttendanceId, das Elternportal öffnet den Termin – wie Ionic.",
+      "v": "bestätigt"
+    },
+    "services/push/push.service#nav-afe2b2de": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/push/push_navigation.dart:81",
+        "lib/core/router/route_access.dart:72",
+        "lib/features/self_service/presentation/pages/signout_page.dart:67"
+      ],
+      "n": "Spieler, Stimmführer, Bewerber, NONE → Meine Termine mit pendingAttendanceId – wie Ionic. Randfall Beobachter (bekommt keine Termin-Pushes, keine Benachrichtigungs-Einstellungen): Ionic AuthGuard bricht /tabs/signout ab (bleibt auf der Seite), Flutter leitet auf Personenliste um.",
+      "v": "bestätigt"
+    },
+    "services/register.guard#effect-e90908cd": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/core/router/app_router.dart:337",
+        "lib/core/router/app_router.dart:352",
+        "lib/core/router/app_router.dart:358",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Angemeldet mit Instanz auf /register: Ionic RegisterGuard → Utils.getUrl(role) ohne Dashboard-Prüfung (Admin/Verantwortlich → Personenliste). Flutter → homeRouteFor inkl. Dashboard (Admin/Verantwortlich mit Dashboard-Tab → Dashboard) und mit 'Instanzauswahl aktivieren' oder noch nicht geladener Instanz → /tenants. Ohne Instanz: beide Seite 'Neue Instanz anlegen'. Seltener Pfad (manuelle URL).",
+      "v": "korrigiert"
+    },
+    "services/register.guard#nav-7b570795": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/core/router/app_router.dart:337",
+        "lib/core/router/app_router.dart:352",
+        "lib/core/router/app_router.dart:358",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ],
+      "n": "Wie effect-e90908cd: Ionic RegisterGuard ohne Dashboard (Admin/Verantwortlich → Personenliste), Flutter mit Dashboard bzw. /tenants bei 'Instanzauswahl aktivieren'.",
+      "v": "korrigiert"
+    },
+    "x-6a833a4976": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/songs/data/song_print_service.dart:80"
+      ],
+      "n": "Befund real. Ionic pdf-lib copyPages übernimmt die PDF-Seiten als Vektorseiten. Flutter Printing.raster(dpi: 150) → PNG je Seite in neues PDF (pdf-Paket kann keine PDFs importieren): unschärferer Notendruck, deutlich größere Datei und mehr Speicher bei großen Mappen.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

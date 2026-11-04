@@ -1,0 +1,19 @@
+{
+  "batch": "zz-verify2-b24-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "x-0ad1beb81e": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:578",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:596",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1255"
+      ],
+      "n": "Befund real, am SDK geprüft: ReorderableListView.builder umhüllt jedes Element mit _ReorderableListViewChildGlobalKey(subKey, state) ohne Index (material/reorderable_list.dart:562) → zwei Felder mit gleicher id = doppelter GlobalKey (Debug-Fehler, Release: eine Zeile verschwindet). Doppelte ids entstehen aus Ionic (Freitext-id = Text, z. B. zweimal 'Pause'; Werk-Platzhalter 1-basiert) und in Flutter selbst (Platzhalter 'song-placeholder-<Anzahl>' 0-basiert, nach Löschen erneut vergeben). Ionic trackt per Objekt, kein Problem. Daten bleiben erhalten, Bearbeiten des Ablaufplans unzuverlässig.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

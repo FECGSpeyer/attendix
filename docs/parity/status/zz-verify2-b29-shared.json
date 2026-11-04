@@ -1,0 +1,15 @@
+{
+  "batch": "zz-verify2-b29-shared",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "x-d204a080f2": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/messages/presentation/widgets/notification_bell.dart:100", "lib/features/messages/presentation/widgets/notification_bell.dart:108", "lib/features/messages/presentation/widgets/notification_bell.dart:134", "lib/data/models/user_notification/user_notification.dart:44"],
+      "n": "Echt: Ionic onTap wechselt die Instanz nur bei Einträgen mit route bzw. attendanceId und gesetztem data.tenantId; Geburtstag/Problemfall ohne Ziel schließen nur das Sheet, Nachrichten wechseln erst auf der Nachrichtenseite / Flutter _navigate setzt vorab für JEDEN Eintrag die Instanz auf targetTenantId (data.tenantId, sonst Zeilen-tenantId) → Tippen auf einen Geburtstags-/Problemfall-Eintrag einer anderen Instanz (Segment „Alle“) schaltet still die aktive Instanz um; fehlt die Instanz in der Nutzerliste, passiert auch bei Nachrichten nichts. (Fallback auf Zeilen-tenantId bei route/attendanceId ohne data.tenantId ist eher besser.)",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,7 +1,38 @@
 {
  "batch": "zz-zz-overrides",
- "note": "Korrekturen an zusätzlichen Befunden der ersten Prüfung nach der zweiten Prüfung (Duplikate, widerlegte Annahmen).",
- "items": {},
+ "note": "Korrekturen nach der zweiten Prüfung: Duplikate und widerlegte Annahmen bei zusätzlichen Befunden (items: Urteil unter der Befund-ID x-…, extraOverride: ältere Form nach Baustein und Titel).",
+ "items": {
+  "x-72494b483e": {
+   "s": "na",
+   "n": "Duplikat von field-a9922b49 (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "x-fc8b0a67b8": {
+   "s": "na",
+   "n": "Duplikat von field-ac71b961 (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "x-7daa6d5e06": {
+   "s": "na",
+   "n": "Duplikat von nav-4df0f2ac (gleiche Abweichung, gleiche Schwere); dort wird es angeglichen.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#text-34177970": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:211"
+   ],
+   "n": "Ionic: Prozent über getPersonAttendances der Person in der anderen Instanz (nur ab Saisonstart der aktuellen Instanz, archivierte Termine für Nicht-Admins ausgeblendet, shift_excused_as_present) / Flutter: alle Termine bis heute ohne Saison-/Archiv-/Schicht-Filter → andere Prozentwerte. Ohne Wert zeigt Ionic „Nicht verfügbar“ in warning (person.page.ts:251-253), Flutter „n/a“ in grau.",
+   "v": "korrigiert"
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "sev": "niedrig",
+   "n": "Zusammenfassung der Klasse: Prüfungen, Datenschutz-Modal, refreshSession/signOut, updateUser terms_accepted_at und Toasts gleich. Einzige Abweichung (Ziel nach Zustimmung) steht und wird angeglichen bei nav-4df0f2ac; hier nicht doppelt gezählt.",
+   "v": "korrigiert"
+  }
+ },
  "extra": [],
  "extraOverride": [
   {

@@ -1,0 +1,21 @@
+{
+  "batch": "zz-verify2-b16-services",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "x-e97bec4aeb": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/data/repositories/attendance_type_repository.dart:174",
+        "lib/data/repositories/attendance_type_repository.dart:178",
+        "lib/data/repositories/attendance_type_repository.dart:157",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1544",
+        "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1558"
+      ],
+      "n": "Befund real. Ionic deleteAttendanceType: delete ohne Vorprüfung (Alert: \"Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht\"). Flutter deleteType: zählt attendance mit type_id+tenantId, bei >0 RepositoryException; handleError wirft weiter, Notifier → false, UI nur \"Fehler beim Löschen des Anwesenheitstyps\", obwohl derselbe Alert-Text das Mitlöschen ankündigt. Ein benutzter Typ ist in Flutter nicht löschbar. Vorbehalt: Die FK-Regel (CASCADE) steht nicht im Repo, nur Ionic-Text und fehlende Vorprüfung sprechen dafür; bei RESTRICT scheitern beide gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

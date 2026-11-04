@@ -167,7 +167,7 @@ main .wrap { padding-block: 18px 40px; display: grid; grid-template-columns: 260
 <script>
 const IONIC_REPO = 'https://github.com/FECGSpeyer/attendance/blob/';
 const FLUTTER_REPO = 'https://github.com/FECGSpeyer/attendix/blob/';
-const KIND = { action: 'Aktion', field: 'Feld', text: 'Text', embed: 'Baustein', alert: 'Dialog', actionsheet: 'Aktionsblatt', modal: 'Modal', popover: 'Popover', toast: 'Hinweis', loading: 'Ladeanzeige', nav: 'Navigation', db: 'Datenbank', native: 'Nativ', effect: 'Datei/Teilen', route: 'Route', logic: 'Logik', extra: 'Zusatzbefund' };
+const KIND = { action: 'Aktion', field: 'Feld', text: 'Text', embed: 'Baustein', media: 'Bild', alert: 'Dialog', actionsheet: 'Aktionsblatt', modal: 'Modal', popover: 'Popover', toast: 'Hinweis', loading: 'Ladeanzeige', nav: 'Navigation', db: 'Datenbank', native: 'Nativ', effect: 'Datei/Teilen', route: 'Route', logic: 'Logik', extra: 'Zusatzbefund' };
 const STATUS = { missing: 'fehlt', diff: 'weicht ab', unclear: 'unklar', ok: 'gleich', na: 'entfällt', offen: 'offen' };
 const AREA = { app: 'App, Anmeldung, Navigation', attendance: 'Termine', overview: 'Übersicht, Statistik, Nachrichten', people: 'Personen', 'planning-org': 'Ablaufpläne, Organisation', selfService: 'Meine Termine, Eltern', services: 'Datenebene', 'settings-general': 'Einstellungen: Allgemein', 'settings-main': 'Einstellungen', 'settings-other': 'Einstellungen: weitere', shared: 'Gemeinsame Bausteine', songs: 'Werke', 'teachers-instruments-duty': 'Lehrer, Instrumente, Dienste', team: 'Team-Organisation', native: 'Native Konfiguration' };
 const SEVRANK = { hoch: 0, mittel: 1, niedrig: 2 };
@@ -176,7 +176,6 @@ let data = null, rows = [], decisions = {}, db = null;
 
 const esc = (s) => String(s ?? '').replace(/[&<>"]/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;' }[c]));
 const docId = (id) => id.replace(/[^A-Za-z0-9_.~:@+-]/g, (c) => (c === '/' ? '~' : c === '#' ? '@' : '+'));
-const hash = (s) => { let h = 0; for (const ch of s) h = (h * 31 + ch.charCodeAt(0)) | 0; return (h >>> 0).toString(36); };
 const ionicLink = (ref) => {
   if (!ref) return '';
   const m = String(ref).replace(/^src\/app\//, '').match(/^(.*?)(?::(\d+))?$/);
@@ -193,8 +192,8 @@ function build() {
   const units = data.units;
   rows = data.rows.map((r) => ({ id: r[0], unit: units[r[1]][0], area: units[r[1]][3], kind: r[2], file: r[3], line: r[4], label: r[5], status: r[6], sev: r[7], f: r[8] || [], note: r[9], cond: r[10], v: r[11] || null }));
   data.extra.forEach((e) => {
-    const area = e[0].startsWith('native') ? 'native' : (units.find((u) => u[0] === e[0]) || [, , , 'app'])[3];
-    rows.push({ id: `x:${hash(e[0] + '|' + e[1])}`, unit: e[0], area, kind: 'extra', file: e[4], line: null, label: e[1], status: e[3] ? 'diff' : 'ok', sev: e[3], f: e[5] || [], note: e[2], cond: '', extra: true });
+    const area = e[1].startsWith('native') ? 'native' : (units.find((u) => u[0] === e[1]) || [, , , 'app'])[3];
+    rows.push({ id: e[0], unit: e[1], area, kind: 'extra', file: e[5], line: null, label: e[2], status: e[4] ? 'diff' : 'ok', sev: e[4], f: e[6] || [], note: e[3], cond: '', v: e[7] || null, extra: true });
   });
   const withExtras = new Set(rows.filter((r) => r.extra).map((r) => r.unit));
   rows.forEach((r) => { if (r.kind === 'logic' && withExtras.has(r.unit)) r.summary = true; });

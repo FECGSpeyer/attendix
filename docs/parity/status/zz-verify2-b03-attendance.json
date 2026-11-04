@@ -1,0 +1,249 @@
+{
+  "batch": "zz-verify2-b03-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "2157fa0",
+  "items": {
+    "attendance/att-list/att-list.page#action-558f18b9": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:301",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:51",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:61"
+      ],
+      "n": "Nur bei >1 Instanz, für alle Rollen der Seite gleich (keine Rollenprüfung in beiden Apps): Langname + Chevron links (centerTitle false). Material in Großbuchstaben (Plattform-Optik). Seite in beiden Apps nur für Admin, Verantwortlich, Beobachter, Helfer, Stimmführer-Helfer (Ionic Tab isHelper||isConductor / Flutter canSeeAttendanceTab); Stimmführer, Spieler, Eltern, Bewerber erreichen sie nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#popover-7554a4bb": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:99",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:118"
+      ],
+      "n": "Popover 220 breit, eine Zeile je Instanz (gleiche Quelle tenantUsers, Favoriten zuerst, dann Langname); rollenunabhängig wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-b4391da5": {
+      "s": "ok",
+      "f": [
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:124",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:332",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389"
+      ],
+      "n": "Langname, Badge „Aktuell“ bei der aktuellen Instanz; gleiche Instanz → nichts. Wechsel landet auf der Startseite der Rolle in der neuen Instanz (Admin/Verantwortlich/Beobachter → Personen, Eltern → Eltern, Rest → Meine Termine), wie Utils.getUrl. Fehlendes Lade-Overlay siehe loading-e1caea8b.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-6a3aa5b0": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:303",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:51"
+      ],
+      "n": "Bei ≤1 Instanz Titel „Termine“, für alle Rollen der Seite.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-8b549b85": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:160",
+        "lib/core/utils/archived_attendance.dart:6",
+        "lib/core/providers/attendance_providers.dart:201"
+      ],
+      "n": "Rollen geprüft: nur Admin/Verantwortlich (Ionic isConductor = ADMIN||RESPONSIBLE; Flutter canSeeArchivedAttendances). Helfer, Stimmführer-Helfer, Beobachter sehen den Eintrag in beiden Apps nicht und bekommen archivierte Termine gar nicht geladen. Zähler „{n} archivierte(r) Termin(e)“ nur bei >0.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-437c32e5": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:314",
+        "lib/core/providers/duty_providers.dart:56"
+      ],
+      "n": "Nur Admin/Verantwortlich und nur wenn die Instanz einen Termintyp mit duty_mode hat (alle Typen, auch unsichtbare) – wie Ionic isConductor && hasDutyTypes; Beobachter/Helfer sehen ihn in beiden Apps nicht. Icon shuffle, Tooltip „Dienste verteilen“.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-6a3aa5b0-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:634",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:277"
+      ],
+      "n": "Großer Titel „Termine“ nur im iOS-Look (collapse=\"condense\" ist iOS-only) und nur bei ≤1 Instanz; rollenunabhängig.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-ffabfdf3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:487",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:489"
+      ],
+      "n": "„Heute“ (Termin läuft heute, inkl. mehrtägiger) bzw. „Nächster Termin“; nur Admin, Verantwortlich, Helfer, Stimmführer-Helfer (Ionic isConductor||isHelper = Flutter canAddAttendance). Beobachter bekommt den nächsten Termin stattdessen oben in der Liste „Termine“ – in beiden Apps.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-3ec5afc7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:505",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:58"
+      ],
+      "n": "„Anwesenheit“ mit Ablaufplan, sonst „Anwesenheit erfassen“; nur Dirigent/Helfer (Karte nur für canAddAttendance), öffnet /attendance/:id (Guard ebenfalls canAddAttendance).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-2a77a09b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:513",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:97"
+      ],
+      "n": "Nur auf der Karte für Dirigent/Helfer und nur mit Planfeldern; Beobachter-Ausschluss in hasPlan in beiden Apps. Inhalt des Viewers (ohne Bearbeiten-Stift) siehe modal-c5dfef61/modal-66d0050c.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-a3616f18": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:495",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:450",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:457"
+      ],
+      "n": "Auf der Karte „Heute/Nächster Termin“ können Admin, Verantwortlich, Helfer und Stimmführer-Helfer per (Voll-)Wischen löschen – in Ionic ebenso (kein [disabled] auf diesem Slider). Bestätigung „Termin wirklich entfernen?“ mit Abbrechen/Fortfahren, dann DELETE attendance (id + tenantId).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-bf238f2d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:71"
+      ],
+      "n": "Mülleimer-Option auf der Karte, gleiche Rollen wie das Wischen (Dirigent + Helfer).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-326ff95d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:525",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:526"
+      ],
+      "n": "„Anstehend“ nur für Dirigent/Helfer (staff = canAddAttendance) und nur mit weiteren kommenden Terminen; Beobachter nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-c90cc320": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:526"
+      ],
+      "n": "Anzahl der kommenden Termine ohne den aktuellen; Archiv-Filter wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-cfdf6516": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:528",
+        "lib/core/utils/event_list_utils.dart:136"
+      ],
+      "n": "Monatskopf „MMMM yyyy“ (z. B. „November 2026“), nur im Dirigent/Helfer-Abschnitt.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-b495283c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:555",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:97"
+      ],
+      "n": "Nur in den kommenden Zeilen (nur Dirigent/Helfer) und nur mit Planfeldern; Tooltip „Ablaufplan anzeigen“. Viewer-Inhalt siehe modal-c5dfef61.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-fcf40bb8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:450",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:457"
+      ],
+      "n": "Wischen-Löschen in kommenden Zeilen nur Admin/Verantwortlich (Ionic @if isConductor); Helfer/Stimmführer-Helfer können hier in beiden Apps nicht löschen, Beobachter sieht den Abschnitt nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-609bdff2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+      ],
+      "n": "Mülleimer-Option nur Admin/Verantwortlich, wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-788af3c8": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:574",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:378"
+      ],
+      "n": "Dirigent/Helfer: „Vergangen“ (beendete Termine); Beobachter: „Termine“ (nächster Termin + beendete) – Flutter staff = canAddAttendance wie Ionic isConductor||isHelper.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-8664b4a7": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:575",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:378"
+      ],
+      "n": "Anzahl je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-4b25b852": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:579"
+      ],
+      "n": "„Durchschnitt“ im Abschnitt für alle Rollen der Seite.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-1083fd67": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:581",
+        "lib/core/providers/attendance_providers.dart:252",
+        "lib/core/providers/realtime_providers.dart:253"
+      ],
+      "n": "Durchschnitt über beendete Termine des Typfilters ohne unbesetzte Dienste, gerundet; archivierte zählen nur bei Admin/Verantwortlich mit (für andere Rollen in beiden Apps gar nicht geladen). Randfall: Ionic behält bei leerer Grundmenge den alten Wert, Flutter zeigt 0 %.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-fcf40bb8-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:586",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:450"
+      ],
+      "n": "Vergangene Zeilen: Wischen-Löschen nur Admin/Verantwortlich (Ionic [disabled]=\"!isConductor\"); Helfer, Stimmführer-Helfer, Beobachter nicht.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-609bdff2-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:466"
+      ],
+      "n": "Mülleimer-Option nur Admin/Verantwortlich, wie Ionic.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-ed4d02b3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:612"
+      ],
+      "n": "„Alle {n} anzeigen“/„Weniger anzeigen“ ab >3 Einträgen; Liste je Rolle wie Ionic (Beobachter inkl. nächstem Termin).",
+      "v": "bestätigt"
+    },
+    "x-9616cc8ac2": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/core/providers/duty_providers.dart:77",
+        "lib/core/providers/duty_providers.dart:148",
+        "lib/core/providers/duty_providers.dart:67",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:369",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:625",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:216",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:158",
+        "lib/core/providers/realtime_providers.dart:276"
+      ],
+      "n": "Befund real: dutyTermineByIdProvider, upcomingDutyTermineProvider und myDutyOverviewProvider sind nicht-autoDispose und hängen nur an Instanz/Konto/Typen; invalidiert nur von DutyNotifier, SignoutNotifier, SignInOutNotifier. Pull-to-Refresh, Realtime (attendanceRefetchCounter), Rückkehr aus dem Termin und Anlegen erneuern nur realtimeAttendanceListProvider. Ionic rechnet Headset, „x/y“-Pill, Namen („(angefragt)“/„noch niemand eingeteilt“), Heute-Karte „… besetzt“ und „Deine Dienste“ bei jedem getAttendance neu (Pull-to-Refresh, ionViewWillEnter, nach Anlegen). Folge in Flutter: neue Dienst-Termine als normale Termine mit „0%“, Bestätigungen/Selbsteintragungen anderer bleiben bis Dienst-Aktion, Instanzwechsel oder Neustart unsichtbar, auch Pull-to-Refresh hilft nicht. Erstprüfer: Sev zu niedrig – falsche/veraltete Daten in der Liste der Leitung = hoch.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

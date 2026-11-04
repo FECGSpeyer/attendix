@@ -1,0 +1,360 @@
+{
+ "batch": "zz-verify2-b25-settings-main",
+ "ionic": "9f9b82af",
+ "flutter": "2157fa0",
+ "items": {
+  "settings/settings/settings.page#toast-83e46be4": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:252-256",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:515",
+    "lib/core/providers/tenant_providers.dart:199",
+    "lib/core/providers/tenant_providers.dart:216"
+   ],
+   "n": "Wischaktion „Löschen“ in der Instanzliste für alle Rollen; Toast „Du kannst diese Instanz nicht löschen.“ (danger), wenn die eigene Rolle in der gewischten Instanz nicht Admin ist (auch Verantwortliche) oder Demo-Konto. Rolle aus tenantUsers.role wie Ionic getUserRolesForTenants. Zeilenangaben aktualisiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-179e26cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:65-69"
+   ],
+   "n": "Nur im Administratoren-Sheet (Admin, kein Demo); Vergleich mit der eigenen Auth-userId, Toast danger, gleicher Text.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-1dcadcaa": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118-151",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405",
+    "lib/features/settings/presentation/pages/settings_page.dart:142-146"
+   ],
+   "n": "Ohne Sidepanel für alle Rollen: Langname + „Aktuell“ bei der aktuellen Instanz; Tippen auf die aktuelle → nichts, sonst Wechsel und Startseite der Rolle in der neuen Instanz (Admin/Verantw./Beobachter → Personen, Eltern → Eltern, sonst Selbstservice) wie Utils.getUrl. Kein Popover bei nur 1 Instanz ist unter action-f029eaa1, fehlendes Lade-Overlay unter loading-050c9fa4 erfasst.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-6ee51338": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:85-86",
+    "lib/features/settings/presentation/pages/settings_page.dart:192",
+    "lib/features/settings/presentation/pages/settings_page.dart:622"
+   ],
+   "n": "Gelbe Karte nur bei ≥1 ausstehender Person der aktuellen Instanz (Realtime). Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-89935282": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:627"
+   ],
+   "n": "Gleiche Bedingung wie text-6ee51338 (Admin/Verantwortliche, ≥1 ausstehend).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-3a4ca14e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:610",
+    "lib/features/settings/presentation/pages/pending_players_page.dart:17-21"
+   ],
+   "n": "Tippen auf die Karte öffnet Sheet in voller Höhe; nur Admin/Verantwortliche, da nur dort die Karte erscheint.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-142fcb20": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:39-43"
+   ],
+   "n": "Titel „Ausstehende Personen“; nur über die Admin/Verantwortliche-Karte erreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-a2970ae5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:116-125",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1696-1699",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1825"
+   ],
+   "n": "Name + E-Mail; Tippen öffnet die Person mit Genehmigen-Aktionen (canEdit = Admin/Verantwortliche, Laden per id+tenantId ohne pending-Filter). Rollen gleich; Darstellung Modal vs. Seite siehe modal-fb3873fe.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-da7247a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:77",
+    "lib/features/settings/presentation/pages/settings_page.dart:198-201",
+    "lib/core/constants/enums.dart:117"
+   ],
+   "n": "Nur Stimmführer und Stimmführer-Helfer, nicht in allgemeinen Instanzen (type general), ohne Sidepanel; alle anderen Rollen inkl. Admin nicht – in beiden gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-e74471ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:203-206",
+    "lib/core/router/route_access.dart:96"
+   ],
+   "n": "Gleiche Bedingung wie text-da7247a3; Ziel /settings/voice-leader, Route ebenfalls nur für Stimmführer(-Helfer).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-b00463f6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:212-215"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-853e8c3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:217-220",
+    "lib/core/router/app_router.dart:163"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Ziel /settings/general.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-bfcc1d8c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:222-225",
+    "lib/core/router/app_router.dart:165"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Ziel /settings/instruments.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-aa4cba95": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:227-231",
+    "lib/core/router/app_router.dart:184"
+   ],
+   "n": "Admin/Verantwortliche und nur bei tenant.maintainTeachers – gleich; Ziel /settings/teachers.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-4e6845f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:233-236",
+    "lib/core/router/app_router.dart:171"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Ziel /settings/role-permissions.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-a5717533": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:238-241",
+    "lib/core/router/app_router.dart:195"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Ziel /settings/dashboard.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-6820099c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:247-250"
+   ],
+   "n": "Admin/Verantwortliche, nur ohne Sidepanel – gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-23b43f46": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:252-256",
+    "lib/core/router/app_router.dart:174"
+   ],
+   "n": "Admin/Verantwortliche, ohne Sidepanel; Titel + Hinweis gleich, Ziel /settings/messages.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-1db2be73": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:262-265"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-7e9eef73": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:267-270"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-ffbd2021": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:272",
+    "lib/data/repositories/admin_repository.dart:45-56"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267). Zähler = tenantUsers mit Rolle Admin ohne Super-Developer, wie Ionic getAdmins; 0 wird angezeigt.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-68eeff8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:275-278"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-d9253696": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:280",
+    "lib/data/repositories/parent_repository.dart:19-26"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich. Zähler = parents der Instanz.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-262cddb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:283-285"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-5bc1738e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:287",
+    "lib/data/repositories/viewer_repository.dart:19-26"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Zähler = viewers der Instanz.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-cda2bc0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:90-100",
+    "lib/features/settings/presentation/pages/settings_page.dart:292-299"
+   ],
+   "n": "Admin/Verantwortliche und nur bei ≥1 Person ohne Account (nicht pending, nicht ausgetreten, mit E-Mail, ohne appId) – gleiche Auswahl, Warnfarbe für Icon und Badge.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-ae5fb341": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:273",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:23-28"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267). Sheet in voller Höhe.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-691320ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:103"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-d8036cc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:116-119"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267). Hinweistext gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-23cfeaeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:104-110"
+   ],
+   "n": "Nur Admin (nicht Verantwortliche) und kein Demo-Konto (Ionic !db.isDemo() && isSuperAdmin; Flutter !isDemo && role.isAdmin, settings_page.dart:74,82,267). FAB „+“ öffnet „Admin hinzufügen“ (Dialog-Details im eigenen Item).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-da6c9bf0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:281",
+    "lib/features/settings/presentation/pages/parents_page.dart:21-24"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich. Sheet in voller Höhe.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-5852c1f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:38"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-f9602276": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:81-84"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich. Hinweistext gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-5bb3e6ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:88-92",
+    "lib/features/settings/presentation/pages/parents_page.dart:253-259",
+    "lib/data/repositories/parent_repository.dart:19-26"
+   ],
+   "n": "Rollen/Mandant gleich (Admin/Verantwortliche, tenant.parents); Tippen → Entfernen-Dialog. Erstprüfung übersah: Ionic: ion-item button ohne detail=\"false\" → auf iOS Chevron am Zeilenende; Liste ohne ORDER BY (DB-Reihenfolge) / Flutter: kein Chevron, Liste nach Nachname, Vorname sortiert (die Sortierung ist eher besser).",
+   "v": "korrigiert"
+  },
+  "settings/settings/settings.page#action-ebc157f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:46-49"
+   ],
+   "n": "Nur Admin/Verantwortliche und nur bei tenant.parents (Flutter settings_page.dart:79,275) – gleich. FAB „+“ öffnet „Elternteil hinzufügen“ (Dialog-Details im eigenen Item).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-d14aa098": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:288",
+    "lib/features/settings/presentation/pages/viewers_page.dart:21-24"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Sheet in voller Höhe.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-e103b45d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:38"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-6a9d1dab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:81-84"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. Hinweistext gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-03eef951": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:88-92",
+    "lib/features/settings/presentation/pages/viewers_page.dart:253-259",
+    "lib/data/repositories/viewer_repository.dart:19-26"
+   ],
+   "n": "Flutter besser: Liste nach Nachname, Vorname sortiert / Ionic getViewers ohne ORDER BY (DB-Reihenfolge); die Erstprüfung übersah die Sortierung. Sonst gleich: Name + E-Mail, kein Chevron, Tippen → Entfernen-Dialog; Rollen gleich (Admin/Verantwortliche).",
+   "v": "korrigiert"
+  },
+  "settings/settings/settings.page#action-7e3c5efc": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:46-49"
+   ],
+   "n": "Rollen: nur Admin und Verantwortliche (Ionic isAdmin; Flutter isAdmin = role.isAdmin || role.isResponsible, settings_page.dart:73); Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber sehen es in beiden nicht. FAB „+“ öffnet „Beobachter hinzufügen“ (Dialog-Details im eigenen Item).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}
