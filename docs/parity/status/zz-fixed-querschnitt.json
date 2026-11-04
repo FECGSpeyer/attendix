@@ -328,6 +328,22 @@
     "lib/shared/widgets/dialogs/ion_modal.dart"
    ],
    "n": "behoben in #295"
+  },
+  "services/login.guard#effect-45cebb67": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ],
+   "n": "behoben in #284 (InstanceSelectionGate)"
+  },
+  "services/login.guard#nav-2cb09388": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ],
+   "n": "behoben in #284 (InstanceSelectionGate)"
   }
  },
  "extra": [],

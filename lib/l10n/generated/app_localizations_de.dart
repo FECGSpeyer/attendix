@@ -7063,6 +7063,11 @@ class AppLocalizationsDe extends AppLocalizations {
   String get peopleFlutterHint => 'Hinweis';
 
   @override
+  String peopleFlutterImportNotAssigned(Object name, Object error) {
+    return '$name: gespeichert, aber nicht zu den Terminen hinzugefügt ($error)';
+  }
+
+  @override
   String get peopleFlutterLastNameRequired => 'Nachname ist erforderlich';
 
   @override

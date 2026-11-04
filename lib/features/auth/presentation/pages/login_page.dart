@@ -312,6 +312,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   Future<void> _routeAfterAuth(User user) async {
     // Check if user wants to skip tenant selection
     final userPrefs = UserPreferences.fromUserMetadata(user.userMetadata);
+    // A real sign-in: the "Instanzauswahl" preference applies (Ionic
+    // routeAfterAuth → setTenant(…, showSelector)).
+    InstanceSelectionGate.afterSignIn = true;
 
     if (!userPrefs.wantInstanceSelection && userPrefs.currentTenantId != null) {
       // Try to auto-navigate to saved tenant
@@ -325,7 +328,12 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       final chosen = await _askWantedTenant(userPrefs.currentTenantId);
       if (chosen != null && mounted) {
         final navigated = await _tryAutoNavigateToTenant(chosen);
-        if (navigated) return;
+        if (navigated) {
+          // The selection was made in the alert; a later visit of the
+          // instance list must not count as "right after sign-in".
+          InstanceSelectionGate.afterSignIn = false;
+          return;
+        }
       }
     }
 

@@ -21,6 +21,6 @@ void main() {
     expect(i, greaterThan(0));
     final block = s.substring(i, s.indexOf("return '/tenants';", i));
     expect(block, contains('homeRouteFor('));
-    expect(block, contains('wantInstanceSelection'));
+    expect(block, contains('InstanceSelectionGate.wanted('));
   });
 }

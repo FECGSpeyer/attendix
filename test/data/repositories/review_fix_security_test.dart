@@ -148,7 +148,8 @@ void main() {
       final menu = body(source, 'List<AppPopoverMenuItem<String>> _buildAttDetailMenuItems(', 4000);
       expect(menu, contains("if (canMutate) item('add_person'"));
       expect(menu, contains("if (canMutate) item('reminder'"));
-      expect(menu, contains("if (canMutate) item('photo'"));
+      // No "Foto" entry: Ionic has the photo upload commented out.
+      expect(menu, isNot(contains("item('photo'")));
       // IOS_DETAIL: Ionic shows the description link to Helfer too; viewers
       // stay read-only.
       expect(source, contains('onEditDescription: canEditAttendanceDescription('));
