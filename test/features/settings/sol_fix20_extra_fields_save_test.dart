@@ -5,7 +5,6 @@ import 'dart:async';
 
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/files_providers.dart';
-import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/extra_fields_repository.dart';
@@ -56,6 +55,20 @@ class _DelayedExtraFieldsRepository extends ExtraFieldsRepository {
   }
 }
 
+/// Song settings of the saved tenant ([error]: loading fails).
+class _FakeSongRepository extends SongRepository {
+  _FakeSongRepository(super.ref, {this.settings = const SongTenantSettings(), this.error = false});
+
+  final SongTenantSettings settings;
+  final bool error;
+
+  @override
+  Future<SongTenantSettings> getSongTenantSettings() async {
+    if (error) throw Exception('load failed');
+    return settings;
+  }
+}
+
 void main() {
   const a = ExtraField(id: 'a', name: 'A', type: 'text', defaultValue: '');
   const b = ExtraField(id: 'b', name: 'B', type: 'text', defaultValue: '');
@@ -73,8 +86,8 @@ void main() {
       overrides: [
         churchesProvider.overrideWith((ref) async => []),
         // Song library of another tenant (song_source_tenant_id = 7).
-        songTenantSettingsProvider
-            .overrideWith((ref) async => const SongTenantSettings(songSourceTenantId: 7)),
+        songRepositoryForTenantProvider.overrideWith((ref, key) =>
+            _FakeSongRepository(ref, settings: const SongTenantSettings(songSourceTenantId: 7))),
         extraFieldsRepositoryWithTenantProvider
             .overrideWith((ref) => repo = _DelayedExtraFieldsRepository(ref)),
       ],
@@ -133,7 +146,7 @@ void main() {
       tenant: tenant,
       overrides: [
         churchesProvider.overrideWith((ref) async => []),
-        songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings()),
+        songRepositoryForTenantProvider.overrideWith((ref, key) => _FakeSongRepository(ref)),
         extraFieldsRepositoryWithTenantProvider
             .overrideWith((ref) => repo = _DelayedExtraFieldsRepository(ref)),
       ],
@@ -164,5 +177,38 @@ void main() {
     final saved = repo.savedPersonFields!.single;
     expect(saved.name, 'C2');
     expect(saved.defaultValue, false);
+  });
+
+  // Sol review PR #303: if the song settings (song_source_tenant_id) cannot
+  // be loaded, the save aborts before any write instead of cleaning up the
+  // own song library.
+  testWidgets('song settings load error aborts before any write', (tester) async {
+    late _DelayedExtraFieldsRepository repo;
+    final tenant = TestFactories.createTenant(id: 1).copyWith(
+      additionalFields: const [a],
+      songAdditionalFields: const [],
+    );
+    final container = createTestContainer(
+      tenant: tenant,
+      overrides: [
+        churchesProvider.overrideWith((ref) async => []),
+        songRepositoryForTenantProvider.overrideWith((ref, key) => _FakeSongRepository(ref, error: true)),
+        extraFieldsRepositoryWithTenantProvider
+            .overrideWith((ref) => repo = _DelayedExtraFieldsRepository(ref)),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: const MaterialApp(home: ExtraFieldsPage()),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pumpAndSettle();
+
+    expect(repo.log, isEmpty);
+    expect(find.byKey(const ValueKey('extra-fields-saving')), findsNothing);
   });
 }

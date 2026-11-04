@@ -6,13 +6,13 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/files_providers.dart';
-import '../../../../core/providers/song_providers.dart' show songTenantSettingsProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/extra_fields_repository.dart';
+import '../../../../data/repositories/song_repository.dart' show songRepositoryForTenantProvider;
 import '../../../../l10n/l10n.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -188,8 +188,12 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     setState(() => _saving = true);
     try {
       // Ionic db.getSongs(): songs of the effective song tenant
-      // (song_source_tenant_id ?? own tenant).
-      final songSettings = await ref.read(songTenantSettingsProvider.future);
+      // (song_source_tenant_id ?? own tenant). Loaded for the captured
+      // tenant (not the current-tenant provider, which follows a tenant
+      // switch and swallows errors): a load error aborts before any write.
+      final songSettings = await ref
+          .read(songRepositoryForTenantProvider((tenantId: tenantId, songSourceTenantId: null)))
+          .getSongTenantSettings();
       final songTenantId = songSettings.songSourceTenantId ?? tenantId;
       await repo.saveFields(personFields: personFields, songFields: songFields);
       await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
@@ -244,7 +248,11 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     var displayMode = existing?.displayMode ?? 'chip';
     var visible = existing?.visibleToPlayers ?? false;
     var editable = existing?.editableByPlayers ?? false;
-    var boolDefault = existing?.type == 'boolean' ? existing?.defaultValue == true : false;
+    // A boolean field without default (null) is effectively `true`
+    // (Utils.getFieldTypeDefaultValue); an untouched toggle keeps the stored value.
+    final initialBoolDefault = existing?.type == 'boolean' &&
+        (existing?.defaultValue == null || existing?.defaultValue == true);
+    var boolDefault = initialBoolDefault;
     final options = <TextEditingController>[
       for (final o in existing?.options ?? const <String>[]) TextEditingController(text: o),
     ];
@@ -254,7 +262,9 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     /// ein unverändertes Eingabefeld behält den gespeicherten Wert
     /// (z. B. Alt-Wert `false` statt des Strings 'false').
     dynamic editedDefault() {
-      if (type == 'boolean') return boolDefault;
+      if (type == 'boolean') {
+        return isEdit && boolDefault == initialBoolDefault ? existing.defaultValue : boolDefault;
+      }
       if (type == 'bfecg_church') return existing?.defaultValue;
       if (isEdit && defaultController.text == initialDefaultText) return existing.defaultValue;
       return _parseDefault(type, defaultController.text);

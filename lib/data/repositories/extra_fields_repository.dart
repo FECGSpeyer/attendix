@@ -93,21 +93,24 @@ class ExtraFieldsRepository extends BaseRepository with TenantAwareRepository {
     return response.cast<Map<String, dynamic>>();
   }
 
-  Future<void> _updateRow(String table, int id, Map<String, dynamic> fields, {int? rowTenantId}) async {
+  /// Gibt zurück, ob tatsächlich eine Zeile aktualisiert wurde
+  /// (nicht bei parallel gelöschter Zeile oder RLS).
+  Future<bool> _updateRow(String table, int id, Map<String, dynamic> fields, {int? rowTenantId}) async {
     final tenantId = rowTenantId ?? currentTenantId;
-    await supabase
+    final updated = await supabase
         .from(table)
         .update({'additional_fields': fields})
         .eq('id', id)
-        .eq('tenantId', tenantId);
+        .eq('tenantId', tenantId)
+        .select('id');
+    return (updated as List).isNotEmpty;
   }
 
   /// Wie Ionic: einzelne fehlgeschlagene Updates werden übersprungen
   /// (nicht gezählt), statt den ganzen Vorgang abzubrechen.
   Future<bool> _tryUpdateRow(String table, int id, Map<String, dynamic> fields) async {
     try {
-      await _updateRow(table, id, fields);
-      return true;
+      return await _updateRow(table, id, fields);
     } catch (e) {
       if (kDebugMode) debugPrint('[ExtraFieldsRepository] update $table#$id failed: $e');
       return false;
