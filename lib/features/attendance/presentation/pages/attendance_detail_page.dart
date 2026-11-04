@@ -39,6 +39,7 @@ import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show IonIos, IonInsetList;
@@ -450,6 +451,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         // IOS_DETAIL: iOS header: back and ⋮ each in a 44 pt glass circle
         final ios = useIosLook(context);
         final canPop = Navigator.of(context).canPop();
+        final inModal = IonPageModalScope.isIn(context);
         // IOS_DETAIL: the shell's floating button / FAB never covers the
         // last row (Ionic .marginBottom 5rem + tabbar-safe padding).
         final fabShown = ios && !ref.watch(effectiveRoleProvider).isViewer;
@@ -461,7 +463,26 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return Scaffold(
           backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
           appBar: AppBar(
-            leading: ios && canPop
+            // Ionic isModal (opened from the dashboard): close X at the start
+            // instead of the back button.
+            leading: inModal
+                ? (ios
+                    ? Center(
+                        child: Semantics(
+                          button: true,
+                          label: context.l10n.commonClose,
+                          child: GestureDetector(
+                            onTap: () => Navigator.of(context).maybePop(),
+                            child: const IosCircleIcon(icon: Icons.close, size: 44, iconSize: 22),
+                          ),
+                        ),
+                      )
+                    : IconButton(
+                        tooltip: context.l10n.commonClose,
+                        icon: const Icon(Icons.close),
+                        onPressed: () => Navigator.of(context).maybePop(),
+                      ))
+                : ios && canPop
                 ? Center(
                     child: Semantics(
                       button: true,
@@ -477,7 +498,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                     ),
                   )
                 : null,
-            leadingWidth: ios && canPop ? 68 : null,
+            leadingWidth: ios && (canPop || inModal) ? 68 : null,
             title: Text(
               titlePersons == null
                   ? dateLabel

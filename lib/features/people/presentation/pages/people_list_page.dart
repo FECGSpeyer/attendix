@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -32,6 +31,7 @@ import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
 import '../widgets/handover_sheet.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
+import '../widgets/person_modal.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import 'bulk_edit_page.dart';
@@ -527,7 +527,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         SliverToBoxAdapter(
           child: _BirthdayBanner(
             people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
-            onTap: (p) => context.push('/people/${p.id}'),
+            onTap: (p) {
+              if (p.id != null) showPersonModal(context, p.id!);
+            },
           ),
         ),
       ...peopleAsync.when(
@@ -561,7 +563,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   actions: [
                     (
                       context.l10n.attendanceAddPerson,
-                      () => context.push('/people/new'),
+                      () => showPersonCreateModal(context),
                     ),
                     if (isAdmin)
                       (context.l10n.peopleImportPeople, _openImport),
@@ -602,7 +604,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   _filterOption == 'otherInstance' ? _otherInstanceName : null,
               onTap: _isSelectionMode && person.id != null
                   ? () => _togglePlayerSelection(person.id!)
-                  : () => context.push('/people/${person.id}'),
+                  : () {
+                      if (person.id != null) showPersonModal(context, person.id!);
+                    },
               onPause: isAdmin ? () => _showPauseDialog(person) : null,
               onUnpause: isAdmin ? () => _unpausePerson(person) : null,
               onRemove: isAdmin ? () => _remove(person) : null,
@@ -662,7 +666,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           : isAdmin
               // IOS_SHELL: iOS → ion-fab in the tab bar row
               ? TabBarFab(
-                  child: IonFabButton(onPressed: () => context.push('/people/new')))
+                  child: IonFabButton(onPressed: () => showPersonCreateModal(context)))
               : null,
     );
   }

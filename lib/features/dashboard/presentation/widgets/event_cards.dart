@@ -16,6 +16,8 @@ import '../../../../data/models/dashboard/dashboard_event.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
+import '../../../attendance/presentation/pages/attendance_detail_page.dart';
 import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
@@ -47,7 +49,11 @@ class NextEventCard extends ConsumerWidget {
 
     Future<void> open(int? id) async {
       if (!canOpen || id == null) return;
-      await context.push('/attendance/$id');
+      // Ionic: AttendancePage as modal (isModal, presentingElement).
+      await showPageModal<void>(
+        context,
+        builder: (_) => AttendanceDetailPage(attendanceId: id),
+      );
       ref.invalidate(dashboardNextEventProvider);
     }
 
