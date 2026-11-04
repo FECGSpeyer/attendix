@@ -1,0 +1,1779 @@
+diff --git a/lib/l10n/app_de.arb b/lib/l10n/app_de.arb
+index 9d18cd15..dee2d626 100644
+--- a/lib/l10n/app_de.arb
++++ b/lib/l10n/app_de.arb
+@@ -8750,6 +8750,14 @@
+   "@peopleFlutterHint": {
+     "description": "people.flutter.hint"
+   },
++  "peopleFlutterImportNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})",
++  "@peopleFlutterImportNotAssigned": {
++    "description": "people.flutter.importNotAssigned",
++    "placeholders": {
++      "name": {},
++      "error": {}
++    }
++  },
+   "peopleFlutterLastNameRequired": "Nachname ist erforderlich",
+   "@peopleFlutterLastNameRequired": {
+     "description": "people.flutter.lastNameRequired"
+@@ -13128,6 +13136,70 @@
+   "@redesignFilesZipPreparing": {
+     "description": "redesign.files.zipPreparing"
+   },
++  "redesignFolderAll": "Alle Werke · {count}",
++  "@redesignFolderAll": {
++    "description": "redesign.folder.all",
++    "placeholders": {
++      "count": {}
++    }
++  },
++  "redesignFolderEmpty": "Für {name} gibt es noch keine Noten.",
++  "@redesignFolderEmpty": {
++    "description": "redesign.folder.empty",
++    "placeholders": {
++      "name": {}
++    }
++  },
++  "redesignFolderMissing": "fehlt",
++  "@redesignFolderMissing": {
++    "description": "redesign.folder.missing"
++  },
++  "redesignFolderNext": "Als Nächstes · {count}",
++  "@redesignFolderNext": {
++    "description": "redesign.folder.next",
++    "placeholders": {
++      "count": {}
++    }
++  },
++  "redesignFolderNoGroup": "Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.",
++  "@redesignFolderNoGroup": {
++    "description": "redesign.folder.noGroup"
++  },
++  "redesignFolderNoPart": "Keine Noten für {name}",
++  "@redesignFolderNoPart": {
++    "description": "redesign.folder.noPart",
++    "placeholders": {
++      "name": {}
++    }
++  },
++  "redesignFolderNothingNext": "Für die nächsten Termine sind noch keine Werke geplant.",
++  "@redesignFolderNothingNext": {
++    "description": "redesign.folder.nothingNext"
++  },
++  "redesignFolderOpen": "Als ein PDF öffnen",
++  "@redesignFolderOpen": {
++    "description": "redesign.folder.open"
++  },
++  "redesignFolderOpenHint": "Zum Ansehen, Speichern oder Drucken",
++  "@redesignFolderOpenHint": {
++    "description": "redesign.folder.openHint"
++  },
++  "redesignFolderOther": "Andere Stimme",
++  "@redesignFolderOther": {
++    "description": "redesign.folder.other"
++  },
++  "redesignFolderPick": "Stimme wählen",
++  "@redesignFolderPick": {
++    "description": "redesign.folder.pick"
++  },
++  "redesignFolderTitle": "Meine Mappe",
++  "@redesignFolderTitle": {
++    "description": "redesign.folder.title"
++  },
++  "redesignFolderTitleLeads": "Mappen",
++  "@redesignFolderTitleLeads": {
++    "description": "redesign.folder.titleLeads"
++  },
+   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
+   "@redesignGroupsLoadFailed": {
+     "description": "redesign.groups.loadFailed"
+@@ -14943,6 +15015,48 @@
+   "@redesignWorkCopyHint": {
+     "description": "redesign.work.copyHint"
+   },
++  "redesignWorkCreateCategory": "Kategorie",
++  "@redesignWorkCreateCategory": {
++    "description": "redesign.workCreate.category"
++  },
++  "redesignWorkCreateCategoryHint": "Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.",
++  "@redesignWorkCreateCategoryHint": {
++    "description": "redesign.workCreate.categoryHint",
++    "placeholders": {
++      "name": {}
++    }
++  },
++  "redesignWorkCreateCreate": "Anlegen",
++  "@redesignWorkCreateCreate": {
++    "description": "redesign.workCreate.create"
++  },
++  "redesignWorkCreateCreateAndAdd": "Anlegen und Noten hinzufügen",
++  "@redesignWorkCreateCreateAndAdd": {
++    "description": "redesign.workCreate.createAndAdd"
++  },
++  "redesignWorkCreateInstrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
++  "@redesignWorkCreateInstrumentationHint": {
++    "description": "redesign.workCreate.instrumentationHint"
++  },
++  "redesignWorkCreateLater": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.",
++  "@redesignWorkCreateLater": {
++    "description": "redesign.workCreate.later"
++  },
++  "redesignWorkCreateNextNumber": "{number} ist die nächste freie Nummer.",
++  "@redesignWorkCreateNextNumber": {
++    "description": "redesign.workCreate.nextNumber",
++    "placeholders": {
++      "number": {}
++    }
++  },
++  "redesignWorkCreatePrefixHint": "Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.",
++  "@redesignWorkCreatePrefixHint": {
++    "description": "redesign.workCreate.prefixHint"
++  },
++  "redesignWorkCreateTitle": "Neues Werk",
++  "@redesignWorkCreateTitle": {
++    "description": "redesign.workCreate.title"
++  },
+   "redesignWorkDifficulty": "Schwierigkeit",
+   "@redesignWorkDifficulty": {
+     "description": "redesign.work.difficulty"
+@@ -15323,6 +15437,30 @@
+   "@redesignWorksAdd": {
+     "description": "redesign.works.add"
+   },
++  "redesignWorksAddImport": "Werkliste importieren",
++  "@redesignWorksAddImport": {
++    "description": "redesign.works.addImport"
++  },
++  "redesignWorksAddImportHint": "Excel oder CSV mit Nummer, Titel, Kategorie",
++  "@redesignWorksAddImportHint": {
++    "description": "redesign.works.addImportHint"
++  },
++  "redesignWorksAddNew": "Neues Werk",
++  "@redesignWorksAddNew": {
++    "description": "redesign.works.addNew"
++  },
++  "redesignWorksAddNewHint": "Titel und Nummer, danach direkt die Noten",
++  "@redesignWorksAddNewHint": {
++    "description": "redesign.works.addNewHint"
++  },
++  "redesignWorksAddOrg": "Aus anderer Gruppe übernehmen",
++  "@redesignWorksAddOrg": {
++    "description": "redesign.works.addOrg"
++  },
++  "redesignWorksAddOrgHint": "Werke deiner Organisation durchsuchen und kopieren",
++  "@redesignWorksAddOrgHint": {
++    "description": "redesign.works.addOrgHint"
++  },
+   "redesignWorksAll": "Alle · {count}",
+   "@redesignWorksAll": {
+     "description": "redesign.works.all",
+@@ -15330,51 +15468,124 @@
+       "count": {}
+     }
+   },
+-  "redesignWorksAudio": "Audio",
+-  "@redesignWorksAudio": {
+-    "description": "redesign.works.audio"
+-  },
+-  "redesignWorksCurrent": "Gerade geprobt",
+-  "@redesignWorksCurrent": {
+-    "description": "redesign.works.current"
++  "redesignWorksAllEvents": "Alle Termine",
++  "@redesignWorksAllEvents": {
++    "description": "redesign.works.allEvents"
+   },
+   "redesignWorksEmpty": "Noch keine Werke.",
+   "@redesignWorksEmpty": {
+     "description": "redesign.works.empty"
+   },
+-  "redesignWorksFiles": "Dateien",
+-  "@redesignWorksFiles": {
+-    "description": "redesign.works.files"
+-  },
+-  "redesignWorksFilesLabel": "Dateien der Gruppe",
+-  "@redesignWorksFilesLabel": {
+-    "description": "redesign.works.filesLabel"
++  "redesignWorksEventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
++  "@redesignWorksEventWorks": {
++    "description": "redesign.works.eventWorks",
++    "placeholders": {
++      "count": {
++        "type": "num"
++      }
++    }
+   },
+-  "redesignWorksFilter": "Filter & Ansicht",
++  "redesignWorksFilter": "Filter",
+   "@redesignWorksFilter": {
+     "description": "redesign.works.filter"
+   },
+-  "redesignWorksFilterActive": "Filter aktiv",
+-  "@redesignWorksFilterActive": {
+-    "description": "redesign.works.filterActive"
++  "redesignWorksFilterReset": "Zurücksetzen",
++  "@redesignWorksFilterReset": {
++    "description": "redesign.works.filterReset"
++  },
++  "redesignWorksFilterTitle": "Sortieren & Filtern",
++  "@redesignWorksFilterTitle": {
++    "description": "redesign.works.filterTitle"
++  },
++  "redesignWorksFolder": "Meine Mappe",
++  "@redesignWorksFolder": {
++    "description": "redesign.works.folder"
++  },
++  "redesignWorksFolders": "Mappen",
++  "@redesignWorksFolders": {
++    "description": "redesign.works.folders"
++  },
++  "redesignWorksForGroup": "Für Gruppe",
++  "@redesignWorksForGroup": {
++    "description": "redesign.works.forGroup"
++  },
++  "redesignWorksForGroupAll": "Alle",
++  "@redesignWorksForGroupAll": {
++    "description": "redesign.works.forGroupAll"
++  },
++  "redesignWorksLastOn": "Zuletzt {date}",
++  "@redesignWorksLastOn": {
++    "description": "redesign.works.lastOn",
++    "placeholders": {
++      "date": {}
++    }
++  },
++  "redesignWorksMissingNotes": "Noten fehlen",
++  "@redesignWorksMissingNotes": {
++    "description": "redesign.works.missingNotes"
+   },
+   "redesignWorksMore": "Mehr",
+   "@redesignWorksMore": {
+     "description": "redesign.works.more"
+   },
++  "redesignWorksNeverPlayed": "Noch nie gespielt",
++  "@redesignWorksNeverPlayed": {
++    "description": "redesign.works.neverPlayed"
++  },
++  "redesignWorksNeverSung": "Noch nie gesungen",
++  "@redesignWorksNeverSung": {
++    "description": "redesign.works.neverSung"
++  },
++  "redesignWorksNext": "Als Nächstes",
++  "@redesignWorksNext": {
++    "description": "redesign.works.next"
++  },
++  "redesignWorksNoFilesPill": "ohne Noten",
++  "@redesignWorksNoFilesPill": {
++    "description": "redesign.works.noFilesPill"
++  },
+   "redesignWorksNoMatch": "Kein Werk passt zur Suche.",
+   "@redesignWorksNoMatch": {
+     "description": "redesign.works.noMatch"
+   },
+-  "redesignWorksPdf": "PDF",
+-  "@redesignWorksPdf": {
+-    "description": "redesign.works.pdf"
++  "redesignWorksOnly": "Nur zeigen",
++  "@redesignWorksOnly": {
++    "description": "redesign.works.only"
++  },
++  "redesignWorksOnlyMine": "Mit meiner Stimme",
++  "@redesignWorksOnlyMine": {
++    "description": "redesign.works.onlyMine"
++  },
++  "redesignWorksOnlyMissing": "Noten fehlen",
++  "@redesignWorksOnlyMissing": {
++    "description": "redesign.works.onlyMissing"
++  },
++  "redesignWorksOnlyRecording": "Mit Aufnahme",
++  "@redesignWorksOnlyRecording": {
++    "description": "redesign.works.onlyRecording"
++  },
++  "redesignWorksOnlySolo": "Mit Solo",
++  "@redesignWorksOnlySolo": {
++    "description": "redesign.works.onlySolo"
++  },
++  "redesignWorksOpenMine": "Meine Noten öffnen",
++  "@redesignWorksOpenMine": {
++    "description": "redesign.works.openMine"
++  },
++  "redesignWorksOpenMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
++  "@redesignWorksOpenMineHint": {
++    "description": "redesign.works.openMineHint",
++    "placeholders": {
++      "count": {
++        "type": "num"
++      }
++    }
+   },
+   "redesignWorksResetFilter": "Filter zurücksetzen",
+   "@redesignWorksResetFilter": {
+     "description": "redesign.works.resetFilter"
+   },
+-  "redesignWorksSearch": "Titel, Komponist, Nummer",
++  "redesignWorksSearch": "Titel oder Nummer",
+   "@redesignWorksSearch": {
+     "description": "redesign.works.search"
+   },
+@@ -15382,6 +15593,69 @@
+   "@redesignWorksSearchLabel": {
+     "description": "redesign.works.searchLabel"
+   },
++  "redesignWorksShow": "{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}",
++  "@redesignWorksShow": {
++    "description": "redesign.works.show",
++    "placeholders": {
++      "count": {
++        "type": "num"
++      }
++    }
++  },
++  "redesignWorksSort": "Sortieren",
++  "@redesignWorksSort": {
++    "description": "redesign.works.sort"
++  },
++  "redesignWorksSortLastPlayed": "Zuletzt gespielt",
++  "@redesignWorksSortLastPlayed": {
++    "description": "redesign.works.sortLastPlayed"
++  },
++  "redesignWorksSortLastSung": "Zuletzt gesungen",
++  "@redesignWorksSortLastSung": {
++    "description": "redesign.works.sortLastSung"
++  },
++  "redesignWorksSortLongestPlayed": "Am längsten nicht gespielt",
++  "@redesignWorksSortLongestPlayed": {
++    "description": "redesign.works.sortLongestPlayed"
++  },
++  "redesignWorksSortLongestSung": "Am längsten nicht gesungen",
++  "@redesignWorksSortLongestSung": {
++    "description": "redesign.works.sortLongestSung"
++  },
++  "redesignWorksSortNumber": "Nummer",
++  "@redesignWorksSortNumber": {
++    "description": "redesign.works.sortNumber"
++  },
++  "redesignWorksSortRemove": "Sortierung „{name}“ entfernen",
++  "@redesignWorksSortRemove": {
++    "description": "redesign.works.sortRemove",
++    "placeholders": {
++      "name": {}
++    }
++  },
++  "redesignWorksSortTitle": "Titel",
++  "@redesignWorksSortTitle": {
++    "description": "redesign.works.sortTitle"
++  },
++  "redesignWorksStatusNoFiles": "noch keine Noten",
++  "@redesignWorksStatusNoFiles": {
++    "description": "redesign.works.statusNoFiles"
++  },
++  "redesignWorksStatusNoPart": "keine Noten für {name}",
++  "@redesignWorksStatusNoPart": {
++    "description": "redesign.works.statusNoPart",
++    "placeholders": {
++      "name": {}
++    }
++  },
++  "redesignWorksStatusPart": "Deine Stimme",
++  "@redesignWorksStatusPart": {
++    "description": "redesign.works.statusPart"
++  },
++  "redesignWorksStatusRecording": "Aufnahme",
++  "@redesignWorksStatusRecording": {
++    "description": "redesign.works.statusRecording"
++  },
+   "registerCreate": "Instanz jetzt erstellen",
+   "@registerCreate": {
+     "description": "register.create"
+diff --git a/lib/l10n/app_en.arb b/lib/l10n/app_en.arb
+index b9644960..c1c255d1 100644
+--- a/lib/l10n/app_en.arb
++++ b/lib/l10n/app_en.arb
+@@ -1901,6 +1901,7 @@
+   "peopleFlutterHandoverTransferred": "{count} players transferred successfully",
+   "peopleFlutterHandoverTransferring": "Transferring...",
+   "peopleFlutterHint": "Note",
++  "peopleFlutterImportNotAssigned": "{name}: saved, but not added to the events ({error})",
+   "peopleFlutterLastNameRequired": "Last name is required",
+   "peopleFlutterListLoadFailed": "The list of people could not be loaded.",
+   "peopleFlutterLoadFailed": "Loading failed",
+@@ -2844,6 +2845,19 @@
+   "redesignFilesUploading": "Uploading …",
+   "redesignFilesWaiting": "Waiting",
+   "redesignFilesZipPreparing": "Creating ZIP …",
++  "redesignFolderAll": "All works · {count}",
++  "redesignFolderEmpty": "There is no sheet music for {name} yet.",
++  "redesignFolderMissing": "missing",
++  "redesignFolderNext": "Coming up · {count}",
++  "redesignFolderNoGroup": "You have no part yet. Pick a part to see its sheet music.",
++  "redesignFolderNoPart": "No sheet music for {name}",
++  "redesignFolderNothingNext": "No works are planned for the coming events yet.",
++  "redesignFolderOpen": "Open as one PDF",
++  "redesignFolderOpenHint": "To view, save or print",
++  "redesignFolderOther": "Other part",
++  "redesignFolderPick": "Pick a part",
++  "redesignFolderTitle": "My folder",
++  "redesignFolderTitleLeads": "Folders",
+   "redesignGroupsLoadFailed": "Your groups could not be loaded.",
+   "redesignGroupsManage": "Manage groups",
+   "redesignGroupsSwitchFailed": "Switching failed. Please try again.",
+@@ -3228,6 +3242,15 @@
+   "redesignWorkCopiedFrom": "Copied from",
+   "redesignWorkCopy": "Copy to another group",
+   "redesignWorkCopyHint": "To groups of your organisation that you lead",
++  "redesignWorkCreateCategory": "Category",
++  "redesignWorkCreateCategoryHint": "Preselected because the list is filtered to “{name}”.",
++  "redesignWorkCreateCreate": "Create",
++  "redesignWorkCreateCreateAndAdd": "Create and add sheet music",
++  "redesignWorkCreateInstrumentationHint": "The app knows which groups play from the sheet music you upload next.",
++  "redesignWorkCreateLater": "Link, difficulty and additional fields later in “Edit”.",
++  "redesignWorkCreateNextNumber": "{number} is the next free number.",
++  "redesignWorkCreatePrefixHint": "Prefix only if needed, e.g. C for Christmas → C1.",
++  "redesignWorkCreateTitle": "New work",
+   "redesignWorkDifficulty": "Difficulty",
+   "redesignWorkEdit": "Edit",
+   "redesignWorkEditCategories": "Categories",
+@@ -3309,20 +3332,54 @@
+   "redesignWorkYourPart": "Your part",
+   "redesignWorkZip": "All files as ZIP",
+   "redesignWorksAdd": "Add work",
++  "redesignWorksAddImport": "Import work list",
++  "redesignWorksAddImportHint": "Excel or CSV with number, title, category",
++  "redesignWorksAddNew": "New work",
++  "redesignWorksAddNewHint": "Title and number, then the sheet music",
++  "redesignWorksAddOrg": "Take over from another group",
++  "redesignWorksAddOrgHint": "Search and copy works of your organisation",
+   "redesignWorksAll": "All · {count}",
+-  "redesignWorksAudio": "Audio",
+-  "redesignWorksCurrent": "In rehearsal",
++  "redesignWorksAllEvents": "All events",
+   "redesignWorksEmpty": "No works yet.",
+-  "redesignWorksFiles": "Files",
+-  "redesignWorksFilesLabel": "Files of the group",
+-  "redesignWorksFilter": "Filter & view",
+-  "redesignWorksFilterActive": "Filter active",
++  "redesignWorksEventWorks": "{count, plural, one {1 work} other {{count} works}}",
++  "redesignWorksFilter": "Filter",
++  "redesignWorksFilterReset": "Reset",
++  "redesignWorksFilterTitle": "Sort & filter",
++  "redesignWorksFolder": "My folder",
++  "redesignWorksFolders": "Folders",
++  "redesignWorksForGroup": "For group",
++  "redesignWorksForGroupAll": "All",
++  "redesignWorksLastOn": "Last {date}",
++  "redesignWorksMissingNotes": "Sheet music missing",
+   "redesignWorksMore": "More",
++  "redesignWorksNeverPlayed": "Never played",
++  "redesignWorksNeverSung": "Never sung",
++  "redesignWorksNext": "Coming up",
++  "redesignWorksNoFilesPill": "no sheet music",
+   "redesignWorksNoMatch": "No work matches the search.",
+-  "redesignWorksPdf": "PDF",
++  "redesignWorksOnly": "Only show",
++  "redesignWorksOnlyMine": "With my part",
++  "redesignWorksOnlyMissing": "Sheet music missing",
++  "redesignWorksOnlyRecording": "With recording",
++  "redesignWorksOnlySolo": "With solo",
++  "redesignWorksOpenMine": "Open my sheet music",
++  "redesignWorksOpenMineHint": "{count, plural, one {Your part as a PDF, also for printing} other {{count} parts as one PDF, also for printing}}",
+   "redesignWorksResetFilter": "Reset filter",
+-  "redesignWorksSearch": "Title, composer, number",
++  "redesignWorksSearch": "Title or number",
+   "redesignWorksSearchLabel": "Search works",
++  "redesignWorksShow": "{count, plural, =0 {No work matches} one {Show 1 work} other {Show {count} works}}",
++  "redesignWorksSort": "Sort",
++  "redesignWorksSortLastPlayed": "Last played",
++  "redesignWorksSortLastSung": "Last sung",
++  "redesignWorksSortLongestPlayed": "Longest not played",
++  "redesignWorksSortLongestSung": "Longest not sung",
++  "redesignWorksSortNumber": "Number",
++  "redesignWorksSortRemove": "Remove sorting “{name}”",
++  "redesignWorksSortTitle": "Title",
++  "redesignWorksStatusNoFiles": "no sheet music yet",
++  "redesignWorksStatusNoPart": "no sheet music for {name}",
++  "redesignWorksStatusPart": "Your part",
++  "redesignWorksStatusRecording": "Recording",
+   "registerCreate": "Create instance now",
+   "registerCreateFailed": "Could not create the instance: {error}",
+   "registerCreating": "Creating instance...",
+diff --git a/lib/l10n/fragments/redesign.json b/lib/l10n/fragments/redesign.json
+index 7f84ec9d..c8b02644 100644
+--- a/lib/l10n/fragments/redesign.json
++++ b/lib/l10n/fragments/redesign.json
+@@ -462,21 +462,81 @@
+         "history": "Verlauf"
+       },
+       "works": {
+-        "files": "Dateien",
+-        "filesLabel": "Dateien der Gruppe",
+-        "search": "Titel, Komponist, Nummer",
++        "search": "Titel oder Nummer",
+         "searchLabel": "Werke suchen",
+-        "current": "Gerade geprobt",
+         "all": "Alle · {count}",
+         "more": "Mehr",
+-        "filter": "Filter & Ansicht",
+-        "filterActive": "Filter aktiv",
++        "filter": "Filter",
+         "resetFilter": "Filter zurücksetzen",
+         "add": "Werk hinzufügen",
+         "empty": "Noch keine Werke.",
+         "noMatch": "Kein Werk passt zur Suche.",
+-        "pdf": "PDF",
+-        "audio": "Audio"
++        "folder": "Meine Mappe",
++        "folders": "Mappen",
++        "next": "Als Nächstes",
++        "allEvents": "Alle Termine",
++        "eventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
++        "openMine": "Meine Noten öffnen",
++        "openMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
++        "missingNotes": "Noten fehlen",
++        "statusPart": "Deine Stimme",
++        "statusRecording": "Aufnahme",
++        "statusNoFiles": "noch keine Noten",
++        "statusNoPart": "keine Noten für {name}",
++        "lastOn": "Zuletzt {date}",
++        "neverPlayed": "Noch nie gespielt",
++        "neverSung": "Noch nie gesungen",
++        "noFilesPill": "ohne Noten",
++        "filterTitle": "Sortieren & Filtern",
++        "filterReset": "Zurücksetzen",
++        "sort": "Sortieren",
++        "sortNumber": "Nummer",
++        "sortTitle": "Titel",
++        "sortLastPlayed": "Zuletzt gespielt",
++        "sortLastSung": "Zuletzt gesungen",
++        "sortLongestPlayed": "Am längsten nicht gespielt",
++        "sortLongestSung": "Am längsten nicht gesungen",
++        "sortRemove": "Sortierung „{name}“ entfernen",
++        "only": "Nur zeigen",
++        "onlyMissing": "Noten fehlen",
++        "onlyMine": "Mit meiner Stimme",
++        "onlyRecording": "Mit Aufnahme",
++        "onlySolo": "Mit Solo",
++        "forGroup": "Für Gruppe",
++        "forGroupAll": "Alle",
++        "show": "{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}",
++        "addNew": "Neues Werk",
++        "addNewHint": "Titel und Nummer, danach direkt die Noten",
++        "addImport": "Werkliste importieren",
++        "addImportHint": "Excel oder CSV mit Nummer, Titel, Kategorie",
++        "addOrg": "Aus anderer Gruppe übernehmen",
++        "addOrgHint": "Werke deiner Organisation durchsuchen und kopieren"
++      },
++      "workCreate": {
++        "title": "Neues Werk",
++        "create": "Anlegen",
++        "createAndAdd": "Anlegen und Noten hinzufügen",
++        "nextNumber": "{number} ist die nächste freie Nummer.",
++        "prefixHint": "Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.",
++        "category": "Kategorie",
++        "categoryHint": "Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.",
++        "instrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
++        "later": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“."
++      },
++      "folder": {
++        "title": "Meine Mappe",
++        "titleLeads": "Mappen",
++        "other": "Andere Stimme",
++        "next": "Als Nächstes · {count}",
++        "all": "Alle Werke · {count}",
++        "noPart": "Keine Noten für {name}",
++        "missing": "fehlt",
++        "open": "Als ein PDF öffnen",
++        "openHint": "Zum Ansehen, Speichern oder Drucken",
++        "empty": "Für {name} gibt es noch keine Noten.",
++        "noGroup": "Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.",
++        "pick": "Stimme wählen",
++        "nothingNext": "Für die nächsten Termine sind noch keine Werke geplant."
+       },
+       "work": {
+         "edit": "Bearbeiten",
+@@ -1303,21 +1363,81 @@
+         "history": "History"
+       },
+       "works": {
+-        "files": "Files",
+-        "filesLabel": "Files of the group",
+-        "search": "Title, composer, number",
++        "search": "Title or number",
+         "searchLabel": "Search works",
+-        "current": "In rehearsal",
+         "all": "All · {count}",
+         "more": "More",
+-        "filter": "Filter & view",
+-        "filterActive": "Filter active",
++        "filter": "Filter",
+         "resetFilter": "Reset filter",
+         "add": "Add work",
+         "empty": "No works yet.",
+         "noMatch": "No work matches the search.",
+-        "pdf": "PDF",
+-        "audio": "Audio"
++        "folder": "My folder",
++        "folders": "Folders",
++        "next": "Coming up",
++        "allEvents": "All events",
++        "eventWorks": "{count, plural, one {1 work} other {{count} works}}",
++        "openMine": "Open my sheet music",
++        "openMineHint": "{count, plural, one {Your part as a PDF, also for printing} other {{count} parts as one PDF, also for printing}}",
++        "missingNotes": "Sheet music missing",
++        "statusPart": "Your part",
++        "statusRecording": "Recording",
++        "statusNoFiles": "no sheet music yet",
++        "statusNoPart": "no sheet music for {name}",
++        "lastOn": "Last {date}",
++        "neverPlayed": "Never played",
++        "neverSung": "Never sung",
++        "noFilesPill": "no sheet music",
++        "filterTitle": "Sort & filter",
++        "filterReset": "Reset",
++        "sort": "Sort",
++        "sortNumber": "Number",
++        "sortTitle": "Title",
++        "sortLastPlayed": "Last played",
++        "sortLastSung": "Last sung",
++        "sortLongestPlayed": "Longest not played",
++        "sortLongestSung": "Longest not sung",
++        "sortRemove": "Remove sorting “{name}”",
++        "only": "Only show",
++        "onlyMissing": "Sheet music missing",
++        "onlyMine": "With my part",
++        "onlyRecording": "With recording",
++        "onlySolo": "With solo",
++        "forGroup": "For group",
++        "forGroupAll": "All",
++        "show": "{count, plural, =0 {No work matches} one {Show 1 work} other {Show {count} works}}",
++        "addNew": "New work",
++        "addNewHint": "Title and number, then the sheet music",
++        "addImport": "Import work list",
++        "addImportHint": "Excel or CSV with number, title, category",
++        "addOrg": "Take over from another group",
++        "addOrgHint": "Search and copy works of your organisation"
++      },
++      "workCreate": {
++        "title": "New work",
++        "create": "Create",
++        "createAndAdd": "Create and add sheet music",
++        "nextNumber": "{number} is the next free number.",
++        "prefixHint": "Prefix only if needed, e.g. C for Christmas → C1.",
++        "category": "Category",
++        "categoryHint": "Preselected because the list is filtered to “{name}”.",
++        "instrumentationHint": "The app knows which groups play from the sheet music you upload next.",
++        "later": "Link, difficulty and additional fields later in “Edit”."
++      },
++      "folder": {
++        "title": "My folder",
++        "titleLeads": "Folders",
++        "other": "Other part",
++        "next": "Coming up · {count}",
++        "all": "All works · {count}",
++        "noPart": "No sheet music for {name}",
++        "missing": "missing",
++        "open": "Open as one PDF",
++        "openHint": "To view, save or print",
++        "empty": "There is no sheet music for {name} yet.",
++        "noGroup": "You have no part yet. Pick a part to see its sheet music.",
++        "pick": "Pick a part",
++        "nothingNext": "No works are planned for the coming events yet."
+       },
+       "work": {
+         "edit": "Edit",
+diff --git a/lib/l10n/generated/app_localizations.dart b/lib/l10n/generated/app_localizations.dart
+index 0adac680..33b8cfd0 100644
+--- a/lib/l10n/generated/app_localizations.dart
++++ b/lib/l10n/generated/app_localizations.dart
+@@ -11537,6 +11537,12 @@ abstract class AppLocalizations {
+   /// **'Hinweis'**
+   String get peopleFlutterHint;
+ 
++  /// people.flutter.importNotAssigned
++  ///
++  /// In de, this message translates to:
++  /// **'{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})'**
++  String peopleFlutterImportNotAssigned(Object name, Object error);
++
+   /// people.flutter.lastNameRequired
+   ///
+   /// In de, this message translates to:
+@@ -17195,6 +17201,84 @@ abstract class AppLocalizations {
+   /// **'ZIP wird erstellt …'**
+   String get redesignFilesZipPreparing;
+ 
++  /// redesign.folder.all
++  ///
++  /// In de, this message translates to:
++  /// **'Alle Werke · {count}'**
++  String redesignFolderAll(Object count);
++
++  /// redesign.folder.empty
++  ///
++  /// In de, this message translates to:
++  /// **'Für {name} gibt es noch keine Noten.'**
++  String redesignFolderEmpty(Object name);
++
++  /// redesign.folder.missing
++  ///
++  /// In de, this message translates to:
++  /// **'fehlt'**
++  String get redesignFolderMissing;
++
++  /// redesign.folder.next
++  ///
++  /// In de, this message translates to:
++  /// **'Als Nächstes · {count}'**
++  String redesignFolderNext(Object count);
++
++  /// redesign.folder.noGroup
++  ///
++  /// In de, this message translates to:
++  /// **'Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.'**
++  String get redesignFolderNoGroup;
++
++  /// redesign.folder.noPart
++  ///
++  /// In de, this message translates to:
++  /// **'Keine Noten für {name}'**
++  String redesignFolderNoPart(Object name);
++
++  /// redesign.folder.nothingNext
++  ///
++  /// In de, this message translates to:
++  /// **'Für die nächsten Termine sind noch keine Werke geplant.'**
++  String get redesignFolderNothingNext;
++
++  /// redesign.folder.open
++  ///
++  /// In de, this message translates to:
++  /// **'Als ein PDF öffnen'**
++  String get redesignFolderOpen;
++
++  /// redesign.folder.openHint
++  ///
++  /// In de, this message translates to:
++  /// **'Zum Ansehen, Speichern oder Drucken'**
++  String get redesignFolderOpenHint;
++
++  /// redesign.folder.other
++  ///
++  /// In de, this message translates to:
++  /// **'Andere Stimme'**
++  String get redesignFolderOther;
++
++  /// redesign.folder.pick
++  ///
++  /// In de, this message translates to:
++  /// **'Stimme wählen'**
++  String get redesignFolderPick;
++
++  /// redesign.folder.title
++  ///
++  /// In de, this message translates to:
++  /// **'Meine Mappe'**
++  String get redesignFolderTitle;
++
++  /// redesign.folder.titleLeads
++  ///
++  /// In de, this message translates to:
++  /// **'Mappen'**
++  String get redesignFolderTitleLeads;
++
+   /// redesign.groups.loadFailed
+   ///
+   /// In de, this message translates to:
+@@ -19499,6 +19583,60 @@ abstract class AppLocalizations {
+   /// **'In Gruppen deiner Organisation, die du leitest'**
+   String get redesignWorkCopyHint;
+ 
++  /// redesign.workCreate.category
++  ///
++  /// In de, this message translates to:
++  /// **'Kategorie'**
++  String get redesignWorkCreateCategory;
++
++  /// redesign.workCreate.categoryHint
++  ///
++  /// In de, this message translates to:
++  /// **'Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.'**
++  String redesignWorkCreateCategoryHint(Object name);
++
++  /// redesign.workCreate.create
++  ///
++  /// In de, this message translates to:
++  /// **'Anlegen'**
++  String get redesignWorkCreateCreate;
++
++  /// redesign.workCreate.createAndAdd
++  ///
++  /// In de, this message translates to:
++  /// **'Anlegen und Noten hinzufügen'**
++  String get redesignWorkCreateCreateAndAdd;
++
++  /// redesign.workCreate.instrumentationHint
++  ///
++  /// In de, this message translates to:
++  /// **'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.'**
++  String get redesignWorkCreateInstrumentationHint;
++
++  /// redesign.workCreate.later
++  ///
++  /// In de, this message translates to:
++  /// **'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.'**
++  String get redesignWorkCreateLater;
++
++  /// redesign.workCreate.nextNumber
++  ///
++  /// In de, this message translates to:
++  /// **'{number} ist die nächste freie Nummer.'**
++  String redesignWorkCreateNextNumber(Object number);
++
++  /// redesign.workCreate.prefixHint
++  ///
++  /// In de, this message translates to:
++  /// **'Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.'**
++  String get redesignWorkCreatePrefixHint;
++
++  /// redesign.workCreate.title
++  ///
++  /// In de, this message translates to:
++  /// **'Neues Werk'**
++  String get redesignWorkCreateTitle;
++
+   /// redesign.work.difficulty
+   ///
+   /// In de, this message translates to:
+@@ -19985,23 +20123,53 @@ abstract class AppLocalizations {
+   /// **'Werk hinzufügen'**
+   String get redesignWorksAdd;
+ 
+-  /// redesign.works.all
++  /// redesign.works.addImport
+   ///
+   /// In de, this message translates to:
+-  /// **'Alle · {count}'**
+-  String redesignWorksAll(Object count);
++  /// **'Werkliste importieren'**
++  String get redesignWorksAddImport;
++
++  /// redesign.works.addImportHint
++  ///
++  /// In de, this message translates to:
++  /// **'Excel oder CSV mit Nummer, Titel, Kategorie'**
++  String get redesignWorksAddImportHint;
+ 
+-  /// redesign.works.audio
++  /// redesign.works.addNew
+   ///
+   /// In de, this message translates to:
+-  /// **'Audio'**
+-  String get redesignWorksAudio;
++  /// **'Neues Werk'**
++  String get redesignWorksAddNew;
+ 
+-  /// redesign.works.current
++  /// redesign.works.addNewHint
+   ///
+   /// In de, this message translates to:
+-  /// **'Gerade geprobt'**
+-  String get redesignWorksCurrent;
++  /// **'Titel und Nummer, danach direkt die Noten'**
++  String get redesignWorksAddNewHint;
++
++  /// redesign.works.addOrg
++  ///
++  /// In de, this message translates to:
++  /// **'Aus anderer Gruppe übernehmen'**
++  String get redesignWorksAddOrg;
++
++  /// redesign.works.addOrgHint
++  ///
++  /// In de, this message translates to:
++  /// **'Werke deiner Organisation durchsuchen und kopieren'**
++  String get redesignWorksAddOrgHint;
++
++  /// redesign.works.all
++  ///
++  /// In de, this message translates to:
++  /// **'Alle · {count}'**
++  String redesignWorksAll(Object count);
++
++  /// redesign.works.allEvents
++  ///
++  /// In de, this message translates to:
++  /// **'Alle Termine'**
++  String get redesignWorksAllEvents;
+ 
+   /// redesign.works.empty
+   ///
+@@ -20009,29 +20177,65 @@ abstract class AppLocalizations {
+   /// **'Noch keine Werke.'**
+   String get redesignWorksEmpty;
+ 
+-  /// redesign.works.files
++  /// redesign.works.eventWorks
+   ///
+   /// In de, this message translates to:
+-  /// **'Dateien'**
+-  String get redesignWorksFiles;
++  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
++  String redesignWorksEventWorks(num count);
+ 
+-  /// redesign.works.filesLabel
++  /// redesign.works.filter
+   ///
+   /// In de, this message translates to:
+-  /// **'Dateien der Gruppe'**
+-  String get redesignWorksFilesLabel;
++  /// **'Filter'**
++  String get redesignWorksFilter;
+ 
+-  /// redesign.works.filter
++  /// redesign.works.filterReset
+   ///
+   /// In de, this message translates to:
+-  /// **'Filter & Ansicht'**
+-  String get redesignWorksFilter;
++  /// **'Zurücksetzen'**
++  String get redesignWorksFilterReset;
+ 
+-  /// redesign.works.filterActive
++  /// redesign.works.filterTitle
+   ///
+   /// In de, this message translates to:
+-  /// **'Filter aktiv'**
+-  String get redesignWorksFilterActive;
++  /// **'Sortieren & Filtern'**
++  String get redesignWorksFilterTitle;
++
++  /// redesign.works.folder
++  ///
++  /// In de, this message translates to:
++  /// **'Meine Mappe'**
++  String get redesignWorksFolder;
++
++  /// redesign.works.folders
++  ///
++  /// In de, this message translates to:
++  /// **'Mappen'**
++  String get redesignWorksFolders;
++
++  /// redesign.works.forGroup
++  ///
++  /// In de, this message translates to:
++  /// **'Für Gruppe'**
++  String get redesignWorksForGroup;
++
++  /// redesign.works.forGroupAll
++  ///
++  /// In de, this message translates to:
++  /// **'Alle'**
++  String get redesignWorksForGroupAll;
++
++  /// redesign.works.lastOn
++  ///
++  /// In de, this message translates to:
++  /// **'Zuletzt {date}'**
++  String redesignWorksLastOn(Object date);
++
++  /// redesign.works.missingNotes
++  ///
++  /// In de, this message translates to:
++  /// **'Noten fehlen'**
++  String get redesignWorksMissingNotes;
+ 
+   /// redesign.works.more
+   ///
+@@ -20039,17 +20243,77 @@ abstract class AppLocalizations {
+   /// **'Mehr'**
+   String get redesignWorksMore;
+ 
++  /// redesign.works.neverPlayed
++  ///
++  /// In de, this message translates to:
++  /// **'Noch nie gespielt'**
++  String get redesignWorksNeverPlayed;
++
++  /// redesign.works.neverSung
++  ///
++  /// In de, this message translates to:
++  /// **'Noch nie gesungen'**
++  String get redesignWorksNeverSung;
++
++  /// redesign.works.next
++  ///
++  /// In de, this message translates to:
++  /// **'Als Nächstes'**
++  String get redesignWorksNext;
++
++  /// redesign.works.noFilesPill
++  ///
++  /// In de, this message translates to:
++  /// **'ohne Noten'**
++  String get redesignWorksNoFilesPill;
++
+   /// redesign.works.noMatch
+   ///
+   /// In de, this message translates to:
+   /// **'Kein Werk passt zur Suche.'**
+   String get redesignWorksNoMatch;
+ 
+-  /// redesign.works.pdf
++  /// redesign.works.only
++  ///
++  /// In de, this message translates to:
++  /// **'Nur zeigen'**
++  String get redesignWorksOnly;
++
++  /// redesign.works.onlyMine
+   ///
+   /// In de, this message translates to:
+-  /// **'PDF'**
+-  String get redesignWorksPdf;
++  /// **'Mit meiner Stimme'**
++  String get redesignWorksOnlyMine;
++
++  /// redesign.works.onlyMissing
++  ///
++  /// In de, this message translates to:
++  /// **'Noten fehlen'**
++  String get redesignWorksOnlyMissing;
++
++  /// redesign.works.onlyRecording
++  ///
++  /// In de, this message translates to:
++  /// **'Mit Aufnahme'**
++  String get redesignWorksOnlyRecording;
++
++  /// redesign.works.onlySolo
++  ///
++  /// In de, this message translates to:
++  /// **'Mit Solo'**
++  String get redesignWorksOnlySolo;
++
++  /// redesign.works.openMine
++  ///
++  /// In de, this message translates to:
++  /// **'Meine Noten öffnen'**
++  String get redesignWorksOpenMine;
++
++  /// redesign.works.openMineHint
++  ///
++  /// In de, this message translates to:
++  /// **'{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}'**
++  String redesignWorksOpenMineHint(num count);
+ 
+   /// redesign.works.resetFilter
+   ///
+@@ -20060,7 +20324,7 @@ abstract class AppLocalizations {
+   /// redesign.works.search
+   ///
+   /// In de, this message translates to:
+-  /// **'Titel, Komponist, Nummer'**
++  /// **'Titel oder Nummer'**
+   String get redesignWorksSearch;
+ 
+   /// redesign.works.searchLabel
+@@ -20069,6 +20333,84 @@ abstract class AppLocalizations {
+   /// **'Werke suchen'**
+   String get redesignWorksSearchLabel;
+ 
++  /// redesign.works.show
++  ///
++  /// In de, this message translates to:
++  /// **'{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}'**
++  String redesignWorksShow(num count);
++
++  /// redesign.works.sort
++  ///
++  /// In de, this message translates to:
++  /// **'Sortieren'**
++  String get redesignWorksSort;
++
++  /// redesign.works.sortLastPlayed
++  ///
++  /// In de, this message translates to:
++  /// **'Zuletzt gespielt'**
++  String get redesignWorksSortLastPlayed;
++
++  /// redesign.works.sortLastSung
++  ///
++  /// In de, this message translates to:
++  /// **'Zuletzt gesungen'**
++  String get redesignWorksSortLastSung;
++
++  /// redesign.works.sortLongestPlayed
++  ///
++  /// In de, this message translates to:
++  /// **'Am längsten nicht gespielt'**
++  String get redesignWorksSortLongestPlayed;
++
++  /// redesign.works.sortLongestSung
++  ///
++  /// In de, this message translates to:
++  /// **'Am längsten nicht gesungen'**
++  String get redesignWorksSortLongestSung;
++
++  /// redesign.works.sortNumber
++  ///
++  /// In de, this message translates to:
++  /// **'Nummer'**
++  String get redesignWorksSortNumber;
++
++  /// redesign.works.sortRemove
++  ///
++  /// In de, this message translates to:
++  /// **'Sortierung „{name}“ entfernen'**
++  String redesignWorksSortRemove(Object name);
++
++  /// redesign.works.sortTitle
++  ///
++  /// In de, this message translates to:
++  /// **'Titel'**
++  String get redesignWorksSortTitle;
++
++  /// redesign.works.statusNoFiles
++  ///
++  /// In de, this message translates to:
++  /// **'noch keine Noten'**
++  String get redesignWorksStatusNoFiles;
++
++  /// redesign.works.statusNoPart
++  ///
++  /// In de, this message translates to:
++  /// **'keine Noten für {name}'**
++  String redesignWorksStatusNoPart(Object name);
++
++  /// redesign.works.statusPart
++  ///
++  /// In de, this message translates to:
++  /// **'Deine Stimme'**
++  String get redesignWorksStatusPart;
++
++  /// redesign.works.statusRecording
++  ///
++  /// In de, this message translates to:
++  /// **'Aufnahme'**
++  String get redesignWorksStatusRecording;
++
+   /// register.create
+   ///
+   /// In de, this message translates to:
+diff --git a/lib/l10n/generated/app_localizations_de.dart b/lib/l10n/generated/app_localizations_de.dart
+index fbafb068..26f09493 100644
+--- a/lib/l10n/generated/app_localizations_de.dart
++++ b/lib/l10n/generated/app_localizations_de.dart
+@@ -7062,6 +7062,11 @@ class AppLocalizationsDe extends AppLocalizations {
+   @override
+   String get peopleFlutterHint => 'Hinweis';
+ 
++  @override
++  String peopleFlutterImportNotAssigned(Object name, Object error) {
++    return '$name: gespeichert, aber nicht zu den Terminen hinzugefügt ($error)';
++  }
++
+   @override
+   String get peopleFlutterLastNameRequired => 'Nachname ist erforderlich';
+ 
+@@ -10547,6 +10552,55 @@ class AppLocalizationsDe extends AppLocalizations {
+   @override
+   String get redesignFilesZipPreparing => 'ZIP wird erstellt …';
+ 
++  @override
++  String redesignFolderAll(Object count) {
++    return 'Alle Werke · $count';
++  }
++
++  @override
++  String redesignFolderEmpty(Object name) {
++    return 'Für $name gibt es noch keine Noten.';
++  }
++
++  @override
++  String get redesignFolderMissing => 'fehlt';
++
++  @override
++  String redesignFolderNext(Object count) {
++    return 'Als Nächstes · $count';
++  }
++
++  @override
++  String get redesignFolderNoGroup =>
++      'Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.';
++
++  @override
++  String redesignFolderNoPart(Object name) {
++    return 'Keine Noten für $name';
++  }
++
++  @override
++  String get redesignFolderNothingNext =>
++      'Für die nächsten Termine sind noch keine Werke geplant.';
++
++  @override
++  String get redesignFolderOpen => 'Als ein PDF öffnen';
++
++  @override
++  String get redesignFolderOpenHint => 'Zum Ansehen, Speichern oder Drucken';
++
++  @override
++  String get redesignFolderOther => 'Andere Stimme';
++
++  @override
++  String get redesignFolderPick => 'Stimme wählen';
++
++  @override
++  String get redesignFolderTitle => 'Meine Mappe';
++
++  @override
++  String get redesignFolderTitleLeads => 'Mappen';
++
+   @override
+   String get redesignGroupsLoadFailed =>
+       'Deine Gruppen konnten nicht geladen werden.';
+@@ -11994,6 +12048,40 @@ class AppLocalizationsDe extends AppLocalizations {
+   String get redesignWorkCopyHint =>
+       'In Gruppen deiner Organisation, die du leitest';
+ 
++  @override
++  String get redesignWorkCreateCategory => 'Kategorie';
++
++  @override
++  String redesignWorkCreateCategoryHint(Object name) {
++    return 'Vorausgewählt, weil die Liste gerade auf „$name“ gefiltert war.';
++  }
++
++  @override
++  String get redesignWorkCreateCreate => 'Anlegen';
++
++  @override
++  String get redesignWorkCreateCreateAndAdd => 'Anlegen und Noten hinzufügen';
++
++  @override
++  String get redesignWorkCreateInstrumentationHint =>
++      'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.';
++
++  @override
++  String get redesignWorkCreateLater =>
++      'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.';
++
++  @override
++  String redesignWorkCreateNextNumber(Object number) {
++    return '$number ist die nächste freie Nummer.';
++  }
++
++  @override
++  String get redesignWorkCreatePrefixHint =>
++      'Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.';
++
++  @override
++  String get redesignWorkCreateTitle => 'Neues Werk';
++
+   @override
+   String get redesignWorkDifficulty => 'Schwierigkeit';
+ 
+@@ -12303,50 +12391,186 @@ class AppLocalizationsDe extends AppLocalizations {
+   @override
+   String get redesignWorksAdd => 'Werk hinzufügen';
+ 
++  @override
++  String get redesignWorksAddImport => 'Werkliste importieren';
++
++  @override
++  String get redesignWorksAddImportHint =>
++      'Excel oder CSV mit Nummer, Titel, Kategorie';
++
++  @override
++  String get redesignWorksAddNew => 'Neues Werk';
++
++  @override
++  String get redesignWorksAddNewHint =>
++      'Titel und Nummer, danach direkt die Noten';
++
++  @override
++  String get redesignWorksAddOrg => 'Aus anderer Gruppe übernehmen';
++
++  @override
++  String get redesignWorksAddOrgHint =>
++      'Werke deiner Organisation durchsuchen und kopieren';
++
+   @override
+   String redesignWorksAll(Object count) {
+     return 'Alle · $count';
+   }
+ 
+   @override
+-  String get redesignWorksAudio => 'Audio';
++  String get redesignWorksAllEvents => 'Alle Termine';
+ 
+   @override
+-  String get redesignWorksCurrent => 'Gerade geprobt';
++  String get redesignWorksEmpty => 'Noch keine Werke.';
+ 
+   @override
+-  String get redesignWorksEmpty => 'Noch keine Werke.';
++  String redesignWorksEventWorks(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: '$count Werke',
++      one: '1 Werk',
++    );
++    return '$_temp0';
++  }
++
++  @override
++  String get redesignWorksFilter => 'Filter';
++
++  @override
++  String get redesignWorksFilterReset => 'Zurücksetzen';
++
++  @override
++  String get redesignWorksFilterTitle => 'Sortieren & Filtern';
+ 
+   @override
+-  String get redesignWorksFiles => 'Dateien';
++  String get redesignWorksFolder => 'Meine Mappe';
+ 
+   @override
+-  String get redesignWorksFilesLabel => 'Dateien der Gruppe';
++  String get redesignWorksFolders => 'Mappen';
+ 
+   @override
+-  String get redesignWorksFilter => 'Filter & Ansicht';
++  String get redesignWorksForGroup => 'Für Gruppe';
+ 
+   @override
+-  String get redesignWorksFilterActive => 'Filter aktiv';
++  String get redesignWorksForGroupAll => 'Alle';
++
++  @override
++  String redesignWorksLastOn(Object date) {
++    return 'Zuletzt $date';
++  }
++
++  @override
++  String get redesignWorksMissingNotes => 'Noten fehlen';
+ 
+   @override
+   String get redesignWorksMore => 'Mehr';
+ 
++  @override
++  String get redesignWorksNeverPlayed => 'Noch nie gespielt';
++
++  @override
++  String get redesignWorksNeverSung => 'Noch nie gesungen';
++
++  @override
++  String get redesignWorksNext => 'Als Nächstes';
++
++  @override
++  String get redesignWorksNoFilesPill => 'ohne Noten';
++
+   @override
+   String get redesignWorksNoMatch => 'Kein Werk passt zur Suche.';
+ 
+   @override
+-  String get redesignWorksPdf => 'PDF';
++  String get redesignWorksOnly => 'Nur zeigen';
++
++  @override
++  String get redesignWorksOnlyMine => 'Mit meiner Stimme';
++
++  @override
++  String get redesignWorksOnlyMissing => 'Noten fehlen';
++
++  @override
++  String get redesignWorksOnlyRecording => 'Mit Aufnahme';
++
++  @override
++  String get redesignWorksOnlySolo => 'Mit Solo';
++
++  @override
++  String get redesignWorksOpenMine => 'Meine Noten öffnen';
++
++  @override
++  String redesignWorksOpenMineHint(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: '$count Stimmen als ein PDF, auch zum Drucken',
++      one: 'Deine Stimme als PDF, auch zum Drucken',
++    );
++    return '$_temp0';
++  }
+ 
+   @override
+   String get redesignWorksResetFilter => 'Filter zurücksetzen';
+ 
+   @override
+-  String get redesignWorksSearch => 'Titel, Komponist, Nummer';
++  String get redesignWorksSearch => 'Titel oder Nummer';
+ 
+   @override
+   String get redesignWorksSearchLabel => 'Werke suchen';
+ 
++  @override
++  String redesignWorksShow(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: '$count Werke anzeigen',
++      one: '1 Werk anzeigen',
++      zero: 'Kein Werk passt',
++    );
++    return '$_temp0';
++  }
++
++  @override
++  String get redesignWorksSort => 'Sortieren';
++
++  @override
++  String get redesignWorksSortLastPlayed => 'Zuletzt gespielt';
++
++  @override
++  String get redesignWorksSortLastSung => 'Zuletzt gesungen';
++
++  @override
++  String get redesignWorksSortLongestPlayed => 'Am längsten nicht gespielt';
++
++  @override
++  String get redesignWorksSortLongestSung => 'Am längsten nicht gesungen';
++
++  @override
++  String get redesignWorksSortNumber => 'Nummer';
++
++  @override
++  String redesignWorksSortRemove(Object name) {
++    return 'Sortierung „$name“ entfernen';
++  }
++
++  @override
++  String get redesignWorksSortTitle => 'Titel';
++
++  @override
++  String get redesignWorksStatusNoFiles => 'noch keine Noten';
++
++  @override
++  String redesignWorksStatusNoPart(Object name) {
++    return 'keine Noten für $name';
++  }
++
++  @override
++  String get redesignWorksStatusPart => 'Deine Stimme';
++
++  @override
++  String get redesignWorksStatusRecording => 'Aufnahme';
++
+   @override
+   String get registerCreate => 'Instanz jetzt erstellen';
+ 
+diff --git a/lib/l10n/generated/app_localizations_en.dart b/lib/l10n/generated/app_localizations_en.dart
+index da08e68d..d5fa7439 100644
+--- a/lib/l10n/generated/app_localizations_en.dart
++++ b/lib/l10n/generated/app_localizations_en.dart
+@@ -6987,6 +6987,11 @@ class AppLocalizationsEn extends AppLocalizations {
+   @override
+   String get peopleFlutterHint => 'Note';
+ 
++  @override
++  String peopleFlutterImportNotAssigned(Object name, Object error) {
++    return '$name: saved, but not added to the events ($error)';
++  }
++
+   @override
+   String get peopleFlutterLastNameRequired => 'Last name is required';
+ 
+@@ -10441,6 +10446,55 @@ class AppLocalizationsEn extends AppLocalizations {
+   @override
+   String get redesignFilesZipPreparing => 'Creating ZIP …';
+ 
++  @override
++  String redesignFolderAll(Object count) {
++    return 'All works · $count';
++  }
++
++  @override
++  String redesignFolderEmpty(Object name) {
++    return 'There is no sheet music for $name yet.';
++  }
++
++  @override
++  String get redesignFolderMissing => 'missing';
++
++  @override
++  String redesignFolderNext(Object count) {
++    return 'Coming up · $count';
++  }
++
++  @override
++  String get redesignFolderNoGroup =>
++      'You have no part yet. Pick a part to see its sheet music.';
++
++  @override
++  String redesignFolderNoPart(Object name) {
++    return 'No sheet music for $name';
++  }
++
++  @override
++  String get redesignFolderNothingNext =>
++      'No works are planned for the coming events yet.';
++
++  @override
++  String get redesignFolderOpen => 'Open as one PDF';
++
++  @override
++  String get redesignFolderOpenHint => 'To view, save or print';
++
++  @override
++  String get redesignFolderOther => 'Other part';
++
++  @override
++  String get redesignFolderPick => 'Pick a part';
++
++  @override
++  String get redesignFolderTitle => 'My folder';
++
++  @override
++  String get redesignFolderTitleLeads => 'Folders';
++
+   @override
+   String get redesignGroupsLoadFailed => 'Your groups could not be loaded.';
+ 
+@@ -11877,6 +11931,40 @@ class AppLocalizationsEn extends AppLocalizations {
+   String get redesignWorkCopyHint =>
+       'To groups of your organisation that you lead';
+ 
++  @override
++  String get redesignWorkCreateCategory => 'Category';
++
++  @override
++  String redesignWorkCreateCategoryHint(Object name) {
++    return 'Preselected because the list is filtered to “$name”.';
++  }
++
++  @override
++  String get redesignWorkCreateCreate => 'Create';
++
++  @override
++  String get redesignWorkCreateCreateAndAdd => 'Create and add sheet music';
++
++  @override
++  String get redesignWorkCreateInstrumentationHint =>
++      'The app knows which groups play from the sheet music you upload next.';
++
++  @override
++  String get redesignWorkCreateLater =>
++      'Link, difficulty and additional fields later in “Edit”.';
++
++  @override
++  String redesignWorkCreateNextNumber(Object number) {
++    return '$number is the next free number.';
++  }
++
++  @override
++  String get redesignWorkCreatePrefixHint =>
++      'Prefix only if needed, e.g. C for Christmas → C1.';
++
++  @override
++  String get redesignWorkCreateTitle => 'New work';
++
+   @override
+   String get redesignWorkDifficulty => 'Difficulty';
+ 
+@@ -12185,50 +12273,186 @@ class AppLocalizationsEn extends AppLocalizations {
+   @override
+   String get redesignWorksAdd => 'Add work';
+ 
++  @override
++  String get redesignWorksAddImport => 'Import work list';
++
++  @override
++  String get redesignWorksAddImportHint =>
++      'Excel or CSV with number, title, category';
++
++  @override
++  String get redesignWorksAddNew => 'New work';
++
++  @override
++  String get redesignWorksAddNewHint =>
++      'Title and number, then the sheet music';
++
++  @override
++  String get redesignWorksAddOrg => 'Take over from another group';
++
++  @override
++  String get redesignWorksAddOrgHint =>
++      'Search and copy works of your organisation';
++
+   @override
+   String redesignWorksAll(Object count) {
+     return 'All · $count';
+   }
+ 
+   @override
+-  String get redesignWorksAudio => 'Audio';
++  String get redesignWorksAllEvents => 'All events';
+ 
+   @override
+-  String get redesignWorksCurrent => 'In rehearsal';
++  String get redesignWorksEmpty => 'No works yet.';
+ 
+   @override
+-  String get redesignWorksEmpty => 'No works yet.';
++  String redesignWorksEventWorks(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: '$count works',
++      one: '1 work',
++    );
++    return '$_temp0';
++  }
++
++  @override
++  String get redesignWorksFilter => 'Filter';
++
++  @override
++  String get redesignWorksFilterReset => 'Reset';
++
++  @override
++  String get redesignWorksFilterTitle => 'Sort & filter';
++
++  @override
++  String get redesignWorksFolder => 'My folder';
+ 
+   @override
+-  String get redesignWorksFiles => 'Files';
++  String get redesignWorksFolders => 'Folders';
+ 
+   @override
+-  String get redesignWorksFilesLabel => 'Files of the group';
++  String get redesignWorksForGroup => 'For group';
+ 
+   @override
+-  String get redesignWorksFilter => 'Filter & view';
++  String get redesignWorksForGroupAll => 'All';
+ 
+   @override
+-  String get redesignWorksFilterActive => 'Filter active';
++  String redesignWorksLastOn(Object date) {
++    return 'Last $date';
++  }
++
++  @override
++  String get redesignWorksMissingNotes => 'Sheet music missing';
+ 
+   @override
+   String get redesignWorksMore => 'More';
+ 
++  @override
++  String get redesignWorksNeverPlayed => 'Never played';
++
++  @override
++  String get redesignWorksNeverSung => 'Never sung';
++
++  @override
++  String get redesignWorksNext => 'Coming up';
++
++  @override
++  String get redesignWorksNoFilesPill => 'no sheet music';
++
+   @override
+   String get redesignWorksNoMatch => 'No work matches the search.';
+ 
+   @override
+-  String get redesignWorksPdf => 'PDF';
++  String get redesignWorksOnly => 'Only show';
++
++  @override
++  String get redesignWorksOnlyMine => 'With my part';
++
++  @override
++  String get redesignWorksOnlyMissing => 'Sheet music missing';
++
++  @override
++  String get redesignWorksOnlyRecording => 'With recording';
++
++  @override
++  String get redesignWorksOnlySolo => 'With solo';
++
++  @override
++  String get redesignWorksOpenMine => 'Open my sheet music';
++
++  @override
++  String redesignWorksOpenMineHint(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: '$count parts as one PDF, also for printing',
++      one: 'Your part as a PDF, also for printing',
++    );
++    return '$_temp0';
++  }
+ 
+   @override
+   String get redesignWorksResetFilter => 'Reset filter';
+ 
+   @override
+-  String get redesignWorksSearch => 'Title, composer, number';
++  String get redesignWorksSearch => 'Title or number';
+ 
+   @override
+   String get redesignWorksSearchLabel => 'Search works';
+ 
++  @override
++  String redesignWorksShow(num count) {
++    String _temp0 = intl.Intl.pluralLogic(
++      count,
++      locale: localeName,
++      other: 'Show $count works',
++      one: 'Show 1 work',
++      zero: 'No work matches',
++    );
++    return '$_temp0';
++  }
++
++  @override
++  String get redesignWorksSort => 'Sort';
++
++  @override
++  String get redesignWorksSortLastPlayed => 'Last played';
++
++  @override
++  String get redesignWorksSortLastSung => 'Last sung';
++
++  @override
++  String get redesignWorksSortLongestPlayed => 'Longest not played';
++
++  @override
++  String get redesignWorksSortLongestSung => 'Longest not sung';
++
++  @override
++  String get redesignWorksSortNumber => 'Number';
++
++  @override
++  String redesignWorksSortRemove(Object name) {
++    return 'Remove sorting “$name”';
++  }
++
++  @override
++  String get redesignWorksSortTitle => 'Title';
++
++  @override
++  String get redesignWorksStatusNoFiles => 'no sheet music yet';
++
++  @override
++  String redesignWorksStatusNoPart(Object name) {
++    return 'no sheet music for $name';
++  }
++
++  @override
++  String get redesignWorksStatusPart => 'Your part';
++
++  @override
++  String get redesignWorksStatusRecording => 'Recording';
++
+   @override
+   String get registerCreate => 'Create instance now';
+ 
