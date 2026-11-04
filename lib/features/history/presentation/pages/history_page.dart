@@ -298,6 +298,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       return;
     }
 
+    // Only Werke of the loaded library (e.g. after an instance switch).
+    final songIds = {for (final s in songs) s.id};
+    _selectedSongIds?.retainWhere(songIds.contains);
     final selectedSongIds = _selectedSongIds ??= {
       if (songs.first.id != null) songs.first.id!,
     };
