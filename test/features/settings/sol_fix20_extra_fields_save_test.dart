@@ -5,9 +5,11 @@ import 'dart:async';
 
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/files_providers.dart';
+import 'package:attendix/core/providers/song_providers.dart';
 import 'package:attendix/core/providers/tenant_providers.dart';
 import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/extra_fields_repository.dart';
+import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/extra_fields_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -26,7 +28,9 @@ class _DelayedExtraFieldsRepository extends ExtraFieldsRepository {
   final gate = Completer<void>();
   final log = <String>[];
   List<String>? savedPersonIds;
+  List<ExtraField>? savedPersonFields;
   final sanitized = <String, List<String>>{};
+  int? songTenantId;
 
   @override
   Future<void> saveFields({
@@ -34,6 +38,7 @@ class _DelayedExtraFieldsRepository extends ExtraFieldsRepository {
     required List<ExtraField> songFields,
   }) async {
     savedPersonIds = personFields.map((f) => f.id).toList();
+    savedPersonFields = personFields;
     log.add('save');
     await gate.future;
   }
@@ -43,7 +48,9 @@ class _DelayedExtraFieldsRepository extends ExtraFieldsRepository {
     required String table,
     required List<ExtraField> definitions,
     List<Object>? churchIds,
+    int? songTenantId,
   }) async {
+    if (table == 'songs') this.songTenantId = songTenantId;
     sanitized[table] = definitions.map((f) => f.id).toList();
     log.add('sanitize:$table');
   }
@@ -65,6 +72,9 @@ void main() {
       tenant: tenant,
       overrides: [
         churchesProvider.overrideWith((ref) async => []),
+        // Song library of another tenant (song_source_tenant_id = 7).
+        songTenantSettingsProvider
+            .overrideWith((ref) async => const SongTenantSettings(songSourceTenantId: 7)),
         extraFieldsRepositoryWithTenantProvider
             .overrideWith((ref) => repo = _DelayedExtraFieldsRepository(ref)),
       ],
@@ -100,10 +110,59 @@ void main() {
     expect(repo.log, ['save', 'sanitize:player', 'sanitize:songs']);
     // The cleanup keeps exactly the definitions that were stored.
     expect(repo.sanitized['player'], ['a', 'b']);
+    // Ionic db.getSongs(): songs of the effective song tenant.
+    expect(repo.songTenantId, 7);
     expect(find.byKey(const ValueKey('extra-fields-saving')), findsNothing);
     expect(
       container.read(currentTenantProvider)?.additionalFields?.map((f) => f.id),
       ['a', 'b'],
     );
+  });
+
+  // Ionic ionModalDidDismiss → closeEditExtraFieldModal: closing the edit
+  // sheet (X) applies the edits; a legacy text default `false` shows empty
+  // and is stored as `false`, not as the string 'false'.
+  testWidgets('closing the edit sheet applies the changes', (tester) async {
+    late _DelayedExtraFieldsRepository repo;
+    const legacy = ExtraField(id: 'c', name: 'C', type: 'text', defaultValue: false);
+    final tenant = TestFactories.createTenant(id: 1).copyWith(
+      additionalFields: const [legacy],
+      songAdditionalFields: const [],
+    );
+    final container = createTestContainer(
+      tenant: tenant,
+      overrides: [
+        churchesProvider.overrideWith((ref) async => []),
+        songTenantSettingsProvider.overrideWith((ref) async => const SongTenantSettings()),
+        extraFieldsRepositoryWithTenantProvider
+            .overrideWith((ref) => repo = _DelayedExtraFieldsRepository(ref)),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: const MaterialApp(home: ExtraFieldsPage()),
+    ));
+    await tester.pumpAndSettle();
+
+    await tester.tap(find.byIcon(Icons.edit_outlined));
+    await tester.pumpAndSettle();
+    expect(find.text('false'), findsNothing);
+    expect(find.text('Übernehmen'), findsNothing);
+
+    await tester.enterText(find.widgetWithText(TextField, 'C'), 'C2');
+    await tester.tap(find.byIcon(Icons.close));
+    await tester.pumpAndSettle();
+    expect(find.text('C2'), findsOneWidget);
+
+    await tester.tap(find.byIcon(Icons.check));
+    await tester.pump();
+    repo.gate.complete();
+    await tester.pumpAndSettle();
+
+    final saved = repo.savedPersonFields!.single;
+    expect(saved.name, 'C2');
+    expect(saved.defaultValue, false);
   });
 }

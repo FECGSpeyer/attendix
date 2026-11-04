@@ -1,6 +1,18 @@
 {
   "versions": [
     {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Zusatzfelder: Schließen des Bearbeiten-Fensters (X, Wischen, Tippen daneben) übernimmt die Änderungen wie bisher, der zusätzliche Button „Übernehmen“ entfällt",
+        "🐛 Zusatzfelder: Beim Hinzufügen bleibt das Fenster bei Fehlern (z. B. Feld existiert schon) mit allen Eingaben offen",
+        "🐛 Zusatzfelder: „Werte zurücksetzen“ setzt beim Gemeinde-Feld wieder die Gemeinde und überspringt einzelne fehlgeschlagene Personen statt abzubrechen",
+        "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
+        "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
+        "🐛 Zusatzfelder: Beim Speichern werden nur aktive Personen und bei genutzter Werk-Bibliothek deren Werke angepasst"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

@@ -212,9 +212,10 @@ void main() {
 
     test('extra fields', () {
       final source = read('lib/data/repositories/extra_fields_repository.dart');
-      final q = body(source, '_loadRows(String table)', 600);
+      final q = body(source, '_loadRows(', 1000);
       expect(q, contains('fetchAllPages'));
-      expect(q, contains(".eq('tenantId', currentTenantId)"));
+      expect(q, contains('final tenantId = rowTenantId ?? currentTenantId;'));
+      expect(q, contains(".eq('tenantId', tenantId)"));
       expect(q, contains(".order('id', ascending: true)"));
     });
   });

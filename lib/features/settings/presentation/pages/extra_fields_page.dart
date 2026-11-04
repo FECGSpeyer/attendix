@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -5,6 +6,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/files_providers.dart';
+import '../../../../core/providers/song_providers.dart' show songTenantSettingsProvider;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
@@ -112,31 +114,34 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
 
   Future<void> _addField(ExtraFieldTarget target) async {
     if (_saving) return; // SOL_FIX20: no edits while saving
+    // Ionic addExtraField: validation happens inside the open sheet.
     final result = await _showFieldSheet(target: target);
-    if (result == null) return;
-    final fields = _fields(target);
-    final id = result.type == 'bfecg_church' ? 'bfecg_church' : extraFieldIdFromName(result.name);
-    if (id.isEmpty) {
-      if (mounted) ToastHelper.showError(context, context.l10n.extraFieldsIdEmpty);
-      return;
-    }
-    if (fields.any((f) => f.id == id)) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.extraFieldsIdExists);
-      }
-      return;
-    }
-    _setFields(target, [...fields, result.copyWith(id: id)]);
+    if (result == null || !mounted) return;
+    _setFields(target, [..._fields(target), result]);
   }
 
   Future<void> _editField(ExtraFieldTarget target, int index) async {
     if (_saving) return;
     final fields = _fields(target);
-    final result = await _showFieldSheet(target: target, existing: fields[index]);
-    if (result == null) return;
-    final updated = [...fields];
+    final original = fields[index];
+    // Ionic ionModalDidDismiss → closeEditExtraFieldModal: every close
+    // (X, swipe, backdrop) applies the edited copy, validated only on save.
+    final result = await _showFieldSheet(target: target, existing: original);
+    if (result == null || !mounted || _sameField(result, original)) return;
+    final updated = [..._fields(target)];
+    if (index >= updated.length) return;
     updated[index] = result;
     _setFields(target, updated);
+  }
+
+  /// Unchanged after closing the edit sheet (stored JSON form), so a plain
+  /// open/close does not mark the page as changed.
+  static bool _sameField(ExtraField a, ExtraField b) {
+    final ja = extraFieldToJson(a);
+    final jb = extraFieldToJson(b);
+    return ja.keys.every((k) => k == 'options'
+        ? listEquals(ja[k] as List, jb[k] as List)
+        : ja[k] == jb[k]);
   }
 
   Future<void> _removeField(ExtraFieldTarget target, int index) async {
@@ -182,9 +187,13 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     final tenantId = repo.currentTenantId;
     setState(() => _saving = true);
     try {
+      // Ionic db.getSongs(): songs of the effective song tenant
+      // (song_source_tenant_id ?? own tenant).
+      final songSettings = await ref.read(songTenantSettingsProvider.future);
+      final songTenantId = songSettings.songSourceTenantId ?? tenantId;
       await repo.saveFields(personFields: personFields, songFields: songFields);
       await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
-      await repo.sanitizeValues(table: 'songs', definitions: songFields);
+      await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: songTenantId);
 
       // SOL_FIX19: only into the local state of that same tenant.
       await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
@@ -211,16 +220,26 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
   // Feld-Editor (Bottom Sheet)
   // ---------------------------------------------------------------------------
 
-  Future<ExtraField?> _showFieldSheet({required ExtraFieldTarget target, ExtraField? existing}) {
+  /// Add sheet: returns the new field after validation in the open sheet
+  /// (Ionic addExtraField), `null` when dismissed.
+  /// Edit sheet: returns the edited copy on every close (Ionic
+  /// closeEditExtraFieldModal), without validation – that happens on save.
+  Future<ExtraField?> _showFieldSheet({required ExtraFieldTarget target, ExtraField? existing}) async {
     final isEdit = existing != null;
     final isPerson = target == ExtraFieldTarget.person;
     final tenantId = ref.read(currentTenantIdProvider);
+    // Bound before the sheet opens (no tenant repository read after an await).
+    final extraFieldsRepo = ref.read(extraFieldsRepositoryWithTenantProvider);
     final nameController = TextEditingController(text: existing?.name ?? '');
-    final defaultController = TextEditingController(
-      text: existing != null && existing.type != 'boolean' && existing.defaultValue != null
-          ? '${existing.defaultValue}'
-          : '',
-    );
+    // Ionic: fields created there start with defaultValue `false`
+    // (emptyField) – the ion-input shows that as empty.
+    final initialDefaultText = existing != null &&
+            existing.type != 'boolean' &&
+            existing.defaultValue != null &&
+            existing.defaultValue != false
+        ? '${existing.defaultValue}'
+        : '';
+    final defaultController = TextEditingController(text: initialDefaultText);
     var type = existing?.type ?? 'text';
     var displayMode = existing?.displayMode ?? 'chip';
     var visible = existing?.visibleToPlayers ?? false;
@@ -231,264 +250,301 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
     ];
     final originalOptions = [...?existing?.options];
 
-    return showModalBottomSheet<ExtraField>(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      builder: (sheetContext) => StatefulBuilder(
-        builder: (ctx, setSheet) {
-          Future<void> removeOption(int i) async {
-            final extraFieldsRepo = ref.read(extraFieldsRepositoryWithTenantProvider);
-            final value = options[i].text;
-            if (isEdit && isPerson && value.isNotEmpty && originalOptions.contains(value)) {
-              final ok = await DialogHelper.showConfirmation(
-                ctx,
-                title: context.l10n.extraFieldsDeleteOption,
-                message: context.l10n.extraFieldsDeleteOptionMessage(value),
-                confirmText: context.l10n.commonDelete,
-                isDestructive: true,
-              );
-              if (!ok) return;
-              final remaining = options.map((c) => c.text).toList()..removeAt(i);
-              final newDefault = remaining.isNotEmpty ? remaining.first : '';
-              try {
-                final count = await extraFieldsRepo
-                    .updateFieldValue(existing.id, value, newDefault);
-                if (count > 0 && mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
-              } catch (_) {
-                if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateExtraFieldsFailed);
-                return;
-              }
-            }
-            setSheet(() => options.removeAt(i).dispose());
-          }
+    /// Standardwert wie gerade bearbeitet (Ionic editingField.defaultValue):
+    /// ein unverändertes Eingabefeld behält den gespeicherten Wert
+    /// (z. B. Alt-Wert `false` statt des Strings 'false').
+    dynamic editedDefault() {
+      if (type == 'boolean') return boolDefault;
+      if (type == 'bfecg_church') return existing?.defaultValue;
+      if (isEdit && defaultController.text == initialDefaultText) return existing.defaultValue;
+      return _parseDefault(type, defaultController.text);
+    }
 
-          Future<void> resetValues() async {
-            final extraFieldsRepo = ref.read(extraFieldsRepositoryWithTenantProvider);
-            final ok = await DialogHelper.showConfirmation(
-              ctx,
-              title: context.l10n.extraFieldsResetValues,
-              message: context.l10n.extraFieldsResetValuesMessage(nameController.text),
-              confirmText: context.l10n.dashSettingsReset,
-              isDestructive: true,
-            );
-            if (!ok) return;
-            final optionValues = options.map((c) => c.text).toList();
-            final resolved = extraFieldDefaultValue(
-              type,
-              defaultValue: type == 'select'
-                  ? null
-                  : type == 'boolean'
-                      ? boolDefault
-                      : _parseDefault(type, defaultController.text),
-              options: optionValues,
-              churchIds: _churchIds,
-            );
-            try {
-              final count = await extraFieldsRepo.resetFieldValues(existing!.id, resolved);
-              if (mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
-            } catch (_) {
-              if (mounted) ToastHelper.showError(context, context.l10n.svcUpdateExtraFieldsFailed);
-            }
-          }
+    ExtraField buildField(String id) {
+      final optionValues = options.map((c) => c.text).toList();
+      return ExtraField(
+        id: id,
+        name: nameController.text.trim(),
+        type: type,
+        // Ionic: a select field's default is its first option.
+        defaultValue: type == 'select'
+            ? (optionValues.isNotEmpty ? optionValues.first : existing?.defaultValue)
+            : editedDefault(),
+        options: type == 'select' ? optionValues : const [],
+        visibleToPlayers: isPerson ? visible : false,
+        editableByPlayers: isPerson && visible ? editable : false,
+        displayMode: displayMode,
+      );
+    }
 
-          void submit() {
-            final name = nameController.text.trim();
-            if (name.isEmpty) {
-              ToastHelper.showError(ctx, context.l10n.extraFieldsInvalidName);
-              return;
-            }
-            final optionValues = options.map((c) => c.text).toList();
-            dynamic defaultValue;
-            if (type == 'select') {
-              if (optionValues.isEmpty) {
-                ToastHelper.showError(ctx, context.l10n.extraFieldsAddOption);
-                return;
-              }
-              if (optionValues.any((o) => o.trim().isEmpty)) {
-                ToastHelper.showError(ctx, context.l10n.extraFieldsOptionsEmpty);
-                return;
-              }
-              defaultValue = optionValues.first;
-            } else if (type == 'boolean') {
-              defaultValue = boolDefault;
-            } else if (type == 'bfecg_church') {
-              defaultValue = existing?.defaultValue;
-            } else {
-              defaultValue = _parseDefault(type, defaultController.text);
-            }
-            Navigator.pop(
-              sheetContext,
-              ExtraField(
-                id: existing?.id ?? '',
-                name: name,
-                type: type,
-                defaultValue: defaultValue,
-                options: type == 'select' ? optionValues : const [],
-                visibleToPlayers: isPerson ? visible : false,
-                editableByPlayers: isPerson && visible ? editable : false,
-                displayMode: displayMode,
-              ),
-            );
-          }
-
-          return Padding(
-            padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
-            child: SafeArea(
-              child: SingleChildScrollView(
-                padding: const EdgeInsets.all(AppDimensions.paddingM),
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.stretch,
-                  mainAxisSize: MainAxisSize.min,
-                  children: [
-                    Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
-                            style: Theme.of(ctx).textTheme.titleLarge,
-                          ),
-                        ),
-                        IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
-                      ],
-                    ),
-                    const SizedBox(height: AppDimensions.paddingS),
-                    if (isEdit)
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(context.l10n.typeSettingsType),
-                        trailing: Text(extraFieldTypeName(type)),
-                      )
-                    else
-                      AppDropdownFormField<String>(
-                        iosInterface: AppSelectInterface.alert,
-                        value: type,
-                        decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
-                        items: [
-                          DropdownMenuItem(value: 'text', child: Text(context.l10n.typeSettingsText)),
-                          DropdownMenuItem(value: 'number', child: Text(context.l10n.extraFieldsNumber)),
-                          DropdownMenuItem(value: 'boolean', child: Text(context.l10n.extraFieldsYesNo)),
-                          DropdownMenuItem(value: 'select', child: Text(context.l10n.extraFieldsSelect)),
-                          if (isPerson && tenantId == 12)
-                            DropdownMenuItem(value: 'bfecg_church', child: Text(context.l10n.extraFieldsChurch)),
-                        ],
-                        onChanged: (v) => setSheet(() {
-                          type = v ?? 'text';
-                          boolDefault = false;
-                          defaultController.text = type == 'number' ? '0' : '';
-                        }),
-                      ),
-                    TextField(
-                      controller: nameController,
-                      textCapitalization: TextCapitalization.sentences,
-                      decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
-                    ),
-                    AppDropdownFormField<String>(
-                      iosInterface: AppSelectInterface.alert,
-                      value: displayMode,
-                      decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
-                      items: [
-                        DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
-                        DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
-                      ],
-                      onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
-                    ),
-                    if (isPerson) ...[
-                      SwitchListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(context.l10n.extraFieldsVisible),
-                        subtitle: Text(context.l10n.extraFieldsVisibleHelper),
-                        value: visible,
-                        onChanged: (v) => setSheet(() => visible = v),
-                      ),
-                      if (visible)
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(context.l10n.extraFieldsEditable),
-                          subtitle: Text(context.l10n.extraFieldsEditableHelper),
-                          value: editable,
-                          onChanged: (v) => setSheet(() => editable = v),
-                        ),
-                    ],
-                    if (type == 'select') ...[
-                      const SizedBox(height: AppDimensions.paddingS),
-                      Row(
-                        children: [
-                          Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
-                          IconButton(
-                            icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
-                            onPressed: () => setSheet(() => options.add(TextEditingController())),
-                          ),
-                        ],
-                      ),
-                      if (options.isEmpty)
-                        Text(isEdit ? context.l10n.extraFieldsNoOptions : context.l10n.extraFieldsNoOptionsSelected,
-                            style: const TextStyle(color: AppColors.medium)),
-                      for (var i = 0; i < options.length; i++)
-                        Row(
-                          children: [
-                            Expanded(
-                              child: TextField(
-                                controller: options[i],
-                                textCapitalization: TextCapitalization.sentences,
-                                decoration: InputDecoration(
-                                  hintText: context.l10n.extraFieldsValuePh,
-                                  helperText: i == 0 ? context.l10n.extraFieldsFlutterFirstOptionDefault : null,
-                                ),
-                              ),
-                            ),
-                            IconButton(
-                              icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
-                              onPressed: () => removeOption(i),
-                            ),
-                          ],
-                        ),
-                    ],
-                    if (type != 'select' && type != 'bfecg_church') ...[
-                      const SizedBox(height: AppDimensions.paddingS),
-                      if (type == 'boolean')
-                        SwitchListTile.adaptive(
-                          contentPadding: EdgeInsets.zero,
-                          title: Text(context.l10n.extraFieldsDefaultValue),
-                          value: boolDefault,
-                          onChanged: (v) => setSheet(() => boolDefault = v),
-                        )
-                      else
-                        TextField(
-                          controller: defaultController,
-                          keyboardType: type == 'number' ? TextInputType.number : TextInputType.text,
-                          decoration: InputDecoration(
-                            labelText: isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional,
-                          ),
-                        ),
-                    ],
-                    if (isEdit && isPerson) ...[
-                      const SizedBox(height: AppDimensions.paddingS),
-                      TextButton(
-                        onPressed: resetValues,
-                        child: Text(context.l10n.extraFieldsResetAll,
-                            style: const TextStyle(color: AppColors.warning)),
-                      ),
-                    ],
-                    const SizedBox(height: AppDimensions.paddingM),
-                    ElevatedButton(
-                      onPressed: submit,
-                      child: Text(isEdit ? context.l10n.commonApply : context.l10n.typeSettingsAddField),
-                    ),
-                  ],
-                ),
-              ),
-            ),
-          );
-        },
-      ),
-    ).whenComplete(() {
+    var disposed = false;
+    void disposeControllers() {
+      if (disposed) return;
+      disposed = true;
       nameController.dispose();
       defaultController.dispose();
       for (final c in options) {
         c.dispose();
       }
-    });
+    }
+
+    final result = await showModalBottomSheet<ExtraField>(
+      context: context,
+      useRootNavigator: true, // IOS_SHELL2: above the tab bar
+      isScrollControlled: true,
+      // Controllers are disposed once the sheet is unmounted (after its
+      // exit animation), not as soon as its future completes.
+      builder: (sheetContext) => _DisposeOnUnmount(
+        onDispose: disposeControllers,
+        child: StatefulBuilder(
+          builder: (ctx, setSheet) {
+            Future<void> removeOption(int i) async {
+              final value = options[i].text;
+              // Ionic removeEditExtraOption: confirm for saved options of person
+              // and song fields; only person values are migrated.
+              if (isEdit && value.isNotEmpty && originalOptions.contains(value)) {
+                final ok = await DialogHelper.showConfirmation(
+                  ctx,
+                  title: context.l10n.extraFieldsDeleteOption,
+                  message: context.l10n.extraFieldsDeleteOptionMessage(value),
+                  confirmText: context.l10n.commonDelete,
+                  isDestructive: true,
+                );
+                if (!ok) return;
+                if (isPerson) {
+                  final current = options.map((c) => c.text).toList();
+                  final newDefault = current.first == value
+                      ? (current.length > 1 ? current[1] : '')
+                      : current.first;
+                  try {
+                    final count = await extraFieldsRepo
+                        .updateFieldValue(existing.id, value, newDefault);
+                    if (count > 0 && mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
+                  } catch (_) {
+                    if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+                    return;
+                  }
+                }
+              }
+              if (!ctx.mounted || i >= options.length) return;
+              setSheet(() => options.removeAt(i).dispose());
+            }
+
+            Future<void> resetValues() async {
+              final ok = await DialogHelper.showConfirmation(
+                ctx,
+                title: context.l10n.extraFieldsResetValues,
+                message: context.l10n.extraFieldsResetValuesMessage(nameController.text),
+                confirmText: context.l10n.dashSettingsReset,
+                isDestructive: true,
+              );
+              if (!ok || !ctx.mounted) return;
+              // Ionic resetExtraFieldValues: the edited default (church field:
+              // its stored church id, else the first church).
+              final resolved = extraFieldDefaultValue(
+                type,
+                defaultValue: type == 'select' ? null : editedDefault(),
+                options: options.map((c) => c.text).toList(),
+                churchIds: _churchIds,
+              );
+              try {
+                final count = await extraFieldsRepo.resetFieldValues(existing!.id, resolved);
+                if (mounted) ToastHelper.showSuccess(context, context.l10n.extraFieldsPersonsUpdated(count));
+              } catch (_) {
+                if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+              }
+            }
+
+            // Ionic addExtraField: checks run in the open sheet, inputs stay.
+            void submit() {
+              final name = nameController.text.trim();
+              if (name.isEmpty) {
+                ToastHelper.showError(ctx, context.l10n.extraFieldsInvalidName);
+                return;
+              }
+              final id = type == 'bfecg_church' ? 'bfecg_church' : extraFieldIdFromName(name);
+              if (_fields(target).any((f) => f.id == id)) {
+                ToastHelper.showError(ctx, context.l10n.extraFieldsIdExists);
+                return;
+              }
+              if (type == 'select') {
+                final optionValues = options.map((c) => c.text).toList();
+                if (optionValues.isEmpty) {
+                  ToastHelper.showError(ctx, context.l10n.extraFieldsAddOption);
+                  return;
+                }
+                if (optionValues.any((o) => o.trim().isEmpty)) {
+                  ToastHelper.showError(ctx, context.l10n.extraFieldsOptionsEmpty);
+                  return;
+                }
+              }
+              if (id.isEmpty) {
+                ToastHelper.showError(ctx, context.l10n.extraFieldsIdEmpty);
+                return;
+              }
+              Navigator.pop(sheetContext, buildField(id));
+            }
+
+            return Padding(
+              padding: EdgeInsets.only(bottom: MediaQuery.of(ctx).viewInsets.bottom),
+              child: SafeArea(
+                child: SingleChildScrollView(
+                  padding: const EdgeInsets.all(AppDimensions.paddingM),
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.stretch,
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              isEdit ? context.l10n.typeSettingsEditField : context.l10n.extraFieldsAddNew,
+                              style: Theme.of(ctx).textTheme.titleLarge,
+                            ),
+                          ),
+                          IconButton(icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose), onPressed: () => Navigator.pop(sheetContext)),
+                        ],
+                      ),
+                      const SizedBox(height: AppDimensions.paddingS),
+                      if (isEdit)
+                        ListTile(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(context.l10n.typeSettingsType),
+                          trailing: Text(extraFieldTypeName(type)),
+                        )
+                      else
+                        AppDropdownFormField<String>(
+                          iosInterface: AppSelectInterface.alert,
+                          value: type,
+                          decoration: InputDecoration(labelText: context.l10n.typeSettingsType),
+                          items: [
+                            DropdownMenuItem(value: 'text', child: Text(context.l10n.typeSettingsText)),
+                            DropdownMenuItem(value: 'number', child: Text(context.l10n.extraFieldsNumber)),
+                            DropdownMenuItem(value: 'boolean', child: Text(context.l10n.extraFieldsYesNo)),
+                            DropdownMenuItem(value: 'select', child: Text(context.l10n.extraFieldsSelect)),
+                            if (isPerson && tenantId == 12)
+                              DropdownMenuItem(value: 'bfecg_church', child: Text(context.l10n.extraFieldsChurch)),
+                          ],
+                          onChanged: (v) => setSheet(() {
+                            type = v ?? 'text';
+                            boolDefault = false;
+                            defaultController.text = type == 'number' ? '0' : '';
+                          }),
+                        ),
+                      TextField(
+                        controller: nameController,
+                        textCapitalization: TextCapitalization.sentences,
+                        decoration: InputDecoration(labelText: context.l10n.typeSettingsName),
+                      ),
+                      AppDropdownFormField<String>(
+                        iosInterface: AppSelectInterface.alert,
+                        value: displayMode,
+                        decoration: InputDecoration(labelText: context.l10n.extraFieldsDisplay),
+                        items: [
+                          DropdownMenuItem(value: 'chip', child: Text(context.l10n.extraFieldsAsChip)),
+                          DropdownMenuItem(value: 'underneath', child: Text(context.l10n.extraFieldsUnderName)),
+                        ],
+                        onChanged: (v) => setSheet(() => displayMode = v ?? 'chip'),
+                      ),
+                      if (isPerson) ...[
+                        SwitchListTile.adaptive(
+                          contentPadding: EdgeInsets.zero,
+                          title: Text(context.l10n.extraFieldsVisible),
+                          subtitle: Text(context.l10n.extraFieldsVisibleHelper),
+                          value: visible,
+                          onChanged: (v) => setSheet(() => visible = v),
+                        ),
+                        if (visible)
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(context.l10n.extraFieldsEditable),
+                            subtitle: Text(context.l10n.extraFieldsEditableHelper),
+                            value: editable,
+                            onChanged: (v) => setSheet(() => editable = v),
+                          ),
+                      ],
+                      if (type == 'select') ...[
+                        const SizedBox(height: AppDimensions.paddingS),
+                        Row(
+                          children: [
+                            Expanded(child: Text(context.l10n.typeSettingsOptions, style: Theme.of(ctx).textTheme.titleSmall)),
+                            IconButton(
+                              icon: Icon(Icons.add, semanticLabel: context.l10n.a11yAdd),
+                              onPressed: () => setSheet(() => options.add(TextEditingController())),
+                            ),
+                          ],
+                        ),
+                        if (options.isEmpty)
+                          Text(isEdit ? context.l10n.extraFieldsNoOptions : context.l10n.extraFieldsNoOptionsSelected,
+                              style: const TextStyle(color: AppColors.medium)),
+                        for (var i = 0; i < options.length; i++)
+                          Row(
+                            children: [
+                              Expanded(
+                                child: TextField(
+                                  controller: options[i],
+                                  textCapitalization: TextCapitalization.sentences,
+                                  decoration: InputDecoration(
+                                    hintText: context.l10n.extraFieldsValuePh,
+                                    helperText: i == 0 ? context.l10n.extraFieldsFlutterFirstOptionDefault : null,
+                                  ),
+                                ),
+                              ),
+                              IconButton(
+                                icon: Icon(Icons.delete_outline, color: AppColors.danger, semanticLabel: context.l10n.commonDelete),
+                                onPressed: () => removeOption(i),
+                              ),
+                            ],
+                          ),
+                      ],
+                      if (type != 'select' && type != 'bfecg_church') ...[
+                        const SizedBox(height: AppDimensions.paddingS),
+                        if (type == 'boolean')
+                          SwitchListTile.adaptive(
+                            contentPadding: EdgeInsets.zero,
+                            title: Text(context.l10n.extraFieldsDefaultValue),
+                            value: boolDefault,
+                            onChanged: (v) => setSheet(() => boolDefault = v),
+                          )
+                        else
+                          TextField(
+                            controller: defaultController,
+                            keyboardType: type == 'number' ? TextInputType.number : TextInputType.text,
+                            decoration: InputDecoration(
+                              labelText: isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional,
+                            ),
+                          ),
+                      ],
+                      if (isEdit && isPerson) ...[
+                        const SizedBox(height: AppDimensions.paddingS),
+                        TextButton(
+                          onPressed: resetValues,
+                          child: Text(context.l10n.extraFieldsResetAll,
+                              style: const TextStyle(color: AppColors.warning)),
+                        ),
+                      ],
+                      // Ionic: only the add sheet has a button; the edit sheet
+                      // applies its changes when it is closed.
+                      if (!isEdit) ...[
+                        const SizedBox(height: AppDimensions.paddingM),
+                        ElevatedButton(
+                          onPressed: submit,
+                          child: Text(context.l10n.typeSettingsAddField),
+                        ),
+                      ],
+                    ],
+                  ),
+                ),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+    // Edit sheet: every close applies the edited copy (sheet widgets and
+    // their controllers are still alive while the exit animation runs).
+    if (isEdit) return buildField(existing.id);
+    return result;
   }
 
   static dynamic _parseDefault(String type, String text) {
@@ -686,4 +742,27 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       ],
     );
   }
+}
+
+/// Calls [onDispose] when the sheet content leaves the tree, i.e. after the
+/// bottom sheet's exit animation (its future already completed before).
+class _DisposeOnUnmount extends StatefulWidget {
+  const _DisposeOnUnmount({required this.onDispose, required this.child});
+
+  final VoidCallback onDispose;
+  final Widget child;
+
+  @override
+  State<_DisposeOnUnmount> createState() => _DisposeOnUnmountState();
+}
+
+class _DisposeOnUnmountState extends State<_DisposeOnUnmount> {
+  @override
+  void dispose() {
+    widget.onDispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }
