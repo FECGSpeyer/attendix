@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:file_picker/file_picker.dart';
@@ -76,11 +77,17 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   List<int> _instrumentIds = [];
   List<String> _categoryIds = [];
   Map<String, dynamic> _additional = {};
-  bool _saving = false;
+  /// Saves queued or running. Ionic saves on every ionBlur/ionChange; here
+  /// every change is queued and written in order, so a change made while a
+  /// save is running is not lost and an older save never lands last.
+  int _saving = 0;
+  Future<void> _saveQueue = Future.value();
 
-  /// A change arrived while a save was running: save again afterwards
-  /// (Ionic saves on every ionBlur/ionChange, nothing gets lost).
-  bool _saveAgain = false;
+  /// Form values of the last queued save (or as loaded): text typed last is
+  /// still saved when the page closes without a focus change.
+  String? _lastQueued;
+  SongNotifier? _notifier;
+  bool _disposed = false;
 
   /// Files the form was last synced with (url + group per file).
   String? _filesKey;
@@ -110,6 +117,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   @override
   void dispose() {
+    _disposed = true;
+    final data = _data;
+    if (data != null && !data.readOnly && jsonEncode(_formValues(data)) != _lastQueued) {
+      _update(data);
+    }
     _prefix.dispose();
     _number.dispose();
     _name.dispose();
@@ -141,6 +153,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     }
     _initializedFor = song.id;
     _filesKey = filesKey;
+    _notifier = ref.read(songNotifierProvider.notifier);
     _prefix.text = song.prefix ?? '';
     _number.text = song.number?.toString() ?? '';
     _name.text = song.name;
@@ -160,6 +173,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             TextEditingController(text: _additional[field.id]?.toString() ?? '');
       }
     }
+    _lastQueued = jsonEncode(_formValues(data));
   }
 
   /// Ionic `instrumentIdsFromFiles`: groups that have files (id > 2)
@@ -168,31 +182,28 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           if (f.instrumentId != null && f.instrumentId! > 2) f.instrumentId!,
       }.toList();
 
-  /// Ionic `update()`: save the whole form. A change made while a save is
-  /// running is saved right after it (the form state at that time).
-  Future<void> _update(SongDetailData data) async {
-    if (!mounted || data.readOnly) return;
-    if (_saving) {
-      _saveAgain = true;
-      return;
-    }
-    setState(() => _saving = true);
-    var failed = false;
-    do {
-      _saveAgain = false;
-      final ok = await _save(_data ?? data);
-      if (!ok) failed = true;
-    } while (_saveAgain && mounted);
-    if (!mounted) return;
-    setState(() => _saving = false);
-    if (failed) {
+  /// Ionic `update()`: save the whole form. Saves run one after another in
+  /// the order of the changes.
+  Future<void> _update(SongDetailData built) async {
+    final data = _data ?? built;
+    final id = data.song.id;
+    final notifier = _notifier;
+    if (data.readOnly || id == null || notifier == null) return;
+    final values = _formValues(data);
+    _lastQueued = jsonEncode(values);
+    if (!_disposed) setState(() => _saving++);
+    final run = _saveQueue.then((_) => notifier.updateSong(id, values));
+    _saveQueue = run.then((_) {}, onError: (_) {});
+    final result = await run;
+    if (!mounted || _disposed) return;
+    setState(() => _saving--);
+    if (result == null) {
       ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
     }
   }
 
-  Future<bool> _save(SongDetailData data) async {
-    final id = data.song.id;
-    if (id == null) return true;
+  /// The whole form as written by Ionic `editSong`.
+  Map<String, dynamic> _formValues(SongDetailData data) {
     final merged = {..._instrumentIds, ..._idsFromFiles(data.song)}.toList();
     _instrumentIds = merged;
     for (final field in data.additionalFields) {
@@ -200,7 +211,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       if (c == null) continue;
       _additional[field.id] = field.isNumber ? num.tryParse(c.text) ?? 0 : c.text;
     }
-    final result = await ref.read(songNotifierProvider.notifier).updateSong(id, {
+    return {
       'prefix': _prefix.text.trim(),
       'number': int.tryParse(_number.text.trim()),
       'name': _name.text.trim(),
@@ -209,10 +220,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       'withChoir': _withChoir,
       'withSolo': _withSolo,
       'instrument_ids': merged,
-      'category_ids': _categoryIds,
+      'category_ids': [..._categoryIds],
       'additional_fields': {..._additional},
-    });
-    return result != null;
+    };
   }
 
   void _refresh() {
@@ -359,7 +369,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           children: [
             const IonContentTopInset(),
             IonLargeTitle(title),
-            if (_saving) const LinearProgressIndicator(minHeight: 2),
+            if (_saving > 0) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),
             if (data.readOnly && (song.categoryIds?.isNotEmpty ?? false)) ...[
               IonListHeader(context.l10n.songsCategories),

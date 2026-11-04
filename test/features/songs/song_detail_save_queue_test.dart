@@ -40,11 +40,10 @@ class _SlowSongNotifier extends SongNotifier {
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
 
-  testWidgets('a change during a running save is saved afterwards', (tester) async {
+  Future<void> pump(WidgetTester tester, _SlowSongNotifier notifier, {bool show = true}) async {
     final auth = MockGoTrueClient();
     when(() => auth.currentUser).thenReturn(null);
     when(() => auth.onAuthStateChange).thenAnswer((_) => const Stream.empty());
-    final notifier = _SlowSongNotifier();
     tester.view.physicalSize = const Size(900, 1400);
     tester.view.devicePixelRatio = 1;
     addTearDown(tester.view.reset);
@@ -73,10 +72,15 @@ void main() {
         locale: const Locale('de'),
         localizationsDelegates: AppLocalizations.localizationsDelegates,
         supportedLocales: AppLocalizations.supportedLocales,
-        home: const SongDetailPage(songId: '1'),
+        home: show ? const SongDetailPage(songId: '1') : const SizedBox(),
       ),
     ));
     await tester.pump(const Duration(seconds: 1));
+  }
+
+  testWidgets('a change during a running save is saved afterwards', (tester) async {
+    final notifier = _SlowSongNotifier();
+    await pump(tester, notifier);
 
     await tester.tap(find.text('Chor & Orchester'));
     await tester.pump();
@@ -95,5 +99,24 @@ void main() {
 
     notifier.pending.last.complete();
     await tester.pump(const Duration(seconds: 1));
+  });
+
+  testWidgets('text typed last is saved when the page closes', (tester) async {
+    final notifier = _SlowSongNotifier();
+    await pump(tester, notifier);
+    await tester.enterText(find.widgetWithText(TextField, 'Festmusik'), 'Festmusik II');
+    await tester.pump();
+    expect(notifier.calls, isEmpty);
+
+    await pump(tester, notifier, show: false);
+    expect(notifier.calls.single['name'], 'Festmusik II');
+    notifier.pending.single.complete();
+  });
+
+  testWidgets('closing without changes saves nothing', (tester) async {
+    final notifier = _SlowSongNotifier();
+    await pump(tester, notifier);
+    await pump(tester, notifier, show: false);
+    expect(notifier.calls, isEmpty);
   });
 }
