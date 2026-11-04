@@ -89,8 +89,22 @@ Future<bool?> shareUrlInBrowser(String url, {String? title}) async {
   if (!(navigator as JSObject).has('share')) return false;
   try {
     await navigator.share(title == null ? web.ShareData(url: url) : web.ShareData(url: url, title: title)).toDart;
-  } catch (_) {
-    // AbortError (cancelled) or NotAllowedError: Ionic copies nothing.
+  } catch (e) {
+    // Only a user cancel (AbortError) counts as handled. Any other error
+    // (e.g. NotAllowedError after the user activation expired) -> false, so
+    // the caller copies the link instead.
+    return _errorName(e) == 'AbortError';
   }
   return true;
+}
+
+/// `DOMException.name` of a caught JS error, null when it has none.
+String? _errorName(Object e) {
+  try {
+    final name = (e as JSObject).getProperty<JSAny?>('name'.toJS).dartify();
+    if (name is String) return name;
+  } catch (_) {}
+  // Fallback: the JS error's toString() is "<name>: <message>".
+  final text = e.toString();
+  return text.contains('AbortError') ? 'AbortError' : null;
 }

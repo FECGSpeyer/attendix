@@ -31,7 +31,7 @@ void setUnloadWarning(Object owner, bool unsaved) =>
 
 /// Ionic `if (navigator.share) navigator.share({url, title}) else copy`:
 /// shares [url] through the Web Share API. Returns false when the browser
-/// has none (the caller copies instead), true once the share sheet was
-/// shown (also when the user cancelled it), null outside the web.
+/// has none or sharing failed (the caller copies instead), true once shared
+/// or cancelled by the user (AbortError), null outside the web.
 Future<bool?> shareUrlInBrowser(String url, {String? title}) =>
     impl.shareUrlInBrowser(url, title: title);
