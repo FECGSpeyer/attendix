@@ -55,19 +55,21 @@ class _TermsPageState extends ConsumerState<TermsPage> {
       return;
     }
     setState(() => _saving = true);
+    // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
+    // Taken before the update: the router also leaves /terms on the user
+    // update and must not use it up first.
+    final pending = PendingFileLink.consume();
     try {
       await ref.read(accountNotifierProvider.notifier).acceptTerms();
       if (!mounted) return;
+      if (pending != null) {
+        context.go(pending);
+        return;
+      }
       // The router may already have left /terms after the user update
       // (same targets as below).
       if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.path !=
           '/terms') {
-        return;
-      }
-      // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
-      final pending = PendingFileLink.consume();
-      if (pending != null) {
-        context.go(pending);
         return;
       }
       // Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) – the start page
@@ -88,11 +90,13 @@ class _TermsPageState extends ConsumerState<TermsPage> {
         ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
       ));
     } on SessionExpiredException {
+      if (pending != null) PendingFileLink.set(pending);
       if (!mounted) return;
       context.go('/login');
       ToastHelper.showWarning(
           context, context.l10n.termsSessionExpired);
     } catch (_) {
+      if (pending != null) PendingFileLink.set(pending);
       if (mounted) {
         ToastHelper.showError(
             context, context.l10n.termsSaveFailed);
