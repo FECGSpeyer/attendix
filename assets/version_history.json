@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.39.8",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Schichtplan kopieren nur in verknüpfte Instanzen der Organisation (wie Ionic)"
+      ]
+    },
+    {
       "version": "0.39.4",
       "date": "4.11.2026",
       "changes": [

@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/shift_utils.dart';
@@ -32,11 +33,12 @@ Future<void> copyShiftToTenant(
   final shiftId = shift.id;
   if (currentTenantId == null || shiftId == null) return;
 
+  // Ionic linkedTenants: own memberships in the same organisation, not as
+  // observer, without the current instance. Reloaded here so the dialog
+  // never offers an instance the user has lost access to meanwhile.
   final List<Tenant> tenants;
   try {
-    tenants = (await ref.read(userTenantsProvider.future))
-        .where((t) => t.id != currentTenantId && t.id != null)
-        .toList();
+    tenants = await ref.refresh(shiftCopyTargetTenantsProvider.future);
   } catch (_) {
     // e.g. offline: tell the user instead of failing silently.
     if (context.mounted) {
@@ -55,7 +57,9 @@ Future<void> copyShiftToTenant(
     builder: (_) => _TargetTenantAlert(tenants: tenants),
   );
   if (targetTenantId == null || !context.mounted) return;
-  final target = tenants.firstWhere((t) => t.id == targetTenantId);
+  // Never write into an instance outside the allowed target list.
+  final target = tenants.where((t) => t.id == targetTenantId).firstOrNull;
+  if (target == null) return;
 
   final supabase = ref.read(supabaseClientProvider);
 
@@ -125,6 +129,7 @@ Future<void> copyShiftToTenant(
       supabase,
       shift,
       targetTenantId: targetTenantId,
+      allowedTenantIds: tenants.map((t) => t.id).whereType<int>().toSet(),
       copyAssignments: copyAssignments,
       playersWithShift: playersWithShift,
     );
@@ -232,9 +237,16 @@ Future<int> _executeCopy(
   SupabaseClient supabase,
   ShiftPlan shift, {
   required int targetTenantId,
+  required Set<int> allowedTenantIds,
   required bool copyAssignments,
   required List<Map<String, dynamic>> playersWithShift,
 }) async {
+  // Last guard before any write: only linked instances of the organisation
+  // where the user is not an observer (shiftCopyTargetTenantsProvider).
+  if (!allowedTenantIds.contains(targetTenantId)) {
+    throw StateError('Shift copy target $targetTenantId is not allowed');
+  }
+
   // Create a clean copy without IDs
   final copiedShift = {
     'name': '${shift.name} (Kopie)',

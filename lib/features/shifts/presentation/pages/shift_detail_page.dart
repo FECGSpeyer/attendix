@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/shift_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_definition.dart';
@@ -95,8 +94,8 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   Widget build(BuildContext context) {
     final shiftAsync = ref.watch(shiftByIdProvider(widget.shiftId));
     final usageCount = ref.watch(shiftUsageCountProvider(widget.shiftId));
-    final tenantsAsync = ref.watch(userTenantsProvider);
-    final currentTenantId = ref.watch(currentTenantIdProvider);
+    // Ionic `@if (linkedTenants.length > 0)`: hidden while loading/on error.
+    final copyTargetsAsync = ref.watch(shiftCopyTargetTenantsProvider);
 
     return IonCondenseScaffold(
       title: context.l10n.shiftsEdit,
@@ -107,12 +106,11 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       ),
       actions: [
         // Copy to tenant button (only with linked tenants)
-        tenantsAsync.when(
+        copyTargetsAsync.when(
           loading: () => const SizedBox.shrink(),
           error: (_, __) => const SizedBox.shrink(),
-          data: (tenants) {
-            final otherTenants = tenants.where((t) => t.id != currentTenantId).toList();
-            if (otherTenants.isEmpty) return const SizedBox.shrink();
+          data: (targets) {
+            if (targets.isEmpty) return const SizedBox.shrink();
 
             return IconButton(
               icon: const Icon(Icons.copy_outlined),
