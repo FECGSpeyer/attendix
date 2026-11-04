@@ -1,4 +1,4 @@
-/// Reads Excel (.xlsx) and CSV files into header/row maps for imports.
+/// Reads Excel (.xlsx, .xls) and CSV files into header/row maps for imports.
 ///
 /// Port of Ionic `spreadsheet-reader.ts`: CSV bytes are decoded as UTF-8
 /// first (a BOM is stripped) and, when that fails because of invalid byte
@@ -11,6 +11,7 @@ import 'dart:typed_data';
 
 import 'package:excel_community/excel_community.dart';
 import '../../l10n/l10n.dart';
+import 'xls_reader.dart';
 
 /// Parsed first sheet of a spreadsheet: header names and one map per row.
 class SpreadsheetData {
@@ -34,18 +35,15 @@ class SpreadsheetReadException implements Exception {
 bool isCsvFileName(String fileName) =>
     RegExp(r'\.(csv|txt)$', caseSensitive: false).hasMatch(fileName);
 
-/// Parse [bytes] of a file called [fileName] (.xlsx, .csv or .txt).
+/// Parse [bytes] of a file called [fileName] (.xlsx, .xls, .csv or .txt).
 SpreadsheetData readSpreadsheet(Uint8List bytes, String fileName) {
   final List<List<dynamic>> table;
   if (isCsvFileName(fileName)) {
     table = parseCsv(decodeCsvBytes(bytes));
   } else {
-    if (RegExp(r'\.xls$', caseSensitive: false).hasMatch(fileName)) {
-      throw SpreadsheetReadException(
-        l10nWithoutContext.coreFlutterXlsUnsupported,
-      );
-    }
-    table = _readXlsx(bytes);
+    // Like SheetJS `read()`: the content decides, not the extension – an
+    // .xls is a BIFF8 compound file, an .xlsx a ZIP.
+    table = isOle2File(bytes) ? _readXls(bytes) : _readXlsx(bytes);
   }
   return tableToRows(table);
 }
@@ -152,6 +150,14 @@ List<List<dynamic>> parseCsv(String text, {String? delimiter}) {
   return rows;
 }
 
+List<List<dynamic>> _readXls(Uint8List bytes) {
+  try {
+    return readXlsTable(bytes);
+  } catch (e) {
+    throw SpreadsheetReadException(l10nWithoutContext.peopleFileUnreadable);
+  }
+}
+
 List<List<dynamic>> _readXlsx(Uint8List bytes) {
   final Excel excel;
   try {
@@ -183,7 +189,12 @@ dynamic cellToDart(CellValue? value) {
     DateTimeCellValue() =>
       DateTime(value.year, value.month, value.day, value.hour, value.minute),
     TimeCellValue() => value.toString(),
-    FormulaCellValue() => value.formula,
+    // SheetJS returns the value Excel stored for the formula (`<v>`). For
+    // numeric results excel_community keeps it in `cachedValue`; for text
+    // results (`t="str"`) `formula` already holds the stored text.
+    FormulaCellValue() => value.cachedValue != null
+        ? cellToDart(value.cachedValue)
+        : value.formula,
   };
 }
 

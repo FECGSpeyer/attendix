@@ -344,6 +344,38 @@
     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
    ],
    "n": "behoben in #284 (InstanceSelectionGate)"
+  },
+  "x-689f15c9e6": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (utilities/spreadsheet-reader: .xls nicht unterstützt)"
+  },
+  "x-b0bfc0b3f4": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (utilities/spreadsheet-reader: Formelzellen)"
+  },
+  "x-9564139e1c": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (songs/import/import.page: .xls-Dateien werden nicht importiert)"
+  },
+  "x-1c8ba119fa": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (songs/import/import.page: Formelzellen evtl. als Formeltext gelesen (unverifiziert))"
   }
  },
  "extra": [],
