@@ -26,6 +26,8 @@ Future<void> printGroupPdfs({
     ToastHelper.showWarning(context, context.l10n.songsNoGroupPdfs);
     return;
   }
+  // Ionic loads the people for the print (not a session cache).
+  ref.invalidate(playerCountByInstrumentProvider);
   final counts = await ref.read(playerCountByInstrumentProvider.future);
   if (!context.mounted) return;
   final withPlayers =
@@ -49,10 +51,39 @@ Future<void> printGroupPdfs({
         copies: ratio == 0 ? 1 : ((counts[f.instrumentId] ?? 0) / ratio).ceil(),
       ),
   ];
-  final result = await ref
-      .read(songPrintServiceProvider)
-      .printEntries(entries, '${song.name.isEmpty ? 'song' : song.name}_print.pdf');
-  if (!context.mounted || result == null || result.pageCount == 0) return;
+  // Ionic PrintService.printEntries: loading overlay while merging, then a
+  // warning for no pages / skipped files.
+  final navigator = Navigator.of(context, rootNavigator: true);
+  var overlay = true;
+  void closeOverlay() {
+    if (!overlay) return;
+    overlay = false;
+    navigator.pop();
+  }
+
+  showAppDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (_) => PrintLoadingOverlay(message: context.l10n.songsCreatingPdf),
+  );
+  SongPrintResult? result;
+  try {
+    result = await ref.read(songPrintServiceProvider).printEntries(
+          entries,
+          '${song.name.isEmpty ? 'song' : song.name}_print.pdf',
+          onMerged: closeOverlay,
+        );
+  } finally {
+    closeOverlay();
+  }
+  if (!context.mounted || result == null) return;
+  if (result.pageCount == 0) {
+    ToastHelper.showWarning(context, context.l10n.svcNoPrintableScores);
+    return;
+  }
+  if (result.skipped > 0) {
+    ToastHelper.showWarning(context, context.l10n.songsFlutterFilesSkipped(result.skipped));
+  }
   final summary = entries
       .where((e) => e.copies > 0)
       .map((e) => '${SongUtils.fileLabel(e.file, groups)}: ${e.copies}x')
@@ -112,6 +143,37 @@ class _GroupPdfRatioDialogState extends State<GroupPdfRatioDialog> {
           child: Text(l10n.songsPrint),
         ),
       ],
+    );
+  }
+}
+
+/// Ionic `Utils.getLoadingElement(…, message)`: blocking spinner with text.
+class PrintLoadingOverlay extends StatelessWidget {
+  const PrintLoadingOverlay({super.key, required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Center(
+        child: Material(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 28, height: 28, child: AppSpinner()),
+                const SizedBox(width: 16),
+                Flexible(child: Text(message)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -1339,13 +1339,15 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('player')
-          .select('instrument')
+          .select('instrument, paused')
           .eq('tenantId', currentTenantId)
           .isFilter('pending', false)
           .isFilter('left', null);
 
+      // Ionic getPlayerCountByGroup: active people only (not left, not paused)
       final counts = <int, int>{};
       for (final row in response as List) {
+        if (row['paused'] == true) continue;
         final instrument = row['instrument'] as int?;
         if (instrument != null) {
           counts[instrument] = (counts[instrument] ?? 0) + 1;

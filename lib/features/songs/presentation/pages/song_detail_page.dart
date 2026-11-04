@@ -49,6 +49,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/router/redesign_routes.dart';
+import '../../../settings/presentation/widgets/settings_sheet.dart'
+    show settingsSheetBar, showSettingsSheet;
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -455,7 +457,10 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                     song.withSolo ||
                     (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))))
               _buildReadOnlyInstrumentation(data),
-            if (data.additionalFields.isNotEmpty) _buildAdditionalFields(data),
+            // Ionic: only with the logged-in tenant's fields, never on the
+            // public share page (values are not public).
+            if (data.additionalFields.isNotEmpty && !data.isPublic)
+              _buildAdditionalFields(data),
             if (data.history.isNotEmpty) _buildHistory(data),
             _FilesSection(
               data: data,
@@ -1302,12 +1307,27 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     }
   }
 
+  Future<({int? instrumentId, String? note})?> _showCategorySheet(Widget picker) =>
+      showSettingsSheet<({int? instrumentId, String? note})>(
+        context,
+        useRootNavigator: true, // IOS_SHELL2: above the tab bar
+        builder: (_) => picker,
+      );
+
+  Future<({int? instrumentId, String? note})?> _showCategoryDialog(Widget picker) =>
+      showAppDialog<({int? instrumentId, String? note})>(
+        context: context,
+        builder: (_) => picker,
+      );
+
   /// Ionic category modal: Chor (alle) (choirs) / Sonstige (Freitext) /
   /// Aufnahme / Liedtext / groups
   Future<void> _changeCategory(SongFile file) async {
-    final result = await showAppDialog<({int? instrumentId, String? note})>(
-      context: context,
-      builder: (_) => FileCategoryDialog(
+    // Ionic: sheet modal (breakpoints [0, 1]); the Beta skin keeps its dialog.
+    final asSheet = context.rdSkin == null;
+    final result = await (asSheet ? _showCategorySheet : _showCategoryDialog)(
+      FileCategoryDialog(
+        asSheet: asSheet,
         instruments: data.instruments,
         isChoir: data.isChoir,
         // Ionic 4.17.16 changeCategory: in choirs a file without group and
@@ -1345,9 +1365,14 @@ class FileCategoryDialog extends StatefulWidget {
     required this.initialInstrumentId,
     required this.initialNote,
     this.isChoir = false,
+    this.asSheet = false,
   });
 
   final List<Group> instruments;
+
+  /// Ionic sheet modal (normal design): toolbar with "Abbrechen", radio
+  /// list, free text and a block "Speichern" button. Otherwise a dialog.
+  final bool asSheet;
 
   /// Picker value: an instrumentId, null ("Sonstige (Freitext)") or
   /// [kChoirAllOptionValue] ("Chor (alle)").
@@ -1380,6 +1405,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
       (2, context.l10n.songsLyrics),
       for (final g in widget.instruments) (g.id, g.name),
     ];
+    if (widget.asSheet) return _buildSheet(context, options);
     return AppAlertDialog(
       title: Text(context.l10n.songsChangeCategory),
       content: SizedBox(
@@ -1425,6 +1451,77 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
           child: Text(context.l10n.commonSave),
         ),
       ],
+    );
+  }
+
+  Widget _buildSheet(BuildContext context, List<(int?, String)> options) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: settingsSheetBar(
+        context,
+        title: context.l10n.songsChangeCategory,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.commonCancel),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 16),
+        children: [
+          for (final o in options)
+            RadioListTile<int?>(
+              value: o.$1,
+              groupValue: _id,
+              controlAffinity: ListTileControlAffinity.trailing,
+              title: Text(o.$2),
+              subtitle: o.$1 == kChoirAllOptionValue
+                  ? Text(context.l10n.songsChoirAllHint)
+                  : null,
+              onChanged: (v) => setState(() => _id = v),
+            ),
+          if (_id == null) ...[
+            // Ionic `ion-item-divider` + `ion-input clearInput`
+            Container(
+              color: theme.colorScheme.surfaceContainerHighest,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Text(context.l10n.songsFreeText,
+                  style: theme.textTheme.bodySmall),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _note,
+                builder: (context, value, _) => TextField(
+                  controller: _note,
+                  decoration: InputDecoration(
+                    hintText: context.l10n.songsEnterCategory,
+                    border: InputBorder.none,
+                    suffixIcon: value.text.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.cancel, size: 18),
+                            tooltip: context.l10n.a11yClearInput,
+                            onPressed: _note.clear,
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(
+                context,
+                resolveFileCategoryOption(_id, _note.text.trim()),
+              ),
+              child: IonButtonLabel(context.l10n.commonSave),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }
