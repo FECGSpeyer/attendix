@@ -1,6 +1,32 @@
 {
   "versions": [
     {
+      "version": "0.39.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Excel-Exporte öffnen direkt mit den Daten (kein leeres erstes Blatt mehr), Termin-Excel wie bisher mit Nachname, Vorname, Gruppe, Status-Kürzel und Bemerkung",
+        "🐛 Export nach Gruppe sortiert innerhalb der Gruppe wieder nach Name, Umlaute richtig einsortiert",
+        "🐛 Schichtplan löschen setzt die schichtbedingten Entschuldigungen in kommenden Terminen zurück",
+        "🐛 Meine Termine und Stimmführer-Seite funktionieren auch, wenn ein Konto mehrere Personen in einer Gruppe hat",
+        "🐛 Gruppenwechsel nimmt die Stimmführer-Rolle weg, neue Personen starten in der ersten Gruppe",
+        "🐛 Person: \"Andere Instanzen\" zeigt nur verknüpfte Gruppen mit der richtigen Rolle",
+        "🐛 Import legt zuerst das Konto an und übernimmt vorhandene Personen dieses Kontos",
+        "🐛 \"Instanzauswahl aktivieren\" zeigt die Auswahl nur nach dem Anmelden, nicht bei jedem App-Start",
+        "🐛 Instanz wechseln in den Einstellungen öffnet die Startseite der Rolle",
+        "🐛 Mail- und Telefon-Links bei Stimmführern und im Account öffnen wieder die Mail- bzw. Telefon-App",
+        "🐛 Tippen neben ein Eingabefeld schließt die Tastatur (auch die Zahlentastatur)",
+        "🐛 Statistik: Altersverteilung mit allen Altersgruppen, Verlauf mit Datum wie TT.MM.",
+        "🐛 Web: Wer die alte Web-App installiert hat, bekommt beim nächsten Öffnen die neue App",
+        "🐛 Android: App heißt wieder \"Attendix\" und das Symbol auf dem Startbildschirm bleibt nach dem Update erhalten",
+        "🐛 Web-App: Excel-Export und Excel-Import funktionieren wieder (schlugen in Chrome und aktuellem Safari fehl)",
+        "🐛 Web-App: Noten als ZIP herunterladen funktioniert wieder",
+        "🐛 Web-App: \"Person hinzufügen\" öffnet wieder das Formular statt einer grauen Seite",
+        "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand",
+        "🐛 Termine anlegen: Ein Filter auf ein Organisationsfeld nutzt den gemeinsamen Wert der Person statt des Standardwerts",
+        "🐛 Personen-Import: Erneut importieren legt schon gespeicherte Personen nicht doppelt an, sondern trägt sie nur noch in die Termine ein"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [
@@ -74,7 +100,6 @@
         "🐛 Dirigenten sind auch ohne Netz verfügbar",
         "✨ iPhone: Laufender Ablaufplan als Live-Aktivität auf dem Sperrbildschirm und in der Dynamic Island",
         "✨ iPhone und Android: Die App nutzt die App-ID der bisherigen Attendix-App und kommt später als Update im Store, Push läuft weiter"
-
       ]
     },
     {
