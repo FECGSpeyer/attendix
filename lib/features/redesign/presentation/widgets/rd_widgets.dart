@@ -376,6 +376,7 @@ class RdPrimaryButton extends StatelessWidget {
     this.color,
     this.foreground,
     this.height = 48,
+    this.loading = false,
   });
 
   final String label;
@@ -385,13 +386,17 @@ class RdPrimaryButton extends StatelessWidget {
   final Color? foreground;
   final double height;
 
+  /// Shows a spinner instead of [icon] and blocks taps (e.g. while a PDF
+  /// is built).
+  final bool loading;
+
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
     return SizedBox(
       height: height,
       child: FilledButton(
-        onPressed: onPressed,
+        onPressed: loading ? null : onPressed,
         style: FilledButton.styleFrom(
           backgroundColor: color ?? p.primary,
           foregroundColor: foreground ?? p.onPrimary,
@@ -409,7 +414,17 @@ class RdPrimaryButton extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.center,
           mainAxisSize: MainAxisSize.min,
           children: [
-            if (icon != null) ...[Icon(icon, size: 20), const SizedBox(width: 8)],
+            if (loading) ...[
+              SizedBox(
+                width: 18,
+                height: 18,
+                child: CircularProgressIndicator(strokeWidth: 2, color: p.text2),
+              ),
+              const SizedBox(width: 10),
+            ] else if (icon != null) ...[
+              Icon(icon, size: 20),
+              const SizedBox(width: 8),
+            ],
             Flexible(child: Text(label, overflow: TextOverflow.ellipsis)),
           ],
         ),
