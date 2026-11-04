@@ -453,21 +453,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
-      // Ionic /register = "Instanz anlegen" behind RegisterGuard: signed
-      // out → /login (global redirect), signed in without any instance →
-      // create one, otherwise the login flow (start page or selection).
-      // The account sign-up is the modal on the login page.
+      // Ionic /register = "Instanz anlegen" behind RegisterGuard: the login
+      // flow decides (signed out → login, otherwise start page or the
+      // selection, which shows the non-dismissable "Instanz anlegen" page
+      // without any instance). The account sign-up is the login modal.
       GoRoute(
         path: '/register',
         name: 'register',
-        redirect: (context, state) async {
-          try {
-            final tenants = await ref.read(userTenantsProvider.future);
-            return tenants.isEmpty ? '/tenants/new' : '/login';
-          } catch (_) {
-            return '/login';
-          }
-        },
+        redirect: (context, state) => '/login',
       ),
       // UX_PRELOGIN: Ionic has no reset page, only the login alert
       // "Passwort zurücksetzen" → old links open it on /login.

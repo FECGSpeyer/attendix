@@ -95,6 +95,9 @@ class RegistrationFormData {
   Map<String, dynamic> additionalFields;
   Uint8List? profileImageBytes;
 
+  /// Content type of [profileImageBytes] (as picked, not re-encoded).
+  String? profileImageMimeType;
+
   RegistrationFormData({
     this.email = '',
     this.password = '',
@@ -263,8 +266,8 @@ class RegistrationService {
           await supabase.storage.from(SupabaseBuckets.profiles).uploadBinary(
                 storagePath,
                 formData.profileImageBytes!,
-                fileOptions: const FileOptions(
-                  contentType: 'image/jpeg',
+                fileOptions: FileOptions(
+                  contentType: formData.profileImageMimeType ?? 'image/jpeg',
                   upsert: true,
                 ),
               );

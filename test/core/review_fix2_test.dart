@@ -70,8 +70,9 @@ void main() {
     expect(s.indexOf('PendingFileLink.consume()', termsDone),
         lessThan(s.indexOf('homeRouteFor(', termsDone)));
     final page = src('lib/features/legal/presentation/pages/terms_page.dart');
-    expect(page.indexOf('PendingFileLink.consume()'),
-        lessThan(page.indexOf('homeRouteFor(')));
+    final accept = page.indexOf('Future<void> _accept()');
+    expect(page.indexOf('PendingFileLink.consume()', accept),
+        lessThan(page.indexOf('await _goHome()', accept)));
   });
 
   test('main: Teams init not awaited, update toast uses root messenger', () {

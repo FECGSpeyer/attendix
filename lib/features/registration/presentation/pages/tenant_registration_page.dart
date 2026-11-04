@@ -50,6 +50,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
   bool _isLoading = false;
   Uint8List? _profileImageBytes;
+  String? _profileImageMimeType;
   bool _hasCheckedRegistration = false;
   bool _defaultsApplied = false;
 
@@ -501,14 +502,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
                 decoration: ionItemInputDecoration(context, field.name),
                 keyboardType: TextInputType.number,
                 initialValue: field.defaultValue?.toString(),
-                onSaved: (value) {
-                  if (value != null && value.isNotEmpty) {
-                    _formData.additionalFields[field.id] =
-                        int.tryParse(value) ?? value;
-                  } else {
-                    _formData.additionalFields.remove(field.id);
-                  }
-                },
+                // Ionic stores null for a cleared number input.
+                onSaved: (value) => _formData.additionalFields[field.id] =
+                    value == null || value.isEmpty
+                        ? null
+                        : int.tryParse(value) ?? value,
               ),
             ),
           );
@@ -614,6 +612,19 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
   /// Ionic onImageSelect(): `<input type="file" accept="image/*">` – the
   /// system offers camera and photo library, the original file is uploaded
   /// (max. 15 MB). In the browser the file input still offers both.
+  /// Content type from the file name when the picker gives none.
+  static String _mimeTypeFor(String name) {
+    final ext = name.split('.').last.toLowerCase();
+    return switch (ext) {
+      'png' => 'image/png',
+      'gif' => 'image/gif',
+      'webp' => 'image/webp',
+      'heic' => 'image/heic',
+      'heif' => 'image/heif',
+      _ => 'image/jpeg',
+    };
+  }
+
   Future<void> _pickImage() async {
     try {
       var source = ImageSource.gallery;
@@ -651,7 +662,10 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         return;
       }
 
-      setState(() => _profileImageBytes = bytes);
+      setState(() {
+        _profileImageBytes = bytes;
+        _profileImageMimeType = image.mimeType ?? _mimeTypeFor(image.name);
+      });
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context,
@@ -1125,7 +1139,8 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
             return context.l10n.tenantRegisterFieldRequired(field.name);
           }
         case 'number':
-          if (value == null || num.tryParse(value.toString()) == null) {
+          // Ionic isNaN(Number(value)): an empty value (null) passes.
+          if (value != null && num.tryParse(value.toString()) == null) {
             return context.l10n.tenantRegisterFieldNumber(field.name);
           }
         case 'date':
@@ -1182,6 +1197,7 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
     // Attach profile image bytes if selected
     _formData.profileImageBytes = _profileImageBytes;
+    _formData.profileImageMimeType = _profileImageMimeType;
 
     final result = await ref.read(registrationServiceProvider).register(
           tenant: tenant,

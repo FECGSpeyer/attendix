@@ -40,12 +40,40 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     super.initState();
     _privacyRecognizer = TapGestureRecognizer()
       ..onTap = () => showLegalModal(context);
+    // Opened with the terms already accepted while the role still loads:
+    // the router keeps /terms then, so leave once the role is there.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !ref.read(accountRepositoryProvider).hasAcceptedTerms) {
+        return;
+      }
+      _goHome();
+    });
   }
 
   @override
   void dispose() {
     _privacyRecognizer.dispose();
     super.dispose();
+  }
+
+  /// Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) – the start page
+  /// of the open instance; without one '/register' (create an instance
+  /// when there is none, otherwise the selection).
+  Future<void> _goHome() async {
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (tenantId == null) {
+      context.go('/register');
+      return;
+    }
+    try {
+      await ref.read(currentTenantUserProvider.future);
+    } catch (_) {}
+    if (!mounted) return;
+    context.go(homeRouteFor(
+      ref.read(currentRoleProvider),
+      tenantId,
+      ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+    ));
   }
 
   Future<void> _accept() async {
@@ -72,23 +100,7 @@ class _TermsPageState extends ConsumerState<TermsPage> {
           '/terms') {
         return;
       }
-      // Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) – the start page
-      // of the open instance; without one '/register' (create an instance
-      // when there is none, otherwise the selection).
-      final tenantId = ref.read(currentTenantIdProvider);
-      if (tenantId == null) {
-        context.go('/register');
-        return;
-      }
-      try {
-        await ref.read(currentTenantUserProvider.future);
-      } catch (_) {}
-      if (!mounted) return;
-      context.go(homeRouteFor(
-        ref.read(currentRoleProvider),
-        tenantId,
-        ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
-      ));
+      await _goHome();
     } on SessionExpiredException {
       if (pending != null) PendingFileLink.set(pending);
       if (!mounted) return;
