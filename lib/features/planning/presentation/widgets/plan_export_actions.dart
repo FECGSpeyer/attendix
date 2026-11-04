@@ -8,6 +8,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
+import '../../../../core/services/web_window.dart' show shareUrlInBrowser;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'ion_items.dart';
@@ -141,7 +142,19 @@ Future<void> runPlanExport(
 String _safeName(String name) => name.replaceFirst('(', '').replaceFirst(')', '');
 
 /// Shares a link via the system share sheet, falls back to the clipboard.
+///
+/// Web (Ionic): Web Share API when the browser has it, otherwise copy +
+/// toast. share_plus reports "unavailable" on the web even after a
+/// successful share, so it is not used there.
 Future<void> sharePlanLink(BuildContext context, String url, {String? title}) async {
+  final shared = await shareUrlInBrowser(url, title: title);
+  if (shared != null) {
+    if (!shared) {
+      await Clipboard.setData(ClipboardData(text: url));
+      if (context.mounted) ToastHelper.showSuccess(context, context.l10n.planningLinkCopied);
+    }
+    return;
+  }
   try {
     final result = await Share.share(url, subject: title);
     if (result.status == ShareResultStatus.unavailable) {

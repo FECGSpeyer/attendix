@@ -1,4 +1,5 @@
 import 'dart:js_interop';
+import 'dart:js_interop_unsafe';
 import 'dart:typed_data';
 
 import 'package:web/web.dart' as web;
@@ -81,4 +82,15 @@ void setUnloadWarning(Object owner, bool unsaved) {
       }).toJS,
     );
   } catch (_) {}
+}
+
+Future<bool?> shareUrlInBrowser(String url, {String? title}) async {
+  final navigator = web.window.navigator;
+  if (!(navigator as JSObject).has('share')) return false;
+  try {
+    await navigator.share(title == null ? web.ShareData(url: url) : web.ShareData(url: url, title: title)).toDart;
+  } catch (_) {
+    // AbortError (cancelled) or NotAllowedError: Ionic copies nothing.
+  }
+  return true;
 }

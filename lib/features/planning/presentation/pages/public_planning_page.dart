@@ -973,6 +973,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         PlanFieldsEditor(
                           fields: _fields,
                           startTime: _time,
+                          publicFieldDialog: true,
                           onChanged: (f) {
                             setState(() => _fields = f);
                             _changed();
