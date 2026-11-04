@@ -173,7 +173,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       if (!mounted || mySeq != _nameLookupSeq) return; // stale
       setState(() => _nameSuggestions = matches);
     } catch (_) {
-      // Silent — suggestions are optional
+      // Ionic CrossTenantService.getPossiblePersonsByName: error toast.
+      if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
     }
   }
 
@@ -199,6 +200,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       matches = await crossTenantPersonRepo
           .getPossiblePersonsByEmail(email, linkedTenantIds: linkedIds);
     } catch (_) {
+      // Ionic getPossiblePersonsByEmail: error toast.
+      if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
       return;
     }
     if (matches.isEmpty || !mounted) return;

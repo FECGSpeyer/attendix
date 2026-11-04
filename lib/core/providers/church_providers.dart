@@ -3,11 +3,19 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import '../../data/models/church/church.dart';
 import '../../data/repositories/church_repository.dart';
 import '../config/supabase_config.dart';
+import '../utils/global_toast.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for all churches (global)
 final churchesProvider = FutureProvider<List<Church>>((ref) async {
   final repo = ref.watch(churchRepositoryProvider);
-  return repo.getChurches();
+  try {
+    return await repo.getChurches();
+  } catch (_) {
+    // Ionic ChurchService.getChurches: toast wherever the list fails.
+    GlobalToast.error(l10nWithoutContext.svcLoadChurchesFailed);
+    rethrow;
+  }
 });
 
 /// Notifier for church mutations

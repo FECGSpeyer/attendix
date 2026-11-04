@@ -232,7 +232,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _otherInstanceName = name;
       });
     } catch (_) {
-      // Keep "Alle anzeigen" when the instance cannot be resolved
+      // Keep "Alle anzeigen"; Ionic shows the service toast here too.
+      if (mounted) ToastHelper.showError(context, context.l10n.svcLoadUsersFailed);
     }
   }
 
@@ -1119,7 +1120,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       });
       _saveFilterOption();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+      // Ionic CrossTenantService.getUserIdsInTenant: 'Fehler beim Laden der Benutzer'.
+      if (mounted) ToastHelper.showError(context, context.l10n.svcLoadUsersFailed);
     }
   }
 

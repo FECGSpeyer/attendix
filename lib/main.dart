@@ -42,6 +42,7 @@ import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
 import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
+import 'core/utils/global_toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -200,6 +201,8 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
       }
     });
     final router = ref.watch(routerProvider);
+    // Ionic service toasts (GlobalToast) use the router's root context.
+    GlobalToast.contextResolver = () => router.routerDelegate.navigatorKey.currentContext;
     // PWA_UPDATE: the web app updates at the next start, without a toast.
     final updateAvailable =
         showUpdateHint(ref.watch(appUpdateAvailableProvider));
