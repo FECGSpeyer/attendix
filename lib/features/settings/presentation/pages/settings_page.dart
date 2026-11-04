@@ -51,6 +51,7 @@ import '../../../../shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/layout/side_nav/side_nav_layout.dart';
 import '../../../history/presentation/pages/history_page.dart' show showHistoryModal;
 import '../../../statistics/presentation/pages/statistics_page.dart' show showStatisticsModal;
+import '../../../planning/presentation/pages/planning_page.dart' show showPlanningModal;
 import '../../../export/presentation/pages/export_page.dart' show showExportModal;
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset, IonRefresher;
 
@@ -357,7 +358,7 @@ class SettingsPage extends ConsumerWidget {
                         icon: Icons.list,
                         title: l10n.settingsRunSheets,
                         detail: false,
-                        onTap: () => context.push('/planning'),
+                        onTap: () => showPlanningModal(context, ref),
                       ),
                     SettingsListTile(
                       icon: Icons.calendar_today_outlined,

@@ -209,22 +209,41 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
           (sheetContext) => Consumer(
             builder: (context, ref, _) {
               final prefs = ref.watch(userPreferencesProvider);
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    child: SwitchListTile.adaptive(
-                      title: Text(context.l10n.settingsEnableTenantSelect),
-                      subtitle: Text(context.l10n.settingsTenantSelectHelper),
-                      value: prefs.wantInstanceSelection,
-                      onChanged:
-                          (value) => ref
-                              .read(userPreferencesNotifierProvider.notifier)
-                              .updatePreferences(wantInstanceSelection: value),
+              // Ionic ngModel: the toggle flips at once and every change is
+              // written (settings.page.ts onTenantSelectionChange).
+              bool? shown;
+              return StatefulBuilder(
+                builder: (context, setSheetState) {
+                  final value = shown ?? prefs.wantInstanceSelection;
+                  return SafeArea(
+                    child: Padding(
+                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+                      child: Card(
+                        margin: EdgeInsets.zero,
+                        child: SwitchListTile.adaptive(
+                          title: Text(context.l10n.settingsEnableTenantSelect),
+                          subtitle: Text(
+                            context.l10n.settingsTenantSelectHelper,
+                          ),
+                          value: value,
+                          onChanged: (newValue) {
+                            setSheetState(() => shown = newValue);
+                            ref
+                                .read(userPreferencesNotifierProvider.notifier)
+                                .updatePreferences(
+                                  wantInstanceSelection: newValue,
+                                )
+                                .catchError((Object _) {
+                                  if (context.mounted) {
+                                    setSheetState(() => shown = null);
+                                  }
+                                });
+                          },
+                        ),
+                      ),
                     ),
-                  ),
-                ),
+                  );
+                },
               );
             },
           ),

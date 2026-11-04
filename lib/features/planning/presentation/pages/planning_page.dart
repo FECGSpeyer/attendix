@@ -4,6 +4,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -37,6 +38,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import '../../../../data/repositories/plan_repository.dart';
@@ -72,6 +74,27 @@ typedef _PlanListOp = ({List<Plan> plans, int open})? Function(PlanAttendance at
 /// its position (`i<n>`) plus the plan count and the plan itself (JSON) in
 /// that copy, see [_PlanningPageState._indexOfRef].
 typedef _PlanRef = ({String key, int count, String? json});
+
+/// Ionic settings "Ablaufpläne" (and the side nav) open PlanningPage as a
+/// card modal (`presentingElement`, cssClass planningModal) with its own
+/// close button. The Beta design keeps its page route.
+Future<void> showPlanningModal(BuildContext context, WidgetRef ref) {
+  if (ref.read(redesignEnabledProvider)) {
+    return context.push('/planning');
+  }
+  final dark = Theme.of(context).brightness == Brightness.dark;
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      backgroundColor: dark ? null : AppColors.light,
+      builder: (_) => const PlanningPage(),
+    );
+  }
+  return showIonModal<void>(
+    context,
+    builder: (_) => const PlanningPage(),
+  );
+}
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
 ///

@@ -76,6 +76,9 @@ class UserPreferencesNotifier extends AsyncNotifier<void> {
       };
 
       await auth.updateUser(UserAttributes(data: updatedData));
+      // userPreferencesProvider only depends on the user id, which does not
+      // change on updateUser – re-read the metadata explicitly.
+      ref.invalidate(userPreferencesProvider);
       state = const AsyncData(null);
     } catch (e, stack) {
       debugPrint('Failed to update user preferences: $e');

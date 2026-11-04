@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -161,9 +162,32 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     final playerId = _profile?.person.id;
     if (playerId == null) return;
     try {
+      // Ionic <input type="file" accept="image/*">: in the native app the
+      // system offers photo library and camera; the browser (PWA) opens its
+      // own file picker.
+      var source = ImageSource.gallery;
+      if (!kIsWeb) {
+        final picked = await showAppActionSheet<ImageSource>(
+          context,
+          actions: [
+            AppActionSheetAction(
+              value: ImageSource.gallery,
+              label: context.l10n.attendanceFlutterGallery,
+              icon: Icons.photo_library_outlined,
+            ),
+            AppActionSheetAction(
+              value: ImageSource.camera,
+              label: context.l10n.attendanceFlutterCamera,
+              icon: Icons.camera_alt_outlined,
+            ),
+          ],
+        );
+        if (picked == null || !mounted) return;
+        source = picked;
+      }
       final picker = ImagePicker();
       final image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1200,
         maxHeight: 1200,
         imageQuality: 85,
@@ -251,9 +275,9 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (ok) {
+      // Ionic updateUserData: toast only, the sheet stays open.
       ToastHelper.showSuccess(
           context, context.l10n.settingsProfileUpdated);
-      Navigator.of(context).pop();
     } else {
       ToastHelper.showError(context, context.l10n.dbUpdateProfileFailed);
     }
@@ -270,6 +294,9 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (!_initialized && profile != null && fieldsAsync.hasValue) {
       _init(profile, visibleFields);
     }
+    // The sheet stays open after saving: the next save compares against the
+    // freshly loaded profile (church/birthday change detection).
+    if (_initialized && profile != null && !_saving) _profile = profile;
     final inputStyle = ionItemInputStyle(context);
 
     // Ionic master data modal: sheet (breakpoint .9) with a plain toolbar
