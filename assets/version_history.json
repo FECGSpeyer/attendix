@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.39.7",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Neuer Termintyp wird wie in Ionic direkt mit allen Einstellungen angelegt"
+      ]
+    },
+    {
       "version": "0.39.6",
       "date": "4.11.2026",
       "changes": [
