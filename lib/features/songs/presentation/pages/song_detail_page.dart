@@ -119,7 +119,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   void dispose() {
     _disposed = true;
     final data = _data;
-    if (data != null && !data.readOnly && jsonEncode(_formValues(data)) != _lastQueued) {
+    if (data != null && !data.readOnly && _snapshot(_formValues(data)) != _lastQueued) {
       _update(data);
     }
     _prefix.dispose();
@@ -173,7 +173,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             TextEditingController(text: _additional[field.id]?.toString() ?? '');
       }
     }
-    _lastQueued = jsonEncode(_formValues(data));
+    _lastQueued = _snapshot(_formValues(data));
   }
 
   /// Ionic `instrumentIdsFromFiles`: groups that have files (id > 2)
@@ -190,15 +190,33 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     final notifier = _notifier;
     if (data.readOnly || id == null || notifier == null) return;
     final values = _formValues(data);
-    _lastQueued = jsonEncode(values);
+    final snapshot = _snapshot(values);
+    _lastQueued = snapshot;
     if (!_disposed) setState(() => _saving++);
     final run = _saveQueue.then((_) => notifier.updateSong(id, values));
     _saveQueue = run.then((_) {}, onError: (_) {});
-    final result = await run;
+    Song? result;
+    try {
+      result = await run;
+    } catch (_) {
+      result = null;
+    }
+    // A failed save counts as not saved: closing the page tries again.
+    if (result == null && _lastQueued == snapshot) _lastQueued = null;
     if (!mounted || _disposed) return;
     setState(() => _saving--);
     if (result == null) {
       ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+    }
+  }
+
+  /// Comparable form state; a state that cannot be encoded never equals
+  /// another one, so it is always saved.
+  static String _snapshot(Map<String, dynamic> values) {
+    try {
+      return jsonEncode(values);
+    } catch (_) {
+      return '!${identityHashCode(values)}';
     }
   }
 
