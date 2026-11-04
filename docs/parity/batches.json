@@ -1,0 +1,463 @@
+{
+ "ionicCommit": "9f9b82af",
+ "batches": [
+  {
+   "id": "b01-app",
+   "family": "app",
+   "units": [
+    "app-redirect/app-redirect.page",
+    "app-routing.module",
+    "app.component",
+    "app.module",
+    "legal/legal.page",
+    "login/legal-modal/legal-content.component",
+    "login/legal-modal/legal-modal.component",
+    "login/login.page",
+    "login/register-modal/register-modal.component",
+    "open-attendance/open-attendance.page",
+    "open-file/open-file.page",
+    "register/register.page"
+   ],
+   "weight": 247
+  },
+  {
+   "id": "b02-app",
+   "family": "app",
+   "units": [
+    "register/tenant-register/tenant-register.page",
+    "tabs/side-nav/nav-items",
+    "tabs/side-nav/side-nav.component",
+    "tabs/tabs.page",
+    "teams-config/teams-config.page",
+    "terms/terms.page"
+   ],
+   "weight": 186
+  },
+  {
+   "id": "b03-attendance",
+   "family": "attendance",
+   "units": [
+    "attendance/att-list/att-list.page",
+    "attendance/attendance/ad-hoc-reminder-modal/ad-hoc-reminder-modal.component"
+   ],
+   "weight": 140
+  },
+  {
+   "id": "b04-attendance",
+   "family": "attendance",
+   "units": [
+    "attendance/attendance/attendance.page",
+    "attendance/attendance/status-info/status-info.component",
+    "attendance/auto-message-panel/auto-message-panel.component"
+   ],
+   "weight": 360
+  },
+  {
+   "id": "b05-overview",
+   "family": "overview",
+   "units": [
+    "dashboard/dashboard.page",
+    "export/export.page",
+    "history/history.page",
+    "home-dashboard/components/absences-card/absences-card.component",
+    "home-dashboard/components/birthdays-card/birthdays-card.component",
+    "home-dashboard/components/critical-persons-card/critical-persons-card.component",
+    "home-dashboard/components/current-plan-card/current-plan-card.component",
+    "home-dashboard/components/current-songs-card/current-songs-card.component",
+    "home-dashboard/components/member-changes-card/member-changes-card.component",
+    "home-dashboard/components/next-event-card/next-event-card.component",
+    "home-dashboard/components/shared/dashboard-date",
+    "home-dashboard/home-dashboard.page",
+    "messages/message-compose/message-compose.component"
+   ],
+   "weight": 217
+  },
+  {
+   "id": "b06-overview",
+   "family": "overview",
+   "units": [
+    "messages/message-detail/message-detail.page",
+    "messages/message-list/message-list.page",
+    "notifications/notifications.page",
+    "stats/stats.page"
+   ],
+   "weight": 176
+  },
+  {
+   "id": "b07-people",
+   "family": "people",
+   "units": [
+    "people/bulk-edit/bulk-edit.page",
+    "people/import/import.page"
+   ],
+   "weight": 86
+  },
+  {
+   "id": "b08-people",
+   "family": "people",
+   "units": [
+    "people/list/list.page",
+    "people/members/members.page"
+   ],
+   "weight": 134
+  },
+  {
+   "id": "b09-people",
+   "family": "people",
+   "units": [
+    "people/person/person.page"
+   ],
+   "weight": 278
+  },
+  {
+   "id": "b10-planning-org",
+   "family": "planning-org",
+   "units": [
+    "org-plan-public/org-plan-public.page",
+    "org-plans/org-plans.page",
+    "org-settings/org-person-fields/org-person-fields.page"
+   ],
+   "weight": 161
+  },
+  {
+   "id": "b11-planning-org",
+   "family": "planning-org",
+   "units": [
+    "org-settings/org-planning-templates/org-planning-templates.page",
+    "org-settings/org-settings.page",
+    "org-settings/org-songs/org-songs.page",
+    "planning/plan-chips/plan-chips.component",
+    "planning/plan-field-edit/plan-field-edit.component",
+    "planning/plan-minutes.pipe",
+    "planning/plan-share-sheet/plan-share-sheet.component"
+   ],
+   "weight": 196
+  },
+  {
+   "id": "b12-planning-org",
+   "family": "planning-org",
+   "units": [
+    "planning/plan-viewer/plan-viewer.component",
+    "planning/planning.page",
+    "public-planning/my-plans/my-plans.component",
+    "public-planning/public-planning-templates"
+   ],
+   "weight": 192
+  },
+  {
+   "id": "b13-planning-org",
+   "family": "planning-org",
+   "units": [
+    "public-planning/public-planning.page",
+    "shared-plan/shared-plan.page"
+   ],
+   "weight": 150
+  },
+  {
+   "id": "b14-selfService",
+   "family": "selfService",
+   "units": [
+    "selfService/overview/overview.page",
+    "selfService/parents/parents.page"
+   ],
+   "weight": 167
+  },
+  {
+   "id": "b15-selfService",
+   "family": "selfService",
+   "units": [
+    "selfService/signout/signout.page"
+   ],
+   "weight": 222
+  },
+  {
+   "id": "b16-services",
+   "family": "services",
+   "units": [
+    "i18n/i18n.providers",
+    "i18n/languages",
+    "i18n/locale.service",
+    "i18n/transloco-loader",
+    "services/admin/admin.service",
+    "services/agenda-item/agenda-item.service",
+    "services/ai.service",
+    "services/attendance-type/attendance-type.service",
+    "services/attendance/attendance.service",
+    "services/audio-player/audio-player.service",
+    "services/audio-player/media-session",
+    "services/auth.guard",
+    "services/auth/auth.service",
+    "services/auto-message/auto-message.service",
+    "services/base/supabase",
+    "services/church/church.service",
+    "services/conductor/conductor.service",
+    "services/cross-tenant/cross-tenant.service",
+    "services/data.service"
+   ],
+   "weight": 211
+  },
+  {
+   "id": "b17-services",
+   "family": "services",
+   "units": [
+    "services/db.service"
+   ],
+   "weight": 219
+  },
+  {
+   "id": "b18-services",
+   "family": "services",
+   "units": [
+    "services/duty/duty.service",
+    "services/feedback/feedback.service",
+    "services/files/files.service",
+    "services/group-category/group-category.service",
+    "services/group/group.service",
+    "services/handover/handover.service",
+    "services/help/help-content.service",
+    "services/history/history.service",
+    "services/holiday/holiday.service",
+    "services/image/image.service",
+    "services/instance/instance.service",
+    "services/layout/layout.service",
+    "services/legal/legal.service",
+    "services/live-activity/live-activity.service",
+    "services/live-update/live-update.service",
+    "services/login.guard",
+    "services/message/message.service",
+    "services/notification/notification.service"
+   ],
+   "weight": 230
+  },
+  {
+   "id": "b19-services",
+   "family": "services",
+   "units": [
+    "services/offline-queue/offline-queue.service",
+    "services/organisation/organisation.service",
+    "services/player-absence/player-absence.service",
+    "services/player/player.service",
+    "services/print/print.service",
+    "services/profile/profile.service",
+    "services/protocol/protocol.service",
+    "services/push/push.service",
+    "services/register.guard",
+    "services/role-permission/role-permission.service"
+   ],
+   "weight": 219
+  },
+  {
+   "id": "b20-services",
+   "family": "services",
+   "units": [
+    "services/shift/shift.service",
+    "services/sign-in-out/sign-in-out.service",
+    "services/song-actions/song-actions.service",
+    "services/song-category/song-category.service",
+    "services/song/song.service",
+    "services/super-developer.guard",
+    "services/task/task.service",
+    "services/teacher/teacher.service",
+    "services/teams/teams.service",
+    "services/telegram/telegram.service",
+    "services/tenant/tenant.service",
+    "services/terms.guard",
+    "services/tracking/tracking.service",
+    "services/user-notification/user-notification.service",
+    "services/user-registration/user-registration.service",
+    "services/viewer-parent/viewer-parent.service",
+    "utilities/archived",
+    "utilities/attendance-create"
+   ],
+   "weight": 231
+  },
+  {
+   "id": "b21-services",
+   "family": "services",
+   "units": [
+    "utilities/attendance-date-dialog",
+    "utilities/attendance-songs",
+    "utilities/db-helpers",
+    "utilities/duty",
+    "utilities/event-list",
+    "utilities/file-move",
+    "utilities/import-mapper",
+    "utilities/instrument-matcher",
+    "utilities/live-plan",
+    "utilities/organisation-person-key",
+    "utilities/person-matcher",
+    "utilities/plan-beamer",
+    "utilities/plan-days",
+    "utilities/plan-groups",
+    "utilities/song-copy",
+    "utilities/spreadsheet-reader",
+    "utilities/unique-dates",
+    "utilities/Utils"
+   ],
+   "weight": 112
+  },
+  {
+   "id": "b22-settings-general",
+   "family": "settings-general",
+   "units": [
+    "settings/general/branding/branding.page",
+    "settings/general/extra-fields/extra-fields.page"
+   ],
+   "weight": 130
+  },
+  {
+   "id": "b23-settings-general",
+   "family": "settings-general",
+   "units": [
+    "settings/general/general.page",
+    "settings/general/link-persons/link-persons.page",
+    "settings/general/shifts/shift/shift.page"
+   ],
+   "weight": 185
+  },
+  {
+   "id": "b24-settings-general",
+   "family": "settings-general",
+   "units": [
+    "settings/general/shifts/shifts.page",
+    "settings/general/type/type.page",
+    "settings/general/types/types.page"
+   ],
+   "weight": 201
+  },
+  {
+   "id": "b25-settings-main",
+   "family": "settings-main",
+   "units": [
+    "settings/settings/settings.page"
+   ],
+   "weight": 254
+  },
+  {
+   "id": "b26-settings-other",
+   "family": "settings-other",
+   "units": [
+    "settings/administration/administration.page",
+    "settings/auto-messages/list/auto-message-list.page",
+    "settings/auto-messages/rule/auto-message-rule.page",
+    "settings/dashboard/dashboard-settings.page"
+   ],
+   "weight": 172
+  },
+  {
+   "id": "b27-settings-other",
+   "family": "settings-other",
+   "units": [
+    "settings/delete-account/delete-account.page",
+    "settings/files/files-move-modal/files-move-modal.component",
+    "settings/files/files.page",
+    "settings/handover-detail/handover-detail.page"
+   ],
+   "weight": 175
+  },
+  {
+   "id": "b28-settings-other",
+   "family": "settings-other",
+   "units": [
+    "settings/handover/handover.page",
+    "settings/help/article/help-article.page",
+    "settings/help/content/index",
+    "settings/help/glossary-popover/help-glossary-popover.component",
+    "settings/help/glossary/help-glossary.page",
+    "settings/help/help-markdown.util",
+    "settings/help/help.page",
+    "settings/role-permissions/role-permissions.page",
+    "settings/voice-leader/voice-leader.page"
+   ],
+   "weight": 120
+  },
+  {
+   "id": "b29-shared",
+   "family": "shared",
+   "units": [
+    "shared/attendance-response-modal/attendance-response-modal.component",
+    "shared/attendance-songs/attendance-songs.component",
+    "shared/audio-player/audio-player.component",
+    "shared/church-overview/church-overview.component",
+    "shared/excuse-reason-picker/excuse-reason-picker.component",
+    "shared/files-folder-picker/files-folder-picker.component",
+    "shared/image-viewer/image-viewer.component",
+    "shared/message-editor/message-editor.component",
+    "shared/notification-bell/notification-bell.component",
+    "shared/tiptap-editor/extensions/slash-commands",
+    "shared/tiptap-editor/extensions/task-ref-node",
+    "shared/tiptap-editor/tiptap-editor.component"
+   ],
+   "weight": 158
+  },
+  {
+   "id": "b30-songs",
+   "family": "songs",
+   "units": [
+    "song-viewer/song-viewer.page",
+    "songs/import/import.page"
+   ],
+   "weight": 61
+  },
+  {
+   "id": "b31-songs",
+   "family": "songs",
+   "units": [
+    "songs/song/song.page"
+   ],
+   "weight": 149
+  },
+  {
+   "id": "b32-songs",
+   "family": "songs",
+   "units": [
+    "songs/songs.page"
+   ],
+   "weight": 106
+  },
+  {
+   "id": "b33-teachers-instruments-duty",
+   "family": "teachers-instruments-duty",
+   "units": [
+    "duty/duty-assign-modal/duty-assign-modal.component",
+    "duty/duty-distribute-modal/duty-distribute-modal.component",
+    "duty/unavailability-modal/unavailability-modal.component",
+    "instruments/instrument-list/instrument-list.page",
+    "instruments/instrument/instrument.page",
+    "teacher/teacher.page",
+    "teachers/teachers.page"
+   ],
+   "weight": 192
+  },
+  {
+   "id": "b34-team",
+   "family": "team",
+   "units": [
+    "agenda-items/agenda-item-detail/agenda-item-detail.page",
+    "agenda-items/agenda-picker/agenda-picker.component",
+    "agenda-items/agenda-plan.helpers",
+    "protocols/protocol/protocol-pdf",
+    "protocols/protocol/protocol.helpers",
+    "protocols/protocol/protocol.page",
+    "tasks/my-tasks/my-tasks.component"
+   ],
+   "weight": 251
+  },
+  {
+   "id": "b35-team",
+   "family": "team",
+   "units": [
+    "tasks/task-detail/task-detail.page",
+    "tasks/task-form/task-form.component",
+    "team-organization/protocols-tab/protocols-tab.component",
+    "team-organization/tasks-tab/tasks-tab.component",
+    "team-organization/tasks-tab/tasks-tab.utils",
+    "team-organization/team-org.utils",
+    "team-organization/team-organization.page",
+    "team-organization/topics-tab/topics-tab.component",
+    "team-organization/topics-tab/topics-tab.utils"
+   ],
+   "weight": 190
+  }
+ ]
+}

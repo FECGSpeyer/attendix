@@ -1,0 +1,9 @@
+{
+  "name": "attendix-parity-screens",
+  "private": true,
+  "type": "module",
+  "description": "Side-by-side screenshots Ionic vs Flutter web (see docs/parity/README.md)",
+  "dependencies": {
+    "playwright": "1.56.1"
+  }
+}
