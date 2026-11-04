@@ -394,9 +394,11 @@ void main() {
       expect(rdWorkLacksNotes(_abend, _groups, {12: 1}, orchestra: true), isFalse);
 
       const choirAll = SongFile(fileName: 'chor.pdf', fileType: _pdf, url: 'https://x/chor.pdf', note: 'Chor');
-      const choirWork = Song(id: 9, name: 'Chorsatz', files: [choirAll, mp3]);
-      expect(rdMemberPartFiles(choirWork, 11, choir: true), [choirAll]);
-      expect(rdMemberPartFiles(choirWork, 11, choir: false), isEmpty);
+      // An own practice recording is no Noten: Chor (alle) still comes.
+      const practice = SongFile(fileName: 'sopran.mp3', fileType: 'audio/mpeg', url: 'https://x/s.mp3', instrumentId: 11);
+      const choirWork = Song(id: 9, name: 'Chorsatz', files: [practice, choirAll, mp3]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: true), [choirAll, practice]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: false), [practice]);
       expect(
         rdApplyOnly(
           [choirWork, recordingOnly],

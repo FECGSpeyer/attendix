@@ -48,13 +48,15 @@ List<SongFile> rdPartFiles(Song song, int? groupId) {
   return files;
 }
 
-/// The viewer's part of [song]: the files of group [groupId] (PDFs first),
-/// in a choir without an own file the "Chor (alle)" files that are meant
-/// for every singer ("Meine Mappe", "Meine Noten öffnen", Werk page).
+/// The viewer's part of [song]: the files of group [groupId] (PDFs first).
+/// In a choir without own Noten the "Chor (alle)" files meant for every
+/// singer come too, next to an own practice recording ("Meine Mappe",
+/// "Meine Noten öffnen", Werk page).
 List<SongFile> rdMemberPartFiles(Song song, int? groupId, {required bool choir}) {
   final own = rdPartFiles(song, groupId);
-  if (own.isNotEmpty || !choir || groupId == null || groupId <= rdLyricsCategory) return own;
+  if (!choir || groupId == null || groupId <= rdLyricsCategory || own.any(rdIsNotes)) return own;
   final all = [
+    ...own,
     for (final f in song.files ?? const <SongFile>[])
       if (isChoirAllFile(instrumentId: f.instrumentId, note: f.note)) f,
   ];

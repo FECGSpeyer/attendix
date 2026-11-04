@@ -113,7 +113,7 @@ class RdWorkPage extends ConsumerWidget {
     final workspace = canEdit && width >= rdWorkFilesMinWidth;
     final missing =
         canEdit && data.isOrchestra
-            ? rdMissingGroups(files, groups, ref.watch(missingGroupsPlayerCountsProvider))
+            ? rdWorkMissingGroups(song, groups, ref.watch(missingGroupsPlayerCountsProvider))
             : const <Group>[];
     final copyTargets =
         data.isPublic
@@ -408,7 +408,8 @@ class RdWorkPage extends ConsumerWidget {
     List<Group> groups,
   ) {
     final l10n = context.l10n;
-    final fileGroups = data.isOrchestra ? rdFileGroups(files, groups) : const <Group>[];
+    // A practice recording is no Noten: same groups as "X fehlt".
+    final fileGroups = data.isOrchestra ? rdFileGroups([...files.where(rdIsNotes)], groups) : const <Group>[];
     final beamer = !data.isPublic && PlanBeamer.active(ref.watch(currentOrganisationProvider).valueOrNull, true);
     return [
       if (song.nextPlanned != null)

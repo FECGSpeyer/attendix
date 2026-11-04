@@ -2,13 +2,18 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../rd_works_logic.dart';
 
 /// REDESIGN: "Nur zeigen" filters of the Werke tab that the stored filter
-/// of the old list does not have (kept while the app runs).
-final rdWorksOnlyProvider = StateProvider<Set<RdWorksOnly>>((ref) => const {});
+/// of the old list does not have (kept while the app runs, cleared when
+/// the tenant changes: the role and its chips may differ there).
+final rdWorksOnlyProvider = StateProvider<Set<RdWorksOnly>>((ref) {
+  ref.watch(currentTenantIdProvider);
+  return const {};
+});
 
 /// The Werke of the list: the stored filter and sort of the old list, the
 /// "Nur zeigen" filters and the search over title and number. "Am
