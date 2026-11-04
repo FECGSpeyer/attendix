@@ -290,14 +290,15 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
   static String _defaultText(dynamic v) => v == null || v is bool ? '' : '$v';
 
   /// Ionic onNewFieldTypeChanged: boolean → false, otherwise
-  /// getFieldTypeDefaultValue (Zahl 0, Datum now as ISO, Text '').
+  /// getFieldTypeDefaultValue (Zahl 0, Datum heute, Text ''). The date is
+  /// stored as yyyy-MM-dd right away, like a date picked in [_pickDate].
   void _onTypeChanged(String type) {
     setState(() {
       _type = type;
       _defaultValue = switch (type) {
         'boolean' => false,
         'number' => 0,
-        'date' => DateTime.now().toUtc().toIso8601String(),
+        'date' => DateFormat('yyyy-MM-dd').format(DateTime.now()),
         _ => '',
       };
       _boolDefault = false;
