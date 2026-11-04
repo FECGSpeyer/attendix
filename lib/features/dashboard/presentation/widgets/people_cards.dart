@@ -15,6 +15,9 @@ Future<void> _openPerson(BuildContext context, WidgetRef ref, Person? person) as
   final id = person?.id;
   if (id == null) return;
   await showPersonModal(context, id);
+  // The modal also closes when the app navigates away (e.g. instance
+  // switch); the card may be gone then and its ref must not be used.
+  if (!context.mounted) return;
   // The person may have been changed (e.g. Problemfall gelöst).
   ref.invalidate(dashboardPersonsProvider);
 }

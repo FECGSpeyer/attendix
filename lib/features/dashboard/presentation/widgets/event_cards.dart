@@ -54,6 +54,9 @@ class NextEventCard extends ConsumerWidget {
         context,
         builder: (_) => AttendanceDetailPage(attendanceId: id),
       );
+      // Closed by a navigation (e.g. instance switch → /attendance): the
+      // card may be disposed and its ref unusable.
+      if (!context.mounted) return;
       ref.invalidate(dashboardNextEventProvider);
     }
 
