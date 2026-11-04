@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show mapEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -56,8 +57,15 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   bool _withSolo = false;
   int? _difficulty;
   List<String> _categoryIds = [];
+
+  /// Zusatzfelder as typed or picked, and as last written.
   Map<String, dynamic> _additional = {};
+  Map<String, dynamic> _storedAdditional = {};
   List<SongAdditionalField> _fields = const [];
+
+  /// The Werk this form writes to, bound once (the router builds a new
+  /// form per Werk; this keeps queued writes on the Werk they came from).
+  late final int _songId = widget.songId;
 
   /// Set once the Werk is deleted: nothing is written any more.
   bool _deleted = false;
@@ -74,7 +82,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
   /// sign-out or account switch is dropped, not written.
   late final OfflineWriteSession _session;
 
-  SongDetailParams get _params => (songId: widget.songId, sharingId: null);
+  SongDetailParams get _params => (songId: _songId, sharingId: null);
 
   @override
   void initState() {
@@ -139,12 +147,13 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
         _fieldFocus[field.id] = focus;
       }
     }
+    _storedAdditional = {..._additional};
   }
 
   void _refresh() {
     _container
       ..invalidate(songDetailDataProvider(_params))
-      ..invalidate(songByIdProvider(widget.songId))
+      ..invalidate(songByIdProvider(_songId))
       ..invalidate(songsProvider);
   }
 
@@ -157,7 +166,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     final repo = _repo;
     if (_deleted || repo == null || !repo.hasTenantId || !_session.isCurrent()) return false;
     try {
-      await repo.updateSong(widget.songId, updates);
+      await repo.updateSong(_songId, updates);
       _refresh();
       return true;
     } catch (_) {
@@ -185,8 +194,10 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     final number = int.tryParse(_number.text.trim());
     _enqueue(() async {
       if (_storedPrefix == null || (prefix == _storedPrefix && number == _storedNumber)) return;
-      // A number another Werk has is not saved (the form says so).
-      if (_numberTakenBy(prefix, number) != null) return;
+      // Only checked against the loaded Werke (the fields stay locked until
+      // then); a number another Werk has is not saved (the form says so).
+      final songs = _container.read(songsProvider).valueOrNull;
+      if (songs == null || rdNumberTakenBy(songs, _songId, prefix, number) != null) return;
       if (await _store({'prefix': prefix, 'number': number})) {
         _storedPrefix = prefix;
         _storedNumber = number;
@@ -202,28 +213,30 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     });
   }
 
-  /// Text and number Zusatzfelder (the whole map is written, like Ionic).
+  /// Text and number Zusatzfelder.
   void _saveFieldTexts() {
     if (_storedName == null || _fieldControllers.isEmpty) return;
-    var changed = false;
     for (final field in _fields) {
       final c = _fieldControllers[field.id];
       if (c == null) continue;
-      final value = field.isNumber ? num.tryParse(c.text.trim()) ?? 0 : c.text;
-      if (_additional[field.id] != value) {
-        _additional[field.id] = value;
-        changed = true;
-      }
+      _additional[field.id] = field.isNumber ? num.tryParse(c.text.trim()) ?? 0 : c.text;
     }
-    if (changed) {
-      _write({
-        'additional_fields': {..._additional},
-      });
-    }
+    _writeFields();
+  }
+
+  /// Writes the whole Zusatzfelder map (like Ionic) when it differs from
+  /// the last written one; marked as written only once it is, so a failed
+  /// save is tried again on the next change, focus change or close.
+  void _writeFields() {
+    final next = {..._additional};
+    _enqueue(() async {
+      if (mapEquals(next, _storedAdditional)) return;
+      if (await _store({'additional_fields': next})) _storedAdditional = next;
+    });
   }
 
   Song? _numberTakenBy(String prefix, int? number) =>
-      rdNumberTakenBy(_container.read(songsProvider).valueOrNull ?? const [], widget.songId, prefix, number);
+      rdNumberTakenBy(_container.read(songsProvider).valueOrNull ?? const [], _songId, prefix, number);
 
   void _set(void Function() change, Map<String, dynamic> Function() updates) {
     setState(change);
@@ -235,7 +248,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     if (context.canPop()) {
       context.pop();
     } else {
-      context.go(RedesignRoutes.work(widget.songId));
+      context.go(RedesignRoutes.work(_songId));
     }
   }
 
@@ -246,12 +259,8 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
       actions: [for (final o in field.options) AppActionSheetAction(value: o, label: o)],
     );
     if (choice == null || !mounted) return;
-    _set(
-      () => _additional[field.id] = choice,
-      () => {
-        'additional_fields': {..._additional},
-      },
-    );
+    setState(() => _additional[field.id] = choice);
+    _writeFields();
   }
 
   Future<void> _delete() async {
@@ -271,7 +280,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
       isDestructive: true,
     );
     if (!confirmed || !mounted) return;
-    final ok = await ref.read(songNotifierProvider.notifier).deleteSong(widget.songId);
+    final ok = await ref.read(songNotifierProvider.notifier).deleteSong(_songId);
     if (!mounted) return;
     if (ok) {
       _deleted = true; // nothing left to save
@@ -363,6 +372,9 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     final prefix = _prefix.text.trim();
     final number = int.tryParse(_number.text.trim());
     final taken = _numberTakenBy(prefix, number);
+    // The number check needs every Werk: locked until they are loaded.
+    final songsAsync = ref.watch(songsProvider);
+    final numberLocked = !songsAsync.hasValue;
     final nameEmpty = _name.text.trim().isEmpty;
     final textStyle = TextStyle(fontSize: 17, color: p.text);
 
@@ -399,6 +411,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
                       key: const Key('rd-work-edit-prefix'),
                       controller: _prefix,
                       focusNode: _prefixFocus,
+                      readOnly: numberLocked,
                       textCapitalization: TextCapitalization.characters,
                       textInputAction: TextInputAction.next,
                       style: textStyle,
@@ -414,6 +427,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
                       key: const Key('rd-work-edit-number'),
                       controller: _number,
                       focusNode: _numberFocus,
+                      readOnly: numberLocked,
                       keyboardType: TextInputType.number,
                       inputFormatters: [FilteringTextInputFormatter.digitsOnly],
                       textInputAction: TextInputAction.done,
@@ -429,6 +443,16 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
         ),
         if (nameEmpty) hint(l10n.redesignWorkEditNameEmpty, color: p.absent),
         if (taken != null) hint(l10n.redesignWorkEditNumberTaken(taken.fullNumber, taken.name), color: p.absent),
+        if (songsAsync.hasError && !songsAsync.hasValue)
+          Padding(
+            padding: const EdgeInsets.fromLTRB(4, 4, 4, 0),
+            child: Row(
+              children: [
+                Expanded(child: Text(l10n.redesignWorkEditNumberLocked, style: RdType.meta(p, size: 13))),
+                RdTextLink(label: l10n.redesignCommonRetry, onTap: () => ref.invalidate(songsProvider)),
+              ],
+            ),
+          ),
         const SizedBox(height: 20),
         Row(
           children: [
@@ -549,16 +573,10 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     final p = context.rd;
     final value = _additional[field.id];
     if (field.isBoolean) {
-      return _switchRow(
-        field.name,
-        value == true,
-        (v) => _set(
-          () => _additional[field.id] = v,
-          () => {
-            'additional_fields': {..._additional},
-          },
-        ),
-      );
+      return _switchRow(field.name, value == true, (v) {
+        setState(() => _additional[field.id] = v);
+        _writeFields();
+      });
     }
     if (field.isSelect) {
       return RdListRow(
@@ -570,6 +588,7 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     return RdFieldRow(
       label: field.name,
       child: TextField(
+        key: Key('rd-work-edit-field-${field.id}'),
         controller: _fieldControllers[field.id],
         focusNode: _fieldFocus[field.id],
         keyboardType: field.isNumber ? const TextInputType.numberWithOptions(decimal: true) : TextInputType.text,

@@ -15027,6 +15027,10 @@
   "@redesignWorkEditNumber": {
     "description": "redesign.workEdit.number"
   },
+  "redesignWorkEditNumberLocked": "Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.",
+  "@redesignWorkEditNumberLocked": {
+    "description": "redesign.workEdit.numberLocked"
+  },
   "redesignWorkEditNumberTaken": "Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.",
   "@redesignWorkEditNumberTaken": {
     "description": "redesign.workEdit.numberTaken",

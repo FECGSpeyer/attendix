@@ -19625,6 +19625,12 @@ abstract class AppLocalizations {
   /// **'Nummer'**
   String get redesignWorkEditNumber;
 
+  /// redesign.workEdit.numberLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.'**
+  String get redesignWorkEditNumberLocked;
+
   /// redesign.workEdit.numberTaken
   ///
   /// In de, this message translates to:

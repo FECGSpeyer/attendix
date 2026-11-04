@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/connectivity_provider.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
@@ -9,6 +11,7 @@ import 'package:attendix/core/services/offline_queue_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/song/song.dart';
+import 'package:attendix/data/models/song/song_additional_field.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_edit_page.dart';
@@ -35,8 +38,15 @@ class _FakeSongRepo extends SongRepository {
   final updates = <Map<String, dynamic>>[];
   bool deleted = false;
 
+  /// The next writes that fail (offline).
+  int failures = 0;
+
   @override
   Future<Song> updateSong(int id, Map<String, dynamic> updates) async {
+    if (failures > 0) {
+      failures--;
+      throw Exception('offline');
+    }
     this.updates.add(Map.of(updates));
     return _song;
   }
@@ -48,7 +58,11 @@ class _FakeSongRepo extends SongRepository {
 const _song = Song(id: 5, name: 'Festliche Ouvertüre', number: 12, categoryIds: ['k'], difficulty: 2);
 const _ave = Song(id: 6, name: 'Ave verum corpus', number: 41);
 
-Widget _editApp(void Function(_FakeSongRepo) onRepo) {
+Widget _editApp(
+  void Function(_FakeSongRepo) onRepo, {
+  Future<List<Song>>? songs,
+  List<SongAdditionalField> fields = const [],
+}) {
   final router = GoRouter(
     initialLocation: '/werke/5/bearbeiten',
     routes: [
@@ -57,14 +71,19 @@ Widget _editApp(void Function(_FakeSongRepo) onRepo) {
         builder: (_, __) => const Scaffold(body: Text('page works')),
         routes: [
           GoRoute(path: ':id', builder: (_, s) => Scaffold(body: Text('page work ${s.pathParameters['id']}'))),
-          GoRoute(path: ':id/bearbeiten', builder: (_, s) => RdWorkEditPage(songId: int.parse(s.pathParameters['id']!))),
+          GoRoute(
+            path: ':id/bearbeiten',
+            builder: (_, s) => RdWorkEditPage(songId: int.parse(s.pathParameters['id']!)),
+          ),
         ],
       ),
     ],
   );
   return ProviderScope(
     overrides: [
-      initialRedesignSettingsProvider.overrideWithValue(const RedesignSettings(enabled: true, world: RdFarbwelt.petrol)),
+      initialRedesignSettingsProvider.overrideWithValue(
+        const RedesignSettings(enabled: true, world: RdFarbwelt.petrol),
+      ),
       effectiveRoleProvider.overrideWithValue(Role.admin),
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
       currentTenantIdProvider.overrideWithValue(7),
@@ -76,19 +95,21 @@ Widget _editApp(void Function(_FakeSongRepo) onRepo) {
         onRepo(repo);
         return repo;
       }),
-      songDetailDataProvider((songId: 5, sharingId: null)).overrideWith((ref) async => const SongDetailData(
-            song: _song,
-            tenantType: 'orchestra',
-            instruments: [],
-            categories: [
-              SongCategory(id: 'k', name: 'Konzert', index: 0),
-              SongCategory(id: 'c', name: 'Kirche', index: 1),
-            ],
-            additionalFields: [],
-            history: [],
-            readOnly: false,
-          )),
-      songsProvider.overrideWith((ref) async => const [_song, _ave]),
+      songDetailDataProvider((songId: 5, sharingId: null)).overrideWith(
+        (ref) async => SongDetailData(
+          song: _song,
+          tenantType: 'orchestra',
+          instruments: const [],
+          categories: const [
+            SongCategory(id: 'k', name: 'Konzert', index: 0),
+            SongCategory(id: 'c', name: 'Kirche', index: 1),
+          ],
+          additionalFields: fields,
+          history: const [],
+          readOnly: false,
+        ),
+      ),
+      songsProvider.overrideWith((ref) => songs ?? Future.value(const [_song, _ave])),
       songSyncedTenantNamesProvider.overrideWith((ref) async => const []),
     ],
     child: MaterialApp.router(
@@ -168,6 +189,39 @@ void main() {
       ]);
     });
 
+    testWidgets('number locked until the Werke are loaded; a failed save is tried again', (tester) async {
+      _phone(tester);
+      late _FakeSongRepo repo;
+      final songs = Completer<List<Song>>();
+      await tester.pumpWidget(
+        _editApp(
+          (r) => repo = r,
+          songs: songs.future,
+          fields: const [SongAdditionalField(id: 'dauer', name: 'Dauer', type: 'text')],
+        ),
+      );
+      await _settle(tester);
+
+      bool locked() => tester.widget<TextField>(find.byKey(const Key('rd-work-edit-number'))).readOnly;
+      expect(locked(), isTrue);
+      songs.complete(const [_song, _ave]);
+      await _settle(tester);
+      expect(locked(), isFalse);
+
+      repo.failures = 1;
+      await tester.enterText(find.byKey(const Key('rd-work-edit-field-dauer')), '7 min');
+      await tester.tap(find.byKey(const Key('rd-work-edit-name'))); // focus change: fails
+      await _settle(tester);
+      expect(repo.updates, isEmpty);
+      await tester.tap(find.byKey(const Key('rd-work-edit-done'))); // closing tries again
+      await _settle(tester);
+      expect(repo.updates, [
+        {
+          'additional_fields': {'dauer': '7 min'},
+        },
+      ]);
+    });
+
     testWidgets('Werk löschen asks first and returns to the list', (tester) async {
       _phone(tester);
       late _FakeSongRepo repo;
@@ -202,10 +256,7 @@ void main() {
   });
 
   test('rdNumberTakenBy: same prefix and number on another Werk', () {
-    const songs = [
-      Song(id: 1, name: 'A', number: 12),
-      Song(id: 2, name: 'B', number: 3, prefix: 'W'),
-    ];
+    const songs = [Song(id: 1, name: 'A', number: 12), Song(id: 2, name: 'B', number: 3, prefix: 'W')];
     expect(rdNumberTakenBy(songs, 1, '', 12), isNull); // the Werk itself
     expect(rdNumberTakenBy(songs, 9, '', 12)?.name, 'A');
     expect(rdNumberTakenBy(songs, 9, 'w ', 3)?.name, 'B');

@@ -12061,6 +12061,10 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkEditNumber => 'Nummer';
 
   @override
+  String get redesignWorkEditNumberLocked =>
+      'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.';
+
+  @override
   String redesignWorkEditNumberTaken(Object number, Object name) {
     return 'Nr. $number hat schon „$name“. Die Nummer wird so nicht gespeichert.';
   }

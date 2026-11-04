@@ -723,7 +723,9 @@ final routerProvider = Provider<GoRouter>((ref) {
                 name: 'redesignWorkEdit',
                 builder: (context, state) {
                   final id = int.tryParse(state.pathParameters['id'] ?? '');
-                  return id == null ? const RdWorksPage() : RdWorkEditPage(songId: id);
+                  return id == null
+                      ? const RdWorksPage()
+                      : RdWorkEditPage(key: ValueKey('rd-work-edit-$id'), songId: id);
                 },
               ),
               GoRoute(
