@@ -13,6 +13,17 @@
       ]
     },
     {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Gruppen und Lehrer: Die Personenzahl zählt keine ausstehenden Registrierungen bzw. ausgetretenen Personen mehr mit",
+        "🐛 Gruppe bearbeiten: Speichern schließt erst nach dem Speichern, bei einem Fehler bleiben die Eingaben erhalten; Entfernen prüft sofort, ob die Gruppe noch Personen hat",
+        "🐛 Gruppen: Hinweise bei leerem Kategorienamen und nach dem Speichern der Reihenfolge wie bisher in der alten App",
+        "🐛 Lehrer: Die Instrumentauswahl ist auch direkt nach dem App-Start gefüllt",
+        "🐛 Dienste verteilen: Person tauschen wie bisher mit Auswahl und „Übernehmen“; „Auch geplante Termine“ meldet Fehler statt „0 Termine angepasst“"
+      ]
+    },
+    {
       "version": "0.39.1",
       "date": "4.11.2026",
       "changes": [
