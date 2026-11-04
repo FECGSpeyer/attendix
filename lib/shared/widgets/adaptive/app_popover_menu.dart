@@ -241,7 +241,7 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
         removeTop: true,
         removeBottom: true,
         child: CustomSingleChildLayout(
-          delegate: _ContentPopoverLayout(
+          delegate: _AnchoredPopoverLayout(
             ios: ios,
             anchor: anchor,
             coverAnchor: coverAnchor,
@@ -268,8 +268,13 @@ class _ContentPopoverRoute<T> extends PopupRoute<T> {
   }
 }
 
-class _ContentPopoverLayout extends SingleChildLayoutDelegate {
-  _ContentPopoverLayout({
+/// Places a popover card at its anchor (see [showAppPopover]) and keeps it
+/// fully inside the safe viewport: below (or, [coverAnchor], over) the
+/// anchor, above it when there is no room below, otherwise pinned to the
+/// bottom edge. The height is capped at the visible area (scrolls inside).
+/// Shared by [showAppPopover] and the [showAppPopoverMenu] parent menu.
+class _AnchoredPopoverLayout extends SingleChildLayoutDelegate {
+  _AnchoredPopoverLayout({
     required this.ios,
     required this.anchor,
     required this.coverAnchor,
@@ -319,7 +324,9 @@ class _ContentPopoverLayout extends SingleChildLayoutDelegate {
         .clamp(_margin, math.max(_margin, size.width - w - _margin))
         .toDouble();
 
-    final minTop = topPadding + _margin;
+    // A trigger in the toolbar may sit inside the top safe-area margin: a
+    // popover covering it keeps the trigger's top (Ionic "replace").
+    final minTop = math.min(topPadding + _margin, math.max(0.0, anchor.top));
     final maxBottom = size.height - bottomPadding - _margin;
     var top = coverAnchor ? anchor.top : anchor.bottom;
     if (top + childSize.height > maxBottom) {
@@ -332,7 +339,7 @@ class _ContentPopoverLayout extends SingleChildLayoutDelegate {
   }
 
   @override
-  bool shouldRelayout(_ContentPopoverLayout old) =>
+  bool shouldRelayout(_AnchoredPopoverLayout old) =>
       old.anchor != anchor ||
       old.ios != ios ||
       old.coverAnchor != coverAnchor ||
@@ -492,7 +499,8 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     final anchor = route.anchor;
     final w = math.min(route.width, size.width - 2 * _margin);
     // iOS: right-aligned with the trigger button. md (`alignment: start`):
-    // left edge at the trigger, pushed back into the viewport.
+    // left edge at the trigger, pushed back into the viewport. Same as
+    // [_AnchoredPopoverLayout] places it; kept here for the nested popover.
     final double left;
     if (ios) {
       final right =
@@ -512,11 +520,9 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     // top at `trigger.top + trigger.height - trigger.height`, i.e. the menu
     // opens over its trigger (Ionic iPhone emulation: ⋮ and menu top y 16).
     // md (`popover.md`, side bottom): directly below the trigger.
-    final top = ios ? anchor.top : anchor.bottom;
-    final maxHeight = math.max(
-      120.0,
-      size.height - top - widget.bottomPadding - _margin,
-    );
+    // Sol review: like Ionic, the menu flips above the trigger when it does
+    // not fit below and always stays inside the visible area (lower entries
+    // stay reachable) – see [_AnchoredPopoverLayout].
     final curved = CurvedAnimation(
       parent: widget.animation,
       curve: Curves.easeOutCubic,
@@ -524,20 +530,25 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     );
 
     final children = <Widget>[
-      Positioned(
-        top: top,
-        left: left,
-        width: w,
-        child: FadeTransition(
-          opacity: curved,
-          child: ScaleTransition(
-            scale: Tween<double>(
-              begin: ios ? 0.85 : 0.8,
-              end: 1,
-            ).animate(curved),
-            alignment: ios ? Alignment.topRight : Alignment.topLeft,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxHeight),
+      Positioned.fill(
+        child: CustomSingleChildLayout(
+          delegate: _AnchoredPopoverLayout(
+            ios: ios,
+            anchor: anchor,
+            coverAnchor: ios,
+            width: w,
+            maxHeight: null,
+            topPadding: widget.topPadding,
+            bottomPadding: widget.bottomPadding,
+          ),
+          child: FadeTransition(
+            opacity: curved,
+            child: ScaleTransition(
+              scale: Tween<double>(
+                begin: ios ? 0.85 : 0.8,
+                end: 1,
+              ).animate(curved),
+              alignment: ios ? Alignment.topRight : Alignment.topLeft,
               child: _PopoverCard(
                 ios: ios,
                 // PARITY_R8: while a nested popover is open the parent

@@ -23,7 +23,8 @@ class HelpMarkdown extends StatefulWidget {
 
   final String data;
   /// Called with the term and the global tap position (anchor of the
-  /// glossary popover, Ionic `popoverController.create({event})`).
+  /// glossary popover, Ionic `popoverController.create({event})`); the
+  /// screen centre when activated without a pointer (screen reader).
   final void Function(String term, Offset globalPosition)? onGlossaryTap;
   final TextStyle? style;
 
@@ -113,8 +114,20 @@ class _HelpMarkdownState extends State<HelpMarkdown> {
           style = style.copyWith(fontStyle: FontStyle.italic);
           spans.add(TextSpan(text: token.text, style: style));
         } else {
+          // Sol review: `onTap` must stay set – Flutter derives the link's
+          // semantic tap action (screen readers) from it. The pointer
+          // position is captured separately; without a pointer (semantic
+          // activation) the popover opens at the centre of the screen.
+          Offset? downPosition;
           final recognizer = TapGestureRecognizer()
-            ..onTapUp = (details) => onTap(glossaryTerm, details.globalPosition);
+            ..onTapDown = ((details) => downPosition = details.globalPosition)
+            ..onTapCancel = (() => downPosition = null)
+            ..onTap = () {
+              final position = downPosition ??
+                  MediaQuery.sizeOf(context).center(Offset.zero);
+              downPosition = null;
+              onTap(glossaryTerm, position);
+            };
           _recognizers.add(recognizer);
           spans.add(TextSpan(
             text: token.text,
