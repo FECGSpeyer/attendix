@@ -109,6 +109,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   late final RdWriteQueue _queue;
   Set<int>? _rowPersonIds;
 
+  /// person_attendances removed on this device ("Aus Termin entfernen"),
+  /// like the Termin page's `_ownDeletedPaIds`: a reload that still has
+  /// the row (cache, realtime) must not bring the person back.
+  final Set<String> _ownDeletedPaIds = {};
+
   ProviderSubscription<AsyncValue<List<PersonAttendance>>>? _rowsSub;
   AppLifecycleListener? _lifecycle;
   Timer? _reloadDebounce;
@@ -175,8 +180,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     ref.invalidate(personAttendancesForAttendanceProvider(_id));
   }
 
-  void _applyRows(List<PersonAttendance> rows) {
+  void _applyRows(List<PersonAttendance> allRows) {
     if (!mounted) return;
+    final rows = _ownDeletedPaIds.isEmpty
+        ? allRows
+        : [for (final pa in allRows) if (!_ownDeletedPaIds.contains(pa.id)) pa];
     setState(() {
       for (final pa in rows) {
         final personId = pa.personId;
@@ -353,10 +361,11 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (open.isEmpty) return;
     HapticHelper.light();
     final previous = {for (final m in open) m.id: m.status};
+    // Not pinned: after the bulk button the list of exceptions stays short
+    // (pinning only keeps a single changed row from jumping away).
     setState(() {
       for (final m in open) {
         _statuses[m.id] = AttendanceStatus.present;
-        _pinned.add(m.id);
       }
     });
     final text = context.l10n.redesignEventAllDone(open.length);
@@ -473,8 +482,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       }
       // Account switched while the check ran: never delete for the new one.
       if (!session.isCurrent()) return;
+      _ownDeletedPaIds.add(paId);
       await repo.deletePersonAttendance(paId);
     } catch (e) {
+      _ownDeletedPaIds.remove(paId);
       if (mounted) ToastHelper.showError(context, l10n.attendancePersonRemoveFailed);
       return;
     }
@@ -659,6 +670,10 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     try {
       // Account or tenant switched while the dialog was open: no write.
       if (!repo.hasTenantId || !session.isCurrent()) return;
+      // Current state right before the write (Termin page `_toggleArchived`):
+      // archived or restored meanwhile (other device, second tap) → no write.
+      final current = container.read(attendanceDetailProvider(_id)).valueOrNull;
+      if (current == null || current.archived == archive) return;
       await repo.updateAttendance(_id, {
         'archived': archive,
         'archived_at': archive ? DateTime.now().toUtc().toIso8601String() : null,
