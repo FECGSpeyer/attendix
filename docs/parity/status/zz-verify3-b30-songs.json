@@ -1,0 +1,73 @@
+{
+  "batch": "zz-verify3-b30-songs",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "songs/import/import.page#toast-65544cdc": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:107",
+        "lib/features/songs/presentation/pages/song_import_page.dart:108",
+        "lib/features/songs/presentation/pages/song_import_page.dart:257"
+      ],
+      "n": "Import-Seite nur für Admin/Verantwortlich (Ionic isAdmin Rolle 1/5 und !tenantData, Flutter isAdmin inkl. !_isPublic, songs_list_page.dart:160/324). Warn-Toast „Bitte Spalten für Nummer und Name zuordnen.“ gleich; in beiden praktisch unerreichbar, da „Weiter“ ohne Nummer+Name deaktiviert ist.",
+      "v": "bestätigt"
+    },
+    "songs/import/import.page#toast-95c41003": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:134",
+        "lib/features/songs/presentation/pages/song_import_page.dart:135",
+        "lib/features/songs/presentation/pages/song_import_page.dart:262"
+      ],
+      "n": "Warn-Toast „Keine importierbaren Werke.“ gleich; in beiden praktisch unerreichbar (Import-Button bei 0 importierbaren Zeilen deaktiviert). Rollen wie Import-Seite (Admin/Verantwortlich).",
+      "v": "bestätigt"
+    },
+    "songs/import/import.page#toast-b62ba249": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:139",
+        "lib/features/songs/presentation/pages/song_import_page.dart:140",
+        "lib/core/utils/toast_helper.dart:65",
+        "lib/core/providers/demo_providers.dart:8"
+      ],
+      "n": "Demo-Prüfung gleich (Ionic isDemo: user.email == demoMail / Flutter isDemoProvider: E-Mail = Demo-Mail), vor dem Import, Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ (dbDemoRestricted, gleicher Text).",
+      "v": "bestätigt"
+    },
+    "songs/import/import.page#toast-fdeb0c8d": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:172",
+        "lib/features/songs/presentation/pages/song_import_page.dart:177",
+        "lib/features/songs/presentation/pages/song_import_page.dart:179",
+        "lib/features/songs/presentation/pages/song_import_page.dart:180",
+        "lib/features/songs/presentation/pages/song_import_page.dart:185"
+      ],
+      "n": "„{n} Werk(e) importiert.“ + ggf. „{n} fehlgeschlagen.“, grün bzw. Warnung wie Ionic; danach Fehlerliste „Nicht importierte Werke“ und Schließen bei ≥1 Import in gleicher Reihenfolge. Nur Admin/Verantwortlich. Fehlererkennung pro Zeile siehe logic-587858e7.",
+      "v": "bestätigt"
+    },
+    "songs/import/import.page#effect-cdbbd276": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:92",
+        "lib/features/songs/presentation/pages/song_import_page.dart:99",
+        "lib/core/utils/import_file_io.dart:25",
+        "lib/core/services/zip_service_io.dart:9",
+        "lib/core/services/zip_service_web.dart:7"
+      ],
+      "n": "Kopfzeilen inkl. Werk-Zusatzfelder des aktuellen Tenants, Beispielzeile, Blatt „Import“, Dateiname „Werke_Import_Vorlage.xlsx“ gleich; nur Admin/Verantwortlich (Import-Seite). Ionic Utils.saveWorkbook: nativ Datei in Cache + FileViewer-Vorschau, mobiles Web Web-Share-Sheet, Desktop writeFile-Download, Fehler ohne Hinweis / Flutter saveGeneratedFile (ZIP-Export-Code): nativ Teilen-Sheet mit Begleittext „Song-Dateien“, Web immer Anker-Download (Blob-Typ application/zip), Fehler → Toast „Fehler: …“. Gleiche Ursache wie Personen-Import x-1a63f4f2ee."
+    },
+    "songs/import/import.page#text-17b1ba5e": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:221",
+        "lib/features/songs/presentation/pages/song_import_page.dart:222",
+        "lib/features/people/presentation/widgets/import_widgets.dart:108"
+      ],
+      "n": "Hinweis „Bitte Spalten für Nummer und Name zuordnen.“ unter den Zuordnungen, solange Nummer/Name fehlen, in Warnfarbe; nur Import-Seite (Admin/Verantwortlich).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

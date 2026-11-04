@@ -1,0 +1,274 @@
+{
+ "batch": "zz-verify3-b34-team",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#actionsheet-d593da5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:151",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:157",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:164",
+    "lib/core/providers/team_org_providers.dart:129"
+   ],
+   "n": "Rollen: „Einplanen“ nur Leitung (isTeamLeaderRole = Admin/Verantwortlich) bei gespeichertem, offenem Thema – Flutter gleiche Bedingung (!_isNew && isLeader && status open). Kopf „In welchen Termin einplanen?“/„Noch kein Termin mit Tagesordnung geplant“, bis 6 Termine „Di, 21.10. · Titel“, bereits eingeplante mit „ (bereits eingeplant)“ deaktiviert, „Neuen Termin anlegen“ mit Plus-Icon, Abbrechen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#alert-592677a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:222",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:115"
+   ],
+   "n": "Löschen-Icon nur Leitung bei bestehendem Thema (Ionic html:8 / Flutter :222), andere Rollen sehen es in beiden Apps nicht. Dialog „Thema wirklich löschen?“ + Text, Abbrechen / „Löschen“ destruktiv → deleteAgendaItem (Flutter zusätzlich tenant_id-Filter, Fehler bei 0 gelöschten Zeilen wie Ionic).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-06ae98b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:126"
+   ],
+   "n": "Grüner Toast „Gelöscht“; nur über den Leitungs-Löschdialog erreichbar (beide Apps).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f25bbc6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:127"
+   ],
+   "n": "context.go('/settings/team-organization?tab=topics') statt navigateBack – gleiche Zielseite (Tab Themen); nur nach Leitungs-Löschen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-b69cc6ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:129"
+   ],
+   "n": "Roter Toast „Löschen fehlgeschlagen“; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-333c131c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:74"
+   ],
+   "n": "Speichern-FAB nur Leitung (Ionic isLeader && item / Flutter isLeader && (item || neu) – gleich, da Ionic für „new“ ein leeres Item anlegt). Oranger Toast „Bitte einen Titel eingeben“.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-de8c40b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:106"
+   ],
+   "n": "Grüner Toast „Gespeichert“ nach Anlegen und Ändern; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-69e94eec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:108"
+   ],
+   "n": "Roter Toast „Thema konnte nicht gespeichert werden“; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-9a3941ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:249"
+   ],
+   "n": "„Vorschlag von {Name}“ mit Glühbirne für alle Rollen, sobald ein Vorschlagender existiert (proposer-Join in beiden Selects); nicht bei neuem Thema.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-dc327713": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:255"
+   ],
+   "n": "decision_note unter „Vorschlag von …“, alle Rollen, nur wenn gesetzt.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-935a7b7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:269",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:398"
+   ],
+   "n": "„Verlauf“ für alle Rollen bei bestehendem Thema. Nicht-Leitung: RPC get_agenda_item_history prüft serverseitig Leitung → Ionic catch → [], Flutter Fehler → valueOrNull ?? [] – beide zeigen den Leertext.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-ee00217d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:421"
+   ],
+   "n": "„Noch in keinem Termin besprochen.“ grau bei leerem Verlauf; für Nicht-Leitung immer (s. text-935a7b7b), in beiden Apps gleich.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-a7db4909": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:452"
+   ],
+   "n": "„Aufgaben“ für alle Rollen bei bestehendem Thema.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-440e3b32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:453"
+   ],
+   "n": "„{done} von {total} erledigt“ rechts im Kopf, nur bei Aufgaben; alle Rollen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6584c187": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:461",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:474"
+   ],
+   "n": "Aufgabenzeile für alle Rollen (Liste per RLS): Kreis/Häkchen-Icon, Titel (durchgestrichen wenn erledigt), Untertitel „Person · fällig/erledigt am“; öffnet /settings/tasks/:id.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-f4245346": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:476"
+   ],
+   "n": "„Keine Aufgaben“ grau; alle Rollen.",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#toast-b45d98ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:192"
+   ],
+   "n": "Roter Toast „Thema konnte nicht angelegt werden“. Picker öffnen in beiden Apps nur Leitung: Termin-Detail (isTeamLeader, plan_accordion.dart:198), Ablaufplanung (planning_page.dart:1625), Themen-Tab Leitung (topics_tab.dart:451).",
+   "v": "bestätigt"
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-f239fa3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:335",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:176"
+   ],
+   "n": "„„{Suchtext}“ als neues Thema anlegen“ bei Suchtext ohne exakten Titeltreffer; legt Thema offen/mittel im aktuellen Mandanten an (Flutter tenant_id im Repository) und wählt es vor. Nur Leitung (Picker-Aufrufer, s. toast-b45d98ef).",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-45539e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:593"
+   ],
+   "n": "„Punkt“ nur in den Leitungs-Layouts (Handy/breit) beider Apps. Toast gleich; der Dialog ist in Flutter dabei schon geschlossen (siehe alert-0750ecfb).",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#toast-9d50a18f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:643"
+   ],
+   "n": "Roter Toast „Punkt konnte nicht hinzugefügt werden“; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-7068fef6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1042",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1048",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1092",
+    "lib/shared/widgets/layout/main_shell.dart:407"
+   ],
+   "n": "Rolle gleich (nur Leitung, Handy-Layout, Text „Speichert…“/„Automatisch gespeichert um HH:mm“/„Änderungen werden automatisch gespeichert“ gleich). Erstprüfer übersah die Breitenbedingung: Ionic isWide = matchMedia Fensterbreite ≥ 900 px / Flutter LayoutBuilder auf die Seitenbreite, die die Shell um das feste Seitenpanel kürzt. Bei Fenster 992–1171 px mit ausgeklapptem Panel (272 px, nur per gespeicherter Wahl) zeigt Flutter Handy-Layout mit dieser Fußleiste, Ionic das dreispaltige Layout ohne Fußleiste. Gilt ebenso für „Notizen“/„Freigeben“ (action-237eefeb/-968c0895).",
+   "v": "korrigiert"
+  },
+  "protocols/protocol/protocol.page#action-237eefeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1100",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1258"
+   ],
+   "n": "Nur Leitung im Handy-Layout (Fußleiste), beide Apps; „Notizen“ öffnet das Sheet „Allgemeine Notizen“, Punkt-Markierung bei vorhandenen Notizen. Breitenband siehe text-7068fef6.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#action-968c0895": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1113",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:786"
+   ],
+   "n": "Nur Leitung im Handy-Layout; „Erneut freigeben“/„Freigeben“ → speichert alles, lädt fremde Notizen nach und öffnet das Freigabe-Sheet. Breitenband siehe text-7068fef6.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#text-18dbad86": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1705"
+   ],
+   "n": "Breites Layout (nur Leitung): Kopf links „Di, 21.10.2026 · 19:00–20:30“ – Zeitspanne nur wenn Planstart vorhanden, Ende = Start + Summe der Dauern, sonst nur Startzeit; wie Ionic."
+  },
+  "protocols/protocol/protocol.page#text-7e6739e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1779"
+   ],
+   "n": "Breites Layout (nur Leitung): Kicker „TOP n · {Start}“ über dem gewählten Punkt. Ohne Startzeit lässt Flutter das leere Segment weg (Ionic „TOP 1 ·  · 10 min“) – nur Trennzeichen."
+  },
+  "protocols/protocol/protocol.page#text-06b9b81b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1781"
+   ],
+   "n": "Breites Layout (nur Leitung): „· {n} min“ im Kicker nur bei Dauer > 0."
+  },
+  "protocols/protocol/protocol.page#text-2bcbb774": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1992"
+   ],
+   "n": "Lese-Layout (Nicht-Leitung, freigegebenes Protokoll): „Di, 21.10.2026 · 19:00–20:30 Uhr“, nur bei Planstart; wie Ionic."
+  },
+  "protocols/protocol/protocol.page#text-dc5c1762": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:885"
+   ],
+   "n": "Freigabe-Sheet (nur Leitung): hinter den vertagten Punkten „ · wird beim nächsten Termin vorgeschlagen“, nur wenn suggest_postponed (Spalte NOT NULL DEFAULT true, daher kein null-Unterschied)."
+  },
+  "protocols/protocol/protocol.page#text-fbfcf4a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:923"
+   ],
+   "n": "Freigabe-Sheet „Wer darf es lesen“: „die Gruppen aus dem Termintyp „{Typ}““ wenn der Typ Gruppen hat; nur Leitung."
+  },
+  "protocols/protocol/protocol.page#text-171a2841": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:924"
+   ],
+   "n": "„alle Mitglieder (Termintyp „{Typ}“ hat keine Gruppen)“ sonst; nur Leitung."
+  },
+  "protocols/protocol/protocol.page#text-c2ffd91d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:930",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:823"
+   ],
+   "n": "Hinter „{n} Anwesende“: „ · {n} Person/Personen mit Aufgaben“ nur bei Aufgaben mit Verantwortlichen; Zählung über Vorname, sonst Nachname, eindeutig – wie Ionic publishSummary; nur Leitung."
+  },
+  "tasks/my-tasks/my-tasks.component#action-98a26f52": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:98",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:108",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:67"
+   ],
+   "n": "„Alle anzeigen (n)“ bei mehr als 5 offenen, sonst „Alle Aufgaben“ nur für Leitung (db.isTeamLeader / isTeamLeaderProvider, Admin/Verantwortlich); Mitglieder ohne Überlauf sehen die Zeile in beiden Apps nicht. Öffnet Teamorganisation Tab Aufgaben.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

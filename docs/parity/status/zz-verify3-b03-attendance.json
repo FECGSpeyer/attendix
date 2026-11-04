@@ -1,0 +1,229 @@
+{
+  "batch": "zz-verify3-b03-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "attendance/att-list/att-list.page#db-a6c8d43f": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:269-325",
+        "lib/core/providers/realtime_providers.dart:144-155"
+      ],
+      "n": "Für alle Rollen der Seite (Admin, Verantw., Beobachter, Helfer, Helfer-Stimmführer) in beiden: Termin-Änderungen der Instanz laden die Liste neu. Flutter filtert serverseitig nach tenantId, DELETE nur für geladene IDs (Ionic: jedes DELETE)."
+    },
+    "attendance/att-list/att-list.page#db-8ec23cab": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:280"
+      ],
+      "n": "Kanalname „attendance_list_changes_<tenantId>“ statt „att-changes“; Funktion gleich, Kanal wird beim Verlassen/Instanzwechsel abgebaut."
+    },
+    "attendance/att-list/att-list.page#nav-ebedf641": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:301",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405",
+        "lib/core/constants/enums.dart:137-141"
+      ],
+      "n": "Umschalter nur bei mehreren Instanzen; Ziel je Rolle in der neuen Instanz: Admin/Verantw./Beobachter → /people (≙ /tabs/player), Eltern → /parents, sonst /signout. Ionic-Default /register nur bei undefinierter Rolle (Randfall)."
+    },
+    "attendance/att-list/att-list.page#effect-bbc763c2": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/constants/enums.dart:137-141",
+        "lib/shared/widgets/tenant/tenant_switcher_title.dart:405"
+      ],
+      "n": "Gleiches Urteil wie nav-ebedf641."
+    },
+    "attendance/att-list/att-list.page#native-27beb711": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/providers/realtime_providers.dart:190-194"
+      ],
+      "n": "Netzstatus vor dem Laden; offline gecachte Liste (je Benutzer+Instanz, Archiv-Filter je Rolle), für alle Rollen der Seite."
+    },
+    "attendance/att-list/att-list.page#toast-ec2c10b2": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:877-880"
+      ],
+      "n": "„Termin hinzugefügt“ / „Termine hinzugefügt“ je Anzahl eindeutiger Tage, grün. Rollen: Anlege-Sheet in Flutter nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (bereits action-4fff8ad6). Flutter prüft zusätzlich vor dem Schreiben (Extra „Anlegen: Rechteprüfung“)."
+    },
+    "attendance/att-list/att-list.page#modal-9df27ec0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:314-322",
+        "lib/features/duty/presentation/pages/duty_distribute_page.dart:20-26"
+      ],
+      "n": "Nur Admin/Verantwortlich und nur mit Dienst-Typ (duty_mode) – Beobachter/Helfer in beiden nicht. Vollbild-Modal, nach Speichern Liste neu."
+    },
+    "attendance/att-list/att-list.page#alert-0c061d4b": {
+      "s": "diff",
+      "sev": "mittel",
+      "v": "korrigiert",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:20-22",
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:53-56",
+        "lib/core/providers/duty_providers.dart:148-153",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:484",
+        "lib/features/duty/presentation/widgets/duty_actions.dart:87-125",
+        "lib/core/providers/duty_providers.dart:256-267"
+      ],
+      "n": "Dialog gleich („Kann nicht“, „Grund (optional)“, „Abbrechen“/„Bestätigen“, Abmelden Entschuldigt isSelf + duty-notify understaffed). Erstprüfung übersah die Rollenbedingung: Ionic: „Deine Dienste“ nur mit myPersonId, das nur Admin/Verantw./Helfer/Helfer-Stimmführer laden / Flutter: MyDutyRequestsSection ohne Rollenprüfung (Person per appId) → ein Beobachter mit eigener Personenzeile sieht die Anfragen auf der Termine-Liste und kann absagen (schreibt person_attendances, löst Mail aus); Titel-Tipp führt ihn per Router auf /people."
+    },
+    "attendance/att-list/att-list.page#toast-a71d4842": {
+      "s": "diff",
+      "sev": "mittel",
+      "v": "korrigiert",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:116-119",
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:20-22"
+      ],
+      "n": "„Abgesagt, das Team wird informiert.“ grün, wie Ionic. Gleiche Rollenlücke wie alert-0c061d4b (eine Ursache): in Flutter auch für Beobachter mit eigener Person erreichbar, in Ionic nur Admin/Verantw./Helfer/Helfer-Stimmführer."
+    },
+    "attendance/att-list/att-list.page#nav-35a3dbc0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:59-67",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:607"
+      ],
+      "n": "/attendance/:id per push nur für Admin/Verantw./Helfer/Helfer-Stimmführer (canAddAttendance = Ionic isConductor||isHelper); Beobachter-Liste ohne Tippen; Neuladen nach Rückkehr. (Beobachter-Tipp in „Deine Dienste“ gehört zu alert-0c061d4b.)"
+    },
+    "attendance/att-list/att-list.page#text-64289559": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:778",
+        "lib/core/providers/holiday_providers.dart:13-23"
+      ],
+      "n": "„Ferien des ausgewählten Bundeslandes“ nur wenn Ferien/Feiertage geladen (Instanz showHolidays && region). Rollen: Anlege-Sheet in Flutter nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (bereits action-4fff8ad6)."
+    },
+    "attendance/att-list/att-list.page#text-03f304ab": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:370-387",
+        "lib/core/utils/attendance_logic_utils.dart:116-117"
+      ],
+      "n": "„Werke“ nur bei Typ manage_songs und Instanztyp ≠ general. Rollen: Anlege-Sheet in Flutter nur mit Anlegerecht (Admin/Verantw., Helfer mit attendance_create) wie Ionic-FAB; Ionic-Leerzustand öffnet es für alle (bereits action-4fff8ad6)."
+    },
+    "attendance/att-list/att-list.page#modal-b795ad26": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:56-78",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:114-117"
+      ],
+      "n": "Bottom-Sheet bis 70 % Höhe mit Titel; zusätzlich X-Knopf."
+    },
+    "attendance/att-list/att-list.page#text-d26956cf": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:128"
+      ],
+      "n": "„Werk(e) hinzufügen“."
+    },
+    "attendance/att-list/att-list.page#action-6e0d681b": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:151-158"
+      ],
+      "n": "„Werk(e)“ mit „{count} Werk(e) ausgewählt“ / „Keine Werke ausgewählt“, öffnet „Werke auswählen“."
+    },
+    "attendance/att-list/att-list.page#text-3c05a1f7": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:318"
+      ],
+      "n": "„Werke auswählen“."
+    },
+    "attendance/att-list/att-list.page#action-f0f69b82": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:320-324"
+      ],
+      "n": "Haken übernimmt die Auswahl und schließt. Abweichend nur beim Schließen ohne Haken: Flutter verwirft die Änderungen, Ionic behält sie (live gebunden)."
+    },
+    "attendance/att-list/att-list.page#field-098f8ed3": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330-335",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343-349"
+      ],
+      "n": "Platzhalter „Werk suchen...“, Suche in „{prefix}{number} {name}“ (klein), ohne Debounce, getrimmt."
+    },
+    "attendance/att-list/att-list.page#action-3436fb43": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360-374"
+      ],
+      "n": "„{prefix}{number} {name}“ und Komponist als Unterzeile, Tippen schaltet die Auswahl."
+    },
+    "attendance/att-list/att-list.page#field-acdfacba": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360-362"
+      ],
+      "n": "Checkbox links, zeigt die Auswahl."
+    },
+    "attendance/att-list/att-list.page#field-57f0740a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:160-189",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:93-101",
+        "lib/core/providers/conductor_providers.dart:34-37"
+      ],
+      "n": "Label „Dirigent“, aktive Dirigenten (Hauptgruppe, nicht ausgetreten) mit Vor- + Nachname + „Anderer Dirigent“, Vorauswahl erster Dirigent."
+    },
+    "attendance/att-list/att-list.page#field-2fb88a59": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:190-204"
+      ],
+      "n": "Eingabefeld für den anderen Dirigenten; erscheint sofort bei „Anderer Dirigent“ (Ionic erst nach dem Alert), siehe alert-c973a254."
+    },
+    "attendance/att-list/att-list.page#text-d3bdc91d": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:412-414",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:36-41"
+      ],
+      "n": "Anderer Dirigent bzw. Vor- + Nachname des Dirigenten (Fallback „Unbekannt“ statt „Unbekannter Dirigent“, praktisch unerreichbar)."
+    },
+    "attendance/att-list/att-list.page#action-562aaa0e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:417-423"
+      ],
+      "n": "X entfernt den Eintrag."
+    },
+    "attendance/att-list/att-list.page#text-f66256e1": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:398-404"
+      ],
+      "n": "„Keine Werke ausgewählt“ bei leerer Liste."
+    }
+  },
+  "extra": []
+}

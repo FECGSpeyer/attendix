@@ -166,7 +166,8 @@ const stable = (v) => {
   return JSON.stringify(v ?? null);
 };
 const fpOf = (i) => {
-  const { id, line, methods, bodies, ...rest } = i;
+  // roleGuarded only steers the selection of a round; it is derived from the method body (mbody)
+  const { id, line, methods, bodies, roleGuarded, ...rest } = i;
   const body = bodies ?? (i.kind === 'logic' ? methods?.map((m) => m.replace(/:\d+-\d+$/, '')) : undefined);
   return createHash('sha1').update(stable({ ...rest, body })).digest('hex').slice(0, 12);
 };

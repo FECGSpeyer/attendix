@@ -1,9 +1,9 @@
 # Fix-Paket „selbstservice“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 17
+## Angleichen (hoch/mittel): 16
 
 - [ ] **hoch** `selfService/overview/overview.page` `actionsheet-1394033e` [selfService/overview/overview.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/overview/overview.page.ts#L275) (2. Prüfung: bestätigt)
   Ionic (overview.page.ts:218-233): bei 'E'/'A' nur 'Abmelden'/'Verspätung eintragen' entfernt, 'Anmelden mit Notiz' bleibt; bei 'L' (Verspätung gemeldet) bleiben 'Abmelden' und 'Verspätung eintragen'; kein Header, keine Icons / Flutter (buildActions): bei isExcusedStatus (Entschuldigt und Verspätung gemeldet) nur 'Anmelden', kein 'Anmelden mit Notiz', kein 'Abmelden'/'Verspätung eintragen'; nach Frist bzw. in 'Weitere Optionen' Toast 'keine Aktionen'; Header mit Titel + Datum/Zeit, Icons. Übrige Einträge, Reihenfolge und rotes 'Abbrechen' gleich.
@@ -23,9 +23,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **hoch** `selfService/signout/signout.page` `x-1962646a5f` **Abwesenheit: andere Zeilen entschuldigt/zurückgesetzt** [src/app/selfService/signout/signout.page.ts:1240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.ts#L1240) (2. Prüfung: bestätigt)
   Befund real: _upcomingInRange nimmt alle eigenen kommenden person_attendances im Zeitraum (inkl. nicht zugeteilter Dienstzeilen, in Dienstplan-Ansicht auch eigene Dienste) zum Entschuldigen bzw. Zurücksetzen; Ionic nur geladene Liste nach applyDutyView/applyDutyLayout. Eigener Dienst wird in Flutter so still abgesagt (kein understaffed). Teilweise Flutter besser: Ionic bricht im "alle Termine"-Modus am ersten fremden Termin (id null) ab. Auch bei action-89fbd54f bzw. alert-cf2e9968 (dort mittel) – einmal beheben.
   Flutter: lib/data/repositories/player_absence_repository.dart:122, lib/data/repositories/player_absence_repository.dart:191, lib/data/repositories/player_absence_repository.dart:228
-- [ ] **hoch** `selfService/signout/signout.page` `x-a5a4d95ac2` **Aktuelle Werke: Instrument aus anderer Instanz** [src/app/selfService/signout/signout.page.ts:1141](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.ts#L1141)
-  Ionic: Rotmarkierung (hasSongNotesForPlayer) und Notenoptionen (openSongOptions) nutzen this.player.instrument (Person per appId + tenantId). / Flutter: UpcomingSongsSheet nimmt currentPlayerInstrumentProvider = player per appId ohne tenantId, limit(1). Bei Personen in mehreren Instanzen kann die Stimme einer anderen Instanz kommen → alle Werke rot, Toast "keine Noten für dein Instrument", Notenoptionen ohne eigene Stimme. Drucken nutzt die gefilterte Person (ok).
-  Flutter: lib/features/self_service/data/providers/upcoming_songs_provider.dart:87, lib/features/self_service/data/providers/upcoming_songs_provider.dart:96, lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:56, lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:127, lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:266
 - [ ] **mittel** `selfService/overview/overview.page` `modal-44ffacb0` [selfService/overview/overview.page.html:96](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/overview/overview.page.html#L96) (2. Prüfung: bestätigt)
   Ionic: Sheet (0.6/1) mit Toolbar 'Beschreibung' + X, Inhalt als Quill-HTML (Formatierung, Links klickbar) / Flutter showEventDescriptionSheet: Bottom-Sheet mit Griff, max. 70 % Höhe, Titel des Termins, Text per QuillUtils.stripHtml als SelectableText (Fett/Listen/Links gehen verloren), kein X
   Flutter: lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-449, lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222
@@ -99,7 +96,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Flutter meldet fehlgeschlagene Zusage/Absage/Notiz/Anmeldefelder/Instanzwechsel per Fehler-Toast (Ionic: unbehandelte Exception, kein Hinweis) und zeigt "Keine Termine gefunden" bzw. Hinweis ohne verknüpfte Person (Ionic: leere Seite).
   Flutter: lib/features/self_service/presentation/widgets/self_service_event_actions.dart:281, lib/features/self_service/presentation/widgets/self_service_event_actions.dart:341, lib/features/self_service/presentation/pages/signout_page.dart:113, lib/features/self_service/presentation/pages/signout_page.dart:281, lib/features/self_service/presentation/pages/signout_page.dart:327
 
-## Kleinigkeiten (niedrig): 55
+## Kleinigkeiten (niedrig): 56
 
 - [ ] **niedrig** `selfService/overview/overview.page` `action-aabe41a2` [selfService/overview/overview.page.html:102](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/overview/overview.page.html#L102) (2. Prüfung: bestätigt)
   Kein Schließen-Button (X) im Beschreibungs-Sheet; schließen nur per Wischen/Tippen daneben
@@ -162,6 +159,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `selfService/signout/signout.page` `loading-19b27361` [selfService/signout/signout.page.ts:1301](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.ts#L1301)
   Ionic: Lade-Overlay beim Löschen der Abwesenheit / Flutter: kein blockierendes Overlay.
   Flutter: lib/features/people/presentation/widgets/planned_absences.dart:248
+- [ ] **niedrig** `selfService/signout/signout.page` `toast-479275a1` [selfService/signout/signout.page.ts:1363](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.ts#L1363) (2. Prüfung: korrigiert)
+  Erstprüfer übersah den Text: Ionic „Fehler beim updaten des Spielers“ (danger, aus updatePlayer) / Flutter „Fehler: <Fehlertext>“ (friendlyErrorMessage, z. B. „Keine Internetverbindung vorhanden“). Flutter meldet zudem Fehler beim Wiedereintragen in kommende Termine (Ionic ohne await).
+  Flutter: lib/features/self_service/presentation/widgets/self_service_absences.dart:132-134, lib/core/utils/error_message.dart:24
 - [ ] **niedrig** `selfService/signout/signout.page` `action-cbdd0bb5` [selfService/signout/signout.page.html:114](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/selfService/signout/signout.page.html#L114) (2. Prüfung: bestätigt)
   Ionic: Bild lädt nicht → Platzhalter-Avatar / Flutter: Platzhalter nur bei leerem img; bei kaputter URL bleibt der Kreis leer (kein onBackgroundImageError).
   Flutter: lib/features/self_service/presentation/pages/signout_page.dart:357

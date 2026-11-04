@@ -1,0 +1,137 @@
+{
+ "batch": "zz-verify3-b35-team",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "tasks/task-detail/task-detail.page#alert-3b0ee21a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:77",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:45",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:53"
+   ],
+   "n": "Löschen-Icon nur Leitung bei geladener Aufgabe (Ionic html:7 / Flutter :77); Verantwortliche und andere Rollen sehen es in beiden Apps nicht. Dialog „Aufgabe löschen?“ / „Die Aufgabe wird endgültig entfernt.“, Abbrechen + „Löschen“ destruktiv → deleteTask (Flutter mit tenant_id-Filter, Fehler bei 0 Zeilen wie Ionic), Toast, Teamorganisation.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#toast-530c6140": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:56"
+   ],
+   "n": "Grüner Toast „Aufgabe gelöscht“; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#toast-6ad4cd08": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:59",
+    "lib/data/repositories/task_repository.dart:175"
+   ],
+   "n": "Roter Toast „Löschen fehlgeschlagen“, auch wenn RLS nichts löscht (0 Zeilen → Fehler, wie Ionic); nur Leitung.",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#text-1119b153": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:215"
+   ],
+   "n": "„· überfällig“ hinter dem Fälligkeitsdatum, Notiz rot; isTaskOverdue gleich (nicht erledigt und Fälligkeit < heute). Alle Rollen."
+  },
+  "tasks/task-form/task-form.component#modal-fbcd872a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:17",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:81",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:477",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:69",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:137"
+   ],
+   "n": "Alle Aufrufer nur Leitung, wie Ionic: Aufgabe bearbeiten (Detail, isLeader), „Aufgabe hinzufügen“ am Thema, Protokoll (nur Leitungs-Layouts), Aufgaben-Tab FAB/Leer-Button. Bottom-Sheet in voller Höhe (Ionic breakpoints [0,1], initial 1); liefert gespeicherte Aufgabe oder null.",
+   "v": "bestätigt"
+  },
+  "tasks/task-form/task-form.component#toast-505df5d1": {
+   "s": "na",
+   "n": "toter Code: save() nur über den Footer-Button, der bei leerem Titel deaktiviert ist (task-form.component.html:136); Flutter identisch (task_form_sheet.dart:143/346).",
+   "v": "bestätigt"
+  },
+  "tasks/task-form/task-form.component#toast-e5e62536": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:178"
+   ],
+   "n": "„Gespeichert“ / „Aufgabe angelegt“ grün; nur Leitung (s. modal-fbcd872a).",
+   "v": "bestätigt"
+  },
+  "tasks/task-form/task-form.component#toast-94a27b91": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:181"
+   ],
+   "n": "Roter Toast „Aufgabe konnte nicht gespeichert werden“; nur Leitung.",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-82b056e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:157",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:211",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:223",
+    "lib/core/providers/team_org_providers.dart:169"
+   ],
+   "n": "Leitung: alle Aufgaben, Untertitel „Person bzw. „Niemand zugewiesen“ · Fälligkeit“; Mitglieder: nur eigene (getMyTasks), Untertitel „Fälligkeit“ bzw. „Ohne Fälligkeit“ – showPerson = isLeader wie Ionic subtitle(). Badges „In Arbeit“ / „Hoch“ (nur nicht erledigt), öffnet /settings/tasks/:id.",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#action-95de4093": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:225",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:33"
+   ],
+   "n": "Für alle Rollen mit sichtbaren Aufgaben (Leitung alle, Mitglieder eigene), ohne Rollenprüfung in beiden Apps; Kreis/Häkchen (grün) schaltet erledigt ↔ offen optimistisch, Fehler-Toast „Status konnte nicht geändert werden“. Tooltip „Wieder öffnen“/„Als erledigt markieren“ statt aria-label.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-8e3d3c47": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:419",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+   ],
+   "n": "„Ändern“ nur im Leitungsteil bei vorhandenem Termin (beide Apps). Kopf „Für welchen Termin planen?“, bis 8 Termine, „Datum dieses Termins ändern“, „Neuen Termin anlegen“, Abbrechen; aktueller Termin per Häkchen-Icon statt „ ✓“-Suffix.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#actionsheet-f0556e68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:441",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:128"
+   ],
+   "n": "TOP-Zeilen nur im Leitungsteil. Kopf TOP-Name, „Thema öffnen“, „Aus diesem Termin entfernen“ (destruktiv), Abbrechen; Entfernen nimmt den TOP aus dem Plan, Thema bleibt.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#alert-f13f91ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:312",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:194"
+   ],
+   "n": "Nur Leitung im Sheet „Vorschläge“. „Vorschlag ablehnen“, „{Name} wird informiert. Eine kurze Begründung hilft.“ bzw. „Die Person“, Textfeld „Begründung (optional)“; Abbrechen / Ablehnen → proposal_status rejected + decision_note (leer → null) + team-notify proposal_decided.",
+   "v": "bestätigt"
+  },
+  "team-organization/topics-tab/topics-tab.component#text-15024791": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:618"
+   ],
+   "n": "Mitglieder im Kreis (inTeamCircle, gleiche Logik inkl. Eltern/Bewerber ausgeschlossen): bei angenommenem Vorschlag „Von der Leitung übernommen“ unter dem Titel; Leitung sieht diesen Teil in beiden Apps nicht."
+  },
+  "team-organization/topics-tab/topics-tab.component#text-040514d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:619",
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart:645"
+   ],
+   "n": "Sonst „Eingereicht am dd.MM.yyyy“ (lokales Datum von created_at); gleiche Rollen wie text-15024791."
+  }
+ },
+ "extra": []
+}

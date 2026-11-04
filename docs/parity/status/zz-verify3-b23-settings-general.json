@@ -1,0 +1,195 @@
+{
+  "batch": "zz-verify3-b23-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/general/general.page#alert-5b397ef5": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:901"
+      ],
+      "n": "„Ungespeicherte Änderungen“ mit Abbrechen/Verwerfen/Speichern in gleicher Reihenfolge; Speichern speichert (auch bei Validierungsfehler) und verlässt die Seite. Abweichende Änderungserkennung ist als b23-Extra erfasst. Rollen: Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg Einstellungen → Einstellungen bei isAdmin, Flutter-Route /settings/general + Eintrag bei isAdmin||isResponsible); isSuperAdmin wird in Ionic gesetzt, aber im Template nicht genutzt – keine Unterschiede zwischen Admin und Verantwortlich."
+    },
+    "settings/general/general.page#toast-b6c301a0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:188"
+      ],
+      "n": "Roter Toast „Der Gruppenname darf nicht leer sein.“ als erste Prüfung. Rollen wie alert-5b397ef5."
+    },
+    "settings/general/general.page#toast-41f907d8": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:192"
+      ],
+      "n": "Roter Toast „Der Kurzname darf nicht leer sein.“ als zweite Prüfung."
+    },
+    "settings/general/general.page#toast-dcf43f84": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:201"
+      ],
+      "n": "Roter Toast, wenn Registrierung an und keine Gruppe ohne maingroup existiert (Ionic db.groups(), Flutter groupsProvider)."
+    },
+    "settings/general/general.page#toast-a82c1284": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:282"
+      ],
+      "n": "Grüner Toast „Einstellungen gespeichert“, danach Dialog mit „Neu laden“ wie Ionic."
+    },
+    "settings/general/general.page#toast-f79901f5": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:304"
+      ]
+    },
+    "settings/general/general.page#action-fcbed0bb": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:92"
+      ],
+      "n": "Roter Papierkorb je Abwesenheitsgrund entfernt den Eintrag sofort (ohne Rückfrage) wie Ionic."
+    },
+    "settings/general/general.page#action-08962457": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:114"
+      ],
+      "n": "„Standardwerte wiederherstellen“ (grau) nur bei leerer Liste, setzt Krankheits-/Urlaubs-/Arbeits-/Familienbedingt."
+    },
+    "settings/general/general.page#action-d8e4368f": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:92"
+      ],
+      "n": "Wie action-fcbed0bb für Verspätungsgründe (gemeinsamer ReasonsListEditor)."
+    },
+    "settings/general/general.page#action-62d6aa37": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/reasons_list_editor.dart:114"
+      ],
+      "n": "Wie action-08962457 für Verspätungsgründe."
+    },
+    "settings/general/general.page#text-b494ec56": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:624"
+      ],
+      "n": "Warnfarbe mit Warn-Icon bei Registrierung an und keiner auswählbaren Gruppe, wie Ionic."
+    },
+    "settings/general/general.page#field-e08702e9": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:638"
+      ],
+      "n": "Toggle „Auto-Genehmigung“ mit Hilfetext nur bei Registrierung an; gespeichert nur bei Registrierung an, sonst false."
+    },
+    "settings/general/general.page#text-ce0e448a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:647"
+      ]
+    },
+    "settings/general/general.page#text-c804cb9e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:660"
+      ]
+    },
+    "settings/general/general.page#field-cda497d1": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:708"
+      ],
+      "n": "„Lehrer pflegen“ mit Hilfetext nur bei Instanztyp orchestra (Mandantenmerkmal gleich)."
+    },
+    "settings/general/general.page#text-5de5c707": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:735"
+      ],
+      "n": "Label „Bundesland für Ferien/Feiertage“ nur bei aktivem „Ferien anzeigen“."
+    },
+    "settings/general/general.page#text-2e97d7f5": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/pages/general_settings_page.dart:767"
+      ]
+    },
+    "settings/general/general.page#text-3cadc6db": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_card.dart:37"
+      ],
+      "n": "Badge „AND“ primary / „OR“ secondary unter der Regelbeschreibung."
+    },
+    "settings/general/general.page#action-afce87e0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/settings/presentation/widgets/critical_rule_card.dart:43",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:864"
+      ],
+      "n": "Roter Papierkorb je Regel öffnet Lösch-Rückfrage und entfernt die Regel lokal (Speichern nötig); Dialogtext und Flutter-Zusatztoast „Regel gelöscht“ gehören zum Alert-Item."
+    },
+    "settings/general/shifts/shift/shift.page#nav-64b3c9d4": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:501"
+      ],
+      "n": "Nach Löschen zurück zur Schichtplan-Liste (Ionic router.navigate auf die Liste, Flutter context.pop()). Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg über Einstellungen → Einstellungen, Flutter-Route /settings/shifts)."
+    },
+    "settings/general/shifts/shift/shift.page#toast-eaabb540": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:500"
+      ]
+    },
+    "settings/general/shifts/shift/shift.page#toast-9ec80392": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:503"
+      ]
+    },
+    "settings/general/shifts/shift/shift.page#toast-cbc04939": {
+      "s": "na",
+      "v": "bestätigt",
+      "n": "toter Code: copyToInstance wird nur vom Kopieren-Button aufgerufen, der nur bei linkedTenants.length > 0 erscheint (shift.page.html:10-11); Flutter-Gegenstück (Text shiftsNoOtherTenants im Kopier-Sheet) ebenso unerreichbar."
+    },
+    "settings/general/shifts/shift/shift.page#action-34770ae6": {
+      "s": "diff",
+      "sev": "hoch",
+      "v": "korrigiert",
+      "f": [
+        "lib/features/shifts/presentation/pages/shift_detail_page.dart:114",
+        "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:81",
+        "lib/core/providers/tenant_providers.dart:176"
+      ],
+      "n": "Erstprüfung übersah den Filter. Ionic: linkedTenants = getTenantsFromUser → nur Instanzen derselben Organisation (getLinkedTenants über tenant_group_tenants) und nur mit eigener Rolle ≠ Beobachter; Button nur dann. Flutter: userTenantsProvider minus aktuelle Instanz – alle Instanzen des Nutzers, ohne Organisations- und Rollenfilter. Folge: Admin/Verantwortlich sieht „Kopieren“ auch ohne verknüpfte Instanz und kann Schichtpläne (inkl. Zuordnungen) in fremde, nicht zur Organisation gehörende Instanzen schreiben; Instanzen mit Rolle Beobachter erscheinen als Ziel (Schreiben dort scheitert per RLS)."
+    }
+  },
+  "extra": []
+}

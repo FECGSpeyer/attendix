@@ -1,0 +1,96 @@
+{
+  "batch": "zz-verify3-b20-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "services/song-actions/song-actions.service#native-83bc9aed": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:136",
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+        "lib/core/services/native/native_file_service.dart:123"
+      ],
+      "n": "Nur mit song.link: Browser.open → openLinkInApp (nativ In-App-Browser, Web neuer Tab). Keine Rollenprüfung in der Methode; Eltern bekommen in beiden Apps nur den Link (linkOnly, parents_portal_page.dart:108). Flutter zeigt zusätzlich einen Fehler-Toast, wenn der Link nicht aufgeht.",
+      "v": "bestätigt"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:143",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ],
+      "n": "Genau eine Datei (Instrument; bei Mandant type=choir plus \"Chor (alle)\", Dubletten nach fileName entfernt – gleiche Mandanten-Bedingung): \"Noten anzeigen\" → openSongFileExternally wie Utils.openFileNative (installierte Web-App In-App-Viewer, sonst neuer Tab, nativ Download + Systemviewer, iOS-App auf Mac Browser).",
+      "v": "bestätigt"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:153",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ],
+      "n": "Mehrere Dateien: Auswahl-Sheet \"Noten für … auswählen\", dann Datei öffnen wie Ionic; gleiche choir-Logik.",
+      "v": "bestätigt"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:177",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ],
+      "n": "Eine Liedtext-Datei (instrumentId 2): \"Liedtext ansehen\" öffnet sie direkt.",
+      "v": "bestätigt"
+    },
+    "services/song-actions/song-actions.service#effect-2f74a4fe-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:178",
+        "lib/features/songs/presentation/widgets/song_file_opener.dart:41"
+      ],
+      "n": "Mehrere Liedtext-Dateien: Auswahl-Sheet (chooseLyricsFor), dann öffnen.",
+      "v": "bestätigt"
+    },
+    "services/song-actions/song-actions.service#toast-cfd2b633": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/widgets/song_options_sheet.dart:186"
+      ],
+      "n": "Warn-Toast \"Für dieses Werk sind keine Aktionen verfügbar.\", wenn außer Abbrechen nichts da ist (Ionic buttons.length === 1, Flutter actions.isEmpty).",
+      "v": "bestätigt"
+    },
+    "services/tenant/tenant.service#db-5ff103ce": {
+      "s": "na",
+      "n": "toter Code: TenantService.removeUserFromTenant wird nirgends aufgerufen (db.tenantSvc nutzt nur getTenantById/updateTenantData/getTenantsByUserId/getTenantUserById/getTenantBy…); Personen-Seite nutzt DbService.removeUserFromTenant (db.service.ts:2483).",
+      "v": "bestätigt"
+    },
+    "services/tenant/tenant.service#db-04693084": {
+      "s": "na",
+      "n": "toter Code: TenantService.getRoleFromTenantUser wird nirgends aufgerufen; genutzt wird DbService.getRoleFromTenantUser (db.service.ts:1540).",
+      "v": "bestätigt"
+    },
+    "services/tenant/tenant.service#db-0b82b158": {
+      "s": "na",
+      "n": "toter Code: TenantService.getAdminUsers wird nirgends aufgerufen (Admins über AdminService.getAdmins, db.service.ts:3525).",
+      "v": "bestätigt"
+    },
+    "services/user-registration/user-registration.service#toast-3186331d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:239",
+        "lib/features/registration/data/providers/registration_providers.dart:160"
+      ],
+      "n": "Insert-Fehler bei tenantUsers: Flutter wirft AccountFlowException mit gleichem Text (svcAddUserToTenantFailed), die Aufrufer zeigen ihn als Fehler-Toast. Keine Rollenprüfung in der Methode (Aufrufer-Flows separat geprüft).",
+      "v": "bestätigt"
+    },
+    "services/user-registration/user-registration.service#db-0a918c84": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.getAppIdByEmail wird nur von UserRegistrationService.registerUser aufgerufen, und das nur von createPlayerAccount, das nirgends aufgerufen wird (db.userRegistrationSvc nutzt nur informUserAboutApproval/Reject und addUserToTenant). Aktiv ist DbService.getAppIdByEmail (db.service.ts:1076).",
+      "v": "bestätigt"
+    },
+    "services/user-registration/user-registration.service#toast-78cb147e": {
+      "s": "na",
+      "n": "toter Code: UserRegistrationService.createPlayerAccount wird nirgends aufgerufen (Konten über DbService.registerUser/createAccount).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

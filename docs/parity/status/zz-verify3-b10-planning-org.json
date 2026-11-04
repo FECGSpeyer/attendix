@@ -1,0 +1,132 @@
+{
+ "batch": "zz-verify3-b10-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "org-plan-public/org-plan-public.page#effect-c4281c2a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:154",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:173",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:158"
+   ],
+   "n": "Mit Key gleich (Clipboard.setData(link), Dialog bleibt offen). Erster Prüfer übersah den Guard: Ionic subscribeCalendar bricht ohne publicKey ab (`if (!this.publicKey) return`, /org-plan ohne ?key=), der immer sichtbare Kalender-Button tut dann nichts. Flutter: _subscribeCalendar ohne Key-Guard → Sheet + Dialog mit „…/ical-org-plans?key=null“, „Link kopieren“ kopiert diesen kaputten Link.",
+   "v": "korrigiert"
+  },
+  "org-plan-public/org-plan-public.page#toast-653c57ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:154"
+   ],
+   "n": "„Link kopiert“ (success) mit Key gleich. Wie das Clipboard-Item: Ionic zeigt den Toast ohne publicKey nie (Guard in subscribeCalendar), Flutter auch ohne Key (kopiert Link mit key=null). Erster Prüfer übersah den Guard.",
+   "v": "korrigiert"
+  },
+  "org-plans/org-plans.page#toast-8a03f01d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:74"
+   ],
+   "n": "„Fehler beim Löschen“ danger, wenn das Löschen von shared_plans scheitert. Papierkorb nur bei Ad-hoc-Plänen, Seite nur Admin/Verantwortlich mit Organisation (Ionic: Links + isUrlAccessAllowed, Flutter: Routen-Guard _isAdminOrResponsible) in beiden.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#effect-35b5f6e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:213",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:97",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:158"
+   ],
+   "n": "Kalender-Button nur bei vorhandenem public_plan_key (Ionic @if (publicKey) + Guard, Flutter if key != null); Clipboard.setData(link), Dialog bleibt offen. Rollen Admin/Verantwortlich in beiden.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-83ae2924": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:97"
+   ],
+   "n": "„Link kopiert“, success (copyPlanLink); gleiche Bedingung wie Kalender-Button.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-c19318c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:130",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:159"
+   ],
+   "n": "Nur mit Organisation und vorhandenem Key: Sheet „Öffentlicher Link“ → „Link kopieren“ → „Link kopiert“ success. (Kopierte URL im Web: Flutter Origin + #/org-plan statt https://attendix.de/org-plan – eigenes Effekt-Item.)",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-7283895c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:133"
+   ],
+   "n": "„Link widerrufen“ success nur nach erfolgreichem Update public_plan_key = null (tenant_groups, eq id); Ionic bei Fehler Service-Toast + throw, Flutter kein Erfolgs-Toast. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-95142758": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:144"
+   ],
+   "n": "Ohne Key: neuer 16-Zeichen-Key in tenant_groups.public_plan_key, Link kopiert, „Link erstellt und kopiert“ success; nur mit Organisation in beiden.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-77469d60": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:304",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:154"
+   ],
+   "n": "Nur Admin (isSuperAdmin = Role.ADMIN; „+“ für Verantwortlich deaktiviert in beiden). Leerer Name → „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ danger, Sheet bleibt offen. Fall „ohne Organisation“ unerreichbar (Link nur im Org-Block).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-04d937da": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:309"
+   ],
+   "n": "Nur Admin; Auswahlfeld ohne (nicht-leere) Option → „Bitte füge mindestens eine Auswahloption hinzu.“ danger, Sheet bleibt offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#alert-81661d54": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:83",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+   ],
+   "n": "Löschen-Button nur für Admin aktiv (beide). „Zusatzfeld löschen?“, „Möchtest du das Zusatzfeld „{name}“ wirklich löschen?“, „Abbrechen“ / „Löschen“ (destruktiv) → nur lokal entfernt, gespeichert erst mit Haken.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-4bf625f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:101"
+   ],
+   "n": "save nur Admin (Guard + Haken deaktiviert in beiden); „Das Auswahlfeld „{name}“ benötigt Optionen.“ danger.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:114",
+    "lib/core/providers/plan_providers.dart:252"
+   ],
+   "n": "Nur Admin; Update tenant_groups.additional_fields + Löschen tenant_group_person_fields (tenant_group, field_id in entfernte) in beiden, dann „Organisations-Zusatzfelder gespeichert.“ success.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-f87b8a1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:133"
+   ],
+   "n": "„Es wurden noch keine organisationsweiten Zusatzfelder hinzugefügt.“ bei leerer Liste. Seite nur für Admin verlinkt (beide); Verantwortlich nur per URL (Flutter-Guard Admin/Verantwortlich), dann alles deaktiviert wie Ionic.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

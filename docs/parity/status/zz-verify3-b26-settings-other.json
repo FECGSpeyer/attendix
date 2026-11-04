@@ -1,0 +1,212 @@
+{
+  "batch": "zz-verify3-b26-settings-other",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/administration/administration.page#toast-22cb7d57": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:62",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:64",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:67"
+      ],
+      "v": "bestätigt",
+      "n": "Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung. Warn-Toast gleicher Text bei Wert ≤ 0/ungültig; leeres Feld = unbegrenzt (beide)."
+    },
+    "settings/administration/administration.page#alert-e0b718fa": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:132",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:138",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:327",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:329",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:331"
+      ],
+      "v": "bestätigt",
+      "n": "Titel 'Gemeinden zusammenführen', Nachricht mit Quelle/Ziel, Abbrechen / Zusammenführen (destruktiv); danach Merge, Liste und Duplikate neu. Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung."
+    },
+    "settings/administration/administration.page#toast-bde9f729": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:151"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/administration/administration.page#toast-200705ff": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/administration/administration.page#alert-104dadf1": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:219",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:224",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:226",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:227",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:228",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:343"
+      ],
+      "v": "bestätigt",
+      "n": "Titel 'Alle Duplikate zusammenführen', Nachricht '{total} Duplikat(e) in {groups} Gruppe(n) …', Abbrechen / Alle zusammenführen (destruktiv). Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung."
+    },
+    "settings/administration/administration.page#toast-cf3b95c1": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/administration/administration.page#alert-a83fabc5": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:155",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:158",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:163",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:170",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:182",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:186"
+      ],
+      "v": "bestätigt",
+      "n": "Titel '„{name}“ zusammenführen mit...', eine Radio-Zeile je anderer Gemeinde (erste vorausgewählt), Abbrechen / Zusammenführen → Bestätigung. Seite nur für den Super-Developer (SuperDeveloperGuard ↔ Route-Redirect isSuperDeveloperProvider, gleiche E-Mail), keine weitere Rollenprüfung."
+    },
+    "settings/administration/administration.page#alert-d95dbe90": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:194",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:196",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:197",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:198",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:138"
+      ],
+      "v": "bestätigt",
+      "n": "Titel 'Bestätigen', Nachricht '„{source}“ wird gelöscht und alle Personen zu „{target}“ verschoben. Fortfahren?', Abbrechen / Zusammenführen (destruktiv)."
+    },
+    "settings/administration/administration.page#toast-f4fcfa29": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:151"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/administration/administration.page#toast-96d13755": {
+      "s": "ok",
+      "f": [
+        "lib/features/dashboard/presentation/pages/administration_page.dart:143",
+        "lib/features/dashboard/presentation/pages/administration_page.dart:144"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#alert-9c3672dd": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:272",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:279",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:280",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:281",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:282",
+        "lib/core/router/app_router.dart:179"
+      ],
+      "v": "bestätigt",
+      "n": "Nur bei bestehender Regel. Regel-Seite nur für Admin/Verantwortlich (Ionic: Einstieg nur über Nachrichten/Termin-Panel für Admin/Verantw.; Flutter: Route-Guard /settings/auto-messages). Titel 'Regel löschen?', Hinweis, Abbrechen / Löschen (destruktiv); Ziel nach dem Löschen: nav-4f4f5283."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#toast-6aab2a50": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:289",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:290"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-8c5c58ad": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:805"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-98712f30": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:799",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:801",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:812"
+      ],
+      "v": "bestätigt",
+      "n": "'Titel · TT.MM.JJJJ' + ' · Startzeit' nur mit Startzeit (Edge Function liefert sonst null)."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-4eef9834": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:818",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:820"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-15e0e4b5": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:824",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:825"
+      ],
+      "v": "bestätigt",
+      "n": "Gleiche Pluralformen (=0 / one / other)."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-0f142178": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:830",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:832",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:833"
+      ],
+      "v": "bestätigt",
+      "n": "Nur beim ersten Termin und nur wenn erfasst; 'TT.MM.JJJJ, HH:mm' in Ortszeit."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-5f839d06": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:845",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:352"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-648a41a3": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:846"
+      ],
+      "n": "'· nur E-Mail' hinter dem Gruppennamen, wenn keine App, aber E-Mail (Edge Function liefert Booleans app/email; Flutter verbindet mit ' · ', bei leerem Gruppennamen ohne führenden Punkt). Rollen: Regel-Seite nur für Admin/Verantwortlich (Ionic: Einstieg nur über Nachrichten/Termin-Panel für Admin/Verantw.; Flutter: Route-Guard /settings/auto-messages)."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-bcc226f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:843",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:847"
+      ],
+      "n": "'· nicht erreichbar' hinter dem Gruppennamen, wenn weder App noch E-Mail; wie text-648a41a3."
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-6ad37b5c": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:851",
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:854"
+      ],
+      "v": "bestätigt"
+    },
+    "settings/auto-messages/rule/auto-message-rule.page#text-d67231b2": {
+      "s": "ok",
+      "f": [
+        "lib/features/messages/presentation/pages/auto_message_rule_page.dart:860"
+      ],
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

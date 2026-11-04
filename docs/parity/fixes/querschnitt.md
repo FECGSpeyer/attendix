@@ -1,9 +1,9 @@
 # Fix-Paket „querschnitt“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 56
+## Angleichen (hoch/mittel): 62
 
 - [ ] **hoch** `services/attendance-type/attendance-type.service` `db-c4d1a223` [services/attendance-type/attendance-type.service.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L77) (2. Prüfung: bestätigt)
   Ionic: deleteAttendanceType löscht den Typ ohne Prüfung (Dialog: 'Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht') / Flutter: deleteType zählt attendance mit type_id und löscht bei >0 NICHT; Repo fängt die Exception, UI zeigt nur 'Fehler beim Löschen des Anwesenheitstyps' – obwohl derselbe Bestätigungstext das Mitlöschen ankündigt.
@@ -11,6 +11,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **hoch** `services/attendance-type/attendance-type.service` `x-e97bec4aeb` **Verwendeter Anwesenheitstyp nicht löschbar** [src/app/services/attendance-type/attendance-type.service.ts:76](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L76) (2. Prüfung: bestätigt)
   Befund real. Ionic deleteAttendanceType: delete ohne Vorprüfung (Alert: "Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht"). Flutter deleteType: zählt attendance mit type_id+tenantId, bei >0 RepositoryException; handleError wirft weiter, Notifier → false, UI nur "Fehler beim Löschen des Anwesenheitstyps", obwohl derselbe Alert-Text das Mitlöschen ankündigt. Ein benutzter Typ ist in Flutter nicht löschbar. Vorbehalt: Die FK-Regel (CASCADE) steht nicht im Repo, nur Ionic-Text und fehlende Vorprüfung sprechen dafür; bei RESTRICT scheitern beide gleich.
   Flutter: lib/data/repositories/attendance_type_repository.dart:174, lib/data/repositories/attendance_type_repository.dart:178, lib/data/repositories/attendance_type_repository.dart:157, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1544, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1558
+- [ ] **hoch** `services/db.service` `db-cc6767aa-2` [services/db.service.ts:2641](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2641) (2. Prüfung: korrigiert)
+  Ionic getAttendance() filtert archivierte Termine (filterArchivedForRole) für alle außer Admin/Verantwortlich, auch für die Ablaufplanung und die Personenliste. Flutter getAttendances filtert, aber die Planung lädt über getPlanAttendances ohne archived: Helfer/Stimmführer-Helfer (/planning?attendanceId) sehen archivierte Termine unter „Zugehöriger Termin“ und können deren Plan bearbeiten (gleiche Lücke wie x-5e1a396117). Zudem zählt die Personenliste für Beobachter archivierte Termine in den Prozenten mit (Ionic nicht; b08-Extra).
+  Flutter: lib/data/repositories/plan_repository.dart:44, lib/core/providers/plan_providers.dart:45, lib/core/router/route_access.dart:109, lib/core/providers/attendance_providers.dart:275, lib/data/repositories/attendance_repository.dart:69
 - [ ] **hoch** `services/db.service` `db-ffa8e5a7` [services/db.service.ts:2752](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2752) (2. Prüfung: korrigiert)
   Ionic liest u.a. extra_plans mit (PlanViewer der Selbstverwaltung zeigt bei mehrtägigen Terminen Tages-/Plan-Chips) / Flutter: kSignoutAttendanceColumns ohne extra_plans → nur Hauptplan. Gleiche Ursache wie signout.page#modal-ef7b9f1b (b15). Filter tenantId + Datum −31 Tage gleich.
   Flutter: lib/data/repositories/sign_in_out_repository.dart:21, lib/data/repositories/sign_in_out_repository.dart:425
@@ -23,6 +26,18 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **hoch** `services/image/image.service` `db-58f14585` [services/image/image.service.ts:48](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/image/image.service.ts#L48) (2. Prüfung: bestätigt)
   Ionic updateImage mit eigener appId: update {img} für alle player-Zeilen des Nutzers (alle Tenants) – Profil, Personen-Seite bei Selbstbearbeitung (person.page.ts:1116) und Registrierung eines angemeldeten Nutzers (tenant-register.page.ts:351) / Flutter: Profil gleichwertig (uploadOwnImage + Sync), Personen-Seite (PlayerRepository.updateImage: id + tenantId) und Registrierung schreiben nur die eine Zeile; in den anderen Tenants bleibt das alte Bild.
   Flutter: lib/data/repositories/profile_repository.dart:441, lib/data/repositories/player_repository.dart:436, lib/features/registration/data/providers/registration_providers.dart:241
+- [ ] **hoch** `services/push/push.service` `native-7521b3d9` [services/push/push.service.ts:55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L55) (2. Prüfung: korrigiert)
+  Android 13+: firebase_messaging getNotificationSettings liefert ohne erteilte POST_NOTIFICATIONS-Berechtigung 0 = AuthorizationStatus.denied (nie notDetermined, Pub-Cache firebase_messaging-15.2.10 FlutterFirebaseMessagingPlugin.java:395-409); Flutter mappt das auf PushPermission.denied. Ionic (Capacitor PushNotifications.checkPermissions) liefert bei noch nicht gefragter Berechtigung 'prompt'. Folge in promptAndEnable: Flutter setzt push_prompt_shown und kehrt zurück – weder Dialog "Push-Benachrichtigungen" noch Systemabfrage; Neuinstallationen auf Android 13+ (und Ionic-Nutzer ohne erteilte Berechtigung) bekommen nie ein Token in device_tokens. Ionic: Dialog → Aktivieren → requestPermissions → Token. iOS gleich. Erstprüfung hat die Android-Abbildung übersehen.
+  Flutter: lib/core/services/push/push_service.dart:266, lib/core/services/push/push_service.dart:273, lib/core/services/push/firebase_push_messaging_client.dart:58, lib/core/services/push/firebase_push_messaging_client.dart:71
+- [ ] **hoch** `services/push/push.service` `alert-a499f987` [services/push/push.service.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L67) (2. Prüfung: korrigiert)
+  Text/Buttons/Effekt gleich (Später → Flag; Aktivieren → Flag, initPush, notifications.push_enabled=true), alle Rollen nach Anmeldung, nur nativ. Aber: auf Android 13+ erscheint der Dialog in Flutter nie (gleiche Ursache wie native-7521b3d9: denied statt prompt). Zusätzlich: Tippen außerhalb/Zurück ruft in Ionic den cancel-Handler "Später" (Flag gesetzt, keine erneute Frage); Flutter (barrierDismissible) setzt das Flag nicht und fragt beim nächsten Start erneut.
+  Flutter: lib/core/providers/push_providers.dart:195, lib/core/services/push/push_service.dart:278
+- [ ] **hoch** `services/push/push.service` `native-9bb3502f` [services/push/push.service.ts:95](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L95) (2. Prüfung: korrigiert)
+  Android 13+: firebase_messaging getNotificationSettings liefert ohne erteilte POST_NOTIFICATIONS-Berechtigung 0 = AuthorizationStatus.denied (nie notDetermined, Pub-Cache firebase_messaging-15.2.10 FlutterFirebaseMessagingPlugin.java:395-409); Flutter mappt das auf PushPermission.denied. Ionic (Capacitor PushNotifications.checkPermissions) liefert bei noch nicht gefragter Berechtigung 'prompt'. initPush (auch über Benachrichtigungen → Push einschalten = togglePush) bricht in Flutter auf Android 13+ ohne Berechtigung ab, statt die Systemabfrage zu zeigen; kein Token. iOS gleich.
+  Flutter: lib/core/services/push/push_service.dart:301, lib/core/services/push/push_service.dart:306, lib/core/services/push/firebase_push_messaging_client.dart:71
+- [ ] **hoch** `services/push/push.service` `native-c30ca494` [services/push/push.service.ts:98](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L98) (2. Prüfung: korrigiert)
+  iOS: requestPermission bei notDetermined wie Ionic. Android 13+: wird in Flutter nie erreicht, weil checkPermission ohne Berechtigung denied statt prompt liefert (siehe native-9bb3502f) – die POST_NOTIFICATIONS-Systemabfrage erscheint nie; Ionic fragt.
+  Flutter: lib/core/services/push/push_service.dart:303, lib/core/services/push/firebase_push_messaging_client.dart:83
 - [ ] **hoch** `utilities/Utils` `x-5195e84084` **PDF-Exporte ohne Unicode-Schrift** [src/app/utilities/Utils.ts:441](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L441) (2. Prüfung: bestätigt)
   Befund real (Ionic-Schrift ist DejaVu Sans, nicht NotoSans). Ionic registerExportFont bettet die Unicode-Schrift in Plan-, Export-, Werk- und Protokoll-PDFs ein. Flutter: kein pw.ThemeData/TTF in irgendeinem pw.Document; Standard-Helvetica (pdf-3.13.1 type1_font.dart:126 nur U+0000–00FF) → kyrillische Namen/Titel (App hat russische Nutzer, Ionic ru.json), „ “, – und € werden als Platzhalter gedruckt. Umlaute/ß gehen.
   Flutter: lib/core/services/plan_export_service.dart:60, lib/core/services/export_service.dart:251, lib/core/services/export_service.dart:486, lib/features/songs/data/song_print_service.dart:164, lib/features/team_organization/protocol_pdf.dart:54
@@ -41,6 +56,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `services/db.service` `alert-f27cc642` [services/db.service.ts:544](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L544) (2. Prüfung: bestätigt)
   Ionic: Radio-Alert "Instanz auswählen" / "Bitte wähle die Instanz aus, die du öffnen möchtest:" mit "Abbrechen" (öffnet gespeicherte bzw. erste Instanz) und "Öffnen" / Flutter: bei wantInstanceSelection nach Login die Vollseite /tenants mit Instanzliste, kein Abbrechen.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:76, lib/features/auth/presentation/pages/login_page.dart:312
+- [ ] **mittel** `services/db.service` `db-6ed0d891` [services/db.service.ts:2305](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2305) (2. Prüfung: korrigiert)
+  Rollen und Abfrage gleich (Personenliste nur Admin/Verantwortlich; „Meine Termine“ nur mit player_self_pause der Rolle Spieler, nicht Bewerber; tenantId, paused, paused_until ≤ heute). Übersehen: Demo-Konto. Ionic entpausiert über updatePlayer → checkDemoRestriction: Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“, nichts wird geschrieben (Personenliste lädt danach nicht) / Flutter schreibt direkt ohne ensureNotDemo: paused=false, Historie, Aufnahme in kommende Termine.
+  Flutter: lib/data/repositories/player_repository.dart:1137, lib/features/people/presentation/pages/people_list_page.dart:128, lib/features/self_service/presentation/widgets/self_service_absences.dart:156
 - [ ] **mittel** `services/db.service` `nav-51ad9728` [services/db.service.ts:3290](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3290) (2. Prüfung: bestätigt)
   Ionic: nach Löschen immer setTenant() und Navigation zu Utils.getUrl(Rolle) / Flutter: nur wenn die aktuelle Instanz gelöscht wurde go("/tenants") mit Auto-Navigation (ggf. Dashboard-Start), sonst bleibt der Benutzer auf der Seite.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335
@@ -169,7 +187,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Befund real. Termine werden mit 12:00 gespeichert (attendance-create.ts:56). Ionic zählt Termine vor jetzt + 24 h → heutiger Termin immer, morgiger ab 12 Uhr. Flutter .lte('attendance.date', now) → heutiger erst ab 12 Uhr, morgiger nie. Prozentwerte der Personenliste weichen an Termin-Tagen ab.
   Flutter: lib/core/providers/attendance_providers.dart:300
 
-## Flutter besser – Leon entscheidet: 45
+## Flutter besser – Leon entscheidet: 47
 
 - [ ] **niedrig** `services/auth.guard` `logic-377dcf4f` [services/auth.guard.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L1)
   Flutter besser: Ionic AuthGuard hängt am /tabs-Elternroute und prüft nur beim ersten Eintritt (Reload/Direktaufruf), Default-Zweig erlaubt nur Admin/Verantwortl./Beobachter – z. B. Reload auf /tabs/members als Spieler wird blockiert / Flutter prüft jede Navigation per roleRouteRedirect (AuthGuard + TabsPage-Regeln) und leitet auf die Startseite der Rolle um statt abzubrechen. Einzelrouten: Routing-Batch.
@@ -204,12 +222,18 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `services/db.service` `db-244b0807` [services/db.service.ts:2288](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2288) (2. Prüfung: bestätigt)
   Flutter besser: Ionic schreibt die History der Quellperson (inkl. neuem Eintrag) in die Zielperson / Flutter hängt den Eintrag an deren eigene History; paused/paused_until gleich. Flutter bietet und erlaubt nur Instanzen, in denen der Benutzer Admin/Verantwortlich ist.
   Flutter: lib/data/repositories/cross_tenant_person_repository.dart:329
+- [ ] **niedrig** `services/db.service` `db-d2175ed2` [services/db.service.ts:2498](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2498) (2. Prüfung: korrigiert)
+  Flutter besser: Rollenlogik gleich (Konto mit Rolle Admin in der Instanz behält Zugang, sonst tenantUsers-Zeile löschen; deleteAdmin löscht nur die Admin-Zeile). Aber Demo-Konto: Ionic removeUserFromTenant hat keine Demo-Sperre – „Account entfernen“ (Personenseite) löscht die tenantUsers-Zeile, erst das folgende updatePlayer bricht mit Demo-Toast ab / Flutter blockt vorher (ensureNotDemo in unlinkAccount und removeUserFromTenant).
+  Flutter: lib/data/repositories/player_repository.dart:650, lib/data/repositories/player_repository.dart:1481
 - [ ] **niedrig** `services/db.service` `db-c9fc0740` [services/db.service.ts:2559](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2559) (2. Prüfung: bestätigt)
   Flutter besser: Ionic entfernt Zugang/appId beim Archivieren nur bei appId UND E-Mail / Flutter bei appId; left, History "Kein Grund angegeben"-Fallback gleich.
   Flutter: lib/data/repositories/player_repository.dart:603, lib/data/repositories/player_repository.dart:622
 - [ ] **niedrig** `services/db.service` `db-e99cfee5` [services/db.service.ts:4048](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L4048)
   Flutter besser: Ionic .single() liefert bei mehreren Zeilen (archiviert + aktiv) null, die Termine der Instanz fehlen in der Übersicht / Flutter lädt alle Zeilen (tenantId + appId) und wählt die aktive.
   Flutter: lib/data/repositories/sign_in_out_repository.dart:597, lib/core/services/cross_tenant_service.dart:63
+- [ ] **niedrig** `services/db.service` `db-7905be27` [services/db.service.ts:4068](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L4068) (2. Prüfung: korrigiert)
+  Flutter besser: Ionic wählt attendance ohne „archived“, der Rollenfilter im Aufrufer (canSeeArchivedAttendances je Mitgliedsrolle) greift daher nie → Übersicht zeigt archivierte Termine allen Rollen und zählt sie mit / Flutter lädt archived und blendet sie für alle außer Admin/Verantwortlich aus. Erstprüfung sah „+archived“, aber nicht die Wirkung (gleicher Befund wie Extra b14 „Archivierte Termine“).
+  Flutter: lib/data/repositories/sign_in_out_repository.dart:609, lib/data/repositories/sign_in_out_repository.dart:572
 - [ ] **niedrig** `services/duty/duty.service` `db-37def78d` [services/duty/duty.service.ts:198](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/duty/duty.service.ts#L198) (2. Prüfung: bestätigt)
   Flutter besser: Ionic lädt die Dienst-Zählung mit .range(0,9999), PostgREST kappt bei max-rows (1000) → bei vielen Einteilungen zu niedrige Zähler / Flutter paginiert per fetchAllPages und filtert zusätzlich attendance.tenantId.
   Flutter: lib/data/repositories/duty_repository.dart:312
@@ -307,7 +331,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic listRaw lädt je Ordnerebene nur die ersten 1000 Einträge (limit 1000) – Löschen/Verschieben/Umbenennen großer Ordner erfasst nur einen Teil und meldet trotzdem Erfolg, die Liste zeigt max. 1000 / Flutter listAllPages lädt seitenweise alle Einträge.
   Flutter: lib/data/repositories/files_repository.dart:180
 
-## Kleinigkeiten (niedrig): 195
+## Kleinigkeiten (niedrig): 197
 
 - [ ] **niedrig** `services/admin/admin.service` `toast-5b84a64a` [services/admin/admin.service.ts:21](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/admin/admin.service.ts#L21)
   Ionic: Toast 'Fehler beim Laden der Admins' (danger) beim Laden der Einstellungen / Flutter: kein Toast; im Administratoren-Sheet steht 'Fehler: <Fehlertext>', Badge zeigt 0.
@@ -369,6 +393,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `services/db.service` `toast-137537bd` [services/db.service.ts:904](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L904) (2. Prüfung: bestätigt)
   Ionic: Toast "Fehler beim Löschen des Elternteils" (danger) / Flutter: "Fehler: Fehler beim Löschen des Elternteils" (Präfix aus settingsFlutterErrorDetail).
   Flutter: lib/data/repositories/parent_repository.dart:110, lib/features/settings/presentation/pages/parents_page.dart:234
+- [ ] **niedrig** `services/db.service` `toast-8b3301cf` [services/db.service.ts:1192](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1192) (2. Prüfung: korrigiert)
+  Rolle/Mandant gleich: Demo-Sperre (ensureNotDemo), neues Konto Hauptgruppe → Verantwortlich, sonst Spieler (accountRoleFor). Personenseite „Account erstellen“: gleicher Text „{Vorname Nachname} - Fehler beim Erstellen des Accounts: {Fehler}“ (rot). Erstprüfung übersah die anderen Aufrufer: Ionic zeigt den Toast in createAccount bei jedem Aufruf / Flutter beim Reaktivieren nur „Fehler: {Fehler}“ (ohne Name/Text), bei „Accounts erstellen“ (Einstellungen) nur der Sammeltoast „Fehler beim Erstellen der Accounts: Name: Fehler“ statt Einzel- + Sammeltoast.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1664, lib/features/people/presentation/pages/person_detail_page.dart:1452, lib/features/settings/presentation/pages/settings_page.dart:703, lib/data/repositories/user_registration_repository.dart:80
 - [ ] **niedrig** `services/db.service` `toast-c8873abd` [services/db.service.ts:1225](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1225) (2. Prüfung: bestätigt)
   Text gleich ("E-Mail oder Passwort falsch. …"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).
   Flutter: lib/features/auth/data/auth_flow_service.dart:76, lib/features/auth/presentation/pages/login_page.dart:207
@@ -782,6 +809,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `utilities/Utils` `loading-ec398d04` [utilities/Utils.ts:410](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L410)
   Ionic: generisches blockierendes LoadingController-Overlay mit Text / Flutter: kein entsprechender Helfer, Seiten zeigen Inline-Spinner oder sperren Buttons.
   Flutter: lib/core/utils/toast_helper.dart:1
+- [ ] **niedrig** `utilities/Utils` `effect-ac49a0f3` [utilities/Utils.ts:1207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1207)
+  Excel „{Info|Typ}_{TT_MM_JJJJ}_Anwesenheit.xlsx“ wird gespeichert. Nativ (Cache + Systemansicht) und Desktop-Browser (Download) wie Ionic. Ionic Mobile-Web (iOS/Android-Browser/PWA): Teilen-Dialog (navigator.share) / Flutter: Printing.sharePdf → nur Anchor-Download (Blob-Typ application/pdf), kein Teilen-Dialog.
+  Flutter: lib/core/services/export_service.dart:706, lib/core/services/native/native_file_service.dart:167, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2407
 - [ ] **niedrig** `utilities/Utils` `effect-44054f10` [utilities/Utils.ts:1232](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1232)
   Nativ gleich (Cache + Systemansicht); auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.
   Flutter: lib/core/services/export_service.dart:706, lib/core/services/native/native_file_service.dart:167

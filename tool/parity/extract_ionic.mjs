@@ -169,7 +169,8 @@ const enclosingMemberHash = (sf, node) => {
   }
   return null;
 };
-const ROLE_TEXT = /\brole\b|\bRole\.|isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isTeamLeader|isLeader|isManager|isSuperAdmin|permission|\bperm|tenantData|tenant\(\)\??\.\w|\btenant\.\w|isGeneral|isChoir|isDemo|isMainGroup|hasOrg|organisation\(\)/;
+// `role: 'cancel'` in alert/action sheet buttons is no role check
+const ROLE_TEXT = /\brole\b(?!\s*:\s*['"`])|\bRole\.|isConductor|isHelper|isAdmin|isPlayer|isViewer|isParent|isApplicant|isVoiceLeader|isResponsible|isTeamLeader|isLeader|isManager|isSuperAdmin|permission|\bperm|tenantData|tenant\(\)\??\.\w|\btenant\.\w|isGeneral|isChoir|isDemo|isMainGroup|hasOrg|organisation\(\)/;
 const enclosingMethod = (node) => {
   let n = node;
   let methodName = null;

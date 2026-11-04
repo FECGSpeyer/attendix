@@ -1,0 +1,303 @@
+{
+ "batch": "zz-verify3-b27-settings-other",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "settings/delete-account/delete-account.page#alert-36591242": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:61-82",
+    "lib/features/settings/presentation/pages/settings_page.dart:480-500"
+   ],
+   "n": "Rollenprüfung gibt es keine: Guard ist nur canDelete() (Code korrekt), in Flutter identisch (_canDelete, Button sonst deaktiviert). Link „Konto löschen“ in beiden für alle Rollen. Header „Konto wirklich löschen?“, Text, „Abbrechen“ / „Endgültig löschen“ (rot) gleich; danach Edge Function delete-account + signOut.",
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#toast-a565e9ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:87-88",
+    "lib/core/utils/toast_helper.dart:111",
+    "lib/core/utils/toast_helper.dart:176"
+   ],
+   "n": "„Dein Konto wurde gelöscht.“ grün nach erfolgreichem Löschen, dann /login; gleiche (keine) Rollenbedingung. Dauer Ionic 4 s / Flutter md 3 s, iOS 4 s.",
+   "v": "bestätigt"
+  },
+  "settings/delete-account/delete-account.page#text-4c117b58": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:142",
+    "lib/features/settings/presentation/widgets/strong_html_text.dart:4-19"
+   ],
+   "n": "Gleicher Text im roten Warnkasten (weiß), „alle“ fett über StrongHtmlText wie Ionic innerHTML <strong>."
+  },
+  "settings/delete-account/delete-account.page#text-7fa7d215": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/delete_account_page.dart:155",
+    "lib/features/settings/presentation/widgets/strong_html_text.dart:4-19"
+   ],
+   "n": "„Diese Aktion kann nicht rückgängig gemacht werden.“ mit fettem „nicht rückgängig“, am Ende des Warnkastens."
+  },
+  "settings/files/files-move-modal/files-move-modal.component#toast-95cf4cc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/files_move_modal.dart:178-181"
+   ],
+   "n": "Roter Toast „Ordner konnte nicht erstellt werden: {error}“ beim Anlegen im Verschieben-Dialog. Rollen gleich: Dialog nur über moveEntries (canEditFiles = Admin/Verantwortlich, beide).",
+   "v": "bestätigt"
+  },
+  "settings/files/files-move-modal/files-move-modal.component#text-1d53cbe8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/files_move_modal.dart:249-251",
+    "lib/features/settings/presentation/widgets/files_move_modal.dart:139-143"
+   ],
+   "n": "Fußzeile „Ziel: Dateiablage / Ordner / …“ bei gewähltem Ziel (Pfad wie selectedLabel)."
+  },
+  "settings/files/files-move-modal/files-move-modal.component#text-54e92896": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/files_move_modal.dart:252"
+   ],
+   "n": "„Wähle einen Zielordner.“ solange nichts gewählt ist."
+  },
+  "settings/files/files.page#effect-c48b9ee3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:426-430"
+   ],
+   "n": "Link in die Zwischenablage; keine Rollenbedingung (Teilen im Menü und im Eintragsmenü für alle mit Dateizugriff, canAccessFiles identisch). Dass Ionic zuerst navigator.share nutzt und nur als Fallback kopiert, ist unter effect-c39ff4df (diff mittel) erfasst.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-33795926": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:430"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ grün nach dem Kopieren; Teilen-Sheet-Unterschied siehe effect-c39ff4df.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-f5e032f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:268-285",
+    "lib/core/providers/role_permission_providers.dart:116-120,141-142"
+   ],
+   "n": "Roter Toast „Fehler beim Laden der Dateien: {error}“. Seite nur bei canAccessFiles: files_shared → alle außer Bewerber/ohne Rolle, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer – in Flutter identisch.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-575aa0a0": {
+   "s": "na",
+   "n": "toter Code bestätigt: triggerUpload nur aus dem Menüpunkt unter @if (canEditEntries) (files.page.html:41-42), canEditEntries nur in ngOnInit gesetzt. Flutter: Menüpunkt nur bei canEdit (files_page.dart:1045), Guard in _upload (775-779) ebenso unerreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-e8156c86": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:669-715",
+    "lib/features/settings/presentation/pages/files_page.dart:1142",
+    "lib/features/settings/presentation/pages/files_page.dart:1209-1213"
+   ],
+   "n": "Grüner Toast nach gesendeter Anfrage. „Mehr Speicher anfragen“ nur für canEditFiles (Admin/Verantwortlich) über die Speicheranzeige ab 80 % bzw. den Speicher-voll-Dialog – gleich.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-a1bcde4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:362-378"
+   ],
+   "n": "Roter Toast „Fehler beim Abspielen: {error}“; Audio-Warteschlange aller (gefilterten) Audiodateien, für alle Rollen mit Dateizugriff.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-4647060a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:345-353"
+   ],
+   "n": "Roter Toast „Bildvorschau fehlgeschlagen: {error}“, wenn die signierte URL nicht erzeugt werden kann; für alle Rollen mit Dateizugriff.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-b07996d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:719-734"
+   ],
+   "n": "„Datei existiert bereits“, Text mit max. 5 Namen + Zusatz, Abbrechen / Überspringen / Überschreiben in gleicher Reihenfolge; nur im Upload (canEditFiles).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-2f654766": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:737-772"
+   ],
+   "n": "„Speicher voll“ mit benötigt/frei/max, „OK“ / „Mehr Speicher anfragen“ → Anfrage-Dialog; nur im Upload mit Speicherlimit (canEditFiles).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-f1fabfb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:800-817",
+    "lib/features/settings/presentation/pages/files_page.dart:820-846"
+   ],
+   "n": "Nicht wegtippbarer Dialog mit Spinner und „Upload n/N (p%)“ + Dateiname während des Uploads; nur canEditFiles.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-ce962bb5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:851-853"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-a9d4ec9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:854-855"
+   ],
+   "n": "„{ok} hochgeladen, {skipped} übersprungen, {failed} fehlgeschlagen.“ als Warnung.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-4a3fa27c": {
+   "s": "na",
+   "n": "toter Code bestätigt: jede ausgewählte Datei erhöht success, failed oder skipped, leere Auswahl kehrt vorher zurück → else-Zweig nie erreicht. Flutter identisch (files_page.dart:856-858).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-e2156c4e": {
+   "s": "na",
+   "n": "toter Code bestätigt: createFolder nur aus dem Menüpunkt unter @if (canEditEntries) (files.page.html:46). Flutter: Menüpunkt nur bei canEdit, Guard in _createFolder (442-445) ebenso unerreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-7acc9af8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:455"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-571055f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:457-458"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-c04ec50c": {
+   "s": "na",
+   "n": "toter Code bestätigt: Umbenennen/Verschieben/Löschen nur unter @if (canEditEntries) gerendert (files.page.html:234-251). Flutter baut diese Aktionen ebenfalls nur bei canEdit (files_page.dart:915-940).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-128218bd": {
+   "s": "na",
+   "n": "toter Code bestätigt: deleteEntry nur über handleEntryAction nach canEditEntries-Prüfung aus dem nur bei canEditEntries sichtbaren Menüpunkt. Flutter: Löschen nur bei canEdit im Aktionsmenü, kein eigener Guard nötig.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-1b4d7bd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:650-658",
+    "lib/features/settings/presentation/pages/files_page.dart:915-940"
+   ],
+   "n": "„Ordner löschen?“/„Datei löschen?“, „Möchtest du {name} wirklich löschen?“, Abbrechen / Löschen (rot); nur Admin/Verantwortlich (Aktionsmenü unter canEdit). Fehlendes Lade-Overlay siehe loading-cdff1a47.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-f1cb9a95": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:665"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-1a9b9314": {
+   "s": "na",
+   "n": "toter Code bestätigt: renameEntry nur über handleEntryAction aus dem Menüpunkt unter @if (canEditEntries) (files.page.html:234-237); Flutter zeigt Umbenennen ebenfalls nur bei canEdit.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-1d01aef6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:474"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-5dc634c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:477"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-f9f7cf03": {
+   "s": "na",
+   "n": "toter Code bestätigt: startSelection nur von Buttons/Menüpunkten unter @if (canEditEntries) (files.page.html:25-27, 51, 243). Flutter: Auswahl-Buttons nur bei canEdit (files_page.dart:1035, 1057, 928), Guard 508-511 unerreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#alert-7aee8034": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:558-569"
+   ],
+   "n": "Plural-Header/-Text, Abbrechen / Löschen (rot); Auswahlmodus nur für canEditFiles, Methode prüft canEdit zusätzlich wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-9a00fe11": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:572-580",
+    "lib/features/settings/presentation/pages/files_page.dart:484-496"
+   ],
+   "n": "Blockierender Spinner (PopScope, nicht wegtippbar) während des Löschens.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-97edb5ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:583-584"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-d5528849": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:585-586"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-8aa45268": {
+   "s": "na",
+   "n": "toter Code bestätigt: moveEntries nur aus dem Menüpunkt unter @if (canEditEntries) oder dem Auswahlmodus (nur nach startSelection mit canEditEntries). Flutter gleich, Guard 597-599 unerreichbar.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#loading-90e0e43b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:615-630",
+    "lib/features/settings/presentation/pages/files_page.dart:484-496"
+   ],
+   "n": "Blockierender Spinner während Zielprüfung und Verschieben.",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-2e9bf690": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:631-633"
+   ],
+   "n": "Fehler beim Lesen des Zielordners → roter Toast, nichts verschoben (Ausnahme läuft durch _withLoading).",
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-264882fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:637-638"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/files/files.page#toast-e09b9e9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart:639-640"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

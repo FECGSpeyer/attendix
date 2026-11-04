@@ -1,0 +1,18 @@
+{
+ "batch": "zz-verify3-native",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "x-3fa2a4cf82": {
+   "s": "ok",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:12",
+    "android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt:4",
+    "android/app/build.gradle.kts:35"
+   ],
+   "n": "Zurückgenommen: auf b218510 behoben. Manifest android:name=\"io.stephanus.attendix.MainActivity\", Klasse in package io.stephanus.attendix, applicationId io.stephanus.attendix → Launcher-Komponente io.stephanus.attendix/io.stephanus.attendix.MainActivity wie Ionic (AndroidManifest.xml:14); Homescreen-Verknüpfungen bleiben. Nur liveplan-Klassen liegen noch unter de.attendix.attendix (nicht Launcher-relevant). launchMode singleTop ist eigener Befund (x-3340d46ef9).",
+   "v": "korrigiert"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,126 @@
+{
+ "batch": "zz-verify3-b05-overview",
+ "ionic": "9f9b82af",
+ "flutter": "b218510",
+ "items": {
+  "dashboard/dashboard.page#media-7b4befe3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:126",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:29"
+   ],
+   "n": "Liniendiagramm 'Events pro Tag': jeder Tag des Zeitraums (fehlende = 0), Label dd.MM., gefüllt, Kurve 0.3, Farbe #3880ff, ohne Legende; nur bei Daten (total_events > 0) – wie Ionic."
+  },
+  "dashboard/dashboard.page#media-250b994d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:176",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:299"
+   ],
+   "n": "Ionic Chart.js-Querbalken (indexAxis y) / Flutter eigene Querbalken mit Eventname links und Anzahl rechts; Top 10 nach Anzahl, gleiche Palette."
+  },
+  "dashboard/dashboard.page#media-236b1c5b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:181"
+   ],
+   "n": "Senkrechte Balken je Instanz mit Label '#<tenant_id>', Top 10, gleiche Palette; Höhe 280 statt 360 px."
+  },
+  "dashboard/dashboard.page#media-22eec441": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:220",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:353"
+   ],
+   "n": "Ring der Top-10-Events in Palettenfarben; Legende rechts 'Name (Anzahl)' statt Chart.js-Legende oben + Hover-Tooltip."
+  },
+  "dashboard/dashboard.page#media-a7b544e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:228",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:20"
+   ],
+   "n": "Ring nach device_type mit Farben ios/android/web/unknown (#a2aaad/#3ddc84/#3880ff/#c9cbcf, sonst #999) wie Ionic; Legende 'Typ (Anzahl)'."
+  },
+  "export/export.page#effect-6347ac25": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:436",
+    "lib/features/export/presentation/pages/export_page.dart:442",
+    "lib/features/export/presentation/pages/export_page.dart:510",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Datei '{Kurzname}_Spielerliste_Stand_{Datum}.xlsx', ein Blatt 'Anwesenheit' wie Ionic. Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser (iOS/Android, PWA) Web-Share-Sheet, Desktop Download / Flutter NativeFileService.saveBytes: nativ Cache + OpenFilex (Cache-Name ohne Punkte/Umlaute, z. B. '…_Stand_04_11_2026.xlsx'), im Web immer Anker-Download über Printing.sharePdf (Blob-Typ application/pdf) – kein Teilen-Dialog im mobilen Browser."
+  },
+  "export/export.page#effect-7662bf5a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:483",
+    "lib/features/export/presentation/pages/export_page.dart:491",
+    "lib/features/export/presentation/pages/export_page.dart:510",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Datei '{Kurzname}_Anwesenheit_Stand_{Datum}.xlsx', ein Blatt 'Anwesenheit' wie Ionic. Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser (iOS/Android, PWA) Web-Share-Sheet, Desktop Download / Flutter NativeFileService.saveBytes: nativ Cache + OpenFilex (Cache-Name ohne Punkte/Umlaute, z. B. '…_Stand_04_11_2026.xlsx'), im Web immer Anker-Download über Printing.sharePdf (Blob-Typ application/pdf) – kein Teilen-Dialog im mobilen Browser."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-4bf876ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:169",
+    "lib/core/utils/dashboard_logic.dart:149"
+   ],
+   "n": "Kachel 'Abgemeldet' + Zeilenumbruch '{n} Schicht', wenn entschuldigt/verspätet entschuldigt mit Notiz 'Schichtbedingt'/'Arbeitsbedingt' > 0 – gleich."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a4c222ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:267"
+   ],
+   "n": "Badge im Abmeldungen-Sheet 'Entschuldigt · Schicht' bzw. '<verspätet entsch.> · Schicht' bei Schicht-Notiz – gleich."
+  },
+  "messages/message-compose/message-compose.component#alert-5fc2a15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:213",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:223"
+   ],
+   "v": "bestätigt",
+   "n": "'Mitteilung senden?' / '„{Titel}“ geht an N Personen ({n} per Push/Telegram, {n} per E-Mail). Das kann nicht rückgängig gemacht werden.', 'Abbrechen' / 'Senden' → senden; nur bei canSend (gleiche Bedingungen). Rollen: Verfassen nur Admin/Verantwortlich – Ionic: Einstellungen 'Mitteilungen' bei isAdmin && !sp, Sidepanel isAdmin, Termin-Panel 'Unentschuldigte anschreiben' bei isManager / Flutter: Route '/settings/messages' _isAdminOrResponsible, Einstellungen isAdmin && !sp, nav_items isAdmin, AutoMessagePanel nur admin/responsible. Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber erreichen den Dialog in beiden nicht."
+  },
+  "messages/message-compose/message-compose.component#loading-a5f8925e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:518",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:306"
+   ],
+   "v": "bestätigt",
+   "n": "Overlay mit Spinner 'Wird versendet …' über dem Inhalt, 'Abbrechen' währenddessen deaktiviert. Erreichbarkeit nur Admin/Verantwortlich wie Ionic."
+  },
+  "messages/message-compose/message-compose.component#toast-56426039": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:269"
+   ],
+   "v": "bestätigt",
+   "n": "Erfolg-Toast 'Mitteilung wird versendet', danach Dialog schließt mit Id. Nur Admin/Verantwortlich wie Ionic."
+  },
+  "messages/message-compose/message-compose.component#toast-9c6ed681": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:264"
+   ],
+   "v": "bestätigt",
+   "n": "Fehler-Toast 'Fehler beim Versenden, bitte versuche es erneut.', Dialog bleibt offen. Nur Admin/Verantwortlich wie Ionic."
+  },
+  "messages/message-compose/message-compose.component#text-22d7bff9": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:572",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:587"
+   ],
+   "n": "'<b>N Person(en)</b> erhalten diese Mitteilung.' mit fettem Zahlenteil; nur wenn Zähler geladen und kein Fehler – gleich."
+  }
+ },
+ "extra": []
+}

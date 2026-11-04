@@ -1,0 +1,189 @@
+{
+  "batch": "zz-verify3-b32-songs",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "songs/songs.page#alert-4b046a4c": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:27",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:85",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:147",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:171",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:466"
+      ],
+      "n": "Druck-Knopf nur Admin/Verantwortlich (Ionic isAdmin Rolle 1/5, Flutter canPrint = isAdmin; Freigabe-Seite siehe action-3f72e6db). „Gruppe wählen“, Radio-Liste aller Nicht-Hauptgruppen, „Abbrechen“/„Noten drucken“; ohne Auswahl Warn-Toast, Dialog bleibt offen; Datei je Gruppe, im Chor Fallback „Chor (alle)“; Noten_<Gruppe>_<yyyy-MM-dd>.pdf. Flutter nutzt die geladenen aktuellen Werke (Ionic lädt neu) und schließt den Dialog vor dem Druck.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#toast-539860db": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:170",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:171"
+      ],
+      "n": "Warn-Toast „Bitte eine Gruppe auswählen.“, Dialog bleibt offen; nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#toast-cb7ca862": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:53",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:54"
+      ],
+      "n": "Warn-Toast „Keine Noten für diese Gruppe in den aktuellen Werken gefunden.“; nur Admin/Verantwortlich.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#effect-97c69a71": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/data/song_print_service.dart:192",
+        "lib/features/songs/data/song_print_service.dart:193",
+        "lib/core/services/native/native_file_service.dart:35",
+        "lib/core/services/native/native_file_service.dart:167"
+      ],
+      "n": "Menüpunkt für alle Rollen und auf der Freigabe-Seite (beide); Dateiname <Kurzname>_Werkverzeichnis_<dd-MM-yyyy>.pdf gleich; nativ Datei in Cache + Viewer, Desktop-Browser Download wie Ionic. Ionic downloadFileNative im mobilen Browser (iOS/Android, auch PWA) → Web-Share-Sheet / Flutter → Anker-Download (Printing.sharePdf web, printing-5.15.1 printing_web.dart:249-277). Erstprüfer übersah den Mobil-Web-Zweig; wie export effect-b206f4b4.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#nav-bb5caed5": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/songs_list_page.dart:111",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:113",
+        "lib/features/songs/presentation/widgets/current_songs_sheet.dart:114"
+      ],
+      "n": "Auf der Freigabe-Seite: Sheet schließen und push /<sharing_id>/<songId> wie Ionic; sonst /settings/songs/<id> bzw. im Werke-Tab /songs-tab/<id> (siehe action-cda4f15d).",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#toast-1a24aa1c": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:187",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:190",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Für Admin/Verantwortlich gleich (grüner Toast „Kategorie hinzugefügt“ nach erfolgreichem Insert). Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Insert von Nicht-Admins scheitert ohne Toast.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#toast-b63ac699": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:183",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:184",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Roter Toast „Der Name der Kategorie darf nicht leer sein“ nach leerem Namen (Dialog schließt) für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#alert-5ae7adcc": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:195",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:202",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:233",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Titel „Kategorie bearbeiten“, vorbelegter Name, Platzhalter, „Abbrechen“/„Speichern“, getrimmter Name für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Update von Nicht-Admins wird von RLS still verworfen.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#toast-5b825f48": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:233",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:236",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Für Admin/Verantwortlich gleich (grün „Kategorie gespeichert“). Ionic meldet den Toast auch Nicht-Admins, obwohl RLS das Update still verwirft (0 Zeilen, kein Fehler), und bei Fehlern (updateSongCategory ohne Fehlerprüfung) / Flutter: nur Admin/Verantwortlich, Toast nur bei Erfolg. Ursache wie action-0dba564e.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#toast-0b939d73": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:228",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:229",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Roter Toast „Der Name der Kategorie darf nicht leer sein“ beim Bearbeiten mit leerem Namen für Admin/Verantwortlich gleich. Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#alert-aba0e0bf": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:240",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:245",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:264",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: „Kategorie löschen“, Text, „Abbrechen“/„Löschen“ für Admin/Verantwortlich gleich (Löschen in Flutter rot). Ionic: Menüpunkt „Werk-Kategorien“ (songs.page.html:23) ohne Rollenprüfung → auch Helfer, Stimmführer, Spieler, Eltern, Beobachter (und die Freigabe-Seite) öffnen Sheet und Dialoge; RLS admins_manage_song_categories erlaubt Schreiben nur Rolle 1/5 / Flutter: Sheet nur für Admin/Verantwortlich, nicht öffentlich (songs_list_page.dart:290). Gleiche Ursache wie action-0dba564e. Ionic-Delete von Nicht-Admins wird von RLS still verworfen.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#toast-e880762a": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:264",
+        "lib/features/songs/presentation/widgets/song_categories_sheet.dart:267",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:290"
+      ],
+      "n": "Flutter besser: Für Admin/Verantwortlich gleich (grün „Kategorie gelöscht“). Ionic meldet den Toast auch Nicht-Admins, obwohl RLS nichts löscht, und bei Fehlern (removeSongCategory ohne Fehlerprüfung) / Flutter: nur Admin/Verantwortlich, Toast nur bei Erfolg. Ursache wie action-0dba564e.",
+      "v": "korrigiert"
+    },
+    "songs/songs.page#action-cfab610a": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/songs_list_page.dart:243",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:299",
+        "lib/features/songs/presentation/pages/songs_list_page.dart:132"
+      ],
+      "n": "Nur wenn song_sharing_id gesetzt (Ionic hasSongSharing aus Freigabe-Tenant bzw. aktuellem Tenant, Flutter songSharingId aus Tenant-Einstellungen bzw. Freigabe-ID), für alle Rollen und auf der Freigabe-Seite; Icon Link, „Link kopieren“, kopiert https://attendix.de/<id>, grüner Toast „Der Link wurde in die Zwischenablage kopiert“.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#field-8b94b50e": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:28",
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:74",
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:84",
+        "lib/data/models/song/song_filter.dart:19"
+      ],
+      "n": "Für alle Rollen: Nummer ↑/↓, Name ↑/↓, „Zuletzt gespielt“ (Orchester) bzw. „Zuletzt gesungen“ ↑/↓ nur nicht-öffentlich, Default Nummer ↑, je Tenant gespeichert.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#field-6acb3577": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:88",
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:97"
+      ],
+      "n": "Für alle Rollen: Alle/1 - Leicht/2 - Mittel/3 - Schwer, Default Alle, nicht wiederhergestellt (wie Ionic).",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#field-4e8c4d24": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:100",
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:105",
+        "lib/core/providers/song_filter_providers.dart:172"
+      ],
+      "n": "Für alle Rollen: Schalter „Chor & Orchester“, Logik (mit Solo zusammen UND) und Speicherung je Tenant gleich.",
+      "v": "bestätigt"
+    },
+    "songs/songs.page#field-2c010447": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:107",
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart:112",
+        "lib/core/providers/song_filter_providers.dart:172"
+      ],
+      "n": "Für alle Rollen: Schalter „Solo“, Logik und Speicherung je Tenant gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

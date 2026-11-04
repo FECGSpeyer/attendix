@@ -1,13 +1,25 @@
 # Fix-Paket „uebersicht“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 15
+## Angleichen (hoch/mittel): 20
 
 - [ ] **hoch** `history/history.page` `modal-0bbf542e` [history/history.page.html:93](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L93) (2. Prüfung: bestätigt)
   Sheet (70 %) per FAB wie Ionic. Aber: _showAddDialog liest planSongsProviderHistory nur per ref.read (einzige Verwendung, nirgends gewatcht); der FutureProvider ist beim ersten Lesen AsyncLoading → songs leer → Warn-Toast 'Keine Werke gefunden', das Sheet öffnet nicht. Erst ein weiterer Tipp nach dem Laden (bzw. nach Instanzwechsel erneut) funktioniert. Ionic lädt die Werke beim Seitenstart und öffnet sofort, mit dem ersten Werk vorausgewählt (Flutter: keine Vorauswahl).
   Flutter: lib/features/history/presentation/pages/history_page.dart:223, lib/features/history/presentation/pages/history_page.dart:260, lib/features/history/presentation/pages/history_page.dart:280, lib/core/providers/history_providers.dart:72
+- [ ] **hoch** `stats/stats.page` `media-57ebfc11` [stats/stats.page.html:134](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L134)
+  Daten gleich (aktive Personen 'Vorname N.', Anwesend+Verspätet+verspätet entsch., Top 20). Ionic: waagrechte Balken mit Namen an jedem Balken, X 0–100 '%', Titel 'Top 20 - Anwesenheits-Elite 🏆' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:831, lib/features/statistics/presentation/pages/statistics_page.dart:877, lib/core/providers/statistics_providers.dart:391
+- [ ] **hoch** `stats/stats.page` `media-315d630a` [stats/stats.page.html:149](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L149)
+  Daten gleich (Quote je Gruppe über aktive Personen, absteigend). Ionic: waagrechte Balken mit Gruppennamen, X 0–100 '%', Titel 'Anwesenheitsquote nach Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:741, lib/features/statistics/presentation/pages/statistics_page.dart:787, lib/core/providers/statistics_providers.dart:359
+- [ ] **hoch** `stats/stats.page` `media-42266499` [stats/stats.page.html:164](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L164)
+  Daten gleich (Status Abwesend je aktiver Person, Top 15). Ionic: waagrechte Balken mit Namen, Titel 'Unentschuldigte Abwesenheiten' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen. Bei Y-Max = max+2 stehen die Namen an den Werten 0, 1, 2 … und wirken wie Achsenwerte.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:1104, lib/features/statistics/presentation/pages/statistics_page.dart:1153, lib/core/providers/statistics_providers.dart:443
+- [ ] **hoch** `stats/stats.page` `media-9766bdb9` [stats/stats.page.html:225](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L225)
+  Daten gleich ('Gruppe (Anzahl)', Ø-Alter gerundet, absteigend). Ionic: waagrechte Balken mit Gruppenlabel, X-Achsentitel 'Jahre', Titel 'Durchschnittsalter pro Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:1012, lib/features/statistics/presentation/pages/statistics_page.dart:1060, lib/core/providers/statistics_providers.dart:550
 - [ ] **hoch** `stats/stats.page` `x-6a02894975` **Balkendiagramme ohne zuordenbare Namen** [src/app/stats/stats.page.ts:306](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.ts#L306) (2. Prüfung: bestätigt)
   Real: fl_chart 0.69.2 (pub-cache) hat keine Drehung, BarChart zeichnet senkrechte Balken, bottomTitles sind aus. leftTitles laufen über die Y-Achse (side_titles_widget.dart: iterateThroughAxis minY..maxY), getTitlesWidget nimmt value.toInt() als Index → data[0] bei 0, data[20] bei 20 … Namen stehen an Wert-Teilstrichen statt an den Balken, meist nur der erste sichtbar. Betrifft Top 20, pro Instrument, Unentschuldigte, Ø-Alter. Ionic: horizontale Balken mit Namen je Balken. Zuordnung nur per Tooltip → hoch bestätigt.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:737-803, lib/features/statistics/presentation/pages/statistics_page.dart:827-893, lib/features/statistics/presentation/pages/statistics_page.dart:1008-1075, lib/features/statistics/presentation/pages/statistics_page.dart:1100-1168
@@ -44,6 +56,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `notifications/notifications.page` `field-05b9f833` [notifications/notifications.page.html:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.html#L53) (2. Prüfung: bestätigt)
   Sichtbarkeit (native App mit Live-Activity-Plugin; Ionic hat das Plugin auch unter Android) und Wirkung gleich. Helfertext: Ionic iOS '…auf dem Sperrbildschirm und in der Dynamic Island.', Android '…auf dem Sperrbildschirm.' / Flutter: Bedingung isSupportedPlatform ist auf iOS UND Android true → Android zeigt den iOS-Text mit Dynamic Island.
   Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:223, lib/core/services/live_activity_service.dart:149
+- [ ] **mittel** `stats/stats.page` `media-ac43f03a` [stats/stats.page.html:104](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L104)
+  Daten gleich (letzte 20 Termine nach Datum, Prozent, Label dd.MM., Y 0–100, gefüllte Linie). Ionic: Diagrammtitel 'Anwesenheitsverlauf (letzte 20 Termine)', Y-Achsentitel '%', Tooltip 'Anwesenheit %: x' / Flutter: kein Diagrammtitel – Hinweis 'letzte 20 Termine' fehlt; Y-Beschriftung '0%…100%'. Ohne Termine im Zeitraum Ionic leeres Diagramm, Flutter Leerzustand statt Abschnitt.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:516, lib/core/providers/statistics_providers.dart:323
 - [ ] **mittel** `stats/stats.page` `field-2d5da58e` [stats/stats.page.html:309](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L309) (2. Prüfung: bestätigt)
   Ionic: ion-select multiple interface='modal' (Auswahlliste als Modal, Übernahme beim Schließen, kein Abbrechen) / Flutter: AlertDialog mit Checkboxen und 'Abbrechen'/'OK'. Anzeige der gewählten Namen und Filterwirkung (Personen und deren Instanzen nur aus der Auswahl) gleich.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:1254, lib/features/statistics/presentation/pages/statistics_page.dart:1307
@@ -93,14 +108,20 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher, nur erneutes Öffnen.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:163
 
-## Kleinigkeiten (niedrig): 34
+## Kleinigkeiten (niedrig): 39
 
 - [ ] **niedrig** `export/export.page` `alert-ed41a2f2` [export/export.page.ts:159](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L159)
   Header 'Feld hinzufügen', Buttons Abbrechen/Hinzufügen gleich. Ionic: Textfeld ohne Label, leere Eingabe fügt eine leere Spalte hinzu / Flutter: Feld mit Label 'Spaltenname' (Flutter-Text), leere Eingabe wird ignoriert.
   Flutter: lib/features/export/presentation/pages/export_page.dart:315
+- [ ] **niedrig** `export/export.page` `effect-6347ac25` [export/export.page.ts:204](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L204)
+  Datei '{Kurzname}_Spielerliste_Stand_{Datum}.xlsx', ein Blatt 'Anwesenheit' wie Ionic. Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser (iOS/Android, PWA) Web-Share-Sheet, Desktop Download / Flutter NativeFileService.saveBytes: nativ Cache + OpenFilex (Cache-Name ohne Punkte/Umlaute, z. B. '…_Stand_04_11_2026.xlsx'), im Web immer Anker-Download über Printing.sharePdf (Blob-Typ application/pdf) – kein Teilen-Dialog im mobilen Browser.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:436, lib/features/export/presentation/pages/export_page.dart:442, lib/features/export/presentation/pages/export_page.dart:510, lib/core/services/native/native_file_service.dart:167
 - [ ] **niedrig** `export/export.page` `effect-b5cfc616` [export/export.page.ts:278](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L278)
   Nativ (iOS/Android): Datei in Cache schreiben und öffnen wie Ionic; Desktop-Browser: Download wie Ionic. Ionic mobiler Browser (iOS/Android-PWA): Web-Share-Sheet (navigator.share) / Flutter: Printing.sharePdf → im Web nur Anchor-Download, kein Teilen-Dialog.
   Flutter: lib/core/services/export_service.dart:88, lib/core/services/native/native_file_service.dart:167
+- [ ] **niedrig** `export/export.page` `effect-7662bf5a` [export/export.page.ts:335](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L335)
+  Datei '{Kurzname}_Anwesenheit_Stand_{Datum}.xlsx', ein Blatt 'Anwesenheit' wie Ionic. Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser (iOS/Android, PWA) Web-Share-Sheet, Desktop Download / Flutter NativeFileService.saveBytes: nativ Cache + OpenFilex (Cache-Name ohne Punkte/Umlaute, z. B. '…_Stand_04_11_2026.xlsx'), im Web immer Anker-Download über Printing.sharePdf (Blob-Typ application/pdf) – kein Teilen-Dialog im mobilen Browser.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:483, lib/features/export/presentation/pages/export_page.dart:491, lib/features/export/presentation/pages/export_page.dart:510, lib/core/services/native/native_file_service.dart:167
 - [ ] **niedrig** `export/export.page` `effect-b206f4b4` [export/export.page.ts:433](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L433)
   Wie beim Spieler-PDF: Ionic mobiler Browser → Web-Share-Sheet / Flutter → Anchor-Download (Printing.sharePdf web); nativ und Desktop gleich.
   Flutter: lib/core/services/export_service.dart:178, lib/core/services/native/native_file_service.dart:167
@@ -167,6 +188,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `stats/stats.page` `text-a54abdb5` [stats/stats.page.html:112](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L112)
   Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:238, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `media-542fed8c` [stats/stats.page.html:119](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L119)
+  Zählung gleich (Verspätet inkl. verspätet entschuldigt, gerundete Prozente). Ionic: voller Kreis, Titel 'Statusverteilung (in %)', Legende oben 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' / Flutter: Ring mit Prozent auf den Segmenten, Legende rechts nur Statusnamen, kein Titel.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:603, lib/features/statistics/presentation/pages/statistics_page.dart:692
 - [ ] **niedrig** `stats/stats.page` `text-f6dad6f9` [stats/stats.page.html:127](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L127)
   Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:240, lib/features/statistics/presentation/pages/statistics_page.dart:245
@@ -176,6 +200,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `stats/stats.page` `text-5acf85be` [stats/stats.page.html:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L157)
   Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:244, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `media-c58a7f02` [stats/stats.page.html:210](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L210)
+  Senkrechte Balken je 3-Jahres-Gruppe 'x-y', Y in 1er-Schritten, nur aktive Personen mit Geburtstag – wie Ionic. Ionic: Titel 'Altersverteilung 🎂' im Diagramm, ohne Geburtstage leeres Diagramm / Flutter: nur gleichlautende Abschnittsüberschrift, Platzhalter 'Keine Geburtsdaten vorhanden'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:921, lib/core/providers/statistics_providers.dart:500
+- [ ] **niedrig** `stats/stats.page` `media-50089e70` [stats/stats.page.html:266](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L266)
+  Ring mit Feldname als Titel, Farben je Option, Zeilenliste darunter gleich. Ionic: Chart.js-Legende 'Option (x%)' über dem Ring, Tooltip 'N Personen (x%)' / Flutter: keine Legende am Ring, Prozent auf Segmenten ab 8 %, kein Tooltip.
+  Flutter: lib/features/statistics/presentation/widgets/field_stats_section.dart:110, lib/features/statistics/presentation/widgets/field_stats_section.dart:170
 - [ ] **niedrig** `export/export.page` `x-0db4aad92e` **Hinweis PDF-Limit nur in Flutter** [src/app/export/export.page.html:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.html#L65)
   Ionic: kein Hinweis / Flutter: bei Anwesenheit+PDF zusätzlicher Text 'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.'
   Flutter: lib/features/export/presentation/pages/export_page.dart:288

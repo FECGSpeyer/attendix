@@ -1,9 +1,9 @@
 # Fix-Paket „einstellungen“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 87
+## Angleichen (hoch/mittel): 90
 
 - [ ] **hoch** `settings/general/extra-fields/extra-fields.page` `alert-89775995` [settings/general/extra-fields/extra-fields.page.ts:235](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/extra-fields/extra-fields.page.ts#L235) (2. Prüfung: bestätigt)
   Dialog (Titel 'Werte zurücksetzen?', Text mit Name, Abbrechen/Zurücksetzen) und Ablauf gleich. Anderer geschriebener Wert: BFECG-Gemeinde-Feld aus Flutter (defaultValue null, Controller '') → Flutter setzt alle Personen auf '' / Ionic auf erste Gemeinde (churches[0].id). In Ionic angelegte Textfelder mit defaultValue false → Flutter schreibt String 'false' (in Personen sichtbar) / Ionic false. Fehler: Ionic zählt nur erfolgreiche Updates, Flutter bricht beim ersten Fehler ab.
@@ -26,6 +26,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **hoch** `settings/general/general.page` `field-7d3ff9d8` [settings/general/general.page.html:278](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/general.page.html#L278) (2. Prüfung: bestätigt)
   Ionic: Optionen Anwesend, Abwesend, Entschuldigt, Verspätet, Verspätet (entsch.), Standard leer, Label 'Status' / Flutter: nur Abwesend, Verspätet, Verspätet (entsch.) – Regeln auf Anwesend/Entschuldigt nicht anlegbar; 'Abwesend' vorausgewählt; Label 'Status (zählt als kritisch)'; Chips statt Select.
   Flutter: lib/features/settings/presentation/widgets/critical_rule_sheet.dart:198-227, lib/features/settings/presentation/widgets/critical_rule_sheet.dart:67
+- [ ] **hoch** `settings/general/shifts/shift/shift.page` `action-34770ae6` [settings/general/shifts/shift/shift.page.html:11](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shift/shift.page.html#L11) (2. Prüfung: korrigiert)
+  Erstprüfung übersah den Filter. Ionic: linkedTenants = getTenantsFromUser → nur Instanzen derselben Organisation (getLinkedTenants über tenant_group_tenants) und nur mit eigener Rolle ≠ Beobachter; Button nur dann. Flutter: userTenantsProvider minus aktuelle Instanz – alle Instanzen des Nutzers, ohne Organisations- und Rollenfilter. Folge: Admin/Verantwortlich sieht „Kopieren“ auch ohne verknüpfte Instanz und kann Schichtpläne (inkl. Zuordnungen) in fremde, nicht zur Organisation gehörende Instanzen schreiben; Instanzen mit Rolle Beobachter erscheinen als Ziel (Schreiben dort scheitert per RLS).
+  Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:114, lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:81, lib/core/providers/tenant_providers.dart:176
 - [ ] **hoch** `settings/general/type/type.page` `alert-57a11ee0` [settings/general/type/type.page.ts:240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L240) (2. Prüfung: bestätigt)
   Dialog gleich (Titel „Anwesenheitstyp löschen“, Text mit „{name}“ inkl. „Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht“, Abbrechen/Löschen; Löschen nicht rot/destruktiv). Wirkung: Ionic löscht attendance_types per id ohne Vorprüfung / Flutter: deleteType zählt Termine mit type_id und bricht bei >0 ab → nur Toast „Fehler beim Löschen des Anwesenheitstyps“; ein benutzter Typ ist in Flutter nicht löschbar, obwohl der Dialog das Mitlöschen ankündigt.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1540-1565, lib/data/repositories/attendance_type_repository.dart:174-198
@@ -251,6 +254,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `settings/settings/settings.page` `text-87e51c97` [settings/settings/settings.page.html:780](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.html#L780) (2. Prüfung: bestätigt)
   Ionic: Badge mit package.json-Version (4.19.7) / Flutter: AppConstants.appVersion (0.38.1) – Nutzer sehen eine niedrigere, andere Versionsnummer.
   Flutter: lib/features/settings/presentation/pages/settings_page.dart:549, lib/core/constants/app_constants.dart:10
+- [ ] **mittel** `settings/settings/settings.page` `text-7dea9c51` [settings/settings/settings.page.html:912](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.html#L912)
+  Format gleich: Listenkopf 'Version x (Datum)'. Daten: Ionic version-history.json (Ionic-Versionen bis 4.19.7) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.39.1 …, andere Einträge) – gleicher Befund wie text-8938a6a0.
+  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:165, lib/shared/widgets/sheets/version_history_sheet.dart:166, assets/version_history.json:1
+- [ ] **mittel** `settings/settings/settings.page` `text-b8c80f4b` [settings/settings/settings.page.html:914](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.html#L914)
+  Fallback 'Version x' ohne Datum vorhanden. Ionic zeigt ihn für alte Einträge ohne Datum (≤ 3.5.0) / in der Flutter-Historie hat jeder Eintrag ein Datum → erscheint nie. Ursache wie text-7dea9c51 (eigene Flutter-Historie).
+  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:167, assets/version_history.json:1
 - [ ] **mittel** `settings/settings/settings.page` `text-8938a6a0` [settings/settings/settings.page.html:921](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.html#L921) (2. Prüfung: bestätigt)
   Gleiche Darstellung ('Version x (Datum)' + je Änderung eine Zeile). Inhalt: Ionic version-history.json (4.19.x-Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.38.x, andere Einträge).
   Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:37, lib/shared/widgets/sheets/version_history_sheet.dart:176, lib/shared/widgets/sheets/version_history_sheet.dart:178, assets/version_history.json:1
@@ -261,7 +270,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Echt, Grenzfall: Ionic lädt je Mitglied alle person_attendances (der .gt auf attendance.date ohne !inner leert nur das Embed, Filter dann in JS) – Limit 1000 gilt pro Person / Flutter: eine Abfrage für ALLE Mitglieder, nur Status 2/4/5, ohne Datumsfilter, ohne order, ohne fetchAllPages; ab > 1000 Abwesenheitszeilen der ganzen Stimme kappt PostgREST willkürlich, kommende Abwesenheiten können fehlen. Nebenbei: Ionic blendet für Stimmführer archivierte Termine aus, Flutter nicht.
   Flutter: lib/data/repositories/attendance_repository.dart:348, lib/data/repositories/attendance_repository.dart:357, lib/features/voice_leader/data/providers/voice_leader_providers.dart:80
 
-## Flutter besser – Leon entscheidet: 31
+## Flutter besser – Leon entscheidet: 34
 
 - [ ] **niedrig** `settings/auto-messages/rule/auto-message-rule.page` `toast-31bb7a6e` [settings/auto-messages/rule/auto-message-rule.page.ts:95](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/auto-messages/rule/auto-message-rule.page.ts#L95)
   Flutter besser: Laden der Regel scheitert → gleicher roter Toast. Ionic zeigt den Toast auch, wenn nur der Verlauf (loadHistory) scheitert, und dann im Verlauf 0/0/0 + "Diese Regel hat noch nichts verschickt." / Flutter: kein Toast, im Tab Verlauf Hinweis "Automatische Nachrichten konnten nicht geladen werden".
@@ -290,6 +299,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/shifts/shift/shift.page` `action-02eec1c5` [settings/general/shifts/shift/shift.page.html:151](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/shifts/shift/shift.page.html#L151)
   Flutter besser: Ionic-Berechnung läuft in eine Endlosschleife, wenn der Plan feste Schichten aber keine Definition hat (currentDate.add(0)); Flutter zeigt eine leere Liste. Sonst gleich (Start am Anfangsdatum).
   Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:627, lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44
+- [ ] **niedrig** `settings/general/type/type.page` `toast-28259494` [settings/general/type/type.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L254) (2. Prüfung: korrigiert)
+  Flutter besser: Demo-Konto – Ionic: checkDemoRestriction zeigt den Demo-Hinweis und danach zusätzlich „Fehler beim Löschen des Anwesenheitstyps“ (rot, überlagert ihn) / Flutter: ensureNotDemo zeigt nur den Demo-Hinweis, der Fehler-Toast wird 4 s unterdrückt. Sonst gleicher Text/Farbe bei Fehlern; zusätzlich bei verwendeten Typen (siehe alert-57a11ee0, hoch). Rollen wie Ionic (nur Admin/Verantwortlich).
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1557-1563, lib/core/utils/toast_helper.dart:28-31, lib/data/repositories/attendance_type_repository.dart:175
 - [ ] **niedrig** `settings/handover/handover.page` `action-0467769e` [settings/handover/handover.page.html:143](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/handover/handover.page.html#L143)
   Flutter besser: Ionic aktiviert den FAB, sobald irgendeine Person ausgewählt ist (auch wenn sie durch einen späteren Filter ausgeblendet ist) und navigiert dann mit leerer Personenliste / Flutter aktiviert nur, wenn mindestens eine ausgewählte Person im gefilterten Ergebnis ist.
   Flutter: lib/features/settings/presentation/pages/handover_page.dart:122, lib/features/settings/presentation/pages/handover_page.dart:132
@@ -302,6 +314,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/role-permissions/role-permissions.page` `alert-c705cf47` [settings/role-permissions/role-permissions.page.ts:93](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/role-permissions/role-permissions.page.ts#L93) (2. Prüfung: bestätigt)
   Flutter besser: Titel „Ungespeicherte Änderungen“, Text und Buttons (Abbrechen / Verwerfen rot / Speichern) gleich. Ionic: bei „Speichern“ wird die Seite auch verlassen, wenn das Speichern fehlschlägt (save() fängt den Fehler, danach resolve(true)) / Flutter bleibt bei Fehler auf der Seite.
   Flutter: lib/features/settings/presentation/pages/role_permissions_page.dart:96-122, lib/features/settings/presentation/pages/role_permissions_page.dart:146-150
+- [ ] **niedrig** `settings/settings/settings.page` `toast-05890c58` [settings/settings/settings.page.ts:550](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L550) (2. Prüfung: korrigiert)
+  Flutter besser: Erfolgs-Toast gleich ('Die Instanz „…“ wurde als Favorit gesetzt/entfernt.', success, 3 s; Wischaktion für alle Rollen in beiden). Schlägt das Speichern fehl, zeigt nur Flutter 'Fehler beim Speichern' (Ionic schließt nur das Loading). Erster Prüfer führte das als ok mit Notiz – laut Brief diff/niedrig.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:241, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:250, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:254
+- [ ] **niedrig** `settings/settings/settings.page` `toast-ab89dfb2` [settings/settings/settings.page.ts:808](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L808) (2. Prüfung: korrigiert)
+  Flutter besser: gleicher Erfolgs-Toast 'Der Link wurde in die Zwischenablage kopiert'. Ionic ruft clipboard.writeText ohne await auf und zeigt den Erfolg auch, wenn das Kopieren scheitert / Flutter wartet und zeigt dann stattdessen 'Link konnte nicht kopiert werden'. Erster Prüfer: ok ohne diesen Unterschied.
+  Flutter: lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:133, lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:136, lib/features/settings/presentation/widgets/calendar_subscription_dialog.dart:141
 - [ ] **niedrig** `settings/settings/settings.page` `toast-453ee9ac` [settings/settings/settings.page.ts:964](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L964) (2. Prüfung: bestätigt)
   Flutter besser: gleicher Text 'Das Bild darf maximal 2MB groß sein.', aber Flutter prüft erst nach dem Verkleinern (image_picker maxWidth/Height 1200, Qualität 85, auch im Web per Canvas) – große Fotos werden verkleinert hochgeladen statt abgelehnt; Meldung erscheint praktisch nie. Ionic lehnt Originaldateien > 2 MB ab.
   Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:165, lib/features/profile/presentation/widgets/master_data_sheet.dart:175
@@ -357,7 +375,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addReminder akzeptiert jede Zahl ≥ 0 (max=168 nur als Input-Attribut) / Flutter lehnt > 168 mit Toast „Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)“ ab.
   Flutter: lib/features/settings/presentation/widgets/type_reminders_editor.dart:39-41
 
-## Kleinigkeiten (niedrig): 185
+## Kleinigkeiten (niedrig): 192
 
 - [ ] **niedrig** `settings/administration/administration.page` `toast-4886e3c8` [settings/administration/administration.page.ts:59](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/administration/administration.page.ts#L59)
   Texte gleich ("Speicher: unbegrenzt" / "Speicherlimit: {gb} GB"). Ionic: {gb} = rohe JS-Zahl mit Dezimalpunkt, ungerundet ("2.5") / Flutter: _fmtGb mit Dezimalkomma, auf 2 Stellen gerundet ("2,5").
@@ -461,6 +479,15 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/files/files.page` `field-5bd09165` [settings/files/files.page.html:124](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L124)
   Ionic normalisiert per NFKD und entfernt Akzente (z. B. „cafe“ findet „Café“) / Flutter ersetzt nur ä/ö/ü/ß, Akzente werden nicht ignoriert.
   Flutter: lib/features/settings/presentation/pages/files_page.dart:50-60, lib/features/settings/presentation/pages/files_page.dart:1231-1236
+- [ ] **niedrig** `settings/files/files.page` `text-308e6820` [settings/files/files.page.html:143](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L143)
+  Text „typ:<wert> · Filtert nach Dateityp oder Art (z. B. typ:pdf, typ:ordner, typ:datei).“ gleich, im Such-Hilfe-Dialog (Dialog statt Popover: siehe popover-f66de769). Ionic: innerHTML mit fetten Beispielen / Flutter: _plainHtml entfernt den Fettdruck. Für alle Rollen wie Ionic.
+  Flutter: lib/features/settings/presentation/pages/files_page.dart:869-879, lib/features/settings/presentation/pages/files_page.dart:863-867
+- [ ] **niedrig** `settings/files/files.page` `text-4f3365df` [settings/files/files.page.html:144](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L144)
+  Text „datum:<wert> · Filtert nach Änderungsdatum (z. B. datum:2026, datum:03.2026, datum:03.03.2026).“ gleich. Ionic: innerHTML mit fetten Beispielen / Flutter: ohne Fettdruck (_plainHtml).
+  Flutter: lib/features/settings/presentation/pages/files_page.dart:869-879, lib/features/settings/presentation/pages/files_page.dart:863-867
+- [ ] **niedrig** `settings/files/files.page` `text-cd4b6647` [settings/files/files.page.html:145](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L145)
+  Text „Filter sind kombinierbar, z. B. protokoll typ:pdf datum:2026.“ gleich. Ionic: Beispiel fett (innerHTML) / Flutter: ohne Fettdruck (_plainHtml).
+  Flutter: lib/features/settings/presentation/pages/files_page.dart:869-879, lib/features/settings/presentation/pages/files_page.dart:863-867
 - [ ] **niedrig** `settings/files/files.page` `action-37361b16` [settings/files/files.page.html:181](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/files/files.page.html#L181)
   Anzeige (Icon/Vorschaubild, Name, Größe „· Geändert: dd.MM.yyyy, HH:mm“), Tap öffnet/zeigt/spielt bzw. wählt aus – gleich. Ionic behält beim Öffnen eines Ordners den Suchbegriff / Flutter leert ihn.
   Flutter: lib/features/settings/presentation/pages/files_page.dart:1294-1358, lib/features/settings/presentation/pages/files_page.dart:329-343
@@ -603,15 +630,24 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/type/type.page` `alert-0ec2acf8` [settings/general/type/type.page.ts:757](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.ts#L757) (2. Prüfung: bestätigt)
   Ionic Alert „To-Do bearbeiten“: ein Textfeld (Platzhalter „To-Do Text...“), Abbrechen/Speichern, nur Text änderbar / Flutter Dialog „To-Do bearbeiten“: „Aufgabe“ (z.B. Noten vorbereiten) + „Frist (Stunden vorher, optional)“, Abbrechen/OK; Frist zusätzlich änderbar, leerer Text → OK ohne Wirkung.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1344-1411
+- [ ] **niedrig** `settings/general/type/type.page` `field-519cd48e` [settings/general/type/type.page.html:31](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L31) (2. Prüfung: korrigiert)
+  iOS gleich (gestapelt, Satzanfang groß). Android/Web: Ionic gestapeltes „Name“ ohne Platzhalter, autocapitalize=sentences / Flutter: schwebendes Label „Name *“ mit Platzhalter „z.B. Probe, Konzert“, ohne Großschreibung am Satzanfang; leerer Name als Feldfehler statt Toast (Toast-Item separat). Rollen wie Ionic.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869
 - [ ] **niedrig** `settings/general/type/type.page` `field-02b039dc` [settings/general/type/type.page.html:58](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L58)
   Nur verfügbare Status wie Ionic, aber Enum-Reihenfolge (…, Entschuldigt, Verspätet, Abwesend) und Text „Verspätet“ statt „Verspätet anwesend“.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:308-333
+- [ ] **niedrig** `settings/general/type/type.page` `field-4a2fa59b` [settings/general/type/type.page.html:86](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L86) (2. Prüfung: korrigiert)
+  Ionic: gestapeltes Label über vollbreitem Zahlenfeld, leer wenn duration_days nicht gesetzt, jeder Wert (auch 0/leer) wird gespeichert / Flutter: Label links, 60 px Feld rechts, zeigt „1“ wenn nicht gesetzt, übernimmt nur Werte > 0 (sonst bleibt still der letzte gültige Wert). Rollen wie Ionic.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:358-385, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1484
 - [ ] **niedrig** `settings/general/type/type.page` `field-ea19d7e9` [settings/general/type/type.page.html:99](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L99)
   Ionic: Minuten nur in 5er-Schritten (minuteValues 0,5,…,55) / Flutter: Zeitwahl ohne 5-Minuten-Raster.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:387-396, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213
 - [ ] **niedrig** `settings/general/type/type.page` `field-32a15191` [settings/general/type/type.page.html:117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L117)
   Ionic: Minuten nur in 5er-Schritten / Flutter: Zeitwahl ohne 5-Minuten-Raster.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:397-403, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213
+- [ ] **niedrig** `settings/general/type/type.page` `field-fe789c4f` [settings/general/type/type.page.html:203](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L203) (2. Prüfung: korrigiert)
+  Ionic: Zahlenfeld (rechtsbündig, Platzhalter „1“, frei eintippbar; 0 wird gespeichert, leer → null scheitert am NOT NULL) / Flutter: −/+-Stepper ab 1, kein Eintippen (große Zahlen nur per Mehrfach-Tippen), speichert mind. 1. Rollen wie Ionic.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:944-963, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1505
 - [ ] **niedrig** `settings/general/type/type.page` `text-c8d8274e` [settings/general/type/type.page.html:243](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/general/type/type.page.html#L243)
   Text identisch, verweist aber auf „Filter“ (Abschnitt heißt in Flutter „Zusatzfeld-Filter“) und auf ein Ja/Nein-Feld, das der Flutter-Filter nicht anbietet (siehe field-1ef7f6fa).
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1014-1020
@@ -725,6 +761,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/settings/settings.page` `loading-5eec4aaf` [settings/settings/settings.page.ts:588](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L588)
   Ionic: blockierendes Loading 'Urkunden werden erstellt...' / Flutter: nur Info-Toast mit demselben Text, nicht blockierend.
   Flutter: lib/features/settings/presentation/widgets/vorkurs_certificates.dart:43
+- [ ] **niedrig** `settings/settings/settings.page` `effect-19f49e82` [settings/settings/settings.page.ts:600](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L600)
+  PDF gleich (eine A4-Seite je Person mit Hintergrund, Name Times fett-kursiv 48→28 pt, 'hat die Vorkursprüfung / erfolgreich bestanden', 'Speyer, den D.M.YYYY'), Dateiname Urkunden_Vorkurs_YYYY-MM-DD.pdf, nativ Cache + Dateiansicht wie Ionic. Ionic mobiles Web (iOS/Android): Teilen-Dialog (navigator.share) / Flutter Web: immer Anker-Download (Printing.sharePdf). Gleicher Befund wie utilities/Utils#effect-c485f21b. Rollen wie toast-d085d424.
+  Flutter: lib/features/settings/presentation/widgets/vorkurs_certificates.dart:53, lib/features/settings/presentation/widgets/vorkurs_certificates.dart:57, lib/core/services/certificate_service.dart:29, lib/core/services/native/native_file_service.dart:167
 - [ ] **niedrig** `settings/settings/settings.page` `alert-271738b9` [settings/settings/settings.page.ts:614](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/settings/settings/settings.page.ts#L614)
   Titel 'Admin hinzufügen', Platzhalter 'E-Mail-Adresse', Abbrechen/Hinzufügen gleich. Ionic: ungültige/leere E-Mail → Alert bleibt offen mit 'Bitte gib gültige Werte ein.' / Flutter: leer → Dialog schließt still, ungültig → Dialog zu + Toast 'Bitte gib eine gültige E-Mail-Adresse ein.' (Flutter-only).
   Flutter: lib/features/settings/presentation/widgets/settings_admins_sheet.dart:36, lib/features/settings/presentation/widgets/settings_admins_sheet.dart:39, lib/features/settings/presentation/widgets/settings_admins_sheet.dart:40, lib/features/settings/presentation/widgets/settings_admins_sheet.dart:41, lib/features/settings/presentation/widgets/settings_admins_sheet.dart:45, lib/features/settings/presentation/widgets/settings_admins_sheet.dart:46

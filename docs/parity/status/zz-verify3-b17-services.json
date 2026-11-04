@@ -1,0 +1,245 @@
+{
+  "batch": "zz-verify3-b17-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "services/db.service#toast-8b3301cf": {
+      "s": "diff",
+      "sev": "niedrig",
+      "v": "korrigiert",
+      "f": [
+        "lib/features/people/presentation/pages/person_detail_page.dart:1664",
+        "lib/features/people/presentation/pages/person_detail_page.dart:1452",
+        "lib/features/settings/presentation/pages/settings_page.dart:703",
+        "lib/data/repositories/user_registration_repository.dart:80"
+      ],
+      "n": "Rolle/Mandant gleich: Demo-Sperre (ensureNotDemo), neues Konto Hauptgruppe → Verantwortlich, sonst Spieler (accountRoleFor). Personenseite „Account erstellen“: gleicher Text „{Vorname Nachname} - Fehler beim Erstellen des Accounts: {Fehler}“ (rot). Erstprüfung übersah die anderen Aufrufer: Ionic zeigt den Toast in createAccount bei jedem Aufruf / Flutter beim Reaktivieren nur „Fehler: {Fehler}“ (ohne Name/Text), bei „Accounts erstellen“ (Einstellungen) nur der Sammeltoast „Fehler beim Erstellen der Accounts: Name: Fehler“ statt Einzel- + Sammeltoast."
+    },
+    "services/db.service#db-17024199": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:256",
+        "lib/features/people/presentation/pages/person_detail_page.dart:413"
+      ],
+      "n": "tenantUsers.role nach tenantId + userId, maybeSingle; keine Zeile → Spieler (Ionic NONE → PLAYER), Bewerber-Reparatur (pending=false) gleich. Keine Rollenbedingung in der Methode."
+    },
+    "services/db.service#db-1c4d7b0d": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:62",
+        "lib/data/repositories/player_repository.dart:94"
+      ],
+      "n": "all-Zweig liegt vor der Eltern-Prüfung, also für alle Rollen gleich (pending=false, tenantId, inkl. archivierter). Flutter: getPlayers(all) vorhanden, die Aufrufer laden mit eigenen tenantId-Abfragen (z. B. getPlayersByShift); deren Logik in den Seiten-Batches."
+    },
+    "services/db.service#db-8d10beae": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:62",
+        "lib/core/providers/realtime_providers.dart:56",
+        "lib/features/members/data/providers/members_providers.dart:63",
+        "lib/data/repositories/player_repository.dart:252"
+      ],
+      "n": "Standardzweig für alle Rollen außer Eltern: tenantId, left null, pending=false, Sortierung Gruppe/Stimmführer/Nachname gleich; person_attendances lädt Flutter nicht mit (Prozente über eigenen Provider). Eltern bekommen in beiden Apps nur ihre Kinder (Flutter getChildrenForParent, eigenes Item db-d20467f8); keine Flutter-Seite mit getPlayers() ist für Eltern erreichbar (Mitglieder nur Helfer/Spieler/Stimmführer, Personen nur Dirigent/Beobachter)."
+    },
+    "services/db.service#db-7932c0e0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:369",
+        "lib/features/people/presentation/pages/person_create_page.dart:1052",
+        "lib/features/registration/data/providers/registration_providers.dart:197"
+      ],
+      "n": "player.id nach appId + tenantId, limit 1, maybeSingle → vorhandene Zeile wird reaktiviert statt eingefügt. Rolle des neuen Kontos gleich (Hauptgruppe → Verantwortlich, sonst Spieler; Import ebenso), Demo gesperrt; Selbstregistrierung reaktiviert ebenfalls."
+    },
+    "services/db.service#db-35a09ab7": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:910",
+        "lib/data/repositories/cross_tenant_person_repository.dart:337"
+      ],
+      "n": "Pause mit Startdatum: Termine der Instanz ab Datum (tenantId) → person_attendances der Person löschen; Flutter vergleicht mit „YYYY-MM-DD“ statt lokaler Mitternacht – bei auf 12 Uhr normierten Terminen gleich. Andere Instanz: eigene tenantId wie Ionic. Dass Flutter dort nur Instanzen anbietet, in denen der Nutzer Admin/Verantwortlich ist, ist am Pause-Dialog erfasst (b08/b09, Flutter besser)."
+    },
+    "services/db.service#db-6ed0d891": {
+      "s": "diff",
+      "sev": "mittel",
+      "v": "korrigiert",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1137",
+        "lib/features/people/presentation/pages/people_list_page.dart:128",
+        "lib/features/self_service/presentation/widgets/self_service_absences.dart:156"
+      ],
+      "n": "Rollen und Abfrage gleich (Personenliste nur Admin/Verantwortlich; „Meine Termine“ nur mit player_self_pause der Rolle Spieler, nicht Bewerber; tenantId, paused, paused_until ≤ heute). Übersehen: Demo-Konto. Ionic entpausiert über updatePlayer → checkDemoRestriction: Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“, nichts wird geschrieben (Personenliste lädt danach nicht) / Flutter schreibt direkt ohne ensureNotDemo: paused=false, Historie, Aufnahme in kommende Termine."
+    },
+    "services/db.service#db-d2175ed2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "v": "korrigiert",
+      "f": [
+        "lib/data/repositories/player_repository.dart:650",
+        "lib/data/repositories/player_repository.dart:1481"
+      ],
+      "n": "Flutter besser: Rollenlogik gleich (Konto mit Rolle Admin in der Instanz behält Zugang, sonst tenantUsers-Zeile löschen; deleteAdmin löscht nur die Admin-Zeile). Aber Demo-Konto: Ionic removeUserFromTenant hat keine Demo-Sperre – „Account entfernen“ (Personenseite) löscht die tenantUsers-Zeile, erst das folgende updatePlayer bricht mit Demo-Toast ab / Flutter blockt vorher (ensureNotDemo in unlinkAccount und removeUserFromTenant)."
+    },
+    "services/db.service#db-6f7cc08a": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:677"
+      ],
+      "n": "Mit personId: weitere aktive Person desselben Kontos (tenantId, appId, left null, id ≠ personId, limit 1) → Zugang bleibt; für alle Rollen gleich (Demo-Unterschied der Methode bei db-d2175ed2)."
+    },
+    "services/db.service#db-cc6767aa": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:69",
+        "lib/core/providers/realtime_providers.dart:251",
+        "lib/core/providers/statistics_providers.dart:80"
+      ],
+      "n": "Mit Personen: Termine nach tenantId, date > Saisonstart bzw. 2020, neueste zuerst; archivierte nur für Admin/Verantwortlich (filterArchivedForRole in Repository und Terminliste). Aufrufer (Terminliste, Export, Statistik) nutzen den gefilterten Weg."
+    },
+    "services/db.service#db-cc6767aa-2": {
+      "s": "diff",
+      "sev": "hoch",
+      "v": "korrigiert",
+      "f": [
+        "lib/data/repositories/plan_repository.dart:44",
+        "lib/core/providers/plan_providers.dart:45",
+        "lib/core/router/route_access.dart:109",
+        "lib/core/providers/attendance_providers.dart:275",
+        "lib/data/repositories/attendance_repository.dart:69"
+      ],
+      "n": "Ionic getAttendance() filtert archivierte Termine (filterArchivedForRole) für alle außer Admin/Verantwortlich, auch für die Ablaufplanung und die Personenliste. Flutter getAttendances filtert, aber die Planung lädt über getPlanAttendances ohne archived: Helfer/Stimmführer-Helfer (/planning?attendanceId) sehen archivierte Termine unter „Zugehöriger Termin“ und können deren Plan bearbeiten (gleiche Lücke wie x-5e1a396117). Zudem zählt die Personenliste für Beobachter archivierte Termine in den Prozenten mit (Ionic nicht; b08-Extra)."
+    },
+    "services/db.service#db-e7a94696": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:125",
+        "lib/data/repositories/player_repository.dart:910"
+      ],
+      "n": "Keine Rollenbedingung in der Methode; Termine der Instanz ab heute (tenantId), aufsteigend. Flutter gte lokaler Tagesbeginn statt gt – bei auf 12 Uhr normierten Terminen gleich."
+    },
+    "services/db.service#db-1e5584c0": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/player_repository.dart:2116",
+        "lib/data/repositories/player_repository.dart:637"
+      ],
+      "n": "Ionic: alle Termine ab Tagesbeginn des Datums (nicht nur des Tages) für Eintritt (addPlayerToAttendancesByDate) und Austritt (left). Flutter inline: date > Eintrittstag bzw. removeFromUpcomingAttendances(from: left), tenantId – gleich. Referenz der Erstprüfung (attendance_repository.dart:801) ist eine ungenutzte Tagesabfrage mit anderer Bedeutung. Keine Rollenbedingung."
+    },
+    "services/db.service#db-7ea61b92": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:362",
+        "lib/data/repositories/player_repository.dart:1521",
+        "lib/data/repositories/attendance_repository.dart:383"
+      ],
+      "n": "Rollenfilter gleich: archivierte Termine nur für Admin/Verantwortlich (canSeeArchivedAttendances) in „Meine Termine“, Personenseite (Statistik/Historie) und Elternportal; Join auf attendance mit tenantId. Referenz der Erstprüfung (attendance_repository.dart:311) wird von keiner Seite genutzt."
+    },
+    "services/db.service#db-133f3370": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:442",
+        "lib/core/providers/signout_providers.dart:209"
+      ],
+      "n": "Nur mit Instanz-Einstellung show_all_attendances („Meine Termine“, nicht Bewerber); laufende/kommende Termine (31 Tage Rückblick) + eigene person_attendances (person_id, attendance_id in …) – gleich. Kein Archiv-Filter in beiden (nur beendete Termine archivierbar)."
+    },
+    "services/db.service#db-50229123": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/song_repository.dart:680",
+        "lib/data/repositories/song_repository.dart:738"
+      ],
+      "n": "history nach tenantId, date > heute 0 Uhr, gruppiert nach Datum + typeInfo/sichtbarer Typname, Sortierung gleich. Keine Rollenbedingung in der Methode."
+    },
+    "services/db.service#db-973409b9": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/song_repository.dart:738",
+        "lib/features/planning/presentation/pages/planning_page.dart:859"
+      ],
+      "n": "Planung: Dirigentenname je Werk aus künftiger history (tenantId). Ionic filtert clientseitig nach Termin- bzw. Eintragsdatum ab heute, Flutter serverseitig nach history.date – praktisch gleich. Keine Rollenbedingung."
+    },
+    "services/db.service#toast-aa4cdecb": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:337",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:262"
+      ],
+      "n": "„Fehler beim Löschen der Instanz, bitte versuche es später erneut.“ (rot). Löschen nur als Admin der Instanz und nicht im Demo-Konto (Ionic canDeleteTenant, Flutter gleiche Prüfung + Admin-Check in deleteTenant)."
+    },
+    "services/db.service#toast-8452ec8e": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:333"
+      ],
+      "n": "„Instanz wurde erfolgreich gelöscht!“ (grün); gleiche Admin-/Demo-Bedingung."
+    },
+    "services/db.service#nav-c490be92": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594",
+        "lib/features/tenant_selection/tenant_defaults.dart:22"
+      ],
+      "n": "Ersteller ist immer Admin der neuen Instanz (Superentwickler-Konto immer, eigenes Konto außer beim Superentwickler) → Ionic /tabs/player, Flutter Role.admin.defaultRoute „/people“. Demo gesperrt."
+    },
+    "services/db.service#effect-1473b6bd": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594"
+      ],
+      "n": "Utils.getUrl(ADMIN) = Personen; Flutter /people – wie nav-c490be92."
+    },
+    "services/db.service#db-6f76f783": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/organisation_repository.dart:335"
+      ],
+      "n": "Verknüpfte Instanzen = andere Instanzen derselben Organisation(en); Flutter filtert serverseitig und prüft zusätzlich die eigene Mitgliedschaft (für jede Rolle gegeben). Keine Rollenbedingung."
+    },
+    "services/db.service#toast-7762503d": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/core/utils/demo_guard.dart:60",
+        "lib/core/utils/demo_guard.dart:93"
+      ],
+      "n": "Demo-Konto (E-Mail = Demo-Mail): orangener Warn-Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ + Abbruch; Flutter-Sperre in rund 140 Schreibpfaden (Stichproben: Account, Instanz löschen/anlegen, Person anlegen, Allgemein, Passwort). Abweichungen beim Auto-Entpausieren und „Account entfernen“ bei db-6ed0d891 bzw. db-d2175ed2."
+    },
+    "services/db.service#db-e6a0665f": {
+      "s": "ok",
+      "v": "bestätigt",
+      "f": [
+        "lib/data/repositories/import_repository.dart:27",
+        "lib/features/people/presentation/pages/person_import_page.dart:152"
+      ],
+      "n": "E-Mails der Instanz (tenantId, seitenweise 1000, getrimmt/klein) für Duplikate beim Import; Import nur für Admin/Verantwortlich in beiden Apps."
+    },
+    "services/db.service#db-7905be27": {
+      "s": "diff",
+      "sev": "niedrig",
+      "v": "korrigiert",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:609",
+        "lib/data/repositories/sign_in_out_repository.dart:572"
+      ],
+      "n": "Flutter besser: Ionic wählt attendance ohne „archived“, der Rollenfilter im Aufrufer (canSeeArchivedAttendances je Mitgliedsrolle) greift daher nie → Übersicht zeigt archivierte Termine allen Rollen und zählt sie mit / Flutter lädt archived und blendet sie für alle außer Admin/Verantwortlich aus. Erstprüfung sah „+archived“, aber nicht die Wirkung (gleicher Befund wie Extra b14 „Archivierte Termine“)."
+    }
+  },
+  "extra": []
+}

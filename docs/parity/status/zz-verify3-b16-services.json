@@ -1,0 +1,47 @@
+{
+  "batch": "zz-verify3-b16-services",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "services/admin/admin.service#db-c0781bb8": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/admin_repository.dart:45-60",
+        "lib/core/providers/admin_providers.dart:38-42",
+        "lib/features/settings/presentation/pages/settings_page.dart:267-273"
+      ],
+      "n": "Gleiche Abfrage (role=1, tenantId) ohne developer@attendix.de. Ionic lädt in den Einstellungen für jede Rolle, zeigt die Liste aber nur Admins außerhalb der Demo; Flutter lädt nur dort – sichtbar gleich (Fehler-Toast siehe toast-5b84a64a).",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-c1ff21d8": {
+      "s": "na",
+      "n": "toter Code: AdminService.removeUserFromTenant/getRoleFromTenantUser werden nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService (2483, 1540) und TenantService haben eigene Implementierungen.",
+      "v": "bestätigt"
+    },
+    "services/admin/admin.service#db-88ecd394": {
+      "s": "na",
+      "n": "toter Code: AdminService.removeUserFromTenant/getRoleFromTenantUser werden nirgends aufgerufen – einzige Nutzung von adminSvc ist db.service.ts:3525 (getAdmins); DbService (2483, 1540) und TenantService haben eigene Implementierungen.",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#db-6334bd57": {
+      "s": "na",
+      "n": "toter Code: CrossTenantService.getTenantsFromUser wird nirgends aufgerufen – Seiten nutzen DbService.getTenantsFromUser (db.service.ts:3452); von CrossTenantService werden nur getPossiblePersonsByName/-ByEmail, getUserRolesForTenants, getUsersFromTenant und getPersonIdFromTenant genutzt.",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#toast-5a403f5d": {
+      "s": "na",
+      "n": "toter Code: CrossTenantService.getTenantsFromUser wird nirgends aufgerufen – Seiten nutzen DbService.getTenantsFromUser (db.service.ts:3452); von CrossTenantService werden nur getPossiblePersonsByName/-ByEmail, getUserRolesForTenants, getUsersFromTenant und getPersonIdFromTenant genutzt.",
+      "v": "bestätigt"
+    },
+    "services/cross-tenant/cross-tenant.service#db-598f27a3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/cross_tenant_person_repository.dart:238-258",
+        "lib/features/people/presentation/pages/people_list_page.dart:214-236"
+      ],
+      "n": "Nur Filter „Mitglied anderer Instanz“ der Personenliste (Dirigenten): tenantId der verknüpften Instanz, role ≠ Beobachter; Flutter liest nur userId und nur für verknüpfte Instanzen – gleiches Ergebnis.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

@@ -1,9 +1,9 @@
 # Fix-Paket „personen“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 77
+## Angleichen (hoch/mittel): 79
 
 - [ ] **hoch** `instruments/instrument-list/instrument-list.page` `action-d2efa7e3` [instruments/instrument-list/instrument-list.page.html:94](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/instruments/instrument-list/instrument-list.page.html#L94) (2. Prüfung: korrigiert)
   Titel „{Name} (Hauptgruppe)“ / „Name (Stimmung)“ / nur Name bei Chor/Allgemein, Schlüssel-Zeile, sort_order-Badge, Badge „n Personen“ (rot bei 0), Tipp öffnet Bearbeiten nur für Admin/Verantwortliche und nicht im Sortiermodus wie Ionic. Abweichung Anzahl: Ionic zählt aus db.getPlayers() (left = null, pending = false) / Flutter getPlayerCountsForGroups filtert nur left = null – ausstehende Registrierungen (tenant-register setzt instrument) werden mitgezählt, Badge zeigt zu hohe Zahl bzw. nicht rot. Erstprüfer „mittel“ → „hoch“: falsche Daten, gleicher Fehlertyp wie teachers action-5b603f4a (dort hoch). Kosmetisch: leere Stimmung „(C)“ statt „()“.
@@ -89,6 +89,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `people/bulk-edit/bulk-edit.page` `x-994adc4d18` **Personenwerte der Zusatzfelder ohne aufgefüllte Defaults** [src/app/people/list/list.page.ts:1040](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/list/list.page.ts#L1040) (2. Prüfung: bestätigt)
   Real: Ionic getModifiedPlayersForList füllt player.additional_fields in place mit Defaults (Utils.ts:121-126; defaultValue, sonst Boolean true, Auswahl erste Option, Gemeinde erste Gemeinde …), openBulkEditModal übergibt diese Objekte (list.page.ts:1035-1041). Flutter _openBulkEdit übergibt nur mergeSharedPersonFieldValues ohne Defaults → bei Personen ohne gespeicherten Wert Schalter aus bzw. Auswahl leer, andere Änderungszahl; Ionic schreibt beim Speichern das aufgefüllte Objekt (auch Defaults anderer Felder), Flutter nur Rohwerte + bearbeitetes Feld.
   Flutter: lib/features/people/presentation/pages/people_list_page.dart:1280-1294, lib/features/people/presentation/pages/bulk_edit_page.dart:102-112, lib/features/people/presentation/pages/bulk_edit_page.dart:161-206
+- [ ] **mittel** `people/import/import.page` `effect-31a0aedd` [people/import/import.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/import/import.page.ts#L275)
+  Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Kopf- und Beispielzeile wie Ionic (Org-Zusatzfelder fehlen: eigener Befund). Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser Web-Share-Sheet, Desktop Download / Flutter: nativ Teilen-Dialog (share_plus) mit Begleittext 'Song-Dateien', im Web immer Anker-Download (Blob-Typ application/zip); bei Fehler Toast 'Fehler: …' nur in Flutter.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:119, lib/features/people/presentation/pages/person_import_page.dart:137, lib/core/utils/import_file_io.dart:25, lib/core/services/zip_service_io.dart:9, lib/core/services/zip_service_web.dart:7
 - [ ] **mittel** `people/import/import.page` `action-2d35c2c8` [people/import/import.page.html:27](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/import/import.page.html#L27) (2. Prüfung: bestätigt)
   Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Beispielzeile gleich. Ionic: Spalten inkl. Org-Zusatzfelder; nativ Datei öffnen (FileViewer), mobiles Web Share-Sheet / Flutter: nur Tenant-Zusatzfelder; nativ Share-Sheet mit Text 'Song-Dateien', Web immer Download.
   Flutter: lib/features/people/presentation/widgets/import_widgets.dart:42, lib/features/people/presentation/pages/person_import_page.dart:108, lib/core/services/zip_service_io.dart:9
@@ -134,6 +137,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `people/person/person.page` `alert-75bf15c2` [people/person/person.page.ts:719](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L719) (2. Prüfung: bestätigt)
   Ionic: „Account entfernen“ / „Möchtest du den Account wirklich aus der Instanz entfernen? Die Personendaten bleiben erhalten.“ Abbrechen/Ja, danach schließt die Seite, Toast „Der Benutzer wurde erfolgreich entfernt“ / Flutter: „Account-Verknüpfung aufheben?“ / „Die Account-Verknüpfung für {name} wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.“ Abbrechen/„Verknüpfung aufheben“ (rot), Seite bleibt offen (zeigt weiter „Verknüpft“, veralteter _draft), Toast „Account-Verknüpfung aufgehoben“. DB-Wirkung gleich (removeUserFromTenant, appId/email = null).
   Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1532, lib/features/people/presentation/pages/person_detail_page.dart:1536, lib/features/people/presentation/pages/person_detail_page.dart:1575
+- [ ] **mittel** `people/person/person.page` `toast-9e8a666e` [people/person/person.page.ts:1211](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1211) (2. Prüfung: korrigiert)
+  Menüpunkt gleich (kein appId, Admin/Verantwortlicher). Erstprüfer übersah die Rollenlogik in db.createAccount → registerUser/getAppIdByEmail: Ionic Admin → nur player.appId gesetzt (E-Mail nur lokal angezeigt), Toast. Ionic Verantwortlicher → ist sein Account schon mit einer Person der Instanz verknüpft: Fehler 'Der Benutzer ist bereits in diesem Mandanten: …', keine Zuweisung; sonst wird sein tenantUsers-Eintrag gelöscht und mit Rolle Spieler (Hauptgruppe: Verantwortlich) neu angelegt + Info-Mail / Flutter: schreibt für beide Rollen direkt appId + E-Mail, immer Erfolgs-Toast, Rolle unverändert. Verantwortliche können so ihren Account an eine zweite Person hängen, was Ionic verweigert (die Ionic-Selbstherabstufung entfällt).
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:962, lib/features/people/presentation/pages/person_detail_page.dart:1384
 - [ ] **mittel** `people/person/person.page` `actionsheet-fba9657b` [people/person/person.page.ts:1329](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1329) (2. Prüfung: bestätigt)
   Header „Aktionen“, Einträge, Reihenfolge, Bedingungen (appId/isAdmin, paused, Organisation, nicht man selbst) und „Abbrechen“ gleich. Wirkung abweichend: „Wieder aktivieren“ – Ionic schließt die Seite ohne Toast / Flutter bleibt offen mit Toast „Die Person wurde erfolgreich wieder aktiviert“; „In andere Instanz übertragen/kopieren“ öffnet das Massen-Übergabe-Sheet statt des Ionic-Sheets; „Archivieren“ öffnet einen Dialog statt Vollbild-Modal.
   Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1354, lib/features/people/presentation/pages/person_detail_page.dart:1378, lib/features/people/presentation/pages/person_detail_page.dart:1013, lib/features/people/presentation/pages/person_detail_page.dart:1403, lib/features/people/presentation/pages/person_detail_page.dart:1050
@@ -237,7 +243,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Bestätigt, Begründung präzisiert: _showAddSheet liest groupsProvider nur per ref.read als feste Liste; ist er noch nicht geladen, ist die Auswahl „Instrumente“ leer und „Hinzufügen“ endet mit „Bitte fülle alle Felder aus...“, erst beim nächsten Öffnen gefüllt. Anders als notiert lädt die Personenliste groupsProvider, wenn nach Gruppe sortiert (Standard). Die Lücke tritt also auf, wenn die Lehrerseite ohne vorheriges Laden erreicht wird (z. B. Neuladen/Direktlink /settings/teachers, Personenliste anders sortiert). Ionic: db.groups() immer geladen. Bearbeiten-Fall: teacher/teacher.page#field-fc1d0925.
   Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:113, lib/core/providers/group_providers.dart:42, lib/features/people/presentation/pages/people_list_page.dart:396
 
-## Flutter besser – Leon entscheidet: 26
+## Flutter besser – Leon entscheidet: 28
 
 - [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `action-7bb1a2ef` [duty/duty-distribute-modal/duty-distribute-modal.component.html:69](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.html#L69)
   Flutter besser: Ionic: Plus-Button bleibt bei 10 aktiv, Tippen wirkungslos (Math.min 10) / Flutter: Button bei 10 ausgegraut. Maximum 10 gleich.
@@ -269,6 +275,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `people/list/list.page` `action-de48c2e0` [people/list/list.page.html:451](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/list/list.page.html#L451)
   Flutter besser: Ionic clearFilters leert nur filterOptAdd und zeigt alle Personen, Filterauswahl (Icon bleibt farbig) und Suchtext bleiben stehen / Flutter setzt Filter auf 'Alle Anzeigen', leert die Suche und speichert das.
   Flutter: lib/features/people/presentation/pages/people_list_page.dart:582, lib/features/people/presentation/pages/people_list_page.dart:1243
+- [ ] **niedrig** `people/person/person.page` `alert-40883a4d` [people/person/person.page.ts:503](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L503) (2. Prüfung: korrigiert)
+  Flutter besser: Detailseite gleich ('Änderungen verwerfen?' / Text, 'Abbrechen' / 'Ja'; Änderungen nur für Admin/Verantwortliche möglich wie Ionic !readOnly). Erstprüfer übersah: Ionic onChange setzt hasChanges nur bei existingPlayer, das Neu-Modal schließt daher immer ohne Rückfrage / Flutter fragt auf der Neu-Seite bei jeder Eingabe (Name, E-Mail, Bild …) ebenfalls nach.
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1742, lib/features/people/presentation/pages/person_create_page.dart:123
+- [ ] **niedrig** `people/person/person.page` `alert-01934766` [people/person/person.page.ts:1343](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1343) (2. Prüfung: korrigiert)
+  Flutter besser: Titel 'Kopieren/Übertragen nicht möglich', Text mit Instanz und E-Mail bzw. Name, 'OK' gleich. Ionic prüft keine Rechte in der Zielinstanz und zeigt den Hinweis für jede eigene Ziel-Rolle / Flutter prüft vorher canEdit in der Zielinstanz und zeigt sonst den roten Toast 'Keine Berechtigung in der Ziel-Instanz' statt des Hinweises (Ionic-Übertragung scheitert dann später). Andere Ziel-Instanzliste: field-0a2daf88.
+  Flutter: lib/features/people/presentation/widgets/handover_sheet.dart:723, lib/features/people/presentation/widgets/handover_sheet.dart:763
 - [ ] **niedrig** `people/person/person.page` `field-9f6c9acb` [people/person/person.page.html:237](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.html#L237)
   Flutter besser: Ionic-Input ohne ionChange (Änderung allein aktiviert Speichern nicht) / Flutter markiert Änderung. Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet
   Flutter: lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:829
@@ -318,7 +330,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen in der Instanz (auch archivierte/ausstehende) „Mögliches Duplikat“ – „Eine Person mit dem Namen "{name}" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.
   Flutter: lib/features/people/presentation/pages/person_create_page.dart:997, lib/features/people/presentation/pages/person_create_page.dart:999
 
-## Kleinigkeiten (niedrig): 163
+## Kleinigkeiten (niedrig): 164
 
 - [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-e612daf1` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L77)
   Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.
@@ -569,6 +581,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `people/person/person.page` `loading-6f0c380f` [people/person/person.page.ts:1546](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1546)
   Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator
   Flutter: lib/features/people/presentation/widgets/planned_absences.dart:248
+- [ ] **niedrig** `people/person/person.page` `actionsheet-eadcf3f0` [people/person/person.page.ts:1641](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1641) (2. Prüfung: korrigiert)
+  Bedingung gleich (ausstehende Person, Admin/Verantwortliche), Texte, Reihenfolge und Wirkung gleich. Ionic: keine Icons, 'Abbrechen' mit role destructive (rot, in der Button-Gruppe) / Flutter: grünes Haken-Icon und grüne Schrift bei 'Person genehmigen', Icon bei 'Person ablehnen', 'Abbrechen' als normaler separater Abbrechen-Button (cancelDestructive fehlt, anders als im '…'-Menü).
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1330
 - [ ] **niedrig** `people/person/person.page` `loading-58ec291d` [people/person/person.page.ts:1680](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/people/person/person.page.ts#L1680)
   Ionic: blockierendes Loading „Die Person wird abgelehnt...“ / Flutter: kein Ladeindikator
   Flutter: lib/features/people/presentation/pages/person_detail_page.dart:1300

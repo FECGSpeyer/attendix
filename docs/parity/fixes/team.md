@@ -1,6 +1,6 @@
 # Fix-Paket „team“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 12
@@ -54,7 +54,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic öffnet den Freigabe-Dialog und gibt frei, auch wenn das Speichern eines Abschnitts fehlschlug (nur Fehler-Toast) / Flutter bricht Öffnen und Freigabe mit „Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.“ ab.
   Flutter: lib/features/team_organization/presentation/pages/protocol_page.dart:788, lib/features/team_organization/presentation/pages/protocol_page.dart:977
 
-## Kleinigkeiten (niedrig): 40
+## Kleinigkeiten (niedrig): 41
 
 - [ ] **niedrig** `agenda-items/agenda-item-detail/agenda-item-detail.page` `loading-ff407ba2` [agenda-items/agenda-item-detail/agenda-item-detail.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts#L275)
   Ionic: blockierendes Lade-Overlay beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während des Speicherns deaktiviert.
@@ -83,6 +83,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `protocols/protocol/protocol.page` `loading-20731d79` [protocols/protocol/protocol.page.ts:1012](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/protocols/protocol/protocol.page.ts#L1012)
   Ionic: blockierendes Lade-Overlay beim Erstellen des PDFs / Flutter: kein Overlay, keine Rückmeldung bis zum Teilen-Dialog.
   Flutter: lib/features/team_organization/presentation/pages/protocol_page.dart:768
+- [ ] **niedrig** `protocols/protocol/protocol.page` `text-7068fef6` [protocols/protocol/protocol.page.html:52](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/protocols/protocol/protocol.page.html#L52) (2. Prüfung: korrigiert)
+  Rolle gleich (nur Leitung, Handy-Layout, Text „Speichert…“/„Automatisch gespeichert um HH:mm“/„Änderungen werden automatisch gespeichert“ gleich). Erstprüfer übersah die Breitenbedingung: Ionic isWide = matchMedia Fensterbreite ≥ 900 px / Flutter LayoutBuilder auf die Seitenbreite, die die Shell um das feste Seitenpanel kürzt. Bei Fenster 992–1171 px mit ausgeklapptem Panel (272 px, nur per gespeicherter Wahl) zeigt Flutter Handy-Layout mit dieser Fußleiste, Ionic das dreispaltige Layout ohne Fußleiste. Gilt ebenso für „Notizen“/„Freigeben“ (action-237eefeb/-968c0895).
+  Flutter: lib/features/team_organization/presentation/pages/protocol_page.dart:1042, lib/features/team_organization/presentation/pages/protocol_page.dart:1048, lib/features/team_organization/presentation/pages/protocol_page.dart:1092, lib/shared/widgets/layout/main_shell.dart:407
 - [ ] **niedrig** `protocols/protocol/protocol.page` `action-e9b880bb` [protocols/protocol/protocol.page.html:97](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/protocols/protocol/protocol.page.html#L97)
   Breites Layout gleich (nextSectionId + Fokus). Ionic Handy: „Nächster Punkt“ auch sichtbar, wenn kein Abschnitt offen ist (springt zum ersten), öffnet, fokussiert und scrollt den Abschnitt ins Bild / Flutter Handy: Button nur bei geöffnetem Abschnitt mit Nachfolger, setzt nur die Auswahl ohne Scroll/Fokus.
   Flutter: lib/features/team_organization/presentation/pages/protocol_page.dart:1394, lib/features/team_organization/presentation/pages/protocol_page.dart:1398

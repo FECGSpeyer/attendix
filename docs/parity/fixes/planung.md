@@ -1,6 +1,6 @@
 # Fix-Paket „planung“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 32
@@ -155,7 +155,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
 
-## Kleinigkeiten (niedrig): 135
+## Kleinigkeiten (niedrig): 141
 
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b7046159` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L182) (2. Prüfung: bestätigt)
   Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.
@@ -172,6 +172,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `actionsheet-876a0d5b` [org-plan-public/org-plan-public.page.ts:324](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L324)
   Header „Kalender abonnieren“, Buttons „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links (…/functions/v1/ical-org-plans?key=…[&lang=xx][&detailed=true]) gleich. Ionic: Buttons ohne Icons / Flutter: zusätzlich Icons (event, event_note)
   Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:154, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `effect-c4281c2a` [org-plan-public/org-plan-public.page.ts:349](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L349) (2. Prüfung: korrigiert)
+  Mit Key gleich (Clipboard.setData(link), Dialog bleibt offen). Erster Prüfer übersah den Guard: Ionic subscribeCalendar bricht ohne publicKey ab (`if (!this.publicKey) return`, /org-plan ohne ?key=), der immer sichtbare Kalender-Button tut dann nichts. Flutter: _subscribeCalendar ohne Key-Guard → Sheet + Dialog mit „…/ical-org-plans?key=null“, „Link kopieren“ kopiert diesen kaputten Link.
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:154, lib/features/organisation/presentation/pages/org_plan_public_page.dart:173, lib/features/planning/presentation/widgets/plan_export_actions.dart:158
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `toast-653c57ac` [org-plan-public/org-plan-public.page.ts:350](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L350) (2. Prüfung: korrigiert)
+  „Link kopiert“ (success) mit Key gleich. Wie das Clipboard-Item: Ionic zeigt den Toast ohne publicKey nie (Guard in subscribeCalendar), Flutter auch ohne Key (kopiert Link mit key=null). Erster Prüfer übersah den Guard.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:159, lib/features/organisation/presentation/pages/org_plan_public_page.dart:154
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `actionsheet-4c267725` [org-plan-public/org-plan-public.page.ts:367](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L367)
   Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: mit Icons (picture_as_pdf, content_copy)
   Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:180, lib/features/planning/presentation/widgets/plan_export_actions.dart:59
@@ -348,6 +354,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `planning/plan-share-sheet/plan-share-sheet.component` `modal-677ebe61` [planning/plan-share-sheet/plan-share-sheet.component.ts:47](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-share-sheet/plan-share-sheet.component.ts#L47)
   Ionic: Sheet-Modal, Start 0,5 bzw. 0,75 (mit Telegram), auf volle Höhe hochziehbar / Flutter: Bottom-Sheet mit fester Höhe 0,5 bzw. 0,75, nicht vergrößerbar.
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:186
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `effect-51032d7f` [planning/plan-viewer/plan-viewer.component.ts:310](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L310)
+  Mehrere Pläne: Teilen-Sheet (Nur …/Alle n Pläne) → Export gleich aufgebaut (PDF, 2x A5, Telegram nur mit Chat-ID, Bild nur bei „Nur …“), Branding immer. roleGuarded nur wegen role:„destructive“; Viewer-Export für jede Rolle, die den Viewer öffnet. Ionic: exportAttendancePlans überspringt Pläne ohne Einträge, Titel-Fallback getPlanningTitle(Typ, typeInfo), Untertitel planSubtitle (bei Tagesplänen ohne eigenes Label nur Datum), Dateiname mit „_alle“, PDF per downloadFileNative / Flutter: leere Pläne werden als leere Seiten mitexportiert, Titel-Fallback typeInfo/Typname bzw. „Ablaufplan“, Untertitel immer „Datum · Label“, Dateiname ohne „_alle“, PDF im Druckdialog. Telegram-Toasts wie toast-41712142. Aus der Terminliste ohne Chips nicht erreichbar (bekannter Befund „Weitere Ablaufpläne fehlen im Viewer“).
+  Flutter: lib/features/planning/presentation/pages/plan_viewer_page.dart:106, lib/features/planning/presentation/pages/plan_viewer_page.dart:87, lib/features/planning/presentation/widgets/plan_export_actions.dart:91, lib/features/planning/presentation/widgets/plan_export_actions.dart:179
 - [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `toast-41712142` [planning/plan-viewer/plan-viewer.component.ts:321](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L321) (2. Prüfung: bestätigt)
   Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:126, lib/features/planning/presentation/widgets/plan_export_actions.dart:132
@@ -384,6 +393,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `planning/planning.page` `effect-53794f7b` [planning/planning.page.ts:891](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L891)
   Ionic: PDF-Download per downloadFileNative, Dateiname „{Titel}_{dddd, DD.MM.YYYY}“; Untertitel bei Tagesplänen ohne eigenes Label ohne Zusatz / Flutter: Druckdialog (Printing.layoutPdf), Dateiname „{Titel}_DD_MM_YYYY“, bei mehreren Plänen immer „ · Label“ im Untertitel.
   Flutter: lib/features/planning/presentation/pages/planning_page.dart:1928, lib/features/planning/presentation/widgets/plan_export_actions.dart:111
+- [ ] **niedrig** `planning/planning.page` `effect-4dc197ef` [planning/planning.page.ts:920](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L920)
+  „PDF exportieren (alle Pläne)“ nur mit Feldern und >1 Plan (beide), vorher Speichern, Titel je Plan (eigener Titel sonst getPlanningTitle), Branding nach Schalter – gleich; keine Rollen-/Mandantenbedingung. Ionic: Pläne ohne Einträge werden übersprungen, Untertitel planSubtitle (Tagespläne ohne eigenes Label nur Datum), PDF-Download „{Titel}_{Plandatum}_alle.pdf“ / Flutter: leere Pläne als leere Seiten, Untertitel immer „Datum · Label“, Druckdialog mit „{Titel}_{Termindatum}“.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1985, lib/features/planning/presentation/pages/planning_page.dart:1994, lib/features/planning/presentation/pages/planning_page.dart:1928
 - [ ] **niedrig** `planning/planning.page` `effect-cc0f301b` [planning/planning.page.ts:1001](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1001)
   Ionic: Link immer https://attendix.de/plan?… / Flutter (Web): aktuelle Origin + „#/plan?…“ (native Apps: attendix.de wie Ionic).
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144, lib/features/planning/presentation/widgets/plan_export_actions.dart:166
@@ -423,6 +435,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `planning/planning.page` `field-2174584b` [planning/planning.page.html:342](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L342)
   Ionic: deaktiviertes ion-datetime im Modal / Flutter: nur Anzeige-Chip ohne Picker.
   Flutter: lib/features/planning/presentation/pages/planning_page.dart:2179
+- [ ] **niedrig** `public-planning/public-planning.page` `alert-32122b22` [public-planning/public-planning.page.ts:347](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L347) (2. Prüfung: korrigiert)
+  Titel, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte einen Programmpunkt eingeben.“, Dauer 20, für alle (auch anonym) – gleich. Ionic: Eingaben nur mit Platzhaltern, Name/Ausführender ungetrimmt (nur Leerzeichen wird angenommen) / Flutter: zusätzlich Feldbeschriftungen „Programmpunkt“/„Ausführender“/„Info“, Werte getrimmt. Erstprüfer nannte das selbst, wertete aber ok; wie planning alert-70a7354c ist das diff niedrig.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:542, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237
+- [ ] **niedrig** `public-planning/public-planning.page` `alert-25e72979` [public-planning/public-planning.page.ts:380](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L380) (2. Prüfung: korrigiert)
+  „Notizfeld hinzufügen“, Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte eine Notiz eingeben.“, id „noteFld …-Zeit“, Dauer 0 – gleich. Ionic: nur Platzhalter, Text ungetrimmt / Flutter: zusätzlich Feldbeschriftung „Notiz“, Text getrimmt (kosmetisch, wie planning alert-70a7354c).
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:552, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:237
 - [ ] **niedrig** `public-planning/public-planning.page` `actionsheet-8b22c81c` [public-planning/public-planning.page.ts:607](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L607)
   Header Blockname, Untertitel „n Unterpunkte · x min“, „Block bearbeiten“, „Unterpunkt hinzufügen“, „Block auflösen“, „Block mit Unterpunkten löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons (edit, add, call_split, delete)
   Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:246-279

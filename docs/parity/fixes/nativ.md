@@ -1,9 +1,9 @@
 # Fix-Paket „nativ“
 
-Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0 (normales Design).
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be, 2157fa0, b218510 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 8
+## Angleichen (hoch/mittel): 7
 
 - [ ] **hoch** `native/android` `x-4beeb3b857` **versionCode/versionName unter Ionic-Stand** [android/app/build.gradle:10](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/android/app/build.gradle#L10) (2. Prüfung: bestätigt)
   Echt, Stand 2157fa0: pubspec 0.39.0+108 → versionCode 108 / versionName 0.39.0; Ionic build.gradle:10-11 versionCode 228 / '4.19.7'. Play nimmt keinen versionCode ≤ 228 an (Geräte updaten nur auf höheren Code) → nötig --build-number ≥ 229 und --build-name ≥ 5.0.0, sonst steht im Store/App-Info 0.39.0. docs/push-setup.md:23-24 nennt veraltet Ionic 4.19.6/227 und empfiehlt --build-number 228 – mit Ionic 4.19.7 schon vergeben, Upload würde abgelehnt. Kein Skript/CI setzt die Werte (ci.yml, deploy-cloudflare.yml ohne build-name/-number). Nebenbei: In-App-Anzeige (Einstellungen-Badge, Login) nutzt AppConstants.appVersion 0.39.0 unabhängig vom Build-Flag (Ionic 4.19.7 aus package.json).
@@ -23,9 +23,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `native/android` `x-8140fe9e0d` **Push-Kanal 'default' neu mit hoher Wichtigkeit** [supabase/functions/_shared/send-push.ts:140](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/supabase/functions/_shared/send-push.ts#L140) (2. Prüfung: bestätigt)
   Echt; Pfad korrigiert (MainActivity liegt auf 2157fa0 unter kotlin/de/attendix/attendix, nicht io/stephanus/attendix). Ionic legt keinen Kanal 'default' an (nur live_plan), kein default_notification_channel_id → FCM-Fallback-Kanal mit IMPORTANCE_DEFAULT (kein Heads-up). Flutter: Kanal 'default' „Benachrichtigungen“ IMPORTANCE_HIGH beim Activity-Start + Manifest-Default → alle Pushes als Heads-up-Banner; Stummschaltung o. Ä. am alten Fallback-Kanal gilt nicht mehr. Entspricht der Absicht von send-push.ts (channel_id 'default'), ist aber sichtbar anders.
   Flutter: android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt:54, android/app/src/main/AndroidManifest.xml:84
-- [ ] **mittel** `native/android` `x-3fa2a4cf82` **Launcher-Activity-Klasse geändert** [android/app/src/main/AndroidManifest.xml:14](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/android/app/src/main/AndroidManifest.xml#L14)
-  Ionic: Launcher-Activity io.stephanus.attendix.MainActivity / Flutter: android:name=".MainActivity" im Namespace de.attendix.attendix → Komponente de.attendix.attendix.MainActivity. Homescreen- und Dock-Verknüpfungen zeigen nach dem Update auf eine nicht mehr vorhandene Komponente; AOSP-Launcher3 sucht dann eine Ersatz-Start-Activity des Pakets, bei anderen Launchern (z. B. Samsung One UI) ist nicht gesichert, dass das Icon bleibt – auf Gerät per Update über eine installierte Ionic-Version prüfen. Die Erstprüfung (1aba6be) nannte io.stephanus.attendix.MainActivity („Homescreen-Verknüpfungen bleiben“) – auf 2157fa0 nicht zutreffend. Abhilfe z. B. activity-alias io.stephanus.attendix.MainActivity mit dem LAUNCHER-Filter.
-  Flutter: android/app/src/main/AndroidManifest.xml:12, android/app/build.gradle.kts:19
 - [ ] **mittel** `native/config` `x-8e475b1344` **iOS-Push im Vordergrund ohne Banner und Badge** [capacitor.config.json:7](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/capacitor.config.json#L7) (2. Prüfung: bestätigt)
   Echt. Ionic: presentationOptions [badge, sound, alert] (gleich dem Default von @capacitor-firebase/messaging) → bei offener App System-Banner + Ton + Badge, dazu der In-App-Alert (push.service.ts:180/218). Flutter iOS: alert:false, badge:false, sound:true (bewusst, Kommentar) → nur Ton + In-App-Alert. Zusätzlich fehlt damit der Eintrag in der Mitteilungszentrale für Pushes, die bei offener App ankommen, und das Badge „1“ nach Verlassen der App. Android in beiden nur In-App-Alert.
   Flutter: lib/core/services/push/firebase_push_messaging_client.dart:43

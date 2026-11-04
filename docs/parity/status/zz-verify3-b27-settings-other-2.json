@@ -1,0 +1,125 @@
+{
+  "batch": "zz-verify3-b27-settings-other-2",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "settings/files/files.page#toast-1b899539": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:595-599", "lib/features/settings/presentation/pages/files_page.dart:641-642", "lib/core/providers/role_permission_providers.dart:143"],
+      "n": "Rolle: _moveEntries bricht wie Ionic moveEntries ohne Bearbeitungsrecht mit „Du darfst Dateien nicht bearbeiten.“ ab; canEditFilesFor = Admin/Verantwortlich wie Ionic canEditFiles (Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber in beiden nie, files_shared ändert nur das Lesen). Text mit {ok}/{skipped}/{failed} und Warnfarbe gleich.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#toast-3992cefe": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:643-644"],
+      "n": "Gleiche Rollen-/Fallbedingung wie moveSummary (nur Admin/Verantwortlich); Plural-Text „Eintrag wurde verschoben.“ / „# Einträge wurden verschoben.“ und Erfolgsfarbe gleich.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-dd0fc07d": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1035-1040", "lib/features/settings/presentation/pages/files_page.dart:508-517"],
+      "n": "Nur außerhalb des Auswahlmodus, für Admin/Verantwortlich (canEditFilesProvider) und nur bei vorhandenen Einträgen; Tooltip „Auswählen“, Icon check_circle_outline; startet leere Auswahl. Übrige Rollen sehen ihn in beiden nicht.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-54e62c3a": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1045-1049", "lib/features/settings/presentation/pages/files_page.dart:775-781"],
+      "n": "Menüeintrag „Dateien hochladen“ nur für Admin/Verantwortlich; Icon gleich; Mehrfach-Dateiauswahl (FilePicker allowMultiple), _upload prüft das Recht erneut wie triggerUpload/onFileSelected.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-6c4bf952": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1050-1053", "lib/features/settings/presentation/pages/files_page.dart:440-460"],
+      "n": "„Ordner erstellen“ nur für Admin/Verantwortlich, öffnet Namensdialog (Recht im Handler erneut geprüft). Icon create_new_folder statt folder-open-outline (gleiche Bedeutung, wie im Verschieben-Dialog als ok bewertet).",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-5f30ac55": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1055-1059", "lib/features/settings/presentation/pages/files_page.dart:508-517"],
+      "n": "„Mehrere auswählen“ nur für Admin/Verantwortlich und nur bei vorhandenen Einträgen; startet leere Auswahl.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#text-c3f98fef": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1142", "lib/features/settings/presentation/pages/files_page.dart:245-253", "lib/features/settings/presentation/pages/files_page.dart:1200-1201"],
+      "n": "Nur Admin/Verantwortlich mit geladener Belegung (Belegung wird wie in Ionic nur bei Bearbeitungsrecht geladen, files_used_bytes); „ · fast voll“ ab 80 %, „ · voll“ ab 100 % an den Speichertext angehängt.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#text-7c9c40ef": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1189-1201", "lib/core/providers/files_providers.dart:117-125"],
+      "n": "Nur Admin/Verantwortlich mit geladener Belegung und Limit (tenants.files_max_bytes): „Speicher: {used} von {max} belegt“, gleiche Größenformatierung (B/KB/MB/GB, eine Nachkommastelle), über Breadcrumbs/unter Suche wie Ionic."
+    },
+    "settings/files/files.page#text-9dbd2f61": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1192-1194"],
+      "n": "Ohne Limit „Speicher: {used} belegt“; gleiche Rollen-/Ladebedingung wie Ionic."
+    },
+    "settings/files/files.page#media-b8018f1d": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1202-1208"],
+      "n": "Fortschrittsbalken used/max, rot ab 90 %, sonst Primärfarbe, nur mit Limit (Flutter zusätzlich max > 0; Limit 0 praktisch ohne Bedeutung)."
+    },
+    "settings/files/files.page#action-ecc09e57": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:1209-1214", "lib/features/settings/presentation/pages/files_page.dart:669-716"],
+      "n": "„Mehr Speicher anfragen“ nur für Admin/Verantwortlich ab 80 % Belegung; Icon gleich; Dialog (Hinweis, Textfeld, Abbrechen/Senden) und Anfrage-Text an questions wie Ionic.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#text-308e6820": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:869-879", "lib/features/settings/presentation/pages/files_page.dart:863-867"],
+      "n": "Text „typ:<wert> · Filtert nach Dateityp oder Art (z. B. typ:pdf, typ:ordner, typ:datei).“ gleich, im Such-Hilfe-Dialog (Dialog statt Popover: siehe popover-f66de769). Ionic: innerHTML mit fetten Beispielen / Flutter: _plainHtml entfernt den Fettdruck. Für alle Rollen wie Ionic."
+    },
+    "settings/files/files.page#text-4f3365df": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:869-879", "lib/features/settings/presentation/pages/files_page.dart:863-867"],
+      "n": "Text „datum:<wert> · Filtert nach Änderungsdatum (z. B. datum:2026, datum:03.2026, datum:03.03.2026).“ gleich. Ionic: innerHTML mit fetten Beispielen / Flutter: ohne Fettdruck (_plainHtml)."
+    },
+    "settings/files/files.page#text-cd4b6647": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:869-879", "lib/features/settings/presentation/pages/files_page.dart:863-867"],
+      "n": "Text „Filter sind kombinierbar, z. B. protokoll typ:pdf datum:2026.“ gleich. Ionic: Beispiel fett (innerHTML) / Flutter: ohne Fettdruck (_plainHtml)."
+    },
+    "settings/files/files.page#action-1e396038": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:915-920", "lib/features/settings/presentation/pages/files_page.dart:462-479"],
+      "n": "„Umbenennen“ nur bei canEdit (Admin/Verantwortlich) im Eintrags-Menü (im Auswahlmodus ausgeblendet wie Ionic); öffnet Umbenennen-Dialog. _renameEntry ohne eigene Rechteprüfung, aber nur von dort erreichbar.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-ea539710": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:921-925", "lib/features/settings/presentation/pages/files_page.dart:595-599"],
+      "n": "„Verschieben“ nur für Admin/Verantwortlich; öffnet Zielordner-Auswahl, _moveEntries prüft das Recht erneut.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-331d5d6d": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:926-931", "lib/features/settings/presentation/pages/files_page.dart:508-517"],
+      "n": "„Mehrere auswählen“ nur für Admin/Verantwortlich; startet die Auswahl mit diesem Eintrag.",
+      "v": "bestätigt"
+    },
+    "settings/files/files.page#action-0d33b3ea": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/files_page.dart:932-937", "lib/features/settings/presentation/pages/files_page.dart:650-667"],
+      "n": "„Löschen“ nur für Admin/Verantwortlich; öffnet Lösch-Bestätigung. Rote Darstellung im Action Sheet ist bei popover-92206ccb erfasst.",
+      "v": "bestätigt"
+    },
+    "settings/handover-detail/handover-detail.page#toast-1afd9d81": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/handover_detail_page.dart:61-64", "lib/core/router/app_router.dart:180"],
+      "n": "Ohne Übergabedaten (Reload/Direktaufruf) Fehler-Toast „Keine Daten für die Personenübergabe vorhanden.“. Seite wie Ionic (isUrlAccessAllowed '/tabs/settings/handover/detail') nur für Admin/Verantwortlich erreichbar (_protectedRoutes '/settings/handover' gilt auch für /detail).",
+      "v": "bestätigt"
+    },
+    "settings/handover-detail/handover-detail.page#nav-eb664c37": {
+      "s": "ok",
+      "f": ["lib/features/settings/presentation/pages/handover_detail_page.dart:65"],
+      "n": "Zurück zu /settings/handover (go statt navigateBack, gleiches Ziel); gleiche Rollenbeschränkung wie der Toast.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

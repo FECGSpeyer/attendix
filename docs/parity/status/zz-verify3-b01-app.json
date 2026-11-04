@@ -1,0 +1,200 @@
+{
+  "batch": "zz-verify3-b01-app",
+  "ionic": "9f9b82af",
+  "flutter": "b218510",
+  "items": {
+    "app-redirect/app-redirect.page#nav-0ce724a0": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:33-50"],
+      "n": "Ziel (App-Store-URL) und Erkennung gleich (Ionic UA iPad/iPhone/iPod oder MacIntel+Touch; Flutter defaultTargetPlatform aus navigator.platform, Mac+maxTouchPoints>2 = iPadOS), nativ beide → /login. Ionic: window.location.replace, /app bleibt nicht im Verlauf / Flutter: launchUrl(webOnlyWindowName '_self') = window.open(_self), /app bleibt im Verlauf; Browser-Zurück landet wieder auf /app und leitet erneut weiter."
+    },
+    "app-redirect/app-redirect.page#nav-bf70c832": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:33-50"],
+      "n": "Ziel (Play-Store-URL) gleich, Android-Erkennung gleichwertig (Flutter-Engine prüft UA 'Android'). Ionic: window.location.replace / Flutter: window.open(_self), /app bleibt im Verlauf (Zurück → erneute Weiterleitung). Randfall: unbekannte navigator.platform wird in Flutter als Android gewertet (Play Store statt Landing)."
+    },
+    "app-redirect/app-redirect.page#nav-e45561c6": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:108-113", "lib/features/public_links/presentation/pages/app_redirect_page.dart:48-50"],
+      "n": "Button \"App Store\" → launchUrl(_self), gleiche Navigation im selben Tab wie location.href."
+    },
+    "app-redirect/app-redirect.page#nav-bf2c630f": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:115-120", "lib/features/public_links/presentation/pages/app_redirect_page.dart:48-50"],
+      "n": "Button \"Google Play\" → launchUrl(_self), gleiche Navigation im selben Tab wie location.href."
+    },
+    "app-redirect/app-redirect.page#media-478f5f25": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:83-94"],
+      "n": "Bedingung ist Plattform, keine Rolle: Landing nur im Web, weder iOS noch Android (Flutter zusätzlich bei Fehler von launchUrl). Gleiches App-Icon 96px, Radius 22; kein semanticLabel (Ionic alt=\"Attendix\"), Überschrift folgt direkt.",
+      "v": "bestätigt"
+    },
+    "app-redirect/app-redirect.page#text-c5b7fc54": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:96-100"],
+      "n": "\"Attendix\", gleiche Landing-Bedingung (Web, nicht iOS/Android).",
+      "v": "bestätigt"
+    },
+    "app-redirect/app-redirect.page#text-e97fa4cd": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:102-106"],
+      "n": "\"Lade die App im Store deines Geräts:\", gleiche Landing-Bedingung.",
+      "v": "bestätigt"
+    },
+    "app-redirect/app-redirect.page#action-2da8ba82": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/app_redirect_page.dart:108-113"],
+      "n": "Heller Block-Button mit Apple-Icon \"App Store\", nur auf der Landing.",
+      "v": "bestätigt"
+    },
+    "app.component#native-a707e12b": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/root_back_button_scope.dart:33-50", "lib/shared/widgets/layout/main_shell.dart:347"],
+      "n": "Android-Zurück ohne weitere Seite → App beenden: RootBackButtonScope (nur nativ Android) an den Shell-Tabs, außerhalb der Shell Flutter-Standard (SystemNavigator.pop). Keine Rollenbedingung.",
+      "v": "bestätigt"
+    },
+    "app.component#toast-ed78b5e8": {
+      "s": "ok",
+      "f": ["lib/features/auth/presentation/pages/new_password_page.dart:34-40"],
+      "n": "\"Bitte gib ein Passwort mit mindestens 6 Zeichen ein\" (danger) bei < 6 Zeichen, Eingabe bleibt offen. Guard passwordRecoveryAlertOpen ist keine Rolle; /new-password nur mit Recovery-Session. Alert→Seite ist als Extra erfasst.",
+      "v": "bestätigt"
+    },
+    "app.component#toast-9a9fbfa0": {
+      "s": "ok",
+      "f": ["lib/features/auth/presentation/pages/new_password_page.dart:42-48"],
+      "n": "Erfolgstoast mit derselben Meldung (db.passwordUpdated); danach Flutter → /tenants.",
+      "v": "bestätigt"
+    },
+    "app.component#toast-0dcf4ddc": {
+      "s": "ok",
+      "f": ["lib/features/auth/presentation/pages/new_password_page.dart:49-51", "lib/features/auth/data/auth_flow_service.dart:194-215"],
+      "n": "Fehlertoast (danger) mit derselben Fehlercode-Zuordnung (same_password, weak_password, Rate-Limit, Session abgelaufen).",
+      "v": "bestätigt"
+    },
+    "app.component#effect-330e1045": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/dialogs/native_app_ad.dart:77-87", "lib/shared/widgets/dialogs/native_app_ad.dart:44-50", "lib/core/router/app_router.dart:145"],
+      "n": "Ionic showNativeAppAd: nur Web, nicht in Teams (teams.isInTeams() → return), einmalig (localStorage) → window.open(Store-URL, '_blank') / Flutter NativeAppAdGate: Web + einmalig, aber ohne Teams-Prüfung → Hinweis und Store-Öffnen auch im Teams-Tab. Gleiche Lücke wie Extra \"Native-App-Hinweis in Teams\" (b01-app). Erstprüfung hat die Teams-Bedingung nicht berücksichtigt.",
+      "v": "korrigiert"
+    },
+    "login/login.page#alert-219aeb1d": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/auth/presentation/pages/login_page.dart:351-395", "lib/features/auth/presentation/pages/login_page.dart:196-210", "lib/core/services/teams/teams_service.dart:181-183"],
+      "n": "Flutter besser: Normalmodus gleich (\"E-Mail nicht bestätigt\", Text, E-Mail-Feld vorbefüllt, Abbrechen / Erneut senden → resend). Teams-Verknüpfungsmodus: Ionic ssoLink fängt email_not_confirmed ab → nur Toast \"Bitte bestätige zuerst deine E-Mail-Adresse.\", kein Dialog / Flutter ssoLink lässt LoginFailure durch → Dialog mit \"Erneut senden\" auch dort.",
+      "v": "korrigiert"
+    },
+    "login/login.page#toast-a452fd30": {
+      "s": "ok",
+      "f": ["lib/features/auth/presentation/pages/login_page.dart:379-384"],
+      "n": "\"Bitte gib deine E-Mail-Adresse ein.\" (warning) bei leerem Feld, Dialog bleibt offen. Sichtbarkeit folgt dem Dialog (Teams-Abweichung bei alert-219aeb1d).",
+      "v": "bestätigt"
+    },
+    "login/login.page#alert-6409ac1a": {
+      "s": "ok",
+      "f": ["lib/features/auth/presentation/pages/login_page.dart:401-409", "lib/features/auth/presentation/pages/login_page.dart:214", "lib/features/auth/presentation/pages/login_page.dart:280"],
+      "n": "\"Kein Konto gefunden\", Abbrechen / Registrieren → Registrieren-Modal; Auslöser user_not_found beim Login und kein Konto bei \"Code senden\" wie Ionic. Im Teams-Modus käme er nur über user_not_found (liefert signInWithPassword praktisch nicht) oder den Code-Weg (siehe Extra).",
+      "v": "bestätigt"
+    },
+    "open-attendance/open-attendance.page#nav-e5a2e051-2": {
+      "s": "ok",
+      "f": ["lib/features/planning/presentation/pages/open_attendance_page.dart:38-43", "lib/core/router/app_router.dart:340-361"],
+      "n": "Nicht-numerische id → /login, für alle Rollen gleich; eingeloggt leitet /login wie Ionic LoginGuard auf die Startseite der Rolle weiter.",
+      "v": "bestätigt"
+    },
+    "open-file/open-file.page#toast-ef87d2b8": {
+      "s": "ok",
+      "f": ["lib/features/public_links/presentation/pages/open_file_page.dart:107-113", "lib/core/providers/role_permission_providers.dart:116-120"],
+      "n": "canAccessFilesFor = Ionic canAccessFiles: files_shared → alle außer Bewerber/none; sonst Admin, Verantwortlich, Helfer, Stimmführer-Helfer (nicht Spieler, Stimmführer, Eltern, Beobachter). Toast \"Du hast keinen Zugriff auf Dateien.\" (danger) + Startseite der Rolle in der Link-Instanz.",
+      "v": "bestätigt"
+    },
+    "open-file/open-file.page#toast-c088ac66": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/public_links/presentation/pages/open_file_page.dart:124", "lib/core/router/app_router.dart:364-372"],
+      "n": "Flutter besser: Erstprüfung übersah TermsGuard. Ionic: Nutzer ohne terms_accepted_at (z. B. Login über geteilten Link) → TermsGuard bricht ab → Toast \"Der Link konnte nicht geöffnet werden.\" + routeAfterAuth, Link verloren / Flutter: Terms-Gate im Router leitet still auf /terms, ein vor dem Login gemerkter Link wird nach Zustimmung fortgesetzt.",
+      "v": "korrigiert"
+    },
+    "register/register.page#alert-f158c7c9": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:502-529", "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:363-369"],
+      "n": "Nur ohne Instanz (Ionic canDismiss=false ↔ Flutter /tenants mit 0 Instanzen → TenantCreatePage(canDismiss: false)). Header, Text, Abbrechen / \"Endgültig löschen\" (rot), delete-account, Abmelden, /login gleich. Fehlendes Overlay ist bei loading-14fb6abb erfasst.",
+      "v": "bestätigt"
+    },
+    "register/register.page#toast-243480af": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:530-537", "lib/data/repositories/account_repository.dart:27-42"],
+      "n": "Vorlage \"Fehler beim Löschen: {error}\" gleich, aber {error}: Ionic FunctionsHttpError \"Edge Function returned a non-2xx status code\" / Flutter RepositoryException aus FunctionException.toString() → \"FunctionException(status: 500, details: {error: …}, reasonPhrase: …)\". Erstprüfung hat den Fehlertext nicht verglichen.",
+      "v": "korrigiert"
+    },
+    "register/register.page#action-c30f1d58": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:146-155"],
+      "n": "Schließen-X nur mit vorhandener Instanz (Ionic canDismiss = tenantUser; Flutter /tenants/new bzw. Instanz-Sheet, canDismiss true), für alle Rollen gleich; pop bzw. /tenants.",
+      "v": "bestätigt"
+    },
+    "register/register.page#action-a59eb784": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:156-160"],
+      "n": "Menü-Button nur ohne Instanz (count == 0), Icon more_vert (iOS more_horiz).",
+      "v": "bestätigt"
+    },
+    "register/register.page#popover-aecc1f28": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:156-183"],
+      "n": "PopupMenuButton unter dem Button mit Abmelden / Konto löschen, schließt bei Auswahl.",
+      "v": "bestätigt"
+    },
+    "register/register.page#action-c25bfc83": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:165-172", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:493-499"],
+      "n": "\"Abmelden\" mit Logout-Icon: Push-Token entfernen, signOut, Zustand leeren, /login (Ionic db.logout + SIGNED_OUT-Handler).",
+      "v": "bestätigt"
+    },
+    "register/register.page#action-44a0b310": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:173-181"],
+      "n": "\"Konto löschen\" mit Papierkorb-Icon, beides rot, öffnet die Bestätigung.",
+      "v": "bestätigt"
+    },
+    "register/register.page#text-51a59c27": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:206-213"],
+      "n": "Gleicher Introtext, \"Instanz\" fett (Inline-HTML-Spans), zentriert in der Intro-Karte."
+    },
+    "register/register.page#text-68203b72": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:57", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"],
+      "n": "\"Ideal für Vereine, Teams oder sonstige Gruppen.\" mit grünem Häkchen unter Schritt 1, Typ general."
+    },
+    "register/register.page#text-db3fe0a6": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:66", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"],
+      "n": "\"Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).\" bei Typ choir."
+    },
+    "register/register.page#text-76739b9f": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:75", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"],
+      "n": "\"Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.\" bei Typ orchestra."
+    },
+    "register/register.page#text-9b44867b": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:542-558", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:636-670"],
+      "n": "Gleicher Text mit h3/p/strong/li/em-Formatierung (_HtmlBlocks). Dialog statt Popover ist bei popover-f947f492 erfasst."
+    }
+  },
+  "extra": [
+    {
+      "unit": "login/login.page",
+      "title": "Teams-Verknüpfung: Wechsel zur Code-Anmeldung",
+      "n": "Ionic: im Teams-Verknüpfungsmodus fängt ssoLink Login-Fehler ab → bei falschem Passwort nur Toast \"Ungültige Anmeldedaten\", kein Angebot zur Code-Anmeldung (Segment ausgeblendet) / Flutter: LoginFailure kommt bis _login → Dialog \"Anmeldung fehlgeschlagen\" mit \"Code per E-Mail\" → Code-Modus trotz Verknüpfungsmodus; Anmeldung per Code verknüpft das Microsoft-Konto nicht, Rückweg zum Passwort-Modus fehlt (Segment bleibt ausgeblendet).",
+      "sev": "mittel",
+      "ionic": "src/app/login/login.page.ts:90-117",
+      "f": ["lib/features/auth/presentation/pages/login_page.dart:196-214", "lib/features/auth/presentation/pages/login_page.dart:412-420", "lib/core/services/teams/teams_service.dart:181-183"]
+    }
+  ]
+}
