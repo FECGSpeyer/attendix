@@ -130,6 +130,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   final Map<String, QuillController> _controllers = {};
   final Map<String, StreamSubscription<DocChange>> _subscriptions = {};
+
+  /// Local edits per section; lets a server merge skip sections edited
+  /// while it was loading.
+  final Map<String, int> _editCount = {};
   final Map<String, Timer> _timers = {};
   final Set<String> _pending = {};
 
@@ -364,12 +368,18 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       readOnly: readOnly || !_isLeader,
     );
     if (_isLeader && !readOnly) {
-      _subscriptions[id] = document.changes.listen((change) {
-        if (change.source == ChangeSource.local) _queueSave(id);
-      });
+      _subscriptions[id] = _listenLocalChanges(id, document);
     }
     _controllers[id] = controller;
     return controller;
+  }
+
+  StreamSubscription<DocChange> _listenLocalChanges(String id, Document document) {
+    return document.changes.listen((change) {
+      if (change.source != ChangeSource.local) return;
+      _editCount[id] = (_editCount[id] ?? 0) + 1;
+      _queueSave(id);
+    });
   }
 
   /// Shows [doc] (saved by another leader) in the open editor of [id]
@@ -384,9 +394,7 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     _subscriptions.remove(id)?.cancel();
     controller.document = document;
     if (_isLeader && !controller.readOnly) {
-      _subscriptions[id] = document.changes.listen((change) {
-        if (change.source == ChangeSource.local) _queueSave(id);
-      });
+      _subscriptions[id] = _listenLocalChanges(id, document);
     }
   }
 
@@ -810,12 +818,15 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
     // Other leaders may have written in other sections meanwhile.
     try {
+      final editsBefore = Map<String, int>.of(_editCount);
       final row = await _repo.getProtocolForAttendance(widget.attendanceId);
-      if (row != null) {
+      if (row != null && mounted) {
         // Ionic mergeServerRow: every section without an unsaved local
-        // change takes the server notes, opened editors included.
+        // change takes the server notes, opened editors included. Sections
+        // edited while the row loaded keep the newer local text.
         for (final e in row.content.entries) {
           if (_pending.contains(e.key) || _inFlight.containsKey(e.key) || e.value is! Map) continue;
+          if ((_editCount[e.key] ?? 0) != (editsBefore[e.key] ?? 0)) continue;
           final doc = Map<String, dynamic>.from(e.value as Map);
           final controller = _controllers[e.key];
           if (controller != null && jsonEncode(_docs[e.key]) != jsonEncode(doc)) {

@@ -60,7 +60,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
     final isLeader = ref.watch(isTeamLeaderProvider);
     final tasksAsync = ref.watch(teamTasksProvider);
     ref.listen(teamTasksProvider, (_, next) {
-      if (next is AsyncError) {
+      if (next is AsyncError && !next.isLoading) {
         ToastHelper.showError(context, context.l10n.teamOrgTasksLoadFailed);
       }
     });

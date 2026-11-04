@@ -356,7 +356,7 @@ class _LeaderTopicsState extends ConsumerState<_LeaderTopics> {
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
     final l10n = context.l10n;
     ref.listen(agendaItemsProvider, (_, next) {
-      if (next is AsyncError) ToastHelper.showError(context, l10n.agendaLoadFailed);
+      if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, l10n.agendaLoadFailed);
     });
 
     Widget content(List<AgendaItem> items) {
@@ -573,7 +573,7 @@ class _MemberTopics extends ConsumerWidget {
     final itemsAsync = ref.watch(agendaItemsProvider);
     final l10n = context.l10n;
     ref.listen(agendaItemsProvider, (_, next) {
-      if (next is AsyncError) ToastHelper.showError(context, l10n.agendaLoadFailed);
+      if (next is AsyncError && !next.isLoading) ToastHelper.showError(context, l10n.agendaLoadFailed);
     });
 
     Widget content(List<AgendaItem> items) {

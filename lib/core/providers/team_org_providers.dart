@@ -438,6 +438,13 @@ Future<Map<String, dynamic>> addTopicsToAttendance(
 
 // ── Reload (Ionic ionViewWillEnter / segment change / refresher) ──────
 
+/// Starts a fresh load of [provider] unless one is already running (e.g. the
+/// first load a page just started by watching it).
+void refreshUnlessLoading<T>(WidgetRef ref, ProviderBase<AsyncValue<T>> provider) {
+  if (ref.read(provider).isLoading) return;
+  ref.invalidate(provider);
+}
+
 /// Ionic team-organization `reloadActive()`: reloads what one tab shows
 /// (`tasks` | `topics` | `protocols`). The tabs keep their current content
 /// while it loads. Completes when the tab's main list has loaded (errors are
@@ -447,17 +454,17 @@ Future<void> reloadTeamOrgTab(WidgetRef ref, String tab) async {
     switch (tab) {
       case 'tasks':
         // Members: getMyTasks is loaded fresh as well.
-        ref.invalidate(myTasksProvider);
-        ref.invalidate(teamTasksProvider);
+        refreshUnlessLoading(ref, myTasksProvider);
+        refreshUnlessLoading(ref, teamTasksProvider);
         await ref.read(teamTasksProvider.future);
       case 'topics':
         // Leadership: topics, protocols (vertagt) and the next Termine.
-        ref.invalidate(agendaItemsProvider);
-        ref.invalidate(protocolsProvider);
-        ref.invalidate(upcomingProtocolAttendancesProvider);
+        refreshUnlessLoading(ref, agendaItemsProvider);
+        refreshUnlessLoading(ref, protocolsProvider);
+        refreshUnlessLoading(ref, upcomingProtocolAttendancesProvider);
         await ref.read(agendaItemsProvider.future);
       case 'protocols':
-        ref.invalidate(protocolsProvider);
+        refreshUnlessLoading(ref, protocolsProvider);
         await ref.read(protocolsProvider.future);
     }
   } catch (_) {

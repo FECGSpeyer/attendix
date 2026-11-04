@@ -34,7 +34,7 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
     // Ionic: the task is loaded anew on every open (also after an earlier
     // load error); a cached task stays visible meanwhile.
     WidgetsBinding.instance.addPostFrameCallback((_) {
-      if (mounted) ref.invalidate(taskByIdProvider(widget.taskId));
+      if (mounted) refreshUnlessLoading(ref, taskByIdProvider(widget.taskId));
     });
   }
 

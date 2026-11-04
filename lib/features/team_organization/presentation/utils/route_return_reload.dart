@@ -2,11 +2,12 @@ import 'package:flutter/widgets.dart';
 import 'package:go_router/go_router.dart';
 
 /// Ionic `ionViewWillEnter` for a go_router page: calls [onRouteReturn]
-/// whenever the app comes back to this page's location after another page
-/// was shown on top (or instead) of it.
+/// whenever this page is the top page again after another page was shown on
+/// top (or instead) of it. Compares the page key of the top route match
+/// (pushed pages have their own key; `replace` keeps the key).
 mixin RouteReturnReload<T extends StatefulWidget> on State<T> {
   GoRouterDelegate? _routeReturnDelegate;
-  String? _routeReturnPath;
+  ValueKey<String>? _routeReturnKey;
   bool _routeReturnCovered = false;
 
   /// Called after the frame in which the page became current again.
@@ -19,7 +20,7 @@ mixin RouteReturnReload<T extends StatefulWidget> on State<T> {
     if (delegate != null && delegate != _routeReturnDelegate) {
       _routeReturnDelegate?.removeListener(_onRouteReturnChange);
       _routeReturnDelegate = delegate;
-      _routeReturnPath = delegate.currentConfiguration.uri.path;
+      _routeReturnKey = delegate.currentConfiguration.lastOrNull?.pageKey;
       delegate.addListener(_onRouteReturnChange);
     }
   }
@@ -31,9 +32,9 @@ mixin RouteReturnReload<T extends StatefulWidget> on State<T> {
   }
 
   void _onRouteReturnChange() {
-    final path = _routeReturnDelegate?.currentConfiguration.uri.path;
-    if (path == null || _routeReturnPath == null) return;
-    if (path != _routeReturnPath) {
+    final key = _routeReturnDelegate?.currentConfiguration.lastOrNull?.pageKey;
+    if (key == null || _routeReturnKey == null) return;
+    if (key != _routeReturnKey) {
       _routeReturnCovered = true;
     } else if (_routeReturnCovered) {
       _routeReturnCovered = false;

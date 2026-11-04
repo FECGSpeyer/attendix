@@ -55,6 +55,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
   /// (spinner until then), so the form never starts from a stale copy.
   late bool _fresh = _isNew;
 
+  /// The fresh load failed: no form from an older cached copy.
+  bool _loadFailed = false;
+
   @override
   void initState() {
     super.initState();
@@ -62,18 +65,28 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
       final id = _itemId;
-      ref.invalidate(agendaItemByIdProvider(id));
+      refreshUnlessLoading(ref, agendaItemByIdProvider(id));
       _reloadRelated();
-      ref.read(agendaItemByIdProvider(id).future).then((_) {}, onError: (_) {}).whenComplete(() {
-        if (mounted) setState(() => _fresh = true);
-      });
+      ref.read(agendaItemByIdProvider(id).future).then(
+        (_) {
+          if (mounted) setState(() => _fresh = true);
+        },
+        onError: (Object _) {
+          if (mounted) {
+            setState(() {
+              _fresh = true;
+              _loadFailed = true;
+            });
+          }
+        },
+      );
     });
   }
 
   /// Ionic loadRelated(): linked tasks and history.
   void _reloadRelated() {
-    ref.invalidate(agendaItemHistoryProvider(_itemId));
-    ref.invalidate(tasksForAgendaItemProvider(_itemId));
+    refreshUnlessLoading(ref, agendaItemHistoryProvider(_itemId));
+    refreshUnlessLoading(ref, tasksForAgendaItemProvider(_itemId));
   }
 
   /// Ionic ionViewWillEnter: back from a task or protocol → reload tasks and
@@ -248,7 +261,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     final isLeader = ref.watch(isTeamLeaderProvider);
     final AsyncValue<AgendaItem?> itemAsync =
         _isNew ? const AsyncValue.data(null) : ref.watch(agendaItemByIdProvider(_itemId));
-    final item = itemAsync.valueOrNull;
+    final item = _loadFailed ? null : itemAsync.valueOrNull;
     if (item != null && isLeader && _fresh) _fill(item);
     final l10n = context.l10n;
 
