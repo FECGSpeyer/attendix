@@ -627,8 +627,11 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
 
   Future<void> _pickImage() async {
     try {
+      final picker = ImagePicker();
       var source = ImageSource.gallery;
-      if (!kIsWeb) {
+      // Camera / gallery choice only where the plugin has a camera (not on
+      // macOS, it throws there); otherwise straight to the gallery.
+      if (!kIsWeb && picker.supportsImageSource(ImageSource.camera)) {
         final picked = await showAppActionSheet<ImageSource>(
           context,
           actions: [
@@ -647,7 +650,6 @@ class _TenantRegistrationPageState extends ConsumerState<TenantRegistrationPage>
         if (picked == null || !mounted) return;
         source = picked;
       }
-      final picker = ImagePicker();
       final image = await picker.pickImage(source: source);
       if (image == null) return;
 
