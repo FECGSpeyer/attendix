@@ -210,14 +210,42 @@ void main() {
 
       repo.failures = 1;
       await tester.enterText(find.byKey(const Key('rd-work-edit-field-dauer')), '7 min');
-      await tester.tap(find.byKey(const Key('rd-work-edit-name'))); // focus change: fails
+      FocusManager.instance.primaryFocus?.unfocus(); // focus change: fails
       await _settle(tester);
       expect(repo.updates, isEmpty);
+      await tester.pump(const Duration(seconds: 4)); // the error toast covers "Fertig"
+      await _settle(tester);
       await tester.tap(find.byKey(const Key('rd-work-edit-done'))); // closing tries again
       await _settle(tester);
       expect(repo.updates, [
         {
           'additional_fields': {'dauer': '7 min'},
+        },
+      ]);
+    });
+
+    testWidgets('only switch fields: a failed save is tried again on close', (tester) async {
+      _phone(tester);
+      late _FakeSongRepo repo;
+      await tester.pumpWidget(
+        _editApp((r) => repo = r, fields: const [SongAdditionalField(id: 'orgel', name: 'Mit Orgel', type: 'boolean')]),
+      );
+      await _settle(tester);
+
+      repo.failures = 1;
+      await tester.ensureVisible(find.text('Mit Orgel'));
+      await _settle(tester);
+      await tester.tap(find.text('Mit Orgel'));
+      await _settle(tester);
+      expect(repo.updates, isEmpty);
+      await tester.pump(const Duration(seconds: 4)); // the error toast covers "Fertig"
+      await _settle(tester);
+      await tester.tap(find.byKey(const Key('rd-work-edit-done')));
+      await _settle(tester);
+      // Switches start on (Ionic default), the tap turned it off.
+      expect(repo.updates, [
+        {
+          'additional_fields': {'orgel': false},
         },
       ]);
     });

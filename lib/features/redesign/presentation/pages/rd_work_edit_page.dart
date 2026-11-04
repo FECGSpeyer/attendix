@@ -213,9 +213,10 @@ class _RdWorkEditPageState extends ConsumerState<RdWorkEditPage> {
     });
   }
 
-  /// Text and number Zusatzfelder.
+  /// Text and number Zusatzfelder; also retries a failed write of switch
+  /// and choice fields (on close, too).
   void _saveFieldTexts() {
-    if (_storedName == null || _fieldControllers.isEmpty) return;
+    if (_storedName == null) return;
     for (final field in _fields) {
       final c = _fieldControllers[field.id];
       if (c == null) continue;
