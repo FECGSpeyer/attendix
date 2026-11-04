@@ -16,6 +16,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -131,7 +132,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (!(role.isAdmin || role.isResponsible)) return;
     final repo = ref.read(playerRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
-    await repo.checkAndUnpausePlayers();
+    try {
+      await repo.checkAndUnpausePlayers();
+    } on DemoModeException {
+      // Demo account: the guard already showed the demo hint; load anyway.
+    }
     if (mounted) ref.invalidate(realtimePlayersProvider);
   }
 

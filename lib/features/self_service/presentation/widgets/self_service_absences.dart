@@ -13,6 +13,7 @@ import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/person/person.dart';
@@ -153,7 +154,11 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
     _unpauseChecked = true;
     WidgetsBinding.instance.addPostFrameCallback((_) async {
       final repo = ref.read(playerRepositoryWithTenantProvider);
-      await repo.checkAndUnpausePlayers();
+      try {
+        await repo.checkAndUnpausePlayers();
+      } on DemoModeException {
+        // Demo account: the guard already showed the demo hint; load anyway.
+      }
       if (mounted) ref.invalidate(currentSelfServicePlayerProvider);
     });
   }
