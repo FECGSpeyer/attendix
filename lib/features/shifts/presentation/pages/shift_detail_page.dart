@@ -367,6 +367,15 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     }
   }
 
+  /// The segments with `index` = list position. Loading sorts by `index`
+  /// (Ionic loadShifts); deleting a segment leaves gaps and a new segment
+  /// gets `_definitions.length`, which could equal a remaining index and
+  /// move the new segment on the next load.
+  List<ShiftDefinition> _numberedDefinitions() => [
+        for (var i = 0; i < _definitions.length; i++)
+          _definitions[i].index == i ? _definitions[i] : _definitions[i].copyWith(index: i),
+      ];
+
   // Definition segment methods
   void _addSegment() {
     setState(() {
@@ -444,7 +453,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       id: widget.shiftId,
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
@@ -511,7 +520,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     final previewPlan = shift.copyWith(
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
@@ -525,7 +534,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     final currentPlan = shift.copyWith(
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
