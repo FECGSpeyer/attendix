@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.40.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Beta: Werke-Liste, Statuszeile und Filter nutzen dieselbe eigene Stimme (nie die Hauptgruppe der Leitung)",
+        "🐛 Beta: „Meine Noten öffnen“ ist gesperrt und zeigt eine Ladeanzeige, solange das PDF erstellt wird",
+        "🐛 Beta: Eine gespeicherte absteigende Sortierung erscheint als „Nummer ↓“ bzw. „Titel ↓“; „Nummer“ und „Titel“ sortieren aufsteigend",
+        "🐛 Beta: „Als Nächstes“ und „Meine Mappe“ zeigen keine Termine mehr, die heute schon vorbei sind",
+        "🐛 Beta: Im Chor heißt „Mehr zu …“ auf der Werk-Seite richtig „Chor (alle)“"
+      ]
+    },
+    {
       "version": "0.40.0",
       "date": "4.11.2026",
       "changes": [

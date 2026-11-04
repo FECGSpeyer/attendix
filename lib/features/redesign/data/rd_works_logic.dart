@@ -1,8 +1,10 @@
 import '../../../core/utils/choir_file_utils.dart';
+import '../../../data/models/attendance/attendance.dart';
 import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../../songs/presentation/utils/song_utils.dart';
+import 'rd_dates.dart';
 
 /// REDESIGN: pure logic of the Werke tab (canvas "WerkeListe", "WerkDetail").
 
@@ -256,6 +258,48 @@ List<RdNextEvent> rdNextEvents(List<CurrentSongsGroup> groups, List<Song> songs)
   final far = DateTime(9999);
   result.sort((a, b) => (a.date ?? far).compareTo(b.date ?? far));
   return result;
+}
+
+/// [events] without the Termine that are already over at [now]. The loader
+/// ([rdNextEvents]' input) keeps everything from the start of today, so a
+/// Termin of this morning would stay until midnight. Over means: the end
+/// time (else the start time) of the Termin, from [attendances] or its type
+/// in [types], on its last day lies before [now]. Without any time the
+/// Termin stays until the end of its (last) day.
+List<RdNextEvent> rdWithoutEndedEvents(
+  List<RdNextEvent> events, {
+  required DateTime now,
+  List<Attendance> attendances = const [],
+  List<AttendanceType> types = const [],
+}) {
+  final byId = {for (final a in attendances) a.id: a};
+  return [
+    for (final e in events)
+      if (!_rdEventOver(e, byId[e.attendanceId], types, now)) e,
+  ];
+}
+
+bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types, DateTime now) {
+  final date = event.date;
+  if (date == null) return false;
+  final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
+  final days = (att?.durationDays ?? 1) < 1 ? 1 : (att?.durationDays ?? 1);
+  final lastDay = rdAddDays(date, days - 1);
+  final start = _rdClock(att?.startTime ?? type?.startTime);
+  final end = _rdClock(att?.endTime ?? type?.endTime);
+  final time = end ?? start;
+  if (time == null) return !now.isBefore(rdAddDays(lastDay, 1));
+  // An end before the start (e.g. 20:00–01:00) is on the next day.
+  final overnight = end != null && start != null && end < start && days == 1;
+  final day = overnight ? rdAddDays(lastDay, 1) : lastDay;
+  return DateTime(day.year, day.month, day.day, time ~/ 60, time % 60).isBefore(now);
+}
+
+/// Minutes after midnight of "HH:mm" (also "HH:mm:ss"), null without one.
+int? _rdClock(String? time) {
+  final match = RegExp(r'^(\d{1,2}):(\d{2})').firstMatch(time?.trim() ?? '');
+  if (match == null) return null;
+  return int.parse(match.group(1)!) * 60 + int.parse(match.group(2)!);
 }
 
 /// "Nur zeigen" of the Werke filter that the old filter does not know.

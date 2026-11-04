@@ -3,10 +3,12 @@ import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/player_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_filter_providers.dart';
 import '../../../../core/providers/song_providers.dart';
@@ -51,6 +53,9 @@ class RdWorksPage extends ConsumerStatefulWidget {
 
 class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   late final _search = TextEditingController(text: ref.read(rdWorksQueryProvider));
+
+  /// "Meine Noten öffnen" is building its PDF.
+  bool _printing = false;
 
   String get _query => ref.read(rdWorksQueryProvider);
 
@@ -177,15 +182,22 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
   }
 
   /// "Meine Noten öffnen": the own parts of the next Termin as one PDF.
+  /// Locked while the PDF is built (no second PDF on a double tap).
   Future<void> _openMine(List<SongPrintEntry> entries, String name) async {
+    if (_printing) return;
     final l10n = context.l10n;
-    final date = DateTime.now().toIso8601String().substring(0, 10);
-    final result = await ref.read(songPrintServiceProvider).printEntries(entries, 'Noten_${name}_$date.pdf');
-    if (!mounted || result == null) return;
-    if (result.pageCount == 0) {
-      ToastHelper.showWarning(context, l10n.svcNoPrintableScores);
-    } else if (result.skipped > 0) {
-      ToastHelper.showWarning(context, l10n.songsFlutterFilesSkipped(result.skipped));
+    setState(() => _printing = true);
+    try {
+      final date = DateTime.now().toIso8601String().substring(0, 10);
+      final result = await ref.read(songPrintServiceProvider).printEntries(entries, 'Noten_${name}_$date.pdf');
+      if (!mounted || result == null) return;
+      if (result.pageCount == 0) {
+        ToastHelper.showWarning(context, l10n.svcNoPrintableScores);
+      } else if (result.skipped > 0) {
+        ToastHelper.showWarning(context, l10n.songsFlutterFilesSkipped(result.skipped));
+      }
+    } finally {
+      if (mounted) setState(() => _printing = false);
     }
   }
 
@@ -275,11 +287,11 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     final filter = ref.watch(songFilterProvider(data.tenantId));
     final filterNotifier = ref.read(songFilterProvider(data.tenantId).notifier);
     final only = ref.watch(rdWorksOnlyProvider);
-    final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
-    final ownGroup = data.groups.where((g) => g.id == groupId && g.maingroup != true).firstOrNull;
+    ref.watch(currentSelfServicePlayerProvider);
+    final ownGroup = _ownGroup(data);
     final counts = lead ? ref.watch(missingGroupsPlayerCountsProvider) : null;
     final shown = _shown(data);
-    final events = _query.trim().isEmpty ? rdNextEvents(data.currentSongs, data.songs) : const <RdNextEvent>[];
+    final events = _query.trim().isEmpty ? _nextEvents(data) : const <RdNextEvent>[];
     final categories = [...data.categories.where((c) => c.id != null)]..sort((a, b) => a.index.compareTo(b.index));
     final sort = filter.sortOption;
     final byLast = sort == SongSortOption.lastSungAsc || sort == SongSortOption.lastSungDesc;
@@ -488,6 +500,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
                     key: const Key('rd-works-open-mine'),
                     icon: Icons.picture_as_pdf_outlined,
                     label: l10n.redesignWorksOpenMine,
+                    loading: _printing,
                     onPressed: () => _openMine(mine, ownGroup!.name),
                   ),
                   Padding(
@@ -520,6 +533,22 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
     ];
   }
 
+  /// The coming Termine with Werke, without those already over today (the
+  /// times come from the loaded Termine, see [rdWithoutEndedEvents]).
+  List<RdNextEvent> _nextEvents(SongsListData data) => rdWithoutEndedEvents(
+    rdNextEvents(data.currentSongs, data.songs),
+    now: DateTime.now(),
+    attendances: ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [],
+    types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
+  );
+
+  /// The own group of a member (never the main group of the conductor), the
+  /// same for the list, the status lines and the filter sheet.
+  Group? _ownGroup(SongsListData data) {
+    final groupId = ref.read(currentSelfServicePlayerProvider).valueOrNull?.instrument;
+    return data.groups.where((g) => g.id == groupId && g.maingroup != true).firstOrNull;
+  }
+
   /// The filtered and sorted Werke (see [rdFilteredWorks]).
   List<Song> _shown(SongsListData data) {
     final lead = ref.read(effectiveRoleProvider).isConductor;
@@ -528,7 +557,7 @@ class _RdWorksPageState extends ConsumerState<RdWorksPage> {
       filter: ref.read(songFilterProvider(data.tenantId)),
       only: ref.read(rdWorksOnlyProvider),
       query: _query,
-      groupId: ref.read(currentSelfServicePlayerProvider).valueOrNull?.instrument,
+      groupId: _ownGroup(data)?.id,
       playerCounts: lead ? ref.read(missingGroupsPlayerCountsProvider) : null,
     );
   }
