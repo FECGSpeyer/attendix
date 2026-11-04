@@ -1,0 +1,10 @@
+{
+  "batch": "zz-fixed-werke",
+  "items": {},
+  "extraOverride": [
+    { "unit": "songs/song/song.page", "title": "Änderung während laufendem Speichern verworfen", "drop": true, "why": "behoben in #PR1" },
+    { "unit": "songs/song/song.page", "title": "Besetzung nach Datei-Änderungen veraltet", "drop": true, "why": "behoben in #PR1" },
+    { "unit": "songs/song/song.page", "title": "Teil-Fehler beim Upload: Liste nicht aktualisiert", "drop": true, "why": "behoben in #PR1" },
+    { "unit": "songs/song/song.page", "title": "Werk und Werkhistorie aus Sitzungs-Cache", "drop": true, "why": "behoben in #PR1" }
+  ]
+}

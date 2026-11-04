@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Werk bearbeiten: Änderungen, die während des Speicherns gemacht werden, gehen nicht mehr verloren",
+        "🐛 Werk bearbeiten: Die Besetzung zeigt nach Hochladen, Löschen oder Kategorie-Wechsel von Dateien die richtigen Gruppen",
+        "🐛 Werk bearbeiten: Nach teilweise fehlgeschlagenem Hochladen erscheinen die hochgeladenen Dateien sofort",
+        "🐛 Werk-Seite lädt beim Öffnen immer den aktuellen Stand und Verlauf"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

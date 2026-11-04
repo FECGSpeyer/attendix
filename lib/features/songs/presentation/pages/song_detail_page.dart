@@ -78,10 +78,35 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   Map<String, dynamic> _additional = {};
   bool _saving = false;
 
+  /// A change arrived while a save was running: save again afterwards
+  /// (Ionic saves on every ionBlur/ionChange, nothing gets lost).
+  bool _saveAgain = false;
+
+  /// Files the form was last synced with (url + group per file).
+  String? _filesKey;
+
+  /// Latest loaded data; a queued save uses it instead of an older copy.
+  SongDetailData? _data;
+
   int? get _songId => int.tryParse(widget.songId);
 
   SongDetailParams get _params =>
       (songId: _songId ?? 0, sharingId: widget.songSharingId);
+
+  @override
+  void initState() {
+    super.initState();
+    // Ionic ngOnInit loads the Werk and its Werkhistorie on every open, so
+    // changes from other people / devices or the Termin page show up.
+    final id = _songId;
+    // Invalidated before the first build, so the form starts with fresh data
+    // (`ref` cannot be used in initState).
+    if (id != null && widget.songSharingId == null) {
+      ProviderScope.containerOf(context, listen: false)
+        ..invalidate(songByIdProvider(id))
+        ..invalidate(songHistoryProvider(id));
+    }
+  }
 
   @override
   void dispose() {
@@ -95,10 +120,27 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     super.dispose();
   }
 
+  static String _filesKeyOf(Song song) => [
+        for (final f in song.files ?? const <SongFile>[]) '${f.url}|${f.instrumentId}',
+      ].join(',');
+
   void _init(SongDetailData data) {
     final song = data.song;
-    if (_initializedFor == song.id) return;
+    _data = data;
+    final filesKey = _filesKeyOf(song);
+    if (_initializedFor == song.id) {
+      // Ionic reloads the Werk after upload, file delete, delete all and
+      // category change (syncInstrumentIdsFromFiles): the Besetzung shows the
+      // instrument_ids the file service wrote, so the next save does not
+      // write the old selection back.
+      if (filesKey != _filesKey) {
+        _filesKey = filesKey;
+        _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(song)}.toList();
+      }
+      return;
+    }
     _initializedFor = song.id;
+    _filesKey = filesKey;
     _prefix.text = song.prefix ?? '';
     _number.text = song.number?.toString() ?? '';
     _name.text = song.name;
@@ -126,11 +168,31 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           if (f.instrumentId != null && f.instrumentId! > 2) f.instrumentId!,
       }.toList();
 
-  /// Ionic `update()`: save the whole form
+  /// Ionic `update()`: save the whole form. A change made while a save is
+  /// running is saved right after it (the form state at that time).
   Future<void> _update(SongDetailData data) async {
-    if (data.readOnly || _saving) return;
+    if (!mounted || data.readOnly) return;
+    if (_saving) {
+      _saveAgain = true;
+      return;
+    }
+    setState(() => _saving = true);
+    var failed = false;
+    do {
+      _saveAgain = false;
+      final ok = await _save(_data ?? data);
+      if (!ok) failed = true;
+    } while (_saveAgain && mounted);
+    if (!mounted) return;
+    setState(() => _saving = false);
+    if (failed) {
+      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+    }
+  }
+
+  Future<bool> _save(SongDetailData data) async {
     final id = data.song.id;
-    if (id == null) return;
+    if (id == null) return true;
     final merged = {..._instrumentIds, ..._idsFromFiles(data.song)}.toList();
     _instrumentIds = merged;
     for (final field in data.additionalFields) {
@@ -138,8 +200,6 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       if (c == null) continue;
       _additional[field.id] = field.isNumber ? num.tryParse(c.text) ?? 0 : c.text;
     }
-
-    setState(() => _saving = true);
     final result = await ref.read(songNotifierProvider.notifier).updateSong(id, {
       'prefix': _prefix.text.trim(),
       'number': int.tryParse(_number.text.trim()),
@@ -150,13 +210,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       'withSolo': _withSolo,
       'instrument_ids': merged,
       'category_ids': _categoryIds,
-      'additional_fields': _additional,
+      'additional_fields': {..._additional},
     });
-    if (!mounted) return;
-    setState(() => _saving = false);
-    if (result == null) {
-      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
-    }
+    return result != null;
   }
 
   void _refresh() {
@@ -909,7 +965,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
   }
 
   Future<void> _upload([List<PlatformFile> initialFiles = const []]) async {
-    final result = await showModalBottomSheet<bool>(
+    await showModalBottomSheet<bool>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
@@ -925,7 +981,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         workName: song.name,
       ),
     );
-    if (result == true) widget.onChanged();
+    // Ionic performUpload reloads the Werk after every run, also when some
+    // files failed and the sheet is closed afterwards.
+    if (mounted) widget.onChanged();
   }
 
   /// Ionic `handlePageDrop`: one file -> single-file modal, several files ->
