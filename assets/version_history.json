@@ -7,7 +7,11 @@
         "🐛 Werk bearbeiten: Änderungen, die während des Speicherns gemacht werden, gehen nicht mehr verloren",
         "🐛 Werk bearbeiten: Die Besetzung zeigt nach Hochladen, Löschen oder Kategorie-Wechsel von Dateien die richtigen Gruppen",
         "🐛 Werk bearbeiten: Nach teilweise fehlgeschlagenem Hochladen erscheinen die hochgeladenen Dateien sofort",
-        "🐛 Werk-Seite lädt beim Öffnen immer den aktuellen Stand und Verlauf"
+        "🐛 Werk-Seite lädt beim Öffnen immer den aktuellen Stand und Verlauf",
+        "🐛 Gruppen-PDFs drucken: Pausierte Personen zählen nicht mehr mit, Hinweis während die PDF entsteht",
+        "🐛 Werk in andere Instanz kopieren: Fenster lässt sich während des Kopierens nicht mehr schließen",
+        "🐛 Kategorie einer Datei ändern öffnet wieder das gewohnte Fenster von unten",
+        "🐛 Werke-Liste: Filter wieder als kleines Menü am Filter-Knopf; Freigabe-Seite mit Zurück-Knopf; gelöschte Kategorie bleibt nicht als Filter hängen"
       ]
     },
     {
