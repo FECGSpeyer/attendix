@@ -1,0 +1,69 @@
+{
+  "batch": "zz-fixed-termine",
+  "items": {
+    "attendance/att-list/att-list.page#alert-c973a254": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/att-list/att-list.page#modal-f5836528": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/attendance/attendance.page#actionsheet-19467990": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/attendance/attendance.page#alert-aadedcba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/attendance/attendance.page#alert-9b3e485d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/attendance/attendance.page#text-be8be344": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
+      ],
+      "n": "behoben in #NNN"
+    }
+  },
+  "extraOverride": [
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Info-Sheet beim ersten Öffnen nur Spinner",
+      "drop": true,
+      "why": "behoben in #NNN"
+    },
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Dienst-Besetzung in der Liste veraltet",
+      "drop": true,
+      "why": "behoben in #NNN"
+    }
+  ]
+}

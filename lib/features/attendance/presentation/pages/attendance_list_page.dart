@@ -269,6 +269,16 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   Widget build(BuildContext context) {
     final ref = this.ref;
     final attendanceAsync = ref.watch(realtimeAttendanceListProvider);
+    // Ionic getAttendance recomputes the duty badge/names and „Deine
+    // Dienste“ from the freshly loaded Termine on every reload (realtime,
+    // pull-to-refresh, after creating). The duty data are separate cached
+    // providers here, so refresh them whenever the list reloads.
+    ref.listen<AsyncValue<List<Attendance>>>(realtimeAttendanceListProvider, (prev, next) {
+      if (prev?.hasValue == true && next.hasValue && !next.isLoading && !identical(prev!.value, next.value)) {
+        ref.invalidate(dutyTermineByIdProvider);
+        ref.invalidate(upcomingDutyTermineProvider);
+      }
+    });
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
     // UX_ATT: Ionic shows the large "Termine" title (iOS) only with one tenant;

@@ -1,6 +1,19 @@
 {
   "versions": [
     {
+      "version": "0.39.5",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Termine: „Anderer Dirigent“ fragt den Namen wieder in einem kleinen Dialog ab",
+        "🐛 Termine: Die Info zu Ferien und Feiertagen zeigt beim ersten Öffnen sofort die Termin-Arten",
+        "🐛 Termine: Neue oder geänderte Dienst-Termine zeigen Besetzung und „Deine Dienste“ gleich richtig an",
+        "🐛 Termin: Kann ein Termin nicht geladen werden, kommt ein Hinweis und es geht zurück zur Liste",
+        "🐛 Termin: „Ablaufplan teilen“ wieder mit Exportieren (PDF), (PDF 2x A5) und Telegram; bei mehreren Plänen Auswahl „dieser Plan / alle Pläne“",
+        "🐛 Termin: Ein einzelnes Anmeldefeld wird wieder in einem kleinen Dialog bearbeitet",
+        "🐛 Termin: Checklisten-Punkte zeigen wieder Datum und Uhrzeit der Fälligkeit"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

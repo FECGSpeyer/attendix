@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -86,6 +87,29 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   int? _selectedConductorId;
   String? _otherConductorName;
   bool _useOtherConductor = false;
+  final _otherConductorController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otherConductorController.dispose();
+    super.dispose();
+  }
+
+  /// Ionic onConChange: alert „Dirigent eingeben“ (placeholder „Dirigent“,
+  /// Abbrechen / Speichern).
+  Future<void> _askOtherConductor() async {
+    final name = await DialogHelper.showTextInput(
+      context,
+      title: context.l10n.attListEnterConductor,
+      hint: context.l10n.attListConductor,
+      confirmText: context.l10n.commonSave,
+    );
+    if (name == null || !mounted || !_useOtherConductor) return;
+    setState(() {
+      _otherConductorName = name;
+      _otherConductorController.text = name;
+    });
+  }
 
   @override
   void initState() {
@@ -174,30 +198,34 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                                   child: Text(context.l10n.attListOtherConductor),
                                 ),
                               ],
-                              onChanged: (v) => setState(() {
+                              onChanged: (v) {
                                 if (v == otherValue) {
-                                  _useOtherConductor = true;
-                                  _selectedConductorId = null;
+                                  setState(() {
+                                    _useOtherConductor = true;
+                                    _selectedConductorId = null;
+                                  });
+                                  _askOtherConductor();
                                 } else {
-                                  _useOtherConductor = false;
-                                  _selectedConductorId = v;
-                                  _otherConductorName = null;
+                                  setState(() {
+                                    _useOtherConductor = false;
+                                    _selectedConductorId = v;
+                                    _otherConductorName = null;
+                                  });
                                 }
-                              }),
+                              },
                             ),
                           ),
                         ),
-                        if (_useOtherConductor) ...[
+                        // Ionic: the field only shows the name saved in the
+                        // „Dirigent eingeben“ alert.
+                        if (_useOtherConductor && (_otherConductorName?.isNotEmpty ?? false)) ...[
                           const Divider(height: 1, indent: 16),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                             child: TextField(
-                              autofocus: true,
+                              controller: _otherConductorController,
                               textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                hintText: context.l10n.attListEnterConductor,
-                                border: InputBorder.none,
-                              ),
+                              decoration: const InputDecoration(border: InputBorder.none),
                               onChanged: (value) => setState(() => _otherConductorName = value),
                             ),
                           ),

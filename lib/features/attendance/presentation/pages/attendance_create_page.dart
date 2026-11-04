@@ -724,7 +724,6 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
   // UX_ATT: Ionic info modal (breakpoint 0.5): Veranstaltungstypen legend,
   // then Ferien and Feiertage.
   void _showHolidayInfo() {
-    final holidaysAsync = ref.read(holidaysProvider);
     final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
     Widget dot(Color color) => Icon(Icons.circle, size: 18, color: color);
     Widget header(String text) => Padding(
@@ -740,46 +739,58 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
+      // Ionic breakpoints [0, 0.5, 1]: opens at half height, can go full.
       builder: (context) => DraggableScrollableSheet(
         initialChildSize: 0.5,
         minChildSize: 0.3,
-        maxChildSize: 0.9,
+        maxChildSize: 1,
         expand: false,
-        builder: (context, scrollController) => holidaysAsync.when(
-          loading: () =>
-              const Center(child: AppSpinner()),
-          error: (e, _) => Center(child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)))),
-          data: (holidays) {
-            final hasHolidays =
-                holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty;
-            return ListView(
-              controller: scrollController,
-              padding: const EdgeInsets.all(16),
-              children: [
-                header(context.l10n.attListEventTypes),
-                _InsetGroup(
-                  margin: EdgeInsets.zero,
-                  children: [
-                    for (final type in types)
-                      ListTile(
-                        dense: true,
-                        leading: dot(ColorUtils.parseNamedColor(type.color)),
-                        title: Text(type.name),
-                      ),
-                    if (hasHolidays) ...[
-                      ListTile(
-                        dense: true,
-                        leading: dot(AppColors.danger),
-                        title: Text(context.l10n.attListHolidaysOfState),
-                      ),
-                      ListTile(
-                        dense: true,
-                        leading: dot(AppColors.medium),
-                        title: Text(context.l10n.attListSchoolHolidaysOfState),
-                      ),
-                    ],
+        // Watches the holidays so the sheet fills in once they are loaded
+        // (Ionic shows the type legend right away).
+        builder: (context, scrollController) => Consumer(builder: (context, ref, _) {
+          final holidaysAsync = ref.watch(holidaysProvider);
+          final holidays = holidaysAsync.valueOrNull;
+          final hasHolidays = holidays != null &&
+              (holidays.publicHolidays.isNotEmpty || holidays.schoolHolidays.isNotEmpty);
+          return ListView(
+            controller: scrollController,
+            padding: const EdgeInsets.all(16),
+            children: [
+              header(context.l10n.attListEventTypes),
+              _InsetGroup(
+                margin: EdgeInsets.zero,
+                children: [
+                  for (final type in types)
+                    ListTile(
+                      dense: true,
+                      leading: dot(ColorUtils.parseNamedColor(type.color)),
+                      title: Text(type.name),
+                    ),
+                  if (hasHolidays) ...[
+                    ListTile(
+                      dense: true,
+                      leading: dot(AppColors.danger),
+                      title: Text(context.l10n.attListHolidaysOfState),
+                    ),
+                    ListTile(
+                      dense: true,
+                      leading: dot(AppColors.medium),
+                      title: Text(context.l10n.attListSchoolHolidaysOfState),
+                    ),
                   ],
-                ),
+                ],
+              ),
+              if (holidays == null && holidaysAsync.isLoading)
+                const Padding(
+                  padding: EdgeInsets.all(16),
+                  child: Center(child: AppSpinner()),
+                )
+              else if (holidaysAsync.hasError && holidays == null)
+                Padding(
+                  padding: const EdgeInsets.all(16),
+                  child: Text(context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(holidaysAsync.error!))),
+                )
+              else if (holidays != null) ...[
                 header(context.l10n.attListSchoolHolidays),
                 for (final h in holidays.schoolHolidays.where((h) => !h.isPast))
                   ListTile(
@@ -793,9 +804,9 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
                     title: Text('${fmt.format(h.startDate)}: ${h.name}'),
                   ),
               ],
-            );
-          },
-        ),
+            ],
+          );
+        }),
       ),
     );
   }

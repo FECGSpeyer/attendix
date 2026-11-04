@@ -479,3 +479,115 @@ Future<String?> showEventNoteDialog(
   controller.dispose();
   return result;
 }
+
+/// Result of [showRegistrationFieldAlert]: [value] null = nothing chosen.
+typedef RegistrationFieldAlertResult = ({dynamic value});
+
+/// Ionic attendance.page `showRegFieldAlert`: with exactly one Anmeldefeld
+/// the answer is edited in an alert with the field label as header – text
+/// input (placeholder „...“), Ja/Nein radios, options as radios or (multi
+/// select) checkboxes – and „Abbrechen“ / „Speichern“. Returns null when
+/// cancelled.
+Future<RegistrationFieldAlertResult?> showRegistrationFieldAlert(
+  BuildContext context, {
+  required RegistrationField field,
+  dynamic existing,
+}) {
+  return showAppDialog<RegistrationFieldAlertResult>(
+    context: context,
+    builder: (_) => _RegistrationFieldAlert(field: field, existing: existing),
+  );
+}
+
+class _RegistrationFieldAlert extends StatefulWidget {
+  const _RegistrationFieldAlert({required this.field, this.existing});
+
+  final RegistrationField field;
+  final dynamic existing;
+
+  @override
+  State<_RegistrationFieldAlert> createState() => _RegistrationFieldAlertState();
+}
+
+class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
+  late final TextEditingController _text =
+      TextEditingController(text: widget.existing is String ? widget.existing as String : '');
+  late dynamic _single = widget.existing;
+  late final Set<String> _multi = {
+    if (widget.existing is List) ...(widget.existing as List).map((e) => e.toString()),
+  };
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  Widget _choice(String label, bool checked, VoidCallback onTap, {bool checkbox = false}) {
+    final primary = Theme.of(context).colorScheme.primary;
+    final icon = checkbox
+        ? (checked ? Icons.check_box : Icons.check_box_outline_blank)
+        : (checked ? Icons.radio_button_checked : Icons.radio_button_unchecked);
+    return ListTile(
+      dense: true,
+      contentPadding: EdgeInsets.zero,
+      leading: Icon(icon, color: checked ? primary : null),
+      title: Text(label),
+      onTap: onTap,
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final field = widget.field;
+    final l10n = context.l10n;
+    Widget content;
+    switch (field.type) {
+      case RegistrationFieldType.text:
+        content = TextField(
+          controller: _text,
+          autofocus: true,
+          decoration: const InputDecoration(hintText: '...'),
+        );
+      case RegistrationFieldType.boolean:
+        content = Column(mainAxisSize: MainAxisSize.min, children: [
+          _choice(l10n.commonYes, _single == true, () => setState(() => _single = true)),
+          _choice(l10n.commonNo, _single == false, () => setState(() => _single = false)),
+        ]);
+      default:
+        final multi = field.type == RegistrationFieldType.multiSelect;
+        content = Column(mainAxisSize: MainAxisSize.min, children: [
+          for (final o in field.options ?? const <String>[])
+            multi
+                ? _choice(o, _multi.contains(o), () => setState(() => _multi.contains(o) ? _multi.remove(o) : _multi.add(o)),
+                    checkbox: true)
+                : _choice(o, _single == o, () => setState(() => _single = o)),
+        ]);
+    }
+    return AppAlertDialog(
+      title: Text(field.label),
+      scrollable: true,
+      content: content,
+      actions: [
+        TextButton(
+          onPressed: () => Navigator.of(context).pop(),
+          child: Text(l10n.commonCancel),
+        ),
+        TextButton(
+          onPressed: () {
+            final dynamic value = switch (field.type) {
+              RegistrationFieldType.text => _text.text,
+              RegistrationFieldType.multiSelect => [
+                  for (final o in field.options ?? const <String>[])
+                    if (_multi.contains(o)) o,
+                ],
+              _ => _single,
+            };
+            Navigator.of(context).pop((value: value));
+          },
+          child: Text(l10n.commonSave),
+        ),
+      ],
+    );
+  }
+}

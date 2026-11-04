@@ -45,6 +45,7 @@ Future<void> showPlanExportSheet(
   String? pdfLabel,
   String? pdf2xLabel,
   bool withTelegram = true,
+  bool alwaysTelegram = false,
   List<PlanSheetAction<String>> afterPdfActions = const [],
   List<PlanSheetAction<String>> trailingActions = const [],
 }) async {
@@ -67,7 +68,9 @@ Future<void> showPlanExportSheet(
         PlanSheetAction('pdf2x', pdf2xLabel ?? l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
         if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
       ],
-      if (showExports && chatId != null) ...[
+      // [alwaysTelegram]: Ionic Termin page lists the Telegram entries even
+      // without a linked chat (the export then reports the missing chat).
+      if (showExports && withTelegram && (chatId != null || alwaysTelegram)) ...[
         PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: Icons.send_outlined),
         PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
         PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),

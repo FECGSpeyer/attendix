@@ -13,7 +13,6 @@ import '../../../../../core/utils/plan_utils.dart';
 import '../../../../../data/models/attendance/attendance.dart';
 import '../../../../../data/models/plan/plan.dart';
 import '../../../../planning/presentation/widgets/plan_export_actions.dart';
-import '../../../../planning/presentation/widgets/plan_field_dialogs.dart';
 import '../../../../planning/presentation/widgets/plan_view_list.dart';
 import '../../../../songs/presentation/utils/song_utils.dart';
 import '../../../../team_organization/presentation/widgets/attendance_protocol_section.dart';
@@ -133,22 +132,38 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
 
     final d = DateTime.tryParse(att.date);
     final date = d == null ? '' : '_${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
+    final fileName = '${_title(att, plans[index])}$date';
+    if (plans.length > 1) {
+      // Ionic sharePlan with several plans: openPlanShareSheet (this plan /
+      // all plans for every action).
+      final choice = await showPlanShareSheet(
+        context,
+        ref,
+        currentLabel: PlanUtils.planLabel(att, index, plans),
+        planCount: plans.length,
+      );
+      if (choice == null || !mounted) return;
+      await runPlanExport(
+        context,
+        ref,
+        choice.action,
+        pages: choice.all ? [for (var i = 0; i < plans.length; i++) page(i)] : [page(index)],
+        fileName: fileName,
+      );
+      return;
+    }
+    // Ionic sharePlan with one plan: „Ablaufplan teilen“ with „Exportieren
+    // (PDF)“, „Exportieren (PDF 2x A5)“ and always the three Telegram entries.
     await showPlanExportSheet(
       context,
       ref,
+      title: context.l10n.attendanceShareRunSheet,
       pages: () => [page(index)],
-      fileName: '${_title(att, plans[index])}$date',
-      extraActions: [
-        if (plans.length > 1)
-          PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
-      ],
-      onExtraAction: (_) => runPlanExport(
-        context,
-        ref,
-        PlanExportAction.pdf,
-        pages: [for (var i = 0; i < plans.length; i++) page(i)],
-        fileName: '${_title(att, plans[index])}$date',
-      ),
+      fileName: fileName,
+      pdfLabel: context.l10n.attendanceExportPdf,
+      pdf2xLabel: context.l10n.attendanceExportPdfA5,
+      withImage: false,
+      alwaysTelegram: true,
     );
   }
 
