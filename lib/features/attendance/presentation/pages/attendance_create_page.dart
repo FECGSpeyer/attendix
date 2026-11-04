@@ -736,6 +736,7 @@ class _AttendanceCreatePageState extends ConsumerState<AttendanceCreatePage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
+      useSafeArea: true,
       shape: const RoundedRectangleBorder(
         borderRadius: BorderRadius.vertical(top: Radius.circular(16)),
       ),
