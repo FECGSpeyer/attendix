@@ -16409,11 +16409,11 @@ abstract class AppLocalizations {
   /// **'Art'**
   String get redesignCreateType;
 
-  /// redesign.event.actions
+  /// redesign.event.addPersonShort
   ///
   /// In de, this message translates to:
-  /// **'Aktionen'**
-  String get redesignEventActions;
+  /// **'Person'**
+  String get redesignEventAddPersonShort;
 
   /// redesign.event.addTask
   ///
@@ -16451,11 +16451,23 @@ abstract class AppLocalizations {
   /// **'Alle Offenen als anwesend'**
   String get redesignEventAllOpenPresent;
 
+  /// redesign.event.allPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 anwesend} other {Alle {count} anwesend}}'**
+  String redesignEventAllPresent(num count);
+
   /// redesign.event.answers
   ///
   /// In de, this message translates to:
   /// **'Rückmeldungen'**
   String get redesignEventAnswers;
+
+  /// redesign.event.answersTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Rückmeldungen mit Grund'**
+  String get redesignEventAnswersTitle;
 
   /// redesign.event.busyLeave
   ///
@@ -16463,11 +16475,29 @@ abstract class AppLocalizations {
   /// **'Bitte warte, bis alles gespeichert ist.'**
   String get redesignEventBusyLeave;
 
+  /// redesign.event.byGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Nach Stimme'**
+  String get redesignEventByGroup;
+
   /// redesign.event.changeConductorHint
   ///
   /// In de, this message translates to:
   /// **'Aus der Gruppe oder Gastdirigent'**
   String get redesignEventChangeConductorHint;
+
+  /// redesign.event.changedBy
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt geändert von {name} · {when}'**
+  String redesignEventChangedBy(Object name, Object when);
+
+  /// redesign.event.closing
+  ///
+  /// In de, this message translates to:
+  /// **'Abschluss'**
+  String get redesignEventClosing;
 
   /// redesign.event.countAbsent
   ///
@@ -16510,6 +16540,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Termin löschen'**
   String get redesignEventDelete;
+
+  /// redesign.event.deleteHint
+  ///
+  /// In de, this message translates to:
+  /// **'„Termin löschen“ steht ganz unten in „Bearbeiten“.'**
+  String get redesignEventDeleteHint;
 
   /// redesign.event.deleteTask
   ///
@@ -16595,6 +16631,12 @@ abstract class AppLocalizations {
   /// **'Als Excel exportieren'**
   String get redesignEventExportExcel;
 
+  /// redesign.event.hide
+  ///
+  /// In de, this message translates to:
+  /// **'Weniger'**
+  String get redesignEventHide;
+
   /// redesign.event.invited
   ///
   /// In de, this message translates to:
@@ -16606,6 +16648,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig'**
   String get redesignEventKeyboardHint;
+
+  /// redesign.event.menu
+  ///
+  /// In de, this message translates to:
+  /// **'Weitere Aktionen'**
+  String get redesignEventMenu;
 
   /// redesign.event.more
   ///
@@ -16619,6 +16667,12 @@ abstract class AppLocalizations {
   /// **'Ablauf, Checkliste, Werke und Notizen'**
   String get redesignEventMoreHint;
 
+  /// redesign.event.morePresent
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 weitere anwesend} other {{count} weitere anwesend}}'**
+  String redesignEventMorePresent(num count);
+
   /// redesign.event.moreStatus
   ///
   /// In de, this message translates to:
@@ -16631,6 +16685,12 @@ abstract class AppLocalizations {
   /// **'zählt nicht'**
   String get redesignEventNeutralHint;
 
+  /// redesign.event.newestFirst
+  ///
+  /// In de, this message translates to:
+  /// **'{title} · neueste zuerst'**
+  String redesignEventNewestFirst(Object title);
+
   /// redesign.event.noMatch
   ///
   /// In de, this message translates to:
@@ -16642,6 +16702,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für diesen Termin sind noch keine Personen eingetragen.'**
   String get redesignEventNoPersons;
+
+  /// redesign.event.noReason
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Grund'**
+  String get redesignEventNoReason;
 
   /// redesign.event.notFound
   ///
@@ -16721,6 +16787,18 @@ abstract class AppLocalizations {
   /// **'Programm'**
   String get redesignEventProgram;
 
+  /// redesign.event.record
+  ///
+  /// In de, this message translates to:
+  /// **'Anwesenheit eintragen'**
+  String get redesignEventRecord;
+
+  /// redesign.event.recordSearchHint
+  ///
+  /// In de, this message translates to:
+  /// **'Wer fehlt? Name suchen'**
+  String get redesignEventRecordSearchHint;
+
   /// redesign.event.registerEmpty
   ///
   /// In de, this message translates to:
@@ -16733,11 +16811,29 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {{names} hat abgesagt.} other {{names} haben abgesagt.}}'**
   String redesignEventRegisterNames(num count, Object names);
 
+  /// redesign.event.registerPresent
+  ///
+  /// In de, this message translates to:
+  /// **'{present} von {total} da'**
+  String redesignEventRegisterPresent(Object present, Object total);
+
   /// redesign.event.remindOpen
   ///
   /// In de, this message translates to:
   /// **'Offene erinnern'**
   String get redesignEventRemindOpen;
+
+  /// redesign.event.removeFromEvent
+  ///
+  /// In de, this message translates to:
+  /// **'Aus Termin entfernen'**
+  String get redesignEventRemoveFromEvent;
+
+  /// redesign.event.removeHint
+  ///
+  /// In de, this message translates to:
+  /// **'{name} taucht in diesem Termin nicht mehr auf'**
+  String redesignEventRemoveHint(Object name);
 
   /// redesign.event.removeWork
   ///
@@ -16775,17 +16871,35 @@ abstract class AppLocalizations {
   /// **'{title} · {count}'**
   String redesignEventSectionCount(Object title, Object count);
 
-  /// redesign.event.signouts
+  /// redesign.event.show
   ///
   /// In de, this message translates to:
-  /// **'Abmeldungen'**
-  String get redesignEventSignouts;
+  /// **'Zeigen'**
+  String get redesignEventShow;
+
+  /// redesign.event.showAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle anzeigen ({count})'**
+  String redesignEventShowAll(Object count);
+
+  /// redesign.event.signedOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abgemeldet'**
+  String get redesignEventSignedOut;
 
   /// redesign.event.status
   ///
   /// In de, this message translates to:
   /// **'Status'**
   String get redesignEventStatus;
+
+  /// redesign.event.statusOverviewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Antworten nach Stimme und Status'**
+  String get redesignEventStatusOverviewHint;
 
   /// redesign.event.tabOverview
   ///
@@ -16798,6 +16912,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Anwesenheit'**
   String get redesignEventTabRecord;
+
+  /// redesign.event.toPerson
+  ///
+  /// In de, this message translates to:
+  /// **'Zur Person'**
+  String get redesignEventToPerson;
 
   /// redesign.event.toWorkHint
   ///
@@ -16852,6 +16972,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Die Werke konnten nicht geladen werden.'**
   String get redesignEventWorksLoadFailed;
+
+  /// redesign.event.yesterday
+  ///
+  /// In de, this message translates to:
+  /// **'gestern'**
+  String get redesignEventYesterday;
 
   /// redesign.events.absent
   ///
