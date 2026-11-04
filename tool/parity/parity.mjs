@@ -76,7 +76,10 @@ const readStatuses = () => {
   if (!existsSync(STATUS_DIR)) return out;
   const extras = new Map();
   const extraVerdicts = [];
-  for (const f of readdirSync(STATUS_DIR).filter((x) => x.endsWith('.json')).sort()) {
+  // Order: first pass, zz-verify*, zz-zz-overrides, then zz-fixed-<bereich>
+  // (fix PRs mark items/extras as fixed; that must win over any earlier verdict).
+  const rank = (f) => (f.startsWith('zz-fixed-') ? `~${f}` : f);
+  for (const f of readdirSync(STATUS_DIR).filter((x) => x.endsWith('.json')).sort((a, b) => (rank(a) < rank(b) ? -1 : 1))) {
     const s = load(join(STATUS_DIR, f));
     out.files.push({ file: f, batch: s.batch, flutter: s.flutter, ionic: s.ionic });
     // later files (e.g. verification passes "zz-verify-*") override earlier ones

@@ -78,6 +78,13 @@ jedes neue Element. Zusätzliche Befunde haben eine stabile ID
 zusammengeführt, und eine Prüfung schreibt ihr Urteil unter dieser ID
 (`s` ok/na nimmt den Befund zurück).
 
+### 4b. Behobene Punkte
+
+Ein Fix-PR trägt behobene Punkte in `status/zz-fixed-<bereich>.json` ein
+(Element-ID oder Befund-ID `x-…` mit `s: "ok"` und Verweis auf den PR). Diese
+Dateien werden immer zuletzt gelesen und gelten damit vor jedem früheren
+Urteil.
+
 ### 5. Bericht, Tracker und Arbeitslisten
 
 `node tool/parity/parity.mjs report` schreibt `summary.md` und die kompakte
