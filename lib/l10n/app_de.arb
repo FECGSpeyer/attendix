@@ -8750,6 +8750,14 @@
   "@peopleFlutterHint": {
     "description": "people.flutter.hint"
   },
+  "peopleFlutterImportNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})",
+  "@peopleFlutterImportNotAssigned": {
+    "description": "people.flutter.importNotAssigned",
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
+  },
   "peopleFlutterLastNameRequired": "Nachname ist erforderlich",
   "@peopleFlutterLastNameRequired": {
     "description": "people.flutter.lastNameRequired"

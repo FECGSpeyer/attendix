@@ -21,7 +21,7 @@ void main() {
       '/tabs/attendance/42': '/attendance/42',
       '/tabs/attendance/42/protocol': '/settings/protocol/42',
       '/tabs/songs-tab': '/songs-tab',
-      '/tabs/songs-tab/7': '/settings/songs/7',
+      '/tabs/songs-tab/7': '/songs-tab/7',
       '/tabs/settings': '/settings',
       '/tabs/settings/teachers': '/settings/teachers',
       '/tabs/settings/instruments': '/settings/instruments',
@@ -84,6 +84,11 @@ void main() {
       expect(_r('/tabs/attendance/42?tenantId=3'), '/attendance/42?tenantId=3');
       expect(_r('/tabs/settings/team-organization?tab=topics'),
           '/settings/team-organization?tab=topics');
+    });
+
+    test('the root opens the login (Ionic redirects \'\' to /login)', () {
+      expect(_r('/'), '/login');
+      expect(_r('/?tenantId=3'), '/login?tenantId=3');
     });
 
     test('non-legacy locations are left alone', () {

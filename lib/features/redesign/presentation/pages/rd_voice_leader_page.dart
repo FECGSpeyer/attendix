@@ -104,8 +104,8 @@ class _VoiceMemberRow extends StatelessWidget {
 
   static Future<void> _launch(String url) async {
     try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) await launchUrl(uri);
+      // No canLaunchUrl pre-check (false for mailto:/tel: on iOS/Android 11+).
+      await launchUrl(Uri.parse(url));
     } catch (_) {
       // PWA may not support mailto:/tel: links.
     }
