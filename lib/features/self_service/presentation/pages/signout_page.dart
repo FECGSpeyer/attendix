@@ -89,11 +89,18 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
           (overview?.useDutyView ?? false) &&
           isDutyPaAttendance(att) &&
           !isCancelledStatus(att.status)) {
-        if (att.dutyState == DutyState.requested) {
-          scrollToDutySection('duty-requests');
-        } else if (att.attendanceId !=
-            overview!.confirmed.firstOrNull?.termin.attendance.id) {
-          scrollToDutySection('duty-mine');
+        final String? section = att.dutyState == DutyState.requested
+            ? 'duty-requests'
+            : att.attendanceId != overview!.confirmed.firstOrNull?.termin.attendance.id
+                ? 'duty-mine'
+                : null;
+        if (section != null) {
+          // The duty sections build only after the overview arrived: let
+          // that frame finish before looking for the anchor. An anchor
+          // outside the built part of the list falls back to the actions.
+          await WidgetsBinding.instance.endOfFrame;
+          if (!mounted) return;
+          if (!scrollToDutySection(section)) actions.presentActions(context, att);
         }
       } else if (att != null) {
         actions.presentActions(context, att);
