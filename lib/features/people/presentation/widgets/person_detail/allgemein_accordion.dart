@@ -412,12 +412,9 @@ class AllgemeinAccordion extends ConsumerWidget {
           label: context.l10n.personPlaysWithTeacher,
           value: hasTeacherValue,
           editable: canEdit,
-          onChanged: (v) {
-            onFieldChanged('hasTeacher', v);
-            if (!v) {
-              onFieldChanged('teacher', null);
-            }
-          },
+          // Ionic: switching off only changes hasTeacher; the teacher stays
+          // saved (teacher pages count students via player.teacher).
+          onChanged: (v) => onFieldChanged('hasTeacher', v),
         ),
         if (hasTeacherValue)
           _buildTeacherField(context, ref, teacherId),
@@ -434,9 +431,15 @@ class AllgemeinAccordion extends ConsumerWidget {
         child: LinearProgressIndicator(),
       ),
       error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
-      data: (teachers) {
-        final teacher = teachers.where((t) => t.id == teacherId).firstOrNull;
+      data: (allTeachers) {
+        final teacher = allTeachers.where((t) => t.id == teacherId).firstOrNull;
         final teacherName = teacher?.name ?? context.l10n.personFlutterNotSelected;
+        // Ionic onInstrumentChange: only teachers of the selected group's
+        // instrument; the select has no empty option.
+        final groupId = selectedGroupId ?? person.instrument;
+        final teachers = allTeachers
+            .where((t) => groupId != null && t.instruments.contains(groupId))
+            .toList();
 
         return Padding(
           padding: EdgeInsets.zero,
@@ -455,15 +458,11 @@ class AllgemeinAccordion extends ConsumerWidget {
                 title: context.l10n.personFlutterChooseLabel(context.l10n.peopleTeacher),
                 items: items,
                 selectedValue: teacherId,
-                noneLabel: context.l10n.peopleNoTeacher,
                 icon: Icons.school,
               );
 
-              if (result != null) {
-                onFieldChanged(
-                  'teacher',
-                  result.isNone ? null : result.value,
-                );
+              if (result != null && !result.isNone) {
+                onFieldChanged('teacher', result.value);
               }
             },
           ),
@@ -480,8 +479,10 @@ class AllgemeinAccordion extends ConsumerWidget {
       loading: () => const LinearProgressIndicator(),
       error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (shifts) {
+        // Ionic: the shift plan row only exists when shift plans exist.
+        if (shifts.isEmpty) return const SizedBox.shrink();
         final shift = shifts.where((s) => s.id == currentShiftId).firstOrNull;
-        final shiftName = shift?.name ?? context.l10n.personFlutterNoShiftPlan;
+        final shiftName = shift?.name ?? context.l10n.personNoShift;
 
         return Column(
           children: [
@@ -500,18 +501,27 @@ class AllgemeinAccordion extends ConsumerWidget {
                   title: context.l10n.personFlutterChooseLabel(context.l10n.personShiftPlan),
                   items: items,
                   selectedValue: currentShiftId,
-                  noneLabel: context.l10n.personFlutterNoShiftPlan,
+                  noneLabel: context.l10n.personNoShift,
                   icon: Icons.schedule,
                 );
 
                 if (result != null) {
-                  onFieldChanged(
-                    'shiftId',
-                    result.isNone ? null : result.value,
-                  );
-                  // Reset shift name and start when shift changes
-                  onFieldChanged('shiftName', null);
-                  onFieldChanged('shiftStart', null);
+                  final id = result.isNone ? null : result.value;
+                  final plan = shifts.where((s) => s.id == id).firstOrNull;
+                  onFieldChanged('shiftId', id);
+                  // Ionic onShiftChange: a plan with named shifts starts with
+                  // its first shift, otherwise the start date is today.
+                  if (plan == null) {
+                    onFieldChanged('shiftName', null);
+                    onFieldChanged('shiftStart', null);
+                  } else if (plan.hasNamedShifts) {
+                    onFieldChanged('shiftName', plan.shifts.first.name);
+                    onFieldChanged('shiftStart', null);
+                  } else {
+                    onFieldChanged('shiftName', null);
+                    onFieldChanged(
+                        'shiftStart', DateTime.now().toUtc().toIso8601String());
+                  }
                 }
               },
             ),
