@@ -7,7 +7,7 @@
         "lib/features/planning/presentation/public_brandings.dart:1",
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     },
     "public-planning/public-planning.page#effect-6021ff44": {
       "s": "ok",
@@ -15,7 +15,7 @@
         "lib/features/planning/presentation/public_brandings.dart:1",
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     },
     "public-planning/public-planning.page#effect-1ad39a4e": {
       "s": "ok",
@@ -23,14 +23,14 @@
         "lib/features/planning/presentation/public_brandings.dart:1",
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     },
     "public-planning/public-planning.page#db-b17aa9e7": {
       "s": "ok",
       "f": [
         "lib/data/repositories/plan_repository.dart:234"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     },
     "public-planning/public-planning.page#field-2ffcb596": {
       "s": "ok",
@@ -38,7 +38,7 @@
         "lib/features/planning/presentation/public_brandings.dart:1",
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     },
     "shared-plan/shared-plan.page#effect-228109d7": {
       "s": "ok",
@@ -46,7 +46,7 @@
         "lib/features/planning/presentation/public_brandings.dart:1",
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #300"
     }
   }
 }
