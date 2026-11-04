@@ -49,6 +49,7 @@ void main() {
       expect(historyEntryTitle(10, date), 'Übertragen am 04.03.2026');
       expect(historyEntryTitle(13, date), 'Kopiert am 04.03.2026');
       expect(historyEntryTitle(7, date), '04.03.2026');
+      expect(historyEntryTitle(14, date), ''); // Ionic: no <h2>
     });
     test('bodies', () {
       expect(historyEntryBody(5, 'alt'), 'alt');

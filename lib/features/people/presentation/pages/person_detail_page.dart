@@ -129,11 +129,11 @@ final personHistoryProvider =
       (t) => t['id'] == typeId,
       orElse: () => <String, dynamic>{},
     );
+    // Ionic Utils.getTypeTitle: typeInfo, else the type name unless
+    // hide_name; no title without a known type.
     if (attType.isNotEmpty) {
-      final typeName = attType['name']?.toString() ?? '';
+      final typeName = attType['hide_name'] == true ? '' : attType['name']?.toString() ?? '';
       meetingName = (typeInfo != null && typeInfo.isNotEmpty) ? typeInfo : typeName;
-    } else {
-      meetingName = typeInfo ?? attendance?['type']?.toString() ?? l10nWithoutContext.peopleAttendance;
     }
 
     final statusValue = a['status'];
