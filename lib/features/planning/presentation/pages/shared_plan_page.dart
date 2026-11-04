@@ -731,7 +731,7 @@ class _SharedPlanPageState extends ConsumerState<SharedPlanPage> {
       ],
       fileName: title,
       // Ionic exportPdf: „Titel_Wochentag, Datum“ (+ `_2x`).
-      pdfFileName: '${title}_${PlanUtils.longDate(date)}',
+      pdfFileName: '${title}_${PlanUtils.longDate(date)}'.replaceAll('/', '.'),
       // Ionic: branding_id of an ad-hoc plan (FECG logo + text), Termin
       // plans and „Kein Branding“ without – never the viewer's instance.
       branding: () => _att == null ? publicPdfBranding(_shared?.brandingId) : Future.value(null),

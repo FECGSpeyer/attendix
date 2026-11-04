@@ -726,7 +726,8 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       '${_title}_${_date.day.toString().padLeft(2, '0')}_${_date.month.toString().padLeft(2, '0')}_${_date.year}';
 
   /// Ionic `export()`: „Titel_Wochentag, TT.MM.JJJJ“ (+ `_2x`).
-  String get _pdfFileName => '${_title}_${PlanUtils.longDate(_date)}';
+  // "/" (dd/MM/yyyy languages) is not allowed in file names.
+  String get _pdfFileName => '${_title}_${PlanUtils.longDate(_date)}'.replaceAll('/', '.');
 
   /// Ionic `exportImage()`: „Titel_JJJJ-MM-TT“.
   String get _imageFileName =>
