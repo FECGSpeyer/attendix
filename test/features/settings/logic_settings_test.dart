@@ -5,7 +5,6 @@ import 'package:attendix/core/utils/statistics_utils.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/repositories/attendance_type_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/attendance_type_edit_page.dart';
-import 'package:attendix/features/settings/presentation/pages/attendance_types_page.dart';
 import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 

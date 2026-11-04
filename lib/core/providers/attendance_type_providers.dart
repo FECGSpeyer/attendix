@@ -87,6 +87,21 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Creates a type from the columns of the type page ("new" mode). Rethrows
+  /// like [createType] so the page shows `typeSettings.createFailed`.
+  Future<AttendanceType> createTypeFromData(Map<String, dynamic> data) async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repo.createTypeFromData(data);
+      state = const AsyncValue.data(null);
+      ref.invalidate(attendanceTypesProvider);
+      return result;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
+    }
+  }
+
   /// Saves the type. Returns null when the save itself failed (caller shows
   /// `typeSettings.updateFailed`); rethrows [DemoModeException] so the demo
   /// block is not reported as a generic failure.

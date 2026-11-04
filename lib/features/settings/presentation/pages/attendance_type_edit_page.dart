@@ -32,20 +32,47 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 
+/// Ionic `types.page.ts openTypeModal()`: "+" presents the type page with
+/// `isNew: true` as a modal (iOS: card modal over the list, md: full-screen
+/// `ion-modal`, centred card on desktop). Nothing is written before the FAB
+/// creates the type. Returns true when a type was created.
+Future<bool?> showAttendanceTypeCreateModal(BuildContext context) {
+  Widget build(BuildContext _) => const AttendanceTypeEditPage.create();
+  if (useIosLook(context)) {
+    return showIosCardModal<bool>(
+      context,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? null
+          : AppColors.light,
+      builder: build,
+    );
+  }
+  return showIonModal<bool>(context, builder: build);
+}
+
 /// Attendance Type Edit Page
 ///
-/// Edit an existing attendance type or create a new one.
+/// Edit an existing attendance type or – with [AttendanceTypeEditPage.create]
+/// (Ionic `isNew`) – configure and create a new one.
 class AttendanceTypeEditPage extends ConsumerStatefulWidget {
-  final String typeId;
+  /// Null in the "new" mode.
+  final String? typeId;
 
   const AttendanceTypeEditPage({
     super.key,
-    required this.typeId,
+    required String this.typeId,
   });
+
+  /// Ionic type.page with `isNew: true`: starts with the defaults of
+  /// [buildNewAttendanceType] and creates the type on the FAB.
+  const AttendanceTypeEditPage.create({super.key}) : typeId = null;
+
+  bool get isNew => typeId == null;
 
   @override
   ConsumerState<AttendanceTypeEditPage> createState() => _AttendanceTypeEditPageState();
@@ -117,24 +144,41 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   AttendanceType? _originalType;
   int _usageCount = 0;
 
+  /// Id of the type created in the "new" mode (for the duty view offer).
+  String? _createdId;
+  bool _isCreating = false;
+
+  bool get _isNew => widget.isNew;
+
+  /// Ionic `dismissModal`: the discard alert only once a name was entered.
+  bool get _hasNewInput => _nameController.text.trim().isNotEmpty;
+
   @override
   void initState() {
     super.initState();
-    _loadType();
+    if (_isNew) {
+      // Ionic isNew: nothing is loaded; the org plan flag starts false and
+      // is written with the insert.
+      _isDefaultOrgPlanLoaded = true;
+      _applyType(buildNewAttendanceType(''));
+    } else {
+      _loadType();
+    }
   }
 
   Future<void> _loadType() async {
+    final typeId = widget.typeId!;
     final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
-    final type = await ref.read(attendanceTypeByIdProvider(widget.typeId).future);
+    final type = await ref.read(attendanceTypeByIdProvider(typeId).future);
 
     if (type != null && mounted) {
       // Fetch usage count
       try {
-        _usageCount = await repo.getAttendanceCountForType(widget.typeId);
+        _usageCount = await repo.getAttendanceCountForType(typeId);
         // SETTINGS2: "Instanz-Name vor Werken"
         _planningPrefixInstanceName =
-            await repo.getPlanningPrefixInstanceName(widget.typeId);
+            await repo.getPlanningPrefixInstanceName(typeId);
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
       }
@@ -143,7 +187,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       try {
         final planTypes = await ref.read(planAttendanceTypesProvider.future);
         _isDefaultOrgPlan =
-            planTypes.where((t) => t.id == widget.typeId).firstOrNull?.isDefaultOrgPlan ?? false;
+            planTypes.where((t) => t.id == typeId).firstOrNull?.isDefaultOrgPlan ?? false;
         _isDefaultOrgPlanLoaded = true;
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
@@ -152,13 +196,21 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
       try {
         final types = await protocolRepo.getProtocolTypes();
-        _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
+        _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == typeId).firstOrNull);
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
       }
       if (!mounted) return;
 
-      setState(() {
+      setState(() => _applyType(type));
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  /// Copies [type] into the form state (the loaded type or the Ionic
+  /// defaults of a new one).
+  void _applyType(AttendanceType type) {
         _originalType = type;
         _nameController.text = type.name;
         _startTime = _parseTime(type.startTime ?? '19:00');
@@ -215,10 +267,6 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ? Map<String, dynamic>.from(type.additionalFieldsFilter!)
             : null;
         _isLoading = false;
-      });
-    } else {
-      setState(() => _isLoading = false);
-    }
   }
 
   @override
@@ -249,19 +297,35 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
 
     // Ionic beforeunload: closing/reloading the browser tab warns too.
-    setUnloadWarning(this, _hasChanges);
+    final dirty = _isNew ? _hasNewInput : _hasChanges;
+    setUnloadWarning(this, dirty);
     return PopScope(
-      canPop: !_hasChanges,
+      canPop: !dirty,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _onBackPressed();
+        if (!didPop) _isNew ? _closeNew() : _onBackPressed();
       },
       child: Scaffold(
         // UX_SETTINGS (WAVE 8): type.page.html — no title, arrow-back,
         // red trash at the end, save via FAB (save-outline).
         // IOS_R6: Ionic `ion-content fullscreen` under the
         // `ion-header translucent` (no large title: always blurred)
-        extendBodyBehindAppBar: useIosLook(context),
-        appBar: IonTranslucentAppBar(child: AppBar(
+        // Ionic isNew (modal): no back arrow and no trash, ✕ at the end.
+        extendBodyBehindAppBar: !_isNew && useIosLook(context),
+        appBar: _isNew
+            ? AppBar(
+                automaticallyImplyLeading: false,
+                toolbarHeight: ionModalToolbarHeight(context),
+                actions: [
+                  ToolbarButtonGroup(children: [
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      tooltip: context.l10n.commonClose,
+                      onPressed: _closeNew,
+                    ),
+                  ]),
+                ],
+              )
+            : IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
           icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: _onBackPressed,
@@ -274,7 +338,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
         ],
       )),
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
+      // Ionic isNew: "+" FAB creates the type (always enabled).
+      floatingActionButton: _isNew
+          ? FloatingActionButton(
+              onPressed: _isCreating ? null : _create,
+              tooltip: context.l10n.typeSettingsFlutterCreateType,
+              child: const Icon(Icons.add),
+            )
+          : TabBarFab.wrap(FloatingActionButton(
         onPressed: _hasChanges ? _save : null,
         tooltip: context.l10n.commonSave,
         child: const Icon(Icons.save_outlined),
@@ -482,6 +553,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   // PROTOCOL: Protokoll & Tagesordnung
                   TypeProtocolSettingsTiles(
                     settings: _protocol,
+                    // Ionic: "Mehr erfahren" is hidden while creating.
+                    showLearnMore: !_isNew,
                     hasPlaceholder: hasAgendaPlaceholder(_planFields),
                     onChanged: (v) => setState(() {
                       _protocol = v;
@@ -831,7 +904,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             }),
             contentPadding: EdgeInsets.zero,
           ),
-          // Ionic openDutyHelp: "Mehr erfahren" → help article duty-setup.
+          // Ionic openDutyHelp: "Mehr erfahren" → help article duty-setup
+          // (not while creating a new type).
+          if (!_isNew)
           ListTile(
             contentPadding: EdgeInsets.zero,
             leading: const Icon(Icons.help_outline, color: AppColors.primary),
@@ -931,7 +1006,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null || tenant.dutyView) return;
     final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    if (types.any((t) => t.dutyMode && t.id != widget.typeId)) return;
+    final ownId = widget.typeId ?? _createdId;
+    if (types.any((t) => t.dutyMode && t.id != ownId)) return;
     final useIt = await DialogHelper.showConfirmation(
       context,
       title: context.l10n.typeSettingsUseDutyView,
@@ -1685,6 +1761,63 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
   }
 
+  /// Ionic `dismissModal` (isNew): once a name was entered ask
+  /// "Änderungen verwerfen?", otherwise close right away.
+  Future<void> _closeNew() async {
+    if (_hasNewInput) {
+      final discard = await DialogHelper.showConfirmation(
+        context,
+        title: context.l10n.typeSettingsDiscardChanges,
+        message: context.l10n.typeSettingsDiscardMessage,
+        confirmText: context.l10n.rolePermDiscard,
+        cancelText: context.l10n.commonCancel,
+        isDestructive: true,
+      );
+      if (!discard || !mounted) return;
+    }
+    // pop() ignores the PopScope; the unload warning goes with the modal.
+    setUnloadWarning(this, false);
+    Navigator.of(context).pop(false);
+  }
+
+  /// Ionic `createType` (isNew): validate, insert with the tenant, success
+  /// toast, the duty view offer, then close the modal.
+  Future<void> _create() async {
+    // Ionic validate(): name first, then at least two statuses.
+    if (_nameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
+      return;
+    }
+    if (_availableStatuses.length < 2) {
+      ToastHelper.showError(context, context.l10n.typeSettingsTwoStatus);
+      return;
+    }
+
+    setState(() => _isCreating = true);
+    try {
+      final created = await ref
+          .read(attendanceTypeNotifierProvider.notifier)
+          .createTypeFromData(_buildTypeData());
+      ref.invalidate(protocolTypesProvider);
+      ref.invalidate(planAttendanceTypesProvider);
+      _createdId = created.id;
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
+      await _offerDutyView();
+      if (!mounted) return;
+      setUnloadWarning(this, false);
+      Navigator.of(context).pop(true);
+    } on DemoModeException {
+      // DEMO_GUARD: the demo warning toast was already shown.
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
+      }
+    } finally {
+      if (mounted) setState(() => _isCreating = false);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     // SETTINGS2: Ionic validate() — at least two available statuses
@@ -1697,7 +1830,40 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
 
     try {
-      final updates = {
+      final updates = _buildTypeData();
+
+      final updated = await ref
+          .read(attendanceTypeNotifierProvider.notifier)
+          .updateType(widget.typeId!, updates);
+      ref.invalidate(protocolTypesProvider);
+      ref.invalidate(planAttendanceTypesProvider);
+      // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
+      if (updated == null) {
+        if (mounted) {
+          ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+        }
+        return;
+      }
+
+      if (mounted) {
+        ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
+        setState(() => _hasChanges = false);
+        await _offerDutyView();
+      }
+    } on DemoModeException {
+      // DEMO_GUARD: the demo warning toast was already shown.
+      return;
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
+      }
+    }
+  }
+
+  /// Columns of the type as edited on the page (update and, for a new type,
+  /// insert; the repository adds the tenant).
+  Map<String, dynamic> _buildTypeData() {
+      return {
         'name': _nameController.text.trim(),
         // SETTINGS2: for all-day types start_time is the plan start (Ionic)
         'start_time': _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
@@ -1713,7 +1879,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'all_day': _allDay,
         'duration_days': _allDay ? _durationDays : null,
         'notification': _notification,
-        'reminders': _reminders.isNotEmpty ? _reminders : null,
+        // Ionic isNew starts with reminders [] (insert keeps the list).
+        'reminders': _isNew || _reminders.isNotEmpty ? _reminders : null,
         // Ionic: "Checkliste aktivieren" off = null, on = list (also []).
         'checklist': _checklistEnabled
             ? _checklist.map((item) => item.toJson()).toList()
@@ -1743,34 +1910,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         'duty_notify_understaffed': _dutyNotifyUnderstaffed,
         'duty_urgent_hours': _dutyUrgentHours,
         ..._protocol.toUpdate(),
+        // Ionic isNew: index 999 (end of the list).
+        if (_isNew) 'index': _originalType?.index ?? 999,
       };
-
-      final updated = await ref
-          .read(attendanceTypeNotifierProvider.notifier)
-          .updateType(widget.typeId, updates);
-      ref.invalidate(protocolTypesProvider);
-      ref.invalidate(planAttendanceTypesProvider);
-      // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
-      if (updated == null) {
-        if (mounted) {
-          ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
-        }
-        return;
-      }
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
-        setState(() => _hasChanges = false);
-        await _offerDutyView();
-      }
-    } on DemoModeException {
-      // DEMO_GUARD: the demo warning toast was already shown.
-      return;
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.typeSettingsUpdateFailed);
-      }
-    }
   }
 
   Future<void> _deleteType() async {
@@ -1785,7 +1927,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (!confirmed) return;
 
     try {
-      final success = await ref.read(attendanceTypeNotifierProvider.notifier).deleteType(widget.typeId);
+      final success = await ref.read(attendanceTypeNotifierProvider.notifier).deleteType(widget.typeId!);
 
       if (success && mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsDeleted);
@@ -1799,6 +1941,34 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       }
     }
   }
+}
+
+/// LOGIC_SETTINGS: defaults of a new type as in Ionic type.page.ts (isNew).
+AttendanceType buildNewAttendanceType(String name) {
+  return AttendanceType(
+    name: name.trim(),
+    planningTitle: '',
+    defaultStatus: AttendanceStatus.present,
+    availableStatuses: const [
+      AttendanceStatus.neutral,
+      AttendanceStatus.present,
+      AttendanceStatus.absent,
+      AttendanceStatus.excused,
+      AttendanceStatus.late,
+    ],
+    manageSongs: false,
+    startTime: '19:00',
+    endTime: '20:30',
+    relevantGroups: const [],
+    index: 999,
+    visible: true,
+    color: 'primary',
+    highlight: false,
+    hideName: false,
+    includeInAverage: true,
+    reminders: const [],
+    defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
+  );
 }
 
 /// LOGIC_SETTINGS: Ionic always stores `default_plan` as

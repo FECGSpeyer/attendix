@@ -129,7 +129,14 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     if (c == null) return;
     final velocity = details.velocity.pixelsPerSecond.dy;
     if (velocity > 700 || c.value < 0.6) {
-      navigator?.pop();
+      if (popDisposition == RoutePopDisposition.doNotPop) {
+        // A PopScope blocks (e.g. unsaved input, Ionic canDismiss): snap
+        // back and let it decide (discard alert) like the strip's maybePop.
+        c.forward();
+        navigator?.maybePop();
+      } else {
+        navigator?.pop();
+      }
     } else {
       c.forward();
     }
