@@ -1,3 +1,4 @@
+import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
 import '../../songs/presentation/utils/song_utils.dart';
@@ -51,9 +52,10 @@ List<SongFile> rdPartFiles(Song song, int? groupId) {
 }
 
 /// The recording of the work (category "Aufnahme").
-SongFile? rdRecording(Song song) => (song.files ?? const <SongFile>[])
-    .where((f) => f.instrumentId == rdRecordingCategory && SongUtils.isAudio(f))
-    .firstOrNull;
+SongFile? rdRecording(Song song) =>
+    (song.files ?? const <SongFile>[])
+        .where((f) => f.instrumentId == rdRecordingCategory && SongUtils.isAudio(f))
+        .firstOrNull;
 
 /// The score (file note "Partitur").
 SongFile? rdScore(Song song) =>
@@ -107,4 +109,56 @@ RdWorkLead rdWorkLead(Song song, int? groupId, {required bool isMainGroup}) {
     return hasGroupFiles ? RdWorkLead.allParts : RdWorkLead.none;
   }
   return hasGroupFiles ? RdWorkLead.noPart : RdWorkLead.none;
+}
+
+/// Whether [file] is a part of a group (not Aufnahme, Liedtext or a free
+/// category such as the score).
+bool rdIsGroupPart(SongFile file) => (file.instrumentId ?? 0) > rdLyricsCategory;
+
+/// The groups that have Noten of the work, in group order. This is the
+/// Besetzung: the upload sets `instrument_ids` from the files as well.
+List<Group> rdFileGroups(List<SongFile> files, List<Group> groups) {
+  final ids = {
+    for (final f in files)
+      if (rdIsGroupPart(f)) f.instrumentId,
+  };
+  return [
+    for (final g in groups)
+      if (g.maingroup != true && ids.contains(g.id)) g,
+  ];
+}
+
+/// Groups still without Noten: somebody plays in them ([playerCounts]
+/// active persons per group; null = unknown, every group counts) but no
+/// part is theirs. Empty while the work has no parts at all: then the page
+/// asks for Noten instead.
+List<Group> rdMissingGroups(List<SongFile> files, List<Group> groups, Map<int, int>? playerCounts) {
+  final have = {for (final g in rdFileGroups(files, groups)) g.id};
+  if (have.isEmpty) return const [];
+  return [
+    for (final g in groups)
+      if (g.maingroup != true &&
+          g.id != null &&
+          g.id! > rdLyricsCategory &&
+          !have.contains(g.id) &&
+          (playerCounts == null || (playerCounts[g.id] ?? 0) > 0))
+        g,
+  ];
+}
+
+/// What a member sees of [files] (sorted): everything but the parts of
+/// other groups ([others], behind "Alle Stimmen") and the [recording],
+/// which has its own card.
+({List<SongFile> shown, List<SongFile> others}) rdMemberFiles(List<SongFile> files, int? groupId, SongFile? recording) {
+  final shown = <SongFile>[];
+  final others = <SongFile>[];
+  for (final f in files) {
+    if (recording != null && f.url == recording.url) continue;
+    if (rdIsGroupPart(f) && f.instrumentId != groupId) {
+      others.add(f);
+    } else {
+      shown.add(f);
+    }
+  }
+  return (shown: shown, others: others);
 }
