@@ -1,0 +1,85 @@
+{
+ "batch": "zz-fixed-personen",
+ "ionic": "9f9b82af",
+ "items": {
+  "instruments/instrument-list/instrument-list.page#action-d2efa7e3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/group_repository.dart",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "teachers/teachers.page#action-5b603f4a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/teacher_repository.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "duty/duty-distribute-modal/duty-distribute-modal.component#alert-500b3722": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart",
+    "lib/shared/widgets/adaptive/app_dialog.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-4c623e8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-30c6ec59": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "instruments/instrument-list/instrument-list.page#toast-e4f5c17f": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "instruments/instrument/instrument.page#toast-39c411aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart",
+    "lib/data/repositories/group_repository.dart"
+   ],
+   "n": "behoben in #292"
+  },
+  "teacher/teacher.page#field-fc1d0925": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ],
+   "n": "behoben in #292"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "instruments/instrument/instrument.page",
+   "title": "Seite schließt vor dem Speichern",
+   "drop": true,
+   "why": "behoben in #292"
+  },
+  {
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "title": "Fehler bei „Auch geplante“ meldet Erfolg",
+   "drop": true,
+   "why": "behoben in #292"
+  },
+  {
+   "unit": "teachers/teachers.page",
+   "title": "„Lehrer hinzufügen“: Instrumentliste leer nach App-Start",
+   "drop": true,
+   "why": "behoben in #292"
+  }
+ ]
+}
