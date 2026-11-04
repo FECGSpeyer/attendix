@@ -277,6 +277,8 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
       if (prev?.hasValue == true && next.hasValue && !next.isLoading && !identical(prev!.value, next.value)) {
         ref.invalidate(dutyTermineByIdProvider);
         ref.invalidate(upcomingDutyTermineProvider);
+        // "Deine Dienste" (Ionic recomputes it with every getAttendance).
+        ref.invalidate(myDutyOverviewProvider);
       }
     });
     // Use effectiveRoleProvider to support debug role override
