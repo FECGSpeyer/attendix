@@ -679,17 +679,21 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
 
   Future<void> _init(List<PlanAttendance> attendances) async {
     _loaded = true;
+    // SOL_FIX25: the repository (tenant) the Termine were loaded with, read
+    // before any await.
+    final disposeRepo = ref.read(planRepositoryWithTenantProvider);
+    final tenantId = ref.read(currentTenantIdProvider);
+    final userId = ref.read(currentAuthUserIdProvider);
     // Ionic ngOnInit loads Werke and history before choosing the start plan
     // (the type template only applies with history).
     try {
       await Future.wait([ref.read(currentSongsProvider.future), ref.read(planSongsProvider.future)]);
     } catch (_) {}
-    if (!mounted) return;
+    if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
     _attendances = [...attendances];
-    // SOL_FIX25: the repository (tenant) the Termine were loaded with.
-    _disposeRepo = ref.read(planRepositoryWithTenantProvider);
-    _tenantId = ref.read(currentTenantIdProvider);
-    _userId = ref.read(currentAuthUserIdProvider);
+    _disposeRepo = disposeRepo;
+    _tenantId = tenantId;
+    _userId = userId;
     // SOL_FIX29: the cached rows hold the commits up to the last cache
     // refresh; newer commits are adopted when a Termin is loaded.
     for (final a in _attendances) {
