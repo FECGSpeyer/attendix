@@ -12,6 +12,7 @@ import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/contact_links.dart';
+import '../../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNumber;
 import '../../../../../core/utils/tenant_label_utils.dart';
 import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
@@ -791,10 +792,10 @@ class AllgemeinAccordion extends ConsumerWidget {
           context,
           title: field.name,
           initialValue: currentValue?.toString() ?? '',
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
         );
         if (result != null) {
-          onFieldChanged('additionalFields.${field.id}', int.tryParse(result) ?? 0);
+          onFieldChanged('additionalFields.${field.id}', parseExtraFieldNumber(result));
         }
         break;
 

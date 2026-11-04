@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/parent_providers.dart';
@@ -40,6 +41,8 @@ Widget _app(PersonImagePicker picker) => ProviderScope(
         parentsProvider.overrideWith((ref) async => const []),
         shiftsProvider.overrideWith((ref) async => const []),
         personImagePickerProvider.overrideWithValue(picker),
+        // The create form is locked for viewers (Ionic readOnly).
+        currentRoleProvider.overrideWithValue(Role.admin),
       ],
       child: MaterialApp(
         theme: AppTheme.light,

@@ -411,6 +411,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               !_changedFields.contains('additionalFields.${e.key}')) {
             _additionalFieldValues[e.key] = e.value;
           }
+          // Ionic existingPlayer carries the shared values too (sync diff).
+          if (_orgFieldIds.contains(e.key)) _initialAdditionalFields[e.key] = e.value;
         }
       });
     } catch (_) {
@@ -523,7 +525,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       } else if (field == 'phone') {
         _draft = _draft.copyWith(phone: value as String?);
       } else if (field == 'birthday') {
-        _draft = _draft.copyWith(birthday: value as String?);
+        // Ionic onBirthdayChange: correctBirthday = true right away (the
+        // warning colour disappears before saving).
+        _draft = _draft.copyWith(birthday: value as String?, correctBirthday: true);
       } else if (field == 'playsSince') {
         _draft = _draft.copyWith(playsSince: value as String?);
       } else if (field == 'joined') {
@@ -555,6 +559,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       } else if (field == 'parentId') {
         _selectedParentId = value as int?;
         _draft = _draft.copyWith(parentId: value);
+      } else if (field == 'img') {
+        _draft = _draft.copyWith(img: value as String?);
       } else if (field == 'otherExercise') {
         _draft = _draft.copyWith(otherExercise: value as String?);
       } else if (field == 'range') {
@@ -844,6 +850,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'examinee': _draft.examinee,
         'testResult': _draft.testResult?.isEmpty ?? true ? null : _draft.testResult,
         'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
+        if (_changedFields.contains('img')) 'img': _draft.img,
       };
 
   /// Ionic dismisses the person modal after save / account / pause actions.
@@ -987,8 +994,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (p.correctBirthday && p.birthday != null) {
       _onFieldChanged('birthday', p.birthday);
     }
-    if (p.otherExercise != null) _onFieldChanged('otherExercise', p.otherExercise);
-    if (p.range != null) _onFieldChanged('range', p.range);
+    // Ionic takes the picture and otherExercise/range even when empty.
+    _onFieldChanged('img', p.img);
+    _onFieldChanged('otherExercise', p.otherExercise);
+    _onFieldChanged('range', p.range);
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
     final group = groups.where((g) => g.name == chosen.groupName).firstOrNull;
     if (group?.id != null) _onFieldChanged('instrument', group!.id);
@@ -1912,7 +1921,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               ),
 
             // Ionic: "Notizen" textarea (existingPlayer && isAdmin)
-            if (canEdit) ...ionBetaGroup(context, [allgemein(AllgemeinPart.notes, 'notes')], inset: false),
+            // (archived persons: shown disabled for admins)
+            if (isAdmin) ...ionBetaGroup(context, [allgemein(AllgemeinPart.notes, 'notes')], inset: false),
 
             // Problem Person Accordion (Ionic: !readOnly && isCritical)
             if (canEdit)

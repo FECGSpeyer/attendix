@@ -24,6 +24,9 @@ import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import '../widgets/person_image_picker.dart';
 import '../../../../core/providers/church_providers.dart';
+import '../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNumber;
+import '../../../../data/models/church/church.dart';
+import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../core/providers/parent_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
@@ -57,7 +60,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   final _notesController = TextEditingController();
 
   int? _selectedInstrument;
-  DateTime? _birthday;
+  // Ionic newPlayer: birthday, playsSince and joined = today (UTC midnight),
+  // correctBirthday false until the birthday is edited (warning colour).
+  DateTime? _birthday = _today();
+  bool _birthdayEdited = false;
   bool _isLoading = false;
   final Map<String, dynamic> _additionalFieldValues = {};
   bool _extraFieldsInitialized = false;
@@ -82,8 +88,17 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   final _instrumentsController = TextEditingController();
   final _testResultController = TextEditingController();
   final _otherExerciseController = TextEditingController();
-  DateTime? _playsSince;
-  DateTime _joined = DateTime.now();
+  DateTime? _playsSince = _today();
+  DateTime _joined = _today();
+
+  static DateTime _today() {
+    final now = DateTime.now();
+    return DateTime(now.year, now.month, now.day);
+  }
+
+  /// Ionic dayjs(date).startOf('day').utc(true).toISOString().
+  static String _utcMidnightIso(DateTime d) =>
+      DateTime.utc(d.year, d.month, d.day).toIso8601String();
   bool _hasTeacher = false;
   int? _teacherId;
   bool _isLeader = false;
@@ -232,36 +247,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     ToastHelper.showSuccess(context, context.l10n.personDataTaken);
   }
 
-  /// Returns the default value for a field type (like Utils.getFieldTypeDefaultValue in Ionic)
-  /// For NEW person: defaultValue is NOT used (only type-based defaults)
-  /// For EXISTING person: defaultValue IS used if provided
-  dynamic _getFieldTypeDefaultValue(String fieldType, {dynamic defaultValue, List<String>? options}) {
-    // 1. If explicit defaultValue is provided, use it
-    if (defaultValue != null) {
-      return defaultValue;
-    }
-
-    // 2. SELECT → first option
-    if (fieldType == 'select') {
-      return (options?.isNotEmpty ?? false) ? options!.first : '';
-    }
-
-    // 3. Type-based defaults (matching Ionic behavior)
-    switch (fieldType) {
-      case 'text':
-      case 'textarea':
-        return '';
-      case 'number':
-        return 0;
-      case 'date':
-        return DateTime.now().toIso8601String().split('T')[0];
-      case 'boolean':
-        return true; // Ionic uses TRUE as default!
-      default:
-        return '';
-    }
-  }
-
   @override
   void dispose() {
     _nameDebounce?.cancel();
@@ -287,14 +272,24 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     final tenant = ref.watch(currentTenantProvider);
     final extraFields = personExtraFields(ref, tenant);
 
-    // Initialize additional_fields with defaults (like Ionic lines 166-174)
-    // For NEW person: use type-based defaults only (NO field.defaultValue)
-    if (!_extraFieldsInitialized && extraFields.isNotEmpty) {
+    // Ionic person.page (new person): getFieldTypeDefaultValue(type,
+    // field.defaultValue, options, churches) – Gemeinde = first church, so
+    // wait for the churches when such a field exists.
+    final hasChurchField = extraFields.any((f) => f.type == 'bfecg_church');
+    final churchesAsync = hasChurchField ? ref.watch(churchesProvider) : null;
+    if (!_extraFieldsInitialized &&
+        extraFields.isNotEmpty &&
+        (churchesAsync == null || !churchesAsync.isLoading)) {
+      final churchIds = <Object>[
+        for (final c in churchesAsync?.valueOrNull ?? const <Church>[])
+          if (c.id != null) c.id!,
+      ];
       for (final field in extraFields) {
-        _additionalFieldValues[field.id] ??= _getFieldTypeDefaultValue(
+        _additionalFieldValues[field.id] ??= extraFieldDefaultValue(
           field.type,
+          defaultValue: field.defaultValue,
           options: field.options,
-          // NOTE: NOT passing field.defaultValue for new person (matches Ionic!)
+          churchIds: churchIds,
         );
       }
       _extraFieldsInitialized = true;
@@ -335,7 +330,13 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           icon: Icons.person_add_alt_1_outlined,
         ),
       ),
-      body: Form(
+      // Ionic person.page readOnly (= not admin/responsible): the create form
+      // is shown locked (disabled inputs) for viewers.
+      body: IgnorePointer(
+        ignoring: !_canEdit,
+        child: Opacity(
+          opacity: _canEdit ? 1 : 0.5,
+          child: Form(
         key: _formKey,
         child: IonFormTheme(
           child: ListView(
@@ -445,10 +446,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                   color: _birthday != null ? null : AppColors.medium,
                 ),
               ),
+              // Ionic: birthday item in warning colour until it is edited.
+              tileColor: _birthdayEdited ? null : AppColors.warning.withValues(alpha: 0.25),
               trailing: _birthday != null
                   ? IconButton(
                       icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
-                      onPressed: () => setState(() => _birthday = null),
+                      onPressed: () => setState(() {
+                        _birthday = null;
+                        _birthdayEdited = true;
+                      }),
                     )
                   : null,
               onTap: _pickBirthday,
@@ -466,16 +472,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                 hintText: 'max@example.com',
                 prefixIcon: ionIsIos(context) ? null : const Icon(Icons.email),
               ),
+              // Ionic addPerson does not validate the e-mail.
               keyboardType: TextInputType.emailAddress,
-              validator: (value) {
-                if (value != null && value.isNotEmpty) {
-                  final emailRegex = RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$');
-                  if (!emailRegex.hasMatch(value)) {
-                    return context.l10n.registerModalInvalidEmail;
-                  }
-                }
-                return null;
-              },
             ),
             gap,
 
@@ -491,19 +489,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ),
             gap,
 
-            // Notes
-            TextFormField(
-              controller: _notesController,
-              decoration: InputDecoration(
-                labelText: context.l10n.peopleFlutterOptional(context.l10n.peopleNotes),
-                hintText: context.l10n.peopleFlutterNotesHint,
-                prefixIcon: ionIsIos(context) ? null : const Icon(Icons.note),
-                alignLabelWithHint: true,
-              ),
-              textCapitalization: TextCapitalization.sentences,
-              maxLines: 3,
-            ),
-
+            // Ionic: "Notizen" only for existing persons (existingPlayer && isAdmin).
             ..._buildIonicFields(tenant),
             ]),
 
@@ -534,7 +520,14 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
         ),
       ),
+        ),
+      ),
     );
+  }
+
+  bool get _canEdit {
+    final role = ref.watch(currentRoleProvider);
+    return role.isAdmin || role.isResponsible;
   }
 
   Widget _buildExtraFieldInput(ExtraField field) {
@@ -570,9 +563,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 8),
           child: TextFormField(
             decoration: InputDecoration(labelText: field.name),
-            keyboardType: TextInputType.number,
-            initialValue: _additionalFieldValues[field.id]?.toString() ?? '0',
-            onChanged: (value) => _additionalFieldValues[field.id] = int.tryParse(value) ?? 0,
+            keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
+            initialValue: _additionalFieldValues[field.id]?.toString() ?? '',
+            onChanged: (value) => _additionalFieldValues[field.id] = parseExtraFieldNumber(value),
           ),
         );
 
@@ -979,7 +972,10 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       lastDate: now,
     );
     if (picked != null) {
-      setState(() => _birthday = picked);
+      setState(() {
+        _birthday = picked;
+        _birthdayEdited = true;
+      });
     }
   }
 
@@ -1023,15 +1019,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ? _notesController.text.trim()
             : null,
         instrument: _selectedInstrument,
-        birthday: _birthday?.toIso8601String().split('T').first,
-        joined: _joined.toIso8601String().split('T').first,
+        birthday: _birthday == null ? null : _utcMidnightIso(_birthday!),
+        joined: _utcMidnightIso(_joined),
         additionalFields: _additionalFieldValues.isNotEmpty ? _additionalFieldValues : null,
         img: _adoptedImg,
         otherExercise: _textOrNull(_otherExerciseController),
         range: _textOrNull(_rangeController),
         instruments: _textOrNull(_instrumentsController),
         testResult: _textOrNull(_testResultController),
-        playsSince: _playsSince?.toIso8601String().split('T').first,
+        playsSince: _playsSince == null ? null : _utcMidnightIso(_playsSince!),
         hasTeacher: _hasTeacher,
         teacher: _hasTeacher ? _teacherId : null,
         isLeader: _isLeader,
@@ -1041,7 +1037,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         shiftId: _shiftId,
         shiftName: _shiftName,
         shiftStart: _shiftStart?.toIso8601String(),
-        correctBirthday: _birthday != null,
+        correctBirthday: _birthdayEdited,
       );
 
       // LOGIC_PEOPLE: Ionic addPerson → db.addPlayer(player, Boolean(email),
