@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -108,6 +110,19 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       _defaultFields = list;
     });
     await _saveDefaultFields();
+  }
+
+  /// Inline minutes of a Standardfeld. Looked up by id (the row may have been
+  /// reordered/removed meanwhile) and stored without `setState`: it is also
+  /// called from the input's `dispose()`, e.g. while this page is popped.
+  /// Nothing else on the page shows the minutes, so no rebuild is needed.
+  void _setDefaultMinutes(String id, String minutes) {
+    final index = _defaultFields.indexWhere((f) => f.id == id);
+    if (index < 0 || _defaultFields[index].time == minutes) return;
+    final list = [..._defaultFields];
+    list[index] = list[index].copyWith(time: minutes);
+    _defaultFields = list;
+    _saveDefaultFields();
   }
 
   Future<void> _removeDefaultField(int index) async {
@@ -390,16 +405,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
                                       // Ionic: inline number input "min", saved on blur.
                                       _DefaultMinutesInput(
                                         key: ValueKey('dfm-${_defaultFields[i].id}-$i'),
+                                        fieldId: _defaultFields[i].id,
                                         value: _defaultFields[i].time,
-                                        onSubmitted: (v) {
-                                          if (v == _defaultFields[i].time) return;
-                                          setState(() {
-                                            final list = [..._defaultFields];
-                                            list[i] = list[i].copyWith(time: v);
-                                            _defaultFields = list;
-                                          });
-                                          _saveDefaultFields();
-                                        },
+                                        onSubmitted: _setDefaultMinutes,
                                       ),
                                       const SizedBox(width: 8),
                                       ReorderableDragStartListener(index: i, child: const Icon(Icons.drag_handle)),
@@ -502,11 +510,23 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 
 /// Inline minutes of a Standardfeld (Ionic `ion-input type="number"`
 /// placeholder "min", `(ionBlur)="saveDefaultFields()"`).
+///
+/// Saves debounced while typing, on blur and on dispose: on iOS/Android going
+/// back directly never blurs the field, so a blur-only save would be lost.
 class _DefaultMinutesInput extends StatefulWidget {
-  const _DefaultMinutesInput({super.key, required this.value, required this.onSubmitted});
+  const _DefaultMinutesInput({
+    super.key,
+    required this.fieldId,
+    required this.value,
+    required this.onSubmitted,
+  });
 
+  final String fieldId;
   final String value;
-  final ValueChanged<String> onSubmitted;
+
+  /// Called with ([fieldId], minutes). Must not call `setState` (also runs
+  /// from `dispose()`).
+  final void Function(String fieldId, String minutes) onSubmitted;
 
   @override
   State<_DefaultMinutesInput> createState() => _DefaultMinutesInputState();
@@ -515,23 +535,42 @@ class _DefaultMinutesInput extends StatefulWidget {
 class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
   late final TextEditingController _controller = TextEditingController(text: widget.value);
   final FocusNode _focus = FocusNode();
+  Timer? _debounce;
+  late String _saved = widget.value;
 
   @override
   void initState() {
     super.initState();
     _focus.addListener(() {
-      if (!_focus.hasFocus) widget.onSubmitted(_controller.text.trim());
+      if (!_focus.hasFocus) _commit();
     });
   }
 
   @override
   void didUpdateWidget(covariant _DefaultMinutesInput oldWidget) {
     super.didUpdateWidget(oldWidget);
+    if (widget.value != oldWidget.value) _saved = widget.value;
     if (!_focus.hasFocus && widget.value != _controller.text) _controller.text = widget.value;
+  }
+
+  /// Saves the current text if it differs from the last saved value.
+  void _commit() {
+    _debounce?.cancel();
+    _debounce = null;
+    final v = _controller.text.trim();
+    if (v == _saved) return;
+    _saved = v;
+    widget.onSubmitted(widget.fieldId, v);
+  }
+
+  void _onChanged(String _) {
+    _debounce?.cancel();
+    _debounce = Timer(const Duration(milliseconds: 600), _commit);
   }
 
   @override
   void dispose() {
+    _commit();
     _controller.dispose();
     _focus.dispose();
     super.dispose();
@@ -553,6 +592,8 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
           border: InputBorder.none,
           contentPadding: const EdgeInsets.symmetric(vertical: 8),
         ),
+        onChanged: _onChanged,
+        onTapOutside: (_) => _focus.unfocus(),
         onSubmitted: (_) => _focus.unfocus(),
       ),
     );
