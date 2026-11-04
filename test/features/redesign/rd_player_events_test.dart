@@ -46,6 +46,7 @@ class _FakeAbsenceNotifier extends PlayerAbsenceNotifier {
     required String fromDate,
     required String untilDate,
     required String reason,
+    Set<String>? onlyIds,
   }) async {
     calls.add('$personId $fromDate $untilDate $reason');
     return 1;
