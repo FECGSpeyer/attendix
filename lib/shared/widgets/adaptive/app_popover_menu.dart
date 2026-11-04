@@ -301,6 +301,11 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
       120.0,
       size.height - top - widget.bottomPadding - _margin,
     );
+    // Ionic `calculateWindowAdjustment`: when the content does not fit below
+    // the trigger, the popover opens above it instead (md: ending at the
+    // trigger's top; iOS "replace": ending at the trigger's bottom).
+    final bottomWhenAbove = ios ? anchor.bottom : anchor.top;
+    final maxHeightAbove = bottomWhenAbove - widget.topPadding - _margin;
     final curved = CurvedAnimation(
       parent: widget.animation,
       curve: Curves.easeOutCubic,
@@ -308,20 +313,24 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     );
 
     final children = <Widget>[
-      Positioned(
-        top: top,
-        left: left,
-        width: w,
-        child: FadeTransition(
-          opacity: curved,
-          child: ScaleTransition(
-            scale: Tween<double>(
-              begin: ios ? 0.85 : 0.8,
-              end: 1,
-            ).animate(curved),
-            alignment: ios ? Alignment.topRight : Alignment.topLeft,
-            child: ConstrainedBox(
-              constraints: BoxConstraints(maxHeight: maxHeight),
+      Positioned.fill(
+        child: CustomSingleChildLayout(
+          delegate: _MainPopoverLayout(
+            left: left,
+            width: w,
+            top: top,
+            maxHeight: maxHeight,
+            bottomWhenAbove: bottomWhenAbove,
+            maxHeightAbove: maxHeightAbove,
+          ),
+          child: FadeTransition(
+            opacity: curved,
+            child: ScaleTransition(
+              scale: Tween<double>(
+                begin: ios ? 0.85 : 0.8,
+                end: 1,
+              ).animate(curved),
+              alignment: ios ? Alignment.topRight : Alignment.topLeft,
               child: _PopoverCard(
                 ios: ios,
                 // PARITY_R8: while a nested popover is open the parent
@@ -427,6 +436,55 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
 
     return Stack(key: _stackKey, children: children);
   }
+}
+
+/// Places the main popover at [top] (below / over the trigger) like before.
+/// Only when its content is taller than the room there ([maxHeight]) and
+/// there is more room above, it ends at [bottomWhenAbove] instead (Ionic
+/// flips the popover above the trigger).
+class _MainPopoverLayout extends SingleChildLayoutDelegate {
+  _MainPopoverLayout({
+    required this.left,
+    required this.width,
+    required this.top,
+    required this.maxHeight,
+    required this.bottomWhenAbove,
+    required this.maxHeightAbove,
+  });
+
+  final double left;
+  final double width;
+  final double top;
+  final double maxHeight;
+  final double bottomWhenAbove;
+  final double maxHeightAbove;
+
+  bool get _aboveHasMoreRoom => maxHeightAbove > maxHeight;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
+      BoxConstraints(
+        minWidth: width,
+        maxWidth: width,
+        maxHeight: _aboveHasMoreRoom ? maxHeightAbove : maxHeight,
+      );
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    if (_aboveHasMoreRoom && childSize.height > maxHeight) {
+      return Offset(left, bottomWhenAbove - childSize.height);
+    }
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(_MainPopoverLayout old) =>
+      old.left != left ||
+      old.width != width ||
+      old.top != top ||
+      old.maxHeight != maxHeight ||
+      old.bottomWhenAbove != bottomWhenAbove ||
+      old.maxHeightAbove != maxHeightAbove;
 }
 
 /// Places a nested popover: [left]/[width] fixed; vertically centred on
