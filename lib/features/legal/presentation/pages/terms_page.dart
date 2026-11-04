@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/legal_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -54,8 +57,36 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     setState(() => _saving = true);
     try {
       await ref.read(accountNotifierProvider.notifier).acceptTerms();
+      if (!mounted) return;
+      // The router may already have left /terms after the user update
+      // (same targets as below).
+      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.path !=
+          '/terms') {
+        return;
+      }
       // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
-      if (mounted) context.go(PendingFileLink.consume() ?? '/tenants');
+      final pending = PendingFileLink.consume();
+      if (pending != null) {
+        context.go(pending);
+        return;
+      }
+      // Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) – the start page
+      // of the open instance; without one '/register' (create an instance
+      // when there is none, otherwise the selection).
+      final tenantId = ref.read(currentTenantIdProvider);
+      if (tenantId == null) {
+        context.go('/register');
+        return;
+      }
+      try {
+        await ref.read(currentTenantUserProvider.future);
+      } catch (_) {}
+      if (!mounted) return;
+      context.go(homeRouteFor(
+        ref.read(currentRoleProvider),
+        tenantId,
+        ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+      ));
     } on SessionExpiredException {
       if (!mounted) return;
       context.go('/login');

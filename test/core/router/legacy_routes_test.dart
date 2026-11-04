@@ -43,6 +43,8 @@ void main() {
       '/tabs/settings/general': '/settings/general',
       '/tabs/settings/general/types': '/settings/types',
       '/tabs/settings/general/types/12': '/settings/types/12',
+      '/tabs/settings/general/shifts': '/settings/shifts',
+      '/tabs/settings/general/shifts/ab12': '/settings/shifts/ab12',
       '/tabs/settings/general/branding': '/settings/general/branding',
       '/tabs/settings/general/extra-fields': '/settings/general/extra-fields',
       '/tabs/settings/voice-leader': '/settings/voice-leader',

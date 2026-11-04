@@ -88,6 +88,10 @@ String _mapSettings(List<String> t) {
       if (rest.first == 'types') {
         return rest.length > 1 ? '/settings/types/${rest[1]}' : '/settings/types';
       }
+      // Ionic /tabs/settings/general/shifts(/:id) → Flutter /settings/shifts
+      if (rest.first == 'shifts') {
+        return rest.length > 1 ? '/settings/shifts/${rest[1]}' : '/settings/shifts';
+      }
       return '/settings/general/${rest.first}'; // branding, extra-fields
     case 'org-settings':
       // Flutter has no separate org branding page (lives in org settings)

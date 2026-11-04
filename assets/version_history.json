@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Registrierung: Vorbelegte Auswahl-Zusatzfelder werden gespeichert, Felder und Gruppen stehen in der Reihenfolge wie bisher",
+        "🐛 Registrierung: Ja/Nein-Feld ohne Wert wird gemeldet; vor dem Ersetzen des Passbilds kommt eine Abfrage, Kamera oder Mediathek wählbar",
+        "🐛 Passwort zurücksetzen: „Neues Passwort“ erscheint wieder als Hinweisfenster über der Startseite",
+        "🐛 Nach der Zustimmung zu den Bedingungen geht es direkt zur Startseite; Ablaufpläne öffnen sich aus der Seitenleiste als Fenster",
+        "🐛 Alte Schichten-Links und /register führen wieder an die richtige Stelle"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

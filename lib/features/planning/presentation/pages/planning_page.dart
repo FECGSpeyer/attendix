@@ -37,6 +37,7 @@ import '../../../songs/presentation/utils/song_utils.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import 'package:attendix/shared/widgets/layout/route_leave_guard.dart';
 import '../../../../data/repositories/plan_repository.dart';
@@ -72,6 +73,16 @@ typedef _PlanListOp = ({List<Plan> plans, int open})? Function(PlanAttendance at
 /// its position (`i<n>`) plus the plan count and the plan itself (JSON) in
 /// that copy, see [_PlanningPageState._indexOfRef].
 typedef _PlanRef = ({String key, int count, String? json});
+
+/// Ionic `modalController.create({ component: PlanningPage, cssClass:
+/// 'planningModal' })`: the Ablaufplan editor as `ion-modal` (full screen on
+/// phones, centred card on desktop) with its own close button.
+Future<void> showPlanningModal(BuildContext context, {int? attendanceId}) {
+  return showIonModal<void>(
+    context,
+    builder: (_) => PlanningPage(attendanceId: attendanceId),
+  );
+}
 
 /// Ablaufplan editor of a Termin (Ionic `PlanningPage`).
 ///
