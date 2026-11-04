@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/plan_providers.dart';
@@ -111,10 +112,21 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     );
   }
 
+  /// Ionic export title: `plan.title`, else `Utils.getPlanningTitle` (the
+  /// type's planning_title, with typeInfo in brackets), else typeInfo, else
+  /// the type name.
   String _title(PlanAttendance att, Plan plan) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    return (att.typeInfo?.isNotEmpty ?? false) ? att.typeInfo! : context.l10n.plansRunSheet;
+    final typeId = att.typeId ?? widget.attendance.typeId;
+    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const [];
+    final type = typeId == null ? null : types.where((x) => x.id == typeId).firstOrNull;
+    final pt = type?.planningTitle?.trim() ?? '';
+    final info = att.typeInfo?.trim() ?? '';
+    if (pt.isNotEmpty) return info.isNotEmpty ? '$pt ($info)' : pt;
+    if (info.isNotEmpty) return info;
+    final name = type?.name.trim() ?? '';
+    return name.isNotEmpty ? name : context.l10n.plansRunSheet;
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
@@ -130,12 +142,14 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       );
     }
 
-    final d = DateTime.tryParse(att.date);
+    // Ionic file name: `<Titel>_DD_MM_YYYY`, `_alle` for all plans, `_2x`
+    // for 2x A5 (added by runPlanExport).
+    final d = DateTime.tryParse(att.date)?.toLocal();
     final date = d == null ? '' : '_${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
     final fileName = '${_title(att, plans[index])}$date';
     if (plans.length > 1) {
       // Ionic sharePlan with several plans: openPlanShareSheet (this plan /
-      // all plans for every action).
+      // all plans: PDF, PDF 2x A5, Telegram PDF / 2x A5; Bild only for one).
       final choice = await showPlanShareSheet(
         context,
         ref,
@@ -148,7 +162,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         ref,
         choice.action,
         pages: choice.all ? [for (var i = 0; i < plans.length; i++) page(i)] : [page(index)],
-        fileName: fileName,
+        fileName: choice.all ? '${fileName}_alle' : fileName,
+        pdf2xSuffix: true,
       );
       return;
     }
@@ -164,6 +179,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       pdf2xLabel: context.l10n.attendanceExportPdfA5,
       withImage: false,
       alwaysTelegram: true,
+      pdf2xSuffix: true,
     );
   }
 

@@ -46,6 +46,7 @@ Future<void> showPlanExportSheet(
   String? pdf2xLabel,
   bool withTelegram = true,
   bool alwaysTelegram = false,
+  bool pdf2xSuffix = false,
   List<PlanSheetAction<String>> afterPdfActions = const [],
   List<PlanSheetAction<String>> trailingActions = const [],
 }) async {
@@ -87,10 +88,13 @@ Future<void> showPlanExportSheet(
   if (beforeExport != null && !beforeExport()) return;
   final parsed = PlanExportAction.values.byName(action);
   await runPlanExport(context, ref, parsed,
-      pages: pages(), fileName: fileName, includeBranding: includeBranding);
+      pages: pages(), fileName: fileName, includeBranding: includeBranding, pdf2xSuffix: pdf2xSuffix);
 }
 
 /// Runs one export action.
+///
+/// [pdf2xSuffix]: the 2x A5 PDF file gets `_2x` like the Telegram upload
+/// (Ionic Termin page).
 Future<void> runPlanExport(
   BuildContext context,
   WidgetRef ref,
@@ -98,6 +102,7 @@ Future<void> runPlanExport(
   required List<PlanExportPage> pages,
   required String fileName,
   bool includeBranding = true,
+  bool pdf2xSuffix = false,
 }) async {
   if (pages.isEmpty || pages.every((p) => p.fields.isEmpty)) {
     ToastHelper.showWarning(context, context.l10n.planningNoPlan);
@@ -111,7 +116,10 @@ Future<void> runPlanExport(
     switch (action) {
       case PlanExportAction.pdf:
       case PlanExportAction.pdf2x:
-        await service.sharePdf(pages, sideBySide: sideBySide, fileName: fileName, branding: branding);
+        await service.sharePdf(pages,
+            sideBySide: sideBySide,
+            fileName: sideBySide && pdf2xSuffix ? '${fileName}_2x' : fileName,
+            branding: branding);
       case PlanExportAction.image:
         await service.shareImage(pages, fileName: fileName, branding: branding);
       case PlanExportAction.telegram:
