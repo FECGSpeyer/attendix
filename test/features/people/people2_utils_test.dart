@@ -2,6 +2,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/data/models/person/person.dart';
 import 'package:attendix/features/people/people_list_utils.dart';
 import 'package:attendix/features/people/presentation/widgets/pause_person_sheet.dart';
+import 'package:attendix/features/people/presentation/widgets/person_detail/date_input_row.dart';
 import 'package:attendix/features/people/presentation/widgets/person_detail/historie_accordion.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -59,5 +60,11 @@ void main() {
       expect(historyEntryBody(6, 'x'), '');
       expect(historyEntryBody(11, 'nach X'), 'nach X');
     });
+  });
+
+  test('typed date like Ionic onManualDateInput', () {
+    expect(parseManualDate('4.3.2026'), '2026-03-04T00:00:00.000Z');
+    expect(parseManualDate('2026-03-04'), isNull);
+    expect(parseManualDate('31.13.2026'), isNull);
   });
 }

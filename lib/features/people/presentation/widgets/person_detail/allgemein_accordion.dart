@@ -19,6 +19,7 @@ import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../ion/ion_widgets.dart';
+import 'date_input_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
@@ -366,6 +367,17 @@ class AllgemeinAccordion extends ConsumerWidget {
     bool highlight = false,
     Color? highlightColor,
   }) {
+    // Ionic: typed TT.MM.JJJJ input (applied on blur) + calendar button.
+    if (canEdit) {
+      return DateInputRow(
+        label: label,
+        value: value,
+        highlight: highlight,
+        lastDate: DateTime.now(),
+        onChanged: (iso) => onFieldChanged(fieldKey, iso),
+      );
+    }
+
     final displayValue = value != null ? _formatDate(value) : context.l10n.personFlutterNotSpecified;
 
     return IonFieldRow(
@@ -750,6 +762,16 @@ class AllgemeinAccordion extends ConsumerWidget {
             },
           );
         },
+      );
+    }
+
+    // Ionic: date extra fields use the typed input + calendar (max today).
+    if (field.type == 'date' && canEdit) {
+      return DateInputRow(
+        label: field.name,
+        value: value?.toString(),
+        lastDate: DateTime.now(),
+        onChanged: (iso) => onFieldChanged('additionalFields.${field.id}', iso),
       );
     }
 

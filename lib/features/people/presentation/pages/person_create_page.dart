@@ -4,7 +4,6 @@ import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/enums.dart';
@@ -32,6 +31,7 @@ import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/teacher_providers.dart';
 import '../../../../data/models/shift/shift_plan.dart';
 import '../widgets/church_picker_sheet.dart';
+import '../widgets/person_detail/date_input_row.dart';
 import '../widgets/person_detail/allgemein_accordion.dart'
     show otherOrchestraOptions, personExtraFields;
 import '../../../../core/services/tracking/tracking_event.dart';
@@ -433,31 +433,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
             ),
             gap,
 
-            // Birthday
-            ListTile(
-              contentPadding: EdgeInsets.zero,
-              leading: ionIsIos(context) ? null : const Icon(Icons.cake),
-              title: Text(context.l10n.peopleBirthday),
-              subtitle: Text(
-                _birthday != null
-                    ? DateFormat(dateFmt()).format(_birthday!)
-                    : context.l10n.personFlutterNotSpecified,
-                style: TextStyle(
-                  color: _birthday != null ? null : AppColors.medium,
-                ),
-              ),
-              // Ionic: birthday item in warning colour until it is edited.
-              tileColor: _birthdayEdited ? null : AppColors.warning.withValues(alpha: 0.25),
-              trailing: _birthday != null
-                  ? IconButton(
-                      icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
-                      onPressed: () => setState(() {
-                        _birthday = null;
-                        _birthdayEdited = true;
-                      }),
-                    )
-                  : null,
-              onTap: _pickBirthday,
+            // Birthday (Ionic: warning colour until edited)
+            _dateTile(
+              icon: Icons.cake,
+              label: context.l10n.peopleBirthday,
+              value: _birthday,
+              highlight: !_birthdayEdited,
+              onChanged: (d) => setState(() {
+                _birthday = d;
+                _birthdayEdited = true;
+              }),
             ),
             if (!ios) const Divider(),
 
@@ -577,27 +562,11 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         );
 
       case 'date':
-        final currentValue = _additionalFieldValues[field.id]?.toString();
-        final currentDate = currentValue != null ? DateTime.tryParse(currentValue) : null;
-        return ListTile(
-          title: Text(field.name),
-          subtitle: Text(
-            currentDate != null
-                ? DateFormat(dateFmt()).format(currentDate)
-                : context.l10n.personFlutterNotSpecified,
-          ),
-          trailing: const Icon(Icons.calendar_today),
-          onTap: () async {
-            final date = await showAppDatePicker(
-              context: context,
-              initialDate: currentDate ?? DateTime.now(),
-              firstDate: DateTime(1900),
-              lastDate: DateTime(2100),
-            );
-            if (date != null) {
-              setState(() => _additionalFieldValues[field.id] = date.toIso8601String().split('T')[0]);
-            }
-          },
+        return DateInputRow(
+          label: field.name,
+          value: _additionalFieldValues[field.id]?.toString(),
+          lastDate: DateTime.now(),
+          onChanged: (iso) => setState(() => _additionalFieldValues[field.id] = iso),
         );
 
       case 'bfecg_church':
@@ -646,6 +615,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     return main?.id != null && main!.id == _selectedInstrument;
   }
 
+  /// Ionic date item: typed TT.MM.JJJJ (on blur) + calendar button.
   Widget _dateTile({
     required IconData icon,
     required String label,
@@ -653,29 +623,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     required ValueChanged<DateTime?> onChanged,
     bool clearable = true,
     DateTime? lastDate,
+    bool highlight = false,
   }) {
-    return ListTile(
-      contentPadding: EdgeInsets.zero,
-      leading: ionIsIos(context) ? null : Icon(icon),
-      title: Text(label),
-      subtitle: Text(
-        value != null ? DateFormat(dateFmt()).format(value) : context.l10n.personFlutterNotSpecified,
-        style: TextStyle(color: value != null ? null : AppColors.medium),
-      ),
-      trailing: clearable && value != null
-          ? IconButton(
-              icon: Icon(Icons.clear, semanticLabel: context.l10n.a11yClearInput),
-              onPressed: () => onChanged(null),
-            )
-          : null,
-      onTap: () async {
-        final picked = await showAppDatePicker(
-          context: context,
-          initialDate: value ?? DateTime.now(),
-          firstDate: DateTime(1900),
-          lastDate: lastDate ?? DateTime(2100),
-        );
-        if (picked != null) onChanged(picked);
+    return DateInputRow(
+      label: label,
+      value: value == null ? null : _utcMidnightIso(value),
+      highlight: highlight,
+      lastDate: lastDate ?? DateTime.now(),
+      onChanged: (iso) {
+        final d = DateTime.parse(iso);
+        onChanged(DateTime(d.year, d.month, d.day));
       },
     );
   }
@@ -961,22 +918,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
       _adoptedImg = null;
     });
     ToastHelper.showSuccess(context, context.l10n.personPhotoRemoved);
-  }
-
-  Future<void> _pickBirthday() async {
-    final now = DateTime.now();
-    final picked = await showAppDatePicker(
-      context: context,
-      initialDate: _birthday ?? DateTime(now.year - 20),
-      firstDate: DateTime(1900),
-      lastDate: now,
-    );
-    if (picked != null) {
-      setState(() {
-        _birthday = picked;
-        _birthdayEdited = true;
-      });
-    }
   }
 
   Future<void> _save() async {
