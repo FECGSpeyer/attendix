@@ -109,7 +109,12 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   /// a pencil that opens the editor on the shown plan.
   Future<void> _openPlanViewer(Attendance att) async {
     final canEdit = ref.read(effectiveRoleProvider).canAddAttendance;
-    final songs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
+    // Werke and the further plans load in parallel; a slow or failed load
+    // only drops the score actions / extra plans.
+    final songsFuture = ref
+        .read(songsProvider.future)
+        .timeout(const Duration(seconds: 5))
+        .catchError((_) => ref.read(songsProvider).valueOrNull ?? const <Song>[]);
     // The list rows carry only `plan`; the further plans are read with the
     // Termin (tenant-scoped). Offline / on failure only the main plan shows.
     var extra = const <Plan>[];
@@ -123,6 +128,7 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
         }
       } catch (_) {}
     }
+    final songs = await songsFuture;
     if (!mounted) return;
     await openAttendancePlanViewer(
       context,
