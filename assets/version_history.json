@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.40.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Android 13 und neuer: Die Frage nach Push-Benachrichtigungen und die Systemabfrage erscheinen wieder, wenn die App noch nie gefragt hat",
+        "🐛 Wird die Frage nach Push-Benachrichtigungen ohne Knopf geschlossen, gilt das wie „Später“ und sie kommt nicht bei jedem Start wieder",
+        "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
+        "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis"
+      ]
+    },
+    {
       "version": "0.40.0",
       "date": "4.11.2026",
       "changes": [
