@@ -45,7 +45,7 @@
       "unit": "planning/plan-viewer/plan-viewer.component",
       "title": "Weitere Ablaufpläne fehlen im Viewer",
       "drop": true,
-      "why": "behoben in #305"
+      "why": "Terminliste behoben in #305, Selbstservice in #298"
     }
   ]
 }
