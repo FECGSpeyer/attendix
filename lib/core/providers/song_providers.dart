@@ -303,6 +303,7 @@ class SongsListData {
 
   bool get isPublic => publicTenant != null;
   bool get isOrchestra => tenantType == 'orchestra';
+  bool get isChoir => tenantType == 'choir';
 
   /// Groups shown as instruments (all but the main group)
   List<Group> get instruments =>

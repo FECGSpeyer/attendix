@@ -147,6 +147,10 @@ class _UnavailabilityPageState extends ConsumerState<UnavailabilityPage> {
     if (!apply || !mounted) return;
     final changed = await ref.read(dutyNotifierProvider.notifier).applyUnavailabilityToFuture(rule);
     if (!mounted) return;
+    if (changed == null) {
+      ToastHelper.showError(context, l10n.svcApplyToPlannedFailed);
+      return;
+    }
     ToastHelper.showSuccess(context, l10n.dutyEventsAdjusted(changed));
   }
 

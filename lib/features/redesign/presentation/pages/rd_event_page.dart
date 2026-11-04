@@ -9,6 +9,7 @@ import 'package:intl/intl.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
 import '../../../../core/providers/attendance_providers.dart';
+import '../../../../core/providers/church_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
@@ -23,6 +24,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart' show AppActionSheetAction, showAppActionSheet;
@@ -600,18 +602,36 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   /// "Als Excel exportieren" with the statuses shown on this page.
   Future<void> _exportExcel(Attendance attendance, List<RdMember> members) async {
     final tenant = ref.read(currentTenantProvider);
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
     if (tenant == null) {
       ToastHelper.showError(context, context.l10n.attendanceFlutterDataUnavailable);
       return;
     }
     ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
     try {
+      final type = ref.read(attendanceTypeForAttendanceProvider(attendance.id ?? -1)).valueOrNull;
+      final churchFieldId = attendanceChurchFieldId(ref);
+      final churches = churchFieldId == null
+          ? const <Church>[]
+          : await ref.read(churchesProvider.future);
+      final persons = [for (final m in members) m.person];
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? persons
+          : await profileRepo.hydrateSharedPersonFieldValues(persons);
+      if (!mounted) return;
       await ExportService().exportAttendanceToExcel(
         context: context,
         attendance: attendance,
-        persons: [for (final m in members) m.person],
+        typeName: type?.name ?? '',
+        persons: exported,
         statuses: {for (final m in members) m.id: m.status},
-        tenantName: tenant.shortName,
+        // Notes stay hidden for roles that may not see them in the view.
+        notes: canViewNotes ? {for (final m in members) m.id: m.note} : const {},
+        churches: churches,
+        churchFieldId: churchFieldId,
       );
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.exportFlutterFailedWith(friendlyErrorMessage(e)));

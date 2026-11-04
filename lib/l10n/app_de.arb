@@ -8750,6 +8750,14 @@
   "@peopleFlutterHint": {
     "description": "people.flutter.hint"
   },
+  "peopleFlutterImportNotAssigned": "{name}: gespeichert, aber nicht zu den Terminen hinzugefügt ({error})",
+  "@peopleFlutterImportNotAssigned": {
+    "description": "people.flutter.importNotAssigned",
+    "placeholders": {
+      "name": {},
+      "error": {}
+    }
+  },
   "peopleFlutterLastNameRequired": "Nachname ist erforderlich",
   "@peopleFlutterLastNameRequired": {
     "description": "people.flutter.lastNameRequired"
@@ -13239,6 +13247,70 @@
   "@redesignFilesZipPreparing": {
     "description": "redesign.files.zipPreparing"
   },
+  "redesignFolderAll": "Alle Werke · {count}",
+  "@redesignFolderAll": {
+    "description": "redesign.folder.all",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignFolderEmpty": "Für {name} gibt es noch keine Noten.",
+  "@redesignFolderEmpty": {
+    "description": "redesign.folder.empty",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFolderMissing": "fehlt",
+  "@redesignFolderMissing": {
+    "description": "redesign.folder.missing"
+  },
+  "redesignFolderNext": "Als Nächstes · {count}",
+  "@redesignFolderNext": {
+    "description": "redesign.folder.next",
+    "placeholders": {
+      "count": {}
+    }
+  },
+  "redesignFolderNoGroup": "Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.",
+  "@redesignFolderNoGroup": {
+    "description": "redesign.folder.noGroup"
+  },
+  "redesignFolderNoPart": "Keine Noten für {name}",
+  "@redesignFolderNoPart": {
+    "description": "redesign.folder.noPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignFolderNothingNext": "Für die nächsten Termine sind noch keine Werke geplant.",
+  "@redesignFolderNothingNext": {
+    "description": "redesign.folder.nothingNext"
+  },
+  "redesignFolderOpen": "Als ein PDF öffnen",
+  "@redesignFolderOpen": {
+    "description": "redesign.folder.open"
+  },
+  "redesignFolderOpenHint": "Zum Ansehen, Speichern oder Drucken",
+  "@redesignFolderOpenHint": {
+    "description": "redesign.folder.openHint"
+  },
+  "redesignFolderOther": "Andere Stimme",
+  "@redesignFolderOther": {
+    "description": "redesign.folder.other"
+  },
+  "redesignFolderPick": "Stimme wählen",
+  "@redesignFolderPick": {
+    "description": "redesign.folder.pick"
+  },
+  "redesignFolderTitle": "Meine Mappe",
+  "@redesignFolderTitle": {
+    "description": "redesign.folder.title"
+  },
+  "redesignFolderTitleLeads": "Mappen",
+  "@redesignFolderTitleLeads": {
+    "description": "redesign.folder.titleLeads"
+  },
   "redesignGroupsLoadFailed": "Deine Gruppen konnten nicht geladen werden.",
   "@redesignGroupsLoadFailed": {
     "description": "redesign.groups.loadFailed"
@@ -15054,6 +15126,48 @@
   "@redesignWorkCopyHint": {
     "description": "redesign.work.copyHint"
   },
+  "redesignWorkCreateCategory": "Kategorie",
+  "@redesignWorkCreateCategory": {
+    "description": "redesign.workCreate.category"
+  },
+  "redesignWorkCreateCategoryHint": "Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.",
+  "@redesignWorkCreateCategoryHint": {
+    "description": "redesign.workCreate.categoryHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkCreateCreate": "Anlegen",
+  "@redesignWorkCreateCreate": {
+    "description": "redesign.workCreate.create"
+  },
+  "redesignWorkCreateCreateAndAdd": "Anlegen und Noten hinzufügen",
+  "@redesignWorkCreateCreateAndAdd": {
+    "description": "redesign.workCreate.createAndAdd"
+  },
+  "redesignWorkCreateInstrumentationHint": "Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.",
+  "@redesignWorkCreateInstrumentationHint": {
+    "description": "redesign.workCreate.instrumentationHint"
+  },
+  "redesignWorkCreateLater": "Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.",
+  "@redesignWorkCreateLater": {
+    "description": "redesign.workCreate.later"
+  },
+  "redesignWorkCreateNextNumber": "{number} ist die nächste freie Nummer.",
+  "@redesignWorkCreateNextNumber": {
+    "description": "redesign.workCreate.nextNumber",
+    "placeholders": {
+      "number": {}
+    }
+  },
+  "redesignWorkCreatePrefixHint": "Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.",
+  "@redesignWorkCreatePrefixHint": {
+    "description": "redesign.workCreate.prefixHint"
+  },
+  "redesignWorkCreateTitle": "Neues Werk",
+  "@redesignWorkCreateTitle": {
+    "description": "redesign.workCreate.title"
+  },
   "redesignWorkDifficulty": "Schwierigkeit",
   "@redesignWorkDifficulty": {
     "description": "redesign.work.difficulty"
@@ -15434,6 +15548,30 @@
   "@redesignWorksAdd": {
     "description": "redesign.works.add"
   },
+  "redesignWorksAddImport": "Werkliste importieren",
+  "@redesignWorksAddImport": {
+    "description": "redesign.works.addImport"
+  },
+  "redesignWorksAddImportHint": "Excel oder CSV mit Nummer, Titel, Kategorie",
+  "@redesignWorksAddImportHint": {
+    "description": "redesign.works.addImportHint"
+  },
+  "redesignWorksAddNew": "Neues Werk",
+  "@redesignWorksAddNew": {
+    "description": "redesign.works.addNew"
+  },
+  "redesignWorksAddNewHint": "Titel und Nummer, danach direkt die Noten",
+  "@redesignWorksAddNewHint": {
+    "description": "redesign.works.addNewHint"
+  },
+  "redesignWorksAddOrg": "Aus anderer Gruppe übernehmen",
+  "@redesignWorksAddOrg": {
+    "description": "redesign.works.addOrg"
+  },
+  "redesignWorksAddOrgHint": "Werke deiner Organisation durchsuchen und kopieren",
+  "@redesignWorksAddOrgHint": {
+    "description": "redesign.works.addOrgHint"
+  },
   "redesignWorksAll": "Alle · {count}",
   "@redesignWorksAll": {
     "description": "redesign.works.all",
@@ -15441,57 +15579,193 @@
       "count": {}
     }
   },
-  "redesignWorksAudio": "Audio",
-  "@redesignWorksAudio": {
-    "description": "redesign.works.audio"
-  },
-  "redesignWorksCurrent": "Gerade geprobt",
-  "@redesignWorksCurrent": {
-    "description": "redesign.works.current"
+  "redesignWorksAllEvents": "Alle Termine",
+  "@redesignWorksAllEvents": {
+    "description": "redesign.works.allEvents"
   },
   "redesignWorksEmpty": "Noch keine Werke.",
   "@redesignWorksEmpty": {
     "description": "redesign.works.empty"
   },
-  "redesignWorksFiles": "Dateien",
-  "@redesignWorksFiles": {
-    "description": "redesign.works.files"
+  "redesignWorksEventWorks": "{count, plural, one {1 Werk} other {{count} Werke}}",
+  "@redesignWorksEventWorks": {
+    "description": "redesign.works.eventWorks",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
-  "redesignWorksFilesLabel": "Dateien der Gruppe",
-  "@redesignWorksFilesLabel": {
-    "description": "redesign.works.filesLabel"
-  },
-  "redesignWorksFilter": "Filter & Ansicht",
+  "redesignWorksFilter": "Filter",
   "@redesignWorksFilter": {
     "description": "redesign.works.filter"
   },
-  "redesignWorksFilterActive": "Filter aktiv",
-  "@redesignWorksFilterActive": {
-    "description": "redesign.works.filterActive"
+  "redesignWorksFilterReset": "Zurücksetzen",
+  "@redesignWorksFilterReset": {
+    "description": "redesign.works.filterReset"
+  },
+  "redesignWorksFilterTitle": "Sortieren & Filtern",
+  "@redesignWorksFilterTitle": {
+    "description": "redesign.works.filterTitle"
+  },
+  "redesignWorksFolder": "Meine Mappe",
+  "@redesignWorksFolder": {
+    "description": "redesign.works.folder"
+  },
+  "redesignWorksFolders": "Mappen",
+  "@redesignWorksFolders": {
+    "description": "redesign.works.folders"
+  },
+  "redesignWorksForGroup": "Für Gruppe",
+  "@redesignWorksForGroup": {
+    "description": "redesign.works.forGroup"
+  },
+  "redesignWorksForGroupAll": "Alle",
+  "@redesignWorksForGroupAll": {
+    "description": "redesign.works.forGroupAll"
+  },
+  "redesignWorksLastOn": "Zuletzt {date}",
+  "@redesignWorksLastOn": {
+    "description": "redesign.works.lastOn",
+    "placeholders": {
+      "date": {}
+    }
+  },
+  "redesignWorksMissingNotes": "Noten fehlen",
+  "@redesignWorksMissingNotes": {
+    "description": "redesign.works.missingNotes"
   },
   "redesignWorksMore": "Mehr",
   "@redesignWorksMore": {
     "description": "redesign.works.more"
   },
+  "redesignWorksNeverPlayed": "Noch nie gespielt",
+  "@redesignWorksNeverPlayed": {
+    "description": "redesign.works.neverPlayed"
+  },
+  "redesignWorksNeverSung": "Noch nie gesungen",
+  "@redesignWorksNeverSung": {
+    "description": "redesign.works.neverSung"
+  },
+  "redesignWorksNext": "Als Nächstes",
+  "@redesignWorksNext": {
+    "description": "redesign.works.next"
+  },
+  "redesignWorksNoFilesPill": "ohne Noten",
+  "@redesignWorksNoFilesPill": {
+    "description": "redesign.works.noFilesPill"
+  },
   "redesignWorksNoMatch": "Kein Werk passt zur Suche.",
   "@redesignWorksNoMatch": {
     "description": "redesign.works.noMatch"
   },
-  "redesignWorksPdf": "PDF",
-  "@redesignWorksPdf": {
-    "description": "redesign.works.pdf"
+  "redesignWorksOnly": "Nur zeigen",
+  "@redesignWorksOnly": {
+    "description": "redesign.works.only"
+  },
+  "redesignWorksOnlyMine": "Mit meiner Stimme",
+  "@redesignWorksOnlyMine": {
+    "description": "redesign.works.onlyMine"
+  },
+  "redesignWorksOnlyMissing": "Noten fehlen",
+  "@redesignWorksOnlyMissing": {
+    "description": "redesign.works.onlyMissing"
+  },
+  "redesignWorksOnlyRecording": "Mit Aufnahme",
+  "@redesignWorksOnlyRecording": {
+    "description": "redesign.works.onlyRecording"
+  },
+  "redesignWorksOnlySolo": "Mit Solo",
+  "@redesignWorksOnlySolo": {
+    "description": "redesign.works.onlySolo"
+  },
+  "redesignWorksOpenMine": "Meine Noten öffnen",
+  "@redesignWorksOpenMine": {
+    "description": "redesign.works.openMine"
+  },
+  "redesignWorksOpenMineHint": "{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}",
+  "@redesignWorksOpenMineHint": {
+    "description": "redesign.works.openMineHint",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignWorksResetFilter": "Filter zurücksetzen",
   "@redesignWorksResetFilter": {
     "description": "redesign.works.resetFilter"
   },
-  "redesignWorksSearch": "Titel, Komponist, Nummer",
+  "redesignWorksSearch": "Titel oder Nummer",
   "@redesignWorksSearch": {
     "description": "redesign.works.search"
   },
   "redesignWorksSearchLabel": "Werke suchen",
   "@redesignWorksSearchLabel": {
     "description": "redesign.works.searchLabel"
+  },
+  "redesignWorksShow": "{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}",
+  "@redesignWorksShow": {
+    "description": "redesign.works.show",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorksSort": "Sortieren",
+  "@redesignWorksSort": {
+    "description": "redesign.works.sort"
+  },
+  "redesignWorksSortLastPlayed": "Zuletzt gespielt",
+  "@redesignWorksSortLastPlayed": {
+    "description": "redesign.works.sortLastPlayed"
+  },
+  "redesignWorksSortLastSung": "Zuletzt gesungen",
+  "@redesignWorksSortLastSung": {
+    "description": "redesign.works.sortLastSung"
+  },
+  "redesignWorksSortLongestPlayed": "Am längsten nicht gespielt",
+  "@redesignWorksSortLongestPlayed": {
+    "description": "redesign.works.sortLongestPlayed"
+  },
+  "redesignWorksSortLongestSung": "Am längsten nicht gesungen",
+  "@redesignWorksSortLongestSung": {
+    "description": "redesign.works.sortLongestSung"
+  },
+  "redesignWorksSortNumber": "Nummer",
+  "@redesignWorksSortNumber": {
+    "description": "redesign.works.sortNumber"
+  },
+  "redesignWorksSortRemove": "Sortierung „{name}“ entfernen",
+  "@redesignWorksSortRemove": {
+    "description": "redesign.works.sortRemove",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorksSortTitle": "Titel",
+  "@redesignWorksSortTitle": {
+    "description": "redesign.works.sortTitle"
+  },
+  "redesignWorksStatusNoFiles": "noch keine Noten",
+  "@redesignWorksStatusNoFiles": {
+    "description": "redesign.works.statusNoFiles"
+  },
+  "redesignWorksStatusNoPart": "keine Noten für {name}",
+  "@redesignWorksStatusNoPart": {
+    "description": "redesign.works.statusNoPart",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorksStatusPart": "Deine Stimme",
+  "@redesignWorksStatusPart": {
+    "description": "redesign.works.statusPart"
+  },
+  "redesignWorksStatusRecording": "Aufnahme",
+  "@redesignWorksStatusRecording": {
+    "description": "redesign.works.statusRecording"
   },
   "registerCreate": "Instanz jetzt erstellen",
   "@registerCreate": {
