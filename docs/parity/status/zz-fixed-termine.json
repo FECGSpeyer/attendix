@@ -1,0 +1,40 @@
+{
+  "batch": "zz-fixed-termine",
+  "items": {
+    "planning/planning.page#actionsheet-0c53b41c": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "planning/planning.page#alert-75ab0ccf": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart",
+        "lib/shared/widgets/adaptive/app_select.dart"
+      ],
+      "n": "behoben in #NNN"
+    }
+  },
+  "extraOverride": [
+    {
+      "unit": "planning/planning.page",
+      "title": "Standardplan bei Termin ohne Ablaufplan",
+      "drop": true,
+      "why": "behoben in #NNN"
+    },
+    {
+      "unit": "planning/planning.page",
+      "title": "Start-Termin ohne kommenden Termin",
+      "drop": true,
+      "why": "behoben in #NNN"
+    },
+    {
+      "unit": "planning/planning.page",
+      "title": "Archivierte Termine in der Terminauswahl für Helfer",
+      "drop": true,
+      "why": "behoben in #NNN"
+    }
+  ]
+}
