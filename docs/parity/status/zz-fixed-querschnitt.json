@@ -376,6 +376,22 @@
     "lib/core/utils/spreadsheet_reader.dart"
    ],
    "n": "behoben in #295 (songs/import/import.page: Formelzellen evtl. als Formeltext gelesen (unverifiziert))"
+  },
+  "songs/import/import.page#field-601fe7d3": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (.xls-Leser)"
+  },
+  "people/import/import.page#field-bdcf25e7": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "behoben in #295 (.xls-Leser)"
   }
  },
  "extra": [],
