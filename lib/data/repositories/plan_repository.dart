@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/plan/plan.dart';
 import 'base_repository.dart';
+import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/paged_query.dart';
 
 /// Provider for PlanRepository (without tenant; use planRepositoryWithTenantProvider)
@@ -12,7 +13,7 @@ final planRepositoryProvider = Provider<PlanRepository>((ref) {
 /// Columns of `attendance` needed for the plan editor / viewer.
 const String planAttendanceColumns =
     'id, tenantId, date, duration_days, plan, extra_plans, type_id, typeInfo, type, '
-    'start_time, notes, share_plan, is_org_plan, share_key, share_edit_key';
+    'start_time, notes, share_plan, is_org_plan, share_key, share_edit_key, archived';
 
 /// Repository for Ablaufpläne of the current instance (ORG_PLANS package).
 ///
@@ -56,9 +57,12 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
               .order('id', ascending: false)
               .range(from, to) as List);
 
-      return response
-          .map((e) => PlanAttendance.fromJson(e as Map<String, dynamic>))
-          .toList();
+      // Ionic `getAttendance()` → `filterArchivedForRole`.
+      return filterArchivedForRole(
+        response.cast<Map<String, dynamic>>(),
+        currentUserRole,
+        isArchivedRow,
+      ).map(PlanAttendance.fromJson).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getPlanAttendances');
       rethrow;
@@ -76,6 +80,11 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
           .maybeSingle();
 
       if (response == null) return null;
+      // Archived Termine only for admins/responsible, also by id (like
+      // attendanceDetailProvider).
+      if (isArchivedRow(response) && !canSeeArchivedAttendances(currentUserRole)) {
+        return null;
+      }
       return PlanAttendance.fromJson(response);
     } catch (e, stack) {
       handleError(e, stack, 'getPlanAttendanceById');
