@@ -1151,6 +1151,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .lte('paused_until', today);
 
       for (final playerData in pausedPlayers as List) {
+        // Ionic unpauses via updatePlayer → checkDemoRestriction(): demo
+        // toast, nothing written (the DemoModeException reaches the caller).
+        ensureNotDemo('checkAndUnpausePlayers'); // DEMO_GUARD
         final player = Person.fromJson(playerData as Map<String, dynamic>);
 
         // Add history entry
@@ -1175,8 +1178,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         await addToUpcomingAttendances(player);
       }
     } catch (e, stack) {
+      // Throws (RepositoryException, or the DemoModeException as is).
       handleError(e, stack, 'checkAndUnpausePlayers');
-      // Don't rethrow - this runs in the background
     }
   }
 
