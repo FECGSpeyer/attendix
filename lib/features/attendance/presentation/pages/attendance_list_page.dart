@@ -111,10 +111,11 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
     final canEdit = ref.read(effectiveRoleProvider).canAddAttendance;
     // Werke and the further plans load in parallel; a slow or failed load
     // only drops the score actions / extra plans.
+    final cachedSongs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
     final songsFuture = ref
         .read(songsProvider.future)
         .timeout(const Duration(seconds: 5))
-        .catchError((_) => ref.read(songsProvider).valueOrNull ?? const <Song>[]);
+        .catchError((_) => cachedSongs);
     // The list rows carry only `plan`; the further plans are read with the
     // Termin (tenant-scoped). Offline / on failure only the main plan shows.
     var extra = const <Plan>[];
