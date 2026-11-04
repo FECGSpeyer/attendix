@@ -147,7 +147,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       // write the old selection back.
       if (filesKey != _filesKey) {
         _filesKey = filesKey;
-        _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(song)}.toList();
+        _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(data)}.toList();
       }
       return;
     }
@@ -161,7 +161,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     _withChoir = song.withChoir;
     _withSolo = song.withSolo;
     _difficulty = song.difficulty;
-    _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(song)}.toList();
+    _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(data)}.toList();
     _categoryIds = [...?song.categoryIds];
     _additional = {...?song.additionalFields};
     for (final field in data.additionalFields) {
@@ -176,11 +176,48 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     _lastQueued = _snapshot(_formValues(data));
   }
 
-  /// Ionic `instrumentIdsFromFiles`: groups that have files (id > 2)
-  List<int> _idsFromFiles(Song song) => {
-        for (final f in song.files ?? const <SongFile>[])
-          if (f.instrumentId != null && f.instrumentId! > 2) f.instrumentId!,
-      }.toList();
+  /// Ionic `instrumentIdsFromFiles`: groups that have files, without
+  /// Aufnahme (1), Liedtext (2) and the main group (as the file service).
+  static List<int> _idsFromFiles(SongDetailData data) =>
+      SongFileService.instrumentIdsFromFiles(
+        [
+          for (final f in data.song.files ?? const <SongFile>[])
+            {'instrumentId': f.instrumentId},
+        ],
+        mainGroupId: data.mainGroupId,
+        excludeLyrics: true,
+      );
+
+  /// Queues a write behind all saves queued before it.
+  Future<Song?> _enqueue(
+    SongNotifier notifier,
+    int id,
+    Map<String, dynamic> values,
+  ) {
+    final run = _saveQueue.then((_) => notifier.updateSong(id, values));
+    _saveQueue = run.then((_) {}, onError: (_) {});
+    return run;
+  }
+
+  /// "Alle löschen": empties the Besetzung through the save queue, so it
+  /// lands after a running save and is not overwritten by it.
+  Future<void> _clearInstrumentIds() async {
+    final data = _data;
+    final id = data?.song.id;
+    final notifier = _notifier;
+    if (data == null || id == null || notifier == null) return;
+    final values = _formValues(data);
+    final before = _lastQueued;
+    // Nothing else pending: the form as saved now has an empty Besetzung,
+    // so closing the page does not save again.
+    final pending = _snapshot(values) != before;
+    _instrumentIds = [];
+    values['instrument_ids'] = <int>[];
+    final result = await _enqueue(notifier, id, {'instrument_ids': <int>[]});
+    if (result != null && !pending && _lastQueued == before) {
+      _lastQueued = _snapshot(values);
+    }
+  }
 
   /// Ionic `update()`: save the whole form. Saves run one after another in
   /// the order of the changes.
@@ -193,8 +230,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     final snapshot = _snapshot(values);
     _lastQueued = snapshot;
     if (!_disposed) setState(() => _saving++);
-    final run = _saveQueue.then((_) => notifier.updateSong(id, values));
-    _saveQueue = run.then((_) {}, onError: (_) {});
+    final run = _enqueue(notifier, id, values);
     Song? result;
     try {
       result = await run;
@@ -222,7 +258,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   /// The whole form as written by Ionic `editSong`.
   Map<String, dynamic> _formValues(SongDetailData data) {
-    final merged = {..._instrumentIds, ..._idsFromFiles(data.song)}.toList();
+    final merged = {..._instrumentIds, ..._idsFromFiles(data)}.toList();
     _instrumentIds = merged;
     for (final field in data.additionalFields) {
       final c = _fieldControllers[field.id];
@@ -294,7 +330,12 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       );
     }
     final dataAsync = ref.watch(songDetailDataProvider(_params));
-    final data = dataAsync.valueOrNull;
+    // Is the same Werk still open below in the stack, the provider keeps the
+    // old value while it reloads after initState: the form starts only with
+    // the fresh data (spinner until then, as on a first open).
+    final data = _initializedFor == null && dataAsync.isLoading
+        ? null
+        : dataAsync.valueOrNull;
 
     if (data == null) {
       final sharingId = widget.songSharingId;
@@ -419,6 +460,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             _FilesSection(
               data: data,
               onChanged: _refresh,
+              onClearInstrumentIds: _clearInstrumentIds,
             ),
             // Ionic 4.17.10: SongBeamer-Datei (Gemeinde App)
             if (!data.isPublic) SongBeamerFileSection(song: song),
@@ -471,7 +513,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       );
 
   Widget _buildEditForm(SongDetailData data) {
-    final fileIds = _idsFromFiles(data.song);
+    final fileIds = _idsFromFiles(data);
     return IonInsetList(children: [
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -963,10 +1005,17 @@ class _CopyToOtherInstance extends ConsumerWidget {
 // ============================================================================
 
 class _FilesSection extends ConsumerStatefulWidget {
-  const _FilesSection({required this.data, required this.onChanged});
+  const _FilesSection({
+    required this.data,
+    required this.onChanged,
+    required this.onClearInstrumentIds,
+  });
 
   final SongDetailData data;
   final VoidCallback onChanged;
+
+  /// "Alle löschen": empty the Besetzung through the page's save queue.
+  final Future<void> Function() onClearInstrumentIds;
 
   @override
   ConsumerState<_FilesSection> createState() => _FilesSectionState();
@@ -1068,9 +1117,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     if (!ok) return;
     await _run(() async {
       await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
-      await ref
-          .read(songNotifierProvider.notifier)
-          .updateSong(song.id!, {'instrument_ids': <int>[]});
+      await widget.onClearInstrumentIds();
       widget.onChanged();
     });
   }
