@@ -3975,6 +3975,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have unsaved changes. Do you want to leave the page anyway?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons => 'Updating persons...';
+
+  @override
   String get extraFieldsForPersons => 'Additional fields for people';
 
   @override

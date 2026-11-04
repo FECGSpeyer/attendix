@@ -1,3 +1,5 @@
+import 'dart:async' show unawaited;
+
 import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -197,7 +199,13 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
       final songTenantId = songSettings.songSourceTenantId ?? tenantId;
       await repo.saveFields(personFields: personFields, songFields: songFields);
       await repo.sanitizeValues(table: 'player', definitions: personFields, churchIds: churchIds);
-      await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: songTenantId);
+      // Deliberate deviation from Ionic (backfillSongAdditionalFields on
+      // db.getSongs()): a synced library belongs to the source instance and
+      // its field definitions. Cleaning it with this instance's song fields
+      // would delete the source's values, so only the own library is cleaned.
+      if (songTenantId == tenantId) {
+        await repo.sanitizeValues(table: 'songs', definitions: songFields, songTenantId: tenantId);
+      }
 
       // SOL_FIX19: only into the local state of that same tenant.
       await ref.read(currentTenantProvider.notifier).updateTenantLocalIfCurrent(
@@ -322,10 +330,22 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                 );
                 if (!ok) return;
                 if (isPerson) {
+                  if (!ctx.mounted) return;
                   final current = options.map((c) => c.text).toList();
                   final newDefault = current.first == value
                       ? (current.length > 1 ? current[1] : '')
                       : current.first;
+                  // The sheet stays locked while the persons are migrated: a
+                  // blocking route above it stops closing (X, swipe, backdrop,
+                  // back) and further deletes, so the option is always removed
+                  // afterwards at the same index.
+                  final rootNav = Navigator.of(ctx, rootNavigator: true);
+                  unawaited(showDialog<void>(
+                    context: ctx,
+                    useRootNavigator: true,
+                    barrierDismissible: false,
+                    builder: (_) => _MigratingOverlay(label: context.l10n.extraFieldsFlutterUpdatingPersons),
+                  ));
                   try {
                     final count = await extraFieldsRepo
                         .updateFieldValue(existing.id, value, newDefault);
@@ -333,6 +353,8 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
                   } catch (_) {
                     if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
                     return;
+                  } finally {
+                    rootNav.pop();
                   }
                 }
               }
@@ -756,6 +778,37 @@ class _ExtraFieldsPageState extends ConsumerState<ExtraFieldsPage> {
 
 /// Calls [onDispose] when the sheet content leaves the tree, i.e. after the
 /// bottom sheet's exit animation (its future already completed before).
+/// Blocking progress dialog above the edit sheet while persons are migrated
+/// (cannot be dismissed by tap or back).
+class _MigratingOverlay extends StatelessWidget {
+  const _MigratingOverlay({required this.label});
+
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Center(
+        key: const ValueKey('extra-fields-migrating'),
+        child: Card(
+          child: Padding(
+            padding: const EdgeInsets.all(AppDimensions.paddingM),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 20, height: 20, child: AppSpinner(strokeWidth: 2)),
+                const SizedBox(width: AppDimensions.paddingM),
+                Text(label),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+  }
+}
+
 class _DisposeOnUnmount extends StatefulWidget {
   const _DisposeOnUnmount({required this.onDispose, required this.child});
 

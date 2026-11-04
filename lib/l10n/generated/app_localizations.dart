@@ -6635,6 +6635,12 @@ abstract class AppLocalizations {
   /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
   String get extraFieldsFlutterLeaveMessage;
 
+  /// extraFields.flutter.updatingPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen werden aktualisiert...'**
+  String get extraFieldsFlutterUpdatingPersons;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:

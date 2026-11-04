@@ -120,11 +120,12 @@ void main() {
     repo.gate.complete();
     await tester.pumpAndSettle();
 
-    expect(repo.log, ['save', 'sanitize:player', 'sanitize:songs']);
+    // Synced library of tenant 7: its songs belong to the source tenant and
+    // are not cleaned with this tenant's song fields (deviates from Ionic).
+    expect(repo.log, ['save', 'sanitize:player']);
     // The cleanup keeps exactly the definitions that were stored.
     expect(repo.sanitized['player'], ['a', 'b']);
-    // Ionic db.getSongs(): songs of the effective song tenant.
-    expect(repo.songTenantId, 7);
+    expect(repo.songTenantId, isNull);
     expect(find.byKey(const ValueKey('extra-fields-saving')), findsNothing);
     expect(
       container.read(currentTenantProvider)?.additionalFields?.map((f) => f.id),

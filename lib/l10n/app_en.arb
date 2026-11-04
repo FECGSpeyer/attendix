@@ -1086,6 +1086,7 @@
   "extraFieldsEditableSuffix": " (editable)",
   "extraFieldsFlutterFirstOptionDefault": "The first option is the default value",
   "extraFieldsFlutterLeaveMessage": "You have unsaved changes. Do you want to leave the page anyway?",
+  "extraFieldsFlutterUpdatingPersons": "Updating persons...",
   "extraFieldsForPersons": "Additional fields for people",
   "extraFieldsForSongs": "Additional fields for pieces",
   "extraFieldsIdEmpty": "The field ID must not be empty.",
