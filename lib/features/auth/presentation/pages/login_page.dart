@@ -321,6 +321,14 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (navigated) return;
     }
 
+    if (userPrefs.wantInstanceSelection && mounted) {
+      final chosen = await _askWantedTenant(userPrefs.currentTenantId);
+      if (chosen != null && mounted) {
+        final navigated = await _tryAutoNavigateToTenant(chosen);
+        if (navigated) return;
+      }
+    }
+
     // Default: show tenant selection
     if (mounted) {
       context.go('/tenants');
@@ -418,6 +426,32 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   /// Try to auto-navigate to the saved tenant
   /// Returns true if navigation was successful, false otherwise
+  /// Ionic `getWantedTenant()`: radio alert "Instanz auswählen" over the
+  /// login page (no backdrop dismiss). "Abbrechen" opens the stored tenant,
+  /// otherwise the first one; "Öffnen" the checked one. Null when the user
+  /// has no tenant (→ selection page).
+  Future<int?> _askWantedTenant(int? storedTenantId) async {
+    final container = ProviderScope.containerOf(context, listen: false);
+    final tenants = await container
+        .read(userTenantsProvider.future)
+        .catchError((Object _) => const <Never>[]);
+    if (tenants.isEmpty || !mounted) return null;
+    final fallback = tenants.any((t) => t.id == storedTenantId)
+        ? storedTenantId
+        : tenants.first.id;
+    final picked = await showAppRadioAlert<int>(
+      context,
+      title: context.l10n.dbChooseInstanceHeader,
+      message: context.l10n.dbChooseInstanceMessage,
+      options: [for (final t in tenants) (t.id!, t.longName)],
+      initialValue: tenants.any((t) => t.id == storedTenantId) ? storedTenantId : null,
+      confirmText: context.l10n.commonOpen,
+      cancelDestructive: true,
+      barrierDismissible: false,
+    );
+    return picked ?? fallback;
+  }
+
   Future<bool> _tryAutoNavigateToTenant(int tenantId) async {
     // IOS_SHELL: the router may replace this page as soon as the session or
     // the tenant changes (e.g. demo login → /tenants), so never touch `ref`

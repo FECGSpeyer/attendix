@@ -218,14 +218,16 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
 
   final now = DateTime.now();
   final today = DateTime(now.year, now.month, now.day);
-  final day = await showAppDatePicker(
-    context: context,
+  // Ionic: alert "{Typ} anlegen" with a date input (today, min today) and
+  // "Abbrechen"/"Anlegen".
+  final day = await showAppDateAlert(
+    context,
+    title: context.l10n.teamOrgFlutterCreateType(type.name),
+    message: context.l10n.dateDialogWhichDay,
     initialDate: today,
     firstDate: today,
-    lastDate: today.add(const Duration(days: 3650)),
-    helpText: '${context.l10n.teamOrgFlutterCreateType(type.name)} – ${context.l10n.dateDialogWhichDay}',
+    lastDate: DateTime(2200),
     confirmText: context.l10n.commonCreate,
-    cancelText: context.l10n.commonCancel,
   );
   if (day == null || !context.mounted) return null;
   if (day.isBefore(today)) {

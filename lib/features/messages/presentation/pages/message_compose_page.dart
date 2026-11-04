@@ -14,6 +14,7 @@ import '../../../../core/utils/tiptap_converter.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/message/message.dart';
 import '../../../../l10n/l10n.dart';
+import '../widgets/message_editor_toolbar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../settings/presentation/widgets/settings_list.dart';
 
@@ -342,38 +343,7 @@ class _MessageComposePageState extends ConsumerState<MessageComposePage> {
               _ComposeBox(
                 child: Column(
                   children: [
-                    QuillSimpleToolbar(
-                      controller: _quill,
-                      config: const QuillSimpleToolbarConfig(
-                        multiRowsDisplay: false,
-                        showBoldButton: true,
-                        showItalicButton: true,
-                        showUnderLineButton: true,
-                        showStrikeThrough: true,
-                        showHeaderStyle: true,
-                        showListBullets: true,
-                        showListNumbers: true,
-                        showLink: true,
-                        showListCheck: false,
-                        showColorButton: false,
-                        showBackgroundColorButton: false,
-                        showClearFormat: false,
-                        showInlineCode: false,
-                        showCodeBlock: false,
-                        showQuote: false,
-                        showIndent: false,
-                        showSearchButton: false,
-                        showSubscript: false,
-                        showSuperscript: false,
-                        showFontFamily: false,
-                        showFontSize: false,
-                        showAlignmentButtons: false,
-                        showDirection: false,
-                        showSmallButton: false,
-                        showUndo: false,
-                        showRedo: false,
-                      ),
-                    ),
+                    MessageEditorToolbar(controller: _quill),
                     const Divider(height: 1),
                     ConstrainedBox(
                       constraints: const BoxConstraints(minHeight: 180),
