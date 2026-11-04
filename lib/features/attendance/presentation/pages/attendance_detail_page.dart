@@ -2447,13 +2447,28 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return;
       }
 
+      // Ionic exportToExcel: the same persons as the list (helper group
+      // only), sorted by main group, group order, then name.
+      final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+      final inAttendance = _personsInAttendance(persons);
+      final groupPersons = groupScope.isAll
+          ? inAttendance
+          : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
+      final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+      final exportPersons = sortPersonsByGroup(
+        groupPersons,
+        groups: groups,
+        mainGroupId: mainGroupIdOf(groups) ?? ref.read(mainGroupProvider).valueOrNull?.id,
+        usePersonSortOrder: false,
+      );
+
       ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
 
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
         context: context,
         attendance: attendance,
-        persons: _personsInAttendance(persons),
+        persons: exportPersons,
         statuses: _localStatuses,
         tenantName: tenant.shortName,
       );
