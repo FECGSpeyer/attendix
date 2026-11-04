@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -64,23 +66,37 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     if (_isNew) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      final id = _itemId;
-      refreshUnlessLoading(ref, agendaItemByIdProvider(id));
+      unawaited(_loadFresh());
       _reloadRelated();
-      ref.read(agendaItemByIdProvider(id).future).then(
-        (_) {
-          if (mounted) setState(() => _fresh = true);
-        },
-        onError: (Object _) {
-          if (mounted) {
-            setState(() {
-              _fresh = true;
-              _loadFailed = true;
-            });
-          }
-        },
-      );
     });
+  }
+
+  /// Loads the topic anew; sets [_fresh] once settled, [_loadFailed] on error.
+  Future<void> _loadFresh() async {
+    final id = _itemId;
+    refreshUnlessLoading(ref, agendaItemByIdProvider(id));
+    try {
+      await ref.read(agendaItemByIdProvider(id).future);
+      if (mounted) setState(() => _fresh = true);
+    } catch (_) {
+      if (mounted) {
+        setState(() {
+          _fresh = true;
+          _loadFailed = true;
+        });
+      }
+    }
+  }
+
+  /// Pull to refresh on "Thema nicht gefunden" (e.g. after a failed load):
+  /// spinner, then a fresh load (never a form from the cached copy).
+  Future<void> _retryLoad() async {
+    setState(() {
+      _fresh = false;
+      _loadFailed = false;
+    });
+    _reloadRelated();
+    await _loadFresh();
   }
 
   /// Ionic loadRelated(): linked tasks and history.
@@ -288,7 +304,20 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
       body: !_fresh || (itemAsync.isLoading && !itemAsync.hasValue)
           ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
-              ? Center(child: Text(l10n.agendaFlutterNotFound))
+              ? LayoutBuilder(
+                  builder: (context, constraints) => RefreshIndicator.adaptive(
+                    onRefresh: _retryLoad,
+                    child: ListView(
+                      physics: const AlwaysScrollableScrollPhysics(),
+                      children: [
+                        SizedBox(
+                          height: constraints.maxHeight,
+                          child: Center(child: Text(l10n.agendaFlutterNotFound)),
+                        ),
+                      ],
+                    ),
+                  ),
+                )
               : ListView(
                   padding: EdgeInsets.only(
                       bottom: isLeader
