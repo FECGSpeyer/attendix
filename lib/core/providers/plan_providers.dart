@@ -44,6 +44,9 @@ final _planRepositoryForAccountProvider =
 /// Termine of the current season with their plans (newest first)
 final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
+  // Archived Termine are filtered by role in the repository: reload when the
+  // role is known / changes.
+  ref.watch(currentRoleProvider);
   if (!repo.hasTenantId) return [];
   final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
   return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart));
@@ -52,6 +55,7 @@ final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async
 /// One Termin with its plans
 final planAttendanceByIdProvider = FutureProvider.family<PlanAttendance?, int>((ref, id) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
+  ref.watch(currentRoleProvider); // archived filter (see above)
   if (!repo.hasTenantId) return null;
   return repo.getPlanAttendanceById(id);
 });

@@ -278,6 +278,9 @@ final playerAttendancePercentagesProvider =
   // the first await (attendanceTypesProvider is only reached afterwards).
   ref.watch(currentAuthUserIdProvider);
   ref.watch(attendanceRefetchCounter);
+  // Ionic `getAttendance()` → `filterArchivedForRole`: archived Termine only
+  // count for admins/responsible.
+  final showArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
 
   final supabase = ref.watch(supabaseClientProvider);
   final tenant = ref.watch(currentTenantProvider);
@@ -297,7 +300,7 @@ final playerAttendancePercentagesProvider =
   while (true) {
     var query = supabase
         .from('person_attendances')
-        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id)')
+        .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id, archived)')
         .eq('attendance.tenantId', tenant.id!)
         .lt('attendance.date', tomorrow);
 
@@ -338,6 +341,10 @@ final playerAttendancePercentagesProvider =
   for (final a in allAttendances) {
     final personId = a['person_id'] as int?;
     if (personId == null) continue;
+    if (!showArchived &&
+        isArchivedRow((a['attendance'] as Map?)?.cast<String, dynamic>())) {
+      continue;
+    }
     final typeId = (a['attendance'] as Map?)?['type_id']?.toString();
     if (typeId == null || !includedTypeIds.contains(typeId)) continue;
     final dutyState = a['duty_state'];
