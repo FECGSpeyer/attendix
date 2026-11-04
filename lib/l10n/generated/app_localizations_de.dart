@@ -10533,7 +10533,7 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
-  String get redesignFilesTitle => 'Dateien';
+  String get redesignFilesTitle => 'Noten & Dateien';
 
   @override
   String get redesignFilesUpload => 'Hochladen';
@@ -11959,10 +11959,43 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignTodayYourAnswer => 'Deine Zusage';
 
   @override
+  String get redesignWorkAbout => 'Über das Werk';
+
+  @override
+  String get redesignWorkAdd => 'Hinzufügen';
+
+  @override
+  String get redesignWorkAddDrop =>
+      'Am Computer: Dateien einfach hierher ziehen';
+
+  @override
+  String get redesignWorkAddHint =>
+      'Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.';
+
+  @override
+  String get redesignWorkAddPick => 'Dateien wählen';
+
+  @override
+  String get redesignWorkAddTitle => 'Noten hinzufügen';
+
+  @override
   String get redesignWorkAllFiles => 'Alle Dateien';
 
   @override
   String get redesignWorkAllParts => 'Alle Stimmen';
+
+  @override
+  String get redesignWorkCopiedFrom => 'Kopiert aus';
+
+  @override
+  String get redesignWorkCopy => 'In andere Gruppe kopieren';
+
+  @override
+  String get redesignWorkCopyHint =>
+      'In Gruppen deiner Organisation, die du leitest';
+
+  @override
+  String get redesignWorkDifficulty => 'Schwierigkeit';
 
   @override
   String get redesignWorkEdit => 'Bearbeiten';
@@ -11974,6 +12007,57 @@ class AppLocalizationsDe extends AppLocalizations {
       locale: localeName,
       other: '$count Dateien',
       one: '1 Datei',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignWorkFileDelete => 'Löschen';
+
+  @override
+  String get redesignWorkFileDownload => 'Herunterladen';
+
+  @override
+  String redesignWorkFileMore(Object name) {
+    return 'Mehr zu $name';
+  }
+
+  @override
+  String get redesignWorkFilePart => 'Stimme ändern';
+
+  @override
+  String get redesignWorkFilePrint => 'Drucken';
+
+  @override
+  String get redesignWorkFileRename => 'Umbenennen';
+
+  @override
+  String get redesignWorkFileShare => 'Teilen';
+
+  @override
+  String get redesignWorkFileTelegram => 'Per Telegram an mich';
+
+  @override
+  String get redesignWorkFiles => 'Noten & Dateien';
+
+  @override
+  String get redesignWorkForConductors => 'Für die Leitung';
+
+  @override
+  String get redesignWorkInstrumentation => 'Besetzung';
+
+  @override
+  String redesignWorkInstrumentationHint(Object names) {
+    return 'aus den Noten: $names';
+  }
+
+  @override
+  String redesignWorkInstrumentationValue(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Gruppen',
+      one: '1 Gruppe',
     );
     return '$_temp0';
   }
@@ -11991,11 +12075,58 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkLyrics => 'Liedtext';
 
   @override
+  String redesignWorkMissingMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Stimmen fehlen noch',
+      one: '1 Stimme fehlt noch',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingOne(Object name) {
+    return '$name fehlt noch';
+  }
+
+  @override
+  String redesignWorkMissingOneHint(Object name) {
+    return 'In der Gruppe spielt jemand $name, es gibt aber noch keine Noten.';
+  }
+
+  @override
+  String redesignWorkMissingPillMany(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count fehlen',
+      one: '1 fehlt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String redesignWorkMissingPillOne(Object name) {
+    return '$name fehlt';
+  }
+
+  @override
+  String get redesignWorkMore => 'Mehr zum Werk';
+
+  @override
   String get redesignWorkNever => 'Noch nie';
+
+  @override
+  String get redesignWorkNext => 'Als Nächstes';
 
   @override
   String get redesignWorkNoFiles =>
       'Zu diesem Werk gibt es noch keine Dateien.';
+
+  @override
+  String get redesignWorkNoFilesYet =>
+      'Zu diesem Werk gibt es noch keine Noten.';
 
   @override
   String get redesignWorkNoPart => 'Für deine Stimme gibt es noch keine Noten.';
@@ -12015,6 +12146,9 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkOpen => 'Öffnen';
 
   @override
+  String get redesignWorkPartOwn => 'deine Stimme';
+
+  @override
   String get redesignWorkPause => 'Anhalten';
 
   @override
@@ -12022,6 +12156,11 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorkPlay => 'Abspielen';
+
+  @override
+  String redesignWorkPractice(Object name) {
+    return 'Übe-Aufnahme · $name';
+  }
 
   @override
   String get redesignWorkRecording => 'Aufnahme';
@@ -12043,10 +12182,31 @@ class AppLocalizationsDe extends AppLocalizations {
   }
 
   @override
+  String get redesignWorkShareLink => 'Link zum Werk teilen';
+
+  @override
+  String get redesignWorkShareLinkHint => 'Öffentliche Seite, ohne Anmeldung';
+
+  @override
   String get redesignWorkSlower => 'Langsamer abspielen';
 
   @override
+  String get redesignWorkUpload => 'Hochladen';
+
+  @override
+  String get redesignWorkWithChoir => 'Mit Chor';
+
+  @override
+  String get redesignWorkWithOrchestra => 'Mit Orchester';
+
+  @override
+  String get redesignWorkWithSolo => 'Mit Solo-Gesang';
+
+  @override
   String get redesignWorkYourPart => 'Deine Stimme';
+
+  @override
+  String get redesignWorkZip => 'Alle Dateien als ZIP';
 
   @override
   String get redesignWorksAdd => 'Werk hinzufügen';

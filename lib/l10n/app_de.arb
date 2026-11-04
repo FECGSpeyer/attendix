@@ -13108,7 +13108,7 @@
       "mod": {}
     }
   },
-  "redesignFilesTitle": "Dateien",
+  "redesignFilesTitle": "Noten & Dateien",
   "@redesignFilesTitle": {
     "description": "redesign.files.title"
   },
@@ -14899,6 +14899,30 @@
   "@redesignTodayYourAnswer": {
     "description": "redesign.today.yourAnswer"
   },
+  "redesignWorkAbout": "Über das Werk",
+  "@redesignWorkAbout": {
+    "description": "redesign.work.about"
+  },
+  "redesignWorkAdd": "Hinzufügen",
+  "@redesignWorkAdd": {
+    "description": "redesign.work.add"
+  },
+  "redesignWorkAddDrop": "Am Computer: Dateien einfach hierher ziehen",
+  "@redesignWorkAddDrop": {
+    "description": "redesign.work.addDrop"
+  },
+  "redesignWorkAddHint": "Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.",
+  "@redesignWorkAddHint": {
+    "description": "redesign.work.addHint"
+  },
+  "redesignWorkAddPick": "Dateien wählen",
+  "@redesignWorkAddPick": {
+    "description": "redesign.work.addPick"
+  },
+  "redesignWorkAddTitle": "Noten hinzufügen",
+  "@redesignWorkAddTitle": {
+    "description": "redesign.work.addTitle"
+  },
   "redesignWorkAllFiles": "Alle Dateien",
   "@redesignWorkAllFiles": {
     "description": "redesign.work.allFiles"
@@ -14907,6 +14931,22 @@
   "@redesignWorkAllParts": {
     "description": "redesign.work.allParts"
   },
+  "redesignWorkCopiedFrom": "Kopiert aus",
+  "@redesignWorkCopiedFrom": {
+    "description": "redesign.work.copiedFrom"
+  },
+  "redesignWorkCopy": "In andere Gruppe kopieren",
+  "@redesignWorkCopy": {
+    "description": "redesign.work.copy"
+  },
+  "redesignWorkCopyHint": "In Gruppen deiner Organisation, die du leitest",
+  "@redesignWorkCopyHint": {
+    "description": "redesign.work.copyHint"
+  },
+  "redesignWorkDifficulty": "Schwierigkeit",
+  "@redesignWorkDifficulty": {
+    "description": "redesign.work.difficulty"
+  },
   "redesignWorkEdit": "Bearbeiten",
   "@redesignWorkEdit": {
     "description": "redesign.work.edit"
@@ -14914,6 +14954,69 @@
   "redesignWorkFileCount": "{count, plural, one {1 Datei} other {{count} Dateien}}",
   "@redesignWorkFileCount": {
     "description": "redesign.work.fileCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkFileDelete": "Löschen",
+  "@redesignWorkFileDelete": {
+    "description": "redesign.work.fileDelete"
+  },
+  "redesignWorkFileDownload": "Herunterladen",
+  "@redesignWorkFileDownload": {
+    "description": "redesign.work.fileDownload"
+  },
+  "redesignWorkFileMore": "Mehr zu {name}",
+  "@redesignWorkFileMore": {
+    "description": "redesign.work.fileMore",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkFilePart": "Stimme ändern",
+  "@redesignWorkFilePart": {
+    "description": "redesign.work.filePart"
+  },
+  "redesignWorkFilePrint": "Drucken",
+  "@redesignWorkFilePrint": {
+    "description": "redesign.work.filePrint"
+  },
+  "redesignWorkFileRename": "Umbenennen",
+  "@redesignWorkFileRename": {
+    "description": "redesign.work.fileRename"
+  },
+  "redesignWorkFileShare": "Teilen",
+  "@redesignWorkFileShare": {
+    "description": "redesign.work.fileShare"
+  },
+  "redesignWorkFileTelegram": "Per Telegram an mich",
+  "@redesignWorkFileTelegram": {
+    "description": "redesign.work.fileTelegram"
+  },
+  "redesignWorkFiles": "Noten & Dateien",
+  "@redesignWorkFiles": {
+    "description": "redesign.work.files"
+  },
+  "redesignWorkForConductors": "Für die Leitung",
+  "@redesignWorkForConductors": {
+    "description": "redesign.work.forConductors"
+  },
+  "redesignWorkInstrumentation": "Besetzung",
+  "@redesignWorkInstrumentation": {
+    "description": "redesign.work.instrumentation"
+  },
+  "redesignWorkInstrumentationHint": "aus den Noten: {names}",
+  "@redesignWorkInstrumentationHint": {
+    "description": "redesign.work.instrumentationHint",
+    "placeholders": {
+      "names": {}
+    }
+  },
+  "redesignWorkInstrumentationValue": "{count, plural, one {1 Gruppe} other {{count} Gruppen}}",
+  "@redesignWorkInstrumentationValue": {
+    "description": "redesign.work.instrumentationValue",
     "placeholders": {
       "count": {
         "type": "num"
@@ -14936,13 +15039,64 @@
   "@redesignWorkLyrics": {
     "description": "redesign.work.lyrics"
   },
+  "redesignWorkMissingMany": "{count, plural, one {1 Stimme fehlt noch} other {{count} Stimmen fehlen noch}}",
+  "@redesignWorkMissingMany": {
+    "description": "redesign.work.missingMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkMissingOne": "{name} fehlt noch",
+  "@redesignWorkMissingOne": {
+    "description": "redesign.work.missingOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMissingOneHint": "In der Gruppe spielt jemand {name}, es gibt aber noch keine Noten.",
+  "@redesignWorkMissingOneHint": {
+    "description": "redesign.work.missingOneHint",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMissingPillMany": "{count, plural, one {1 fehlt} other {{count} fehlen}}",
+  "@redesignWorkMissingPillMany": {
+    "description": "redesign.work.missingPillMany",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignWorkMissingPillOne": "{name} fehlt",
+  "@redesignWorkMissingPillOne": {
+    "description": "redesign.work.missingPillOne",
+    "placeholders": {
+      "name": {}
+    }
+  },
+  "redesignWorkMore": "Mehr zum Werk",
+  "@redesignWorkMore": {
+    "description": "redesign.work.more"
+  },
   "redesignWorkNever": "Noch nie",
   "@redesignWorkNever": {
     "description": "redesign.work.never"
   },
+  "redesignWorkNext": "Als Nächstes",
+  "@redesignWorkNext": {
+    "description": "redesign.work.next"
+  },
   "redesignWorkNoFiles": "Zu diesem Werk gibt es noch keine Dateien.",
   "@redesignWorkNoFiles": {
     "description": "redesign.work.noFiles"
+  },
+  "redesignWorkNoFilesYet": "Zu diesem Werk gibt es noch keine Noten.",
+  "@redesignWorkNoFilesYet": {
+    "description": "redesign.work.noFilesYet"
   },
   "redesignWorkNoPart": "Für deine Stimme gibt es noch keine Noten.",
   "@redesignWorkNoPart": {
@@ -14967,6 +15121,10 @@
   "@redesignWorkOpen": {
     "description": "redesign.work.open"
   },
+  "redesignWorkPartOwn": "deine Stimme",
+  "@redesignWorkPartOwn": {
+    "description": "redesign.work.partOwn"
+  },
   "redesignWorkPause": "Anhalten",
   "@redesignWorkPause": {
     "description": "redesign.work.pause"
@@ -14978,6 +15136,13 @@
   "redesignWorkPlay": "Abspielen",
   "@redesignWorkPlay": {
     "description": "redesign.work.play"
+  },
+  "redesignWorkPractice": "Übe-Aufnahme · {name}",
+  "@redesignWorkPractice": {
+    "description": "redesign.work.practice",
+    "placeholders": {
+      "name": {}
+    }
   },
   "redesignWorkRecording": "Aufnahme",
   "@redesignWorkRecording": {
@@ -15005,13 +15170,41 @@
       "name": {}
     }
   },
+  "redesignWorkShareLink": "Link zum Werk teilen",
+  "@redesignWorkShareLink": {
+    "description": "redesign.work.shareLink"
+  },
+  "redesignWorkShareLinkHint": "Öffentliche Seite, ohne Anmeldung",
+  "@redesignWorkShareLinkHint": {
+    "description": "redesign.work.shareLinkHint"
+  },
   "redesignWorkSlower": "Langsamer abspielen",
   "@redesignWorkSlower": {
     "description": "redesign.work.slower"
   },
+  "redesignWorkUpload": "Hochladen",
+  "@redesignWorkUpload": {
+    "description": "redesign.work.upload"
+  },
+  "redesignWorkWithChoir": "Mit Chor",
+  "@redesignWorkWithChoir": {
+    "description": "redesign.work.withChoir"
+  },
+  "redesignWorkWithOrchestra": "Mit Orchester",
+  "@redesignWorkWithOrchestra": {
+    "description": "redesign.work.withOrchestra"
+  },
+  "redesignWorkWithSolo": "Mit Solo-Gesang",
+  "@redesignWorkWithSolo": {
+    "description": "redesign.work.withSolo"
+  },
   "redesignWorkYourPart": "Deine Stimme",
   "@redesignWorkYourPart": {
     "description": "redesign.work.yourPart"
+  },
+  "redesignWorkZip": "Alle Dateien als ZIP",
+  "@redesignWorkZip": {
+    "description": "redesign.work.zip"
   },
   "redesignWorksAdd": "Werk hinzufügen",
   "@redesignWorksAdd": {

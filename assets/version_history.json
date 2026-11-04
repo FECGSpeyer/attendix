@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.38.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Neue Werk-Seite mit „Noten & Dateien“, Tipp auf eine Stimme öffnet sie direkt im Viewer",
+        "✨ Beta: ••• neben jeder Datei mit Teilen, Herunterladen, Drucken und Telegram; die Leitung kann dort auch Stimme ändern, umbenennen und löschen (mit Rückgängig)",
+        "✨ Beta: Noten auch am Handy hinzufügen, mit Stimmen-Erkennung und Hinweis, welche Stimme noch fehlt",
+        "✨ Beta: Abschnitt „Über das Werk“ mit Besetzung aus den Noten, Als Nächstes und Zuletzt gespielt; ••• oben mit Link teilen, ZIP, Gruppen-PDFs und Kopieren"
+      ]
+    },
+    {
       "version": "0.37.0",
       "date": "3.11.2026",
       "changes": [
