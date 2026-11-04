@@ -17168,7 +17168,7 @@ abstract class AppLocalizations {
   /// redesign.files.title
   ///
   /// In de, this message translates to:
-  /// **'Dateien'**
+  /// **'Noten & Dateien'**
   String get redesignFilesTitle;
 
   /// redesign.files.upload
@@ -19433,6 +19433,42 @@ abstract class AppLocalizations {
   /// **'Deine Zusage'**
   String get redesignTodayYourAnswer;
 
+  /// redesign.work.about
+  ///
+  /// In de, this message translates to:
+  /// **'Über das Werk'**
+  String get redesignWorkAbout;
+
+  /// redesign.work.add
+  ///
+  /// In de, this message translates to:
+  /// **'Hinzufügen'**
+  String get redesignWorkAdd;
+
+  /// redesign.work.addDrop
+  ///
+  /// In de, this message translates to:
+  /// **'Am Computer: Dateien einfach hierher ziehen'**
+  String get redesignWorkAddDrop;
+
+  /// redesign.work.addHint
+  ///
+  /// In de, this message translates to:
+  /// **'Stimmen, Partitur, Aufnahme oder Liedtext auswählen. Die Stimme wird am Dateinamen erkannt, bei unklaren Namen auf Seite 1.'**
+  String get redesignWorkAddHint;
+
+  /// redesign.work.addPick
+  ///
+  /// In de, this message translates to:
+  /// **'Dateien wählen'**
+  String get redesignWorkAddPick;
+
+  /// redesign.work.addTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Noten hinzufügen'**
+  String get redesignWorkAddTitle;
+
   /// redesign.work.allFiles
   ///
   /// In de, this message translates to:
@@ -19445,6 +19481,30 @@ abstract class AppLocalizations {
   /// **'Alle Stimmen'**
   String get redesignWorkAllParts;
 
+  /// redesign.work.copiedFrom
+  ///
+  /// In de, this message translates to:
+  /// **'Kopiert aus'**
+  String get redesignWorkCopiedFrom;
+
+  /// redesign.work.copy
+  ///
+  /// In de, this message translates to:
+  /// **'In andere Gruppe kopieren'**
+  String get redesignWorkCopy;
+
+  /// redesign.work.copyHint
+  ///
+  /// In de, this message translates to:
+  /// **'In Gruppen deiner Organisation, die du leitest'**
+  String get redesignWorkCopyHint;
+
+  /// redesign.work.difficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get redesignWorkDifficulty;
+
   /// redesign.work.edit
   ///
   /// In de, this message translates to:
@@ -19456,6 +19516,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'{count, plural, one {1 Datei} other {{count} Dateien}}'**
   String redesignWorkFileCount(num count);
+
+  /// redesign.work.fileDelete
+  ///
+  /// In de, this message translates to:
+  /// **'Löschen'**
+  String get redesignWorkFileDelete;
+
+  /// redesign.work.fileDownload
+  ///
+  /// In de, this message translates to:
+  /// **'Herunterladen'**
+  String get redesignWorkFileDownload;
+
+  /// redesign.work.fileMore
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zu {name}'**
+  String redesignWorkFileMore(Object name);
+
+  /// redesign.work.filePart
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme ändern'**
+  String get redesignWorkFilePart;
+
+  /// redesign.work.filePrint
+  ///
+  /// In de, this message translates to:
+  /// **'Drucken'**
+  String get redesignWorkFilePrint;
+
+  /// redesign.work.fileRename
+  ///
+  /// In de, this message translates to:
+  /// **'Umbenennen'**
+  String get redesignWorkFileRename;
+
+  /// redesign.work.fileShare
+  ///
+  /// In de, this message translates to:
+  /// **'Teilen'**
+  String get redesignWorkFileShare;
+
+  /// redesign.work.fileTelegram
+  ///
+  /// In de, this message translates to:
+  /// **'Per Telegram an mich'**
+  String get redesignWorkFileTelegram;
+
+  /// redesign.work.files
+  ///
+  /// In de, this message translates to:
+  /// **'Noten & Dateien'**
+  String get redesignWorkFiles;
+
+  /// redesign.work.forConductors
+  ///
+  /// In de, this message translates to:
+  /// **'Für die Leitung'**
+  String get redesignWorkForConductors;
+
+  /// redesign.work.instrumentation
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get redesignWorkInstrumentation;
+
+  /// redesign.work.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'aus den Noten: {names}'**
+  String redesignWorkInstrumentationHint(Object names);
+
+  /// redesign.work.instrumentationValue
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Gruppe} other {{count} Gruppen}}'**
+  String redesignWorkInstrumentationValue(num count);
 
   /// redesign.work.lastPlayed
   ///
@@ -19481,17 +19619,65 @@ abstract class AppLocalizations {
   /// **'Liedtext'**
   String get redesignWorkLyrics;
 
+  /// redesign.work.missingMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Stimme fehlt noch} other {{count} Stimmen fehlen noch}}'**
+  String redesignWorkMissingMany(num count);
+
+  /// redesign.work.missingOne
+  ///
+  /// In de, this message translates to:
+  /// **'{name} fehlt noch'**
+  String redesignWorkMissingOne(Object name);
+
+  /// redesign.work.missingOneHint
+  ///
+  /// In de, this message translates to:
+  /// **'In der Gruppe spielt jemand {name}, es gibt aber noch keine Noten.'**
+  String redesignWorkMissingOneHint(Object name);
+
+  /// redesign.work.missingPillMany
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 fehlt} other {{count} fehlen}}'**
+  String redesignWorkMissingPillMany(num count);
+
+  /// redesign.work.missingPillOne
+  ///
+  /// In de, this message translates to:
+  /// **'{name} fehlt'**
+  String redesignWorkMissingPillOne(Object name);
+
+  /// redesign.work.more
+  ///
+  /// In de, this message translates to:
+  /// **'Mehr zum Werk'**
+  String get redesignWorkMore;
+
   /// redesign.work.never
   ///
   /// In de, this message translates to:
   /// **'Noch nie'**
   String get redesignWorkNever;
 
+  /// redesign.work.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes'**
+  String get redesignWorkNext;
+
   /// redesign.work.noFiles
   ///
   /// In de, this message translates to:
   /// **'Zu diesem Werk gibt es noch keine Dateien.'**
   String get redesignWorkNoFiles;
+
+  /// redesign.work.noFilesYet
+  ///
+  /// In de, this message translates to:
+  /// **'Zu diesem Werk gibt es noch keine Noten.'**
+  String get redesignWorkNoFilesYet;
 
   /// redesign.work.noPart
   ///
@@ -19523,6 +19709,12 @@ abstract class AppLocalizations {
   /// **'Öffnen'**
   String get redesignWorkOpen;
 
+  /// redesign.work.partOwn
+  ///
+  /// In de, this message translates to:
+  /// **'deine Stimme'**
+  String get redesignWorkPartOwn;
+
   /// redesign.work.pause
   ///
   /// In de, this message translates to:
@@ -19540,6 +19732,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Abspielen'**
   String get redesignWorkPlay;
+
+  /// redesign.work.practice
+  ///
+  /// In de, this message translates to:
+  /// **'Übe-Aufnahme · {name}'**
+  String redesignWorkPractice(Object name);
 
   /// redesign.work.recording
   ///
@@ -19571,17 +19769,59 @@ abstract class AppLocalizations {
   /// **'{name} teilen'**
   String redesignWorkShareFile(Object name);
 
+  /// redesign.work.shareLink
+  ///
+  /// In de, this message translates to:
+  /// **'Link zum Werk teilen'**
+  String get redesignWorkShareLink;
+
+  /// redesign.work.shareLinkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Öffentliche Seite, ohne Anmeldung'**
+  String get redesignWorkShareLinkHint;
+
   /// redesign.work.slower
   ///
   /// In de, this message translates to:
   /// **'Langsamer abspielen'**
   String get redesignWorkSlower;
 
+  /// redesign.work.upload
+  ///
+  /// In de, this message translates to:
+  /// **'Hochladen'**
+  String get redesignWorkUpload;
+
+  /// redesign.work.withChoir
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Chor'**
+  String get redesignWorkWithChoir;
+
+  /// redesign.work.withOrchestra
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Orchester'**
+  String get redesignWorkWithOrchestra;
+
+  /// redesign.work.withSolo
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Solo-Gesang'**
+  String get redesignWorkWithSolo;
+
   /// redesign.work.yourPart
   ///
   /// In de, this message translates to:
   /// **'Deine Stimme'**
   String get redesignWorkYourPart;
+
+  /// redesign.work.zip
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Dateien als ZIP'**
+  String get redesignWorkZip;
 
   /// redesign.works.add
   ///
