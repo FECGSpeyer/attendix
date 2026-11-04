@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.40.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Werke-Liste neu: „Als Nächstes“ zeigt die Werke der nächsten Termine, Mitglieder öffnen dort ihre Stimmen mit „Meine Noten öffnen“ als ein PDF",
+        "✨ Beta: Jedes Werk mit einer Statuszeile (deine Stimme, Aufnahme, fehlende Noten); die Leitung sieht, wo noch Noten fehlen",
+        "✨ Beta: „Sortieren & Filtern“ mit Nummer, Titel, Zuletzt gespielt und Am längsten nicht gespielt, dazu Nur-zeigen-Filter",
+        "✨ Beta: „+“ mit Neues Werk, Werkliste importieren und Aus anderer Gruppe übernehmen; „Neues Werk“ schlägt die nächste freie Nummer vor und fragt keine Besetzung ab",
+        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

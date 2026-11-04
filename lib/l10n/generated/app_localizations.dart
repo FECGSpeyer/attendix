@@ -17195,6 +17195,84 @@ abstract class AppLocalizations {
   /// **'ZIP wird erstellt …'**
   String get redesignFilesZipPreparing;
 
+  /// redesign.folder.all
+  ///
+  /// In de, this message translates to:
+  /// **'Alle Werke · {count}'**
+  String redesignFolderAll(Object count);
+
+  /// redesign.folder.empty
+  ///
+  /// In de, this message translates to:
+  /// **'Für {name} gibt es noch keine Noten.'**
+  String redesignFolderEmpty(Object name);
+
+  /// redesign.folder.missing
+  ///
+  /// In de, this message translates to:
+  /// **'fehlt'**
+  String get redesignFolderMissing;
+
+  /// redesign.folder.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes · {count}'**
+  String redesignFolderNext(Object count);
+
+  /// redesign.folder.noGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Dir ist noch keine Stimme zugeordnet. Wähle eine Stimme, um ihre Noten zu sehen.'**
+  String get redesignFolderNoGroup;
+
+  /// redesign.folder.noPart
+  ///
+  /// In de, this message translates to:
+  /// **'Keine Noten für {name}'**
+  String redesignFolderNoPart(Object name);
+
+  /// redesign.folder.nothingNext
+  ///
+  /// In de, this message translates to:
+  /// **'Für die nächsten Termine sind noch keine Werke geplant.'**
+  String get redesignFolderNothingNext;
+
+  /// redesign.folder.open
+  ///
+  /// In de, this message translates to:
+  /// **'Als ein PDF öffnen'**
+  String get redesignFolderOpen;
+
+  /// redesign.folder.openHint
+  ///
+  /// In de, this message translates to:
+  /// **'Zum Ansehen, Speichern oder Drucken'**
+  String get redesignFolderOpenHint;
+
+  /// redesign.folder.other
+  ///
+  /// In de, this message translates to:
+  /// **'Andere Stimme'**
+  String get redesignFolderOther;
+
+  /// redesign.folder.pick
+  ///
+  /// In de, this message translates to:
+  /// **'Stimme wählen'**
+  String get redesignFolderPick;
+
+  /// redesign.folder.title
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Mappe'**
+  String get redesignFolderTitle;
+
+  /// redesign.folder.titleLeads
+  ///
+  /// In de, this message translates to:
+  /// **'Mappen'**
+  String get redesignFolderTitleLeads;
+
   /// redesign.groups.loadFailed
   ///
   /// In de, this message translates to:
@@ -19499,6 +19577,60 @@ abstract class AppLocalizations {
   /// **'In Gruppen deiner Organisation, die du leitest'**
   String get redesignWorkCopyHint;
 
+  /// redesign.workCreate.category
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorie'**
+  String get redesignWorkCreateCategory;
+
+  /// redesign.workCreate.categoryHint
+  ///
+  /// In de, this message translates to:
+  /// **'Vorausgewählt, weil die Liste gerade auf „{name}“ gefiltert war.'**
+  String redesignWorkCreateCategoryHint(Object name);
+
+  /// redesign.workCreate.create
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen'**
+  String get redesignWorkCreateCreate;
+
+  /// redesign.workCreate.createAndAdd
+  ///
+  /// In de, this message translates to:
+  /// **'Anlegen und Noten hinzufügen'**
+  String get redesignWorkCreateCreateAndAdd;
+
+  /// redesign.workCreate.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Gruppen mitspielen, erkennt die App an den Noten, die du gleich hochlädst.'**
+  String get redesignWorkCreateInstrumentationHint;
+
+  /// redesign.workCreate.later
+  ///
+  /// In de, this message translates to:
+  /// **'Link, Schwierigkeit und Zusatzfelder später in „Bearbeiten“.'**
+  String get redesignWorkCreateLater;
+
+  /// redesign.workCreate.nextNumber
+  ///
+  /// In de, this message translates to:
+  /// **'{number} ist die nächste freie Nummer.'**
+  String redesignWorkCreateNextNumber(Object number);
+
+  /// redesign.workCreate.prefixHint
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix nur bei Bedarf, z. B. W für Weihnachten → W1.'**
+  String get redesignWorkCreatePrefixHint;
+
+  /// redesign.workCreate.title
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk'**
+  String get redesignWorkCreateTitle;
+
   /// redesign.work.difficulty
   ///
   /// In de, this message translates to:
@@ -19985,23 +20117,53 @@ abstract class AppLocalizations {
   /// **'Werk hinzufügen'**
   String get redesignWorksAdd;
 
+  /// redesign.works.addImport
+  ///
+  /// In de, this message translates to:
+  /// **'Werkliste importieren'**
+  String get redesignWorksAddImport;
+
+  /// redesign.works.addImportHint
+  ///
+  /// In de, this message translates to:
+  /// **'Excel oder CSV mit Nummer, Titel, Kategorie'**
+  String get redesignWorksAddImportHint;
+
+  /// redesign.works.addNew
+  ///
+  /// In de, this message translates to:
+  /// **'Neues Werk'**
+  String get redesignWorksAddNew;
+
+  /// redesign.works.addNewHint
+  ///
+  /// In de, this message translates to:
+  /// **'Titel und Nummer, danach direkt die Noten'**
+  String get redesignWorksAddNewHint;
+
+  /// redesign.works.addOrg
+  ///
+  /// In de, this message translates to:
+  /// **'Aus anderer Gruppe übernehmen'**
+  String get redesignWorksAddOrg;
+
+  /// redesign.works.addOrgHint
+  ///
+  /// In de, this message translates to:
+  /// **'Werke deiner Organisation durchsuchen und kopieren'**
+  String get redesignWorksAddOrgHint;
+
   /// redesign.works.all
   ///
   /// In de, this message translates to:
   /// **'Alle · {count}'**
   String redesignWorksAll(Object count);
 
-  /// redesign.works.audio
+  /// redesign.works.allEvents
   ///
   /// In de, this message translates to:
-  /// **'Audio'**
-  String get redesignWorksAudio;
-
-  /// redesign.works.current
-  ///
-  /// In de, this message translates to:
-  /// **'Gerade geprobt'**
-  String get redesignWorksCurrent;
+  /// **'Alle Termine'**
+  String get redesignWorksAllEvents;
 
   /// redesign.works.empty
   ///
@@ -20009,29 +20171,65 @@ abstract class AppLocalizations {
   /// **'Noch keine Werke.'**
   String get redesignWorksEmpty;
 
-  /// redesign.works.files
+  /// redesign.works.eventWorks
   ///
   /// In de, this message translates to:
-  /// **'Dateien'**
-  String get redesignWorksFiles;
-
-  /// redesign.works.filesLabel
-  ///
-  /// In de, this message translates to:
-  /// **'Dateien der Gruppe'**
-  String get redesignWorksFilesLabel;
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignWorksEventWorks(num count);
 
   /// redesign.works.filter
   ///
   /// In de, this message translates to:
-  /// **'Filter & Ansicht'**
+  /// **'Filter'**
   String get redesignWorksFilter;
 
-  /// redesign.works.filterActive
+  /// redesign.works.filterReset
   ///
   /// In de, this message translates to:
-  /// **'Filter aktiv'**
-  String get redesignWorksFilterActive;
+  /// **'Zurücksetzen'**
+  String get redesignWorksFilterReset;
+
+  /// redesign.works.filterTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren & Filtern'**
+  String get redesignWorksFilterTitle;
+
+  /// redesign.works.folder
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Mappe'**
+  String get redesignWorksFolder;
+
+  /// redesign.works.folders
+  ///
+  /// In de, this message translates to:
+  /// **'Mappen'**
+  String get redesignWorksFolders;
+
+  /// redesign.works.forGroup
+  ///
+  /// In de, this message translates to:
+  /// **'Für Gruppe'**
+  String get redesignWorksForGroup;
+
+  /// redesign.works.forGroupAll
+  ///
+  /// In de, this message translates to:
+  /// **'Alle'**
+  String get redesignWorksForGroupAll;
+
+  /// redesign.works.lastOn
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt {date}'**
+  String redesignWorksLastOn(Object date);
+
+  /// redesign.works.missingNotes
+  ///
+  /// In de, this message translates to:
+  /// **'Noten fehlen'**
+  String get redesignWorksMissingNotes;
 
   /// redesign.works.more
   ///
@@ -20039,17 +20237,77 @@ abstract class AppLocalizations {
   /// **'Mehr'**
   String get redesignWorksMore;
 
+  /// redesign.works.neverPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nie gespielt'**
+  String get redesignWorksNeverPlayed;
+
+  /// redesign.works.neverSung
+  ///
+  /// In de, this message translates to:
+  /// **'Noch nie gesungen'**
+  String get redesignWorksNeverSung;
+
+  /// redesign.works.next
+  ///
+  /// In de, this message translates to:
+  /// **'Als Nächstes'**
+  String get redesignWorksNext;
+
+  /// redesign.works.noFilesPill
+  ///
+  /// In de, this message translates to:
+  /// **'ohne Noten'**
+  String get redesignWorksNoFilesPill;
+
   /// redesign.works.noMatch
   ///
   /// In de, this message translates to:
   /// **'Kein Werk passt zur Suche.'**
   String get redesignWorksNoMatch;
 
-  /// redesign.works.pdf
+  /// redesign.works.only
   ///
   /// In de, this message translates to:
-  /// **'PDF'**
-  String get redesignWorksPdf;
+  /// **'Nur zeigen'**
+  String get redesignWorksOnly;
+
+  /// redesign.works.onlyMine
+  ///
+  /// In de, this message translates to:
+  /// **'Mit meiner Stimme'**
+  String get redesignWorksOnlyMine;
+
+  /// redesign.works.onlyMissing
+  ///
+  /// In de, this message translates to:
+  /// **'Noten fehlen'**
+  String get redesignWorksOnlyMissing;
+
+  /// redesign.works.onlyRecording
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Aufnahme'**
+  String get redesignWorksOnlyRecording;
+
+  /// redesign.works.onlySolo
+  ///
+  /// In de, this message translates to:
+  /// **'Mit Solo'**
+  String get redesignWorksOnlySolo;
+
+  /// redesign.works.openMine
+  ///
+  /// In de, this message translates to:
+  /// **'Meine Noten öffnen'**
+  String get redesignWorksOpenMine;
+
+  /// redesign.works.openMineHint
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {Deine Stimme als PDF, auch zum Drucken} other {{count} Stimmen als ein PDF, auch zum Drucken}}'**
+  String redesignWorksOpenMineHint(num count);
 
   /// redesign.works.resetFilter
   ///
@@ -20060,7 +20318,7 @@ abstract class AppLocalizations {
   /// redesign.works.search
   ///
   /// In de, this message translates to:
-  /// **'Titel, Komponist, Nummer'**
+  /// **'Titel oder Nummer'**
   String get redesignWorksSearch;
 
   /// redesign.works.searchLabel
@@ -20068,6 +20326,84 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Werke suchen'**
   String get redesignWorksSearchLabel;
+
+  /// redesign.works.show
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Kein Werk passt} one {1 Werk anzeigen} other {{count} Werke anzeigen}}'**
+  String redesignWorksShow(num count);
+
+  /// redesign.works.sort
+  ///
+  /// In de, this message translates to:
+  /// **'Sortieren'**
+  String get redesignWorksSort;
+
+  /// redesign.works.sortLastPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gespielt'**
+  String get redesignWorksSortLastPlayed;
+
+  /// redesign.works.sortLastSung
+  ///
+  /// In de, this message translates to:
+  /// **'Zuletzt gesungen'**
+  String get redesignWorksSortLastSung;
+
+  /// redesign.works.sortLongestPlayed
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht gespielt'**
+  String get redesignWorksSortLongestPlayed;
+
+  /// redesign.works.sortLongestSung
+  ///
+  /// In de, this message translates to:
+  /// **'Am längsten nicht gesungen'**
+  String get redesignWorksSortLongestSung;
+
+  /// redesign.works.sortNumber
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignWorksSortNumber;
+
+  /// redesign.works.sortRemove
+  ///
+  /// In de, this message translates to:
+  /// **'Sortierung „{name}“ entfernen'**
+  String redesignWorksSortRemove(Object name);
+
+  /// redesign.works.sortTitle
+  ///
+  /// In de, this message translates to:
+  /// **'Titel'**
+  String get redesignWorksSortTitle;
+
+  /// redesign.works.statusNoFiles
+  ///
+  /// In de, this message translates to:
+  /// **'noch keine Noten'**
+  String get redesignWorksStatusNoFiles;
+
+  /// redesign.works.statusNoPart
+  ///
+  /// In de, this message translates to:
+  /// **'keine Noten für {name}'**
+  String redesignWorksStatusNoPart(Object name);
+
+  /// redesign.works.statusPart
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Stimme'**
+  String get redesignWorksStatusPart;
+
+  /// redesign.works.statusRecording
+  ///
+  /// In de, this message translates to:
+  /// **'Aufnahme'**
+  String get redesignWorksStatusRecording;
 
   /// register.create
   ///

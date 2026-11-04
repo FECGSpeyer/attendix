@@ -109,6 +109,8 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_folder_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_create_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
 import '../../features/redesign/presentation/pages/rd_works_page.dart';
@@ -718,6 +720,16 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              GoRoute(
+                path: 'neu',
+                name: 'redesignWorkCreate',
+                builder: (context, state) => const RdWorkCreatePage(),
+              ),
+              GoRoute(
+                path: 'mappe',
+                name: 'redesignFolder',
+                builder: (context, state) => const RdFolderPage(),
+              ),
               GoRoute(
                 path: ':id/bearbeiten',
                 name: 'redesignWorkEdit',
