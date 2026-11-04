@@ -181,6 +181,13 @@
     "lib/core/providers/team_org_providers.dart"
    ],
    "n": "behoben in #296"
+  },
+  "login/login.page#x-8af7179780": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ],
+   "n": "behoben in #296"
   }
  },
  "extraOverride": [
