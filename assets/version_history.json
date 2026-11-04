@@ -11,6 +11,13 @@
       ]
     },
     {
+      "version": "0.38.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Web: Aufnahmen lassen sich wieder abspielen"
+      ]
+    },
+    {
       "version": "0.38.0",
       "date": "4.11.2026",
       "changes": [
