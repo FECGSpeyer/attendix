@@ -1,0 +1,62 @@
+{
+ "batch": "zz-fixed-querschnitt",
+ "items": {
+  "utilities/Utils#effect-178a8abf": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/Utils#effect-576bec88-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/Utils#effect-178a8abf-2": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/Utils#effect-576bec88-4": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/Utils#effect-b60c4449": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/Utils#effect-fad4e9cc": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ],
+   "n": "behoben in #295"
+  }
+ },
+ "extra": [],
+ "extraOverride": [
+  {
+   "unit": "utilities/Utils",
+   "title": "PDF-Exporte ohne Unicode-Schrift",
+   "drop": true,
+   "why": "behoben in #295 (PdfFonts, NotoSans)"
+  }
+ ]
+}
