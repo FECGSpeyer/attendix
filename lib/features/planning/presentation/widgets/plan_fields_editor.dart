@@ -191,8 +191,11 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         return;
       }
       if (r == null) return;
+      // The list may have changed (Realtime) while the dialog was open.
+      final i = _fields.indexWhere((f) => identical(f, field));
+      if (i == -1) return;
       final updated = [..._fields];
-      updated[index] = isNote
+      updated[i] = isNote
           ? field.copyWith(name: r.name)
           : field.copyWith(name: r.name, conductor: r.conductor, info: r.info);
       _emit(updated);

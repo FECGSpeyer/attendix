@@ -11,7 +11,7 @@ import 'plan_field_dialogs.dart';
 /// reorder handle. Tapping a row opens the field dialog (with Dauer), a
 /// block head moves together with its Unterpunkte and deleting it turns the
 /// Unterpunkte into normal fields.
-class SharedPlanEditList extends StatelessWidget {
+class SharedPlanEditList extends StatefulWidget {
   const SharedPlanEditList({
     super.key,
     required this.fields,
@@ -25,19 +25,27 @@ class SharedPlanEditList extends StatelessWidget {
   final String startTime;
   final ValueChanged<List<PlanField>> onChanged;
 
+  @override
+  State<SharedPlanEditList> createState() => _SharedPlanEditListState();
+}
+
+class _SharedPlanEditListState extends State<SharedPlanEditList> {
+  List<PlanField> get fields => widget.fields;
+
   /// Ionic `calculateTime`: start + minutes of all previous rows, plus
   /// " | Ausführender".
   String _timeOf(int index) {
-    final start = PlanUtils.parseTimeToMinutes(startTime);
+    final start = PlanUtils.parseTimeToMinutes(widget.startTime);
     final field = fields[index];
     final time = start == null ? '' : PlanUtils.formatMinutes(PlanUtils.startMinutesAt(start, fields, index));
     final conductor = field.conductor ?? '';
     return conductor.isNotEmpty ? '$time | $conductor' : time;
   }
 
-  Future<void> _edit(BuildContext context, int index) async {
+  Future<void> _edit(int index) async {
     final field = fields[index];
     final isNote = PlanUtils.isNote(field);
+    final isHead = PlanUtils.isGroupHead(field);
     final r = await showPlanFieldDialog(
       context,
       title: context.l10n.planningEditField,
@@ -52,28 +60,37 @@ class SharedPlanEditList extends StatelessWidget {
       initialMinutes: int.tryParse(field.time),
       withConductor: !isNote,
       withInfo: !isNote,
-      withMinutes: !isNote,
+      // A block head's duration comes from its Unterpunkte.
+      withMinutes: !isNote && !isHead,
     );
-    if (r == null) return;
-    final updated = [...fields];
-    updated[index] = isNote
-        ? field.copyWith(name: r.name)
-        : field.copyWith(
+    if (r == null || !mounted) return;
+    // A Realtime update of another editor may have arrived while the dialog
+    // was open: re-find the field in the current list instead of writing the
+    // stale one back. Gone (deleted elsewhere) -> drop the edit.
+    final current = widget.fields;
+    var i = current.indexWhere((f) => identical(f, field));
+    if (i == -1) i = current.indexWhere((f) => f.id == field.id);
+    if (i == -1) return;
+    final base = current[i];
+    final updated = [...current];
+    updated[i] = isNote
+        ? base.copyWith(name: r.name)
+        : base.copyWith(
             name: r.name,
             conductor: r.conductor,
             info: r.info,
             // Ionic: `if (evt.time) field.time = String(evt.time)`.
-            time: r.minutes != null && r.minutes! > 0 ? '${r.minutes}' : field.time,
+            time: r.minutes != null && r.minutes! > 0 ? '${r.minutes}' : base.time,
           );
-    onChanged(PlanUtils.normalizeGroups(updated));
+    widget.onChanged(PlanUtils.normalizeGroups(updated));
   }
 
-  void _remove(int index) => onChanged(PlanUtils.normalizeGroups([...fields]..removeAt(index)));
+  void _remove(int index) => widget.onChanged(PlanUtils.normalizeGroups([...fields]..removeAt(index)));
 
   void _reorder(int oldIndex, int newIndex) {
     if (newIndex > oldIndex) newIndex -= 1;
     if (oldIndex == newIndex) return;
-    onChanged(PlanUtils.moveField(fields, oldIndex, newIndex));
+    widget.onChanged(PlanUtils.moveField(fields, oldIndex, newIndex));
   }
 
   @override
@@ -99,7 +116,7 @@ class SharedPlanEditList extends StatelessWidget {
     final info = field.info?.trim() ?? '';
     final tile = ListTile(
       contentPadding: EdgeInsets.only(left: isChild ? 34 : 16, right: 8),
-      onTap: () => _edit(context, i),
+      onTap: () => _edit(i),
       title: Text(
         field.name,
         style: isNote
