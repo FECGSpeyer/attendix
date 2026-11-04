@@ -1,0 +1,1508 @@
+{
+ "batch": "b34-team",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:71",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:133",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:378",
+    "lib/core/providers/team_org_providers.dart:212",
+    "lib/core/providers/team_org_providers.dart:221"
+   ],
+   "n": "Laden, Leitungsrolle (admin/responsible), Neu-Defaults (open/medium), Speichern (Titel trim, Beschreibung leer→null, Dauer>0), Löschen, Einplanen (6 nächste Protokoll-Termine, „bereits eingeplant“ deaktiviert, Neuer Termin), Verlauf-Status (Ergebnis/Geplant/Ohne Ergebnis), Aufgaben-Untertitel und Farben gleich. Abweichungen: Verlauf/Thema werden in Flutter gecacht statt bei Rückkehr neu geladen (siehe extra), Flutter zeigt „Thema nicht gefunden“ statt leerer Seite (extra); Rest bei den Items (Personen-Sortierung, Dauer-Rundung, Badge-Farbe, Ladeoverlay).",
+   "sev": "mittel"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-9a96f482": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:418"
+   ],
+   "n": "Push auf das Protokoll des Termins; Pfad /settings/protocol/:id statt /tabs/attendance/:id/protocol (Route-Mapping im Routing-Batch)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f7bc89a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:474"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#actionsheet-d593da5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:151",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:153",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:157",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:164"
+   ],
+   "n": "Header „In welchen Termin einplanen?“/„Noch kein Termin mit Tagesordnung geplant“, Buttons „Di, 21.10. · Titel (bereits eingeplant)“ deaktiviert, „Neuer Termin“ mit Plus-Icon, Abbrechen (showCancel Standard) gleich."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-f79a99f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:196",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:198"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-aa35d39a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:204"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#alert-592677a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:115"
+   ],
+   "n": "Dialog mit gleichem Titel/Text, Abbrechen + destruktivem „Löschen“."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-06ae98b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:126"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f25bbc6a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:127"
+   ],
+   "n": "context.go('/settings/team-organization?tab=topics') statt navigateBack – gleiche Zielseite (Tab Themen)."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-b69cc6ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:129"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-333c131c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:74"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#loading-ff407ba2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:78",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:233"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während des Speicherns deaktiviert.",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-de8c40b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:106"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-69e94eec": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:108"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-e0111868": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:219"
+   ],
+   "n": "AppBar-Zurück (Pop); Ionic-defaultHref nur bei Direktaufruf relevant."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8561bc58": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:220"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-03443e7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:222"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-219c0bba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:290"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-39a93a68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:291"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-2f9c0ed7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:302"
+   ],
+   "n": "Dropdown statt Popover-Select; Optionen Offen/Erledigt/Verworfen in gleicher Reihenfolge."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-3a89b9b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:310"
+   ],
+   "n": "Dropdown statt Popover-Select; Optionen Hoch/Mittel/Niedrig in gleicher Reihenfolge."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-42aad74c": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:279",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:318"
+   ],
+   "n": "Optionen „Niemand“ + aktive, nicht ausstehende Personen gleich. Ionic: Select als Vollbild-Modal mit „Abbrechen“, Sortierung localeCompare('de') / Flutter: Dropdown ohne Abbrechen, Sortierung per toLowerCase().compareTo (Umlaute wie „Ä…“ landen hinter Z).",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#field-75815c26": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:79",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:327"
+   ],
+   "n": "Ionic: Number()+Math.round – „12.5“ wird als 13 gespeichert / Flutter: int.tryParse – Dezimalwerte werden verworfen und als null (Standard) gespeichert. Label/Platzhalter gleich.",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-7e0c435f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:347"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-8b87f4b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:350"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-c1d2d5c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:358"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-048e6c66": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:363"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-24277623": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:366"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-073edee5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:368"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-9a3941ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:249"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-dc327713": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:255"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-935a7b7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:398"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-7ec0a004": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:391",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:283"
+   ],
+   "n": "Zeile „Typ · dd.MM.yyyy“ mit Status-Badge und Navigation gleich. Ionic: Badge „Besprochen“ grau (medium) / Flutter: outcomeColor('discussed') = primary (blau).",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-ee00217d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:421"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-a7db4909": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:452"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-440e3b32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:453"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6584c187": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:461"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#text-f4245346": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:476"
+   ]
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-991adfdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:477"
+   ],
+   "n": "Öffnet das Aufgaben-Formular mit Thema, Kontext und vorbelegter verantwortlicher Person."
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:230"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#logic-293244fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:94",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:133",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:150",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:161",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:176",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:196"
+   ],
+   "n": "Laden (Themen + Protokolle, vertagte zuerst bei suggest_postponed≠false), Dauer aus Plan/Thema/Typ, Suche in Titel+Beschreibung, Anlegen aus Suche, Bestätigungstext, Einfüge-Hinweis mit neuem Ende, ±5-min-Stepper (min. 5), Speichern/Entfernen und Erfolgstexte gleich."
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#toast-13525ea5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:127"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#toast-b45d98ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:192"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#toast-c194e7e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:224",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:229"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#toast-53c21d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:232"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-de2c760d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:313"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#text-0c1af794": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:318"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#field-2310865c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:322"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-f239fa3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:335"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#text-50af4600": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:344"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#text-bc509663": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:350"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#text-955c0ff3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:355"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-aa5cabb7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:238"
+   ],
+   "n": "Haken-Icon, Titel, Badge „Vertagt dd.MM.“/„Vertagt“, Untertitel (Verantwortlich · Priorität · bereits/aus Plan entfernt), Minuten rechts gleich."
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-4e64d9db": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:274"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-dd2ff7b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:279"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-6ca0e858": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:287"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#text-2abe9e54": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:161",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:379"
+   ]
+  },
+  "agenda-items/agenda-picker/agenda-picker.component#action-5756d23e": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:384"
+   ],
+   "n": "Text, Deaktivierung (keine Änderung/speichert) und Wirkung gleich. Ionic: Spinner im Button während des Speicherns / Flutter: Button nur deaktiviert, kein Spinner.",
+   "sev": "niedrig"
+  },
+  "agenda-items/agenda-plan.helpers#logic-71d6aee7": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/team_org_utils.dart:169",
+    "lib/features/team_organization/team_org_utils.dart:178",
+    "lib/features/team_organization/team_org_utils.dart:195",
+    "lib/features/team_organization/team_org_utils.dart:219",
+    "lib/features/team_organization/team_org_utils.dart:230",
+    "lib/core/providers/team_org_providers.dart:413"
+   ],
+   "n": "defaultTopicDuration, initialPlan (ohne Song-Platzhalter, Zeit Typ-Plan→Typ-Start→Termin→19:00), planWithTopics, insertAfterName, upcomingProtocolAttendances, Neuberechnung des Endes und Neuladen des Plans vor dem Schreiben gleich. Abweichung nur bei inzwischen gelöschtem Plan (extra).",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol-pdf#logic-3a7d97db": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:53",
+    "lib/features/team_organization/protocol_pdf.dart:91"
+   ],
+   "n": "Inhalt (Branding-Kopf, Status, Anwesend/Entschuldigt, Abschnitte mit Meta, Ergebnis, Notizen oder „Keine Notizen“, Aufgaben „Aufgabe: …“, Allgemeine Notizen, Weitere Aufgaben, „Seite i von n“) gleich. Flutter nutzt aber die Latin-1-Standardschrift (Kästchen statt •, „“, –, …, Kyrillisch) und ein abweichendes Layout (siehe extra).",
+   "sev": "hoch"
+  },
+  "protocols/protocol/protocol-pdf#effect-1ae212ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:154"
+   ],
+   "n": "doc.save() liefert die PDF-Bytes (statt Blob)."
+  },
+  "protocols/protocol/protocol.helpers#logic-d338644e": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/tiptap_delta.dart:351",
+    "lib/features/team_organization/tiptap_delta.dart:396",
+    "lib/features/team_organization/tiptap_delta.dart:450",
+    "lib/features/team_organization/team_org_utils.dart:515",
+    "lib/features/team_organization/team_org_utils.dart:540",
+    "lib/features/team_organization/team_org_utils.dart:563",
+    "lib/features/team_organization/team_org_utils.dart:610",
+    "lib/features/team_organization/protocol_layout.dart:27",
+    "lib/features/team_organization/protocol_layout.dart:52"
+   ],
+   "n": "inlineText, isDocEmpty, docToPlainText, taskRefIds, taskSections, leftoverSections (inkl. __agenda__), planStartDateTime, liveSection, nextSectionId, isPresentStatus, initials, publishSummary, joinNames (de), monthLabel/groupByMonth, matchesSearch, topicClosureCandidates, clampSideWidth, parseColumnWidths gleich. Abweichung: docToLines vereinfacht (extra).",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#logic-82b3528c": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:220",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:393",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:451",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:519",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:557",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:786",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:970"
+   ],
+   "n": "Laden (Termin, Protokoll, Aufgaben; Mitglied ohne Protokoll → „noch nicht freigegeben“), Abschnitte/TOP-Nummern/Startzeiten, Live-Modus (20 s, nur heute, nur Leitung), Autosave je Abschnitt (800 ms, Fehler-Toast max. alle 10 s), Ergebnis umschalten mit Rücknahme, Aufgabe mit Protokoll-Anlage und Task-Referenz, Freigabe (Themen schließen, PDF hochladen, team-notify, PDF nach 60 s löschen), Spaltenbreiten und Tastenkürzel gleich. Abweichungen siehe extra.",
+   "sev": "mittel"
+  },
+  "protocols/protocol/protocol.page#toast-b135441f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:413"
+   ]
+  },
+  "protocols/protocol/protocol.page#toast-ad978678": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:474"
+   ]
+  },
+  "protocols/protocol/protocol.page#toast-31c22572": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:528"
+   ]
+  },
+  "protocols/protocol/protocol.page#alert-0750ecfb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:561",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:591"
+   ],
+   "n": "Titel „Spontaner Punkt“, Hinweistext, Felder Titel/Dauer (vorbelegt), Abbrechen/Hinzufügen gleich. Ionic: bei leerem Titel bleibt der Alert offen (handler return false) / Flutter: Dialog schließt, danach Warn-Toast – Eingaben (z. B. Dauer) sind weg.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#toast-45539e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:593"
+   ],
+   "n": "Toast gleich; der Dialog ist dabei schon geschlossen (siehe alert-0750ecfb)."
+  },
+  "protocols/protocol/protocol.page#loading-e7e42088": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:604"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Anlegen des spontanen Punkts / Flutter: kein Overlay, keine Sperre.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#toast-9d50a18f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:643"
+   ]
+  },
+  "protocols/protocol/protocol.page#loading-4ee35e81": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:971"
+   ],
+   "n": "Blockierender Spinner-Dialog (nicht schließbar) während der Freigabe."
+  },
+  "protocols/protocol/protocol.page#toast-cbe0d029": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1010"
+   ]
+  },
+  "protocols/protocol/protocol.page#toast-fe3d7c68": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1025"
+   ]
+  },
+  "protocols/protocol/protocol.page#toast-09822721": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1027"
+   ]
+  },
+  "protocols/protocol/protocol.page#toast-a4e6101a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:996"
+   ]
+  },
+  "protocols/protocol/protocol.page#loading-20731d79": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:768"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Erstellen des PDFs / Flutter: kein Overlay, keine Rückmeldung bis zum Teilen-Dialog.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#effect-9302ed46": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:778",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "NativeFileService.saveBytes ist der Port von Utils.downloadFileNative (Detailprüfung im Native-Batch); Dateiname „Protokoll {Titel} {YYYY-MM-DD}.pdf“ gleich bereinigt."
+  },
+  "protocols/protocol/protocol.page#toast-89ae3e7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:780"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-48d91b74": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1056"
+   ],
+   "n": "AppBar-Zurück (Pop) mit Speichern beim Verlassen (PopScope); Ionic-defaultHref nur bei Direktaufruf (Routing-Batch)."
+  },
+  "protocols/protocol/protocol.page#text-5e885f4a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1059"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-742f1877": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1060"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-69bd2a16": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1070"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-83236a9b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1129"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-5405ec76": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1129"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-5bf58122": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1134"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-6ddd6834": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1136"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7068fef6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1092"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-237eefeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1099"
+   ],
+   "n": "Mit Punkt-Markierung bei vorhandenen allgemeinen Notizen."
+  },
+  "protocols/protocol/protocol.page#action-968c0895": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1115"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-7a8159ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1153"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-fd297bc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1394",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1683"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-e9b880bb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1394",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1398"
+   ],
+   "n": "Breites Layout gleich (nextSectionId + Fokus). Ionic Handy: „Nächster Punkt“ auch sichtbar, wenn kein Abschnitt offen ist (springt zum ersten), öffnet, fokussiert und scrollt den Abschnitt ins Bild / Flutter Handy: Button nur bei geöffnetem Abschnitt mit Nachfolger, setzt nur die Auswahl ohne Scroll/Fokus.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#action-433417f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1359"
+   ],
+   "n": "Besprochen/Beschlossen/Vertagt als ChoiceChips, erneutes Tippen hebt auf."
+  },
+  "protocols/protocol/protocol.page#action-320caa0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1337",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1353"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-dada2a79": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1528"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7b76c77f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1529"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-02d5034d": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1537"
+   ],
+   "n": "Titel gleich. Flutter zeigt (Handy- und Leseansicht) unter jedem Titel zusätzlich „Dieser Punkt steht nicht mehr im Ablaufplan. Die Notizen bleiben erhalten.“ – Ionic dort nur Titel + Notizen.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1542"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1411"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-57aa283b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1414"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-15655d8b": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1452"
+   ],
+   "n": "Kopf mit TOP/Startzeit, Name, Erledigt-Haken, Vorschau, Ergebnis-Badge, Minuten und Pfeil gleich. Ionic: Verantwortliche/r steht auch bei eingeklappter Karte mit Vorschau, Öffnen scrollt die Karte ins Bild / Flutter: bei Vorschau ersetzt diese die Verantwortliche/n, kein Scroll.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#action-eb5b2d02": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1491"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-238ec080": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1496"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-774289cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1504"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-346ac4ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1422"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-4a3daba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1428"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-066d150f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1704"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-400180d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1705"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1706"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-69a5ef32": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1710"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-a536206e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1715",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1743"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-099ebe1a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1746"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-7b79c06e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1755"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-15ef5196": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1765"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-5ae5d0d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1768"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-198ecb5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1961",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1594"
+   ],
+   "n": "Ziehen, Doppelklick/Pos1 setzt zurück, Pfeiltasten (Shift = 48 px), Tooltip gleich; Breite pro Gerät gespeichert."
+  },
+  "protocols/protocol/protocol.page#text-28a78447": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1781",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1788"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-ff71af8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1789"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7100878c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1797"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-eb5b2d02-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1804"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-238ec080-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1826"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-d33d41aa": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1841"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-b3a7fb57": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1838"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-0cd727f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1848"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-dada2a79-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1860"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-27c5b66c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1861"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-5c862955": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1862"
+   ]
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1865",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1866"
+   ],
+   "n": "Schreibgeschützte Notizen gleich. Flutter listet darunter zusätzlich die in diesen Notizen referenzierten Aufgaben; Ionic zeigt im breiten Layout bei „Weitere Notizen“ keine Aufgabenliste.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#text-1aaa95b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1876"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-747eafd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1879"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-c84d1157": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1963",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1594"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7395f79f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1890"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-0bec9107": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1891"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-ea70e797": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1898"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-c6f17db5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1900"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-dbdd6514": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1912"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-320caa0f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1919",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1935"
+   ],
+   "n": "Untertitel „TOP n/Punkt/Allgemein · Vorname“ gleich."
+  },
+  "protocols/protocol/protocol.page#text-cc185098": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1914"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-2c1a73a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1991"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-400180d3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1992"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-7951a5bf-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1999"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-92a4ce8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2009"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-11d66fff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2011"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-24bf7368": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2015"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-11d66fff-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2018"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-360916dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2033"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-5fe903eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2035"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-a2f3759b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2037",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:283"
+   ]
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2041"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-158e2b35": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2043"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-89a4bcae": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2057"
+   ]
+  },
+  "protocols/protocol/protocol.page#embed-5484c3d8-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2059"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-69bd2a16-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:2066"
+   ]
+  },
+  "protocols/protocol/protocol.page#modal-ee22855e": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1196"
+   ],
+   "n": "Ionic: Sheet mit Breakpoints (Start 60 %, auf 100 % ziehbar) / Flutter: Bottom-Sheet mit fester Höhe 70 %, nicht auf Vollbild ziehbar. Inhalt eigene Items.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#text-7db64e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1210"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-75d6acff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1211"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-32276dc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1216"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-483ee402": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1219"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-19804570": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1223"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-2d97aa39": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1227"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-24981059": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1230"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-483ee402-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1233"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-19804570-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1234"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-a1e4d9fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1235"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-fb9b7b24": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1240"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-19804570-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1243"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-44846e73": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1247"
+   ]
+  },
+  "protocols/protocol/protocol.page#modal-310a0a39": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1258",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1302"
+   ],
+   "n": "Speichern beim Schließen gleich. Ionic: Sheet mit Breakpoints (Start 75 %, auf 100 % ziehbar) / Flutter: feste Höhe 80 %, nicht ziehbar.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#text-9a10cea7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1272"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-798b4676": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1273"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-5235a889": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1279"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-c6f17db5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1281"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-9e2bdbdb": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1287"
+   ],
+   "n": "Ionic: Aufgaben-Formular öffnet über dem Notizen-Sheet, danach bleibt das Sheet mit der neuen Referenz offen / Flutter: Notizen-Sheet wird zuerst geschlossen, dann das Formular geöffnet (Referenz landet trotzdem in den allgemeinen Notizen).",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#modal-a445544e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:848"
+   ],
+   "n": "Bottom-Sheet 90 % Höhe mit Abbrechen links und Titel; Ionic Sheet mit Breakpoint 1."
+  },
+  "protocols/protocol/protocol.page#action-b5f2fcb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:861"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-66d72cf0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:863"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-4e8966c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:869"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-2bf7f00d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:874"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-d73fe6b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:875"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-fd7a6a5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:878"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-be302879": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:879"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-bc3b2a50": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:884"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-0a05ce42": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:885"
+   ],
+   "n": "Inkl. Zusatz „ · wird beim nächsten Termin vorgeschlagen“ bei suggest_postponed."
+  },
+  "protocols/protocol/protocol.page#text-820d5e3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:889"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-efc615ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:890"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-036b6b54": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:893"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-d27515ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:893"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-8e387a42": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:896"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-a9cc96a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:896"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-ca7b19f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:901"
+   ]
+  },
+  "protocols/protocol/protocol.page#field-a14b79a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:905"
+   ],
+   "n": "Checkbox je Thema mit Ergebnis-Label, „Beschlossen“ vorausgewählt."
+  },
+  "protocols/protocol/protocol.page#text-ed19b34b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:915"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-160968fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:921"
+   ],
+   "n": "Inkl. „die Gruppen aus dem Termintyp …“ / „alle Mitglieder …“."
+  },
+  "protocols/protocol/protocol.page#text-fb5e077d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:929"
+   ]
+  },
+  "protocols/protocol/protocol.page#text-096e9cd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:930"
+   ],
+   "n": "Inkl. Zusatz „ · n Personen mit Aufgaben“."
+  },
+  "protocols/protocol/protocol.page#field-c72137bf": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:847",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:932"
+   ],
+   "n": "Schalter mit Text/Untertitel, Standard an. Ionic: sendPdf ist Seitenzustand – ausgeschaltet bleibt es beim erneuten Öffnen aus / Flutter: wird bei jedem Öffnen wieder auf „an“ gesetzt.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#text-7a0cc62b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:942"
+   ]
+  },
+  "protocols/protocol/protocol.page#action-75501172": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:944",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:970"
+   ],
+   "n": "Text „(Erneut) Freigeben & benachrichtigen“ und Ablauf gleich. Ionic: Sheet bleibt während der Freigabe offen (Button deaktiviert) und bei Fehler offen / Flutter: Sheet schließt sofort, bei Fehler muss es neu geöffnet werden.",
+   "sev": "niedrig"
+  },
+  "protocols/protocol/protocol.page#action-85b310a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:949"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#logic-91cfedd0": {
+   "s": "diff",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:34",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:50",
+    "lib/core/providers/team_org_providers.dart:151"
+   ],
+   "n": "Sichtbarkeit (Teamorganisation aktiv + offene Aufgaben), Sortierung über groupTasksByDue, Limit 5, Untertitel „n offen · n überfällig“, Fälligkeitstexte, optimistisches Erledigen mit Rücknahme gleich. Abweichung: Aktualisierung (extra).",
+   "sev": "niedrig"
+  },
+  "tasks/my-tasks/my-tasks.component#toast-c2754a1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:42"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#toast-e9cc79d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:46"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#text-fda8269c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:72"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#text-d32f83fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:66",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:73"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#action-de099eb7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:80"
+   ],
+   "n": "Titel, Fälligkeit (überfällig rot), Badge „In Arbeit“, Tippen öffnet die Aufgabe."
+  },
+  "tasks/my-tasks/my-tasks.component#action-abbb733f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:82"
+   ]
+  },
+  "tasks/my-tasks/my-tasks.component#action-98a26f52": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:98"
+   ],
+   "n": "„Alle anzeigen (n)“ / „Alle Aufgaben“ (Leitung), öffnet Teamorganisation Tab Aufgaben."
+  }
+ },
+ "extra": [
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Verlauf/Thema veralten (Cache)",
+   "n": "Ionic: ionViewWillEnter lädt Verlauf und Aufgaben bei jeder Rückkehr neu (z. B. nach Ergebnis-Setzen im Protokoll), ngOnInit lädt das Thema bei jedem Öffnen / Flutter: agendaItemHistoryProvider und agendaItemByIdProvider sind nicht autoDispose und werden nur nach eigenem Einplanen bzw. eigenem Speichern invalidiert – nach einem Ergebnis im Protokoll oder Änderungen anderer Nutzer zeigt der Verlauf weiter z. B. „Geplant“ statt „Beschlossen“, bis die App neu startet.",
+   "sev": "mittel",
+   "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts:122",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:212",
+    "lib/core/providers/team_org_providers.dart:221",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:191",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:384"
+   ]
+  },
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Thema nicht ladbar",
+   "n": "Flutter besser: Ionic zeigt bei nicht ladbarem/nicht sichtbarem Thema eine leere Seite ohne Hinweis (item undefined) / Flutter zeigt „Thema nicht gefunden“.",
+   "sev": "niedrig",
+   "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts:128",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:240"
+   ]
+  },
+  {
+   "unit": "agenda-items/agenda-plan.helpers",
+   "title": "Gelöschter Ablaufplan beim Einplanen",
+   "n": "Flutter besser: Ionic addTopicsToAttendance übernimmt einen inzwischen gelöschten Plan als null und schreibt einen neuen Standardplan (initialPlan) mit dem Thema / Flutter wirft bei gelöschtem Plan einen Fehler → Toast „Thema konnte nicht eingeplant werden“ bzw. „Ablaufplan konnte nicht gespeichert werden“, nichts wird geschrieben.",
+   "sev": "niedrig",
+   "ionic": "src/app/agenda-items/agenda-plan.helpers.ts:127",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:427"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol-pdf",
+   "title": "PDF-Schrift ohne Unicode",
+   "n": "Ionic: jsPDF mit eingebetteter Noto Sans (Latin + Kyrillisch, Utils.registerExportFont) / Flutter: pw.Document() ohne Theme → Standardschrift Helvetica (nur Latin-1, pdf-3.13.1 type1_font.dart:126); jedes Zeichen außerhalb Latin-1 wird als Platzhalter-Kästchen gezeichnet (pdf-3.13.1 widgets/text.dart:905) – u. a. die Aufzählungspunkte „•“ in Listen und unter „Weitere Aufgaben“, typografische Anführungszeichen „ “, Gedankenstriche, „…“, Emojis sowie kyrillische Namen und Notizen.",
+   "sev": "hoch",
+   "ionic": "src/app/protocols/protocol/protocol-pdf.ts:38",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:54",
+    "lib/features/team_organization/protocol_pdf.dart:68",
+    "lib/features/team_organization/protocol_pdf.dart:148"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol-pdf",
+   "title": "PDF-Layout abweichend",
+   "n": "Ionic: Ergebnis hinter dem Abschnittstitel („TOP 1 · X  –  Beschlossen“), graue Trennlinie vor jedem Abschnitt, „Anwesend (n): Namen“ in einer Zeile, Überschriften 13/12/11 pt nach Ebene, Seitenzahl grau / Flutter: Ergebnis rechtsbündig in Akzentfarbe, keine Trennlinien, „Anwesend (n)“ als farbige Zwischenüberschrift mit Namen darunter, Überschriften einheitlich 12 pt, Seitenzahl schwarz.",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol-pdf.ts:108",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:109",
+    "lib/features/team_organization/protocol_pdf.dart:119"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol.helpers",
+   "title": "docToLines vereinfacht (PDF)",
+   "n": "Ionic: docToLines liefert Überschriften mit Ebene, Codeblöcke zeilenweise (kleiner, grau), horizontale Linien (als Strich im PDF) und Zitate (kursiv, grau) / Flutter: nur heading=true ohne Ebene, Codeblock als ein einziger Absatz, horizontale Linien entfallen, Zitate in „…“ gesetzt.",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol.helpers.ts:90",
+   "f": [
+    "lib/features/team_organization/tiptap_delta.dart:396",
+    "lib/features/team_organization/tiptap_delta.dart:427"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Fremde Notizen vor Freigabe",
+   "n": "Ionic: openPublish/mergeServerRow übernimmt Notizen anderer Leitungen für jeden Abschnitt ohne ungespeicherte lokale Änderung – auch in geöffneten Editoren (editorContent wird aktualisiert) / Flutter übernimmt Server-Notizen nur für Abschnitte, deren Editor in dieser Sitzung nie geöffnet wurde; in bereits geöffneten Abschnitten fehlen fremde Notizen in der Zusammenfassung („Noch ohne Notizen“) und im mitgeschickten PDF, und spätere Eingaben dort überschreiben sie.",
+   "sev": "mittel",
+   "ionic": "src/app/protocols/protocol/protocol.page.ts:657",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:792",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:796"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Freigabe nur nach vollständigem Speichern",
+   "n": "Flutter besser: Ionic öffnet den Freigabe-Dialog und gibt frei, auch wenn das Speichern eines Abschnitts fehlschlug (nur Fehler-Toast) / Flutter bricht Öffnen und Freigabe mit „Notizen konnten nicht gespeichert werden. Prüfe deine Verbindung.“ ab.",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol.page.ts:876",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:788",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:977"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Spontaner Punkt: Ablauf",
+   "n": "Ionic: legt das Thema zuerst an und liest dann den Termin; bei inzwischen gelöschtem Plan schreibt es den geladenen Plan zurück; Standarddauer agenda_default_duration || 10; der neue Punkt wird danach geöffnet, fokussiert und ins Bild gescrollt / Flutter: prüft Termin und Plan vor dem Anlegen und bricht bei gelöschtem Termin/Plan mit „Punkt konnte nicht hinzugefügt werden“ ab (besser), Standarddauer agenda_default_duration ?? 10 (0 wird zu 1 min statt 10), neuer Punkt wird nur ausgewählt (kein Fokus/Scroll).",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol.page.ts:794",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:558",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:609",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:637"
+   ]
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Teilnehmende: Sortierung/Fallback",
+   "n": "Ionic: Teilnehmende per localeCompare sortiert, leerer Name → „Unbekannt“ / Flutter: String.compareTo (Groß-/Kleinschreibung, Umlaute hinter Z), leerer Name bleibt leer (Avatar-Reihe, Sheet, Chips, PDF).",
+   "sev": "niedrig",
+   "ionic": "src/app/protocols/protocol/protocol.page.ts:281",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:713"
+   ]
+  },
+  {
+   "unit": "tasks/my-tasks/my-tasks.component",
+   "title": "Karte aktualisiert sich",
+   "n": "Flutter besser: Ionic lädt die offenen Aufgaben nur einmal je Mandant (effect auf tenantId) – anderswo erledigte oder neu zugewiesene Aufgaben bleiben bis zum Mandantenwechsel/Neustart sichtbar bzw. fehlen / Flutter: myTasksProvider wird nach jeder Aufgaben-Änderung invalidiert und zeigt den aktuellen Stand.",
+   "sev": "niedrig",
+   "ionic": "src/app/tasks/my-tasks/my-tasks.component.ts:36",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53",
+    "lib/core/providers/team_org_providers.dart:277"
+   ]
+  }
+ ]
+}

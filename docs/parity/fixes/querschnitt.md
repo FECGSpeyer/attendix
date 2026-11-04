@@ -1,0 +1,877 @@
+# Fix-Paket „querschnitt“
+
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be,  (normales Design).
+Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
+
+## Angleichen (hoch/mittel): 57
+
+- [ ] **hoch** `services/attendance-type/attendance-type.service` `db-c4d1a223` [services/attendance-type/attendance-type.service.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L77) (2. Prüfung: bestätigt)
+  Ionic: deleteAttendanceType löscht den Typ ohne Prüfung (Dialog: 'Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht') / Flutter: deleteType zählt attendance mit type_id und löscht bei >0 NICHT; Repo fängt die Exception, UI zeigt nur 'Fehler beim Löschen des Anwesenheitstyps' – obwohl derselbe Bestätigungstext das Mitlöschen ankündigt.
+  Flutter: lib/data/repositories/attendance_type_repository.dart:174, lib/data/repositories/attendance_type_repository.dart:178, lib/data/repositories/attendance_type_repository.dart:187
+- [ ] **hoch** `services/attendance-type/attendance-type.service` [src/app/services/attendance-type/attendance-type.service.ts:76](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L76)
+  Ionic: deleteAttendanceType löscht den Typ ohne Prüfung; laut Bestätigungstext werden alle Anwesenheiten dieses Typs mitgelöscht (FK attendance_type_id_fkey) / Flutter: deleteType zählt Termine mit type_id und bricht bei >0 ab (RepositoryException 'Typ kann nicht gelöscht werden…', in der UI nur 'Fehler beim Löschen des Anwesenheitstyps'), obwohl derselbe Bestätigungstext das Mitlöschen ankündigt.
+  Flutter: lib/data/repositories/attendance_type_repository.dart:174, lib/data/repositories/attendance_type_repository.dart:178, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1552
+- [ ] **hoch** `services/db.service` `db-ffa8e5a7` [services/db.service.ts:2752](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2752) (2. Prüfung: korrigiert)
+  Ionic liest u.a. extra_plans mit (PlanViewer der Selbstverwaltung zeigt bei mehrtägigen Terminen Tages-/Plan-Chips) / Flutter: kSignoutAttendanceColumns ohne extra_plans → nur Hauptplan. Gleiche Ursache wie signout.page#modal-ef7b9f1b (b15). Filter tenantId + Datum −31 Tage gleich.
+  Flutter: lib/data/repositories/sign_in_out_repository.dart:21, lib/data/repositories/sign_in_out_repository.dart:425
+- [ ] **hoch** `services/db.service` [src/app/services/db.service.ts:3416](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3416)
+  Außerhalb der Stichprobe, beim Prüfen von db-9a7299b3 gefunden. Ionic mergePendingPlayerIntoExisting: tenantUsers.role immer PLAYER (+ Mail mit Rolle Spieler). / Flutter: RESPONSIBLE, wenn die Zielperson in der Hauptgruppe ist (accountRoleFor), sonst PLAYER. Evtl. bewusst an createAccount angelehnt – Leon entscheidet.
+  Flutter: lib/data/repositories/player_repository.dart:1991
+- [ ] **hoch** `services/image/image.service` `db-a8a5f597` [services/image/image.service.ts:14](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/image/image.service.ts#L14) (2. Prüfung: bestätigt)
+  Ionic removeImage mit eigener appId: update {img:''} für alle player-Zeilen des Nutzers (alle Tenants) – im Profil und auf der Personen-Seite bei Selbstbearbeitung (person.page.ts:1067) / Flutter: Profil gleichwertig (removeOwnImage + _syncOwnPersonalData), die Personen-Seite (person_header.dart) leert img nur in dieser einen Zeile (id + tenantId); in den anderen Tenants bleibt das alte (gelöschte) Bild.
+  Flutter: lib/data/repositories/profile_repository.dart:464, lib/features/people/presentation/widgets/person_detail/person_header.dart:314
+- [ ] **hoch** `services/image/image.service` `db-58f14585` [services/image/image.service.ts:48](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/image/image.service.ts#L48) (2. Prüfung: bestätigt)
+  Ionic updateImage mit eigener appId: update {img} für alle player-Zeilen des Nutzers (alle Tenants) – Profil, Personen-Seite bei Selbstbearbeitung (person.page.ts:1116) und Registrierung eines angemeldeten Nutzers (tenant-register.page.ts:351) / Flutter: Profil gleichwertig (uploadOwnImage + Sync), Personen-Seite (PlayerRepository.updateImage: id + tenantId) und Registrierung schreiben nur die eine Zeile; in den anderen Tenants bleibt das alte Bild.
+  Flutter: lib/data/repositories/profile_repository.dart:441, lib/data/repositories/player_repository.dart:436, lib/features/registration/data/providers/registration_providers.dart:241
+- [ ] **hoch** `utilities/Utils` [src/app/utilities/Utils.ts:441](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L441)
+  Ionic: registerExportFont bettet NotoSans in alle PDF-Exporte ein (Kyrillisch, „“, –, € werden gedruckt) / Flutter: kein pw.ThemeData/TTF in irgendeinem PDF (Plan, Anwesenheit, Werke, Protokoll), Standard-Helvetica Type1 nur U+0000–00FF (pdf-3.13.1 type1_font.dart:126) → kyrillische Namen/Titel, typografische Anführungszeichen, Gedankenstrich und € erscheinen als leere Platzhalterkästchen.
+  Flutter: lib/core/services/plan_export_service.dart:60, lib/core/services/export_service.dart:255, lib/core/services/export_service.dart:491, lib/features/songs/data/song_print_service.dart:64, lib/features/team_organization/protocol_pdf.dart:54
+- [ ] **mittel** `services/church/church.service` `toast-e387c98e` [services/church/church.service.ts:19](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/church/church.service.ts#L19) (2. Prüfung: korrigiert)
+  Ionic: Toast 'Fehler beim Laden der Kirchen' (danger) überall, wo getChurches scheitert (Instanz-Laden, Administration, Registrierung, Statistik) / Flutter: kein Toast; nur die Instanz-Registrierung zeigt inline rot 'Fehler beim Laden der Gemeinden' statt der Gemeindeauswahl, sonst still leere Liste (valueOrNull). Erstprüfer: 'missing, überall still' – Registrierungsseite übersehen.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:644, lib/core/providers/church_providers.dart:8, lib/features/dashboard/presentation/pages/administration_page.dart:215
+- [ ] **mittel** `services/conductor/conductor.service` `toast-e679cded` [services/conductor/conductor.service.ts:40](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/conductor/conductor.service.ts#L40) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Laden der Hauptgruppen-Personen' (danger) / Flutter: conductorsProvider (OfflineListCache → PlayerRepository.getConductors) ohne Hinweis; Aufrufer (Werk-Historie, Register-Plan, Termin) fangen den Fehler still bzw. melden ihn nur an ErrorReporter.
+- [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-119dd1e0` [services/cross-tenant/cross-tenant.service.ts:236](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/cross-tenant/cross-tenant.service.ts#L236) (2. Prüfung: korrigiert)
+  Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1122, lib/features/people/presentation/pages/people_list_page.dart:235, lib/data/repositories/cross_tenant_person_repository.dart:240
+- [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-fef13d0b` [services/cross-tenant/cross-tenant.service.ts:312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/cross-tenant/cross-tenant.service.ts#L312) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Laden der Personen' (danger) bei Namensvorschlägen und beim Button 'In anderer Instanz suchen' / Flutter: Vorschläge still ('Silent — suggestions are optional', person_create_page.dart:176); _searchPersonInOtherInstance fängt den Fehler gar nicht ab (kein Toast).
+- [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-9e26e97c` [services/cross-tenant/cross-tenant.service.ts:340](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/cross-tenant/cross-tenant.service.ts#L340) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Laden der Personen' (danger) bei der E-Mail-Prüfung (onEmailBlur) / Flutter: person_create_page.dart:200 und person_detail_page.dart:859 fangen den Fehler still ab.
+- [ ] **mittel** `services/db.service` `alert-f27cc642` [services/db.service.ts:544](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L544) (2. Prüfung: bestätigt)
+  Ionic: Radio-Alert "Instanz auswählen" / "Bitte wähle die Instanz aus, die du öffnen möchtest:" mit "Abbrechen" (öffnet gespeicherte bzw. erste Instanz) und "Öffnen" / Flutter: bei wantInstanceSelection nach Login die Vollseite /tenants mit Instanzliste, kein Abbrechen.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:76, lib/features/auth/presentation/pages/login_page.dart:312
+- [ ] **mittel** `services/db.service` `nav-51ad9728` [services/db.service.ts:3290](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3290) (2. Prüfung: bestätigt)
+  Ionic: nach Löschen immer setTenant() und Navigation zu Utils.getUrl(Rolle) / Flutter: nur wenn die aktuelle Instanz gelöscht wurde go("/tenants") mit Auto-Navigation (ggf. Dashboard-Start), sonst bleibt der Benutzer auf der Seite.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335
+- [ ] **mittel** `services/db.service` `effect-3e8f334d` [services/db.service.ts:3290](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3290) (2. Prüfung: bestätigt)
+  Wie nav-51ad9728: Ionic Utils.getUrl(Rolle) nach jedem Löschen / Flutter nur bei gelöschter aktueller Instanz über /tenants.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335
+- [ ] **mittel** `services/db.service` [src/app/services/db.service.ts:453](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L453)
+  Ionic: setTenant nimmt localStorage vor user_metadata.currentTenantId (gleiches Gerät gewinnt, Metadaten werden nachgezogen) / Flutter: Server-Metadaten gewinnen vor SharedPreferences, Login-Navigation nutzt nur Metadaten; bei abweichenden Werten öffnet eine andere Instanz.
+  Flutter: lib/core/providers/tenant_providers.dart:52, lib/features/auth/presentation/pages/login_page.dart:319, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:93
+- [ ] **mittel** `services/duty/duty.service` `toast-b8016997` [services/duty/duty.service.ts:316](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/duty/duty.service.ts#L316) (2. Prüfung: bestätigt)
+  Ionic: bei DB-Fehler Toast 'Fehler beim Übernehmen in geplante Termine' (danger) / Flutter: DutyNotifier.applyUnavailabilityToFuture fängt den Fehler ab und gibt 0 zurück, die Seite zeigt den Erfolgs-Toast '0 Termine angepasst'.
+  Flutter: lib/core/providers/duty_providers.dart:306, lib/features/duty/presentation/pages/unavailability_page.dart:150
+- [ ] **mittel** `services/files/files.service` `db-c711efdc` [services/files/files.service.ts:299](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L299) (2. Prüfung: bestätigt)
+  .keep-Upload in gleichem Bucket/Pfad, upsert false, text/plain. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung + Entfernen aller Kombinationszeichen / Flutter feste Akzent-Tabelle (files_repository.dart:85-93). ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute (NFC) gleich.
+  Flutter: lib/data/repositories/files_repository.dart:306
+- [ ] **mittel** `services/files/files.service` `db-68243270` [services/files/files.service.ts:327](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L327) (2. Prüfung: bestätigt)
+  Upload in gleichen Bucket mit gleichem Pfadschema, contentType aus der Dateiendung (storage_client), Tracking gleich. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung + Entfernen aller Kombinationszeichen / Flutter feste Akzent-Tabelle (files_repository.dart:85-93). ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute (NFC) gleich. Zusätzlich: Dateinamen in zerlegter Form (NFD, z. B. von macOS) – Ionic 'März' → 'Marz', Flutter → 'Ma-rz'.
+  Flutter: lib/data/repositories/files_repository.dart:340, lib/features/settings/presentation/pages/files_page.dart:837
+- [ ] **mittel** `services/files/files.service` `db-77218a19` [services/files/files.service.ts:400](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L400) (2. Prüfung: bestätigt)
+  Umbenennen per move wie Ionic. Ordner-/Dateiname wird anders bereinigt: Ionic NFKD-Normalisierung + Entfernen aller Kombinationszeichen / Flutter feste Akzent-Tabelle (files_repository.dart:85-93). ę ą ś ź ż ć ń ő ă ș ț ě ů ň ť ď ğ werden in Flutter zu '-' statt zum Grundbuchstaben ('Wędrówka' → Ionic 'Wedrowka', Flutter 'W-drowka'); deutsche Umlaute (NFC) gleich.
+  Flutter: lib/data/repositories/files_repository.dart:409
+- [ ] **mittel** `services/files/files.service` [src/app/services/files/files.service.ts:152](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L152)
+  Ionic: setPendingLink speichert den geteilten Datei-Link in localStorage und öffnet ihn nach dem Login auch nach Seiten-Reload/App-Neustart (z. B. E-Mail-Bestätigung, OAuth-Redirect im Web) / Flutter: PendingFileLink nur im Speicher, nach Reload oder Neustart geht der Link verloren und der Nutzer landet auf der Startseite.
+  Flutter: lib/features/public_links/presentation/pages/open_file_page.dart:15
+- [ ] **mittel** `services/group-category/group-category.service` `native-d88b5602` [services/group-category/group-category.service.ts:18](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L18) (2. Prüfung: bestätigt)
+  Ionic: offline (Network.getStatus) werden Kategorien aus dem Cache geladen / Flutter: groupCategoriesProvider nutzt kein OfflineListCache (anders als groupsProvider) – offline keine Kategorien, Gruppierung im Ablaufplan-Akkordeon und in der Werkliste fehlt.
+  Flutter: lib/core/providers/group_providers.dart:98
+- [ ] **mittel** `services/group-category/group-category.service` `toast-2822515a` [services/group-category/group-category.service.ts:52](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L52) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Hinzufügen der Kategorie' (einzige Fehlermeldung, Seite fängt nicht) / Flutter: Fehler wird im GroupNotifier verschluckt, kein Hinweis.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:294
+- [ ] **mittel** `services/group-category/group-category.service` `toast-913649c9` [services/group-category/group-category.service.ts:68](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L68) (2. Prüfung: bestätigt)
+  Flutter: Fehler wird im GroupNotifier verschluckt, kein Toast 'Fehler beim Aktualisieren der Kategorie'.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:334
+- [ ] **mittel** `services/group-category/group-category.service` `toast-0eec9127` [services/group-category/group-category.service.ts:98](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L98) (2. Prüfung: bestätigt)
+  Flutter: Fehler (z. B. noch zugeordnete Instrumente) wird im GroupNotifier verschluckt, kein Toast 'Fehler beim Löschen der Kategorie'.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:364
+- [ ] **mittel** `services/help/help-content.service` [src/app/services/help/help-content.service.ts:18](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/help/help-content.service.ts#L18)
+  Ionic: Fuse.js-Fuzzy-Suche (gewichtete Felder, threshold 0.35, ignoreLocation, ganze Eingabe als ein Muster) / Flutter: eigene Token-UND-Suche mit Editierdistanz ≤1 (Tokens ab 4 Zeichen) und eigener Bewertung – Trefferliste und Reihenfolge weichen ab.
+  Flutter: lib/features/help/data/help_content_service.dart:62, lib/features/help/data/help_content_service.dart:123
+- [ ] **mittel** `services/history/history.service` `db-1c319cab` [services/history/history.service.ts:28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/history/history.service.ts#L28) (2. Prüfung: bestätigt)
+  Ionic: Historie eines Termins order('songId') / Flutter getHistoryForAttendance order('id') – die Werke auf der Termin-Seite erscheinen in anderer Reihenfolge (Eintragsreihenfolge statt Werk-ID).
+  Flutter: lib/data/repositories/attendance_repository.dart:880
+- [ ] **mittel** `services/history/history.service` `db-1996dec2` [services/history/history.service.ts:68](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/history/history.service.ts#L68) (2. Prüfung: bestätigt)
+  Dirigent-Änderung gleich (person_id, otherConductor). Ionic ruft updateHistoryEntry zusätzlich bei jeder Termin-Info-Änderung mit {visible: attendance.save_in_history}, wenn die Einträge abweichen (attendance.page.ts:1521-1524; Alt-Termine mit save_in_history false/null → Werke verschwinden aus der Historie) / Flutter schreibt visible nie.
+  Flutter: lib/data/repositories/attendance_repository.dart:914, lib/features/attendance/presentation/attendance_song_history.dart:85
+- [ ] **mittel** `services/holiday/holiday.service` [src/app/services/holiday/holiday.service.ts:20](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/holiday/holiday.service.ts#L20)
+  Ionic: gone = startDate vor heute (Tagesgenauigkeit) / Flutter: isPast = endDate (Mitternacht lokal) vor jetzt. Folge: ein Feiertag heute ist in Flutter schon 'vergangen' (ausgeblendet), in Ionic sichtbar; laufende Schulferien sind in Flutter sichtbar, in Ionic ausgeblendet.
+  Flutter: lib/core/services/holiday_service.dart:122, lib/core/services/holiday_service.dart:168, lib/features/attendance/presentation/pages/attendance_create_page.dart:784
+- [ ] **mittel** `services/live-activity/live-activity.service` `modal-9b4e9fd5` [services/live-activity/live-activity.service.ts:284](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/live-activity/live-activity.service.ts#L284) (2. Prüfung: bestätigt)
+  Präsentation (Vollbild-Planansicht, live) gleich. Ionic lädt den Termin per getAttendanceById ohne Tenant-Filter / Flutter per getPlanAttendanceById mit Filter auf den aktuellen Tenant – Tap auf die Live Activity eines ORG-Plan-Termins eines anderen Chors oder eines Termins aus einem anderen Tenant öffnet in Flutter nichts.
+  Flutter: lib/core/services/live_activity_service.dart:915, lib/data/repositories/plan_repository.dart:69
+- [ ] **mittel** `services/live-update/live-update.service` [src/app/services/live-update/live-update.service.ts:117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/live-update/live-update.service.ts#L117)
+  Ionic: lädt neue Web-Bundles still im Hintergrund, aktiviert sie beim nächsten Kaltstart bzw. sofort auf /login oder /register, plus manueller 'Update'-Button / Flutter: kein OTA; StoreUpdateService prüft die Store-Version und bietet 'Update installieren' auf Login- und Einstellungsseite an – der Nutzer muss aktiv über Store/In-App-Update aktualisieren.
+  Flutter: lib/core/services/native/store_update_service.dart:52, lib/features/auth/presentation/pages/login_page.dart:660, lib/features/settings/presentation/pages/settings_page.dart:552
+- [ ] **mittel** `services/notification/notification.service` `db-8470a157` [services/notification/notification.service.ts:42](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/notification/notification.service.ts#L42) (2. Prüfung: korrigiert)
+  Gleiche Default-Flags, aber andere Bedingung: Ionic legt die Default-Zeile bei jedem Tenant-Laden an (db.service.ts:508, setTenant) / Flutter nur, wenn die Benachrichtigungsseite, der Telegram-Planversand oder das Registerplan-Sheet die Konfiguration lesen. Folge für neue Konten: 'Aktivieren' im Push-Prompt nach dem Login schreibt push_enabled per UPDATE ins Leere (push_service.dart:283 → device_token_repository.dart:125), die später angelegte Zeile hat push_enabled false – in Ionic bleibt die Zustimmung gespeichert. Nebenbei: created_at als lokale Zeit ohne 'Z' (1–2 h verschoben), enabled_tenants explizit null.
+  Flutter: lib/core/services/telegram_service.dart:196, lib/core/services/telegram_service.dart:376, lib/features/notifications/presentation/pages/notifications_page.dart:67, lib/data/repositories/device_token_repository.dart:125
+- [ ] **mittel** `services/organisation/organisation.service` `toast-7f0bc6eb` [services/organisation/organisation.service.ts:132](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L132) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Verknüpfen der Organisation" (plus error.message der Seite). / Flutter: beim Auswählen "Fehler beim Verknüpfen"; beim Erstellen wird das Ergebnis von linkCurrentTenant ignoriert und trotz fehlgeschlagener Verknüpfung "Die Organisation wurde erfolgreich erstellt." gezeigt.
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:74, lib/features/organisation/presentation/widgets/org_link_dialogs.dart:102
+- [ ] **mittel** `services/print/print.service` [src/app/services/print/print.service.ts:150](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L150)
+  Ionic: übernimmt PDF-Seiten mit pdf-lib copyPages als Vektor (scharfer Druck, kleine Datei). / Flutter: rastert jede PDF-Seite mit Printing.raster (150 dpi) zu einem Bild und baut daraus ein neues PDF (unschärfere Noten, größere Datei, langsamer).
+  Flutter: lib/features/songs/data/song_print_service.dart:80
+- [ ] **mittel** `services/print/print.service` [src/app/services/print/print.service.ts:150](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L150)
+  Ionic: pdf-lib übernimmt die PDF-Seiten als Vektorseiten (copyPages). / Flutter: jede PDF-Seite wird mit 150 dpi als PNG gerastert und eingebettet – unschärferer Notendruck, deutlich größere Datei/Speicherbedarf bei großen Mappen.
+  Flutter: lib/features/songs/data/song_print_service.dart:80
+- [ ] **mittel** `services/shift/shift.service` [src/app/services/shift/shift.service.ts:28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L28)
+  Ionic: loadShifts sortiert definition nach 'index' (Ionic-Editor vergibt index = Länge, nach Löschen und Neuanlegen kann die gespeicherte Reihenfolge davon abweichen, z.B. [2,3,2]) / Flutter: getShifts übernimmt die gespeicherte Array-Reihenfolge ohne Sortierung. Bei solchen Plänen ergeben sich andere Segment-Reihenfolge, anderer Zyklus und damit andere schichtbedingte Status.
+  Flutter: lib/data/repositories/shift_repository.dart:25, lib/data/models/shift/shift_plan.dart:80
+- [ ] **mittel** `services/shift/shift.service` [src/app/services/shift/shift.service.ts:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L26)
+  Ionic: loadShifts sortiert definition nach 'index'; Anzeige, Speichern und Utils.getStatusByShift nutzen diese Reihenfolge / Flutter: gespeicherte Array-Reihenfolge (ShiftPlan.fromJson, keine Sortierung). Wirkt, wenn Array- und index-Reihenfolge auseinanderlaufen (mehrere Segmente gelöscht, danach eins hinzugefügt: index = Länge, z. B. [0,5,2]) – dann andere Segmentfolge und ggf. andere 'Schichtbedingt'-Status.
+  Flutter: lib/data/repositories/shift_repository.dart:25, lib/data/models/shift/shift_plan.dart:67
+- [ ] **mittel** `services/teacher/teacher.service` [src/app/services/teacher/teacher.service.ts:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/teacher/teacher.service.ts#L43)
+  Ionic: keine Lösch-Aktion für Lehrer (deleteTeacher ungenutzt) / Flutter: Admins können Lehrer in der Lehrerliste löschen (Delete teachers nach id + tenantId).
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:95, lib/data/repositories/teacher_repository.dart:98
+- [ ] **mittel** `services/teacher/teacher.service` [src/app/services/teacher/teacher.service.ts:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/teacher/teacher.service.ts#L43)
+  Ionic: keine Lösch-Aktion (TeacherService.deleteTeacher ungenutzt) / Flutter: Admin kann Lehrer per Wischen mit Bestätigung löschen (delete teachers nach id + tenantId).
+  Flutter: lib/features/teachers/presentation/pages/teachers_list_page.dart:96, lib/data/repositories/teacher_repository.dart:98
+- [ ] **mittel** `shared/audio-player/audio-player.component` `toast-8cb59de1` [shared/audio-player/audio-player.component.ts:36](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/audio-player/audio-player.component.ts#L36) (2. Prüfung: bestätigt)
+  Ionic: Fehler bei Zurück/Weiter (Queue-URL nicht auflösbar, Laden fehlgeschlagen) → Player wird zurückgesetzt und roter Toast „Fehler beim Abspielen: {error}“ / Flutter: audio_player_widget.dart:72/84 übergibt svc.previous/svc.next ohne catch – kein Toast; bei resolveUrl-Fehler bleibt der alte Titel pausiert, Zähler zeigt schon den neuen Index; bei Ladefehler schließt sich der Player stumm (_load → _stopInternal). ARB-Key audioPlayFailed ungenutzt.
+- [ ] **mittel** `shared/files-folder-picker/files-folder-picker.component` `action-c2019029` [shared/files-folder-picker/files-folder-picker.component.html:31](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.html#L31) (2. Prüfung: bestätigt)
+  Ionic: oberste Listenzeile in primary mit checkmark-circle „Diesen Ordner wählen: {Ordnername}“, beim Laden deaktiviert / Flutter: FilledButton mit Häkchen am unteren Rand „Diesen Ordner wählen“ ohne Ordnernamen, auch während des Ladens aktiv (liefert dann den vorherigen Ordner); in beiden nur außerhalb des Hauptordners.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:336
+- [ ] **mittel** `shared/message-editor/message-editor.component` `alert-bc736d27` [shared/message-editor/message-editor.component.ts:181](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/message-editor/message-editor.component.ts#L181) (2. Prüfung: bestätigt)
+  Ionic: Alert „Link“, Feld URL (Platzhalter „https://…“, vorbelegt), nur ohne Markierung/Link „Angezeigter Text (optional)“; Buttons „Abbrechen“, „Entfernen“ (nur auf bestehendem Link), „Übernehmen“; ohne Schema wird https:// vorangestellt / Flutter: flutter_quill-Standarddialog (link_dialog.dart) mit Pflichtfeldern „Text“ und „Link“ (Hinweise „z.B. 'Mehr erfahren'“ / „z.B. 'https://example.com'“), nur „OK“, deaktiviert solange der Link nicht mit http(s)://, mailto:, tel: … beginnt; kein Abbrechen/Entfernen im Dialog (Entfernen nur per langem Druck auf den Link unter iOS/Android, nicht im Web); editorLink/editorLinkText ungenutzt.
+  Flutter: lib/features/messages/presentation/pages/message_compose_page.dart:356, lib/features/messages/presentation/pages/auto_message_rule_page.dart:628
+- [ ] **mittel** `shared/message-editor/message-editor.component` `action-445826b3` [shared/message-editor/message-editor.component.ts (inline):43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/message-editor/message-editor.component.ts (inline)#L43) (2. Prüfung: bestätigt)
+  Ionic: Rückgängig-Button „↶“ am Ende der Toolbar (Nachricht verfassen, Auto-Nachricht) / Flutter: showUndo: false (message_compose_page.dart:373, auto_message_rule_page.dart:645) – nur Tastenkürzel auf Hardware-Tastatur.
+- [ ] **mittel** `shared/notification-bell/notification-bell.component` [src/app/shared/notification-bell/notification-bell.component.ts:278](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/notification-bell/notification-bell.component.ts#L278)
+  Ionic: onTap wechselt die Instanz nur bei Einträgen mit eigener Route oder Termin und nur, wenn data.tenantId gesetzt ist; Geburtstags-/Problemfall-Einträge (ohne Ziel) schließen nur das Sheet, Nachrichten wechseln erst auf der Nachrichtenseite / Flutter: _navigate wechselt vorab für JEDE Benachrichtigung auf targetTenantId (data.tenantId, sonst Zeilen-tenantId) – Tippen auf einen Eintrag ohne Ziel aus einer anderen Instanz (Segment „Alle“) schaltet die aktive Instanz um; ist die Instanz nicht mehr in der Nutzerliste, passiert gar nichts
+  Flutter: lib/features/messages/presentation/widgets/notification_bell.dart:100, lib/data/models/user_notification/user_notification.dart:44
+- [ ] **mittel** `utilities/attendance-date-dialog` `alert-fb943686` [utilities/attendance-date-dialog.ts:20](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-date-dialog.ts#L20) (2. Prüfung: bestätigt)
+  Ionic: Alert „Datum ändern“ mit Text „Auf welchen Tag soll der Termin verschoben werden?“, Datumsfeld (vorbelegt), Buttons „Abbrechen“/„Weiter“ / Flutter: showAppDatePicker – Material: Kopfzeile = helpText „Auf welchen Tag…“, Überschrift „Datum ändern“ fehlt (dateDialogChangeDate ungenutzt), Buttons „Abbrechen“/„OK“; iOS-Look: Kalenderkarte, Antippen eines Tages übernimmt sofort (kein „Weiter“, ohne abweichende Status wird direkt verschoben); Auswahl auf 1.1.(Jahr−5)…1.1.(Jahr+5) begrenzt; Termin wird schon vor dem Picker geladen.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_date_change.dart:93
+- [ ] **mittel** `utilities/attendance-date-dialog` `alert-6ec992cf` [utilities/attendance-date-dialog.ts:121](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-date-dialog.ts#L121) (2. Prüfung: bestätigt)
+  Ionic: Alert „{Typ} anlegen“ + „An welchem Tag findet der Termin statt?“, Datumsfeld (heute, min heute), „Abbrechen“/„Anlegen“ / Flutter: Datepicker mit helpText „{Typ} anlegen – An welchem Tag findet der Termin statt?“, Material-Buttons „Abbrechen“/„Anlegen“, firstDate heute; iOS-Look ohne Buttons – Antippen eines Tages legt den Termin samt Personen sofort an (Bestätigung fehlt).
+  Flutter: lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:223
+- [ ] **mittel** `utilities/instrument-matcher` [src/app/utilities/instrument-matcher.ts:291](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/instrument-matcher.ts#L291)
+  Ionic: Teilstring-Abgleich mit Familien/Begriffen inkl. Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte, russischen Transliterationen (skripka, fleita, truba, valtorna …) und Kürzeln к-б/ф-но/уд, 3. Durchgang als Fallback / Flutter: anderer Algorithmus (ganze Wörter, Konfidenz, lernbare Synonyme, Bild-Erkennung part-detect), diese Begriffe fehlen → Dateien werden anders oder gar nicht automatisch einer Gruppe zugeordnet.
+  Flutter: lib/core/utils/instrument_matcher.dart:40, lib/core/utils/instrument_matcher.dart:48
+- [ ] **mittel** `utilities/spreadsheet-reader` [src/app/utilities/spreadsheet-reader.ts:16](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/spreadsheet-reader.ts#L16)
+  Ionic: SheetJS liest .xlsx, .xls und .csv (Import-Seiten accept='.xlsx,.xls,.csv') / Flutter: Dateiauswahl erlaubt xls, Leser bricht aber mit coreFlutterXlsUnsupported ab.
+  Flutter: lib/core/utils/spreadsheet_reader.dart:43, lib/core/utils/import_file_io.dart:13
+- [ ] **mittel** `utilities/spreadsheet-reader` [src/app/utilities/spreadsheet-reader.ts:16](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/spreadsheet-reader.ts#L16)
+  Ionic: SheetJS liefert den berechneten Wert der Formelzelle / Flutter: cellToDart gibt value.formula zurück (Formeltext statt cachedValue) → importierte Werte falsch, wenn die Tabelle Formeln enthält.
+  Flutter: lib/core/utils/spreadsheet_reader.dart:186
+- [ ] **mittel** `utilities/Utils` `effect-178a8abf` [utilities/Utils.ts:950](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L950) (2. Prüfung: bestätigt)
+  Ionic: 2x-A5-PDF „{Titel}_{Datum}_2x.pdf“ wird gespeichert (Desktop-Web Download, Mobile-Web Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf → Printing.layoutPdf = System-Druckdialog (Speichern nur über Druckdialog/„Als PDF sichern“), Jobname ohne „_2x“.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:111, lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` `effect-576bec88-2` [utilities/Utils.ts:950](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L950) (2. Prüfung: bestätigt)
+  Wie effect-178a8abf: Ionic speichert das 2x-A5-PDF / Flutter öffnet den System-Druckdialog.
+  Flutter: lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` `effect-178a8abf-2` [utilities/Utils.ts:1036](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1036) (2. Prüfung: bestätigt)
+  Ionic: A4-PDF „{Titel}_{Datum}.pdf“ wird gespeichert (Desktop-Web Download, Mobile-Web Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: Printing.layoutPdf = System-Druckdialog.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:111, lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` `effect-576bec88-4` [utilities/Utils.ts:1036](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1036) (2. Prüfung: bestätigt)
+  Wie effect-178a8abf-2: Ionic speichert das A4-PDF / Flutter öffnet den System-Druckdialog.
+  Flutter: lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` `effect-b60c4449` [utilities/Utils.ts:1060](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1060) (2. Prüfung: bestätigt)
+  Ein PDF mit einer Seite je Plan ist vorhanden. Ionic: Datei „…_alle.pdf“ wird gespeichert (Download/Teilen/Dateiansicht) / Flutter: System-Druckdialog.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:145, lib/features/planning/presentation/pages/plan_viewer_page.dart:116, lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` `effect-fad4e9cc` [utilities/Utils.ts:1104](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1104) (2. Prüfung: bestätigt)
+  Ionic: Titel = Plantitel, sonst getPlanningTitle(Typ, Info) („{planning_title} ({Info})“, planning_title, Info, Typname, „Probenplan“); Datei wird gespeichert / Flutter: Titel = Plantitel, sonst typeInfo, sonst „Ablaufplan“ – planning_title und Typname fehlen in PDF-Kopf und Dateiname; Ausgabe über System-Druckdialog.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:115, lib/features/planning/presentation/attendance_plan_viewer.dart:38, lib/core/services/plan_export_service.dart:131
+- [ ] **mittel** `utilities/Utils` [src/app/utilities/Utils.ts:100](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L100)
+  Ionic getModifiedPlayersForList: Gruppenname und Nachname per localeCompare (Ä/Ö/Ü bei A/O/U) / Flutter sortPeopleByGroup: toLowerCase().compareTo (Codepunkt) → 'Özdemir' steht nach 'Zimmer'; betrifft Personenliste (Standardsortierung Gruppe), Mitglieder, Export, Ausgetretene. localeCompareDe existiert (core/utils/people_sort.dart:8), wird hier aber nicht genutzt.
+  Flutter: lib/features/people/people_list_utils.dart:77, lib/features/people/people_list_utils.dart:85, lib/features/people/presentation/pages/people_list_page.dart:397
+- [ ] **mittel** `utilities/Utils` [src/app/utilities/Utils.ts:146](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L146)
+  Ionic: zählt Termine mit Datum vor jetzt + 1 Tag (heutiger Termin immer, morgiger ab 12 Uhr, da Datum auf 12:00 gespeichert) / Flutter playerAttendancePercentagesProvider: .lte('attendance.date', now) → heutiger Termin erst ab 12 Uhr, morgiger nie. Prozentwerte in der Personenliste weichen um Termin-Tage herum ab.
+  Flutter: lib/core/providers/attendance_providers.dart:300
+
+## Flutter besser – Leon entscheidet: 44
+
+- [ ] **niedrig** `services/auth.guard` `logic-377dcf4f` [services/auth.guard.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L1)
+  Flutter besser: Ionic AuthGuard hängt am /tabs-Elternroute und prüft nur beim ersten Eintritt (Reload/Direktaufruf), Default-Zweig erlaubt nur Admin/Verantwortl./Beobachter – z. B. Reload auf /tabs/members als Spieler wird blockiert / Flutter prüft jede Navigation per roleRouteRedirect (AuthGuard + TabsPage-Regeln) und leitet auf die Startseite der Rolle um statt abzubrechen. Einzelrouten: Routing-Batch.
+  Flutter: lib/core/router/app_router.dart:276, lib/core/router/app_router.dart:333, lib/core/router/app_router.dart:395, lib/core/router/app_router.dart:214, lib/core/router/route_access.dart:68
+- [ ] **niedrig** `services/auth/auth.service` `db-1b80db04` [services/auth/auth.service.ts:171](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L171) (2. Prüfung: korrigiert)
+  Flutter besser: gleicher Schreibvorgang auth.updateUser({password}) aus 'Passwort ändern'. Ionic AuthService.changePassword wertet das {error} von supabase-js nicht aus (updateUser wirft nicht) – bei Ablehnung (z. B. gleiches/zu schwaches Passwort) zeigt settings.page trotzdem 'Passwort geändert' / Flutter: gotrue wirft AuthException → Toast 'Fehler beim Ändern des Passworts'. Erstprüfer: ok ohne diesen Unterschied.
+  Flutter: lib/features/profile/presentation/widgets/account_dialogs.dart:75, lib/features/settings/presentation/pages/settings_page.dart:527
+- [ ] **niedrig** `services/church/church.service` `db-e51e3c81` [services/church/church.service.ts:84](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/church/church.service.ts#L84) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic löscht die doppelte Gemeinde immer, auch wenn Personen-Updates fehlschlugen / Flutter löscht nur, wenn alle Personen umgestellt sind und keine Referenz mehr existiert, sonst Fehler 'Zusammenführen fehlgeschlagen'.
+  Flutter: lib/data/repositories/church_repository.dart:117, lib/data/repositories/church_repository.dart:131
+- [ ] **niedrig** `services/db.service` `db-e1bff895` [services/db.service.ts:384](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L384) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic entfernt "<tenant>/<song>/<name>" ohne Präfix "songs/" (Upload liegt unter songs/…, Objekt bleibt im Bucket) / Flutter entfernt "songs/<tenant>/<song>/<storageName|fileName>". Fehler beim Entfernen ignoriert Flutter (Ionic bricht ab).
+  Flutter: lib/core/services/song_file_service.dart:350
+- [ ] **niedrig** `services/db.service` `db-759f867b` [services/db.service.ts:390](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L390) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic schreibt die übrigen files ohne storageName zurück / Flutter lässt die übrigen Einträge unverändert (inkl. storageName); instrument_ids gleich (ohne null/1/Hauptgruppe), Filter id + tenantId.
+  Flutter: lib/core/services/song_file_service.dart:377
+- [ ] **niedrig** `services/db.service` `db-2ff41e23` [services/db.service.ts:1027](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1027) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic legt nach action register den tenantUsers-Eintrag ohne tenantId an (= aktuelle Instanz, falsch bei Übergabe in andere Instanz) / Flutter nutzt die Zielinstanz.
+  Flutter: lib/data/repositories/user_registration_repository.dart:160, lib/data/repositories/user_registration_repository.dart:178
+- [ ] **niedrig** `services/db.service` `db-9d4749fb` [services/db.service.ts:1080](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1080)
+  Flutter besser: Ionic ilike "%email%" (Teilstring, kann fremde Adresse treffen) / Flutter ilike exakt (case-insensitiv).
+  Flutter: lib/data/repositories/user_registration_repository.dart:354
+- [ ] **niedrig** `services/db.service` `toast-642edafe` [services/db.service.ts:1426](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1426)
+  Flutter besser: Ionic zeigt einen allgemeinen Registrierungsfehler / Flutter zeigt je nach Fehler konkrete Meldungen (z. B. schon registriert, schwaches Passwort).
+  Flutter: lib/features/auth/presentation/pages/register_page.dart:230
+- [ ] **niedrig** `services/db.service` `db-d030c88f` [services/db.service.ts:1494](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1494) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic schreibt firstName/lastName/phone/birthday/img/correctBirthday UND additional_fields der aktuellen Instanz in alle player-Zeilen mit appId (überschreibt Zusatzfelder anderer Instanzen) / Flutter: Stammdaten in alle eigenen Zeilen, additional_fields nur aktuelle Instanz; img nicht in diesem Speichern (Bild separat, ebenfalls instanzübergreifend).
+  Flutter: lib/data/repositories/profile_repository.dart:327, lib/data/repositories/profile_repository.dart:364
+- [ ] **niedrig** `services/db.service` `db-244b0807` [services/db.service.ts:2288](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2288) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic schreibt die History der Quellperson (inkl. neuem Eintrag) in die Zielperson / Flutter hängt den Eintrag an deren eigene History; paused/paused_until gleich. Flutter bietet und erlaubt nur Instanzen, in denen der Benutzer Admin/Verantwortlich ist.
+  Flutter: lib/data/repositories/cross_tenant_person_repository.dart:329
+- [ ] **niedrig** `services/db.service` `db-c9fc0740` [services/db.service.ts:2559](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2559) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic entfernt Zugang/appId beim Archivieren nur bei appId UND E-Mail / Flutter bei appId; left, History "Kein Grund angegeben"-Fallback gleich.
+  Flutter: lib/data/repositories/player_repository.dart:603, lib/data/repositories/player_repository.dart:622
+- [ ] **niedrig** `services/db.service` `db-e99cfee5` [services/db.service.ts:4048](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L4048)
+  Flutter besser: Ionic .single() liefert bei mehreren Zeilen (archiviert + aktiv) null, die Termine der Instanz fehlen in der Übersicht / Flutter lädt alle Zeilen (tenantId + appId) und wählt die aktive.
+  Flutter: lib/data/repositories/sign_in_out_repository.dart:597, lib/core/services/cross_tenant_service.dart:63
+- [ ] **niedrig** `services/duty/duty.service` `db-37def78d` [services/duty/duty.service.ts:198](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/duty/duty.service.ts#L198) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic lädt die Dienst-Zählung mit .range(0,9999), PostgREST kappt bei max-rows (1000) → bei vielen Einteilungen zu niedrige Zähler / Flutter paginiert per fetchAllPages und filtert zusätzlich attendance.tenantId.
+  Flutter: lib/data/repositories/duty_repository.dart:312
+- [ ] **niedrig** `services/feedback/feedback.service` `db-d7adec93` [services/feedback/feedback.service.ts:12](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/feedback/feedback.service.ts#L12) (2. Prüfung: bestätigt)
+  Flutter besser: Tabelle questions, gleiche Spalten inkl. tenant_id / Ionic schreibt leere Telefonnummer als '', Flutter als null (send-telegram-on-question zeigt dann '(keine Nummer)' statt leer).
+  Flutter: lib/data/repositories/feedback_repository.dart:30, lib/shared/widgets/sheets/feedback_sheet.dart:90, lib/features/settings/presentation/pages/files_page.dart:708
+- [ ] **niedrig** `services/feedback/feedback.service` `toast-1a78dc16` [services/feedback/feedback.service.ts:22](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/feedback/feedback.service.ts#L22)
+  Flutter besser: im Feedback-Sheet gleicher Toast 'Fehler beim Senden der Frage' (danger) / bei der Datei-Anfrage (Dateien-Seite) zeigt Ionic diesen und den Seiten-Toast übereinander, Flutter nur den Seiten-Toast.
+  Flutter: lib/shared/widgets/sheets/feedback_sheet.dart:103, lib/features/settings/presentation/pages/files_page.dart:714
+- [ ] **niedrig** `services/feedback/feedback.service` `db-ccd0a966` [services/feedback/feedback.service.ts:35](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/feedback/feedback.service.ts#L35) (2. Prüfung: bestätigt)
+  Flutter besser: Tabelle feedback, gleiche Spalten, anonym gleich / leere Telefonnummer als null statt '' (send-telegram-on-feedback: '(keine Nummer)'). Präfix '[Neues Design]' nur im Beta.
+  Flutter: lib/data/repositories/feedback_repository.dart:57, lib/shared/widgets/sheets/feedback_sheet.dart:90
+- [ ] **niedrig** `services/files/files.service` `db-95cedfe5` [services/files/files.service.ts:183](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L183)
+  Flutter besser: Ionic listet mit limit 1000 und hört dort auf (Löschen/Verschieben großer Ordner unvollständig) / Flutter listAllPages blättert alle Einträge durch.
+  Flutter: lib/data/repositories/files_repository.dart:180
+- [ ] **niedrig** `services/history/history.service` `db-a47f9039` [services/history/history.service.ts:46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/history/history.service.ts#L46)
+  Flutter besser: Ionic lädt mit fester range (durch PostgREST max-rows gekappt) / Flutter paginiert alle Einträge.
+  Flutter: lib/data/repositories/song_repository.dart:614
+- [ ] **niedrig** `services/message/message.service` `db-5d66a01e` [services/message/message.service.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/message/message.service.ts#L61)
+  Flutter besser: Ionic .range(0,4999) wird von PostgREST max-rows (1000) gekappt – bei mehr Empfängern fehlen Zeilen / Flutter paginiert alle Empfänger.
+  Flutter: lib/data/repositories/message_repository.dart:77
+- [ ] **niedrig** `services/message/message.service` `db-7eb181ae` [services/message/message.service.ts:84](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/message/message.service.ts#L84)
+  Flutter besser: Ionic .range(0,49999) wird bei 1000 Zeilen gekappt – Gelesen-/Problem-Zähler der Liste zu niedrig / Flutter paginiert.
+  Flutter: lib/data/repositories/message_repository.dart:103
+- [ ] **niedrig** `services/push/push.service` `db-b54d7781` [services/push/push.service.ts:385](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L385) (2. Prüfung: bestätigt)
+  Flutter besser: Token wird vor dem Abmelden gelöscht (zusätzlich nach user_id), FCM-Token auch auf Android gelöscht. Ionic löscht erst im SIGNED_OUT-Handler (app.component.ts:166) – ohne Sitzung greift RLS "Users can manage their own tokens", der Delete ist wirkungslos; auf Android kommen danach weiter Pushes des alten Kontos.
+  Flutter: lib/data/repositories/device_token_repository.dart:106, lib/core/services/push/push_service.dart:446, lib/core/providers/push_providers.dart:87
+- [ ] **niedrig** `services/push/push.service` `db-b597994b` [services/push/push.service.ts:457](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/push/push.service.ts#L457) (2. Prüfung: korrigiert)
+  Flutter besser: upsert mit onConflict user_id,token aktualisiert platform/updated_at. Ionic upsert hat KEIN onConflict (Konflikt nur auf PK id, nicht im Payload) → bei bereits gespeichertem Token schlägt der Insert mit 23505 an UNIQUE(user_id, token) fehl (MIGRATION_push_notifications.sql:13), nur console.error; Zeile bleibt unverändert. Erster Prüfer schrieb fälschlich "wie Ionic".
+  Flutter: lib/data/repositories/device_token_repository.dart:79
+- [ ] **niedrig** `services/sign-in-out/sign-in-out.service` `db-574d5c66` [services/sign-in-out/sign-in-out.service.ts:68](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/sign-in-out/sign-in-out.service.ts#L68) (2. Prüfung: bestätigt)
+  Flutter besser: gleiche Tabelle/Spalten (status, notes, changed_at, Duty-Sync bei Anmelden) nach id, aber changed_by: Ionic schreibt bei Abmeldung (DbService.signout gibt keine userId weiter) null, sonst die User-ID / Flutter immer die aktuelle User-ID. Folge: 'Zuletzt geändert von' zeigt nach Abmeldung in Flutter einen Namen statt 'Status wurde noch nicht geändert'. Duty-Sync bei Abmeldung fehlt in Flutter, ist für Entschuldigt/Verspätung gemeldet aber wirkungslos (dutyStateAfterStatus unverändert).
+  Flutter: lib/data/repositories/sign_in_out_repository.dart:104
+- [ ] **niedrig** `services/song-category/song-category.service` `db-e31017a2` [services/song-category/song-category.service.ts:24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-category/song-category.service.ts#L24) (2. Prüfung: bestätigt)
+  Flutter besser: gleiche Spalten name (getrimmt), index, tenant_id (effektive Werk-Instanz). Ionic (songs.page) index = Anzahl Kategorien → nach Löschen doppelter index möglich / Flutter: höchster index + 1.
+  Flutter: lib/data/repositories/song_repository.dart:460, lib/core/providers/song_providers.dart:597
+- [ ] **niedrig** `services/song/song.service` `db-b99e04f3` [services/song/song.service.ts:105](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song/song.service.ts#L105) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic entfernt '<tenantId>/<songId>/<fileName>' (ohne Präfix 'songs/', Anzeigename statt storageName) – die echten Objekte 'songs/<tenantId>/<songId>/<storageName>' (DbService.uploadSongFile) bleiben liegen / Flutter löscht 'songs/<tenantId>/<songId>/<storageName ?? fileName>' (best effort), Dateiliste frisch aus der DB.
+  Flutter: lib/data/repositories/song_repository.dart:311
+- [ ] **niedrig** `services/viewer-parent/viewer-parent.service` `db-9ac84e15` [services/viewer-parent/viewer-parent.service.ts:14](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/viewer-parent/viewer-parent.service.ts#L14) (2. Prüfung: bestätigt)
+  Flutter besser: gleiche Abfrage viewers mit tenantId, zusätzlich sortiert nach Nachname/Vorname; Ionic zeigt die Beobachter im Modal in DB-Reihenfolge.
+  Flutter: lib/data/repositories/viewer_repository.dart:21
+- [ ] **niedrig** `services/viewer-parent/viewer-parent.service` `db-ca7d5935` [services/viewer-parent/viewer-parent.service.ts:54](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/viewer-parent/viewer-parent.service.ts#L54)
+  Flutter besser: gleiche Abfrage parents/tenantId, zusätzlich alphabetisch nach lastName/firstName sortiert; Ionic ohne Sortierung.
+  Flutter: lib/data/repositories/parent_repository.dart:21
+- [ ] **niedrig** `services/ai.service` [src/app/services/ai.service.ts:15](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/ai.service.ts#L15)
+  Flutter besser: Ionic übernimmt die Antwort von synonyms-gpt unverändert ins Synonym-Feld (bei data=null wird null gesetzt und trotzdem 'Synonyme generiert' gezeigt) / Flutter entfernt Anführungszeichen/Punkte, ersetzt Zeilenumbrüche durch Kommas, verbindet mit ', ' und zeigt bei leerer Antwort den Fehler-Toast.
+  Flutter: lib/core/services/ai_service.dart:23, lib/core/services/ai_service.dart:30
+- [ ] **niedrig** `services/attendance/attendance.service` [src/app/services/attendance/attendance.service.ts:62](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance/attendance.service.ts#L62)
+  Flutter besser: Ionic addPersonAttendances behandelt Fehler 23505 als Erfolg (kein Datensatz eingefügt, trotzdem Erfolgsmeldung) / Flutter wirft den Fehler, Aufrufer zeigen den Fehler-Toast.
+  Flutter: lib/data/repositories/attendance_repository.dart:627
+- [ ] **niedrig** `services/attendance/attendance.service` [src/app/services/attendance/attendance.service.ts:88](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance/attendance.service.ts#L88)
+  Flutter besser: Ionic reassignPersonAttendances liest je Person nur die ersten 1000 Zeilen (PostgREST-Limit) / Flutter liest alle Seiten und schreibt in Blöcken, bricht ab, wenn etwas nicht übertragen wurde.
+  Flutter: lib/data/repositories/player_repository.dart:2281, lib/data/repositories/player_repository.dart:2340
+- [ ] **niedrig** `services/church/church.service` [src/app/services/church/church.service.ts:59](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/church/church.service.ts#L59)
+  Flutter besser: Ionic liest nur die ersten 1000 Personen mit Zusatzfeldern (PostgREST-Limit) und löscht das Duplikat auch bei Teilfehlern – Personen können auf eine gelöschte Gemeinde zeigen / Flutter liest alle referenzierenden Personen seitenweise und löscht nur bei vollständiger Umstellung.
+  Flutter: lib/data/repositories/church_repository.dart:87, lib/data/repositories/church_repository.dart:148
+- [ ] **niedrig** `services/duty/duty.service` [src/app/services/duty/duty.service.ts:165](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/duty/duty.service.ts#L165)
+  Flutter besser: Ionic getUpcomingDutyTermine fängt DB-Fehler ab und liefert still [] (Dienstverteilung wirkt leer) / Flutter wirft den Fehler weiter, die Dienstverteilung zeigt den Fehler-Toast 'Fehler: …'.
+  Flutter: lib/data/repositories/duty_repository.dart:264, lib/features/duty/presentation/pages/duty_distribute_page.dart:146
+- [ ] **niedrig** `services/offline-queue/offline-queue.service` [src/app/services/offline-queue/offline-queue.service.ts:74](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/offline-queue/offline-queue.service.ts#L74)
+  Ionic: spielt alle gespeicherten Einträge mit der aktuellen Sitzung ab und zählt alle (auch die eines anderen, zuvor angemeldeten Benutzers); Speicher Ionic Storage. / Flutter: verarbeitet und zählt nur Einträge des angemeldeten Benutzers, verwirft Alt-Einträge ohne userId, leitet Online-Schreibvorgänge bei vorhandener Warteschlange in denselben Eintrag, meldet Persistenzfehler; Speicher SharedPreferences "offline_writes_v1" (keine Übernahme alter Ionic-Einträge).
+  Flutter: lib/core/services/offline_queue_service.dart:566, lib/core/services/offline_queue_service.dart:605, lib/core/services/offline_queue_service.dart:759
+- [ ] **niedrig** `services/organisation/organisation.service` [src/app/services/organisation/organisation.service.ts:124](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L124)
+  Ionic: verknüpft/trennt Instanzen und lädt Instanzen/Personen/verknüpfte Instanzen ohne eigene Rollen- bzw. Mitgliedsprüfung (nur RLS); doppelte Verknüpfung erzeugt Fehler. / Flutter: prüft vor Verknüpfen/Trennen Rolle 1/5 in tenantUsers, vor dem Laden Mitgliedschaft; doppelte Verknüpfung wird still ignoriert.
+  Flutter: lib/data/repositories/organisation_repository.dart:50, lib/data/repositories/organisation_repository.dart:66, lib/data/repositories/organisation_repository.dart:190, lib/data/repositories/organisation_repository.dart:237
+- [ ] **niedrig** `services/organisation/organisation.service` [src/app/services/organisation/organisation.service.ts:50](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L50)
+  Ionic: lädt Feldwerte für viele Personen in einer Abfrage (bei vielen Personen durch max-rows abgeschnitten). / Flutter: lädt in Blöcken/seitenweise, dadurch vollständig.
+  Flutter: lib/data/repositories/shared_person_fields.dart:66
+- [ ] **niedrig** `services/player-absence/player-absence.service` [src/app/services/player-absence/player-absence.service.ts:32](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player-absence/player-absence.service.ts#L32)
+  Ionic: lädt Abwesenheiten der Instanz in einer Abfrage (max-rows) und löscht nur per id. / Flutter: lädt seitenweise und löscht zusätzlich mit tenant_id-Filter.
+  Flutter: lib/data/repositories/player_absence_repository.dart:50, lib/data/repositories/player_absence_repository.dart:105
+- [ ] **niedrig** `services/player/player.service` [src/app/services/player/player.service.ts:535](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L535)
+  Ionic: lädt alle Personen der Instanz für Zurücksetzen/Umbenennen in einer Abfrage (max-rows). / Flutter: lädt seitenweise.
+  Flutter: lib/data/repositories/extra_fields_repository.dart:73
+- [ ] **niedrig** `utilities/attendance-create` [src/app/utilities/attendance-create.ts:177](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-create.ts#L177)
+  Flutter besser: Ionic changeAttendanceDate schreibt bei Fehler von getPlayerAbsencesForTenant trotzdem (ohne Abwesenheitsprüfung, ggf. Reset entschuldigter Personen) / Flutter lädt die Abwesenheiten vor dem ersten Schreiben und bricht mit Fehler-Toast (dateDialog.loadFailed) ohne Änderung ab.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_date_change.dart:137
+- [ ] **niedrig** `utilities/spreadsheet-reader` [src/app/utilities/spreadsheet-reader.ts:19](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/spreadsheet-reader.ts#L19)
+  Flutter besser: Ionic SheetJS (cellDates) kann "01/02/2020" als MM/DD lesen und Tag/Monat vertauschen / Flutter liest DD/MM korrekt.
+  Flutter: lib/core/utils/spreadsheet_reader.dart:1
+- [ ] **niedrig** `utilities/Utils` [src/app/utilities/Utils.ts:1392](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1392)
+  Flutter besser: Ionic listet alle Nicht-Hauptgruppen ohne Stimme / Flutter lässt für Dirigent/Helfer Gruppen ohne aktive Personen weg (missingGroupsPlayerCountsProvider). Zusätzlich Reihenfolge: Ionic Kategorien nach id aufsteigend, Flutter nach erstem Auftreten.
+  Flutter: lib/features/songs/presentation/utils/song_utils.dart:115, lib/core/providers/player_providers.dart:116
+- [ ] **niedrig** `shared/notification-bell/notification-bell.component` [src/app/shared/notification-bell/notification-bell.component.ts:230](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/notification-bell/notification-bell.component.ts#L230)
+  Flutter besser: Ionic markAll/deleteAll/toggleRead/deleteOne haben kein try/catch – DB-Fehler bleiben unbemerkt / Flutter: _guard zeigt roten Toast „svcSaveFailed“ und lädt die Liste neu
+  Flutter: lib/features/messages/presentation/widgets/notification_bell.dart:198
+- [ ] **niedrig** `services/db.service` [src/app/services/db.service.ts:1083](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1083)
+  Flutter besser: Ionic sucht tenantUsers per ilike "%email%" (Teilstring) – bei Einladung von "max@x.de" kann das Konto von "amax@x.de" verknüpft und informiert werden / Flutter: exakter, case-insensitiver Vergleich (exactIlikePattern).
+  Flutter: lib/data/repositories/user_registration_repository.dart:357
+- [ ] **niedrig** `services/db.service` [src/app/services/db.service.ts:2536](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2536)
+  Flutter besser: Ionic ruft nach removeUserFromTenant noch getAppIdByEmail auf; bleibt der Zugang wegen einer zweiten aktiven Person mit gleicher appId bestehen, wirft das "… bereits in der Instanz als …" → Archivieren bricht ab (Entfernen meldet Fehler nach dem Löschen) / Flutter: kein Nachlauf, Archivieren/Löschen gelingt.
+  Flutter: lib/data/repositories/player_repository.dart:584
+- [ ] **niedrig** `services/files/files.service` [src/app/services/files/files.service.ts:182](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L182)
+  Flutter besser: Ionic listRaw lädt je Ordnerebene nur die ersten 1000 Einträge (limit 1000) – Löschen/Verschieben/Umbenennen großer Ordner erfasst nur einen Teil und meldet trotzdem Erfolg, die Liste zeigt max. 1000 / Flutter listAllPages lädt seitenweise alle Einträge.
+  Flutter: lib/data/repositories/files_repository.dart:180
+
+## Kleinigkeiten (niedrig): 192
+
+- [ ] **niedrig** `services/admin/admin.service` `toast-5b84a64a` [services/admin/admin.service.ts:21](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/admin/admin.service.ts#L21)
+  Ionic: Toast 'Fehler beim Laden der Admins' (danger) beim Laden der Einstellungen / Flutter: kein Toast; im Administratoren-Sheet steht 'Fehler: <Fehlertext>', Badge zeigt 0.
+  Flutter: lib/features/settings/presentation/widgets/settings_admins_sheet.dart:128
+- [ ] **niedrig** `services/attendance-type/attendance-type.service` `toast-853b9ecb` [services/attendance-type/attendance-type.service.ts:20](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L20)
+  Ionic: Toast 'Fehler beim Laden der Anwesenheitstypen' (danger) / Flutter: kein Toast; Typen-Seite zeigt 'Fehler: …' im Inhalt, andere Stellen nutzen den Provider-Fehler still.
+  Flutter: lib/features/settings/presentation/pages/attendance_types_page.dart:73
+- [ ] **niedrig** `services/attendance-type/attendance-type.service` `toast-8252c8d0` [services/attendance-type/attendance-type.service.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L38)
+  Ionic: Toast 'Fehler beim Laden des Anwesenheitstyps' (danger), Seite bleibt leer / Flutter: kein Toast; Seite zeigt 'Typ nicht gefunden' bzw. bleibt im Ladezustand.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:205
+- [ ] **niedrig** `services/attendance-type/attendance-type.service` `toast-fb1159a4` [services/attendance-type/attendance-type.service.ts:69](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance-type/attendance-type.service.ts#L69)
+  Ionic: Service-Toast 'Fehler beim Hinzufügen des Anwesenheitstyps' + Seiten-Toast 'Fehler beim Erstellen des Anwesenheitstyps' / Flutter: nur 'Fehler beim Erstellen des Anwesenheitstyps' – gleiche Bedeutung.
+  Flutter: lib/features/settings/presentation/pages/attendance_types_page.dart:239
+- [ ] **niedrig** `services/auth.guard` `nav-ae1f9a67` [services/auth.guard.ts:23](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth.guard.ts#L23)
+  Ohne Session in beiden Apps /login. Ionic: auch mit Session, aber ohne tenantUser-Rolle → /login (Login-Formular) / Flutter: mit Session und noch nicht geladener Rolle bzw. ohne Instanz → /tenants (Instanzauswahl).
+  Flutter: lib/core/router/app_router.dart:333, lib/core/router/app_router.dart:395
+- [ ] **niedrig** `services/auth/auth.service` `logic-9ee33b52` [services/auth/auth.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L1)
+  Lebendig sind nur Session-Beobachtung/checkToken, login (Teams-Verknüpfung), resendConfirmationEmail und changePassword; register/logout/resetPassword/updatePassword/registerUser/informUserAbout* sind toter Code. Teams-Login zeigt in Flutter die Texte von DbService.login statt AuthService.login – siehe Toast-Items.
+  Flutter: lib/core/config/supabase_config.dart:50, lib/core/config/supabase_config.dart:81, lib/features/auth/data/auth_flow_service.dart:334, lib/features/auth/data/auth_flow_service.dart:76, lib/features/auth/data/auth_flow_service.dart:417, lib/features/auth/presentation/pages/login_page.dart:196, lib/features/profile/presentation/widgets/account_dialogs.dart:75
+- [ ] **niedrig** `services/auth/auth.service` `toast-c252a214` [services/auth/auth.service.ts:69](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L69)
+  Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Ionic: 'Ungültige Anmeldedaten' / Flutter: 'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.' (danach in beiden der Code-Login-Hinweis).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:79, lib/features/auth/presentation/pages/login_page.dart:207
+- [ ] **niedrig** `services/auth/auth.service` `toast-d3b70253` [services/auth/auth.service.ts:84](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L84)
+  Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Ionic: 'Benutzer nicht gefunden' / Flutter: 'Kein Konto mit dieser E-Mail-Adresse gefunden. Bitte registriere dich zuerst.' (danach in beiden der Registrieren-Dialog).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:103, lib/features/auth/presentation/pages/login_page.dart:207
+- [ ] **niedrig** `services/auth/auth.service` `toast-fe3978a5` [services/auth/auth.service.ts:87](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L87) (2. Prüfung: bestätigt)
+  Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login). Notiz des Erstprüfers korrigiert: ssoLink fängt den Fehler ab (catch → false), daher zeigt Ionic NUR den Toast 'Bitte bestätige zuerst deine E-Mail-Adresse.' und KEINEN Erneut-senden-Dialog / Flutter: kein Toast; die LoginFailure wird bis _login durchgereicht und öffnet den Dialog 'E-Mail nicht bestätigt' mit 'Erneut senden' (Flutter besser).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:108, lib/features/auth/presentation/pages/login_page.dart:209
+- [ ] **niedrig** `services/auth/auth.service` `toast-c252a214-2` [services/auth/auth.service.ts:93](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auth/auth.service.ts#L93)
+  Nur im Teams-Verknüpfungsmodus erreichbar (TeamsService.ssoLink → authSvc.login); der normale Login läuft über DbService.login (eigene Unit). Code invalid_credentials: Ionic 'Ungültige Anmeldedaten' / Flutter 'E-Mail oder Passwort falsch. Falls du kein Passwort gesetzt hast, nutze den Anmelde-Code per E-Mail.'
+  Flutter: lib/features/auth/data/auth_flow_service.dart:80, lib/features/auth/presentation/pages/login_page.dart:207
+- [ ] **niedrig** `services/auto-message/auto-message.service` `db-c24634de` [services/auto-message/auto-message.service.ts:183](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auto-message/auto-message.service.ts#L183)
+  Ionic: liefert alle angefragten Termine / Flutter: selektiert zusätzlich archived und blendet archivierte Termine für Rollen außer Admin/Verantwortl. aus – in der Nachrichtendetailansicht fehlen dann Termin-Karte und Antwortmöglichkeit.
+  Flutter: lib/data/repositories/auto_message_repository.dart:244, lib/data/repositories/auto_message_repository.dart:251
+- [ ] **niedrig** `services/church/church.service` `toast-a0b536b6` [services/church/church.service.ts:33](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/church/church.service.ts#L33) (2. Prüfung: bestätigt)
+  Ionic: Service-Toast 'Fehler beim Aktualisieren der Gemeinde' und danach 'Fehler beim Umbenennen' / Flutter: nur 'Fehler beim Umbenennen'.
+  Flutter: lib/features/dashboard/presentation/pages/administration_page.dart:127
+- [ ] **niedrig** `services/church/church.service` `toast-014c9654` [services/church/church.service.ts:49](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/church/church.service.ts#L49) (2. Prüfung: bestätigt)
+  Ionic: 'Fehler beim Erstellen der Kirche' (+ Seiten-Toast mit Rohfehlertext) / Flutter: Administration 'Fehler beim Hinzufügen', Registrierung 'Fehler beim Erstellen der Gemeinde.'
+  Flutter: lib/features/dashboard/presentation/pages/administration_page.dart:109, lib/features/registration/presentation/pages/tenant_registration_page.dart:1136
+- [ ] **niedrig** `services/cross-tenant/cross-tenant.service` `toast-2e9148a8` [services/cross-tenant/cross-tenant.service.ts:202](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/cross-tenant/cross-tenant.service.ts#L202)
+  Ionic: Toast 'Fehler beim Laden der Mandanten' beim Laden der Einstellungen / Flutter: kein Toast; die Instanzliste zeigt eine Fehleransicht.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:429
+- [ ] **niedrig** `services/db.service` `loading-9f4b6f7d` [services/db.service.ts:469](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L469)
+  Ionic: blockierendes Loading-Overlay beim Instanzwechsel / Flutter: kein Overlay, direkter Wechsel.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:161
+- [ ] **niedrig** `services/db.service` `db-c465c027` [services/db.service.ts:486](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L486) (2. Prüfung: korrigiert)
+  Ionic: updateUser({data:{currentTenantId, wantInstanceSelection}}) – nur diese zwei Schlüssel / Flutter: updateCurrentTenantId schickt die komplette lokale user_metadata plus currentTenantId; ist die lokale Kopie veraltet (z.B. showSongsTab_*/dashboardCards_* zwischenzeitlich auf anderem Gerät geändert), werden diese Werte zurückgesetzt. Im Normalfall gleiches Ergebnis.
+  Flutter: lib/core/providers/user_preferences_provider.dart:103
+- [ ] **niedrig** `services/db.service` `toast-6a8168f4` [services/db.service.ts:870](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L870)
+  Ionic: "Fehler beim Entfernen der E-Mail aus der Authentifizierung" / Flutter: "Fehler: Fehler beim Entfernen der E-Mail aus der Authentifizierung".
+  Flutter: lib/data/repositories/viewer_repository.dart:64, lib/features/settings/presentation/pages/viewers_page.dart:204
+- [ ] **niedrig** `services/db.service` `toast-4ca4cded` [services/db.service.ts:880](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L880)
+  Ionic: "Fehler beim Löschen des Beobachters" / Flutter: mit Präfix "Fehler: ".
+  Flutter: lib/data/repositories/viewer_repository.dart:64, lib/features/settings/presentation/pages/viewers_page.dart:204
+- [ ] **niedrig** `services/db.service` `toast-dcde7a3a` [services/db.service.ts:894](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L894)
+  Ionic: "Fehler beim Entfernen der E-Mail aus der Authentifizierung" / Flutter: mit Präfix "Fehler: ".
+  Flutter: lib/data/repositories/parent_repository.dart:81
+- [ ] **niedrig** `services/db.service` `toast-137537bd` [services/db.service.ts:904](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L904) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Löschen des Elternteils" (danger) / Flutter: "Fehler: Fehler beim Löschen des Elternteils" (Präfix aus settingsFlutterErrorDetail).
+  Flutter: lib/data/repositories/parent_repository.dart:110, lib/features/settings/presentation/pages/parents_page.dart:234
+- [ ] **niedrig** `services/db.service` `toast-c8873abd` [services/db.service.ts:1225](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1225) (2. Prüfung: bestätigt)
+  Text gleich ("E-Mail oder Passwort falsch. …"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:76, lib/features/auth/presentation/pages/login_page.dart:207
+- [ ] **niedrig** `services/db.service` `toast-c7143ae5` [services/db.service.ts:1240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1240)
+  Text gleich ("Kein Konto mit dieser E-Mail-Adresse gefunden…"); Ionic 5 s / Flutter 3 s (iOS 4 s).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:76, lib/features/auth/presentation/pages/login_page.dart:114
+- [ ] **niedrig** `services/db.service` `toast-c8873abd-2` [services/db.service.ts:1250](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1250)
+  Text gleich ("E-Mail oder Passwort falsch…"); Ionic 5 s / Flutter 3 s (iOS 4 s).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:76, lib/features/auth/presentation/pages/login_page.dart:114
+- [ ] **niedrig** `services/db.service` `toast-a9895a84` [services/db.service.ts:1307](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1307)
+  Text gleich ("Kein Konto mit dieser E-Mail-Adresse gefunden…"); Ionic 5 s / Flutter 3 s (iOS 4 s).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:152, lib/features/auth/presentation/pages/login_page.dart:262
+- [ ] **niedrig** `services/db.service` `toast-a9895a84-2` [services/db.service.ts:1313](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1313) (2. Prüfung: bestätigt)
+  Text gleich ("Kein Konto mit dieser E-Mail-Adresse gefunden…"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:171, lib/features/auth/presentation/pages/login_page.dart:279
+- [ ] **niedrig** `services/db.service` `toast-a9895a84-3` [services/db.service.ts:1319](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1319) (2. Prüfung: bestätigt)
+  Text gleich; Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:174, lib/features/auth/presentation/pages/login_page.dart:279
+- [ ] **niedrig** `services/db.service` `toast-ca28f528` [services/db.service.ts:1521](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1521) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Aktualisieren der Kirchenzuordnung" / Flutter: allgemeines "Fehler beim Aktualisieren des Profils".
+  Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:258
+- [ ] **niedrig** `services/db.service` `toast-f23fb4a8` [services/db.service.ts:1568](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1568) (2. Prüfung: bestätigt)
+  Betrifft getPlayers(true) (Statistik, Termin, Werk, Gruppe, Dashboard-Karten, Aufgaben …). Ionic: Toast "Fehler beim Laden der Personen" / Flutter: Text dbLoadPeopleFailed nirgends genutzt; Fehler je Seite inline oder gar nicht angezeigt.
+  Flutter: lib/data/repositories/dashboard_repository.dart:36, lib/features/people/presentation/pages/people_list_page.dart:534
+- [ ] **niedrig** `services/db.service` `db-d20467f8` [services/db.service.ts:1579](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1579)
+  Ionic: Kinder des Elternteils sortiert nach Gruppe/Name (wie Personenliste) / Flutter: nur nach lastName sortiert.
+  Flutter: lib/data/repositories/player_repository.dart:252
+- [ ] **niedrig** `services/db.service` `toast-44d19a85` [services/db.service.ts:1593](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1593)
+  Ionic: Toast "Fehler beim Laden der Kinder" / Flutter: Fehleransicht (_ErrorView) im Elternportal.
+  Flutter: lib/features/parents/presentation/pages/parents_portal_page.dart:195
+- [ ] **niedrig** `services/db.service` `toast-f23fb4a8-2` [services/db.service.ts:1616](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1616)
+  Ionic: Toast "Fehler beim Laden der Personen" / Flutter: Fehleranzeige in der Liste.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:534
+- [ ] **niedrig** `services/db.service` `loading-3aae5e12` [services/db.service.ts:1635](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1635)
+  Ionic: blockierendes Loading-Overlay beim Passwort-Zurücksetzen / Flutter: kein Overlay.
+  Flutter: lib/features/auth/presentation/pages/login_page.dart:120
+- [ ] **niedrig** `services/db.service` `toast-3cbc9139` [services/db.service.ts:1644](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1644) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Zurücksetzen des Passworts. Versuche es später erneut" / Flutter: "Fehler beim Zurücksetzen des Passworts" (authResetFailed).
+  Flutter: lib/features/auth/data/auth_flow_service.dart:438, lib/features/auth/presentation/pages/login_page.dart:131
+- [ ] **niedrig** `services/db.service` `toast-6e31e7d2` [services/db.service.ts:1648](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1648)
+  Ionic: "Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt" (4 s) / Flutter: "E-Mail zum Zurücksetzen des Passworts wurde gesendet".
+  Flutter: lib/features/auth/data/auth_flow_service.dart:430, lib/features/auth/presentation/pages/login_page.dart:120
+- [ ] **niedrig** `services/db.service` `db-01e8ff41` [services/db.service.ts:1774](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1774) (2. Prüfung: korrigiert)
+  Wie beim Insert: Ionic pickPersonFields ohne img (vorhandenes Bild der reaktivierten Zeile bleibt) / Flutter _personInsertData schreibt eine Nicht-data:-URL (z.B. übernommenes Bild eines Treffers aus anderer Instanz) mit; sonst left = null, Filter id + tenantId.
+  Flutter: lib/data/repositories/player_repository.dart:387, lib/data/repositories/player_repository.dart:504
+- [ ] **niedrig** `services/db.service` `db-fa2a3d2a` [services/db.service.ts:1815](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1815) (2. Prüfung: bestätigt)
+  Ionic: insert ohne img (pickPersonFields, übernommenes Bild eines Treffers geht verloren; data:-Bild separat hochgeladen) / Flutter: schreibt Nicht-data:-URL beim Insert mit; data:-Bild separat wie Ionic.
+  Flutter: lib/data/repositories/player_repository.dart:504
+- [ ] **niedrig** `services/db.service` `toast-11486c7a` [services/db.service.ts:3309](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3309)
+  Ionic: "Fehler beim Setzen des Favoriten, bitte versuche es später erneut." / Flutter: "Fehler beim Speichern".
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:254
+- [ ] **niedrig** `services/db.service` `toast-74190cc0` [services/db.service.ts:3323](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3323) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Erstellen der Instanz, bitte versuche es später erneut." (plus Seiten-Toast mit Fehler) / Flutter: nur "Fehler beim Erstellen der Instanz: {Fehler}".
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598
+- [ ] **niedrig** `services/db.service` `toast-adc1be2e` [services/db.service.ts:3348](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3348)
+  Ionic: "Fehler beim Erstellen des Benutzers, bitte versuche es später erneut." / Flutter: einheitlich "Fehler beim Erstellen der Instanz: {Fehler}".
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598
+- [ ] **niedrig** `services/db.service` `toast-1fe396ca` [services/db.service.ts:3370](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3370)
+  Ionic: "Fehler beim Hinzufügen der Standard Anwesenheitstypen" / Flutter: einheitlich "Fehler beim Erstellen der Instanz: {Fehler}".
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598
+- [ ] **niedrig** `services/db.service` `toast-70dfd437` [services/db.service.ts:3438](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3438) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Laden der Gruppenteilnehmer" / Flutter: linkedTenantIdsProvider verschluckt den Fehler (leere Liste), kein Toast.
+- [ ] **niedrig** `services/db.service` `toast-5ffe4e58` [services/db.service.ts:3459](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3459) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Laden der Mandanten" / Flutter: Fehler im Pausieren-Folgeschritt still abgefangen (pause_person_sheet.dart).
+- [ ] **niedrig** `services/duty/duty.service` `toast-14e51b33` [services/duty/duty.service.ts:231](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/duty/duty.service.ts#L231)
+  Ionic: Toast 'Fehler beim Laden der Verfügbarkeit' (danger) und leere Liste / Flutter: kein Toast, die Verfügbarkeits-Seite zeigt inline 'Fehler: {Fehler}'.
+  Flutter: lib/features/duty/presentation/pages/unavailability_page.dart:233
+- [ ] **niedrig** `services/group-category/group-category.service` `toast-e1869ba2` [services/group-category/group-category.service.ts:33](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L33)
+  Ionic: Toast 'Fehler beim Laden der Kategorien' (danger) überall / Flutter: im Kategorien-Sheet inline 'Fehler: {Fehler}' mit Erneut-Button, an anderen Stellen still.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:144
+- [ ] **niedrig** `services/group-category/group-category.service` `toast-ec60df9e` [services/group-category/group-category.service.ts:84](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group-category/group-category.service.ts#L84) (2. Prüfung: bestätigt)
+  Ionic: Service-Toast 'Fehler beim Aktualisieren der Kategoriereihenfolge' plus Seiten-Toast 'Fehler beim Speichern der Reihenfolge' / Flutter: nur 'Fehler beim Speichern der Reihenfolge'.
+  Flutter: lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:62
+- [ ] **niedrig** `services/group/group.service` `toast-0fbc7e49` [services/group/group.service.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group/group.service.ts#L61)
+  Ionic: 'Es kann nur eine Hauptgruppe existieren' / Flutter: Repository wirft svcOnlyOneMainGroup, die Instrumente-Seite zeigt aber immer 'Fehler beim Speichern'. Kaum erreichbar, da der Bearbeiten-Dialog maingroup nicht ändert.
+  Flutter: lib/data/repositories/group_repository.dart:143, lib/features/instruments/presentation/pages/instruments_list_page.dart:477
+- [ ] **niedrig** `services/group/group.service` `toast-eff6b54e` [services/group/group.service.ts:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/group/group.service.ts#L63) (2. Prüfung: bestätigt)
+  Ionic: 'Fehler beim updaten des Instruments' / Flutter: 'Fehler beim Speichern'.
+  Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:477
+- [ ] **niedrig** `services/history/history.service` `toast-2c4284b3` [services/history/history.service.ts:74](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/history/history.service.ts#L74)
+  Ionic: 'Fehler beim Updaten des Eintrags' / Flutter: 'Fehler beim Speichern: {Fehler}'.
+  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:2102
+- [ ] **niedrig** `services/notification/notification.service` `toast-29a202cf` [services/notification/notification.service.ts:62](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/notification/notification.service.ts#L62)
+  Ionic: 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.' / Flutter: 'Fehler beim Aktualisieren der Konfiguration' (ohne Hinweis, es später erneut zu versuchen); Schalter wird zurückgesetzt.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:112
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-d74063e5` [services/organisation/organisation.service.ts:21](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L21)
+  Ionic: "Fehler beim Speichern der Organisations-Zusatzfelder" / Flutter: "Fehler beim Speichern" (rot).
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:116
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-748ceab8` [services/organisation/organisation.service.ts:36](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L36) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Laden der gemeinsamen Zusatzfelder" (rot) beim Öffnen der Personendetails (person.page.ts:168). / Flutter: _loadSharedFieldValues fängt den Fehler still ab (person_detail_page.dart:333), es werden die Instanzwerte gezeigt.
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-3af4a04b` [services/organisation/organisation.service.ts:57](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L57)
+  Ionic: "Fehler beim Laden der gemeinsamen Zusatzfelder" (rot). / Flutter: Personenliste und Statistik fangen still ab (kein Toast); der Export zeigt seinen eigenen Fehler.
+  Flutter: lib/core/providers/profile_providers.dart:95, lib/core/providers/statistics_providers.dart:189
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-81a862a6` [services/organisation/organisation.service.ts:89](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L89)
+  Ionic: "Fehler beim Speichern der gemeinsamen Zusatzfelder". / Flutter: Fehler des Aufrufers: Personendetail "Fehler beim aktualisieren des Spielers: …", Mehrfachbearbeitung "Fehler beim Speichern", eigenes Profil "Fehler beim Aktualisieren des Profils".
+  Flutter: lib/features/people/presentation/pages/person_detail_page.dart:730, lib/features/profile/presentation/widgets/master_data_sheet.dart:258
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-46c2798a` [services/organisation/organisation.service.ts:103](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L103)
+  Ionic: "Fehler beim Löschen der gemeinsamen Zusatzfeldwerte". / Flutter: "Fehler beim Speichern" (rot).
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:116
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-7072cf99` [services/organisation/organisation.service.ts:145](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L145)
+  Ionic: "Fehler beim Entfernen der Organisation". / Flutter: "Fehler beim Trennen" (rot).
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:59
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-7072cf99-2` [services/organisation/organisation.service.ts:156](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L156)
+  Wie toast-7072cf99: Flutter "Fehler beim Trennen".
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:59
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-68cfa05e` [services/organisation/organisation.service.ts:179](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L179) (2. Prüfung: korrigiert)
+  Ionic: Toast "Fehler beim Laden der Organisation" (rot) bei jedem Laden (Instanzwechsel setTenant, Stück, Person). / Flutter: kein Toast; nur die Organisations-Seiten zeigen im Inhalt "Fehler: <Meldung>", sonst still (valueOrNull). Erster Prüfer: "missing" – es gibt aber die Inline-Meldung, daher diff (wie toast-8e502223).
+  Flutter: lib/core/providers/organisation_providers.dart:11, lib/features/organisation/presentation/pages/org_settings_page.dart:143
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-db3d69ea` [services/organisation/organisation.service.ts:193](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L193)
+  Ionic: "Fehler beim Laden der Organisationen" (rot). / Flutter: Personen verknüpfen zeigt "Fehler beim Laden: …", Statistik blendet den Org-Abschnitt still aus.
+  Flutter: lib/features/settings/presentation/pages/link_persons_page.dart:121, lib/features/statistics/presentation/pages/statistics_page.dart:1300
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-c69e2a47` [services/organisation/organisation.service.ts:211](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L211) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Personen". / Flutter: Personen verknüpfen "Fehler beim Laden: <Meldung>"; Statistik (Organisation) still.
+  Flutter: lib/features/settings/presentation/pages/link_persons_page.dart:121, lib/features/statistics/presentation/pages/statistics_page.dart:1300
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-f9193a09` [services/organisation/organisation.service.ts:226](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L226) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Laden der Mandanten", es öffnet sich kein Dialog. / Flutter: Fehler wird zu leerer Liste, danach öffnet sich direkt "Organisation erstellen".
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-dfc90bbf` [services/organisation/organisation.service.ts:236](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L236)
+  Ionic: "Fehler beim Laden der Organisationen". / Flutter: wie toast-f9193a09 kein Toast, Dialog "Organisation erstellen" öffnet direkt.
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-d0763e5e` [services/organisation/organisation.service.ts:259](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L259) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Mandanten" (rot). / Flutter: linkedTenantsProvider-Aufrufer nutzen valueOrNull, kein Hinweis (song_detail_page.dart:848, org_settings_page.dart:131, handover_page.dart:100, person_detail_page.dart:1361).
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-8e502223` [services/organisation/organisation.service.ts:289](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L289) (2. Prüfung: bestätigt)
+  Ionic: Toast "Fehler beim Laden der Organisationspläne". / Flutter: Fehlermeldung im Seiteninhalt "Fehler: <Meldung>".
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:264
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-8e502223-2` [services/organisation/organisation.service.ts:310](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L310) (2. Prüfung: bestätigt)
+  Wie toast-8e502223: Flutter zeigt "Fehler: <Meldung>" im Inhalt statt Toast.
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:264
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-1f659229` [services/organisation/organisation.service.ts:328](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L328)
+  Ionic: "Fehler beim Erstellen des öffentlichen Links". / Flutter: "Fehler beim Erstellen des Links".
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:141
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-c089dd9d` [services/organisation/organisation.service.ts:342](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L342) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Widerrufen des öffentlichen Links" (rot). / Flutter: bei Fehler kein Feedback (org_plans_page.dart:133-134 zeigt nur bei Erfolg einen Toast).
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-83e4423b` [services/organisation/organisation.service.ts:356](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L356)
+  Ionic: "Fehler beim Speichern der Planvorlagen". / Flutter: "Fehler beim Speichern".
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:46
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-fed350fd` [services/organisation/organisation.service.ts:372](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L372)
+  Ionic: "Fehler beim Speichern der Standardfelder". / Flutter: "Fehler beim Speichern".
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:39
+- [ ] **niedrig** `services/organisation/organisation.service` `toast-f4cd350d` [services/organisation/organisation.service.ts:388](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L388)
+  Ionic: "Fehler beim Umbenennen der Organisation". / Flutter: "Fehler beim Speichern".
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:44
+- [ ] **niedrig** `services/player-absence/player-absence.service` `toast-88276f2b` [services/player-absence/player-absence.service.ts:24](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player-absence/player-absence.service.ts#L24) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Abwesenheiten" (rot). / Flutter: Aufrufer nutzen valueOrNull, kein Feedback (planned_absences.dart:332, self_service_absences.dart:170).
+- [ ] **niedrig** `services/player-absence/player-absence.service` `toast-41ab2170` [services/player-absence/player-absence.service.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player-absence/player-absence.service.ts#L38) (2. Prüfung: korrigiert)
+  Ionic: Service-Toast "Fehler beim Laden der Abwesenheiten" bei jedem Aufrufer (Termin anlegen, Datum ändern, Startseiten-Karte), auch wenn der Aufrufer weitermacht. / Flutter: Termin anlegen still; Datum ändern zeigt "Termin konnte nicht geladen werden" und bricht ab (Ionic attendance-create.ts:178 macht ohne Abwesenheiten weiter); Startseiten-Karte "Fehler beim Laden: <Meldung>". Erster Prüfer: "missing" mit nur einem Aufrufer.
+  Flutter: lib/features/attendance/presentation/attendance_create_writes.dart:131, lib/features/attendance/presentation/widgets/attendance_date_change.dart:142, lib/features/dashboard/presentation/widgets/people_cards.dart:149
+- [ ] **niedrig** `services/player-absence/player-absence.service` `toast-fd2fd528` [services/player-absence/player-absence.service.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player-absence/player-absence.service.ts#L53)
+  Ionic: "Fehler beim Speichern der Abwesenheit". / Flutter: "Abwesenheit konnte nicht gespeichert werden" (gleiche Bedeutung).
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:238, lib/features/self_service/presentation/widgets/self_service_absences.dart:74
+- [ ] **niedrig** `services/player-absence/player-absence.service` `toast-a5d07cbf` [services/player-absence/player-absence.service.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player-absence/player-absence.service.ts#L67)
+  Ionic: "Fehler beim Löschen der Abwesenheit". / Flutter: "Abwesenheit konnte nicht gelöscht werden" (gleiche Bedeutung).
+  Flutter: lib/features/people/presentation/widgets/planned_absences.dart:272
+- [ ] **niedrig** `services/player/player.service` `toast-a7a067dd` [services/player/player.service.ts:30](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L30)
+  Ionic: Toast "Fehler beim Laden des Benutzers" (rot). / Flutter: Fehleransicht "Fehler: <Meldung>" auf der Seite.
+  Flutter: lib/features/self_service/presentation/pages/signout_page.dart:245
+- [ ] **niedrig** `services/player/player.service` `toast-a7a067dd-2` [services/player/player.service.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L38)
+  Ionic: Toast "Fehler beim Laden des Benutzers" wenn keine Person gefunden. / Flutter: Text "Für dein Konto wurde in dieser Instanz keine Person gefunden." auf der Seite.
+  Flutter: lib/features/self_service/presentation/pages/signout_page.dart:281
+- [ ] **niedrig** `services/player/player.service` `toast-470a239e` [services/player/player.service.ts:138](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L138)
+  Ionic: Toast "Fehler beim Laden der Gruppenmitglieder". / Flutter: gleicher Text als Fehleransicht auf der Seite statt Toast.
+  Flutter: lib/features/voice_leader/presentation/pages/voice_leader_page.dart:56
+- [ ] **niedrig** `services/player/player.service` `toast-ecfc07c3` [services/player/player.service.ts:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L157) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Personen" (rot) in Einstellungen/Seitenmenü. / Flutter: realtimePendingPlayersProvider mit valueOrNull, kein Feedback (settings_page.dart:85).
+- [ ] **niedrig** `services/player/player.service` `toast-f8ff8801` [services/player/player.service.ts:229](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L229) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Personen" (rot), Seite fängt danach still ab (person.page.ts:880). / Flutter: Fehler ergibt leere Liste ohne Feedback (duplicate_candidates_card.dart:27).
+- [ ] **niedrig** `services/player/player.service` `toast-243104ec` [services/player/player.service.ts:541](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L541)
+  Ionic: "Fehler beim Laden der Personen". / Flutter: "Fehler beim updaten der Zusatzfelder".
+  Flutter: lib/features/settings/presentation/pages/extra_fields_page.dart:291
+- [ ] **niedrig** `services/player/player.service` `toast-7d6f3e4f` [services/player/player.service.ts:576](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L576) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Laden der Personen". / Flutter: "Fehler beim updaten der Zusatzfelder".
+  Flutter: lib/features/settings/presentation/pages/extra_fields_page.dart:259
+- [ ] **niedrig** `services/print/print.service` `loading-091f77ad` [services/print/print.service.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L38)
+  Ionic: blockierendes Lade-Overlay während des Zusammenführens. / Flutter: kein Overlay, nur ein interner _printing-Schalter gegen Doppelstart.
+  Flutter: lib/features/songs/data/song_print_service.dart:61
+- [ ] **niedrig** `services/print/print.service` `toast-c959cefd` [services/print/print.service.ts:45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L45) (2. Prüfung: bestätigt)
+  Ionic: "Fehler beim Zusammenführen der Noten." (rot). / Flutter: Fehler aus doc.save/printPdf (Web: rethrow) werden in den Aufrufern nicht abgefangen, kein Toast.
+- [ ] **niedrig** `services/print/print.service` `toast-b351a56a` [services/print/print.service.ts:52](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L52) (2. Prüfung: bestätigt)
+  Ionic: "Keine druckbaren Noten (PDF/Bild) gefunden." (Warnung) an allen Stellen. / Flutter: gleicher Text in Aktuelle Stücke und Gruppenmappe; Stückdetail "Datei konnte nicht gedruckt werden"; Selbstbedienung "Keine druckbaren Noten gefunden."; Gruppen-PDF-Druck (group_pdf_print.dart:55) ohne Hinweis.
+  Flutter: lib/features/songs/presentation/widgets/current_songs_sheet.dart:64, lib/features/songs/presentation/widgets/group_files_sheet.dart:53, lib/features/songs/presentation/pages/song_detail_page.dart:1131
+- [ ] **niedrig** `services/print/print.service` `toast-9183dbad` [services/print/print.service.ts:56](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L56)
+  Ionic: "${skipped} Datei(en) konnten nicht eingebunden werden." überall. / Flutter: gleicher Text in Aktuelle Stücke, Gruppendateien, Kommende Stücke; Gruppen-PDF-Druck zeigt stattdessen eine eigene Zusammenfassung.
+  Flutter: lib/features/songs/presentation/widgets/current_songs_sheet.dart:66, lib/features/songs/presentation/widgets/group_files_sheet.dart:55
+- [ ] **niedrig** `services/print/print.service` `effect-e0430543-2` [services/print/print.service.ts:89](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L89)
+  Ionic (mobiles Web): Teilen-Dialog bzw. Download der PDF. / Flutter (printing Web, pub-cache printing-5.15.1 printing_web.dart:165-240): bei User-Agent "Mobile" wird die PDF in neuem Tab geöffnet; iPadOS mit Desktop-UA druckt über iframe.
+  Flutter: lib/core/services/native/native_file_service.dart:183
+- [ ] **niedrig** `services/print/print.service` `effect-e0430543-3` [services/print/print.service.ts:99](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L99)
+  Ionic: bei Druckfehler wird die PDF heruntergeladen. / Flutter: printing öffnet bei iframe-Fehler die PDF in neuem Tab statt Download.
+  Flutter: lib/core/services/native/native_file_service.dart:183
+- [ ] **niedrig** `services/print/print.service` `toast-b415683d` [services/print/print.service.ts:100](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L100) (2. Prüfung: bestätigt)
+  Ionic: Desktop-Browser-Druck fehlgeschlagen → PDF-Download + Hinweis "PDF heruntergeladen - bitte manuell drucken" (Warnung). / Flutter (printing 5.15.1 Web): öffnet die PDF ohne Hinweis in neuem Tab.
+- [ ] **niedrig** `services/register.guard` `nav-28791f97` [services/register.guard.ts:22](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/register.guard.ts#L22)
+  Ionic: nicht angemeldet auf /register → Weiterleitung auf /login. / Flutter: /register ist die Konto-Registrierung (RegisterPage) und wird ohne Login direkt angezeigt, keine Weiterleitung auf /login. Nur bei direktem Aufruf der URL.
+  Flutter: lib/core/router/app_router.dart:289, lib/core/router/app_router.dart:334, lib/core/router/app_router.dart:450
+- [ ] **niedrig** `services/role-permission/role-permission.service` `toast-df99859f` [services/role-permission/role-permission.service.ts:19](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/role-permission/role-permission.service.ts#L19)
+  Ionic: Toast "Fehler beim Laden der Rollenberechtigungen" (rot) beim Laden der Instanz. / Flutter: kein Toast; nur auf der Seite Rollenberechtigungen Fehlertext "Fehler beim Laden der Rollenberechtigungen" + Fehlermeldung, sonst still (Helfer-Rechte verweigert).
+  Flutter: lib/features/settings/presentation/pages/role_permissions_page.dart:173
+- [ ] **niedrig** `services/role-permission/role-permission.service` `toast-3496ca2e` [services/role-permission/role-permission.service.ts:35](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/role-permission/role-permission.service.ts#L35)
+  Ionic: Service-Toast "Fehler beim Aktualisieren der Rollenberechtigung", danach Seiten-Toast "Fehler beim Speichern der Rollenberechtigungen". / Flutter: nur "Fehler beim Speichern der Rollenberechtigungen" (rot).
+  Flutter: lib/features/settings/presentation/pages/role_permissions_page.dart:91
+- [ ] **niedrig** `services/shift/shift.service` `toast-3dcb713a` [services/shift/shift.service.ts:22](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L22) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Laden der Schichten' (danger) / Flutter: kein Toast, Liste zeigt Inline-Text 'Fehler: <Fehlertext>'.
+  Flutter: lib/features/shifts/presentation/pages/shifts_list_page.dart:53
+- [ ] **niedrig** `services/shift/shift.service` `toast-7ef37344` [services/shift/shift.service.ts:40](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L40)
+  Ionic: Toast 'Fehler beim Überprüfen der Schichtverwendung' (danger) / Flutter: Fehler des Usage-Providers wird stumm ignoriert (SizedBox.shrink, Anzahl 0).
+  Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:112
+- [ ] **niedrig** `services/shift/shift.service` `toast-cb1e402a` [services/shift/shift.service.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L61)
+  Ionic: Toast 'Fehler beim Hinzufügen der Schicht' (danger) / Flutter: 'Fehler beim Erstellen: <Fehlertext>' bzw. beim Kopieren 'Fehler beim Kopieren: <Fehlertext>'.
+  Flutter: lib/features/shifts/presentation/pages/shifts_list_page.dart:206, lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434
+- [ ] **niedrig** `services/shift/shift.service` `toast-8a42eed5` [services/shift/shift.service.ts:75](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L75)
+  Ionic: Toast 'Fehler beim Aktualisieren der Schicht' (danger) / Flutter: 'Fehler: <Fehlertext>'.
+  Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:462
+- [ ] **niedrig** `services/shift/shift.service` `toast-2cfee317` [services/shift/shift.service.ts:87](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L87)
+  Ionic: Toast 'Fehler beim Löschen der Schicht' / Flutter: 'Fehler beim Löschen des Schichtplans' – gleiche Bedeutung.
+  Flutter: lib/features/shifts/presentation/pages/shift_detail_page.dart:503
+- [ ] **niedrig** `services/shift/shift.service` `db-de95fd8a` [services/shift/shift.service.ts:93](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L93)
+  Ionic: liest Personen mit dieser Schicht nur mit appId (not appId is null); davon hängt ab, ob die Zuweisungs-Abfrage kommt und welche Anzahl genannt wird / Flutter: Anzahl über getShiftUsageCount ohne appId-Filter (zählt auch Personen ohne Konto), der Kopiervorgang liest dann tenantId+shift_id und filtert appId erst in Dart. Schalter 'Zuweisungen kopieren' und Personenanzahl können daher abweichen.
+  Flutter: lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43, lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:334, lib/data/repositories/shift_repository.dart:141
+- [ ] **niedrig** `services/shift/shift.service` `toast-b0942088` [services/shift/shift.service.ts:101](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L101)
+  Ionic: Toast 'Fehler beim Laden der Personen mit Schicht' (danger) / Flutter: Fehler beim Laden der Anzahl wird nicht gemeldet (unbehandelter Future-Fehler, Anzahl bleibt 0).
+  Flutter: lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43
+- [ ] **niedrig** `services/shift/shift.service` `toast-574abc71` [services/shift/shift.service.ts:127](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L127)
+  Ionic: Toast 'Fehler beim Suchen der Personen in Ziel-Instanz' (danger, danach Seiten-Toast) / Flutter: nur allgemeiner Toast 'Fehler beim Kopieren: <Fehlertext>'.
+  Flutter: lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:434
+- [ ] **niedrig** `services/sign-in-out/sign-in-out.service` `logic-6ffa52b8` [services/sign-in-out/sign-in-out.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/sign-in-out/sign-in-out.service.ts#L1)
+  signout/signin/updateAttendanceNote gleich: Status Entschuldigt bzw. Verspätung gemeldet (lateExcused) mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update; danach quick-processor mit signout/lateSignout/noteUpdate bzw. Vorstatus; Pflicht-Status-Sync wie syncDutyWithStatus (Flutter im selben Update). Flutter prüft zusätzlich die Mandanten-/Eigentümerschaft der IDs. Einziger Unterschied: changed_by bei der Abmeldung (siehe db-Item).
+  Flutter: lib/data/repositories/sign_in_out_repository.dart:164, lib/data/repositories/sign_in_out_repository.dart:201, lib/data/repositories/sign_in_out_repository.dart:245, lib/data/repositories/sign_in_out_repository.dart:104, lib/data/repositories/sign_in_out_repository.dart:141
+- [ ] **niedrig** `services/song-actions/song-actions.service` `toast-448502f0` [services/song-actions/song-actions.service.ts:62](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L62)
+  Ionic: Toast 'Für dein Instrument sind leider keine Noten verfügbar.' (danger, 4 s) nur wenn eine instrumentId gesetzt ist / Flutter: zeigt den Toast auch ohne Instrument (playerInstrumentId null, kein Chor), z.B. im Ablaufplan ohne eigene Person.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:111
+- [ ] **niedrig** `services/song-actions/song-actions.service` `effect-a62dbd79` [services/song-actions/song-actions.service.ts:96](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L96)
+  Ionic: 'Noten herunterladen' fehlt bei isPlatform('ios') – das gilt auch für iPhone/iPad im Browser/PWA; Download lädt die Datei aus dem Storage und gibt sie im mobilen Web an das Teilen-Menü (Web Share), am Desktop als Anchor-Download, nativ Cache + FileViewer / Flutter: Button im Web immer sichtbar (auch iOS-Web), PWA lädt per Anchor-Download (kein Teilen-Menü), Browser-Tab öffnet URL mit ?download=, nativ Cache + Systemviewer.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:124, lib/features/self_service/presentation/widgets/song_options_sheet.dart:74
+- [ ] **niedrig** `services/song-actions/song-actions.service` `effect-a62dbd79-2` [services/song-actions/song-actions.service.ts:133](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L133)
+  Wie Einzeldatei-Download: Ionic blendet 'Noten herunterladen' auch auf iOS-Web aus und nutzt im mobilen Web das Teilen-Menü / Flutter zeigt den Button im Web immer, Anchor-Download bzw. ?download=-URL ohne Teilen-Menü.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:146, lib/features/self_service/presentation/widgets/song_options_sheet.dart:74
+- [ ] **niedrig** `services/song-actions/song-actions.service` `actionsheet-9e3330e3` [services/song-actions/song-actions.service.ts:144](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L144)
+  Header 'Noten für {song} auswählen', Dateinamen + 'Abbrechen' (destruktiv) gleich. Ionic: {song} = '<number>. <name>' ohne Präfix, Sheet auf iOS-Web nie erreichbar / Flutter: mit Präfix (fullNumber), im Web auch auf iOS.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:149, lib/features/self_service/presentation/widgets/song_options_sheet.dart:54
+- [ ] **niedrig** `services/song-actions/song-actions.service` `actionsheet-9e3330e3-2` [services/song-actions/song-actions.service.ts:173](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L173)
+  Header 'Noten für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic '<number>. <name>' ohne Präfix / Flutter mit Präfix (z.B. 'A12. Name').
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:156
+- [ ] **niedrig** `services/song-actions/song-actions.service` `actionsheet-ee67de06` [services/song-actions/song-actions.service.ts:201](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L201)
+  Header 'Noten für {song} drucken', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix. Druck über SongPrintService statt PrintService.printSongFile (eigene Unit).
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:160, lib/features/self_service/presentation/widgets/song_options_sheet.dart:126
+- [ ] **niedrig** `services/song-actions/song-actions.service` `effect-2999b087` [services/song-actions/song-actions.service.ts:224](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L224)
+  Aufnahme herunterladen auf allen Plattformen (gleich). Ionic: mobiles Web → Teilen-Menü (Web Share), Desktop → Anchor-Download / Flutter: PWA Anchor-Download, Browser-Tab öffnet ?download=-URL, kein Teilen-Menü.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:172, lib/features/self_service/presentation/widgets/song_options_sheet.dart:74
+- [ ] **niedrig** `services/song-actions/song-actions.service` `actionsheet-f2b52b99` [services/song-actions/song-actions.service.ts:258](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L258)
+  Header 'Liedtext für {song} auswählen', Dateinamen, 'Abbrechen' gleich; {song} Ionic ohne Präfix / Flutter mit Präfix.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:182
+- [ ] **niedrig** `services/song-actions/song-actions.service` `actionsheet-6742ebe7` [services/song-actions/song-actions.service.ts:282](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L282)
+  Buttons und Reihenfolge gleich (Notenlink öffnen, Noten herunterladen, Noten anzeigen, Noten drucken, Aufnahme anhören, Aufnahme herunterladen, Liedtext ansehen, Abbrechen). Header Ionic '<number>. <name>' / Flutter '<prefix><number>. <name>' (ohne Nummer nur Name).
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:191, lib/features/self_service/presentation/widgets/song_options_sheet.dart:135
+- [ ] **niedrig** `services/song-category/song-category.service` `logic-524df545` [services/song-category/song-category.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-category/song-category.service.ts#L1)
+  Laden (effektive Werk-Instanz bzw. geteilte Instanz, nach index), Anlegen, Umbenennen/Umsortieren, Löschen ohne Neunummerierung portiert; Flutter filtert Update/Delete zusätzlich nach tenant_id. Einziger Unterschied: index beim Anlegen (siehe db-Item, Flutter besser).
+  Flutter: lib/data/repositories/song_repository.dart:442, lib/data/repositories/song_repository.dart:460, lib/data/repositories/song_repository.dart:484, lib/data/repositories/song_repository.dart:500, lib/core/providers/song_providers.dart:590, lib/data/repositories/public_song_repository.dart:103
+- [ ] **niedrig** `services/song/song.service` `logic-77d06c32` [services/song/song.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song/song.service.ts#L1)
+  Lebendige Methoden portiert: getSongs (Seiten à 1000, Offline-Cache), getSong (Dateien nach instrumentId sortiert), addSong, editSong, removeSong, ensureSongCategories, searchOrgSongs, copyOrgSong (inkl. Rückbau bei Fehler). Abweichung nur beim Löschen der Storage-Dateien (siehe db-Item). uploadSongFile, downloadSongFile, deleteSongFile, copySongToTenant, uploadSongFileToTenant sowie add/update/removeSongCategory sind in SongService toter Code (DbService/SongCategoryService haben eigene Implementierungen). Flutter prüft bei Org-Kopien zusätzlich Admin/Verantwortlich-Rolle in der Ziel-Bibliothek (wie die Ionic-Zielliste).
+  Flutter: lib/data/repositories/song_repository.dart:129, lib/data/repositories/song_repository.dart:226, lib/data/repositories/song_repository.dart:244, lib/data/repositories/song_repository.dart:283, lib/data/repositories/song_repository.dart:311, lib/data/repositories/org_song_repository.dart:35, lib/data/repositories/org_song_repository.dart:127, lib/data/repositories/org_song_repository.dart:162
+- [ ] **niedrig** `services/super-developer.guard` `logic-85893776` [services/super-developer.guard.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/super-developer.guard.ts#L1) (2. Prüfung: bestätigt)
+  Gleiche Prüfung (E-Mail = developer@attendix.de) für /settings/administration und /dashboard. Ionic: sonst Umleitung nach /tabs/player / Flutter: nach /settings.
+  Flutter: lib/core/router/app_router.dart:1240, lib/core/router/app_router.dart:1279, lib/core/providers/dashboard_providers.dart:31
+- [ ] **niedrig** `services/super-developer.guard` `nav-5ef82b68` [services/super-developer.guard.ts:20](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/super-developer.guard.ts#L20)
+  Ionic: Nicht-Super-Developer werden nach '/tabs/player' (Personen) umgeleitet / Flutter: nach '/settings'. Nur bei direktem Aufruf der URL sichtbar.
+  Flutter: lib/core/router/app_router.dart:1243, lib/core/router/app_router.dart:1280
+- [ ] **niedrig** `services/telegram/telegram.service` `logic-be595d17` [services/telegram/telegram.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L1)
+  encodeFilename/cleanName (NFD, Sonderzeichen → '-', '_<100-999>'+Endung, leer → 'file'), Upload in Bucket attendances, öffentliche URL mit ?download=<Name>, send-photo/send-document, Löschen nach 10 s (auch bei Fehler), send-document mit sendAsUrl, quick-processor (signout/lateSignout/noteUpdate/Vorstatus inkl. isSelf) und playerPaused gleich. Abweichungen nur bei Ladeanzeige und Toasts (siehe Items).
+  Flutter: lib/core/services/telegram_service.dart:258, lib/core/services/telegram_service.dart:306, lib/core/services/telegram_service.dart:356, lib/core/services/telegram_service.dart:241, lib/data/repositories/sign_in_out_repository.dart:117
+- [ ] **niedrig** `services/telegram/telegram.service` `loading-752e4954` [services/telegram/telegram.service.ts:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L26)
+  Ionic: blockierendes Lade-Overlay (ohne Text) während Upload und Versand / Flutter: kein blockierendes Overlay (Registerprobenplan-Sheet nur _busy).
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:126, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2010, lib/features/planning/presentation/widgets/register_plan_sheet.dart:342
+- [ ] **niedrig** `services/telegram/telegram.service` `toast-d48335d8` [services/telegram/telegram.service.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L67)
+  Ionic: nach dem Plan-Versand immer 'Nachricht wurde erfolgreich gesendet!' / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan-Export zeigt nach dem Senden 'Plan wird per Telegram gesendet...', die Terminseite 'Plan per Telegram gesendet'.
+  Flutter: lib/features/planning/presentation/widgets/register_plan_sheet.dart:372, lib/features/planning/presentation/widgets/plan_export_actions.dart:132, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2018
+- [ ] **niedrig** `services/telegram/telegram.service` `toast-d81870f7` [services/telegram/telegram.service.ts:69](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L69)
+  Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: nur der Registerprobenplan zeigt diesen Text; Planung/Ablaufplan 'Fehler beim Export: <Fehler>', Terminseite 'Fehler beim Senden: <Fehler>'.
+  Flutter: lib/features/planning/presentation/widgets/register_plan_sheet.dart:374, lib/features/planning/presentation/widgets/plan_export_actions.dart:135, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2022
+- [ ] **niedrig** `services/telegram/telegram.service` `toast-fb958f4a` [services/telegram/telegram.service.ts:90](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L90)
+  Ionic: 'Nachricht wurde erfolgreich gesendet!' / Flutter: Dateiablage gleich, Werk-Seite 'Datei per Telegram gesendet' (gleiche Bedeutung).
+  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1148, lib/features/settings/presentation/pages/files_page.dart:397
+- [ ] **niedrig** `services/telegram/telegram.service` `toast-9359ba11` [services/telegram/telegram.service.ts:92](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/telegram/telegram.service.ts#L92)
+  Ionic: 'Fehler beim Senden der Nachricht, versuche es später erneut!' (danger) / Flutter: Werk-Seite 'Fehler: <Fehler>', Dateiablage 'Telegram-Versand fehlgeschlagen: <Fehler>'.
+  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:905, lib/features/settings/presentation/pages/files_page.dart:399
+- [ ] **niedrig** `services/tenant/tenant.service` `logic-029b4bca` [services/tenant/tenant.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/tenant/tenant.service.ts#L1)
+  Lebendig sind nur getTenantById, updateTenantData, getTenantsByUserId, getTenantBySongSharingId, getTenantByRegisterId (DbService-Wrapper db.service.ts:630/750/1858/3897/3901/4065) – alle mit gleichen Daten in Flutter vorhanden. Alle übrigen Methoden (getTenants, getTenantUserById, addUserToTenant, updateTenantUser, removeUserFromTenant, setFavorite, getRoleFromTenantUser, Viewers/Parents, Organisation, getAdminUsers, createAdminUser, createTenant, deleteTenant) sind toter Code: DbService/ViewerParentService/OrganisationService haben eigene Implementierungen. Abweichung: zentraler Fehler-Toast beim Tenant-Update fehlt (siehe Item).
+  Flutter: lib/data/repositories/player_repository.dart:2071, lib/features/settings/presentation/pages/general_settings_page.dart:221, lib/features/registration/presentation/pages/tenant_registration_page.dart:696, lib/data/repositories/public_song_repository.dart:39, lib/features/registration/data/providers/registration_providers.dart:19
+- [ ] **niedrig** `services/tenant/tenant.service` `db-a71d98ce` [services/tenant/tenant.service.ts:46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/tenant/tenant.service.ts#L46) (2. Prüfung: korrigiert)
+  Update tenants nach id = aktuelle Instanz; Flutter hat keine zentrale Methode, die Aufrufer schreiben ihre Felder direkt (Feldinhalte in den Seiten-Batches). Abweichung: Ionic sperrt jeden Aufruf im Demo-Konto (DbService.updateTenantData → checkDemoRestriction) / Flutter: updateFilesShared ('Dateiablage für alle', Rollen & Berechtigungen) hat keine Demo-Sperre, das Demo-Konto kann files_shared speichern. Alle anderen Aufrufer haben ensureNotDemo/DemoGuard.
+  Flutter: lib/data/repositories/role_permission_repository.dart:65, lib/features/settings/presentation/pages/general_settings_page.dart:221, lib/data/repositories/plan_repository.dart:188, lib/data/repositories/extra_fields_repository.dart:62, lib/data/repositories/administration_repository.dart:46, lib/data/repositories/song_repository.dart:402, lib/data/repositories/duty_repository.dart:226
+- [ ] **niedrig** `services/tenant/tenant.service` `toast-028a6639` [services/tenant/tenant.service.ts:54](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/tenant/tenant.service.ts#L54)
+  Ionic: bei jedem fehlgeschlagenen Tenant-Update Toast 'Fehler beim Aktualisieren der Einstellungen' (danger) / Flutter: kein zentraler Toast, jede Seite zeigt ihre eigene Fehlermeldung.
+  Flutter: lib/features/settings/presentation/pages/general_settings_page.dart:210
+- [ ] **niedrig** `services/viewer-parent/viewer-parent.service` `logic-7fe2dddf` [services/viewer-parent/viewer-parent.service.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/viewer-parent/viewer-parent.service.ts#L1)
+  Lebendig nur getViewers/getParents (db.service.ts:886/910); createViewer/deleteViewer/createParent/deleteParent sind toter Code (DbService eigene Implementierungen). Abweichungen: Flutter sortiert alphabetisch, Fehler inline statt Toast (siehe Items).
+  Flutter: lib/data/repositories/viewer_repository.dart:19, lib/data/repositories/parent_repository.dart:19, lib/features/settings/presentation/pages/viewers_page.dart:52, lib/features/settings/presentation/pages/parents_page.dart:52
+- [ ] **niedrig** `services/viewer-parent/viewer-parent.service` `toast-e246152a` [services/viewer-parent/viewer-parent.service.ts:20](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/viewer-parent/viewer-parent.service.ts#L20) (2. Prüfung: bestätigt)
+  Ionic: Toast 'Fehler beim Laden der Beobachter' (danger) / Flutter: kein Toast; Beobachter-Seite zeigt 'Fehler: …' mit 'Erneut versuchen', Einstellungs-Badge zeigt 0.
+  Flutter: lib/features/settings/presentation/pages/viewers_page.dart:52, lib/features/settings/presentation/pages/settings_page.dart:287
+- [ ] **niedrig** `services/viewer-parent/viewer-parent.service` `toast-4ab2f7b2` [services/viewer-parent/viewer-parent.service.ts:60](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/viewer-parent/viewer-parent.service.ts#L60)
+  Ionic: Fehler-Toast 'Fehler beim Laden der Elternteile' / Flutter: kein Toast; Eltern-Seite zeigt 'Fehler: …' mit Wiederholen-Button.
+  Flutter: lib/features/settings/presentation/pages/parents_page.dart:52
+- [ ] **niedrig** `shared/attendance-songs/attendance-songs.component` `action-d37ad3ce` [shared/attendance-songs/attendance-songs.component.html:27](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/attendance-songs/attendance-songs.component.html#L27) (2. Prüfung: bestätigt)
+  Funktion gleich (Tippen → Notenoptionen, Eltern nur Link; ohne Link nicht tippbar; Download-Button bei Link; „Für dich sind keine Noten hinterlegt“ statt „Dirigent: …“). Ionic: Zeile ohne Noten 8 % rot getönt, roter Hinweistext, kein Chevron, Name „{number}. {name}“ / Flutter: Zeile vollflächig rot mit weißer Schrift, im iOS-Look Chevron, Name „{prefix}{number}. {name}“ (ohne Nummer nur Name).
+  Flutter: lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:228, lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:406
+- [ ] **niedrig** `shared/church-overview/church-overview.component` `action-d91ac356` [shared/church-overview/church-overview.component.html:5](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/church-overview/church-overview.component.html#L5) (2. Prüfung: bestätigt)
+  Ionic: X-Schließen-Button rechts in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen nach unten oder Tippen außerhalb.
+  Flutter: lib/shared/widgets/sheets/church_overview_sheet.dart:81
+- [ ] **niedrig** `shared/excuse-reason-picker/excuse-reason-picker.component` `action-9be93d63` [shared/excuse-reason-picker/excuse-reason-picker.component.html:12](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/excuse-reason-picker/excuse-reason-picker.component.html#L12)
+  Häkchen rechts in der Kopfzeile, deaktiviert solange nicht bestätigbar – gleich. Ionic: nur dieses Häkchen / Flutter: zusätzlich ein großer Button „Bestätigen“ unter der Liste
+  Flutter: lib/shared/widgets/event_list/excuse_reason_sheet.dart:105, lib/shared/widgets/event_list/excuse_reason_sheet.dart:146
+- [ ] **niedrig** `shared/excuse-reason-picker/excuse-reason-picker.component` `field-432c437c` [shared/excuse-reason-picker/excuse-reason-picker.component.html:35](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/excuse-reason-picker/excuse-reason-picker.component.html#L35) (2. Prüfung: bestätigt)
+  Label „Grund“, Platzhalter „Mindestens 5 Zeichen eingeben...“, Satzanfang groß, Bestätigen erst ab 5 Zeichen – gleich. Ionic: Textarea ohne Autofokus, wächst unbegrenzt (autoGrow) / Flutter: autofocus – Tastatur öffnet sofort bei „Sonstiger Grund“ bzw. beim Öffnen am Termintag; umrandetes Feld, 2–5 Zeilen.
+  Flutter: lib/shared/widgets/event_list/excuse_reason_sheet.dart:127
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` `toast-6a3e186f` [shared/files-folder-picker/files-folder-picker.component.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.ts#L53)
+  Ionic: roter Toast „Fehler beim Laden der Ordner: {error}“ / Flutter: gleicher Text als rote Zeile im Sheet statt Toast
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:250
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` `modal-9164bfef` [shared/files-folder-picker/files-folder-picker.component.html:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.html#L1)
+  Ionic: Sheet mit Breakpoints [0, 1], öffnet in voller Höhe mit Toolbar / Flutter: Bottom-Sheet mit Drag-Handle, Höhe nach Inhalt bis max. 75 %
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180, lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:262
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` `action-0d52550a` [shared/files-folder-picker/files-folder-picker.component.html:6](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.html#L6)
+  Ionic: X-Button links in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen oder Tippen außerhalb
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:180
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` `action-ef82aba3` [shared/files-folder-picker/files-folder-picker.component.html:12](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.html#L12)
+  Ionic: Häkchen rechts in der Toolbar (deaktiviert im Hauptordner/beim Laden) wählt aktuellen Ordner / Flutter: kein Häkchen in der Kopfzeile; dieselbe Funktion nur über den Button „Diesen Ordner wählen“ unten (siehe action-c2019029)
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:333
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` `action-a9992099` [shared/files-folder-picker/files-folder-picker.component.html:46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/files-folder-picker/files-folder-picker.component.html#L46)
+  Tippen öffnet Unterordner – gleich. Ionic: Ordner-Icon in primary, im iOS-Look Chevron (button-Item) / Flutter: Ordner-Icon in Standardfarbe, kein Chevron
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:308
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `action-dd54e64c` [shared/image-viewer/image-viewer.component.html:4](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L4)
+  Pinch/Pan/Mausrad-Zoom und Fehleranzeige „Bild konnte nicht geladen werden“ vorhanden. Ionic: Wischen nach oben ODER unten schließt (ab 110 px oder schneller Wisch > 0,6 px/ms), Bild folgt auch seitlich, fliegt animiert raus; elastisches Über-Zoomen/Rand-Gummiband; Fehler-Icon image-outline / Flutter: nur nach unten, erst ab 120 px (schneller kurzer Wisch schließt nicht), kein Gummiband; Fehler-Icon broken_image
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:163, lib/shared/widgets/sheets/image_viewer_sheet.dart:204, lib/shared/widgets/sheets/image_viewer_sheet.dart:230
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `action-54bf8f0b` [shared/image-viewer/image-viewer.component.html:10](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L10)
+  Spinner während des Ladens, danach Bild – gleich. Ionic: bei Ladefehler wird fallbackSrc versucht (Passbild in Einstellungen/Person: Avatar-Platzhalter assets/icon/avatar-placeholder.svg) / Flutter: kein Fallback, direkt Fehleranzeige
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:224
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `text-c27ded53` [shared/image-viewer/image-viewer.component.html:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L26)
+  Ionic: Titel = Dateiname bzw. „Bildvorschau“ (Dateiablage); beim Passbild (settings.page.html:282, person.page.html:49) wird nur [attr.title] gesetzt, das @Input title bleibt leer → kein Titel / Flutter: immer ein Titel: Dateiname, „{Vorname Nachname}.jpg“ (Person) bzw. „Passbild.jpg“ (Stammdaten)
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:274, lib/features/people/presentation/widgets/person_detail/person_header.dart:164, lib/features/profile/presentation/widgets/master_data_sheet.dart:150, lib/features/settings/presentation/pages/files_page.dart:357
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `text-59c21e83` [shared/image-viewer/image-viewer.component.html:33](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L33)
+  Text „Doppeltippen oder mit zwei Fingern zoomen“ gleich. Ionic: nur beim allerersten Öffnen (localStorage imageViewerHintSeen), 3,2 s, mit Hand-Icon, verschwindet mit den Leisten / Flutter: bei jedem Öffnen 3 s, ohne Icon, unabhängig vom Ausblenden der Leisten
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:348
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `action-24790a96` [shared/image-viewer/image-viewer.component.html:41](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L41) (2. Prüfung: bestätigt)
+  Minus-Button, deaktiviert bei 100 % – gleich. Ionic: Faktor 1/1,6 (auch Taste „-“) / Flutter: 1/1,5.
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:314
+- [ ] **niedrig** `shared/image-viewer/image-viewer.component` `action-236047c8` [shared/image-viewer/image-viewer.component.html:47](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/image-viewer/image-viewer.component.html#L47)
+  Plus-Button, deaktiviert bei 500 % – gleich. Ionic: Faktor 1,6 (auch Tasten +/=) / Flutter: 1,5
+  Flutter: lib/shared/widgets/sheets/image_viewer_sheet.dart:337
+- [ ] **niedrig** `shared/message-editor/message-editor.component` `action-ee5fa118` [shared/message-editor/message-editor.component.ts (inline):38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/message-editor/message-editor.component.ts (inline)#L38)
+  Ionic: ein Umschalt-Button „H“ (Überschrift Ebene 2 an/aus) / Flutter: Dropdown „Überschrift“ mit H1, H2, H3, Normal (H1 wird beim Speichern zu Ebene 2, H3 bleibt Ebene 3)
+  Flutter: lib/features/messages/presentation/pages/message_compose_page.dart:353, lib/core/utils/tiptap_converter.dart:47
+- [ ] **niedrig** `shared/message-editor/message-editor.component` `action-b11ec5dc` [shared/message-editor/message-editor.component.ts (inline):40](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/message-editor/message-editor.component.ts (inline)#L40)
+  Nummerierte Liste vorhanden. Ionic: Reihenfolge Aufzählung, dann Nummerierung / Flutter (flutter_quill-Toolbar): erst Nummerierung, dann Aufzählung
+  Flutter: lib/features/messages/presentation/pages/message_compose_page.dart:355
+- [ ] **niedrig** `shared/notification-bell/notification-bell.component` `loading-5bd47fec` [shared/notification-bell/notification-bell.component.ts:112](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/notification-bell/notification-bell.component.ts#L112)
+  Ionic: blockierendes Loading-Overlay beim Segmentwechsel / Flutter: kein Overlay, Spinner nur im Listenbereich solange noch keine Daten für das Segment geladen sind
+  Flutter: lib/features/messages/presentation/widgets/notification_bell.dart:319, lib/features/messages/presentation/widgets/notification_bell.dart:423
+- [ ] **niedrig** `shared/notification-bell/notification-bell.component` `loading-603fb6e6` [shared/notification-bell/notification-bell.component.ts:137](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/notification-bell/notification-bell.component.ts#L137)
+  Ionic: blockierendes Loading-Overlay nach Tipp auf die Glocke, bis Liste geladen ist / Flutter: keine Ladeanzeige, Sheet bzw. Toast erscheint erst nach dem Laden
+  Flutter: lib/features/messages/presentation/widgets/notification_bell.dart:39
+- [ ] **niedrig** `shared/notification-bell/notification-bell.component` `action-37616b6e` [shared/notification-bell/notification-bell.component.html:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/notification-bell/notification-bell.component.html#L63)
+  Roter Punkt bei ungelesen, Instanzname nur im Segment „Alle“, Text, Datum „dd.MM.yyyy HH:mm“, Tippen markiert gelesen und navigiert – gleich. Ionic: Button-Optik/Chevron nur bei Termin- oder Nachrichten-Benachrichtigung / Flutter: Chevron auch bei Einträgen mit eigener Route (Teamorganisation)
+  Flutter: lib/features/messages/presentation/widgets/notification_bell.dart:479, lib/features/messages/presentation/widgets/notification_bell.dart:268
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-bad87fa3` [shared/tiptap-editor/tiptap-editor.component.ts (inline):38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L38)
+  Fett vorhanden. Ionic: dunkles schwebendes Bubble-Menü, erscheint nur bei markiertem Text / Flutter: feste flutter_quill-Toolbar über dem Editor (immer sichtbar beim Bearbeiten), Icon statt „B“
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:362
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-35002b54` [shared/tiptap-editor/tiptap-editor.component.ts (inline):39](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L39)
+  Kursiv vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:363
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-ea36a1eb` [shared/tiptap-editor/tiptap-editor.component.ts (inline):40](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L40)
+  Unterstrichen vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:364
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-a4f9e0da` [shared/tiptap-editor/tiptap-editor.component.ts (inline):41](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L41)
+  Durchgestrichen vorhanden; Bubble-Menü bei Auswahl vs. feste Toolbar (wie action-bad87fa3)
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:365
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-5574f0fb` [shared/tiptap-editor/tiptap-editor.component.ts (inline):43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L43)
+  Ionic: eigener Umschalt-Button „H1“ im Bubble-Menü (nochmal tippen → Absatz) / Flutter: Eintrag „Überschrift 1“ im Überschriften-Dropdown der festen Toolbar (zurück über „Normal“)
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:376
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-b55962f5` [shared/tiptap-editor/tiptap-editor.component.ts (inline):44](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L44) (2. Prüfung: bestätigt)
+  Ionic: Button „H2“ im Bubble-Menü bei Textauswahl / Flutter: Eintrag „Überschrift 2“ im Überschriften-Dropdown der festen Toolbar (H1, H2, H3, Normal).
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:376
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-db26f149` [shared/tiptap-editor/tiptap-editor.component.ts (inline):45](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L45)
+  Ionic: Button „H3“ im Bubble-Menü / Flutter: Eintrag im Überschriften-Dropdown (wie action-5574f0fb)
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:376
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-e7be6f33` [shared/tiptap-editor/tiptap-editor.component.ts (inline):47](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L47)
+  Aufzählung vorhanden. Ionic: im Bubble-Menü vor „1.“ / Flutter: feste Toolbar, Aufzählung steht hinter der Nummerierung
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:378
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` `action-a754f1aa` [shared/tiptap-editor/tiptap-editor.component.ts (inline):48](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts (inline)#L48) (2. Prüfung: bestätigt)
+  Nummerierte Liste vorhanden; Ionic: Bubble-Menü bei Auswahl, „1.“ nach der Aufzählung / Flutter: feste Toolbar, Nummerierung vor der Aufzählung.
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:377
+- [ ] **niedrig** `utilities/attendance-date-dialog` `loading-7398625d` [utilities/attendance-date-dialog.ts:35](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-date-dialog.ts#L35)
+  Ionic: blockierendes Lade-Overlay beim Laden des Termins / Flutter: kein Overlay.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_date_change.dart:63
+- [ ] **niedrig** `utilities/attendance-date-dialog` `loading-7398625d-2` [utilities/attendance-date-dialog.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-date-dialog.ts#L67) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Lade-Overlay (max. 3 s) während changeAttendanceDate / Flutter: kein Overlay oder Indikator während der Schreibvorgänge (Zeilen 148–211), Seite bleibt bedienbar.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_date_change.dart:148
+- [ ] **niedrig** `utilities/attendance-date-dialog` `loading-191f06e1` [utilities/attendance-date-dialog.ts:140](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/attendance-date-dialog.ts#L140)
+  Ionic: blockierendes Overlay beim Anlegen / Flutter: kein Overlay, nur Button gesperrt (_creatingAttendance im Themen-Tab).
+  Flutter: lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170
+- [ ] **niedrig** `utilities/Utils` `toast-bc8376d4` [utilities/Utils.ts:387](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L387)
+  md/Desktop identisch (Ionic-Toast oben, 3 s). Ionic auch auf iOS: Toast oben, 3 s, ohne Button / Flutter iOS-Look: SnackBar unten, 4 s, mit Icon und OK-Button.
+  Flutter: lib/core/utils/toast_helper.dart:105
+- [ ] **niedrig** `utilities/Utils` `loading-ec398d04` [utilities/Utils.ts:410](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L410)
+  Ionic: generisches blockierendes LoadingController-Overlay mit Text / Flutter: kein entsprechender Helfer, Seiten zeigen Inline-Spinner oder sperren Buttons.
+  Flutter: lib/core/utils/toast_helper.dart:1
+- [ ] **niedrig** `utilities/Utils` `effect-44054f10` [utilities/Utils.ts:1232](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1232)
+  Nativ gleich (Cache + Systemansicht); auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.
+  Flutter: lib/core/services/export_service.dart:706, lib/core/services/native/native_file_service.dart:167
+- [ ] **niedrig** `utilities/Utils` `effect-1a09a2fb` [utilities/Utils.ts:1760](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1760)
+  In-App-Dateiansicht der installierten Web-App: auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.
+  Flutter: lib/features/songs/presentation/widgets/song_file_opener.dart:80, lib/core/services/native/native_file_service.dart:77, lib/core/services/web_window_web.dart:52
+- [ ] **niedrig** `utilities/Utils` `effect-c485f21b` [utilities/Utils.ts:1963](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L1963)
+  Dateiname Urkunden_Vorkurs_YYYY-MM-DD.pdf gleich; nativ gleich; auf Mobile-Web (iOS/Android) Ionic: System-Teilen-Dialog mit der Datei (navigator.share), Fallback Download / Flutter: immer Anchor-Download (Printing.sharePdf bzw. downloadBytesInBrowser), kein Teilen-Dialog.
+  Flutter: lib/features/settings/presentation/widgets/vorkurs_certificates.dart:57, lib/core/services/native/native_file_service.dart:167
+- [ ] **niedrig** `services/attendance/attendance.service` [src/app/services/attendance/attendance.service.ts:370](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/attendance/attendance.service.ts#L370)
+  Ionic getAttendanceByIdRobust/safeModify entfernt person_attendances, deren Person keine Gruppe (instrument null) hat, aus der Anzeige / Flutter zeigt diese Zeilen an.
+  Flutter: lib/core/providers/attendance_detail_providers.dart:100
+- [ ] **niedrig** `services/audio-player/audio-player.service` [src/app/services/audio-player/audio-player.service.ts:178](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/audio-player.service.ts#L178)
+  Ionic: löst die signierte URL des nächsten Warteschlangen-Titels vorab auf und cacht URLs 30 min (Weiterschalten ohne Netzrundlauf, z. B. bei gesperrtem Bildschirm) / Flutter: URL wird erst beim Weiterschalten aufgelöst, kein Cache.
+  Flutter: lib/core/services/audio_player/audio_player_service.dart:201
+- [ ] **niedrig** `services/audio-player/audio-player.service` [src/app/services/audio-player/audio-player.service.ts:281](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/audio-player.service.ts#L281)
+  Ionic: schlägt audio.play() fehl (Autoplay/Netz), bleibt der Titel pausiert in der Player-Leiste; schlägt die URL-Auflösung eines Warteschlangen-Titels fehl, wird die Wiedergabe zurückgesetzt / Flutter: bei setUrl/play-Fehler wird der Player komplett geschlossen (Leiste verschwindet); bei URL-Fehler bleibt der vorige Titel pausiert stehen, Index steht schon auf dem neuen Titel.
+  Flutter: lib/core/services/audio_player/audio_player_service.dart:260, lib/core/services/audio_player/audio_player_service.dart:207
+- [ ] **niedrig** `services/audio-player/audio-player.service` [src/app/services/audio-player/audio-player.service.ts:57](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/audio-player.service.ts#L57)
+  Ionic isAudioFile prüft zuerst den MIME-Typ (audio/*), dann die Endung / Flutter AudioPlayerService.isAudioFile nur die Endung; Song-Seite ergänzt SongUtils.isAudio, die Dateien-Seite nutzt in beiden Apps nur den Namen.
+  Flutter: lib/core/services/audio_player/audio_player_service.dart:78, lib/features/songs/presentation/pages/song_detail_page.dart:1095
+- [ ] **niedrig** `services/audio-player/media-session` [src/app/services/audio-player/media-session.ts:98](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/media-session.ts#L98)
+  Ionic: Android-Plugin bekommt das Branding-Logo zentriert auf weißem Quadrat (data-URL), ohne Branding das Attendix-Logo; iOS das Attendix-Logo per https / Flutter (audio_service): artUri = Branding-Logo-URL unverändert, ohne Branding-Logo kein Cover. Web: Flutter-Fallback icons/Icon-192.png statt icon-256.
+  Flutter: lib/core/services/audio_player/media_session_native.dart:96, lib/core/services/audio_player/media_session_web.dart:80
+- [ ] **niedrig** `services/audio-player/media-session` [src/app/services/audio-player/media-session.ts:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/media-session.ts#L65)
+  Ionic: das Android-Plugin zeigt Vor/Zurück immer (Handler lassen sich nicht entfernen) / Flutter: nur bei Warteschlange (wie Web).
+  Flutter: lib/core/services/audio_player/media_session_native.dart:140
+- [ ] **niedrig** `services/auto-message/auto-message.service` [src/app/services/auto-message/auto-message.service.ts:181](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auto-message/auto-message.service.ts#L181)
+  Ionic getAttendanceInfo filtert archivierte Termine nicht – Mitglieder sehen in der Nachricht die Termin-Karte und können antworten / Flutter blendet archivierte Termine für alle außer Admin/Verantwortl. aus (keine Termin-Karte, keine Antwort).
+  Flutter: lib/data/repositories/auto_message_repository.dart:251
+- [ ] **niedrig** `services/auto-message/auto-message.service` [src/app/services/auto-message/auto-message.service.ts:271](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auto-message/auto-message.service.ts#L271)
+  Ionic formatTerminDate wertet nur reines YYYY-MM-DD als Kalenderdatum, Zeitstempel werden in Lokalzeit umgerechnet / Flutter nimmt bei jedem String mit YYYY-MM-DD-Anfang das UTC-Datum ohne Umrechnung. Bei auf 12 Uhr normierten Terminen gleich; bei Zeitstempeln nahe Mitternacht (ältere Daten) zeigt Flutter den Vortag/Folgetag (Termin-Karte, Platzhalter {datum} im Panel).
+  Flutter: lib/data/models/auto_message/auto_message.dart:400
+- [ ] **niedrig** `services/db.service` [src/app/services/db.service.ts:1095](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L1095)
+  Ionic: vorhandener tenantUsers-Eintrag mit Rolle Stimmführer/Stimmführer-Helfer → Fehler "userAlreadyInTenant"; verknüpfte Person → immer "bereits in Instanz als …" / Flutter: Stimmführer-Rollen wie Spieler behandelt (player prüfen, verwaisten Eintrag löschen); ist die verknüpfte Person dieselbe (personId), wird die Verknüpfung wiederverwendet statt Fehler.
+  Flutter: lib/data/repositories/user_registration_repository.dart:374, lib/data/repositories/user_registration_repository.dart:401
+- [ ] **niedrig** `services/db.service` [src/app/services/db.service.ts:953](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L953)
+  Ionic: E-Mail unverändert an RPC/Edge-Function und tenantUsers / Flutter: E-Mail getrimmt und kleingeschrieben (andere gespeicherte Schreibweise).
+  Flutter: lib/data/repositories/user_registration_repository.dart:110
+- [ ] **niedrig** `services/db.service` [src/app/services/db.service.ts:757](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L757)
+  Ionic: logout() nur signOut, user_metadata.currentTenantId bleibt / Flutter: Abmelden auf Instanzauswahl/Instanz-Erstellen ruft clearTenant() → currentTenantId in Metadaten gelöscht, nächster Login landet auf der Instanzauswahl.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:345, lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:495, lib/core/providers/tenant_providers.dart:160
+- [ ] **niedrig** `services/files/files.service` [src/app/services/files/files.service.ts:285](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L285)
+  Ionic: a.name.localeCompare(b.name) (sprachrichtige Reihenfolge) / Flutter: toLowerCase().compareTo (Codepoint-Reihenfolge). Unterschied nur bei Alt-Namen mit Nicht-ASCII-Zeichen oder Satzzeichen.
+  Flutter: lib/features/settings/presentation/pages/files_page.dart:147
+- [ ] **niedrig** `services/live-activity/live-activity.service` [src/app/services/live-activity/live-activity.service.ts:156](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/live-activity/live-activity.service.ts#L156)
+  Ionic: tenant.timezone, sonst Geräte-Zeitzone, sonst Europe/Berlin / Flutter: tenant.timezone, sonst fest Europe/Berlin – bei leerer Tenant-Zeitzone und Gerät in anderer Zeitzone andere Uhrzeiten.
+  Flutter: lib/core/services/live_activity_service.dart:565, lib/core/services/live_activity_service.dart:828
+- [ ] **niedrig** `services/player/player.service` [src/app/services/player/player.service.ts:556](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L556)
+  Ionic: aktualisiert jede Person einzeln, zählt Erfolge und macht bei Einzelfehlern weiter ("{n} Personen aktualisiert"). / Flutter: bricht beim ersten fehlgeschlagenen Update ab und zeigt "Fehler beim updaten der Zusatzfelder"; bereits aktualisierte Personen bleiben geändert.
+  Flutter: lib/data/repositories/extra_fields_repository.dart:137, lib/data/repositories/extra_fields_repository.dart:158
+- [ ] **niedrig** `services/player/player.service` [src/app/services/player/player.service.ts:434](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/player/player.service.ts#L434)
+  Ionic: Zusammenführen von Duplikaten entfernt die doppelte Person über removePlayer inkl. Historien-/Tracking-Eintrag (db.service.ts:3429). / Flutter: Zusammenführen löscht/archiviert ohne diesen Tracking-Eintrag.
+  Flutter: lib/data/repositories/player_repository.dart:2026
+- [ ] **niedrig** `services/song-actions/song-actions.service` [src/app/services/song-actions/song-actions.service.ts:216](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/song-actions/song-actions.service.ts#L216)
+  Ionic: Aufnahme anhören startet den Player mit Titel '<number> <name>' / Flutter: '<prefix><number> <name>'.
+  Flutter: lib/features/self_service/presentation/widgets/song_options_sheet.dart:170
+- [ ] **niedrig** `services/teams/teams.service` [src/app/services/teams/teams.service.ts:206](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/teams/teams.service.ts#L206)
+  Ionic: jede Nicht-2xx-Antwort von teams-sso (401/409/500) liefert linked=false → ssoSignIn 'needs-link' → Login öffnet im Verknüpfungsmodus / Flutter: Nicht-2xx → linked=null → 'failed' → normales Login-Formular; nur ein 200 {linked:false} führt zum Verknüpfen.
+  Flutter: lib/core/services/teams/teams_service.dart:262, lib/core/services/teams/teams_service.dart:269
+- [ ] **niedrig** `utilities/instrument-matcher` [src/app/utilities/instrument-matcher.ts:384](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/instrument-matcher.ts#L384)
+  Ionic: Teilstrings ('full', 'text', 'chor'), audio/* per MIME → Aufnahme, .mid als Audio / Flutter: ganze Wörter, Audio per Endungsliste, .sib/.mid vor dem Gruppenabgleich, .mid mit Notiz 'MIDI', Partitur-Komposita erkannt (Flutter besser: weniger Fehlzuordnungen).
+  Flutter: lib/features/songs/presentation/widgets/file_upload_sheet.dart:23, lib/features/songs/presentation/widgets/file_upload_sheet.dart:62, lib/features/songs/presentation/widgets/file_upload_sheet.dart:123
+- [ ] **niedrig** `utilities/person-matcher` [src/app/utilities/person-matcher.ts:56](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/person-matcher.ts#L56)
+  Ionic: entfernt alle kombinierenden Zeichen per NFD (z. B. ğ→g, auch zerlegte Umlaute) / Flutter: feste Diakritika-Tabelle – ğ u. a. fehlen, zerlegte Umlaute werden zu Leerzeichen; dafür ł/đ besser. Import-Abgleich kann bei solchen Namen anders ausfallen.
+  Flutter: lib/core/utils/person_matcher.dart:87
+- [ ] **niedrig** `utilities/plan-days` [src/app/utilities/plan-days.ts:77](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/plan-days.ts#L77)
+  Ionic: Untertitel des Plans = Datum, Tageslabel nur wenn es nicht das automatische Tageslabel ist / Flutter: bei mehreren Plänen immer longDate + ' · ' + planLabel, z. B. doppelt 'Samstag, 18.10.2025 · Sa 18.10.'.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:124, lib/features/planning/presentation/pages/plan_viewer_page.dart:94
+- [ ] **niedrig** `utilities/Utils` [src/app/utilities/Utils.ts:162](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/utilities/Utils.ts#L162)
+  Ionic: Listenbilder über Supabase render/image …?quality=20 (klein) / Flutter: lädt die Originalbilder (kein render-URL), mehr Datenvolumen und langsameres Laden in Listen.
+  Flutter: lib/core/utils/profile_image_path.dart:10
+- [ ] **niedrig** `shared/church-overview/church-overview.component` [src/app/shared/church-overview/church-overview.component.ts:49](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/church-overview/church-overview.component.ts#L49)
+  Ionic: bei gleicher Anzahl a.name.localeCompare(b.name) (Umlaute/Groß-Klein natürlich) / Flutter: a.name.compareTo(b.name) (Codepoint-Reihenfolge, z. B. „Ärzte…“ hinter „Zion“, Kleinbuchstaben hinter Großbuchstaben)
+  Flutter: lib/shared/widgets/sheets/church_overview_sheet.dart:55
+- [ ] **niedrig** `shared/files-folder-picker/files-folder-picker.component` [src/app/services/files/files.service.ts:280](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/files/files.service.ts#L280)
+  Ionic: FilesService.listEntries sortiert Ordner zusätzlich mit localeCompare (Groß-/Kleinschreibung und Umlaute natürlich) / Flutter: übernimmt die Storage-Reihenfolge (name asc der Datenbank) ohne Nachsortierung – Reihenfolge kann bei Groß-/Kleinschreibung bzw. Umlauten abweichen
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:238
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` [src/app/shared/tiptap-editor/tiptap-editor.component.ts:163](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts#L163)
+  Ionic: Editor lädt Highlight und TextAlign (Markdown ==Text==, Tastenkürzel Strg+Umschalt+H bzw. L/E/R/J) und speichert mark highlight bzw. attrs.textAlign / Flutter: tiptap_delta.dart kennt beide nicht – werden nicht angezeigt und beim Bearbeiten/Speichern eines solchen Protokollabschnitts entfernt
+  Flutter: lib/features/team_organization/tiptap_delta.dart:5
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` [src/app/shared/tiptap-editor/extensions/slash-commands.ts:61](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/extensions/slash-commands.ts#L61)
+  Ionic: kein Slash-Menü (SlashCommands-Extension toter Code, nicht registriert) / Flutter: Tippen von „/“ öffnet unter dem Editor eine Liste „Überschrift 1/2, Aufzählung, Nummerierte Liste, Neue Aufgabe, /tagesordnung – {Thema}“
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:260, lib/features/team_organization/presentation/widgets/protocol_editor.dart:400
+- [ ] **niedrig** `shared/tiptap-editor/tiptap-editor.component` [src/app/shared/tiptap-editor/tiptap-editor.component.ts:37](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared/tiptap-editor/tiptap-editor.component.ts#L37)
+  Ionic: Bubble-Menü nur mit B/I/U/S, H1–H3, Listen; Aufgaben-/Themen-Referenzen nicht anklickbar (cursor: default) / Flutter: Toolbar zusätzlich mit Rückgängig/Wiederholen, Checkliste, Zitat, Einrücken/Ausrücken, Link; Tippen auf eine Aufgaben-Referenz öffnet /settings/tasks/{id}, auf eine Themen-Referenz (Leitung) /settings/agenda-items/{id}
+  Flutter: lib/features/team_organization/presentation/widgets/protocol_editor.dart:358, lib/features/team_organization/presentation/pages/protocol_page.dart:1332
+- [ ] **niedrig** `services/audio-player/audio-player.service` [src/app/services/audio-player/audio-player.service.ts:268](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/audio-player/audio-player.service.ts#L268)
+  Ionic: startPlayback setzt currentFile sofort, die Leiste bleibt beim Laden des nächsten Titels sichtbar (0:00) / Flutter: _load ruft zuerst _stopInternal(keepQueue: true) → state = AudioPlayerState() (currentUrl null, hasFile false); die Leiste verschwindet, bis setUrl den neuen Titel geladen hat, und erscheint dann wieder (auch beim ersten Abspielen erst nach dem Laden).
+  Flutter: lib/core/services/audio_player/audio_player_service.dart:217, lib/core/services/audio_player/audio_player_service.dart:357, lib/core/services/audio_player/audio_player_state.dart:25
+- [ ] **niedrig** `services/print/print.service` [src/app/services/print/print.service.ts:87](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L87)
+  Ionic: mobiler Browser/PWA → Utils.downloadFileNative (Teilen-Menü mit "Drucken" bzw. Download). / Flutter: Printing.layoutPdf öffnet auf Mobile-UA die PDF nur in einem neuen Tab (printing_web _getPdf).
+  Flutter: lib/core/services/native/native_file_service.dart:181
+- [ ] **niedrig** `services/print/print.service` [src/app/services/print/print.service.ts:38](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/print/print.service.ts#L38)
+  Ionic: blockierendes Loading "PDFs werden zusammengeführt..." bzw. "Datei wird geladen..." bis zum Druck. / Flutter: kein Ladeindikator während Download/Rastern (svcMergingPdfs/svcFileLoading ungenutzt).
+  Flutter: lib/features/songs/presentation/widgets/current_songs_sheet.dart:58
+- [ ] **niedrig** `services/shift/shift.service` [src/app/services/shift/shift.service.ts:98](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/shift/shift.service.ts#L98)
+  Ionic: getPlayersWithShift zählt nur Personen mit appId; ohne solche wird direkt nur der Plan kopiert, die Zahl im Hinweis = Personen mit Account / Flutter: shiftUsageCountProvider zählt alle Personen mit dieser Schicht – Schalter 'Zuweisungen kopieren' erscheint auch, wenn niemand einen Account hat, Zahl höher; dann Meldung 'copiedNoMatch' statt 'copied'.
+  Flutter: lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:43, lib/data/repositories/shift_repository.dart:141
+- [ ] **niedrig** `utilities/instrument-matcher` [src/app/songs/song/song.page.ts:234](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/songs/song/song.page.ts#L234)
+  Ionic addFiles: erst matchInstrument (Gruppenname/Synonym), erst danach detectSpecialFileType – „Sopran Text.pdf“ → Sopran / Flutter guessFileCategory → InstrumentMatcher.detect prüft zuerst lyricsKeywords (text, words, lyrics …) und bei Nicht-PDF recordingKeywords (audio, track, aufnahme …) und ordnet „Sopran Text.pdf“ dem Liedtext zu, bevor Gruppen bewertet werden.
+  Flutter: lib/core/utils/instrument_matcher.dart:204, lib/features/songs/presentation/widgets/file_upload_sheet.dart:164

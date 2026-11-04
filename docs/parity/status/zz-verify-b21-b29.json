@@ -1,0 +1,259 @@
+{
+  "batch": "zz-verify-b21-b29",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "utilities/attendance-date-dialog#alert-fb943686": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_date_change.dart:93"],
+      "n": "Ionic: Alert „Datum ändern“ mit Text „Auf welchen Tag soll der Termin verschoben werden?“, Datumsfeld (vorbelegt), Buttons „Abbrechen“/„Weiter“ / Flutter: showAppDatePicker – Material: Kopfzeile = helpText „Auf welchen Tag…“, Überschrift „Datum ändern“ fehlt (dateDialogChangeDate ungenutzt), Buttons „Abbrechen“/„OK“; iOS-Look: Kalenderkarte, Antippen eines Tages übernimmt sofort (kein „Weiter“, ohne abweichende Status wird direkt verschoben); Auswahl auf 1.1.(Jahr−5)…1.1.(Jahr+5) begrenzt; Termin wird schon vor dem Picker geladen.",
+      "v": "bestätigt"
+    },
+    "utilities/attendance-date-dialog#loading-7398625d-2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_date_change.dart:148"],
+      "n": "Ionic: blockierendes Lade-Overlay (max. 3 s) während changeAttendanceDate / Flutter: kein Overlay oder Indikator während der Schreibvorgänge (Zeilen 148–211), Seite bleibt bedienbar.",
+      "v": "bestätigt"
+    },
+    "utilities/attendance-date-dialog#alert-6ec992cf": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:223"],
+      "n": "Ionic: Alert „{Typ} anlegen“ + „An welchem Tag findet der Termin statt?“, Datumsfeld (heute, min heute), „Abbrechen“/„Anlegen“ / Flutter: Datepicker mit helpText „{Typ} anlegen – An welchem Tag findet der Termin statt?“, Material-Buttons „Abbrechen“/„Anlegen“, firstDate heute; iOS-Look ohne Buttons – Antippen eines Tages legt den Termin samt Personen sofort an (Bestätigung fehlt).",
+      "v": "bestätigt"
+    },
+    "utilities/attendance-date-dialog#toast-8fed68b4": {
+      "s": "ok",
+      "f": ["lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:234"],
+      "n": "Gleicher Text „Bitte ein Datum ab heute wählen“, Warnfarbe; in Flutter praktisch unerreichbar, weil der Picker Tage vor heute sperrt (firstDate heute) – Ergebnis gleich (kein Termin in der Vergangenheit).",
+      "v": "bestätigt"
+    },
+    "utilities/attendance-date-dialog#toast-552c3214": {
+      "s": "ok",
+      "f": ["lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:299"],
+      "n": "Roter Toast „Termin konnte nicht angelegt werden“ bei Fehler beim Laden der Personen/Sperrzeiten oder beim Anlegen.",
+      "v": "bestätigt"
+    },
+    "utilities/db-helpers#db-f424eb31": {
+      "s": "ok",
+      "f": ["lib/data/repositories/attendance_repository.dart:681", "lib/data/repositories/attendance_repository.dart:713", "lib/core/utils/duty_utils.dart:51"],
+      "n": "Gleiche Spalten/Werte: duty_state nach dutyStateAfterStatus, bei „confirmed“ duty_reminder_sent=true, bei vorher leerem Dienst duty_assigned_by/at; nur für Dienst-Typen und ohne explizites duty_state. Flutter schreibt sie im selben person_attendances-Update wie den Status (.eq('id') nach Tenant-Prüfung der Zeile), Ionic als zweites Update; Abmelde-Pfad ebenso (sign_in_out_repository.dart:141).",
+      "v": "bestätigt"
+    },
+    "utilities/file-move#logic-a98c13f1": {
+      "s": "ok",
+      "f": ["lib/features/settings/data/file_move.dart:13", "lib/features/settings/presentation/widgets/files_move_modal.dart:137"],
+      "n": "1:1-Port aller 7 Funktionen (normalize, parent, isSameOrInside, isBlockedTarget, isCurrentLocation, canMoveInto, ancestorFilePaths).",
+      "v": "bestätigt"
+    },
+    "utilities/instrument-matcher#logic-602c073f": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/core/utils/instrument_matcher.dart:194", "lib/features/songs/presentation/widgets/file_upload_sheet.dart:23", "lib/features/songs/presentation/widgets/file_upload_sheet.dart:133"],
+      "n": "Anderer Zuordnungs-Algorithmus (Punktbewertung, ganze Wörter, Konfidenz, lernbare Synonyme) mit fehlenden Ionic-Begriffen (Akkordeon/Bajan, Mandoline, Banjo, Celesta, Triangel, Becken, Blockflöte, russ. Transliterationen); zusätzlich prüft Flutter Liedtext-/Aufnahme-Stichwörter vor den Gruppen (siehe extra). Nur Vorbelegung im Upload-Dialog, dort änderbar.",
+      "v": "bestätigt"
+    },
+    "utilities/spreadsheet-reader#logic-cc538ad0": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/core/utils/spreadsheet_reader.dart:43", "lib/core/utils/spreadsheet_reader.dart:186", "lib/core/utils/import_file_io.dart:13"],
+      "n": "CSV-Dekodierung (UTF-8 strikt, BOM, Fallback Windows-1252) gleich. Ionic liest .xls / Flutter: Dateiauswahl bietet xls an, Leser bricht mit „Das alte Excel-Format (.xls) wird nicht unterstützt…“ ab. Formelzellen: Flutter liefert bei Zahl-/Datumsformeln den Formeltext statt des berechneten Werts (excel_community 2.6.2 worksheet_parser.dart:844, cachedValue ungenutzt); Text-Formeln (t=\"str\") liefern den Wert.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#logic-1c33d253": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": ["lib/core/services/plan_export_service.dart:59", "lib/core/services/export_service.dart:255", "lib/core/services/pdf_branding.dart:1", "lib/core/services/native/native_file_service.dart:142", "lib/core/utils/shift_utils.dart:129", "lib/features/people/people_list_utils.dart:58", "lib/core/providers/attendance_providers.dart:275"],
+      "n": "Helfer weitgehend portiert (getPercentage, getStatusByShift, getAttText, Excel-Export, Feld-Defaults, Standard-Typen, Navigation, Datei speichern/öffnen, Branding). hoch wegen PDF-Schrift: kein pw.Document in lib setzt eine TTF/ThemeData, pdf 3.13.1 Type1-Helvetica kann nur U+0000–00FF (type1_font.dart:126), andere Zeichen (Kyrillisch, „“, –, €) werden als Platzhalter gezeichnet (widgets/text.dart:903). Weitere Abweichungen (Gruppensortierung ohne localeCompare, Zeitfenster der Quote, Ohne-Text, Bild-Render-URL) wie in b21 extra – nachgeprüft.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-d0866846": {
+      "s": "na",
+      "n": "toter Code: asImage und sideBySide nie gemeinsam – attendance.page.ts:1384/1414 send(true), planning.page.ts:1059 send(true), plan-viewer.component.ts:307-309 (sideBySide nur pdf2x/telegram2x, asImage nur telegramImage) und :347, public-planning.page.ts:764/786/806 (send(true), exportImage(false)).",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-576bec88": {
+      "s": "ok",
+      "f": ["lib/features/planning/presentation/widgets/plan_export_actions.dart:125", "lib/core/services/plan_export_service.dart:59"],
+      "n": "2x-A5-PDF als Bytes für Telegram (telegram2x, Name mit „_2x“).",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-178a8abf": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/planning/presentation/widgets/plan_export_actions.dart:111", "lib/core/services/plan_export_service.dart:131"],
+      "n": "Ionic: 2x-A5-PDF „{Titel}_{Datum}_2x.pdf“ wird gespeichert (Desktop-Web Download, Mobile-Web Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: sharePdf → Printing.layoutPdf = System-Druckdialog (Speichern nur über Druckdialog/„Als PDF sichern“), Jobname ohne „_2x“.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-576bec88-2": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/core/services/plan_export_service.dart:131"],
+      "n": "Wie effect-178a8abf: Ionic speichert das 2x-A5-PDF / Flutter öffnet den System-Druckdialog.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-178a8abf-2": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/planning/presentation/widgets/plan_export_actions.dart:111", "lib/core/services/plan_export_service.dart:131"],
+      "n": "Ionic: A4-PDF „{Titel}_{Datum}.pdf“ wird gespeichert (Desktop-Web Download, Mobile-Web Teilen-Dialog, nativ Cache + Dateiansicht) / Flutter: Printing.layoutPdf = System-Druckdialog.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-576bec88-4": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/core/services/plan_export_service.dart:131"],
+      "n": "Wie effect-178a8abf-2: Ionic speichert das A4-PDF / Flutter öffnet den System-Druckdialog.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-b60c4449": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:145", "lib/features/planning/presentation/pages/plan_viewer_page.dart:116", "lib/core/services/plan_export_service.dart:131"],
+      "n": "Ein PDF mit einer Seite je Plan ist vorhanden. Ionic: Datei „…_alle.pdf“ wird gespeichert (Download/Teilen/Dateiansicht) / Flutter: System-Druckdialog.",
+      "v": "bestätigt"
+    },
+    "utilities/Utils#effect-fad4e9cc": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:115", "lib/features/planning/presentation/attendance_plan_viewer.dart:38", "lib/core/services/plan_export_service.dart:131"],
+      "n": "Ionic: Titel = Plantitel, sonst getPlanningTitle(Typ, Info) („{planning_title} ({Info})“, planning_title, Info, Typname, „Probenplan“); Datei wird gespeichert / Flutter: Titel = Plantitel, sonst typeInfo, sonst „Ablaufplan“ – planning_title und Typname fehlen in PDF-Kopf und Dateiname; Ausgabe über System-Druckdialog.",
+      "v": "bestätigt"
+    },
+    "shared/attendance-songs/attendance-songs.component#action-d37ad3ce": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:228", "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:406"],
+      "n": "Funktion gleich (Tippen → Notenoptionen, Eltern nur Link; ohne Link nicht tippbar; Download-Button bei Link; „Für dich sind keine Noten hinterlegt“ statt „Dirigent: …“). Ionic: Zeile ohne Noten 8 % rot getönt, roter Hinweistext, kein Chevron, Name „{number}. {name}“ / Flutter: Zeile vollflächig rot mit weißer Schrift, im iOS-Look Chevron, Name „{prefix}{number}. {name}“ (ohne Nummer nur Name).",
+      "v": "bestätigt"
+    },
+    "shared/audio-player/audio-player.component#toast-8cb59de1": {
+      "s": "missing",
+      "sev": "mittel",
+      "n": "Ionic: Fehler bei Zurück/Weiter (Queue-URL nicht auflösbar, Laden fehlgeschlagen) → Player wird zurückgesetzt und roter Toast „Fehler beim Abspielen: {error}“ / Flutter: audio_player_widget.dart:72/84 übergibt svc.previous/svc.next ohne catch – kein Toast; bei resolveUrl-Fehler bleibt der alte Titel pausiert, Zähler zeigt schon den neuen Index; bei Ladefehler schließt sich der Player stumm (_load → _stopInternal). ARB-Key audioPlayFailed ungenutzt.",
+      "v": "bestätigt"
+    },
+    "shared/audio-player/audio-player.component#text-05909793": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/audio_player/audio_player_widget.dart:173"],
+      "n": "Gesamtdauer „m:ss“ rechts vom Regler (formatTime gleich, 0 → „0:00“).",
+      "v": "bestätigt"
+    },
+    "shared/church-overview/church-overview.component#logic-58512849": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/sheets/church_overview_sheet.dart:32", "lib/features/attendance/presentation/attendance_extra_actions.dart:101", "lib/features/people/presentation/pages/people_list_page.dart:1128"],
+      "n": "Zählung (gesamt, leer → ohne Gemeinde, je Gemeinde, unbekannte ID → „Unbekannte Gemeinde“), Sortierung nach Anzahl absteigend, Aufrufer (Anwesend/Verspätet/Verspätung gemeldet bzw. gefilterte Personen) gleich. Nur Gleichstand: Ionic localeCompare / Flutter compareTo (Codepoint).",
+      "v": "bestätigt"
+    },
+    "shared/church-overview/church-overview.component#action-d91ac356": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/sheets/church_overview_sheet.dart:81"],
+      "n": "Ionic: X-Schließen-Button rechts in der Toolbar / Flutter: kein Schließen-Button, nur Drag-Handle, Wischen nach unten oder Tippen außerhalb.",
+      "v": "bestätigt"
+    },
+    "shared/church-overview/church-overview.component#text-88e12ac8": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/sheets/church_overview_sheet.dart:136"],
+      "n": "Badge mit Gesamtzahl in primary hinter „{subtitle}“.",
+      "v": "bestätigt"
+    },
+    "shared/excuse-reason-picker/excuse-reason-picker.component#field-432c437c": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/event_list/excuse_reason_sheet.dart:127"],
+      "n": "Label „Grund“, Platzhalter „Mindestens 5 Zeichen eingeben...“, Satzanfang groß, Bestätigen erst ab 5 Zeichen – gleich. Ionic: Textarea ohne Autofokus, wächst unbegrenzt (autoGrow) / Flutter: autofocus – Tastatur öffnet sofort bei „Sonstiger Grund“ bzw. beim Öffnen am Termintag; umrandetes Feld, 2–5 Zeilen.",
+      "v": "bestätigt"
+    },
+    "shared/files-folder-picker/files-folder-picker.component#action-c2019029": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:336"],
+      "n": "Ionic: oberste Listenzeile in primary mit checkmark-circle „Diesen Ordner wählen: {Ordnername}“, beim Laden deaktiviert / Flutter: FilledButton mit Häkchen am unteren Rand „Diesen Ordner wählen“ ohne Ordnernamen, auch während des Ladens aktiv (liefert dann den vorherigen Ordner); in beiden nur außerhalb des Hauptordners.",
+      "v": "bestätigt"
+    },
+    "shared/image-viewer/image-viewer.component#action-24790a96": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/shared/widgets/sheets/image_viewer_sheet.dart:314"],
+      "n": "Minus-Button, deaktiviert bei 100 % – gleich. Ionic: Faktor 1/1,6 (auch Taste „-“) / Flutter: 1/1,5.",
+      "v": "bestätigt"
+    },
+    "shared/image-viewer/image-viewer.component#action-3ac52411": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/sheets/image_viewer_sheet.dart:330"],
+      "n": "„{n} %“ mit geschütztem Leerzeichen, Tippen setzt auf 100 % zurück.",
+      "v": "bestätigt"
+    },
+    "shared/message-editor/message-editor.component#alert-bc736d27": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/messages/presentation/pages/message_compose_page.dart:356", "lib/features/messages/presentation/pages/auto_message_rule_page.dart:628"],
+      "n": "Ionic: Alert „Link“, Feld URL (Platzhalter „https://…“, vorbelegt), nur ohne Markierung/Link „Angezeigter Text (optional)“; Buttons „Abbrechen“, „Entfernen“ (nur auf bestehendem Link), „Übernehmen“; ohne Schema wird https:// vorangestellt / Flutter: flutter_quill-Standarddialog (link_dialog.dart) mit Pflichtfeldern „Text“ und „Link“ (Hinweise „z.B. 'Mehr erfahren'“ / „z.B. 'https://example.com'“), nur „OK“, deaktiviert solange der Link nicht mit http(s)://, mailto:, tel: … beginnt; kein Abbrechen/Entfernen im Dialog (Entfernen nur per langem Druck auf den Link unter iOS/Android, nicht im Web); editorLink/editorLinkText ungenutzt.",
+      "v": "bestätigt"
+    },
+    "shared/message-editor/message-editor.component#action-445826b3": {
+      "s": "missing",
+      "sev": "mittel",
+      "n": "Ionic: Rückgängig-Button „↶“ am Ende der Toolbar (Nachricht verfassen, Auto-Nachricht) / Flutter: showUndo: false (message_compose_page.dart:373, auto_message_rule_page.dart:645) – nur Tastenkürzel auf Hardware-Tastatur.",
+      "v": "bestätigt"
+    },
+    "shared/notification-bell/notification-bell.component#logic-a18396dd": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/messages/presentation/widgets/notification_bell.dart:39", "lib/features/messages/presentation/widgets/notification_bell.dart:98", "lib/core/providers/message_providers.dart:193", "lib/core/providers/message_providers.dart:223"],
+      "n": "Badge (ungelesen, aktuelle Instanz, 99+), Öffnen mit Fallback „Alle“ und Toast bei leer, Realtime je Nutzer, Alle-markieren (Rückfrage nur in „Alle“), Alle-löschen mit segmentabhängigem Text, Umschalten gelesen/ungelesen, Tippen → gelesen + Navigation je Rolle wie navigateToAttendance – gleich. mittel wegen Instanzwechsel: Flutter _navigate (Zeile 100) wechselt vorab für JEDE Benachrichtigung auf targetTenantId (data.tenantId, sonst Zeilen-tenantId), auch für Geburtstag/Problemfall ohne Ziel; Ionic nur bei Route/Termin mit data.tenantId (siehe b29 extra).",
+      "v": "bestätigt"
+    },
+    "shared/notification-bell/notification-bell.component#alert-7b9d7085": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/widgets/notification_bell.dart:206"],
+      "n": "Nur im Segment „Alle“: „Alle als gelesen markieren?“ / „Alle Benachrichtigungen aus allen Instanzen werden als gelesen markiert.“ / „Abbrechen“, „Markieren“ → markAllRead(allTenants: true); im Segment „Aktuelle Instanz“ ohne Rückfrage.",
+      "v": "bestätigt"
+    },
+    "shared/notification-bell/notification-bell.component#nav-7f660468": {
+      "s": "ok",
+      "f": ["lib/features/messages/presentation/widgets/notification_bell.dart:117"],
+      "n": "Eigene Route (Aufgabe /settings/tasks/{id}, Protokoll → /settings/protocol/{id}, Themen /settings/team-organization?tab=topics) nach evtl. Instanzwechsel; Flutter übersetzt die Ionic-Route (mapIonicRoute) und navigiert nur, wenn sie existiert (alle drei existieren).",
+      "v": "bestätigt"
+    },
+    "shared/notification-bell/notification-bell.component#db-5d50b7c0": {
+      "s": "ok",
+      "f": ["lib/core/providers/message_providers.dart:250"],
+      "n": "removeChannel beim Verwerfen des Realtime-Providers (Unmount der Glocke, Nutzer-/Instanzwechsel).",
+      "v": "bestätigt"
+    },
+    "shared/tiptap-editor/extensions/slash-commands#logic-aecc73dd": {
+      "s": "na",
+      "n": "toter Code: SlashCommands/buildCommandItems werden nirgends importiert oder registriert (tiptap-editor.component.ts lädt nur StarterKit, Highlight, TextAlign, Link, Underline, TaskList/Item, BubbleMenu, Placeholder, AgendaItemNode, TaskRefNode); kein Slash-Menü im Ionic-Editor. Flutter hat eines zusätzlich (b29 extra).",
+      "v": "bestätigt"
+    },
+    "shared/tiptap-editor/tiptap-editor.component#action-b55962f5": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/team_organization/presentation/widgets/protocol_editor.dart:376"],
+      "n": "Ionic: Button „H2“ im Bubble-Menü bei Textauswahl / Flutter: Eintrag „Überschrift 2“ im Überschriften-Dropdown der festen Toolbar (H1, H2, H3, Normal).",
+      "v": "bestätigt"
+    },
+    "shared/tiptap-editor/tiptap-editor.component#action-a754f1aa": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/team_organization/presentation/widgets/protocol_editor.dart:377"],
+      "n": "Nummerierte Liste vorhanden; Ionic: Bubble-Menü bei Auswahl, „1.“ nach der Aufzählung / Flutter: feste Toolbar, Nummerierung vor der Aufzählung.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "utilities/instrument-matcher",
+      "title": "Liedtext-/Aufnahme-Stichwörter vor den Gruppen",
+      "n": "Ionic addFiles: erst matchInstrument (Gruppenname/Synonym), erst danach detectSpecialFileType – „Sopran Text.pdf“ → Sopran / Flutter guessFileCategory → InstrumentMatcher.detect prüft zuerst lyricsKeywords (text, words, lyrics …) und bei Nicht-PDF recordingKeywords (audio, track, aufnahme …) und ordnet „Sopran Text.pdf“ dem Liedtext zu, bevor Gruppen bewertet werden.",
+      "sev": "niedrig",
+      "ionic": "src/app/songs/song/song.page.ts:234",
+      "f": ["lib/core/utils/instrument_matcher.dart:204", "lib/features/songs/presentation/widgets/file_upload_sheet.dart:164"]
+    }
+  ]
+}

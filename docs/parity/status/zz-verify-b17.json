@@ -1,0 +1,604 @@
+{
+ "batch": "zz-verify-b17",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "services/db.service#logic-0e1c2e0b": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:41",
+    "lib/features/auth/presentation/pages/login_page.dart:312",
+    "lib/data/repositories/user_registration_repository.dart:101",
+    "lib/data/repositories/user_registration_repository.dart:349",
+    "lib/data/repositories/player_repository.dart:584",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:343"
+   ],
+   "n": "Selbst geprüft: Song-Dateien, setTenant/Startseite, Auth, Konten (registerUser/getAppIdByEmail/createAccount), Personen (add/update/archive/activate, Termin-Sync inkl. relevant_groups/additional_fields_filter/Schicht), Instanzen, Übergabe, Dateiablage-Rechte weitgehend gleich portiert. Höchste Abweichung bleibt der Vorrang Server-Metadaten vs. lokaler Instanz-Cache (mittel). Zusätzlich zu den 4 Extras des Erstreviews: Ionic getAppIdByEmail sucht per Teilstring (%email%) und removeEmailFromAuth ruft danach getAppIdByEmail auf (siehe extra, beides Flutter besser).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-8d3e452e": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:249"
+   ],
+   "n": "Bucket songs, Pfad songs/<Song-Quellinstanz>/<songId>/<storageName>, upsert. Nur intern anders: Flutter-Speichername ohne NFD-Normalisierung, Leerzeichen → \"-\" (Ionic: \"Muller Lied_123.pdf\", Flutter: \"M-ller-Lied_123.pdf\"); fileName/Anzeige gleich.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-8fc12571": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:296"
+   ],
+   "n": "files (storageName, fileName, fileType, url, instrumentId, note) + instrument_ids ohne null/1/Hauptgruppe; Filter id + tenantId (Ionic nur id).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-e29da71b": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:572",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:339"
+   ],
+   "n": "songs/<Zielinstanz>/<neue songId>/<storageName>, upsert, Dateityp der Quelle.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-4c1eb778": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:305"
+   ],
+   "n": "Gleiche Spalten (name, number, prefix, withChoir, withSolo, link, difficulty, instrument_ids [], category null) + tenantId Ziel.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-abc49039": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:618",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:354"
+   ],
+   "n": "Flutter schreibt files je Upload (uploadFileBytes) und am Ende instrument_ids der gemappten Ids ohne null/1/2, Filter id + tenantId Ziel; Endzustand gleich.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-e1bff895": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/song_file_service.dart:350"
+   ],
+   "n": "Flutter besser: Ionic entfernt \"<tenant>/<song>/<name>\" ohne Präfix \"songs/\" (Upload liegt unter songs/…, Objekt bleibt im Bucket) / Flutter entfernt \"songs/<tenant>/<song>/<storageName|fileName>\". Fehler beim Entfernen ignoriert Flutter (Ionic bricht ab).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-759f867b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/song_file_service.dart:377"
+   ],
+   "n": "Flutter besser: Ionic schreibt die übrigen files ohne storageName zurück / Flutter lässt die übrigen Einträge unverändert (inkl. storageName); instrument_ids gleich (ohne null/1/Hauptgruppe), Filter id + tenantId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-c465c027": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/user_preferences_provider.dart:103"
+   ],
+   "n": "Ionic: updateUser({data:{currentTenantId, wantInstanceSelection}}) – nur diese zwei Schlüssel / Flutter: updateCurrentTenantId schickt die komplette lokale user_metadata plus currentTenantId; ist die lokale Kopie veraltet (z.B. showSongsTab_*/dashboardCards_* zwischenzeitlich auf anderem Gerät geändert), werden diese Werte zurückgesetzt. Im Normalfall gleiches Ergebnis.",
+   "v": "korrigiert"
+  },
+  "services/db.service#alert-f27cc642": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:312"
+   ],
+   "n": "Ionic: Radio-Alert \"Instanz auswählen\" / \"Bitte wähle die Instanz aus, die du öffnen möchtest:\" mit \"Abbrechen\" (öffnet gespeicherte bzw. erste Instanz) und \"Öffnen\" / Flutter: bei wantInstanceSelection nach Login die Vollseite /tenants mit Instanzliste, kein Abbrechen.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-3570c95a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:583",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:139",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:347"
+   ],
+   "n": "signOut + Navigation /login; Löschen von currentTenantId auf Instanzauswahl siehe Extra des Erstreviews.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-ce08613a": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/optional_tabs_providers.dart:66"
+   ],
+   "n": "Nur Schlüssel showSongsTab_<tenantId>.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-8d8a615f": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/optional_tabs_providers.dart:73"
+   ],
+   "n": "Nur Schlüssel showOrgPlansTab_<tenantId>.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-2fd3cd30": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:143"
+   ],
+   "n": "Nur Schlüssel showDashboardTab_<tenantId>.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-4876fa59": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:160"
+   ],
+   "n": "dashboardCards_<tenantId> als [{id, visible}].",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-c86c5021": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/account_repository.dart:27"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a4755bbc": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/account_repository.dart:41",
+    "lib/features/settings/presentation/pages/delete_account_page.dart:85"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-df38a8de": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:64"
+   ],
+   "n": "Vorher tenantUsers-Zeile (außer Admin) entfernen, Abbruch bei Fehler; Löschen viewers per id + tenantId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-0d132f59": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:81"
+   ],
+   "n": "Wie Ionic: erst Zugang entziehen (Admins bleiben), dann parents per id + tenantId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-137537bd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:110",
+    "lib/features/settings/presentation/pages/parents_page.dart:234"
+   ],
+   "n": "Ionic: Toast \"Fehler beim Löschen des Elternteils\" (danger) / Flutter: \"Fehler: Fehler beim Löschen des Elternteils\" (Präfix aus settingsFlutterErrorDetail).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-9dda4c79": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/viewer_repository.dart:38",
+    "lib/core/providers/viewer_providers.dart:87"
+   ],
+   "n": "registerUser(Rolle Viewer) → insert viewers {appId, email, firstName, lastName, tenantId}.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-6c2884c9": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/parent_repository.dart:55",
+    "lib/core/providers/parent_providers.dart:99"
+   ],
+   "n": "registerUser(Rolle Elternteil) → insert parents → tenantUsers.parent_id (linkParentToTenantUser).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-ee74db05": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:183",
+    "lib/data/repositories/user_registration_repository.dart:101"
+   ],
+   "n": "action inform mit email, name, role-Text, roleId, tenantId; mailSent-Prüfung gleich (E-Mail-Normalisierung siehe Extra).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-927e06c4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:140"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-ee74db05-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:183",
+    "lib/data/repositories/user_registration_repository.dart:146"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-2ff41e23": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:160",
+    "lib/data/repositories/user_registration_repository.dart:178"
+   ],
+   "n": "Flutter besser: Ionic legt nach action register den tenantUsers-Eintrag ohne tenantId an (= aktuelle Instanz, falsch bei Übergabe in andere Instanz) / Flutter nutzt die Zielinstanz.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-18b6c38a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:311",
+    "lib/data/repositories/user_registration_repository.dart:326"
+   ],
+   "n": "Felder role bzw. parent_id, Filter tenantId + userId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a0284eb0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:426"
+   ],
+   "n": "Verwaisten tenantUsers-Eintrag löschen (tenantId + userId); Rollenabweichung Stimmführer siehe Extra.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a0284eb0-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:426"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a0284eb0-3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:426"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-f8dfe408": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:500"
+   ],
+   "n": "player.appId per id + tenantId; Rolle Hauptgruppe → Verantwortlich, sonst Spieler.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-c8873abd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:76",
+    "lib/features/auth/presentation/pages/login_page.dart:207"
+   ],
+   "n": "Text gleich (\"E-Mail oder Passwort falsch. …\"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-a9895a84-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:171",
+    "lib/features/auth/presentation/pages/login_page.dart:279"
+   ],
+   "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-a9895a84-3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:174",
+    "lib/features/auth/presentation/pages/login_page.dart:279"
+   ],
+   "n": "Text gleich; Ionic 5 s / Flutter 3 s (md) bzw. 4 s (iOS).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-04641214": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:186",
+    "lib/features/auth/presentation/pages/login_page.dart:294"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#effect-75028b3e": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/dashboard_logic.dart:56",
+    "lib/features/auth/presentation/pages/login_page.dart:461"
+   ],
+   "n": "homeRouteFor: Dashboard für Admin/Verantwortliche mit showDashboardTab, sonst role.defaultRoute (= Utils.getUrl).",
+   "v": "bestätigt"
+  },
+  "services/db.service#nav-db276870": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:364"
+   ],
+   "n": "Ohne Mitgliedschaft zeigt /tenants die nicht schließbare TenantCreatePage (= Ionic /register).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-b503196e": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:190"
+   ],
+   "n": "signUp mit terms_accepted_at; emailRedirectTo im Web = aktueller Origin/login, nativ https://attendix.de/login.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-d030c88f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:327",
+    "lib/data/repositories/profile_repository.dart:364"
+   ],
+   "n": "Flutter besser: Ionic schreibt firstName/lastName/phone/birthday/img/correctBirthday UND additional_fields der aktuellen Instanz in alle player-Zeilen mit appId (überschreibt Zusatzfelder anderer Instanzen) / Flutter: Stammdaten in alle eigenen Zeilen, additional_fields nur aktuelle Instanz; img nicht in diesem Speichern (Bild separat, ebenfalls instanzübergreifend).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-d030c88f-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:403"
+   ],
+   "n": "additional_fields.bfecg_church in eigenen Zeilen mit gesetzter, abweichender Kirche; Filter id + tenantId + appId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-ca28f528": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+   ],
+   "n": "Ionic: \"Fehler beim Aktualisieren der Kirchenzuordnung\" / Flutter: allgemeines \"Fehler beim Aktualisieren des Profils\".",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-f23fb4a8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:36",
+    "lib/features/people/presentation/pages/people_list_page.dart:534"
+   ],
+   "n": "Betrifft getPlayers(true) (Statistik, Termin, Werk, Gruppe, Dashboard-Karten, Aufgaben …). Ionic: Toast \"Fehler beim Laden der Personen\" / Flutter: Text dbLoadPeopleFailed nirgends genutzt; Fehler je Seite inline oder gar nicht angezeigt.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-3cbc9139": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:438",
+    "lib/features/auth/presentation/pages/login_page.dart:131"
+   ],
+   "n": "Ionic: \"Fehler beim Zurücksetzen des Passworts. Versuche es später erneut\" / Flutter: \"Fehler beim Zurücksetzen des Passworts\" (authResetFailed).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-eb609135": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:443"
+   ],
+   "n": "Gleiche Fehlertexte je Code.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-01e8ff41": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/player_repository.dart:387",
+    "lib/data/repositories/player_repository.dart:504"
+   ],
+   "n": "Wie beim Insert: Ionic pickPersonFields ohne img (vorhandenes Bild der reaktivierten Zeile bleibt) / Flutter _personInsertData schreibt eine Nicht-data:-URL (z.B. übernommenes Bild eines Treffers aus anderer Instanz) mit; sonst left = null, Filter id + tenantId.",
+   "v": "korrigiert"
+  },
+  "services/db.service#db-fa2a3d2a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/player_repository.dart:504"
+   ],
+   "n": "Ionic: insert ohne img (pickPersonFields, übernommenes Bild eines Treffers geht verloren; data:-Bild separat hochgeladen) / Flutter: schreibt Nicht-data:-URL beim Insert mit; data:-Bild separat wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-73e39b3e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:538"
+   ],
+   "n": "pickPersonFields ohne id/created_at/img, Filter id + tenantId.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-244b0807": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/cross_tenant_person_repository.dart:329"
+   ],
+   "n": "Flutter besser: Ionic schreibt die History der Quellperson (inkl. neuem Eintrag) in die Zielperson / Flutter hängt den Eintrag an deren eigene History; paused/paused_until gleich. Flutter bietet und erlaubt nur Instanzen, in denen der Benutzer Admin/Verantwortlich ist.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-241c9ebf": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:654"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-f46be416": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:683"
+   ],
+   "n": "Admin bleibt, weitere aktive Person mit gleicher appId hält den Zugang.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-c9fc0740": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/player_repository.dart:603",
+    "lib/data/repositories/player_repository.dart:622"
+   ],
+   "n": "Flutter besser: Ionic entfernt Zugang/appId beim Archivieren nur bei appId UND E-Mail / Flutter bei appId; left, History \"Kein Grund angegeben\"-Fallback gleich.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-ffa8e5a7": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:21",
+    "lib/data/repositories/sign_in_out_repository.dart:425"
+   ],
+   "n": "Ionic liest u.a. extra_plans mit (PlanViewer der Selbstverwaltung zeigt bei mehrtägigen Terminen Tages-/Plan-Chips) / Flutter: kSignoutAttendanceColumns ohne extra_plans → nur Hauptplan. Gleiche Ursache wie signout.page#modal-ef7b9f1b (b15). Filter tenantId + Datum −31 Tage gleich.",
+   "v": "korrigiert"
+  },
+  "services/db.service#db-2d9e88d3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:940"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-01d8f953": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:294"
+   ],
+   "n": "Body + tenantId, Fehler verschluckt wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-2c362d4d": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:301"
+   ],
+   "n": "Flutter prüft vorher zusätzlich Admin-Rolle.",
+   "v": "bestätigt"
+  },
+  "services/db.service#nav-51ad9728": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+   ],
+   "n": "Ionic: nach Löschen immer setTenant() und Navigation zu Utils.getUrl(Rolle) / Flutter: nur wenn die aktuelle Instanz gelöscht wurde go(\"/tenants\") mit Auto-Navigation (ggf. Dashboard-Start), sonst bleibt der Benutzer auf der Seite.",
+   "v": "bestätigt"
+  },
+  "services/db.service#effect-3e8f334d": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+   ],
+   "n": "Wie nav-51ad9728: Ionic Utils.getUrl(Rolle) nach jedem Löschen / Flutter nur bei gelöschter aktueller Instanz über /tenants.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-33aeae23": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:281"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-3719cde8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/tenant_create_repository.dart:38",
+    "lib/features/tenant_selection/tenant_defaults.dart:45"
+   ],
+   "n": "Gleiche Defaults (maintainTeachers false, withExcuses true, betaProgram true, showHolidays false, Geräte-Zeitzone).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-74190cc0": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598"
+   ],
+   "n": "Ionic: \"Fehler beim Erstellen der Instanz, bitte versuche es später erneut.\" (plus Seiten-Toast mit Fehler) / Flutter: nur \"Fehler beim Erstellen der Instanz: {Fehler}\".",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-889a8812": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/tenant_create_repository.dart:50"
+   ],
+   "n": "Super-Developer immer, Ersteller als Admin (außer Super-Developer).",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-1cd73328": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:581"
+   ],
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a7cd02de": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/tenant_create_repository.dart:63"
+   ],
+   "n": "Gleiche Standard-Termintypen inkl. Status, Farben, Flags.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-70dfd437": {
+   "s": "missing",
+   "sev": "niedrig",
+   "f": [],
+   "n": "Ionic: Toast \"Fehler beim Laden der Gruppenteilnehmer\" / Flutter: linkedTenantIdsProvider verschluckt den Fehler (leere Liste), kein Toast.",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-a3cf422a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/cross_tenant_person_repository.dart:208"
+   ],
+   "n": "Verknüpfte Instanzen außer aktueller, Rolle ≠ Viewer, wie Ionic-Filter.",
+   "v": "bestätigt"
+  },
+  "services/db.service#toast-5ffe4e58": {
+   "s": "missing",
+   "sev": "niedrig",
+   "f": [],
+   "n": "Ionic: Toast \"Fehler beim Laden der Mandanten\" / Flutter: Fehler im Pausieren-Folgeschritt still abgefangen (pause_person_sheet.dart).",
+   "v": "bestätigt"
+  },
+  "services/db.service#db-9e81b5f6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:737"
+   ],
+   "n": "left = null + History \"Person wieder aktiviert\", Filter id + tenantId.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "services/db.service",
+   "title": "getAppIdByEmail: Teilstring-Suche",
+   "n": "Flutter besser: Ionic sucht tenantUsers per ilike \"%email%\" (Teilstring) – bei Einladung von \"max@x.de\" kann das Konto von \"amax@x.de\" verknüpft und informiert werden / Flutter: exakter, case-insensitiver Vergleich (exactIlikePattern).",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:1083",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:357"
+   ]
+  },
+  {
+   "unit": "services/db.service",
+   "title": "removeEmailFromAuth: Nachprüfung bricht ab",
+   "n": "Flutter besser: Ionic ruft nach removeUserFromTenant noch getAppIdByEmail auf; bleibt der Zugang wegen einer zweiten aktiven Person mit gleicher appId bestehen, wirft das \"… bereits in der Instanz als …\" → Archivieren bricht ab (Entfernen meldet Fehler nach dem Löschen) / Flutter: kein Nachlauf, Archivieren/Löschen gelingt.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:2536",
+   "f": [
+    "lib/data/repositories/player_repository.dart:584"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1777 @@
+{
+ "batch": "b01-app",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "app-redirect/app-redirect.page#logic-154a5f34": {
+   "s": "diff",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:31-54"
+   ],
+   "n": "Plattform-Erkennung und Ziel (App Store/Play Store/Web) gleich; Unterschied beim History-Verhalten, siehe extra.",
+   "sev": "niedrig"
+  },
+  "app-redirect/app-redirect.page#nav-42559fe1": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:33-35"
+   ]
+  },
+  "app-redirect/app-redirect.page#text-c5b7fc54": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:96"
+   ]
+  },
+  "app-redirect/app-redirect.page#text-e97fa4cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:103"
+   ]
+  },
+  "app-redirect/app-redirect.page#action-2da8ba82": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:108-113"
+   ]
+  },
+  "app-redirect/app-redirect.page#action-f6aa44fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:115-120"
+   ],
+   "n": "Ionic: Icon logo-google-playstore / Flutter: Icons.shop. Text und Ziel gleich.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-7f7cfdbd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:26-29"
+   ],
+   "n": "'' → /login (Query bleibt erhalten); LoginGuard-Weiterleitung entspricht AR-Redirect für angemeldete Nutzer."
+  },
+  "app-routing.module#route-b64546c1": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:276-441",
+    "lib/core/router/legacy_routes.dart:44-45"
+   ],
+   "n": "Flutter besser: /tabs ohne Anmeldung → Ionic: AuthGuard → /login, nach Login routeAfterAuth (Link geht verloren) / Flutter: Link wird gemerkt (PendingFileLink) und nach Login fortgesetzt; /tabs → /open-link → Rollen-Startseite.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-c75ffb00": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/route_access.dart:72-75",
+    "lib/core/router/legacy_routes.dart:65-71"
+   ]
+  },
+  "app-routing.module#route-5a8aa5c8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/route_access.dart:77-81"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. (Übersicht: Ionic Reload schickt Admin/Verantwortl./Beobachter auf /tabs/player.)",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-30a0910a": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/route_access.dart:83-88"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-3957412a": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:187",
+    "lib/core/router/app_router.dart:790-817",
+    "lib/core/router/legacy_routes.dart:48-49"
+   ]
+  },
+  "app-routing.module#route-117fac13": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:194",
+    "lib/core/router/app_router.dart:820-847"
+   ],
+   "n": "Flutter besser: Ionic: isUrlAccessAllowed kennt nur /tabs/attendance mit Unterpfad, Reload der nackten URL schickt Helfer auf /tabs/signout / Flutter: Helfer dürfen /attendance öffnen (gleiche Rollen wie Tab).",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-902a5855": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:54-56",
+    "lib/core/router/app_router.dart:1045-1055"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. Legacy-URL wird auf /settings/protocol/:id gemappt.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-70e49d30": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/attendance_detail_guard.dart:22-27",
+    "lib/core/router/app_router.dart:214-246"
+   ],
+   "n": "Ionic: AuthGuard und isUrlAccessAllowed erlauben attendance* für ADMIN/HELPER/VLH/VIEWER/RESPONSIBLE; Beobachter öffnen den Termin aus Liste, Topics und Nachrichten / Flutter: attendanceDetailRedirect verlangt role.canAddAttendance – Beobachter (VIEWER) wird von /attendance/:id auf /people umgeleitet.",
+   "sev": "hoch"
+  },
+  "app-routing.module#route-05ed08a7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/route_access.dart:89-93"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-4cddadf6": {
+   "s": "missing",
+   "n": "Ionic-Route /tabs/songs-tab/import (SongImportPage) nur per URL erreichbar, die App öffnet den Import als Modal (songs.page.ts:377) / Flutter: keine Route, /songs-tab/import fällt auf SongDetailPage(id \"import\").",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-82191e46": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1293-1300"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-9ddb8b7c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:936-942"
+   ]
+  },
+  "app-routing.module#route-07b55f9c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:186",
+    "lib/core/router/app_router.dart:987-991"
+   ]
+  },
+  "app-routing.module#route-c862e0d0": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:167",
+    "lib/core/router/app_router.dart:982"
+   ]
+  },
+  "app-routing.module#route-e032468e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:950-981",
+    "lib/core/router/route_access.dart:117-122"
+   ],
+   "n": "Flutter besser: Ionic: Reload von /tabs/settings/songs bricht für Nicht-Dirigenten ab (AuthGuard) / Flutter: alle Rollen inkl. Bewerber können /settings/songs öffnen; Anlegen/Bearbeiten nur Admin/Verantwortl. (route_access).",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-22a72ccb": {
+   "s": "missing",
+   "n": "Ionic-Route /tabs/settings/songs/import (SongImportPage) nur per URL erreichbar; Flutter hat keine Import-Route, /settings/songs/import wird als Werk-ID \"import\" interpretiert.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-692f435d": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:960-967"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-c4744fe8": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1204-1211",
+    "lib/features/settings/presentation/pages/files_page.dart:1126-1133"
+   ],
+   "n": "Zugriff wie Ionic canAccessFiles (Prüfung in der Seite statt im Guard)."
+  },
+  "app-routing.module#route-ed286061": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:89-90",
+    "lib/core/router/app_router.dart:993-1004"
+   ]
+  },
+  "app-routing.module#route-26467c34": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:84-88"
+   ]
+  },
+  "app-routing.module#route-f024e0aa": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1040-1044"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-5d496c10": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:84-88"
+   ]
+  },
+  "app-routing.module#route-903b9699": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1035-1039"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. (team-notify-Links /tabs/settings/tasks/:id)",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-3e6c6d33": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1028-1034"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-a1ee1df3": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:176",
+    "lib/core/router/app_router.dart:1006-1010"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-0a62fac7": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:178",
+    "lib/core/router/app_router.dart:1012-1016"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-e4f28d41": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1017-1025"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-b987dd8e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:930-935",
+    "lib/core/router/legacy_routes.dart:61-62"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. (send-message-Links /tabs/messages/:id → /messages/:id)",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-0351b31a": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1056-1060"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-6b4589f8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:91-92",
+    "lib/core/router/app_router.dart:547-551"
+   ],
+   "n": "Flutter besser: Ionic: /tabs/settings/register (RegisterPage) – Reload bricht für Nicht-Dirigenten ab / Flutter: Legacy-URL → /tenants/new, für alle angemeldeten Rollen.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-259813cd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:179",
+    "lib/core/router/app_router.dart:1247-1262"
+   ]
+  },
+  "app-routing.module#route-a99e6e47": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1252-1260"
+   ]
+  },
+  "app-routing.module#route-1ed5378b": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:165",
+    "lib/core/router/app_router.dart:1061-1065"
+   ]
+  },
+  "app-routing.module#route-409dca75": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:93-98",
+    "lib/core/router/app_router.dart:1109-1124"
+   ],
+   "n": "Ionic: /tabs/settings/general/shifts öffnet die Schichtenliste / Flutter: Legacy-Mapping liefert /settings/general/shifts, diese Route gibt es nicht (Schichten liegen unter /settings/shifts) → Fehlerseite \"Seite nicht gefunden\".",
+   "sev": "mittel"
+  },
+  "app-routing.module#route-174d1db9": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:93-98",
+    "lib/core/router/app_router.dart:1109-1124"
+   ],
+   "n": "Ionic: /tabs/settings/general/shifts/:id öffnet die Schicht / Flutter: Legacy-Mapping → /settings/general/shifts (ohne :id), Route existiert nicht → Fehlerseite \"Seite nicht gefunden\".",
+   "sev": "mittel"
+  },
+  "app-routing.module#route-362ac3d6": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:95-96",
+    "lib/core/router/app_router.dart:1071-1086"
+   ]
+  },
+  "app-routing.module#route-d10242f3": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:95-96",
+    "lib/core/router/app_router.dart:1071-1086"
+   ]
+  },
+  "app-routing.module#route-8b879178": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1222-1226"
+   ]
+  },
+  "app-routing.module#route-58f7f3b8": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1217-1221"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-4f889ee3": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/route_access.dart:95-98"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. (Stimmführer: nur VL/VLH)",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-8fe0e4ca": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:173",
+    "lib/core/router/app_router.dart:1212"
+   ]
+  },
+  "app-routing.module#route-81a96071": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1199-1203"
+   ],
+   "n": "Flutter besser: Ionic: delete-account fehlt in isUrlAccessAllowed, Reload leitet Nicht-Dirigenten auf getUrl um / Flutter: /settings/delete-account für alle angemeldeten Rollen.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-bac0fe82": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1180-1198"
+   ],
+   "n": "Flutter besser: Ionic: Reload von /tabs/settings/help bricht für Nicht-Dirigenten ab (AuthGuard) / Flutter: Hilfe für alle Rollen erreichbar.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-1a651acd": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1180-1198"
+   ],
+   "n": "Flutter besser: wie /tabs/settings/help – Ionic Reload für Nicht-Dirigenten abgebrochen / Flutter: Artikel für alle Rollen.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-d6960ea2": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1180-1198"
+   ],
+   "n": "Flutter besser: wie /tabs/settings/help – Ionic Reload für Nicht-Dirigenten abgebrochen / Flutter: Glossar für alle Rollen.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-fc0d5b73": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/legacy_routes.dart:63-64",
+    "lib/core/router/app_router.dart:199",
+    "lib/core/router/app_router.dart:1302-1318"
+   ]
+  },
+  "app-routing.module#route-b9a9398e": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:63-64"
+   ],
+   "n": "Ionic: /tabs/org-plans/planung bleibt im Tab Org-Pläne / Flutter: Legacy-URL → /settings/org-plans/planung (Einstellungen statt Tab /org-plans-tab/planung).",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-9a25908b": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:182",
+    "lib/core/router/app_router.dart:1141-1152"
+   ]
+  },
+  "app-routing.module#route-66af9bdd": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1141-1152"
+   ]
+  },
+  "app-routing.module#route-f9c1060e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:183",
+    "lib/core/router/app_router.dart:1153-1177"
+   ]
+  },
+  "app-routing.module#route-f4856f09": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1153-1177"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-f65b270a": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1153-1177"
+   ],
+   "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-600bc78e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1153-1177"
+   ]
+  },
+  "app-routing.module#route-dd04c3d0": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:99-102"
+   ],
+   "n": "Ionic: /tabs/settings/org-settings/branding öffnet die Org-Branding-Seite / Flutter: Legacy-URL → /settings/org-settings (Branding ist dort enthalten, keine eigene Seite).",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-74c4b07e": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:181",
+    "lib/core/router/app_router.dart:1136-1140"
+   ]
+  },
+  "app-routing.module#route-ddf8f625": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1238-1245"
+   ],
+   "n": "Ionic: SuperDeveloperGuard leitet Nicht-Superdevs auf /tabs/player um / Flutter: Umleitung auf /settings.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-1f551f78": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:1276-1282"
+   ],
+   "n": "Ionic: SuperDeveloperGuard leitet Nicht-Superdevs auf /tabs/player um / Flutter: Umleitung auf /settings.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-54b016ce": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1276-1282"
+   ]
+  },
+  "app-routing.module#route-64f686ec": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1276-1282"
+   ]
+  },
+  "app-routing.module#route-ede3e6e8": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/route_access.dart:70",
+    "lib/core/router/app_router.dart:881-889"
+   ]
+  },
+  "app-routing.module#route-b64546c1-2": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:45",
+    "lib/features/deep_links/presentation/pages/open_link_page.dart:81-89"
+   ],
+   "n": "Ionic: Tabs-Kindroute '' → redirect /tabs/player (danach effect → getUrl(role)) / Flutter: /tabs → /open-link → Rollen-Startseite (homeRouteFor/defaultRoute) direkt, ohne Zwischenstopp auf /people.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-b64546c1-3": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/legacy_routes.dart:74-75",
+    "lib/features/deep_links/presentation/pages/open_link_page.dart:81-89"
+   ],
+   "n": "Ionic: Wildcard/Leer-Route unter /tabs → /tabs/player / Flutter: unbekannte /tabs/...-Pfade → /open-link → Rollen-Startseite.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-d6ee1e0c": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:339-361",
+    "lib/core/router/app_router.dart:444-448"
+   ]
+  },
+  "app-routing.module#route-d98e9634": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:449-455",
+    "lib/core/router/app_router.dart:289-291"
+   ],
+   "n": "Ionic: /register = RegisterPage (neue Instanz anlegen) mit RegisterGuard (ohne Instanz → Anlegen, mit Instanz → getUrl, abgemeldet → /login) / Flutter: /register ist das Konto-Registrierungsformular (öffentlich); Instanz anlegen liegt unter /tenants/new.",
+   "sev": "mittel"
+  },
+  "app-routing.module#route-49fc5ebe": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:477-484"
+   ]
+  },
+  "app-routing.module#route-61b8a146": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:297-298",
+    "lib/core/router/app_router.dart:487-491"
+   ]
+  },
+  "app-routing.module#route-4f64d874": {
+   "s": "diff",
+   "f": [
+    "lib/core/router/app_router.dart:365-376",
+    "lib/core/router/app_router.dart:492-496"
+   ],
+   "n": "Ionic: nach Akzeptieren der AGB → getUrl(role) / Flutter: → /tenants → homeRouteFor (Dashboard-Logik); TermsGuard-Äquivalent im Redirect.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-4195df74": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:254-260",
+    "lib/core/router/app_router.dart:1324-1327"
+   ]
+  },
+  "app-routing.module#route-e346b9e2": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:305-309",
+    "lib/core/router/app_router.dart:513-517"
+   ],
+   "n": "Öffentliche Planungsansicht; ok."
+  },
+  "app-routing.module#route-bd3213ab": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:504-512"
+   ]
+  },
+  "app-routing.module#route-3a204f54": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:311-316",
+    "lib/core/router/app_router.dart:523-530"
+   ]
+  },
+  "app-routing.module#route-892610fa": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1328-1335"
+   ]
+  },
+  "app-routing.module#route-80d287ce": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:301",
+    "lib/core/router/app_router.dart:498-502"
+   ]
+  },
+  "app-routing.module#route-956f337d": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:518-522"
+   ]
+  },
+  "app-routing.module#route-30d5de34": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1336-1341"
+   ]
+  },
+  "app-routing.module#route-f224eba3": {
+   "s": "missing",
+   "n": "Ionic: /:songSharingId/import (Werk-Import aus geteilter Liste) / Flutter: keine Route; /x/import wird als /:songSharingId/:songId mit songId \"import\" interpretiert.",
+   "sev": "niedrig"
+  },
+  "app-routing.module#route-57e60fc9": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:1342-1349"
+   ]
+  },
+  "app.component#logic-4a296d90": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:85-165",
+    "lib/features/auth/data/auth_flow_service.dart:470-530",
+    "lib/shared/widgets/dialogs/native_app_ad.dart:30-97"
+   ],
+   "n": "Auth-Deep-Links, Push-Init, Teams, Tracking, SW-Update und Native-App-Hinweis vorhanden; Unterschiede siehe extras (Passwort-Recovery als Seite statt Alert, Update-Modell, Teams-Unterdrückung, Fehlertexte, Tracking-URLs).",
+   "sev": "mittel"
+  },
+  "app.component#nav-ea6fff49": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/teams/teams_service.dart:331-344"
+   ]
+  },
+  "app.component#native-a707e12b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/root_back_button_scope.dart:36-50"
+   ]
+  },
+  "app.component#alert-df60fa5d": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-115"
+   ],
+   "n": "Ionic: Alert \"Neues Passwort\" mit Passwortfeld (min. 6) über der aktuellen Seite, Buttons Abbrechen/Passwort ändern, bleibt bei Fehler offen / Flutter: eigene Seite /new-password mit Passwortfeld und Button; gleiche Validierung, anderer Dialogtyp/Flow.",
+   "sev": "mittel"
+  },
+  "app.component#toast-ed78b5e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-51"
+   ]
+  },
+  "app.component#toast-9a9fbfa0": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-51"
+   ]
+  },
+  "app.component#toast-0dcf4ddc": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-51"
+   ]
+  },
+  "app.component#db-c155d49d": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:137-146",
+    "lib/core/providers/push_providers.dart:62-77"
+   ]
+  },
+  "app.component#nav-0040c935": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:333-336"
+   ]
+  },
+  "app.component#alert-b82c0ed9": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/dialogs/native_app_ad.dart:30-97"
+   ],
+   "n": "Ionic: Hinweis wird in Teams nicht gezeigt (isInTeams) / Flutter: Native-App-Hinweis ohne Teams-Prüfung, erscheint auch im Teams-Tab. Texte/Buttons gleich.",
+   "sev": "niedrig"
+  },
+  "app.component#effect-330e1045": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/dialogs/native_app_ad.dart:44-50"
+   ]
+  },
+  "app.component#native-f45e9256": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:85-110"
+   ]
+  },
+  "app.component#nav-da17d860": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:85-110"
+   ]
+  },
+  "app.component#toast-499d9f2d": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:124-165"
+   ],
+   "n": "Flutter besser: Ionic zeigt error_description der Supabase-URL roh (englisch) / Flutter übersetzt bekannte Fehler in deutschen Text.",
+   "sev": "niedrig"
+  },
+  "app.component#nav-3a7bceb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ]
+  },
+  "app.component#db-bd67c5c9": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:296-310",
+    "lib/features/auth/data/auth_flow_service.dart:470-530"
+   ],
+   "n": "Flutter besser: Ionic verifyOtp nur mit type recovery|signup / Flutter mappt alle Link-Typen (u.a. invite, magiclink, email_change) auf den passenden OtpType.",
+   "sev": "niedrig"
+  },
+  "app.component#db-d6f9a05c": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:470-530"
+   ]
+  },
+  "app.component#db-5fb0bfbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:514"
+   ]
+  },
+  "app.component#nav-3a7bceb6-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-120"
+   ],
+   "n": "Ionic: Recovery-Link → /login und dort Alert \"Neues Passwort\" / Flutter: Recovery-Link → Seite /new-password.",
+   "sev": "mittel"
+  },
+  "app.component#toast-e7dc24bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ]
+  },
+  "app.component#toast-872f0a00": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ]
+  },
+  "app.component#nav-3a7bceb6-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-133"
+   ]
+  },
+  "app.module#logic-0c401cb7": {
+   "s": "diff",
+   "f": [
+    "lib/main.dart:102-105",
+    "lib/main.dart:155"
+   ],
+   "n": "Ionic: TeamsService.init als APP_INITIALIZER (App startet erst nach Teams-Erkennung); SW im iframe deaktiviert / Flutter: TeamsService.init() wird nicht abgewartet (unawaited), SSO startet nach Erkennung. Sichtbar höchstens als kurzer Zwischenstand im Teams-Tab.",
+   "sev": "niedrig"
+  },
+  "legal/legal.page#action-54a73fe6": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/legal_page.dart:21-26"
+   ]
+  },
+  "legal/legal.page#text-1878e877": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/legal_page.dart:20"
+   ]
+  },
+  "legal/legal.page#embed-5272fde7": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/legal_page.dart:29"
+   ]
+  },
+  "login/legal-modal/legal-content.component#logic-29322e4b": {
+   "s": "diff",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:61-83"
+   ],
+   "n": "Inhalt wird geladen und angezeigt; Unterschiede siehe extras (Fehleransicht mit Wiederholen, Rendering).",
+   "sev": "niedrig"
+  },
+  "login/legal-modal/legal-content.component#text-6f50c60a": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:67-71"
+   ]
+  },
+  "login/legal-modal/legal-modal.component#logic-3f4d04f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+   ]
+  },
+  "login/legal-modal/legal-modal.component#text-67a39ad6": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+   ]
+  },
+  "login/legal-modal/legal-modal.component#action-bf1f94b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+   ]
+  },
+  "login/legal-modal/legal-modal.component#embed-8f9b9e91": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:171-193"
+   ]
+  },
+  "login/login.page#logic-b2bfd6ff": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:113-417"
+   ],
+   "n": "Login (Passwort/Code), Reset, Registrieren, Bestätigungsmail gleich; Unterschiede siehe extras.",
+   "sev": "niedrig"
+  },
+  "login/login.page#loading-256b5e4d": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:186-228"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/login.page#toast-30a11df6": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:233-259"
+   ]
+  },
+  "login/login.page#toast-ea20099d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:262-267"
+   ]
+  },
+  "login/login.page#loading-850f8e3f": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:262-282"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/login.page#loading-65905d50": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:284-298"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/login.page#alert-219aeb1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:350-395"
+   ]
+  },
+  "login/login.page#toast-a452fd30": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:381-384"
+   ]
+  },
+  "login/login.page#alert-6409ac1a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:398-406"
+   ]
+  },
+  "login/login.page#alert-1434e49d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:409-417"
+   ]
+  },
+  "login/login.page#loading-5b2e7ab2": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:151-168"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/login.page#modal-103ea590": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:135-136"
+   ]
+  },
+  "login/login.page#alert-6a20446e": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:113-126",
+    "lib/features/auth/presentation/widgets/reset_password_dialog.dart"
+   ],
+   "n": "Ionic: Alert \"Passwort zurücksetzen\" mit E-Mail-Feld, danach Toast / Flutter: eigener Dialog (reset_password_dialog) mit gleichem Feld; Toast-Texte leicht anders formuliert, kein Loading-Overlay.",
+   "sev": "niedrig"
+  },
+  "login/login.page#modal-54e99890": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:333-347"
+   ],
+   "n": "Ionic: Registrieren-Modal leer / Flutter: Registrieren-Seite mit der im Login eingegebenen E-Mail vorbefüllt.",
+   "sev": "niedrig"
+  },
+  "login/login.page#toast-852af94c": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:345"
+   ]
+  },
+  "login/login.page#action-4356dbd3": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:696-848"
+   ],
+   "n": "Ionic: Enter im E-Mail-Feld springt ins Passwortfeld bzw. sendet / Flutter: Enter im E-Mail-Feld verhält sich anders (Fokuswechsel/Absenden nicht identisch).",
+   "sev": "niedrig"
+  },
+  "login/login.page#field-d44519e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:714-726"
+   ]
+  },
+  "login/login.page#field-d0883640": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:731-760"
+   ]
+  },
+  "login/login.page#field-970a3c41": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:762-797"
+   ]
+  },
+  "login/login.page#action-f30ee364": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:767-781"
+   ]
+  },
+  "login/login.page#field-4e867a58": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:828-835"
+   ]
+  },
+  "login/login.page#action-af3f04b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:804-806"
+   ]
+  },
+  "login/login.page#action-a353b6d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:807-808"
+   ]
+  },
+  "login/login.page#action-9df2d240": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:813-818"
+   ]
+  },
+  "login/login.page#action-af3f04b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:820-825"
+   ]
+  },
+  "login/login.page#action-70cf3742": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:826-827"
+   ]
+  },
+  "login/login.page#action-b6cdb175": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:838-839"
+   ]
+  },
+  "login/login.page#action-1966836a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:840-845"
+   ]
+  },
+  "login/login.page#action-02346026": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:657-672"
+   ],
+   "n": "Ionic: \"Nach Updates suchen\" prüft/installiert ein OTA-Live-Update (Capgo) / Flutter: prüft die Store-Version und öffnet den Store.",
+   "sev": "niedrig"
+  },
+  "login/login.page#text-ba560996": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:680-682"
+   ],
+   "n": "Zeigt die Flutter-App-Version statt der Ionic-Version."
+  },
+  "login/login.page#action-a6d6b3b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:683-686"
+   ]
+  },
+  "login/login.page#action-6a4ae84b": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:688-691"
+   ]
+  },
+  "login/register-modal/register-modal.component#logic-7bbd3637": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:110-300"
+   ],
+   "n": "Registrierung, Validierung, Code-Bestätigung gleich; Unterschiede siehe extras.",
+   "sev": "niedrig"
+  },
+  "login/register-modal/register-modal.component#modal-080b45a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:110-111"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-ba40ad3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:255-258"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-8f1461ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:259-262"
+   ]
+  },
+  "login/register-modal/register-modal.component#loading-3c8fec58": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:263-268"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/register-modal/register-modal.component#loading-246d5798": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:281-297"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay mit Text / Flutter: Spinner im Button, Felder und Links bleiben bedienbar.",
+   "sev": "niedrig"
+  },
+  "login/register-modal/register-modal.component#db-ccf652fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:292"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-6d9b35c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:169-172"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-16a9af5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:173-176"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-cb3fc9b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:177-180"
+   ]
+  },
+  "login/register-modal/register-modal.component#toast-ce59251f": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:181-184"
+   ]
+  },
+  "login/register-modal/register-modal.component#loading-2d3baa1a": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:528-539"
+   ],
+   "n": "Ionic: Overlay \"Registrierung läuft...\" / Flutter: Spinner im Button, kein blockierendes Overlay.",
+   "sev": "niedrig"
+  },
+  "login/register-modal/register-modal.component#toast-f7470f37": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:212-242"
+   ]
+  },
+  "login/register-modal/register-modal.component#text-bc1359dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:345"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-750d1d30": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:347-355"
+   ]
+  },
+  "login/register-modal/register-modal.component#text-fa17e5fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:367-373"
+   ]
+  },
+  "login/register-modal/register-modal.component#text-076068a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:375"
+   ]
+  },
+  "login/register-modal/register-modal.component#text-db5ffd6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:377-382"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-f32f9068": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:360-557"
+   ],
+   "n": "Ionic: Enter in jedem Feld sendet das Formular ab / Flutter: Enter sendet nur aus dem Feld \"Passwort bestätigen\" ab.",
+   "sev": "niedrig"
+  },
+  "login/register-modal/register-modal.component#field-410a3077": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:387-394"
+   ]
+  },
+  "login/register-modal/register-modal.component#field-6fbdba65": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:398-411"
+   ]
+  },
+  "login/register-modal/register-modal.component#field-2f06b64e": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:413-441"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-2c289d8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:417-431"
+   ]
+  },
+  "login/register-modal/register-modal.component#field-e6607e3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:442-456"
+   ]
+  },
+  "login/register-modal/register-modal.component#field-12044aea": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:457-464"
+   ]
+  },
+  "login/register-modal/register-modal.component#field-87d9c8c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:470-488"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-cc5ee3ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:503-511"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-39c451d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:540-549"
+   ]
+  },
+  "login/register-modal/register-modal.component#action-ae1b8182": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:552-556"
+   ]
+  },
+  "open-attendance/open-attendance.page#logic-caf4f4fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:37-94"
+   ],
+   "n": "Öffnen eines Termins per Link (mit/ohne Anmeldung) vorhanden; Unterschiede siehe extras.",
+   "sev": "niedrig"
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:313-316"
+   ]
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:40-43"
+   ]
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051-3": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:313-316"
+   ]
+  },
+  "open-file/open-file.page#logic-76562f6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:58-125"
+   ]
+  },
+  "open-file/open-file.page#toast-d3c8175b": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:58-66"
+   ]
+  },
+  "open-file/open-file.page#nav-c403b48f": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:64"
+   ]
+  },
+  "open-file/open-file.page#nav-e132ddd2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:70-73"
+   ]
+  },
+  "open-file/open-file.page#nav-e132ddd2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:76-85"
+   ]
+  },
+  "open-file/open-file.page#toast-0367da77": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:92-96"
+   ]
+  },
+  "open-file/open-file.page#toast-ef87d2b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:109-113"
+   ]
+  },
+  "open-file/open-file.page#nav-034261c8": {
+   "s": "diff",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:115-124"
+   ],
+   "n": "Ionic: navigateByUrl(..., replaceUrl) – Zurück führt nicht auf /open-file / Flutter: context.go ohne Ersetzen des Browser-History-Eintrags, Zurück im Browser öffnet /open-file erneut.",
+   "sev": "niedrig"
+  },
+  "open-file/open-file.page#toast-c088ac66": {
+   "s": "na",
+   "n": "Flutter hat für /settings/files keinen Guard, der die Navigation abbrechen könnte; der Fehlertoast für eine abgebrochene Navigation hat keinen Auslöser (Zugriff prüft die Dateien-Seite selbst)."
+  },
+  "register/register.page#logic-697bd367": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:440-600"
+   ],
+   "n": "Instanz anlegen/löschen, Validierung und Felder gleich; Unterschiede siehe extras.",
+   "sev": "niedrig"
+  },
+  "register/register.page#toast-dc5bddf6": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:561-564"
+   ]
+  },
+  "register/register.page#loading-f7a14784": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460"
+   ],
+   "n": "Ionic: blockierendes Overlay beim Anlegen / Flutter: Spinner im Button.",
+   "sev": "niedrig"
+  },
+  "register/register.page#toast-535997f4": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:596-599"
+   ],
+   "n": "Flutter besser: Ionic: Toast mit roher Fehlermeldung (register.createFailed + error.message), teils doppelt / Flutter: verständlicher deutscher Fehlertext.",
+   "sev": "niedrig"
+  },
+  "register/register.page#alert-f158c7c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:502-521"
+   ]
+  },
+  "register/register.page#loading-14fb6abb": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:524"
+   ],
+   "n": "Ionic: blockierendes Loading-Overlay beim Löschen / Flutter: nur Info-Toast, nicht blockierend.",
+   "sev": "niedrig"
+  },
+  "register/register.page#toast-aed4ea59": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:528-529"
+   ]
+  },
+  "register/register.page#toast-243480af": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:530-537"
+   ]
+  },
+  "register/register.page#text-57d96556": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:143"
+   ]
+  },
+  "register/register.page#action-c30f1d58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:146-155"
+   ]
+  },
+  "register/register.page#action-a59eb784": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:158-160"
+   ]
+  },
+  "register/register.page#popover-aecc1f28": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:158-183"
+   ]
+  },
+  "register/register.page#action-c25bfc83": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:165-172",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:493-499"
+   ]
+  },
+  "register/register.page#action-44a0b310": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:173-181"
+   ]
+  },
+  "register/register.page#text-afeec563": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:196-204"
+   ]
+  },
+  "register/register.page#text-9482d5fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:233-240"
+   ]
+  },
+  "register/register.page#text-856864fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:242-249"
+   ]
+  },
+  "register/register.page#text-25d8d6cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:260"
+   ]
+  },
+  "register/register.page#field-5641b587": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:265-279",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490"
+   ]
+  },
+  "register/register.page#text-a326493a": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:306"
+   ]
+  },
+  "register/register.page#field-98af382f": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:311-324"
+   ]
+  },
+  "register/register.page#field-3125940a": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:325-337"
+   ]
+  },
+  "register/register.page#text-69e955ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:342-345"
+   ]
+  },
+  "register/register.page#action-a59eb784-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:346-352"
+   ]
+  },
+  "register/register.page#popover-f947f492": {
+   "s": "diff",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:542-558"
+   ],
+   "n": "Ionic: Info-Popover am Info-Icon (Hauptgruppe) / Flutter: AlertDialog mit gleichem Text.",
+   "sev": "mittel"
+  },
+  "register/register.page#field-38a5af18": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:357-369"
+   ]
+  },
+  "register/register.page#text-e3dfb75e": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:374"
+   ]
+  },
+  "register/register.page#text-f594a3e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:393"
+   ]
+  },
+  "register/register.page#text-0d484e0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-392"
+   ]
+  },
+  "register/register.page#text-6f9b8d26": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:396"
+   ]
+  },
+  "register/register.page#text-89093a58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:400-402"
+   ]
+  },
+  "register/register.page#text-9349f4dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:418"
+   ]
+  },
+  "register/register.page#text-ed5b440c": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:423-424"
+   ]
+  },
+  "register/register.page#text-1f43fa56": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:425-426"
+   ]
+  },
+  "register/register.page#text-79616fca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:427-428"
+   ]
+  },
+  "register/register.page#action-78b871cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460"
+   ]
+  },
+  "register/register.page#text-e5c14cf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:446-460"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "app-routing.module",
+   "title": "Reload/Deep-Link-Rollenprüfung",
+   "n": "Flutter besser: Ionic: AuthGuard läuft nur beim Betreten von /tabs; für viele Unterseiten (messages, team-organization, tasks/:id, agenda-items/:id, messages/:id, auto-messages, overview, delete-account, general/extra-fields, general/shifts, org-settings/person-fields, org-settings/songs) bricht ein Reload die Navigation ab (leere Seite) oder TabsPage-effect leitet auf getUrl(role) um, obwohl die UI der Rolle den Zugang erlaubt / Flutter: Redirect prüft die Rolle bei jeder Navigation und schickt abgelehnte Rollen auf role.defaultRoute.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/auth.guard.ts:16-45",
+   "f": [
+    "lib/core/router/app_router.dart:214-246",
+    "lib/core/router/route_access.dart:127-139"
+   ]
+  },
+  {
+   "unit": "app-routing.module",
+   "title": "Beobachter kann Termin-Detail nicht öffnen",
+   "n": "Ionic: VIEWER darf attendance/:id öffnen (AuthGuard, isUrlAccessAllowed), Einstieg aus Anwesenheitsliste, Themen-Tab und Nachrichten / Flutter: attendanceDetailRedirect verlangt canAddAttendance, Beobachter wird auf /people umgeleitet.",
+   "sev": "hoch",
+   "ionic": "src/app/utilities/Utils.ts:1312-1317",
+   "f": [
+    "lib/core/router/attendance_detail_guard.dart:22-27"
+   ]
+  },
+  {
+   "unit": "app-routing.module",
+   "title": "Legacy-Schichten-URLs ins Leere",
+   "n": "Ionic: /tabs/settings/general/shifts(/:id) öffnet Schichten / Flutter: legacyRouteRedirect → /settings/general/shifts, keine solche Route → Fehlerseite \"Seite nicht gefunden\".",
+   "sev": "mittel",
+   "ionic": "src/app/tabs/tabs-routing.module.ts",
+   "f": [
+    "lib/core/router/legacy_routes.dart:93-98",
+    "lib/core/router/app_router.dart:1109-1124"
+   ]
+  },
+  {
+   "unit": "app-redirect/app-redirect.page",
+   "title": "Store-Weiterleitung legt History-Eintrag an",
+   "n": "Ionic: window.location.replace(storeUrl) – Zurück führt nicht wieder auf /app / Flutter: launchUrl(webOnlyWindowName: \"_self\") legt einen Eintrag an, Zurück öffnet /app und leitet erneut weiter.",
+   "sev": "niedrig",
+   "ionic": "src/app/app-redirect/app-redirect.page.ts:38-42",
+   "f": [
+    "lib/features/public_links/presentation/pages/app_redirect_page.dart:31-54"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "Passwort-Recovery als Seite statt Alert",
+   "n": "Ionic: PASSWORD_RECOVERY-Event/Recovery-Link öffnet Alert \"Neues Passwort\" über der Login-Seite / Flutter: Navigation auf eigene Seite /new-password.",
+   "sev": "mittel",
+   "ionic": "src/app/app.component.ts:108-160",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:119-120",
+    "lib/features/auth/presentation/pages/new_password_page.dart:34-115"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "Web-Update-Modell",
+   "n": "Ionic: SwUpdate prüft regelmäßig/bei Sichtbarkeitswechsel, aktiviert eine neue Version und lädt die Seite sofort neu / Flutter: neue Version wird erst beim nächsten Start geladen.",
+   "sev": "niedrig",
+   "ionic": "src/app/app.component.ts:178-199",
+   "f": [
+    "lib/core/services/app_update_service_web.dart"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "Native-App-Hinweis in Teams",
+   "n": "Ionic: showNativeAppAd kehrt in Teams zurück (isInTeams) / Flutter: keine Teams-Prüfung, Hinweis erscheint auch im Teams-Tab.",
+   "sev": "niedrig",
+   "ionic": "src/app/app.component.ts:203-207",
+   "f": [
+    "lib/shared/widgets/dialogs/native_app_ad.dart:30-97"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "Auth-Link-Fehlertexte",
+   "n": "Flutter besser: Ionic zeigt error_description (englisch) direkt / Flutter übersetzt bekannte Fehler ins Deutsche.",
+   "sev": "niedrig",
+   "ionic": "src/app/app.component.ts:297",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:152-165"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "OTP-Link-Typen",
+   "n": "Flutter besser: Ionic verifyOtp nur recovery|signup / Flutter unterstützt weitere Link-Typen (invite, magiclink, email_change).",
+   "sev": "niedrig",
+   "ionic": "src/app/app.component.ts:303-323",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:296-310"
+   ]
+  },
+  {
+   "unit": "app.component",
+   "title": "Page-View-Tracking",
+   "n": "Ionic: trackt router.url roh (/tabs/...) / Flutter: tracking_observer bereinigt IDs/Query und trackt Flutter-Pfade (andere URLs in der Auswertung).",
+   "sev": "niedrig",
+   "ionic": "src/app/app.component.ts:375-385",
+   "f": [
+    "lib/core/router/tracking_observer.dart:14-40"
+   ]
+  },
+  {
+   "unit": "login/legal-modal/legal-content.component",
+   "title": "Fehleransicht mit Wiederholen",
+   "n": "Flutter besser: Ionic setzt nur error=true (Fehlertext) / Flutter: Fehleransicht mit \"Erneut versuchen\".",
+   "sev": "niedrig",
+   "ionic": "src/app/login/legal-modal/legal-content.component.ts:18-24",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:61-83"
+   ]
+  },
+  {
+   "unit": "login/legal-modal/legal-content.component",
+   "title": "HTML-Rendering",
+   "n": "Ionic: innerHTML / Flutter: Umwandlung über HtmlToDelta/Quill; Darstellung komplexer HTML-Elemente (Tabellen, Listen) nicht geprüft (Paketquellen nicht im Container).",
+   "sev": "niedrig",
+   "ionic": "src/app/login/legal-modal/legal-content.component.ts",
+   "f": [
+    "lib/features/legal/presentation/widgets/legal_content_view.dart:61-83"
+   ]
+  },
+  {
+   "unit": "login/login.page",
+   "title": "E-Mail-Validierung inline",
+   "n": "Ionic: ungültige E-Mail → Toast / Flutter: Fehlertext direkt am Feld.",
+   "sev": "niedrig",
+   "ionic": "src/app/login/login.page.ts:164-166",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:151-168"
+   ]
+  },
+  {
+   "unit": "login/login.page",
+   "title": "Reset-Toast-Texte",
+   "n": "Ionic: db.resetPassword-Toasts / Flutter: eigene, leicht anders formulierte Toasts im Reset-Dialog.",
+   "sev": "niedrig",
+   "ionic": "src/app/login/login.page.ts:334",
+   "f": [
+    "lib/features/auth/presentation/widgets/reset_password_dialog.dart"
+   ]
+  },
+  {
+   "unit": "login/login.page",
+   "title": "Registrieren mit E-Mail vorbefüllt",
+   "n": "Ionic: Registrieren-Modal startet leer / Flutter: übernimmt die eingegebene E-Mail.",
+   "sev": "niedrig",
+   "ionic": "src/app/login/login.page.ts",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:333-347"
+   ]
+  },
+  {
+   "unit": "login/register-modal/register-modal.component",
+   "title": "Fehlermeldungen signUp",
+   "n": "Flutter besser: Ionic: allgemeine Fehlertoasts aus db.register / Flutter: spezifischere Meldungen je Supabase-Fehler.",
+   "sev": "niedrig",
+   "ionic": "src/app/login/register-modal/register-modal.component.ts:196-205",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:212-242"
+   ]
+  },
+  {
+   "unit": "login/register-modal/register-modal.component",
+   "title": "Bestehendes Konto mit richtigem Passwort",
+   "n": "Flutter besser: Ionic zeigt \"Registrierung erfolgreich…\"-Toast, obwohl der Nutzer direkt angemeldet ist / Flutter leitet den angemeldeten Nutzer weiter.",
+   "sev": "niedrig",
+   "ionic": "src/app/login/register-modal/register-modal.component.ts:196-205",
+   "f": [
+    "lib/features/auth/presentation/pages/register_page.dart:212-242"
+   ]
+  },
+  {
+   "unit": "open-attendance/open-attendance.page",
+   "title": "Link ohne gültige ID",
+   "n": "Ionic: ungültige ID angemeldet → routeAfterAuth (Dashboard-Logik) / Flutter: → role.defaultRoute.",
+   "sev": "niedrig",
+   "ionic": "src/app/open-attendance/open-attendance.page.ts:49-55",
+   "f": [
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:37-50"
+   ]
+  },
+  {
+   "unit": "open-attendance/open-attendance.page",
+   "title": "Fortsetzen nach Login",
+   "n": "Flutter besser: Ionic merkt sich die ID nur in pendingAttendanceId (geht bei Reload verloren) / Flutter setzt den Link nach dem Login fort.",
+   "sev": "niedrig",
+   "ionic": "src/app/open-attendance/open-attendance.page.ts:62-67",
+   "f": [
+    "lib/core/router/app_router.dart:311-316",
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:40-43"
+   ]
+  },
+  {
+   "unit": "open-attendance/open-attendance.page",
+   "title": "Beobachter",
+   "n": "Flutter besser: Ionic bleibt für Beobachter ohne Termin-Zugriff auf dem Spinner hängen / Flutter leitet auf /people um.",
+   "sev": "niedrig",
+   "ionic": "src/app/open-attendance/open-attendance.page.ts:70-85",
+   "f": [
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:60-94"
+   ]
+  },
+  {
+   "unit": "register/register.page",
+   "title": "Namen werden getrimmt",
+   "n": "Ionic speichert Instanz-/Namensfelder ungetrimmt / Flutter trimmt Leerzeichen.",
+   "sev": "niedrig",
+   "ionic": "src/app/register/register.page.ts:40-58",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:470-490"
+   ]
+  },
+  {
+   "unit": "register/register.page",
+   "title": "Schließen der Route-Variante",
+   "n": "Flutter besser: Ionic ruft modalController.dismiss() auch in der Route-Variante (/tabs/settings/register) auf, wo kein Modal existiert (Fehler/kein Schließen) / Flutter navigiert korrekt zurück.",
+   "sev": "niedrig",
+   "ionic": "src/app/register/register.page.ts:53",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:561-564"
+   ]
+  }
+ ]
+}

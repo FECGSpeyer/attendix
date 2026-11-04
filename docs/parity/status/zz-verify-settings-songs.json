@@ -1,0 +1,441 @@
+{
+ "batch": "zz-verify-settings-songs",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/settings/settings.page#db-754f75cc": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/realtime_providers.dart:326",
+    "lib/core/providers/realtime_providers.dart:358",
+    "lib/features/settings/presentation/pages/settings_page.dart:86"
+   ],
+   "n": "Live-Aktualisierung der ausstehenden Registrierungen per postgres_changes auf player (INSERT pending bzw. old.id gesetzt → neu laden); Flutter zusätzlich tenantId-Filter + DELETE-Listener für bekannte pending-IDs. Karte wie Ionic nur für Admin/Verantwortliche.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-574f5f7c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:360",
+    "lib/core/router/app_router.dart:901"
+   ],
+   "n": "Ionic: 'Ablaufpläne' öffnet PlanningPage als Karten-Modal (presentingElement, cssClass planningModal, Schließen-X) / Flutter: context.push('/planning') – normale Seite im Shell mit Zurück-Pfeil (Statistik/Export/Verlauf öffnet Flutter dagegen als Modal).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-35a628ef": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:125",
+    "lib/features/settings/presentation/pages/left_players_page.dart:129",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1701"
+   ],
+   "n": "Ionic: Tippen auf archivierte Person öffnet PersonPage als Karten-Modal (readOnly, hasLeft), Archivliste wird nur nach 'activated' neu geladen / Flutter: context.push('/people/<id>') als Seite über dem Archiv-Sheet (Shell-Navigator); Seite für ausgetretene Personen schreibgeschützt mit FAB 'Person reaktivieren', Liste wird danach immer invalidiert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#alert-7b4ee94f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:204",
+    "lib/features/settings/presentation/pages/viewers_page.dart:208",
+    "lib/features/settings/presentation/pages/viewers_page.dart:209",
+    "lib/features/settings/presentation/pages/viewers_page.dart:227",
+    "lib/features/settings/presentation/pages/viewers_page.dart:230"
+   ],
+   "n": "Titel 'Beobachter entfernen?', Nachricht 'Möchtest du {name} wirklich entfernen?', Buttons Abbrechen/Ja und Löschweg (tenantUsers ohne Admin-Rolle + viewers id/tenantId) gleich. Flutter zusätzlich: Erfolgs-Toast 'Beobachter entfernt' (Flutter-only) und 'Ja' rot hinterlegt; Ionic zeigt nach dem Entfernen keinen Toast.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-2d9ef553": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:376",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:380",
+    "lib/core/router/app_router.dart:549"
+   ],
+   "n": "Ionic: '+' schließt das Instanzen-Sheet und öffnet RegisterPage als Karten-Modal / Flutter: Sheet zu, router.push('/tenants/new') – Vollbildseite außerhalb des Shells.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-7a0b5d62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/viewers_page.dart:186"
+   ],
+   "n": "Ionic: blockierendes Loading während createViewer / Flutter: Dialog schließt, kein Ladeindikator bis Toast/Listen-Update.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-58a1f0f9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/parents_page.dart:186"
+   ],
+   "n": "Ionic: blockierendes Loading während createParent / Flutter: Dialog schließt, kein Ladeindikator bis Toast/Listen-Update.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#alert-7be72d9c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:33",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:38",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:43",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:78",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:85",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:119"
+   ],
+   "n": "Titel 'Gruppen auswählen', Nachricht, alle Gruppen vorausgewählt, Abbrechen/Generieren, Filter (nicht ausgetreten/pausiert/ausstehend) gleich. Ionic: ohne Auswahl bleibt der Alert offen (Warn-Toast); während der Erstellung blockierendes Loading 'settings.creatingCertificates' / Flutter: Dialog schließt, dann Warn-Toast; statt Loading nur Info-Toast.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-8befac68": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:100",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:106"
+   ],
+   "n": "Ionic: blockierendes Loading während createAdmin / Flutter: nur Spinner im FAB (FAB deaktiviert), Sheet bleibt bedienbar.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-fb3873fe": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart:125",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1736"
+   ],
+   "n": "Ionic: Tippen auf ausstehende Person öffnet PersonPage als Karten-Modal (approveMode) / Flutter: context.push('/people/<id>') als normale Seite über dem Sheet; Freigabe-Aktionen dort über FAB für pending; Liste per Realtime aktuell.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-68b1e36d": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:255"
+   ],
+   "n": "Erfolgs-Toast 'Die Profildaten wurden erfolgreich aktualisiert.' nach dem Speichern (Flutter schließt danach das Sheet, s. action-100a2fb9).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-453ee9ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:175"
+   ],
+   "n": "Flutter besser: gleicher Text 'Das Bild darf maximal 2MB groß sein.', aber Flutter prüft erst nach dem Verkleinern (image_picker maxWidth/Height 1200, Qualität 85, auch im Web per Canvas) – große Fotos werden verkleinert hochgeladen statt abgelehnt; Meldung erscheint praktisch nie. Ionic lehnt Originaldateien > 2 MB ab.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#loading-35a4db51": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:113",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:390"
+   ],
+   "n": "Ionic: blockierendes Loading während sendFeedback / Flutter: Spinner im 'Absenden'-Button (Button deaktiviert), nicht blockierend.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-8545be66": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:108",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:109"
+   ],
+   "n": "Gleicher Text 'Bitte gib eine Bewertung ab.'; Ionic rot (danger) / Flutter Warnfarbe.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#toast-70d8cc00": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:135"
+   ],
+   "n": "Ionic: Service-Toast 'Fehler beim Senden des Feedbacks' plus Seiten-Toast 'Fehler beim Senden des Feedbacks: {error}' / Flutter: nur 'Fehler beim Senden des Feedbacks' ohne Fehlerdetail.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#db-d18f91fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:228",
+    "lib/core/providers/user_preferences_provider.dart:75",
+    "lib/core/providers/user_preferences_provider.dart:93"
+   ],
+   "n": "auth.updateUser mit data.wantInstanceSelection (Flutter übernimmt die übrigen Metadaten inkl. currentTenantId). Schreibweg gleich; dass der Schalter danach den alten Wert zeigt und Folge-Taps denselben Wert schreiben, ist unter field-fdb790d6 erfasst.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#embed-ea4c4538": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:148",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:26"
+   ],
+   "n": "Glocke rechts in der Toolbar; mit Sidepanel ausgeblendet wie Ionic global.scss (body.side-panel-active).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-3b369ec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/app_promo_card.dart:109"
+   ],
+   "n": "Gleicher Text; gleiche Bedingung (nur Web, Super-Developer, nicht in Teams, nicht weggeklickt).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-f65b81d3": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:166",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:169"
+   ],
+   "n": "Ionic: <input type=file accept=image/*> – in der App (iOS-WebView) Auswahl Mediathek/Foto aufnehmen/Datei, Originaldatei wird hochgeladen / Flutter: native Apps nur ImageSource.gallery (keine Kamera-Option; PWA: Browser-Dateiauswahl ohne capture wie Ionic); Bild wird auf max. 1200 px, Qualität 85 verkleinert.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-de860e09-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:299",
+    "lib/shared/widgets/display/avatar.dart:44"
+   ],
+   "n": "Passbild rechts im Eintrag; ohne Bild oder bei Ladefehler Platzhalter-Avatar (avatar-placeholder.svg nachgebildet).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-b0fe3226": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:505",
+    "lib/features/profile/presentation/widgets/church_picker.dart:16",
+    "lib/features/profile/presentation/widgets/church_picker.dart:31"
+   ],
+   "n": "Ionic: Vollbild-ion-modal (ohne Breakpoints) / Flutter: Bottom-Sheet mit 95 % Höhe; Inhalt (Titel Feldname, Schließen, Suche, 'Nicht gelistet', Häkchen) gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-7b00fe14": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:360",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:363"
+   ],
+   "n": "Nicht editierbares Zusatzfeld: Feldname (h3) + Anzeigewert darunter.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-100a2fb9": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:346",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:349",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:227",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:256",
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+   ],
+   "n": "Speichern-Eintrag und Felder (Name, Telefon, Geburtstag mit correctBirthday nur bei Änderung, Zusatzfelder inkl. Org-Feldern, Kirche) gleich. Ionic: Sheet bleibt nach dem Speichern offen, Eingaben wirken sofort live auf die Hero-Karte (auch ungespeichert) / Flutter: Sheet schließt nach Erfolg, ungespeicherte Eingaben verfallen beim Schließen; Flutter trimmt Namen/Telefon. Korrektur zur Erstnotiz: Ionic meldet Fehler sehr wohl (db.updateProfile zeigt 'Fehler beim Aktualisieren des Profils', wie Flutter). Instanzübergreifender Schreibweg ist im Service-Batch (b17 db-d030c88f) bewertet.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-0f769ee3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:132",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:134",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:136",
+    "lib/features/settings/presentation/widgets/settings_admins_sheet.dart:138",
+    "lib/data/repositories/admin_repository.dart:153"
+   ],
+   "n": "E-Mail + 'Erstellt am: dd.MM.yyyy'; Tippen → eigener Eintrag: 'cannotRemoveSelf'-Toast, sonst Alert 'Admin entfernen?' Abbrechen/Ja → tenantUsers delete (tenantId, role admin, userId) wie Ionic, Erfolgs-Toast. Nur Super-Admin ohne Demo (wie Ionic).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-0490526c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:377",
+    "lib/features/settings/presentation/pages/settings_page.dart:380",
+    "lib/features/settings/presentation/pages/settings_page.dart:382"
+   ],
+   "n": "Ionic ohne queryParam → Standard-Tab 'tasks' (team-organization.page.ts activeSegment); Flutter ?tab=tasks – gleiches Ergebnis. Nur Teamleitung.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#action-ad2d5b3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:391",
+    "lib/features/settings/presentation/pages/settings_page.dart:394",
+    "lib/features/settings/presentation/pages/settings_page.dart:396"
+   ],
+   "n": "'Thema vorschlagen' → team-organization?tab=topics, nur im Teamkreis ohne Teamleitung.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-14ba6220": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart:58"
+   ],
+   "n": "Sheet-Titel 'Archiv'.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-87e51c97": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:549",
+    "lib/core/constants/app_constants.dart:10"
+   ],
+   "n": "Ionic: Badge mit package.json-Version (4.19.7) / Flutter: AppConstants.appVersion (0.38.1) – Nutzer sehen eine niedrigere, andere Versionsnummer.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-4c83c19f": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:543",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:19",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:20",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:38",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:236"
+   ],
+   "n": "iOS: Sheet in voller Höhe wie Ionic [0,1]. md: Ionic volle Höhe / Flutter ziehbares Sheet initial 70 %, max. 90 %.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-ace4bcc6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/sheets/feedback_sheet.dart:453",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:454",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:571",
+    "lib/shared/widgets/sheets/feedback_sheet.dart:574"
+   ],
+   "n": "Schalter 'Anonym' gleich, blendet das Telefonfeld aus; anonym schreibt tenant_id/user_id null wie Ionic. md zusätzlich Flutter-only-Untertitel 'Deine Daten werden nicht mitgesendet'.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#text-8938a6a0": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/shared/widgets/sheets/version_history_sheet.dart:37",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:176",
+    "lib/shared/widgets/sheets/version_history_sheet.dart:178",
+    "assets/version_history.json:1"
+   ],
+   "n": "Gleiche Darstellung ('Version x (Datum)' + je Änderung eine Zeile). Inhalt: Ionic version-history.json (4.19.x-Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.38.x, andere Einträge).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-fdb790d6": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:218",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:224",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:227",
+    "lib/core/providers/user_preferences_provider.dart:61",
+    "lib/core/providers/user_preferences_provider.dart:63",
+    "lib/core/config/supabase_config.dart:60"
+   ],
+   "n": "Label 'Instanzauswahl aktivieren' + Hilfetext und Schreiben in auth-Metadaten gleich. Fehler jetzt am Paketcode bestätigt (riverpod 2.6.1: Provider.updateShouldNotify = previous != next): userPreferencesProvider hängt nur an currentAuthUserIdProvider (nach updateUser dieselbe ID → keine Benachrichtigung) und dem konstanten supabaseAuthProvider → Schalter bleibt nach dem Tippen auf dem alten Wert, jedes weitere Tippen schreibt denselben Wert; Zurückschalten erst nach Neustart/Neuanmeldung. Ionic: ngModel schaltet sofort um und schreibt jeden Wechsel. Erstprüfer 'mittel' zu niedrig: Einstellung pro Sitzung nur einmal setzbar, Schalter zeigt falschen Zustand.",
+   "v": "korrigiert"
+  },
+  "settings/settings/settings.page#action-25aed01a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:537",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:539",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:541",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:549",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:566",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:569",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:168"
+   ],
+   "n": "Kurzname, Langname, Badge 'Aktuell', Favoriten-Stern, Tippen wechselt (aktuelle: nichts, sonst Sheet zu und Start-URL der Rolle) wie Ionic. Flutter zusätzlich: Info-Button je Instanz → Flutter-only Detailseite (Mitgliederzahl, Rolle, Löschen nur Admin).",
+   "v": "bestätigt"
+  },
+  "song-viewer/song-viewer.page#field-6a45b149": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage wird nirgends geladen (kein loadChildren/Import außerhalb src/app/song-viewer; app-routing.module.ts:84 lädt für '/:songSharingId' die SongsPage); sortOpt/onFilterChanged existieren in der Klasse nicht.",
+   "v": "bestätigt"
+  },
+  "song-viewer/song-viewer.page#text-153f96cf": {
+   "s": "na",
+   "n": "toter Code: SongViewerPage wird nirgends geladen (app-routing.module.ts:84 → SongsPage für '/:songSharingId').",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#logic-587858e7": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:62",
+    "lib/features/songs/presentation/pages/song_import_page.dart:105",
+    "lib/features/songs/presentation/pages/song_import_page.dart:132",
+    "lib/core/utils/import_mapper.dart:467",
+    "lib/core/utils/import_mapper.dart:608",
+    "lib/core/utils/import_mapper.dart:632",
+    "lib/data/repositories/import_repository.dart:80",
+    "lib/data/repositories/import_repository.dart:109",
+    "lib/core/utils/spreadsheet_reader.dart:43",
+    "lib/core/utils/spreadsheet_reader.dart:186"
+   ],
+   "n": "Gleich: 3 Schritte Datei → Zuordnung → Vorschau, Zielfeld-Optionen, Auto-Mapping, Pflicht Nummer+Name, Zeilen-Validierung, Duplikate in Datei und in effektiver Werkbibliothek (paginiert, tenantId = Werk-Quelle), Zähler/Status, Insert in songs mit denselben Spalten und tenantId = effectiveSongTenantId, Demo-Sperre, Vorlage, Schließen. Unterschiede (s. Erst-extra): .xls wird abgelehnt (hoch); Flutter erkennt DB-Insert-Fehler (Ionic zählt sie als importiert); Fehlergrund technisch formatiert. Formelzellen jetzt verifiziert: excel_community 2.6.2 liefert FormulaCellValue(formula, cachedValue), cellToDart nimmt die Formel statt des Ergebnisses → z. B. Nummer per Formel wird Fehlerzeile (Ionic/SheetJS: berechneter Wert).",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#loading-656de8cd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:149",
+    "lib/features/songs/presentation/pages/song_import_page.dart:165",
+    "lib/features/songs/presentation/pages/song_import_page.dart:226",
+    "lib/features/songs/presentation/pages/song_import_page.dart:260"
+   ],
+   "n": "Text '{done} / {total} importiert...' mit Fortschritt gleich. Ionic: Overlay blockiert ganze Seite / Flutter: nur Inhalt blockiert, 'Zurück' in der Fußleiste bleibt aktiv (wechselt zur Zuordnung, Import läuft weiter); Android-Zurück schließt die Seite mitten im Import (dann kein Ergebnis-Toast, Werkliste nicht neu geladen).",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#toast-3c445d79": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: äußerer catch zeigt Fehler als roten Toast (praktisch unerreichbar, importSongs fängt pro Zeile) / Flutter: kein äußerer catch, nur Fehler pro Zeile (song_import_page.dart:158-163).",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#alert-8c2d4a0a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:180",
+    "lib/features/people/presentation/widgets/import_widgets.dart:226"
+   ],
+   "n": "Gleich: Titel 'Nicht importierte Werke', max. 10 Zeilen '• {Präfix}{Nr} {Name}: {Grund}', '… und {n} weitere', Button 'OK'. Unterschiede: Grund in Flutter 'RepositoryException: <msg> (operation: insertSong, code: …)' statt error.message; Ionic schließt das Import-Modal sofort hinter dem Alert, Flutter erst nach 'OK'. In Ionic praktisch nie sichtbar (addSong prüft error nicht).",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#text-08ea26b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:209",
+    "lib/features/people/presentation/widgets/import_widgets.dart:30"
+   ],
+   "n": "Text identisch; nennt .xls, das Flutter ablehnt (s. field-601fe7d3).",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#field-601fe7d3": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/core/utils/import_file_io.dart:13",
+    "lib/core/utils/spreadsheet_reader.dart:43"
+   ],
+   "n": "Ionic: accept .xlsx,.xls,.csv, SheetJS liest alle drei / Flutter: Picker erlaubt xlsx/xls/csv, .xls wird aber mit rotem Toast 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' abgelehnt.",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#action-442f4824": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_import_page.dart:261"
+   ],
+   "n": "'{count} importieren' in der Fußleiste rechts, deaktiviert während des Imports oder ohne importierbare Zeilen.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

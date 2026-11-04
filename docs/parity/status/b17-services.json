@@ -1,0 +1,1096 @@
+{
+  "batch": "b17-services",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "services/db.service#logic-0e1c2e0b": {
+      "s": "diff",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:41",
+        "lib/features/auth/presentation/pages/login_page.dart:312",
+        "lib/data/repositories/user_registration_repository.dart:349",
+        "lib/data/repositories/user_registration_repository.dart:101",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:343"
+      ],
+      "n": "Methoden des DbService sind auf Repositories/Provider verteilt und weitgehend gleich portiert (Song-Dateien, Tenant-Wechsel, Auth, Konten, Personen, Termine, Instanzen, Übergabe). Versteckte Abweichungen: Vorrang Metadaten vs. lokaler Tenant-Cache, Stimmführer-Rollen in getAppIdByEmail, E-Mail-Normalisierung in registerUser, Logout löscht currentTenantId (siehe extra).",
+      "sev": "mittel"
+    },
+    "services/db.service#db-8d3e452e": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/song_file_service.dart:249"
+      ],
+      "n": "Bucket songs, Pfad songs/<tenant>/<song>/<fileId>, upsert"
+    },
+    "services/db.service#db-7bece662": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/song_file_service.dart:259"
+      ]
+    },
+    "services/db.service#db-8fc12571": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/song_file_service.dart:296"
+      ],
+      "n": "files-Eintrag + instrument_ids, Filter id + tenantId"
+    },
+    "services/db.service#db-7be27d7c": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/song_file_service.dart:547"
+      ]
+    },
+    "services/db.service#db-60a1d5d1": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:327",
+        "lib/core/services/song_file_service.dart:547"
+      ]
+    },
+    "services/db.service#db-e29da71b": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:339",
+        "lib/core/services/song_file_service.dart:572"
+      ]
+    },
+    "services/db.service#db-07d07d5b": {
+      "s": "ok",
+      "f": [
+        "lib/core/services/song_file_service.dart:582"
+      ]
+    },
+    "services/db.service#db-4c1eb778": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:303"
+      ]
+    },
+    "services/db.service#db-abc49039": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:353",
+        "lib/core/services/song_file_service.dart:296"
+      ],
+      "n": "Flutter schreibt files pro Upload und am Ende instrument_ids (ohne null/1/Hauptgruppe); Endzustand gleich"
+    },
+    "services/db.service#db-e1bff895": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/song_file_service.dart:350"
+      ],
+      "n": "Flutter besser: Ionic löscht \"<tenant>/<song>/<name>\" ohne Präfix \"songs/\" (Upload liegt unter songs/…, Datei bleibt im Bucket) / Flutter löscht \"songs/<tenant>/<song>/<storageName>\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-759f867b": {
+      "s": "diff",
+      "f": [
+        "lib/core/services/song_file_service.dart:377"
+      ],
+      "n": "Flutter besser: Ionic schreibt die übrigen files ohne storageName zurück / Flutter behält die Einträge vollständig (inkl. storageName); instrument_ids gleich, Filter id + tenantId.",
+      "sev": "niedrig"
+    },
+    "services/db.service#loading-9f4b6f7d": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:161"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay beim Instanzwechsel / Flutter: kein Overlay, direkter Wechsel.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-c465c027": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/user_preferences_provider.dart:103"
+      ],
+      "n": "currentTenantId in user_metadata; wantInstanceSelection bleibt erhalten (Ionic setzt es explizit auf bisherigen Wert/false)"
+    },
+    "services/db.service#alert-f27cc642": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:312",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:67"
+      ],
+      "n": "Ionic: Radio-Alert \"Instanz auswählen\" (\"Bitte wähle die Instanz aus…\", Buttons \"Abbrechen\"/\"Öffnen\") / Flutter: volle Seite /tenants mit Instanzliste, kein Abbrechen.",
+      "sev": "mittel"
+    },
+    "services/db.service#db-9c005a78": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:176"
+      ]
+    },
+    "services/db.service#db-3570c95a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:583",
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:139",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:347"
+      ]
+    },
+    "services/db.service#nav-748cf4c0": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/settings_page.dart:585",
+        "lib/shared/widgets/layout/side_nav/side_nav.dart:141"
+      ]
+    },
+    "services/db.service#db-ce08613a": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/optional_tabs_providers.dart:66"
+      ]
+    },
+    "services/db.service#db-8d8a615f": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/optional_tabs_providers.dart:73"
+      ]
+    },
+    "services/db.service#db-2fd3cd30": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/dashboard_providers.dart:143"
+      ]
+    },
+    "services/db.service#db-4876fa59": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/dashboard_providers.dart:160"
+      ],
+      "n": "Karten als {id, visible}"
+    },
+    "services/db.service#db-c86c5021": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/account_repository.dart:27"
+      ]
+    },
+    "services/db.service#db-a4755bbc": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/account_repository.dart:27",
+        "lib/features/settings/presentation/pages/delete_account_page.dart:85"
+      ]
+    },
+    "services/db.service#nav-da856cba": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:88"
+      ]
+    },
+    "services/db.service#toast-6a8168f4": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:64",
+        "lib/features/settings/presentation/pages/viewers_page.dart:204"
+      ],
+      "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: \"Fehler: Fehler beim Entfernen der E-Mail aus der Authentifizierung\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-df38a8de": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:64"
+      ]
+    },
+    "services/db.service#toast-4ca4cded": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:64",
+        "lib/features/settings/presentation/pages/viewers_page.dart:204"
+      ],
+      "n": "Ionic: \"Fehler beim Löschen des Beobachters\" / Flutter: mit Präfix \"Fehler: \".",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-dcde7a3a": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/parent_repository.dart:81"
+      ],
+      "n": "Ionic: \"Fehler beim Entfernen der E-Mail aus der Authentifizierung\" / Flutter: mit Präfix \"Fehler: \".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-0d132f59": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/parent_repository.dart:81"
+      ]
+    },
+    "services/db.service#toast-137537bd": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/parent_repository.dart:81"
+      ],
+      "n": "Ionic: \"Fehler beim Löschen des Elternteils\" / Flutter: mit Präfix \"Fehler: \".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-9dda4c79": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/viewer_repository.dart:38"
+      ]
+    },
+    "services/db.service#db-6c2884c9": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/parent_repository.dart:55"
+      ]
+    },
+    "services/db.service#db-ee74db05": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:101",
+        "lib/data/repositories/user_registration_repository.dart:87"
+      ]
+    },
+    "services/db.service#db-927e06c4": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:140"
+      ]
+    },
+    "services/db.service#db-ee74db05-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:101",
+        "lib/data/repositories/user_registration_repository.dart:87"
+      ]
+    },
+    "services/db.service#db-2ff41e23": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:101",
+        "lib/data/repositories/user_registration_repository.dart:239"
+      ],
+      "n": "Flutter besser: Ionic legt im register-Pfad den tenantUsers-Eintrag ohne tenantId (aktuelle Instanz) an / Flutter nutzt durchgehend die Zielinstanz (wichtig bei Übergabe).",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-18b6c38a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:311"
+      ]
+    },
+    "services/db.service#db-9d4749fb": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:354"
+      ],
+      "n": "Flutter besser: Ionic ilike \"%email%\" (Teilstring, kann fremde Adresse treffen) / Flutter ilike exakt (case-insensitiv).",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-7acf6dfb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:394"
+      ]
+    },
+    "services/db.service#db-a0284eb0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:426"
+      ]
+    },
+    "services/db.service#db-760ae443": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:394"
+      ]
+    },
+    "services/db.service#db-a0284eb0-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:426"
+      ]
+    },
+    "services/db.service#db-b3d6fa91": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:394"
+      ]
+    },
+    "services/db.service#db-a0284eb0-3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:426"
+      ]
+    },
+    "services/db.service#toast-8b3301cf": {
+      "s": "ok",
+      "f": [
+        "lib/features/people/presentation/pages/person_detail_page.dart:1596",
+        "lib/features/settings/presentation/pages/settings_page.dart:703"
+      ],
+      "n": "\"{Name} - Fehler beim Erstellen des Accounts: {Fehler}\""
+    },
+    "services/db.service#db-f8dfe408": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:500"
+      ]
+    },
+    "services/db.service#db-328295fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:334"
+      ]
+    },
+    "services/db.service#toast-c8873abd": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ],
+      "n": "Text gleich (\"E-Mail oder Passwort falsch…\"); Ionic 5 s / Flutter Standarddauer 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-79f266ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-7a069dcd": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-c31e6f3d": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-bdbdd56a": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-c7143ae5": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ],
+      "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-93dda176": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-c8873abd-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ],
+      "n": "Text gleich (\"E-Mail oder Passwort falsch…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-0f5651ec": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:76",
+        "lib/features/auth/presentation/pages/login_page.dart:114"
+      ]
+    },
+    "services/db.service#toast-bdede9c9": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:334",
+        "lib/features/auth/presentation/pages/login_page.dart:190"
+      ]
+    },
+    "services/db.service#db-904aefb5": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:353"
+      ]
+    },
+    "services/db.service#toast-5a318fd2": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ]
+    },
+    "services/db.service#toast-328fdcac": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ]
+    },
+    "services/db.service#toast-a9895a84": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ],
+      "n": "Text gleich (\"Kein Konto mit dieser E-Mail-Adresse gefunden…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-7ff478f0": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ]
+    },
+    "services/db.service#toast-a9895a84-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ],
+      "n": "Text gleich (\"Kein Konto…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-a9895a84-3": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ],
+      "n": "Text gleich (\"Kein Konto…\"); Ionic 5 s / Flutter 3 s (iOS 4 s).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-0f56a005": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:152",
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ]
+    },
+    "services/db.service#toast-f7183302": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:262"
+      ]
+    },
+    "services/db.service#db-74176a94": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:378"
+      ]
+    },
+    "services/db.service#db-9d602142": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:378"
+      ]
+    },
+    "services/db.service#toast-5053953a": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:181",
+        "lib/features/auth/presentation/pages/login_page.dart:284"
+      ]
+    },
+    "services/db.service#toast-04641214": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:181",
+        "lib/features/auth/presentation/pages/login_page.dart:284"
+      ]
+    },
+    "services/db.service#toast-322b828c": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:181",
+        "lib/features/auth/presentation/pages/login_page.dart:284"
+      ]
+    },
+    "services/db.service#nav-7f5eeeac": {
+      "s": "ok",
+      "f": [
+        "lib/core/router/app_router.dart:346",
+        "lib/features/public_links/presentation/pages/open_file_page.dart:82"
+      ],
+      "n": "PendingFileLink wird nach Login im Router-Redirect eingelöst"
+    },
+    "services/db.service#nav-138a96fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:424",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ]
+    },
+    "services/db.service#effect-75028b3e": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:424",
+        "lib/core/utils/dashboard_logic.dart:56"
+      ]
+    },
+    "services/db.service#nav-db276870": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:329",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:362"
+      ],
+      "n": "Ohne Mitgliedschaft: /tenants zeigt TenantCreatePage (nicht schließbar) statt /register; gleiche Registrierungsseite"
+    },
+    "services/db.service#db-b503196e": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/register_page.dart:190"
+      ],
+      "n": "emailRedirectTo im Web = aktueller Origin"
+    },
+    "services/db.service#toast-642edafe": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/presentation/pages/register_page.dart:230"
+      ],
+      "n": "Flutter besser: Ionic zeigt einen allgemeinen Registrierungsfehler / Flutter zeigt je nach Fehler konkrete Meldungen (z. B. schon registriert, schwaches Passwort).",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-bed2b65f": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/register_page.dart:204"
+      ]
+    },
+    "services/db.service#db-abe48f4d": {
+      "s": "na",
+      "n": "Flutter liest/schreibt img nicht über die Profil-Aktualisierung; Bild-Upload separat (lib/data/repositories/profile_repository.dart:413), kein Gegenstück für diese Abfrage nötig."
+    },
+    "services/db.service#db-d030c88f": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/profile_repository.dart:327",
+        "lib/data/repositories/profile_repository.dart:364"
+      ],
+      "n": "Flutter besser: Ionic aktualisiert alle player-Zeilen mit gleicher appId instanzübergreifend inkl. additional_fields der aktuellen Instanz / Flutter schreibt Stammdaten pro Instanz, ohne fremde additional_fields zu überschreiben.",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-c41e2bb6": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+      ]
+    },
+    "services/db.service#db-f5ce2029": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/profile_repository.dart:385"
+      ]
+    },
+    "services/db.service#db-d030c88f-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/profile_repository.dart:385"
+      ]
+    },
+    "services/db.service#toast-ca28f528": {
+      "s": "diff",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:258"
+      ],
+      "n": "Ionic: \"Fehler beim Aktualisieren der Kirchenzuordnung\" / Flutter: \"Fehler beim Aktualisieren des Profils\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-17024199": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:256"
+      ]
+    },
+    "services/db.service#db-1c4d7b0d": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:62"
+      ]
+    },
+    "services/db.service#toast-f23fb4a8": {
+      "s": "diff",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:534"
+      ],
+      "n": "Ionic: Toast \"Fehler beim Laden der Personen\" / Flutter: Fehleranzeige in der Liste (\"Fehler beim Laden\", \"Die Personenliste konnte nicht geladen werden.\").",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-d20467f8": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/player_repository.dart:252"
+      ],
+      "n": "Ionic: Kinder des Elternteils sortiert nach Gruppe/Name (wie Personenliste) / Flutter: nur nach lastName sortiert.",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-44d19a85": {
+      "s": "diff",
+      "f": [
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:195"
+      ],
+      "n": "Ionic: Toast \"Fehler beim Laden der Kinder\" / Flutter: Fehleransicht (_ErrorView) im Elternportal.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-8d10beae": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:62"
+      ]
+    },
+    "services/db.service#toast-f23fb4a8-2": {
+      "s": "diff",
+      "f": [
+        "lib/features/people/presentation/pages/people_list_page.dart:534"
+      ],
+      "n": "Ionic: Toast \"Fehler beim Laden der Personen\" / Flutter: Fehleranzeige in der Liste.",
+      "sev": "niedrig"
+    },
+    "services/db.service#loading-3aae5e12": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/presentation/pages/login_page.dart:120"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay beim Passwort-Zurücksetzen / Flutter: kein Overlay.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-37eafcf3": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:430"
+      ]
+    },
+    "services/db.service#toast-3cbc9139": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:430",
+        "lib/features/auth/presentation/pages/login_page.dart:120"
+      ],
+      "n": "Ionic: \"Fehler beim Zurücksetzen des Passworts. Versuche es später erneut\" / Flutter: \"Fehler beim Zurücksetzen des Passworts\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-6e31e7d2": {
+      "s": "diff",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:430",
+        "lib/features/auth/presentation/pages/login_page.dart:120"
+      ],
+      "n": "Ionic: \"Eine E-Mail mit weiteren Anweisungen wurde dir zugesandt\" (4 s) / Flutter: \"E-Mail zum Zurücksetzen des Passworts wurde gesendet\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#loading-67fad659": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/presentation/pages/new_password_page.dart:41"
+      ],
+      "n": "Button-Spinner, Buttons gesperrt"
+    },
+    "services/db.service#db-eb609135": {
+      "s": "ok",
+      "f": [
+        "lib/features/auth/data/auth_flow_service.dart:443"
+      ]
+    },
+    "services/db.service#db-7932c0e0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:349"
+      ]
+    },
+    "services/db.service#db-01e8ff41": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:349"
+      ]
+    },
+    "services/db.service#db-fa2a3d2a": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/player_repository.dart:504"
+      ],
+      "n": "Ionic: insert ohne img (pickPersonFields schließt img aus, Bild separat) / Flutter: schreibt img beim Insert mit, wenn keine data:-URL.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-35a09ab7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:904"
+      ]
+    },
+    "services/db.service#db-73e39b3e": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:518"
+      ]
+    },
+    "services/db.service#db-244b0807": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/cross_tenant_person_repository.dart:288"
+      ],
+      "n": "Flutter besser: Ionic hängt den Eintrag an die History der Quellperson und schreibt sie in die Zielperson / Flutter erweitert die eigene History der Zielperson und prüft Rechte (Admin/Verantwortlich) in der Zielinstanz.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-6ed0d891": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1131"
+      ]
+    },
+    "services/db.service#db-241c9ebf": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:644"
+      ]
+    },
+    "services/db.service#db-d2175ed2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:644"
+      ]
+    },
+    "services/db.service#db-6f7cc08a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:644"
+      ]
+    },
+    "services/db.service#db-f46be416": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:644"
+      ]
+    },
+    "services/db.service#db-c9fc0740": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/player_repository.dart:584"
+      ],
+      "n": "Flutter besser: Ionic entfernt Konto/appId beim Archivieren nur, wenn appId UND E-Mail gesetzt sind / Flutter auch ohne E-Mail.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-cc6767aa": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:69"
+      ]
+    },
+    "services/db.service#db-cc6767aa-2": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:69"
+      ]
+    },
+    "services/db.service#db-e7a94696": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:125"
+      ]
+    },
+    "services/db.service#db-1e5584c0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:801"
+      ]
+    },
+    "services/db.service#db-7ea61b92": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:311"
+      ]
+    },
+    "services/db.service#db-ffa8e5a7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:412"
+      ]
+    },
+    "services/db.service#db-133f3370": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:412"
+      ]
+    },
+    "services/db.service#db-2d9e88d3": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:940"
+      ]
+    },
+    "services/db.service#db-01d8f953": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/protocol_repository.dart:294"
+      ]
+    },
+    "services/db.service#db-50229123": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:680",
+        "lib/data/repositories/song_repository.dart:738"
+      ]
+    },
+    "services/db.service#db-973409b9": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/song_repository.dart:738",
+        "lib/features/planning/presentation/pages/planning_page.dart:859"
+      ],
+      "n": "Planung nutzt die Historie aus currentSongsProvider (history ab heute, tenantId)"
+    },
+    "services/db.service#db-2c362d4d": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:301"
+      ]
+    },
+    "services/db.service#toast-aa4cdecb": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:337"
+      ]
+    },
+    "services/db.service#nav-51ad9728": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+      ],
+      "n": "Ionic: nach Löschen immer setTenant + Navigation zu Utils.getUrl(Rolle) der nächsten Instanz / Flutter: nur wenn die aktuelle Instanz gelöscht wurde, go(\"/tenants\") mit Auto-Navigation, sonst bleibt die Seite.",
+      "sev": "mittel"
+    },
+    "services/db.service#effect-3e8f334d": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+      ],
+      "n": "Ionic: Utils.getUrl(Rolle) nach Löschen immer / Flutter: nur bei gelöschter aktueller Instanz über /tenants.",
+      "sev": "mittel"
+    },
+    "services/db.service#nav-8f636066": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:335"
+      ]
+    },
+    "services/db.service#toast-8452ec8e": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:333"
+      ],
+      "n": "\"Instanz wurde erfolgreich gelöscht!\""
+    },
+    "services/db.service#db-33aeae23": {
+      "s": "ok",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:281"
+      ]
+    },
+    "services/db.service#toast-11486c7a": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:254"
+      ],
+      "n": "Ionic: \"Fehler beim Setzen des Favoriten, bitte versuche es später erneut.\" / Flutter: \"Fehler beim Speichern\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-3719cde8": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/tenant_create_repository.dart:21",
+        "lib/features/tenant_selection/tenant_defaults.dart:45"
+      ]
+    },
+    "services/db.service#toast-74190cc0": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598"
+      ],
+      "n": "Ionic: \"Fehler beim Erstellen der Instanz, bitte versuche es später erneut.\" / Flutter: \"Fehler beim Erstellen der Instanz: {Fehler}\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-889a8812": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/tenant_create_repository.dart:21"
+      ],
+      "n": "inkl. Super-Developer-Eintrag (buildNewTenantUsers)"
+    },
+    "services/db.service#toast-adc1be2e": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598"
+      ],
+      "n": "Ionic: \"Fehler beim Erstellen des Benutzers, bitte versuche es später erneut.\" / Flutter: einheitlich \"Fehler beim Erstellen der Instanz: {Fehler}\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-1cd73328": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:581"
+      ],
+      "n": "\"Instanz wurde erfolgreich erstellt!\""
+    },
+    "services/db.service#nav-c490be92": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594"
+      ]
+    },
+    "services/db.service#effect-1473b6bd": {
+      "s": "ok",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:594"
+      ]
+    },
+    "services/db.service#db-a7cd02de": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/tenant_create_repository.dart:21"
+      ]
+    },
+    "services/db.service#toast-1fe396ca": {
+      "s": "diff",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:598"
+      ],
+      "n": "Ionic: \"Fehler beim Hinzufügen der Standard Anwesenheitstypen\" / Flutter: einheitlich \"Fehler beim Erstellen der Instanz: {Fehler}\".",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-6f76f783": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/organisation_repository.dart:335"
+      ]
+    },
+    "services/db.service#toast-70dfd437": {
+      "s": "missing",
+      "n": "Ionic: Toast \"Fehler beim Laden der Gruppenteilnehmer\" / Flutter: kein Toast, Fehler wird verschluckt (linkedTenantIdsProvider) bzw. nicht angezeigt.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-a3cf422a": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/cross_tenant_person_repository.dart:208"
+      ]
+    },
+    "services/db.service#toast-5ffe4e58": {
+      "s": "missing",
+      "n": "Ionic: Toast \"Fehler beim Laden der Mandanten\" / Flutter: kein Toast, Fehler im Pausieren-Ablauf nicht angezeigt (pause_person_sheet.dart).",
+      "sev": "niedrig"
+    },
+    "services/db.service#toast-7762503d": {
+      "s": "ok",
+      "f": [
+        "lib/core/utils/toast_helper.dart:65",
+        "lib/core/utils/demo_guard.dart:80"
+      ]
+    },
+    "services/db.service#db-9e81b5f6": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:694"
+      ]
+    },
+    "services/db.service#db-e6a0665f": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/import_repository.dart:27"
+      ]
+    },
+    "services/db.service#db-674632d0": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/import_repository.dart:80"
+      ]
+    },
+    "services/db.service#db-09697835": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1564"
+      ]
+    },
+    "services/db.service#db-9f804cab": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1564"
+      ]
+    },
+    "services/db.service#db-e99cfee5": {
+      "s": "diff",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:597",
+        "lib/core/services/cross_tenant_service.dart:63"
+      ],
+      "n": "Flutter besser: Ionic .single() liefert bei mehreren Zeilen (archiviert + aktiv) null, die Termine der Instanz fehlen in der Übersicht / Flutter lädt alle Zeilen (tenantId + appId) und wählt die aktive.",
+      "sev": "niedrig"
+    },
+    "services/db.service#db-7905be27": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:609"
+      ],
+      "n": "Inner-Join mit Spalten wie Ionic (+archived), Filter person_id, attendance.tenantId, date > seasonStart (Default 2023-01-01)"
+    },
+    "services/db.service#db-931b014c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/sign_in_out_repository.dart:612"
+      ],
+      "n": "Typen per Join attType:type_id statt eigener Abfrage je Instanz; gleiche Daten"
+    }
+  },
+  "extra": [
+    {
+      "unit": "services/db.service",
+      "title": "Vorrang gespeicherte Instanz",
+      "n": "Ionic: setTenant nimmt localStorage vor user_metadata.currentTenantId (gleiches Gerät gewinnt, Metadaten werden nachgezogen) / Flutter: Server-Metadaten gewinnen vor SharedPreferences, Login-Navigation nutzt nur Metadaten; bei abweichenden Werten öffnet eine andere Instanz.",
+      "sev": "mittel",
+      "ionic": "src/app/services/db.service.ts:453",
+      "f": [
+        "lib/core/providers/tenant_providers.dart:52",
+        "lib/features/auth/presentation/pages/login_page.dart:319",
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:93"
+      ]
+    },
+    {
+      "unit": "services/db.service",
+      "title": "getAppIdByEmail: Stimmführer und gleiche Person",
+      "n": "Ionic: vorhandener tenantUsers-Eintrag mit Rolle Stimmführer/Stimmführer-Helfer → Fehler \"userAlreadyInTenant\"; verknüpfte Person → immer \"bereits in Instanz als …\" / Flutter: Stimmführer-Rollen wie Spieler behandelt (player prüfen, verwaisten Eintrag löschen); ist die verknüpfte Person dieselbe (personId), wird die Verknüpfung wiederverwendet statt Fehler.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/db.service.ts:1095",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:374",
+        "lib/data/repositories/user_registration_repository.dart:401"
+      ]
+    },
+    {
+      "unit": "services/db.service",
+      "title": "registerUser normalisiert E-Mail",
+      "n": "Ionic: E-Mail unverändert an RPC/Edge-Function und tenantUsers / Flutter: E-Mail getrimmt und kleingeschrieben (andere gespeicherte Schreibweise).",
+      "sev": "niedrig",
+      "ionic": "src/app/services/db.service.ts:953",
+      "f": [
+        "lib/data/repositories/user_registration_repository.dart:110"
+      ]
+    },
+    {
+      "unit": "services/db.service",
+      "title": "Logout löscht gespeicherte Instanz",
+      "n": "Ionic: logout() nur signOut, user_metadata.currentTenantId bleibt / Flutter: Abmelden auf Instanzauswahl/Instanz-Erstellen ruft clearTenant() → currentTenantId in Metadaten gelöscht, nächster Login landet auf der Instanzauswahl.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/db.service.ts:757",
+      "f": [
+        "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:345",
+        "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:495",
+        "lib/core/providers/tenant_providers.dart:160"
+      ]
+    }
+  ]
+}

@@ -1,0 +1,1187 @@
+{
+ "batch": "b14-selfService",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "selfService/overview/overview.page#logic-1ed68b7a": {
+   "s": "diff",
+   "f": [
+    "lib/core/providers/self_service_providers.dart:17-155",
+    "lib/data/repositories/sign_in_out_repository.dart:535-640",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-428"
+   ],
+   "n": "Laden (Mitgliedschaften, Person je Instanz, seasonStart, Typen), Aufteilung anstehend/vergangen, aktueller Termin, Prozent/Verspätungen (include_in_average, shift_excused_as_present der aktuellen Instanz), Gruppierung nach Instanz, Schnellaktionen, Frist-Chip und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Aktionsblatt bei Entschuldigt/Verspätung gemeldet (hoch), strengere Typfilter, archivierte Termine, Personenwahl, changed_by, Dienst-Sync anderer Instanzen, Farbanzahl, Fehlerbehandlung – siehe extra.",
+   "sev": "hoch"
+  },
+  "selfService/overview/overview.page#toast-7a8e1bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:455-458"
+   ],
+   "n": "Warn-Toast 'Für diesen Termin sind keine Aktionen verfügbar.' wenn keine Einträge (Ionic: nur Abbrechen übrig)"
+  },
+  "selfService/overview/overview.page#actionsheet-1394033e": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-428",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:434-477"
+   ],
+   "n": "Ionic: kein Header, keine Icons; 'Entschuldigt' → 'Anmelden' + 'Anmelden mit Notiz'; 'Verspätung gemeldet' (text L) → zusätzlich 'Abmelden' und 'Verspätung eintragen' (nach Fristende nur diese beiden); 'Weitere Optionen' bei Entschuldigt → 'Anmelden mit Notiz' / Flutter: Header mit Titel + Datum/Zeit, Icons; Entschuldigt und Verspätung gemeldet nur 'Anmelden' (kein 'Anmelden mit Notiz', kein 'Abmelden'/'Verspätung eintragen'; nach Frist bzw. in 'Weitere Optionen' Toast 'keine Aktionen'). Typfilter strenger (siehe extra). Übrige Einträge, Reihenfolge und rotes 'Abbrechen' gleich.",
+   "sev": "hoch"
+  },
+  "selfService/overview/overview.page#alert-0041e6ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345-353",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:451-480"
+   ],
+   "n": "'Notiz für Anmeldung', Platzhalter 'Gib hier deine Notiz ein', Abbrechen/Anmelden gleich; Erreichbarkeit siehe actionsheet-1394033e"
+  },
+  "selfService/overview/overview.page#toast-8236dcaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:335-343"
+   ]
+  },
+  "selfService/overview/overview.page#toast-7a36c603": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:265-284"
+   ]
+  },
+  "selfService/overview/overview.page#alert-855b4ce2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-370"
+   ]
+  },
+  "selfService/overview/overview.page#toast-b3e96f73": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:363-367"
+   ]
+  },
+  "selfService/overview/overview.page#nav-0075de44": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25-37",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:133-141"
+   ],
+   "n": "Andere Instanz: /open-file?tenantId&path&folder=1 wie Ionic; aktuelle Instanz direkt /settings/files?path (Ionic auch hier über /open-file → /tabs/settings/files), gleiches Ziel"
+  },
+  "selfService/overview/overview.page#native-84371d8c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140-1149"
+   ]
+  },
+  "selfService/overview/overview.page#effect-209410e2": {
+   "s": "na",
+   "n": "toter Code: Ionic lädt in getPersonAttendancesForTenant kein `place` (src/app/services/db.service.ts:4070), openRoute findet nie einen Ort; Flutter lädt place in der Übersicht bewusst ebenfalls nicht (sign_in_out_repository.dart:29)"
+  },
+  "selfService/overview/overview.page#action-be846b4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:111"
+   ]
+  },
+  "selfService/overview/overview.page#text-efc7a9d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:112-115"
+   ]
+  },
+  "selfService/overview/overview.page#action-52336ee1": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:119-124"
+   ]
+  },
+  "selfService/overview/overview.page#modal-f1b9e68c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:983-1105"
+   ],
+   "n": "Sheet auf 0.5 wie Ionic; in Flutter nicht auf 1 ziehbar (Inhalt passt vollständig)"
+  },
+  "selfService/overview/overview.page#text-95f5a37c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1024",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1082"
+   ]
+  },
+  "selfService/overview/overview.page#text-8e23d54c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-cff4be2d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-5fe1a7b8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-189251fc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-9e2b7ce8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-94722660": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-b968d6dc": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-8d3e6e15": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-eb3fab2f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-015152b4": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-22863631": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#text-e8dde30f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/overview/overview.page#embed-6d2b0e6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:125"
+   ]
+  },
+  "selfService/overview/overview.page#field-06775822": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:130-141"
+   ],
+   "n": "Chronologisch/Nach Instanz, Standard chronologisch, Wechsel nur lokal wie Ionic"
+  },
+  "selfService/overview/overview.page#text-efc7a9d5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:152",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:191"
+   ]
+  },
+  "selfService/overview/overview.page#action-56e78a16": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:79-82",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:183-185"
+   ]
+  },
+  "selfService/overview/overview.page#text-78132b6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:150-167"
+   ],
+   "n": "Flutter besser: Ionic zeigt die Karte mit Spinner und 'Termine werden geladen...' bei jedem Neuladen (Pull-to-Refresh, nach Zusagen/Absagen/Notiz) und blendet Zusammenfassung und Listen solange aus / Flutter nur beim ersten Laden, beim Neuladen bleibt die Liste stehen",
+   "sev": "niedrig"
+  },
+  "selfService/overview/overview.page#text-493f8cb7": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:194-198",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:875-925"
+   ]
+  },
+  "selfService/overview/overview.page#text-974360b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:194-198",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:917"
+   ]
+  },
+  "selfService/overview/overview.page#text-c972a7fe": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:918-921"
+   ]
+  },
+  "selfService/overview/overview.page#action-f60f8ec5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245-284",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:50-51"
+   ],
+   "n": "Gründe der aktuellen Instanz bzw. Standardgründe wie Ionic; Inhalt des Pickers eigene Unit"
+  },
+  "selfService/overview/overview.page#modal-44ffacb0": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-449",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222"
+   ],
+   "n": "Ionic: Sheet (0.6/1) mit Toolbar 'Beschreibung' + X, Inhalt als Quill-HTML (Formatierung, Links klickbar) / Flutter: Bottom-Sheet mit Griff, max. 70 % Höhe, Beschreibung per stripHtml als Klartext (Fett/Listen/Links gehen verloren), kein X",
+   "sev": "mittel"
+  },
+  "selfService/overview/overview.page#text-b9c91159": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:437"
+   ]
+  },
+  "selfService/overview/overview.page#action-aabe41a2": {
+   "s": "missing",
+   "n": "Kein Schließen-Button (X) im Beschreibungs-Sheet; schließen nur per Wischen/Tippen daneben",
+   "sev": "niedrig"
+  },
+  "selfService/overview/overview.page#text-62906ae5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:113-123",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:201-202"
+   ],
+   "n": "'Anmeldefrist: TT.MM.JJJJ HH:mm' nur in den 3 Tagen vor der Frist (overviewMode) wie Ionic"
+  },
+  "selfService/overview/overview.page#text-ce67106b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:203-204"
+   ]
+  },
+  "selfService/overview/overview.page#action-2e23edd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222"
+   ],
+   "n": "Chip ok; Inhalt des Sheets siehe modal-44ffacb0"
+  },
+  "selfService/overview/overview.page#action-203e5c71": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223-228"
+   ]
+  },
+  "selfService/overview/overview.page#action-96db2113": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:229-234",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:69-74"
+   ]
+  },
+  "selfService/overview/overview.page#action-2fa915d0": {
+   "s": "na",
+   "n": "toter Code: `attendance.place` wird in Ionic nicht geladen (src/app/services/db.service.ts:4070), Chip erscheint nie; Flutter lädt place ebenfalls nicht (sign_in_out_repository.dart:29)"
+  },
+  "selfService/overview/overview.page#action-c25a9330": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:261-287"
+   ],
+   "n": "Kachel, Titel, Meta (mit Datum wenn vergangen), Instanzzeile, Chips nur anstehend, Status-Pill; nur anstehende Zeilen öffnen das Aktionsblatt"
+  },
+  "selfService/overview/overview.page#action-c679f931": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:278-283"
+   ]
+  },
+  "selfService/overview/overview.page#text-94fda460": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:301"
+   ],
+   "n": "Literale 'Heute'/'Nächster Termin' als teamOrgTodayCap/teamOrgNextEvent, Bedingung laufender Termin gleich"
+  },
+  "selfService/overview/overview.page#text-4d129a6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:302-304"
+   ]
+  },
+  "selfService/overview/overview.page#text-f4e81eb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:302-304"
+   ]
+  },
+  "selfService/overview/overview.page#text-d21b10c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:305"
+   ]
+  },
+  "selfService/overview/overview.page#text-6562636b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:306",
+    "lib/data/repositories/sign_in_out_repository.dart:876-888"
+   ]
+  },
+  "selfService/overview/overview.page#text-fdfa7967": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:307",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:227-259"
+   ]
+  },
+  "selfService/overview/overview.page#text-ff6e340b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:308"
+   ]
+  },
+  "selfService/overview/overview.page#text-1d8f9c50": {
+   "s": "na",
+   "n": "toter Code: currentAttendance.attendance.place wird in Ionic nie geladen (src/app/services/db.service.ts:4070); Flutter übergibt place, das ebenfalls nie geladen wird"
+  },
+  "selfService/overview/overview.page#action-3ebb3e71": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:171-176",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:856-866"
+   ],
+   "n": "Bedingungen/Funktion gleich. Ionic: aktiver Zustand (zugesagt) ist zugleich disabled → grün gefüllt mit 50 % Deckkraft / Flutter: grün gefüllt in voller Farbe, Tippen wirkungslos",
+   "sev": "niedrig"
+  },
+  "selfService/overview/overview.page#action-d9485f56": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:177-183",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:856-866"
+   ],
+   "n": "Bedingungen/Funktion gleich. Ionic: 'Verspätung gemeldet' → rosa gefüllt, aber disabled (gedimmt) / Flutter: rosa gefüllt in voller Farbe, Tippen wirkungslos",
+   "sev": "niedrig"
+  },
+  "selfService/overview/overview.page#action-b04641d5": {
+   "s": "diff",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:184-190",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:856-866"
+   ],
+   "n": "Bedingungen/Funktion gleich. Ionic: 'Entschuldigt' → gelb gefüllt, aber disabled (gedimmt) / Flutter: gelb gefüllt in voller Farbe, Tippen wirkungslos",
+   "sev": "niedrig"
+  },
+  "selfService/overview/overview.page#action-71931241": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:312",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:794-808"
+   ],
+   "n": "öffnet Aktionsblatt ohne Schnellaktionen und Chips; Inhaltsunterschiede siehe actionsheet-1394033e"
+  },
+  "selfService/overview/overview.page#text-bae710dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:315"
+   ]
+  },
+  "selfService/overview/overview.page#text-ed538238": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:315"
+   ],
+   "n": "Anzahl ohne aktuellen Termin wie Ionic"
+  },
+  "selfService/overview/overview.page#text-c97a7272": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:316-317"
+   ]
+  },
+  "selfService/overview/overview.page#text-b3037697": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:323"
+   ]
+  },
+  "selfService/overview/overview.page#text-b6a0cab7": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:324-325"
+   ]
+  },
+  "selfService/overview/overview.page#text-0c273104": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:325"
+   ]
+  },
+  "selfService/overview/overview.page#action-cd83d22c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:328-334"
+   ],
+   "n": "Vorschau 3, 'Alle N anzeigen'/'Weniger anzeigen'"
+  },
+  "selfService/overview/overview.page#text-f5f8878b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:351-364",
+    "lib/core/providers/self_service_providers.dart:106-126"
+   ]
+  },
+  "selfService/overview/overview.page#text-15f2df15": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:355"
+   ]
+  },
+  "selfService/overview/overview.page#text-bd3022fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:346-348"
+   ]
+  },
+  "selfService/parents/parents.page#logic-ed920d8b": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:219-452",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:399-534"
+   ],
+   "n": "Kinder (parent_id, nicht pending/left), Termine aller Kinder (archiviert nur für Admin/Verantwortliche), aktueller/anstehende/vergangene (max. 10, Vorschau 3), Kinder-Prozent (vergangene, shift_excused_as_present), Werke je Termin und 'Aktuelle Werke', Aktionsblatt-Regeln und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Benachrichtigung bei 'Verspätung gemeldet', Kinder-Reihenfolge, hide_name im Titel, Wahl des laufenden Termins, keine 2020-Untergrenze, changed_by, Fehlerbehandlung, leere Zustände, Ablaufplan ohne Felder – siehe extra.",
+   "sev": "mittel"
+  },
+  "selfService/parents/parents.page#loading-2ab41b5d": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:87-106"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay (max. 3 s) während des Instanzwechsels / Flutter: kein Overlay, Wechsel ohne Ladeanzeige",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#nav-5a071c33": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:96-99"
+   ],
+   "n": "Ziel je Rolle (navigateByUrl ↔ context.go)"
+  },
+  "selfService/parents/parents.page#effect-dfaa55b4": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Utils.getUrl ↔ Role.defaultRoute: Admin/Verantwortlich/Viewer → Personen, Eltern → Eltern-Seite, sonst Meine Termine"
+  },
+  "selfService/parents/parents.page#native-6ab3c266": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:127-132",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:454-455",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140-1149"
+   ]
+  },
+  "selfService/parents/parents.page#effect-11be3cc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:438",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:456-457",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137"
+   ],
+   "n": "iOS: Auswahl Apple Karten/Google Maps wie Ionic"
+  },
+  "selfService/parents/parents.page#actionsheet-da064539": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:399-459"
+   ],
+   "n": "Einträge, Reihenfolge und Bedingungen gleich (Anmelden/Abmelden/Verspätung eintragen je Kindstatus und Typ, Ablaufplan anzeigen, Beschreibung anzeigen, Anhang öffnen, Navigation öffnen, rotes Abbrechen). Ionic: ohne Header und Icons / Flutter: Header 'Vorname · Titel' bzw. Titel plus Datum/Zeit/Ort, Icons",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#toast-18f5fd94": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:483-508"
+   ]
+  },
+  "selfService/parents/parents.page#toast-34a79f36": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:461-481"
+   ]
+  },
+  "selfService/parents/parents.page#native-c786bec7": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:277-282"
+   ]
+  },
+  "selfService/parents/parents.page#modal-0f0e45d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:101-111",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:447-470",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:367-369"
+   ],
+   "n": "Sheet 0.75 mit Titel, Datum, Werken (nur Links) und Ablaufplan-Option wie Ionic; Titel bei hide_name siehe extra"
+  },
+  "selfService/parents/parents.page#modal-f1fcb99c": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:510-534",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:223-244"
+   ],
+   "n": "Vollbild-Modal wie Ionic, Plan inkl. extra_plans/duration_days; isPractice ist im Ionic-PlanViewer ungenutzt"
+  },
+  "selfService/parents/parents.page#action-c596d047": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:169-177"
+   ]
+  },
+  "selfService/parents/parents.page#action-4d01e523": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:34-84",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:164-178"
+   ],
+   "n": "nur bei mehr als einer Instanz, Langname + Pfeil nach unten"
+  },
+  "selfService/parents/parents.page#popover-40152ee7": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:34-61"
+   ],
+   "n": "PopupMenu statt ion-popover, gleiche Liste mit 'Aktuell'-Badge"
+  },
+  "selfService/parents/parents.page#action-45f9db74": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:38-60",
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:87-106"
+   ],
+   "n": "Ladeanzeige fehlt, siehe loading-2ab41b5d"
+  },
+  "selfService/parents/parents.page#text-ae69766a": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:28-32",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:164-166"
+   ]
+  },
+  "selfService/parents/parents.page#action-4d01e523-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:182-187"
+   ]
+  },
+  "selfService/parents/parents.page#modal-42bf82e8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:983-1105"
+   ],
+   "n": "Sheet auf 0.5 wie Ionic; nicht auf 1 ziehbar (Inhalt passt)"
+  },
+  "selfService/parents/parents.page#text-408540c6": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1024",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1082"
+   ]
+  },
+  "selfService/parents/parents.page#text-00b6e58b": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-793bcfa4": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-3a0a1fcb": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-369ac7b0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-d552faeb": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-d8b131c2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-19442e87": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-dd544324": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-aa8c11f8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-01d5aa44": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-5fb97dea": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#text-bd1e9db3": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ]
+  },
+  "selfService/parents/parents.page#embed-8aa4a4c3": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:188"
+   ]
+  },
+  "selfService/parents/parents.page#text-ae69766a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:249"
+   ]
+  },
+  "selfService/parents/parents.page#action-4094e62c": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:238-244"
+   ]
+  },
+  "selfService/parents/parents.page#text-0a85142a": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:132-136"
+   ]
+  },
+  "selfService/parents/parents.page#text-e891c5c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:138-141"
+   ]
+  },
+  "selfService/parents/parents.page#text-afd4ff21": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:148-154",
+    "lib/data/repositories/player_repository.dart:252-263"
+   ],
+   "n": "Reihenfolge der Kinder-Chips: Ionic getPlayers (Eltern) sortiert nach Instrument, isLeader absteigend, Nachname / Flutter getChildrenForParent nur nach Nachname (Geschwister mit gleichem Nachnamen in beliebiger Reihenfolge)",
+   "sev": "mittel"
+  },
+  "selfService/parents/parents.page#text-896db40b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:179-217",
+    "lib/features/parents/data/providers/parents_providers.dart:419-452"
+   ],
+   "n": "Farbe ≥75 grün, ≥50 gelb, sonst rot; Prozent über alle vergangenen Termine des Kindes"
+  },
+  "selfService/parents/parents.page#action-6d581ce5": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:157-163"
+   ]
+  },
+  "selfService/parents/parents.page#modal-4d6e2d80": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:230-295"
+   ],
+   "n": "Höhe 0.8 bei mehreren Terminen, sonst 0.6 wie Ionic; nicht auf 1 ziehbar"
+  },
+  "selfService/parents/parents.page#action-9dbffd72": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:247-252"
+   ]
+  },
+  "selfService/parents/parents.page#text-22a5f4e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:246"
+   ]
+  },
+  "selfService/parents/parents.page#text-525b7dae": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:401-411"
+   ],
+   "n": "Gruppenkopf 'TT.MM.JJJJ | Titel': Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026'); Fallback-Datum in Flutter ohne Mehrtages-Spanne",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-3365e82a": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:265-283"
+   ],
+   "n": "'Nr. Name', 'Dirigent: …', Download-Icon und Link öffnen gleich. Ionic: nur Zeilen mit Link sind Buttons (iOS-Chevron) / Flutter: alle Zeilen tippbar mit iOS-Chevron, ohne Link wirkungslos",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-d04c7e28": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:483-496"
+   ],
+   "n": "Gründe der Instanz bzw. Standard; isToday = Termin ist heute wie Ionic"
+  },
+  "selfService/parents/parents.page#modal-fc6bc685": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-449",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:121-126"
+   ],
+   "n": "Ionic: Sheet (0.6/1) mit Toolbar 'Beschreibung' + X, Inhalt als Quill-HTML (Formatierung, Links klickbar) / Flutter: Bottom-Sheet mit Griff, max. 70 % Höhe, Beschreibung per stripHtml als Klartext (Fett/Listen/Links gehen verloren), kein X",
+   "sev": "mittel"
+  },
+  "selfService/parents/parents.page#text-2e3c9554": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:437"
+   ]
+  },
+  "selfService/parents/parents.page#action-838329cd": {
+   "s": "missing",
+   "n": "Kein Schließen-Button (X) im Beschreibungs-Sheet; schließen nur per Wischen/Tippen daneben",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-3ea4d6a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:90-98",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:114"
+   ]
+  },
+  "selfService/parents/parents.page#action-f2490e18": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:115-120"
+   ]
+  },
+  "selfService/parents/parents.page#action-d29165b7": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:121-126"
+   ],
+   "n": "Chip ok; Inhalt des Sheets siehe modal-fc6bc685"
+  },
+  "selfService/parents/parents.page#action-12dc0660": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:127-132"
+   ]
+  },
+  "selfService/parents/parents.page#text-8f78a1b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:254"
+   ],
+   "n": "Flutter immer 'Heute'; Ionic-Zweig 'Nächster Termin' ist toter Code (currentAttendance enthält nur laufende Termine)"
+  },
+  "selfService/parents/parents.page#text-e91e7329": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+   ]
+  },
+  "selfService/parents/parents.page#text-d711fc20": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:255-257"
+   ]
+  },
+  "selfService/parents/parents.page#text-ec0de4fb": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:258"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#text-29268b7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:259",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:65-76"
+   ]
+  },
+  "selfService/parents/parents.page#text-341f8082": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:260",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:732-753"
+   ]
+  },
+  "selfService/parents/parents.page#action-ea934dc1": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:264-271",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:561-621"
+   ],
+   "n": "Zeile (Initialen, Vorname, 'Notiz: …', Status-Pill) und Aktionsblatt gleich. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-fe13ebcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:272-281"
+   ]
+  },
+  "selfService/parents/parents.page#text-574b264e": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:284-285"
+   ]
+  },
+  "selfService/parents/parents.page#text-51c19dc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:285"
+   ],
+   "n": "ohne laufende Termine wie Ionic"
+  },
+  "selfService/parents/parents.page#text-ff4a6508": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:286-287"
+   ]
+  },
+  "selfService/parents/parents.page#text-50b4b4e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+   ]
+  },
+  "selfService/parents/parents.page#text-b3b0e9f9": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:292-293"
+   ]
+  },
+  "selfService/parents/parents.page#text-45095c3b": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:294"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#text-eb70b83e": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:295",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:65-76"
+   ],
+   "n": "Zeit und Ort, Datum nur bei Mehrtägigen"
+  },
+  "selfService/parents/parents.page#action-136ed4ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:298-303"
+   ]
+  },
+  "selfService/parents/parents.page#action-b0f208df": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:313-320",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:623-679"
+   ],
+   "n": "Chip 'Initialen Vorname · Status' öffnet Aktionsblatt des Kindes. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#text-1b40f902": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:328"
+   ]
+  },
+  "selfService/parents/parents.page#text-fc884c7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:328",
+    "lib/features/parents/data/providers/parents_providers.dart:345-356"
+   ],
+   "n": "max. 10 wie Ionic"
+  },
+  "selfService/parents/parents.page#text-50b4b4e0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+   ]
+  },
+  "selfService/parents/parents.page#text-b3b0e9f9-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:331-332"
+   ]
+  },
+  "selfService/parents/parents.page#text-45095c3b-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:333"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-3ea4d6a0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:343"
+   ]
+  },
+  "selfService/parents/parents.page#text-cb64c81a": {
+   "s": "diff",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:344-349"
+   ],
+   "n": "'Vorname · Status' (vergangene Form) gleich. Funktion gleich; Reihenfolge der Kinder je Termin: Ionic nach Kinder-Sortierung (Instrument, isLeader, Nachname) / Flutter Reihenfolge der DB-Zeilen (nicht garantiert gleich)",
+   "sev": "niedrig"
+  },
+  "selfService/parents/parents.page#action-6939adbb": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:355-361"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Aktionsblatt bei Entschuldigt / Verspätung gemeldet",
+   "n": "Ionic: Status Entschuldigt (E) → 'Anmelden' + 'Anmelden mit Notiz'; Verspätung gemeldet (text 'L', nur E/A werden gefiltert) → zusätzlich 'Abmelden' und 'Verspätung eintragen', nach Fristende bleiben diese beiden / Flutter: isExcusedStatus (Entschuldigt und Verspätung gemeldet) sperrt 'Abmelden'/'Verspätung eintragen' und blendet 'Anmelden mit Notiz' aus → kein direkter Wechsel von 'Verspätung gemeldet' zu 'Abmelden', nach Frist nur Toast 'keine Aktionen'",
+   "sev": "hoch",
+   "ionic": "src/app/selfService/overview/overview.page.ts:218",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:377-399"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Typfilter im Aktionsblatt",
+   "n": "Flutter besser: Ionic prüft available_statuses nur in einer else-if-Kette (nur wenn Anmelden möglich; 'Verspätung' ungeprüft, wenn 'Entschuldigt' fehlt; bei Zugesagt oder abgelaufener Frist gar nicht; in 'Weitere Optionen' bleibt 'Abmelden', wenn der Typ 'Entschuldigt' nicht erlaubt) → zeigt gesperrte Status-Aktionen / Flutter filtert immer nach den erlaubten Status des Typs",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/overview/overview.page.ts:218-240",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:146-150",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:395-400"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Archivierte Termine",
+   "n": "Flutter besser: Ionic lädt `archived` nicht mit (Select ohne archived), der Rollenfilter greift daher nie → archivierte Termine für alle Rollen sichtbar und im Prozentwert / Flutter lädt archived und blendet sie für Nicht-Admins/-Verantwortliche aus",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:4172",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:29-32",
+    "lib/data/repositories/sign_in_out_repository.dart:625"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Person je Instanz",
+   "n": "Flutter besser: Ionic getPersonIdForTenant mit .single() → bei mehreren verknüpften player-Zeilen in einer Instanz fehlen deren Termine ganz / Flutter wählt die aktive Zeile (nicht pending/left)",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:4053",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:597-603"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "changed_by bei Abmeldung",
+   "n": "Flutter besser: Ionic signout übergibt keine userId → changed_by = null (Dirigent sieht 'Status wurde nicht geändert') / Flutter schreibt changed_by = aktueller Nutzer",
+   "sev": "niedrig",
+   "ionic": "src/app/services/sign-in-out/sign-in-out.service.ts:23",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:104-113"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Dienst-Sync bei Terminen anderer Instanzen",
+   "n": "Flutter besser: Ionic syncDutyWithStatus kennt nur die Dienst-Typen der aktuellen Instanz (getDutyTypeIds) → Zusagen zu einem angefragten Dienst einer anderen Instanz bestätigt ihn nicht / Flutter prüft duty_mode des Termintyps und setzt duty_state=confirmed auch dort",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/db-helpers.ts:343",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:141-162",
+    "lib/data/repositories/sign_in_out_repository.dart:183-185"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Instanzfarben",
+   "n": "Ionic: 16 Farben inkl. #FFB300 (Amber) / Flutter: 15 Farben → ab der 16. Mitgliedschaft andere Farbe (Modulo 15 statt 16)",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:4025",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:45-69"
+   ]
+  },
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Fehlerbehandlung",
+   "n": "Flutter besser: Ionic zeigt bei Fehlern beim Laden/Anmelden/Abmelden/Notiz nichts (unbehandelte Exception, kein Toast) / Flutter zeigt Fehleransicht mit 'Erneut versuchen' bzw. Toasts 'Anmeldung fehlgeschlagen…', 'Abmeldung fehlgeschlagen…', 'Notiz konnte nicht gespeichert werden.'",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/overview/overview.page.ts:307",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:169-179",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:274-283",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:338-342"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Benachrichtigung bei Anmeldung nach 'Verspätung gemeldet'",
+   "n": "Ionic: signin(attendance) liest status vom Termin-Objekt (undefined) → Typ immer 'signin' → quick-processor benachrichtigt die Dirigenten / Flutter: Typ je Kindstatus → bei 'Verspätung gemeldet' 'lateSignIn', den quick-processor nicht kennt (prüft 'lateSignin') → keine Push-/Telegram-Benachrichtigung",
+   "sev": "mittel",
+   "ionic": "src/app/selfService/parents/parents.page.ts:434",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:464-473",
+    "lib/data/repositories/sign_in_out_repository.dart:676-681"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Reihenfolge der Kinder",
+   "n": "Ionic: Kinder nach Instrument, isLeader absteigend, Nachname; Kinder je Termin in dieser Reihenfolge / Flutter: Kinder nur nach Nachname, je Termin in DB-Reihenfolge der person_attendances",
+   "sev": "mittel",
+   "ionic": "src/app/services/db.service.ts:1586",
+   "f": [
+    "lib/data/repositories/player_repository.dart:252-263",
+    "lib/features/parents/data/providers/parents_providers.dart:294-300"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Titel ignoriert hide_name in Ionic",
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026'); betrifft Heute-Karte, anstehende/vergangene Termine, Werke-Sheet und 'Aktuelle Werke'",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:2716",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/data/providers/parents_providers.dart:401-406"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Welcher laufende Termin auf der Heute-Karte",
+   "n": "Ionic: bei mehreren laufenden Terminen der zuletzt begonnene (Liste nach Datum absteigend) / Flutter: der früheste; die übrigen laufenden fehlen in beiden",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/parents/parents.page.ts:196",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:359-362",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:148"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Zeitraum der Termine",
+   "n": "Ionic: nur Termine nach dem 01.01.2020 (getPersonAttendances all=true) / Flutter: ohne Untergrenze (ältere Termine zählen in 'Vergangen' und im Prozentwert)",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:2718",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:383-400"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "changed_by bei Abmeldung",
+   "n": "Flutter besser: Ionic signout (Eltern) übergibt keine userId → changed_by = null / Flutter schreibt changed_by = aktueller Nutzer",
+   "sev": "niedrig",
+   "ionic": "src/app/services/sign-in-out/sign-in-out.service.ts:23",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:104-113"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Fehlerbehandlung",
+   "n": "Flutter besser: Ionic bricht bei Fehlern ohne Rückmeldung ab (kein Toast) / Flutter zeigt 'Anmeldung fehlgeschlagen…'/'Abmeldung fehlgeschlagen…' bzw. Fehleransicht mit 'Erneut versuchen'; Instanzwechsel-Fehler als Toast",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/parents/parents.page.ts:432",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:474-480",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:497-499",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:537-557"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Leere Zustände",
+   "n": "Ionic: ohne Kinder bzw. ohne Termine einfach leere Seite / Flutter: 'Keine Kinder gefunden' + 'Es wurden keine Kinder mit Ihrem Eltern-Account verknüpft.' bzw. 'Keine Termine gefunden'",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/parents/parents.page.html:89",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:200-219",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:364-372"
+   ]
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Ablaufplan ohne Felder",
+   "n": "Ionic: 'Ablaufplan anzeigen' im Aktionsblatt (share_plan && plan) öffnet den Viewer auch bei leerem Plan / Flutter: Toast 'Kein Ablaufplan verfügbar.'",
+   "sev": "niedrig",
+   "ionic": "src/app/selfService/parents/parents.page.ts:380",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:510-514"
+   ]
+  }
+ ]
+}

@@ -1,0 +1,1982 @@
+{
+ "batch": "b09-people",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "people/person/person.page#logic-8a6cf6df": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:355",
+    "lib/features/people/presentation/pages/person_detail_page.dart:491",
+    "lib/features/people/presentation/pages/person_create_page.dart:238"
+   ],
+   "n": "Großteil der Logik übernommen (Statistik/Verspätungsschwelle, Rollen-Sync, Bewerber-Reparatur, Schicht-Neuberechnung, Organisationsfelder, Duplikate/Merge, Abwesenheiten). Abweichungen: veralteter Seitenzustand nach Aktionen, falsche Notiz-Historie beim Speichern, fehlende Standardwerte der Zusatzfelder, abweichende Standardwerte/E-Mail-Prüfung auf der Neu-Seite, Passbild wird bei Datenübernahme nicht übernommen (siehe extra)",
+   "sev": "hoch"
+  },
+  "people/person/person.page#loading-be5cc2f1": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1151",
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart"
+   ],
+   "n": "Ionic: blockierendes Loading „Wird zurückgesetzt...“ / Flutter: kein Ladeindikator beim Zurücksetzen",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-420483c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1164"
+   ]
+  },
+  "people/person/person.page#toast-10d4fb42": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1172"
+   ]
+  },
+  "people/person/person.page#alert-40883a4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1742",
+    "lib/features/people/presentation/pages/person_create_page.dart:123"
+   ],
+   "n": "Flutter: PopScope-/Schließen-Dialog mit „Abbrechen“/„Ja“; auch auf Neu-Seite"
+  },
+  "people/person/person.page#toast-9348bff8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:370",
+    "lib/features/people/presentation/pages/person_create_page.dart:389"
+   ],
+   "n": "Ionic: Toast „Bitte gib den Vornamen und Nachnamen an.“ / Flutter: Inline-Validierung unter den Feldern „Vorname ist erforderlich“/„Nachname ist erforderlich“, Labels mit „*“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-b5454ced": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:334",
+    "lib/features/people/presentation/pages/person_create_page.dart:989"
+   ],
+   "n": "Ionic: blockierendes Loading (3 s) beim Hinzufügen / Flutter: nur Speichern-Button deaktiviert, kein Overlay",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-e88a740d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:1066"
+   ]
+  },
+  "people/person/person.page#toast-46aad51d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:1072"
+   ],
+   "n": "Flutter: Fehlertext über friendlyErrorMessage statt Roh-Fehler"
+  },
+  "people/person/person.page#toast-2b97990f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:533",
+    "lib/features/people/presentation/pages/person_detail_page.dart:537"
+   ],
+   "n": "Flutter: eigene Regex (Ionic Utils.validateEmail), gleicher Text"
+  },
+  "people/person/person.page#loading-d68742ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:587",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1733"
+   ],
+   "n": "Ionic: blockierendes Loading beim Speichern / Flutter: nur Speichern-FAB deaktiviert (_isSaving), kein Overlay",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-f1974eb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:548",
+    "lib/features/people/presentation/pages/person_detail_page.dart:559"
+   ],
+   "n": "Ionic: „Abbrechen“ (bricht Speichern ab) / „Ja“ / Flutter: zusätzlicher dritter Button „Nur speichern“; Dialog nur wenn Person noch kein appId hat",
+   "sev": "mittel"
+  },
+  "people/person/person.page#alert-77f37654": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:571",
+    "lib/features/people/presentation/pages/person_detail_page.dart:757"
+   ]
+  },
+  "people/person/person.page#toast-8064d400": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:725"
+   ],
+   "n": "Toast gleich; Seite bleibt danach offen (siehe Speichern-FAB)"
+  },
+  "people/person/person.page#toast-a9ba8d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:734"
+   ]
+  },
+  "people/person/person.page#toast-0c4f57a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1518"
+   ]
+  },
+  "people/person/person.page#alert-75bf15c2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1532",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1536"
+   ],
+   "n": "Ionic: „Account entfernen“ / „Möchtest du den Account wirklich aus der Instanz entfernen? Die Personendaten bleiben erhalten.“ Abbrechen/Ja / Flutter: „Account-Verknüpfung aufheben?“ / „Die Account-Verknüpfung für {name} wird aufgehoben. Die Person kann sich dann nicht mehr in der App anmelden.“ Abbrechen/„Verknüpfung aufheben“; Ionic schließt danach die Seite, Flutter bleibt",
+   "sev": "mittel"
+  },
+  "people/person/person.page#toast-cee56561": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1582"
+   ],
+   "n": "Ionic: „Der Benutzer wurde erfolgreich entfernt“ / Flutter: „Account-Verknüpfung aufgehoben“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-f55609ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1590"
+   ],
+   "n": "Ionic: „Fehler beim Entfernen des Benutzers“ / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-3e3e43d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:883",
+    "lib/features/people/presentation/pages/person_create_page.dart:232"
+   ]
+  },
+  "people/person/person.page#alert-cd59453f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:120",
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:148"
+   ],
+   "n": "1 Treffer: gleich (Abbrechen/Ja). Mehrere Treffer: Ionic Alert mit Radio-Liste (erster vorausgewählt) + Abbrechen/Ja / Flutter: SimpleDialog, Tippen auf Eintrag übernimmt sofort, nur „Abbrechen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-c5cb3708": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:63"
+   ]
+  },
+  "people/person/person.page#loading-ae31ca18": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:81",
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:132"
+   ],
+   "n": "Ionic: blockierendes Loading „Die Personen werden zusammengeführt...“ / Flutter: nur LinearProgressIndicator in der Karte, nicht blockierend, ohne Text",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-6cd00c06": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:91"
+   ]
+  },
+  "people/person/person.page#toast-10d74821": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:99"
+   ]
+  },
+  "people/person/person.page#alert-a6876225": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:275",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:287"
+   ]
+  },
+  "people/person/person.page#toast-29a8b883": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:334"
+   ]
+  },
+  "people/person/person.page#toast-326d88e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:338"
+   ]
+  },
+  "people/person/person.page#loading-9ba0a7e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1596"
+   ],
+   "n": "Ionic: blockierendes Loading beim Account anlegen / Flutter: kein Ladeindikator",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-8807fdd9": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1655"
+   ],
+   "n": "Ionic: „Account wurde erfolgreich angelegt“ / Flutter: „Account erstellt. Passwort-E-Mail wurde gesendet.“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-fc0e45e2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1664"
+   ],
+   "n": "Ionic: Roh-Fehlermeldung error.message / Flutter: „{name} - Fehler beim Erstellen des Accounts: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-18f6a225": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:285"
+   ],
+   "n": "Flutter: erreichbar über Aktionsblatt des Avatars statt Bildbetrachter"
+  },
+  "people/person/person.page#toast-8a955d94": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:331",
+    "lib/features/people/presentation/pages/person_create_page.dart:970"
+   ]
+  },
+  "people/person/person.page#loading-b96f785a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:225"
+   ],
+   "n": "Ionic: blockierendes Loading beim Bildupload / Flutter: nur Info-Toast „Lade Passbild hoch...“, nicht blockierend",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-9d699ae0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:232",
+    "lib/features/people/presentation/pages/person_create_page.dart:941"
+   ]
+  },
+  "people/person/person.page#toast-9e522fb8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:950"
+   ]
+  },
+  "people/person/person.page#toast-7e0a2ff5": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:274"
+   ],
+   "n": "Ionic: Roh-Fehler / Flutter: „Fehler beim Hochladen: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-3050c22e": {
+   "s": "na",
+   "n": "Flutter-Bildauswahl (ImagePicker, nur Galerie-Bilder) lässt keine Nicht-Bild-Dateien zu; Fall tritt nicht auf (lib/features/people/presentation/widgets/person_image_picker.dart)"
+  },
+  "people/person/person.page#alert-04050354": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:344"
+   ],
+   "n": "Flutter: Datum im Inhalt statt subHeader, Button „OK“"
+  },
+  "people/person/person.page#toast-049f4205": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:907"
+   ]
+  },
+  "people/person/person.page#actionsheet-e75017a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:914"
+   ],
+   "n": "Flutter: Einträge „Vorname Nachname · Gruppe (Instanz)“ wie Ionic"
+  },
+  "people/person/person.page#toast-602fdd96": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:947"
+   ]
+  },
+  "people/person/person.page#loading-fc02b5d4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:962"
+   ],
+   "n": "Ionic: blockierendes Loading beim Zuweisen / Flutter: kein Ladeindikator",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-9e8a666e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:980"
+   ]
+  },
+  "people/person/person.page#toast-968501f7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:988"
+   ],
+   "n": "Ionic: Roh-Fehler error.message / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-f74ad707": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1044"
+   ],
+   "n": "Ionic: Roh-Fehler / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-b55317e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1457",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1461"
+   ]
+  },
+  "people/person/person.page#toast-7d104b56": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1484"
+   ]
+  },
+  "people/person/person.page#toast-f74ad707-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1488"
+   ],
+   "n": "Ionic: Roh-Fehler / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#actionsheet-fba9657b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1354",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1380",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1013"
+   ],
+   "n": "Header „Aktionen“, Buttons, Reihenfolge, Bedingungen und „Abbrechen“ gleich. Wirkung abweichend: „Wieder aktivieren“ – Ionic schließt die Seite ohne Toast / Flutter bleibt offen mit Toast „Die Person wurde erfolgreich wieder aktiviert“; „In andere Instanz übertragen/kopieren“ öffnet das Massen-Übergabe-Sheet statt des Ionic-Modals; „Archivieren“ öffnet einen Dialog statt Vollbild-Modal",
+   "sev": "mittel"
+  },
+  "people/person/person.page#alert-01934766": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:759",
+    "lib/features/people/presentation/widgets/handover_sheet.dart:763"
+   ]
+  },
+  "people/person/person.page#alert-97cf5262": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:772"
+   ],
+   "n": "Ionic: „Person kopieren“/„Person übertragen“, „Möchtest du die Person wirklich in die andere Instanz kopieren/übertragen? Alle zugehörigen Daten … gehen dabei verloren!“, Abbrechen/Ja / Flutter (Massen-Sheet): „Spieler kopieren?“/„Spieler übertragen?“, „1 Spieler nach/an \\\"{Instanz}\\\" kopieren/übertragen? Die Spieler werden in dieser Instanz archiviert…“, Buttons Abbrechen/„Kopieren“/„Übertragen“",
+   "sev": "mittel"
+  },
+  "people/person/person.page#toast-d7c9e86c": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:819"
+   ],
+   "n": "Ionic: „Die Person wurde erfolgreich kopiert/übertragen“ / Flutter: „1 Spieler erfolgreich kopiert/übertragen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-b4300d3e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:830"
+   ],
+   "n": "Ionic: Roh-Fehler / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-78153810": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1138"
+   ]
+  },
+  "people/person/person.page#toast-0d609ac3": {
+   "s": "na",
+   "n": "toter Code: der Button „Pausieren“ ist ohne Grund deaktiviert ([disabled]=\"!pauseReason\", person.page.html:987), confirmPause wird nur von dort aufgerufen; Flutter: Button ebenfalls deaktiviert (lib/features/people/presentation/widgets/pause_person_sheet.dart:163)"
+  },
+  "people/person/person.page#toast-f4e0ab31": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:212"
+   ],
+   "n": "Ionic: Roh-Fehler / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#alert-71956f19": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:236",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:284"
+   ],
+   "n": "Texte/Buttons gleich (Überspringen/Pausieren, Checkboxen). Flutter besser: bietet nur Instanzen an, in denen der Nutzer Personen verwalten darf; Ionic listet alle verknüpften Instanzen",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-b7159a13": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:269"
+   ]
+  },
+  "people/person/person.page#toast-52d1c58c": {
+   "s": "na",
+   "n": "toter Code: der Button „Abwesenheit eintragen“ ist ohne Grund/Von/Bis deaktiviert (person.page.html:1068), confirmAbsence wird nur von dort aufgerufen; Flutter: Button ebenfalls deaktiviert (lib/features/people/presentation/widgets/planned_absences.dart:203)"
+  },
+  "people/person/person.page#loading-cd6c7935": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:230"
+   ],
+   "n": "Ionic: blockierendes Loading beim Eintragen der Abwesenheit / Flutter: kein Ladeindikator",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-aee32adb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:241"
+   ]
+  },
+  "people/person/person.page#alert-d5cca7fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:248",
+    "lib/features/people/presentation/widgets/planned_absences.dart:256"
+   ]
+  },
+  "people/person/person.page#loading-6f0c380f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:248"
+   ],
+   "n": "Ionic: blockierendes Loading beim Löschen der Abwesenheit / Flutter: kein Ladeindikator",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-b0dccec9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:270"
+   ]
+  },
+  "people/person/person.page#alert-5ffb2485": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1423",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1427"
+   ]
+  },
+  "people/person/person.page#toast-58f0abe0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1449"
+   ]
+  },
+  "people/person/person.page#actionsheet-eadcf3f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1330"
+   ]
+  },
+  "people/person/person.page#alert-692c7626": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1256",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1262"
+   ],
+   "n": "Ionic: Header „Person ablehnen“, subHeader „Gib einen Grund an.“, Textarea ohne Label; leerer Grund → Meldung „Bitte gib einen Grund an“ im Alert / Flutter: zusätzlicher Text personFlutterDeclineMessage, Feld „Grund *“ mit Hinweis, leerer Grund → SnackBar; Button „Ablehnen“ rot",
+   "sev": "mittel"
+  },
+  "people/person/person.page#loading-58ec291d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1300"
+   ],
+   "n": "Ionic: blockierendes Loading „Die Person wird abgelehnt...“ / Flutter: kein Ladeindikator",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-55836540": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1313"
+   ],
+   "n": "Ionic: „Die Spielerdaten wurden erfolgreich aktualisiert.“ / Flutter: „Person wurde abgelehnt“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-26c7e22c": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1322"
+   ],
+   "n": "Ionic: „Fehler beim aktualisieren des Spielers“ / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#loading-00357310": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1230"
+   ],
+   "n": "Ionic: blockierendes Loading „Die Person wird genehmigt...“ / Flutter: kein Ladeindikator (vorher zusätzlicher Bestätigungsdialog)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-c09ff9ac": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1241"
+   ],
+   "n": "Ionic: „Die Spielerdaten wurden erfolgreich aktualisiert.“ / Flutter: „Person wurde genehmigt“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#toast-1b04b6d6": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1250"
+   ],
+   "n": "Ionic: „Fehler beim aktualisieren des Spielers“ / Flutter: „Fehler: {error}“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-38ca9858": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1923"
+   ],
+   "n": "Flutter: openUnavailabilityPage (Vollbild-Seite) mit personId, personName, forOther=true; Ionic Vollbild-Modal"
+  },
+  "people/person/person.page#text-012b5231": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:313"
+   ]
+  },
+  "people/person/person.page#text-14657460": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1769"
+   ]
+  },
+  "people/person/person.page#text-a7ca92e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1770"
+   ],
+   "n": "Flutter: bei pending-Person"
+  },
+  "people/person/person.page#action-213509df": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1791",
+    "lib/features/people/presentation/pages/person_create_page.dart:324"
+   ]
+  },
+  "people/person/person.page#field-a9ab8c88": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_image_picker.dart:14"
+   ],
+   "n": "Ionic: <input type=file accept=image/*> (mobil auch Kamera/Datei wählbar) / Flutter: ImagePicker nur Galerie, verkleinert auf 800px/80 %",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-40313396": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:65",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:159"
+   ],
+   "n": "Ionic: Tipp auf Avatar öffnet bei vorhandenem Bild den Bildbetrachter (mit Ersetzen/Entfernen), ohne Bild direkt die Dateiauswahl / Flutter (bearbeitbar): Aktionsblatt „Passbild ersetzen“/„Passbild entfernen“/„Passbild ansehen“, auch ohne Bild; nur Leser: Betrachter wie Ionic. Kamera-Badge gleich",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-29def6f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:93"
+   ]
+  },
+  "people/person/person.page#text-e54bddae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:118"
+   ]
+  },
+  "people/person/person.page#action-f2320b9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:137",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1808"
+   ]
+  },
+  "people/person/person.page#modal-ecac8535": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:159",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:205"
+   ],
+   "n": "Ionic: Bildbetrachter-Modal öffnet direkt beim Tipp auf den Avatar / Flutter: im Bearbeitungsmodus nur über Aktionsblatt „Passbild ansehen“ (Vollbild-Viewer)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-5615e0d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:205",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:276"
+   ],
+   "n": "Ionic: Viewer-Titel „Passbild“, Bild in voller Qualität (ohne ?quality=20) / Flutter: Titel „{Vorname Nachname}.jpg“, Bild-URL unverändert, keine Aktionen im Viewer",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-ea218e71": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:182"
+   ],
+   "n": "Ionic: Button „Ersetzen“ im Bildbetrachter (wenn !readOnly) / Flutter: „Passbild ersetzen“ nur im Avatar-Aktionsblatt, nicht im Viewer",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-0a1221be": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:188"
+   ],
+   "n": "Ionic: Button „Entfernen“ im Bildbetrachter (wenn !readOnly) / Flutter: „Passbild entfernen“ nur im Avatar-Aktionsblatt, nicht im Viewer",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-e915fb37": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:236",
+    "lib/features/people/presentation/pages/person_create_page.dart:365"
+   ],
+   "n": "Detail: Label „Vorname“ gleich; Neu-Seite: „Vorname *“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-4b77b853": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:233",
+    "lib/features/people/presentation/pages/person_create_page.dart:362"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Detail, mit Pflicht-Validierung); Neu-Seite: TextFormField mit Pflicht-Validierung, Namensvorschläge wie Ionic",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-c4ad9070": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:252",
+    "lib/features/people/presentation/pages/person_create_page.dart:384"
+   ],
+   "n": "Detail: Label „Nachname“ gleich; Neu-Seite: „Nachname *“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-6e1a9b00": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:249",
+    "lib/features/people/presentation/pages/person_create_page.dart:381"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Detail, mit Pflicht-Validierung); Neu-Seite: TextFormField mit Pflicht-Validierung",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-8ce3b7a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1815"
+   ]
+  },
+  "people/person/person.page#text-ab03f436": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:128"
+   ]
+  },
+  "people/person/person.page#text-dcf4e37a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:135"
+   ]
+  },
+  "people/person/person.page#text-92aaa12d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:136"
+   ],
+   "n": "Flutter: Gruppe und Grund in einer Zeile „Gruppe · Grund“"
+  },
+  "people/person/person.page#text-ec97784e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:140"
+   ]
+  },
+  "people/person/person.page#text-5dbfd756": {
+   "s": "missing",
+   "n": "Prozent-Badge (Score) der Duplikat-Kandidaten fehlt in der Flutter-Karte (lib/features/people/presentation/widgets/duplicate_candidates_card.dart:133)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-2c1ec053": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/duplicate_candidates_card.dart:144"
+   ]
+  },
+  "people/person/person.page#action-c72e602e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:40",
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:46"
+   ],
+   "n": "Schließen-Button gleich; Flutter zeigt zusätzlich Überschrift „Person in anderer Instanz gefunden?“ über den Vorschlägen (Ionic ohne Überschrift)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-caeb0a85": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_match_suggestions.dart:52",
+    "lib/features/people/presentation/pages/person_create_page.dart:399"
+   ]
+  },
+  "people/person/person.page#text-b133c084": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1839",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:269"
+   ],
+   "n": "Ionic: Notizen bei existingPlayer && isAdmin, bei Ausgetretenen (readOnly) deaktiviert sichtbar / Flutter: nur canEdit (Ausgetretene: ausgeblendet); zusätzlich auf Neu-Seite sichtbar (Ionic nicht)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-05790430": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:272"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-df85d683": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:38",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1843"
+   ],
+   "n": "Flutter: zusätzlich Box mit criticalReason („Grund“)"
+  },
+  "people/person/person.page#field-fe3a2971": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:89",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1178"
+   ],
+   "n": "Ionic: Toggle „Mit Person gesprochen“ markiert Änderung; Lösen erfolgt beim Speichern (FAB, Seite schließt) zusammen mit anderen Änderungen / Flutter: Toggle (mit Untertitel) markiert keine Änderung; Lösen nur über eigenen Button „Zurücksetzen (Gespräch geführt)“, sofort, Toast „Problemfall gelöst“; Speichern-FAB löst den Problemfall nicht",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-e7801fc0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:103"
+   ]
+  },
+  "people/person/person.page#field-36a3bcfe": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:100"
+   ],
+   "n": "Flutter: TextField mit Hinweistext"
+  },
+  "people/person/person.page#text-e678fd99": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:47",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1857"
+   ]
+  },
+  "people/person/person.page#text-ad6357dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:64"
+   ]
+  },
+  "people/person/person.page#action-0de19419": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:78"
+   ]
+  },
+  "people/person/person.page#text-13da27cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:139"
+   ]
+  },
+  "people/person/person.page#field-4bf62b27": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:289",
+    "lib/features/people/presentation/pages/person_detail_page.dart:444"
+   ],
+   "n": "Ionic: Label „Gruppe“, Modal-Select / Flutter: Label je Instanztyp „Stimme“/„Instrument“/„Gruppe“, Auswahl-Sheet; Wechsel setzt Stimmführer zurück wie Ionic",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-1819de6e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:836"
+   ]
+  },
+  "people/person/person.page#field-9f6c9acb": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:829"
+   ],
+   "n": "Flutter besser: Ionic-Input ohne ionChange (Änderung allein aktiviert Speichern nicht) / Flutter markiert Änderung. Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-bb66373a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:336"
+   ],
+   "n": "Ionic: „Telefon-/Handynummer“ / Flutter: „Telefon“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-84804c14": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:330"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; zusätzlich Anruf-Button; leer + nicht bearbeitbar ausgeblendet (Ionic: leeres deaktiviertes Feld)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-22fb03ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:162"
+   ]
+  },
+  "people/person/person.page#field-3abdeaf8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:159",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:359"
+   ],
+   "n": "Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button / Flutter: Feld nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Kalender; Material-Picker hat Eingabemodus). Warnfarbe (correctBirthday) bleibt in Flutter bis zum Neuladen, Ionic entfernt sie sofort nach Änderung",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-02594b69": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: separater Kalender-Button am Feld / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-9c171caa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371",
+    "lib/shared/widgets/adaptive/app_pickers.dart:12"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-946f7994": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371",
+    "lib/features/people/presentation/pages/person_detail_page.dart:643"
+   ],
+   "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic; setzt correctBirthday beim Speichern",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-a939a284": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:172"
+   ],
+   "n": "Flutter: Feld zusätzlich ausgeblendet, wenn leer und nicht bearbeitbar"
+  },
+  "people/person/person.page#field-6c24372b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:174",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:359"
+   ],
+   "n": "Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button / Flutter: Feld nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Kalender; Material-Picker hat Eingabemodus)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-02594b69-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: separater Kalender-Button am Feld / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-637d2f88": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-6cfcad0a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-828f38de": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:184"
+   ]
+  },
+  "people/person/person.page#field-0755eef9": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:184",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:359"
+   ],
+   "n": "Ionic: Texteingabe TT.MM.JJJJ (Platzhalter „TT.MM.JJJJ“, Übernahme bei Blur) plus Kalender-Button / Flutter: Feld nur antippbar → Datumsauswahl, keine direkte Texteingabe (iOS-Look nur Kalender; Material-Picker hat Eingabemodus)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-02594b69-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: separater Kalender-Button am Feld / Flutter: kein eigener Button, Tipp auf die Zeile öffnet die Datumsauswahl",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-5e3cc20f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl (preferWheel) / Flutter: Material-DatePicker-Dialog bzw. Kalender-Karte (iOS-Look)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-8c59f281": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:371"
+   ],
+   "n": "Ionic: ion-datetime Rad, max = heute / Flutter: Kalender, lastDate = heute; Speichern als Datum wie Ionic",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-c617e6c6": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:194",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599"
+   ],
+   "n": "Label „Eltern“ gleich; Flutter-Bedingung ohne „!isParent“ (Ionic blendet das Feld für Benutzer mit Rolle Elternteil aus)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-06ab1bbe": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:599"
+   ],
+   "n": "Ionic: Modal-Select, ohne Auswahl „Nicht festgelegt“ / Flutter: Auswahl-Sheet mit Option „Nicht festgelegt“, Anzeige ohne Auswahl aber „Nicht zugewiesen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-8adac9da": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:404",
+    "lib/features/people/presentation/pages/person_detail_page.dart:636"
+   ],
+   "n": "Ionic: Ausschalten ändert nur hasTeacher, teacher bleibt gespeichert / Flutter: Ausschalten setzt teacher auf null und speichert teacher=null (anderer DB-Wert)",
+   "sev": "hoch"
+  },
+  "people/person/person.page#field-528d183b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:428",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:458"
+   ],
+   "n": "Ionic: nur Lehrer, die das Instrument der gewählten Gruppe unterrichten; keine Leer-Option / Flutter (Detail): alle Lehrer der Instanz, zusätzliche Option „Kein Lehrer“, Anzeige „Nicht ausgewählt“ (Neu-Seite filtert wie Ionic)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#field-020d2981": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:392"
+   ]
+  },
+  "people/person/person.page#text-a507dbf9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:856"
+   ]
+  },
+  "people/person/person.page#field-6acc513f": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:848"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-8d1cf99a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:659"
+   ],
+   "n": "Flutter: Dialog mit Checkboxen SoS/GoS/BoS, Abbrechen/Übernehmen; leer „Keine“"
+  },
+  "people/person/person.page#field-be17a89b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:867"
+   ]
+  },
+  "people/person/person.page#text-f9ca222a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:877"
+   ]
+  },
+  "people/person/person.page#field-7662f2a7": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:877"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; leer + nicht bearbeitbar ausgeblendet (Ionic: immer sichtbar)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-7b7c2d2d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:475",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:513"
+   ],
+   "n": "Ionic: nur sichtbar, wenn Schichtpläne existieren; Leer-Option „Keine Schicht zugewiesen“; Wechsel setzt shift_name auf erste Schicht bzw. shift_start auf heute / Flutter: Zeile immer sichtbar, Leer-Option „Kein Schichtplan“, Wechsel setzt shift_name und shift_start auf null (anderer DB-Wert, Schichtstatus ohne Startdatum/Schicht)",
+   "sev": "hoch"
+  },
+  "people/person/person.page#field-016207ea": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:529"
+   ],
+   "n": "Flutter: zusätzliche Leer-Option „Keine Schicht zugewiesen“, Anzeige „Nicht ausgewählt“ (Ionic: keine Leer-Option, vorbelegt mit erster Schicht)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-79d17c2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:580"
+   ]
+  },
+  "people/person/person.page#field-ea337733": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:568"
+   ],
+   "n": "Ionic: ion-datetime-button / Flutter: Zeile mit Datum, leer „Nicht angegeben“, Tipp öffnet Datumsauswahl",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-ac91c261": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:583"
+   ],
+   "n": "Ionic: Modal mit ion-datetime / Flutter: DatePicker-Dialog bzw. Kalender-Karte",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-503d0cfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:583"
+   ],
+   "n": "Flutter: Kalender 2000–2100, markiert Änderung"
+  },
+  "people/person/person.page#text-79d104bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:223"
+   ],
+   "n": "Bedingung gleich (bearbeitbar oder Wert vorhanden)"
+  },
+  "people/person/person.page#field-eb1656da": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:641"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-e65374d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:66",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1869"
+   ],
+   "n": "Bedingung: canEdit && !pending (Ionic: !isParent && !readOnly && !approveMode)"
+  },
+  "people/person/person.page#text-a6284510": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:86"
+   ]
+  },
+  "people/person/person.page#field-d1e5b0ca": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:84",
+    "lib/features/people/presentation/pages/person_detail_page.dart:852"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe; Prüfung im Sheet nur auf „@“; Suche in anderen Instanzen nach Änderung statt bei Blur; gesperrt wenn appId wie Ionic",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-06c55240": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:94"
+   ],
+   "n": "Ionic: Lupen-Icon-Button rechts im E-Mail-Feld, deaktiviert ohne E-Mail / Flutter: Textbutton „In anderer Instanz suchen“ unter dem Feld, nur sichtbar mit E-Mail",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-0de62271": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:127"
+   ],
+   "n": "Ionic: roter Papierkorb-Icon-Button rechts im E-Mail-Feld / Flutter: Outlined-Button „Account-Verknüpfung aufheben“ unter der Rollenauswahl",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-280cafd6": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:211",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:225"
+   ],
+   "n": "Optionen/Reihenfolge/Sperre bei Hauptgruppe gleich. Flutter besser: aktuelle Rolle außerhalb der Liste (z. B. Admin) wird angezeigt statt leerem Select; Bedingung nur appId (Ionic email && appId)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-eec7f233": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:175"
+   ]
+  },
+  "people/person/person.page#modal-b80602d8": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:278"
+   ],
+   "n": "Ionic: Sheet-Modal (Breakpoint 0.5) mit Toolbar / Flutter: AlertDialog",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-569fac2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:282"
+   ]
+  },
+  "people/person/person.page#action-36a985b0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:296"
+   ],
+   "n": "Ionic: X-Icon in der Toolbar / Flutter: Textbutton „Schließen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-b4cb386f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:288"
+   ]
+  },
+  "people/person/person.page#text-67d8ca5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:292"
+   ]
+  },
+  "people/person/person.page#text-75ad9b8b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:124"
+   ]
+  },
+  "people/person/person.page#field-247f92a0": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:766"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-247f92a0-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:779",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:787"
+   ],
+   "n": "Ionic: ion-input type=number, Dezimalzahlen möglich / Flutter: int.tryParse → Dezimalzahlen und leere Eingabe werden als 0 gespeichert",
+   "sev": "hoch"
+  },
+  "people/person/person.page#text-2ef5c47d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:748"
+   ]
+  },
+  "people/person/person.page#field-b8f6d19b": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:745"
+   ],
+   "n": "Ionic: Toggle ohne Wert ist mit Standard true (bzw. defaultValue) vorbelegt / Flutter: fehlender Wert wird als aus (false) angezeigt; Flutter besser: Toggle nur bei Bearbeitungsrecht änderbar (Ionic auch bei readOnly)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-2ef5c47d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:757"
+   ]
+  },
+  "people/person/person.page#field-8438f479": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:791",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:803"
+   ],
+   "n": "Ionic: Texteingabe TT.MM.JJJJ + Kalender-Button; fehlender Wert vorbelegt mit heute / Flutter: nur Datumsauswahl per Tipp, leer „Nicht angegeben“; speichert „YYYY-MM-DD“ statt ISO-Zeitstempel (UTC-Mitternacht)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#modal-9dba127a": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795"
+   ],
+   "n": "Ionic: Modal mit Rad-Datumsauswahl / Flutter: DatePicker-Dialog bzw. Kalender-Karte",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-e423e2ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:795",
+    "lib/shared/widgets/sheets/field_editor_sheet.dart:213"
+   ],
+   "n": "Ionic: max = heute / Flutter: Kalender 1900–2100 (kein Maximum heute)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-50c752ee": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:808"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (Auswahl-Sheet); fehlender Wert in Ionic mit erster Option vorbelegt, Flutter „Nicht angegeben“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-049486aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:766"
+   ],
+   "n": "Bearbeiten per Tipp → Editor-Sheet statt Inline-Eingabe (4 Zeilen)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-2ef5c47d-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:726"
+   ]
+  },
+  "people/person/person.page#action-f401ebe4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:724"
+   ],
+   "n": "Flutter: Zeile mit Kirchenname/„Nicht gelistet“/„Bitte wählen“, Tipp öffnet Auswahl"
+  },
+  "people/person/person.page#modal-cc0c1d20": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:26"
+   ],
+   "n": "Ionic: Vollbild-Modal / Flutter: Bottom-Sheet mit 85 % Höhe",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-66310ab1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:72"
+   ]
+  },
+  "people/person/person.page#action-440f7c59": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:77"
+   ]
+  },
+  "people/person/person.page#field-bc29f6df": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:87"
+   ]
+  },
+  "people/person/person.page#action-7245d271": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:97"
+   ]
+  },
+  "people/person/person.page#action-d804247e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:105"
+   ]
+  },
+  "people/person/person.page#text-a63748b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/church_picker_sheet.dart:114"
+   ]
+  },
+  "people/person/person.page#text-ac60eb1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:174",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1891"
+   ]
+  },
+  "people/person/person.page#text-408e4921": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:215"
+   ],
+   "n": "Flutter: longName, Fallback shortName"
+  },
+  "people/person/person.page#text-a48aa58c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:218"
+   ]
+  },
+  "people/person/person.page#text-34177970": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:211"
+   ],
+   "n": "Ionic: Prozent aus getPersonAttendances (nur aktuelle Saison, archivierte Termine für Mitglieder ausgeblendet, shift_excused_as_present berücksichtigt) / Flutter: alle Termine bis heute ohne Saison-/Archiv-/Schicht-Filter → andere Prozentwerte; „Nicht verfügbar“ und Farben gleich",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-4ba50278": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:49",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:76",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:102"
+   ],
+   "n": "Ionic: Historie nur sichtbar, wenn Einträge vorhanden; nur aktuelle Saison / Flutter: immer sichtbar mit Leerzustand „Keine Historie vorhanden“, zusätzlicher Umschalter „Alle anzeigen“ (alle Saisons)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-46e0984b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:168"
+   ]
+  },
+  "people/person/person.page#text-79695a55": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:167"
+   ]
+  },
+  "people/person/person.page#text-524d02fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:164"
+   ]
+  },
+  "people/person/person.page#action-53209882": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:176",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:374",
+    "lib/features/people/presentation/pages/person_detail_page.dart:131"
+   ],
+   "n": "Ionic: Zeiten der Historieneinträge („Mit Person gesprochen (dd.MM.yyyy HH:mm)“ usw.) in Ortszeit; Termintitel ohne Namen bei hide_name; Typ 14/15 ohne Titelzeile / Flutter: Zeitstempel als UTC formatiert (Uhrzeit 1–2 h falsch, Datum kann kippen), Termintitel ignoriert hide_name, Typ 14/15 mit Datum als Titel; Tipp auf Notiz-Eintrag wie Ionic",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-a6446ca3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:257"
+   ],
+   "n": "Flutter: Slidable mit Papierkorb, nur bearbeitbar und nicht Termin"
+  },
+  "people/person/person.page#text-0f8281df": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:20",
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:121"
+   ],
+   "n": "Text gleich; Flutter zählt Termine ab heute (gte heute), Ionic nur Termine nach jetzt — heutige Termine erscheinen in Flutter zusätzlich hier und in der Historie",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-9bed7686": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:137"
+   ],
+   "n": "Format „dd.MM.yyyy | Titel“ gleich; Flutter ignoriert hide_name der Terminart (Ionic zeigt dann nur das Datum)",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-9bed7686-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:143"
+   ]
+  },
+  "people/person/person.page#text-9c7dd371": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:182"
+   ]
+  },
+  "people/person/person.page#text-e04cce3c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/upcoming_appointments_accordion.dart:174"
+   ]
+  },
+  "people/person/person.page#text-9102c4ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:336",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1915"
+   ]
+  },
+  "people/person/person.page#text-9bed7686-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:291"
+   ]
+  },
+  "people/person/person.page#text-e09c40a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:292"
+   ]
+  },
+  "people/person/person.page#action-99512786": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:293"
+   ]
+  },
+  "people/person/person.page#text-d7650994": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:352"
+   ]
+  },
+  "people/person/person.page#action-9ebb72e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:356"
+   ]
+  },
+  "people/person/person.page#action-c210ff08": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1918"
+   ]
+  },
+  "people/person/person.page#action-bf4fde99": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1736",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1210"
+   ],
+   "n": "Ionic: im Genehmigungsmodus immer FAB „…“ → Aktionsblatt; Änderungen werden beim Genehmigen mitgespeichert (inkl. Problemfall gelöst) / Flutter: bei Änderungen erscheint stattdessen Speichern-FAB, Genehmigen speichert nur pending/Historie (ungespeicherte Änderungen gehen nicht mit)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-29de3e84": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1733",
+    "lib/features/people/presentation/pages/person_detail_page.dart:722"
+   ],
+   "n": "Ionic: nach erfolgreichem Speichern schließt die Seite / Flutter: Seite bleibt offen (nur Toast)",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-8b894b78": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:330"
+   ]
+  },
+  "people/person/person.page#action-77040b65": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1738",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1596"
+   ],
+   "n": "Ionic: Schlüssel-FAB legt Account sofort an (ohne Rückfrage) und schließt die Seite / Flutter: zusätzlicher Bestätigungsdialog, Seite bleibt offen",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-a75ff037": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1740",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1354"
+   ]
+  },
+  "people/person/person.page#action-3a69a489": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1731"
+   ],
+   "n": "Flutter: nur Admin/Verantwortlicher (Ionic: hasLeft, Seite nur von Admin-Einstellungen geöffnet)"
+  },
+  "people/person/person.page#modal-cc46e7c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:43"
+   ],
+   "n": "Flutter: Bottom-Sheet (Ionic Sheet-Modal 0.75)"
+  },
+  "people/person/person.page#text-74cc549e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:98"
+   ],
+   "n": "„{name} Pausieren“ (Großschreibung)"
+  },
+  "people/person/person.page#action-82d36162": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:104"
+   ]
+  },
+  "people/person/person.page#text-cd380b15": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:115"
+   ]
+  },
+  "people/person/person.page#field-31ccb60b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:116"
+   ]
+  },
+  "people/person/person.page#text-56eeae57": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:128"
+   ]
+  },
+  "people/person/person.page#text-71d08f8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ]
+  },
+  "people/person/person.page#text-be0758fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:129"
+   ]
+  },
+  "people/person/person.page#action-078fae20": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:130"
+   ]
+  },
+  "people/person/person.page#field-31cb4e6e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:131"
+   ],
+   "n": "Ionic: Inline-Kalender im aufklappbaren Bereich, max = heute / Flutter: Datumsdialog beim Tipp, lastDate heute, frühestens vor 5 Jahren",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-98061078": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:142"
+   ]
+  },
+  "people/person/person.page#text-71d08f8a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ]
+  },
+  "people/person/person.page#text-57a6ff94": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:143"
+   ]
+  },
+  "people/person/person.page#action-59bee702": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:144"
+   ]
+  },
+  "people/person/person.page#field-932fcf9d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:145"
+   ],
+   "n": "Ionic: Inline-Kalender im aufklappbaren Bereich, min = heute / Flutter: Datumsdialog, firstDate heute, bis +3 Jahre, Start +30 Tage",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-6e3272f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:158"
+   ]
+  },
+  "people/person/person.page#action-c704728e": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:163",
+    "lib/features/people/presentation/pages/person_detail_page.dart:994"
+   ],
+   "n": "Button gleich (deaktiviert ohne Grund). Ionic: nach dem Pausieren (und ggf. Abfrage andere Instanzen) schließt die Seite, kein Erfolgs-Toast / Flutter: Seite bleibt offen, zusätzlicher Toast „{Vorname} wurde pausiert“",
+   "sev": "mittel"
+  },
+  "people/person/person.page#modal-b29d5620": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:48"
+   ],
+   "n": "Flutter: Bottom-Sheet (Ionic Sheet-Modal 0.85)"
+  },
+  "people/person/person.page#text-ef92326c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:141"
+   ]
+  },
+  "people/person/person.page#action-49c5b592": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:145"
+   ]
+  },
+  "people/person/person.page#text-cd380b15-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:158"
+   ]
+  },
+  "people/person/person.page#field-37f5b4b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:159"
+   ]
+  },
+  "people/person/person.page#text-8b8fdf3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:166"
+   ]
+  },
+  "people/person/person.page#text-71d08f8a-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:167"
+   ]
+  },
+  "people/person/person.page#text-887c6524": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:169"
+   ]
+  },
+  "people/person/person.page#action-35f05e9d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:172"
+   ],
+   "n": "Ionic: eigener Löschen-Button am „Von“-Datum / Flutter: kein Button an „Von“, ein Button an „Bis“ löscht beide Daten",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-3c608429": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:96"
+   ],
+   "n": "Ionic: zwei Inline-Kalender (Von/Bis) ohne Grenzen / Flutter: ein Zeitraum-Dialog (showDateRangePicker) für Von und Bis, Vorjahr bis +3 Jahre",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-ac9e7aae": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:174"
+   ]
+  },
+  "people/person/person.page#text-71d08f8a-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:176"
+   ]
+  },
+  "people/person/person.page#text-887c6524-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:177"
+   ]
+  },
+  "people/person/person.page#action-227003e4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:180"
+   ],
+   "n": "Ionic: löscht nur „Bis“ / Flutter: löscht „Von“ und „Bis“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-e2731760": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:96"
+   ],
+   "n": "Ionic: Inline-Kalender, min = Von / Flutter: gemeinsamer Zeitraum-Dialog",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-d974b12d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:195"
+   ]
+  },
+  "people/person/person.page#action-1d820b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:205"
+   ]
+  },
+  "people/person/person.page#modal-75561fb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1050"
+   ],
+   "n": "Ionic: Vollbild-Modal (nicht per Hintergrund schließbar) mit Toolbar und FAB / Flutter: AlertDialog",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-45b14cdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1058"
+   ]
+  },
+  "people/person/person.page#action-22e55c57": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1092"
+   ],
+   "n": "Ionic: X-Button in der Toolbar / Flutter: Textbutton „Abbrechen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-15cc2dfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1064"
+   ]
+  },
+  "people/person/person.page#field-03332121": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1069"
+   ],
+   "n": "Ionic: natives Datumsfeld (type=date), keine Grenze / Flutter: Zeile mit Datum, Tipp öffnet Datumsauswahl, lastDate heute",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#text-b8f39c05": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1084"
+   ],
+   "n": "Ionic: Label „Notiz“ / Flutter: „Grund (optional)“ mit Hinweistext",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#field-3de9eda0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1081"
+   ],
+   "n": "Flutter: TextField, 2 Zeilen"
+  },
+  "people/person/person.page#action-7114e66d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1098"
+   ],
+   "n": "Ionic: FAB mit Archiv-Icon / Flutter: roter Button „Archivieren“ im Dialog",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#modal-f11c7cfb": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1403",
+    "lib/features/people/presentation/widgets/handover_sheet.dart:102"
+   ],
+   "n": "Ionic: eigenes Sheet-Modal (0.5) „Kopieren/Übertragen von {name}“ mit Ziel-Instanz + Ziel-Gruppe / Flutter: Massen-Übergabe-Sheet (DraggableScrollableSheet) für 1 Person mit Titel „Spieler kopieren/übertragen“, Modus-Umschalter, Gruppen-Zuordnung",
+   "sev": "mittel"
+  },
+  "people/person/person.page#text-0f2b968d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:114"
+   ],
+   "n": "Ionic: „Kopieren von {name}“/„Übertragen von {name}“ / Flutter: „Spieler kopieren“/„Spieler übertragen“",
+   "sev": "niedrig"
+  },
+  "people/person/person.page#action-ff9a9e50": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:116"
+   ],
+   "n": "Flutter: X links in der Toolbar"
+  },
+  "people/person/person.page#field-0a2daf88": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:85",
+    "lib/features/people/presentation/widgets/handover_sheet.dart:452"
+   ],
+   "n": "Ionic: Ziel-Instanzen = Instanzen der Organisation (getTenantsFromOrganisation), erste vorausgewählt / Flutter: alle Instanzen, in denen der Nutzer Mitglied ist (userTenantsProvider), außer der aktuellen — auch außerhalb der Organisation",
+   "sev": "hoch"
+  },
+  "people/person/person.page#field-272c2c28": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:514"
+   ],
+   "n": "Ionic: eine Auswahl „Ziel-Gruppe“ (Pflicht) / Flutter: „Gruppen-Zuordnung“ je Quellgruppe",
+   "sev": "mittel"
+  },
+  "people/person/person.page#action-cf8fa6af": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/widgets/handover_sheet.dart:200"
+   ],
+   "n": "Ionic: Button „Kopieren“/„Übertragen“, deaktiviert ohne Instanz/Gruppe / Flutter: Button „Kopieren“/„Übertragen“ des Massen-Sheets mit Fortschritt",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "people/person/person.page",
+   "title": "Veraltete Anzeige nach Aktionen auf der Seite",
+   "n": "Ionic: aktualisiert this.player sofort (Passbild, appId/E-Mail nach „Meinen Benutzer zuweisen“) oder schließt die Seite (Speichern/Problemfall, Account entfernen, Pausieren, Reaktivieren) / Flutter: _draft wird nur in initState gesetzt; nach ref.invalidate rendert dieselbe State-Instanz weiter (kein didUpdateWidget/Resync). Nach Passbild ersetzen/entfernen bleibt das alte Bild, nach „Account-Verknüpfung aufheben“ bleibt „Verknüpft“ samt Rollenauswahl, nach „Meinen Benutzer zuweisen“ fehlt die Verknüpfung, nach „In anderer Instanz suchen“ bleibt die alte E-Mail angezeigt, nach „Problemfall gelöst“ bleiben roter Header und Problemfall-Bereich, Geburtstags-Warnfarbe bleibt – bis zum erneuten Öffnen",
+   "sev": "hoch",
+   "ionic": "src/app/people/person/person.page.ts:1117",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:294",
+    "lib/features/people/presentation/pages/person_detail_page.dart:355",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1693",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:266"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Notiz-Historie bei jedem Speichern ohne Notiz",
+   "n": "Ionic: NOTES-Eintrag nur wenn (alt || '') !== (neu || '') / Flutter: Vergleich _draft.notes != (person.notes ?? ''); bei Personen ohne Notiz (null) ist das immer wahr → jedes Speichern hängt einen Historien-Eintrag „Keine Notiz“ (Typ Notiz geändert) an",
+   "sev": "hoch",
+   "ionic": "src/app/people/person/person.page.ts:661",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:606"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Zusatzfelder: keine Standardwerte bei bestehenden Personen",
+   "n": "Ionic ngOnInit: fehlende additional_fields werden mit defaultValue bzw. Typ-Standard vorbelegt (Text '', Zahl 0, Datum heute, Ja/Nein true, Auswahl erste Option, Gemeinde erste Gemeinde) und beim nächsten Speichern geschrieben / Flutter Detail: keine Vorbelegung, Anzeige „Nicht angegeben“ bzw. Toggle aus, gespeichert wird nur, was geändert wurde",
+   "sev": "hoch",
+   "ionic": "src/app/people/person/person.page.ts:171",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:366",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:935"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: Zusatzfeld-Standardwerte",
+   "n": "Ionic addPerson: getFieldTypeDefaultValue(type, field.defaultValue, options, churches) – nutzt defaultValue, Gemeinde = erste Gemeinde, Datum als ISO-Zeitstempel / Flutter: ignoriert field.defaultValue bewusst (Kommentar „matches Ionic“ trifft auf 4.19.7 nicht zu), Gemeinde '' („Nicht gelistet“), Datum „YYYY-MM-DD“",
+   "sev": "hoch",
+   "ionic": "src/app/people/person/person.page.ts:216",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:238",
+    "lib/features/people/presentation/pages/person_create_page.dart:292"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: Standarddaten Geburtsdatum/Spielt seit",
+   "n": "Ionic newPlayer: birthday und playsSince = heute (correctBirthday false, Feld danach gelb markiert) / Flutter: beide leer (null), correctBirthday = birthday != null",
+   "sev": "mittel",
+   "ionic": "src/app/people/person/person.page.ts:35",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:60",
+    "lib/features/people/presentation/pages/person_create_page.dart:85",
+    "lib/features/people/presentation/pages/person_create_page.dart:1044"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: strengere E-Mail-Prüfung",
+   "n": "Ionic addPerson prüft die E-Mail nicht (Utils.validateEmail nur beim Bearbeiten, erlaubt „+“ und lange TLDs) / Flutter Neu-Seite: Regex ^[\\w-\\.]+@([\\w-]+\\.)+[\\w-]{2,4}$ blockiert das Anlegen z. B. bei „max+tag@x.de“ oder „info@verein.online“",
+   "sev": "mittel",
+   "ionic": "src/app/people/person/person.page.ts:525",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:470"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Datenübernahme (E-Mail vergeben) ohne Passbild",
+   "n": "Ionic applyMatchedPerson: übernimmt auch img (oder Standardbild) sowie otherExercise/range auch wenn leer / Flutter Detailseite: übernimmt kein Passbild, otherExercise/range nur wenn gesetzt",
+   "sev": "mittel",
+   "ionic": "src/app/people/person/person.page.ts:813",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:868"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Pausieren in anderen Instanzen: Historie",
+   "n": "Flutter besser: Ionic überschreibt die Historie der Person in der anderen Instanz mit der kompletten Historie dieser Instanz (pausePlayerInOtherTenant(..., history)) / Flutter hängt nur einen Pausiert-Eintrag an",
+   "sev": "niedrig",
+   "ionic": "src/app/people/person/person.page.ts:1453",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:247"
+   ]
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Verspätungszähler zurücksetzen schreibt nur lastSolve",
+   "n": "Flutter besser: Ionic resetLateCount speichert den ganzen Spieler (db.updatePlayer(this.player)) inkl. noch ungespeicherter Änderungen / Flutter schreibt nur lastSolve",
+   "sev": "niedrig",
+   "ionic": "src/app/people/person/person.page.ts:396",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1391"
+   ]
+  }
+ ]
+}

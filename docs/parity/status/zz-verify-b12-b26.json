@@ -1,0 +1,442 @@
+{
+ "batch": "zz-verify-b12-b26",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "planning/plan-viewer/plan-viewer.component#toast-41712142": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:126",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:132"
+   ],
+   "n": "Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
+   "s": "missing",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:163",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:18"
+   ],
+   "n": "Ionic: Bearbeiten-Button im Plan-Viewer für Dirigent/Helfer (att-list übergibt canEdit) öffnet den Ablaufplan-Editor / Flutter: Button existiert nur bei onEdit != null, kein Aufrufer (openAttendancePlanViewer) übergibt onEdit – im Viewer fehlt der Button; Bearbeiten nur über die Termin-Detailseite.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-5103dc28": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-6a2e9a3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:118",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:122",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:25"
+   ],
+   "n": "Ionic: aus der Terminliste übergibt att-list die Werke (songs), Werk-Zeilen zeigen „♪ Noten öffnen“ und sind antippbar / Flutter: openAttendancePlanViewer übergibt keine songAction – Werk-Zeilen im Viewer aus der Terminliste sind nicht antippbar (nur im Self-Service-Viewer).",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#text-d513c68c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+   ],
+   "n": "Ionic: Ende-Zeile nur wenn plan.end gesetzt / Flutter: Ende wird bei fehlendem plan.end aus Start + Minuten berechnet und angezeigt.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#logic-5522ee54": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:679",
+    "lib/features/planning/presentation/pages/planning_page.dart:715",
+    "lib/features/planning/presentation/pages/planning_page.dart:759",
+    "lib/features/planning/presentation/pages/planning_page.dart:873",
+    "lib/features/planning/presentation/pages/planning_page.dart:970",
+    "lib/data/repositories/plan_repository.dart:44"
+   ],
+   "n": "Laden, Speichern, Mehrfach-Pläne, Blöcke, Vorlagen, Export und Freigabe portiert. Extras des ersten Durchgangs nachvollzogen: Standardplan bei Termin ohne Plan (Flutter wendet immer Typ-Vorlage/„Wort“ an, setzt _dirty und schreibt attendance.plan ohne Nutzeränderung – hoch), Start-Termin ohne kommenden Termin (mittel), Werke-Reihenfolge, Validierung beim Wechsel, Entwürfe. Zusätzlich gefunden: archivierte Termine in der Terminauswahl auch für Helfer (extra, hoch)",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#modal-bbd6596e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Ionic: Feld bearbeiten als Vollbild-Modal PlanFieldEditComponent / Flutter: AlertDialog (showPlanFieldDialog).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#alert-70a7354c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1465",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40"
+   ],
+   "n": "Ionic: Eingaben nur mit Platzhaltern / Flutter: gleiche Eingaben und Buttons, zusätzlich Feldbeschriftungen.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-0f4e0ac3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+   ],
+   "n": "Ionic: Block-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-0c53b41c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1870",
+    "lib/features/planning/presentation/pages/planning_page.dart:1884"
+   ],
+   "n": "Ionic: „Nur-Lesen-Link“, „Bearbeitungs-Link“, „Abbrechen“ / Flutter: zusätzlich „Freigabe aufheben“ wenn bereits ein shareKey existiert, dazu Icons.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#toast-676200b9": {
+   "s": "na",
+   "f": [],
+   "n": "toter Code: gehört zu revokeSharePlan(), das nirgends aufgerufen wird.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-160cbfb2-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:377"
+   ],
+   "n": "Ionic: PDF-Blob für Download / Flutter: PDF geht in den Druckdialog (Printing.layoutPdf).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#alert-c2d6f9d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1261"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#actionsheet-5a0aa6c6": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1306"
+   ],
+   "n": "Ionic: Plan-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#alert-75ab0ccf": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1368"
+   ],
+   "n": "Ionic: Radio-Alert „Tag zuordnen“ mit Abbrechen/Speichern / Flutter: Action-Sheet, Auswahl wird sofort übernommen.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#field-0c644b5c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:2264"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-1f4d1515": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1662"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-748cb97a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1668"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#modal-ffaa7230": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:1542",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:95"
+   ],
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-62a2b6ee": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515",
+    "lib/features/songs/presentation/utils/song_utils.dart:115",
+    "lib/core/providers/player_providers.dart:116"
+   ],
+   "n": "Flutter besser (bewusst): Ionic „Ohne …“ zählt alle Nicht-Haupt-Gruppen ohne Stimme / Flutter: für Dirigent/Helfer nur Gruppen mit Spielern (missingInstrumentsText mit playerCounts). Pfad korrigiert: song_utils liegt unter features/songs/presentation/utils.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#action-6c9b4483": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:560",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197"
+   ],
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#logic-42314d12": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1006",
+    "lib/data/repositories/plan_repository.dart:202"
+   ],
+   "n": "Laden, Sortierung (created_at absteigend), Löschen und Öffnen wie Ionic; Unterschied siehe extra (Ladefehler wird angezeigt).",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#db-65684aa5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:245"
+   ],
+   "n": "Flutter besser: delete auf shared_plans filtert zusätzlich .eq('creator_user_id', userId) (Ionic nur eq id, RLS).",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-8fd4640e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:93",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:98",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:100",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:101"
+   ],
+   "n": "Titel „Gemeinde hinzufügen“, Platzhalter „Name der Gemeinde“, Buttons „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Alert bleibt offen mit Meldung „Bitte gib gültige Werte ein.“ (return false); beim Anlegen blockierendes Lade-Overlay; Fehler-Toast mit Rohmeldung error.message / Flutter: Dialog schließt, Warn-Toast mit demselben Text; kein Overlay; Fehler-Toast „Fehler beim Hinzufügen“. Flutter trimmt (Ionic legt Namen aus Leerzeichen ungetrimmt an).",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#loading-9b43bea8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:141",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:207",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:325"
+   ],
+   "n": "Ionic: blockierendes Overlay \"Gemeinden werden zusammengeführt...\" / Flutter: kein Overlay und kein Text, nur Merge-/Umbenennen-Buttons während saving deaktiviert.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#text-ab5ef6e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:360",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:365"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-3c8301fd": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:98",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:118"
+   ],
+   "n": "Ionic: roter Toast \"Automatische Nachrichten konnten nicht geladen werden\" (auch wenn nur getRecentRuns scheitert); Seite bleibt mit \"Neue Regel\", Vorlagen und Hinweis bedienbar / Flutter: kein Toast; bei Fehler der Regeln ersetzt ein zentrierter Hinweistext den gesamten Inhalt (kein \"Neue Regel\"-Button, keine Vorlagen); Fehler beim Laden der Läufe wird still ignoriert.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-a1066ac4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:88",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:89"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#logic-e4bf4b56": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:77",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:118",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:144",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:156",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:164",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:175",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:199",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:222",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:235",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:249",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:272",
+    "lib/core/providers/auto_message_providers.dart:127",
+    "lib/data/models/auto_message/auto_message.dart:81",
+    "lib/data/models/auto_message/auto_message.dart:189",
+    "lib/data/models/auto_message/auto_message.dart:212",
+    "lib/data/repositories/auto_message_repository.dart:65"
+   ],
+   "n": "Geprüft: Defaults, Vorlagen-Presets, Toggles (leer → null), Stepper-Grenzen, delayLabel, Textmodus/Reset, Platzhalter, Beispieltext (nur im Vorlagenmodus), Vorschau, problems. saveRule schreibt dieselben Spalten wie Ionic (enabled_at nur beim Einschalten, created_by/tenantId beim Insert); Update/Delete filtern zusätzlich tenantId (Ionic nur id + RLS). Abweichungen: Verlaufstitel bei ausgeblendeten Typen (Flutter besser) und Regel-ID nicht gefunden – beide niedrig.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#toast-6b7dde03": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:252",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:253",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:254",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:235",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:236",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:237",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:238",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:239",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:240",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:241",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:242",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:243",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:244",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:245"
+   ],
+   "n": "Flutter besser: gleiche Prüfungen/Reihenfolge, erster Fehler als Warn-Toast. Ionic akzeptiert beim eigenen Text einen Body, der nur Leerzeichen enthält (prüft nur auf \"text\"-Knoten) / Flutter verlangt nicht-leeren Text (TiptapConverter.hasText).",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-61929704": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:264"
+   ],
+   "n": "Ionic: navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → zurück zur vorherigen Seite. Gleich beim Aufruf aus der Liste; beim Aufruf aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin statt auf der Liste.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#nav-4f4f5283": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:287",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:288"
+   ],
+   "n": "Ionic: navigateByUrl('/tabs/settings/auto-messages') → immer zur Regel-Liste / Flutter: context.pop() → zurück zur vorherigen Seite. Gleich beim Aufruf aus der Liste; beim Aufruf aus dem Termin-Panel (?tab=history) landet Flutter wieder auf dem Termin statt auf der Liste.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-ad6a48bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:359"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-3f080ffa": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:410"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-b069a66d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:465"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#field-21530294": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:512",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:513",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:514",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:516",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:517",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:519",
+    "lib/data/models/auto_message/auto_message.dart:33",
+    "lib/features/messages/presentation/auto_message_texts.dart:96"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#text-946e1029": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:840",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:842"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/rule/auto-message-rule.page#action-51800515": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:318",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:319",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:322",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:323",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:327"
+   ],
+   "v": "bestätigt"
+  },
+  "settings/dashboard/dashboard-settings.page#logic-300baefb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:38",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:48",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:51",
+    "lib/core/providers/dashboard_providers.dart:124",
+    "lib/core/providers/dashboard_providers.dart:144",
+    "lib/core/providers/dashboard_providers.dart:161",
+    "lib/core/providers/dashboard_providers.dart:184",
+    "lib/core/providers/dashboard_providers.dart:190",
+    "lib/core/utils/dashboard_logic.dart:22",
+    "lib/core/utils/dashboard_logic.dart:64"
+   ],
+   "n": "Geprüft: user_metadata-Schlüssel showDashboardTab_<tenant>/dashboardCards_<tenant>, Merge neuer/unbekannter Karten, Default-Reihenfolge, „Meine Aufgaben“ nur mit Teamorganisation, Umsortieren (versteckte Karten ans Ende), Zurücksetzen. Einzige Abweichung: Flutter besser bei Speicherfehler (Rollback + roter Toast; Ionic wertet updateUser-Fehler nicht aus).",
+   "v": "bestätigt"
+  },
+  "settings/dashboard/dashboard-settings.page#text-3fd612ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:131",
+    "lib/features/dashboard/presentation/pages/dashboard_settings_page.dart:134"
+   ],
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "planning/plan-viewer/plan-viewer.component",
+   "title": "Weitere Ablaufpläne fehlen im Viewer (Terminliste/Selbstservice)",
+   "n": "Ionic: att-list und signout öffnen den Viewer mit dem Termin; bei mehreren Plänen (attendance.extra_plans) erscheinen Chips zum Umschalten, Standard = Plan des heutigen Tages / Flutter: openAttendancePlanViewer übergibt plan explizit und keine extraPlans, showPlanViewerSheet im Selbstservice ebenso, kSignoutAttendanceColumns lädt extra_plans nicht → nur Plan 1 sichtbar. Der erste Durchgang hat das Chips-Item (action-adebf7d7) als ok bewertet.",
+   "sev": "hoch",
+   "ionic": "src/app/planning/plan-viewer/plan-viewer.component.ts:53",
+   "f": [
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:25",
+    "lib/features/self_service/presentation/pages/signout_page.dart:716",
+    "lib/data/repositories/sign_in_out_repository.dart:21",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:61"
+   ]
+  },
+  {
+   "unit": "planning/planning.page",
+   "title": "Archivierte Termine in der Terminauswahl für Helfer",
+   "n": "Ionic: getAttendance filtert archivierte Termine per filterArchivedForRole für alle Rollen außer Admin/Verantwortliche / Flutter: getPlanAttendances hat keinen archived-Filter; Helfer erreichen /planning?attendanceId (route_access) und sehen und bearbeiten dort auch archivierte Termine.",
+   "sev": "hoch",
+   "ionic": "src/app/services/db.service.ts:2653",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:44",
+    "lib/core/router/route_access.dart:110"
+   ]
+  }
+ ]
+}

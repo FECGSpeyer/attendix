@@ -1,0 +1,1102 @@
+{
+ "batch": "b13-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "public-planning/public-planning.page#logic-f87732cd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:221-256",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:301-309",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:384-451",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:714-785"
+   ],
+   "n": "Vorlagen (gleiche 5 Vorlagen, IDs, Startzeiten, neue IDs beim Klonen), Platzhalter „Chor/Orchester“/„Werk N“, Org-Vorlagen/-Felder, Blockvorlagen, Zeiten/Ende, Validierung, lokale Sicherung (gleiche Felder), DB-Autosave nach 500 ms, Teilen, Org-Zuordnung gleich. Abweichungen siehe extra (Branding siehe field-2ffcb596 und Export-Effekte).",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#db-7c1e7e29": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:180",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:186-190"
+   ],
+   "n": "Sitzung über Supabase-Auth (currentSession)"
+  },
+  "public-planning/public-planning.page#nav-d5e2c588": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:306-309",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:191-196"
+   ],
+   "n": "Eingeloggt auf /planung → /settings/planung (Router-Redirect ersetzt den Eintrag; zusätzlich context.go in initState)"
+  },
+  "public-planning/public-planning.page#db-e4496b2e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:279-296",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:255-272"
+   ],
+   "n": "select org_id eq id maybeSingle, nur mit gespeicherter Plan-ID; Flutter zusätzlich eq creator_user_id; Fehler → lokaler Stand bleibt"
+  },
+  "public-planning/public-planning.page#alert-b65125be": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:415-423",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369-392"
+   ],
+   "n": "„Vorlage anwenden“, „Aktuellen Ablauf durch die Vorlage ersetzen?“, „Abbrechen“/„Ersetzen“; ohne Felder direkt ersetzt"
+  },
+  "public-planning/public-planning.page#alert-32122b22": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:542-551",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40-88",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+   ],
+   "n": "„Feld hinzufügen“, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Meldung „Bitte einen Programmpunkt eingeben.“, Dauer 20; Flutter zeigt zusätzlich Feldbezeichnungen und trimmt Name/Ausführenden"
+  },
+  "public-planning/public-planning.page#alert-25e72979": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:552-563"
+   ],
+   "n": "„Notizfeld hinzufügen“, „Notiz eingeben...“, Meldung „Bitte eine Notiz eingeben.“, id noteFld…, Dauer 0"
+  },
+  "public-planning/public-planning.page#alert-53b00c7b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320"
+   ],
+   "n": "Titel „Feld bearbeiten“, Felder Programmpunkt/Ausführender/Info bzw. bei Notizen nur Notiz gleich. Ionic: Buttons „Löschen“ (rot, entfernt das Feld) / „Abbrechen“ / „Speichern“, keine Dauer im Dialog / Flutter: kein „Löschen“ (nur per Wischen), Bestätigen heißt „Updaten“, zusätzliches Feld „Minuten“, Info-Platzhalter „Info-Text (optional)...“",
+   "sev": "mittel"
+  },
+  "public-planning/public-planning.page#alert-f4ddbc0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:582-598"
+   ],
+   "n": "„Programmblock hinzufügen“, Hinweis „Die Dauer ergibt sich aus den Unterpunkten.“, Name/Ausführung (optional)/Info, „Abbrechen“/„Anlegen“, Meldung „Bitte einen Namen eingeben.“, danach Unterpunkt-Dialog"
+  },
+  "public-planning/public-planning.page#alert-252d541a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:599-619",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:222-244"
+   ],
+   "n": "„Unterpunkt hinzufügen“ mit Blockname als Untertitel, Platzhalter „Programmpunkt, z. B. Gruppenlied“/„Ausführenden eingeben...“/„Info-Text (optional), z. B. Liedtitel“, „Minuten“ Vorgabe 5, „Abbrechen“/„Hinzufügen“; Einfügen am Blockende, Block wird aufgeklappt"
+  },
+  "public-planning/public-planning.page#actionsheet-8b22c81c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246-279"
+   ],
+   "n": "Header Blockname, Untertitel „n Unterpunkte · x min“, „Block bearbeiten“, „Unterpunkt hinzufügen“, „Block auflösen“, „Block mit Unterpunkten löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons (edit, add, call_split, delete)",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#alert-04303c43": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:281-301"
+   ],
+   "n": "„Block bearbeiten“, Name/Ausführung/Info mit Bezeichnungen, „Abbrechen“/„Speichern“, Meldung „Bitte einen Namen eingeben.“"
+  },
+  "public-planning/public-planning.page#alert-9f6c8399": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303-332"
+   ],
+   "n": "„Block löschen?“, „„{name}“ hat n Unterpunkte.“, „Abbrechen“/„Nur Block auflösen“/„Alles löschen“ (rot); ohne Unterpunkte direkt gelöscht"
+  },
+  "public-planning/public-planning.page#toast-51c4a8ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:714-718"
+   ],
+   "n": "„Bitte mindestens ein Feld hinzufügen.“ (warning)"
+  },
+  "public-planning/public-planning.page#toast-88e9eba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:719-722"
+   ],
+   "n": "„Bitte alle Dauern ausfüllen.“ (warning); Notizen und Block-Köpfe ausgenommen"
+  },
+  "public-planning/public-planning.page#effect-73ff88d2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:726-742",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111",
+    "lib/core/services/plan_export_service.dart:128-132",
+    "lib/core/providers/branding_providers.dart:40-46"
+   ],
+   "n": "PDF (A4 bzw. 2x A5) mit Titel, Datum und Feldern erzeugt. Ionic: Branding = im Feld „Branding“ gewähltes öffentliches Branding (FECG-Logo + Text) bzw. keins bei „Kein Branding“ / Flutter: Auswahl wird ignoriert, eingeloggt immer Instanz-/Org-Branding (resolvePdfBranding), anonym keins – FECG-Briefkopf fehlt. Außerdem: Flutter öffnet den System-Druckdialog (Printing.layoutPdf) statt Download/Dateiansicht; Dateiname Ionic „Titel_Wochentag, TT.MM.JJJJ(_2x).pdf“ / Flutter „Titel_TT_MM_JJJJ.pdf“",
+   "sev": "hoch"
+  },
+  "public-planning/public-planning.page#effect-6021ff44": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:726-734",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:107-113",
+    "lib/core/services/plan_export_service.dart:119-125"
+   ],
+   "n": "Bild (A4) = erste PDF-Seite als PNG. Ionic: Branding = im Feld „Branding“ gewähltes öffentliches Branding (FECG-Logo + Text) bzw. keins bei „Kein Branding“ / Flutter: Auswahl wird ignoriert, eingeloggt immer Instanz-/Org-Branding (resolvePdfBranding), anonym keins – FECG-Briefkopf fehlt",
+   "sev": "hoch"
+  },
+  "public-planning/public-planning.page#effect-433919fa": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/plan_export_service.dart:135-139",
+    "lib/core/services/native/native_file_service.dart:167-176",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:736-737"
+   ],
+   "n": "PNG speichern/teilen (Web: Teilen bzw. Download, nativ: Datei öffnen) gleich. Dateiname Ionic „Titel_JJJJ-MM-TT.png“ / Flutter „Titel_TT_MM_JJJJ.png“",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-1ad39a4e": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:114-131",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:22-28",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:107"
+   ],
+   "n": "Telegram-Versand (PDF, PDF 2x A5, Bild) nur mit verknüpftem Telegram-Chat, Name „Titel ohne erste Klammern_TT_MM_JJJJ(_2x)“ gleich. Ionic: Branding = im Feld „Branding“ gewähltes öffentliches Branding (FECG-Logo + Text) bzw. keins bei „Kein Branding“ / Flutter: Auswahl wird ignoriert, eingeloggt immer Instanz-/Org-Branding (resolvePdfBranding), anonym keins – FECG-Briefkopf fehlt",
+   "sev": "hoch"
+  },
+  "public-planning/public-planning.page#actionsheet-bfb3e0da": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:739-742",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77"
+   ],
+   "n": "Validierung vorher, Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram-Einträge „Per Telegram senden (PDF)“/„(PDF 2x A5)“/„(Bild)“ nur mit Chat-ID, „Abbrechen“ – gleich. Ionic: ohne Icons / Flutter: Icons",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#actionsheet-722869aa": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:744-758",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:59-82"
+   ],
+   "n": "Header „Teilen & Exportieren“, „Nur-Lesen-Link“, „Bearbeitungs-Link“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram, „Abbrechen“ – Reihenfolge und Wirkung gleich. Ionic: ohne Icons / Flutter: Icons (link, edit_note, picture_as_pdf …)",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#toast-7e4f62bb": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:763-770",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:335-362"
+   ],
+   "n": "Flutter besser: Text „Fehler beim Erstellen des Links“ (danger) gleich. Ionic: nur wenn nach persistToDb keine Plan-ID existiert (Upsert-Fehler werden ignoriert, Link auf evtl. ungespeicherten Plan wird geteilt) / Flutter: speichert vor dem Teilen immer und zeigt den Toast auch bei Speicherfehler",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-5c5e4502": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:782-784"
+   ],
+   "n": "Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154"
+   ],
+   "n": "Fallback Zwischenablage + Toast gleich. Ionic: nur wenn navigator.share fehlt / Flutter: wenn Teilen scheitert oder „unavailable“ meldet; im Web ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (Mail-Programm) (share_plus_web.dart:93-125 im Pub-Cache)",
+   "sev": "mittel"
+  },
+  "public-planning/public-planning.page#toast-c76fea2d": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#db-a246cbc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:771-780",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:311-320",
+    "lib/data/repositories/public_plan_repository.dart:208-219"
+   ],
+   "n": "Anonym: insert shared_plans mit id und edit_key (je 8 Hex), plan_title, date, time, end_time, fields, branding_id (bei „Kein Branding“ weggelassen = null); kein creator"
+  },
+  "public-planning/public-planning.page#toast-7e4f62bb-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:775-779"
+   ],
+   "n": "Insert-Fehler → „Fehler beim Erstellen des Links“ (danger)"
+  },
+  "public-planning/public-planning.page#effect-5c5e4502-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:782-784"
+   ],
+   "n": "Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154"
+   ],
+   "n": "Fallback Zwischenablage + Toast gleich. Ionic: nur wenn navigator.share fehlt / Flutter: wenn Teilen scheitert oder „unavailable“ meldet; im Web ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (Mail-Programm) (share_plus_web.dart:93-125 im Pub-Cache)",
+   "sev": "mittel"
+  },
+  "public-planning/public-planning.page#toast-c76fea2d-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153"
+   ],
+   "n": "„Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#modal-c85eff60": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:667-674",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:1006-1046"
+   ],
+   "n": "Ionic: Sheet-Modal (Breakpoints 0/0.5/0.9, Start 0.9, ohne Griff) / Flutter: Vollbild-Dialog (fullscreenDialog) „Meine Pläne“ mit „Schließen“; Auswahl eines Plans lädt ihn wie Ionic",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#alert-815ae115": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:626-635"
+   ],
+   "n": "„Neuer Plan“, „Aktuellen Plan verwerfen und einen neuen erstellen?“, „Abbrechen“/„Neuer Plan“; ohne Felder direkt"
+  },
+  "public-planning/public-planning.page#db-9fadbb62": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:335-338",
+    "lib/data/repositories/plan_repository.dart:225-233"
+   ],
+   "n": "Nutzer-ID aus der Sitzung, ohne Sitzung kein Speichern; Flutter bindet zusätzlich an das Konto, das die Seite geöffnet hat"
+  },
+  "public-planning/public-planning.page#db-b17aa9e7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:311-320",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:323-362",
+    "lib/data/repositories/plan_repository.dart:225-242",
+    "lib/data/models/plan/plan.dart:181-195"
+   ],
+   "n": "upsert shared_plans (onConflict id) mit id, edit_key, plan_title, date, time, end_time, fields, creator_user_id gleich. Ionic: branding_id bei „Kein Branding“ explizit null / Flutter: Spalte wird bei null weggelassen (includeIfNull: false) → ein vorher gespeichertes Branding bleibt in der DB stehen und kehrt beim Laden über „Meine Pläne“ zurück. Flutter besser: fehlgeschlagener Autosave → Toast „Fehler beim Speichern des Plans“ (Ionic ignoriert Fehler); neue ID wird erst nach erfolgreichem Speichern übernommen",
+   "sev": "hoch"
+  },
+  "public-planning/public-planning.page#toast-4f1670a7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:693-698"
+   ],
+   "n": "Flutter besser: Text „Fehler beim Speichern des Plans“ (danger) gleich. Ionic: nur ohne Plan-ID (Upsert-Fehler ignoriert, danach Org-Update auf evtl. nicht vorhandene Zeile mit Erfolgs-Toast) / Flutter: bei jedem fehlgeschlagenen Speichern",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#db-252fc2e5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:261-274",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:693-701"
+   ],
+   "n": "update shared_plans set org_id = Org-ID where id, nach Validierung und Speichern; Flutter zusätzlich eq creator_user_id und invalidiert die Org-Pläne"
+  },
+  "public-planning/public-planning.page#toast-e01820b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:705-707"
+   ],
+   "n": "„Fehler beim Hinzufügen zur Organisation“ (danger)"
+  },
+  "public-planning/public-planning.page#toast-d3dbfed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:704"
+   ],
+   "n": "„Plan zur Organisation \"{org}\" hinzugefügt“ (success)"
+  },
+  "public-planning/public-planning.page#db-99a947c6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:261-274",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:680-684"
+   ],
+   "n": "org_id = null where id, nur mit Plan-ID; Flutter zusätzlich eq creator_user_id"
+  },
+  "public-planning/public-planning.page#toast-59c04720": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:688-690"
+   ],
+   "n": "„Fehler beim Entfernen aus der Organisation“ (danger)"
+  },
+  "public-planning/public-planning.page#toast-798244e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:687"
+   ],
+   "n": "„Plan aus Organisation entfernt“ (success)"
+  },
+  "public-planning/public-planning.page#toast-44b64ac5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:453-457"
+   ],
+   "n": "„Keine Vorlage ausgewählt.“ (warning), auch bei Org-Vorlage"
+  },
+  "public-planning/public-planning.page#alert-f51251df": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:459-465"
+   ],
+   "n": "„Vorlage wiederherstellen“, „Alle Änderungen verwerfen und die Standardwerte der Vorlage „{name}“ wiederherstellen?“, „Abbrechen“/„Wiederherstellen“"
+  },
+  "public-planning/public-planning.page#action-bc995e2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:839",
+    "lib/core/router/app_router.dart:1135-1150",
+    "lib/core/router/app_router.dart:1309-1316"
+   ],
+   "n": "Zurück-Pfeil nur in der App (eingeloggt), zurück zu Einstellungen bzw. Org-Pläne"
+  },
+  "public-planning/public-planning.page#text-e1be5f2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:840"
+   ],
+   "n": "„Ablaufplanung“"
+  },
+  "public-planning/public-planning.page#action-e29a181c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:844-845"
+   ],
+   "n": "„Meine Pläne“ (Icon list) nur eingeloggt"
+  },
+  "public-planning/public-planning.page#action-29abb447": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:846"
+   ],
+   "n": "Teilen-Icon (ios_share), Tooltip „Teilen & Exportieren“, immer sichtbar"
+  },
+  "public-planning/public-planning.page#text-e1be5f2d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:838-840"
+   ],
+   "n": "großer Titel über IonCondenseScaffold"
+  },
+  "public-planning/public-planning.page#field-cc22e81f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:862-884"
+   ],
+   "n": "Label „Titel“, Platzhalter „Ablaufplan“, Großschreibung Satzanfang, Speichern beim Verlassen"
+  },
+  "public-planning/public-planning.page#field-9dc37d80": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:886-901",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:425-451"
+   ],
+   "n": "Flutter besser: Optionen (5 Vorlagen, deaktiviert „── Org-Vorlagen ──“, „{title} (Org)“ nur eingeloggt) und Rückfrage gleich. Ionic: bei „Abbrechen“ bleibt die neue Vorlage ausgewählt, obwohl nichts ersetzt wurde; Startzeit einer Org-Vorlage nur übernommen, wenn sie ISO-Datum-Zeit ist / Flutter: Abbrechen setzt die Auswahl zurück; Startzeit auch im Format „HH:mm“ übernommen",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#field-2ffcb596": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:58-62",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:902-915",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:107"
+   ],
+   "n": "Auswahl „Kein Branding“/„FECG Speyer“/„FECG Schwegenheim“ wird wie in Ionic lokal und als branding_id gespeichert. Ionic: bestimmt Logo und Text im PDF-/Bild-/Telegram-Export / Flutter: ohne Wirkung auf den Export (Instanz-Branding wird verwendet), FECG-Logo existiert in Flutter nicht",
+   "sev": "hoch"
+  },
+  "public-planning/public-planning.page#text-b7f9f5cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:917"
+   ],
+   "n": "„Datum“"
+  },
+  "public-planning/public-planning.page#field-51c31589": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:918-921"
+   ],
+   "n": "Ionic: ion-datetime-button im Intl-Kurzformat (z. B. „4. Nov. 2026“; Ionic-Paket nicht im Container) / Flutter: „04.11.2026“ (dateFmt)",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#modal-419a4f08": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:791-802"
+   ],
+   "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime"
+  },
+  "public-planning/public-planning.page#field-bfd56fd5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:791-802"
+   ],
+   "n": "Datum wählen → Startzeit/Ende gelten für das neue Datum, Speichern"
+  },
+  "public-planning/public-planning.page#action-5364830f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:923-927"
+   ],
+   "n": "„Vorlage wiederherstellen“, Icon refresh, primär"
+  },
+  "public-planning/public-planning.page#action-7c6a22b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:928-937",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:676-708"
+   ],
+   "n": "nur eingeloggt mit Organisation; „In Organisation \"{org}\"“ grün mit check_circle bzw. „Zur Organisation hinzufügen“ primär mit business_outlined; Tippen entfernt bzw. fügt hinzu"
+  },
+  "public-planning/public-planning.page#action-58426c72": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:938-943"
+   ],
+   "n": "„Neuer Plan“ grau mit add_circle_outline, nur eingeloggt"
+  },
+  "public-planning/public-planning.page#text-5e7e42ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:949-950"
+   ],
+   "n": "„Ablauf“"
+  },
+  "public-planning/public-planning.page#action-5eb77eb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:951-958"
+   ],
+   "n": "„+“ öffnet das Menü"
+  },
+  "public-planning/public-planning.page#popover-f538a440": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:475-526"
+   ],
+   "n": "Popover-Menü unter dem „+“ (showMenu), Abschnitte mit Trennlinie und kleiner fetter Überschrift"
+  },
+  "public-planning/public-planning.page#action-26dcf833": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:506"
+   ],
+   "n": "„Feld hinzufügen“"
+  },
+  "public-planning/public-planning.page#action-5d3b0d53": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:507"
+   ],
+   "n": "„Programmblock hinzufügen“"
+  },
+  "public-planning/public-planning.page#action-561534c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:508"
+   ],
+   "n": "„Notizfeld hinzufügen“"
+  },
+  "public-planning/public-planning.page#action-b290a33e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:509-510",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:567-570",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:35-57"
+   ],
+   "n": "„Aktuelle Werke hinzufügen“ nur eingeloggt und Instanztyp ≠ general; fügt Werke der Historie an, die noch nicht im Plan sind (20 min, Dirigent); Quelle/Reihenfolge siehe extra"
+  },
+  "public-planning/public-planning.page#action-5dd20907": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:511",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:571-577"
+   ],
+   "n": "„Werk hinzufügen“ nur wenn Werke vorhanden"
+  },
+  "public-planning/public-planning.page#text-4ae11dda": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:513-515"
+   ],
+   "n": "„Felder“ nur eingeloggt mit Org-Standardfeldern"
+  },
+  "public-planning/public-planning.page#action-3c7894ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:516-517",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:528-532"
+   ],
+   "n": "„{name} {min} min“, fügt Kopie des Org-Felds an"
+  },
+  "public-planning/public-planning.page#text-778c4c4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:519-521"
+   ],
+   "n": "„Programmblöcke“ nur eingeloggt mit Blockvorlagen"
+  },
+  "public-planning/public-planning.page#action-94254d7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:522-523",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:533-538",
+    "lib/core/utils/plan_utils.dart:207-230"
+   ],
+   "n": "„{name} {min} min“ (Summe der Unterpunkte), fügt Block mit neuen IDs an"
+  },
+  "public-planning/public-planning.page#modal-d6e1776e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:95-100"
+   ],
+   "n": "Vollbild-Dialog „Werk auswählen“"
+  },
+  "public-planning/public-planning.page#text-d763683c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:124"
+   ],
+   "n": "„Werk auswählen“"
+  },
+  "public-planning/public-planning.page#action-e49c1ead": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:126-130"
+   ],
+   "n": "Schließen-Icon close"
+  },
+  "public-planning/public-planning.page#field-3db7bd23": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:115-120",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:132-138"
+   ],
+   "n": "Suchfeld „Werk suchen...“; Ionic filtert Name/Nummer/Komponist, Flutter den Text aus Präfix, Nummer, Name, Komponist (Obermenge)"
+  },
+  "public-planning/public-planning.page#text-8cbf6f85": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:143-149"
+   ],
+   "n": "„Keine Werke gefunden“ bei leerem Suchergebnis"
+  },
+  "public-planning/public-planning.page#action-89d692a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:150-160",
+    "lib/features/planning/presentation/widgets/plan_song_helper.dart:17-31"
+   ],
+   "n": "„{prefix}{number} {name}“ + Komponist; Auswahl fügt Werk (20 min, Dirigent aus Historie) an und schließt"
+  },
+  "public-planning/public-planning.page#text-2f8b1a6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:967"
+   ],
+   "n": "„Start“"
+  },
+  "public-planning/public-planning.page#field-51c31589-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:968"
+   ],
+   "n": "Startzeit HH:mm"
+  },
+  "public-planning/public-planning.page#modal-419a4f08-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:804-817"
+   ],
+   "n": "Plattform-Zeitwahl (24 h) statt ion-modal"
+  },
+  "public-planning/public-planning.page#field-2749d7be": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:804-817"
+   ],
+   "n": "Startzeit wählen → Zeiten/Ende neu, Speichern (Flutter beim Bestätigen, Ionic bei jeder Rad-Änderung)"
+  },
+  "public-planning/public-planning.page#action-5b03242a": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:110-149",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:355-374"
+   ],
+   "n": "Ziehen am Griff; direkt über der „Unterpunkt hinzufügen“-Zeile → in den Block, direkt darunter → heraus; Block-Kopf nimmt Unterpunkte mit"
+  },
+  "public-planning/public-planning.page#action-6c83022b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:362-367",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:644-668"
+   ],
+   "n": "„Unterpunkt hinzufügen“ (Icon add, primär) am Ende jedes aufgeklappten Blocks"
+  },
+  "public-planning/public-planning.page#action-1352b63f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:492-500"
+   ],
+   "n": "chevron_right/expand_more, Tooltip „Block aufklappen“/„Block einklappen“"
+  },
+  "public-planning/public-planning.page#action-1b52d60d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-160",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:414-419",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:457-468"
+   ],
+   "n": "Kopf: Name, „HH:mm – HH:mm | Ausführung“, Info, Plakette „{min} min“; Tippen → Block-Aktionsblatt"
+  },
+  "public-planning/public-planning.page#action-0e3eca3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:439-449",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515"
+   ],
+   "n": "Name, „HH:mm | Ausführender“ (nicht bei Notizen), Info; Tippen → Feld bearbeiten"
+  },
+  "public-planning/public-planning.page#field-7949de05": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:469-473",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:570-619"
+   ],
+   "n": "Zahl, Platzhalter „min“, nicht bei Notizen; Änderung → Zeiten/Ende neu + Speichern (Flutter je Eingabe, Ionic beim Verlassen)"
+  },
+  "public-planning/public-planning.page#action-d456b0fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:549-555",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:212-220"
+   ],
+   "n": "„Einrücken“/„Ausrücken“ (grau) nur wenn möglich"
+  },
+  "public-planning/public-planning.page#action-f0588d57": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:556-561",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197-204"
+   ],
+   "n": "roter Wisch-Button mit Papierkorb; Block-Kopf → Rückfrage"
+  },
+  "public-planning/public-planning.page#text-aefaf1bb": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:981-986"
+   ],
+   "n": "„Ende“ gleich. Ionic: sichtbar, sobald end gesetzt ist (auch bei leerem Ablauf, z. B. „Leerer Ablauf“; nach „Neuer Plan“ bis zur nächsten Änderung ausgeblendet) / Flutter: nur wenn mindestens ein Feld existiert",
+   "sev": "niedrig"
+  },
+  "public-planning/public-planning.page#field-51c31589-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "n": "Endzeit HH:mm, nicht antippbar"
+  },
+  "public-planning/public-planning.page#modal-419a4f08-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "n": "Ende ist in beiden nur Anzeige (Ionic: ion-datetime disabled / Flutter: Chip ohne Aktion); ob Ionic den Button deaktiviert, ist im Container nicht prüfbar, Wirkung gleich"
+  },
+  "public-planning/public-planning.page#field-3e7a1873": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:985"
+   ],
+   "n": "Ende nicht änderbar"
+  },
+  "public-planning/public-planning.page#action-ded29dbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:991-998"
+   ],
+   "n": "„Exportieren“ mit Teilen-Icon, volle Breite → Export-Sheet"
+  },
+  "shared-plan/shared-plan.page#logic-fdf3f44b": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:273-301",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:354-390",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:446-470",
+    "lib/core/utils/plan_utils.dart:444-488"
+   ],
+   "n": "Laden (Termin per id + share_key + archived=false, Ad-hoc-Plan per id), Titel-Fallback (plan.title → typeInfo bzw. „Ablaufplan“), mehrere Pläne mit Chips und heutigem Plan, Bearbeitungsmodus nur mit passendem Schlüssel (Flutter prüft serverseitig), Realtime nur im Bearbeitungsmodus, Live-Fenster −5 min … Ende+15 min, Auto-Live beim Laden, Countdown-Format gleich. Abweichungen siehe extra.",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#db-c07797b1": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:56-94",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:354-375"
+   ],
+   "n": "attendance per id, share_key, archived=false; Flutter liest share_key/share_edit_key nicht mit und prüft den Bearbeitungsschlüssel per Filter (verifySharedAttendanceEditKey) – gleiche Daten, gleicher Modus"
+  },
+  "shared-plan/shared-plan.page#db-63498014": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:129-161",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:446-458"
+   ],
+   "n": "shared_plans per id; Flutter ohne edit_key-Spalte, Schlüssel per Filter geprüft"
+  },
+  "shared-plan/shared-plan.page#db-19ab5fbe": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:297-308",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:370-374"
+   ],
+   "n": "nur im Bearbeitungsmodus; UPDATE attendance id=eq.{id}"
+  },
+  "shared-plan/shared-plan.page#db-eb2241ea": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:297-300"
+   ],
+   "n": "Kanal shared-att-{id}"
+  },
+  "shared-plan/shared-plan.page#db-21ceecec": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:314-325",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:453-457"
+   ],
+   "n": "nur im Bearbeitungsmodus; UPDATE shared_plans id=eq.{key}"
+  },
+  "shared-plan/shared-plan.page#db-e1883bf7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:314-317"
+   ],
+   "n": "Kanal shared-plan-{key}"
+  },
+  "shared-plan/shared-plan.page#alert-cbcf9904": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:637-648",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:326-366"
+   ],
+   "n": "„Titel bearbeiten“, Feld mit aktuellem Titel und Platzhalter „Titel“, „Abbrechen“/„Speichern“, leer → bleibt offen"
+  },
+  "shared-plan/shared-plan.page#alert-fe4c6b4f": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:668-691",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191"
+   ],
+   "n": "Flutter besser: „Feld hinzufügen“, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Dauer 20, getrimmt – gleich. Ionic: leerer Name → Dialog bleibt stumm offen / Flutter: Meldung „Bitte einen Programmpunkt eingeben.“; zusätzlich Feldbezeichnungen",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-5d93ade6": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:692-705"
+   ],
+   "n": "Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Notiz (noteFld, Dauer 0) gleich. Ionic: Titel „Notiz hinzufügen“ (attendance.addNote), leer → stumm offen / Flutter: Titel „Notizfeld hinzufügen“, Meldung „Bitte eine Notiz eingeben.“",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-0caf6a44": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:650-666"
+   ],
+   "n": "Ionic: Alert „Startzeit bearbeiten“ mit Zeit-Eingabe und „Abbrechen“/„Speichern“ / Flutter: System-Zeitwahl (24 h) mit Hilfetext „Startzeit bearbeiten“. Gespeicherter Wert: Ad-hoc-Plan `${date}T${HH:mm}` gleich; Termin-Plan Ionic `${attendance.date}T${HH:mm}`, Flutter nur „HH:mm“",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#alert-29f54454": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320"
+   ],
+   "n": "„Feld bearbeiten“ mit Programmpunkt/Ausführender/Info und Dauer, bei Notizen nur Text, „Abbrechen“ gleich. Ionic: Bestätigen „Speichern“, Dauer-Platzhalter „Dauer (min)“, leerer Name → stumm offen; Block-Kopf wird wie ein normales Feld (inkl. Dauer) bearbeitet / Flutter: Bestätigen „Updaten“, Feld „Minuten“, Fehlermeldung bei leerem Namen; Tippen auf Block-Kopf öffnet das Block-Aktionsblatt",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#db-4e980eb4": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:590-620",
+    "lib/data/repositories/public_plan_repository.dart:97-126"
+   ],
+   "n": "Flutter besser: gleiche Spalten (plan bzw. plan + extra_plans über splitPlans) mit bearbeitetem Plan (time, fields, title oder null). Ionic: schreibt das alte end weiter, Filter nur id / Flutter: end wird neu berechnet, Filter zusätzlich share_key, share_edit_key, archived=false; keine getroffene Zeile → Fehler-Toast",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#db-64fc7972": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:621-627",
+    "lib/data/repositories/public_plan_repository.dart:168-205"
+   ],
+   "n": "Flutter besser: Ionic schreibt nur fields + plan_title (eine geänderte Startzeit eines Ad-hoc-Plans wird nicht gespeichert, end_time bleibt alt) / Flutter schreibt fields, plan_title, time und neu berechnetes end_time; Filter id + edit_key",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#toast-2ab6b1bd": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:630-633"
+   ],
+   "n": "Flutter besser: „Fehler beim Speichern“ (danger) gleich. Ionic: nur bei geworfener Exception (supabase-js liefert DB-Fehler als error zurück, daher praktisch nie) / Flutter: bei jedem fehlgeschlagenen oder wirkungslosen Update",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#actionsheet-7d9d8ba7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:713-733",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77"
+   ],
+   "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: Icons picture_as_pdf, content_copy",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#effect-228109d7": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:713-733",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111",
+    "lib/core/providers/branding_providers.dart:40-46"
+   ],
+   "n": "PDF A4/2x A5 mit Titel, Feldern und bei mehreren Plänen „Wochentag, Datum · Planname“. Ionic: Branding aus branding_id des Plans (FECG-Logo + Text) / Flutter: branding_id wird ignoriert; eingeloggte Betrachter bekommen ihr Instanz-Branding, anonyme keins → FECG-Briefkopf fehlt. Außerdem Untertitel bei einem Plan: Ionic Datum aus time (bei „HH:mm“ heute) / Flutter Plandatum; Dateiname Ionic „Titel_Wochentag, Datum.pdf“ / Flutter „Titel.pdf“; ohne Felder Ionic stumm, Flutter Warn-Toast",
+   "sev": "hoch"
+  },
+  "shared-plan/shared-plan.page#text-aa963fc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:746",
+    "lib/core/utils/plan_utils.dart:508-515"
+   ],
+   "n": "„Wochentag, TT.MM.JJJJ“, ohne Datum der Titel"
+  },
+  "shared-plan/shared-plan.page#action-47ec43ec": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:750-757"
+   ],
+   "n": "nur bei isLiveNow, Farbe danger/primary, schaltet Live-Modus – gleich. Ionic: Icon radio/radio-outline / Flutter: sensors/sensors_outlined",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#action-3d7a5ead": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:758-759"
+   ],
+   "n": "Teilen-Icon (ios_share) → Export-Sheet, nur geladen und gefunden"
+  },
+  "shared-plan/shared-plan.page#text-5a696bcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:769-778"
+   ],
+   "n": "„Plan nicht gefunden. Der Link ist möglicherweise abgelaufen oder ungültig.“ in einer Karte"
+  },
+  "shared-plan/shared-plan.page#action-f8b2b6c5": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:517-534",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:783-784"
+   ],
+   "n": "Flutter besser: Chips mit Plannamen und „heute“-Markierung, Wechsel des Plans gleich. Ionic: Wechsel bei laufendem Live-Modus schaltet ihn fälschlich aus (stopLive + toggleLive) bzw. lässt ihn ohne Timer an / Flutter: Live = isLiveNow des neuen Plans; im Bearbeitungsmodus werden offene Änderungen vor dem Wechsel gespeichert",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#action-5e0affc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:799-812"
+   ],
+   "n": "Titel als Listenkopf; im Bearbeitungsmodus Stift-Icon und Tippen → „Titel bearbeiten“"
+  },
+  "shared-plan/shared-plan.page#action-3a3d613f": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:789-797"
+   ],
+   "n": "„+“ nur im Bearbeitungsmodus"
+  },
+  "shared-plan/shared-plan.page#popover-84d9bbdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:668-676"
+   ],
+   "n": "Popover am „+“ (showIonPopover)"
+  },
+  "shared-plan/shared-plan.page#action-942dc972": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:673"
+   ],
+   "n": "„Feld hinzufügen“"
+  },
+  "shared-plan/shared-plan.page#action-dd1ccee4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:674"
+   ],
+   "n": "„Notizfeld hinzufügen“"
+  },
+  "shared-plan/shared-plan.page#action-32fa8823": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:817-821",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:96-104"
+   ],
+   "n": "„Start“ + „{time} Uhr“; nur im Bearbeitungsmodus antippbar → Startzeit bearbeiten"
+  },
+  "shared-plan/shared-plan.page#action-ec0c1511": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:815-836",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:110-149",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:537-566",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:106-205"
+   ],
+   "n": "Umsortieren nur im Bearbeitungsmodus, Block-Kopf samt Unterpunkten, danach Speichern – gleich. Ionic Bearbeitungsmodus: einfache Zeilen (Name, Zeit, Info, Papierkorb, Griff), keine Minutenangabe / Flutter: PlanFieldsEditor mit Minuten-Eingabefeld je Zeile, Wisch-Optionen „Einrücken“/„Ausrücken“ und Löschen, Block ein-/ausklappen, „Unterpunkt hinzufügen“-Zeilen, Hinweis „Keine Programmpunkte“",
+   "sev": "mittel"
+  },
+  "shared-plan/shared-plan.page#action-3bb4b647": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:106-205",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-160",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515"
+   ],
+   "n": "Zeile mit Name, „HH:mm | Ausführender“, Info, „{min} min“ bzw. Countdown-Plakette beim aktiven Feld, Tippen → Feld bearbeiten (nur Bearbeitungsmodus) gleich. Ionic: Block-Kopf zeigt Startzeit, Tippen auf Kopf → Feld bearbeiten / Flutter: Kopf zeigt Zeitspanne „10:37 – 10:55“, Tippen → Block-Aktionsblatt; Tagesordnungsfelder „TOP n · Titel“, Agenda-Platzhalter ausgeblendet",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#action-a9ede0e6": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:556-561",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:197-204",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:303-332"
+   ],
+   "n": "Ionic: roter Papierkorb-Button an jeder Zeile im Bearbeitungsmodus, löscht sofort; beim Block-Kopf werden die Unterpunkte normale Felder / Flutter: kein sichtbarer Button, Löschen nur per Wischen; Block-Kopf mit Unterpunkten → Rückfrage „Block löschen?“ (Nur Block auflösen / Alles löschen)",
+   "sev": "mittel"
+  },
+  "shared-plan/shared-plan.page#text-36e09e6c": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:830-834",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:207-217"
+   ],
+   "n": "„Ende“ gleich. Ionic: nur wenn end gespeichert ist / Flutter (Nur-Lesen): ohne end aus Start + Summe der Dauern berechnet und angezeigt",
+   "sev": "niedrig"
+  },
+  "shared-plan/shared-plan.page#text-d2f87d03": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:833",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ],
+   "n": "„{time} Uhr“ mit HH:mm"
+  }
+ },
+ "extra": [
+  {
+   "unit": "public-planning/public-planning.page",
+   "title": "Quelle und Reihenfolge der aktuellen Werke",
+   "n": "Ionic: getUpcomingHistory – alle Historie-Einträge der Instanz, deren Termindatum (sonst history.date) nach heute 0 Uhr liegt, ohne Sortierung (DB-Reihenfolge) / Flutter: currentSongsProvider – Server-Filter history.date > heute 0 Uhr, nach Datum gruppiert und sortiert; Platzhalter „Chor/Orchester“/„Werk N“ und „Aktuelle Werke hinzufügen“ können dadurch andere Werke bzw. eine andere Reihenfolge ergeben",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3189",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:376-377",
+    "lib/data/repositories/song_repository.dart:738-811"
+   ]
+  },
+  {
+   "unit": "public-planning/public-planning.page",
+   "title": "Platzhalter-Auflösung beim Öffnen nicht gespeichert",
+   "n": "Ionic: ngOnInit ersetzt Platzhalter nach dem Laden von Werken/Historie und ruft calculateEnd → lokale Sicherung + DB-Speicherung / Flutter: ersetzt nur im Speicher (setState), gespeichert erst bei der nächsten Änderung",
+   "sev": "niedrig",
+   "ionic": "src/app/public-planning/public-planning.page.ts:129-132",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:823-833"
+   ]
+  },
+  {
+   "unit": "public-planning/public-planning.page",
+   "title": "Leerer Ablauf zeigt Hinweis",
+   "n": "Ionic: ohne Felder ist die Liste leer / Flutter: grauer Text „Keine Programmpunkte“",
+   "sev": "niedrig",
+   "ionic": "src/app/public-planning/public-planning.page.html:193-255",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:346-352"
+   ]
+  },
+  {
+   "unit": "public-planning/public-planning.page",
+   "title": "Lokaler Entwurf je Konto",
+   "n": "Flutter besser: Ionic: ein gemeinsamer localStorage-Eintrag „attendix-public-plan“ für anonym und alle Konten (Entwurf samt Plan-ID/Bearbeitungsschlüssel wandert zwischen /planung und App bzw. Konten) / Flutter: Entwurf je Auth-Nutzer bzw. anonym getrennt, alter globaler Eintrag wird verworfen, beim Abmelden gelöscht",
+   "sev": "niedrig",
+   "ionic": "src/app/public-planning/public-planning.page.ts:1021-1060",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:144-147",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:221-256",
+    "lib/core/services/public_plan_draft_storage.dart:15-38"
+   ]
+  },
+  {
+   "unit": "shared-plan/shared-plan.page",
+   "title": "Live-Modus vor Beginn",
+   "n": "Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld, stattdessen „beginnt in X Min.“ in der Start-Zeile",
+   "sev": "niedrig",
+   "ionic": "src/app/shared-plan/shared-plan.page.ts:292-312",
+   "f": [
+    "lib/core/utils/plan_utils.dart:455-467",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:86-103"
+   ]
+  },
+  {
+   "unit": "shared-plan/shared-plan.page",
+   "title": "Kein Auto-Scroll zum aktiven Programmpunkt",
+   "n": "Ionic: scrollToActive scrollt im Live-Modus einmal das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen",
+   "sev": "niedrig",
+   "ionic": "src/app/shared-plan/shared-plan.page.ts:316-324",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:80-228"
+   ]
+  },
+  {
+   "unit": "shared-plan/shared-plan.page",
+   "title": "Live-Modus: Programmblock-Kopf",
+   "n": "Ionic: Block-Köpfe zählen als normale Zeilen (vor dem aktiven Feld ausgegraut, vor Start ggf. selbst aktiv) / Flutter: Köpfe werden übersprungen, der Kopf des laufenden Blocks bleibt voll sichtbar und bekommt einen blauen linken Rand",
+   "sev": "niedrig",
+   "ionic": "src/app/shared-plan/shared-plan.page.ts:292-312",
+   "f": [
+    "lib/core/utils/plan_utils.dart:455-467",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:112-114",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:191-203"
+   ]
+  },
+  {
+   "unit": "shared-plan/shared-plan.page",
+   "title": "Aktualisierung bei Nur-Lesen-Links",
+   "n": "Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen",
+   "sev": "niedrig",
+   "ionic": "src/app/shared-plan/shared-plan.page.ts:114-117",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:310-352",
+    "lib/features/planning/presentation/pages/shared_plan_page.dart:392-400"
+   ]
+  }
+ ]
+}

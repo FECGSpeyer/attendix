@@ -1,0 +1,773 @@
+{
+ "batch": "zz-verify-planning-selfservice",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "org-plan-public/org-plan-public.page#db-b7046159": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+   ],
+   "n": "Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#alert-c3af9876": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:167"
+   ],
+   "n": "Header „Kalender abonnieren“, Text „Kopiere den folgenden Link in deine Kalender-App: …“, „Link kopieren“ (Dialog bleibt offen, Toast „Link kopiert“) und „Schließen“ gleich. Ionic: dritter Button „Anleitung öffnen“ / Flutter: fehlt auf der öffentlichen Seite (org_plan_public_page.dart:172-175; nur org_plans_page.dart:109 hat ihn).",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#native-c9096ded": {
+   "s": "missing",
+   "sev": "mittel",
+   "n": "Ionic: „Anleitung öffnen“ öffnet support.apple.com/de-de/102301 (iOS) bzw. Google-Kalender-Hilfe (sonst) im Browser / Flutter: Button fehlt im Kalender-Dialog der öffentlichen Org-Plan-Seite (org_plan_public_page.dart:172-175)",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-48b8a885": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:325"
+   ],
+   "n": "Text „Keine bevorstehenden Org-Pläne vorhanden.“ gleich. Ionic: grauer p-Text in Inset-Liste / Flutter: ListTile mit zusätzlichem Icon event_outlined, normale Textfarbe",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#action-610d3d65": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:220"
+   ],
+   "n": "Live-Schalter nur bei isLiveNow, Farbe danger/primary, toggelt Live-Modus ohne das Akkordeon zu schalten – gleich. Ionic: Icon radio/radio-outline (Funkwellen) neben dem Akkordeon-Pfeil / Flutter: radio_button_checked/unchecked, ersetzt den Aufklapp-Pfeil (ExpansionTile.trailing), Tooltip „Live“",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ],
+   "n": "„{time} Uhr“ mit HH:mm gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-24593650-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ],
+   "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette), Zeile nur wenn plan.end gesetzt / Flutter: graue Text-Notiz rechts; bei leerem end berechnet Flutter das Ende aus Start + Minuten und zeigt die Zeile trotzdem (Randfall, Ionic-Planung speichert end immer).",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#modal-a0d38218": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:243"
+   ],
+   "n": "Vollbild-Modal (rootNavigator, fullscreenDialog) über Uhr-Button, nur bei vergangenen Plänen; Pläne zugeklappt wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#action-62549630": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:251"
+   ],
+   "n": "Schließen-Icon close",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#text-278f4c08-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:215",
+    "lib/core/providers/plan_providers.dart:119"
+   ],
+   "n": "Ionic: Instanzname nur bei Termin-Plänen (kind attendance), klein/fett/uppercase grau / Flutter: tenantLabel – bei Ad-hoc-Plänen zusätzlich „Org-Plan“, Stil 12 px grau ohne uppercase/fett.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#db-d2b74a95": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:185",
+    "lib/core/providers/plan_providers.dart:279"
+   ],
+   "n": "shared_plans delete eq id; Flutter zusätzlich eq org_id (aktuelle Organisation) – gleiche Wirkung; Fehler-Toast „plans.deleteFailed“ wie Ionic, danach Liste neu (invalidate orgPlansProvider).",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#effect-bb4d0f68-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:138",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:144",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:166"
+   ],
+   "n": "Neuer Schlüssel (16 Hex-Zeichen, Random.secure) wird in tenant_groups.public_plan_key gespeichert, Link kopiert, Toast „Link erstellt“ wie Ionic. Ionic: kopiert immer https://attendix.de/org-plan?key=… / Flutter: nativ gleich, im Web <origin><path>#/org-plan?key=… (Hash-URL der aktuellen Domain).",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#text-1a55f32d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:268"
+   ],
+   "n": "„Keine bevorstehenden Org-Pläne. Pläne können über die Ablaufplanung …“ mit Kalender-Icon",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#modal-e1461116": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:147"
+   ],
+   "n": "Ionic: ion-modal (Vollbild-Modal über allem, inkl. Tabbar) / Flutter: normale Push-Seite (MaterialPageRoute ohne fullscreenDialog, im Shell-Navigator) mit Zurück-Pfeil, Einträge ohne Inset-Liste",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#action-c21a87b3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+   ],
+   "n": "Ionic: Schließen-Button (X) rechts / Flutter: kein X, nur automatischer Zurück-Pfeil links",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#action-07229903-2": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:151",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:171"
+   ],
+   "n": "Löschen per Aktionsblatt (Titel = Planname, „Plan löschen“ destruktiv) wie Ionic. Ionic: Verlaufs-Modal ist an pastPlans gebunden, gelöschter Plan verschwindet sofort / Flutter: Verlaufsseite baut eine beim Öffnen übergebene Liste (_showHistory(split.past)) – gelöschter Plan bleibt sichtbar bis zum erneuten Öffnen; erneutes Löschen läuft ins Leere.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:60"
+   ],
+   "n": "Text „Ein Zusatzfeld mit diesem Namen existiert bereits.“ gleich. Ionic: Prüfung vor dem Schließen, Modal bleibt mit den Eingaben offen / Flutter: Prüfung erst nach dem Schließen des Sheets – Toast erscheint, Sheet ist zu und alle Eingaben (Typ, Optionen, Standardwert …) sind verloren",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-89565647": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:97"
+   ],
+   "n": "„Ungültige Organisations-Zusatzfelder.“",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-64695ee6": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:353"
+   ],
+   "n": "Auswahl „Typ“ mit Text, Textbereich, Zahl, Datum, Ja/Nein, Auswahl (Standard Text) gleich. Ionic: onNewFieldTypeChanged setzt Standardwert per getFieldTypeDefaultValue – Zahl → 0 (im Feld sichtbar), Datum → aktueller ISO-Zeitstempel, Ja/Nein → false; wird ohne Eingabe in additional_fields gespeichert und z. B. beim Verknüpfen von Personen als Wert übernommen (db.service.ts:2462) / Flutter: Typwechsel ändert nichts, Standardwert bleibt '' (Zahl/Datum leer); Datum ohne Datumsauswahl (Textfeld).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-db01f6fe": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"
+   ],
+   "n": "Ionic: Schließen-Button (X) in der Kopfzeile des Bearbeiten-Modals / Flutter: kein X, Schließen nur durch Wegwischen/Antippen außerhalb",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-079ad93e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:402"
+   ],
+   "n": "Ionic (Bearbeiten): „Keine Optionen“ / Flutter: „Keine Optionen ausgewählt“ (gleicher Text wie beim Hinzufügen)",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+   ],
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-3207b9c2": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:280",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:430"
+   ],
+   "n": "Label „Standardwert“ gleich. Ionic: Eingabe zeigt den gespeicherten Standardwert jeder Art (z. B. Zahl 0, Datum) und behält ihn / Flutter: nur String-Werte werden vorbelegt – ein nicht-String-Standardwert (z. B. die von Ionic gesetzte Zahl 0) erscheint leer und wird beim „Änderungen übernehmen“ durch '' ersetzt; Datum ohne Datumsauswahl",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#logic-833a03a8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:38",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:248",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:536"
+   ],
+   "n": "Gleich: Laden von default_fields/planning_templates der Organisation, Standardfelder anlegen (Name Pflicht, „Bitte einen Feldnamen eingeben.“)/bearbeiten/löschen (Wischen)/sortieren, Vorlagen anlegen (danach aufgeklappt)/umbenennen/löschen (Auswahl-Index wird nachgezogen), Feld/Notiz/Werk-Platzhalter („Werk Platzhalter n“, id song-placeholder-n, nicht bei Typ general)/Standardfelder einfügen, Uhrzeiten je Feld nur mit Startzeit, „Ende ca.“, Dauer „{h} h {m} min“, Speichern nach jeder Änderung in tenant_groups. Abweichungen siehe extra (Zeitformat/end beim Speichern, Programmblock-Funktionen, Fehlertext, Langdruck-Menü, Button „Updaten“ statt „Speichern“ im Feld-Dialog).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:121",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel, Platzhalter „Name der Vorlage...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ im Dialog / Flutter: „Hinzufügen“ tut bei leerem Namen nichts, keine Meldung (der Toast in Z.130 ist unerreichbar, showPlanTextPrompt gibt nie leer zurück).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:158",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel „Vorlage umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ / Flutter: Button tut nichts, keine Meldung.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d3412616": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:384"
+   ],
+   "n": "Ionic: Zahlenfeld „min“ direkt in jeder Standardfeld-Zeile, speichert beim Verlassen / Flutter: nur Anzeige „20 min“, Minuten nur über den Bearbeiten-Dialog (Tippen auf die Zeile) änderbar. (In den Vorlagenfeldern hat Flutter das Inline-Feld, PlanFieldsEditor _MinutesInput.)",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-babb6f3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:442"
+   ],
+   "n": "Titel, „n Feld/Felder · Dauer“, Auf-/Zuklappen mit Pfeil gleich.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:195"
+   ],
+   "n": "Einträge und Reihenfolge gleich (Feld hinzufügen, Notizfeld hinzufügen, Werk-Platzhalter nur wenn nicht general, dann Standardfelder mit Minuten). Ionic: Popover am Button „Feld hinzufügen“ / Flutter: Aktionsblatt (showPlanActionSheet) von unten, Standardfelder als „Name (20 min)“ ohne Trenner/Überschrift.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-112a783d": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: Trenner + fette Überschrift „Standardfelder“ vor den Standardfeldern im Popover / Flutter: Standardfelder folgen ohne Überschrift im Action-Sheet (org_planning_templates_page.dart:201).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#logic-6f27dc28": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:127",
+    "lib/core/providers/organisation_providers.dart:39"
+   ],
+   "n": "Gleich: isSuperAdmin = Rolle Admin, isAdmin = Admin/Verantwortlicher, verknüpfte Instanzen der Organisation (ohne eigene), Abschnitts-Sichtbarkeit, Org-Auswahl/-Erstellung, Umbenennen, Trennen (löscht Org ohne Instanzen), Gemeinde-App-Schalter und Schlüssel (atx_ + 24 Zufallsbytes hex, SHA-256-Hash + letzte 4 Zeichen), Werk-Synchronisierung mit Rückfrage beim Deaktivieren. Abweichungen siehe extra (Fehlertexte, Aktualisierung der Instanzliste).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-8c221091": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:79"
+   ],
+   "n": "Titel „Organisation erstellen“, Platzhalter „Name eingeben...“, „Abbrechen“/„Hinzufügen“, Anlegen + Verknüpfen der Instanz, Toast „org.created“ gleich. Ionic: leerer Name → Meldung „Bitte gib gültige Werte ein.“, Dialog bleibt offen; blockierendes Lade-Overlay / Flutter: Dialog schließt, nichts passiert, keine Meldung; kein Overlay.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-14d3ff8c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:30",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel „Organisation umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“, Speichern des getrimmten Namens gleich. Ionic: leerer Name → Meldung „Bitte gib einen gültigen Namen ein.“ / Flutter: „Speichern“ tut nichts, keine Meldung (Warn-Toast Z.39 unerreichbar).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#loading-2b64f5ec": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:88"
+   ],
+   "n": "Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: kleiner Spinner anstelle der Auswahl, Seite bleibt bedienbar.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#logic-2fe66ba4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:79",
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:146",
+    "lib/core/providers/org_song_providers.dart:41"
+   ],
+   "n": "Gleich: Zugriff nur Admin/Verantwortlicher mit Organisation, Startsuche mit ?q=, Instanz-Chips (ohne eigene Bibliothek und ohne synchronisierte Instanzen, alle abgewählt → alle an), RPC search_org_songs mit 50er-Seiten, Treffer-/„Schon bei dir“-Erkennung, Ziele nur mit Admin/Verantwortlicher-Rolle je Bibliothek, Duplikat-/Nummernlogik, Feld- und Dateioptionen, Überschreiben-Rückfrage, Kategorien anlegen, Erfolgs-/Fehlertexte. Abweichung siehe extra (Ziel wird nicht gemerkt).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-songs/org-songs.page#toast-1fbe264c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:147"
+   ],
+   "n": "„Suche fehlgeschlagen: {error}“ als Fehler-Toast; Flutter setzt friendlyErrorMessage statt error.message ein.",
+   "v": "bestätigt"
+  },
+  "planning/plan-chips/plan-chips.component#logic-5c667539": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:262"
+   ],
+   "n": "select meldet nur bei anderem Index, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#action-36535d24": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:315"
+   ],
+   "n": "„Abbrechen“ schließt ohne Änderung wie Ionic. Ionic: Vollbild-Modal, Button oben links in der Toolbar / Flutter: Dialog (AppAlertDialog), Button unten.",
+   "v": "bestätigt"
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-6a664673": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:291",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:191"
+   ],
+   "n": "Label „Minuten“, Zahlentastatur, Vorbelegung (Dauer bzw. 20) gleich; Flutter ohne Platzhalter „Minuten“, dafür Suffix „min“. Verhalten beim Speichern weicht ab: Ionic 0 Minuten → alte Dauer bleibt (`this.time ? … : field.time`) / Flutter 0 → Dauer „0“ (Flutter besser). Erstprüfer: „ok“, obwohl genau dieses Feld abweicht (stand nur als extra „0 Minuten“).",
+   "v": "korrigiert"
+  },
+  "selfService/overview/overview.page#logic-1ed68b7a": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/core/providers/self_service_providers.dart:17-155",
+    "lib/data/repositories/sign_in_out_repository.dart:535-640",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-428"
+   ],
+   "n": "Laden (Mitgliedschaften, Person je Instanz, seasonStart, Typen), Aufteilung anstehend/vergangen, aktueller Termin, Prozent/Verspätungen (include_in_average, shift_excused_as_present der aktuellen Instanz), Gruppierung nach Instanz, Schnellaktionen, Frist-Chip und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Aktionsblatt bei Entschuldigt/Verspätung gemeldet (hoch), strengere Typfilter, archivierte Termine, Personenwahl, changed_by, Dienst-Sync anderer Instanzen, Farbanzahl, Fehlerbehandlung – siehe extra.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#toast-7a8e1bcd": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:455-458"
+   ],
+   "n": "Warn-Toast 'Für diesen Termin sind keine Aktionen verfügbar.' wenn keine Einträge (Ionic: nur Abbrechen übrig)",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#actionsheet-1394033e": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-428",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:434-477"
+   ],
+   "n": "Ionic (overview.page.ts:218-233): bei 'E'/'A' nur 'Abmelden'/'Verspätung eintragen' entfernt, 'Anmelden mit Notiz' bleibt; bei 'L' (Verspätung gemeldet) bleiben 'Abmelden' und 'Verspätung eintragen'; kein Header, keine Icons / Flutter (buildActions): bei isExcusedStatus (Entschuldigt und Verspätung gemeldet) nur 'Anmelden', kein 'Anmelden mit Notiz', kein 'Abmelden'/'Verspätung eintragen'; nach Frist bzw. in 'Weitere Optionen' Toast 'keine Aktionen'; Header mit Titel + Datum/Zeit, Icons. Übrige Einträge, Reihenfolge und rotes 'Abbrechen' gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#toast-b3e96f73": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:363-367"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#effect-209410e2": {
+   "s": "na",
+   "n": "toter Code: Ionic lädt in getPersonAttendancesForTenant kein `place` (src/app/services/db.service.ts:4070), openRoute findet nie einen Ort; Flutter lädt place in der Übersicht bewusst ebenfalls nicht (sign_in_out_repository.dart:29)",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-cff4be2d": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:990-995"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-78132b6e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:150-167"
+   ],
+   "n": "Flutter besser: Ionic zeigt die Karte mit Spinner und 'Termine werden geladen...' bei jedem Neuladen (Pull-to-Refresh, nach Zusagen/Absagen/Notiz) und blendet Zusammenfassung und Listen solange aus / Flutter nur beim ersten Laden, beim Neuladen bleibt die Liste stehen",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#modal-44ffacb0": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-449",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222"
+   ],
+   "n": "Ionic: Sheet (0.6/1) mit Toolbar 'Beschreibung' + X, Inhalt als Quill-HTML (Formatierung, Links klickbar) / Flutter showEventDescriptionSheet: Bottom-Sheet mit Griff, max. 70 % Höhe, Titel des Termins, Text per QuillUtils.stripHtml als SelectableText (Fett/Listen/Links gehen verloren), kein X",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-aabe41a2": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Kein Schließen-Button (X) im Beschreibungs-Sheet; schließen nur per Wischen/Tippen daneben",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-203e5c71": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223-228"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-94fda460": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:301"
+   ],
+   "n": "Literale 'Heute'/'Nächster Termin' als teamOrgTodayCap/teamOrgNextEvent, Bedingung laufender Termin gleich",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-b04641d5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:184-190",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:856-866"
+   ],
+   "n": "Bedingungen/Funktion gleich. Ionic: 'Entschuldigt' → gelb, aber disabled (gedimmt) / Flutter EventActionButton: aktiv gelb gefüllt in voller Farbe, onPressed ?? () {} → Tippen wirkungslos",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#logic-ed920d8b": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/parents/data/providers/parents_providers.dart:219-452",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:399-534"
+   ],
+   "n": "Kinder (parent_id, nicht pending/left), Termine aller Kinder (archiviert nur für Admin/Verantwortliche), aktueller/anstehende/vergangene (max. 10, Vorschau 3), Kinder-Prozent (vergangene, shift_excused_as_present), Werke je Termin und 'Aktuelle Werke', Aktionsblatt-Regeln und DB-Schreibvorgänge entsprechen Ionic. Abweichungen: Benachrichtigung bei 'Verspätung gemeldet', Kinder-Reihenfolge, hide_name im Titel, Wahl des laufenden Termins, keine 2020-Untergrenze, changed_by, Fehlerbehandlung, leere Zustände, Ablaufplan ohne Felder – siehe extra.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-45f9db74": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:38-60",
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:87-106"
+   ],
+   "n": "PopupMenu mit allen Instanzen und Badge 'Aktuell', gleiche Instanz ohne Wirkung; Ladeanzeige fehlt, siehe loading-2ab41b5d",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-afd4ff21": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:148-154",
+    "lib/data/repositories/player_repository.dart:252-263"
+   ],
+   "n": "Reihenfolge der Kinder-Chips: Ionic getPlayers (Eltern) sortiert nach Instrument, isLeader absteigend, Nachname / Flutter getChildrenForParent nur nach Nachname (Geschwister mit gleichem Nachnamen in beliebiger Reihenfolge)",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-896db40b": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:179-217",
+    "lib/features/parents/data/providers/parents_providers.dart:419-452"
+   ],
+   "n": "Farbe ≥75 grün, ≥50 gelb, sonst rot; Prozent über alle vergangenen Termine des Kindes",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-3365e82a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/widgets/parents_header_widgets.dart:265-283"
+   ],
+   "n": "'Nr. Name', 'Dirigent: …', Download-Icon und Link öffnen gleich. Ionic: nur Zeilen mit Link sind Buttons (iOS-Chevron) / Flutter: alle Zeilen tippbar mit iOS-Chevron, ohne Link wirkungslos",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#modal-fc6bc685": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-449",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:121-126"
+   ],
+   "n": "Ionic: Sheet (0.6/1) mit Toolbar 'Beschreibung' + X, Inhalt als Quill-HTML (Formatierung, Links klickbar) / Flutter: Bottom-Sheet mit Griff, max. 70 % Höhe, Beschreibung per stripHtml als Klartext (Fett/Listen/Links gehen verloren), kein X",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#action-838329cd": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Kein Schließen-Button (X) im Beschreibungs-Sheet; schließen nur per Wischen/Tippen daneben",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-45095c3b": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:294"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-eb70b83e": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:295",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:65-76"
+   ],
+   "n": "Zeit und Ort, Datum nur bei Mehrtägigen",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-45095c3b-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:58-63",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:333"
+   ],
+   "n": "Ionic: Titel = typeInfo oder Typname auch bei hide_name (attType-Join in getPersonAttendances ohne hide_name) / Flutter: bei hide_name ohne typeInfo das Datum (z. B. 'So., 20.10.2026')",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#logic-382df5cb": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:66",
+    "lib/core/providers/signout_providers.dart:90",
+    "lib/core/providers/signout_providers.dart:168",
+    "lib/core/providers/duty_providers.dart:148",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373",
+    "lib/data/repositories/player_absence_repository.dart:191",
+    "lib/features/self_service/presentation/pages/signout_page.dart:87"
+   ],
+   "n": "Laden/Aufteilen (aktuell/anstehend/vergangen), Prozent, Verspätungen, Dienst-Filter (applyDutyView/applyDutyLayout), Offene Dienste, Anmeldefelder, Aktionsblatt-Regeln, Pause/Abwesenheit, Notizen stimmen überein. Geprüfte Abweichungen: extra_plans fehlen in kSignoutAttendanceColumns und werden nicht an showPlanViewerSheet übergeben (hoch); Abwesenheit eintragen/löschen schreibt per Query alle eigenen kommenden Zeilen im Zeitraum statt currentAttendance+actualAttendances (Ionic: ohne nicht zugeteilte Dienste, in der Dienstplan-Ansicht ohne eigene Dienste) (hoch); Pull-to-Refresh ohne upcomingDutyTermineProvider; keine 'Bitte bestätigen'-Pill; Push-Öffnen ohne Dienst-Logik; kleinere Punkte siehe extra.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#loading-6042fa43": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:95"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während setTenant + Navigation / Flutter _switchTenant (über TenantSwitcherTitle): kein Overlay, Wechsel ohne Sperre; bei Fehler Toast signoutFlutterSwitchTenantFailed.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-4119f982": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:79"
+   ],
+   "n": "'Danke, dein Dienst ist bestätigt 🙂' als Erfolgs-Toast; DB-Update (duty_state confirmed, status Anwesend, notes '', changed_by/at) wie Ionic dutySvc.confirm. Fehler-Toast svcConfirmFailed zeigt Ionic im Service.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-ec5f8f8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:366"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-ef7b9f1b": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:716",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384",
+    "lib/data/repositories/sign_in_out_repository.dart:21"
+   ],
+   "n": "Ionic: PlanViewer bekommt attendance aus getPersonAttendances inkl. extra_plans/duration_days (db.service.ts:2716) → bei mehrtägigen Terminen Tages-/Plan-Chips (heute vorausgewählt); defaultLive nicht gesetzt → Live-Modus nur im Zeitfenster (isLiveNow: 5 Min. vor bis 15 Min. nach Planende) / Flutter signoutEventActions.openPlan: extra_plans weder geladen (kSignoutAttendanceColumns) noch übergeben → nur der erste Plan; defaultLive = isToday → Live-Modus an jedem Termintag. Vollbild wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-cf2e9968": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:248",
+    "lib/data/repositories/player_absence_repository.dart:228",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:184"
+   ],
+   "n": "Titel 'Abwesenheit löschen', Text, 'Abbrechen'/'Löschen' (destruktiv) gleich (DialogHelper.showConfirmation, selfService-Text). Wirkung abweichend: Ionic setzt nur Zeilen aus currentAttendance + actualAttendances zurück (ohne nicht zugeteilte Dienste, in der Dienstplan-Ansicht ohne eigene Dienste) / Flutter resetExcusedAttendances: alle eigenen kommenden person_attendances der Instanz im Zeitraum mit Entschuldigt + Notiz = Grund → Standardstatus; DB-Abweichung als hoch im extra 'Abwesenheit: andere Zeilen' (b15).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-d8823545": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:993"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-fb214f33": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:995"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-62f375d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:217"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-47659591": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:87",
+    "lib/features/self_service/presentation/pages/signout_page.dart:259"
+   ],
+   "n": "Ionic handleRefresh: getAttendances (inkl. loadOpenDuties → Dienst-Termine neu) + Aufgaben / Flutter _refresh: invalidiert signoutData, Person, Werke, Aufgaben, aber nicht upcomingDutyTermineProvider (myDutyOverviewProvider baut nur mit dem gecachten Ergebnis neu) → 'Bitte bestätigen', 'Offene Dienste', 'Meine Dienste', Zähler bleiben nach Pull-to-Refresh veraltet.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-cbdd0bb5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:357"
+   ],
+   "n": "Ionic: Bild lädt nicht → Platzhalter-Avatar / Flutter: Platzhalter nur bei leerem img; bei kaputter URL bleibt der Kreis leer (kein onBackgroundImageError).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-bafe7147": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:87",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:471"
+   ],
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-ed1a1b2e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:272"
+   ],
+   "n": "Ionic: Datumskachel mit Tag / Flutter: keine Kachel, Tag in der Textzeile \"Di, 05.11. · 19:00 Uhr\".",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-76bcf174": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:99",
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:278"
+   ],
+   "n": "Ionic getEventMeta(att, true, false): \"Di., 05.11.2026 · 19:00–21:00\" / Flutter _dateLine: \"Di, 05.11. · 19:00 Uhr\" (ohne Jahr, ohne Endzeit).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-b04b96f3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:175"
+   ],
+   "n": "Ionic Gruppenkopf '05.11.2026 | Probe' (dateFmt + getEventTitle) / Flutter IonListHeader 'Heute · Probe', 'Morgen · …' bzw. 'Mi, 5. Nov · Probe' (DateHelper.getReadableDate + eventTitle).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-79cc09bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:200",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:264"
+   ],
+   "n": "'Nr. Name', 'Dirigent: …' nur mit Dirigent, rot ohne eigene Noten, Tippen → Noten-Optionen, Download-Button nur mit Link",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-819b10ac": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425"
+   ],
+   "n": "Ionic: Sheet 60 % mit Toolbar (\"Beschreibung\" + X) und quill-view, d. h. formatiertes HTML (fett, Listen, anklickbare Links) / Flutter: Sheet mit Griff, Titel als Text, Beschreibung per QuillUtils.stripHtml als reiner Text (Formatierung weg, Links nicht anklickbar).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-ceeea6ff": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: Datumskachel (Tag) / Flutter: Tag in der Untertitelzeile.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-4dca8fd9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+   ],
+   "n": "Ionic: 'Dringend' rot und fett (.duty-urgent) vor der Meta-Zeile / Flutter: 'Dringend' als normaler Text nach dem Datum ('Di, 05.11. · Dringend · 19:00 · …').",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-7ab3ea5e": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:501"
+   ],
+   "n": "Ionic statusLabelOf/statusColorOf: zugeteilter, unbestätigter Dienst (duty_state requested) → Pill \"Bitte bestätigen\" in Orange / Flutter: immer EventPill.status(att.status) → z. B. \"Neutral\" grau.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-22f32baf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:171",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:858"
+   ],
+   "n": "Bedingungen/Wirkung gleich. Ionic: bei Zugesagt gefüllt grün, aber disabled (halbe Deckkraft) / Flutter: gefüllt grün in voller Deckkraft, Tippen ohne Wirkung.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-836ea596": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:525",
+    "lib/features/self_service/presentation/pages/signout_page.dart:550"
+   ],
+   "n": "Zeile, Dienst-Tag, Meta, Info-Text, Chips, \"Nicht eingeladen\" und Tippen → Aktionsblatt gleich. Ionic: unbestätigter zugeteilter Dienst zeigt Pill \"Bitte bestätigen\" (orange) / Flutter: normale Status-Pill (z. B. \"Neutral\").",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-76fb71e5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+   ],
+   "n": "Ionic: Sheet 85 % (Breakpoints 0/0.85/1), backdropDismiss=false in beiden Modi / Flutter showRegistrationFieldsSheet: Sheet in Inhaltshöhe mit Griff, isDismissible nur im Bearbeiten-Modus → dort durch Tippen außerhalb schließbar.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "title": "Feld-Dialog in Vorlagen: Button-Text",
+   "n": "Ionic changeField (Vorlagenfeld bearbeiten): Bestätigen-Button „Speichern“ / Flutter PlanFieldsEditor._editField: „Updaten“ (planning.update); Titel/Labels sonst gleich.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.ts:348",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:171"
+   ]
+  }
+ ]
+}

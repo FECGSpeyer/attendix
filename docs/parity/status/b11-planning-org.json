@@ -1,0 +1,1241 @@
+{
+ "batch": "b11-planning-org",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "org-settings/org-planning-templates/org-planning-templates.page#logic-833a03a8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:38",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:248",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:536"
+   ],
+   "n": "Gleich: Laden von default_fields/planning_templates der Organisation, Standardfelder anlegen/bearbeiten/löschen/sortieren, Vorlagen anlegen (danach aufgeklappt)/umbenennen/löschen (Auswahl-Index wird nachgezogen), Felder/Notizen/Werk-Platzhalter („Werk Platzhalter n“, id song-placeholder-n, nicht bei Typ general)/Standardfelder einfügen, Uhrzeiten je Feld, Ende, Dauer „{h} h {m} min“, Speichern nach jeder Änderung in tenant_groups. Abweichungen siehe extra (Zeitformat/end beim Speichern, zusätzliche Programmblock-Funktionen, Fehlermeldungstext, zusätzliche Bedienwege)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-255be77f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:70",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177"
+   ],
+   "n": "Titel „Feld hinzufügen“, Platzhalter „Feldname...“, „Ausführender (optional)...“, „Info-Text (optional)“, Minuten (20), „Abbrechen“/„Hinzufügen“, Pflichtmeldung „Bitte einen Feldnamen eingeben.“ gleich; Flutter zeigt zusätzlich Feld-Labels (Feldname/Ausführender/Info)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-1b2d213f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:88"
+   ],
+   "n": "Feldname/Ausführender/Minuten ohne Info-Feld, „Speichern“, Pflichtmeldung gleich."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:121",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel, Platzhalter „Name der Vorlage...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ im Dialog / Flutter: „Hinzufügen“ tut bei leerem Namen nichts, keine Meldung (der Toast in Z.130 ist unerreichbar, showPlanTextPrompt gibt nie leer zurück)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:158",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel „Vorlage umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ / Flutter: Button tut nichts, keine Meldung."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-894e27e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:209"
+   ],
+   "n": "Platzhalter „Freitext eingeben...“, „Ausführenden eingeben...“, „Info-Text (optional)“, Minuten 20, kein Pflichtfeld, id = Name bzw. UUID gleich; Flutter mit Feld-Labels und getrimmtem Text."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-d30419c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:226"
+   ],
+   "n": "„Notizfeld hinzufügen“, Platzhalter „Notiz eingeben...“, id „noteFld <Text>“, time '0' gleich; Flutter zusätzlich Label „Notiz“."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-ff2bca9c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155"
+   ],
+   "n": "Titel „Feld bearbeiten“, Programmpunkt/Ausführender/Info/Minuten bzw. bei Notizen nur „Notiz“, Pflichtmeldung „Bitte einen Programmpunkt eingeben.“ gleich. Ionic: Bestätigen-Button „Speichern“ / Flutter: „Updaten“ (gemeinsamer PlanFieldsEditor-Dialog)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-82bc5cc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:330"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-fb7c6e3c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:330"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-fb7c6e3c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:337"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-9c0db376": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:338"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-b326a42a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:279"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-79db6f21": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:339"
+   ],
+   "n": "Leertext „Noch keine Standardfelder definiert“, Name + Ausführender, Ziehen zum Sortieren mit Speichern gleich."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-3b2a1c77": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:380"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d3412616": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:384"
+   ],
+   "n": "Ionic: Zahlenfeld „min“ direkt in der Zeile, speichert beim Verlassen / Flutter: nur Anzeige „20 min“, Minuten nur über den Bearbeiten-Dialog änderbar."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-51e20dd1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:365"
+   ],
+   "n": "Vollständiges Wischen löscht (DismissiblePane), ohne Rückfrage wie Ionic."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-bd8f72cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:367"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-f76ccd6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:394"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-8c620aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:395"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-687aeae0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:395"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-58b1f3a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:399"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-babb6f3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:442"
+   ],
+   "n": "Titel, „n Feld/Felder · Dauer“, Auf-/Zuklappen mit Pfeil gleich."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-ed8e3687": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:428"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-2f0f2a33": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:434"
+   ],
+   "n": "Löschen ohne Rückfrage wie Ionic."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-f189620f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:453"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-d048865c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:454",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:248"
+   ],
+   "n": "Startzeit wählen und Speichern gleich. Ionic: ion-datetime-button (ohne Wert zeigt er die Standardzeit des Pickers), speichert bei jeder Rad-Änderung / Flutter: TextButton „--:--“ ohne Wert, Picker startet bei 10:00, speichert erst bei Bestätigen."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#modal-3febb718": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:251"
+   ],
+   "n": "Ionic: Inline-Modal mit Zeit-Rad / Flutter: showAppTimePicker (iOS-Rad-Dialog bzw. Material-Zeitwahl, 24 h)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-0fbdb2fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:261"
+   ],
+   "n": "Speicherformat abweichend, siehe extra „Startzeit-Format“."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-95567a5a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:346",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:456"
+   ],
+   "n": "Sortieren per Ziehgriff mit Neuberechnung/Speichern gleich. Ionic: leere Vorlage zeigt keine Zeile / Flutter: Text „Keine Felder“."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-01d7d5ac": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:439",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515"
+   ],
+   "n": "Tippen öffnet „Feld bearbeiten“, Zeile „HH:mm | Ausführender“ (nur mit Startzeit), Notizen grau gleich. Ionic: Werk-Platzhalter kursiv und ohne Zeitzeile, keine Info-Zeile / Flutter: Platzhalter normal mit Zeitzeile, zusätzlich kursive Info-Zeile."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#field-a0f363a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:569"
+   ],
+   "n": "Zahlenfeld „min“ je Feld (nicht bei Notizen), aktualisiert Ende und speichert; Flutter speichert bei jeder Eingabe statt beim Verlassen."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-d1249587": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:543"
+   ],
+   "n": "Ionic: expandable Löschen-Option, vollständiges Wischen löscht / Flutter: kein Löschen per Durchwischen (kein DismissiblePane), nur Tipp auf die Option; zusätzlich Option „Einrücken“ (siehe extra)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-2df56b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:556"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-5b4524e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:466"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:195"
+   ],
+   "n": "Einträge und Reihenfolge gleich. Ionic: Popover am Button „Feld hinzufügen“ / Flutter: Action-Sheet (showPlanActionSheet) von unten, Standardfelder ohne Trenner und Überschrift."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-628489c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:198"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-f38fd15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:199"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-7562664a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:200"
+   ],
+   "n": "Nur wenn Instanztyp nicht „general“, wie Ionic."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-112a783d": {
+   "s": "missing",
+   "sev": "niedrig",
+   "n": "Ionic: Trenner + fette Überschrift „Standardfelder“ vor den Standardfeldern im Popover / Flutter: Standardfelder folgen ohne Überschrift im Action-Sheet (org_planning_templates_page.dart:201)."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-dd2c64eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:202",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:208"
+   ],
+   "n": "Ionic: „Name  20 min“ (ion-note) / Flutter: „Name (20 min)“; Kopie mit neuer UUID gleich."
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-2a29f1b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:471"
+   ]
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-da10650b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:407"
+   ]
+  },
+  "org-settings/org-settings.page#logic-6f27dc28": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:127",
+    "lib/core/providers/organisation_providers.dart:39"
+   ],
+   "n": "Gleich: isSuperAdmin = Rolle Admin, isAdmin = Admin/Verantwortlicher, verknüpfte Instanzen der Organisation (ohne eigene), Abschnitts-Sichtbarkeit, Org-Auswahl/-Erstellung, Umbenennen, Trennen (löscht Org ohne Instanzen), Gemeinde-App-Schalter und Schlüssel (atx_ + 24 Zufallsbytes hex, SHA-256-Hash + letzte 4 Zeichen), Werk-Synchronisierung mit Rückfrage beim Deaktivieren. Abweichungen siehe extra (Fehlertexte, Aktualisierung der Instanzliste)."
+  },
+  "org-settings/org-settings.page#alert-d66bdd77": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:30"
+   ],
+   "n": "„Organisation auswählen“, Radioliste (erste vorausgewählt), „Abbrechen“/„Auswählen“/„Neue Organisation erstellen“ gleich; ohne Organisationen direkt „Organisation erstellen“ wie Ionic."
+  },
+  "org-settings/org-settings.page#loading-fa858e41": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:70"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay während des Verknüpfens / Flutter: kein Overlay, wartet ohne Anzeige."
+  },
+  "org-settings/org-settings.page#toast-5c26b059": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:73"
+   ]
+  },
+  "org-settings/org-settings.page#toast-eaca6962": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:74"
+   ],
+   "n": "Ionic: Service-Toast „Fehler beim Verknüpfen der Organisation“, danach Toast mit error.message (danger) / Flutter: Toast „Fehler beim Verknüpfen“ (danger)."
+  },
+  "org-settings/org-settings.page#alert-8c221091": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:79"
+   ],
+   "n": "Titel „Organisation erstellen“, Platzhalter „Name eingeben...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte gib gültige Werte ein.“, Dialog bleibt offen / Flutter: Dialog schließt, es passiert nichts, keine Meldung."
+  },
+  "org-settings/org-settings.page#loading-9aa86873": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:100"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay beim Erstellen / Flutter: kein Overlay."
+  },
+  "org-settings/org-settings.page#toast-7cb48d62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:101"
+   ],
+   "n": "Text „Die Organisation wurde erfolgreich erstellt.“ gleich. Ionic: Erfolg nur, wenn Erstellen und Verknüpfen klappen / Flutter: Erfolgs-Toast auch, wenn das anschließende Verknüpfen fehlschlägt (Ergebnis von linkCurrentTenant wird ignoriert)."
+  },
+  "org-settings/org-settings.page#toast-6d088b19": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:106"
+   ],
+   "n": "Ionic: Service-Toast „Fehler beim Erstellen der Organisation“, dann error.message (danger) / Flutter: nur „Fehler beim Erstellen der Organisation“ (danger)."
+  },
+  "org-settings/org-settings.page#alert-eca98d48": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:94"
+   ],
+   "n": "Header „Verbindungsschlüssel“, Schlüssel (Flutter monospace, markierbar), Text „Nur jetzt sichtbar…“, „Kopieren“ (bleibt offen) / „Schließen“ gleich."
+  },
+  "org-settings/org-settings.page#toast-89e49671": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:112"
+   ]
+  },
+  "org-settings/org-settings.page#alert-f8951c24": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:75"
+   ],
+   "n": "Nur bei vorhandenem Schlüssel: „Schlüssel erneuern“, Text „Der alte Schlüssel funktioniert danach nicht mehr…“, „Abbrechen“/„Erneuern“ (destruktiv) gleich."
+  },
+  "org-settings/org-settings.page#alert-14d3ff8c": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:30",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355"
+   ],
+   "n": "Titel „Organisation umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“, Speichern des getrimmten Namens gleich. Ionic: leerer Name → Meldung „Bitte gib einen gültigen Namen ein.“ / Flutter: „Speichern“ tut nichts, keine Meldung (Warn-Toast Z.39 unerreichbar)."
+  },
+  "org-settings/org-settings.page#toast-d99388c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44"
+   ]
+  },
+  "org-settings/org-settings.page#alert-49a6136a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:47",
+    "lib/data/repositories/organisation_repository.dart:91"
+   ],
+   "n": "„Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, „Abbrechen“/„Trennen“ (destruktiv); löscht tenant_group_tenants-Zeile und leere Organisation gleich."
+  },
+  "org-settings/org-settings.page#toast-9381748b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:59"
+   ]
+  },
+  "org-settings/org-settings.page#modal-fd2da8e9": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:248"
+   ],
+   "n": "Ionic: LinkPersonsPage als Sheet-Modal (Breakpoints 0/0,5/1, voll geöffnet, ohne Griff) / Flutter: normale Push-Seite /settings/general/link-persons."
+  },
+  "org-settings/org-settings.page#loading-2b64f5ec": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:88"
+   ],
+   "n": "Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: kleiner Spinner anstelle der Auswahl, Seite bleibt bedienbar."
+  },
+  "org-settings/org-settings.page#toast-2193dd25": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:68"
+   ]
+  },
+  "org-settings/org-settings.page#alert-17b9e40c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:31"
+   ],
+   "n": "Nur beim Wechsel von einer Quelle auf „Keine“: Header, Text, „Abbrechen“/„Deaktivieren“ (rot) gleich; Abbrechen lässt den alten Wert stehen."
+  },
+  "org-settings/org-settings.page#action-1e69166b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:140"
+   ]
+  },
+  "org-settings/org-settings.page#text-a607a8fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:140"
+   ]
+  },
+  "org-settings/org-settings.page#text-a607a8fd-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:149",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:173"
+   ]
+  },
+  "org-settings/org-settings.page#text-ce868386": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:153"
+   ]
+  },
+  "org-settings/org-settings.page#text-cb7ad407": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:155"
+   ]
+  },
+  "org-settings/org-settings.page#text-2df945fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:156"
+   ]
+  },
+  "org-settings/org-settings.page#action-77cfad47": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:158"
+   ]
+  },
+  "org-settings/org-settings.page#text-020d4514": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:175"
+   ]
+  },
+  "org-settings/org-settings.page#action-95a1e432": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:176"
+   ],
+   "n": "Name, „Tippen zum Umbenennen“ und Chevron nur für Admin, Tippen → Umbenennen gleich."
+  },
+  "org-settings/org-settings.page#action-034c64fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:183"
+   ]
+  },
+  "org-settings/org-settings.page#text-248ea768": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:190"
+   ]
+  },
+  "org-settings/org-settings.page#action-14c8d226": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:192"
+   ],
+   "n": "Gleiche BrandingPage; Ionic-Pfad …/org-settings/branding, Flutter /settings/general/branding (Ionic lädt dort dasselbe Modul)."
+  },
+  "org-settings/org-settings.page#action-0f593c87": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:198"
+   ]
+  },
+  "org-settings/org-settings.page#action-9d64834f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:204"
+   ]
+  },
+  "org-settings/org-settings.page#text-03add0f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:212"
+   ],
+   "n": "Nur Admin + fecg_link_enabled, wie Ionic."
+  },
+  "org-settings/org-settings.page#field-16ab0b34": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:214"
+   ]
+  },
+  "org-settings/org-settings.page#action-16566c33": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:222"
+   ]
+  },
+  "org-settings/org-settings.page#text-841b3f4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:234"
+   ]
+  },
+  "org-settings/org-settings.page#text-1a2c91b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:241"
+   ]
+  },
+  "org-settings/org-settings.page#action-79ded874": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:243"
+   ],
+   "n": "Texte/Bedingung gleich; Präsentation (Seite statt Sheet) siehe modal-fd2da8e9."
+  },
+  "org-settings/org-settings.page#action-8ea841f2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:250"
+   ]
+  },
+  "org-settings/org-settings.page#text-5a3b837f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:259"
+   ]
+  },
+  "org-settings/org-settings.page#action-973a2bad": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:261"
+   ]
+  },
+  "org-settings/org-settings.page#text-bbfd5f0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:269"
+   ]
+  },
+  "org-settings/org-settings.page#action-fd83ac3d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:271"
+   ]
+  },
+  "org-settings/org-settings.page#text-372954be": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:117"
+   ]
+  },
+  "org-settings/org-settings.page#text-62272383": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:84"
+   ]
+  },
+  "org-settings/org-settings.page#text-7af04a0a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:87"
+   ]
+  },
+  "org-settings/org-settings.page#field-cfa42488": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:94",
+    "lib/data/repositories/song_repository.dart:402"
+   ],
+   "n": "Optionen „Keine (eigene Werke)“ + Kurznamen der verknüpften Instanzen, Action-Sheet (iOS), schreibt tenants.song_source_tenant_id der eigenen Instanz."
+  },
+  "org-settings/org-settings.page#text-9f03cb0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:283"
+   ]
+  },
+  "org-settings/org-settings.page#text-b41bd762": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:286"
+   ]
+  },
+  "org-settings/org-settings.page#text-03183d75": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:287"
+   ]
+  },
+  "org-settings/org-settings.page#text-874018a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:292"
+   ]
+  },
+  "org-settings/org-settings.page#text-8614316a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:293"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#logic-2fe66ba4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:79",
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:146",
+    "lib/core/providers/org_song_providers.dart:41"
+   ],
+   "n": "Gleich: Zugriff nur Admin/Verantwortlicher mit Organisation, Startsuche mit ?q=, Instanz-Chips (ohne eigene Bibliothek und ohne synchronisierte Instanzen, alle abgewählt → alle an), RPC search_org_songs mit 50er-Seiten, Treffer-/„Schon bei dir“-Erkennung, Ziele nur mit Admin/Verantwortlicher-Rolle je Bibliothek, Duplikat-/Nummernlogik, Feld- und Dateioptionen, Überschreiben-Rückfrage, Kategorien anlegen, Erfolgs-/Fehlertexte. Abweichung siehe extra (Ziel wird nicht gemerkt)."
+  },
+  "org-settings/org-songs/org-songs.page#toast-1fbe264c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:147"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#toast-e931bf78": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:205"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#toast-0cced0ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:165"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#loading-fd46fb98": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:344",
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:424"
+   ],
+   "n": "Ionic: blockierendes Overlay „Werk wird kopiert...“ bzw. „Datei x von y wird kopiert...“ / Flutter: Fortschrittsbalken + gleicher Text im Sheet, Schließen und Buttons gesperrt, Präfix/Nummer-Felder bleiben bedienbar."
+  },
+  "org-settings/org-songs/org-songs.page#toast-8a81b299": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:385"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#toast-1281d722": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:393"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#alert-eaa61c59": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:334"
+   ],
+   "n": "„Werte überschreiben?“, „Diese Felder haben im Ziel schon einen Wert…: {fields}“, „Abbrechen“/„Überschreiben“ gleich."
+  },
+  "org-settings/org-songs/org-songs.page#action-fe2969bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:235"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-bf23a879": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:235"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-3d514959": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:257"
+   ],
+   "n": "Platzhalter „Name oder Nummer“, 300 ms Verzögerung, Vorbelegung aus ?q= gleich. Ionic: Suchleiste fest in der Kopfzeile / Flutter: Suchleiste am Listenanfang, scrollt mit."
+  },
+  "org-settings/org-songs/org-songs.page#text-8eba480d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:243"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-8b39a07c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:269"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-868aa115": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:275"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-9f743d93": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:280"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-aa6f0fbd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:292"
+   ],
+   "n": "„Präfix+Nummer Name“, Instanz (primary) · „n Dateien“ · Kategorien, Badge „Schon bei dir“, Kopier-Icon, Tippen öffnet Kopieren gleich."
+  },
+  "org-settings/org-songs/org-songs.page#text-51119188": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:328"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-e81797bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_songs_page.dart:165"
+   ],
+   "n": "Nachladen beim Scrollen ans Ende (300 px) statt ion-infinite-scroll."
+  },
+  "org-settings/org-songs/org-songs.page#modal-465e7f69": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:23"
+   ],
+   "n": "Ionic: Sheet-Modal Breakpoints 0/1 voll geöffnet / Flutter: Bottom-Sheet in voller Höhe; Quelle, Ziele und Instanzen werden übergeben."
+  },
+  "org-settings/org-songs/org-songs.page#action-cda35fd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:415"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-1c3eb54a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:413"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-6bc33df9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:418"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-d1b4142b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:434"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-16a749e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:435"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-e0eaa75c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:440"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-84cb7a51": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:445"
+   ],
+   "n": "Label „Ziel-Instanz“, Optionen = Kurznamen der möglichen Ziele (ohne Quellbibliothek), Action-Sheet (iOS), Wechsel lädt Ziel neu; Vorauswahl siehe extra."
+  },
+  "org-settings/org-songs/org-songs.page#text-54ec9e67": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:464"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-30e180ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:497"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-24bd80f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:509"
+   ],
+   "n": "Radio „In vorhandenes Werk kopieren“ / „Als neues Werk anlegen“, Vorauswahl vorhandenes Werk bei Duplikat gleich."
+  },
+  "org-settings/org-songs/org-songs.page#field-22da5f9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:515"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-be552f1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:545"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-891eadf2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:550"
+   ],
+   "n": "Label „Präfix“, max. 5 Zeichen gleich."
+  },
+  "org-settings/org-songs/org-songs.page#field-51191dfd": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:559"
+   ],
+   "n": "Label „Nummer“, Zahlentastatur, vorbelegt (bei Kollision nächste freie Nummer), rot wenn vergeben."
+  },
+  "org-settings/org-songs/org-songs.page#action-891b7bb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:567"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-fb33a0bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:579"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-60da81eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:583"
+   ],
+   "n": "Checkbox mit Feldname, Wert und „Im Ziel: …“ (warning); Vorauswahl nur leere Zielfelder bzw. alle bei neuem Werk."
+  },
+  "org-settings/org-songs/org-songs.page#text-34dd8221": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:606"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-59702b24": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:608"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-de5cd780": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:647"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-279796ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:655"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-7563cee7": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:657"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#text-24227f6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:660"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#field-03b7be28": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:668"
+   ],
+   "n": "Optionen „Sonstige“, „Aufnahme“, „Liedtext“, Gruppen des Ziels (Flutter ohne Gruppen mit id 1/2), deaktiviert wenn Datei abgewählt, Vorauswahl per Gruppenname gleich."
+  },
+  "org-settings/org-songs/org-songs.page#text-cbab05c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:626"
+   ]
+  },
+  "org-settings/org-songs/org-songs.page#action-cc2aa10b": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:630"
+   ]
+  },
+  "planning/plan-chips/plan-chips.component#logic-5c667539": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:262"
+   ],
+   "n": "select meldet nur bei anderem Index, wie Ionic."
+  },
+  "planning/plan-chips/plan-chips.component#action-82aaa332": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:255"
+   ],
+   "n": "Chip je Plan, gewählter primary, übrige grau umrandet, Zusatz „· heute“ beim heutigen Plan, horizontale Zeile mit optionalem Zusatz-Widget (ng-content → trailing)."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#logic-84b752f5": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:139",
+    "lib/core/utils/plan_beamer.dart:42"
+   ],
+   "n": "Gleich: Vorbelegung (Minuten leer → 20), Beamer-Automatik (Werk oder „Lied“/„Gedicht“ im Titel, live beim Tippen), Grund-Text, manueller Schalter nur bei Änderung, Datei der Zeile sonst des Werks, Pflicht-Programmpunkt (getrimmt), Info leer → entfernt, needsBeamer nur bei sichtbarem Beamer-Bereich. Abweichung siehe extra (0 Minuten)."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#action-36535d24": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:315"
+   ],
+   "n": "„Abbrechen“ schließt ohne Änderung wie Ionic. Ionic: Vollbild-Modal, Button oben links in der Toolbar / Flutter: Dialog (AppAlertDialog), Button unten."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-572a71cd": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:167"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#action-97956a62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:319",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:171"
+   ],
+   "n": "Text „Updaten“ und Speichern-Logik gleich. Ionic: fetter Button oben rechts in der Toolbar / Flutter: gefüllter Button unten rechts im Dialog."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-1c5a6d48": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:257"
+   ],
+   "n": "Label „Programmpunkt“, Platzhalter „Programmpunkt eingeben...“, Satzanfang groß, mehrzeilig (Flutter max. 3 Zeilen)."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0bda59a8": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:297"
+   ],
+   "n": "Text „Bitte einen Programmpunkt eingeben.“ gleich. Ionic: direkt unter dem Programmpunkt, verschwindet beim Tippen / Flutter: unter allen Feldern (nach Minuten), bleibt bis zum nächsten Speichern-Versuch."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-931b8beb": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:270"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-159a7ede": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:281",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:170"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-6a664673": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:291"
+   ],
+   "n": "Label „Minuten“, Zahlentastatur, Vorbelegung gleich; Flutter ohne Platzhalter „Minuten“, dafür Suffix „min“."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0fbfb680": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:209"
+   ],
+   "n": "Nur mit Beamer-Bereich (Org-Plan einer verknüpften Org, kein Notizfeld)."
+  },
+  "planning/plan-field-edit/plan-field-edit.component#field-86c9cb80": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:212"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-0d1ecdbc": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-a42fe7b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-d5e8230e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:226"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-6aad1281": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:227"
+   ]
+  },
+  "planning/plan-field-edit/plan-field-edit.component#text-552fe355": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:231"
+   ]
+  },
+  "planning/plan-minutes.pipe#logic-a54b756e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/utils/plan_utils.dart:75",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150"
+   ],
+   "n": "Block-Kopf = Summe der Unterpunkte, sonst Dauer des Feldes – gleich. Ionic: gibt field.time unverändert aus (leer → „ min“) / Flutter: Zahl, leer/ungültig → „0 min“."
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#logic-657c81c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:179",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:213"
+   ],
+   "n": "Auswahl liefert Umfang (nur dieser/alle) + Aktion, Schließen liefert null; hasChatId aus der Telegram-Chat-ID der Benachrichtigungs-Konfiguration wie Ionic."
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#modal-677ebe61": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:186"
+   ],
+   "n": "Ionic: Sheet-Modal, Start 0,5 bzw. 0,75 (mit Telegram), auf volle Höhe hochziehbar / Flutter: Bottom-Sheet mit fester Höhe 0,5 bzw. 0,75, nicht vergrößerbar."
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#text-7fc44a7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:233"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-020798d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:235"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#field-6b6f854b": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:248"
+   ],
+   "n": "Segment „Nur {label}“ / „Alle {count} Pläne“, Start „Nur …“."
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-b401edaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:260"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-02b802e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:261"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-bb65cd73": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:263"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-3f20e5d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:264"
+   ]
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#action-7476193c": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:265"
+   ],
+   "n": "Nur mit Chat-ID und Umfang „Nur …“, wie Ionic."
+  }
+ },
+ "extra": [
+  {
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "title": "Startzeit-Format und end beim Speichern",
+   "n": "Ionic: ion-datetime schreibt tpl.time als ISO-Datum-Zeit (YYYY-MM-DDTHH:mm…), end bleibt '' (templateEnds nur lokal) / Flutter: schreibt time als „HH:mm“ und bei jedem Speichern end = berechnetes Ende „HH:mm“ in jede Vorlage; Leser beider Apps akzeptieren beide Formate, Ionic applyTemplate nutzt end nicht.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:109",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:43",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:261"
+   ]
+  },
+  {
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "title": "Programmblöcke in Vorlagen",
+   "n": "Ionic: Vorlagenfelder sind eine flache Liste, Wisch-Option nur Löschen / Flutter: gemeinsamer PlanFieldsEditor bietet zusätzlich „Einrücken/Ausrücken“ (groupId), Block-Köpfe mit Block-Optionen und „Unterpunkt hinzufügen“ – Vorlagen können Programmblöcke enthalten.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:139",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:549",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:246"
+   ]
+  },
+  {
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "title": "Fehlertext beim Speichern",
+   "n": "Ionic: Toast „Fehler beim Speichern der Planvorlagen“ bzw. „Fehler beim Speichern der Standardfelder“ (Service) / Flutter: Toast „Fehler beim Speichern“.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:355",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:40",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:47"
+   ]
+  },
+  {
+   "unit": "org-settings/org-planning-templates/org-planning-templates.page",
+   "title": "Zusätzlicher Bedienweg Vorlage",
+   "n": "Ionic: Umbenennen/Löschen nur über Wisch-Optionen / Flutter besser: zusätzlich Langdruck auf die Vorlage öffnet Action-Sheet „Vorlage umbenennen“/„Löschen“.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-planning-templates/org-planning-templates.page.html:91",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:447"
+   ]
+  },
+  {
+   "unit": "org-settings/org-settings.page",
+   "title": "Fehlertexte Umbenennen/Trennen/Synchronisierung",
+   "n": "Ionic: „Fehler beim Umbenennen der Organisation“, „Fehler beim Entfernen der Organisation“, „Fehler beim Aktualisieren der Einstellungen“-Toast aus den Services / Flutter: „Fehler beim Speichern“ (Umbenennen, Werk-Sync) bzw. „Fehler beim Trennen“.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/organisation/organisation.service.ts:388",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:60",
+    "lib/features/organisation/presentation/widgets/org_song_sync_section.dart:70"
+   ]
+  },
+  {
+   "unit": "org-settings/org-settings.page",
+   "title": "Instanzliste nach Verknüpfen",
+   "n": "Ionic: linkedTenants wird nur in ngOnInit geladen – nach Erstellen/Verknüpfen auf der Seite fehlen „Werke“, „Werk-Synchronisierung“ und „Instanzen“ bis zum erneuten Öffnen / Flutter besser: linkedTenantsProvider wird invalidiert, Abschnitte erscheinen sofort.",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-settings.page.ts:32",
+   "f": [
+    "lib/core/providers/organisation_providers.dart:99"
+   ]
+  },
+  {
+   "unit": "org-settings/org-songs/org-songs.page",
+   "title": "Zielinstanz wird nicht gemerkt",
+   "n": "Ionic: beim nächsten Kopieren bleibt die zuletzt gewählte Zielinstanz vorausgewählt, sofern sie für das Werk möglich ist / Flutter: jedes Öffnen startet mit dem ersten Ziel (eigene Instanz zuerst).",
+   "sev": "niedrig",
+   "ionic": "src/app/org-settings/org-songs/org-songs.page.ts:202",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:89"
+   ]
+  },
+  {
+   "unit": "planning/plan-field-edit/plan-field-edit.component",
+   "title": "0 Minuten",
+   "n": "Ionic: Minuten 0 (oder leer) → alte Dauer bleibt (`this.time ? … : field.time`) / Flutter: leer → alte Dauer, 0 → Dauer wird auf „0“ gesetzt.",
+   "sev": "niedrig",
+   "ionic": "src/app/planning/plan-field-edit/plan-field-edit.component.ts:88",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:191"
+   ]
+  }
+ ]
+}

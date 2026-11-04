@@ -1,0 +1,2203 @@
+{
+ "batch": "b04-attendance",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "attendance/attendance/attendance.page#logic-8c42fa1f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:239",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:560",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1072",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:23",
+    "lib/core/providers/role_permission_providers.dart:97"
+   ],
+   "n": "Laden, Realtime, Statuswechsel (Mapping), Helfer-Gruppenfilter, Notiz-Maskierung, Sortierung (Hauptgruppe/sort_order/Nachname), Filter, Ansicht-Prefs (gleiche Keys), Checkliste, Werke-Sync, Dienstplan, Protokoll und Archivieren entsprechen Ionic. Abweichungen hinter der UI siehe extra (history.visible-Abgleich, Sortierung in „Person hinzufügen“, Gruppenrecht bei Ladefehler).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#nav-a04742ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:376"
+   ],
+   "n": "Mandantenwechsel bei offenem Termin → go('/attendance')."
+  },
+  "attendance/attendance/attendance.page#native-248ec156": {
+   "s": "na",
+   "n": "Lifecycle-Aufräumen (Network.removeAllListeners im teardown) ohne sichtbaren Effekt; Flutter: ref.listen(connectivityProvider) endet mit dem Widget."
+  },
+  "attendance/attendance/attendance.page#toast-821c46bb": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:410"
+   ],
+   "n": "Ionic: Toast (danger) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und automatisch zurück (navigateBack) / Flutter: kein Toast, kein Zurück; Fehlerseite mit demselben Text und Button „Neu laden“.",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#toast-87a629e9": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1461",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1486"
+   ],
+   "n": "Ionic: Toast (danger) „Neu laden fehlgeschlagen — bitte erneut versuchen.“ / Flutter: „Neu laden“ invalidiert nur die Provider; bei erneutem Fehler kein Toast, Banner/Fehlerseite bleibt.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#db-8e6ff93f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"
+   ],
+   "n": "Flutter: ein Kanal für attendance + person_attendances, serverseitig nach id/attendance_id gefiltert (Ionic filtert im Client)."
+  },
+  "attendance/attendance/attendance.page#db-221ca54c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:266",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:278"
+   ],
+   "n": "Ionic Kanal „att-changes“ (alle attendance-Änderungen) / Flutter: UPDATE gefiltert auf id + DELETE auf demselben Kanal – gleiche Wirkung."
+  },
+  "attendance/attendance/attendance.page#db-2c9a711f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"
+   ]
+  },
+  "attendance/attendance/attendance.page#db-5ddb1746": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:258"
+   ],
+   "n": "Kanal „person-att-<id>“ statt „person-changes“, Filter attendance_id; DELETE ungefiltert wie Ionic."
+  },
+  "attendance/attendance/attendance.page#native-1dcfca94": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:383"
+   ],
+   "n": "connectivityProvider statt Capacitor Network.getStatus."
+  },
+  "attendance/attendance/attendance.page#native-7db6296b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:383"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-f46a2cc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:389",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:391"
+   ],
+   "n": "Nur bei echtem Wechsel online/offline (Ionic ebenso)."
+  },
+  "attendance/attendance/attendance.page#nav-eec13fdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:142"
+   ],
+   "n": "Ziel ist die Protokoll-Seite unter /settings/protocol/:id statt /tabs/attendance/:id/protocol (Pfad im Routing-Batch); push, Zurück führt zum Termin."
+  },
+  "attendance/attendance/attendance.page#nav-bb97d1da": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:465"
+   ]
+  },
+  "attendance/attendance/attendance.page#nav-560ce93a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1440",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1456"
+   ],
+   "n": "Ohne Back-Stack go('/attendance')."
+  },
+  "attendance/attendance/attendance.page#toast-af8f3320": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1451"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-961d3c4c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1436"
+   ]
+  },
+  "attendance/attendance/attendance.page#native-7fcba5d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:266"
+   ],
+   "n": "HapticHelper.light (try/catch-sicher)."
+  },
+  "attendance/attendance/attendance.page#toast-4a26da7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:274",
+    "lib/features/attendance/presentation/widgets/attendance_detail/status_chip.dart:58"
+   ]
+  },
+  "attendance/attendance/attendance.page#actionsheet-5fe69f80": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:26",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:857"
+   ],
+   "n": "Sheet gleich (Header „Notiz hinzufügen“, „Aktuell: …“, Gründe, „Eigene Notiz...“, „Notiz löschen“ destruktiv, Abbrechen). Flutter zeigt nach dem Speichern zusätzlich einen Erfolgs-Toast „Notiz hinzugefügt“/„Notiz gelöscht“ (Ionic: kein Toast).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-1a679783": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:55"
+   ],
+   "n": "Vorbelegung nur bei nicht vordefinierter Notiz wie Ionic; Flutter trimmt den Text."
+  },
+  "attendance/attendance/attendance.page#loading-65a49b17": {
+   "s": "na",
+   "n": "toter Code: onImageSelect hängt nur am #chooser-Input, der im HTML auskommentiert ist (attendance.page.html:386)."
+  },
+  "attendance/attendance/attendance.page#toast-e582c18c": {
+   "s": "na",
+   "n": "toter Code: onImageSelect ist nicht erreichbar (#chooser-Input auskommentiert, attendance.page.html:386)."
+  },
+  "attendance/attendance/attendance.page#toast-b89dcf18": {
+   "s": "na",
+   "n": "toter Code: onImageSelect ist nicht erreichbar (#chooser-Input auskommentiert, attendance.page.html:386)."
+  },
+  "attendance/attendance/attendance.page#toast-1962a3f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:79"
+   ]
+  },
+  "attendance/attendance/attendance.page#alert-a33e2289": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:94"
+   ],
+   "n": "Header „Kann nicht“, Textfeld „Grund (optional)“, Abbrechen/Bestätigen; Abmeldung isSelf + understaffed-Notify wie Ionic."
+  },
+  "attendance/attendance/attendance.page#toast-ea1a4203": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:118"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-e75634f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:272",
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:334",
+    "lib/features/duty/presentation/widgets/duty_assign_sheet.dart:33"
+   ],
+   "n": "Sheet 0.75, Titel „Typ · dd.MM.“, offene Plätze, Kandidaten nach Monatsdiensten, Monat."
+  },
+  "attendance/attendance/attendance.page#toast-f7e53881": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:249"
+   ]
+  },
+  "attendance/attendance/attendance.page#alert-2268569a": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:259"
+   ],
+   "n": "„Aus dem Dienst austragen?“, „{Vorname} ist dann nicht mehr eingeteilt.“, Abbrechen/Austragen (destruktiv)."
+  },
+  "attendance/attendance/attendance.page#nav-a37ce0ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:669",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"
+   ],
+   "n": "push auf die Dateiablage mit path-Parameter."
+  },
+  "attendance/attendance/attendance.page#effect-70a83fa3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:663",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108"
+   ],
+   "n": "iOS: Auswahl Apple Karten/Google Maps, sonst Google Maps – wie Utils.openNavigation."
+  },
+  "attendance/attendance/attendance.page#loading-41558b08": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:110"
+   ],
+   "n": "Ionic: blockierendes Loading während des Uploads / Flutter: nur Spinner im Sheet, nicht blockierend.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#db-4914fe1c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1038",
+    "lib/data/repositories/attendance_repository.dart:1045"
+   ],
+   "n": "Bucket attendances, Pfad <id>/attachment/<safeName> (gleiche Regex), upsert."
+  },
+  "attendance/attendance/attendance.page#db-4d232055": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1045"
+   ],
+   "n": "Public URL; Update attachment_url/attachment_name mit tenantId-Filter."
+  },
+  "attendance/attendance/attendance.page#toast-7229aee2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:123"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-70362adc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:125"
+   ]
+  },
+  "attendance/attendance/attendance.page#db-f3ad3394": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:135",
+    "lib/data/repositories/attendance_repository.dart:1113"
+   ]
+  },
+  "attendance/attendance/attendance.page#native-d6a03777": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:155"
+   ],
+   "n": "NativeFileService.openLinkInApp statt Browser.open."
+  },
+  "attendance/attendance/attendance.page#effect-7e7a46ab": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91"
+   ],
+   "n": "PDF-Export (A4 / 2x A5) über runPlanExport; Unterschiede im Teilen-Sheet siehe actionsheet-19467990."
+  },
+  "attendance/attendance/attendance.page#modal-9d951002": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:44",
+    "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:18"
+   ],
+   "n": "Vollhohes Sheet statt Vollbild-Modal; Plan wird danach neu geladen."
+  },
+  "attendance/attendance/attendance.page#nav-27495850": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:66",
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:178"
+   ],
+   "n": "Tagesordnungspunkt → /settings/agenda-items/:id (nur Leitung), Aufgabe → /settings/tasks/:id; Flutter hat keinen Modal-Modus zum Schließen."
+  },
+  "attendance/attendance/attendance.page#actionsheet-19467990": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:33"
+   ],
+   "n": "Ionic (ein Plan): Header „Ablaufplan teilen“, „Exportieren (PDF)“, „Exportieren (PDF 2x A5)“, drei Telegram-Optionen immer, Abbrechen; mehrere Pläne: Teilen-Sheet mit Wahl „dieser Plan / alle Pläne“ für jede Aktion. / Flutter: Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, zusätzlich „Bild (A4)“, Telegram nur mit Chat-ID; bei mehreren Plänen nur ein zusätzlicher Eintrag „PDF exportieren (alle Pläne)“ (kein 2x A5/Telegram für alle).",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#effect-353ec499": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:91"
+   ],
+   "n": "Telegram-Versand (PDF, 2x A5, Bild) über runPlanExport; nur angeboten, wenn eine Chat-ID existiert."
+  },
+  "attendance/attendance/attendance.page#modal-80b3cbae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:244",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:716"
+   ],
+   "n": "Ablaufplan-Editor als Seite (/planning?attendanceId=…&plan=i) statt Vollbild-Modal; Planindex wird übergeben."
+  },
+  "attendance/attendance/attendance.page#actionsheet-0085a6c3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2126",
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:33"
+   ],
+   "n": "Optionen gleich („Dirigent ändern“, „Zum Werk“, Abbrechen). Header Ionic „12 Name“ (Nummer ohne Präfix) / Flutter Song.displayName mit Präfix und „ - “; unbekannt: Ionic „Unbekanntes Lied“ / „Unbekannter Dirigent“, Flutter „Unbekanntes Werk“ / „Unbekannt“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-5a49adc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:89",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2154"
+   ]
+  },
+  "attendance/attendance/attendance.page#alert-1119c6cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:89"
+   ],
+   "n": "„Dirigent eingeben“ mit Platzhalter „Dirigent“, leerer Name speichert nichts."
+  },
+  "attendance/attendance/attendance.page#alert-aadedcba": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:198"
+   ],
+   "n": "Ionic: Auswahl „Anderer Dirigent“ öffnet Alert „Dirigent eingeben“ (Abbrechen/Speichern) / Flutter: kein Dialog, Inline-Textfeld mit Hinweis „Dirigent eingeben“.",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#alert-a4a881ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2470"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-68ebef24": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2494"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-d1c36dcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2497"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-66ebc374": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:876"
+   ]
+  },
+  "attendance/attendance/attendance.page#alert-ad3c579a": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:870"
+   ],
+   "n": "Flutter besser: sucht den Ändernden unter allen Personen des Mandanten (Ionic nur unter den Personen des Termins → sonst „'Unbekannt'“). Ionic-Sonderfall UUID 665fe2b4-… → „Matthias Eckstädt“ fehlt in Flutter.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-9b3e485d": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2237",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2271",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+   ],
+   "n": "Ionic: bei genau einem Anmeldefeld ein Alert mit Feldname als Header (Ja/Nein-Radios, Optionen als Radios/Checkboxen, Abbrechen/Speichern) / Flutter: immer das Sheet „Anmeldefelder“ (Schalter/Dropdown/Checkboxen); zusätzlich Toast „Anmeldefelder gespeichert“.",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#actionsheet-1aaa2155": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:207",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:775"
+   ],
+   "n": "Reihenfolge und Bedingungen gleich. Flutter besser: „Erinnerung“ für eine Person ohne Account zeigt „Die Person hat keinen Account“; Ionic sendet dann (playerAppId undefined) an alle Personen des Termins.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#alert-3e7845a6": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1530",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1601"
+   ],
+   "n": "Dialog gleich („To-Do hinzufügen“, Text, Frist in Stunden, Abbrechen/Hinzufügen). Flutter zeigt zusätzlich Toast „To-Do hinzugefügt“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#toast-010be423": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1559"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-37612561": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1630"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-6eb688fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1669"
+   ]
+  },
+  "attendance/attendance/attendance.page#alert-87434869": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1610"
+   ],
+   "n": "Titel „To-Do löschen?“ (Flutter-Key), Text und Buttons gleich. Flutter zeigt nach dem Löschen zusätzlich Toast „To-Do gelöscht“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#modal-1e1a6630": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2502"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-94dca9ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1360",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:102"
+   ],
+   "n": "Anwesende (Anwesend/Verspätet/Verspätet entsch.) mit Untertitel „Anwesende Personen“."
+  },
+  "attendance/attendance/attendance.page#alert-742e0a0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1164"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-3c53fce6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1194"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-d7a6342e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1196"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-2087914f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1392",
+    "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:52"
+   ],
+   "n": "Gleiche Vorgaben (Titel/Nachricht/Link, „nur ohne Rückmeldung“)."
+  },
+  "attendance/attendance/attendance.page#loading-b675baf2": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1401"
+   ],
+   "n": "Ionic: blockierendes Loading „Wird versendet...“ / Flutter: kein Overlay (nur Doppelversand-Sperre).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#db-633099eb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1014"
+   ],
+   "n": "Edge Function send-ad-hoc-reminder mit gleichem Body; zusätzlich Mandanten-Prüfung des Termins."
+  },
+  "attendance/attendance/attendance.page#toast-f2ad9095": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1412"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-d8dd95d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1410"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-97593561": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_add_persons.dart:44"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-3d3d6241": {
+   "s": "na",
+   "n": "toter Code: der Button ist bei leerer Auswahl deaktiviert ([disabled]=\"selectedPersonsToAdd.length === 0\"), der Toast kann nicht erscheinen; Flutter ebenso deaktiviert."
+  },
+  "attendance/attendance/attendance.page#loading-c10b1ad4": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/attendance_add_persons.dart:55"
+   ],
+   "n": "Ionic: blockierendes Loading „Personen werden hinzugefügt...“ / Flutter: kein Overlay.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#toast-3e883fec": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_add_persons.dart:91"
+   ]
+  },
+  "attendance/attendance/attendance.page#toast-c69b3a87": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_add_persons.dart:93"
+   ]
+  },
+  "attendance/attendance/attendance.page#nav-be608956": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2144"
+   ],
+   "n": "push /settings/songs/:id."
+  },
+  "attendance/attendance/attendance.page#alert-69df322a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1244"
+   ],
+   "n": "Radios „Standard (Gruppe)“ und je Feld ↑/↓, Abbrechen/OK, gleiche Speicher-Keys."
+  },
+  "attendance/attendance/attendance.page#action-64b05ba6": {
+   "s": "diff",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:50",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:465"
+   ],
+   "n": "Ionic: vom Dashboard („Nächster Termin“) als Modal mit X (close-outline) geöffnet / Flutter: Seite wird gepusht, Zurück-Pfeil statt X.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-cf6368ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:465"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-b4223e43": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:482"
+   ],
+   "n": "„dd.MM.yyyy | anwesend/gesamt“ (Anwesend + Verspätet, gefilterte Liste)."
+  },
+  "attendance/attendance/attendance.page#action-fd60899f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:505"
+   ],
+   "n": "Icon primary + Badge mit Anzahl bei aktivem Filter."
+  },
+  "attendance/attendance/attendance.page#popover-99a14383": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:525",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1072"
+   ],
+   "n": "Einträge in Ionic-Reihenfolge; Rollenunterschiede bei einzelnen Einträgen siehe dort."
+  },
+  "attendance/attendance/attendance.page#action-695a85d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1104"
+   ]
+  },
+  "attendance/attendance/attendance.page#popover-e3d9c11a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1203"
+   ],
+   "n": "Ohne aufgelösten Typ zeigt Flutter alle Status (Ionic keine)."
+  },
+  "attendance/attendance/attendance.page#action-6b1dd3ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1209"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-735def41": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-241fea16": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1210"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-b975e0f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-dd4e8bf5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1211"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-635df2fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-5dad23bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1212"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-b46ff290": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-d7e1cae2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1213"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-cd0f2af8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-9cc1dea3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1215"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-54fc17c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-de07ad3e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1231"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-fc458692": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1109"
+   ],
+   "n": "Nur wenn sortierbare Felder existieren; Untertitel „Feld ↑/↓“."
+  },
+  "attendance/attendance/attendance.page#action-6d68e9c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1111"
+   ]
+  },
+  "attendance/attendance/attendance.page#popover-0b27f205": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1314"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-54b40856": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1319"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-093444e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1320"
+   ],
+   "n": "Standard aus wie Ionic (showAvatars ?? false)."
+  },
+  "attendance/attendance/attendance.page#action-693335dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1327"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-36f00c0f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1330"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-0ce1a7c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1338"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-417d9077": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1340"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-d5ac7ad9": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1113",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2579"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-ab758e8d": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1115"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-eb230380": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1117"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet. Wiederherstellen ohne Rückfrage wie Ionic.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-d0752375": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1120"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-facf83f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1121"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-da48cc91": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1122"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-9dea2cd5": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1123"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-3e99df7b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1126",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:973"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-9cb015ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1132",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1147"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-d0d07e72": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:12"
+   ],
+   "n": "Bottom-Sheet ~0.55 mit Griff; Flutter hat zusätzlich ein X."
+  },
+  "attendance/attendance/attendance.page#text-7e5bce34": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:86"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-c220c2e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:35"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-35b8e6c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:36"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-5280924c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:37"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-121c8937": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:38"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-92c17ee9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:131",
+    "lib/features/attendance/presentation/widgets/attendance_detail/status_chip.dart:16"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-3368a39c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:39"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-4c5f651e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_legend_sheet.dart:40"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-bd06fd9a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2603",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:624"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-7a75323d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2603"
+   ]
+  },
+  "attendance/attendance/attendance.page#embed-76bd1527": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:627"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-eeded125": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:168"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-f317ae92": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:174"
+   ],
+   "n": "Zeile nur bei aufgelöstem Typ, siehe text-4ed35fba."
+  },
+  "attendance/attendance/attendance.page#text-4ed35fba": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:171",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:182"
+   ],
+   "n": "Ionic: Typ nicht auflösbar → Badge „Unbekannt“ / Flutter: Zeile „Typ“ fehlt dann ganz.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-6c23e1d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:194",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2179"
+   ],
+   "n": "Datum ändern über promptAttendanceDateChange (gemeinsame Logik, eigener Batch)."
+  },
+  "attendance/attendance/attendance.page#text-86d18171": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:202"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-3d7244ba": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:93",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2280"
+   ],
+   "n": "Speichern beim Verlassen wie Ionic; leeres Feld: Ionic schreibt '' / Flutter null (gleiche Anzeige).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-9829611a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:211"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-291ed873": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:99",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:639"
+   ],
+   "n": "Speichern beim Verlassen wie Ionic; leeres Feld: Ionic schreibt '' / Flutter null (gleiche Anzeige).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-49f12806": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:230"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-55765067": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:220",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1735"
+   ],
+   "n": "Standardfrist (Vortag, Typ-Start+2 h, sonst Termintag) wie Ionic. Flutter zeigt zusätzlich Toast „Frist aktiviert/deaktiviert“; auf iOS ohne Hilfetext (laut Flutter-Kommentar wie Ionic iOS; ion-toggle-Interna nicht im Container).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-5ebb6149": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:250"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-5b528285": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:253"
+   ],
+   "n": "Gesperrt, wenn die Frist schreibgeschützt ist."
+  },
+  "attendance/attendance/attendance.page#modal-761bba53": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774"
+   ],
+   "n": "Ionic: ein Modal mit Datum+Uhrzeit (date-time) / Flutter: erst Datums-, dann Uhrzeit-Dialog.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-7e76e2fd": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:152"
+   ],
+   "n": "Flutter speichert die gewählte Frist mit toUtc() (21:00 MEZ → 20:00Z), zeigt sie aber als Wandzeit aus den UTC-Komponenten an (event_list_utils.dart:226) → nach dem Speichern steht 20:00 da und die Anmeldung schließt eine Stunde früher. Ionic schreibt den ion-datetime-Wert (Wandzeit). Außerdem: Ionic Minuten in 5er-Schritten und max = Termintag zur Typ-Startzeit / Flutter freie Minuten, max = Termintag; Flutter-Toast „Frist aktualisiert“. (ion-datetime-Interna nicht im Container.)",
+   "sev": "hoch"
+  },
+  "attendance/attendance/attendance.page#text-572859cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:262"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-5b528285-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:265"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-761bba53-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2297"
+   ],
+   "n": "Uhrzeit-Dialog statt ion-datetime-Modal."
+  },
+  "attendance/attendance/attendance.page#field-f27959a3": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:265",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2297"
+   ],
+   "n": "Speichern + Schicht-Neuberechnung wie Ionic. Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; Flutter zeigt zusätzlich einen Erfolgs-Toast.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-e7f02a78": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:272"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-5b528285-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:275"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-761bba53-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2352"
+   ],
+   "n": "Uhrzeit-Dialog statt ion-datetime-Modal."
+  },
+  "attendance/attendance/attendance.page#field-95734d84": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:275",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2352"
+   ],
+   "n": "Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; Flutter zeigt zusätzlich einen Erfolgs-Toast.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-8a1edeff": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:284"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-5f1a024e": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:281"
+   ],
+   "n": "Flutter besser: Ionic zeigt ein Zahlenfeld, onInfoChanged schreibt duration_days aber nicht (Änderung geht beim Neuladen verloren) / Flutter zeigt die Dauer nur an.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-880e7fa9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:305",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:612"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-8c75c0fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:308"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-39683a30": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:316",
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:336"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-eea3b09d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:348"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-bf208af8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:355"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-3afb4fa9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:361",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2216"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-eeca698c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2203",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-258068ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:375"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-2c20cb73": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:372",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2200"
+   ],
+   "n": "Platzhalter „Adresse oder Ortsname“, Speichern beim Verlassen, leer → null."
+  },
+  "attendance/attendance/attendance.page#action-0b452705": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:387"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-da89e903": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:398",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:674"
+   ],
+   "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen ohne Bedingung, also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canEditAttendanceDescription = canEdit). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-a166edd0": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:405",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2418"
+   ],
+   "n": "Export wie Ionic; Flutter zeigt vorher zusätzlich einen Info-Toast „Excel wird erstellt…“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#modal-03ac6baf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:24"
+   ],
+   "n": "Bottom-Sheet 0.8."
+  },
+  "attendance/attendance/attendance.page#text-947253d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:164"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-009eaece": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:24"
+   ],
+   "n": "Ionic: X-Button zum Schließen / Flutter: kein Schließen-Button (nur Wischen/Griff).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-ee0c7ebc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:208"
+   ],
+   "n": "Gleiche Toolbar, Speichern bei Blur."
+  },
+  "attendance/attendance/attendance.page#text-a54233d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:224"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-aa282122": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:229"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-188edfd0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:236"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-411b5d35": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:242"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-cd29b89c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:110"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-c838c3fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:31"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-771e09e7": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:33"
+   ],
+   "n": "Ionic: „12 Name“ (Nummer ohne Präfix), „Unbekanntes Lied“ / „Unbekannter Dirigent“ / Flutter: „W12 - Name“ (Song.displayName), „Unbekanntes Werk“ / „Unbekannt“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-9a1384d5": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:41",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2079"
+   ],
+   "n": "Entfernen ohne Rückfrage wie Ionic; Flutter zeigt zusätzlich Toast „Werk entfernt“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-543c2011": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:48"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-a9aad035": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:133"
+   ],
+   "n": "Sheet wie Ionic (0.7); Flutter hat zusätzlich ein X oben.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-904249c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:128"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-bb56681b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:152"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-8e3ed7fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:300"
+   ],
+   "n": "Vollbild-Seite."
+  },
+  "attendance/attendance/attendance.page#text-bbc3b99a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:318"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-ae2384c0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:321"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-3ee5c084": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343"
+   ],
+   "n": "Suche über „Präfix+Nummer Name“."
+  },
+  "attendance/attendance/attendance.page#text-5c344678": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:352"
+   ],
+   "n": "Ionic: nur bei Suchbegriff ohne Treffer / Flutter: auch ohne Suchbegriff, wenn keine Werke existieren.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-c44054d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:360"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-2eb6811a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:361"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-2a3cbef9": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:160"
+   ],
+   "n": "Aktive Dirigenten + „Anderer Dirigent“, Vorauswahl erster aktiver Dirigent."
+  },
+  "attendance/attendance/attendance.page#field-4babf8fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:198"
+   ],
+   "n": "Name des anderen Dirigenten (Flutter direkt inline, siehe alert-aadedcba)."
+  },
+  "attendance/attendance/attendance.page#action-8beaeeab": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:216"
+   ],
+   "n": "Ionic: „Hinzufügen“, immer tippbar / Flutter: „Werk(e) hinzufügen“, deaktiviert bis Werk und Dirigent gewählt.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-8f5d1834": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:46",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:608"
+   ],
+   "n": "Sichtbar für Nicht-Helfer bzw. Helfer mit checklist_view und nur mit Einträgen."
+  },
+  "attendance/attendance/attendance.page#text-4e772282": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:52"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-ea675320": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:107",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1497"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-ed6ba539": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:108"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-be8be344": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:117",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1712"
+   ],
+   "n": "Ionic: „in 2 Tagen · 01.03.2026 18:00 Uhr“ (relativ · absolut) / Flutter: nur die relative Angabe, absolutes Fälligkeitsdatum fehlt.",
+   "sev": "mittel"
+  },
+  "attendance/attendance/attendance.page#action-0a51d6bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:89"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-2f4b32ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:137"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-a90978d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:100",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:705"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-da5331f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:102"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-e4ed7554": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:84"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-92340212": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:110"
+   ],
+   "n": "Deaktiviert bei 1, nur für Admin/Verantwortliche (isTeamLeader)."
+  },
+  "attendance/attendance/attendance.page#text-fc5e0c8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:115"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-a8da4198": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:116"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-da1403f3": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:129"
+   ],
+   "n": "Ionic: Avatar (pa.img) vor dem Namen / Flutter: ohne Avatar.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-893be114": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:130"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-f9480eb0": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:134"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-c4e7782d": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:139"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-0c17035f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:147",
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:153"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-fb46ceed": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:156"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-51ebf56b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:161"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-d7c6dece": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:171"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-4210b23c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:177"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-da1403f3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:181"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-82619b7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:183"
+   ],
+   "n": "Direktes Einteilen (anwesende Person sofort bestätigt) wie Ionic assignDuty."
+  },
+  "attendance/attendance/attendance.page#text-7b36322f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:189"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-da1403f3-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:193"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-82619b7c-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:195"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-68ca5cdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:201"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-da1403f3-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:205"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-592be266": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:206",
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:38"
+   ],
+   "n": "Flutter besser: Helfer ohne Notiz-Recht sehen „Notiz hinzugefügt“ statt des Grundes / Ionic zeigt pa.notes hier unmaskiert.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-944ee066": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_staffing_section.dart:211"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-25ce998f": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:116",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:712"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-4c355ed6": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:24"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-5baa85b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:26"
+   ],
+   "n": "inkl. „geändert am …“ nach Freigabe."
+  },
+  "attendance/attendance/attendance.page#text-d57576ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:35"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-94989341": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:120"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-d6bad509": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:134"
+   ],
+   "n": "Nur Admin/Verantwortliche; Ziel /settings/protocol/:id (siehe nav-eec13fdd)."
+  },
+  "attendance/attendance/attendance.page#action-1728cada": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:144"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-7145cf86": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:154"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-faee518d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:163"
+   ],
+   "n": "Icon, Durchstreichen, „Niemand zugewiesen“, „· fällig dd.MM.“, Statuslabel; Tap → /settings/tasks/:id."
+  },
+  "attendance/attendance/attendance.page#text-1956196d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:216",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:716"
+   ],
+   "n": "Für Beobachter ausgeblendet wie Ionic."
+  },
+  "attendance/attendance/attendance.page#action-33a93547": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:226"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-39e7db32": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:98"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-1ffb6841": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+   ],
+   "n": "Ionic: „19:00 Uhr“ als Badge / Flutter: graue Textnotiz.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-0c508800": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:150",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:161",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:239"
+   ],
+   "n": "Tap auf TOP öffnet das Thema (nur Leitung) wie Ionic. Ionic: list-circle-Icon vor TOP-Feldern, Minuten als Badge / Flutter: kein Icon, Minuten als graue Notiz.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-e7f02a78-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-1ffb6841-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+   ],
+   "n": "Ionic: Uhrzeit als Badge / Flutter: graue Textnotiz.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#action-292b5b5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:198",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:243"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-525fcc66": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:244"
+   ],
+   "n": "Öffnet den Editor als Seite statt Modal."
+  },
+  "attendance/attendance/attendance.page#action-f16184a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:249"
+   ],
+   "n": "Inhalt des Sheets siehe actionsheet-19467990."
+  },
+  "attendance/attendance/attendance.page#action-292b5b5a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:221"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-2ffbbc70": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:222"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-7001ac88": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1472",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:737"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-346c2e34": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1475"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-5ca67a7d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1486"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-89b498de": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_grid.dart:194",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_grid.dart:209"
+   ],
+   "n": "Sticky, „Gruppe (x/y)“ mit Anwesend/Verspätet/Verspätet entsch."
+  },
+  "attendance/attendance/attendance.page#action-8c2a7393": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:91"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-2ea27ba4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:109"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-d9253f57": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:116"
+   ],
+   "n": "Ionic: Notiz einzeilig (abgeschnitten) / Flutter: bis zu 2 Zeilen.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-c40504a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:600"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-07fede6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:120",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2218"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-22c2052b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:592"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-69c39f7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:138",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:283",
+    "lib/features/attendance/presentation/widgets/attendance_detail/status_chip.dart:43"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-832872e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:185",
+    "lib/features/attendance/presentation/widgets/attendance_detail/status_chip.dart:58"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-8c2a7393-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:91"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-c8020ca3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:158"
+   ],
+   "n": "Voller Wisch öffnet das Notiz-Sheet."
+  },
+  "attendance/attendance/attendance.page#action-7fa2d073": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:167"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-2a819fd1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:173"
+   ]
+  },
+  "attendance/attendance/attendance.page#modal-80e7e739": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:72",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:77"
+   ],
+   "n": "Bottom-Sheet 0.8."
+  },
+  "attendance/attendance/attendance.page#text-8a34dabe": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:157"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-7ee9567b": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:77"
+   ],
+   "n": "Ionic: X-Button zum Schließen / Flutter: kein Schließen-Button (nur Wischen/Griff).",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-eec80d76": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/attendance_add_persons.dart:32"
+   ],
+   "n": "Ionic: Sheet öffnet sofort mit Spinner „Lade Personen...“ / Flutter: lädt vor dem Öffnen, kein Ladehinweis.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-860f54c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:166"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-ba04e59c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:176"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-4e8f7d2c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:176"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-b5b11f80": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:115"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-dd2e2f27": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:180",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:187"
+   ],
+   "n": "Flutter besser: „Andere Personen“ ist aufgeklappt, wenn es keine passenden Personen gibt / Ionic: immer eingeklappt.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-820294e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:182"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-b5b11f80-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:188"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-e24264a7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:200",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:63"
+   ],
+   "n": "„Personen auswählen“ (deaktiviert) bzw. „n Personen hinzufügen“; Status nach Typ/Schicht wie Ionic."
+  },
+  "attendance/attendance/attendance.page#action-84a45123": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:456",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:800"
+   ],
+   "n": "Flutter besser: iOS-FAB (Ablaufplan bearbeiten) fehlt für Beobachter / Ionic zeigt ihn allen Rollen, obwohl Beobachter den Ablaufplan-Bereich nicht sehen.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#modal-2816ad2c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+   ],
+   "n": "Bottom-Sheet (Ionic 0.85); bei nur einem Feld siehe alert-9b3e485d."
+  },
+  "attendance/attendance/attendance.page#text-7abb2645": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:389"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-33556934": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:389"
+   ],
+   "n": "Ionic: X-Icon (close-outline) / Flutter: Textbutton „Abbrechen“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#field-a9cd06ca": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:361"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-79b0837f": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:316"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-e98b30bf": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:316"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-bbe33afa": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:322"
+   ]
+  },
+  "attendance/attendance/attendance.page#text-79b0837f-2": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:336"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-8700fc49": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"
+   ]
+  },
+  "attendance/attendance/attendance.page#field-b12f8242": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"
+   ]
+  },
+  "attendance/attendance/attendance.page#action-5fb9b753": {
+   "s": "diff",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:408",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2263"
+   ],
+   "n": "Speichern (Merge in registration_answers, offline-fähig) wie Ionic; Flutter zeigt zusätzlich Toast „Anmeldefelder gespeichert“.",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/status-info/status-info.component#logic-2fc18c9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:34",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:50",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:75",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:88",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2502"
+   ],
+   "n": "Gleiche Zählung (alle Personenzeilen des Termins, nur Helfer-Gruppe, nicht Such-/Statusfilter), gleiche Reihenfolge Anwesend/Entschuldigt/Verspätet/Verspätet (entschuldigt)/Abwesend/Neutral, nur count>0, gleiche Farben; Sheet initial 0.5, max 0.75 wie Ionic-Breakpoints"
+  },
+  "attendance/attendance/status-info/status-info.component#text-ea603485": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:153",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:157"
+   ]
+  },
+  "attendance/attendance/status-info/status-info.component#action-016eacc4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:158",
+    "lib/shared/widgets/adaptive/app_toolbar.dart:232"
+   ]
+  },
+  "attendance/attendance/status-info/status-info.component#text-a19daaec": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:171"
+   ]
+  },
+  "attendance/attendance/status-info/status-info.component#text-cca832e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:105",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:192"
+   ]
+  },
+  "attendance/attendance/status-info/status-info.component#text-6b98b45c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:109"
+   ]
+  },
+  "attendance/attendance/status-info/status-info.component#text-3a4803bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:112"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#logic-535f81f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:41",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:52",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:73",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:110",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:161",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:165",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:196",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:248",
+    "lib/data/repositories/auto_message_repository.dart:31",
+    "lib/data/repositories/auto_message_repository.dart:206"
+   ],
+   "n": "isManager (Admin/Verantwortlich), started, unexcused (abwesend, nicht ausgetreten), pending, Laden (Regeln/Runs/Rückmeldungen, gleiche Tabellen, Flutter zusätzlich tenantId-Filter), Regelfilter (type_ids, enabled/enabled_at oder Run), sendAt = Ende + delay, startOf/endOf, suspend/unsuspend (gleiche Insert-/Delete-Spalten), decide über Edge Function attendance-response, writeUnexcused – alles gleich"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-68e701d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:175"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-14f8cca5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:184"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#nav-e5389e36": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:190",
+    "lib/core/router/app_router.dart:931"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#nav-bd2317ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:192",
+    "lib/core/router/app_router.dart:1013"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#alert-ca65276f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:204"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-6d42c5cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:235"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#toast-cd2bb0ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:240"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#modal-0f458f28": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:79",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:23"
+   ],
+   "n": "Vollbild-Compose mit festen Empfängern (person_id), attendanceId, allowResponses, Empfänger-Label, Titel „Wir haben euch vermisst“ und Text mit termin/datum/instanz – wie Ionic"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-f9dc6cea": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:291"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-40b5ed17": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:302"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-cbe9ec72": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:295"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-552f8f68": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:303"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-5b92afdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:296"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-38f24a5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:282",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:304"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-bdda8e46": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:297"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-9a24a550": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:306"
+   ],
+   "n": "Randfall: leerer created_by_name zeigt in Ionic „Unbekannt“, in Flutter (nur bei null) „Ausgesetzt von “ – praktisch nie"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-604d5e9c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:299"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-4bfd5861": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:298"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-32eb1cf7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:312"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-4fdc1969": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:314"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-beffd5ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:316"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-bb9383cc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:322"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-5dd3621d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:442"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-71044245": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:424"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-241dd21d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:425",
+    "lib/features/messages/presentation/auto_message_texts.dart:68"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-4325a30d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:454"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#action-ee066e4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:461"
+   ]
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#text-7f432be1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:476",
+    "lib/features/messages/presentation/auto_message_texts.dart:76"
+   ]
+  }
+ },
+ "extra": [
+  {
+   "unit": "attendance/attendance/attendance.page",
+   "title": "history.visible-Abgleich fehlt",
+   "n": "Ionic: onInfoChanged setzt bei jedem Speichern von Info/Notizen/Zeiten/Frist alle Werke-Einträge des Termins auf visible = save_in_history, wenn sie abweichen / Flutter: kein Abgleich.",
+   "sev": "niedrig",
+   "ionic": "src/app/attendance/attendance/attendance.page.ts:1521",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2280"
+   ]
+  },
+  {
+   "unit": "attendance/attendance/attendance.page",
+   "title": "Sortierung „Person hinzufügen“",
+   "n": "Ionic: Nachname/Vorname mit localeCompare (Umlaute/Groß-klein sprachrichtig) / Flutter: String.compareTo (Codepunkte, „Ä…“ und kleingeschriebene Namen landen hinten).",
+   "sev": "niedrig",
+   "ionic": "src/app/attendance/attendance/attendance.page.ts:2421",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:56"
+   ]
+  },
+  {
+   "unit": "attendance/attendance/attendance.page",
+   "title": "Helfer-Gruppenrecht bei Ladefehler",
+   "n": "Flutter besser: Ionic zeigt einem Helfer bei Fehler beim Laden von Profil/Berechtigung die ungefilterte Liste aller Gruppen / Flutter zeigt dann niemanden (SOL_FIX2).",
+   "sev": "niedrig",
+   "ionic": "src/app/attendance/attendance/attendance.page.ts:425",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:569",
+    "lib/core/providers/role_permission_providers.dart:110"
+   ]
+  }
+ ]
+}

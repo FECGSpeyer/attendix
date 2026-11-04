@@ -402,7 +402,8 @@ const scanTs = (file) => {
         });
       } else if ((last === 'create' && /loading(Controller|Ctrl)\b/i.test(target)) || calleeText === 'Utils.getLoadingElement') {
         const p = last === 'create' ? objProps(sf, arg0) : null;
-        push('loading', n, { message: textField(sf, p ? p.message : arg0) });
+        // Utils.getLoadingElement(duration = 3000, message?)
+        push('loading', n, { message: textField(sf, p ? p.message : n.arguments[1]), duration: p?.duration ? nodeText(sf, p.duration) : (arg0 ? nodeText(sf, arg0) : '3000') });
       }
       // ---- navigation
       else if (/^(navigate|navigateByUrl)$/.test(last) && /router/i.test(target)) {

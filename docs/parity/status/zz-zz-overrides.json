@@ -1,0 +1,44 @@
+{
+ "batch": "zz-zz-overrides",
+ "note": "Korrekturen an zusätzlichen Befunden der ersten Prüfung nach der zweiten Prüfung (Duplikate, widerlegte Annahmen).",
+ "items": {},
+ "extra": [],
+ "extraOverride": [
+  {
+   "unit": "app-routing.module",
+   "title": "Beobachter kann Termin-Detail nicht öffnen",
+   "sev": "niedrig",
+   "why": "Beobachter erreichen /tabs/attendance/:id in Ionic nur per eingetippter URL (Liste, Themen-Tab und Nachrichten zeigen den Einstieg nur anderen Rollen); siehe zz-verify-app"
+  },
+  {
+   "unit": "attendance/att-list/att-list.page",
+   "title": "Ablaufplan-Viewer aus der Liste unvollständig",
+   "drop": true,
+   "why": "Duplikat von modal-c5dfef61 / modal-66d0050c"
+  },
+  {
+   "unit": "attendance/att-list/att-list.page",
+   "title": "Info-Sheet beim ersten Öffnen nur Spinner",
+   "drop": true,
+   "why": "Duplikat von modal-f5836528"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Ablaufplan ohne weitere Tagespläne",
+   "drop": true,
+   "why": "Duplikat von modal-ef7b9f1b und plan-viewer-Befund ‚Weitere Ablaufpläne fehlen im Viewer‘"
+  },
+  {
+   "unit": "services/user-registration/user-registration.service",
+   "title": "Zusammenführen: Rolle Verantwortlich statt Spieler",
+   "drop": true,
+   "why": "Duplikat von services/db.service ‚Zusammenführen: Rolle des übernommenen Kontos‘"
+  },
+  {
+   "unit": "tasks/my-tasks/my-tasks.component",
+   "title": "Karte aktualisiert sich",
+   "drop": true,
+   "why": "widerlegt: Ionic lädt die Karte bei jeder Rückkehr neu; ersetzt durch Befund aus zz-verify-b34"
+  }
+ ]
+}

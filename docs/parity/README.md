@@ -12,8 +12,9 @@ Beta-Seiten zählen nicht.
 | 1. Soll-Liste | `tool/parity/extract_ionic.mjs` | `ionic-inventory.json` |
 | 2. Prüfpakete | `tool/parity/parity.mjs batches` | `batches.json` |
 | 3. Nachweis je Punkt | Review nach `tool/parity/review-brief.md` | `status/<paket>.json` |
-| 4. Gegenprüfung | zweiter, unabhängiger Durchgang | `status/zz-verify-*.json` |
-| 5. Bericht | `tool/parity/parity.mjs report` | `summary.md`, `tracker-data.json` |
+| 4. Gegenprüfung | `parity.mjs verify-slices` + `tool/parity/verify-brief.md` | `status/zz-verify-*.json` |
+| 5. Bericht | `tool/parity/parity.mjs report` | `summary.md`, `tracker-data.json`, Tracker-Seite |
+| 5b. Arbeitslisten | `tool/parity/parity.mjs fixlists` | `fixes/<bereich>.md` |
 | 6. Bildvergleich | `tool/parity/screens/compare.mjs` (Mac) | Bildpaare je Rolle und Seite |
 | 7. Gerätetests | `device-checklist.md` | von Hand auf iPhone/Android |
 
@@ -48,9 +49,25 @@ Berechnungen) stehen unter `extra`.
 
 ### 4. Gegenprüfung
 
-Ein zweiter Durchgang prüft unabhängig alle `diff`/`missing`/`unclear` und eine
-Stichprobe der `ok`-Einträge. Seine Dateien heißen `zz-verify-*.json` und
-überschreiben beim Bericht die Erstbewertung.
+`node tool/parity/parity.mjs verify-slices <dir> [n] [pakete]` zieht je
+fertigem Paket die Stichprobe für einen zweiten, unabhängigen Durchgang nach
+`tool/parity/verify-brief.md`: jeder Datenbank-Schreibzugriff, jedes
+`missing`/`unclear`, jedes `diff` mit Schwere hoch/mittel, 20 % der
+`niedrig`-Abweichungen, 10 % der `na` und 5 % der `ok`. Die Auswahl hängt nur
+an der Element-ID (Hash) und ist damit wiederholbar. Die Ergebnisse heißen
+`zz-verify-*.json`, tragen `v: bestätigt|korrigiert` und überschreiben beim
+Bericht die Erstbewertung. Zusätzliche Befunde, die sich als Duplikat oder
+widerlegt herausstellen, werden in `zz-zz-overrides.json` (`extraOverride`)
+zurückgenommen oder umgestuft.
+
+### 5. Bericht, Tracker und Arbeitslisten
+
+`node tool/parity/parity.mjs report` schreibt `summary.md` und die kompakte
+`tracker-data.json` (nicht versioniert, wird mit veröffentlicht) für die Tracker-Seite (`tracker/index.html`, als
+Artifact veröffentlicht; dort entscheidet Leon je Abweichung „Angleichen“,
+„So lassen“ oder „Später klären“). `node tool/parity/parity.mjs fixlists`
+schreibt je Bereich eine Arbeitsliste `fixes/<bereich>.md`: hoch/mittel zum
+Angleichen, „Flutter besser“-Fälle zur Entscheidung, Kleinigkeiten.
 
 ### 6. Bildvergleich (auf dem Mac)
 

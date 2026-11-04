@@ -1,0 +1,1038 @@
+{
+  "batch": "b27-settings-other",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "settings/delete-account/delete-account.page#logic-92460c6b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:23-33",
+        "lib/features/settings/presentation/pages/delete_account_page.dart:61-97",
+        "lib/core/providers/legal_providers.dart:37-50"
+      ],
+      "n": "Code (6 Zeichen aus ABCDEFGHJKMNPQRSTUVWXYZ23456789, neu pro Öffnen), Prüfung trim/upper, Tracking AccountDeleted vor dem Löschen, Edge Function delete-account, Logout, Tenant-State leeren, /login – identisch. Abweichungen nur in loading/toast-Items."
+    },
+    "settings/delete-account/delete-account.page#alert-36591242": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:64-81"
+      ]
+    },
+    "settings/delete-account/delete-account.page#loading-4ca29b26": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:205-223"
+      ],
+      "n": "Ionic: blockierendes Overlay „Konto wird gelöscht...“ (60 s) / Flutter: nur Spinner + Text „Konto wird gelöscht...“ im Button, Seite bleibt bedienbar (Zurück möglich).",
+      "sev": "niedrig"
+    },
+    "settings/delete-account/delete-account.page#toast-a565e9ab": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:87"
+      ],
+      "n": "Dauer: Ionic 4 s / Flutter Standarddauer (md 3 s)."
+    },
+    "settings/delete-account/delete-account.page#toast-2e5d1ac6": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:89-95",
+        "lib/data/repositories/account_repository.dart:27-42"
+      ],
+      "n": "Text „Fehler beim Löschen: {error}“ gleich, {error} abweichend: Ionic error.message („Edge Function returned a non-2xx status code“) / Flutter toString der FunctionException („FunctionException(status: …, details: …, reasonPhrase: …)“). Dauer 5 s vs Standard.",
+      "sev": "niedrig"
+    },
+    "settings/delete-account/delete-account.page#nav-0bbc4661": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:109-113"
+      ],
+      "n": "Flutter maybePop → /settings (Elternroute)."
+    },
+    "settings/delete-account/delete-account.page#action-505f9b80": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:109-113"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-682c5b75": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:114"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-aad24fd7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:134-140"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-722c0cdf": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:144-153"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-6b2ef742": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:144-153"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-875bf378": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:144-153"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-480e3e56": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:144-153"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-2ed2dc08": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:161-165"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-a1c35d2c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:167-188"
+      ]
+    },
+    "settings/delete-account/delete-account.page#text-fa55108c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:190-192"
+      ]
+    },
+    "settings/delete-account/delete-account.page#field-637465b8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:190-201"
+      ]
+    },
+    "settings/delete-account/delete-account.page#action-ffefb702": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/delete_account_page.dart:205-223"
+      ],
+      "n": "Zusätzlich während des Löschens deaktiviert."
+    },
+    "settings/files/files-move-modal/files-move-modal.component#logic-b0901de7": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:85-183"
+      ],
+      "n": "Baum bis currentPath aufklappen, Lazy-Load der Unterordner, blockierte Ziele (verschobene Ordner + Inhalt), „Aktueller Ordner“, canConfirm, Ordner anlegen + neu angelegten auswählen – gleich. Abweichung: Sortierung der Ordner (extra).",
+      "sev": "niedrig"
+    },
+    "settings/files/files-move-modal/files-move-modal.component#alert-4779f093": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:161-169"
+      ],
+      "n": "Titel „Ordner erstellen“, Platzhalter „Ordnername“, Abbrechen/Erstellen gleich. Leerer Name: Ionic lässt den Dialog offen (handler return false) / Flutter schließt ihn ohne Aktion.",
+      "sev": "niedrig"
+    },
+    "settings/files/files-move-modal/files-move-modal.component#toast-95cf4cc8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:178-181"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#toast-a0875994": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:110-114"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-3380b566": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:198-204"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#text-04b63e5c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:205"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-2eba90ce": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:207-213"
+      ],
+      "n": "Icon create_new_folder statt folder-open-outline."
+    },
+    "settings/files/files-move-modal/files-move-modal.component#text-66958508": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:218-224"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-473c19fb": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:273-350"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-1bd623b6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:279-316"
+      ]
+    },
+    "settings/files/files-move-modal/files-move-modal.component#action-c0b95fe6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:259-265"
+      ]
+    },
+    "settings/files/files.page#logic-003f54cc": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:209-286",
+        "lib/features/settings/presentation/pages/files_page.dart:595-648",
+        "lib/features/settings/presentation/pages/files_page.dart:775-860"
+      ],
+      "n": "Laden, Suche (typ:/datum:), Speicherprüfung/-anfrage, Upload mit Duplikat-Abfrage und Fortschritt, Mehrfachauswahl, Verschieben (Überspringen vorhandener Namen), Löschen, Direktlink ?path/&open entsprechen Ionic. Abweichungen in den Items; zusätzlich alte Liste während des Ladens (extra).",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-f69d0e8d": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1128-1134"
+      ],
+      "n": "Ionic: Toast (danger) „Du hast keinen Zugriff auf Dateien.“ + zurück / Flutter: kein Toast, derselbe Text als Seiteninhalt.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#nav-c401b9ed": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1128-1134",
+        "lib/features/settings/presentation/pages/files_page.dart:209-210"
+      ],
+      "n": "Ionic: navCtrl.back() ohne Zugriff / Flutter bleibt auf der Seite (Hinweistext, Menü ausgeblendet); _init lädt trotzdem die Einträge (ggf. Fehler-Toast).",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-e5e719e1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:213-216"
+      ]
+    },
+    "settings/files/files.page#effect-c39ff4df": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:426-438"
+      ],
+      "n": "Ionic: zuerst navigator.share (System-Teilen-Dialog, wo verfügbar, z. B. iOS/macOS-Safari, Chrome Windows), Zwischenablage nur als Fallback / Flutter: kopiert immer zuerst in die Zwischenablage, Share.share nur wenn Kopieren fehlschlägt.",
+      "sev": "mittel"
+    },
+    "settings/files/files.page#effect-c48b9ee3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:429"
+      ]
+    },
+    "settings/files/files.page#toast-33795926": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:430"
+      ]
+    },
+    "settings/files/files.page#toast-767d441c": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:431-436"
+      ],
+      "n": "Ionic: Toast „Link: {url}“ (medium), wenn die Zwischenablage fehlschlägt / Flutter öffnet dann Share.share; Toast (Info) erst, wenn auch das fehlschlägt.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-f5e032f8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:281-282"
+      ]
+    },
+    "settings/files/files.page#toast-575aa0a0": {
+      "s": "na",
+      "n": "toter Code: triggerUpload wird nur aus dem Menüpunkt unter @if (canEditEntries) aufgerufen (files.page.html:41-42); canEditEntries wird nur in ngOnInit gesetzt (files.page.ts:51). Flutter hat denselben Guard (files_page.dart:776-779)."
+    },
+    "settings/files/files.page#alert-157216a5": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:669-708",
+        "lib/data/repositories/feedback_repository.dart:24-35"
+      ],
+      "n": "Titel, Hinweis, Textfeld „Wie viel Speicher braucht ihr ungefähr? (optional)“, Abbrechen/Senden und Nachrichtentext gleich. DB-Insert questions: Ionic phone '' / Flutter phone null (kein sichtbarer Effekt).",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-e8156c86": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:709-711"
+      ]
+    },
+    "settings/files/files.page#toast-d3bd6d1e": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:712-715"
+      ],
+      "n": "Ionic: {error} = error.message (+ Service-Toast „Fehler beim Senden der Frage“) / Flutter: {error} = toString der RepositoryException („RepositoryException: … (operation: sendQuestion…)“), kein Service-Toast.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-a1bcde4f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:374-378"
+      ]
+    },
+    "settings/files/files.page#toast-4647060a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:347-353"
+      ]
+    },
+    "settings/files/files.page#alert-b07996d4": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:719-734"
+      ]
+    },
+    "settings/files/files.page#alert-2f654766": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:758-771"
+      ]
+    },
+    "settings/files/files.page#loading-f1fabfb1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:800-847"
+      ],
+      "n": "Blockierender Dialog mit Spinner und Text „Upload n/N (p%)“ + Dateiname."
+    },
+    "settings/files/files.page#toast-ce962bb5": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:851-853"
+      ]
+    },
+    "settings/files/files.page#toast-a9d4ec9d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:854-855"
+      ]
+    },
+    "settings/files/files.page#toast-4a3fa27c": {
+      "s": "na",
+      "n": "toter Code: jede ausgewählte Datei erhöht success, failed oder skipped, files.length > 0 ist vorher geprüft (files.page.ts:689-760) → else-Zweig nie erreichbar. Flutter identisch (files_page.dart:856-858)."
+    },
+    "settings/files/files.page#toast-e2156c4e": {
+      "s": "na",
+      "n": "toter Code: createFolder wird nur aus dem Menüpunkt unter @if (canEditEntries) aufgerufen (files.page.html:41-46); canEditEntries nur in ngOnInit gesetzt. Flutter hat denselben Guard (files_page.dart:442-445)."
+    },
+    "settings/files/files.page#alert-e8c9b56a": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:446-452"
+      ],
+      "n": "Titel „Ordner erstellen“, Platzhalter „Ordnername“, Abbrechen/Erstellen gleich. Leerer Name: Ionic lässt den Dialog offen / Flutter schließt ihn ohne Aktion.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-7acc9af8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:455"
+      ]
+    },
+    "settings/files/files.page#toast-571055f7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:457-458"
+      ]
+    },
+    "settings/files/files.page#loading-82305d64": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:403-414"
+      ],
+      "n": "Ionic: blockierendes Lade-Overlay während des Downloads / Flutter: kein Ladeindikator.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#effect-a54e7eb4": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:407-410",
+        "lib/core/services/native/native_file_service.dart:142-162"
+      ],
+      "n": "Nativ gleich (Cache + System-Viewer). Web: Ionic lädt den Blob herunter (Desktop <a download>, mobile Browser: Teilen-Dialog mit Datei) / Flutter öffnet die signierte URL mit ?download= im Browser (launchExternal).",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-d3727a66": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:411-412"
+      ]
+    },
+    "settings/files/files.page#toast-f38f08f1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:388-391"
+      ],
+      "n": "Praktisch nur bei Race erreichbar: Menüpunkt ist ohne Chat-ID ausgeblendet (beide)."
+    },
+    "settings/files/files.page#loading-d65a6193": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:393"
+      ],
+      "n": "Ionic: blockierendes Overlay „Datei wird per Telegram gesendet...“ / Flutter: nur Info-Toast mit diesem Text, nicht blockierend.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-030d7a9b": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:394-400",
+        "lib/core/services/telegram_service.dart:357-366"
+      ],
+      "n": "Fehler beim Signieren der URL gleich. Fehler der Edge Function send-document: Ionic (TelegramService) „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter „Telegram-Versand fehlgeschlagen: {error}“.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-c04ec50c": {
+      "s": "na",
+      "n": "toter Code: Umbenennen/Verschieben/Löschen werden nur unter @if (canEditEntries) gerendert (files.page.html:234-251); canEditEntries ändert sich nach ngOnInit nicht."
+    },
+    "settings/files/files.page#toast-128218bd": {
+      "s": "na",
+      "n": "toter Code: deleteEntry wird nur über handleEntryAction nach der canEditEntries-Prüfung bzw. aus dem nur bei canEditEntries sichtbaren Menüpunkt aufgerufen (files.page.ts:858, html:234-251). Flutter hat keinen Aufruf."
+    },
+    "settings/files/files.page#alert-1b4d7bd6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:652-658"
+      ]
+    },
+    "settings/files/files.page#loading-cdff1a47": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:659-666"
+      ],
+      "n": "Ionic: blockierendes Lade-Overlay beim Löschen eines Eintrags / Flutter: kein Ladeindikator.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-354386ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:662"
+      ]
+    },
+    "settings/files/files.page#toast-f1cb9a95": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:665"
+      ]
+    },
+    "settings/files/files.page#toast-1a9b9314": {
+      "s": "na",
+      "n": "toter Code: renameEntry nur über handleEntryAction aus dem Menüpunkt unter @if (canEditEntries) erreichbar (files.page.html:234-237)."
+    },
+    "settings/files/files.page#alert-3b9b2763": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:464-471"
+      ],
+      "n": "Titel „Ordner/Datei umbenennen“, Feld mit aktuellem Namen, Platzhalter „Neuer Name“, Abbrechen/Speichern gleich. Leerer Name: Ionic lässt den Dialog offen / Flutter schließt ihn ohne Aktion.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#loading-4e44e24e": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:471-478"
+      ],
+      "n": "Ionic: blockierendes Lade-Overlay beim Umbenennen / Flutter: kein Ladeindikator.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#toast-1d01aef6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:474"
+      ]
+    },
+    "settings/files/files.page#toast-5dc634c6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:477"
+      ]
+    },
+    "settings/files/files.page#toast-f9f7cf03": {
+      "s": "na",
+      "n": "toter Code: startSelection wird nur von Buttons/Menüpunkten unter @if (canEditEntries) aufgerufen (files.page.html:25-27, 41-54, 234-246)."
+    },
+    "settings/files/files.page#alert-7aee8034": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:563-569"
+      ]
+    },
+    "settings/files/files.page#loading-9a00fe11": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:572-580",
+        "lib/features/settings/presentation/pages/files_page.dart:484-496"
+      ]
+    },
+    "settings/files/files.page#toast-97edb5ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:583-584"
+      ]
+    },
+    "settings/files/files.page#toast-d5528849": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:585-586"
+      ]
+    },
+    "settings/files/files.page#toast-8aa45268": {
+      "s": "na",
+      "n": "toter Code: moveEntries nur aus dem Menüpunkt unter @if (canEditEntries) oder im Auswahlmodus (nur nach erfolgreichem startSelection) erreichbar."
+    },
+    "settings/files/files.page#modal-b8bd9613": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:601-606",
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:20-38"
+      ],
+      "n": "Übergebene Daten (Einträge, aktueller Ordner, Tenant über gebundenes Repository) gleich. Ionic: Vollbild-Modal (ohne presentingElement) / Flutter iOS: Karten-Modal (per Wischen schließbar); md wie Ionic.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#loading-90e0e43b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:615-630"
+      ]
+    },
+    "settings/files/files.page#toast-2e9bf690": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:631-633"
+      ]
+    },
+    "settings/files/files.page#toast-264882fe": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:637-638"
+      ]
+    },
+    "settings/files/files.page#toast-e09b9e9c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:639-640"
+      ]
+    },
+    "settings/files/files.page#toast-1b899539": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:641-642"
+      ]
+    },
+    "settings/files/files.page#toast-3992cefe": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:643-644"
+      ]
+    },
+    "settings/files/files.page#nav-ce9fcd43": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1012-1029"
+      ],
+      "n": "Flutter: pop bzw. go('/settings')."
+    },
+    "settings/files/files.page#action-ac60d4db": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:993-997"
+      ]
+    },
+    "settings/files/files.page#text-6c970750": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:998"
+      ]
+    },
+    "settings/files/files.page#action-a5bf7664": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1000-1005"
+      ]
+    },
+    "settings/files/files.page#action-3c274606": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1012-1029"
+      ]
+    },
+    "settings/files/files.page#text-55b1e283": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1009"
+      ]
+    },
+    "settings/files/files.page#action-dd0fc07d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1035-1040"
+      ]
+    },
+    "settings/files/files.page#action-26c5be9a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1041-1043"
+      ]
+    },
+    "settings/files/files.page#popover-7cf1e4d9": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1041-1095"
+      ],
+      "n": "PopupMenuButton statt ion-popover, gleicher Inhalt und Reihenfolge."
+    },
+    "settings/files/files.page#action-54e62c3a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1046-1049"
+      ]
+    },
+    "settings/files/files.page#action-6c4bf952": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1050-1053"
+      ]
+    },
+    "settings/files/files.page#action-5f30ac55": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1055-1059"
+      ]
+    },
+    "settings/files/files.page#action-2b16d7a4": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1061-1068"
+      ],
+      "n": "Text und Bedingung gleich; Teilen-Verhalten siehe effect-c39ff4df."
+    },
+    "settings/files/files.page#text-7ded9a32": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1070-1073"
+      ]
+    },
+    "settings/files/files.page#text-c86920a6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:255-266",
+        "lib/features/settings/presentation/pages/files_page.dart:1072"
+      ]
+    },
+    "settings/files/files.page#action-42b3d799": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:146-149",
+        "lib/features/settings/presentation/pages/files_page.dart:1074-1077"
+      ],
+      "n": "Ionic: Namenssortierung mit localeCompare(Sprache, sensitivity base) / Flutter: toLowerCase().compareTo (Codepoint: Umlaute/Akzente hinter z). Gilt auch für die Standardsortierung beim Laden.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#action-54fc9b6c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1078-1081"
+      ]
+    },
+    "settings/files/files.page#action-4c8c34ab": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1082-1085"
+      ]
+    },
+    "settings/files/files.page#action-d9c2fc1d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1086-1093"
+      ]
+    },
+    "settings/files/files.page#action-dec822a9": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1135-1136"
+      ]
+    },
+    "settings/files/files.page#field-23c77ab6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:783"
+      ],
+      "n": "FilePicker (Mehrfachauswahl) statt <input type=file multiple>."
+    },
+    "settings/files/files.page#action-14d154d9": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1156-1170",
+        "lib/features/settings/presentation/pages/files_page.dart:317-323"
+      ],
+      "n": "Ionic: openRoot behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#action-64a83941": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1171-1181",
+        "lib/features/settings/presentation/pages/files_page.dart:317-323"
+      ],
+      "n": "Ionic: openSegment behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#text-c3f98fef": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1189-1201"
+      ]
+    },
+    "settings/files/files.page#action-ecc09e57": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1209-1214"
+      ]
+    },
+    "settings/files/files.page#field-5bd09165": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:50-60",
+        "lib/features/settings/presentation/pages/files_page.dart:1231-1236"
+      ],
+      "n": "Ionic normalisiert per NFKD und entfernt Akzente (z. B. „cafe“ findet „Café“) / Flutter ersetzt nur ä/ö/ü/ß, Akzente werden nicht ignoriert.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#action-b50a0922": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1240-1244"
+      ]
+    },
+    "settings/files/files.page#popover-f66de769": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:869-880"
+      ],
+      "n": "Ionic: Popover am Hilfe-Button, Beispiele fett / Flutter: Alert-Dialog mit OK-Button, gleiche Texte, Fettdruck entfernt.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#text-af5c84ef": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:872"
+      ]
+    },
+    "settings/files/files.page#text-73b58f50": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:874"
+      ]
+    },
+    "settings/files/files.page#action-e5256591": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1248-1252"
+      ]
+    },
+    "settings/files/files.page#text-75644c0c": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1261-1262"
+      ]
+    },
+    "settings/files/files.page#text-6acb38db": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1265-1266"
+      ]
+    },
+    "settings/files/files.page#action-37361b16": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1294-1358",
+        "lib/features/settings/presentation/pages/files_page.dart:329-343"
+      ],
+      "n": "Anzeige (Icon/Vorschaubild, Name, Größe „· Geändert: dd.MM.yyyy, HH:mm“), Tap öffnet/zeigt/spielt bzw. wählt aus – gleich. Ionic behält beim Öffnen eines Ordners den Suchbegriff / Flutter leert ihn.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#field-5fd06a31": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1336-1345"
+      ]
+    },
+    "settings/files/files.page#action-fc7ea012": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1351-1356"
+      ]
+    },
+    "settings/files/files.page#popover-92206ccb": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:882-943"
+      ],
+      "n": "Ionic: Popover am ⋯-Button / Flutter: Action Sheet von unten mit zusätzlichem „Abbrechen“; Einträge, Reihenfolge und Bedingungen gleich.",
+      "sev": "mittel"
+    },
+    "settings/files/files.page#action-bdaec002": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:888-896",
+        "lib/features/settings/presentation/pages/files_page.dart:329-333"
+      ],
+      "n": "Texte/Icon/Effekt gleich; bei „Ordner öffnen“ behält Ionic den Suchbegriff / Flutter leert ihn.",
+      "sev": "niedrig"
+    },
+    "settings/files/files.page#action-484a5ba9": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:897-902"
+      ]
+    },
+    "settings/files/files.page#action-a4a98ab3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:903-907"
+      ],
+      "n": "Teilen-Verhalten siehe effect-c39ff4df."
+    },
+    "settings/files/files.page#action-d05fb9ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:909-914"
+      ]
+    },
+    "settings/files/files.page#action-1e396038": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:916-920"
+      ]
+    },
+    "settings/files/files.page#action-ea539710": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:921-925"
+      ]
+    },
+    "settings/files/files.page#action-331d5d6d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:927-931"
+      ]
+    },
+    "settings/files/files.page#action-0d33b3ea": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:932-937"
+      ]
+    },
+    "settings/files/files.page#modal-5e3c0523": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:345-358",
+        "lib/shared/widgets/sheets/image_viewer_sheet.dart:382-397"
+      ],
+      "n": "Vollbild-Bildbetrachter (transparente Route)."
+    },
+    "settings/files/files.page#action-65e414cc": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:357"
+      ],
+      "n": "Titel = Dateiname."
+    },
+    "settings/files/files.page#action-6d64975f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1108-1112"
+      ]
+    },
+    "settings/files/files.page#action-9231c827": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1113-1118"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#logic-1c212d0f": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:27-36",
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:61-86",
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:129-179"
+      ],
+      "n": "Auto-Zuordnung (gleich oder enthält bei >2 Zeichen, sonst erste Gruppe), Bestätigung, Übergabe je Person mit Fehlerliste, Tracking HandoverCreated, Navigation gleich. Abweichend: Reihenfolge der Zielgruppen (extra), Fehler beim Laden der Gruppen (extra).",
+      "sev": "mittel"
+    },
+    "settings/handover-detail/handover-detail.page#toast-1afd9d81": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:63-64"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#nav-eb664c37": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:65"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#alert-3ae53341": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:92-112"
+      ],
+      "n": "Ionic: Radio-Alert „Gruppe auswählen“ mit Buttons „Abbrechen“/„OK“, Übernahme erst mit OK / Flutter: Auswahldialog ohne Buttons, Tippen auf eine Gruppe übernimmt sofort (Schließen durch Tippen außerhalb).",
+      "sev": "niedrig"
+    },
+    "settings/handover-detail/handover-detail.page#alert-0f698f99": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:114-127"
+      ],
+      "n": "Titel, Text und Buttons gleich. Ionic: „Abbrechen“ mit role destructive (iOS rot) / Flutter: „Übertragen“ rot gefüllt wenn die Personen nicht in der Instanz bleiben, „Abbrechen“ neutral.",
+      "sev": "niedrig"
+    },
+    "settings/handover-detail/handover-detail.page#loading-ce2dc227": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:133",
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:190-202"
+      ],
+      "n": "Ionic: blockierendes Overlay „Personen werden übertragen...“ / Flutter: nur Spinner im FAB, kein Text, Seite bleibt bedienbar.",
+      "sev": "niedrig"
+    },
+    "settings/handover-detail/handover-detail.page#alert-266c5947": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:160-166"
+      ],
+      "n": "Flutter navigiert erst nach OK zurück."
+    },
+    "settings/handover-detail/handover-detail.page#toast-4d721504": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:167-170"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#nav-d4ac1a58": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:171"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#toast-90d445a1": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:172-175"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#nav-ccdfc4c5": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:189"
+      ],
+      "n": "Automatischer Zurück der AppBar → /settings/handover (per push geöffnet)."
+    },
+    "settings/handover-detail/handover-detail.page#action-15e4f17a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:189"
+      ],
+      "n": "Automatischer Zurück-Button der AppBar."
+    },
+    "settings/handover-detail/handover-detail.page#text-f95fbac6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:189"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#text-f95fbac6-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:209"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#text-e58425f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:210-211"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#action-05e9d214": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:216-224"
+      ]
+    },
+    "settings/handover-detail/handover-detail.page#action-dd3be56e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:190-202"
+      ],
+      "n": "FAB erst nach dem Laden der Gruppen sichtbar."
+    }
+  },
+  "extra": [
+    {
+      "unit": "settings/files/files-move-modal/files-move-modal.component",
+      "title": "Sortierung der Ordner im Baum",
+      "n": "Ionic: a.name.localeCompare(b.name) (sprachabhängig, Umlaute/Groß-Klein einsortiert) / Flutter: a.name.compareTo(b.name) (Codepoint: Großbuchstaben vor Kleinbuchstaben, Umlaute hinter z).",
+      "sev": "niedrig",
+      "ionic": "src/app/settings/files/files-move-modal/files-move-modal.component.ts:172",
+      "f": [
+        "lib/features/settings/presentation/widgets/files_move_modal.dart:103-104"
+      ]
+    },
+    {
+      "unit": "settings/files/files.page",
+      "title": "Ladeanzeige beim Ordnerwechsel",
+      "n": "Ionic: während loadEntries ersetzt ein Spinner die Liste / Flutter: Spinner nur bei leerer Liste; beim Ordnerwechsel bleibt die alte Liste sichtbar (Breadcrumb zeigt schon den neuen Ordner), bis die neue geladen ist.",
+      "sev": "niedrig",
+      "ionic": "src/app/settings/files/files.page.html:159-163",
+      "f": [
+        "lib/features/settings/presentation/pages/files_page.dart:1257-1260"
+      ]
+    },
+    {
+      "unit": "settings/handover-detail/handover-detail.page",
+      "title": "Reihenfolge der Zielgruppen",
+      "n": "Ionic: db.getGroups sortiert nach category, sort_order, name / Flutter: getTargetTenantGroups nur nach name → andere Reihenfolge im Auswahldialog, anderer Standard (erste Gruppe) ohne Namenstreffer und anderer Treffer bei mehreren Teilübereinstimmungen.",
+      "sev": "mittel",
+      "ionic": "src/app/settings/handover-detail/handover-detail.page.ts:39-56",
+      "f": [
+        "lib/data/repositories/player_repository.dart:1598-1607",
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:27-36"
+      ]
+    },
+    {
+      "unit": "settings/handover-detail/handover-detail.page",
+      "title": "Fehler beim Laden der Zielgruppen",
+      "n": "Flutter besser: Ionic ignoriert den Fehler von getGroups (data null → Laufzeitfehler, Zuordnung bleibt leer) / Flutter zeigt einen Fehler-Toast und beendet das Laden.",
+      "sev": "niedrig",
+      "ionic": "src/app/services/group/group.service.ts:18-28",
+      "f": [
+        "lib/features/settings/presentation/pages/handover_detail_page.dart:81-85"
+      ]
+    }
+  ]
+}

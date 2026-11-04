@@ -1,0 +1,199 @@
+# Fix-Paket „uebersicht“
+
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be,  (normales Design).
+Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
+
+## Angleichen (hoch/mittel): 15
+
+- [ ] **hoch** `history/history.page` `modal-0bbf542e` [history/history.page.html:93](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L93) (2. Prüfung: bestätigt)
+  Sheet (70 %) per FAB wie Ionic. Aber: _showAddDialog liest planSongsProviderHistory nur per ref.read (einzige Verwendung, nirgends gewatcht); der FutureProvider ist beim ersten Lesen AsyncLoading → songs leer → Warn-Toast 'Keine Werke gefunden', das Sheet öffnet nicht. Erst ein weiterer Tipp nach dem Laden (bzw. nach Instanzwechsel erneut) funktioniert. Ionic lädt die Werke beim Seitenstart und öffnet sofort, mit dem ersten Werk vorausgewählt (Flutter: keine Vorauswahl).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:223, lib/features/history/presentation/pages/history_page.dart:260, lib/features/history/presentation/pages/history_page.dart:280, lib/core/providers/history_providers.dart:72
+- [ ] **hoch** `stats/stats.page` [src/app/stats/stats.page.ts:306](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.ts#L306)
+  Ionic: Top 20, Anwesenheit pro Instrument, Unentschuldigte Abwesenheiten und Ø-Alter pro Instrument als horizontale Balken (indexAxis y) mit Personen-/Gruppennamen an jedem Balken / Flutter: fl_chart 0.69 BarChart ohne Drehung -> senkrechte Balken, untere Achse unbeschriftet; die Namen werden als leftTitles an den Y-Wert-Teilstrichen (data[Wert]) gezeichnet und stehen damit neben falschen Werten/Balken. Zuordnung nur per Tooltip beim Antippen.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:752, lib/features/statistics/presentation/pages/statistics_page.dart:787, lib/features/statistics/presentation/pages/statistics_page.dart:842, lib/features/statistics/presentation/pages/statistics_page.dart:877, lib/features/statistics/presentation/pages/statistics_page.dart:1025, lib/features/statistics/presentation/pages/statistics_page.dart:1060, lib/features/statistics/presentation/pages/statistics_page.dart:1117, lib/features/statistics/presentation/pages/statistics_page.dart:1153
+- [ ] **mittel** `home-dashboard/components/absences-card/absences-card.component` `modal-6daf3e85` [home-dashboard/components/absences-card/absences-card.component.ts:99](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/absences-card/absences-card.component.ts#L99) (2. Prüfung: bestätigt)
+  Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
+  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
+- [ ] **mittel** `home-dashboard/components/birthdays-card/birthdays-card.component` `modal-388a556f` [home-dashboard/components/birthdays-card/birthdays-card.component.ts:99](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/birthdays-card/birthdays-card.component.ts#L99) (2. Prüfung: bestätigt)
+  Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
+  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
+- [ ] **mittel** `home-dashboard/components/critical-persons-card/critical-persons-card.component` `modal-160799e3` [home-dashboard/components/critical-persons-card/critical-persons-card.component.ts:49](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/critical-persons-card/critical-persons-card.component.ts#L49) (2. Prüfung: bestätigt)
+  Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
+  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
+- [ ] **mittel** `home-dashboard/components/member-changes-card/member-changes-card.component` `modal-04f3c3d5` [home-dashboard/components/member-changes-card/member-changes-card.component.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/member-changes-card/member-changes-card.component.ts#L67) (2. Prüfung: bestätigt)
+  Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
+  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
+- [ ] **mittel** `home-dashboard/components/next-event-card/next-event-card.component` `modal-29087654` [home-dashboard/components/next-event-card/next-event-card.component.ts:112](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/next-event-card/next-event-card.component.ts#L112) (2. Prüfung: bestätigt)
+  Ionic: AttendancePage als Modal (isModal, iOS Karten-Modal, md Vollbild) / Flutter: context.push('/attendance/<id>') als normale Seite. Rollenbedingung (Admin, Verantwortlicher, Helfer, Stimmführer-Helfer) und Neuladen danach gleich.
+  Flutter: lib/features/dashboard/presentation/widgets/event_cards.dart:48
+- [ ] **mittel** `home-dashboard/home-dashboard.page` `nav-1c9dc137` [home-dashboard/home-dashboard.page.ts:79](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/home-dashboard.page.ts#L79) (2. Prüfung: bestätigt)
+  Ionic: nach Instanzwechsel immer Utils.getUrl(role) → Admin/Verantwortlicher/Betrachter '/tabs/player', Eltern '/tabs/parents', sonst '/tabs/signout' / Flutter: homeRouteFor → '/home-dashboard', wenn im neuen Tenant der Dashboard-Tab aktiv ist (showDashboardTab_<id>, Admin/Verantwortlicher), sonst role.defaultRoute. Admin bleibt dann auf dem Dashboard statt in 'Personen'.
+  Flutter: lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188, lib/core/utils/dashboard_logic.dart:56
+- [ ] **mittel** `home-dashboard/home-dashboard.page` `effect-e221ccc5` [home-dashboard/home-dashboard.page.ts:79](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/home-dashboard.page.ts#L79) (2. Prüfung: bestätigt)
+  Ionic: nach Instanzwechsel immer Utils.getUrl(role) → Admin/Verantwortlicher/Betrachter '/tabs/player', Eltern '/tabs/parents', sonst '/tabs/signout' / Flutter: homeRouteFor → '/home-dashboard', wenn im neuen Tenant der Dashboard-Tab aktiv ist (showDashboardTab_<id>, Admin/Verantwortlicher), sonst role.defaultRoute. Admin bleibt dann auf dem Dashboard statt in 'Personen'. (gleiches Urteil wie nav-1c9dc137)
+  Flutter: lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188, lib/core/utils/dashboard_logic.dart:56
+- [ ] **mittel** `messages/message-detail/message-detail.page` `toast-264998c7` [messages/message-detail/message-detail.page.ts:116](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/messages/message-detail/message-detail.page.ts#L116) (2. Prüfung: bestätigt)
+  Ionic: roter Toast 'Mitteilung konnte nicht geladen werden' bei jedem Ladefehler in load() (Mitteilung, Instanzwechsel, Empfängerliste, frühere Mitteilungen) / Flutter: kein Toast; Fehler der Mitteilung → zentrierter Text mit demselben Wortlaut, Fehler der Empfängerliste → stumm 0/0-Kacheln und 'Keine Personen in dieser Ansicht.', Fehler der früheren Mitteilungen → Liste fehlt stumm.
+  Flutter: lib/features/messages/presentation/pages/message_detail_page.dart:143, lib/features/messages/presentation/pages/message_detail_page.dart:252, lib/features/messages/presentation/pages/message_detail_page.dart:600
+- [ ] **mittel** `messages/message-detail/message-detail.page` [src/app/services/message/message.service.ts:46](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/message/message.service.ts#L46)
+  Ionic: getMessage ohne Instanzfilter (RLS "recipient can read messages"), die eigene Kopie bleibt auch nach Austritt lesbar (z. B. aus dem Benachrichtigungs-Feed 'alle Instanzen' oder einem Push-/E-Mail-Link) / Flutter: getMessageById filtert auf aktuelle + aktuelle Instanzen des Nutzers, sonst Ansicht 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.'
+  Flutter: lib/data/repositories/message_repository.dart:48, lib/core/providers/message_providers.dart:58
+- [ ] **mittel** `messages/message-detail/message-detail.page` [src/app/services/auto-message/auto-message.service.ts:181](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/auto-message/auto-message.service.ts#L181)
+  Ionic: loadOwnCopy lädt den Termin ohne Archiv-Filter, Mitglieder sehen Termin-Karte, Status und 'Grund nachtragen'/'Ich war doch da' auch bei archivierten Terminen / Flutter: getAttendanceInfo verwirft archivierte Termine für alle außer Admin/Verantwortliche, die Termin-Karte und die Antwort-Buttons fehlen dann (evtl. bewusst wie filterArchivedForRole).
+  Flutter: lib/data/repositories/auto_message_repository.dart:249, lib/features/messages/presentation/widgets/message_termin_section.dart:69, lib/features/messages/presentation/widgets/message_termin_section.dart:116
+- [ ] **mittel** `notifications/notifications.page` `field-05b9f833` [notifications/notifications.page.html:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.html#L53) (2. Prüfung: bestätigt)
+  Sichtbarkeit (native App mit Live-Activity-Plugin; Ionic hat das Plugin auch unter Android) und Wirkung gleich. Helfertext: Ionic iOS '…auf dem Sperrbildschirm und in der Dynamic Island.', Android '…auf dem Sperrbildschirm.' / Flutter: Bedingung isSupportedPlatform ist auf iOS UND Android true → Android zeigt den iOS-Text mit Dynamic Island.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:223, lib/core/services/live_activity_service.dart:149
+- [ ] **mittel** `stats/stats.page` `field-2d5da58e` [stats/stats.page.html:309](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L309) (2. Prüfung: bestätigt)
+  Ionic: ion-select multiple interface='modal' (Auswahlliste als Modal, Übernahme beim Schließen, kein Abbrechen) / Flutter: AlertDialog mit Checkboxen und 'Abbrechen'/'OK'. Anzeige der gewählten Namen und Filterwirkung (Personen und deren Instanzen nur aus der Auswahl) gleich.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:1254, lib/features/statistics/presentation/pages/statistics_page.dart:1307
+- [ ] **mittel** `stats/stats.page` [src/app/stats/stats.page.ts:207](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.ts#L207)
+  Ionic: Titel in den Diagrammen 'Anwesenheitsverlauf (letzte 20 Termine)', 'Statusverteilung (in %)', 'Top 20 - Anwesenheits-Elite 🏆', 'Anwesenheitsquote nach Instrument', 'Unentschuldigte Abwesenheiten', 'Altersverteilung 🎂', 'Durchschnittsalter pro Instrument', Achsentitel '%' bzw. 'Jahre' / Flutter: nur die Abschnittsüberschriften, u. a. fehlt der Hinweis, dass der Verlauf nur die letzten 20 Termine zeigt.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:516, lib/features/statistics/presentation/pages/statistics_page.dart:603, lib/features/statistics/presentation/pages/statistics_page.dart:921
+
+## Flutter besser – Leon entscheidet: 13
+
+- [ ] **niedrig** `export/export.page` `field-1f02578e` [export/export.page.html:23](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.html#L23)
+  Flutter besser: Ionic ion-select multiple setzt nach OK die Reihenfolge auf die Optionsreihenfolge zurück und verwirft eigene Extrafelder (nicht in den Optionen) / Flutter behält die manuelle Reihenfolge und eigene Felder, neue Felder werden angehängt. Label 'Felder', Optionen (Standard + Extrafelder) gleich.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:192, lib/features/export/presentation/pages/export_page.dart:96
+- [ ] **niedrig** `notifications/notifications.page` `field-cb78f4aa` [notifications/notifications.page.html:28](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.html#L28)
+  Flutter besser: Material-Darstellung mit zusätzlichem Kopieren-Button (Toast 'Benutzer-Id kopiert') und Monospace-Wert; iOS wie Ionic (Label + markierbarer Wert). Sichtbar nur ohne Telegram-Verknüpfung wie Ionic.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:208, lib/features/notifications/presentation/pages/notifications_page.dart:410, lib/features/notifications/presentation/pages/notifications_page.dart:446
+- [ ] **niedrig** `stats/stats.page` `field-0fc2d09f` [stats/stats.page.html:25](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L25)
+  Flutter besser: "Von" ist auf <= "Bis" begrenzt (Ionic: jedes Datum, ggf. leerer Zeitraum). Übernahme bei Auswahl und Neuberechnung wie onDateFilterChange.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:325, lib/features/statistics/presentation/pages/statistics_page.dart:341, lib/core/providers/statistics_providers.dart:43
+- [ ] **niedrig** `stats/stats.page` `field-e8b28445` [stats/stats.page.html:36](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L36) (2. Prüfung: bestätigt)
+  Flutter besser: 'Bis' ist auf ≥ 'Von' begrenzt (Obergrenze heute + 2 Jahre), Ionic ohne Grenzen. Ionic Kalender im Modal mit Sofortübernahme / Flutter Datumsdialog; Neuberechnung bei Auswahl gleich.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:325, lib/features/statistics/presentation/pages/statistics_page.dart:336, lib/core/providers/statistics_providers.dart:43
+- [ ] **niedrig** `export/export.page` [src/app/export/export.page.ts:178](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L178)
+  Flutter besser: Ionic exportiert auch ohne gewählte Felder und meldet weder Erfolg noch Fehler / Flutter: Toast 'Bitte wähle mindestens ein Feld aus.' bei leerer Auswahl, Toast 'Export erfolgreich' bzw. 'Fehler beim Export: …'.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:347, lib/features/export/presentation/pages/export_page.dart:495
+- [ ] **niedrig** `history/history.page` [src/app/history/history.page.ts:86](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.ts#L86)
+  Flutter besser: Ionic sortiert die Gruppen mit dayjs('DD.MM.YYYY') ohne customParseFormat → browserabhängig (iOS/Safari: Invalid Date → Einfügereihenfolge = neueste zuerst; Chrome/Android: teils als MM.DD. fehlgeparst, Reihenfolge durcheinander) / Flutter: stabil neueste zuerst (DB-Reihenfolge).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:241
+- [ ] **niedrig** `history/history.page` [src/app/history/history.page.ts:59](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.ts#L59)
+  Flutter besser: Toasts '{n} Werke hinzugefügt' / 'Eintrag gelöscht', Fehlertoast beim Hinzufügen, Fehleransicht mit 'Erneut versuchen' beim Laden; Ionic zeigt nichts davon (und bricht bei leerer Werkbibliothek in ngOnInit ab, songs[0].id).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:114, lib/features/history/presentation/pages/history_page.dart:554, lib/features/history/presentation/pages/history_page.dart:594
+- [ ] **niedrig** `home-dashboard/components/birthdays-card/birthdays-card.component` [src/app/home-dashboard/components/birthdays-card/birthdays-card.component.ts:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/birthdays-card/birthdays-card.component.ts#L63)
+  Flutter besser: Ionic prüft nur dieses und nächstes Jahr – Anfang Januar fehlen Dezember-Geburtstage im Rückblick 'Zuletzt'; 29.02. rollt in Nicht-Schaltjahren auf 01.03. / Flutter nimmt das nächstgelegene Vorkommen aus Vorjahr/Jahr/Folgejahr und hält 29.02. auf 28.02.
+  Flutter: lib/core/utils/dashboard_utils.dart:95
+- [ ] **niedrig** `home-dashboard/components/current-songs-card/current-songs-card.component` [src/app/services/db.service.ts:3162](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3162)
+  Flutter besser: Ionic sortiert mit dayjs(x, 'DD.MM.YYYY') ohne geladenes customParseFormat → browserabhängig (Safari/iOS: unsortiert umgekehrte DB-Reihenfolge, Chrome teils MM.DD.) / Flutter: wie beabsichtigt nach Datum aufsteigend, bei gleichem Datum nach Termin-ID.
+  Flutter: lib/core/utils/dashboard_logic.dart:194
+- [ ] **niedrig** `messages/message-compose/message-compose.component` [src/app/messages/message-compose/message-compose.component.ts:203](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/messages/message-compose/message-compose.component.ts#L203)
+  Flutter besser: Ionic: nach Versand im Preset-Modus ('Unentschuldigte anschreiben') wird trotzdem der normale Entwurf 'message-draft-<tenantId>' gelöscht / Flutter: _clearDraft überspringt Preset, normaler Entwurf bleibt erhalten.
+  Flutter: lib/features/messages/presentation/pages/message_compose_page.dart:156
+- [ ] **niedrig** `messages/message-compose/message-compose.component` [src/app/messages/message-compose/message-compose.component.ts:96](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/messages/message-compose/message-compose.component.ts#L96)
+  Flutter besser: Ionic: hasText prüft nur, ob irgendein Textknoten existiert (auch nur Leerzeichen erlaubt Senden) / Flutter: TiptapConverter.hasText verlangt nicht-leeren Text nach trim.
+  Flutter: lib/core/utils/tiptap_converter.dart:152
+- [ ] **niedrig** `notifications/notifications.page` [src/app/notifications/notifications.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.ts#L43)
+  Flutter besser: Ionic zeigt beim Laden und bei Ladefehler eine leere Seite (nur Titel) / Flutter zeigt Spinner, bei Fehler Toast 'Fehler beim Laden: …' und Text 'Konfiguration nicht gefunden'.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:60, lib/features/notifications/presentation/pages/notifications_page.dart:158
+- [ ] **niedrig** `stats/stats.page` [src/app/stats/stats.page.html:12](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L12)
+  Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher, nur erneutes Öffnen.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:163
+
+## Kleinigkeiten (niedrig): 34
+
+- [ ] **niedrig** `export/export.page` `alert-ed41a2f2` [export/export.page.ts:159](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L159)
+  Header 'Feld hinzufügen', Buttons Abbrechen/Hinzufügen gleich. Ionic: Textfeld ohne Label, leere Eingabe fügt eine leere Spalte hinzu / Flutter: Feld mit Label 'Spaltenname' (Flutter-Text), leere Eingabe wird ignoriert.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:315
+- [ ] **niedrig** `export/export.page` `effect-b5cfc616` [export/export.page.ts:278](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L278)
+  Nativ (iOS/Android): Datei in Cache schreiben und öffnen wie Ionic; Desktop-Browser: Download wie Ionic. Ionic mobiler Browser (iOS/Android-PWA): Web-Share-Sheet (navigator.share) / Flutter: Printing.sharePdf → im Web nur Anchor-Download, kein Teilen-Dialog.
+  Flutter: lib/core/services/export_service.dart:88, lib/core/services/native/native_file_service.dart:167
+- [ ] **niedrig** `export/export.page` `effect-b206f4b4` [export/export.page.ts:433](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.ts#L433)
+  Wie beim Spieler-PDF: Ionic mobiler Browser → Web-Share-Sheet / Flutter → Anchor-Download (Printing.sharePdf web); nativ und Desktop gleich.
+  Flutter: lib/core/services/export_service.dart:178, lib/core/services/native/native_file_service.dart:167
+- [ ] **niedrig** `export/export.page` `action-affb31d3` [export/export.page.html:31](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.html#L31) (2. Prüfung: bestätigt)
+  Ziehen am Griff rechts und Wischen zum Entfernen (Papierkorb) gleich. Flutter zeigt bei selbst hinzugefügten Feldern zusätzlich den Untertitel 'Eigenes Feld (leer)' (Flutter-Text), Ionic nur den Feldnamen.
+  Flutter: lib/features/export/presentation/pages/export_page.dart:200, lib/features/export/presentation/pages/export_page.dart:236
+- [ ] **niedrig** `history/history.page` `toast-a7d10e87` [history/history.page.ts:214](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.ts#L214) (2. Prüfung: bestätigt)
+  Text 'Bitte wähle mindestens ein Werk an' gleich. Ionic: Farbe danger (rot) / Flutter: ToastHelper.showWarning (orange). Zudem startet Flutter ohne vorausgewähltes Werk (Ionic: selectedSongs = [songs[0].id]), der Hinweis kommt in Flutter also schon beim ersten 'Hinzufügen' ohne Auswahl.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:445
+- [ ] **niedrig** `history/history.page` `toast-cafe4207` [history/history.page.ts:263](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.ts#L263)
+  Ionic: 'Fehler beim Löschen des Eintrags' (danger) / Flutter: 'Fehler: <technische Meldung>' (danger).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:598
+- [ ] **niedrig** `history/history.page` `action-85678212` [history/history.page.html:13](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L13)
+  Ionic: Pull-to-Refresh immer (auch im Leerzustand) / Flutter: RefreshIndicator nur um die gefüllte Liste – im Leerzustand ('Noch keine Werke gespielt', keine Treffer) kein Pull-to-Refresh.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:177
+- [ ] **niedrig** `history/history.page` `field-ac79647a` [history/history.page.html:17](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L17)
+  Platzhalter 'Werk suchen...' gleich. Ionic: filtert nur nach Werkname, ohne Treffer leere Liste / Flutter: filtert zusätzlich nach Werknummer und Dirigent und zeigt bei 0 Treffern 'Keine Werke gefunden' mit Icon.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:104, lib/features/history/presentation/pages/history_page.dart:230, lib/features/history/presentation/pages/history_page.dart:160
+- [ ] **niedrig** `history/history.page` `text-dff66123` [history/history.page.html:60](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L60)
+  Datums-Akkordeon (hellgrau, anfangs zu) vorhanden. Ionic: ion-accordion-group – immer nur ein Datum gleichzeitig offen / Flutter: jede Gruppe unabhängig, mehrere gleichzeitig offen.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:648, lib/features/history/presentation/pages/history_page.dart:653
+- [ ] **niedrig** `history/history.page` `action-6dccb9eb` [history/history.page.html:101](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L101)
+  Zeile 'Werk(e)' mit 'N Werk(e) ausgewählt'/'Keine Werke ausgewählt' und Chevron öffnet die Auswahl. Ionic: beim ersten Öffnen ist das erste Werk der Bibliothek vorausgewählt ('1 Werk(e) ausgewählt'), Auswahl bleibt nach Schließen ohne Hinzufügen erhalten / Flutter: startet bei jedem Öffnen leer.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:326
+- [ ] **niedrig** `history/history.page` `field-c1a5fc20` [history/history.page.html:124](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L124) (2. Prüfung: bestätigt)
+  Platzhalter 'Werk suchen...' gleich. Ionic sucht in '{prefix}{nummer} {name}' (Anzeige ebenso) / Flutter in displayName '{prefix}{nummer} - {name}' (Anzeige mit ' - '); Suchbegriffe über Nummer und Name hinweg ('12 Ave') finden in Flutter nichts.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:812, lib/features/history/presentation/pages/history_page.dart:829, lib/data/models/song/song.dart:150
+- [ ] **niedrig** `history/history.page` `action-a34c7dc7` [history/history.page.html:146](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L146)
+  Checkbox-Zeile mit Komponist, Tippen schaltet um. Ionic Titel: '{prefix}{nummer} {name}' / Flutter: '{prefix}{nummer} - {name}' (zusätzlicher Bindestrich).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:854, lib/data/models/song/song.dart:150
+- [ ] **niedrig** `history/history.page` `field-1bf71ecb` [history/history.page.html:179](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L179) (2. Prüfung: bestätigt)
+  Ionic: eingegebener Name als editierbares ion-input / Flutter: nur als Textzeile; Korrektur nur über erneute Auswahl 'Anderer Dirigent'.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:388
+- [ ] **niedrig** `history/history.page` `field-1d1fb30d` [history/history.page.html:184](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L184)
+  Feld mit Platzhalter 'TT.MM.JJJJ', Übernahme beim Verlassen, ungültig → letzter gültiger Wert. Ionic: nach erfolgreichem Hinzufügen bleibt das zuletzt gewählte Datum für den nächsten Eintrag / Flutter: jedes Öffnen startet mit heute. Flutter besser: Tage wie 31.02. werden verworfen (Ionic rollt auf 03.03.).
+  Flutter: lib/features/history/presentation/pages/history_page.dart:399, lib/features/history/presentation/pages/history_page.dart:884
+- [ ] **niedrig** `history/history.page` `field-aa62edcf` [history/history.page.html:196](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.html#L196)
+  Ionic: ion-datetime als Datumsrad (preferWheel, Montag zuerst), Wert wird sofort übernommen, schließt bei Tageswechsel, unbegrenzter Bereich / Flutter: Kalender-Datepicker (md mit OK-Bestätigung), Bereich 01.01.2000 bis heute+365 Tage.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:420, lib/shared/widgets/adaptive/app_pickers.dart:12
+- [ ] **niedrig** `home-dashboard/home-dashboard.page` `loading-bee7e5e1` [home-dashboard/home-dashboard.page.ts:76](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/home-dashboard.page.ts#L76)
+  Ionic: blockierendes Lade-Overlay (max. 3 s) während Tenantwechsel / Flutter: kein Overlay, UI bleibt bedienbar bis zur Navigation.
+  Flutter: lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180
+- [ ] **niedrig** `messages/message-list/message-list.page` `toast-d930edbc` [messages/message-list/message-list.page.ts:67](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/messages/message-list/message-list.page.ts#L67)
+  Ionic: Toast 'Mitteilungen konnten nicht geladen werden' (danger), darunter Leerzustand 'Noch keine Mitteilungen' mit Button und Eintrag 'Automatische Nachrichten'. / Flutter: kein Toast, nur zentrierter Text 'Mitteilungen konnten nicht geladen werden' ohne Auto-Eintrag und Leerzustand.
+  Flutter: lib/features/messages/presentation/pages/message_list_page.dart:73
+- [ ] **niedrig** `messages/message-list/message-list.page` `action-4c1cdd16` [messages/message-list/message-list.page.html:34](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/messages/message-list/message-list.page.html#L34) (2. Prüfung: bestätigt)
+  Text 'Erste Mitteilung schreiben', runde Form und Aktion gleich. Icon: Ionic create-outline / Flutter Icons.edit_note.
+  Flutter: lib/features/messages/presentation/pages/message_list_page.dart:313
+- [ ] **niedrig** `notifications/notifications.page` `native-1f2aa2b5` [notifications/notifications.page.ts:68](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.ts#L68)
+  Gleicher Link https://t.me/attendix_bot?start=<userId>. Ionic: Capacitor Browser.open (In-App-Browser in der App, neuer Tab im Web) / Flutter: launchUrl externalApplication (öffnet direkt Telegram bzw. externen Browser), bei Fehler Toast 'Konnte Telegram nicht öffnen'.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:130, lib/core/services/telegram_service.dart:176
+- [ ] **niedrig** `notifications/notifications.page` `text-bd81b782` [notifications/notifications.page.html:33](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/notifications/notifications.page.html#L33)
+  Text 'Telegramverknüpfung' gleich. Material: zusätzliches Telegram-Icon vor dem Titel (grün wenn verknüpft); Ionic ohne Icon. iOS wie Ionic.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:485, lib/features/notifications/presentation/pages/notifications_page.dart:531
+- [ ] **niedrig** `stats/stats.page` `field-d9134dd8` [stats/stats.page.html:22](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L22) (2. Prüfung: bestätigt)
+  Ionic ion-datetime-button mit locale de-DE zeigt das Intl-Kurzformat ('1. Sept. 2025'; Ionic-Paket nicht im Container) / Flutter '01.09.2025' (DateHelper.getShortDate).
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:347, lib/features/statistics/presentation/pages/statistics_page.dart:392
+- [ ] **niedrig** `stats/stats.page` `field-d9134dd8-2` [stats/stats.page.html:33](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L33)
+  Anzeigeformat wie field-d9134dd8: Ionic Intl-Kurzformat ('1. Sept. 2025') / Flutter '01.09.2025'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:347, lib/features/statistics/presentation/pages/statistics_page.dart:392
+- [ ] **niedrig** `stats/stats.page` `text-729fe4d0` [stats/stats.page.html:97](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L97)
+  Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:236, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `text-a54abdb5` [stats/stats.page.html:112](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L112)
+  Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:238, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `text-f6dad6f9` [stats/stats.page.html:127](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L127)
+  Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:240, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `text-0a14e583` [stats/stats.page.html:142](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L142)
+  Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:242, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `stats/stats.page` `text-5acf85be` [stats/stats.page.html:157](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.html#L157)
+  Ionic: Abschnitt immer sichtbar (bei 0 Terminen leeres Diagramm) / Flutter: bei 0 Terminen im Zeitraum entfallen die fünf Anwesenheits-Abschnitte, stattdessen ein Leerzustand 'Keine Daten im ausgewählten Zeitraum'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:87, lib/features/statistics/presentation/pages/statistics_page.dart:244, lib/features/statistics/presentation/pages/statistics_page.dart:245
+- [ ] **niedrig** `export/export.page` [src/app/export/export.page.html:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/export/export.page.html#L65)
+  Ionic: kein Hinweis / Flutter: bei Anwesenheit+PDF zusätzlicher Text 'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.'
+  Flutter: lib/features/export/presentation/pages/export_page.dart:288
+- [ ] **niedrig** `history/history.page` [src/app/history/history.page.ts:73](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/history/history.page.ts#L73)
+  Ionic: leerer Name bzw. leerer Dirigent hinter '|' / Flutter: 'Unbekanntes Werk' bzw. 'Unbekannt'.
+  Flutter: lib/features/history/presentation/pages/history_page.dart:731, lib/data/models/history/history_entry.dart:42
+- [ ] **niedrig** `home-dashboard/components/next-event-card/next-event-card.component` [src/app/home-dashboard/components/next-event-card/next-event-card.component.ts:104](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/components/next-event-card/next-event-card.component.ts#L104)
+  Ionic: Gruppe, dann Nachname per localeCompare (Umlaute bei Grundbuchstaben, Groß/klein egal) / Flutter: String.compareTo (Code-Einheiten: z. B. 'Özdemir' nach 'Zimmer', Kleinbuchstaben nach Großbuchstaben).
+  Flutter: lib/core/utils/dashboard_logic.dart:133
+- [ ] **niedrig** `home-dashboard/home-dashboard.page` [src/app/home-dashboard/home-dashboard.page.ts:47](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/home-dashboard/home-dashboard.page.ts#L47)
+  Ionic: ionViewWillEnter lädt die Karte 'Meine Aufgaben' bei jedem erneuten Betreten des Dashboards neu / Flutter: myTasksProvider wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier, Abmeldung) oder Pull-to-Refresh invalidiert; fremde Änderungen erscheinen erst nach Refresh.
+  Flutter: lib/core/providers/team_org_providers.dart:277, lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53
+- [ ] **niedrig** `notifications/notifications.page` [src/app/services/notification/notification.service.ts:55](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/notification/notification.service.ts#L55)
+  Ionic: Toast 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.', der Schalter bleibt im neuen (nicht gespeicherten) Zustand / Flutter: Toast 'Fehler beim Aktualisieren der Konfiguration', der Schalter springt zurück.
+  Flutter: lib/features/notifications/presentation/pages/notifications_page.dart:103
+- [ ] **niedrig** `stats/stats.page` [src/app/stats/stats.page.ts:240](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.ts#L240)
+  Ionic: Legende 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' über dem Kreisdiagramm / Flutter: Prozent auf den Segmenten, Legende rechts nur mit Statusnamen, Ring statt voller Kreis.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:603, lib/features/statistics/presentation/pages/statistics_page.dart:692
+- [ ] **niedrig** `stats/stats.page` [src/app/stats/stats.page.ts:380](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/stats/stats.page.ts#L380)
+  Ionic: leeres Diagramm (mit Titel), wenn keine Daten / Flutter: Platzhalter 'Keine Daten verfügbar', 'Keine Geburtsdaten vorhanden' bzw. 'Keine unentschuldigten Abwesenheiten'.
+  Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:1197, lib/features/statistics/presentation/pages/statistics_page.dart:929, lib/features/statistics/presentation/pages/statistics_page.dart:1112

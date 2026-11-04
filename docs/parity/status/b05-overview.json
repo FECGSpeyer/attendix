@@ -1,0 +1,1434 @@
+{
+ "batch": "b05-overview",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "dashboard/dashboard.page#logic-298f6250": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:312",
+    "lib/core/providers/dashboard_providers.dart:318",
+    "lib/data/repositories/administration_repository.dart:83",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:29",
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:103"
+   ],
+   "n": "Default 30 Tage, Reload bei Bereichswechsel, p_since = jetzt − N Tage, p_events = TrackingEvent-Namen (identisch zu Ionic), hasData = total_events > 0, Fehler → Leerzustand, Top-Event = byName[0], Tagesreihe mit Nullen aufgefüllt (Label dd.MM.), Top 10 Events/Tenants (#id), Gerätefarben gleich. Diagramme mit fl_chart statt Chart.js (Top-Events als Balkenliste mit Zahlen, Doughnut-Legende seitlich, Top-Instanzen 280 statt 360 px hoch) – rein optisch."
+  },
+  "dashboard/dashboard.page#db-b3d10dca": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/administration_repository.dart:94"
+   ],
+   "n": "Gleiche RPC mit p_since/p_events; bewusst ohne tenantId (serverseitig per assert_usage_dashboard_access geschützt, wie Ionic)."
+  },
+  "dashboard/dashboard.page#db-98608218": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/administration_repository.dart:95"
+   ]
+  },
+  "dashboard/dashboard.page#db-1ab98808": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/administration_repository.dart:96"
+   ]
+  },
+  "dashboard/dashboard.page#db-6985c91d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/administration_repository.dart:97"
+   ]
+  },
+  "dashboard/dashboard.page#db-5b0cea53": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/administration_repository.dart:98"
+   ]
+  },
+  "dashboard/dashboard.page#action-ebca8aeb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:56",
+    "lib/features/dashboard/presentation/pages/administration_page.dart:251"
+   ],
+   "n": "AppBar-Zurück-Pfeil ohne Text; Seite wird aus der Administration gepusht, Zurück führt dorthin wie in Ionic."
+  },
+  "dashboard/dashboard.page#text-985feb0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:57"
+   ]
+  },
+  "dashboard/dashboard.page#field-231232e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:62",
+    "lib/core/providers/dashboard_providers.dart:312"
+   ],
+   "n": "Segment 7/30/90 Tage in der zweiten Toolbar-Zeile (AppBar.bottom), Default 30, Wechsel lädt neu."
+  },
+  "dashboard/dashboard.page#text-294b907e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:86"
+   ]
+  },
+  "dashboard/dashboard.page#text-408d2dfd": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:119"
+   ]
+  },
+  "dashboard/dashboard.page#text-2cefb88a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:119"
+   ]
+  },
+  "dashboard/dashboard.page#text-8633618d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:120"
+   ]
+  },
+  "dashboard/dashboard.page#text-be10487b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:120"
+   ]
+  },
+  "dashboard/dashboard.page#text-58d3e2dc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:121"
+   ]
+  },
+  "dashboard/dashboard.page#text-e98ca2de": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:121"
+   ]
+  },
+  "dashboard/dashboard.page#text-9fa5d7a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:122"
+   ]
+  },
+  "dashboard/dashboard.page#text-c0b6e0d4": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:122"
+   ]
+  },
+  "dashboard/dashboard.page#text-a0572d71": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:127"
+   ]
+  },
+  "dashboard/dashboard.page#text-1812a53e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:177"
+   ]
+  },
+  "dashboard/dashboard.page#text-510d7fef": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:182"
+   ]
+  },
+  "dashboard/dashboard.page#text-deed3988": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:221"
+   ]
+  },
+  "dashboard/dashboard.page#text-3f1879b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/usage_dashboard_page.dart:229"
+   ]
+  },
+  "export/export.page#logic-fc4181cd": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/export_fields.dart:12",
+    "lib/features/export/export_fields.dart:70",
+    "lib/features/export/export_fields.dart:102",
+    "lib/features/export/export_fields.dart:148",
+    "lib/features/export/presentation/pages/export_page.dart:82",
+    "lib/features/export/presentation/pages/export_page.dart:346",
+    "lib/core/services/export_service.dart:184"
+   ],
+   "n": "Kernlogik gleich: Standard-/Default-Felder, Extrafelder (Ja/Nein, Datum, Gemeinde), Sortierschlüssel inkl. extra_<id>, stabile localeCompare-Sortierung, Segmentwechsel setzt Felder/Sortierung zurück, Anwesenheit nur vergangene Saison-Termine mit Personen, PDF max. 8 (neueste, aufsteigend), Statuscodes X/A/E/L/N, Dateinamen/Sheetname/Titel gleich, Tracking report_exported. Abweichungen nur Flutter-Zusatzhinweise/-meldungen (siehe extra). Anwesenheit % kommt aus playerAttendancePercentagesProvider (geteilte Logik, eigener Batch)."
+  },
+  "export/export.page#alert-ed41a2f2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:315"
+   ],
+   "n": "Header 'Feld hinzufügen', Buttons Abbrechen/Hinzufügen gleich. Ionic: Textfeld ohne Label, leere Eingabe fügt eine leere Spalte hinzu / Flutter: Feld mit Label 'Spaltenname' (Flutter-Text), leere Eingabe wird ignoriert."
+  },
+  "export/export.page#effect-b5cfc616": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/export_service.dart:88",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Nativ (iOS/Android): Datei in Cache schreiben und öffnen wie Ionic; Desktop-Browser: Download wie Ionic. Ionic mobiler Browser (iOS/Android-PWA): Web-Share-Sheet (navigator.share) / Flutter: Printing.sharePdf → im Web nur Anchor-Download, kein Teilen-Dialog."
+  },
+  "export/export.page#effect-02c7a701": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/export_service.dart:96",
+    "lib/core/services/export_service.dart:245"
+   ],
+   "n": "PDF mit pdf-Paket statt jsPDF: Briefkopf auf jeder Seite, Titel '{name} Spielerliste', 'Stand: {date}', Plain-Tabelle mit Zebra, gleiche Auto-Fit-Stufen (11/3.5 → 11/2 → 9/2 → 8/1.5)."
+  },
+  "export/export.page#effect-b206f4b4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/export_service.dart:178",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Wie beim Spieler-PDF: Ionic mobiler Browser → Web-Share-Sheet / Flutter → Anchor-Download (Printing.sharePdf web); nativ und Desktop gleich."
+  },
+  "export/export.page#effect-885fb586": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/export_service.dart:184",
+    "lib/core/services/export_service.dart:245"
+   ],
+   "n": "Titel '{name} Anwesenheit', farbige Statuszellen (A/X/E/L/N) zentriert, %-Zellen zentriert, Auto-Fit 8/2 → 8/1.5 → 7 → 6."
+  },
+  "export/export.page#text-78d7e3a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:165"
+   ]
+  },
+  "export/export.page#action-b2474426": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:168"
+   ]
+  },
+  "export/export.page#field-a18e942f": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:186",
+    "lib/features/export/presentation/pages/export_page.dart:82"
+   ],
+   "n": "md-Segment Spieler/Anwesenheit; Wechsel setzt Felder, Sortierung 'gruppe' und Aufsteigend zurück."
+  },
+  "export/export.page#field-1f02578e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:192",
+    "lib/features/export/presentation/pages/export_page.dart:96"
+   ],
+   "n": "Flutter besser: Ionic ion-select multiple setzt nach OK die Reihenfolge auf die Optionsreihenfolge zurück und verwirft eigene Extrafelder (nicht in den Optionen) / Flutter behält die manuelle Reihenfolge und eigene Felder, neue Felder werden angehängt. Label 'Felder', Optionen (Standard + Extrafelder) gleich."
+  },
+  "export/export.page#action-affb31d3": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:200",
+    "lib/features/export/presentation/pages/export_page.dart:236"
+   ],
+   "n": "Umsortieren per Griff rechts gleich. Flutter zeigt bei eigenen (Frei-)Feldern zusätzlich den Untertitel 'Eigenes Feld (leer)' (Flutter-Text), Ionic nicht."
+  },
+  "export/export.page#action-7e54e395": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:217"
+   ],
+   "n": "Wischen nach links → rote Löschen-Option entfernt das Feld."
+  },
+  "export/export.page#action-afef6d4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:255"
+   ]
+  },
+  "export/export.page#field-66ac065f": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:269",
+    "lib/features/export/export_fields.dart:70"
+   ],
+   "n": "Popover-Auswahl; Optionen Nachname/Vorname/Gruppe/Geburtsdatum/Eingetreten/Anwesenheit % (bzw. 3 bei Anwesenheit) + Extrafelder, Default Gruppe."
+  },
+  "export/export.page#field-8402df77": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:275"
+   ]
+  },
+  "export/export.page#field-71f4922d": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:281"
+   ]
+  },
+  "export/export.page#action-f9223964": {
+   "s": "ok",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:296",
+    "lib/features/export/presentation/pages/export_page.dart:346"
+   ],
+   "n": "Block-Button 'Exportieren'; Spieler → PDF/Excel, Anwesenheit → PDF/Excel wie Ionic; Spinner im Button während des Exports."
+  },
+  "history/history.page#logic-41631a29": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/history_providers.dart:18",
+    "lib/features/history/history_utils.dart:23",
+    "lib/features/history/presentation/pages/history_page.dart:230",
+    "lib/features/history/presentation/pages/history_page.dart:241",
+    "lib/features/history/presentation/pages/history_page.dart:884"
+   ],
+   "n": "Gleich: history (tenantId, visible=true, date desc) mit Termindatum vor Eintragsdatum, Dirigentenname über alle Dirigenten (inkl. ausgetretene), Probenzähler (uebung mit Plan, 4 Monate davor, alle Pläne), Gruppierung nach Datum, Datumseingabe TT.MM.JJJJ, Löschen mit Haptik + Bestätigung, Einfügen mehrerer Werke mit visible=true. Unterschiede siehe extra und Einzel-Items."
+  },
+  "history/history.page#alert-6e1a25c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:479"
+   ],
+   "n": "Titel 'Dirigent eingeben', Textfeld (Flutter mit Label statt Platzhalter 'Dirigent'), Buttons Abbrechen/Speichern; leerer Name wird in Flutter ignoriert."
+  },
+  "history/history.page#toast-a7d10e87": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:446"
+   ],
+   "n": "Text gleich 'Bitte wähle mindestens ein Werk an'. Ionic: Farbe danger (rot) / Flutter: ToastHelper.showWarning (orange)."
+  },
+  "history/history.page#native-74e8de75": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:568"
+   ]
+  },
+  "history/history.page#alert-2038761e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:570",
+    "lib/data/repositories/attendance_repository.dart:925"
+   ],
+   "n": "Header 'Möchtest du den Eintrag wirklich entfernen?', Abbrechen/Ja; Ja löscht (Flutter zusätzlich mit tenantId-Filter) und lädt neu."
+  },
+  "history/history.page#toast-cafe4207": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:598"
+   ],
+   "n": "Ionic: 'Fehler beim Löschen des Eintrags' (danger) / Flutter: 'Fehler: <technische Meldung>' (danger)."
+  },
+  "history/history.page#text-4ca684b5": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:80"
+   ]
+  },
+  "history/history.page#action-a4e47659": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:86"
+   ]
+  },
+  "history/history.page#action-85678212": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:177"
+   ],
+   "n": "Ionic: Pull-to-Refresh immer (auch im Leerzustand) / Flutter: RefreshIndicator nur um die gefüllte Liste – im Leerzustand ('Noch keine Werke gespielt', keine Treffer) kein Pull-to-Refresh."
+  },
+  "history/history.page#field-ac79647a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:104",
+    "lib/features/history/presentation/pages/history_page.dart:230",
+    "lib/features/history/presentation/pages/history_page.dart:160"
+   ],
+   "n": "Platzhalter 'Werk suchen...' gleich. Ionic: filtert nur nach Werkname, ohne Treffer leere Liste / Flutter: filtert zusätzlich nach Werknummer und Dirigent und zeigt bei 0 Treffern 'Keine Werke gefunden' mit Icon."
+  },
+  "history/history.page#text-a2c9f652": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:152"
+   ]
+  },
+  "history/history.page#text-49ced4d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:197",
+    "lib/features/history/presentation/pages/history_page.dart:749"
+   ],
+   "n": "Suchmodus: flache Liste, nur Werkname, kein Proben-Badge."
+  },
+  "history/history.page#text-12c0b16e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:756",
+    "lib/core/providers/history_providers.dart:52"
+   ]
+  },
+  "history/history.page#text-12c0b16e-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:756",
+    "lib/core/providers/history_providers.dart:52"
+   ]
+  },
+  "history/history.page#action-ac09cfa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:739"
+   ]
+  },
+  "history/history.page#text-dff66123": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:648",
+    "lib/features/history/presentation/pages/history_page.dart:653"
+   ],
+   "n": "Datums-Akkordeon (hellgrau, anfangs zu) vorhanden. Ionic: ion-accordion-group – immer nur ein Datum gleichzeitig offen / Flutter: jede Gruppe unabhängig, mehrere gleichzeitig offen."
+  },
+  "history/history.page#text-be8b6a49": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:749"
+   ]
+  },
+  "history/history.page#text-12c0b16e-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:756"
+   ]
+  },
+  "history/history.page#text-12c0b16e-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:756"
+   ]
+  },
+  "history/history.page#text-decdb8ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:771",
+    "lib/features/history/history_utils.dart:71"
+   ]
+  },
+  "history/history.page#action-74b628bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:739"
+   ]
+  },
+  "history/history.page#modal-0bbf542e": {
+   "s": "diff",
+   "sev": "hoch",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:223",
+    "lib/features/history/presentation/pages/history_page.dart:260",
+    "lib/features/history/presentation/pages/history_page.dart:280",
+    "lib/core/providers/history_providers.dart:72"
+   ],
+   "n": "Sheet (70 %) per FAB wie Ionic. Aber: _showAddDialog liest planSongsProviderHistory nur mit ref.read (wird nirgends gewatcht) – beim ersten Tippen pro App-Sitzung ist der Provider noch AsyncLoading → songs leer → Toast 'Keine Werke gefunden' und das Sheet öffnet nicht; erst ein zweites Tippen nach dem Laden funktioniert. Ionic öffnet sofort (Werke beim Seitenstart geladen)."
+  },
+  "history/history.page#text-28f39b12": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:320"
+   ]
+  },
+  "history/history.page#action-6dccb9eb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:326"
+   ],
+   "n": "Zeile 'Werk(e)' mit 'N Werk(e) ausgewählt'/'Keine Werke ausgewählt' und Chevron öffnet die Auswahl. Ionic: beim ersten Öffnen ist das erste Werk der Bibliothek vorausgewählt ('1 Werk(e) ausgewählt'), Auswahl bleibt nach Schließen ohne Hinzufügen erhalten / Flutter: startet bei jedem Öffnen leer."
+  },
+  "history/history.page#modal-9b3d2b28": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:510"
+   ],
+   "n": "Vollbild (fullscreenDialog). Auswahl wird in Flutter nur mit ✓ übernommen; Schließen per System-Zurück verwirft Änderungen (Ionic übernimmt live)."
+  },
+  "history/history.page#text-913595c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:817"
+   ]
+  },
+  "history/history.page#action-ada537fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:821"
+   ]
+  },
+  "history/history.page#field-c1a5fc20": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:829",
+    "lib/data/models/song/song.dart:150"
+   ],
+   "n": "Platzhalter gleich. Ionic: sucht in '{prefix}{nummer} {name}' / Flutter: in displayName '{prefix}{nummer} - {name}' – Suchbegriffe wie '12 Ave' treffen in Flutter nicht mehr."
+  },
+  "history/history.page#text-0ad9679c": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:839"
+   ]
+  },
+  "history/history.page#action-a34c7dc7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:854",
+    "lib/data/models/song/song.dart:150"
+   ],
+   "n": "Checkbox-Zeile mit Komponist, Tippen schaltet um. Ionic Titel: '{prefix}{nummer} {name}' / Flutter: '{prefix}{nummer} - {name}' (zusätzlicher Bindestrich)."
+  },
+  "history/history.page#field-2be7f50e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:854"
+   ]
+  },
+  "history/history.page#field-85282cc3": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:351",
+    "lib/features/history/history_utils.dart:83"
+   ],
+   "n": "Label 'Dirigent', Optionen aktive Dirigenten + 'Anderer Dirigent', Default erster aktiver Dirigent, Alert-Interface auf iOS."
+  },
+  "history/history.page#field-1bf71ecb": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:388"
+   ],
+   "n": "Ionic: eingegebener Name erscheint als editierbares ion-input / Flutter: nur als Textzeile, Korrektur nur durch erneute Auswahl 'Anderer Dirigent'."
+  },
+  "history/history.page#text-af3f8717": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:396"
+   ]
+  },
+  "history/history.page#field-1d1fb30d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:399",
+    "lib/features/history/presentation/pages/history_page.dart:884"
+   ],
+   "n": "Feld mit Platzhalter 'TT.MM.JJJJ', Übernahme beim Verlassen, ungültig → letzter gültiger Wert. Ionic: nach erfolgreichem Hinzufügen bleibt das zuletzt gewählte Datum für den nächsten Eintrag / Flutter: jedes Öffnen startet mit heute. Flutter besser: Tage wie 31.02. werden verworfen (Ionic rollt auf 03.03.)."
+  },
+  "history/history.page#action-8f1945e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:418"
+   ]
+  },
+  "history/history.page#modal-83362f58": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:420"
+   ]
+  },
+  "history/history.page#field-aa62edcf": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:420",
+    "lib/shared/widgets/adaptive/app_pickers.dart:12"
+   ],
+   "n": "Ionic: ion-datetime als Datumsrad (preferWheel, Montag zuerst), Wert wird sofort übernommen, schließt bei Tageswechsel, unbegrenzter Bereich / Flutter: Kalender-Datepicker (md mit OK-Bestätigung), Bereich 01.01.2000 bis heute+365 Tage."
+  },
+  "history/history.page#action-a6f939ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:443",
+    "lib/features/history/presentation/pages/history_page.dart:538",
+    "lib/data/repositories/attendance_repository.dart:897"
+   ],
+   "n": "Block-Button 'Hinzufügen': Prüfung mind. ein Werk, ein history-Eintrag je Werk (songId, person_id bzw. otherConductor, date, visible=true, tenantId), Sheet schließt, Liste lädt neu. Datum in Flutter als YYYY-MM-DD statt ISO-Zeitstempel (gleicher Tag)."
+  },
+  "home-dashboard/components/absences-card/absences-card.component#logic-443db571": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:252",
+    "lib/core/utils/dashboard_utils.dart:193",
+    "lib/core/utils/dashboard_utils.dart:240",
+    "lib/data/repositories/dashboard_repository.dart:124"
+   ],
+   "n": "Gleich: player_absences des Tenants + alle nicht-pending Personen; Abwesenheiten mit Beginn oder Ende nach heute−28 Tage; pausierte, nicht archivierte Personen mit letztem Pausiert-Historieneintrag (sonst paused_until, Grund 'Pausiert'); absteigend nach Beginn; Untertitel 'bis {Datum}'/'pausiert' bzw. 'von – bis' + Grund. Öffnen siehe modal-Item. Fehlerfall: Flutter zeigt Fehlerzeile statt leerer Karte."
+  },
+  "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+   ],
+   "n": "Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild-Modal, backdropDismiss false), readOnly für Nicht-Admins / Flutter: context.push('/people/:id') – normale Detailseite im Shell statt Modal (Dashboard ist ohnehin nur für Admin/Verantwortliche, daher editierbar wie Ionic)."
+  },
+  "home-dashboard/components/absences-card/absences-card.component#text-1472ba62": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:144"
+   ]
+  },
+  "home-dashboard/components/absences-card/absences-card.component#text-0e06b25f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:145"
+   ]
+  },
+  "home-dashboard/components/absences-card/absences-card.component#text-775a5bf4": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:154"
+   ]
+  },
+  "home-dashboard/components/absences-card/absences-card.component#action-dc318865": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:160",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:179"
+   ],
+   "n": "Datumskachel (orange bzw. grau bei Pause, Pause-Icon ohne Datum), Name, Untertitel, Chip 'Pause'/'Abwesend'; Tippen öffnet die Person (Darstellung siehe modal-Item)."
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#logic-866add2e": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:237",
+    "lib/core/utils/dashboard_utils.dart:95",
+    "lib/core/utils/dashboard_utils.dart:157"
+   ],
+   "n": "Gleich: nicht archivierte Personen mit bestätigtem Geburtstag, ±14 Tage, Alter +1 für kommende, Sortierung kommende aufsteigend vor vergangenen (jüngste zuerst), Texte 'wird heute/wird/ist … geworden'. Unterschied Jahreswechsel siehe extra."
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+   ],
+   "n": "Ionic: PersonPage als Modal (iOS Karten-Modal, md Vollbild-Modal) / Flutter: context.push('/people/:id') als normale Seite."
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-bda2dbd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:31"
+   ]
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-b7dccef3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:32"
+   ]
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-17c34187": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:41"
+   ]
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#text-b3d3eb43": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:50",
+    "lib/features/dashboard/presentation/widgets/dashboard_card.dart:191"
+   ]
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#action-9374f372": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:60"
+   ],
+   "n": "Kachel pink (heute solid, vergangen grau/gedimmt), Zeile rosa hinterlegt am Geburtstag, 'Wochentag · Alterstext', rechts Chip 'Heute' mit Sparkles bzw. relative Tage."
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#logic-8b7401f1": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:247",
+    "lib/core/utils/dashboard_utils.dart:263",
+    "lib/core/utils/dashboard_utils.dart:281",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:19"
+   ],
+   "n": "isCritical aus allen nicht-pending Personen (inkl. archivierte wie Ionic), Grundtext criticalReasonText bzw. Historientyp-Text, Initialen; nach Rückkehr von der Person wird neu geladen (Ionic: nach Modal-Schließen)."
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+   ],
+   "n": "Ionic: PersonPage als Modal (iOS Karten-Modal, md Vollbild-Modal) / Flutter: context.push('/people/:id') als normale Seite; Neuladen danach in beiden."
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#text-fef566cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:197"
+   ]
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#text-55740fdf": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:198"
+   ]
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#text-2a682321": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:208"
+   ]
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#action-fb7def79": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:214"
+   ],
+   "n": "Rote Initialen-Kachel, Name, Grund bzw. 'Problemfall'."
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#logic-a3609a93": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:289",
+    "lib/core/utils/dashboard_logic.dart:244",
+    "lib/data/repositories/dashboard_repository.dart:99",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:415"
+   ],
+   "n": "Gleich: Termine ab heute−31 Tage, nur nicht beendete; erster mit befülltem Plan und (Admin/Verantwortlich oder share_plan); Tagesplan bei Mehrfachplänen; Startzeiten je Punkt, Live-Zeitraum (Termin- bzw. Planzeiten), aktiver Punkt ohne Blockköpfe, Countdown h:mm:ss, Sekundentakt nur am Plantag, 'Heute' bzw. 'Wochentag, TT.MM.JJJJ', Positionen ohne Blockköpfe; ohne Plan keine Karte. Ladezustand in Flutter mit Kartenkopf (Ionic nur Spinner)."
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#modal-0f9e8264": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:397",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+   ],
+   "n": "Vollbild-Planansicht (fullscreenDialog) mit Termin inkl. extra_plans; isPractice/songs werden im Ionic-Viewer nicht genutzt. Flutter-Fallback: Termin öffnen, falls der Plan nicht parsebar ist."
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#action-337f2999": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:481",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:524"
+   ],
+   "n": "Ganze Karte tippbar → Planansicht; Titel 'Aktueller Ablaufplan', Untertitel Typname, Badge 'Live' (danger), Kachel teal, Datum/Heute, '{start} – {end} Uhr · N Positionen', Chevron, Punkte mit Nummer/Name/Dirigent, Startzeit bzw. Countdown-Chip, vergangene abgeblendet."
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#logic-844e5465": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:275",
+    "lib/core/utils/dashboard_logic.dart:157",
+    "lib/data/repositories/dashboard_repository.dart:148",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:314"
+   ],
+   "n": "Gleiche Abfrage (history ab heute, mit Werk/Dirigent/Termin, tenantId), Gruppierung 'Datum | Typinfo' (Typname nur ohne hide_name), ein Eintrag je Werk (erste Fundstelle), Nummer prefix+number, Untertitel 'Dirigent · Typ' sonst 'Wochentag, TT.MM.', relative Tage. Unterschied Sortierung siehe extra."
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#nav-dac62404": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:326",
+    "lib/core/router/route_access.dart:46"
+   ],
+   "n": "Admin/Verantwortliche (einzige Dashboard-Nutzer) → /songs-tab/:id wie Ionic /tabs/songs-tab/:id (Push)."
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#text-40bc2241": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:290"
+   ]
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#text-a3dc1df5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:291"
+   ]
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#text-830f9c8d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:300"
+   ]
+  },
+  "home-dashboard/components/current-songs-card/current-songs-card.component#action-b43ba01c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:314"
+   ],
+   "n": "Lila Nummernkachel (klein ab >3 Zeichen), Werkname, Untertitel, relative Tage rechts."
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#logic-d1ff88e0": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:242",
+    "lib/core/utils/dashboard_utils.dart:169"
+   ],
+   "n": "Beitritte (joined) und Austritte (left) der letzten 60 Tage aus allen nicht-pending Personen, neueste zuerst, max. 5."
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14"
+   ],
+   "n": "Ionic: PersonPage als Modal (iOS Karten-Modal, md Vollbild-Modal) / Flutter: context.push('/people/:id') als normale Seite."
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#text-9f0328b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:95"
+   ]
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#text-eccdde15": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:96"
+   ]
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#text-eab120a3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:105"
+   ]
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#action-cd789740": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:111"
+   ],
+   "n": "Kachel grün/rot, Name, relative Tage, Chip mit Pfeil vor/zurück und 'Beitritt'/'Austritt'."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#logic-4b019c62": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:260",
+    "lib/core/utils/dashboard_logic.dart:107",
+    "lib/data/repositories/dashboard_repository.dart:62",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:40"
+   ],
+   "n": "Gleich: letzter = jüngster beendeter Termin (mehrtägige erst nach letztem Tag), nächster = frühester nicht beendeter; Anwesend = anwesend+verspätet, Abgemeldet = entschuldigt+verspätet entschuldigt, Schicht über 'Schichtbedingt/Arbeitsbedingt', Offen = neutral, Prozent wie Utils.getPercentage inkl. shift_excused_as_present; Öffnen nur Admin/Verantwortlich/Helfer/Stimmführer-Helfer, danach Neuladen. Flutter lädt nur je 5 Termine vor/ab heute statt aller Saisontermine (gleiches Ergebnis). Sortierunterschied siehe extra."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:48"
+   ],
+   "n": "Ionic: AttendancePage als Modal (isModal, iOS Karten-Modal mit presentingElement, md Vollbild-Modal) / Flutter: context.push('/attendance/:id') – normale Termin-Detailseite im Shell; Neuladen der Karte danach in beiden."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-ce89ab63": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:56"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-31fc2b8a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:57"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-f908c92b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:75"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#action-057151b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:121",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:23"
+   ],
+   "n": "Blaue Datumskachel (solid wenn heute), Typinfo, 'Wochentag · {start – end} Uhr', relative Tage; tippbar nur für berechtigte Rollen."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-8ba43bc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:87"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-9ddee8d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:177"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a7ec96b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:177"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-8cbc8076": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:180"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-273be980": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:169"
+   ],
+   "n": "Inkl. Zusatzzeile '{n} Schicht' bei Schichtarbeitern."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-50f2f871": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-af42f222": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:186"
+   ],
+   "n": "'Offen' über protocolOpen (gleicher Text)."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-559e61e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:200"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-c6804cc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:207"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-224308fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:204"
+   ],
+   "n": "Inkl. Fortschrittsbalken darunter."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-0aa79f4a": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:183",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:228"
+   ],
+   "n": "Tippen auf 'Abgemeldet' (nur bei >0) öffnet Bottom-Sheet, Start 75 %, bis Vollhöhe ziehbar (Ionic Breakpoints 0/0.5/0.75/1)."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-932c96fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:243"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-120492fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:251"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-260e2887": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:255"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-a6df82bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:256"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-609ece15": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:259"
+   ],
+   "n": "Chip warning bei 'verspätet entschuldigt', sonst primary; Text Status + ' · Schicht' bei Schichtnotiz."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-077f6830": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:100"
+   ]
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#action-debeb343": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:101"
+   ],
+   "n": "Graue Kachel, Typinfo, '{present}/{total} anwesend · {excused} entschuldigt', Prozent-Chip grün ≥75/orange ≥50/rot; tippbar nur für berechtigte Rollen."
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#text-bd37369c": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:68"
+   ]
+  },
+  "home-dashboard/components/shared/dashboard-date#logic-ce40a0ba": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/dashboard_utils.dart:42",
+    "lib/core/utils/dashboard_utils.dart:45",
+    "lib/core/utils/dashboard_utils.dart:55",
+    "lib/core/utils/dashboard_utils.dart:69",
+    "lib/features/dashboard/presentation/widgets/dashboard_card.dart:230"
+   ],
+   "n": "Tageszahl, Monatskürzel ohne Punkt (Jan/Feb/März/…/Sept/Okt/Nov/Dez wie dayjs de), Heute/Gestern/Morgen/vor N Tagen/in N Tagen (DST-sicher), Kurzdatum TT.MM. bzw. TT.MM.JJ in anderem Jahr."
+  },
+  "home-dashboard/home-dashboard.page#logic-a918ee9c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:42",
+    "lib/core/providers/dashboard_providers.dart:218",
+    "lib/core/providers/dashboard_providers.dart:298",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+   ],
+   "n": "Gleich: Kartenkonfiguration je Tenant, sichtbare Karten in Reihenfolge, 'Meine Aufgaben' nur mit Teamorganisation, Pull-to-Refresh lädt alle Karten neu, Tenantwechsel nur bei anderem Tenant, Spaltenzahl 1/2/3 ab 768/1200 px (Flutter verteilt nach Anzahl statt CSS-Höhenausgleich). Unterschiede siehe extra."
+  },
+  "home-dashboard/home-dashboard.page#loading-bee7e5e1": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+   ],
+   "n": "Ionic: blockierendes Lade-Overlay (max. 3 s) während Tenantwechsel / Flutter: kein Overlay, UI bleibt bedienbar bis zur Navigation."
+  },
+  "home-dashboard/home-dashboard.page#nav-1c9dc137": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Ionic: nach Tenantwechsel Utils.getUrl(role) → Admin/Verantwortlicher/Viewer '/tabs/player', Eltern '/tabs/parents', sonst '/tabs/signout' / Flutter: homeRouteFor → '/home-dashboard' wenn im neuen Tenant Dashboard-Tab aktiv (showDashboardTab_<id>), sonst role.defaultRoute; Admin bleibt also ggf. auf dem Dashboard statt auf Personen."
+  },
+  "home-dashboard/home-dashboard.page#effect-e221ccc5": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:188",
+    "lib/core/utils/dashboard_logic.dart:56"
+   ],
+   "n": "Ionic: Utils.getUrl(role) → Admin/Verantwortlicher/Viewer '/tabs/player' / Flutter: homeRouteFor → '/home-dashboard' wenn Dashboard-Tab im neuen Tenant aktiv, sonst role.defaultRoute (gleiches Urteil wie nav-1c9dc137)."
+  },
+  "home-dashboard/home-dashboard.page#action-3ea00e0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:68"
+   ],
+   "n": "SideNavMenuButton.maybe nur bei Tablet-Overlay-Sidepanel (Ionic autoHide)."
+  },
+  "home-dashboard/home-dashboard.page#action-98d61d4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:70",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118"
+   ],
+   "n": "Nur bei >1 Tenant; Tenant-Langname mit Pfeil nach unten."
+  },
+  "home-dashboard/home-dashboard.page#popover-9bf258c6": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118"
+   ],
+   "n": "Popup-Menü Breite 220, schließt bei Auswahl."
+  },
+  "home-dashboard/home-dashboard.page#action-80e399a8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:146",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:73"
+   ],
+   "n": "Eintrag je Tenant mit Langname, Badge 'Aktuell' beim aktuellen; Auswahl → _switchDashboardTenant (Ziel siehe nav-1c9dc137)."
+  },
+  "home-dashboard/home-dashboard.page#text-4fcb2ddf": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:75"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#action-85616b63": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:83"
+   ],
+   "n": "Nur nicht-iOS, Zahnrad → '/settings/dashboard'."
+  },
+  "home-dashboard/home-dashboard.page#embed-0bb4d324": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-0bb4d324-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:89"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#action-89d4cfdd": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:105",
+    "lib/core/providers/dashboard_providers.dart:298"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#text-4fcb2ddf-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:52"
+   ],
+   "n": "Großer Titel nur bei ≤1 Tenant."
+  },
+  "home-dashboard/home-dashboard.page#embed-a500e2c5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:30"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-0a79b8bc": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:31"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-4c48c398": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:32"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-dae20206": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:33"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-ba02fb2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:34"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-95fa8dc1": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:35"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-07ebeab6": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:36"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#embed-7bf0df2f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:37",
+    "lib/core/providers/dashboard_providers.dart:218"
+   ],
+   "n": "Nur mit Teamorganisation (configurableDashboardCards)."
+  },
+  "home-dashboard/home-dashboard.page#text-fad17522": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:119"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#action-246718b2": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:124"
+   ]
+  },
+  "home-dashboard/home-dashboard.page#action-1e2f7a30": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:95"
+   ],
+   "n": "Nur iOS, FAB unten rechts mit Zahnrad → '/settings/dashboard'."
+  },
+  "messages/message-compose/message-compose.component#logic-2f8f942d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:88",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:114",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:179",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:187",
+    "lib/core/providers/message_providers.dart:97"
+   ],
+   "n": "Gleich: Entwurf je Tenant ('message-draft-<tenantId>', Titel+Inhalt bei jeder Änderung, nicht im Preset-Modus), Preset mit festen Empfängern/Titel/Inhalt, Senden nur mit Titel, Text, ≥1 Kanal, Gruppenauswahl bzw. 'alle' und >0 Empfängern, Zähler mit Request-Schutz (leere Gruppenauswahl → 0 ohne Abfrage), Gruppen in gleicher Sortierung, Rückgabe der Nachrichten-ID. Entwurf jetzt als Quill-Delta statt Tiptap-JSON gespeichert (alter Ionic-Entwurf wird nicht übernommen). Unterschiede siehe extra."
+  },
+  "messages/message-compose/message-compose.component#alert-5fc2a15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:213",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:223"
+   ],
+   "n": "'Mitteilung senden?' / '„{Titel}“ geht an N Personen ({n} per Push/Telegram, {n} per E-Mail). Das kann nicht rückgängig gemacht werden.' Buttons 'Abbrechen', 'Senden'."
+  },
+  "messages/message-compose/message-compose.component#loading-a5f8925e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:518"
+   ],
+   "n": "Abgedunkeltes Overlay mit Spinner und 'Wird versendet …' über dem Inhalt, 'Abbrechen' währenddessen deaktiviert."
+  },
+  "messages/message-compose/message-compose.component#toast-56426039": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:269"
+   ]
+  },
+  "messages/message-compose/message-compose.component#toast-9c6ed681": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:264"
+   ]
+  },
+  "messages/message-compose/message-compose.component#action-c07a1f03": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:307"
+   ],
+   "n": "Schließt ohne Ergebnis, Entwurf bleibt."
+  },
+  "messages/message-compose/message-compose.component#text-c26b36de": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:312"
+   ]
+  },
+  "messages/message-compose/message-compose.component#field-a300171b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:325"
+   ],
+   "n": "Label 'Titel', Platzhalter 'z. B. Probe am Samstag fällt aus', max. 200 Zeichen, Satzanfang groß, speichert Entwurf bei Eingabe."
+  },
+  "messages/message-compose/message-compose.component#action-0994f764": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:382"
+   ],
+   "n": "Quill-Editor mit Toolbar statt Tiptap-Komponente; Änderung speichert Entwurf und prüft canSend. Editor selbst wird in eigener Unit geprüft."
+  },
+  "messages/message-compose/message-compose.component#text-9bea7949": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:394"
+   ]
+  },
+  "messages/message-compose/message-compose.component#text-8dac5e4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:398"
+   ],
+   "n": "Nur Preset, mit Personen-Icon."
+  },
+  "messages/message-compose/message-compose.component#field-4725efbf": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:414",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:421"
+   ],
+   "n": "Radio 'Alle aktiven Mitglieder' (Untertitel 'inkl. Hauptgruppe', Standard) / 'Nur bestimmte Gruppen'; Wechsel lädt Zähler neu; nur ohne Preset."
+  },
+  "messages/message-compose/message-compose.component#action-4a9be03d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:442"
+   ],
+   "n": "Chip je Gruppe (nur bei 'Nur bestimmte Gruppen'), Umschalten lädt Zähler neu."
+  },
+  "messages/message-compose/message-compose.component#text-29a21f31": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:464"
+   ]
+  },
+  "messages/message-compose/message-compose.component#field-2ce7f8ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:470"
+   ],
+   "n": "Schalter 'Push / Telegram', Standard an, Untertitel mit Anzahl nur wenn Zähler geladen und an."
+  },
+  "messages/message-compose/message-compose.component#field-0f120e43": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:482"
+   ],
+   "n": "Schalter 'E-Mail', Standard an, Untertitel mit Anzahl nur wenn Zähler geladen und an."
+  },
+  "messages/message-compose/message-compose.component#text-70022f65": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:548"
+   ]
+  },
+  "messages/message-compose/message-compose.component#action-55d9747b": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:553"
+   ]
+  },
+  "messages/message-compose/message-compose.component#text-9f6ee6e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:577"
+   ]
+  },
+  "messages/message-compose/message-compose.component#action-2fb6390f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:507"
+   ],
+   "n": "Volle Breite, Senden-Icon, deaktiviert solange canSend falsch, öffnet Bestätigung."
+  }
+ },
+ "extra": [
+  {
+   "unit": "export/export.page",
+   "title": "Hinweis PDF-Limit nur in Flutter",
+   "n": "Ionic: kein Hinweis / Flutter: bei Anwesenheit+PDF zusätzlicher Text 'PDF-Export ist auf die letzten 8 Termine begrenzt. Für alle Termine der Saison nutze den Excel-Export.'",
+   "sev": "niedrig",
+   "ionic": "src/app/export/export.page.html:65",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:288"
+   ]
+  },
+  {
+   "unit": "export/export.page",
+   "title": "Rückmeldungen beim Export",
+   "n": "Flutter besser: Ionic exportiert auch ohne gewählte Felder und meldet weder Erfolg noch Fehler / Flutter: Toast 'Bitte wähle mindestens ein Feld aus.' bei leerer Auswahl, Toast 'Export erfolgreich' bzw. 'Fehler beim Export: …'.",
+   "sev": "niedrig",
+   "ionic": "src/app/export/export.page.ts:178",
+   "f": [
+    "lib/features/export/presentation/pages/export_page.dart:347",
+    "lib/features/export/presentation/pages/export_page.dart:495"
+   ]
+  },
+  {
+   "unit": "history/history.page",
+   "title": "Reihenfolge der Datumsgruppen",
+   "n": "Flutter besser: Ionic sortiert die Gruppen mit dayjs('DD.MM.YYYY') ohne customParseFormat → browserabhängig (iOS/Safari: Invalid Date → Einfügereihenfolge = neueste zuerst; Chrome/Android: teils als MM.DD. fehlgeparst, Reihenfolge durcheinander) / Flutter: stabil neueste zuerst (DB-Reihenfolge).",
+   "sev": "niedrig",
+   "ionic": "src/app/history/history.page.ts:86",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:241"
+   ]
+  },
+  {
+   "unit": "history/history.page",
+   "title": "Platzhaltertexte bei fehlendem Werk/Dirigent",
+   "n": "Ionic: leerer Name bzw. leerer Dirigent hinter '|' / Flutter: 'Unbekanntes Werk' bzw. 'Unbekannt'.",
+   "sev": "niedrig",
+   "ionic": "src/app/history/history.page.ts:73",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:731",
+    "lib/data/models/history/history_entry.dart:42"
+   ]
+  },
+  {
+   "unit": "history/history.page",
+   "title": "Zusätzliche Rückmeldungen in Flutter",
+   "n": "Flutter besser: Toasts '{n} Werke hinzugefügt' / 'Eintrag gelöscht', Fehlertoast beim Hinzufügen, Fehleransicht mit 'Erneut versuchen' beim Laden; Ionic zeigt nichts davon (und bricht bei leerer Werkbibliothek in ngOnInit ab, songs[0].id).",
+   "sev": "niedrig",
+   "ionic": "src/app/history/history.page.ts:59",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:114",
+    "lib/features/history/presentation/pages/history_page.dart:554",
+    "lib/features/history/presentation/pages/history_page.dart:594"
+   ]
+  },
+  {
+   "unit": "home-dashboard/components/birthdays-card/birthdays-card.component",
+   "title": "Geburtstage über den Jahreswechsel",
+   "n": "Flutter besser: Ionic prüft nur dieses und nächstes Jahr – Anfang Januar fehlen Dezember-Geburtstage im Rückblick 'Zuletzt'; 29.02. rollt in Nicht-Schaltjahren auf 01.03. / Flutter nimmt das nächstgelegene Vorkommen aus Vorjahr/Jahr/Folgejahr und hält 29.02. auf 28.02.",
+   "sev": "niedrig",
+   "ionic": "src/app/home-dashboard/components/birthdays-card/birthdays-card.component.ts:63",
+   "f": [
+    "lib/core/utils/dashboard_utils.dart:95"
+   ]
+  },
+  {
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "title": "Reihenfolge der aktuellen Werke",
+   "n": "Flutter besser: Ionic sortiert mit dayjs(x, 'DD.MM.YYYY') ohne geladenes customParseFormat → browserabhängig (Safari/iOS: unsortiert umgekehrte DB-Reihenfolge, Chrome teils MM.DD.) / Flutter: wie beabsichtigt nach Datum aufsteigend, bei gleichem Datum nach Termin-ID.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3162",
+   "f": [
+    "lib/core/utils/dashboard_logic.dart:194"
+   ]
+  },
+  {
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "title": "Sortierung der Abmeldungen",
+   "n": "Ionic: Gruppe, dann Nachname per localeCompare (Umlaute bei Grundbuchstaben, Groß/klein egal) / Flutter: String.compareTo (Code-Einheiten: z. B. 'Özdemir' nach 'Zimmer', Kleinbuchstaben nach Großbuchstaben).",
+   "sev": "niedrig",
+   "ionic": "src/app/home-dashboard/components/next-event-card/next-event-card.component.ts:104",
+   "f": [
+    "lib/core/utils/dashboard_logic.dart:133"
+   ]
+  },
+  {
+   "unit": "home-dashboard/home-dashboard.page",
+   "title": "Meine Aufgaben beim Zurückkehren",
+   "n": "Ionic: ionViewWillEnter lädt die Karte 'Meine Aufgaben' bei jedem erneuten Betreten des Dashboards neu / Flutter: myTasksProvider wird nur nach eigenen Aufgaben-Änderungen (TeamTaskNotifier, Abmeldung) oder Pull-to-Refresh invalidiert; fremde Änderungen erscheinen erst nach Refresh.",
+   "sev": "niedrig",
+   "ionic": "src/app/home-dashboard/home-dashboard.page.ts:47",
+   "f": [
+    "lib/core/providers/team_org_providers.dart:277",
+    "lib/features/team_organization/presentation/widgets/my_tasks_card.dart:53"
+   ]
+  },
+  {
+   "unit": "messages/message-compose/message-compose.component",
+   "title": "Preset-Versand löscht normalen Entwurf",
+   "n": "Flutter besser: Ionic: nach Versand im Preset-Modus ('Unentschuldigte anschreiben') wird trotzdem der normale Entwurf 'message-draft-<tenantId>' gelöscht / Flutter: _clearDraft überspringt Preset, normaler Entwurf bleibt erhalten.",
+   "sev": "niedrig",
+   "ionic": "src/app/messages/message-compose/message-compose.component.ts:203",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:156"
+   ]
+  },
+  {
+   "unit": "messages/message-compose/message-compose.component",
+   "title": "Nur-Leerzeichen-Text",
+   "n": "Flutter besser: Ionic: hasText prüft nur, ob irgendein Textknoten existiert (auch nur Leerzeichen erlaubt Senden) / Flutter: TiptapConverter.hasText verlangt nicht-leeren Text nach trim.",
+   "sev": "niedrig",
+   "ionic": "src/app/messages/message-compose/message-compose.component.ts:96",
+   "f": [
+    "lib/core/utils/tiptap_converter.dart:152"
+   ]
+  }
+ ]
+}

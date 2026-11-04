@@ -49,6 +49,27 @@ feature and nearly every UI detail exists identically in the Flutter app's
   effect, e.g. change detection, lifecycle wiring). Give the reason.
 - `unclear`: could not be determined; say what is missing to decide.
 
+Special cases:
+
+- Unreachable Ionic code (a unit that no route or template opens, or a branch
+  that can never run): `na` with the note "toter Code: …" and the evidence.
+- Flutter deliberately or accidentally behaves *better* than Ionic (e.g. it
+  reports an error Ionic swallows): `diff`, `sev` `niedrig`, note starts with
+  "Flutter besser:". Leon decides whether to keep it.
+- The `sev` of a `logic` item is the highest `sev` of its `extra` findings.
+- The unit's `routes` field is context only; routes are checked in the
+  routing batch.
+- Package internals that are not in the container (pub cache): say so in the
+  note and use `unclear` only if the verdict depends on it.
+- `extra` is only for differences that no item of the batch covers (hidden
+  logic). Do not repeat an item's difference as an extra.
+- `effect` items for `Utils.getUrl` sit next to a `nav` item for the same
+  call: give both the same verdict.
+- Shared service code called from a page (e.g. `this.db.addPlayer`) is checked
+  in its own batch; follow it one level deep only to understand the page.
+- `cond` is complete for template items; for TypeScript items it lists only
+  the nearest `if` conditions, so read the method for outer guards.
+
 ## How to check each item kind
 
 - `action`: what the user taps (button, item, tab, sliding option, fab, link),

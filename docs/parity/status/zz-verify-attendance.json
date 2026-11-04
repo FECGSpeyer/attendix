@@ -1,0 +1,459 @@
+{
+  "batch": "zz-verify-attendance",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "attendance/att-list/att-list.page#logic-d52a9296": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:269",
+        "lib/core/providers/attendance_providers.dart:193",
+        "lib/core/providers/attendance_providers.dart:252",
+        "lib/core/providers/realtime_providers.dart:144",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:817",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:115",
+        "lib/core/providers/duty_providers.dart:77"
+      ],
+      "n": "Grundlogik stimmt (Laden ab Saisonstart mit Offline-Cache, Archiv nur Admin/Verantwortliche via filterArchivedForRole, Typ-/Archiv-Filter, Sortierung, aktueller/kommende/vergangene Termine, Beobachter-Liste, Durchschnitt ohne unbesetzte Dienste, Prozent inkl. shift_excused_as_present, Rollenflags canAddAttendance = Dirigent||Helfer, Löschen, Anlegen mit gleichen Spalten, Personenfilter, Schichten, Abwesenheiten, Verhinderungen, Checkliste, Werken, duty_required). Korrektur sev hoch→mittel: Die hoch- und mittel-Extras des Erstreviewers (Ablaufplan-Viewer ohne Bearbeiten/Zusatzpläne/Werk-Aktionen; Info-Sheet nur Spinner) sind bereits durch modal-c5dfef61, modal-66d0050c und modal-f5836528 abgedeckt und dürfen laut Brief nicht als extra doppelt zählen (die Lücken selbst bleiben dort hoch/mittel). Übrige Erst-Extras (Dienst-Pill vergangen, „Deine Dienste“-Quelle, Meta-Zeit ganztägig, Formular-Zustand, Flutter-besser-Punkte) geprüft, zutreffend, niedrig. Neu: Dienst-Besetzung/-Namen und „Deine Dienste“ aus nicht aufgefrischten Caches (siehe extra, mittel).",
+      "v": "korrigiert"
+    },
+    "attendance/att-list/att-list.page#toast-e7112c48": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_create_page.dart:829"],
+      "n": "Warn-Toast „Bitte wähle mindestens ein Datum aus“ (orange). In beiden Apps praktisch unerreichbar, da der Absenden-Eintrag ohne Datum deaktiviert ist.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#loading-64f98ca9": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:850",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:475",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:491"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay (Utils.getLoadingElement, endet spätestens nach 3 s) / Flutter: kein Overlay, Spinner im Absenden-Eintrag, Eintrag deaktiviert, Sheet per PopScope/shouldCloseOnMinExtent nicht schließbar; übrige Felder bleiben bedienbar.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#toast-2921a95c": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/pages/attendance_create_page.dart:821"],
+      "n": "Ionic: Toast (danger) „Ungültiger Anwesenheitstyp ausgewählt“, wenn type_id keinem Typ entspricht (z. B. kein sichtbarer Typ) / Flutter: neutrale SnackBar „Bitte wähle einen Veranstaltungstyp“ (attListInvalidType ungenutzt), Prüfung vor der Datumsprüfung.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#toast-b8563c8d": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_create_page.dart:670"],
+      "n": "Nur heute gewählt → Auswahl leeren, „Das aktuelle Datum wurde deselektiert“, danach Kalender. Neutraler Standard-Toast statt Ionic-Farbe „light“.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#alert-c973a254": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:177",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:190"
+      ],
+      "n": "Ionic: Auswahl „Anderer Dirigent“ öffnet Alert „Dirigent eingeben“ (Input-Placeholder „Dirigent“, „Abbrechen“/„Speichern“), danach Textfeld nur mit gespeichertem Namen / Flutter: kein Dialog, sofort Inline-Textfeld mit Hinweis „Dirigent eingeben“.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#modal-c5dfef61": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:103",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart:18",
+        "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+      ],
+      "n": "Ionic: PlanViewer mit attendance inkl. extra_plans (plan === attendance.plan → Tages-Chips aller Pläne), songs (Werk-Zeilen öffnen Notenaktionen) und canEdit (Stift für Dirigent/Helfer) / Flutter: Vollbild-Viewer, Attendance-Modell ohne extra_plans und plan explizit übergeben → nur Hauptplan, keine Tages-Chips, kein songAction, kein onEdit. defaultLive gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#modal-66d0050c": {
+      "s": "missing",
+      "sev": "hoch",
+      "n": "Ionic: „Bearbeiten“ im Ablaufplan-Viewer (canEdit = Dirigent/Helfer) schließt mit role „edit“ und öffnet PlanningPage (attendanceId, initialPlanIndex) / Flutter: openAttendancePlanViewer übergibt kein onEdit, kein Bearbeiten-Knopf; Editor aus der Liste nicht erreichbar (nur über die Termin-Detailseite).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-558f18b9-2": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_list_page.dart:113"],
+      "n": "Filter-Popover „Alle anzeigen“, Typen mit Farbpunkt, „Archivierte anzeigen“ nur Admin/Verantwortliche. Icon tune statt „options“, primär bei aktivem Filter/Archiv.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-4fff8ad6": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/pages/attendance_list_page.dart:239"],
+      "n": "Flutter besser: Button „Termin hinzufügen“ im Leerzustand nur mit Anlegerecht (canCreateAttendanceProvider, wie der FAB) / Ionic zeigt ihn allen Rollen der Seite (auch Beobachter und Helfer ohne attendance_create) und öffnet das Anlege-Sheet.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#modal-f5836528": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:727",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:748"
+      ],
+      "n": "Ionic: Sheet (0.5) sofort mit Typen-Legende, Schulferien, Feiertagen / Flutter: _showHolidayInfo nimmt holidaysProvider per ref.read als Momentaufnahme und baut alles im data-Zweig → beim ersten Öffnen (Provider noch nicht geladen; nur multi_date_calendar beobachtet ihn sonst) dauerhaft nur Spinner, auch ohne Typen-Legende; erst beim nächsten Öffnen Inhalt. maxChildSize 0.9 statt 1.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-16ffe6c1": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/pages/attendance_create_page.dart:772"],
+      "n": "Text „Feiertage des ausgewählten Bundeslandes“ gleich, gleiche Bedingung; Punktfarbe AppColors.danger (#B95B5B) statt Ionic „holiday“ (#9f6073, als AppColors.holiday vorhanden).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#field-b83547ff": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:160",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:684"
+      ],
+      "n": "Flutter besser: beim automatisch gewählten ersten Typ ist die Dauer mit duration_days des Typs vorbelegt / Ionic zeigt dort 1 (onTypeChange läuft nur bei Nutzerauswahl) und legt dann einen 1-Tages-Termin an. Sonst gleich (Zahlenfeld nur bei all_day, Werte < 1 werden in Flutter ignoriert).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-558f18b9-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:381",
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart:392"
+      ],
+      "n": "„+“ neben „Werke“ öffnet das Sheet „Werk(e) hinzufügen“ (max. 70 % Höhe).",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#modal-aff28de3": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:234",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:323"
+      ],
+      "n": "Vollbildseite „Werke auswählen“ mit Suche wie Ionic, aber Auswahl wird nur mit ✓ übernommen; X/Zurück verwirft sie (Ionic: Auswahl wirkt sofort, jedes Schließen behält sie). Suchbegriff wird in Flutter bei jedem Öffnen zurückgesetzt.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#action-4ef97afb": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:214",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:250"
+      ],
+      "n": "Flutter besser: „Werk(e) hinzufügen“ erst aktiv mit ≥1 Werk und Dirigent bzw. Namen / Ionic immer aktiv (ohne Werk nur Schließen); bei „Anderer Dirigent“ ohne Namen übernimmt Ionic person_id 9999999999. Achtung: ohne aktive Dirigenten erlaubt Ionic Werke ohne Dirigent, Flutter nur mit „Anderer Dirigent“ + Name.",
+      "v": "bestätigt"
+    },
+    "attendance/att-list/att-list.page#text-8babe4ac": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:413",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:284",
+        "lib/data/models/song/song.dart:150"
+      ],
+      "n": "Ionic: „{number} {name}“ (ohne Präfix) bzw. „Unbekanntes Lied“ / Flutter: „{prefix}{number} - {name}“ bzw. „Unbekannt“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:410"],
+      "n": "Ionic: nach Retries Toast (danger) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und automatisch zurück (navigateBack) / Flutter: kein Toast, kein Zurück; Fehlerseite mit demselben Text und Button „Neu laden“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#native-1dcfca94": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:383",
+        "lib/core/services/offline_queue_service.dart:540"
+      ],
+      "n": "connectivityProvider statt Network.getStatus; Toasts nur bei echtem Online/Offline-Wechsel, Offline-Queue wird global beim Reconnect geflusht.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#nav-bb97d1da": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:465",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1437",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1453"
+      ],
+      "n": "Zurück per Pop, ohne Verlauf go('/attendance') (Ionic navigateByUrl('/tabs/attendance')); auch bei „deletedByOther“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#toast-1962a3f3": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_actions.dart:79",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:163"
+      ],
+      "n": "„Danke, dein Dienst ist bestätigt 🙂“ (success) nach Bestätigen des eigenen angefragten Dienstes im Besetzungsblock.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#db-4914fe1c": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1045",
+        "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:108"
+      ],
+      "n": "Bucket attendances, Pfad <id>/attachment/<safeName> (gleiche Regex), upsert, danach attachment_url/attachment_name (id + tenantId). Das zusätzliche Löschen einer Vorgängerdatei (previousFileName) greift praktisch nie, weil Hochladen wie in Ionic nur ohne Anhang angeboten wird.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#db-f3ad3394": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1113",
+        "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:131"
+      ],
+      "n": "Flutter besser: Ionic löscht `<id>/attachment/<attachment_name>` mit dem Originalnamen, hochgeladen wurde aber unter dem bereinigten Namen → bei Leer-/Sonderzeichen bleibt die Datei im Bucket liegen / Flutter löscht den bereinigten Pfad (attachmentPath). DB-Update attachment_url/attachment_name = null gleich. Erstreviewer hat den Pfadunterschied übersehen.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#actionsheet-19467990": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:121",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:33"
+      ],
+      "n": "Ionic (ein Plan): Header „Ablaufplan teilen“, „Exportieren (PDF)“, „Exportieren (PDF 2x A5)“, drei Telegram-Optionen immer, Abbrechen; mehrere Pläne: Teilen-Sheet mit Wahl „dieser Plan / alle Pläne“ für jede Aktion / Flutter: Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, zusätzlich „Bild (A4)“, Telegram nur mit Chat-ID; bei mehreren Plänen nur zusätzlich „PDF exportieren (alle Pläne)“ (kein 2x A5/Telegram für alle).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-aadedcba": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2057",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:177",
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:198"
+      ],
+      "n": "Ionic: Auswahl „Anderer Dirigent“ im Werke-Modal der Detailseite öffnet Alert „Dirigent eingeben“ (Placeholder „Dirigent“, Abbrechen/Speichern) / Flutter: dasselbe SongsSelectionSheet wie beim Anlegen, kein Dialog, Inline-Textfeld mit Hinweis „Dirigent eingeben“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#alert-9b3e485d": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2237",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2271",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+      ],
+      "n": "Ionic: bei genau einem Anmeldefeld ein Alert mit Feldname als Header (Text-Input, Ja/Nein-Radios, Optionen als Radios/Checkboxen; Abbrechen/Speichern) / Flutter: immer das Sheet „Anmeldefelder“ (Schalter/Dropdown/Checkboxen); zusätzlich Toast „Anmeldefelder gespeichert“. Schreiben (Merge in registration_answers) gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#db-633099eb": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/attendance_repository.dart:1014",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1370"
+      ],
+      "n": "Edge Function send-ad-hoc-reminder mit gleichem Body (attendanceId, tenantId, title/message nur wenn gesetzt, playerAppId, playerAppIds = neutrale Personen der Gruppe bei „nur ohne Rückmeldung“); zusätzlich Mandanten-Prüfung des Termins.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-b4223e43": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:482",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1049"
+      ],
+      "n": "„dd.MM.yyyy | anwesend/gesamt“ (Anwesend + Verspätet) über die Gruppen- und statusgefilterte Liste wie filteredPlayers.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-dd4e8bf5": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:1211"],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-d7e1cae2": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:1213"],
+      "n": "„Verspätet entschuldigt“ erscheint wie in Ionic, wenn der Typ Verspätet (3) erlaubt, und filtert Status 5.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-093444e8": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:1320"],
+      "n": "„Bilder anzeigen“ im Untermenü „Ansicht“, Standard aus wie Ionic (showAvatars ?? false), lokal gespeichert.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-ab758e8d": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1115",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2579"
+      ],
+      "n": "Flutter besser: Ionic zeigt „Checkliste starten“ allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern / Flutter nur Admin, Verantwortliche, Stimmführer-Helfer (canMutateAttendanceDetail). Praktisch selten: Beobachter erreichen die Ionic-Detailseite nur über Umwege (Liste, Dashboard und Push öffnen sie für VIEWER nicht).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-eeded125": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:168"],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-6c23e1d3": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:194",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2179"
+      ],
+      "n": "„Datum“ für alle Rollen antippbar wie Ionic, ruft promptAttendanceDateChange (gemeinsame Logik, eigener Batch).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-7e76e2fd": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1816",
+        "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:152",
+        "lib/core/utils/event_list_utils.dart:230"
+      ],
+      "n": "Flutter speichert die gewählte Frist mit toUtc() (21:00 MEZ → 20:00Z), liest Fristen aber nach der Ionic-Konvention „Wandzeit in UTC-Notation“ (Anzeige ohne toLocal, isSigninOpen/deadlineLocal) → nach dem Speichern steht 20:00 da und die Anmeldung schließt eine Stunde (Sommer: zwei) zu früh. Ionic schreibt den ion-datetime-Wert als Wandzeit (Konvention durch Flutters eigenen Kommentar bestätigt; ion-datetime-Quellen nicht im Container). Außerdem: Ionic Minuten in 5er-Schritten, max = Termintag zur Typ-Startzeit / Flutter freie Minuten, max = Termintag; Flutter-Toast „Frist aktualisiert“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-5f1a024e": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:281"],
+      "n": "Flutter besser: Ionic zeigt ein Zahlenfeld „Dauer (Tage)“, onInfoChanged schreibt duration_days aber nicht (Änderung geht beim Neuladen verloren) / Flutter zeigt die Dauer nur an.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-947253d3": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:164"],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-188edfd0": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:236"],
+      "n": "Chip mit Dateiname öffnet den Anhang im In-App-Browser (Ionic Browser.open).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-9a1384d5": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:41",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2079"
+      ],
+      "n": "Entfernen ohne Rückfrage wie Ionic (Flutter über Abgleich der history-Zeilen statt direktem Löschen per id); Flutter zeigt zusätzlich Toast „Werk entfernt“.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-5c344678": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:350"],
+      "n": "Ionic: „Keine Werke gefunden“ nur bei Suchbegriff ohne Treffer / Flutter: auch ohne Suchbegriff, wenn keine Werke existieren.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-8f5d1834": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:46",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:608"
+      ],
+      "n": "Sichtbar für Nicht-Helfer bzw. Helfer mit checklist_view und nur mit Einträgen.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-be8be344": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:117",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1712"
+      ],
+      "n": "Ionic: „in 2 Tagen · 01.03.2026 18:00 Uhr“ (relativ · absolut) / Flutter: nur die relative Angabe, absolutes Fälligkeitsdatum fehlt (attendanceTimeOClock ungenutzt).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-2f4b32ed": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:137",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1577",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1601"
+      ],
+      "n": "Dialog gleich (Header „To-Do hinzufügen“, Text + Stunden, Abbrechen/Hinzufügen, Warnung ohne Text, dueDate ab Terminbeginn); Flutter zeigt nach dem Speichern zusätzlich Toast „To-Do hinzugefügt“ (Ionic keiner). Erstreviewer hat das als ok gewertet, die gleichartigen Zusatz-Toasts bei action-9a1384d5/action-5fb9b753 aber als diff.",
+      "v": "korrigiert"
+    },
+    "attendance/attendance/attendance.page#text-68ca5cdb": {
+      "s": "ok",
+      "f": ["lib/features/duty/presentation/widgets/duty_staffing_section.dart:201"],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-592be266": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:206",
+        "lib/features/duty/presentation/widgets/duty_staffing_section.dart:38"
+      ],
+      "n": "Flutter besser: Helfer (HELPER) ohne player_notes_view sehen „Notiz hinzugefügt“ statt des Grundes / Ionic zeigt pa.notes im Besetzungsblock unmaskiert.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-7001ac88": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1472",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:737"
+      ],
+      "n": "„Anwesenheitsliste konnte nicht geladen werden“ + „Neu laden“, nur ohne Gruppenbeschränkung wie Ionic (helperGroupId == null).",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-d9253f57": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:116"],
+      "n": "Ionic: Notiz einzeilig abgeschnitten (ion-label ohne ion-text-wrap) / Flutter: bis zu 2 Zeilen. Maskierung für Helfer ohne Recht gleich.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#field-69c39f7a": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:138",
+        "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:283",
+        "lib/features/attendance/presentation/widgets/attendance_detail/status_chip.dart:43"
+      ],
+      "n": "Gleiche Optionen und Reihenfolge (Neutral, Anwesend, Entschuldigt, Verspätet, Verspätet entschuldigt, Abwesend; LE an Verspätet gekoppelt), schreibt nur status.",
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#text-8a34dabe": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:157"],
+      "v": "bestätigt"
+    },
+    "attendance/attendance/attendance.page#action-5fb9b753": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart:408",
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2263"
+      ],
+      "n": "Speichern (Merge in registration_answers inkl. Standardwerten, offline-fähig) wie Ionic; Flutter zeigt zusätzlich Toast „Anmeldefelder gespeichert“.",
+      "v": "bestätigt"
+    },
+    "attendance/auto-message-panel/auto-message-panel.component#action-ee066e4b": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:461"],
+      "n": "„Ablehnen“ (outline, grau) nur Admin/Verantwortliche nach Terminbeginn bei offenen Antworten; Rückfrage mit Name, Text und destruktivem „Ablehnen“, Toast wie Ionic.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Dienst-Besetzung in der Liste veraltet",
+      "n": "Ionic: dutyBadge/dutyNames/isDutyAttendance und myDutyRequests werden bei jedem getAttendance (Realtime, Rückkehr, Pull-to-Refresh, nach Anlegen) aus att.persons und dem Typ neu berechnet / Flutter: Headset-Icon, Namenszeile, Besetzungs-Pill und „Deine Dienste: bitte bestätigen“ kommen aus dutyTermineByIdProvider bzw. myDutyOverviewProvider (keepAlive, ohne attendanceRefetchCounter); Anlegen, Realtime und Pull-to-Refresh invalidieren nur realtimeAttendanceListProvider → neu angelegte Dienst-Termine zeigen „0%“ statt „0/2“, ohne Headset und ohne „noch niemand eingeteilt“; Zuteilungen durch andere erscheinen nicht, bis eine Dienst-Aktion (DutyNotifier) oder ein App-Neustart den Cache leert.",
+      "sev": "mittel",
+      "ionic": "src/app/attendance/att-list/att-list.page.ts:528",
+      "f": [
+        "lib/core/providers/duty_providers.dart:77",
+        "lib/core/providers/duty_providers.dart:148",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:369",
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart:625",
+        "lib/features/attendance/presentation/attendance_create_writes.dart:158"
+      ]
+    }
+  ]
+}

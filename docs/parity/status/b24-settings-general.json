@@ -1,0 +1,1381 @@
+{
+ "batch": "b24-settings-general",
+ "ionic": "9f9b82af",
+ "flutter": "1aba6be",
+ "items": {
+  "settings/general/shifts/shifts.page#logic-541274b4": {
+   "s": "diff",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:113-210",
+    "lib/data/repositories/shift_repository.dart:17-32"
+   ],
+   "n": "Ablauf gleich (Sheet schließen, Name prüfen, Plan anlegen mit definition/shifts [], zum Plan navigieren, Liste nach Name sortiert); Abweichungen siehe extra (Erfolgs-Toast, Trim, Navigation per ID).",
+   "sev": "niedrig"
+  },
+  "settings/general/shifts/shifts.page#nav-8e9080ea": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:34-38",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:536"
+   ],
+   "n": "Flutter context.pop() zurück zu „Allgemein“ (Seite wird von dort gepusht)."
+  },
+  "settings/general/shifts/shifts.page#toast-a0cd84c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:171-177"
+   ]
+  },
+  "settings/general/shifts/shifts.page#nav-cfc6f85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:199-202",
+    "lib/core/router/app_router.dart:1110-1121"
+   ]
+  },
+  "settings/general/shifts/shifts.page#action-1d18586b": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:34-38"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-2e1e5176": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:33"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-2e1e5176-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:32-46"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-1fa63f55": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:86-92"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-07658717": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:94-98"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-ef55982c": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:57-58"
+   ]
+  },
+  "settings/general/shifts/shifts.page#action-0a70585a": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:62-68",
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:105-109",
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:213-231"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-c07a14b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:59-60"
+   ]
+  },
+  "settings/general/shifts/shifts.page#modal-bf7dce08": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:113-169"
+   ],
+   "n": "Bottom-Sheet mit 70 % Höhe (Ionic breakpoint 0.7)."
+  },
+  "settings/general/shifts/shifts.page#text-32437e7f": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:134"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-ea714085": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:141-145"
+   ]
+  },
+  "settings/general/shifts/shifts.page#field-ae426495": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:141-145"
+   ]
+  },
+  "settings/general/shifts/shifts.page#text-be99f343": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:146-149"
+   ]
+  },
+  "settings/general/shifts/shifts.page#field-fc1d364f": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:146-149"
+   ]
+  },
+  "settings/general/shifts/shifts.page#action-bcf59a94": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:152-161"
+   ]
+  },
+  "settings/general/type/type.page#logic-20147d19": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:105-185",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1458-1538"
+   ],
+   "n": "Seite stark umgebaut (Ablaufplan, Checkliste, Erinnerungen, Filter, Neu-Anlage); Item-Unterschiede bei den Items, verdeckte Logik siehe extra (doppelte Feld-IDs, Agenda-Marker-Zeit, null statt []/'' beim Speichern, Änderungserkennung, System-Zurück, Nutzungshinweis, veralteter Filter-Key).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#nav-3a5f04bf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1453-1455"
+   ]
+  },
+  "settings/general/type/type.page#alert-67f98937": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1422-1451"
+   ],
+   "n": "Abbrechen / Verwerfen (rot) / Speichern; Speichern speichert und verlässt die Seite (auch wenn die Validierung scheitert – wie Ionic)."
+  },
+  "settings/general/type/type.page#toast-ccbc1d13": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1525-1527"
+   ]
+  },
+  "settings/general/type/type.page#toast-d47c0363": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1518-1523",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1533-1536"
+   ]
+  },
+  "settings/general/type/type.page#toast-69addb3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:230-231"
+   ],
+   "n": "Toast im Flutter-Anlegeablauf (Namensdialog auf der Typenliste)."
+  },
+  "settings/general/type/type.page#toast-f110531e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:237-240"
+   ]
+  },
+  "settings/general/type/type.page#toast-d7abd52a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1459",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:209-215"
+   ],
+   "n": "Ionic: roter Toast / Flutter Bearbeiten: gleicher Text als Validierungsfehler unter dem Namensfeld, kein Toast (beim Anlegen im Namensdialog Toast).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#toast-6ffc1cbe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1460-1467"
+   ],
+   "n": "Flutter prüft < 2; im Status-Dialog lässt sich der letzte Status ohnehin nicht abwählen."
+  },
+  "settings/general/type/type.page#alert-57a11ee0": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1540-1565",
+    "lib/data/repositories/attendance_type_repository.dart:174-198"
+   ],
+   "n": "Dialog gleich (Titel, Text mit „{name}“, Abbrechen/Löschen; „Löschen“ in Flutter nicht destruktiv markiert). Wirkung: Ionic löscht den Typ (Text: Anwesenheiten werden mitgelöscht) / Flutter: Repository bricht ab, wenn Termine des Typs existieren → Toast „Fehler beim Löschen des Anwesenheitstyps“; benutzte Typen sind nicht löschbar, obwohl der Dialogtext das Mitlöschen ankündigt.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#toast-bfb92172": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1554-1556"
+   ]
+  },
+  "settings/general/type/type.page#nav-41b5d1ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1556"
+   ],
+   "n": "Ionic router.navigate zur Typenliste / Flutter context.pop() zurück zur Typenliste."
+  },
+  "settings/general/type/type.page#toast-28259494": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1557-1563"
+   ]
+  },
+  "settings/general/type/type.page#alert-49afdc91": {
+   "s": "missing",
+   "n": "Ionic: beim Schließen des Neu-Modals mit eingegebenem Namen Rückfrage „Änderungen verwerfen?“ (Abbrechen/Verwerfen) / Flutter: kein Neu-Modal; „Abbrechen“ im Namensdialog schließt ohne Rückfrage.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#alert-ae40e4a4": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1243-1251",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1276-1332"
+   ],
+   "n": "Ionic Alert „Feld hinzufügen“: Textarea „Freitext eingeben...“ + „Info-Text (optional)“, Abbrechen/Hinzufügen; Feld id=Text, time '20', info / Flutter Dialog „Neues Feld“: „Bezeichnung“ + „Dauer (Minuten)“ (Vorgabe 10), Abbrechen/OK; kein Info-Text, id 'custom-<ts>', Standarddauer 10 statt 20.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#alert-0d2e84fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1027-1056"
+   ]
+  },
+  "settings/general/type/type.page#toast-307c76ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1052"
+   ]
+  },
+  "settings/general/type/type.page#toast-e2f0301d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1053-1054"
+   ]
+  },
+  "settings/general/type/type.page#nav-bc1cad79": {
+   "s": "missing",
+   "n": "openDutyHelp (Hilfe-Artikel 'duty-setup') wird in der normalen Typ-Seite nirgends aufgerufen (siehe action-2e6f9d01).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#nav-ab53d5e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127",
+    "lib/core/router/app_router.dart:1180-1191"
+   ]
+  },
+  "settings/general/type/type.page#toast-0ce227b1": {
+   "s": "missing",
+   "n": "Nur über den Popover-Eintrag „Tagesordnung Platzhalter“ erreichbar, der in Flutter fehlt; „Platzhalter einfügen“ ist bei vorhandenem Marker ausgeblendet (wie Ionic).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#alert-4bd8b87d": {
+   "s": "missing",
+   "n": "Alert „Notizfeld hinzufügen“ (Textarea „Notiz eingeben...“, Abbrechen/Hinzufügen, id 'noteFld <Text>', time 0) fehlt in der normalen Typ-Seite (siehe action-c71a96a2).",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#alert-7993d27e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1274",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1276-1332"
+   ],
+   "n": "Ionic „Feld bearbeiten“: Programmpunkt, Ausführender, Info (Notizfeld: Textarea „Notiz“), Abbrechen/Updaten, leer → Meldung „Bitte einen Programmpunkt eingeben.“ / Flutter „Feld bearbeiten“: „Bezeichnung“ + „Dauer (Minuten)“, Abbrechen/OK, leer → OK ohne Wirkung; Ausführender (conductor) und Info nicht editierbar.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#toast-eaf26e31": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:34-38",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:62-67"
+   ]
+  },
+  "settings/general/type/type.page#toast-995c9d84": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:42",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:62-66"
+   ],
+   "n": "Ionic: Toast-Farbe warning / Flutter: showError (danger).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#toast-43a95259": {
+   "s": "na",
+   "n": "toter Code: addReminder wird nur im Block @if (canAddReminder()) aufgerufen, der bei 3 Erinnerungen ausgeblendet ist (Flutter ebenso, type_reminders_editor.dart:129)."
+  },
+  "settings/general/type/type.page#toast-d3df03e8": {
+   "s": "na",
+   "n": "toter Code: Button „Feld hinzufügen“ ist bei leerer Bezeichnung disabled ([disabled]=\"!newRegField.label?.trim() || !newRegField.type\"); Flutter-Verhalten siehe action-cb1f55e8."
+  },
+  "settings/general/type/type.page#toast-8a7ee694": {
+   "s": "na",
+   "n": "toter Code: Button ist ohne Typ disabled ([disabled]=\"… || !newRegField.type\"); Flutter hat „Text“ vorausgewählt."
+  },
+  "settings/general/type/type.page#toast-7092669c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:52-62"
+   ]
+  },
+  "settings/general/type/type.page#toast-24b8caa6": {
+   "s": "na",
+   "n": "toter Code: Button „To-Do hinzufügen“ ist bei leerem Text disabled ([disabled]=\"!newChecklistText?.trim()\")."
+  },
+  "settings/general/type/type.page#alert-0ec2acf8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1344-1411"
+   ],
+   "n": "Ionic Alert „To-Do bearbeiten“: ein Textfeld (Platzhalter „To-Do Text...“), Abbrechen/Speichern, nur Text änderbar / Flutter Dialog „To-Do bearbeiten“: „Aufgabe“ + „Frist (Stunden vorher, optional)“, Abbrechen/OK; Frist ebenfalls änderbar.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-06fe01ff": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:225-229"
+   ]
+  },
+  "settings/general/type/type.page#action-9220acaf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:230-236"
+   ]
+  },
+  "settings/general/type/type.page#action-2be774f4": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:195-199"
+   ],
+   "n": "Ionic: „X“ im Neu-Modal (dismiss, ggf. mit Rückfrage) / Flutter: kein Neu-Modal, „Abbrechen“ im Namensdialog der Typenliste.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-bcc05107": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:858-866"
+   ]
+  },
+  "settings/general/type/type.page#field-519cd48e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:840-869"
+   ]
+  },
+  "settings/general/type/type.page#text-44f5a998": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:279-280"
+   ]
+  },
+  "settings/general/type/type.page#field-4bd5f276": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:284-295"
+   ]
+  },
+  "settings/general/type/type.page#text-71ea0fce": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:299-307"
+   ]
+  },
+  "settings/general/type/type.page#field-1e46173e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:299-307",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:785-838",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1178-1194"
+   ],
+   "n": "Ionic Mehrfachauswahl: Neutral, Anwesend, Abwesend, Entschuldigt, Verspätet anwesend (Anwesend gesperrt) / Flutter-Dialog: Neutral, Anwesend, Entschuldigt, Verspätet, Abwesend, „Verspätet (entsch.)“ – andere Reihenfolge, „Verspätet“ statt „Verspätet anwesend“ und zusätzlich Status 5 wählbar (Ionic attendance.page prüft available_statuses.length === 5).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-0b9f9349": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:308-310"
+   ]
+  },
+  "settings/general/type/type.page#field-02b039dc": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:308-333"
+   ],
+   "n": "Nur verfügbare Status wie Ionic, aber Enum-Reihenfolge (…, Entschuldigt, Verspätet, Abwesend) und Text „Verspätet“ statt „Verspätet anwesend“.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-5028d2f7": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:334-345"
+   ],
+   "n": "Ionic: nur wenn tenant.type !== 'general' / Flutter: immer sichtbar; in Flutter steuert der Schalter zusätzlich die Sichtbarkeit des Ablaufplans (siehe text-6289c3a9).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-63d333de": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:346-357"
+   ]
+  },
+  "settings/general/type/type.page#text-90aaada7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:358-363"
+   ]
+  },
+  "settings/general/type/type.page#field-4a2fa59b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:358-385"
+   ]
+  },
+  "settings/general/type/type.page#text-0103bbc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:387-389"
+   ]
+  },
+  "settings/general/type/type.page#text-fca1a1c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:390-392"
+   ]
+  },
+  "settings/general/type/type.page#field-9786b85d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:393-395"
+   ]
+  },
+  "settings/general/type/type.page#modal-8afdfb0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Zeitwahl-Dialog statt ion-modal mit ion-datetime (Plattform-Look)."
+  },
+  "settings/general/type/type.page#field-ea19d7e9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:387-396",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Ionic: Minuten nur in 5er-Schritten (minuteValues 0,5,…,55) / Flutter: Zeitwahl ohne 5-Minuten-Raster.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-d7a84674": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:399"
+   ]
+  },
+  "settings/general/type/type.page#field-9786b85d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:400-402"
+   ]
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Zeitwahl-Dialog statt ion-modal (Plattform-Look)."
+  },
+  "settings/general/type/type.page#field-32a15191": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:397-403",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Ionic: Minuten nur in 5er-Schritten / Flutter: Zeitwahl ohne 5-Minuten-Raster.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-740d3e37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:405-416"
+   ]
+  },
+  "settings/general/type/type.page#field-af0bc58e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:417-428"
+   ]
+  },
+  "settings/general/type/type.page#field-fdd20919": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:429-440"
+   ]
+  },
+  "settings/general/type/type.page#field-621715ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:114-120",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:31-36"
+   ]
+  },
+  "settings/general/type/type.page#action-f6f5a988": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127"
+   ]
+  },
+  "settings/general/type/type.page#field-91bd7675": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:128-148"
+   ]
+  },
+  "settings/general/type/type.page#field-ccf8bbf1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:149-155"
+   ]
+  },
+  "settings/general/type/type.page#text-ca2ec236": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:156-158"
+   ]
+  },
+  "settings/general/type/type.page#action-7ac15547": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:159-164",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:449-452"
+   ]
+  },
+  "settings/general/type/type.page#field-98265cec": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:455-466"
+   ]
+  },
+  "settings/general/type/type.page#text-4d1722d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:916-917"
+   ]
+  },
+  "settings/general/type/type.page#field-8aa4fd37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:921-942"
+   ]
+  },
+  "settings/general/type/type.page#action-2e6f9d01": {
+   "s": "missing",
+   "n": "Ionic: Eintrag „Mehr erfahren“ (help-circle) unter „Dienst-Modus“ → Hilfe-Artikel 'duty-setup' / Flutter: fehlt in der Dienstplan-Sektion (nur beim Protokoll vorhanden).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-fe789c4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:944-963"
+   ],
+   "n": "Zahleneingabe (min 1) als −/+-Stepper (min 1); gleicher Wert."
+  },
+  "settings/general/type/type.page#field-b74def74": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:964-970"
+   ]
+  },
+  "settings/general/type/type.page#field-5409bc4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:971-986"
+   ]
+  },
+  "settings/general/type/type.page#field-30cdf8c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:987-995"
+   ]
+  },
+  "settings/general/type/type.page#field-e4e83761": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:996-1013"
+   ]
+  },
+  "settings/general/type/type.page#text-c8d8274e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1014-1020"
+   ],
+   "n": "Text identisch, verweist aber auf „Filter“ (Abschnitt heißt in Flutter „Zusatzfeld-Filter“) und auf ein Ja/Nein-Feld, das der Flutter-Filter nicht anbietet (siehe field-1ef7f6fa).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-e35b5a32": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:477-478"
+   ]
+  },
+  "settings/general/type/type.page#field-8fba8ce6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:481-492"
+   ]
+  },
+  "settings/general/type/type.page#action-d5d47659": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493-500"
+   ],
+   "n": "Ionic: Eintrag „Erinnerungen konfigurieren“ mit „{count} Erinnerung(en) aktiv“ bzw. „Keine Erinnerungen konfiguriert“ und Badge „n/3“, öffnet ein Sheet / Flutter: kein Eintrag, Erinnerungs-Editor direkt inline unter dem Schalter.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#modal-0895b1d0": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:493-500",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:72-186"
+   ],
+   "n": "Ionic: Sheet-Modal (Breakpoints 0/1) / Flutter: Inhalt inline in der Seite (TypeRemindersEditor).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-e17651f9": {
+   "s": "missing",
+   "n": "Sheet-Titel „Erinnerungen“ entfällt (Inline-Editor).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-a64534cc": {
+   "s": "missing",
+   "n": "Häkchen zum Schließen entfällt (kein Sheet).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-5f58aecb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:81-101"
+   ]
+  },
+  "settings/general/type/type.page#text-b4f5731a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:102-104"
+   ]
+  },
+  "settings/general/type/type.page#text-7128bb80": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:106-109"
+   ]
+  },
+  "settings/general/type/type.page#text-e30ee4ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:124",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:26-31"
+   ]
+  },
+  "settings/general/type/type.page#text-4074ac4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:125"
+   ]
+  },
+  "settings/general/type/type.page#action-5917fc85": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:117-119"
+   ]
+  },
+  "settings/general/type/type.page#text-d7d1c4cd": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:113-114"
+   ],
+   "n": "Gleicher Text, aber ohne Glocken-Icon (notifications-off) und nicht zentriert.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-5cb01ac6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:130"
+   ]
+  },
+  "settings/general/type/type.page#action-6f4dbd15": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:132-142"
+   ],
+   "n": "Chips ohne add-circle-Icon; vorhandene Werte deaktiviert wie Ionic.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-eb5120fd": {
+   "s": "missing",
+   "n": "Überschrift „Benutzerdefiniert“ fehlt; die Eingabe folgt direkt auf die Schnellauswahl.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-2bab6162": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:147-158"
+   ]
+  },
+  "settings/general/type/type.page#action-b683d989": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:161-165",
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:34-47"
+   ],
+   "n": "Ionic: Block-Button „Erinnerung hinzufügen“ mit Icon, disabled bei leerer Eingabe / Flutter: runder „+“-IconButton (Text nur als Tooltip), immer aktiv (leer → Toast „Bitte geben Sie eine positive Ganzzahl ein“). Flutter besser: Werte > 168 werden abgelehnt (Ionic speichert sie).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-dfaf8c58": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_reminders_editor.dart:168-183"
+   ]
+  },
+  "settings/general/type/type.page#text-77016ef0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:510"
+   ]
+  },
+  "settings/general/type/type.page#text-d9788b1c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:513"
+   ]
+  },
+  "settings/general/type/type.page#text-08ed915a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:514"
+   ]
+  },
+  "settings/general/type/type.page#popover-31d23755": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:744-781"
+   ],
+   "n": "Ionic: Popover am Eintrag mit 3er-Raster / Flutter: zentrierter Dialog mit Farb-Raster; Farben, Reihenfolge und graue Markierung der Auswahl gleich.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-2608135b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:753-757",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:776-780"
+   ]
+  },
+  "settings/general/type/type.page#text-2c11308c": {
+   "s": "missing",
+   "n": "Ionic: ein Abschnitt „Filter“ mit Relevante Gruppen + Zusatzfeld-Filter / Flutter: zwei Abschnitte „Relevante Gruppen“ und „Zusatzfeld-Filter“; der Dienstplan-Hinweis verweist weiter auf „Filter“.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-e6aa9e5e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1058-1097"
+   ],
+   "n": "Ionic: Mehrfach-Select „Relevante Gruppen“ mit Hilfetext „Nur die relevanten Gruppen werden … Wenn keine Gruppe ausgewählt ist, werden alle Gruppen berücksichtigt.“, Optionen group.name / Flutter: Abschnittstitel + FilterChips mit shortName ?? name, nur Kurzhinweis „Leer = gilt für alle Gruppen“.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-1ef7f6fa": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1099-1151"
+   ],
+   "n": "Ionic: sichtbar, wenn Personen-Zusatzfelder vom Typ select ODER boolean existieren; Optionen „Kein Filter“ + select- und boolean-Felder; Hilfetext „Nur Personen mit dem ausgewählten Zusatzfeld-Wert …“ / Flutter: nur select-Felder (Ja/Nein-Felder nicht wählbar, Abschnitt fehlt bei nur Ja/Nein-Feldern), Label „Zusatzfeld“, eigener Hinweis „Nur Spieler mit diesem Zusatzfeld-Wert einbeziehen“.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#field-81819267": {
+   "s": "missing",
+   "n": "Wert-Auswahl „Wert“ Ja/Nein für Ja/Nein-Zusatzfelder fehlt. Zudem: ist (aus Ionic) ein Ja/Nein-Filter gespeichert (option true/false) und hat der Tenant ein select-Feld, wirft `_additionalFieldsFilter?['option'] as String?` beim Aufbau einen TypeError → Seite bricht ab.",
+   "sev": "hoch",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1107-1108"
+   ]
+  },
+  "settings/general/type/type.page#field-c6f43718": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1152-1171"
+   ],
+   "n": "Label „Wert“ statt „Option“; Optionen und Vorauswahl (erste Option) gleich.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-6289c3a9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:529-534"
+   ],
+   "n": "Ionic: Abschnitt „Ablaufplan“ immer sichtbar (default_plan wird bei Bedarf angelegt) / Flutter: nur wenn „Werke verwalten“ an ist (if (_manageSongs)); sonst sind Ablaufplan-Vorlage, Planungstitel, Instanz-Name und Plan-Start nicht bearbeitbar.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#action-8950195c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:636-655"
+   ],
+   "n": "Ionic: „+“ im Listenkopf öffnet Popover / Flutter: zwei Outline-Buttons unter der Liste („Feld hinzufügen“, „Werk Platzhalter“); Sichtbarkeit siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#popover-26fe60f8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:636-655"
+   ],
+   "n": "Kein Popover; nur „Feld hinzufügen“ und „Werk Platzhalter“ als Buttons, „Notizfeld hinzufügen“ und „Tagesordnung Platzhalter“ fehlen.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-af88791e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:639-644",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1243-1251"
+   ],
+   "n": "Button unter der Liste statt Popover-Eintrag; Dialog abweichend (siehe alert-ae40e4a4).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-c71a96a2": {
+   "s": "missing",
+   "n": "„Notizfeld hinzufügen“ (Notizfelder ohne Zeit, eigene Darstellung) gibt es in der normalen Typ-Seite nicht (ARB-Key nur in org_planning_templates_page).",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#action-a5acb470": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:646-653",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1253-1264"
+   ],
+   "n": "Ionic: nur wenn tenant.type !== 'general' / Flutter: ohne general-Prüfung (Abschnitt nur bei „Werke verwalten“); ID 'song-placeholder-<n>' 0-basiert statt 1-basiert (Name „Werk Platzhalter n“ gleich).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-b172177a": {
+   "s": "missing",
+   "n": "Popover-Eintrag fehlt; der Marker ist nur über „Platzhalter einfügen“ im Protokoll-Bereich einfügbar.",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart:159-164"
+   ]
+  },
+  "settings/general/type/type.page#text-8c888e7c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:536-538"
+   ],
+   "n": "Label gleich; nur sichtbar, wenn „Werke verwalten“ an ist (Ionic: immer); sonst gleich – siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-f51fa00c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:536-548"
+   ],
+   "n": "Hilfetext „Dieser Titel wird beim Exportieren eines Ablaufplans angezeigt …“ fehlt, stattdessen Platzhalter „z.B. Probenplan“; leer → null statt ''; Sichtbarkeit siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-111f251b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:549-562"
+   ],
+   "n": "Gleiche general-Bedingung und Texte; nur sichtbar, wenn „Werke verwalten“ an ist (Ionic: immer); sonst gleich – siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-246edae3": {
+   "s": "diff",
+   "f": [
+    "lib/features/organisation/presentation/widgets/type_default_org_plan_toggle.dart:24-47",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:662"
+   ],
+   "n": "Ionic: im Ablaufplan-Abschnitt, Teil von Speichern/ungespeicherten Änderungen / Flutter: eigener Schalter zwischen Ablaufplan und Checkliste, sofort gespeichert (Fehler-Toast „Fehler beim Speichern“), unabhängig von „Werke verwalten“.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-a94e358b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:563-574"
+   ],
+   "n": "Ionic: „Start“-Zeile immer (bei nicht-ganztägigen Typen gesperrt mit der Typ-Startzeit) / Flutter: nur bei ganztägigen Typen und nur bei „Werke verwalten“.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-80219924": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:568"
+   ],
+   "n": "Text gleich; nur sichtbar, wenn „Werke verwalten“ an ist (Ionic: immer); sonst gleich – siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-9786b85d-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:569-573"
+   ],
+   "n": "Nur für ganztägige Typen (und „Werke verwalten“); keine gesperrte Anzeige bei nicht-ganztägigen Typen.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-3": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:573",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Zeitwahl-Dialog; Sichtbarkeit wie text-a94e358b.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-e2cc3102": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:563-574",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213"
+   ],
+   "n": "Bei ganztägigen Typen editierbar wie Ionic, aber nur bei „Werke verwalten“; kein 5-Minuten-Raster; keine Neuberechnung einer Endzeit (Flutter zeigt keine).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-c4c2cba9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:577-618"
+   ],
+   "n": "Ionic-Zeile: Name, berechnete Uhrzeit „HH:mm | Ausführender“, Info-Zeile, Minuten-Eingabe rechts; Agenda-Marker mit Icon und „Tagesordnung“/„Hier werden Themen eingefügt“; Notizfelder ohne Zeit / Flutter: Name (Werk-Platzhalter kursiv) + „{n} Min.“, Drag-Handle, Swipe-Löschen; keine Uhrzeiten, kein Ausführender/Info, Marker als normale Zeile. Sichtbarkeit siehe text-6289c3a9.",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#action-3a657512": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:614",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266-1274"
+   ],
+   "n": "Tippen öffnet einen Bearbeiten-Dialog ohne Ausführender/Info (siehe alert-7993d27e); auch der Agenda-Marker ist antippbar (Ionic nicht).",
+   "sev": "hoch"
+  },
+  "settings/general/type/type.page#field-ba7f8aa7": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:609",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1298-1305"
+   ],
+   "n": "Ionic: Minuten-Eingabe direkt in der Zeile (Platzhalter „min“, Ende-Neuberechnung bei Blur) / Flutter: nur im Bearbeiten-Dialog „Dauer (Minuten)“.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-f45c84b6": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:595-601"
+   ],
+   "n": "Voll-Swipe löscht wie Ionic (expandable); nur sichtbar, wenn „Werke verwalten“ an ist (Ionic: immer); sonst gleich – siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#action-c1a3e2f1": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:595-601"
+   ],
+   "n": "Löschen-Option wie Ionic; nur sichtbar, wenn „Werke verwalten“ an ist (Ionic: immer); sonst gleich – siehe text-6289c3a9.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-d7a84674-2": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:619-635"
+   ],
+   "n": "Ionic: Zeile „Ende“ mit berechneter Endzeit des Plans (erscheint nach einer Änderung am Plan) / Flutter: „Gesamt: {n} Min.“ statt Endzeit.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-9786b85d-4": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:619-635"
+   ],
+   "n": "Keine Endzeit-Anzeige, nur Gesamtminuten (siehe text-d7a84674-2).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-4": {
+   "s": "missing",
+   "n": "Kein (gesperrter) Endzeit-Picker; siehe text-d7a84674-2.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-076bd829": {
+   "s": "missing",
+   "n": "Gesperrte Endzeit fehlt; Flutter zeigt nur „Gesamt: {n} Min.“.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-ed93279a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:665-666"
+   ],
+   "n": "Ionic: Abschnitt nur bei aktivierter Checkliste, mit Zähler-Badge / Flutter: immer sichtbar, ohne Badge (siehe field-d34df4b8).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-b7e124ce": {
+   "s": "missing",
+   "n": "Zähler-Badge (Anzahl To-Dos) im Abschnittskopf fehlt.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-fb3aac9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:669-703"
+   ]
+  },
+  "settings/general/type/type.page#action-e05c70b9": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:699",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1344-1352"
+   ],
+   "n": "Tippen öffnet Dialog mit zusätzlichem Frist-Feld (siehe alert-0ec2acf8).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-9242896d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:686-691"
+   ]
+  },
+  "settings/general/type/type.page#text-31685302": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:704-711"
+   ],
+   "n": "Auch ohne aktivierte Checkliste sichtbar; ohne checkbox-Icon, nicht zentriert.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-4366c1dd": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:712-716",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1354-1411"
+   ],
+   "n": "Ionic: Inline-Eingabe „Neues To-Do“ (Platzhalter „To-Do Text eingeben...“) im Abschnitt / Flutter: erst Button, dann Dialog „Neues To-Do“ mit Feld „Aufgabe“ (Platzhalter „z.B. Noten vorbereiten“).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-557c3624": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1377-1384",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1399"
+   ],
+   "n": "Ionic: Auswahl „Deadline“ (Action-Sheet): Keine Deadline, 1 Stunde/1 Tag/2 Tage/1 Woche vorher, Benutzerdefiniert... / Flutter: freies Zahlenfeld „Frist (Stunden vorher, optional)“ im Dialog, keine Vorgaben.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-5ad22e0e": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1377-1384"
+   ],
+   "n": "Stunden-Eingabe immer im Dialog statt nur bei „Benutzerdefiniert...“; Label „Frist (Stunden vorher, optional)“ statt „Stunden vor Termin“.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-bab9d008": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:712-716",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1334-1342"
+   ],
+   "n": "Ionic: Block-Button fügt das inline eingegebene To-Do hinzu (disabled ohne Text) / Flutter: Outline-Button „To-Do hinzufügen“ öffnet einen Dialog.",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#field-d34df4b8": {
+   "s": "missing",
+   "n": "Schalter „Checkliste aktivieren“ mit Hilfetext fehlt; Flutter zeigt die Checkliste immer und speichert leer als null (Ionic: [] bei aktivierter leerer Liste – beim Termin-Anlegen gleichwertig).",
+   "sev": "mittel"
+  },
+  "settings/general/type/type.page#text-058a3ea5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:723-724"
+   ]
+  },
+  "settings/general/type/type.page#text-fdfcef92": {
+   "s": "missing",
+   "n": "Zähler-Badge (Anzahl Anmeldefelder) im Abschnittskopf fehlt.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#text-2dca20de": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:96"
+   ]
+  },
+  "settings/general/type/type.page#text-05a7cbcf": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:97-100"
+   ]
+  },
+  "settings/general/type/type.page#action-174badcb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:91-93"
+   ]
+  },
+  "settings/general/type/type.page#text-39727779": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:80-88"
+   ]
+  },
+  "settings/general/type/type.page#field-fc88ba9f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:104-111"
+   ]
+  },
+  "settings/general/type/type.page#field-96e0108b": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:113-127"
+   ],
+   "n": "Optionen und Reihenfolge gleich; Flutter mit Vorauswahl „Text“ (Ionic leer).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#field-43531b7a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:128-138"
+   ]
+  },
+  "settings/general/type/type.page#action-cb1f55e8": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:139-144",
+    "lib/features/settings/presentation/widgets/registration_fields_editor.dart:46-51"
+   ],
+   "n": "Ionic: disabled ohne Bezeichnung/Typ / Flutter: immer aktiv, leer → Warn-Toast „Bitte eine Feldbezeichnung eingeben“.",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-fd011cb6": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:238-242"
+   ],
+   "n": "Flutter-FAB ist erst nach einer Änderung aktiv (Ionic immer).",
+   "sev": "niedrig"
+  },
+  "settings/general/type/type.page#action-a1e62eae": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:180-242"
+   ],
+   "n": "Ionic: Neu-Modal mit allen Einstellungen, „+“-FAB legt an (Validierung, Toast, Dienstplan-Angebot, Modal zu) / Flutter: Namensdialog → Anlegen mit Standardwerten → Bearbeiten-Seite; Dienstplan-Angebot erst beim Speichern dort.",
+   "sev": "mittel"
+  },
+  "settings/general/types/types.page#logic-8220f429": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:144-242",
+    "lib/data/repositories/attendance_type_repository.dart:201-217"
+   ],
+   "n": "Sortieren/Speichern gleich (index = Position für alle Typen, Liste nach index), Anlegen-Ablauf anders (siehe modal-c0d2c05c), kein Loading (siehe loading-b4bbe04a); Fehlerbehandlung siehe extra.",
+   "sev": "niedrig"
+  },
+  "settings/general/types/types.page#nav-08d36e35": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:45-48"
+   ]
+  },
+  "settings/general/types/types.page#loading-b4bbe04a": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:144-174"
+   ],
+   "n": "Ionic: blockierendes Loading „Speichere Reihenfolge...“ / Flutter: kein Overlay, Speichern läuft ohne Sperre.",
+   "sev": "niedrig"
+  },
+  "settings/general/types/types.page#toast-675faa13": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:160-162"
+   ]
+  },
+  "settings/general/types/types.page#modal-c0d2c05c": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:180-242"
+   ],
+   "n": "Ionic: TypePage (isNew) als Card-Modal mit allen Einstellungen, Insert erst über den „+“-FAB / Flutter: Dialog „Neuer Anwesenheitstyp“ nur mit Name (Abbrechen/Erstellen), legt den Typ mit den Ionic-Standardwerten an und öffnet danach die Bearbeiten-Seite.",
+   "sev": "mittel"
+  },
+  "settings/general/types/types.page#action-87895685": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:45-48"
+   ]
+  },
+  "settings/general/types/types.page#text-3f75d05f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:34",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:49"
+   ]
+  },
+  "settings/general/types/types.page#action-2a71cf91": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:58-68"
+   ]
+  },
+  "settings/general/types/types.page#action-2545cec1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:51-57"
+   ]
+  },
+  "settings/general/types/types.page#text-3f75d05f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:80"
+   ]
+  },
+  "settings/general/types/types.page#text-02036b91": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:82"
+   ]
+  },
+  "settings/general/types/types.page#text-18678a56": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:83-86"
+   ]
+  },
+  "settings/general/types/types.page#action-86cf2354": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:114-119",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:176-178"
+   ]
+  },
+  "settings/general/types/types.page#action-aac5889a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:87-113"
+   ]
+  },
+  "settings/general/types/types.page#action-d4d32824": {
+   "s": "diff",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:126-140"
+   ],
+   "n": "Ionic: „+“-FAB auch im Sortiermodus sichtbar / Flutter: im Sortiermodus stattdessen grauer „X“-FAB (Sortieren abbrechen); Anlegen-Ablauf siehe modal-c0d2c05c.",
+   "sev": "niedrig"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/general/shifts/shifts.page",
+   "title": "Erfolgs-Toast nur in Flutter",
+   "n": "Ionic: nach dem Anlegen kein Toast, direkt Navigation / Flutter: zusätzlich grüner Toast „Schichtplan \"<Name>\" erstellt“.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/shifts/shifts.page.ts:47-50",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:198"
+   ]
+  },
+  {
+   "unit": "settings/general/shifts/shifts.page",
+   "title": "Name/Beschreibung getrimmt",
+   "n": "Ionic: speichert name/description ungetrimmt / Flutter: trim() vor dem Insert.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/shifts/shifts.page.ts:40-45",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:173-178"
+   ]
+  },
+  {
+   "unit": "settings/general/shifts/shifts.page",
+   "title": "Navigation zum neuen Plan per ID",
+   "n": "Flutter besser: Ionic sucht den neuen Plan nach Namen (db.addShift → shifts().find(name)), bei gleichnamigen Plänen ggf. der falsche / Flutter navigiert zur zurückgegebenen ID.",
+   "sev": "niedrig",
+   "ionic": "src/app/services/db.service.ts:3913-3918",
+   "f": [
+    "lib/features/shifts/presentation/pages/shifts_list_page.dart:194-202"
+   ]
+  },
+  {
+   "unit": "settings/general/types/types.page",
+   "title": "Fehler beim Speichern der Reihenfolge",
+   "n": "Flutter besser: Ionic ohne Fehlerbehandlung (Loading bleibt bei Fehler offen) / Flutter: Toast „Fehler beim Speichern. Bitte erneut versuchen.“, Sortiermodus bleibt erhalten.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/types/types.page.ts:31-46",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart:163-173"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Doppelte Feld-IDs im Ablaufplan",
+   "n": "Ionic: Feld-ID = eingegebener Text (zweimal „Pause“ → gleiche ID), funktioniert / Flutter: ReorderableListView mit ValueKey('plan-field-<id>') → doppelte (Global-)Keys, die Liste kann nicht aufgebaut werden; neue Werk-Platzhalter-IDs (Anzahl-basiert) können sich nach Löschen wiederholen.",
+   "sev": "mittel",
+   "ionic": "src/app/settings/general/type/type.page.ts:324-330",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:596",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1253-1259"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Agenda-Marker-Zeit nicht normalisiert",
+   "n": "Ionic: setzt beim Laden die Zeit des Tagesordnungs-Markers auf 0 (ältere Pläne: 30 Min.) / Flutter: übernimmt die gespeicherte Zeit, zählt sie in „Gesamt“ mit und speichert sie wieder.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.ts:113-119",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1228-1235"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Speichern schreibt null statt Werte",
+   "n": "Ionic: schreibt das ganze Typ-Objekt (reminders [], planning_title '', end_time/duration_days bleiben) / Flutter: reminders/checklist/planning_title leer → null, end_time bei ganztägig → null, duration_days bei nicht-ganztägig → null.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.ts:189-196",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1470-1511"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Änderungserkennung per Flag",
+   "n": "Ionic: Vergleich mit Original-JSON (Zurückändern = keine Änderung) / Flutter: Flag _hasChanges bleibt nach Zurückändern gesetzt → Rückfrage beim Verlassen trotz unverändertem Stand.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.ts:131-143",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:95",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:245"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "System-Zurück fragt nach",
+   "n": "Flutter besser: PopScope fragt auch bei Android-Zurück/iOS-Wischgeste nach ungespeicherten Änderungen / Ionic nur beim Zurück-Button.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.ts:148-154",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:214-218"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Nutzungs-Hinweiskarte nur in Flutter",
+   "n": "Ionic: kein Hinweis / Flutter: Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.html:26-34",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:251-271"
+   ]
+  },
+  {
+   "unit": "settings/general/type/type.page",
+   "title": "Veralteter Zusatzfeld-Filter",
+   "n": "Ionic: zeigt „Kein Filter“, wenn das gespeicherte Zusatzfeld nicht mehr existiert / Flutter: nutzt den Key direkt als Dropdown-Wert, der nicht in der Liste ist (Assertion bzw. leere Anzeige).",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/type/type.page.ts:122",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1107-1126"
+   ]
+  }
+ ]
+}

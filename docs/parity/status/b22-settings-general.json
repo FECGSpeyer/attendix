@@ -1,0 +1,901 @@
+{
+  "batch": "b22-settings-general",
+  "ionic": "9f9b82af",
+  "flutter": "1aba6be",
+  "items": {
+    "settings/general/branding/branding.page#logic-9562f6bc": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:40-102",
+        "lib/data/repositories/organisation_settings_repository.dart:30-45",
+        "lib/data/repositories/organisation_settings_repository.dart:93-142"
+      ],
+      "n": "Laden der Organisation (tenant_group_tenants → tenant_group), Upload nach Bucket branding/org-<id> mit ?v=-Cache-Buster, Entfernen ohne Tabellen-Schreiben, Speichern (tenant_groups.logo_url/branding_text, leer → null, Text getrimmt) wie Ionic. Abweichung: Demo-Sperre (siehe extra).",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#toast-cb6ec961": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:45-48"
+      ]
+    },
+    "settings/general/branding/branding.page#toast-6b4f5e61": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:49-54"
+      ],
+      "n": "Ionic: Prüfung über MIME-Typ (imgFile.type beginnt mit 'image') – jedes Bildformat (z.B. TIFF, AVIF, ICO) wird angenommen / Flutter: Prüfung über Dateiendung gegen png/jpg/jpeg/gif/webp/svg/bmp/heic/heif; andere Bildformate → 'Bitte wähle eine Bilddatei aus.'",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#loading-af506242": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:56",
+        "lib/features/settings/presentation/pages/branding_page.dart:196",
+        "lib/features/settings/presentation/pages/branding_page.dart:229"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay ohne Text (duration 3000) / Flutter: nur LinearProgressIndicator oben, Logo- und Speichern-Aktionen deaktiviert, Textfeld und Zurück bleiben bedienbar",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#toast-e9f84b0e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:64"
+      ]
+    },
+    "settings/general/branding/branding.page#toast-08e586ef": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:65-66"
+      ],
+      "n": "Fehlertext über friendlyErrorMessage: StorageException.message wie Ionic error.message; Netzwerkfehler werden zu 'Keine Internetverbindung vorhanden'"
+    },
+    "settings/general/branding/branding.page#loading-f8d4b932": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:73",
+        "lib/features/settings/presentation/pages/branding_page.dart:204",
+        "lib/features/settings/presentation/pages/branding_page.dart:229"
+      ],
+      "n": "Ionic: blockierendes Loading-Overlay ohne Text (duration 3000) / Flutter: nur LinearProgressIndicator, Logo- und Speichern-Aktionen deaktiviert, Rest bedienbar",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#toast-81a12682": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:77-78"
+      ],
+      "n": "Text gleich; Ionic zeigt ihn auch bei Storage-Fehler (siehe toast-c1d1cda9)"
+    },
+    "settings/general/branding/branding.page#toast-c1d1cda9": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:79-80",
+        "lib/data/repositories/organisation_settings_repository.dart:112-121"
+      ],
+      "n": "Flutter besser: Ionic removeOrgLogo wertet das {error} von supabase.storage.remove nicht aus (storage-js wirft dabei nicht; Paket nicht im Container, aus API-Kenntnis) → dieser Fehler-Toast erscheint praktisch nie, stattdessen 'Logo entfernt. Speichern nicht vergessen.' / Flutter: remove wirft StorageException → Fehler-Toast, Logo bleibt angezeigt",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#loading-73e70629": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:86-101",
+        "lib/features/settings/presentation/pages/branding_page.dart:229"
+      ],
+      "n": "Ionic: blockierendes Overlay 'Branding wird gespeichert...' bis zum Ende / Flutter: kein Overlay, kein Text (ARB brandingSaving ungenutzt), nur LinearProgressIndicator und deaktivierte Speichern-Buttons; Seite bleibt bedienbar",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#toast-39c68a81": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:96"
+      ]
+    },
+    "settings/general/branding/branding.page#toast-833723a1": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:97-98"
+      ],
+      "n": "Flutter besser: Ionic zeigt nach dem Service-Toast 'Fehler beim Speichern des Brandings' zusätzlich die rohe Fehlermeldung (error.message, z.B. PostgREST-Text) / Flutter zeigt nur 'Fehler beim Speichern des Brandings'",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#nav-de11d527": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:119-122",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:540",
+        "lib/features/organisation/presentation/pages/org_settings_page.dart:196"
+      ],
+      "n": "Flutter besser: Ionic navigateBack immer nach /tabs/settings/org-settings – auch wenn die Seite aus Allgemeine Einstellungen geöffnet wurde / Flutter: Navigator.maybePop zurück zur aufrufenden Seite (Allgemeine Einstellungen bzw. Organisation)",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#action-a79d6f49": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:119-122"
+      ],
+      "n": "Pfeil-zurück links vorhanden; Ziel wie nav-de11d527: Ionic immer Organisation-Einstellungen / Flutter besser: zurück zur aufrufenden Seite",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#text-602cb7e3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:123"
+      ]
+    },
+    "settings/general/branding/branding.page#action-191f49f8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:124-130"
+      ]
+    },
+    "settings/general/branding/branding.page#text-06060f56": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:136-150"
+      ]
+    },
+    "settings/general/branding/branding.page#text-4c26341a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:163-168"
+      ]
+    },
+    "settings/general/branding/branding.page#text-1e2d6e0b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:169-171"
+      ]
+    },
+    "settings/general/branding/branding.page#action-b1fdc47e": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:191-197"
+      ]
+    },
+    "settings/general/branding/branding.page#field-339f58a0": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:42"
+      ],
+      "n": "Ionic: <input type=file accept=image/*> – in der iOS-App System-Menü mit Fotomediathek / Foto aufnehmen / Datei auswählen / Flutter: FilePicker FileType.image öffnet auf iOS direkt die Fotomediathek (PHPicker, file_picker 8.3.7), keine Kamera und keine Dateien-App. Web: accept image/* wie Ionic",
+      "sev": "niedrig"
+    },
+    "settings/general/branding/branding.page#action-5cc1cfe8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:198-205"
+      ]
+    },
+    "settings/general/branding/branding.page#field-42c132ed": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:208-221"
+      ],
+      "n": "maxLength 60, Satzanfang groß, Label 'Branding-Text', Placeholder 'z.B. Verbandsname' gleich; Material zeigt zusätzlich den Zeichenzähler (Plattform-Look)"
+    },
+    "settings/general/branding/branding.page#action-2cf08504": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/branding_page.dart:223-226"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#logic-27aa04c0": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:88-208",
+        "lib/data/repositories/extra_fields_repository.dart:56-175"
+      ],
+      "n": "Laden aus tenant.additional_fields/song_additional_fields, ID-Bildung aus Name, Validierung, Reorder, Speichern (tenants-Update beider Spalten) und Bereinigung im Kern wie Ionic; haveFieldsChanged und navigateBack sind in Ionic toter Code. Abweichungen in der Bereinigung siehe extra.",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-b9ee5530": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:296-299"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-924f922c": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:123-128"
+      ],
+      "n": "Ionic: Prüfung im offenen Modal, Modal bleibt mit allen Eingaben offen / Flutter: Prüfung erst nach dem Schließen des Sheets – Toast erscheint, Sheet ist zu, Eingaben (Name, Optionen, Standardwert) sind verloren",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-fcd86ce2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:304-307"
+      ],
+      "n": "Text gleich; Flutter prüft Optionen vor der ID-Doppelung (Ionic umgekehrt)"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-945683f7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:308-311"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-918527db": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:118-122"
+      ],
+      "n": "Ionic: Prüfung im offenen Modal, Modal bleibt offen / Flutter: Prüfung erst nach dem Schließen des Sheets – Toast erscheint, Eingaben verloren",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#alert-34f8d44b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:142-154"
+      ],
+      "n": "Titel, Text mit Feldname, Abbrechen/Löschen gleich; Löschen-Button rot"
+    },
+    "settings/general/extra-fields/extra-fields.page#alert-bc12427a": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264",
+        "lib/data/repositories/extra_fields_repository.dart:137-155"
+      ],
+      "n": "Für Personenfelder gleich (Titel, Text mit Option, Abbrechen/Löschen, Werte per updateFieldValue auf neue erste Option, Toast bei count>0). Ionic zeigt den Dialog auch beim Löschen einer bestehenden Option eines Werkfeldes (danach nur entfernen) / Flutter: bei Werkfeldern kein Dialog (Bedingung isPerson), Option sofort weg. Fehlerfall: Ionic ignoriert Fehler einzelner Zeilen, Ladefehler → 'Fehler beim Laden der Personen' / Flutter bricht beim ersten Fehler mit 'Fehler beim updaten der Zusatzfelder' ab",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-72645316": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:255-257"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#alert-89775995": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:266-293",
+        "lib/data/repositories/extra_fields_repository.dart:158-175"
+      ],
+      "n": "Dialog (Titel, Text mit Name, Abbrechen/Zurücksetzen) und Ablauf gleich. Abweichender Wert bei Typ 'BFECG Gemeinde' (nur Instanz 12): Flutter nimmt den Text des versteckten Standardwert-Controllers – bei in Flutter angelegten Feldern '' → alle Personen werden auf '' gesetzt / Ionic: gespeicherter defaultValue bzw. erste Gemeinde (churches[0].id). Bei Alt-Textfeldern mit defaultValue false schreibt Flutter den String 'false', Ionic false. Fehlerfall: Ionic zählt nur erfolgreiche Updates, Flutter bricht beim ersten Fehler mit 'Fehler beim updaten der Zusatzfelder' ab",
+      "sev": "hoch"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-590eef57": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:288-289"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-f43756d7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:54-57",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:174-178"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-7c30c93f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:58-61"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-ca61b0b3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:62-64"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#loading-a708240a": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:549-601"
+      ],
+      "n": "Overlay mit Spinner und 'Felder werden gespeichert...', Eingaben gesperrt (AbsorbPointer), Zurück gesperrt (PopScope)"
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-1b391737": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:202"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#toast-2f727485": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:203-204"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#nav-6dc5f926": {
+      "s": "na",
+      "n": "toter Code: navigateBack() wird weder im Template noch im TS aufgerufen (der Zurück-Pfeil nutzt goBack())"
+    },
+    "settings/general/extra-fields/extra-fields.page#nav-599a827b": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:522-527",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:503-515",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:535-538",
+        "lib/features/settings/presentation/pages/general_settings_page.dart:704"
+      ],
+      "n": "Ziel gleich (zurück zu Allgemeine Einstellungen, einziger Aufrufer). Flutter besser: bei ungespeicherten Änderungen Dialog 'Ungespeicherte Änderungen' / 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?' (Abbrechen/Verwerfen); Ionic verwirft still",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-a20ffd04": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:535-538",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:522-527"
+      ],
+      "n": "Pfeil-zurück vorhanden; wie nav-599a827b: Flutter besser – Rückfrage bei ungespeicherten Änderungen, Ionic verwirft still",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-79b86a29": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:539"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-e8512bfd": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:541-546"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-79b86a29-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:558"
+      ],
+      "n": "IonLargeTitle nur im iOS-Look, wie Ionic collapse=condense"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-4fbc5ec7": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:560",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:652-662"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-05925936": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-e091cca3": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:113-115",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:344-354"
+      ],
+      "n": "Beides Bottom-Sheet. Ionic: Sheet in voller Höhe (initialBreakpoint 1), ohne Schließen-Button, Entwurf bleibt nach Wegwischen für das nächste Öffnen erhalten / Flutter: Sheet in Inhaltshöhe mit X-Button, Formular bei jedem Öffnen leer",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-aaa7cf25": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-e584f2a8": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:363-380"
+      ],
+      "n": "Optionen Text/Zahl/Ja-Nein/Auswahl in gleicher Reihenfolge, Typwechsel setzt Standard zurück (Zahl → 0). Ionic: 'BFECG Gemeinde' bei db.isBeta() = Instanz 12 ODER Benutzer-E-Mail endet auf developer@attendix.de / Flutter: nur Instanz 12. Ionic speichert beim Wechsel auf BFECG die erste Gemeinde als defaultValue, Flutter null",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-4dafe561": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-d84509fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-99c184df": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:396-403"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-da097b90": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+      ],
+      "n": "Flutter speichert editableByPlayers=false, wenn nicht sichtbar (Ionic behält den Wert) – ohne sichtbare Wirkung"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-696dba20": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-1f091cde": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-7776dc9d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-de4f6670": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+      ],
+      "n": "Placeholder 'Wert eingeben...', Hilfstext 'Erste Option ist der Standardwert' bei der ersten Option"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-3dcbfc66": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-8f66e68f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-dc17c391": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-1dbe68d1": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:494-497"
+      ],
+      "n": "Label 'Standardwert (optional)', Zahlentastatur bei Zahl gleich. Flutter besser: Ionic startet mit defaultValue false (emptyField); bleibt der Typ 'Text' unverändert und das Feld leer, speichert Ionic defaultValue false und befüllt Personen mit false / Flutter speichert ''",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-160105ff": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+      ],
+      "n": "Validierungsabweichungen siehe toast-924f922c / toast-918527db"
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-67f7ba0c": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:132-140",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:320-332",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477"
+      ],
+      "n": "Trigger Stift, Bottom-Sheet mit Kopie des Feldes. Ionic: jedes Schließen (X, Wischen, Hintergrund) übernimmt die Änderungen über closeEditExtraFieldModal (ionModalDidDismiss), ohne Prüfung bis zum Speichern / Flutter: nur der zusätzliche Button 'Übernehmen' übernimmt (mit Prüfung Name/Optionen), X oder Wischen verwirft alle Änderungen",
+      "sev": "hoch"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-0d0d3a83": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-5fa87742": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352"
+      ],
+      "n": "Ionic: X übernimmt die Änderungen in die Liste / Flutter: X schließt ohne Übernehmen – Änderungen verloren; per Dialog gelöschte Optionen sind in der DB schon umgestellt, bleiben aber in der Felddefinition",
+      "sev": "hoch"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-ca4abb00": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-06537600": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:360",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:46-47"
+      ],
+      "n": "Flutter besser: Ionic getFieldTypeName kennt bfecg_church nicht → 'Unbekannt' / Flutter 'BFECG Gemeinde'; übrige Typen gleich",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#field-9a759f2f": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-f3d39802": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-ffdffaab": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:396-403"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-0722d457": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:404-411"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-696dba20-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-91f38a72": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-fe5543e5": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-42c419ec": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-09e7d9fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264"
+      ],
+      "n": "Bestehende Option → Dialog (siehe alert-bc12427a), neue Option sofort entfernt"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-8f66e68f-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-6546f130": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-26cfdf12": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:219-223",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318"
+      ],
+      "n": "Label 'Standardwert', Zahlentastatur gleich. Ionic: Alt-Felder mit defaultValue false (in Ionic angelegte Textfelder, s. field-1dbe68d1) zeigen ein leeres Feld / Flutter zeigt 'false' als Text und speichert beim Übernehmen den String 'false' als Standardwert (neue Personen bekommen 'false')",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-25b7b1ff": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:465-472"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-b6ab4515": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:605-606"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-2279dc11": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:603-651"
+      ],
+      "n": "Name, 'Typ: …' (nicht bei bfecg_church), 'Anzeige: …', 'Für Mitglieder sichtbar (bearbeitbar)', Stift/Papierkorb und Sortiergriff ab 2 Feldern gleich. Ionic: Augen-Icon (eye-outline) vor 'Für Mitglieder sichtbar' / Flutter: ohne Icon",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-dcfca024": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:631-634"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-e80b8cdb": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:635-638"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-11fa3ede": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:562"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-05925936-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:656-660",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:678-682"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-3b9ec807": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:113-115",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:344-354"
+      ],
+      "n": "Beides Bottom-Sheet. Ionic: Sheet in voller Höhe (initialBreakpoint 1), ohne Schließen-Button, Entwurf bleibt nach Wegwischen erhalten / Flutter: Sheet in Inhaltshöhe mit X-Button, Formular bei jedem Öffnen leer",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-aaa7cf25-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-4c447044": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:363-380"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-477aff7b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-f6d666d6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-696dba20-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-74da4c50": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-7776dc9d-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-c084e95b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-ca6c05f6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:263"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-8f66e68f-3": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-5d3c4fca": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-cf72db04": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:494-497"
+      ],
+      "n": "Label 'Standardwert (optional)' gleich. Flutter besser: Ionic speichert bei unverändertem Typ 'Text' und leerem Feld defaultValue false (emptyField) und befüllt Werke mit false / Flutter speichert ''",
+      "sev": "niedrig"
+    },
+    "settings/general/extra-fields/extra-fields.page#action-a3856866": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:113-130"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#modal-48c8bdd3": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:132-140",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:320-332",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:474-477"
+      ],
+      "n": "Trigger Stift, Bottom-Sheet mit Kopie des Feldes. Ionic: jedes Schließen (X, Wischen, Hintergrund) übernimmt die Änderungen (ionModalDidDismiss → closeEditExtraFieldModal) / Flutter: nur 'Übernehmen' übernimmt (mit Prüfung), X oder Wischen verwirft",
+      "sev": "hoch"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-0d0d3a83-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-38045a06": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:352"
+      ],
+      "n": "Ionic: X übernimmt die Änderungen in die Liste / Flutter: X schließt ohne Übernehmen – Änderungen verloren",
+      "sev": "hoch"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-ca4abb00-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-3868e0d2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:360",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:31-51"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-9eea7996": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:381-385"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-d5ae8d41": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-696dba20-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-15722e77": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:418-421"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#text-fe5543e5-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-9589321d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-e93b0747": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:240-264",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:440-443"
+      ],
+      "n": "Ionic: bestehende Option eines Werkfeldes → Dialog 'Option löschen?' (Abbrechen/Löschen), danach nur entfernen / Flutter: kein Dialog (nur bei Personenfeldern), Option sofort entfernt",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-8f66e68f-4": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-60338e3d": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#field-618124b8": {
+      "s": "diff",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:219-223",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:318"
+      ],
+      "n": "Label 'Standardwert' gleich. Ionic: Alt-Felder mit defaultValue false zeigen ein leeres Feld / Flutter zeigt 'false' als Text und speichert beim Übernehmen den String 'false' (neue Werke bekommen 'false')",
+      "sev": "mittel"
+    },
+    "settings/general/extra-fields/extra-fields.page#text-b6ab4515-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:605-606"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-2a285919": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:603-651"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-a6d1009b": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:631-634"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-2348e9b6": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:635-638"
+      ]
+    },
+    "settings/general/extra-fields/extra-fields.page#action-6c3f7ab8": {
+      "s": "ok",
+      "f": [
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:565-568"
+      ]
+    }
+  },
+  "extra": [
+    {
+      "unit": "settings/general/branding/branding.page",
+      "title": "Demo-Sperre schon bei Logo-Upload/-Entfernen",
+      "n": "Ionic: updateOrgLogo/removeOrgLogo ohne checkDemoRestriction – das Demo-Konto kann die Datei org-<id> im Bucket branding überschreiben/löschen, nur Speichern ist gesperrt / Flutter besser: uploadLogo/removeLogo rufen ensureNotDemo (Demo-Toast, kein Storage-Zugriff)",
+      "sev": "niedrig",
+      "ionic": "src/app/services/image/image.service.ts:136",
+      "f": [
+        "lib/data/repositories/organisation_settings_repository.dart:94",
+        "lib/data/repositories/organisation_settings_repository.dart:113"
+      ]
+    },
+    {
+      "unit": "settings/general/extra-fields/extra-fields.page",
+      "title": "Personen-Bereinigung erfasst andere Personen",
+      "n": "Ionic: sanitizePlayerAdditionalFields nutzt db.getPlayers() → nur aktive (left IS NULL) und nicht ausstehende (pending=false) Personen, ohne Paging / Flutter: sanitizeValues('player') lädt alle Personen der Instanz inkl. archivierter und ausstehender (gepaged) und schreibt auch dort additional_fields (gelöschte Felder entfernt, Defaults ergänzt, ungültige Auswahlwerte ersetzt)",
+      "sev": "mittel",
+      "ionic": "src/app/settings/general/extra-fields/extra-fields.page.ts:319",
+      "f": [
+        "lib/data/repositories/extra_fields_repository.dart:72-82",
+        "lib/data/repositories/extra_fields_repository.dart:94-133",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:186"
+      ]
+    },
+    {
+      "unit": "settings/general/extra-fields/extra-fields.page",
+      "title": "Werk-Bereinigung bei synchronisierter Werkbibliothek",
+      "n": "Ionic: backfillSongAdditionalFields lädt db.getSongs() = Werke von effectiveSongTenantId (song_source_tenant_id ?? eigene Instanz) und schreibt deren additional_fields (editSong nur nach id) / Flutter: sanitizeValues('songs') nur Werke mit tenantId = aktuelle Instanz → bei genutzter Quell-Bibliothek werden deren Werke weder ergänzt noch bereinigt",
+      "sev": "mittel",
+      "ionic": "src/app/settings/general/extra-fields/extra-fields.page.ts:353",
+      "f": [
+        "lib/data/repositories/extra_fields_repository.dart:72-82",
+        "lib/features/settings/presentation/pages/extra_fields_page.dart:187"
+      ]
+    }
+  ]
+}

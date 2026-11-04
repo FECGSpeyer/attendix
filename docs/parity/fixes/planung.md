@@ -1,0 +1,563 @@
+# Fix-Paket „planung“
+
+Soll: Ionic 4.19.7 (9f9b82af). Ist: Flutter 1aba6be,  (normales Design).
+Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
+
+## Angleichen (hoch/mittel): 32
+
+- [ ] **hoch** `planning/plan-viewer/plan-viewer.component` [src/app/planning/plan-viewer/plan-viewer.component.ts:53](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L53)
+  Ionic: att-list und signout öffnen den Viewer mit dem Termin; bei mehreren Plänen (attendance.extra_plans) erscheinen Chips zum Umschalten, Standard = Plan des heutigen Tages / Flutter: openAttendancePlanViewer übergibt plan explizit und keine extraPlans, showPlanViewerSheet im Selbstservice ebenso, kSignoutAttendanceColumns lädt extra_plans nicht → nur Plan 1 sichtbar. Der erste Durchgang hat das Chips-Item (action-adebf7d7) als ok bewertet.
+  Flutter: lib/features/planning/presentation/attendance_plan_viewer.dart:25, lib/features/self_service/presentation/pages/signout_page.dart:716, lib/data/repositories/sign_in_out_repository.dart:21, lib/features/planning/presentation/pages/plan_viewer_page.dart:61
+- [ ] **hoch** `planning/planning.page` [src/app/planning/planning.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L43)
+  Ionic: Startfeld „Wort “ (id '', 10 min); die Vorlage des Termintyps wird nur übernommen, wenn kommende Werke-Historie existiert (onAttChange → addDefaultFieldsFromAttendanceType), ohne Typ-Vorlage dann leere Liste; ohne Historie bleibt „Wort “ stehen und beim Öffnen wird nichts gespeichert (beim Terminwechsel bleiben ohne Historie sogar die Felder des vorigen Termins stehen und werden gespeichert) / Flutter: wendet immer die Typ-Vorlage an, sonst Feld „Wort“ (id 'Wort', 10 min), setzt _dirty und schreibt diesen Plan beim Verlassen in attendance.plan – auch ohne Nutzeränderung und auch ohne Historie.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:759, lib/features/planning/presentation/pages/planning_page.dart:873
+- [ ] **hoch** `planning/planning.page` [src/app/services/db.service.ts:2653](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L2653)
+  Ionic: getAttendance filtert archivierte Termine per filterArchivedForRole für alle Rollen außer Admin/Verantwortliche / Flutter: getPlanAttendances hat keinen archived-Filter; Helfer erreichen /planning?attendanceId (route_access) und sehen und bearbeiten dort auch archivierte Termine.
+  Flutter: lib/data/repositories/plan_repository.dart:44, lib/core/router/route_access.dart:110
+- [ ] **hoch** `public-planning/public-planning.page` `effect-73ff88d2` [public-planning/public-planning.page.ts:723](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L723) (2. Prüfung: bestätigt)
+  PDF A4/2x A5 mit Titel, „Wochentag, Datum“ und Feldern gleich. Ionic: Branding = gewähltes öffentliches Branding (FECG-Logo + „FECG Speyer“/„FECG Schwegenheim“), bei „Kein Branding“ keins / Flutter: Auswahl ignoriert, resolvePdfBranding → eingeloggt immer Instanz-/Org-Branding (auch bei „Kein Branding“), anonym keins; FECG-Briefkopf gibt es nicht. Außerdem Ionic Download/Teilen-Sheet mit Datei „Titel_Wochentag, TT.MM.JJJJ(_2x).pdf“ / Flutter System-Druckdialog (Printing.layoutPdf), Name „Titel_TT_MM_JJJJ.pdf“.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:726-742, lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111, lib/core/services/plan_export_service.dart:128-132, lib/core/providers/branding_providers.dart:40-46
+- [ ] **hoch** `public-planning/public-planning.page` `effect-6021ff44` [public-planning/public-planning.page.ts:733](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L733) (2. Prüfung: bestätigt)
+  Bild (A4) = erste PDF-Seite als PNG gleich. Ionic: Branding aus der Auswahl (FECG-Logo + Text bzw. keins) / Flutter: Auswahl ignoriert, eingeloggt Instanz-Branding, anonym keins. Dateiname Ionic „Titel_JJJJ-MM-TT.png“ / Flutter „Titel_TT_MM_JJJJ.png“.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:726-737, lib/features/planning/presentation/widgets/plan_export_actions.dart:112-113, lib/core/services/plan_export_service.dart:119-139
+- [ ] **hoch** `public-planning/public-planning.page` `effect-1ad39a4e` [public-planning/public-planning.page.ts:772](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L772) (2. Prüfung: bestätigt)
+  Telegram (PDF, PDF 2x A5, Bild) nur mit verknüpftem Chat, Name „Titel ohne erste Klammern_TT_MM_JJJJ(_2x)“ gleich. Ionic: Branding aus der Auswahl (FECG-Logo + Text bzw. keins) / Flutter: Auswahl ignoriert, Instanz-/Org-Branding des Nutzers – FECG-Briefkopf fehlt.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:57-75, lib/features/planning/presentation/widgets/plan_export_actions.dart:114-132, lib/features/planning/presentation/widgets/plan_export_actions.dart:22-28
+- [ ] **hoch** `public-planning/public-planning.page` `db-b17aa9e7` [public-planning/public-planning.page.ts:941](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L941) (2. Prüfung: bestätigt)
+  upsert shared_plans (onConflict id) mit id, edit_key, plan_title, date, time, end_time, fields, creator_user_id gleich. Ionic: branding_id bei „Kein Branding“ explizit null / Flutter: SharedPlan.toJson (includeIfNull:false) lässt branding_id weg → beim Upsert bleibt ein früher gesetztes Branding in der DB stehen und kommt über „Meine Pläne“ zurück (abweichender DB-Write). Flutter besser: fehlgeschlagener Autosave → Toast, neue ID erst nach erfolgreichem Speichern.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:311-320, lib/features/planning/presentation/pages/public_planning_page.dart:335-362, lib/data/repositories/plan_repository.dart:225-242, lib/data/models/plan/plan.g.dart:147-161
+- [ ] **hoch** `public-planning/public-planning.page` `field-2ffcb596` [public-planning/public-planning.page.html:48](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L48) (2. Prüfung: bestätigt)
+  Auswahl „Kein Branding“/„FECG Speyer“/„FECG Schwegenheim“, lokal und als branding_id gespeichert – gleich. Ionic: bestimmt Logo und Text im PDF-/Bild-/Telegram-Export / Flutter: ohne Wirkung auf den Export (es gilt Instanz-Branding), kein FECG-Logo vorhanden.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:58-62, lib/features/planning/presentation/pages/public_planning_page.dart:902-915, lib/features/planning/presentation/widgets/plan_export_actions.dart:107
+- [ ] **hoch** `shared-plan/shared-plan.page` `effect-228109d7` [shared-plan/shared-plan.page.ts:514](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L514) (2. Prüfung: bestätigt)
+  PDF A4/2x A5 mit Titel, Feldern, bei mehreren Plänen „Wochentag, Datum · Planname“. Ionic: Branding aus branding_id des Ad-hoc-Plans (FECG-Logo + Text), Termin-Pläne ohne / Flutter: branding_id ignoriert; eingeloggte Betrachter bekommen ihr Instanz-Branding (auch bei Termin-Plänen), anonyme keins. Außerdem Untertitel bei einem Plan: Ionic Datum aus time (bei „HH:mm“ heute) / Flutter Plandatum; Datei Ionic Download „Titel_Wochentag, Datum.pdf“ / Flutter Druckdialog „Titel.pdf“; ohne Felder Ionic stumm, Flutter Warn-Toast „Kein Plan verfügbar“.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:713-733, lib/features/planning/presentation/widgets/plan_export_actions.dart:91-111, lib/core/providers/branding_providers.dart:40-46
+- [ ] **mittel** `org-plan-public/org-plan-public.page` `alert-c3af9876` [org-plan-public/org-plan-public.page.ts:342](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L342) (2. Prüfung: bestätigt)
+  Header „Kalender abonnieren“, Text „Kopiere den folgenden Link in deine Kalender-App: …“, „Link kopieren“ (Dialog bleibt offen, Toast „Link kopiert“) und „Schließen“ gleich. Ionic: dritter Button „Anleitung öffnen“ / Flutter: fehlt auf der öffentlichen Seite (org_plan_public_page.dart:172-175; nur org_plans_page.dart:109 hat ihn).
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:167
+- [ ] **mittel** `org-plan-public/org-plan-public.page` `native-c9096ded` [org-plan-public/org-plan-public.page.ts:357](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L357) (2. Prüfung: bestätigt)
+  Ionic: „Anleitung öffnen“ öffnet support.apple.com/de-de/102301 (iOS) bzw. Google-Kalender-Hilfe (sonst) im Browser / Flutter: Button fehlt im Kalender-Dialog der öffentlichen Org-Plan-Seite (org_plan_public_page.dart:172-175)
+- [ ] **mittel** `org-plans/org-plans.page` `action-07229903-2` [org-plans/org-plans.page.html:148](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L148) (2. Prüfung: bestätigt)
+  Löschen per Aktionsblatt (Titel = Planname, „Plan löschen“ destruktiv) wie Ionic. Ionic: Verlaufs-Modal ist an pastPlans gebunden, gelöschter Plan verschwindet sofort / Flutter: Verlaufsseite baut eine beim Öffnen übergebene Liste (_showHistory(split.past)) – gelöschter Plan bleibt sichtbar bis zum erneuten Öffnen; erneutes Löschen läuft ins Leere.
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:151, lib/features/organisation/presentation/pages/org_plans_page.dart:171
+- [ ] **mittel** `org-settings/org-person-fields/org-person-fields.page` `toast-a15cd8e0` [org-settings/org-person-fields/org-person-fields.page.ts:62](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.ts#L62) (2. Prüfung: bestätigt)
+  Text „Ein Zusatzfeld mit diesem Namen existiert bereits.“ gleich. Ionic: Prüfung vor dem Schließen, Modal bleibt mit den Eingaben offen / Flutter: Prüfung erst nach dem Schließen des Sheets – Toast erscheint, Sheet ist zu und alle Eingaben (Typ, Optionen, Standardwert …) sind verloren
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:60
+- [ ] **mittel** `org-settings/org-person-fields/org-person-fields.page` `field-64695ee6` [org-settings/org-person-fields/org-person-fields.page.html:49](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L49) (2. Prüfung: bestätigt)
+  Auswahl „Typ“ mit Text, Textbereich, Zahl, Datum, Ja/Nein, Auswahl (Standard Text) gleich. Ionic: onNewFieldTypeChanged setzt Standardwert per getFieldTypeDefaultValue – Zahl → 0 (im Feld sichtbar), Datum → aktueller ISO-Zeitstempel, Ja/Nein → false; wird ohne Eingabe in additional_fields gespeichert und z. B. beim Verknüpfen von Personen als Wert übernommen (db.service.ts:2462) / Flutter: Typwechsel ändert nichts, Standardwert bleibt '' (Zahl/Datum leer); Datum ohne Datumsauswahl (Textfeld).
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:353
+- [ ] **mittel** `org-settings/org-person-fields/org-person-fields.page` `field-3207b9c2` [org-settings/org-person-fields/org-person-fields.page.html:197](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L197) (2. Prüfung: bestätigt)
+  Label „Standardwert“ gleich. Ionic: Eingabe zeigt den gespeicherten Standardwert jeder Art (z. B. Zahl 0, Datum) und behält ihn / Flutter: nur String-Werte werden vorbelegt – ein nicht-String-Standardwert (z. B. die von Ionic gesetzte Zahl 0) erscheint leer und wird beim „Änderungen übernehmen“ durch '' ersetzt; Datum ohne Datumsauswahl
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:280, lib/features/organisation/presentation/pages/org_person_fields_page.dart:430
+- [ ] **mittel** `org-settings/org-planning-templates/org-planning-templates.page` `alert-ce98be7f` [org-settings/org-planning-templates/org-planning-templates.page.ts:142](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.ts#L142) (2. Prüfung: bestätigt)
+  Titel, Platzhalter „Name der Vorlage...“, „Abbrechen“/„Hinzufügen“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ im Dialog / Flutter: „Hinzufügen“ tut bei leerem Namen nichts, keine Meldung (der Toast in Z.130 ist unerreichbar, showPlanTextPrompt gibt nie leer zurück).
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:121, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355
+- [ ] **mittel** `org-settings/org-planning-templates/org-planning-templates.page` `alert-e458236c` [org-settings/org-planning-templates/org-planning-templates.page.ts:170](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.ts#L170) (2. Prüfung: bestätigt)
+  Titel „Vorlage umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“ gleich. Ionic: leerer Name → Meldung „Bitte einen Namen eingeben.“ / Flutter: Button tut nichts, keine Meldung.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:158, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355
+- [ ] **mittel** `org-settings/org-planning-templates/org-planning-templates.page` `field-d3412616` [org-settings/org-planning-templates/org-planning-templates.page.html:41](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L41) (2. Prüfung: bestätigt)
+  Ionic: Zahlenfeld „min“ direkt in jeder Standardfeld-Zeile, speichert beim Verlassen / Flutter: nur Anzeige „20 min“, Minuten nur über den Bearbeiten-Dialog (Tippen auf die Zeile) änderbar. (In den Vorlagenfeldern hat Flutter das Inline-Feld, PlanFieldsEditor _MinutesInput.)
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:384
+- [ ] **mittel** `org-settings/org-planning-templates/org-planning-templates.page` `popover-21e36ab9` [org-settings/org-planning-templates/org-planning-templates.page.html:154](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L154) (2. Prüfung: bestätigt)
+  Einträge und Reihenfolge gleich (Feld hinzufügen, Notizfeld hinzufügen, Werk-Platzhalter nur wenn nicht general, dann Standardfelder mit Minuten). Ionic: Popover am Button „Feld hinzufügen“ / Flutter: Aktionsblatt (showPlanActionSheet) von unten, Standardfelder als „Name (20 min)“ ohne Trenner/Überschrift.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:195
+- [ ] **mittel** `org-settings/org-settings.page` `alert-8c221091` [org-settings/org-settings.page.ts:91](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L91) (2. Prüfung: bestätigt)
+  Titel „Organisation erstellen“, Platzhalter „Name eingeben...“, „Abbrechen“/„Hinzufügen“, Anlegen + Verknüpfen der Instanz, Toast „org.created“ gleich. Ionic: leerer Name → Meldung „Bitte gib gültige Werte ein.“, Dialog bleibt offen; blockierendes Lade-Overlay / Flutter: Dialog schließt, nichts passiert, keine Meldung; kein Overlay.
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:79
+- [ ] **mittel** `org-settings/org-settings.page` `alert-14d3ff8c` [org-settings/org-settings.page.ts:192](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L192) (2. Prüfung: bestätigt)
+  Titel „Organisation umbenennen“, Vorbelegung, Platzhalter, „Abbrechen“/„Speichern“, Speichern des getrimmten Namens gleich. Ionic: leerer Name → Meldung „Bitte gib einen gültigen Namen ein.“ / Flutter: „Speichern“ tut nichts, keine Meldung (Warn-Toast Z.39 unerreichbar).
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:30, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:355
+- [ ] **mittel** `planning/plan-viewer/plan-viewer.component` `action-705fc86e` [planning/plan-viewer/plan-viewer.component.html:16](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.html#L16) (2. Prüfung: bestätigt)
+  Ionic: Bearbeiten-Button im Plan-Viewer für Dirigent/Helfer (att-list übergibt canEdit) öffnet den Ablaufplan-Editor / Flutter: Button existiert nur bei onEdit != null, kein Aufrufer (openAttendancePlanViewer) übergibt onEdit – im Viewer fehlt der Button; Bearbeiten nur über die Termin-Detailseite.
+  Flutter: lib/features/planning/presentation/pages/plan_viewer_page.dart:163, lib/features/planning/presentation/attendance_plan_viewer.dart:18
+- [ ] **mittel** `planning/plan-viewer/plan-viewer.component` `action-a5b1e6d4` [planning/plan-viewer/plan-viewer.component.html:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.html#L63) (2. Prüfung: bestätigt)
+  Ionic: aus der Terminliste übergibt att-list die Werke (songs), Werk-Zeilen zeigen „♪ Noten öffnen“ und sind antippbar / Flutter: openAttendancePlanViewer übergibt keine songAction – Werk-Zeilen im Viewer aus der Terminliste sind nicht antippbar (nur im Self-Service-Viewer).
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:118, lib/features/planning/presentation/widgets/plan_view_list.dart:122, lib/features/planning/presentation/attendance_plan_viewer.dart:25
+- [ ] **mittel** `planning/planning.page` `modal-bbd6596e` [planning/planning.page.ts:321](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L321) (2. Prüfung: bestätigt)
+  Ionic: Feld bearbeiten als Vollbild-Modal PlanFieldEditComponent / Flutter: AlertDialog (showPlanFieldDialog).
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:155, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40
+- [ ] **mittel** `planning/planning.page` `actionsheet-0c53b41c` [planning/planning.page.ts:967](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L967) (2. Prüfung: bestätigt)
+  Ionic: „Nur-Lesen-Link“, „Bearbeitungs-Link“, „Abbrechen“ / Flutter: zusätzlich „Freigabe aufheben“ wenn bereits ein shareKey existiert, dazu Icons.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1870, lib/features/planning/presentation/pages/planning_page.dart:1884
+- [ ] **mittel** `planning/planning.page` `alert-75ab0ccf` [planning/planning.page.ts:1436](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1436) (2. Prüfung: bestätigt)
+  Ionic: Radio-Alert „Tag zuordnen“ mit Abbrechen/Speichern / Flutter: Action-Sheet, Auswahl wird sofort übernommen.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1368
+- [ ] **mittel** `planning/planning.page` [src/app/planning/planning.page.ts:268](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L268)
+  Ionic: ohne attendanceId wird upcomingAttendances[0] gewählt; gibt es keinen kommenden Termin, ist kein Termin ausgewählt / Flutter: wählt dann den neuesten Termin aus; eine attendanceId außerhalb der geladenen Liste wird per ID nachgeladen (Flutter besser).
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:679
+- [ ] **mittel** `public-planning/public-planning.page` `alert-53b00c7b` [public-planning/public-planning.page.ts:417](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L417) (2. Prüfung: bestätigt)
+  Titel „Feld bearbeiten“, Name/Ausführender/Info bzw. bei Notizen nur Notiz, Leername-Prüfung gleich. Ionic: Buttons „Löschen“ (rot, entfernt das Feld sofort) / „Abbrechen“ / „Speichern“, keine Dauer im Dialog / Flutter: kein „Löschen“ (nur per Wischen), Bestätigen heißt „Updaten“, zusätzliches Feld „Minuten“, Feldbeschriftungen statt reiner Platzhalter, Info-Hinweis „Info-Text (optional)...“.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320
+- [ ] **mittel** `public-planning/public-planning.page` `effect-9082e8f4` [public-planning/public-planning.page.ts:829](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L829) (2. Prüfung: bestätigt)
+  Fallback Zwischenablage + Toast „Link in Zwischenablage kopiert“ gleich. Ionic: Kopieren nur, wenn navigator.share fehlt / Flutter (sharePlanLink): kopiert, wenn Share.share wirft oder „unavailable“ liefert – share_plus 10.1.4 liefert im Web auch nach ERFOLGREICHEM Teilen „unavailable“ (share_plus_web.dart:136), d. h. in der PWA wird nach dem Teilen-Sheet zusätzlich kopiert und getoastet; ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (share_plus_web.dart:96-125). Nativ: System-Teilen-Sheet statt Kopieren.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/pages/public_planning_page.dart:760-785
+- [ ] **mittel** `public-planning/public-planning.page` `effect-9082e8f4-2` [public-planning/public-planning.page.ts:859](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L859) (2. Prüfung: bestätigt)
+  Fallback Zwischenablage + Toast „Link in Zwischenablage kopiert“ gleich. Ionic: Kopieren nur, wenn navigator.share fehlt / Flutter (sharePlanLink): kopiert, wenn Share.share wirft oder „unavailable“ liefert – share_plus 10.1.4 liefert im Web auch nach ERFOLGREICHEM Teilen „unavailable“ (share_plus_web.dart:136), d. h. in der PWA wird nach dem Teilen-Sheet zusätzlich kopiert und getoastet; ohne Web-Share-API öffnet share_plus vorher einen mailto:-Link (share_plus_web.dart:96-125). Nativ: System-Teilen-Sheet statt Kopieren.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/pages/public_planning_page.dart:771-785
+- [ ] **mittel** `shared-plan/shared-plan.page` `action-ec0c1511` [shared-plan/shared-plan.page.html:69](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L69) (2. Prüfung: bestätigt)
+  Umsortieren nur im Bearbeitungsmodus, Block-Kopf samt Unterpunkten, danach Speichern; Ansicht mit Zeit | Ausführender, Info, „{min} min“ bzw. Countdown-Badge – gleich. Ionic Bearbeitungsmodus: einfache Zeilen (Name, Zeit, Info, Papierkorb, Griff), keine Minutenangabe, Tippen auf Block-Kopf öffnet den Feld-Dialog / Flutter: PlanFieldsEditor mit Minuten-Eingabefeld je Zeile, Wisch-Optionen „Einrücken“/„Ausrücken“/Löschen, Block ein-/ausklappen, „Unterpunkt hinzufügen“-Zeilen, Block-Optionen-Sheet, Hinweis „Keine Programmpunkte“. Ansicht: Block-Kopf Ionic nur Startzeit / Flutter Zeitraum „HH:mm – HH:mm“.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:815-836, lib/features/planning/presentation/widgets/plan_fields_editor.dart:110-149, lib/features/planning/presentation/widgets/plan_fields_editor.dart:537-566, lib/features/planning/presentation/widgets/plan_view_list.dart:106-205
+- [ ] **mittel** `shared-plan/shared-plan.page` `action-a9ede0e6` [shared-plan/shared-plan.page.html:96](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L96) (2. Prüfung: bestätigt)
+  Ionic: roter Papierkorb-Button an jeder Zeile im Bearbeitungsmodus, löscht sofort; beim Block-Kopf werden die Unterpunkte ohne Rückfrage normale Felder / Flutter: kein sichtbarer Button, Löschen nur per Wischen; Block-Kopf mit Unterpunkten → Rückfrage „Block löschen?“ (Nur Block auflösen / Alles löschen).
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:537-566, lib/features/planning/presentation/widgets/plan_fields_editor.dart:197-204, lib/features/planning/presentation/widgets/plan_fields_editor.dart:303-332
+
+## Flutter besser – Leon entscheidet: 17
+
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `field-7b3e761d` [org-settings/org-person-fields/org-person-fields.page.html:147](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L147)
+  Flutter besser: leerer Name beim Übernehmen → Toast „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ / Ionic übernimmt den leeren Namen, Fehler erst beim Speichern („Ungültige Organisations-Zusatzfelder.“)
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:302
+- [ ] **niedrig** `planning/planning.page` `alert-43003bc8` [planning/planning.page.ts:712](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L712)
+  Flutter besser: leerer Name wird abgelehnt (Ionic fügt ein leeres Feld hinzu); zusätzlich Feldbeschriftungen.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1438, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40
+- [ ] **niedrig** `planning/planning.page` `alert-84b74bbf` [planning/planning.page.ts:757](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L757)
+  Flutter besser: leere Notiz wird mit „Bitte eine Notiz eingeben.“ abgelehnt (Ionic fügt ein leeres Notizfeld hinzu).
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1450
+- [ ] **niedrig** `planning/planning.page` `action-62a2b6ee` [planning/planning.page.html:295](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L295) (2. Prüfung: bestätigt)
+  Flutter besser (bewusst): Ionic „Ohne …“ zählt alle Nicht-Haupt-Gruppen ohne Stimme / Flutter: für Dirigent/Helfer nur Gruppen mit Spielern (missingInstrumentsText mit playerCounts). Pfad korrigiert: song_utils liegt unter features/songs/presentation/utils.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:515, lib/features/songs/presentation/utils/song_utils.dart:115, lib/core/providers/player_providers.dart:116
+- [ ] **niedrig** `public-planning/my-plans/my-plans.component` `db-65684aa5` [public-planning/my-plans/my-plans.component.ts:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/my-plans/my-plans.component.ts#L63) (2. Prüfung: bestätigt)
+  Flutter besser: delete auf shared_plans filtert zusätzlich .eq('creator_user_id', userId) (Ionic nur eq id, RLS).
+  Flutter: lib/data/repositories/plan_repository.dart:245
+- [ ] **niedrig** `public-planning/public-planning.page` `toast-7e4f62bb` [public-planning/public-planning.page.ts:821](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L821)
+  Flutter besser: Text „Fehler beim Erstellen des Links“ (danger) gleich. Ionic: nur wenn nach persistToDb keine Plan-ID existiert (Upsert-Fehler werden ignoriert, Link auf evtl. ungespeicherten Plan wird geteilt) / Flutter: speichert vor dem Teilen immer und zeigt den Toast auch bei Speicherfehler
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:763-770, lib/features/planning/presentation/pages/public_planning_page.dart:335-362
+- [ ] **niedrig** `public-planning/public-planning.page` `toast-4f1670a7` [public-planning/public-planning.page.ts:961](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L961)
+  Flutter besser: Text „Fehler beim Speichern des Plans“ (danger) gleich. Ionic: nur ohne Plan-ID (Upsert-Fehler ignoriert, danach Org-Update auf evtl. nicht vorhandene Zeile mit Erfolgs-Toast) / Flutter: bei jedem fehlgeschlagenen Speichern
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:693-698
+- [ ] **niedrig** `public-planning/public-planning.page` `field-9dc37d80` [public-planning/public-planning.page.html:35](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L35)
+  Flutter besser: Optionen (5 Vorlagen, deaktiviert „── Org-Vorlagen ──“, „{title} (Org)“ nur eingeloggt) und Rückfrage gleich. Ionic: bei „Abbrechen“ bleibt die neue Vorlage ausgewählt, obwohl nichts ersetzt wurde; Startzeit einer Org-Vorlage nur übernommen, wenn sie ISO-Datum-Zeit ist / Flutter: Abbrechen setzt die Auswahl zurück; Startzeit auch im Format „HH:mm“ übernommen
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:886-901, lib/features/planning/presentation/pages/public_planning_page.dart:425-451
+- [ ] **niedrig** `shared-plan/shared-plan.page` `alert-fe4c6b4f` [shared-plan/shared-plan.page.ts:351](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L351) (2. Prüfung: bestätigt)
+  Flutter besser: „Feld hinzufügen“, Platzhalter „Programmpunkt eingeben...“/„Ausführender (optional)“/„Info-Text (optional)“, „Abbrechen“/„Hinzufügen“, Dauer 20, getrimmt – gleich. Ionic: leerer Name → Dialog bleibt stumm offen / Flutter: Meldung „Bitte einen Programmpunkt eingeben.“; zusätzlich Feldbeschriftungen.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:668-691, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:177-191
+- [ ] **niedrig** `shared-plan/shared-plan.page` `db-4e980eb4` [shared-plan/shared-plan.page.ts:484](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L484) (2. Prüfung: bestätigt)
+  Flutter besser: gleiche Spalten (plan bzw. plan + extra_plans über splitPlans) mit time, fields, title (leer → null). Ionic: schreibt das alte end weiter, Filter nur id / Flutter: end neu berechnet, Filter zusätzlich share_key, share_edit_key, archived=false; keine getroffene Zeile → Fehler-Toast.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:590-620, lib/data/repositories/public_plan_repository.dart:97-126
+- [ ] **niedrig** `shared-plan/shared-plan.page` `db-64fc7972` [shared-plan/shared-plan.page.ts:487](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L487) (2. Prüfung: bestätigt)
+  Flutter besser: Ionic schreibt nur fields + plan_title (geänderte Startzeit eines Ad-hoc-Plans geht verloren, end_time bleibt alt) / Flutter schreibt fields, plan_title, time und neu berechnetes end_time; Filter id + edit_key, 0 Zeilen → Fehler-Toast.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:621-627, lib/data/repositories/public_plan_repository.dart:168-205
+- [ ] **niedrig** `shared-plan/shared-plan.page` `toast-2ab6b1bd` [shared-plan/shared-plan.page.ts:493](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L493)
+  Flutter besser: „Fehler beim Speichern“ (danger) gleich. Ionic: nur bei geworfener Exception (supabase-js liefert DB-Fehler als error zurück, daher praktisch nie) / Flutter: bei jedem fehlgeschlagenen oder wirkungslosen Update
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:630-633
+- [ ] **niedrig** `shared-plan/shared-plan.page` `action-f8b2b6c5` [shared-plan/shared-plan.page.html:37](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L37)
+  Flutter besser: Chips mit Plannamen und „heute“-Markierung, Wechsel des Plans gleich. Ionic: Wechsel bei laufendem Live-Modus schaltet ihn fälschlich aus (stopLive + toggleLive) bzw. lässt ihn ohne Timer an / Flutter: Live = isLiveNow des neuen Plans; im Bearbeitungsmodus werden offene Änderungen vor dem Wechsel gespeichert
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:517-534, lib/features/planning/presentation/pages/shared_plan_page.dart:783-784
+- [ ] **niedrig** `planning/planning.page` [src/app/planning/planning.page.ts:1247](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1247)
+  Flutter besser: Ionic: updateAttendance/saveOpenPlan verwerfen einen ungültigen Plan beim Termin-/Planwechsel oder Schließen still (validate(false) → return) / Flutter: Wechsel und Schließen werden mit Validierungs-Toast blockiert; fehlgeschlagenes Speichern lässt die Seite mit Fehler-Toast offen.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:917, lib/features/planning/presentation/pages/planning_page.dart:970, lib/features/planning/presentation/pages/planning_page.dart:2073
+- [ ] **niedrig** `public-planning/my-plans/my-plans.component` [src/app/public-planning/my-plans/my-plans.component.ts:36](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/my-plans/my-plans.component.ts#L36)
+  Flutter besser: Ionic: Fehler beim Laden ergibt still eine leere Liste („Keine Pläne“) / Flutter: zeigt „Fehler: …“.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:1022
+- [ ] **niedrig** `public-planning/public-planning.page` [src/app/public-planning/public-planning.page.ts:1021-1060](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L1021-1060)
+  Flutter besser: Ionic: ein gemeinsamer localStorage-Eintrag „attendix-public-plan“ für anonym und alle Konten (Entwurf samt Plan-ID/Bearbeitungsschlüssel wandert zwischen /planung und App bzw. Konten) / Flutter: Entwurf je Auth-Nutzer bzw. anonym getrennt, alter globaler Eintrag wird verworfen, beim Abmelden gelöscht
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:144-147, lib/features/planning/presentation/pages/public_planning_page.dart:221-256, lib/core/services/public_plan_draft_storage.dart:15-38
+- [ ] **niedrig** `shared-plan/shared-plan.page` [src/app/shared-plan/shared-plan.page.ts:114-117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L114-117)
+  Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
+
+## Kleinigkeiten (niedrig): 135
+
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b7046159` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L182) (2. Prüfung: bestätigt)
+  Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:46, lib/features/organisation/presentation/pages/org_plan_public_page.dart:125, lib/features/organisation/presentation/pages/org_plan_public_page.dart:342
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b99f855a` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L182)
+  Ionic: Kanal `org-att-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:46, lib/features/organisation/presentation/pages/org_plan_public_page.dart:125
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-2f01c860` [org-plan-public/org-plan-public.page.ts:199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L199)
+  Ionic: Realtime-Kanal je kommendem Plan, Änderungen erscheinen sofort / Flutter: kein Realtime-Kanal (SOL_FIX7: Payload enthielte share_edit_key/edit_key für anonyme Betrachter); stattdessen Polling der öffentlichen Selects alle 15 s, nur bereits angezeigte kommende Einträge werden aktualisiert → Änderungen erscheinen bis zu 15 s später (shared_plans UPDATE id=eq)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:46, lib/features/organisation/presentation/pages/org_plan_public_page.dart:125, lib/features/organisation/presentation/pages/org_plan_public_page.dart:342
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-508eb016` [org-plan-public/org-plan-public.page.ts:199](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L199)
+  Ionic: Kanal `org-adhoc-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:46, lib/features/organisation/presentation/pages/org_plan_public_page.dart:125
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `actionsheet-876a0d5b` [org-plan-public/org-plan-public.page.ts:324](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L324)
+  Header „Kalender abonnieren“, Buttons „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links (…/functions/v1/ical-org-plans?key=…[&lang=xx][&detailed=true]) gleich. Ionic: Buttons ohne Icons / Flutter: zusätzlich Icons (event, event_note)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:154, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `actionsheet-4c267725` [org-plan-public/org-plan-public.page.ts:367](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L367)
+  Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: mit Icons (picture_as_pdf, content_copy)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:180, lib/features/planning/presentation/widgets/plan_export_actions.dart:59
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `effect-45237c25` [org-plan-public/org-plan-public.page.ts:370](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L370)
+  PDF A4 wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:180, lib/features/planning/presentation/widgets/plan_export_actions.dart:91, lib/core/providers/branding_providers.dart:40
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `effect-b996f803` [org-plan-public/org-plan-public.page.ts:371](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L371)
+  PDF 2x A5 (sideBySide) wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:180, lib/features/planning/presentation/widgets/plan_export_actions.dart:104, lib/features/planning/presentation/widgets/plan_export_actions.dart:111
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `action-b3c45e32` [org-plan-public/org-plan-public.page.html:5](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L5)
+  Kalender-Button (calendar_month_outlined, Tooltip „Kalender abonnieren“) immer sichtbar wie Ionic. Ionic: ohne key in der URL tut der Button nichts (`if (!this.publicKey) return`) / Flutter: öffnet trotzdem das Sheet mit Link „…?key=null“
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:283
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-48b8a885` [org-plan-public/org-plan-public.page.html:52](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L52) (2. Prüfung: bestätigt)
+  Text „Keine bevorstehenden Org-Pläne vorhanden.“ gleich. Ionic: grauer p-Text in Inset-Liste / Flutter: ListTile mit zusätzlichem Icon event_outlined, normale Textfarbe
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:325
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-80d2f3fd` [org-plan-public/org-plan-public.page.html:63](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L63)
+  Format „Wochentag, TT.MM.JJJJ“ gleich. Ionic: ohne Datum (Ad-hoc-Plan ohne date) wird der Titel angezeigt / Flutter: leere Zeile (longDate(null) = '')
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:217, lib/core/utils/plan_utils.dart:508
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-278f4c08` [org-plan-public/org-plan-public.page.html:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L65)
+  Ionic: Instanzname nur bei Termin-Plänen, Stil GROSSBUCHSTABEN/fett 0.75rem / Flutter: Instanzname bei Termin-Plänen, bei Ad-hoc-Plänen zusätzlich „Org-Plan“; 12px grau, nicht uppercase/fett
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:215, lib/core/providers/plan_providers.dart:119
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `action-610d3d65` [org-plan-public/org-plan-public.page.html:70](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L70) (2. Prüfung: bestätigt)
+  Live-Schalter nur bei isLiveNow, Farbe danger/primary, toggelt Live-Modus ohne das Akkordeon zu schalten – gleich. Ionic: Icon radio/radio-outline (Funkwellen) neben dem Akkordeon-Pfeil / Flutter: radio_button_checked/unchecked, ersetzt den Aufklapp-Pfeil (ExpansionTile.trailing), Tooltip „Live“
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:220
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-24593650` [org-plan-public/org-plan-public.page.html:86](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L86) (2. Prüfung: bestätigt)
+  „{time} Uhr“ mit HH:mm gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:102
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-e42e4358` [org-plan-public/org-plan-public.page.html:96](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L96)
+  Ionic: field.name / Flutter: PlanUtils.fieldDisplayName → bei Tagesordnungs-Feldern „TOP n · Titel“; Agenda-Platzhalter-Feld wird in Flutter ausgeblendet, in Ionic als Zeile angezeigt
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:166
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-8367e2d0` [org-plan-public/org-plan-public.page.html:98](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L98)
+  Startzeit + „ | Dirigent“ gleich. Ionic: Programmblock-Kopf zeigt nur Startzeit / Flutter: Zeitspanne „10:37 – 10:55“
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:130, lib/features/planning/presentation/widgets/plan_view_list.dart:133
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-4841bd3c` [org-plan-public/org-plan-public.page.html:108](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L108)
+  „{min} min“ (Block-Kopf = Summe der Unterpunkte) gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:149
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-188d296f` [org-plan-public/org-plan-public.page.html:115](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L115)
+  Ionic: Zeile „Ende“ nur wenn plan.end gesetzt / Flutter: ohne plan.end wird Ende aus Start + Summe der Dauern berechnet und angezeigt
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:207
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-24593650-2` [org-plan-public/org-plan-public.page.html:116](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L116) (2. Prüfung: bestätigt)
+  „{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette), Zeile nur wenn plan.end gesetzt / Flutter: graue Text-Notiz rechts; bei leerem end berechnet Flutter das Ende aus Start + Minuten und zeigt die Zeile trotzdem (Randfall, Ionic-Planung speichert end immer).
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:214
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-80d2f3fd-2` [org-plan-public/org-plan-public.page.html:149](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L149)
+  wie text-80d2f3fd: ohne Datum Ionic Titel / Flutter leer
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:217, lib/core/utils/plan_utils.dart:508
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-278f4c08-2` [org-plan-public/org-plan-public.page.html:151](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L151) (2. Prüfung: bestätigt)
+  Ionic: Instanzname nur bei Termin-Plänen (kind attendance), klein/fett/uppercase grau / Flutter: tenantLabel – bei Ad-hoc-Plänen zusätzlich „Org-Plan“, Stil 12 px grau ohne uppercase/fett.
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:215, lib/core/providers/plan_providers.dart:119
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-24593650-3` [org-plan-public/org-plan-public.page.html:166](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L166)
+  „{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:102
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-e42e4358-2` [org-plan-public/org-plan-public.page.html:171](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L171)
+  wie text-e42e4358: „TOP n · Titel“ für Tagesordnungs-Felder, Agenda-Platzhalter ausgeblendet
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:166
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-8367e2d0-2` [org-plan-public/org-plan-public.page.html:173](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L173)
+  wie text-8367e2d0: Block-Kopf Zeitspanne statt Startzeit
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:130
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-4841bd3c-2` [org-plan-public/org-plan-public.page.html:177](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L177)
+  „{min} min“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:149
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-188d296f-2` [org-plan-public/org-plan-public.page.html:183](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L183)
+  wie text-188d296f: Flutter zeigt berechnetes Ende auch ohne plan.end
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:207
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` `text-24593650-4` [org-plan-public/org-plan-public.page.html:184](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L184)
+  „{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:214
+- [ ] **niedrig** `org-plans/org-plans.page` `actionsheet-f5bf6fdd` [org-plans/org-plans.page.ts:177](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L177)
+  Header = Plantitel bzw. „Plan“, „Plan löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icon / Flutter: Icon delete_outline
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:64
+- [ ] **niedrig** `org-plans/org-plans.page` `actionsheet-4bd02dbc` [org-plans/org-plans.page.ts:205](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L205)
+  Header „Kalender abonnieren“, „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links gleich. Ionic: ohne Icons / Flutter: Icons event, event_note
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:77, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404
+- [ ] **niedrig** `org-plans/org-plans.page` `alert-9793c6fc` [org-plans/org-plans.page.ts:223](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L223)
+  Header, Text mit Link, Buttons „Link kopieren“ (bleibt offen) / „Anleitung öffnen“ / „Schließen“ gleich. Ionic: „Anleitung öffnen“ schließt den Dialog / Flutter: Dialog bleibt nach „Anleitung öffnen“ offen
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:90
+- [ ] **niedrig** `org-plans/org-plans.page` `native-1a59de28` [org-plans/org-plans.page.ts:238](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L238)
+  In-App-Browser (nativ) bzw. extern (Web) mit Apple-/Google-Hilfe-URL. Ionic: isPlatform('ios') ist auch im iPhone-Browser/PWA wahr → Apple-Anleitung / Flutter: `!kIsWeb && iOS` → in der PWA auf dem iPhone wird die Google-Anleitung geöffnet
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:100, lib/core/services/native/native_file_service.dart:123
+- [ ] **niedrig** `org-plans/org-plans.page` `actionsheet-76cc5ad8` [org-plans/org-plans.page.ts:253](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L253)
+  Header „Öffentlicher Link“, „Link kopieren“, „Link widerrufen“ (destruktiv, ohne Rückfrage), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons copy, link_off
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:117
+- [ ] **niedrig** `org-plans/org-plans.page` `effect-bb4d0f68` [org-plans/org-plans.page.ts:259](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L259)
+  Ionic: kopiert immer `https://attendix.de/org-plan?key=…` / Flutter: nativ gleich, im Web `<origin><path>#/org-plan?key=…` (planPublicUrl, Hash-URL der aktuellen Domain)
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:120, lib/features/planning/presentation/widgets/plan_export_actions.dart:166
+- [ ] **niedrig** `org-plans/org-plans.page` `effect-bb4d0f68-2` [org-plans/org-plans.page.ts:284](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.ts#L284) (2. Prüfung: bestätigt)
+  Neuer Schlüssel (16 Hex-Zeichen, Random.secure) wird in tenant_groups.public_plan_key gespeichert, Link kopiert, Toast „Link erstellt“ wie Ionic. Ionic: kopiert immer https://attendix.de/org-plan?key=… / Flutter: nativ gleich, im Web <origin><path>#/org-plan?key=… (Hash-URL der aktuellen Domain).
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:138, lib/features/organisation/presentation/pages/org_plans_page.dart:144, lib/features/planning/presentation/widgets/plan_export_actions.dart:166
+- [ ] **niedrig** `org-plans/org-plans.page` `action-04994ce0` [org-plans/org-plans.page.html:18](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L18)
+  Öffnet Verwalten-Sheet bzw. erzeugt Link wie Ionic. Ionic: Button immer sichtbar, Icon link/link-outline / Flutter: nur wenn Organisation vorhanden, Icon link/add_link (ohne Schlüssel)
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:219
+- [ ] **niedrig** `org-plans/org-plans.page` `action-6428e040` [org-plans/org-plans.page.html:66](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L66)
+  Titel, „dd, TT.MM.JJJJ · N Punkte“ (Punkte nur > 0), Instanzname bzw. „Org-Plan“, Tipp öffnet Plan-Viewer – gleich. Ionic: Instanz-Label GROSSBUCHSTABEN/fett, Chevron auch bei Ad-hoc-Plänen neben dem Papierkorb / Flutter: Label 12px grau normal, Ad-hoc-Zeilen ohne Chevron
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:156, lib/features/organisation/presentation/pages/org_plans_page.dart:276
+- [ ] **niedrig** `org-plans/org-plans.page` `modal-e1461116` [org-plans/org-plans.page.html:119](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L119) (2. Prüfung: bestätigt)
+  Ionic: ion-modal (Vollbild-Modal über allem, inkl. Tabbar) / Flutter: normale Push-Seite (MaterialPageRoute ohne fullscreenDialog, im Shell-Navigator) mit Zurück-Pfeil, Einträge ohne Inset-Liste
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:147
+- [ ] **niedrig** `org-plans/org-plans.page` `action-c21a87b3` [org-plans/org-plans.page.html:125](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L125) (2. Prüfung: bestätigt)
+  Ionic: Schließen-Button (X) rechts / Flutter: kein X, nur automatischer Zurück-Pfeil links
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:150
+- [ ] **niedrig** `org-plans/org-plans.page` `action-6428e040-2` [org-plans/org-plans.page.html:134](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L134)
+  Titel, „dd, TT.MM.JJJJ · N Punkte“ (Punkte nur > 0), Instanzname bzw. „Org-Plan“, Tipp öffnet Plan-Viewer – gleich. Ionic: Instanz-Label GROSSBUCHSTABEN/fett, Chevron auch bei Ad-hoc-Plänen neben dem Papierkorb / Flutter: Label 12px grau normal, Ad-hoc-Zeilen ohne Chevron
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:151, lib/features/organisation/presentation/pages/org_plans_page.dart:156
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `field-44f78df0` [org-settings/org-person-fields/org-person-fields.page.html:109](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L109)
+  Label „Standardwert (optional)“, Zahlen-Tastatur bei Zahl gleich. Ionic: bei Typ Datum Eingabe type=date (Datumsauswahl) / Flutter: freies Textfeld ohne Datumsauswahl
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:430
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `action-db01f6fe` [org-settings/org-person-fields/org-person-fields.page.html:134](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L134) (2. Prüfung: bestätigt)
+  Ionic: Schließen-Button (X) in der Kopfzeile des Bearbeiten-Modals / Flutter: kein X, Schließen nur durch Wegwischen/Antippen außerhalb
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:344
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `text-079ad93e` [org-settings/org-person-fields/org-person-fields.page.html:176](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L176) (2. Prüfung: bestätigt)
+  Ionic (Bearbeiten): „Keine Optionen“ / Flutter: „Keine Optionen ausgewählt“ (gleicher Text wie beim Hinzufügen)
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:402
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `action-9a1af10d` [org-settings/org-person-fields/org-person-fields.page.html:221](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-person-fields/org-person-fields.page.html#L221)
+  Umsortieren nur für Admin (Griff), Zeilen Name / „Typ: …“ / „Anzeige: …“ / „Für Mitglieder sichtbar (bearbeitbar)“ gleich. Ionic: Augen-Icon vor „Für Mitglieder sichtbar“ / Flutter: ohne Icon (reiner Untertitel)
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:134, lib/features/organisation/presentation/pages/org_person_fields_page.dart:238
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `alert-ff2bca9c` [org-settings/org-planning-templates/org-planning-templates.page.ts:344](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.ts#L344)
+  Titel „Feld bearbeiten“, Programmpunkt/Ausführender/Info/Minuten bzw. bei Notizen nur „Notiz“, Pflichtmeldung „Bitte einen Programmpunkt eingeben.“ gleich. Ionic: Bestätigen-Button „Speichern“ / Flutter: „Updaten“ (gemeinsamer PlanFieldsEditor-Dialog).
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:155
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `field-d048865c` [org-settings/org-planning-templates/org-planning-templates.page.html:106](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L106)
+  Startzeit wählen und Speichern gleich. Ionic: ion-datetime-button (ohne Wert zeigt er die Standardzeit des Pickers), speichert bei jeder Rad-Änderung / Flutter: TextButton „--:--“ ohne Wert, Picker startet bei 10:00, speichert erst bei Bestätigen.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:454, lib/features/organisation/presentation/pages/org_planning_templates_page.dart:248
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `action-95567a5a` [org-settings/org-planning-templates/org-planning-templates.page.html:117](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L117)
+  Sortieren per Ziehgriff mit Neuberechnung/Speichern gleich. Ionic: leere Vorlage zeigt keine Zeile / Flutter: Text „Keine Felder“.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:346, lib/features/organisation/presentation/pages/org_planning_templates_page.dart:456
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `action-01d7d5ac` [org-settings/org-planning-templates/org-planning-templates.page.html:122](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L122)
+  Tippen öffnet „Feld bearbeiten“, Zeile „HH:mm | Ausführender“ (nur mit Startzeit), Notizen grau gleich. Ionic: Werk-Platzhalter kursiv und ohne Zeitzeile, keine Info-Zeile / Flutter: Platzhalter normal mit Zeitzeile, zusätzlich kursive Info-Zeile.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:439, lib/features/planning/presentation/widgets/plan_fields_editor.dart:515
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `action-d1249587` [org-settings/org-planning-templates/org-planning-templates.page.html:139](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L139)
+  Ionic: expandable Löschen-Option, vollständiges Wischen löscht / Flutter: kein Löschen per Durchwischen (kein DismissiblePane), nur Tipp auf die Option; zusätzlich Option „Einrücken“ (siehe extra).
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:543
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` `text-112a783d` [org-settings/org-planning-templates/org-planning-templates.page.html:170](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L170) (2. Prüfung: bestätigt)
+  Ionic: Trenner + fette Überschrift „Standardfelder“ vor den Standardfeldern im Popover / Flutter: Standardfelder folgen ohne Überschrift im Action-Sheet (org_planning_templates_page.dart:201).
+- [ ] **niedrig** `org-settings/org-settings.page` `loading-fa858e41` [org-settings/org-settings.page.ts:59](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L59)
+  Ionic: blockierendes Lade-Overlay während des Verknüpfens / Flutter: kein Overlay, wartet ohne Anzeige.
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:70
+- [ ] **niedrig** `org-settings/org-settings.page` `toast-eaca6962` [org-settings/org-settings.page.ts:66](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L66)
+  Ionic: Service-Toast „Fehler beim Verknüpfen der Organisation“, danach Toast mit error.message (danger) / Flutter: Toast „Fehler beim Verknüpfen“ (danger).
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:74
+- [ ] **niedrig** `org-settings/org-settings.page` `loading-9aa86873` [org-settings/org-settings.page.ts:104](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L104)
+  Ionic: blockierendes Lade-Overlay beim Erstellen / Flutter: kein Overlay.
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:100
+- [ ] **niedrig** `org-settings/org-settings.page` `toast-7cb48d62` [org-settings/org-settings.page.ts:108](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L108)
+  Text „Die Organisation wurde erfolgreich erstellt.“ gleich. Ionic: Erfolg nur, wenn Erstellen und Verknüpfen klappen / Flutter: Erfolgs-Toast auch, wenn das anschließende Verknüpfen fehlschlägt (Ergebnis von linkCurrentTenant wird ignoriert).
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:101
+- [ ] **niedrig** `org-settings/org-settings.page` `toast-6d088b19` [org-settings/org-settings.page.ts:111](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L111)
+  Ionic: Service-Toast „Fehler beim Erstellen der Organisation“, dann error.message (danger) / Flutter: nur „Fehler beim Erstellen der Organisation“ (danger).
+  Flutter: lib/features/organisation/presentation/widgets/org_link_dialogs.dart:106
+- [ ] **niedrig** `org-settings/org-settings.page` `modal-fd2da8e9` [org-settings/org-settings.page.ts:247](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L247)
+  Ionic: LinkPersonsPage als Sheet-Modal (Breakpoints 0/0,5/1, voll geöffnet, ohne Griff) / Flutter: normale Push-Seite /settings/general/link-persons.
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:248
+- [ ] **niedrig** `org-settings/org-settings.page` `loading-2b64f5ec` [org-settings/org-settings.page.ts:265](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L265) (2. Prüfung: bestätigt)
+  Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: kleiner Spinner anstelle der Auswahl, Seite bleibt bedienbar.
+  Flutter: lib/features/organisation/presentation/widgets/org_song_sync_section.dart:88
+- [ ] **niedrig** `org-settings/org-songs/org-songs.page` `loading-fd46fb98` [org-settings/org-songs/org-songs.page.ts:396](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-songs/org-songs.page.ts#L396)
+  Ionic: blockierendes Overlay „Werk wird kopiert...“ bzw. „Datei x von y wird kopiert...“ / Flutter: Fortschrittsbalken + gleicher Text im Sheet, Schließen und Buttons gesperrt, Präfix/Nummer-Felder bleiben bedienbar.
+  Flutter: lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:344, lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:424
+- [ ] **niedrig** `org-settings/org-songs/org-songs.page` `field-3d514959` [org-settings/org-songs/org-songs.page.html:10](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-songs/org-songs.page.html#L10)
+  Platzhalter „Name oder Nummer“, 300 ms Verzögerung, Vorbelegung aus ?q= gleich. Ionic: Suchleiste fest in der Kopfzeile / Flutter: Suchleiste am Listenanfang, scrollt mit.
+  Flutter: lib/features/organisation/presentation/pages/org_songs_page.dart:257
+- [ ] **niedrig** `planning/plan-field-edit/plan-field-edit.component` `action-36535d24` [planning/plan-field-edit/plan-field-edit.component.html:4](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-field-edit/plan-field-edit.component.html#L4) (2. Prüfung: bestätigt)
+  „Abbrechen“ schließt ohne Änderung wie Ionic. Ionic: Vollbild-Modal, Button oben links in der Toolbar / Flutter: Dialog (AppAlertDialog), Button unten.
+  Flutter: lib/features/planning/presentation/widgets/plan_field_dialogs.dart:315
+- [ ] **niedrig** `planning/plan-field-edit/plan-field-edit.component` `action-97956a62` [planning/plan-field-edit/plan-field-edit.component.html:8](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-field-edit/plan-field-edit.component.html#L8)
+  Text „Updaten“ und Speichern-Logik gleich. Ionic: fetter Button oben rechts in der Toolbar / Flutter: gefüllter Button unten rechts im Dialog.
+  Flutter: lib/features/planning/presentation/widgets/plan_field_dialogs.dart:319, lib/features/planning/presentation/widgets/plan_fields_editor.dart:171
+- [ ] **niedrig** `planning/plan-field-edit/plan-field-edit.component` `text-0bda59a8` [planning/plan-field-edit/plan-field-edit.component.html:23](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-field-edit/plan-field-edit.component.html#L23)
+  Text „Bitte einen Programmpunkt eingeben.“ gleich. Ionic: direkt unter dem Programmpunkt, verschwindet beim Tippen / Flutter: unter allen Feldern (nach Minuten), bleibt bis zum nächsten Speichern-Versuch.
+  Flutter: lib/features/planning/presentation/widgets/plan_field_dialogs.dart:297
+- [ ] **niedrig** `planning/plan-field-edit/plan-field-edit.component` `field-6a664673` [planning/plan-field-edit/plan-field-edit.component.html:37](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-field-edit/plan-field-edit.component.html#L37) (2. Prüfung: korrigiert)
+  Label „Minuten“, Zahlentastatur, Vorbelegung (Dauer bzw. 20) gleich; Flutter ohne Platzhalter „Minuten“, dafür Suffix „min“. Verhalten beim Speichern weicht ab: Ionic 0 Minuten → alte Dauer bleibt (`this.time ? … : field.time`) / Flutter 0 → Dauer „0“ (Flutter besser). Erstprüfer: „ok“, obwohl genau dieses Feld abweicht (stand nur als extra „0 Minuten“).
+  Flutter: lib/features/planning/presentation/widgets/plan_field_dialogs.dart:291, lib/features/planning/presentation/widgets/plan_fields_editor.dart:191
+- [ ] **niedrig** `planning/plan-minutes.pipe` `logic-a54b756e` [planning/plan-minutes.pipe.ts:1](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-minutes.pipe.ts#L1)
+  Block-Kopf = Summe der Unterpunkte, sonst Dauer des Feldes – gleich. Ionic: gibt field.time unverändert aus (leer → „ min“) / Flutter: Zahl, leer/ungültig → „0 min“.
+  Flutter: lib/core/utils/plan_utils.dart:75, lib/features/planning/presentation/widgets/plan_view_list.dart:150
+- [ ] **niedrig** `planning/plan-share-sheet/plan-share-sheet.component` `modal-677ebe61` [planning/plan-share-sheet/plan-share-sheet.component.ts:47](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-share-sheet/plan-share-sheet.component.ts#L47)
+  Ionic: Sheet-Modal, Start 0,5 bzw. 0,75 (mit Telegram), auf volle Höhe hochziehbar / Flutter: Bottom-Sheet mit fester Höhe 0,5 bzw. 0,75, nicht vergrößerbar.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:186
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `toast-41712142` [planning/plan-viewer/plan-viewer.component.ts:321](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L321) (2. Prüfung: bestätigt)
+  Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:126, lib/features/planning/presentation/widgets/plan_export_actions.dart:132
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `actionsheet-3a04c7a8` [planning/plan-viewer/plan-viewer.component.ts:356](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L356)
+  Ionic: Export-Sheet ohne Icons, Abbrechen mit role „destructive“ / Flutter: gleiche Einträge und Reihenfolge, aber mit Icons; Abbrechen nicht destruktiv (rot).
+  Flutter: lib/features/planning/presentation/pages/plan_viewer_page.dart:106, lib/features/planning/presentation/widgets/plan_export_actions.dart:33
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `effect-2dd21155` [planning/plan-viewer/plan-viewer.component.ts:373](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L373)
+  Ionic: PDF wird per downloadFileNative heruntergeladen (Desktop) / per Web-Share bzw. Datei-Viewer (mobil); Dateiname-Fallback getPlanningTitle / Flutter: Druckdialog (Printing.layoutPdf); Titel-Fallback plan.title bzw. Typname oder „Ablaufplan“.
+  Flutter: lib/features/planning/presentation/pages/plan_viewer_page.dart:106, lib/features/planning/presentation/widgets/plan_export_actions.dart:111
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `effect-2cc43a4d` [planning/plan-viewer/plan-viewer.component.ts:396](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L396)
+  Ionic: Telegram-Versand mit Lade-Overlay; Dateiname-Fallback getPlanningTitle / Flutter: Versand ohne Overlay; Titel-Fallback plan.title bzw. Typname oder „Ablaufplan“.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:114, lib/features/planning/presentation/widgets/plan_export_actions.dart:126
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `toast-dd66afe1` [planning/plan-viewer/plan-viewer.component.ts:414](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L414)
+  Ionic: „Plan wird per Telegram gesendet...“ sofort, dazu Lade-Overlay des TelegramService und danach „Nachricht wurde erfolgreich gesendet!“ bzw. Fehler-Toast / Flutter: kein Overlay, nur ein Erfolgs-Toast „Plan wird per Telegram gesendet...“ nach erfolgreichem Senden; bei Fehler „Fehler beim Export: …“.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:132, lib/features/planning/presentation/widgets/plan_export_actions.dart:135
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` `text-d513c68c` [planning/plan-viewer/plan-viewer.component.html:97](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.html#L97) (2. Prüfung: bestätigt)
+  Ionic: Ende-Zeile nur wenn plan.end gesetzt / Flutter: Ende wird bei fehlendem plan.end aus Start + Minuten berechnet und angezeigt.
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:207, lib/features/planning/presentation/widgets/plan_view_list.dart:213
+- [ ] **niedrig** `planning/planning.page` `modal-5f3c6ffd` [planning/planning.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L182)
+  Ionic: Tagesordnungs-Auswahl als Vollbild-Modal / Flutter: Bottom-Sheet mit 90 % Höhe.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1775, lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart
+- [ ] **niedrig** `planning/planning.page` `effect-cba63ea5` [planning/planning.page.ts:380](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L380)
+  Ionic: nach Versand Toast „Nachricht wurde erfolgreich gesendet!“ (TelegramService) mit Lade-Overlay / Flutter: Toast „Plan wird per Telegram gesendet...“ nach Versand, kein Overlay.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:126, lib/features/planning/presentation/widgets/plan_export_actions.dart:132
+- [ ] **niedrig** `planning/planning.page` `alert-70a7354c` [planning/planning.page.ts:518](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L518) (2. Prüfung: bestätigt)
+  Ionic: Eingaben nur mit Platzhaltern / Flutter: gleiche Eingaben und Buttons, zusätzlich Feldbeschriftungen.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1465, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40
+- [ ] **niedrig** `planning/planning.page` `alert-4f031d78` [planning/planning.page.ts:548](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L548)
+  Ionic: Eingaben nur mit Platzhaltern / Flutter: zusätzlich Feldbeschriftungen; Dirigent-Wert wird getrimmt.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:222, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:40
+- [ ] **niedrig** `planning/planning.page` `actionsheet-0f4e0ac3` [planning/planning.page.ts:599](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L599) (2. Prüfung: bestätigt)
+  Ionic: Block-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:246
+- [ ] **niedrig** `planning/planning.page` `effect-53794f7b` [planning/planning.page.ts:891](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L891)
+  Ionic: PDF-Download per downloadFileNative, Dateiname „{Titel}_{dddd, DD.MM.YYYY}“; Untertitel bei Tagesplänen ohne eigenes Label ohne Zusatz / Flutter: Druckdialog (Printing.layoutPdf), Dateiname „{Titel}_DD_MM_YYYY“, bei mehreren Plänen immer „ · Label“ im Untertitel.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1928, lib/features/planning/presentation/widgets/plan_export_actions.dart:111
+- [ ] **niedrig** `planning/planning.page` `effect-cc0f301b` [planning/planning.page.ts:1001](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1001)
+  Ionic: Link immer https://attendix.de/plan?… / Flutter (Web): aktuelle Origin + „#/plan?…“ (native Apps: attendix.de wie Ionic).
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144, lib/features/planning/presentation/widgets/plan_export_actions.dart:166
+- [ ] **niedrig** `planning/planning.page` `actionsheet-d52e80e4` [planning/planning.page.ts:1082](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1082)
+  Ionic: Aktionen-Sheet ohne Icons / Flutter: gleiche Einträge mit Icons.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1949
+- [ ] **niedrig** `planning/planning.page` `effect-d8aa5cb2` [planning/planning.page.ts:1200](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1200)
+  Ionic: Registerprobenplan per downloadFileNative heruntergeladen / Flutter: Druckdialog (Printing.layoutPdf).
+  Flutter: lib/features/planning/presentation/widgets/register_plan_sheet.dart:377
+- [ ] **niedrig** `planning/planning.page` `effect-160cbfb2-2` [planning/planning.page.ts:1200](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1200) (2. Prüfung: bestätigt)
+  Ionic: PDF-Blob für Download / Flutter: PDF geht in den Druckdialog (Printing.layoutPdf).
+  Flutter: lib/features/planning/presentation/widgets/register_plan_sheet.dart:377
+- [ ] **niedrig** `planning/planning.page` `actionsheet-5a0aa6c6` [planning/planning.page.ts:1396](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L1396) (2. Prüfung: bestätigt)
+  Ionic: Plan-Optionen ohne Icons / Flutter: gleiche Einträge mit Icons.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1306
+- [ ] **niedrig** `planning/planning.page` `field-181f005d` [planning/planning.page.html:26](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L26)
+  Ionic: ion-select als Modal, Label mit hide_name-Logik der Typen / Flutter: Dropdown, Label aus Typname ohne hide_name; bei leerer Liste zusätzlicher Text „Keine Termine vorhanden“.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1206, lib/features/planning/presentation/pages/planning_page.dart:2217
+- [ ] **niedrig** `planning/planning.page` `field-db353430` [planning/planning.page.html:65](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L65)
+  Ionic: Sichtbarkeit nach Tenant-Branding, Wert nur für diese Seite / Flutter: hasBranding prüft Org-Branding zuerst; Schalterzustand gilt sitzungsweit.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:2272, lib/core/providers/branding_providers.dart
+- [ ] **niedrig** `planning/planning.page` `field-1a6d6339` [planning/planning.page.html:197](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L197)
+  Ionic: Suche nach Nummer/Name / Flutter: Suche trifft zusätzlich den Komponisten.
+  Flutter: lib/features/planning/presentation/widgets/plan_song_helper.dart:118, lib/features/planning/presentation/widgets/plan_song_helper.dart:135
+- [ ] **niedrig** `planning/planning.page` `action-45191162` [planning/planning.page.html:320](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L320)
+  Ionic: voller Wisch (ionSwipe, expandable) löscht das Feld / Flutter: kein Full-Swipe-Löschen, nur Tippen auf die Option.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:537
+- [ ] **niedrig** `planning/planning.page` `text-ea874fbd` [planning/planning.page.html:338](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L338)
+  Ionic: Ende-Zeile sobald end gesetzt (@if end) / Flutter: nur wenn der Plan Felder hat.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:2179
+- [ ] **niedrig** `planning/planning.page` `field-6e765eaa-2` [planning/planning.page.html:339](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L339)
+  Ionic: Ende-Zeile sobald end gesetzt / Flutter: nur wenn der Plan Felder hat.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:2179
+- [ ] **niedrig** `planning/planning.page` `modal-42d9d843-2` [planning/planning.page.html:340](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L340)
+  Ionic: Ende-Chip öffnet einen deaktivierten Zeit-Picker / Flutter: Chip ohne Aktion.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:2179
+- [ ] **niedrig** `planning/planning.page` `field-2174584b` [planning/planning.page.html:342](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.html#L342)
+  Ionic: deaktiviertes ion-datetime im Modal / Flutter: nur Anzeige-Chip ohne Picker.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:2179
+- [ ] **niedrig** `public-planning/public-planning.page` `actionsheet-8b22c81c` [public-planning/public-planning.page.ts:607](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L607)
+  Header Blockname, Untertitel „n Unterpunkte · x min“, „Block bearbeiten“, „Unterpunkt hinzufügen“, „Block auflösen“, „Block mit Unterpunkten löschen“ (destruktiv), „Abbrechen“ gleich. Ionic: ohne Icons / Flutter: Icons (edit, add, call_split, delete)
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:246-279
+- [ ] **niedrig** `public-planning/public-planning.page` `effect-433919fa` [public-planning/public-planning.page.ts:739](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L739)
+  PNG speichern/teilen (Web: Teilen bzw. Download, nativ: Datei öffnen) gleich. Dateiname Ionic „Titel_JJJJ-MM-TT.png“ / Flutter „Titel_TT_MM_JJJJ.png“
+  Flutter: lib/core/services/plan_export_service.dart:135-139, lib/core/services/native/native_file_service.dart:167-176, lib/features/planning/presentation/pages/public_planning_page.dart:736-737
+- [ ] **niedrig** `public-planning/public-planning.page` `actionsheet-bfb3e0da` [public-planning/public-planning.page.ts:790](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L790)
+  Validierung vorher, Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram-Einträge „Per Telegram senden (PDF)“/„(PDF 2x A5)“/„(Bild)“ nur mit Chat-ID, „Abbrechen“ – gleich. Ionic: ohne Icons / Flutter: Icons
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:739-742, lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77
+- [ ] **niedrig** `public-planning/public-planning.page` `actionsheet-722869aa` [public-planning/public-planning.page.ts:799](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L799)
+  Header „Teilen & Exportieren“, „Nur-Lesen-Link“, „Bearbeitungs-Link“, „PDF (A4)“, „PDF (2x A5)“, „Bild (A4)“, Telegram, „Abbrechen“ – Reihenfolge und Wirkung gleich. Ionic: ohne Icons / Flutter: Icons (link, edit_note, picture_as_pdf …)
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:744-758, lib/features/planning/presentation/widgets/plan_export_actions.dart:59-82
+- [ ] **niedrig** `public-planning/public-planning.page` `effect-5c5e4502` [public-planning/public-planning.page.ts:827](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L827)
+  Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171, lib/features/planning/presentation/pages/public_planning_page.dart:782-784
+- [ ] **niedrig** `public-planning/public-planning.page` `toast-c76fea2d` [public-planning/public-planning.page.ts:830](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L830)
+  „Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153
+- [ ] **niedrig** `public-planning/public-planning.page` `effect-5c5e4502-2` [public-planning/public-planning.page.ts:857](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L857)
+  Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171, lib/features/planning/presentation/pages/public_planning_page.dart:782-784
+- [ ] **niedrig** `public-planning/public-planning.page` `toast-c76fea2d-2` [public-planning/public-planning.page.ts:860](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L860)
+  „Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153
+- [ ] **niedrig** `public-planning/public-planning.page` `modal-c85eff60` [public-planning/public-planning.page.ts:865](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L865)
+  Ionic: Sheet-Modal (Breakpoints 0/0.5/0.9, Start 0.9, ohne Griff) / Flutter: Vollbild-Dialog (fullscreenDialog) „Meine Pläne“ mit „Schließen“; Auswahl eines Plans lädt ihn wie Ionic
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:667-674, lib/features/planning/presentation/pages/public_planning_page.dart:1006-1046
+- [ ] **niedrig** `public-planning/public-planning.page` `field-51c31589` [public-planning/public-planning.page.html:56](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L56)
+  Ionic: ion-datetime-button im Intl-Kurzformat (z. B. „4. Nov. 2026“; Ionic-Paket nicht im Container) / Flutter: „04.11.2026“ (dateFmt)
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:918-921
+- [ ] **niedrig** `public-planning/public-planning.page` `text-aefaf1bb` [public-planning/public-planning.page.html:259](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L259) (2. Prüfung: bestätigt)
+  „Ende“ gleich. Ionic: sichtbar sobald end gesetzt (auch bei leerem Ablauf, z. B. Vorlage „Leerer Ablauf“; nach „Neuer Plan“ bis zur nächsten Änderung aus) / Flutter: nur wenn mindestens ein Feld existiert.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:981-986
+- [ ] **niedrig** `shared-plan/shared-plan.page` `alert-5d93ade6` [shared-plan/shared-plan.page.ts:382](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L382)
+  Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Notiz (noteFld, Dauer 0) gleich. Ionic: Titel „Notiz hinzufügen“ (attendance.addNote), leer → stumm offen / Flutter: Titel „Notizfeld hinzufügen“, Meldung „Bitte eine Notiz eingeben.“
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:692-705
+- [ ] **niedrig** `shared-plan/shared-plan.page` `alert-0caf6a44` [shared-plan/shared-plan.page.ts:424](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L424)
+  Ionic: Alert „Startzeit bearbeiten“ mit Zeit-Eingabe und „Abbrechen“/„Speichern“ / Flutter: System-Zeitwahl (24 h) mit Hilfetext „Startzeit bearbeiten“. Gespeicherter Wert: Ad-hoc-Plan `${date}T${HH:mm}` gleich; Termin-Plan Ionic `${attendance.date}T${HH:mm}`, Flutter nur „HH:mm“
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:650-666
+- [ ] **niedrig** `shared-plan/shared-plan.page` `alert-29f54454` [shared-plan/shared-plan.page.ts:453](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L453)
+  „Feld bearbeiten“ mit Programmpunkt/Ausführender/Info und Dauer, bei Notizen nur Text, „Abbrechen“ gleich. Ionic: Bestätigen „Speichern“, Dauer-Platzhalter „Dauer (min)“, leerer Name → stumm offen; Block-Kopf wird wie ein normales Feld (inkl. Dauer) bearbeitet / Flutter: Bestätigen „Updaten“, Feld „Minuten“, Fehlermeldung bei leerem Namen; Tippen auf Block-Kopf öffnet das Block-Aktionsblatt
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-195, lib/features/planning/presentation/widgets/plan_field_dialogs.dart:306-320
+- [ ] **niedrig** `shared-plan/shared-plan.page` `actionsheet-7d9d8ba7` [shared-plan/shared-plan.page.ts:505](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L505) (2. Prüfung: bestätigt)
+  Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: Icons picture_as_pdf, content_copy.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:713-733, lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77
+- [ ] **niedrig** `shared-plan/shared-plan.page` `action-47ec43ec` [shared-plan/shared-plan.page.html:6](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L6)
+  nur bei isLiveNow, Farbe danger/primary, schaltet Live-Modus – gleich. Ionic: Icon radio/radio-outline / Flutter: sensors/sensors_outlined
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:750-757
+- [ ] **niedrig** `shared-plan/shared-plan.page` `action-3bb4b647` [shared-plan/shared-plan.page.html:71](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L71)
+  Zeile mit Name, „HH:mm | Ausführender“, Info, „{min} min“ bzw. Countdown-Plakette beim aktiven Feld, Tippen → Feld bearbeiten (nur Bearbeitungsmodus) gleich. Ionic: Block-Kopf zeigt Startzeit, Tippen auf Kopf → Feld bearbeiten / Flutter: Kopf zeigt Zeitspanne „10:37 – 10:55“, Tippen → Block-Aktionsblatt; Tagesordnungsfelder „TOP n · Titel“, Agenda-Platzhalter ausgeblendet
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:106-205, lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-160, lib/features/planning/presentation/widgets/plan_fields_editor.dart:515
+- [ ] **niedrig** `shared-plan/shared-plan.page` `text-36e09e6c` [shared-plan/shared-plan.page.html:107](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.html#L107)
+  „Ende“ gleich. Ionic: nur wenn end gespeichert ist / Flutter (Nur-Lesen): ohne end aus Start + Summe der Dauern berechnet und angezeigt
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:830-834, lib/features/planning/presentation/widgets/plan_view_list.dart:207-217
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.ts:293](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L293)
+  Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld (activeIndex −1), stattdessen in der Start-Zeile „beginnt in X Min.“
+  Flutter: lib/core/utils/plan_utils.dart:455, lib/features/planning/presentation/widgets/plan_view_list.dart:88
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.ts:310](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L310)
+  Ionic: scrollToActive scrollt im Live-Modus einmal je Plan das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:86
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.html:94](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L94)
+  Ionic: Block-Köpfe vor dem aktiven Feld werden wie erledigte Felder ausgegraut (opacity .4), kein Block-Rahmen / Flutter: Kopf des laufenden Blocks bleibt voll sichtbar und erhält einen blauen linken Rand; Köpfe werden nie aktiv
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:113, lib/features/planning/presentation/widgets/plan_view_list.dart:198
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.html:169](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L169)
+  Ionic: alle Felder im Verlauf ausgegraut (class done-slot, opacity .4) und ohne Info-Zeile / Flutter: Felder voll sichtbar, Info-Zeile wird angezeigt
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:237, lib/features/planning/presentation/widgets/plan_view_list.dart:138
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.ts:102](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.ts#L102)
+  Ionic: Supabase-Fehler beim Laden der Pläne → leere Liste („Keine bevorstehenden Org-Pläne vorhanden.“) / Flutter: Fehler beim ersten Laden → „Link ungültig oder abgelaufen.“; Fehler beim Pull-to-Refresh → _loadPlans wirft ungefangen, _loading bleibt true (Spinner ohne Refresher), Polling-Timer bleibt gestoppt
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:90, lib/features/organisation/presentation/pages/org_plan_public_page.dart:100, lib/features/organisation/presentation/pages/org_plan_public_page.dart:319
+- [ ] **niedrig** `org-plan-public/org-plan-public.page` [src/app/org-plan-public/org-plan-public.page.html:27](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plan-public/org-plan-public.page.html#L27)
+  Ionic: 3 Skeleton-Zeilen in Inset-Liste / Flutter: Spinner (AppSpinner)
+  Flutter: lib/features/organisation/presentation/pages/org_plan_public_page.dart:297
+- [ ] **niedrig** `org-plans/org-plans.page` [src/app/services/organisation/organisation.service.ts:287](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L287)
+  Ionic: Toast „Fehler beim Laden der Organisationspläne“ (danger), Seite zeigt Leerzustand „Keine bevorstehenden Org-Pläne …“ sowie „Ablaufplanung öffnen“ und ggf. den Öffentlicher-Link-Hinweis / Flutter: kein Toast, statt der Liste „Fehler: <Meldung>“; „Ablaufplanung öffnen“, „Vergangene Pläne“ und der Öffentlicher-Link-Kasten fehlen im Fehlerzustand
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:264
+- [ ] **niedrig** `org-plans/org-plans.page` [src/app/org-plans/org-plans.page.html:43](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-plans/org-plans.page.html#L43)
+  Ionic: 3 Skeleton-Zeilen, darunter bereits „Ablaufplanung öffnen“ / Flutter: Spinner, Aktionskasten erst nach dem Laden
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:250, lib/features/organisation/presentation/pages/org_plans_page.dart:261
+- [ ] **niedrig** `org-plans/org-plans.page` [src/app/services/organisation/organisation.service.ts:335](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L335)
+  Ionic: Widerrufen fehlgeschlagen → Toast „Fehler beim Widerrufen des öffentlichen Links“; Erstellen fehlgeschlagen → „Fehler beim Erstellen des öffentlichen Links“ / Flutter: Widerrufen fehlgeschlagen → keine Meldung (nur Erfolgs-Toast entfällt); Erstellen fehlgeschlagen → „Fehler beim Erstellen des Links“
+  Flutter: lib/features/organisation/presentation/pages/org_plans_page.dart:133, lib/features/organisation/presentation/pages/org_plans_page.dart:141
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` [src/app/services/organisation/organisation.service.ts:21](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L21)
+  Ionic: „Fehler beim Speichern der Organisations-Zusatzfelder“ bzw. „Fehler beim Löschen der gemeinsamen Zusatzfeldwerte“ (danger) / Flutter: einheitlich „Fehler beim Speichern“
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:116
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` [src/app/org-settings/org-planning-templates/org-planning-templates.page.html:109](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L109)
+  Ionic: ion-datetime schreibt tpl.time als ISO-Datum-Zeit (YYYY-MM-DDTHH:mm…), end bleibt '' (templateEnds nur lokal) / Flutter: schreibt time als „HH:mm“ und bei jedem Speichern end = berechnetes Ende „HH:mm“ in jede Vorlage; Leser beider Apps akzeptieren beide Formate, Ionic applyTemplate nutzt end nicht.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:43, lib/features/organisation/presentation/pages/org_planning_templates_page.dart:261
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` [src/app/org-settings/org-planning-templates/org-planning-templates.page.html:139](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L139)
+  Ionic: Vorlagenfelder sind eine flache Liste, Wisch-Option nur Löschen / Flutter: gemeinsamer PlanFieldsEditor bietet zusätzlich „Einrücken/Ausrücken“ (groupId), Block-Köpfe mit Block-Optionen und „Unterpunkt hinzufügen“ – Vorlagen können Programmblöcke enthalten.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:549, lib/features/planning/presentation/widgets/plan_fields_editor.dart:246
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` [src/app/services/organisation/organisation.service.ts:355](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L355)
+  Ionic: Toast „Fehler beim Speichern der Planvorlagen“ bzw. „Fehler beim Speichern der Standardfelder“ (Service) / Flutter: Toast „Fehler beim Speichern“.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:40, lib/features/organisation/presentation/pages/org_planning_templates_page.dart:47
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` [src/app/org-settings/org-planning-templates/org-planning-templates.page.html:91](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.html#L91)
+  Ionic: Umbenennen/Löschen nur über Wisch-Optionen / Flutter besser: zusätzlich Langdruck auf die Vorlage öffnet Action-Sheet „Vorlage umbenennen“/„Löschen“.
+  Flutter: lib/features/organisation/presentation/pages/org_planning_templates_page.dart:447
+- [ ] **niedrig** `org-settings/org-settings.page` [src/app/services/organisation/organisation.service.ts:388](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/organisation/organisation.service.ts#L388)
+  Ionic: „Fehler beim Umbenennen der Organisation“, „Fehler beim Entfernen der Organisation“, „Fehler beim Aktualisieren der Einstellungen“-Toast aus den Services / Flutter: „Fehler beim Speichern“ (Umbenennen, Werk-Sync) bzw. „Fehler beim Trennen“.
+  Flutter: lib/features/organisation/presentation/pages/org_settings_page.dart:44, lib/features/organisation/presentation/pages/org_settings_page.dart:60, lib/features/organisation/presentation/widgets/org_song_sync_section.dart:70
+- [ ] **niedrig** `org-settings/org-settings.page` [src/app/org-settings/org-settings.page.ts:32](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-settings.page.ts#L32)
+  Ionic: linkedTenants wird nur in ngOnInit geladen – nach Erstellen/Verknüpfen auf der Seite fehlen „Werke“, „Werk-Synchronisierung“ und „Instanzen“ bis zum erneuten Öffnen / Flutter besser: linkedTenantsProvider wird invalidiert, Abschnitte erscheinen sofort.
+  Flutter: lib/core/providers/organisation_providers.dart:99
+- [ ] **niedrig** `org-settings/org-songs/org-songs.page` [src/app/org-settings/org-songs/org-songs.page.ts:202](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-songs/org-songs.page.ts#L202)
+  Ionic: beim nächsten Kopieren bleibt die zuletzt gewählte Zielinstanz vorausgewählt, sofern sie für das Werk möglich ist / Flutter: jedes Öffnen startet mit dem ersten Ziel (eigene Instanz zuerst).
+  Flutter: lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:89
+- [ ] **niedrig** `planning/plan-field-edit/plan-field-edit.component` [src/app/planning/plan-field-edit/plan-field-edit.component.ts:88](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-field-edit/plan-field-edit.component.ts#L88)
+  Ionic: Minuten 0 (oder leer) → alte Dauer bleibt (`this.time ? … : field.time`) / Flutter: leer → alte Dauer, 0 → Dauer wird auf „0“ gesetzt.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:191
+- [ ] **niedrig** `planning/plan-viewer/plan-viewer.component` [src/app/planning/plan-viewer/plan-viewer.component.ts:159](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/plan-viewer/plan-viewer.component.ts#L159)
+  Ionic: im Live-Modus scrollt der Viewer automatisch zur aktuell laufenden Zeile (scrollToActive beim Öffnen und bei jedem Tick) / Flutter: aktive Zeile wird markiert, aber nicht in den sichtbaren Bereich gescrollt.
+  Flutter: lib/features/planning/presentation/pages/plan_viewer_page.dart:71, lib/features/planning/presentation/widgets/plan_view_list.dart:97
+- [ ] **niedrig** `planning/planning.page` [src/app/services/db.service.ts:3189](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3189)
+  Ionic: getUpcomingHistory liefert unsortiert, gefiltert über das Termin-Datum (attendance_id.date) – „Aktuelle Werke hinzufügen“ fügt in DB-Reihenfolge ein / Flutter: currentSongsProvider sortiert nach Datum aufsteigend und filtert serverseitig auf history.date.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:1509, lib/core/providers/song_providers.dart:171
+- [ ] **niedrig** `planning/planning.page` [src/app/planning/planning.page.ts:871](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/planning/planning.page.ts#L871)
+  Ionic: speichert jede Änderung sofort (calculateEnd → updateAttendance), keine Entwürfe / Flutter: 400-ms-Autosave mit Schreib-Warteschlange (PlanningWriteSync), lokale Entwürfe (PlanningDraftStore) mit Wiederherstellung und Konfliktdialog bei parallelen Änderungen.
+  Flutter: lib/features/planning/presentation/pages/planning_page.dart:551, lib/features/planning/presentation/pages/planning_page.dart:970
+- [ ] **niedrig** `public-planning/public-planning.page` [src/app/services/db.service.ts:3189](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/services/db.service.ts#L3189)
+  Ionic: getUpcomingHistory – alle Historie-Einträge der Instanz, deren Termindatum (sonst history.date) nach heute 0 Uhr liegt, ohne Sortierung (DB-Reihenfolge) / Flutter: currentSongsProvider – Server-Filter history.date > heute 0 Uhr, nach Datum gruppiert und sortiert; Platzhalter „Chor/Orchester“/„Werk N“ und „Aktuelle Werke hinzufügen“ können dadurch andere Werke bzw. eine andere Reihenfolge ergeben
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:376-377, lib/data/repositories/song_repository.dart:738-811
+- [ ] **niedrig** `public-planning/public-planning.page` [src/app/public-planning/public-planning.page.ts:129-132](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.ts#L129-132)
+  Ionic: ngOnInit ersetzt Platzhalter nach dem Laden von Werken/Historie und ruft calculateEnd → lokale Sicherung + DB-Speicherung / Flutter: ersetzt nur im Speicher (setState), gespeichert erst bei der nächsten Änderung
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:823-833
+- [ ] **niedrig** `public-planning/public-planning.page` [src/app/public-planning/public-planning.page.html:193-255](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/public-planning/public-planning.page.html#L193-255)
+  Ionic: ohne Felder ist die Liste leer / Flutter: grauer Text „Keine Programmpunkte“
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:346-352
+- [ ] **niedrig** `shared-plan/shared-plan.page` [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-312)
+  Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld, stattdessen „beginnt in X Min.“ in der Start-Zeile
+  Flutter: lib/core/utils/plan_utils.dart:455-467, lib/features/planning/presentation/widgets/plan_view_list.dart:86-103
+- [ ] **niedrig** `shared-plan/shared-plan.page` [src/app/shared-plan/shared-plan.page.ts:316-324](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L316-324)
+  Ionic: scrollToActive scrollt im Live-Modus einmal das aktive Feld in die Bildschirmmitte / Flutter: kein Scrollen
+  Flutter: lib/features/planning/presentation/widgets/plan_view_list.dart:80-228
+- [ ] **niedrig** `shared-plan/shared-plan.page` [src/app/shared-plan/shared-plan.page.ts:292-312](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/shared-plan/shared-plan.page.ts#L292-312)
+  Ionic: Block-Köpfe zählen als normale Zeilen (vor dem aktiven Feld ausgegraut, vor Start ggf. selbst aktiv) / Flutter: Köpfe werden übersprungen, der Kopf des laufenden Blocks bleibt voll sichtbar und bekommt einen blauen linken Rand
+  Flutter: lib/core/utils/plan_utils.dart:455-467, lib/features/planning/presentation/widgets/plan_view_list.dart:112-114, lib/features/planning/presentation/widgets/plan_view_list.dart:191-203
+- [ ] **niedrig** `org-settings/org-planning-templates/org-planning-templates.page` [src/app/org-settings/org-planning-templates/org-planning-templates.page.ts:348](https://github.com/FECGSpeyer/attendance/blob/9f9b82af/src/app/org-settings/org-planning-templates/org-planning-templates.page.ts#L348)
+  Ionic changeField (Vorlagenfeld bearbeiten): Bestätigen-Button „Speichern“ / Flutter PlanFieldsEditor._editField: „Updaten“ (planning.update); Titel/Labels sonst gleich.
+  Flutter: lib/features/planning/presentation/widgets/plan_fields_editor.dart:171
