@@ -241,9 +241,9 @@ Widget _workApp(
         builder: (_, __) => const Scaffold(body: Text('page works')),
         routes: [
           GoRoute(path: ':id', builder: (_, s) => RdWorkPage(songId: int.parse(s.pathParameters['id']!))),
+          GoRoute(path: ':id/bearbeiten', builder: (_, s) => Scaffold(body: Text('page edit ${s.pathParameters['id']}'))),
         ],
       ),
-      GoRoute(path: '/settings/songs/:id', builder: (_, s) => Scaffold(body: Text('page old ${s.pathParameters['id']}'))),
     ],
   );
   final readOnly = !(role.isAdmin || role.isResponsible);
@@ -872,13 +872,13 @@ void main() {
       expect(find.text('aus den Noten: Flöte'), findsOneWidget);
     });
 
-    testWidgets('admin: Bearbeiten opens the existing page', (tester) async {
+    testWidgets('admin: Bearbeiten opens "Werk bearbeiten"', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_workApp(Role.admin, song: _ouverture));
       await _settle(tester);
       await tester.tap(find.text('Bearbeiten'));
       await _settle(tester);
-      expect(find.text('page old 5'), findsOneWidget);
+      expect(find.text('page edit 5'), findsOneWidget);
     });
 
     testWidgets('a work without files: members read so, editors can add', (tester) async {

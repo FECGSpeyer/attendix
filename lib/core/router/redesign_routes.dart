@@ -46,6 +46,9 @@ class RedesignRoutes {
   /// A work of the new design.
   static String work(int id) => '$works/$id';
 
+  /// "Werk bearbeiten" of the new design (replaces the old song page).
+  static String workEdit(int id) => '$works/$id/bearbeiten';
+
   /// Tab "Ich".
   static const String me = '/ich';
 
@@ -117,6 +120,18 @@ class RedesignRoutes {
     return uri.replace(path: target).toString();
   }
 
+  /// The old song page while the new design is on: `/settings/songs/:id`
+  /// and `/songs-tab/:id` open the Werk page, `/settings/songs/:id/edit`
+  /// "Werk bearbeiten" (links from the old pages, e.g. "Alle Details" of a
+  /// Termin). Null for every other location.
+  static String? oldSongTarget(String location) {
+    final m = RegExp(r'^/(?:settings/songs|songs-tab)/(\d+)(/edit)?$').firstMatch(location);
+    if (m == null) return null;
+    final id = int.parse(m.group(1)!);
+    if (m.group(2) != null && !location.startsWith('/songs-tab/')) return workEdit(id);
+    return work(id);
+  }
+
   /// Role checks of the new design's routes (the router runs them after the
   /// Beta check); null when [role] may open [location].
   ///
@@ -139,7 +154,11 @@ class RedesignRoutes {
       return role.canSeePeopleTab ? null : today;
     }
     if (location == works || location.startsWith('$works/')) {
-      return canOpenSongsTab(role) ? null : today;
+      if (!canOpenSongsTab(role)) return today;
+      // "Werk bearbeiten" like the old song form: Admins and Verantwortliche.
+      final edit = RegExp('^$works/(\\d+)/bearbeiten\$').firstMatch(location);
+      if (edit != null && !(role.isAdmin || role.isResponsible)) return work(int.parse(edit.group(1)!));
+      return null;
     }
     final isEvents = location == events || location.startsWith('$events/');
     if (!isEvents) return null;

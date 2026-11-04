@@ -19511,6 +19511,150 @@ abstract class AppLocalizations {
   /// **'Bearbeiten'**
   String get redesignWorkEdit;
 
+  /// redesign.workEdit.categories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien'**
+  String get redesignWorkEditCategories;
+
+  /// redesign.workEdit.delete
+  ///
+  /// In de, this message translates to:
+  /// **'Werk löschen'**
+  String get redesignWorkEditDelete;
+
+  /// redesign.workEdit.difficulty
+  ///
+  /// In de, this message translates to:
+  /// **'Schwierigkeit'**
+  String get redesignWorkEditDifficulty;
+
+  /// redesign.workEdit.difficultyNone
+  ///
+  /// In de, this message translates to:
+  /// **'Offen'**
+  String get redesignWorkEditDifficultyNone;
+
+  /// redesign.workEdit.easy
+  ///
+  /// In de, this message translates to:
+  /// **'Leicht'**
+  String get redesignWorkEditEasy;
+
+  /// redesign.workEdit.fields
+  ///
+  /// In de, this message translates to:
+  /// **'Zusatzfelder'**
+  String get redesignWorkEditFields;
+
+  /// redesign.workEdit.hard
+  ///
+  /// In de, this message translates to:
+  /// **'Schwer'**
+  String get redesignWorkEditHard;
+
+  /// redesign.workEdit.hint
+  ///
+  /// In de, this message translates to:
+  /// **'Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.'**
+  String get redesignWorkEditHint;
+
+  /// redesign.workEdit.instrumentation
+  ///
+  /// In de, this message translates to:
+  /// **'Besetzung'**
+  String get redesignWorkEditInstrumentation;
+
+  /// redesign.workEdit.instrumentationHint
+  ///
+  /// In de, this message translates to:
+  /// **'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.'**
+  String get redesignWorkEditInstrumentationHint;
+
+  /// redesign.workEdit.link
+  ///
+  /// In de, this message translates to:
+  /// **'Link'**
+  String get redesignWorkEditLink;
+
+  /// redesign.workEdit.linkHint
+  ///
+  /// In de, this message translates to:
+  /// **'Video, Hörbeispiel oder Verlag'**
+  String get redesignWorkEditLinkHint;
+
+  /// redesign.workEdit.manageCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Kategorien verwalten'**
+  String get redesignWorkEditManageCategories;
+
+  /// redesign.workEdit.medium
+  ///
+  /// In de, this message translates to:
+  /// **'Mittel'**
+  String get redesignWorkEditMedium;
+
+  /// redesign.workEdit.name
+  ///
+  /// In de, this message translates to:
+  /// **'Titel'**
+  String get redesignWorkEditName;
+
+  /// redesign.workEdit.nameEmpty
+  ///
+  /// In de, this message translates to:
+  /// **'Ohne Titel wird nicht gespeichert.'**
+  String get redesignWorkEditNameEmpty;
+
+  /// redesign.workEdit.noCategories
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Kategorien angelegt.'**
+  String get redesignWorkEditNoCategories;
+
+  /// redesign.workEdit.notAllowed
+  ///
+  /// In de, this message translates to:
+  /// **'Werke bearbeiten kann nur die Leitung.'**
+  String get redesignWorkEditNotAllowed;
+
+  /// redesign.workEdit.number
+  ///
+  /// In de, this message translates to:
+  /// **'Nummer'**
+  String get redesignWorkEditNumber;
+
+  /// redesign.workEdit.numberLocked
+  ///
+  /// In de, this message translates to:
+  /// **'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.'**
+  String get redesignWorkEditNumberLocked;
+
+  /// redesign.workEdit.numberTaken
+  ///
+  /// In de, this message translates to:
+  /// **'Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.'**
+  String redesignWorkEditNumberTaken(Object number, Object name);
+
+  /// redesign.workEdit.prefix
+  ///
+  /// In de, this message translates to:
+  /// **'Präfix'**
+  String get redesignWorkEditPrefix;
+
+  /// redesign.workEdit.prefixHint
+  ///
+  /// In de, this message translates to:
+  /// **'z. B. W'**
+  String get redesignWorkEditPrefixHint;
+
+  /// redesign.workEdit.title
+  ///
+  /// In de, this message translates to:
+  /// **'Werk bearbeiten'**
+  String get redesignWorkEditTitle;
+
   /// redesign.work.fileCount
   ///
   /// In de, this message translates to:
@@ -19576,6 +19720,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für die Leitung'**
   String get redesignWorkForConductors;
+
+  /// redesign.work.history
+  ///
+  /// In de, this message translates to:
+  /// **'Verlauf'**
+  String get redesignWorkHistory;
+
+  /// redesign.work.historyCount
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Termin} other {{count} Termine}}'**
+  String redesignWorkHistoryCount(num count);
 
   /// redesign.work.instrumentation
   ///
