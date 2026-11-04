@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
+import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/plan_providers.dart';
@@ -112,10 +113,20 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     );
   }
 
+  /// Ionic `exportAttendancePlans` titleOf: plan title, else
+  /// `Utils.getPlanningTitle(type, typeInfo)`.
   String _title(PlanAttendance att, Plan plan) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    return (att.typeInfo?.isNotEmpty ?? false) ? att.typeInfo! : context.l10n.plansRunSheet;
+    final typeId = widget.attendance.typeId;
+    final type = (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+        .where((ty) => ty.id == typeId)
+        .firstOrNull;
+    return PlanUtils.planningTitle(
+      planningTitle: type?.planningTitle,
+      typeName: type?.name,
+      typeInfo: att.typeInfo,
+    );
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
@@ -147,7 +158,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         ref,
         PlanExportAction.pdf,
         pages: [for (var i = 0; i < plans.length; i++) page(i)],
-        fileName: '${_title(att, plans[index])}$date',
+        // Ionic: title of the first plan + "_alle".
+        fileName: '${_title(att, plans.first)}${date}_alle',
       ),
     );
   }
@@ -172,6 +184,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   Widget build(BuildContext context) {
     // P10_ATTENDANCE: keep the data of the missing-groups line loaded
     ref.watch(songsProvider);
+    ref.watch(attendanceTypesProvider); // export title (getPlanningTitle)
     ref.watch(groupCategoriesProvider);
     ref.watch(missingGroupsPlayerCountsProvider);
     final att = _planAttendance();

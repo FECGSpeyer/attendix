@@ -2,7 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
+import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../core/utils/plan_utils.dart';
 import '../../../../data/models/plan/plan.dart';
 import '../widgets/plan_export_actions.dart';
@@ -88,9 +90,8 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     final p = _plans[i];
     final date = _labels.isNotEmpty ? PlanUtils.planDate(widget.attendance, i, _plans) : DateTime.tryParse(widget.attendance.date);
     final label = _labels.isNotEmpty ? ' · ${_labels[i]}' : '';
-    final title = (p.title?.trim().isNotEmpty ?? false) ? p.title!.trim() : (widget.title ?? context.l10n.plansRunSheet);
     return PlanExportPage(
-      title: title,
+      title: _exportTitle(p),
       subtitle: '${PlanUtils.longDate(date)}$label',
       time: p.time,
       end: p.end,
@@ -98,9 +99,29 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     );
   }
 
+  /// Ionic plan viewer export: plan title, else `Utils.getPlanningTitle(type,
+  /// typeInfo)` of the Termin's type; plans without a known type (shared /
+  /// org plans) keep the title they were opened with.
+  String _exportTitle(Plan p) {
+    final t = p.title?.trim();
+    if (t != null && t.isNotEmpty) return t;
+    final typeId = widget.attendance.typeId;
+    final type = typeId == null
+        ? null
+        : (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
+            .where((ty) => ty.id == typeId)
+            .firstOrNull;
+    if (type == null) return widget.title ?? context.l10n.plansRunSheet;
+    return PlanUtils.planningTitle(
+      planningTitle: type.planningTitle,
+      typeName: type.name,
+      typeInfo: widget.attendance.typeInfo,
+    );
+  }
+
   String get _fileName {
     final date = _date;
-    return '${_title}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}';
+    return '${_exportTitle(_plan)}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}';
   }
 
   Future<void> _export() async {
@@ -118,7 +139,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
         ref,
         choice.action,
         pages: choice.all ? [for (var i = 0; i < _plans.length; i++) _page(i)] : [_page(_index)],
-        fileName: _fileName,
+        fileName: choice.all ? '${_fileName}_alle' : _fileName,
       );
       return;
     }
@@ -136,6 +157,7 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
 
   @override
   Widget build(BuildContext context) {
+    ref.watch(attendanceTypesProvider); // export title (getPlanningTitle)
     final date = _date;
     return Scaffold(
       appBar: AppBar(

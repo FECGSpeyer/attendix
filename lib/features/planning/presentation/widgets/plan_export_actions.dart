@@ -108,7 +108,7 @@ Future<void> runPlanExport(
     switch (action) {
       case PlanExportAction.pdf:
       case PlanExportAction.pdf2x:
-        await service.sharePdf(pages, sideBySide: sideBySide, fileName: fileName, branding: branding);
+        await service.savePdf(pages, sideBySide: sideBySide, fileName: fileName, branding: branding);
       case PlanExportAction.image:
         await service.shareImage(pages, fileName: fileName, branding: branding);
       case PlanExportAction.telegram:

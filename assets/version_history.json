@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.39.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 PDF-Exporte zeigen kyrillische Namen, „Anführungszeichen“, Gedankenstriche und € wieder richtig an",
+        "🐛 Ablaufplan als PDF wird wieder gespeichert (Download bzw. Dateiansicht) statt den Druckdialog zu öffnen, auch der Registerprobenplan",
+        "🐛 Ablaufplan-PDF trägt wieder den Plantitel des Termintyps im Kopf und im Dateinamen"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [
