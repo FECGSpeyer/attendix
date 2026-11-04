@@ -143,10 +143,17 @@ class FakePrompt implements PushPromptStore {
   Future<bool> wasShown() async => shown;
   @override
   Future<void> markShown() async => shown = true;
+
+  bool permissionRequested = false;
+  @override
+  Future<bool> wasPermissionRequested() async => permissionRequested;
+  @override
+  Future<void> markPermissionRequested() async => permissionRequested = true;
 }
 
 class FakeHost implements PushHost {
   bool? confirmAnswer = true;
+  bool confirmThrows = false;
   bool showAnswer = false;
   int confirms = 0;
   final alerts = <PushMessage>[];
@@ -156,6 +163,7 @@ class FakeHost implements PushHost {
   @override
   Future<bool?> confirmEnablePush() async {
     confirms++;
+    if (confirmThrows) throw StateError('no context');
     return confirmAnswer;
   }
 
@@ -234,12 +242,66 @@ void main() {
     expect(client.badgeClears, 1);
   });
 
-  test('permission denied: remembered, no prompt, no token', () async {
+  test('permission denied (iOS): remembered, no prompt, no token', () async {
     client.permission = PushPermission.denied;
+    final s = build(platform: 'ios');
+    await s.promptAndEnable();
+    expect(host.confirms, 0);
+    expect(client.requests, 0);
+    expect(prompt.shown, isTrue);
+    expect(tokens.saved, isEmpty);
+  });
+
+  test('permission denied (Android, already requested): remembered, no prompt', () async {
+    client.permission = PushPermission.denied;
+    prompt.permissionRequested = true;
     final s = build();
     await s.promptAndEnable();
     expect(host.confirms, 0);
+    expect(client.requests, 0);
     expect(prompt.shown, isTrue);
+    expect(tokens.saved, isEmpty);
+  });
+
+  test('Android 13+, never asked ("denied"): dialog and system prompt', () async {
+    client.permission = PushPermission.denied;
+    final s = build();
+    await s.promptAndEnable();
+    expect(host.confirms, 1);
+    expect(client.requests, 1);
+    expect(prompt.permissionRequested, isTrue);
+    expect(prompt.shown, isTrue);
+    expect(tokens.saved, ['android:tok-1']);
+    expect(tokens.pushEnabled, [true]);
+  });
+
+  test('Android, prompt already shown, never asked: initPush requests', () async {
+    prompt.shown = true;
+    client.permission = PushPermission.denied;
+    final s = build();
+    await s.initPush();
+    expect(host.confirms, 0);
+    expect(client.requests, 1);
+    expect(tokens.saved, ['android:tok-1']);
+  });
+
+  test('prompt dismissed without a button: remembered like "Später"', () async {
+    client.permission = PushPermission.prompt;
+    host.confirmAnswer = null;
+    final s = build(platform: 'ios');
+    await s.promptAndEnable();
+    expect(prompt.shown, isTrue);
+    expect(client.requests, 0);
+    expect(tokens.saved, isEmpty);
+    expect(tokens.pushEnabled, isEmpty);
+  });
+
+  test('prompt could not be shown: asked again next time', () async {
+    client.permission = PushPermission.prompt;
+    host.confirmThrows = true;
+    final s = build(platform: 'ios');
+    await s.promptAndEnable();
+    expect(prompt.shown, isFalse);
     expect(tokens.saved, isEmpty);
   });
 
