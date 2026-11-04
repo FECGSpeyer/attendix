@@ -48,6 +48,286 @@
     "lib/features/planning/presentation/widgets/plan_export_actions.dart"
    ],
    "n": "behoben in #295"
+  },
+  "services/image/image.service#db-a8a5f597": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart",
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+    "lib/core/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/image/image.service#db-58f14585": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart",
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart",
+    "lib/core/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/attendance-type/attendance-type.service#db-c4d1a223": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/db.service#nav-51ad9728": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/db.service#effect-3e8f334d": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/db.service#alert-f27cc642": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart",
+    "lib/shared/widgets/adaptive/app_dialog.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/files/files.service#db-c711efdc": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/nfkd_fold.dart",
+    "lib/data/repositories/files_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/files/files.service#db-68243270": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/nfkd_fold.dart",
+    "lib/data/repositories/files_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/files/files.service#db-77218a19": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/nfkd_fold.dart",
+    "lib/data/repositories/files_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/group-category/group-category.service#native-d88b5602": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/group_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/group-category/group-category.service#toast-2822515a": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/group-category/group-category.service#toast-913649c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/group-category/group-category.service#toast-0eec9127": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/history/history.service#db-1c319cab": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/live-activity/live-activity.service#modal-9b4e9fd5": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/live_activity_service.dart",
+    "lib/data/repositories/plan_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/notification/notification.service#db-8470a157": {
+   "s": "ok",
+   "f": [
+    "lib/main.dart",
+    "lib/core/services/telegram_service.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/church/church.service#toast-e387c98e": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/church_providers.dart",
+    "lib/core/utils/global_toast.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/conductor/conductor.service#toast-e679cded": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/conductor_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-119dd1e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-fef13d0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/cross-tenant/cross-tenant.service#toast-9e26e97c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/duty/duty.service#toast-b8016997": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/duty_providers.dart",
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/organisation/organisation.service#toast-7f0bc6eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "shared/audio-player/audio-player.component#toast-8cb59de1": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart",
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c2019029": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "shared/message-editor/message-editor.component#alert-bc736d27": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "shared/message-editor/message-editor.component#action-445826b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/attendance-date-dialog#alert-fb943686": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart",
+    "lib/shared/widgets/adaptive/app_dialog.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "utilities/attendance-date-dialog#alert-6ec992cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart",
+    "lib/shared/widgets/adaptive/app_dialog.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "people/list/list.page#modal-38ba21ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/people/presentation/widgets/person_modal.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "attendance/attendance/attendance.page#action-64b05ba6": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart"
+   ],
+   "n": "behoben in #295"
   }
  },
  "extra": [],
@@ -57,6 +337,66 @@
    "title": "PDF-Exporte ohne Unicode-Schrift",
    "drop": true,
    "why": "behoben in #295 (PdfFonts, NotoSans)"
+  },
+  {
+   "unit": "services/attendance-type/attendance-type.service",
+   "title": "Verwendeter Anwesenheitstyp nicht löschbar",
+   "drop": true,
+   "why": "behoben in #295 (deleteType ohne Verwendungsprüfung)"
+  },
+  {
+   "unit": "services/db.service",
+   "title": "Vorrang gespeicherte Instanz",
+   "drop": true,
+   "why": "behoben in #295 (lokaler Cache vor user_metadata)"
+  },
+  {
+   "unit": "services/files/files.service",
+   "title": "Ausstehender Datei-Link übersteht keinen Reload",
+   "drop": true,
+   "why": "behoben in #295 (PendingFileLink in SharedPreferences)"
+  },
+  {
+   "unit": "services/holiday/holiday.service",
+   "title": "Vergangen-Markierung von Feiertagen/Ferien",
+   "drop": true,
+   "why": "behoben in #295 (isHolidayGone)"
+  },
+  {
+   "unit": "services/shift/shift.service",
+   "title": "Segmente nicht nach index sortiert",
+   "drop": true,
+   "why": "behoben in #295 (Sortierung im Converter)"
+  },
+  {
+   "unit": "services/shift/shift.service",
+   "title": "Schicht-Segmente nicht nach index sortiert",
+   "drop": true,
+   "why": "behoben in #295 (Sortierung im Converter)"
+  },
+  {
+   "unit": "shared/notification-bell/notification-bell.component",
+   "title": "Instanzwechsel beim Tippen auf jede fremde Benachrichtigung",
+   "drop": true,
+   "why": "behoben in #295 (nur bei Ziel mit tenantId)"
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Gruppensortierung ohne localeCompare",
+   "drop": true,
+   "why": "behoben in #295 (localeCompareDe)"
+  },
+  {
+   "unit": "people/list/list.page",
+   "title": "Umlaute in Gruppen-Sortierung",
+   "drop": true,
+   "why": "behoben in #295 (localeCompareDe)"
+  },
+  {
+   "unit": "utilities/Utils",
+   "title": "Zeitfenster der Anwesenheitsquote",
+   "drop": true,
+   "why": "behoben in #295 (Termine vor jetzt + 1 Tag)"
   }
  ]
 }
