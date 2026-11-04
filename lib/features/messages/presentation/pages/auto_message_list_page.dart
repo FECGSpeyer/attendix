@@ -28,14 +28,17 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
   /// Optimistic toggle state while the update runs (rule id → enabled).
   final Map<String, bool> _toggling = {};
 
+  /// Ionic takes over the saved rule after a toggle: the saved state wins
+  /// until the rules are loaded again (rule id → enabled).
+  final Map<String, bool> _saved = {};
+
   /// Ionic `load()` shows one red toast per (re)load, whether the rules or
   /// the recent runs failed.
   bool _loadFailedShown = false;
 
-  /// Tenant whose rules / recent runs the providers delivered last. After a
-  /// refresh error the earlier data stays visible, but never another
-  /// tenant's (the providers keep it as previous value on a tenant switch).
-  int? _rulesTenantId;
+  /// Tenant whose recent runs the provider delivered last (only this page
+  /// watches it). After a refresh error the earlier data stays visible, but
+  /// never another tenant's (kept as previous value on a tenant switch).
   int? _lastWeekTenantId;
 
   @override
@@ -79,21 +82,28 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
     final id = rule.id;
     if (id == null) return;
     setState(() => _toggling[id] = enabled);
+    final AutoMessageRule saved;
     try {
-      await ref.read(autoMessageRepositoryWithTenantProvider).setEnabled(id, enabled);
-      ref.invalidate(autoMessageRulesProvider);
-      await ref.read(autoMessageRulesProvider.future);
-      if (mounted) {
-        ToastHelper.showSuccess(
-          context,
-          enabled ? context.l10n.autoMessagesEnabledToast : context.l10n.autoMessagesDisabledToast,
-        );
-      }
+      saved = await ref.read(autoMessageRepositoryWithTenantProvider).setEnabled(id, enabled);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.autoMessagesSaveFailed);
-    } finally {
-      if (mounted) setState(() => _toggling.remove(id));
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.autoMessagesSaveFailed);
+        setState(() => _toggling.remove(id));
+      }
+      return;
     }
+    if (!mounted) return;
+    setState(() {
+      _toggling.remove(id);
+      _saved[id] = saved.enabled;
+    });
+    ToastHelper.showSuccess(
+      context,
+      saved.enabled ? context.l10n.autoMessagesEnabledToast : context.l10n.autoMessagesDisabledToast,
+    );
+    // Background reload for the count on Mitteilungen; the switch keeps the
+    // saved state even if it fails.
+    ref.invalidate(autoMessageRulesProvider);
   }
 
   @override
@@ -101,20 +111,24 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
     final l10n = context.l10n;
     // A tenant switch reloads both providers: one new toast per tenant.
     ref.listen(currentTenantIdProvider, (_, _) => _loadFailedShown = false);
-    ref.listen(autoMessageRulesProvider, _onLoadResult);
+    ref.listen(autoMessageRulesProvider, (previous, next) {
+      if (next is AsyncData && !next.isLoading) _saved.clear();
+      _onLoadResult(previous, next);
+    });
     ref.listen(autoMessageLastWeekProvider, _onLoadResult);
     final tenantId = ref.watch(currentTenantIdProvider);
     final rulesAsync = ref.watch(autoMessageRulesProvider);
     final lastWeekAsync = ref.watch(autoMessageLastWeekProvider);
-    if (rulesAsync is AsyncData && !rulesAsync.isLoading) _rulesTenantId = tenantId;
     if (lastWeekAsync is AsyncData && !lastWeekAsync.isLoading) _lastWeekTenantId = tenantId;
     // Ionic: spinner for the first load (and after a tenant switch, which
     // reloads the providers); a refresh keeps the page. After an error the
     // page stays usable (toast, see _onLoadResult) with the rules loaded
-    // before for this tenant (none otherwise).
+    // before for this tenant (each rule carries its tenantId).
     final firstLoad = rulesAsync is AsyncLoading;
-    final rules =
-        (_rulesTenantId == tenantId ? rulesAsync.valueOrNull : null) ?? const <AutoMessageRule>[];
+    final rules = [
+      for (final rule in rulesAsync.valueOrNull ?? const <AutoMessageRule>[])
+        if (rule.tenantId == tenantId) rule,
+    ];
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
     final lastWeek = _lastWeekTenantId == tenantId ? lastWeekAsync.valueOrNull : null;
 
@@ -150,7 +164,7 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
                     for (final rule in rules)
                       _RuleRow(
                         rule: rule,
-                        enabled: _toggling[rule.id] ?? rule.enabled,
+                        enabled: _toggling[rule.id] ?? _saved[rule.id] ?? rule.enabled,
                         summary: l10n.autoMessageRuleSummary(rule, types),
                         chips: l10n.autoMessageRuleChips(rule),
                         onTap: () => _open(rule),

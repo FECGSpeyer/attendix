@@ -183,7 +183,8 @@ extension CriticalRuleExtension on CriticalRule {
 
   /// Ionic general.page `getCriticalRuleDescription`, e.g.
   /// "Name: 3x Abwesend, Verspätet in 30 Tagen (Probe, Konzert)" – the
-  /// names of [types] in the rule, or "Alle Typen" for none.
+  /// names of [types] in the rule, or "Alle Typen" for none. Without
+  /// parentheses when no type name resolves (types loading or failed).
   String describe(List<AttendanceType> types) {
     final typeNames = attendanceTypeIds.isNotEmpty
         ? types
@@ -192,6 +193,7 @@ extension CriticalRuleExtension on CriticalRule {
             .join(', ')
         : l10nWithoutContext.generalSettingsAllTypes;
     final prefix = (name ?? '').isNotEmpty ? '$name: ' : '';
+    if (typeNames.isEmpty) return '$prefix$description';
     return '$prefix$description ($typeNames)';
   }
 

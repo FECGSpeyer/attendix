@@ -103,6 +103,8 @@ void main() {
       );
       expect(rule.describe(types),
           'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen (Probe, Konzert)');
+      // types not loaded (yet): no empty parentheses
+      expect(rule.describe(const []), 'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen');
       // all types, season; legacy rule without period_type counts its days
       expect(
         rule
