@@ -17,6 +17,7 @@ import '../../core/utils/paged_query.dart';
 import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
+import 'profile_repository.dart' show syncOwnPlayerImage;
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/services/error_reporter.dart';
@@ -387,7 +388,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// ASTRA_PHOTO: Ionic ImageService.updateImage – upload the picture to the
   /// `profiles` bucket under the bare player id (upsert) and store its plain
   /// public URL in `player.img`. Returns the public URL.
-  Future<String> updateImage(int playerId, Uint8List bytes) async {
+  Future<String> updateImage(int playerId, Uint8List bytes, {String? appId}) async {
     ensureNotDemo('updateImage'); // DEMO_GUARD
     try {
       final storagePath = profileImageStoragePath(playerId);
@@ -407,11 +408,21 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .update({'img': publicUrl})
           .eq('id', playerId)
           .eq('tenantId', currentTenantId);
+      await syncOwnImage(appId, publicUrl);
       return publicUrl;
     } catch (e, stack) {
       handleError(e, stack, 'updateImage');
       rethrow;
     }
+  }
+
+  /// Ionic `ImageService.updateImage` / `removeImage` with the own appId
+  /// (`appId === currentUserId`): the picture is written to every player
+  /// row of the account, i.e. in all instances. No-op for other persons.
+  Future<void> syncOwnImage(String? appId, String img) async {
+    final userId = supabase.auth.currentUser?.id;
+    if (appId == null || appId.isEmpty || userId == null || appId != userId) return;
+    await syncOwnPlayerImage(supabase, userId: userId, img: img);
   }
 
   /// Ionic 4.19.3 `ImageService.copyProfileImage`: copies a person's picture

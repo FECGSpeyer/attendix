@@ -135,7 +135,7 @@ void main() {
       final header = _read(
           'lib/features/people/presentation/widgets/person_detail/person_header.dart');
       expect(header, contains('ref.read(personImagePickerProvider)()'));
-      expect(header, contains('repo.updateImage(personId, bytes)'));
+      expect(header, contains('repo.updateImage(personId, bytes, appId: person.appId)'));
       expect(header, isNot(contains('ImagePicker()')));
     });
   });
