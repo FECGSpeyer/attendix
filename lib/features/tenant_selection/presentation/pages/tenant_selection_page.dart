@@ -205,48 +205,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
-      builder:
-          (sheetContext) => Consumer(
-            builder: (context, ref, _) {
-              final prefs = ref.watch(userPreferencesProvider);
-              // Ionic ngModel: the toggle flips at once and every change is
-              // written (settings.page.ts onTenantSelectionChange).
-              bool? shown;
-              return StatefulBuilder(
-                builder: (context, setSheetState) {
-                  final value = shown ?? prefs.wantInstanceSelection;
-                  return SafeArea(
-                    child: Padding(
-                      padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                      child: Card(
-                        margin: EdgeInsets.zero,
-                        child: SwitchListTile.adaptive(
-                          title: Text(context.l10n.settingsEnableTenantSelect),
-                          subtitle: Text(
-                            context.l10n.settingsTenantSelectHelper,
-                          ),
-                          value: value,
-                          onChanged: (newValue) {
-                            setSheetState(() => shown = newValue);
-                            ref
-                                .read(userPreferencesNotifierProvider.notifier)
-                                .updatePreferences(
-                                  wantInstanceSelection: newValue,
-                                )
-                                .catchError((Object _) {
-                                  if (context.mounted) {
-                                    setSheetState(() => shown = null);
-                                  }
-                                });
-                          },
-                        ),
-                      ),
-                    ),
-                  );
-                },
-              );
-            },
-          ),
+      builder: (sheetContext) => const _InstanceSelectionToggle(),
     );
   }
 
@@ -592,6 +551,60 @@ class _TenantTile extends StatelessWidget {
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic ngModel: the toggle flips at once and every change is written
+/// (settings.page.ts onTenantSelectionChange). The local value is kept while
+/// any write is pending, so a finished earlier write can't flip it back.
+class _InstanceSelectionToggle extends ConsumerStatefulWidget {
+  const _InstanceSelectionToggle();
+
+  @override
+  ConsumerState<_InstanceSelectionToggle> createState() => _InstanceSelectionToggleState();
+}
+
+class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionToggle> {
+  bool? _shown;
+  int _pending = 0;
+
+  Future<void> _onChanged(bool newValue) async {
+    setState(() {
+      _shown = newValue;
+      _pending++;
+    });
+    try {
+      await ref.read(userPreferencesNotifierProvider.notifier).updatePreferences(wantInstanceSelection: newValue);
+    } catch (_) {
+      // The stored value wins once nothing is pending any more.
+    } finally {
+      if (mounted) {
+        setState(() {
+          _pending--;
+          if (_pending == 0) _shown = null;
+        });
+      }
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefs = ref.watch(userPreferencesProvider);
+    final value = _shown ?? prefs.wantInstanceSelection;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: SwitchListTile.adaptive(
+            title: Text(context.l10n.settingsEnableTenantSelect),
+            subtitle: Text(context.l10n.settingsTenantSelectHelper),
+            value: value,
+            onChanged: _onChanged,
+          ),
         ),
       ),
     );

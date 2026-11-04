@@ -1,4 +1,4 @@
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -165,8 +165,12 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       // Ionic <input type="file" accept="image/*">: in the native app the
       // system offers photo library and camera; the browser (PWA) opens its
       // own file picker.
+      // Camera only on iOS/Android: image_picker has no camera on desktop.
       var source = ImageSource.gallery;
-      if (!kIsWeb) {
+      final hasCamera = !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.android);
+      if (hasCamera) {
         final picked = await showAppActionSheet<ImageSource>(
           context,
           actions: [
