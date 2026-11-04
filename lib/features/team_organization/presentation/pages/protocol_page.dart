@@ -1,10 +1,10 @@
-import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' show DeepCollectionEquality;
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -811,6 +811,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   // ── Publish ────────────────────────────────────────────────
 
   Future<void> _openPublish() async {
+    // Taken before the flush: an edit typed while saving (and saved before
+    // the row below arrives) must not be overwritten by an older server row.
+    final editsBefore = Map<String, int>.of(_editCount);
     // SOL_FIX2: never offer publishing an incompletely saved protocol.
     if (!await _flushAll()) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
@@ -818,7 +821,6 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
     // Other leaders may have written in other sections meanwhile.
     try {
-      final editsBefore = Map<String, int>.of(_editCount);
       final row = await _repo.getProtocolForAttendance(widget.attendanceId);
       if (row != null && mounted) {
         // Ionic mergeServerRow: every section without an unsaved local
@@ -829,7 +831,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
           if ((_editCount[e.key] ?? 0) != (editsBefore[e.key] ?? 0)) continue;
           final doc = Map<String, dynamic>.from(e.value as Map);
           final controller = _controllers[e.key];
-          if (controller != null && jsonEncode(_docs[e.key]) != jsonEncode(doc)) {
+          // Compared by content: jsonb returns the keys sorted, a string
+          // compare would replace (cursor, undo) nearly every editor.
+          if (controller != null && !const DeepCollectionEquality().equals(_docs[e.key], doc)) {
             _replaceEditorDoc(e.key, controller, doc);
           }
           _docs[e.key] = doc;
