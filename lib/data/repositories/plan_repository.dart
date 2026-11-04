@@ -233,7 +233,10 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
       }
       final data = plan.copyWith(creatorUserId: userId).toJson()
         ..remove('created_at')
-        ..remove('org_id');
+        ..remove('org_id')
+        // Ionic sends branding_id: null for „Kein Branding“; toJson drops
+        // nulls, which would keep an earlier branding in the row.
+        ..['branding_id'] = plan.brandingId;
       await supabase.from('shared_plans').upsert(data, onConflict: 'id');
     } catch (e, stack) {
       handleError(e, stack, 'upsertMySharedPlan');

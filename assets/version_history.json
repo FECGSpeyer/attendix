@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.39.3",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Öffentliche Planung: Das gewählte Branding (FECG Speyer, FECG Schwegenheim oder keins) erscheint wieder in PDF, Bild und Telegram, statt des Brandings der eigenen Gruppe",
+        "🐛 Geteilter Plan: PDF trägt das Branding des Plans, Termin-Pläne bleiben ohne",
+        "🐛 Öffentliche Planung: „Kein Branding“ entfernt ein vorher gewähltes Branding auch in „Meine Pläne“",
+        "🐛 Dateinamen der Plan-Exporte wie bisher (Titel mit Wochentag und Datum)"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [
