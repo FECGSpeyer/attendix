@@ -1,0 +1,51 @@
+{
+  "batch": "zz-fixed-termine",
+  "items": {
+    "attendance/att-list/att-list.page#modal-c5dfef61": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "attendance/att-list/att-list.page#modal-66d0050c": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #NNN"
+    },
+    "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "behoben in #NNN"
+    }
+  },
+  "extraOverride": [
+    {
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Ablaufplan-Viewer aus der Liste unvollständig",
+      "drop": true,
+      "why": "behoben in #NNN"
+    },
+    {
+      "unit": "planning/plan-viewer/plan-viewer.component",
+      "title": "Weitere Ablaufpläne fehlen im Viewer",
+      "drop": true,
+      "why": "behoben in #NNN"
+    }
+  ]
+}

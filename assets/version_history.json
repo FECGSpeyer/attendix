@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Termine: Der Ablaufplan aus der Terminliste zeigt wieder alle Pläne eines Termins (Tages-Chips), auch auf „Meine Termine“",
+        "🐛 Termine: Im Ablaufplan aus der Terminliste öffnen Werke wieder die Noten",
+        "🐛 Termine: Dirigenten und Helfer können den Ablaufplan aus der Terminliste direkt bearbeiten (Stift)"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [

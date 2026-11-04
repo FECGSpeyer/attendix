@@ -402,7 +402,9 @@ Future<void> showPlanViewerSheet(
     ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
   }
   final extra = <Plan>[];
-  for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
+  // Ionic signout/overview pass attendance.attendance (incl. extra_plans).
+  durationDays ??= attendance.durationDays;
+  for (final p in extraPlans ?? attendance.extraPlans ?? const <Map<String, dynamic>>[]) {
     try {
       extra.add(Plan.fromJson(p));
     } catch (e, st) {
