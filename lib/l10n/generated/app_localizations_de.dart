@@ -12006,6 +12006,84 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignWorkEdit => 'Bearbeiten';
 
   @override
+  String get redesignWorkEditCategories => 'Kategorien';
+
+  @override
+  String get redesignWorkEditDelete => 'Werk löschen';
+
+  @override
+  String get redesignWorkEditDifficulty => 'Schwierigkeit';
+
+  @override
+  String get redesignWorkEditDifficultyNone => 'Offen';
+
+  @override
+  String get redesignWorkEditEasy => 'Leicht';
+
+  @override
+  String get redesignWorkEditFields => 'Zusatzfelder';
+
+  @override
+  String get redesignWorkEditHard => 'Schwer';
+
+  @override
+  String get redesignWorkEditHint =>
+      'Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.';
+
+  @override
+  String get redesignWorkEditInstrumentation => 'Besetzung';
+
+  @override
+  String get redesignWorkEditInstrumentationHint =>
+      'Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.';
+
+  @override
+  String get redesignWorkEditLink => 'Link';
+
+  @override
+  String get redesignWorkEditLinkHint => 'Video, Hörbeispiel oder Verlag';
+
+  @override
+  String get redesignWorkEditManageCategories => 'Kategorien verwalten';
+
+  @override
+  String get redesignWorkEditMedium => 'Mittel';
+
+  @override
+  String get redesignWorkEditName => 'Titel';
+
+  @override
+  String get redesignWorkEditNameEmpty => 'Ohne Titel wird nicht gespeichert.';
+
+  @override
+  String get redesignWorkEditNoCategories => 'Noch keine Kategorien angelegt.';
+
+  @override
+  String get redesignWorkEditNotAllowed =>
+      'Werke bearbeiten kann nur die Leitung.';
+
+  @override
+  String get redesignWorkEditNumber => 'Nummer';
+
+  @override
+  String get redesignWorkEditNumberLocked =>
+      'Die Werkliste konnte nicht geladen werden, die Nummer lässt sich so nicht prüfen.';
+
+  @override
+  String redesignWorkEditNumberTaken(Object number, Object name) {
+    return 'Nr. $number hat schon „$name“. Die Nummer wird so nicht gespeichert.';
+  }
+
+  @override
+  String get redesignWorkEditPrefix => 'Präfix';
+
+  @override
+  String get redesignWorkEditPrefixHint => 'z. B. W';
+
+  @override
+  String get redesignWorkEditTitle => 'Werk bearbeiten';
+
+  @override
   String redesignWorkFileCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -12047,6 +12125,20 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignWorkForConductors => 'Für die Leitung';
+
+  @override
+  String get redesignWorkHistory => 'Verlauf';
+
+  @override
+  String redesignWorkHistoryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count Termine',
+      one: '1 Termin',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignWorkInstrumentation => 'Besetzung';

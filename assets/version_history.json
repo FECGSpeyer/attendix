@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.38.2",
+      "version": "0.39.1",
       "date": "4.11.2026",
       "changes": [
         "🐛 Excel-Exporte öffnen direkt mit den Daten (kein leeres erstes Blatt mehr), Termin-Excel wie bisher mit Nachname, Vorname, Gruppe, Status-Kürzel und Bemerkung",
@@ -24,6 +24,16 @@
         "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand",
         "🐛 Termine anlegen: Ein Filter auf ein Organisationsfeld nutzt den gemeinsamen Wert der Person statt des Standardwerts",
         "🐛 Personen-Import: Erneut importieren legt schon gespeicherte Personen nicht doppelt an, sondern trägt sie nur noch in die Termine ein"
+      ]
+    },
+    {
+      "version": "0.39.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Neues Formular „Werk bearbeiten“ mit Titel, Präfix und Nummer, Kategorien, Schwierigkeit, Chor/Solo, Link und Zusatzfeldern; jede Änderung wird sofort gespeichert",
+        "✨ Beta: Ist eine Nummer schon vergeben, zeigt das Formular, welches Werk sie hat, und speichert sie nicht",
+        "✨ Beta: Keine Besetzungs-Auswahl mehr, die Gruppen ergeben sich aus den hochgeladenen Noten; „Werk löschen“ steht unten im Formular",
+        "✨ Beta: Tipp auf „Zuletzt gespielt“ zeigt den ganzen Verlauf; alte Werk-Links öffnen die neue Werk-Seite"
       ]
     },
     {

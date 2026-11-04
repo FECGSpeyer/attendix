@@ -11889,6 +11889,84 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignWorkEdit => 'Edit';
 
   @override
+  String get redesignWorkEditCategories => 'Categories';
+
+  @override
+  String get redesignWorkEditDelete => 'Delete work';
+
+  @override
+  String get redesignWorkEditDifficulty => 'Difficulty';
+
+  @override
+  String get redesignWorkEditDifficultyNone => 'Open';
+
+  @override
+  String get redesignWorkEditEasy => 'Easy';
+
+  @override
+  String get redesignWorkEditFields => 'Additional fields';
+
+  @override
+  String get redesignWorkEditHard => 'Hard';
+
+  @override
+  String get redesignWorkEditHint =>
+      'Changes are saved right away. Sheet music and files are managed on the work page.';
+
+  @override
+  String get redesignWorkEditInstrumentation => 'Instrumentation';
+
+  @override
+  String get redesignWorkEditInstrumentationHint =>
+      'Which groups play follows from the uploaded sheet music. If a part is missing, upload it on the work page.';
+
+  @override
+  String get redesignWorkEditLink => 'Link';
+
+  @override
+  String get redesignWorkEditLinkHint => 'Video, recording or publisher';
+
+  @override
+  String get redesignWorkEditManageCategories => 'Manage categories';
+
+  @override
+  String get redesignWorkEditMedium => 'Medium';
+
+  @override
+  String get redesignWorkEditName => 'Title';
+
+  @override
+  String get redesignWorkEditNameEmpty =>
+      'A work without a title is not saved.';
+
+  @override
+  String get redesignWorkEditNoCategories => 'No categories yet.';
+
+  @override
+  String get redesignWorkEditNotAllowed => 'Only leaders can edit works.';
+
+  @override
+  String get redesignWorkEditNumber => 'Number';
+
+  @override
+  String get redesignWorkEditNumberLocked =>
+      'The work list could not be loaded, so the number cannot be checked.';
+
+  @override
+  String redesignWorkEditNumberTaken(Object number, Object name) {
+    return 'No. $number already belongs to “$name”. The number is not saved like this.';
+  }
+
+  @override
+  String get redesignWorkEditPrefix => 'Prefix';
+
+  @override
+  String get redesignWorkEditPrefixHint => 'e.g. C';
+
+  @override
+  String get redesignWorkEditTitle => 'Edit work';
+
+  @override
   String redesignWorkFileCount(num count) {
     String _temp0 = intl.Intl.pluralLogic(
       count,
@@ -11930,6 +12008,20 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get redesignWorkForConductors => 'For conductors';
+
+  @override
+  String get redesignWorkHistory => 'History';
+
+  @override
+  String redesignWorkHistoryCount(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: '$count events',
+      one: '1 event',
+    );
+    return '$_temp0';
+  }
 
   @override
   String get redesignWorkInstrumentation => 'Instrumentation';
