@@ -13,6 +13,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/providers/user_preferences_provider.dart';
 import '../../../../core/router/app_router.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -70,8 +71,9 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     final userPrefs = ref.read(userPreferencesProvider);
 
-    // If user wants to see selection, don't auto-navigate
-    if (userPrefs.wantInstanceSelection) return;
+    // If user wants to see selection, don't auto-navigate (Ionic: only right
+    // after a sign-in; a restored session opens the stored instance).
+    if (InstanceSelectionGate.wanted(userPrefs)) return;
 
     // If tenant is already set, user navigated here to switch - show selection
     final currentTenant = ref.read(currentTenantProvider);
@@ -182,6 +184,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     if (!mounted) return;
 
     // Set tenant locally WITHOUT triggering auth sync
+    InstanceSelectionGate.afterSignIn = false;
     await container.read(currentTenantProvider.notifier).setTenantLocal(tenant);
 
     // Wait for currentTenantUserProvider to load so router doesn't redirect back
@@ -191,11 +194,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     final prefsNotifier =
         container.read(userPreferencesNotifierProvider.notifier);
 
-    final home = homeRouteFor(
-      role,
-      tenant.id,
-      container.read(supabaseAuthProvider).currentUser?.userMetadata,
-    );
+    // Ionic settings onTenantChange navigates to Utils.getUrl(role) (no
+    // dashboard start page); the dashboard start only applies after login.
+    final home = widget.sheet && !RedesignRoutes.active
+        ? role.defaultRoute
+        : homeRouteFor(
+            role,
+            tenant.id,
+            container.read(supabaseAuthProvider).currentUser?.userMetadata,
+          );
 
     // Navigate FIRST - before auth sync can cause rebuilds
     // IOS_SETTINGS2: Ionic `modal?.dismiss()` before navigating.
