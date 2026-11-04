@@ -512,7 +512,8 @@ class _RegistrationFieldAlert extends StatefulWidget {
 class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
   late final TextEditingController _text =
       TextEditingController(text: widget.existing is String ? widget.existing as String : '');
-  late dynamic _single = widget.existing;
+  // Without a previous answer nothing is preselected ('' counts as none).
+  late dynamic _single = widget.existing == '' ? null : widget.existing;
   late final Set<String> _multi = {
     if (widget.existing is List) ...(widget.existing as List).map((e) => e.toString()),
   };
@@ -581,7 +582,8 @@ class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
                   for (final o in field.options ?? const <String>[])
                     if (_multi.contains(o)) o,
                 ],
-              _ => _single,
+              // Nothing chosen → null, never ''.
+              _ => _single == '' ? null : _single,
             };
             Navigator.of(context).pop((value: value));
           },

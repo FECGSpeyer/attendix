@@ -2264,9 +2264,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final result = await showRegistrationFieldAlert(
         context,
         field: field,
-        existing: existing != null && existing.containsKey(field.id)
-            ? existing[field.id]
-            : registrationFieldDefault(field),
+        // No previous answer: nothing preselected (Ionic showRegFieldAlert).
+        existing: existing?[field.id],
       );
       if (result == null || !mounted) return;
       merged = <String, dynamic>{...?existing};
