@@ -8,14 +8,14 @@
         "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart",
         "lib/features/planning/presentation/widgets/plan_view_list.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #309"
     },
     "shared-plan/shared-plan.page#action-a9ede0e6": {
       "s": "ok",
       "f": [
         "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #309"
     },
     "public-planning/public-planning.page#alert-53b00c7b": {
       "s": "ok",
@@ -23,7 +23,7 @@
         "lib/features/planning/presentation/widgets/plan_fields_editor.dart",
         "lib/features/planning/presentation/pages/public_planning_page.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #309"
     },
     "public-planning/public-planning.page#effect-9082e8f4": {
       "s": "ok",
@@ -31,7 +31,7 @@
         "lib/features/planning/presentation/widgets/plan_export_actions.dart",
         "lib/core/services/web_window_web.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #309"
     },
     "public-planning/public-planning.page#effect-9082e8f4-2": {
       "s": "ok",
@@ -39,7 +39,7 @@
         "lib/features/planning/presentation/widgets/plan_export_actions.dart",
         "lib/core/services/web_window_web.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #309"
     }
   }
 }
