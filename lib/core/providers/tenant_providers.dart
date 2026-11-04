@@ -55,7 +55,25 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     final tenantIdToLoad = cachedTenantId ?? serverTenantId;
 
     if (tenantIdToLoad != null) {
-      await _loadAndValidateTenant(tenantIdToLoad);
+      // A cached id that differs from the account's metadata may belong to
+      // another account of this device: if it is not accessible, drop only
+      // the local cache and fall back to the metadata – never clear the
+      // metadata of the signed-in account because of a foreign cache entry.
+      final fallback = cachedTenantId != null &&
+              serverTenantId != null &&
+              serverTenantId != cachedTenantId
+          ? serverTenantId
+          : null;
+      final loaded = await _loadAndValidateTenant(
+        tenantIdToLoad,
+        localOnly: fallback != null,
+      );
+
+      if (loaded == false && fallback != null && !_explicitlySet) {
+        if (await _loadAndValidateTenant(fallback) == true && !_explicitlySet) {
+          await prefs.setInt(_tenantIdKey, fallback);
+        }
+      }
 
       // Fill the cache from the server value on a new device.
       if (cachedTenantId == null && serverTenantId != null) {
@@ -64,13 +82,16 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     }
   }
 
-  /// Load tenant by ID and validate user still has access
-  Future<void> _loadAndValidateTenant(int tenantId) async {
+  /// Load tenant by ID and validate user still has access.
+  /// Returns true when loaded, false when the tenant is not accessible (or
+  /// gone; storage was cleared – only the local cache with [localOnly]) and
+  /// null when nothing was decided (no user, explicit choice, error).
+  Future<bool?> _loadAndValidateTenant(int tenantId, {bool localOnly = false}) async {
     try {
       final supabase = ref.read(supabaseClientProvider);
       final userId = supabase.auth.currentUser?.id;
 
-      if (userId == null) return;
+      if (userId == null) return null;
 
       // Verify user still has access to this tenant
       final tenantUserResponse = await supabase
@@ -80,12 +101,12 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
-      if (_explicitlySet) return;
+      if (_explicitlySet) return null;
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
-        await _clearAllStorage();
-        return;
+        await _clearStorage(localOnly: localOnly);
+        return false;
       }
 
       // Load the tenant data
@@ -95,20 +116,28 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
-      if (_explicitlySet) return;
+      if (_explicitlySet) return null;
       if (response != null) {
         state = Tenant.fromJson(response);
-      } else {
-        // Tenant doesn't exist anymore
-        await _clearAllStorage();
+        return true;
       }
+      // Tenant doesn't exist anymore
+      await _clearStorage(localOnly: localOnly);
+      return false;
     } catch (e, stack) {
       debugPrint('Failed to load saved tenant: $e');
       // SEC-008: Only log stack trace in debug mode
       if (kDebugMode) {
         debugPrint('$stack');
       }
+      return null;
     }
+  }
+
+  Future<void> _clearStorage({required bool localOnly}) async {
+    if (!localOnly) return _clearAllStorage();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tenantIdKey);
   }
 
   /// Set the current tenant locally without triggering auth sync.
