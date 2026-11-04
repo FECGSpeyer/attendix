@@ -25,7 +25,7 @@ import '../../../../core/utils/text_utils.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
-import '../widgets/handover_sheet.dart';
+import '../widgets/person_transfer_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
 import '../widgets/archive_person_modal.dart';
 import '../widgets/duplicate_candidates_card.dart';
@@ -1427,22 +1427,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     action?.call();
   }
 
+  /// Ionic transfer modal for this person (target instance + target group).
+  /// A transfer (not a copy) closes the person page.
   Future<void> _showTransferSheet({bool copy = false}) async {
-    final result = await showHandoverSheet(
-      context,
-      selectedPlayers: [widget.person],
-      initialStayInInstance: copy,
-    );
-
-    if (result == true && mounted) {
-      ref.invalidate(personProvider(widget.personId));
-      ref.invalidate(realtimePlayersProvider);
-      // Ionic transferPerson: a transfer (not a copy) closes the person page.
-      // The sheet can switch between copy and transfer, so look at the
-      // result: a transferred person is archived (`left` set).
-      final updated = await ref.read(personProvider(widget.personId).future);
-      if (mounted && (updated == null || updated.left != null)) context.pop();
-    }
+    final done = await showPersonTransferSheet(context, widget.person, copy: copy);
+    if (!done || !mounted) return;
+    ref.invalidate(personProvider(widget.personId));
+    ref.invalidate(realtimePlayersProvider);
+    if (!copy) _closePage();
   }
 
   /// Ionic person.page activate(): "Person reaktivieren" for archived
