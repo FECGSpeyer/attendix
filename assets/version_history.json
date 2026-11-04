@@ -10,7 +10,10 @@
         "🐛 Termin: Kann ein Termin nicht geladen werden, kommt ein Hinweis und es geht zurück zur Liste",
         "🐛 Termin: „Ablaufplan teilen“ wieder mit Exportieren (PDF), (PDF 2x A5) und Telegram; bei mehreren Plänen Auswahl „dieser Plan / alle Pläne“",
         "🐛 Termin: Ein einzelnes Anmeldefeld wird wieder in einem kleinen Dialog bearbeitet",
-        "🐛 Termin: Checklisten-Punkte zeigen wieder Datum und Uhrzeit der Fälligkeit"
+        "🐛 Termin: Checklisten-Punkte zeigen wieder Datum und Uhrzeit der Fälligkeit",
+        "🐛 Termin: Der Excel-Export enthält nur die Personen der Liste (Helfer: nur ihre Gruppen) und ist nach Gruppen sortiert",
+        "🐛 Termine: „Deine Dienste: bitte bestätigen“ sehen nur Admin, Verantwortliche und Helfer",
+        "🐛 Termin: Ablaufplan-Export mit dem richtigen Titel und Dateinamen (Datum, „_alle“, „_2x“)"
       ]
     },
     {

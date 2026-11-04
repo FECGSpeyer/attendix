@@ -50,6 +50,43 @@
         "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
       ],
       "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-8f43ff82": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#alert-0c061d4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#toast-a71d4842": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-839f92ba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-7cdd0978": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
     }
   },
   "extraOverride": [
