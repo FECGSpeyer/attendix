@@ -82,11 +82,14 @@ class PlayerAbsenceNotifier extends Notifier<AsyncValue<void>> {
 
   /// Adds the absence and excuses all upcoming attendances in range.
   /// Returns the number of excused attendances, or null on error.
+  /// [onlyIds]: only these person_attendances (self-service, see
+  /// [PlayerAbsenceRepository.limitToIds]).
   Future<int?> addAbsence({
     required int personId,
     required String fromDate,
     required String untilDate,
     required String reason,
+    Set<String>? onlyIds,
   }) async {
     final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
@@ -102,6 +105,7 @@ class PlayerAbsenceNotifier extends Notifier<AsyncValue<void>> {
         fromDate: fromDate,
         untilDate: untilDate,
         reason: reason,
+        onlyIds: onlyIds,
       );
       state = const AsyncValue.data(null);
       ref.invalidate(playerAbsencesByPersonIdProvider(personId));
@@ -114,13 +118,13 @@ class PlayerAbsenceNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Deletes the absence and resets the attendances it excused.
-  Future<bool> deleteAbsence(PlayerAbsence absence) async {
+  Future<bool> deleteAbsence(PlayerAbsence absence, {Set<String>? onlyIds}) async {
     if (absence.id == null) return false;
     final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
     try {
       await repo.deleteAbsence(absence.id!);
-      await repo.resetExcusedAttendances(absence: absence);
+      await repo.resetExcusedAttendances(absence: absence, onlyIds: onlyIds);
       state = const AsyncValue.data(null);
       ref.invalidate(playerAbsencesByPersonIdProvider(absence.personId));
       ref.invalidate(playerAbsencesProvider);

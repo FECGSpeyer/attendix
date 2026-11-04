@@ -290,6 +290,11 @@ final parentAttendanceGroupsProvider =
     Provider<List<ParentAttendanceGroup>>((ref) {
   final attendances = ref.watch(childrenAttendancesProvider).valueOrNull ?? [];
   if (attendances.isEmpty) return [];
+  final children = ref.watch(parentChildrenProvider).valueOrNull ?? const <Person>[];
+  final childOrder = {
+    for (var i = 0; i < children.length; i++)
+      if (children[i].id != null) children[i].id!: i,
+  };
 
   // Group by attendance ID
   final Map<int, List<ChildPersonAttendance>> grouped = {};
@@ -304,7 +309,11 @@ final parentAttendanceGroupsProvider =
   return grouped.entries
       .where((entry) => entry.value.isNotEmpty)
       .map((entry) {
-    final childAtts = entry.value;
+    // PARITY_SELF: Ionic lists the kids of a Termin in the order of the
+    // kids (getPlayers: instrument, isLeader desc, lastName).
+    final childAtts = [...entry.value]
+      ..sort((a, b) => (childOrder[a.childId] ?? 1 << 30)
+          .compareTo(childOrder[b.childId] ?? 1 << 30));
     final first = childAtts.first;
     return ParentAttendanceGroup(
       attendanceId: entry.key,

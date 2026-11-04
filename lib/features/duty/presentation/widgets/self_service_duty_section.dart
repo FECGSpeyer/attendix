@@ -370,6 +370,10 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
   );
 }
 
+/// Scrolls the duty section [id] (`duty-mine`, `duty-requests`, `duty-open`)
+/// into view (Ionic `scrollToSection`).
+void scrollToDutySection(String id) => _DutyAnchor.scrollTo(id);
+
 /// Ionic `scrollToSection(id)` targets (`duty-mine`, `duty-requests`,
 /// `duty-open`): each section title registers its context, a tap on a stat
 /// tile scrolls it into view. A registry instead of GlobalKeys, so two

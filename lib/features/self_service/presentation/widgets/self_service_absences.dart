@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -36,6 +37,24 @@ void _refreshAfterAbsenceChange(WidgetRef ref) {
   ref.invalidate(currentSelfServicePlayerProvider);
 }
 
+/// PARITY_SELF: person_attendances that Ionic confirmAbsence/deleteAbsence
+/// touch: the Termine "Meine Termine" lists as current + upcoming
+/// (`currentAttendance` + `actualAttendances` after applyDutyView /
+/// applyDutyLayout). Unassigned duties never count; in the Dienstplan view
+/// the own duties stay untouched ("Weitere Termine" only). Termine of the
+/// tenant without an own row ("alle Termine" mode) have no id and are
+/// skipped.
+Future<Set<String>> selfServiceAbsenceCandidateIds(WidgetRef ref) async {
+  final raw = await ref.read(signoutDataProvider.future);
+  final useDutyView =
+      ref.read(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false;
+  return applySignoutDutyView(raw, useDutyView: useDutyView)
+      .allUpcoming
+      .map((a) => a.id)
+      .whereType<String>()
+      .toSet();
+}
+
 /// "Abwesenheit melden" sheet + save (Ionic confirmAbsence).
 Future<void> selfServiceReportAbsence(
   BuildContext context,
@@ -63,11 +82,21 @@ Future<void> saveSelfServiceAbsence(
   AbsenceInput input,
 ) async {
   if (player.id == null) return;
+  final Set<String> onlyIds;
+  try {
+    onlyIds = await selfServiceAbsenceCandidateIds(ref);
+  } catch (_) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.signoutFlutterAbsenceSaveFailed);
+    }
+    return;
+  }
   final count = await ref.read(playerAbsenceNotifierProvider.notifier).addAbsence(
         personId: player.id!,
         fromDate: input.fromDate,
         untilDate: input.untilDate,
         reason: input.reason,
+        onlyIds: onlyIds,
       );
   if (!context.mounted) return;
   if (count == null) {
@@ -186,6 +215,7 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
                   ref,
                   absence,
                   selfService: true,
+                  onlyIds: () => selfServiceAbsenceCandidateIds(ref),
                 );
                 if (ok) _refreshAfterAbsenceChange(ref);
               },

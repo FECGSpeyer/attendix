@@ -388,10 +388,16 @@ class SelfServiceEventActions {
         isExcused && !overviewMode ? SelfServiceActionType.undoSignout : SelfServiceActionType.signIn,
       ));
     }
-    if (signInAllowed && !isExcused) {
+    // PARITY_SELF: Ionic OverviewPage only filters by the status letter:
+    // 'E' / 'A' drop Abmelden + Verspätung eintragen, 'Anmelden mit Notiz'
+    // stays; 'L' (Verspätet / Verspätung gemeldet) keeps all of them.
+    // Ionic SignoutPage additionally blocks them for every excused status.
+    if (signInAllowed && (overviewMode || !isExcused)) {
       actions.add(const SelfServiceAction(SelfServiceActionType.signInWithNote));
     }
-    final blockedBySignout = isExcused || att.text == 'A';
+    final blockedBySignout = overviewMode
+        ? att.text == 'E' || att.text == 'A'
+        : isExcused || att.text == 'A';
     if (excuseAllowed && !blockedBySignout && !(qa?.allowExcuse ?? false)) {
       actions.add(const SelfServiceAction(SelfServiceActionType.signOut));
     }

@@ -20,7 +20,7 @@ final signInOutRepositoryProvider = Provider<SignInOutRepository>((ref) {
 /// Columns of `attendance` needed by the Terminlisten (signout, overview, parents).
 const String kSignoutAttendanceColumns =
     'id, date, type, typeInfo, songs, type_id, start_time, end_time, deadline, '
-    'duration_days, plan, share_plan, description, attachment_url, '
+    'duration_days, plan, extra_plans, share_plan, description, attachment_url, '
     'attachment_name, files_folder, place, tenantId, archived';
 
 /// IOS_FORMS2: `attendance` columns of the Übersicht – exactly Ionic
@@ -491,6 +491,12 @@ class SignInOutRepository extends BaseRepository with TenantAwareRepository {
       tenantName: tenantName,
       tenantColor: tenantColor,
       plan: att['plan'] as Map<String, dynamic>?,
+      extraPlans: att['extra_plans'] is List
+          ? [
+              for (final p in att['extra_plans'] as List)
+                if (p is Map) Map<String, dynamic>.from(p),
+            ]
+          : null,
       sharePlan: att['share_plan'] == true,
       typeId: att['type_id']?.toString(),
       includeInAverage: type?.includeInAverage ?? true,
@@ -698,6 +704,10 @@ class CrossTenantPersonAttendance {
   final String tenantName;
   final String tenantColor;
   final Map<String, dynamic>? plan;
+
+  /// PARITY_SELF: Ionic `attendance.extra_plans` (further plans, e.g. one per
+  /// day of a multi-day Termin) for the plan viewer's day chips.
+  final List<Map<String, dynamic>>? extraPlans;
   final bool sharePlan;
   final String? typeId;
   final bool includeInAverage;
@@ -747,6 +757,7 @@ class CrossTenantPersonAttendance {
     required this.tenantName,
     required this.tenantColor,
     this.plan,
+    this.extraPlans,
     this.sharePlan = false,
     this.typeId,
     this.includeInAverage = true,
@@ -785,6 +796,7 @@ class CrossTenantPersonAttendance {
       tenantName: tenantName,
       tenantColor: tenantColor,
       plan: plan,
+      extraPlans: extraPlans,
       sharePlan: sharePlan,
       typeId: typeId,
       includeInAverage: includeInAverage,

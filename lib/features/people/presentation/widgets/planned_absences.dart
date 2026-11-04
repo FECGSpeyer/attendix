@@ -250,6 +250,7 @@ Future<bool> deletePlannedAbsenceFlow(
   WidgetRef ref,
   PlayerAbsence absence, {
   bool selfService = false,
+  Future<Set<String>?> Function()? onlyIds,
 }) async {
   final confirmed = await DialogHelper.showConfirmation(
     context,
@@ -262,8 +263,19 @@ Future<bool> deletePlannedAbsenceFlow(
   );
   if (!confirmed || !context.mounted) return false;
 
-  final ok =
-      await ref.read(playerAbsenceNotifierProvider.notifier).deleteAbsence(absence);
+  Set<String>? ids;
+  try {
+    ids = await onlyIds?.call();
+  } catch (_) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.personFlutterAbsenceDeleteFailed);
+    }
+    return false;
+  }
+  if (!context.mounted) return false;
+  final ok = await ref
+      .read(playerAbsenceNotifierProvider.notifier)
+      .deleteAbsence(absence, onlyIds: ids);
   if (!context.mounted) return ok;
   if (ok) {
     ref.invalidate(upcomingAttendancesProvider(absence.personId));

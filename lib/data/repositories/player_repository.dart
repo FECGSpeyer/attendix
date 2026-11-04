@@ -230,6 +230,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           // approved players have pending=false, not NULL.
           .isFilter('pending', false)
           .isFilter('left', null)
+          // PARITY_SELF: Ionic getPlayers (PARENT) order – instrument,
+          // isLeader descending, lastName.
+          .order('instrument')
+          .order('isLeader', ascending: false)
           .order('lastName');
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
