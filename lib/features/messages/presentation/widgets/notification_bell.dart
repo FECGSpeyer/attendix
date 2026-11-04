@@ -103,7 +103,12 @@ class NotificationBell extends ConsumerWidget implements HiddenWithSidePanel {
     // when data.tenantId is set.
     if (!isMessage && n.route == null && n.attendanceId == null) return;
     final explicitTenant = int.tryParse(n.data['tenantId']?.toString() ?? '');
-    final int? targetTenant = isMessage ? n.targetTenantId : explicitTenant;
+    // A Termin id only exists in its own instance: in "Alle Instanzen" an
+    // entry of another instance without data.tenantId still has to switch to
+    // the row's instance, otherwise the Termin is not found.
+    final int? targetTenant = isMessage || (n.route == null && n.attendanceId != null)
+        ? n.targetTenantId
+        : explicitTenant;
     if (targetTenant != null && targetTenant != ref.read(currentTenantIdProvider)) {
       final tenants = await ref.read(userTenantsProvider.future);
       Tenant? tenant;
