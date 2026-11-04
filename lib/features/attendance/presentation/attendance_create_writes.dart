@@ -110,6 +110,7 @@ class AttendanceCreateWriter {
   List<PlayerAbsence> _absences = const [];
   List<ShiftPlan> _shifts = const [];
   List<ProfileExtraField> _extraFields = const [];
+  List<Map<String, dynamic>> _players = const [];
 
   /// Creates one Termin per day of [input] and returns their ids in the
   /// same order. Throws on the first failed write.
@@ -146,6 +147,9 @@ class AttendanceCreateWriter {
     _extraFields = input.type.additionalFieldsFilter == null
         ? const []
         : await _ref.read(personExtraFieldsProvider.future);
+    // Participants are loaded before the first Termin is written, so a failed
+    // read cannot leave a Termin without persons behind.
+    _players = await _loadActivePlayers(input.type);
 
     final ids = <int>[];
     // Ionic 4.19.2 `uniqueDates`: one Termin per calendar day.
@@ -264,18 +268,13 @@ class AttendanceCreateWriter {
     return attendanceId;
   }
 
-  /// Create PersonAttendance records for players based on relevant groups
-  Future<void> _createPersonAttendancesForRelevant(
-    AttendanceType type,
-    int attendanceId,
-    DateTime date, {
-    String? startTime,
-    String? endTime,
-  }) async {
+  /// Active players of the bound tenant for a new Termin of [type], with the
+  /// organisation's shared field values when the type filters on a field.
+  Future<List<Map<String, dynamic>>> _loadActivePlayers(AttendanceType type) async {
     final supabase = _saveClient;
     final tenant = _saveTenant!;
 
-    if (tenant.id == null) return;
+    if (tenant.id == null) return const [];
 
     // Get all active players (not left, not pending). Paused persons are
     // dropped below like Ionic (`if (player.paused)`), so paused = NULL
@@ -291,13 +290,26 @@ class AttendanceCreateWriter {
         .map((p) => Map<String, dynamic>.from(p as Map))
         .where((p) => p['paused'] != true)
         .toList();
-    if (playerList.isEmpty) return;
+    if (playerList.isEmpty) return playerList;
     // Organisation field values are shared across the organisation's groups;
     // merge them so the type's field filter sees them (not just the default).
     if (type.additionalFieldsFilter != null) {
       playerList =
           await hydrateSharedFieldValuesForRows(supabase, tenant.id!, playerList);
     }
+    return playerList;
+  }
+
+  /// Create PersonAttendance records for players based on relevant groups
+  Future<void> _createPersonAttendancesForRelevant(
+    AttendanceType type,
+    int attendanceId,
+    DateTime date, {
+    String? startTime,
+    String? endTime,
+  }) async {
+    final playerList = _players;
+    if (playerList.isEmpty) return;
 
     // Get default status from attendance type
     // DUTY: nobody is expected until assigned → Neutral for duty types
@@ -394,7 +406,7 @@ class AttendanceCreateWriter {
     }
 
     // Batch insert all records
-    await supabase.from('person_attendances').insert(records);
+    await _saveClient.from('person_attendances').insert(records);
   }
 
   /// Create song history entries for the attendance

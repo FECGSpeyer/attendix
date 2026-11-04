@@ -163,7 +163,11 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
 
   List<MappedPersonRow> get _importable =>
       _mappedRows
-          .where((r) => r.isImportable && !_importedRows.contains(r.rowIndex))
+          .where((r) =>
+              !_importedRows.contains(r.rowIndex) &&
+              // A saved person still missing its Termine stays retryable,
+              // even when a new duplicate check now flags it.
+              (r.isImportable || _savedWithoutTermine.containsKey(r.rowIndex)))
           .toList();
 
   Future<void> _startImport() async {
