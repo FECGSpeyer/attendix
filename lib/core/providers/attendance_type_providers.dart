@@ -6,6 +6,8 @@ import '../config/supabase_config.dart'
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/attendance_type_repository.dart';
 import '../utils/demo_guard.dart';
+import 'attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider;
+import 'plan_providers.dart' show planAttendanceTypesProvider;
 import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
@@ -116,6 +118,10 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       final success = await _repo.deleteType(id);
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceTypesProvider);
+      // The type's Termine are deleted with it (no usage pre-check, like Ionic).
+      ref.invalidate(attendancesProvider);
+      ref.invalidate(upcomingAttendancesProvider);
+      ref.invalidate(planAttendanceTypesProvider);
       return success;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

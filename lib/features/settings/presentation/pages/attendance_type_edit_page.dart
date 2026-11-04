@@ -1191,8 +1191,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       setState(() {
         if (isStart) {
           _startTime = time;
-          // Ionic: the plan start picker recalculates "Ende".
-          if (_planEnd != null) _calculateEnd();
+          // Ionic: the plan start picker always recalculates "Ende".
+          _calculateEnd();
         } else {
           _endTime = time;
         }
@@ -1553,17 +1553,21 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           IonStackedField(
             flush: true,
             label: l10n.typeSettingsDeadline,
-            builder: (decoration) => AppDropdownFormField<int?>(
-              iosInterface: AppSelectInterface.actionSheet,
-              decoration: decoration.copyWith(hintText: l10n.typeSettingsNoDeadline),
-              value: _newTodoDeadline,
-              items: [
-                DropdownMenuItem(value: null, child: Text(l10n.typeSettingsNoDeadline)),
-                for (final h in _deadlinePresets)
-                  DropdownMenuItem(value: h, child: Text(_deadlinePresetLabel(h))),
-                DropdownMenuItem(value: -1, child: Text(l10n.typeSettingsCustomDots)),
-              ],
-              onChanged: (v) => setState(() => _newTodoDeadline = v),
+            // Own Form: a deadline for a not yet added to-do is no change of
+            // the type (Ionic compares only the type).
+            builder: (decoration) => Form(
+              child: AppDropdownFormField<int?>(
+                iosInterface: AppSelectInterface.actionSheet,
+                decoration: decoration.copyWith(hintText: l10n.typeSettingsNoDeadline),
+                value: _newTodoDeadline,
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.typeSettingsNoDeadline)),
+                  for (final h in _deadlinePresets)
+                    DropdownMenuItem(value: h, child: Text(_deadlinePresetLabel(h))),
+                  DropdownMenuItem(value: -1, child: Text(l10n.typeSettingsCustomDots)),
+                ],
+                onChanged: (v) => setState(() => _newTodoDeadline = v),
+              ),
             ),
           ),
           if (showCustom)
