@@ -43,6 +43,7 @@ class PlanFieldsEditor extends StatefulWidget {
     this.emptyText,
     this.onAddTopics,
     this.beamerFileOf,
+    this.templateMode = false,
   });
 
   final List<PlanField> fields;
@@ -68,6 +69,11 @@ class PlanFieldsEditor extends StatefulWidget {
   /// the one of its Werk). Rows needing a file get a status line and the
   /// edit dialog shows the "Beamer-Datei nötig" switch.
   final BeamerFile? Function(PlanField field)? beamerFileOf;
+
+  /// Standard-Ablaufplan of a Termintyp (Ionic type.page): no Programmblöcke
+  /// (no indent), the Tagesordnung marker as a fixed two-line row and the
+  /// "Feld bearbeiten" alert without minutes (they are edited in the row).
+  final bool templateMode;
 
   @override
   State<PlanFieldsEditor> createState() => _PlanFieldsEditorState();
@@ -160,6 +166,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     }
     if (PlanUtils.isAgendaPlaceholder(field)) return;
     final isNote = PlanUtils.isNote(field);
+    if (widget.templateMode) {
+      await _editTemplateField(index, field, isNote: isNote);
+      return;
+    }
     final beamerFileOf = widget.beamerFileOf;
     final showBeamer = beamerFileOf != null && !isNote;
     final result = await showPlanFieldDialog(
@@ -191,6 +201,35 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
             time: result.minutes?.toString() ?? field.time,
             needsBeamer: showBeamer ? result.needsBeamer : field.needsBeamer,
           );
+    _emit(updated);
+  }
+
+  /// Ionic type.page changeField: Programmpunkt, Ausführender, Info (note:
+  /// only "Notiz"), "Updaten"; an empty name keeps the alert open.
+  Future<void> _editTemplateField(int index, PlanField field, {required bool isNote}) async {
+    final l10n = context.l10n;
+    final result = await showPlanFieldDialog(
+      context,
+      title: l10n.typeSettingsEditField,
+      nameLabel: isNote ? l10n.typeSettingsNote : l10n.typeSettingsProgrammeItem,
+      nameHint: isNote ? l10n.typeSettingsNotePh : l10n.typeSettingsProgrammeItemPh,
+      conductorLabel: l10n.typeSettingsPerformer,
+      conductorHint: l10n.typeSettingsPerformerPh,
+      infoHint: l10n.typeSettingsInfoOptionalDots,
+      confirmText: l10n.typeSettingsUpdate,
+      emptyNameMessage: l10n.typeSettingsEnterItem,
+      initialName: field.name,
+      initialConductor: field.conductor,
+      initialInfo: field.info,
+      withConductor: !isNote,
+      withInfo: !isNote,
+      withMinutes: false,
+    );
+    if (result == null || !mounted) return;
+    final updated = [..._fields];
+    updated[index] = isNote
+        ? field.copyWith(name: result.name)
+        : field.copyWith(name: result.name, conductor: result.conductor, info: result.info);
     _emit(updated);
   }
 
@@ -388,6 +427,26 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       ),
     );
 
+    if (PlanUtils.isAgendaPlaceholder(field) && widget.templateMode) {
+      // Ionic type.page: git-commit icon, h2 "Tagesordnung", h3 hint; not editable.
+      return _slidable(
+        index: index,
+        canIndent: false,
+        isChild: false,
+        child: DecoratedBox(
+          decoration: BoxDecoration(
+            border: Border(bottom: BorderSide(color: theme.dividerColor, width: 0.5)),
+          ),
+          child: ListTile(
+            leading: const Icon(Icons.commit, color: AppColors.medium),
+            title: Text(context.l10n.typeSettingsAgenda),
+            subtitle: Text(context.l10n.typeSettingsTopicsHere),
+            trailing: dragHandle,
+          ),
+        ),
+      );
+    }
+
     if (PlanUtils.isAgendaPlaceholder(field)) {
       return _slidable(
         index: index,
@@ -448,7 +507,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       ));
     }
 
-    final canIndent = PlanUtils.canIndent(_fields, index);
+    final canIndent = !widget.templateMode && PlanUtils.canIndent(_fields, index);
     final isDark = theme.brightness == Brightness.dark;
 
     // Ionic: group heads show their summed duration as a badge, plain fields an

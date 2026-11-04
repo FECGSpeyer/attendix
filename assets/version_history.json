@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.39.6",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Termintyp: Der Standard-Ablaufplan ist immer bearbeitbar (nicht nur bei „Werke verwalten“) und zeigt Uhrzeiten, Ausführende, Infos und Minuten direkt in der Zeile wie bisher",
+        "🐛 Termintyp: Über „+“ lassen sich wieder Felder, Notizfelder, Werk-Platzhalter und der Tagesordnungs-Platzhalter einfügen; beim Bearbeiten bleiben Ausführender und Info erhalten",
+        "🐛 Termintyp: Filter für Ja/Nein-Zusatzfelder, „Checkliste aktivieren“, To-Dos mit Deadline-Auswahl und „Erinnerungen konfigurieren“ wie bisher",
+        "🐛 Termintyp: Löschen funktioniert auch bei Typen mit Terminen; „Mehr erfahren“ beim Dienstplan"
+      ]
+    },
+    {
       "version": "0.39.0",
       "date": "4.11.2026",
       "changes": [
