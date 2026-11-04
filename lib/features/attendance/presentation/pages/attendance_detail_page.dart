@@ -1784,7 +1784,14 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final currentDeadline = EventListUtils.deadlineLocal(attendance.deadline);
 
     // Ionic maxDeadlineDate: Termin day at the type start time (19:30 without).
-    final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+    // Wait for a still loading type so the limit is not the 19:30 fallback.
+    AttendanceType? type;
+    try {
+      type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
+    } catch (_) {
+      type = null;
+    }
+    if (!mounted) return;
     final start = type?.startTime;
     final startHour = start != null && start.length >= 5 ? int.tryParse(start.substring(0, 2)) ?? 19 : 19;
     final startMin = start != null && start.length >= 5 ? int.tryParse(start.substring(3, 5)) ?? 30 : 30;
@@ -1809,7 +1816,10 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     if (selectedDate == null || !mounted) return;
 
-    final initialTime = TimeOfDay.fromDateTime(currentDeadline ?? initialDate);
+    // Snap to the 5-minute grid first: the iOS wheel shows the snapped time
+    // and returns null when left unchanged, so that is what gets saved.
+    final rawTime = TimeOfDay.fromDateTime(currentDeadline ?? initialDate);
+    final initialTime = TimeOfDay(hour: rawTime.hour, minute: rawTime.minute - rawTime.minute % 5);
     final selectedTime = await showAppTimePicker(
       context: context,
       initialTime: initialTime,
