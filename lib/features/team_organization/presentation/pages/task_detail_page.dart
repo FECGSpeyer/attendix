@@ -28,6 +28,26 @@ class TaskDetailPage extends ConsumerStatefulWidget {
 class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
   bool _savingStatus = false;
 
+  @override
+  void initState() {
+    super.initState();
+    // Ionic: the task is loaded anew on every open (also after an earlier
+    // load error); a cached task stays visible meanwhile.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) ref.invalidate(taskByIdProvider(widget.taskId));
+    });
+  }
+
+  /// Ionic ion-refresher (in every state of the page).
+  Future<void> _reload() async {
+    ref.invalidate(taskByIdProvider(widget.taskId));
+    try {
+      await ref.read(taskByIdProvider(widget.taskId).future);
+    } catch (_) {
+      // "Diese Aufgabe gibt es nicht mehr…" stays.
+    }
+  }
+
   Future<void> _setStatus(TeamTask task, String status) async {
     if (task.status == status || _savingStatus) return;
     setState(() => _savingStatus = true);
@@ -116,7 +136,12 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
       body: taskAsync.isLoading && task == null
           ? const Center(child: AppSpinner())
           : task == null
-              ? IonEmptyState(
+              ? RefreshIndicator.adaptive(
+                  onRefresh: _reload,
+                  child: ListView(
+                    physics: const AlwaysScrollableScrollPhysics(),
+                    children: [
+                      IonEmptyState(
                   icon: Icons.search,
                   iconSize: 48,
                   padding: const EdgeInsets.symmetric(vertical: 64, horizontal: 32),
@@ -130,9 +155,12 @@ class _TaskDetailPageState extends ConsumerState<TaskDetailPage> {
                         : context.go(isLeader ? '/settings/team-organization' : '/signout'),
                     child: IonButtonLabel(l10n.commonBack),
                   ),
+                      ),
+                    ],
+                  ),
                 )
               : RefreshIndicator.adaptive(
-                  onRefresh: () async => ref.invalidate(taskByIdProvider(widget.taskId)),
+                  onRefresh: _reload,
                   child: _buildBody(context, task, isLeader, me?.id, types, today),
                 ),
     );

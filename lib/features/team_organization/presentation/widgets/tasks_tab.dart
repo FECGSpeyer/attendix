@@ -59,25 +59,16 @@ class _TasksTabState extends ConsumerState<TasksTab> {
   Widget build(BuildContext context) {
     final isLeader = ref.watch(isTeamLeaderProvider);
     final tasksAsync = ref.watch(teamTasksProvider);
+    ref.listen(teamTasksProvider, (_, next) {
+      if (next is AsyncError) {
+        ToastHelper.showError(context, context.l10n.teamOrgTasksLoadFailed);
+      }
+    });
     final myPersonId = ref.watch(teamPersonProvider).valueOrNull?.id;
     final today = localToday();
     final l10n = context.l10n;
 
-    return Scaffold(
-      // PARITY_R5: page colour of the team-org page shows through.
-      backgroundColor: Colors.transparent,
-      floatingActionButton: TabBarFab.wrap(isLeader
-          ? FloatingActionButton(
-              heroTag: 'team-org-add-task',
-              tooltip: l10n.teamOrgCreateTask,
-              onPressed: _addTask,
-              child: const Icon(Icons.add),
-            )
-          : null),
-      body: tasksAsync.when(
-        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
-        error: (_, __) => Center(child: Text(l10n.teamOrgTasksLoadFailed)),
-        data: (raw) {
+    Widget content(List<TeamTask> raw) {
           final tasks = raw
               .map((t) => _optimistic.containsKey(t.id)
                   ? t.copyWith(
@@ -105,7 +96,7 @@ class _TasksTabState extends ConsumerState<TasksTab> {
           }
 
           return RefreshIndicator.adaptive(
-            onRefresh: () async => ref.invalidate(teamTasksProvider),
+            onRefresh: () => reloadTeamOrgTab(ref, 'tasks'),
             child: ListView(
               physics: const AlwaysScrollableScrollPhysics(),
               padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 72)),
@@ -176,7 +167,26 @@ class _TasksTabState extends ConsumerState<TasksTab> {
               ],
             ),
           );
-        },
+    }
+
+    return Scaffold(
+      // PARITY_R5: page colour of the team-org page shows through.
+      backgroundColor: Colors.transparent,
+      floatingActionButton: TabBarFab.wrap(isLeader
+          ? FloatingActionButton(
+              heroTag: 'team-org-add-task',
+              tooltip: l10n.teamOrgCreateTask,
+              onPressed: _addTask,
+              child: const Icon(Icons.add),
+            )
+          : null),
+      // Ionic reload(): after a failed load the previous list stays (none →
+      // empty state), a red toast reports it, pull-to-refresh keeps working.
+      body: tasksAsync.when(
+        skipError: true,
+        loading: () => const TeamOrgListSkeleton(), // Ionic ion-skeleton-text (3 rows)
+        error: (_, __) => content(const []),
+        data: content,
       ),
     );
   }

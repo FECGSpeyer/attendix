@@ -17,6 +17,7 @@ import '../../team_org_utils.dart';
 import '../widgets/task_form_sheet.dart';
 import '../widgets/tasks_tab.dart' show TeamOrgBadge, priorityColor, outcomeColor;
 import '../widgets/quick_create_attendance.dart';
+import '../utils/route_return_reload.dart';
 import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -36,7 +37,8 @@ class AgendaItemDetailPage extends ConsumerStatefulWidget {
   ConsumerState<AgendaItemDetailPage> createState() => _AgendaItemDetailPageState();
 }
 
-class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
+class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
+    with RouteReturnReload {
   final _title = TextEditingController();
   final _description = TextEditingController();
   final _duration = TextEditingController();
@@ -48,6 +50,38 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
   bool _saving = false;
 
   bool get _isNew => _itemId == 'new';
+
+  /// Ionic ngOnInit → loadItem(): the topic is loaded anew on every open
+  /// (spinner until then), so the form never starts from a stale copy.
+  late bool _fresh = _isNew;
+
+  @override
+  void initState() {
+    super.initState();
+    if (_isNew) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final id = _itemId;
+      ref.invalidate(agendaItemByIdProvider(id));
+      _reloadRelated();
+      ref.read(agendaItemByIdProvider(id).future).then((_) {}, onError: (_) {}).whenComplete(() {
+        if (mounted) setState(() => _fresh = true);
+      });
+    });
+  }
+
+  /// Ionic loadRelated(): linked tasks and history.
+  void _reloadRelated() {
+    ref.invalidate(agendaItemHistoryProvider(_itemId));
+    ref.invalidate(tasksForAgendaItemProvider(_itemId));
+  }
+
+  /// Ionic ionViewWillEnter: back from a task or protocol → reload tasks and
+  /// history (e.g. a result set in the protocol).
+  @override
+  void onRouteReturn() {
+    if (!_isNew) _reloadRelated();
+  }
 
   @override
   void dispose() {
@@ -135,6 +169,9 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     final types = await ref.read(protocolTypesProvider.future);
     List<ProtocolAttendance> upcoming = [];
     try {
+      // Ionic: getUpcomingAttendances on every tap (new/deleted Termine,
+      // current plans for "bereits eingeplant").
+      ref.invalidate(upcomingProtocolAttendancesProvider);
       upcoming = (await ref.read(upcomingProtocolAttendancesProvider.future)).take(_planChoices).toList();
     } catch (e, st) {
       ErrorReporter.report(e, st, where: 'agenda_item_detail_page');
@@ -212,7 +249,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
     final AsyncValue<AgendaItem?> itemAsync =
         _isNew ? const AsyncValue.data(null) : ref.watch(agendaItemByIdProvider(_itemId));
     final item = itemAsync.valueOrNull;
-    if (item != null && isLeader) _fill(item);
+    if (item != null && isLeader && _fresh) _fill(item);
     final l10n = context.l10n;
 
     return Scaffold(
@@ -235,7 +272,7 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage> {
             )
           : null),
       // P10_SONGS_ORG: keep the form while the item reloads after a save.
-      body: itemAsync.isLoading && !itemAsync.hasValue
+      body: !_fresh || (itemAsync.isLoading && !itemAsync.hasValue)
           ? const Center(child: AppSpinner())
           : (!_isNew && item == null)
               ? Center(child: Text(l10n.agendaFlutterNotFound))

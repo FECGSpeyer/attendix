@@ -105,6 +105,82 @@
     "lib/core/router/app_router.dart"
    ],
    "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol-pdf#logic-3a7d97db": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/pdf_fonts.dart",
+    "lib/features/team_organization/protocol_pdf.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart",
+    "lib/features/team_organization/presentation/utils/route_return_reload.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol.page#logic-82b3528c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol.page#action-9e2bdbdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "tasks/task-detail/task-detail.page#action-df7b76e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/team-organization.page#logic-cb8d3ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/team-organization.page#action-411a87d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-f0d73e65": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
   }
  },
  "extraOverride": [
@@ -141,6 +217,42 @@
   {
    "unit": "terms/terms.page",
    "title": "Ziel nach Zustimmung zu den Bedingungen",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Verlauf/Thema veralten (Cache)",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Einplanen-Liste aus Cache",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "protocols/protocol/protocol-pdf",
+   "title": "PDF-Schrift ohne Unicode",
+   "drop": true,
+   "why": "behoben in #295"
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Fremde Notizen vor Freigabe",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "team-organization/team-organization.page",
+   "title": "Kein Neuladen beim Zurückkehren/Tabwechsel",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "title": "Ladefehler der Protokollliste",
    "drop": true,
    "why": "behoben in #296"
   }

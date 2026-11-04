@@ -435,3 +435,32 @@ Future<Map<String, dynamic>> addTopicsToAttendance(
   final plan = planWithTopics(current, type, selections, removeIds: removeIds);
   return await repo.updateAttendancePlan(attendance.id, plan) ?? plan;
 }
+
+// ── Reload (Ionic ionViewWillEnter / segment change / refresher) ──────
+
+/// Ionic team-organization `reloadActive()`: reloads what one tab shows
+/// (`tasks` | `topics` | `protocols`). The tabs keep their current content
+/// while it loads. Completes when the tab's main list has loaded (errors are
+/// shown by the tab).
+Future<void> reloadTeamOrgTab(WidgetRef ref, String tab) async {
+  try {
+    switch (tab) {
+      case 'tasks':
+        // Members: getMyTasks is loaded fresh as well.
+        ref.invalidate(myTasksProvider);
+        ref.invalidate(teamTasksProvider);
+        await ref.read(teamTasksProvider.future);
+      case 'topics':
+        // Leadership: topics, protocols (vertagt) and the next Termine.
+        ref.invalidate(agendaItemsProvider);
+        ref.invalidate(protocolsProvider);
+        ref.invalidate(upcomingProtocolAttendancesProvider);
+        await ref.read(agendaItemsProvider.future);
+      case 'protocols':
+        ref.invalidate(protocolsProvider);
+        await ref.read(protocolsProvider.future);
+    }
+  } catch (_) {
+    // Reported by the tab (toast / empty state).
+  }
+}

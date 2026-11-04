@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:async';
 
 import 'package:flutter/material.dart';
@@ -369,6 +370,24 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     }
     _controllers[id] = controller;
     return controller;
+  }
+
+  /// Shows [doc] (saved by another leader) in the open editor of [id]
+  /// without queueing a save.
+  void _replaceEditorDoc(String id, QuillController controller, Map<String, dynamic> doc) {
+    Document document;
+    try {
+      document = Document.fromJson(tiptapToDelta(doc).ops);
+    } catch (_) {
+      return;
+    }
+    _subscriptions.remove(id)?.cancel();
+    controller.document = document;
+    if (_isLeader && !controller.readOnly) {
+      _subscriptions[id] = document.changes.listen((change) {
+        if (change.source == ChangeSource.local) _queueSave(id);
+      });
+    }
   }
 
   Map<String, dynamic>? _currentDoc(String id) {
@@ -793,9 +812,16 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     try {
       final row = await _repo.getProtocolForAttendance(widget.attendanceId);
       if (row != null) {
+        // Ionic mergeServerRow: every section without an unsaved local
+        // change takes the server notes, opened editors included.
         for (final e in row.content.entries) {
-          if (_controllers.containsKey(e.key) || _pending.contains(e.key) || e.value is! Map) continue;
-          _docs[e.key] = Map<String, dynamic>.from(e.value as Map);
+          if (_pending.contains(e.key) || _inFlight.containsKey(e.key) || e.value is! Map) continue;
+          final doc = Map<String, dynamic>.from(e.value as Map);
+          final controller = _controllers[e.key];
+          if (controller != null && jsonEncode(_docs[e.key]) != jsonEncode(doc)) {
+            _replaceEditorDoc(e.key, controller, doc);
+          }
+          _docs[e.key] = doc;
         }
         _outcomes = {for (final e in row.outcomes.entries) e.key: e.value.toString()};
       }
@@ -1279,18 +1305,26 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   Text(ctx.l10n.protocolWholeMeeting),
                   const SizedBox(height: AppDimensions.paddingS),
                   _editor(controller),
+                  // Ionic: the task form opens above the notes sheet; back in
+                  // the sheet the reference and the task are shown and
+                  // writing continues.
                   StatefulBuilder(
-                    builder: (ctx, _) => _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        Navigator.of(ctx).pop();
-                        await _createTask(protocolGeneralSectionId);
-                      },
-                      icon: const Icon(Icons.add_circle_outline),
-                      label: IonButtonLabel(ctx.l10n.tasksTask),
+                    builder: (sheetCtx, setSheet) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              await _createTask(protocolGeneralSectionId);
+                              if (sheetCtx.mounted) setSheet(() {});
+                            },
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: IonButtonLabel(ctx.l10n.tasksTask),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],
