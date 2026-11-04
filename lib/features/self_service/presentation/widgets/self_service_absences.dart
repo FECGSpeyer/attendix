@@ -43,13 +43,12 @@ void _refreshAfterAbsenceChange(WidgetRef ref) {
 /// applyDutyLayout). Unassigned duties never count; in the Dienstplan view
 /// the own duties stay untouched ("Weitere Termine" only). Termine of the
 /// tenant without an own row ("alle Termine" mode) have no id and are
-/// skipped.
+/// skipped. Waits for the duty overview (whether the Dienstplan view is
+/// active) and throws when it fails, so the callers write nothing.
 Future<Set<String>> selfServiceAbsenceCandidateIds(WidgetRef ref) async {
   final raw = await ref.read(signoutDataProvider.future);
-  final useDutyView =
-      ref.read(myDutyOverviewProvider).valueOrNull?.useDutyView ?? false;
-  return applySignoutDutyView(raw, useDutyView: useDutyView)
-      .allUpcoming
+  final duty = await ref.read(myDutyOverviewProvider.future);
+  return absenceCandidates(raw, useDutyView: duty.useDutyView)
       .map((a) => a.id)
       .whereType<String>()
       .toSet();
@@ -82,9 +81,15 @@ Future<void> saveSelfServiceAbsence(
   AbsenceInput input,
 ) async {
   if (player.id == null) return;
+  // The write goes through the current group's repository: if the group
+  // changes while the candidates load, the ids belong to the old group.
+  final tenantId = ref.read(currentTenantIdProvider);
   final Set<String> onlyIds;
   try {
     onlyIds = await selfServiceAbsenceCandidateIds(ref);
+    if (ref.read(currentTenantIdProvider) != tenantId) {
+      throw StateError('Instanz während des Speicherns gewechselt');
+    }
   } catch (_) {
     if (context.mounted) {
       ToastHelper.showError(context, context.l10n.signoutFlutterAbsenceSaveFailed);
