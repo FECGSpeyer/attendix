@@ -7,7 +7,7 @@
         "lib/features/attendance/presentation/pages/attendance_list_page.dart",
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #305"
     },
     "attendance/att-list/att-list.page#modal-66d0050c": {
       "s": "ok",
@@ -15,7 +15,7 @@
         "lib/features/attendance/presentation/pages/attendance_list_page.dart",
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #305"
     },
     "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
       "s": "ok",
@@ -23,7 +23,7 @@
         "lib/features/attendance/presentation/pages/attendance_list_page.dart",
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #305"
     },
     "planning/plan-viewer/plan-viewer.component#action-a5b1e6d4": {
       "s": "ok",
@@ -31,7 +31,7 @@
         "lib/features/attendance/presentation/pages/attendance_list_page.dart",
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
-      "n": "behoben in #NNN"
+      "n": "behoben in #305"
     }
   },
   "extraOverride": [
@@ -39,13 +39,13 @@
       "unit": "attendance/att-list/att-list.page",
       "title": "Ablaufplan-Viewer aus der Liste unvollständig",
       "drop": true,
-      "why": "behoben in #NNN"
+      "why": "behoben in #305"
     },
     {
       "unit": "planning/plan-viewer/plan-viewer.component",
       "title": "Weitere Ablaufpläne fehlen im Viewer",
       "drop": true,
-      "why": "behoben in #NNN"
+      "why": "behoben in #305"
     }
   ]
 }
