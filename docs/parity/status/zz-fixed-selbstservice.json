@@ -1,0 +1,130 @@
+{
+ "batch": "zz-fixed-selbstservice",
+ "items": {
+  "selfService/overview/overview.page#actionsheet-1394033e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:391"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#modal-ef7b9f1b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:406",
+    "lib/data/repositories/sign_in_out_repository.dart:23"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/overview/overview.page#modal-44ffacb0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/parents/parents.page#text-afd4ff21": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:235",
+    "lib/features/parents/data/providers/parents_providers.dart:315"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/parents/parents.page#modal-fc6bc685": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#alert-cf2e9968": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_absence_repository.dart:189",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:47"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#action-47659591": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:122"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#modal-819b10ac": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#text-7ab3ea5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:548"
+   ],
+   "n": "behoben in #298"
+  },
+  "selfService/signout/signout.page#action-836ea596": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:548"
+   ],
+   "n": "behoben in #298"
+  },
+  "services/db.service#db-ffa8e5a7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:23",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:406"
+   ],
+   "n": "behoben in #298 (extra_plans in kSignoutAttendanceColumns, bis in den Plan-Viewer durchgereicht)"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "selfService/overview/overview.page",
+   "title": "Aktionsblatt bei Entschuldigt / Verspätung gemeldet",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Benachrichtigung bei Anmeldung nach 'Verspätung gemeldet'",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/parents/parents.page",
+   "title": "Reihenfolge der Kinder",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Push/Deep-Link öffnet Termin ohne Dienst-Logik",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Status-Pill ohne \"Bitte bestätigen\"",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Abwesenheit: andere Zeilen entschuldigt/zurückgesetzt",
+   "drop": true,
+   "why": "behoben in #298"
+  },
+  {
+   "unit": "selfService/signout/signout.page",
+   "title": "Pull-to-Refresh lädt Dienste nicht neu",
+   "drop": true,
+   "why": "behoben in #298"
+  }
+ ]
+}
