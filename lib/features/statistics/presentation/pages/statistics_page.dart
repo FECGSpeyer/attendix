@@ -1021,44 +1021,45 @@ class _OrganisationStatsSectionState
   }
 
   /// Ionic `ion-select multiple interface="modal"` "Instanzen filtern".
+  ///
+  /// PARITY_UEBERSICHT: Ionic select modal – full-screen list (centred card
+  /// on wide screens) with a toolbar (label + "Schließen") and checkboxes;
+  /// the choice is taken over when the modal closes (`ionDismiss` →
+  /// filterInstances), there is no "Abbrechen".
   Future<void> _pickTenants(List<Tenant> tenants) async {
     final selection = {..._selectedTenantIds};
-    final result = await showAppDialog<Set<int>>(
-      context: context,
+    await showIonModal<void>(
+      context,
       builder: (ctx) => StatefulBuilder(
-        builder: (ctx, setLocal) => AppAlertDialog(
-          title: Text(ctx.l10n.statsFilterTenants),
-          content: SizedBox(
-            width: double.maxFinite,
-            child: ListView(
-              shrinkWrap: true,
-              children: [
-                for (final t in tenants)
-                  if (t.id != null)
-                    CheckboxListTile(
-                      title: Text(t.longName),
-                      value: selection.contains(t.id),
-                      onChanged: (v) => setLocal(() {
-                        v == true ? selection.add(t.id!) : selection.remove(t.id);
-                      }),
-                    ),
-              ],
-            ),
+        builder: (ctx, setLocal) => Scaffold(
+          appBar: AppBar(
+            automaticallyImplyLeading: false,
+            title: Text(ctx.l10n.statsFilterTenants),
+            actions: [
+              TextButton(
+                onPressed: () => Navigator.of(ctx).pop(),
+                child: Text(ctx.l10n.commonClose),
+              ),
+            ],
           ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(ctx.l10n.commonCancel),
-            ),
-            ElevatedButton(
-              onPressed: () => Navigator.pop(ctx, selection),
-              child: Text(ctx.l10n.commonOk),
-            ),
-          ],
+          body: ListView(
+            children: [
+              for (final t in tenants)
+                if (t.id != null)
+                  CheckboxListTile(
+                    controlAffinity: ListTileControlAffinity.leading,
+                    title: Text(t.longName),
+                    value: selection.contains(t.id),
+                    onChanged: (v) => setLocal(() {
+                      v == true ? selection.add(t.id!) : selection.remove(t.id);
+                    }),
+                  ),
+            ],
+          ),
         ),
       ),
     );
-    if (result != null && mounted) setState(() => _selectedTenantIds = result);
+    if (mounted) setState(() => _selectedTenantIds = selection);
   }
 
   Widget _buildOrgSection(Organisation organisation) {

@@ -46,6 +46,25 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
 
   bool _switchingTenant = false;
 
+  /// PARITY_UEBERSICHT: Ionic load() shows one red toast "Mitteilung konnte
+  /// nicht geladen werden" when any part of loading fails (message, instance
+  /// switch, recipients, earlier messages); reset on pull-to-refresh.
+  bool _loadErrorShown = false;
+
+  void _showLoadError() {
+    if (_loadErrorShown || !mounted) return;
+    _loadErrorShown = true;
+    ToastHelper.showError(context, context.l10n.messagesLoadFailed);
+  }
+
+  void _listenLoadError<T>(ProviderListenable<AsyncValue<T>> provider) {
+    ref.listen<AsyncValue<T>>(provider, (prev, next) {
+      if (next.hasError && !next.isLoading && !(prev?.hasError ?? false)) {
+        _showLoadError();
+      }
+    });
+  }
+
   bool get _isManager {
     final role = ref.watch(effectiveRoleProvider);
     return role.isAdmin || role.isResponsible;
@@ -68,6 +87,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         await ref.read(currentTenantUserProvider.future);
       } catch (_) {
         // Stay on the current instance; the message is still shown.
+        _showLoadError();
       } finally {
         if (mounted) setState(() => _switchingTenant = false);
       }
@@ -108,6 +128,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   }
 
   Future<void> _refresh() async {
+    _loadErrorShown = false;
     ref.invalidate(messageRecipientsProvider(widget.messageId));
     ref.invalidate(messageByIdProvider(widget.messageId));
     await ref.read(messageByIdProvider(widget.messageId).future);
@@ -121,6 +142,14 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     final isManager = _isManager &&
         (message == null || message.tenantId == ref.watch(currentTenantIdProvider));
     final l10n = context.l10n;
+    _listenLoadError(messageByIdProvider(widget.messageId));
+    if (message != null) {
+      if (isManager) {
+        _listenLoadError(messageRecipientsProvider(message.id));
+      } else {
+        _listenLoadError(receivedMessagesProvider);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(
