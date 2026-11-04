@@ -140,12 +140,12 @@ class AttendanceCreateWriter {
     } catch (_) {
       _shifts = const [];
     }
-    // LOGIC_ATT: organisation + tenant extra fields (Ionic getPersonExtraFields)
-    try {
-      _extraFields = await _ref.read(personExtraFieldsProvider.future);
-    } catch (_) {
-      _extraFields = const [];
-    }
+    // LOGIC_ATT: organisation + tenant extra fields (Ionic getPersonExtraFields).
+    // Only needed for a field filter; a failed load then fails the creation
+    // instead of inviting everybody.
+    _extraFields = input.type.additionalFieldsFilter == null
+        ? const []
+        : await _ref.read(personExtraFieldsProvider.future);
 
     final ids = <int>[];
     // Ionic 4.19.2 `uniqueDates`: one Termin per calendar day.

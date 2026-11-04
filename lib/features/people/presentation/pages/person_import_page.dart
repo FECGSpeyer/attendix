@@ -53,6 +53,9 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   /// person is not saved twice.
   final Map<int, Person> _savedWithoutTermine = {};
 
+  /// Rows (by file row) that are completely imported; a retry skips them.
+  final Set<int> _importedRows = {};
+
   List<Group> get _groups => ref.read(groupsProvider).valueOrNull ?? [];
 
   Future<PersonMapContext> _buildContext() async {
@@ -97,6 +100,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         _fileName = picked.name;
         _rawRows = data.rows;
         _savedWithoutTermine.clear();
+        _importedRows.clear();
         _headers = data.headers;
         _ctx = ctx;
         _options = _buildOptions();
@@ -158,7 +162,9 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   }
 
   List<MappedPersonRow> get _importable =>
-      _mappedRows.where((r) => r.isImportable).toList();
+      _mappedRows
+          .where((r) => r.isImportable && !_importedRows.contains(r.rowIndex))
+          .toList();
 
   Future<void> _startImport() async {
     final toImport = _importable;
@@ -208,6 +214,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
           );
         }
         _savedWithoutTermine.remove(row.rowIndex);
+        _importedRows.add(row.rowIndex);
         imported++;
       } on PersonNotAddedToAttendancesException catch (e) {
         _savedWithoutTermine[row.rowIndex] = e.person;
@@ -240,7 +247,11 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
       await showImportFailures(context, title: context.l10n.peopleNotImported, lines: failed);
     }
 
-    if (imported > 0 && mounted) Navigator.of(context).pop(true);
+    // Ionic closes once a row was imported. Stay open while saved persons
+    // still miss their Termine, so the retry can add only those.
+    if (imported > 0 && _savedWithoutTermine.isEmpty && mounted) {
+      Navigator.of(context).pop(true);
+    }
   }
 
   @override

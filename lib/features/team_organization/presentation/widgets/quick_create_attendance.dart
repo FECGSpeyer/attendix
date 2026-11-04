@@ -256,11 +256,12 @@ Future<int?> promptCreateProtocolAttendance(BuildContext context, WidgetRef ref)
       ref.read(shiftsProvider.future).catchError((_) => <ShiftPlan>[]),
     ]);
     // Ionic getPersonExtraFields: organisation fields count too, so a type
-    // filtering on one does not invite everybody.
+    // filtering on one does not invite everybody. Only needed for a field
+    // filter; a failed load then fails the creation (no unfiltered Termin).
     final tenantFields = tenant?.additionalFields ?? const <ExtraField>[];
-    final orgFields = await ref
-        .read(personExtraFieldsProvider.future)
-        .catchError((_) => <ProfileExtraField>[]);
+    final orgFields = type.additionalFieldsFilter == null
+        ? const <ProfileExtraField>[]
+        : await ref.read(personExtraFieldsProvider.future);
     final persons = personsForAttendanceType(
       results[0] as List<Map<String, dynamic>>,
       type,
