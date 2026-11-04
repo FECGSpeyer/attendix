@@ -135,7 +135,7 @@ class RdWorkPage extends ConsumerWidget {
     final header = Row(
       children: [
         Expanded(child: back),
-        if (canEdit) RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push('/settings/songs/$songId')),
+        if (canEdit) RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
         if (rdWorkMenuHasActions(data, files, copyTargets)) ...[
           const SizedBox(width: 4),
           Builder(
@@ -417,7 +417,9 @@ class RdWorkPage extends ConsumerWidget {
                   SongUtils.formatDate(song.lastSung),
                   if ((song.conductor ?? '').isNotEmpty) song.conductor!,
                 ].join(' · '),
-        showChevron: false,
+        showChevron: data.history.isNotEmpty,
+        // The whole history (loaded for the leads, like the old page).
+        onTap: data.history.isEmpty ? null : () => _showHistory(context, data),
       ),
       if (fileGroups.isNotEmpty)
         RdListRow(
@@ -483,6 +485,61 @@ class RdWorkPage extends ConsumerWidget {
       ok = false;
     }
     if (!ok && context.mounted) ToastHelper.showError(context, context.l10n.songsFlutterOpenFileFailed);
+  }
+
+  /// "Verlauf": every Termin the Werk was played in (old song page
+  /// "Historie"), newest first.
+  Future<void> _showHistory(BuildContext context, SongDetailData data) {
+    return showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      backgroundColor: context.rd.bg,
+      shape: const RoundedRectangleBorder(borderRadius: BorderRadius.vertical(top: Radius.circular(20))),
+      builder: (sheet) {
+        final p = sheet.rd;
+        return DraggableScrollableSheet(
+          expand: false,
+          initialChildSize: 0.6,
+          maxChildSize: 0.95,
+          builder:
+              (sheet, controller) => ListView(
+                controller: controller,
+                padding: const EdgeInsets.fromLTRB(16, 8, 16, 24),
+                children: [
+                  Center(
+                    child: Container(
+                      width: 36,
+                      height: 5,
+                      margin: const EdgeInsets.only(bottom: 12),
+                      decoration: BoxDecoration(color: p.track, borderRadius: BorderRadius.circular(3)),
+                    ),
+                  ),
+                  Text(sheet.l10n.redesignWorkHistory, style: RdType.section(p)),
+                  Text(
+                    '${data.song.name} · ${sheet.l10n.redesignWorkHistoryCount(data.history.length)}',
+                    style: RdType.meta(p, size: 14),
+                  ),
+                  const SizedBox(height: 12),
+                  RdGroupedList(
+                    children: [
+                      for (final entry in data.history)
+                        RdListRow(
+                          title: [
+                            SongUtils.formatDate(entry.attendanceDate ?? entry.date),
+                            if ((entry.typeTitle ?? '').isNotEmpty) entry.typeTitle!,
+                          ].join(' · '),
+                          subtitle: (entry.conductorName ?? '').isNotEmpty ? entry.conductorName : null,
+                          showChevron: false,
+                        ),
+                    ],
+                  ),
+                ],
+              ),
+        );
+      },
+    );
   }
 
   /// "Alle Stimmen": the parts of every group; a tap opens one, "•••" has

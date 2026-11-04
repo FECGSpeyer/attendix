@@ -162,3 +162,14 @@ List<Group> rdMissingGroups(List<SongFile> files, List<Group> groups, Map<int, i
   }
   return (shown: shown, others: others);
 }
+
+/// "Werk bearbeiten": the other Werk that already has [prefix] [number]
+/// (prefix compared without case and spaces), or null when the number is
+/// free or empty.
+Song? rdNumberTakenBy(List<Song> songs, int? songId, String prefix, int? number) {
+  if (number == null) return null;
+  final wanted = prefix.trim().toLowerCase();
+  return songs
+      .where((s) => s.id != songId && s.number == number && (s.prefix ?? '').trim().toLowerCase() == wanted)
+      .firstOrNull;
+}

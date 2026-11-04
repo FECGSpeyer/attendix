@@ -14951,6 +14951,102 @@
   "@redesignWorkEdit": {
     "description": "redesign.work.edit"
   },
+  "redesignWorkEditCategories": "Kategorien",
+  "@redesignWorkEditCategories": {
+    "description": "redesign.workEdit.categories"
+  },
+  "redesignWorkEditDelete": "Werk löschen",
+  "@redesignWorkEditDelete": {
+    "description": "redesign.workEdit.delete"
+  },
+  "redesignWorkEditDifficulty": "Schwierigkeit",
+  "@redesignWorkEditDifficulty": {
+    "description": "redesign.workEdit.difficulty"
+  },
+  "redesignWorkEditDifficultyNone": "Offen",
+  "@redesignWorkEditDifficultyNone": {
+    "description": "redesign.workEdit.difficultyNone"
+  },
+  "redesignWorkEditEasy": "Leicht",
+  "@redesignWorkEditEasy": {
+    "description": "redesign.workEdit.easy"
+  },
+  "redesignWorkEditFields": "Zusatzfelder",
+  "@redesignWorkEditFields": {
+    "description": "redesign.workEdit.fields"
+  },
+  "redesignWorkEditHard": "Schwer",
+  "@redesignWorkEditHard": {
+    "description": "redesign.workEdit.hard"
+  },
+  "redesignWorkEditHint": "Änderungen werden sofort gespeichert. Noten und Dateien pflegst du direkt auf der Werk-Seite.",
+  "@redesignWorkEditHint": {
+    "description": "redesign.workEdit.hint"
+  },
+  "redesignWorkEditInstrumentation": "Besetzung",
+  "@redesignWorkEditInstrumentation": {
+    "description": "redesign.workEdit.instrumentation"
+  },
+  "redesignWorkEditInstrumentationHint": "Welche Gruppen mitspielen, ergibt sich aus den hochgeladenen Noten. Fehlt eine Stimme, lädst du sie auf der Werk-Seite hoch.",
+  "@redesignWorkEditInstrumentationHint": {
+    "description": "redesign.workEdit.instrumentationHint"
+  },
+  "redesignWorkEditLink": "Link",
+  "@redesignWorkEditLink": {
+    "description": "redesign.workEdit.link"
+  },
+  "redesignWorkEditLinkHint": "Video, Hörbeispiel oder Verlag",
+  "@redesignWorkEditLinkHint": {
+    "description": "redesign.workEdit.linkHint"
+  },
+  "redesignWorkEditManageCategories": "Kategorien verwalten",
+  "@redesignWorkEditManageCategories": {
+    "description": "redesign.workEdit.manageCategories"
+  },
+  "redesignWorkEditMedium": "Mittel",
+  "@redesignWorkEditMedium": {
+    "description": "redesign.workEdit.medium"
+  },
+  "redesignWorkEditName": "Titel",
+  "@redesignWorkEditName": {
+    "description": "redesign.workEdit.name"
+  },
+  "redesignWorkEditNameEmpty": "Ohne Titel wird nicht gespeichert.",
+  "@redesignWorkEditNameEmpty": {
+    "description": "redesign.workEdit.nameEmpty"
+  },
+  "redesignWorkEditNoCategories": "Noch keine Kategorien angelegt.",
+  "@redesignWorkEditNoCategories": {
+    "description": "redesign.workEdit.noCategories"
+  },
+  "redesignWorkEditNotAllowed": "Werke bearbeiten kann nur die Leitung.",
+  "@redesignWorkEditNotAllowed": {
+    "description": "redesign.workEdit.notAllowed"
+  },
+  "redesignWorkEditNumber": "Nummer",
+  "@redesignWorkEditNumber": {
+    "description": "redesign.workEdit.number"
+  },
+  "redesignWorkEditNumberTaken": "Nr. {number} hat schon „{name}“. Die Nummer wird so nicht gespeichert.",
+  "@redesignWorkEditNumberTaken": {
+    "description": "redesign.workEdit.numberTaken",
+    "placeholders": {
+      "number": {},
+      "name": {}
+    }
+  },
+  "redesignWorkEditPrefix": "Präfix",
+  "@redesignWorkEditPrefix": {
+    "description": "redesign.workEdit.prefix"
+  },
+  "redesignWorkEditPrefixHint": "z. B. W",
+  "@redesignWorkEditPrefixHint": {
+    "description": "redesign.workEdit.prefixHint"
+  },
+  "redesignWorkEditTitle": "Werk bearbeiten",
+  "@redesignWorkEditTitle": {
+    "description": "redesign.workEdit.title"
+  },
   "redesignWorkFileCount": "{count, plural, one {1 Datei} other {{count} Dateien}}",
   "@redesignWorkFileCount": {
     "description": "redesign.work.fileCount",
@@ -15002,6 +15098,19 @@
   "redesignWorkForConductors": "Für die Leitung",
   "@redesignWorkForConductors": {
     "description": "redesign.work.forConductors"
+  },
+  "redesignWorkHistory": "Verlauf",
+  "@redesignWorkHistory": {
+    "description": "redesign.work.history"
+  },
+  "redesignWorkHistoryCount": "{count, plural, one {1 Termin} other {{count} Termine}}",
+  "@redesignWorkHistoryCount": {
+    "description": "redesign.work.historyCount",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
   },
   "redesignWorkInstrumentation": "Besetzung",
   "@redesignWorkInstrumentation": {

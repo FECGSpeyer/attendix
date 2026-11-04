@@ -109,6 +109,7 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
 import '../../features/redesign/presentation/pages/rd_works_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
@@ -414,6 +415,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
           );
         }
+        // REDESIGN: the old song page becomes the Werk page of the new design.
+        if (RedesignRoutes.active) {
+          final songTarget = RedesignRoutes.oldSongTarget(location);
+          if (songTarget != null) return songTarget;
+        }
         // REDESIGN: who may open the Termine of the new design.
         final redesignTarget = RedesignRoutes.roleRedirect(location, role);
         if (redesignTarget != null) return redesignTarget;
@@ -712,6 +718,14 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              GoRoute(
+                path: ':id/bearbeiten',
+                name: 'redesignWorkEdit',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return id == null ? const RdWorksPage() : RdWorkEditPage(songId: id);
+                },
+              ),
               GoRoute(
                 path: ':id',
                 name: 'redesignWork',
