@@ -161,7 +161,14 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           _selectedRegistrationFields.add(required);
         }
       }
-      _criticalRules = List.from(tenant.criticalRules ?? []);
+      // Ionic ngOnInit: legacy rules without period_type get 'days' (saved
+      // with the next save; evaluate-critical-rules then counts 30 days).
+      _criticalRules = [
+        for (final r in tenant.criticalRules ?? const <CriticalRule>[])
+          r.periodType == null
+              ? r.copyWith(periodType: CriticalRulePeriodType.days)
+              : r,
+      ];
 
     } catch (e) {
       if (mounted) {

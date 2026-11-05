@@ -13,7 +13,7 @@ DateTime personAttendanceWindowStart({String? seasonStart, bool hasLeft = false}
 
 /// Ionic person.page `lateThreshold`: threshold of the first critical rule
 /// that counts "Verspätet"; 999 (= never) without such a rule.
-int lateWarningThreshold(List<CriticalRule>? rules) {
+num lateWarningThreshold(List<CriticalRule>? rules) {
   for (final rule in rules ?? const <CriticalRule>[]) {
     if (rule.statuses.contains(AttendanceStatus.late.value)) {
       return rule.thresholdValue;

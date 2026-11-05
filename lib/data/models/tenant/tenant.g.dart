@@ -148,7 +148,7 @@ _$CriticalRuleImpl _$$CriticalRuleImplFromJson(Map<String, dynamic> json) =>
         _$CriticalRuleThresholdTypeEnumMap,
         json['threshold_type'],
       ),
-      thresholdValue: (json['threshold_value'] as num).toInt(),
+      thresholdValue: json['threshold_value'] as num,
       periodType: $enumDecodeNullable(
         _$CriticalRulePeriodTypeEnumMap,
         json['period_type'],
