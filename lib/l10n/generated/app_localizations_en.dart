@@ -73,9 +73,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get adminEvaluation => 'Analytics';
 
   @override
-  String get adminFlutterAddFailed => 'Error while adding';
-
-  @override
   String adminGb(Object value) {
     return '$value GB';
   }
@@ -2954,11 +2951,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get coreFlutterRuleSinceSeasonStart => 'since season start';
 
   @override
-  String coreFlutterRuleStatusN(Object n) {
-    return 'Status $n';
-  }
-
-  @override
   String get coreFlutterSchoolHolidays => 'School holidays';
 
   @override
@@ -3975,6 +3967,9 @@ class AppLocalizationsEn extends AppLocalizations {
       'You have unsaved changes. Do you want to leave the page anyway?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons => 'Updating persons...';
+
+  @override
   String get extraFieldsForPersons => 'Additional fields for people';
 
   @override
@@ -4681,12 +4676,6 @@ class AppLocalizationsEn extends AppLocalizations {
   String get generalSettingsFlutterOrShort => 'OR';
 
   @override
-  String get generalSettingsFlutterPracticeEnd => 'Rehearsal end';
-
-  @override
-  String get generalSettingsFlutterPracticeStart => 'Rehearsal start';
-
-  @override
   String get generalSettingsFlutterRuleAdded => 'Rule added';
 
   @override
@@ -4701,10 +4690,6 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterRuleUpdated => 'Rule updated';
-
-  @override
-  String get generalSettingsFlutterStatusCritical =>
-      'Status (counts as critical)';
 
   @override
   String get generalSettingsForeignInfo => 'Info text for other events';
@@ -6172,6 +6157,9 @@ class AppLocalizationsEn extends AppLocalizations {
 
   @override
   String get orgFieldsApplyChanges => 'Apply changes';
+
+  @override
+  String get orgFieldsFlutterClearDefault => 'Remove default value';
 
   @override
   String get orgFieldsFlutterFirstOptionDefault =>

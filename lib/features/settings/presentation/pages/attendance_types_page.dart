@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -12,6 +11,7 @@ import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../widgets/ion_condense.dart';
+import 'attendance_type_edit_page.dart' show showAttendanceTypeCreateModal;
 import '../widgets/settings_list.dart';
 
 /// Attendance Types List Page
@@ -125,7 +125,9 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
       ),
       floatingActionButton: !_isReordering
           ? FloatingActionButton(
-              onPressed: () => _showCreateDialog(context),
+              // Ionic openTypeModal(): the type page as modal in the "new"
+              // mode (all settings); the notifier reloads the list.
+              onPressed: () => showAttendanceTypeCreateModal(context),
               child: const Icon(Icons.add),
             )
           : FloatingActionButton(
@@ -177,95 +179,4 @@ class _AttendanceTypesPageState extends ConsumerState<AttendanceTypesPage> {
     context.push('/settings/types/${type.id}');
   }
 
-  Future<void> _showCreateDialog(BuildContext context) async {
-    final nameController = TextEditingController();
-
-    final result = await showAppDialog<String>(
-      context: context,
-      builder: (context) => AppAlertDialog(
-        title: Text(context.l10n.typeSettingsFlutterNewType),
-        content: TextField(
-          controller: nameController,
-          decoration: InputDecoration(
-            labelText: context.l10n.typeSettingsName,
-            hintText: context.l10n.typeSettingsFlutterNamePh,
-          ),
-          autofocus: true,
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context),
-            child: Text(context.l10n.commonCancel),
-          ),
-          ElevatedButton(
-            onPressed: () => Navigator.pop(context, nameController.text),
-            child: Text(context.l10n.filesCreate),
-          ),
-        ],
-      ),
-    );
-
-    if (result == null) return;
-    // LOGIC_SETTINGS: Ionic validate() — name required
-    if (result.trim().isEmpty) {
-      if (context.mounted) {
-        ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
-      }
-      return;
-    }
-    await _createType(result.trim());
-  }
-
-  Future<void> _createType(String name) async {
-    // LOGIC_SETTINGS: Ionic TypePage isNew defaults (index 999, empty
-    // default_plan, relevant_groups [], reminders []); statuses are written
-    // as numbers by the repository.
-    final newType = buildNewAttendanceType(name);
-
-    try {
-      final created = await ref
-          .read(attendanceTypeNotifierProvider.notifier)
-          .createType(newType);
-
-      if (!mounted) return;
-      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
-      // Ionic configures the full type in the create modal; here the edit
-      // page of the new type opens so all settings (incl. duty view) follow.
-      if (created.id != null) {
-        context.push('/settings/types/${created.id}');
-      }
-    } catch (e) {
-      if (mounted) {
-        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
-      }
-    }
-  }
-}
-
-/// LOGIC_SETTINGS: defaults of a new type as in Ionic type.page.ts (isNew).
-AttendanceType buildNewAttendanceType(String name) {
-  return AttendanceType(
-    name: name.trim(),
-    planningTitle: '',
-    defaultStatus: AttendanceStatus.present,
-    availableStatuses: const [
-      AttendanceStatus.neutral,
-      AttendanceStatus.present,
-      AttendanceStatus.absent,
-      AttendanceStatus.excused,
-      AttendanceStatus.late,
-    ],
-    manageSongs: false,
-    startTime: '19:00',
-    endTime: '20:30',
-    relevantGroups: const [],
-    index: 999,
-    visible: true,
-    color: 'primary',
-    highlight: false,
-    hideName: false,
-    includeInAverage: true,
-    reminders: const [],
-    defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
-  );
 }

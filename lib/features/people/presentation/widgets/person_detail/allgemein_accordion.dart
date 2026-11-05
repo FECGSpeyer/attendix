@@ -12,12 +12,14 @@ import '../../../../../core/providers/teacher_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../core/utils/contact_links.dart';
+import '../../../../../core/utils/extra_field_utils.dart' show parseExtraFieldNumber;
 import '../../../../../core/utils/tenant_label_utils.dart';
 import '../../../../../data/models/parent/parent_model.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../data/models/shift/shift_plan.dart';
 import '../../../../../data/models/tenant/tenant.dart';
 import '../ion/ion_widgets.dart';
+import 'date_input_row.dart';
 import '../../../../../shared/widgets/sheets/field_editor_sheet.dart';
 import '../../../../../shared/widgets/sheets/selection_sheet.dart';
 import '../church_picker_sheet.dart';
@@ -365,6 +367,17 @@ class AllgemeinAccordion extends ConsumerWidget {
     bool highlight = false,
     Color? highlightColor,
   }) {
+    // Ionic: typed TT.MM.JJJJ input (applied on blur) + calendar button.
+    if (canEdit) {
+      return DateInputRow(
+        label: label,
+        value: value,
+        highlight: highlight,
+        lastDate: DateTime.now(),
+        onChanged: (iso) => onFieldChanged(fieldKey, iso),
+      );
+    }
+
     final displayValue = value != null ? _formatDate(value) : context.l10n.personFlutterNotSpecified;
 
     return IonFieldRow(
@@ -412,12 +425,9 @@ class AllgemeinAccordion extends ConsumerWidget {
           label: context.l10n.personPlaysWithTeacher,
           value: hasTeacherValue,
           editable: canEdit,
-          onChanged: (v) {
-            onFieldChanged('hasTeacher', v);
-            if (!v) {
-              onFieldChanged('teacher', null);
-            }
-          },
+          // Ionic: switching off only changes hasTeacher; the teacher stays
+          // saved (teacher pages count students via player.teacher).
+          onChanged: (v) => onFieldChanged('hasTeacher', v),
         ),
         if (hasTeacherValue)
           _buildTeacherField(context, ref, teacherId),
@@ -434,9 +444,15 @@ class AllgemeinAccordion extends ConsumerWidget {
         child: LinearProgressIndicator(),
       ),
       error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
-      data: (teachers) {
-        final teacher = teachers.where((t) => t.id == teacherId).firstOrNull;
+      data: (allTeachers) {
+        final teacher = allTeachers.where((t) => t.id == teacherId).firstOrNull;
         final teacherName = teacher?.name ?? context.l10n.personFlutterNotSelected;
+        // Ionic onInstrumentChange: only teachers of the selected group's
+        // instrument; the select has no empty option.
+        final groupId = selectedGroupId ?? person.instrument;
+        final teachers = allTeachers
+            .where((t) => groupId != null && t.instruments.contains(groupId))
+            .toList();
 
         return Padding(
           padding: EdgeInsets.zero,
@@ -455,15 +471,11 @@ class AllgemeinAccordion extends ConsumerWidget {
                 title: context.l10n.personFlutterChooseLabel(context.l10n.peopleTeacher),
                 items: items,
                 selectedValue: teacherId,
-                noneLabel: context.l10n.peopleNoTeacher,
                 icon: Icons.school,
               );
 
-              if (result != null) {
-                onFieldChanged(
-                  'teacher',
-                  result.isNone ? null : result.value,
-                );
+              if (result != null && !result.isNone) {
+                onFieldChanged('teacher', result.value);
               }
             },
           ),
@@ -480,8 +492,10 @@ class AllgemeinAccordion extends ConsumerWidget {
       loading: () => const LinearProgressIndicator(),
       error: (e, _) => Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))),
       data: (shifts) {
+        // Ionic: the shift plan row only exists when shift plans exist.
+        if (shifts.isEmpty) return const SizedBox.shrink();
         final shift = shifts.where((s) => s.id == currentShiftId).firstOrNull;
-        final shiftName = shift?.name ?? context.l10n.personFlutterNoShiftPlan;
+        final shiftName = shift?.name ?? context.l10n.personNoShift;
 
         return Column(
           children: [
@@ -500,18 +514,27 @@ class AllgemeinAccordion extends ConsumerWidget {
                   title: context.l10n.personFlutterChooseLabel(context.l10n.personShiftPlan),
                   items: items,
                   selectedValue: currentShiftId,
-                  noneLabel: context.l10n.personFlutterNoShiftPlan,
+                  noneLabel: context.l10n.personNoShift,
                   icon: Icons.schedule,
                 );
 
                 if (result != null) {
-                  onFieldChanged(
-                    'shiftId',
-                    result.isNone ? null : result.value,
-                  );
-                  // Reset shift name and start when shift changes
-                  onFieldChanged('shiftName', null);
-                  onFieldChanged('shiftStart', null);
+                  final id = result.isNone ? null : result.value;
+                  final plan = shifts.where((s) => s.id == id).firstOrNull;
+                  onFieldChanged('shiftId', id);
+                  // Ionic onShiftChange: a plan with named shifts starts with
+                  // its first shift, otherwise the start date is today.
+                  if (plan == null) {
+                    onFieldChanged('shiftName', null);
+                    onFieldChanged('shiftStart', null);
+                  } else if (plan.hasNamedShifts) {
+                    onFieldChanged('shiftName', plan.shifts.first.name);
+                    onFieldChanged('shiftStart', null);
+                  } else {
+                    onFieldChanged('shiftName', null);
+                    onFieldChanged(
+                        'shiftStart', DateTime.now().toUtc().toIso8601String());
+                  }
                 }
               },
             ),
@@ -742,6 +765,16 @@ class AllgemeinAccordion extends ConsumerWidget {
       );
     }
 
+    // Ionic: date extra fields use the typed input + calendar (max today).
+    if (field.type == 'date' && canEdit) {
+      return DateInputRow(
+        label: field.name,
+        value: value?.toString(),
+        lastDate: DateTime.now(),
+        onChanged: (iso) => onFieldChanged('additionalFields.${field.id}', iso),
+      );
+    }
+
     if (field.type == 'boolean') {
       return IonToggleRow(
         icon: icon,
@@ -781,10 +814,10 @@ class AllgemeinAccordion extends ConsumerWidget {
           context,
           title: field.name,
           initialValue: currentValue?.toString() ?? '',
-          keyboardType: TextInputType.number,
+          keyboardType: const TextInputType.numberWithOptions(decimal: true, signed: true),
         );
         if (result != null) {
-          onFieldChanged('additionalFields.${field.id}', int.tryParse(result) ?? 0);
+          onFieldChanged('additionalFields.${field.id}', parseExtraFieldNumber(result));
         }
         break;
 

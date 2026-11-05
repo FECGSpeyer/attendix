@@ -166,9 +166,10 @@ void main() {
       '_buildDutySection(),',
       'title: context.l10n.typeSettingsEventReminders,',
       'title: context.l10n.typeSettingsAppearance,',
-      '_buildRelevantGroupsSection(),',
-      'title: context.l10n.typeSettingsRunSheet,',
-      'title: context.l10n.typeSettingsChecklist,',
+      '_buildFilterSection(),',
+      '_buildPlanSection(),',
+      '_buildChecklistSection(),',
+      'context.l10n.typeSettingsEnableChecklist',
       'title: context.l10n.typeSettingsSignupFields,',
     ]);
   });

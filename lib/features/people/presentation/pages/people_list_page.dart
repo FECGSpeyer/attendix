@@ -22,6 +22,7 @@ import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/providers/church_providers.dart';
+import '../../../../core/providers/teacher_providers.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../shared/widgets/tenant/tenant_switcher_title.dart';
@@ -29,6 +30,7 @@ import '../../people_list_utils.dart';
 import '../../../../shared/widgets/loading/loading.dart';
 import '../../../../shared/widgets/common/empty_state.dart';
 import '../../../../shared/widgets/sheets/church_overview_sheet.dart';
+import '../widgets/archive_person_modal.dart';
 import '../widgets/handover_sheet.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
@@ -69,6 +71,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
 
   /// Working order while reordering: group key → player ids
   final Map<String, List<int>> _reorderIds = {};
+
+  /// Groups whose order was changed (Ionic handleReorder sets sort_order
+  /// 1..n only for the moved group; untouched groups keep their order).
+  final Set<String> _reorderedGroups = {};
 
   // Selection mode state
   bool _isSelectionMode = false;
@@ -313,6 +319,30 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     return filtered;
   }
 
+  /// Ionic list players: shared organisation values hydrated, then
+  /// getModifiedPlayersForList fills missing extra field values with their
+  /// defaults (getPersonExtraFields, first church).
+  List<Person> _listPeople() {
+    final raw = ref.read(realtimePlayersProvider).valueOrNull ?? const <Person>[];
+    return _withDefaults(mergeSharedPersonFieldValues(
+        raw, ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {}));
+  }
+
+  List<Person> _withDefaults(List<Person> people) {
+    final fields = ref.read(personListExtraFieldsProvider);
+    final hasChurch = fields.any((f) => f.type == 'bfecg_church');
+    return withExtraFieldDefaults(
+      people,
+      fields,
+      churchIds: hasChurch
+          ? [
+              for (final c in ref.read(churchesProvider).valueOrNull ?? const [])
+                if (c.id != null) c.id!,
+            ]
+          : const [],
+    );
+  }
+
   List<Person> _sortPeople(List<Person> people) {
     final sorted = List<Person>.from(people);
 
@@ -431,9 +461,23 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     });
     // Use realtime provider for live updates
     final peopleAsync = ref.watch(realtimePlayersProvider);
-    final percentages = ref.watch(playerAttendancePercentagesProvider).valueOrNull ?? {};
+    final percentagesAsync = ref.watch(playerAttendancePercentagesProvider);
+    final percentages = percentagesAsync.valueOrNull ?? {};
+    // Ionic showTeachers = view option and tenant.maintainTeachers; names
+    // from db.getTeachers().
+    final showTeachers = (tenant?.maintainTeachers ?? false) &&
+        _viewOptions.contains('teacher');
+    final teacherNames = <int, String>{
+      if (showTeachers)
+        for (final t in ref.watch(teachersProvider).valueOrNull ?? const [])
+          if (t.id != null) t.id!: t.name,
+    };
     // PARITY_B (I2): Ionic getPersonExtraFields + hydrated shared values
     final extraFields = ref.watch(personListExtraFieldsProvider);
+    // Gemeinde defaults need the churches (first church).
+    if (extraFields.any((f) => f.type == 'bfecg_church')) {
+      ref.watch(churchesProvider);
+    }
     final sharedFieldValues =
         ref.watch(sharedPersonFieldValuesProvider).valueOrNull ?? const {};
     final mainGroupId = ref.watch(mainGroupProvider).valueOrNull?.id;
@@ -544,8 +588,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           ),
         ],
         data: (rawPeople) {
-          final people =
-              mergeSharedPersonFieldValues(rawPeople, sharedFieldValues);
+          final people = _withDefaults(
+              mergeSharedPersonFieldValues(rawPeople, sharedFieldValues));
           final sortedPeople = _sortPeople(_filterPeople(people));
 
           if (people.isEmpty) {
@@ -605,8 +649,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               onPause: isAdmin ? () => _showPauseDialog(person) : null,
               onUnpause: isAdmin ? () => _unpausePerson(person) : null,
               onRemove: isAdmin ? () => _remove(person) : null,
-              attendancePercentage:
-                  person.id != null ? percentages[person.id] : null,
+              // Ionic shows the badge for everyone, 0% without counted Termine
+              attendancePercentage: person.id != null && percentagesAsync.hasValue
+                  ? percentages[person.id] ?? 0
+                  : null,
+              showTeachers: showTeachers,
+              teacherNames: teacherNames,
             );
           }
 
@@ -701,8 +749,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             icon: const Icon(Icons.select_all),
             tooltip: context.l10n.handoverSelectAll,
             onPressed: () {
-              final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
-              final filtered = _filterPeople(people);
+              final filtered = _filterPeople(_listPeople());
               setState(() {
                 _selectedPlayerIds.clear();
                 for (final p in filtered) {
@@ -1039,18 +1086,21 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
             .toList();
       }
       if (!mounted) return;
-      value = await showAppDialog<String>(
-        context: context,
-        builder: (ctx) => AppSimpleDialog(
-          title: Text(field.name),
-          children: choices
-              .map((c) => SimpleDialogOption(
-                    onPressed: () => Navigator.pop(ctx, c.key),
-                    child: Text(c.value),
-                  ))
-              .toList(),
-        ),
+      // Ionic: ion-alert with radio inputs, "Abbrechen" (→ Alle) /
+      // "Filtern". Only the Ja/Nein alert pre-checks a value (Ja unless the
+      // saved filter is Nein); the select/church inputs set `selected`,
+      // which ion-alert ignores, so nothing is pre-checked there.
+      final saved = _filterOption == option ? _extraFilterValue : null;
+      final result = await showAppRadioAlert<String>(
+        context,
+        title: field.name,
+        options: [for (final c in choices) (c.key, c.value)],
+        initialValue: field.type == 'boolean'
+            ? (saved == 'false' ? 'false' : 'true')
+            : null,
+        confirmText: context.l10n.peopleFilter,
       );
+      value = result?.value;
     }
 
     if (!mounted) return;
@@ -1128,9 +1178,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   Future<void> _showChurchOverview() async {
     final field = _churchField(ref.read(currentTenantProvider));
     if (field == null) return;
-    final people = mergeSharedPersonFieldValues(
-        ref.read(realtimePlayersProvider).valueOrNull ?? const [],
-        ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {});
+    final people = _listPeople();
     final churchIds = _filterPeople(people)
         .map((p) => churchIdOf(p.additionalFields, field.id))
         .toList();
@@ -1147,9 +1195,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   /// Ionic toggleReorderMode: enter reorder mode, or save the new order.
   Future<void> _toggleReorderMode() async {
     if (!_isReordering) {
-      final people = ref.read(realtimePlayersProvider).valueOrNull ?? [];
-      final grouped = _groupByGroup(_sortPeople(_filterPeople(people)));
+      final grouped = _groupByGroup(_sortPeople(_filterPeople(_listPeople())));
       setState(() {
+        _reorderedGroups.clear();
         _reorderIds
           ..clear()
           ..addAll(grouped.map((k, v) =>
@@ -1160,8 +1208,12 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       return;
     }
 
+    // Ionic savePlayerOrder: writes sort_order only where it is set, i.e.
+    // the moved groups; never-sorted groups stay alphabetical.
     final orders = <int, int>{};
-    for (final ids in _reorderIds.values) {
+    for (final entry in _reorderIds.entries) {
+      if (!_reorderedGroups.contains(entry.key)) continue;
+      final ids = entry.value;
       for (var i = 0; i < ids.length; i++) {
         orders[ids[i]] = i + 1;
       }
@@ -1214,8 +1266,10 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
               setState(() {
                 final ids = _reorderIds[groupName]!;
                 if (newIndex > oldIndex) newIndex -= 1;
+                if (newIndex == oldIndex) return;
                 final moved = ids.removeAt(oldIndex);
                 ids.insert(newIndex, moved);
+                _reorderedGroups.add(groupName);
               });
             },
             children: [
@@ -1279,9 +1333,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
   // PEOPLE_IMPORT: open bulk edit with the currently filtered persons
   Future<void> _openBulkEdit() async {
     // PARITY_B (I3): bulk edit works on hydrated values (Ionic list players)
-    final people = mergeSharedPersonFieldValues(
-        ref.read(realtimePlayersProvider).valueOrNull ?? [],
-        ref.read(sharedPersonFieldValuesProvider).valueOrNull ?? const {});
+    final people = _listPeople();
     final players = _sortPeople(_filterPeople(people));
     final updated = await Navigator.of(context, rootNavigator: true).push<bool>(
       MaterialPageRoute(
@@ -1381,73 +1433,13 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (choice == 'remove') await _removePlayer(person);
   }
 
-  /// Ionic archive modal: "{name} Archivieren" with Austrittsdatum + Notiz.
+  /// Ionic archive modal: full screen "{name} Archivieren" with X,
+  /// Austrittsdatum, Notiz and the archive FAB.
   Future<void> _showArchiveDialog(Person person) async {
-    final noteController = TextEditingController();
-    DateTime archiveDate = DateTime.now();
-
-    try {
-      final result = await showAppDialog<Map<String, dynamic>>(
-        context: context,
-        barrierDismissible: false,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AppAlertDialog(
-            title: Text(context.l10n.peopleArchiveTitle('${person.firstName} ${person.lastName}')),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(context.l10n.peopleLeaveDate),
-                  subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showAppDatePicker(
-                      context: context,
-                      initialDate: archiveDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime(2100),
-                    );
-                    if (date != null) {
-                      setDialogState(() => archiveDate = date);
-                    }
-                  },
-                ),
-                TextField(
-                  controller: noteController,
-                  textCapitalization: TextCapitalization.sentences,
-                  decoration: InputDecoration(labelText: context.l10n.peopleNote),
-                  maxLines: 3,
-                  minLines: 1,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(
-                onPressed: () => Navigator.pop(context),
-                child: Text(context.l10n.commonCancel),
-              ),
-              FilledButton.icon(
-                icon: const Icon(Icons.archive_outlined),
-                onPressed: () {
-                  Navigator.pop(context, {
-                    'date': archiveDate.toIso8601String(),
-                    'note': noteController.text,
-                  });
-                },
-                label: Text(context.l10n.peopleArchive),
-              ),
-            ],
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _archivePerson(person,
-            date: result['date'] as String, note: result['note'] as String);
-      }
-    } finally {
-      noteController.dispose();
+    final result = await showArchivePersonModal(
+        context, '${person.firstName} ${person.lastName}');
+    if (result != null && mounted) {
+      await _archivePerson(person, date: result.date, note: result.note);
     }
   }
 
@@ -1504,6 +1496,8 @@ class _PersonListItem extends StatelessWidget {
     this.churchNames = const {},
     this.isMainGroup = false,
     this.otherInstanceName,
+    this.showTeachers = false,
+    this.teacherNames = const {},
   });
 
   final Person person;
@@ -1520,6 +1514,12 @@ class _PersonListItem extends StatelessWidget {
   final bool isMainGroup;
   final String? otherInstanceName;
 
+  /// Ionic showTeachers: view option "Lehrer" and tenant maintainTeachers.
+  final bool showTeachers;
+
+  /// Teacher id → name (Ionic getTeacherName, unknown → "Unbekannt").
+  final Map<int, String> teacherNames;
+
   String _extraValueText(ExtraField field, dynamic value) {
     if (field.type == 'bfecg_church') {
       return churchNames[value?.toString()] ?? l10nWithoutContext.commonUnknown;
@@ -1527,7 +1527,10 @@ class _PersonListItem extends StatelessWidget {
     return value.toString();
   }
 
-  bool _hasExtraValue(dynamic v) => v != null && v != false && v != '';
+  /// JS truthiness like Ionic `@if (player.additional_fields[field.id])`:
+  /// null, false, '' and 0 hide the badge/line.
+  bool _hasExtraValue(dynamic v) =>
+      v != null && v != false && v != '' && v != 0;
 
   /// Ionic getSubText: Gruppe | Geburtsdatum | Testergebnis | Instrumente |
   /// Sonstige Dienste, joined with " | ".
@@ -1570,10 +1573,11 @@ class _PersonListItem extends StatelessWidget {
     final sub = _subText(context);
     return [
       if (sub.isNotEmpty) line(sub),
-      if (!isMainGroup && viewOptions.contains('teacher'))
+      if (!isMainGroup && showTeachers)
         line(
-          person.teacherName != null
-              ? context.l10n.peopleTeacherName(person.teacherName!)
+          person.teacher != null
+              ? context.l10n.peopleTeacherName(
+                  teacherNames[person.teacher] ?? context.l10n.commonUnknown)
               : context.l10n.peopleNoTeacher,
         ),
       if (otherInstanceName != null) line(otherInstanceName!),
@@ -1617,6 +1621,8 @@ class _PersonListItem extends StatelessWidget {
       for (final f in extraFields)
         if (viewOptions.contains('extra:${f.id}') &&
             f.displayMode != 'underneath' &&
+            const ['boolean', 'select', 'text', 'bfecg_church', 'number']
+                .contains(f.type) &&
             _hasExtraValue(person.additionalFields?[f.id]))
           IonBadge(
             text: switch (f.type) {

@@ -7,6 +7,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/group_providers.dart';
+import '../../../../data/models/instrument/instrument.dart' show Group;
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/color_utils.dart';
@@ -20,26 +21,58 @@ import '../widgets/type_protocol_settings.dart';
 import '../widgets/registration_fields_editor.dart';
 import '../widgets/type_reminders_editor.dart';
 import '../widgets/settings_list.dart';
-import '../../../organisation/presentation/widgets/type_default_org_plan_toggle.dart';
+import '../../../../core/providers/organisation_providers.dart' show currentOrganisationProvider;
+import '../../../../core/providers/plan_providers.dart' show planAttendanceTypesProvider;
+import '../../../../core/utils/plan_utils.dart';
+import '../../../../data/models/team_org/team_org.dart' show agendaItemsPlaceholderId;
+import '../../../../data/models/plan/plan.dart' show PlanField;
+import '../../../planning/presentation/widgets/plan_field_dialogs.dart' show showPlanFieldDialog;
+import '../../../planning/presentation/widgets/plan_fields_editor.dart';
 import '../../../../l10n/l10n.dart';
-import '../../../../core/utils/error_message.dart';
 import '../../../../core/services/error_reporter.dart';
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/services/web_window.dart' show setUnloadWarning;
 
 
+/// Ionic `types.page.ts openTypeModal()`: "+" presents the type page with
+/// `isNew: true` as a modal (iOS: card modal over the list, md: full-screen
+/// `ion-modal`, centred card on desktop). Nothing is written before the FAB
+/// creates the type. Returns true when a type was created.
+Future<bool?> showAttendanceTypeCreateModal(BuildContext context) {
+  Widget build(BuildContext _) => const AttendanceTypeEditPage.create();
+  if (useIosLook(context)) {
+    return showIosCardModal<bool>(
+      context,
+      backgroundColor: Theme.of(context).brightness == Brightness.dark
+          ? null
+          : AppColors.light,
+      builder: build,
+    );
+  }
+  return showIonModal<bool>(context, builder: build);
+}
+
 /// Attendance Type Edit Page
 ///
-/// Edit an existing attendance type or create a new one.
+/// Edit an existing attendance type or – with [AttendanceTypeEditPage.create]
+/// (Ionic `isNew`) – configure and create a new one.
 class AttendanceTypeEditPage extends ConsumerStatefulWidget {
-  final String typeId;
+  /// Null in the "new" mode.
+  final String? typeId;
 
   const AttendanceTypeEditPage({
     super.key,
-    required this.typeId,
+    required String this.typeId,
   });
+
+  /// Ionic type.page with `isNew: true`: starts with the defaults of
+  /// [buildNewAttendanceType] and creates the type on the FAB.
+  const AttendanceTypeEditPage.create({super.key}) : typeId = null;
+
+  bool get isNew => typeId == null;
 
   @override
   ConsumerState<AttendanceTypeEditPage> createState() => _AttendanceTypeEditPageState();
@@ -75,9 +108,28 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   bool _notification = false;
   List<int> _reminders = [];
   List<ChecklistItem> _checklist = [];
+
+  /// Ionic `type.checklist !== null` ("Checkliste aktivieren").
+  bool _checklistEnabled = false;
+  final _newTodoController = TextEditingController();
+  final _customDeadlineController = TextEditingController();
+
+  /// Ionic `newChecklistDeadline`: null = keine, -1 = benutzerdefiniert.
+  int? _newTodoDeadline;
   List<Map<String, dynamic>> _planFields = [];
+
+  /// Row identities given only in memory (local uid → stored uid, null =
+  /// the row had none); restored before saving. See [_withRowUid].
+  final Map<String, String?> _localPlanUids = {};
   String _planningTitle = '';
   bool _planningPrefixInstanceName = false;
+  bool _isDefaultOrgPlan = false;
+  /// Only write is_default_org_plan when it was loaded, so a failed load
+  /// never overwrites a stored `true`.
+  bool _isDefaultOrgPlanLoaded = false;
+
+  /// Ionic `end`: computed by calculateEnd() after a change to the plan.
+  String? _planEnd;
   List<int> _relevantGroups = [];
   Map<String, dynamic>? _additionalFieldsFilter;
   TypeProtocolSettings _protocol = const TypeProtocolSettings();
@@ -96,24 +148,51 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   AttendanceType? _originalType;
   int _usageCount = 0;
 
+  /// Id of the type created in the "new" mode (for the duty view offer).
+  String? _createdId;
+  bool _isCreating = false;
+
+  bool get _isNew => widget.isNew;
+
+  /// Ionic `dismissModal`: the discard alert only once a name was entered.
+  bool get _hasNewInput => _nameController.text.trim().isNotEmpty;
+
   @override
   void initState() {
     super.initState();
-    _loadType();
+    if (_isNew) {
+      // Ionic isNew: nothing is loaded; the org plan flag starts false and
+      // is written with the insert.
+      _isDefaultOrgPlanLoaded = true;
+      _applyType(buildNewAttendanceType(''));
+    } else {
+      _loadType();
+    }
   }
 
   Future<void> _loadType() async {
+    final typeId = widget.typeId!;
     final repo = ref.read(attendanceTypeRepositoryWithTenantProvider);
     final protocolRepo = ref.read(protocolRepositoryWithTenantProvider);
-    final type = await ref.read(attendanceTypeByIdProvider(widget.typeId).future);
+    final type = await ref.read(attendanceTypeByIdProvider(typeId).future);
 
     if (type != null && mounted) {
       // Fetch usage count
       try {
-        _usageCount = await repo.getAttendanceCountForType(widget.typeId);
+        _usageCount = await repo.getAttendanceCountForType(typeId);
         // SETTINGS2: "Instanz-Name vor Werken"
         _planningPrefixInstanceName =
-            await repo.getPlanningPrefixInstanceName(widget.typeId);
+            await repo.getPlanningPrefixInstanceName(typeId);
+      } catch (e, st) {
+        ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
+      }
+
+      // Ionic type.page: is_default_org_plan is edited with the other fields.
+      try {
+        final planTypes = await ref.read(planAttendanceTypesProvider.future);
+        _isDefaultOrgPlan =
+            planTypes.where((t) => t.id == typeId).firstOrNull?.isDefaultOrgPlan ?? false;
+        _isDefaultOrgPlanLoaded = true;
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
       }
@@ -121,13 +200,21 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       // PROTOCOL: enable_protocol etc. are not part of the AttendanceType model
       try {
         final types = await protocolRepo.getProtocolTypes();
-        _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == widget.typeId).firstOrNull);
+        _protocol = TypeProtocolSettings.fromType(types.where((t) => t.id == typeId).firstOrNull);
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'attendance_type_edit_page');
       }
       if (!mounted) return;
 
-      setState(() {
+      setState(() => _applyType(type));
+    } else {
+      setState(() => _isLoading = false);
+    }
+  }
+
+  /// Copies [type] into the form state (the loaded type or the Ionic
+  /// defaults of a new one).
+  void _applyType(AttendanceType type) {
         _originalType = type;
         _nameController.text = type.name;
         _startTime = _parseTime(type.startTime ?? '19:00');
@@ -170,18 +257,22 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _notification = type.notification;
         _reminders = List<int>.from(type.reminders ?? []);
         _checklist = List<ChecklistItem>.from(type.checklist ?? []);
+        _checklistEnabled = type.checklist != null;
         _planningTitle = type.planningTitle ?? '';
         _planningTitleController.text = _planningTitle;
-        _planFields = _parsePlanFields(type.defaultPlan);
+        // Ionic ngOnInit: the agenda marker takes no time (older plans
+        // stored 30 min on it).
+        // Added one by one so _withRowUid sees the rows already loaded.
+        _localPlanUids.clear();
+        _planFields = [];
+        for (final f in _parsePlanFields(type.defaultPlan)) {
+          _planFields.add(_withRowUid(f['id'] == agendaItemsPlaceholderId ? {...f, 'time': '0'} : f));
+        }
         _relevantGroups = List<int>.from(type.relevantGroups ?? []);
         _additionalFieldsFilter = type.additionalFieldsFilter != null
             ? Map<String, dynamic>.from(type.additionalFieldsFilter!)
             : null;
         _isLoading = false;
-      });
-    } else {
-      setState(() => _isLoading = false);
-    }
   }
 
   @override
@@ -190,6 +281,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     _nameController.dispose();
     _durationDaysController.dispose();
     _planningTitleController.dispose();
+    _newTodoController.dispose();
+    _customDeadlineController.dispose();
     super.dispose();
   }
 
@@ -210,19 +303,36 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
 
     // Ionic beforeunload: closing/reloading the browser tab warns too.
-    setUnloadWarning(this, _hasChanges);
+    final dirty = _isNew ? _hasNewInput : _hasChanges;
+    setUnloadWarning(this, dirty);
     return PopScope(
-      canPop: !_hasChanges,
+      // Während des Anlegens nicht schließen (Wischen/Zurück blockiert).
+      canPop: !dirty && !_isCreating,
       onPopInvokedWithResult: (didPop, _) {
-        if (!didPop) _onBackPressed();
+        if (!didPop) _isNew ? _closeNew() : _onBackPressed();
       },
       child: Scaffold(
         // UX_SETTINGS (WAVE 8): type.page.html — no title, arrow-back,
         // red trash at the end, save via FAB (save-outline).
         // IOS_R6: Ionic `ion-content fullscreen` under the
         // `ion-header translucent` (no large title: always blurred)
-        extendBodyBehindAppBar: useIosLook(context),
-        appBar: IonTranslucentAppBar(child: AppBar(
+        // Ionic isNew (modal): no back arrow and no trash, ✕ at the end.
+        extendBodyBehindAppBar: !_isNew && useIosLook(context),
+        appBar: _isNew
+            ? AppBar(
+                automaticallyImplyLeading: false,
+                toolbarHeight: ionModalToolbarHeight(context),
+                actions: [
+                  ToolbarButtonGroup(children: [
+                    IconButton(
+                      icon: const Icon(Icons.close),
+                      tooltip: context.l10n.commonClose,
+                      onPressed: _isCreating ? null : _closeNew,
+                    ),
+                  ]),
+                ],
+              )
+            : IonTranslucentAppBar(child: AppBar(
           leading: IconButton(
           icon: Icon(Icons.arrow_back, semanticLabel: context.l10n.commonBack),
           onPressed: _onBackPressed,
@@ -235,7 +345,14 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
           ),
         ],
       )),
-      floatingActionButton: TabBarFab.wrap(FloatingActionButton(
+      // Ionic isNew: "+" FAB creates the type (always enabled).
+      floatingActionButton: _isNew
+          ? FloatingActionButton(
+              onPressed: _isCreating ? null : _create,
+              tooltip: context.l10n.typeSettingsFlutterCreateType,
+              child: const Icon(Icons.add),
+            )
+          : TabBarFab.wrap(FloatingActionButton(
         onPressed: _hasChanges ? _save : null,
         tooltip: context.l10n.commonSave,
         child: const Icon(Icons.save_outlined),
@@ -298,7 +415,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   // stacked select.
                   IonStackedValue(
                     label: context.l10n.typeSettingsAvailableStatus,
-                    value: AttendanceStatus.values
+                    value: _statusOrder
                         .where(_availableStatuses.contains)
                         .map(_getStatusName)
                         .join(', '),
@@ -322,7 +439,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           });
                         }
                       },
-                      items: AttendanceStatus.values
+                      items: _statusOrder
                           .where(_availableStatuses.contains)
                           .map((status) => DropdownMenuItem(
                                 value: status,
@@ -331,6 +448,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                           .toList(),
                     ),
                   ),
+                  // Ionic: `@if (!isGeneral)`.
+                  if (!_isGeneral)
                   SwitchListTile.adaptive(
                     title: Text(context.l10n.typeSettingsManageSongs),
                     subtitle: Text(
@@ -441,13 +560,15 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   // PROTOCOL: Protokoll & Tagesordnung
                   TypeProtocolSettingsTiles(
                     settings: _protocol,
+                    // Ionic: "Mehr erfahren" is hidden while creating.
+                    showLearnMore: !_isNew,
                     hasPlaceholder: hasAgendaPlaceholder(_planFields),
                     onChanged: (v) => setState(() {
                       _protocol = v;
                       _hasChanges = true;
                     }),
                     onInsertPlaceholder: () => setState(() {
-                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(agendaPlaceholderField());
+                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(_withRowUid(agendaPlaceholderField()));
                       _hasChanges = true;
                     }),
                   ),
@@ -490,13 +611,26 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     }),
                     contentPadding: EdgeInsets.zero,
                   ),
+                  // Ionic: item "Erinnerungen konfigurieren" opening the sheet.
                   if (_notification)
-                    TypeRemindersEditor(
-                      reminders: _reminders,
-                      onChanged: (list) => setState(() {
-                        _reminders = list;
-                        _hasChanges = true;
-                      }),
+                    ListTile(
+                      contentPadding: EdgeInsets.zero,
+                      title: Text(context.l10n.typeSettingsConfigureReminders),
+                      subtitle: Text(_reminders.isNotEmpty
+                          ? context.l10n.typeSettingsRemindersActive(_reminders.length)
+                          : context.l10n.typeSettingsNoReminders),
+                      trailing: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_reminders.isNotEmpty)
+                            IonBadge(
+                              text: '${_reminders.length}/${TypeRemindersEditor.maxReminders}',
+                              color: AppColors.primary,
+                            ),
+                          const Icon(Icons.chevron_right, color: AppColors.medium),
+                        ],
+                      ),
+                      onTap: _openReminders,
                     ),
                 ],
               ),
@@ -518,206 +652,34 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             ),
             const SizedBox(height: AppDimensions.paddingL),
 
-            // Relevant Groups (B8-009)
-            _buildRelevantGroupsSection(),
+            // Ionic "Filter": Relevante Gruppen + Zusatzfeld-Filter
+            _buildFilterSection(),
             const SizedBox(height: AppDimensions.paddingL),
 
-            // Additional Fields Filter (B8-010)
-            _buildAdditionalFieldsFilterSection(),
+            // Ionic: "Ablaufplan" is always shown (default_plan is created
+            // on load), with the "+" popover in the header.
+            _buildPlanSection(),
             const SizedBox(height: AppDimensions.paddingL),
 
-            // Ablaufplan (Default Plan) - only when manageSongs is enabled
-            if (_manageSongs) ...[
-              _buildSection(
-                title: context.l10n.typeSettingsRunSheet,
-                child: Column(
-                  children: [
-                    // Planning title
-                    IonStackedField(
-                      flush: true,
-                      label: context.l10n.typeSettingsPlanHeading,
-                      hint: context.l10n.typeSettingsFlutterPlanHeadingPh,
-                      builder: (decoration) => TextFormField(
-                        controller: _planningTitleController,
-                        decoration: decoration,
-                        onChanged: (value) {
-                          _planningTitle = value;
-                          _hasChanges = true;
-                        },
-                      ),
-                    ),
-                    // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
-                    if (ref.watch(currentTenantProvider)?.type != 'general')
-                      SwitchListTile.adaptive(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(context.l10n.typeSettingsTenantNameBefore),
-                        subtitle: Text(
-                          context.l10n.typeSettingsTenantNameHelper,
-                        ),
-                        value: _planningPrefixInstanceName,
-                        onChanged: (v) => setState(() {
-                          _planningPrefixInstanceName = v;
-                          _hasChanges = true;
-                        }),
-                      ),
-                    // SETTINGS2: plan start time for all-day types (Ionic type.start_time)
-                    if (_allDay)
-                      ListTile(
-                        contentPadding: EdgeInsets.zero,
-                        title: Text(context.l10n.typeSettingsStartShort),
-                        subtitle: Text(context.l10n.typeSettingsStartAllDay),
-                        trailing: Text(
-                          _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                        onTap: () => _pickTime(isStart: true),
-                      ),
-                    const SizedBox(height: 12),
-                    // Plan fields list
-                    if (_planFields.isNotEmpty)
-                      ReorderableListView.builder(
-                        shrinkWrap: true,
-                        physics: const NeverScrollableScrollPhysics(),
-                        itemCount: _planFields.length,
-                        onReorder: (oldIndex, newIndex) {
-                          setState(() {
-                            if (newIndex > oldIndex) newIndex--;
-                            final item = _planFields.removeAt(oldIndex);
-                            _planFields.insert(newIndex, item);
-                            _hasChanges = true;
-                          });
-                        },
-                        itemBuilder: (context, index) {
-                          final field = _planFields[index];
-                          final isSongPlaceholder = (field['id'] as String? ?? '').startsWith('song-placeholder');
-                          // Ionic: ion-item-sliding, expandable trash option
-                          // (full swipe deletes), reorder handle at the end.
-                          return SwipeActions.delete(
-                            key: ValueKey('plan-field-${field['id']}'),
-                            fullSwipe: true,
-                            onDelete: () => setState(() {
-                              _planFields.removeAt(index);
-                              _hasChanges = true;
-                            }),
-                            child: ListTile(
-                              title: Text(
-                                field['name'] as String? ?? '',
-                                style: isSongPlaceholder
-                                    ? const TextStyle(fontStyle: FontStyle.italic)
-                                    : null,
-                              ),
-                              subtitle: Text(context.l10n.typeSettingsFlutterMinutes('${field['time'] ?? '0'}')),
-                              trailing: ReorderableDragStartListener(
-                                index: index,
-                                child: const Icon(Icons.drag_handle),
-                              ),
-                              onTap: () => _editPlanField(index),
-                            ),
-                          );
-                        },
-                      ),
-                    // Total duration
-                    if (_planFields.isNotEmpty)
-                      Padding(
-                        padding: const EdgeInsets.symmetric(vertical: 8),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Text(
-                              context.l10n.typeSettingsFlutterTotalMinutes(_totalPlanMinutes()),
-                              style: const TextStyle(
-                                fontWeight: FontWeight.w600,
-                                color: AppColors.medium,
-                              ),
-                            ),
-                          ],
-                        ),
-                      ),
-                    // Add buttons
-                    Row(
-                      children: [
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: _addPlanField,
-                            icon: const Icon(Icons.add, size: 18),
-                            label: Text(context.l10n.typeSettingsAddField),
-                          ),
-                        ),
-                        const SizedBox(width: 8),
-                        Expanded(
-                          child: OutlinedButton.icon(
-                            onPressed: _addSongPlaceholder,
-                            icon: const Icon(Icons.music_note, size: 18),
-                            label: Text(context.l10n.typeSettingsSongPlaceholder),
-                          ),
-                        ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
+            // Checkliste (Template) – only while enabled (Ionic `@if (type.checklist)`)
+            if (_checklistEnabled) ...[
+              _buildChecklistSection(),
               const SizedBox(height: AppDimensions.paddingL),
             ],
-            // ORG_PLANS: Termine of this type start as org plan
-            TypeDefaultOrgPlanToggle(typeId: widget.typeId),
-
-            // Checkliste (Template)
+            // Ionic: toggle "Checkliste aktivieren" (off = checklist null)
             _buildSection(
-              title: context.l10n.typeSettingsChecklist,
-              child: Column(
-                children: [
-                  if (_checklist.isNotEmpty)
-                    ReorderableListView.builder(
-                      shrinkWrap: true,
-                      physics: const NeverScrollableScrollPhysics(),
-                      itemCount: _checklist.length,
-                      onReorder: (oldIndex, newIndex) {
-                        setState(() {
-                          if (newIndex > oldIndex) newIndex--;
-                          final item = _checklist.removeAt(oldIndex);
-                          _checklist.insert(newIndex, item);
-                          _hasChanges = true;
-                        });
-                      },
-                      itemBuilder: (context, index) {
-                        final item = _checklist[index];
-                        // Ionic: ion-item-sliding with a trash option,
-                        // deadline text as subtitle, reorder handle at the end.
-                        return SwipeActions.delete(
-                          key: ValueKey('checklist-${item.id}'),
-                          onDelete: () => setState(() {
-                            _checklist.removeAt(index);
-                            _hasChanges = true;
-                          }),
-                          child: ListTile(
-                            title: Text(item.text),
-                            subtitle: Text(_checklistDeadlineText(item.deadlineHours)),
-                            trailing: ReorderableDragStartListener(
-                              index: index,
-                              child: const Icon(Icons.drag_handle),
-                            ),
-                            onTap: () => _editChecklistItem(index),
-                          ),
-                        );
-                      },
-                    ),
-                  if (_checklist.isEmpty)
-                    Padding(
-                      padding: EdgeInsets.symmetric(vertical: 8),
-                      child: Text(
-                        context.l10n.typeSettingsNoTodos,
-                        style: TextStyle(color: AppColors.medium),
-                      ),
-                    ),
-                  OutlinedButton.icon(
-                    onPressed: _addChecklistItem,
-                    icon: const Icon(Icons.add, size: 18),
-                    label: IonButtonLabel(context.l10n.typeSettingsAddTodo),
-                  ),
-                ],
+              child: SwitchListTile.adaptive(
+                contentPadding: EdgeInsets.zero,
+                title: Text(context.l10n.typeSettingsEnableChecklist),
+                subtitle: Text(context.l10n.typeSettingsChecklistHelper),
+                value: _checklistEnabled,
+                onChanged: (v) => setState(() {
+                  _checklistEnabled = v;
+                  _checklist = [];
+                  _hasChanges = true;
+                }),
               ),
             ),
-
             const SizedBox(height: AppDimensions.paddingL),
             // ATTENDANCE_SIGNOUT: Anmeldefelder (adjustable at any time)
             _buildSection(
@@ -794,7 +756,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
-                for (final status in AttendanceStatus.values)
+                for (final status in _ionicStatusOptions)
                   CheckboxListTile(
                     title: Text(_getStatusName(status)),
                     value: selected.contains(status),
@@ -828,7 +790,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     setState(() {
       _availableStatuses
         ..clear()
-        ..addAll(AttendanceStatus.values.where(result.contains));
+        ..addAll(_statusOrder.where(result.contains));
       // Ionic onAvailableStatusesChanged: fall back to Anwesend.
       if (!_availableStatuses.contains(_defaultStatus)) {
         _defaultStatus = AttendanceStatus.present;
@@ -868,13 +830,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     ]);
   }
 
-  Widget _buildSection({required String title, required Widget child}) {
+  Widget _buildSection({String? title, required Widget child, Widget? action}) {
     // UX_SETTINGS (WAVE 8): iOS → ion-list-header + inset item group.
     if (ionIsIos(context)) {
       return Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          IonListHeader(title: title),
+          if (title != null) IonListHeader(title: title, action: action),
           IonInsetGroup(children: [
             Padding(
               padding: const EdgeInsets.fromLTRB(
@@ -892,15 +854,24 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        Text(
-          title,
-          style: const TextStyle(
-            fontSize: 14,
-            fontWeight: FontWeight.w600,
-            color: AppColors.medium,
+        if (title != null) ...[
+          Row(
+            children: [
+              Expanded(
+                child: Text(
+                  title,
+                  style: const TextStyle(
+                    fontSize: 14,
+                    fontWeight: FontWeight.w600,
+                    color: AppColors.medium,
+                  ),
+                ),
+              ),
+              if (action != null) action,
+            ],
           ),
-        ),
-        const SizedBox(height: 8),
+          const SizedBox(height: 8),
+        ],
         child,
       ],
     );
@@ -939,6 +910,15 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               }
             }),
             contentPadding: EdgeInsets.zero,
+          ),
+          // Ionic openDutyHelp: "Mehr erfahren" → help article duty-setup
+          // (not while creating a new type).
+          if (!_isNew)
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            leading: const Icon(Icons.help_outline, color: AppColors.primary),
+            title: Text(context.l10n.typeSettingsLearnMore, style: const TextStyle(color: AppColors.primary)),
+            onTap: () => context.push('/settings/help/article/duty-setup'),
           ),
           if (_dutyMode) ...[
             ListTile(
@@ -1033,7 +1013,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final tenant = ref.read(currentTenantProvider);
     if (tenant == null || tenant.dutyView) return;
     final types = ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[];
-    if (types.any((t) => t.dutyMode && t.id != widget.typeId)) return;
+    final ownId = widget.typeId ?? _createdId;
+    if (types.any((t) => t.dutyMode && t.id != ownId)) return;
     final useIt = await DialogHelper.showConfirmation(
       context,
       title: context.l10n.typeSettingsUseDutyView,
@@ -1055,122 +1036,196 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
   }
 
-  Widget _buildRelevantGroupsSection() {
-    final groupsAsync = ref.watch(groupsProvider);
+  /// Ionic "Filter": multi-select "Relevante Gruppen" and the extra field
+  /// filter (select and Ja/Nein fields) in one list.
+  Widget _buildFilterSection() {
+    final groups = ref.watch(groupsProvider).valueOrNull ?? const <Group>[];
+    final tenant = ref.watch(currentTenantProvider);
+    final extraFields = (tenant?.additionalFields ?? [])
+        .where((f) => f.type == 'select' || f.type == 'boolean')
+        .toList();
+
+    final selectedFieldId = _additionalFieldsFilter?['key'] as String?;
+    final selectedField = extraFields.where((f) => f.id == selectedFieldId).firstOrNull;
+    final rawOption = _additionalFieldsFilter?['option'];
+
+    final groupNames = [
+      for (final g in groups)
+        if (g.id != null && _relevantGroups.contains(g.id)) g.name,
+    ];
 
     return _buildSection(
-      title: context.l10n.typeSettingsRelevantGroups,
+      title: context.l10n.typeSettingsFilter,
       child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
         children: [
-          Text(
-            context.l10n.typeSettingsFlutterAllGroupsHint,
-            style: TextStyle(fontSize: 12, color: AppColors.medium),
+          IonStackedValue(
+            flush: true,
+            label: context.l10n.typeSettingsRelevantGroups,
+            value: groupNames.join(', '),
+            helper: context.l10n.typeSettingsRelevantGroupsHelper,
+            onTap: groups.isEmpty ? null : () => _pickRelevantGroups(groups),
           ),
-          const SizedBox(height: 8),
-          groupsAsync.when(
-            loading: () => const LinearProgressIndicator(),
-            error: (e, _) => Text(context.l10n.settingsFlutterErrorDetail(friendlyErrorMessage(e))),
-            data: (groups) => Wrap(
-              spacing: 8,
-              runSpacing: 8,
-              children: groups.where((g) => g.id != null).map((group) {
-                final isSelected = _relevantGroups.contains(group.id);
-                return FilterChip(
-                  label: Text(group.shortName ?? group.name),
-                  selected: isSelected,
-                  onSelected: (selected) => setState(() {
-                    if (selected) {
-                      _relevantGroups.add(group.id!);
-                    } else {
-                      _relevantGroups.remove(group.id!);
-                    }
-                    _hasChanges = true;
-                  }),
-                );
-              }).toList(),
+          if (extraFields.isNotEmpty)
+            IonStackedField(
+              flush: true,
+              label: context.l10n.typeSettingsExtraFilter,
+              helper: context.l10n.typeSettingsExtraFilterHelper,
+              builder: (decoration) => AppDropdownFormField<String?>(
+                iosInterface: AppSelectInterface.alert,
+                decoration: decoration,
+                value: selectedField?.id,
+                items: [
+                  DropdownMenuItem(value: null, child: Text(context.l10n.typeSettingsNoFilter)),
+                  for (final f in extraFields) DropdownMenuItem(value: f.id, child: Text(f.name)),
+                ],
+                // Ionic onAdditionalFieldFilterChanged: Ja/Nein starts with
+                // true, a select field with its first option.
+                onChanged: (value) => setState(() {
+                  final field = extraFields.where((f) => f.id == value).firstOrNull;
+                  _additionalFieldsFilter = field == null
+                      ? null
+                      : {
+                          'key': field.id,
+                          'option': field.type == 'boolean' ? true : field.options?.firstOrNull,
+                        };
+                  _hasChanges = true;
+                }),
+              ),
             ),
-          ),
+          if (selectedField != null && selectedField.type == 'boolean')
+            IonStackedField(
+              flush: true,
+              label: context.l10n.typeSettingsValue,
+              builder: (decoration) => AppDropdownFormField<bool>(
+                iosInterface: AppSelectInterface.alert,
+                decoration: decoration,
+                value: rawOption is bool ? rawOption : null,
+                items: [
+                  DropdownMenuItem(value: true, child: Text(context.l10n.commonYes)),
+                  DropdownMenuItem(value: false, child: Text(context.l10n.commonNo)),
+                ],
+                onChanged: (value) => setState(() {
+                  _additionalFieldsFilter = {'key': selectedField.id, 'option': value};
+                  _hasChanges = true;
+                }),
+              ),
+            )
+          else if (selectedField != null &&
+              _additionalFieldsFilter!.containsKey('option') &&
+              (selectedField.options ?? const []).isNotEmpty)
+            IonStackedField(
+              flush: true,
+              label: context.l10n.typeSettingsOption,
+              builder: (decoration) => AppDropdownFormField<String>(
+                iosInterface: AppSelectInterface.alert,
+                decoration: decoration,
+                value: rawOption is String && selectedField.options!.contains(rawOption) ? rawOption : null,
+                items: [
+                  for (final opt in selectedField.options!) DropdownMenuItem(value: opt, child: Text(opt)),
+                ],
+                onChanged: (value) => setState(() {
+                  _additionalFieldsFilter = {'key': selectedField.id, 'option': value};
+                  _hasChanges = true;
+                }),
+              ),
+            ),
         ],
       ),
     );
   }
 
-  Widget _buildAdditionalFieldsFilterSection() {
-    final tenant = ref.watch(currentTenantProvider);
-    final extraFields = (tenant?.additionalFields ?? [])
-        .where((f) => f.type == 'select')
-        .toList();
-
-    if (extraFields.isEmpty) return const SizedBox.shrink();
-
-    final selectedFieldId = _additionalFieldsFilter?['key'] as String?;
-    final selectedOption = _additionalFieldsFilter?['option'] as String?;
-    final selectedField = extraFields.where((f) => f.id == selectedFieldId).firstOrNull;
-    final options = selectedField?.options ?? [];
-
-    return _buildSection(
-      title: context.l10n.typeSettingsExtraFilter,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            context.l10n.typeSettingsFlutterExtraFilterHint,
-            style: TextStyle(fontSize: 12, color: AppColors.medium),
-          ),
-          const SizedBox(height: 8),
-          AppDropdownFormField<String?>(
-            iosInterface: AppSelectInterface.alert,
-            value: selectedFieldId,
-            decoration: InputDecoration(
-              labelText: context.l10n.typeSettingsFlutterExtraField,
-              isDense: true,
+  /// Ionic `ion-select multiple` "Relevante Gruppen" (options: group.name).
+  Future<void> _pickRelevantGroups(List<Group> groups) async {
+    final selected = {..._relevantGroups};
+    final result = await showAppDialog<Set<int>>(
+      context: context,
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setLocal) => AppAlertDialog(
+          title: Text(context.l10n.typeSettingsRelevantGroups),
+          contentPadding: const EdgeInsets.symmetric(vertical: 8),
+          content: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final group in groups.where((g) => g.id != null))
+                  CheckboxListTile(
+                    title: Text(group.name),
+                    value: selected.contains(group.id),
+                    onChanged: (v) => setLocal(() {
+                      if (v == true) {
+                        selected.add(group.id!);
+                      } else {
+                        selected.remove(group.id!);
+                      }
+                    }),
+                  ),
+              ],
             ),
-            items: [
-              DropdownMenuItem(
-                value: null,
-                child: Text(context.l10n.typeSettingsNoFilter),
-              ),
-              ...extraFields.map((f) => DropdownMenuItem(
-                    value: f.id,
-                    child: Text(f.name),
-                  )),
-            ],
-            onChanged: (value) => setState(() {
-              if (value == null) {
-                _additionalFieldsFilter = null;
-              } else {
-                final field = extraFields.where((f) => f.id == value).firstOrNull;
-                _additionalFieldsFilter = {
-                  'key': value,
-                  'option': field?.options?.firstOrNull ?? '',
-                };
-              }
-              _hasChanges = true;
-            }),
           ),
-          if (selectedFieldId != null && options.isNotEmpty) ...[
-            const SizedBox(height: 8),
-            AppDropdownFormField<String>(
-              iosInterface: AppSelectInterface.alert,
-              value: options.contains(selectedOption) ? selectedOption : options.firstOrNull,
-              decoration: InputDecoration(
-                labelText: context.l10n.typeSettingsValue,
-                isDense: true,
-              ),
-              items: options
-                  .map((opt) => DropdownMenuItem(value: opt, child: Text(opt)))
-                  .toList(),
-              onChanged: (value) => setState(() {
-                _additionalFieldsFilter = {
-                  'key': selectedFieldId,
-                  'option': value,
-                };
-                _hasChanges = true;
-              }),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(ctx),
+              child: Text(context.l10n.commonCancel),
+            ),
+            TextButton(
+              onPressed: () => Navigator.pop(ctx, selected),
+              child: Text(context.l10n.commonOk),
             ),
           ],
-        ],
+        ),
+      ),
+    );
+    if (result == null || !mounted) return;
+    setState(() {
+      // Keep the group order of the instance (Ionic writes the selection in option order).
+      _relevantGroups = [
+        for (final g in groups)
+          if (g.id case final id? when result.contains(id)) id,
+      ];
+      _hasChanges = true;
+    });
+  }
+
+  /// Ionic reminders sheet (breakpoint 1, checkmark closes).
+  Future<void> _openReminders() async {
+    await showModalBottomSheet<void>(
+      context: context,
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (sheetContext) => FractionallySizedBox(
+        heightFactor: 0.95,
+        child: StatefulBuilder(
+          builder: (sheetContext, setSheet) => Scaffold(
+            appBar: AppBar(
+              automaticallyImplyLeading: false,
+              title: Text(context.l10n.typeSettingsReminders),
+              actions: [
+                IconButton(
+                  tooltip: context.l10n.commonOk,
+                  icon: const Icon(Icons.check),
+                  onPressed: () => Navigator.of(sheetContext).pop(),
+                ),
+              ],
+            ),
+            body: ListView(
+              padding: const EdgeInsets.all(AppDimensions.paddingM),
+              children: [
+                TypeRemindersEditor(
+                  reminders: _reminders,
+                  onChanged: (list) {
+                    setState(() {
+                      _reminders = list;
+                      _hasChanges = true;
+                    });
+                    setSheet(() {});
+                  },
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -1185,13 +1240,28 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       case AttendanceStatus.excused:
         return l10n.commonStatusExcused;
       case AttendanceStatus.late:
-        return l10n.commonStatusLateShort;
+        return l10n.commonStatusLate;
       case AttendanceStatus.lateExcused:
-        return l10n.generalSettingsLateExcusedShort;
+        return l10n.commonStatusLateExcused;
       case AttendanceStatus.neutral:
-        return l10n.generalSettingsNeutral;
+        return l10n.commonStatusNeutral;
     }
   }
+
+  /// Ionic type.page `attendanceStatuses`: Verspätet (entsch.) is never offered.
+  static const _ionicStatusOptions = [
+    AttendanceStatus.neutral,
+    AttendanceStatus.present,
+    AttendanceStatus.absent,
+    AttendanceStatus.excused,
+    AttendanceStatus.late,
+  ];
+
+  /// Display order: Ionic options, then a status stored by older Flutter
+  /// versions (kept, not offered).
+  static const _statusOrder = [..._ionicStatusOptions, AttendanceStatus.lateExcused];
+
+  bool get _isGeneral => ref.read(currentTenantProvider)?.type == 'general';
 
   Future<void> _pickTime({required bool isStart}) async {
     final time = await showAppTimePicker(
@@ -1204,6 +1274,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       setState(() {
         if (isStart) {
           _startTime = time;
+          // Ionic: the plan start picker always recalculates "Ende".
+          _calculateEnd();
         } else {
           _endTime = time;
         }
@@ -1234,180 +1306,432 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         .toList();
   }
 
-  int _totalPlanMinutes() {
-    return _planFields.fold<int>(0, (sum, f) {
-      return sum + (int.tryParse('${f['time'] ?? '0'}') ?? 0);
-    });
+  // ---------------------------------------------------------------------------
+  // Ablaufplan (Ionic type.page default_plan)
+  // ---------------------------------------------------------------------------
+
+  List<PlanField> get _planFieldModels => [for (final f in _planFields) PlanField.fromJson(f)];
+
+  /// Gives a row a unique `uid` as its identity while editing: ids repeat
+  /// (free text id = text, e.g. "Pause" twice), the uid travels through the
+  /// [PlanFieldsEditor] unchanged. A stored, unique uid is kept; otherwise a
+  /// local one is set and removed (or the stored one restored) on save.
+  Map<String, dynamic> _withRowUid(Map<String, dynamic> row) {
+    final stored = row['uid'];
+    final storedUid = stored is String && stored.isNotEmpty ? stored : null;
+    final taken = storedUid != null &&
+        (_localPlanUids.containsKey(storedUid) || _planFields.any((f) => f['uid'] == storedUid));
+    if (storedUid != null && !taken) return row;
+    final local = 'local-${PlanUtils.uuid()}';
+    _localPlanUids[local] = storedUid;
+    return {...row, 'uid': local};
   }
 
-  Future<void> _addPlanField() async {
-    final result = await _showPlanFieldDialog();
-    if (result != null) {
-      setState(() {
-        _planFields.add(result);
-        _hasChanges = true;
-      });
-    }
-  }
+  /// [_planFields] as stored: local row identities removed again.
+  List<Map<String, dynamic>> get _planFieldsForSave => [
+        for (final f in _planFields)
+          if (_localPlanUids.containsKey(f['uid']))
+            _localPlanUids[f['uid']] == null
+                ? ({...f}..remove('uid'))
+                : {...f, 'uid': _localPlanUids[f['uid']]}
+          else
+            f,
+      ];
 
-  Future<void> _addSongPlaceholder() async {
-    final index = _planFields.where((f) =>
-        (f['id'] as String? ?? '').startsWith('song-placeholder')).length;
+  /// Back to the stored map: the original row (matched by its row identity
+  /// `uid`, see [_withRowUid]) is kept and only updated, so unknown keys and
+  /// the legacy `isNote` flag survive. The Flutter-only `isGroup: false`
+  /// default is not written.
+  void _setPlanFields(List<PlanField> fields) {
     setState(() {
-      _planFields.add({
-        'id': 'song-placeholder-$index',
-        'name': context.l10n.typeSettingsSongPlaceholderN(index + 1),
-        'time': '20',
-      });
+      _planFields = mergePlanRows(_planFields, fields);
+      _calculateEnd();
       _hasChanges = true;
     });
   }
 
-  Future<void> _editPlanField(int index) async {
-    final result = await _showPlanFieldDialog(existing: _planFields[index]);
-    if (result != null) {
-      setState(() {
-        _planFields[index] = result;
-        _hasChanges = true;
-      });
+  /// Ionic calculateEnd(): start time + all minutes, shown as "Ende".
+  void _calculateEnd() {
+    final start = _startTime ?? const TimeOfDay(hour: 19, minute: 0);
+    var minutes = start.hour * 60 + start.minute;
+    for (final f in _planFields) {
+      minutes += int.tryParse('${f['time'] ?? ''}'.trim()) ?? 0;
+    }
+    _planEnd = PlanUtils.formatMinutes(minutes);
+  }
+
+  void _addPlanRow(Map<String, dynamic> field) {
+    setState(() {
+      _planFields = [..._planFields, _withRowUid(field)];
+      _calculateEnd();
+      _hasChanges = true;
+    });
+  }
+
+  Widget _buildPlanSection() {
+    final l10n = context.l10n;
+    final isGeneral = _isGeneral;
+    final org = ref.watch(currentOrganisationProvider).valueOrNull;
+    final start = _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0));
+    return _buildSection(
+      title: l10n.typeSettingsRunSheet,
+      action: Builder(
+        builder: (anchorContext) => IconButton(
+          tooltip: l10n.typeSettingsAddField,
+          icon: const Icon(Icons.add, color: AppColors.primary),
+          onPressed: () => _showPlanAddMenu(anchorContext),
+        ),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          IonStackedField(
+            flush: true,
+            label: l10n.typeSettingsPlanHeading,
+            helper: l10n.typeSettingsTitleHelper,
+            builder: (decoration) => TextFormField(
+              controller: _planningTitleController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: decoration,
+              onChanged: (value) {
+                _planningTitle = value;
+                _hasChanges = true;
+              },
+            ),
+          ),
+          // SETTINGS2: Ionic "Instanz-Name vor Werken" (not for general tenants)
+          if (!isGeneral)
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.typeSettingsTenantNameBefore),
+              subtitle: Text(l10n.typeSettingsTenantNameHelper),
+              value: _planningPrefixInstanceName,
+              onChanged: (v) => setState(() {
+                _planningPrefixInstanceName = v;
+                _hasChanges = true;
+              }),
+            ),
+          // ORG_PLANS: Ionic `@if (db.organisation())`, saved with the FAB.
+          // Disabled until the stored value is loaded (it is only saved then).
+          if (org != null)
+            SwitchListTile.adaptive(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.typeSettingsOrgPlanDefault),
+              value: _isDefaultOrgPlan,
+              onChanged: _isDefaultOrgPlanLoaded
+                  ? (v) => setState(() {
+                        _isDefaultOrgPlan = v;
+                        _hasChanges = true;
+                      })
+                  : null,
+            ),
+          // Ionic: "Start" always; editable only for all-day types (otherwise
+          // the type's start time, disabled).
+          ListTile(
+            contentPadding: EdgeInsets.zero,
+            title: Text(l10n.typeSettingsStartShort),
+            subtitle: _allDay ? Text(l10n.typeSettingsStartAllDay) : null,
+            trailing: Text(
+              start,
+              style: Theme.of(context).textTheme.titleMedium?.copyWith(
+                    color: _allDay ? null : AppColors.medium,
+                  ),
+            ),
+            onTap: _allDay ? () => _pickTime(isStart: true) : null,
+          ),
+          PlanFieldsEditor(
+            templateMode: true,
+            fields: _planFieldModels,
+            startTime: start,
+            emptyText: '',
+            onChanged: _setPlanFields,
+          ),
+          if (_planEnd != null)
+            ListTile(
+              contentPadding: EdgeInsets.zero,
+              title: Text(l10n.typeSettingsEnd),
+              trailing: Text(
+                _planEnd!,
+                style: Theme.of(context).textTheme.titleMedium?.copyWith(color: AppColors.medium),
+              ),
+            ),
+        ],
+      ),
+    );
+  }
+
+  /// Ionic `ion-popover` at the "+": Feld, Notizfeld, Werk Platzhalter
+  /// (not for general tenants), Tagesordnung Platzhalter (protocol types).
+  Future<void> _showPlanAddMenu(BuildContext anchorContext) async {
+    final l10n = context.l10n;
+    final box = anchorContext.findRenderObject() as RenderBox;
+    final overlay = Navigator.of(anchorContext).overlay!.context.findRenderObject() as RenderBox;
+    final topLeft = box.localToGlobal(Offset(0, box.size.height), ancestor: overlay);
+    final bottomRight = box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay);
+    final action = await showMenu<String>(
+      context: anchorContext,
+      position: RelativeRect.fromRect(Rect.fromPoints(topLeft, bottomRight), Offset.zero & overlay.size),
+      constraints: const BoxConstraints(minWidth: 250, maxWidth: 320),
+      items: [
+        PopupMenuItem(value: 'field', child: Text(l10n.typeSettingsAddField)),
+        PopupMenuItem(value: 'note', child: Text(l10n.typeSettingsAddNoteField)),
+        if (!_isGeneral) PopupMenuItem(value: 'song', child: Text(l10n.typeSettingsSongPlaceholder)),
+        if (_protocol.enableProtocol)
+          PopupMenuItem(
+            value: 'agenda',
+            child: Row(children: [
+              const Icon(Icons.commit, color: AppColors.medium),
+              const SizedBox(width: 12),
+              Expanded(child: Text(l10n.typeSettingsAgendaPlaceholder)),
+            ]),
+          ),
+      ],
+    );
+    if (action == null || !mounted) return;
+    switch (action) {
+      case 'field':
+        await _addPlanField();
+      case 'note':
+        await _addNoteField();
+      case 'song':
+        _addSongPlaceholder();
+      case 'agenda':
+        _addAgendaPlaceholder();
     }
   }
 
-  Future<Map<String, dynamic>?> _showPlanFieldDialog({Map<String, dynamic>? existing}) async {
-    final nameCtrl = TextEditingController(text: existing?['name'] as String? ?? '');
-    final timeCtrl = TextEditingController(text: existing?['time'] as String? ?? '10');
-    final id = existing?['id'] as String? ?? 'custom-${DateTime.now().millisecondsSinceEpoch}';
+  /// Ionic addExtraField: free text + optional info; id = text, 20 minutes.
+  Future<void> _addPlanField() async {
+    final l10n = context.l10n;
+    final result = await showPlanFieldDialog(
+      context,
+      title: l10n.typeSettingsAddField,
+      nameLabel: '',
+      nameHint: l10n.typeSettingsFreeTextPh,
+      infoHint: l10n.typeSettingsInfoOptional,
+      withConductor: false,
+      withMinutes: false,
+      requireName: false,
+    );
+    if (result == null || !mounted) return;
+    _addPlanRow({
+      'id': result.name,
+      'name': result.name,
+      if (result.info != null) 'info': result.info,
+      'time': '20',
+    });
+  }
 
-    try {
-      return await showAppDialog<Map<String, dynamic>>(
-        context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(existing != null ? context.l10n.typeSettingsEditField : context.l10n.typeSettingsFlutterNewField),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: nameCtrl,
-                decoration: InputDecoration(
-                  labelText: context.l10n.shiftsLabel,
-                  hintText: context.l10n.typeSettingsFlutterFieldNamePh,
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: timeCtrl,
-                decoration: InputDecoration(
-                  labelText: context.l10n.typeSettingsFlutterDurationMinutes,
-                  hintText: context.l10n.typeSettingsFlutterDurationPh,
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.commonCancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final name = nameCtrl.text.trim();
-                if (name.isEmpty) return;
-                Navigator.pop(context, {
-                  'id': id,
-                  'name': name,
-                  'time': timeCtrl.text.trim().isEmpty ? '0' : timeCtrl.text.trim(),
+  /// Ionic addNoteField: id `noteFld <text>`, no time.
+  Future<void> _addNoteField() async {
+    final l10n = context.l10n;
+    final result = await showPlanFieldDialog(
+      context,
+      title: l10n.typeSettingsAddNoteField,
+      nameLabel: '',
+      nameHint: l10n.typeSettingsNotePh,
+      withConductor: false,
+      withInfo: false,
+      withMinutes: false,
+      requireName: false,
+    );
+    if (result == null || !mounted) return;
+    _addPlanRow({
+      'id': 'noteFld ${result.name}',
+      'name': result.name,
+      'conductor': '',
+      'time': '0',
+    });
+  }
+
+  /// Ionic addSongPlaceholder: numbered from 1.
+  void _addSongPlaceholder() {
+    final n = _planFields.where((f) => '${f['id'] ?? ''}'.startsWith('song-placeholder-')).length + 1;
+    _addPlanRow({
+      'id': 'song-placeholder-$n',
+      'name': context.l10n.typeSettingsSongPlaceholderN(n),
+      'time': '20',
+    });
+  }
+
+  /// Ionic addAgendaItemsPlaceholder: only once.
+  void _addAgendaPlaceholder() {
+    if (hasAgendaPlaceholder(_planFields)) {
+      ToastHelper.showWarning(context, context.l10n.typeSettingsAgendaExists);
+      return;
+    }
+    _addPlanRow(agendaPlaceholderField());
+  }
+
+  // ---------------------------------------------------------------------------
+  // Checkliste (Ionic type.page)
+  // ---------------------------------------------------------------------------
+
+  static const _deadlinePresets = [1, 24, 48, 168];
+
+  String _deadlinePresetLabel(int hours) =>
+      hours == 168 ? context.l10n.redesignCreateDeadlineWeek : _checklistDeadlineText(hours);
+
+  Widget _buildChecklistSection() {
+    final l10n = context.l10n;
+    final showCustom = _newTodoDeadline == -1;
+    return _buildSection(
+      title: l10n.typeSettingsChecklist,
+      action: Padding(
+        padding: const EdgeInsets.only(right: 12),
+        child: IonBadge(text: '${_checklist.length}', color: AppColors.medium),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_checklist.isNotEmpty)
+            ReorderableListView.builder(
+              shrinkWrap: true,
+              physics: const NeverScrollableScrollPhysics(),
+              buildDefaultDragHandles: false,
+              itemCount: _checklist.length,
+              onReorder: (oldIndex, newIndex) {
+                setState(() {
+                  if (newIndex > oldIndex) newIndex--;
+                  final item = _checklist.removeAt(oldIndex);
+                  _checklist.insert(newIndex, item);
+                  _hasChanges = true;
                 });
               },
-              child: Text(context.l10n.commonOk),
-            ),
-          ],
-        ),
-      );
-    } finally {
-      nameCtrl.dispose();
-      timeCtrl.dispose();
-    }
-  }
-
-  Future<void> _addChecklistItem() async {
-    final result = await _showChecklistItemDialog();
-    if (result != null) {
-      setState(() {
-        _checklist.add(result);
-        _hasChanges = true;
-      });
-    }
-  }
-
-  Future<void> _editChecklistItem(int index) async {
-    final result = await _showChecklistItemDialog(existing: _checklist[index]);
-    if (result != null) {
-      setState(() {
-        _checklist[index] = result;
-        _hasChanges = true;
-      });
-    }
-  }
-
-  Future<ChecklistItem?> _showChecklistItemDialog({ChecklistItem? existing}) async {
-    final textCtrl = TextEditingController(text: existing?.text ?? '');
-    final deadlineCtrl = TextEditingController(
-      text: existing?.deadlineHours?.toString() ?? '',
-    );
-
-    try {
-      return await showAppDialog<ChecklistItem>(
-        context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(existing != null ? context.l10n.typeSettingsEditTodo : context.l10n.typeSettingsNewTodo),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              TextField(
-                controller: textCtrl,
-                decoration: InputDecoration(
-                  labelText: context.l10n.tasksTask,
-                  hintText: context.l10n.typeSettingsFlutterTodoPh,
-                ),
-                autofocus: true,
-              ),
-              const SizedBox(height: 12),
-              TextField(
-                controller: deadlineCtrl,
-                decoration: InputDecoration(
-                  labelText: context.l10n.typeSettingsFlutterDeadlineLabel,
-                  hintText: context.l10n.typeSettingsFlutterDeadlinePh,
-                ),
-                keyboardType: TextInputType.number,
-              ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.commonCancel),
-            ),
-            FilledButton(
-              onPressed: () {
-                final text = textCtrl.text.trim();
-                if (text.isEmpty) return;
-                Navigator.pop(context, ChecklistItem(
-                  id: existing?.id ?? DateTime.now().millisecondsSinceEpoch.toString(),
-                  text: text,
-                  deadlineHours: int.tryParse(deadlineCtrl.text.trim()),
-                ));
+              itemBuilder: (context, index) {
+                final item = _checklist[index];
+                // Ionic: ion-item-sliding with a trash option,
+                // deadline text as subtitle, reorder handle at the end.
+                return SwipeActions.delete(
+                  key: ObjectKey(item),
+                  onDelete: () => setState(() {
+                    _checklist.removeAt(index);
+                    _hasChanges = true;
+                  }),
+                  child: ListTile(
+                    contentPadding: EdgeInsets.zero,
+                    title: Text(item.text),
+                    subtitle: Text(_checklistDeadlineText(item.deadlineHours)),
+                    trailing: ReorderableDragStartListener(
+                      index: index,
+                      child: const Icon(Icons.reorder, color: AppColors.medium),
+                    ),
+                    onTap: () => _editChecklistItem(index),
+                  ),
+                );
               },
-              child: Text(context.l10n.commonOk),
+            )
+          else
+            Padding(
+              padding: const EdgeInsets.symmetric(vertical: 12),
+              child: Column(
+                children: [
+                  const Icon(Icons.check_box_outlined, size: 32, color: AppColors.medium),
+                  const SizedBox(height: 4),
+                  Text(l10n.typeSettingsNoTodos, style: const TextStyle(color: AppColors.medium)),
+                ],
+              ),
             ),
-          ],
-        ),
-      );
-    } finally {
-      textCtrl.dispose();
-      deadlineCtrl.dispose();
+          // Ionic: inline "Neues To-Do" + "Deadline" (action sheet) + button.
+          IonStackedField(
+            flush: true,
+            label: l10n.typeSettingsNewTodo,
+            hint: l10n.typeSettingsTodoPlaceholder,
+            builder: (decoration) => TextField(
+              controller: _newTodoController,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: decoration,
+              onChanged: (_) => setState(() {}),
+            ),
+          ),
+          IonStackedField(
+            flush: true,
+            label: l10n.typeSettingsDeadline,
+            // Own Form: a deadline for a not yet added to-do is no change of
+            // the type (Ionic compares only the type).
+            builder: (decoration) => Form(
+              child: AppDropdownFormField<int?>(
+                iosInterface: AppSelectInterface.actionSheet,
+                decoration: decoration.copyWith(hintText: l10n.typeSettingsNoDeadline),
+                value: _newTodoDeadline,
+                items: [
+                  DropdownMenuItem(value: null, child: Text(l10n.typeSettingsNoDeadline)),
+                  for (final h in _deadlinePresets)
+                    DropdownMenuItem(value: h, child: Text(_deadlinePresetLabel(h))),
+                  DropdownMenuItem(value: -1, child: Text(l10n.typeSettingsCustomDots)),
+                ],
+                onChanged: (v) => setState(() => _newTodoDeadline = v),
+              ),
+            ),
+          ),
+          if (showCustom)
+            IonStackedField(
+              flush: true,
+              label: l10n.typeSettingsHoursBefore,
+              hint: 'z.B. 12',
+              builder: (decoration) => TextField(
+                controller: _customDeadlineController,
+                keyboardType: TextInputType.number,
+                decoration: decoration,
+              ),
+            ),
+          Padding(
+            padding: const EdgeInsets.symmetric(vertical: 8),
+            child: FilledButton.icon(
+              onPressed: _newTodoController.text.trim().isEmpty ? null : _addChecklistItem,
+              icon: const Icon(Icons.add_circle_outline),
+              label: IonButtonLabel(l10n.typeSettingsAddTodo),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Ionic addChecklistItem.
+  void _addChecklistItem() {
+    final text = _newTodoController.text.trim();
+    if (text.isEmpty) {
+      ToastHelper.showWarning(context, context.l10n.typeSettingsEnterTodo);
+      return;
     }
+    int? deadline = _newTodoDeadline;
+    if (deadline == -1) {
+      final custom = int.tryParse(_customDeadlineController.text.trim());
+      deadline = custom != null && custom != 0 ? custom : null;
+    }
+    setState(() {
+      _checklist = [
+        ..._checklist,
+        ChecklistItem(id: PlanUtils.uuid(), text: text, deadlineHours: deadline),
+      ];
+      _newTodoController.clear();
+      _customDeadlineController.clear();
+      _newTodoDeadline = null;
+      _hasChanges = true;
+    });
+  }
+
+  /// Ionic editChecklistItem: alert "To-Do bearbeiten" with the text only.
+  Future<void> _editChecklistItem(int index) async {
+    final item = _checklist[index];
+    final text = await showPlanFieldDialog(
+      context,
+      title: context.l10n.typeSettingsEditTodo,
+      nameLabel: '',
+      nameHint: context.l10n.typeSettingsTodoTextPh,
+      initialName: item.text,
+      confirmText: context.l10n.commonSave,
+      withConductor: false,
+      withInfo: false,
+      withMinutes: false,
+      requireName: false,
+    );
+    if (text == null || text.name.isEmpty || !mounted) return;
+    setState(() {
+      _checklist[index] = item.copyWith(text: text.name);
+      _hasChanges = true;
+    });
   }
 
   /// Ionic getChecklistDeadlineText / getFormattedReminder.
@@ -1455,6 +1779,70 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
   }
 
+  /// Ionic `dismissModal` (isNew): once a name was entered ask
+  /// "Änderungen verwerfen?", otherwise close right away.
+  Future<void> _closeNew() async {
+    // Während des Anlegens gesperrt: der Insert läuft schon.
+    if (_isCreating) return;
+    if (_hasNewInput) {
+      final discard = await DialogHelper.showConfirmation(
+        context,
+        title: context.l10n.typeSettingsDiscardChanges,
+        message: context.l10n.typeSettingsDiscardMessage,
+        confirmText: context.l10n.rolePermDiscard,
+        cancelText: context.l10n.commonCancel,
+        isDestructive: true,
+      );
+      if (!discard || !mounted || _isCreating) return;
+    }
+    // pop() ignores the PopScope; the unload warning goes with the modal.
+    setUnloadWarning(this, false);
+    Navigator.of(context).pop(false);
+  }
+
+  /// Ionic `createType` (isNew): validate, insert with the tenant, success
+  /// toast, the duty view offer, then close the modal.
+  Future<void> _create() async {
+    // Ionic validate(): name first, then at least two statuses.
+    if (_nameController.text.trim().isEmpty) {
+      ToastHelper.showError(context, context.l10n.typeSettingsEnterName);
+      return;
+    }
+    if (_availableStatuses.length < 2) {
+      ToastHelper.showError(context, context.l10n.typeSettingsTwoStatus);
+      return;
+    }
+
+    // Provider-Zugriffe vor dem await holen: danach darf `ref` nicht mehr
+    // angefasst werden (State könnte disposed sein).
+    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    final container = ProviderScope.containerOf(context);
+    final data = _buildTypeData();
+
+    setState(() => _isCreating = true);
+    try {
+      final created = await notifier.createTypeFromData(data);
+      container.invalidate(protocolTypesProvider);
+      container.invalidate(planAttendanceTypesProvider);
+      if (!mounted) return;
+      _createdId = created.id;
+      if (!mounted) return;
+      ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);
+      await _offerDutyView();
+      if (!mounted) return;
+      setUnloadWarning(this, false);
+      Navigator.of(context).pop(true);
+    } on DemoModeException {
+      // DEMO_GUARD: the demo warning toast was already shown.
+    } catch (e) {
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.typeSettingsCreateFailed);
+      }
+    } finally {
+      if (mounted) setState(() => _isCreating = false);
+    }
+  }
+
   Future<void> _save() async {
     if (!_formKey.currentState!.validate()) return;
     // SETTINGS2: Ionic validate() — at least two available statuses
@@ -1467,53 +1855,13 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
 
     try {
-      final updates = {
-        'name': _nameController.text.trim(),
-        // SETTINGS2: for all-day types start_time is the plan start (Ionic)
-        'start_time': _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
-        'end_time': _allDay ? null : _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
-        'default_status': _defaultStatus.value,
-        'available_statuses': _availableStatuses.map((s) => s.value).toList(),
-        'manage_songs': _manageSongs,
-        'visible': _visible,
-        'highlight': _highlight,
-        'hide_name': _hideName,
-        'include_in_average': _includeInAverage,
-        'color': _color,
-        'all_day': _allDay,
-        'duration_days': _allDay ? _durationDays : null,
-        'notification': _notification,
-        'reminders': _reminders.isNotEmpty ? _reminders : null,
-        'checklist': _checklist.isNotEmpty
-            ? _checklist.map((item) => item.toJson()).toList()
-            : null,
-        // LOGIC_SETTINGS: Ionic always keeps default_plan = {time, end, fields}
-        // (never null) and preserves the stored time/end.
-        'default_plan': buildDefaultPlanUpdate(
-          _originalType?.defaultPlan,
-          _planFields,
-        ),
-        'planning_title': _planningTitle.isNotEmpty ? _planningTitle : null,
-        'planning_prefix_instance_name': _planningPrefixInstanceName,
-        // LOGIC_SETTINGS: Ionic keeps relevant_groups as [] (never null);
-        // Ionic code calls relevant_groups.length without null check.
-        'relevant_groups': _relevantGroups,
-        'additional_fields_filter': _additionalFieldsFilter,
-        'place_enabled': _placeEnabled,
-        'registration_fields': _registrationFields.map((f) => f.toJson()).toList(),
-        'duty_mode': _dutyMode,
-        'duty_required': _dutyRequired < 1 ? 1 : _dutyRequired,
-        'duty_self_signup': _dutySelfSignup,
-        'duty_confirm_reminder_days': _dutyConfirmReminderDays,
-        'duty_notify_understaffed': _dutyNotifyUnderstaffed,
-        'duty_urgent_hours': _dutyUrgentHours,
-        ..._protocol.toUpdate(),
-      };
+      final updates = _buildTypeData();
 
       final updated = await ref
           .read(attendanceTypeNotifierProvider.notifier)
-          .updateType(widget.typeId, updates);
+          .updateType(widget.typeId!, updates);
       ref.invalidate(protocolTypesProvider);
+      ref.invalidate(planAttendanceTypesProvider);
       // LOGIC_SETTINGS: Ionic shows updateFailed when the save fails
       if (updated == null) {
         if (mounted) {
@@ -1537,6 +1885,61 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     }
   }
 
+  /// Columns of the type as edited on the page (update and, for a new type,
+  /// insert; the repository adds the tenant).
+  Map<String, dynamic> _buildTypeData() {
+      return {
+        'name': _nameController.text.trim(),
+        // SETTINGS2: for all-day types start_time is the plan start (Ionic)
+        'start_time': _formatTime(_startTime ?? const TimeOfDay(hour: 19, minute: 0)),
+        'end_time': _allDay ? null : _formatTime(_endTime ?? const TimeOfDay(hour: 20, minute: 30)),
+        'default_status': _defaultStatus.value,
+        'available_statuses': _availableStatuses.map((s) => s.value).toList(),
+        'manage_songs': _manageSongs,
+        'visible': _visible,
+        'highlight': _highlight,
+        'hide_name': _hideName,
+        'include_in_average': _includeInAverage,
+        'color': _color,
+        'all_day': _allDay,
+        'duration_days': _allDay ? _durationDays : null,
+        'notification': _notification,
+        // Ionic isNew starts with reminders [] (insert keeps the list).
+        'reminders': _isNew || _reminders.isNotEmpty ? _reminders : null,
+        // Ionic: "Checkliste aktivieren" off = null, on = list (also []).
+        'checklist': _checklistEnabled
+            ? _checklist.map((item) => item.toJson()).toList()
+            : null,
+        // LOGIC_SETTINGS: Ionic always keeps default_plan = {time, end, fields}
+        // (never null) and preserves the stored time/end.
+        'default_plan': buildDefaultPlanUpdate(
+          _originalType?.defaultPlan,
+          _planFieldsForSave,
+        ),
+        // Ionic writes the input as is ('' once edited); untouched null stays null.
+        'planning_title': _planningTitle.isEmpty && _originalType?.planningTitle == null
+            ? null
+            : _planningTitle,
+        if (_isDefaultOrgPlanLoaded) 'is_default_org_plan': _isDefaultOrgPlan,
+        'planning_prefix_instance_name': _planningPrefixInstanceName,
+        // LOGIC_SETTINGS: Ionic keeps relevant_groups as [] (never null);
+        // Ionic code calls relevant_groups.length without null check.
+        'relevant_groups': _relevantGroups,
+        'additional_fields_filter': _additionalFieldsFilter,
+        'place_enabled': _placeEnabled,
+        'registration_fields': _registrationFields.map((f) => f.toJson()).toList(),
+        'duty_mode': _dutyMode,
+        'duty_required': _dutyRequired < 1 ? 1 : _dutyRequired,
+        'duty_self_signup': _dutySelfSignup,
+        'duty_confirm_reminder_days': _dutyConfirmReminderDays,
+        'duty_notify_understaffed': _dutyNotifyUnderstaffed,
+        'duty_urgent_hours': _dutyUrgentHours,
+        ..._protocol.toUpdate(),
+        // Ionic isNew: index 999 (end of the list).
+        if (_isNew) 'index': _originalType?.index ?? 999,
+      };
+  }
+
   Future<void> _deleteType() async {
     final confirmed = await DialogHelper.showConfirmation(
       context,
@@ -1549,7 +1952,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     if (!confirmed) return;
 
     try {
-      final success = await ref.read(attendanceTypeNotifierProvider.notifier).deleteType(widget.typeId);
+      final success = await ref.read(attendanceTypeNotifierProvider.notifier).deleteType(widget.typeId!);
 
       if (success && mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsDeleted);
@@ -1565,6 +1968,34 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   }
 }
 
+/// LOGIC_SETTINGS: defaults of a new type as in Ionic type.page.ts (isNew).
+AttendanceType buildNewAttendanceType(String name) {
+  return AttendanceType(
+    name: name.trim(),
+    planningTitle: '',
+    defaultStatus: AttendanceStatus.present,
+    availableStatuses: const [
+      AttendanceStatus.neutral,
+      AttendanceStatus.present,
+      AttendanceStatus.absent,
+      AttendanceStatus.excused,
+      AttendanceStatus.late,
+    ],
+    manageSongs: false,
+    startTime: '19:00',
+    endTime: '20:30',
+    relevantGroups: const [],
+    index: 999,
+    visible: true,
+    color: 'primary',
+    highlight: false,
+    hideName: false,
+    includeInAverage: true,
+    reminders: const [],
+    defaultPlan: const {'time': '', 'end': '', 'fields': <dynamic>[]},
+  );
+}
+
 /// LOGIC_SETTINGS: Ionic always stores `default_plan` as
 /// `{time, end, fields}` (never null). Keeps any other stored keys
 /// (e.g. time/end) and replaces only the fields list.
@@ -1578,4 +2009,37 @@ Map<String, dynamic> buildDefaultPlanUpdate(
     'end': original?['end'] ?? '',
     'fields': fields,
   };
+}
+
+const _planFieldKeys = {
+  'id', 'name', 'time', 'conductor', 'currentTime', 'songId', 'info', 'agendaItemId',
+  'isGroup', 'groupId', 'uid', 'needsBeamer', 'beamerFile',
+};
+
+/// Merges the edited [fields] back into the stored [originals] rows: each
+/// row is matched by its `uid` (the row identity, ids repeat), else by id.
+/// The matched row keeps unknown keys and the legacy `isNote` flag; keys
+/// PlanField knows but dropped (cleared to null) are removed, the
+/// Flutter-only `isGroup: false` default is not added.
+@visibleForTesting
+List<Map<String, dynamic>> mergePlanRows(
+  List<Map<String, dynamic>> originals,
+  List<PlanField> fields,
+) {
+  final remaining = [...originals];
+  return [
+    for (final field in fields) _mergePlanRow(remaining, field),
+  ];
+}
+
+Map<String, dynamic> _mergePlanRow(List<Map<String, dynamic>> remaining, PlanField field) {
+  final json = field.toJson();
+  final uid = json['uid'];
+  final idx = uid != null
+      ? remaining.indexWhere((o) => o['uid'] == uid)
+      : remaining.indexWhere((o) => '${o['id']}' == '${json['id']}');
+  final original = idx >= 0 ? remaining.removeAt(idx) : const <String, dynamic>{};
+  final merged = {...original, ...json}..removeWhere((k, _) => _planFieldKeys.contains(k) && !json.containsKey(k));
+  if (merged['isGroup'] == false && !original.containsKey('isGroup')) merged.remove('isGroup');
+  return merged;
 }

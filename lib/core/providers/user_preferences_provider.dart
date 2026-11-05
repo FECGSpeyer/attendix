@@ -66,10 +66,43 @@ final userPreferencesProvider = Provider<UserPreferences>((ref) {
   return UserPreferences.fromUserMetadata(user?.userMetadata);
 });
 
+/// "Instanzauswahl aktivieren" value wanted by the user while a write is
+/// pending (null: no write pending, show the stored value). Set only by
+/// [UserPreferencesNotifier.setWantInstanceSelection].
+final wantedInstanceSelectionProvider = StateProvider<bool?>((ref) => null);
+
 /// Notifier for updating user preferences in Supabase user_metadata
 class UserPreferencesNotifier extends AsyncNotifier<void> {
+  /// Running write loop for wantInstanceSelection (null: idle).
+  Future<void>? _instanceSelectionWrite;
+
   @override
   Future<void> build() async {}
+
+  /// Ionic ngModel: every toggle change is written (settings.page.ts
+  /// onTenantSelectionChange). Writes are serialized here, not in the widget,
+  /// so they survive closing and reopening the sheet: only one runs at a time
+  /// and afterwards the latest wanted value is written once if it differs, so
+  /// an older write can't finish last. The returned future is the shared write
+  /// loop; it throws if a write fails (the stored value is shown again).
+  Future<void> setWantInstanceSelection(bool value) {
+    ref.read(wantedInstanceSelectionProvider.notifier).state = value;
+    return _instanceSelectionWrite ??= _writeInstanceSelection();
+  }
+
+  Future<void> _writeInstanceSelection() async {
+    final wanted = ref.read(wantedInstanceSelectionProvider.notifier);
+    try {
+      bool written;
+      do {
+        written = wanted.state!;
+        await updatePreferences(wantInstanceSelection: written);
+      } while (wanted.state != written);
+    } finally {
+      _instanceSelectionWrite = null;
+      wanted.state = null;
+    }
+  }
 
   /// Update user preferences in Supabase user_metadata
   Future<void> updatePreferences({
@@ -91,6 +124,9 @@ class UserPreferencesNotifier extends AsyncNotifier<void> {
       };
 
       await auth.updateUser(UserAttributes(data: updatedData));
+      // userPreferencesProvider only depends on the user id, which does not
+      // change on updateUser – re-read the metadata explicitly.
+      ref.invalidate(userPreferencesProvider);
       state = const AsyncData(null);
     } catch (e, stack) {
       debugPrint('Failed to update user preferences: $e');
