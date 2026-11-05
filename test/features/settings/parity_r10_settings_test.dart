@@ -73,6 +73,26 @@ void main() {
       expect(list.map((e) => e.person.firstName), ['Max', 'Anna', 'Zoe']);
     });
 
+    test('umlauts sort with their base letter (JS localeCompare)', () {
+      VoiceGroupMember m(String last) => VoiceGroupMember(
+            person: Person(firstName: 'A', lastName: last),
+            upcomingAbsences: const [],
+          );
+      final list = [m('Zimmer'), m('Mustermann'), m('Özdemir'), m('Müller')]
+        ..sort(compareVoiceGroupMembers);
+      expect(list.map((e) => e.person.lastName),
+          ['Müller', 'Mustermann', 'Özdemir', 'Zimmer']);
+    });
+
+    test('query loads only current Termine, paged past the row limit', () {
+      final source = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
+      final start = source.indexOf('getUpcomingAbsencesForPersons(');
+      final body = source.substring(start, source.indexOf('handleError', start));
+      expect(body, contains(".gte('attendance.date', from)"));
+      expect(body, contains('fetchAllPages'));
+      expect(body, contains('.range(rangeFrom, rangeTo)'));
+    });
+
     test('query joins the attendance type for the title, tenant-filtered', () {
       final source = File('lib/data/repositories/attendance_repository.dart').readAsStringSync();
       final start = source.indexOf('getUpcomingAbsencesForPersons(');

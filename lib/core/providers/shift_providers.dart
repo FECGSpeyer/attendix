@@ -4,7 +4,10 @@ import '../config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 
 import '../../data/models/shift/shift_plan.dart';
+import '../../data/models/tenant/tenant.dart';
 import '../../data/repositories/repositories.dart';
+import '../constants/enums.dart';
+import 'organisation_providers.dart';
 import 'player_providers.dart';
 import 'tenant_providers.dart';
 
@@ -63,6 +66,44 @@ final shiftUsageCountProvider =
   if (!repo.hasTenantId) return 0;
 
   return repo.getShiftUsageCount(id);
+});
+
+/// Ionic ShiftPage `linkedTenants` = `getTenantsFromUser(userId)` minus the
+/// current instance: instances the user is a member of ([userTenants], with
+/// the user's role merged in by [userTenantsProvider]) that belong to the
+/// same organisation as the current instance ([linkedTenantIds], Ionic
+/// `getLinkedTenants` via `tenant_group_tenants`) and where the user is not
+/// an observer (Role.viewer).
+List<Tenant> shiftCopyTargets({
+  required List<Tenant> userTenants,
+  required Iterable<int> linkedTenantIds,
+  required int? currentTenantId,
+}) {
+  if (currentTenantId == null) return const [];
+  final linked = linkedTenantIds.toSet();
+  return userTenants
+      .where((t) =>
+          t.id != null &&
+          t.id != currentTenantId &&
+          linked.contains(t.id) &&
+          t.role != Role.viewer.value)
+      .toList();
+}
+
+/// Target instances for "Schichtplan kopieren" (see [shiftCopyTargets]).
+/// The copy button is only shown when this list is not empty, and the copy
+/// itself only writes into one of these instances.
+final shiftCopyTargetTenantsProvider =
+    FutureProvider<List<Tenant>>((ref) async {
+  final currentTenantId = ref.watch(currentTenantIdProvider);
+  if (currentTenantId == null) return const [];
+  final userTenants = await ref.watch(userTenantsProvider.future);
+  final linkedTenants = await ref.watch(allLinkedTenantsProvider.future);
+  return shiftCopyTargets(
+    userTenants: userTenants,
+    linkedTenantIds: linkedTenants.map((t) => t.id).whereType<int>(),
+    currentTenantId: currentTenantId,
+  );
 });
 
 /// Notifier for shift mutations
