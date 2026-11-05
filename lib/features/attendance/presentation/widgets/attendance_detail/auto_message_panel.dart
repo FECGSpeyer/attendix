@@ -130,6 +130,75 @@ final _autoMessagePanelProvider = FutureProvider.autoDispose.family<_PanelData, 
   );
 });
 
+/// One member answer of [AutoMessagePanel], ready to draw.
+class AutoMessageAnswer {
+  const AutoMessageAnswer({
+    required this.name,
+    required this.detail,
+    required this.wasPresent,
+    required this.pending,
+    required this.acceptLabel,
+    required this.stateText,
+    required this.busy,
+    required this.onDecide,
+  });
+
+  final String name;
+
+  /// "Sagt, er/sie war da" or "Grund: text".
+  final String detail;
+  final bool wasPresent;
+  final bool pending;
+
+  /// "Als anwesend eintragen" / "Entschuldigen".
+  final String acceptLabel;
+
+  /// Decided state ("Bestätigt · Name"), null while pending.
+  final String? stateText;
+  final bool busy;
+  final ValueChanged<bool> onDecide;
+}
+
+/// How [AutoMessagePanel] draws its parts: the Ionic look on the Termin
+/// page by default, the new design's look in the Beta Termin.
+abstract class AutoMessagePanelLook {
+  const AutoMessagePanelLook();
+
+  /// Everything the panel shows: the banner [rows] and the [answers]
+  /// (null without answers). Not called when there is nothing to show.
+  Widget frame(BuildContext context, {required List<Widget> rows, Widget? answers}) => Column(
+    crossAxisAlignment: CrossAxisAlignment.stretch,
+    children: [...rows, if (answers != null) answers],
+  );
+
+  Widget banner(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    (String, VoidCallback)? action,
+  });
+
+  Widget answers(BuildContext context, {required String title, required List<AutoMessageAnswer> answers});
+}
+
+class _IonicLook extends AutoMessagePanelLook {
+  const _IonicLook();
+
+  @override
+  Widget banner(
+    BuildContext context, {
+    required IconData icon,
+    required String title,
+    String? subtitle,
+    (String, VoidCallback)? action,
+  }) => _Banner(icon: icon, title: title, subtitle: subtitle, action: action);
+
+  @override
+  Widget answers(BuildContext context, {required String title, required List<AutoMessageAnswer> answers}) =>
+      SettingsListSection(title: title, children: [for (final a in answers) _ResponseRow(answer: a)]);
+}
+
 /// On a Termin (admins/responsibles, Ionic 4.18 `app-auto-message-panel`):
 /// what the automatic messages do for it ("geht um 23:30 raus" / "ging an
 /// 4 Personen", Diesmal aussetzen) and the members' answers to confirm or
@@ -140,11 +209,18 @@ class AutoMessagePanel extends ConsumerStatefulWidget {
     required this.attendance,
     required this.attendanceType,
     required this.people,
+    this.look = const _IonicLook(),
+    this.leading = const [],
   });
 
   final Attendance attendance;
   final AttendanceType? attendanceType;
   final List<AutoMessagePanelPerson> people;
+  final AutoMessagePanelLook look;
+
+  /// Rows shown before the banners, with the same guard (admins and
+  /// responsibles, once the Termin has started).
+  final List<Widget> leading;
 
   @override
   ConsumerState<AutoMessagePanel> createState() => _AutoMessagePanelState();
@@ -251,8 +327,11 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
     }
     final start = autoMessageTerminStart(widget.attendance, widget.attendanceType);
     if (start.isAfter(DateTime.now())) return const SizedBox.shrink();
+    final look = widget.look;
     final data = ref.watch(_autoMessagePanelProvider(_id)).valueOrNull;
-    if (data == null) return const SizedBox.shrink();
+    if (data == null) {
+      return widget.leading.isEmpty ? const SizedBox.shrink() : look.frame(context, rows: widget.leading);
+    }
 
     final l10n = context.l10n;
     final end = autoMessageTerminEnd(widget.attendance, widget.attendanceType);
@@ -281,11 +360,14 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
     final pending = responses.where((r) => r.isPending).length;
     final dateTime = DateFormat('${dateFmt()}, HH:mm');
 
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.stretch,
-      children: [
+    if (widget.leading.isEmpty && states.isEmpty && responses.isEmpty) return const SizedBox.shrink();
+    return look.frame(
+      context,
+      rows: [
+        ...widget.leading,
         for (final s in states)
-          _Banner(
+          look.banner(
+            context,
             icon: s.run?.status == 'sent' ? Icons.send_outlined : Icons.timer_outlined,
             title: switch (s.run?.status) {
               null when s.sendAt.isAfter(DateTime.now()) => l10n.autoMessagesPanelWillSend(
@@ -317,20 +399,30 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
                     ? (l10n.autoMessagesWhoRead, () => _openRun(s.rule, s.run!))
                     : null,
           ),
-        if (responses.isNotEmpty)
-          SettingsListSection(
+      ],
+      answers: responses.isEmpty
+          ? null
+          : look.answers(
+            context,
             title: l10n.autoMessagesPanelResponses(pending),
-            children: [
+            answers: [
               for (final r in responses)
-                _ResponseRow(
-                  response: r,
-                  name: _nameOf(r),
+                AutoMessageAnswer(
+                  name: _nameOf(r).isEmpty ? l10n.commonUnknown : _nameOf(r),
+                  detail: r.wasPresent
+                      ? l10n.autoMessagesPanelSaysPresent
+                      : '${l10n.autoMessageReason(r.reasonCode)}${(r.text?.isNotEmpty ?? false) ? ': ${r.text}' : ''}',
+                  wasPresent: r.wasPresent,
+                  pending: r.isPending,
+                  acceptLabel: r.wasPresent ? l10n.autoMessagesSetPresent : l10n.autoMessagesExcuse,
+                  stateText: r.isPending
+                      ? null
+                      : '${l10n.autoMessageResponseState(r.state)}${(r.decidedByName?.isNotEmpty ?? false) ? ' · ${r.decidedByName}' : ''}',
                   busy: _busy.contains(r.id),
                   onDecide: (accept) => _decide(r, accept),
                 ),
             ],
           ),
-      ],
     );
   }
 }
@@ -403,33 +495,21 @@ class _Banner extends StatelessWidget {
 /// One answer: icon per kind, name, reason, buttons side by side
 /// (Ionic 06a659fc) or the decided state.
 class _ResponseRow extends StatelessWidget {
-  const _ResponseRow({
-    required this.response,
-    required this.name,
-    required this.busy,
-    required this.onDecide,
-  });
+  const _ResponseRow({required this.answer});
 
-  final AttendanceResponse response;
-  final String name;
-  final bool busy;
-  final ValueChanged<bool> onDecide;
+  final AutoMessageAnswer answer;
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
-    final r = response;
-    final detail =
-        r.wasPresent
-            ? l10n.autoMessagesPanelSaysPresent
-            : '${l10n.autoMessageReason(r.reasonCode)}${(r.text?.isNotEmpty ?? false) ? ': ${r.text}' : ''}';
+    final a = answer;
     return Padding(
       padding: const EdgeInsets.fromLTRB(16, 12, 16, 12),
       child: Row(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           Icon(
-            r.wasPresent ? Icons.back_hand_outlined : Icons.chat_bubble_outline,
+            a.wasPresent ? Icons.back_hand_outlined : Icons.chat_bubble_outline,
             color: AppColors.medium,
             size: 22,
           ),
@@ -438,13 +518,10 @@ class _ResponseRow extends StatelessWidget {
             child: Column(
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  name.isEmpty ? l10n.commonUnknown : name,
-                  style: const TextStyle(fontWeight: FontWeight.w600),
-                ),
+                Text(a.name, style: const TextStyle(fontWeight: FontWeight.w600)),
                 const SizedBox(height: 2),
-                Text(detail, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
-                if (r.isPending)
+                Text(a.detail, style: const TextStyle(fontSize: 14, color: AppColors.medium)),
+                if (a.pending)
                   Padding(
                     padding: const EdgeInsets.only(top: 10),
                     child: Wrap(
@@ -452,14 +529,12 @@ class _ResponseRow extends StatelessWidget {
                       runSpacing: 8,
                       children: [
                         FilledButton(
-                          onPressed: busy ? null : () => onDecide(true),
+                          onPressed: a.busy ? null : () => a.onDecide(true),
                           style: FilledButton.styleFrom(visualDensity: VisualDensity.compact),
-                          child: IonButtonLabel(
-                            r.wasPresent ? l10n.autoMessagesSetPresent : l10n.autoMessagesExcuse,
-                          ),
+                          child: IonButtonLabel(a.acceptLabel),
                         ),
                         OutlinedButton(
-                          onPressed: busy ? null : () => onDecide(false),
+                          onPressed: a.busy ? null : () => a.onDecide(false),
                           style: OutlinedButton.styleFrom(
                             visualDensity: VisualDensity.compact,
                             foregroundColor: AppColors.medium,
@@ -473,7 +548,7 @@ class _ResponseRow extends StatelessWidget {
                   Padding(
                     padding: const EdgeInsets.only(top: 4),
                     child: Text(
-                      '${l10n.autoMessageResponseState(r.state)}${(r.decidedByName?.isNotEmpty ?? false) ? ' · ${r.decidedByName}' : ''}',
+                      a.stateText ?? '',
                       style: const TextStyle(fontSize: 12.8, color: AppColors.medium),
                     ),
                   ),
