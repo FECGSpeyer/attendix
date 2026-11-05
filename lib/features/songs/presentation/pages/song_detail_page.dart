@@ -159,7 +159,15 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       // write the old selection back.
       if (filesKey != _filesKey) {
         _filesKey = filesKey;
-        _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(data)}.toList();
+        // After "Alle löschen" a reload of an older save may still carry the
+        // old instrument_ids: keep the emptied Besetzung until the database
+        // confirms it.
+        final cleared = _clearedFilesKey != null;
+        _instrumentIds = {
+          ...(cleared ? _instrumentIds : song.instrumentIds ?? const <int>[]),
+          ..._idsFromFiles(data),
+        }.toList();
+        if (cleared && (song.instrumentIds?.isEmpty ?? true)) _clearedFilesKey = null;
       }
       return;
     }

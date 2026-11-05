@@ -71,6 +71,8 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       minChildSize: 0.4,
       maxChildSize: 0.9,
       expand: false,
+      // Dragging down to the bottom closes the sheet: not while copying.
+      shouldCloseOnMinExtent: !_isCopying,
       builder: (context, scrollController) {
         return Column(
           children: [
