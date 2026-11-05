@@ -6,7 +6,6 @@ import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../l10n/l10n.dart';
 import '../../../../attendance/presentation/widgets/attendance_detail/status_chip.dart'
     show ionicSelectableStatuses, ionicStatusLabel;
-import '../../../data/providers/rd_today_providers.dart';
 import '../../../data/rd_event_logic.dart';
 import '../rd_widgets.dart';
 
@@ -21,33 +20,104 @@ import '../rd_widgets.dart';
       AttendanceStatus.neutral => (color: p.text2, soft: p.track, icon: Icons.remove_rounded),
     };
 
-/// "23 da · 1 später · 3 entsch. · 0 fehlt · 5 offen" (canvas D5).
-class RdRecordCounts extends StatelessWidget {
-  const RdRecordCounts({super.key, required this.counts});
+/// Filter chips of the Anwesenheit tab (concept L3): "Alle 38",
+/// "Anwesend 33", "Verspätet 2" … A status only shows with a count (or
+/// while it is the chosen filter).
+class RdRecordFilterChips extends StatelessWidget {
+  const RdRecordFilterChips({
+    super.key,
+    required this.members,
+    required this.selected,
+    required this.onChanged,
+  });
 
-  final RdStatusCounts counts;
+  final List<RdMember> members;
+  final RdRecordFilter selected;
+  final ValueChanged<RdRecordFilter> onChanged;
 
   @override
   Widget build(BuildContext context) {
     final p = context.rd;
     final l10n = context.l10n;
-    Widget chip(String text, Color color, Color soft) => Container(
-          padding: const EdgeInsets.symmetric(horizontal: 10, vertical: 5),
-          decoration: BoxDecoration(color: soft, borderRadius: BorderRadius.circular(999)),
-          child: Text(text, style: TextStyle(fontSize: 13, fontWeight: FontWeight.w600, color: color)),
-        );
+    (String, Color?) labelOf(RdRecordFilter f) => switch (f) {
+          RdRecordFilter.all => (l10n.redesignCommonAll, null),
+          RdRecordFilter.present => (l10n.commonStatusPresent, p.present),
+          RdRecordFilter.late => (l10n.redesignStatusLate, p.late),
+          RdRecordFilter.excused => (l10n.redesignStatusExcused, p.excused),
+          RdRecordFilter.absent => (l10n.redesignStatusAbsent, p.absent),
+          RdRecordFilter.open => (l10n.redesignStatusOpen, p.text2),
+        };
+    return Wrap(
+      spacing: 6,
+      runSpacing: 6,
+      children: [
+        for (final f in RdRecordFilter.values)
+          if (f == RdRecordFilter.all ||
+              f == selected ||
+              members.any((m) => rdFilterMatches(f, m.status)))
+            _FilterChip(
+              key: ValueKey('rd-filter-${f.name}'),
+              label: labelOf(f).$1,
+              dot: labelOf(f).$2,
+              count: members.where((m) => rdFilterMatches(f, m.status)).length,
+              selected: f == selected,
+              onTap: () => onChanged(f == selected ? RdRecordFilter.all : f),
+            ),
+      ],
+    );
+  }
+}
+
+class _FilterChip extends StatelessWidget {
+  const _FilterChip({
+    super.key,
+    required this.label,
+    required this.dot,
+    required this.count,
+    required this.selected,
+    required this.onTap,
+  });
+
+  final String label;
+  final Color? dot;
+  final int count;
+  final bool selected;
+  final VoidCallback onTap;
+
+  @override
+  Widget build(BuildContext context) {
+    final p = context.rd;
+    final fg = selected ? p.onPrimary : p.text;
     return Semantics(
-      container: true,
-      child: Wrap(
-        spacing: 6,
-        runSpacing: 6,
-        children: [
-          chip(l10n.redesignEventCountPresent(counts.present), p.present, p.presentSoft),
-          chip(l10n.redesignEventCountLate(counts.lateAnnounced), p.late, p.lateSoft),
-          chip(l10n.redesignEventCountExcused(counts.excused), p.excused, p.excusedSoft),
-          chip(l10n.redesignEventCountAbsent(counts.absent), p.absent, p.absentSoft),
-          chip(l10n.redesignEventCountOpen(counts.open), p.text2, p.track),
-        ],
+      button: true,
+      selected: selected,
+      label: '$label $count',
+      excludeSemantics: true,
+      child: Material(
+        color: selected ? p.primary : p.surface,
+        shape: StadiumBorder(side: selected ? BorderSide.none : BorderSide(color: p.offBorder)),
+        child: InkWell(
+          customBorder: const StadiumBorder(),
+          onTap: onTap,
+          child: ConstrainedBox(
+            constraints: const BoxConstraints(minHeight: 36),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 6),
+              child: Row(
+                mainAxisSize: MainAxisSize.min,
+                children: [
+                  if (dot != null && !selected) ...[
+                    Container(width: 8, height: 8, decoration: BoxDecoration(color: dot, shape: BoxShape.circle)),
+                    const SizedBox(width: 6),
+                  ],
+                  Text(label, style: TextStyle(fontSize: 14, color: fg)),
+                  const SizedBox(width: 5),
+                  Text('$count', style: TextStyle(fontSize: 14, fontWeight: FontWeight.w700, color: fg)),
+                ],
+              ),
+            ),
+          ),
+        ),
       ),
     );
   }
@@ -200,17 +270,26 @@ class _StatusButton extends StatelessWidget {
   }
 }
 
-/// Result of [showRdStatusSheet].
-typedef RdStatusSheetResult = ({AttendanceStatus status, String? note});
+/// What the person sheet asks for besides status and note.
+enum RdPersonSheetAction { openPerson, remove }
 
-/// "Weitere Status" (canvas StatusSheet): every status of the type and the
-/// note of this Termin. Returns null when closed without "Fertig".
+/// Result of [showRdStatusSheet].
+typedef RdStatusSheetResult = ({AttendanceStatus status, String? note, RdPersonSheetAction? action});
+
+/// The person sheet (canvas StatusSheet, concept L7): every status of the
+/// type, the note of this Termin, the registration answers, "Zur Person",
+/// "Aus Termin entfernen" and who changed the status last. Returns null
+/// when closed without "Fertig" or an action.
 Future<RdStatusSheetResult?> showRdStatusSheet(
   BuildContext context, {
   required RdMember member,
   required String subtitle,
   required List<AttendanceStatus> available,
   required bool canEditNote,
+  String? registration,
+  String? changedInfo,
+  bool canOpenPerson = false,
+  bool canRemove = false,
 }) {
   return showModalBottomSheet<RdStatusSheetResult>(
     context: context,
@@ -223,6 +302,10 @@ Future<RdStatusSheetResult?> showRdStatusSheet(
       subtitle: subtitle,
       available: available,
       canEditNote: canEditNote,
+      registration: registration,
+      changedInfo: changedInfo,
+      canOpenPerson: canOpenPerson,
+      canRemove: canRemove,
     ),
   );
 }
@@ -233,12 +316,24 @@ class _StatusSheet extends StatefulWidget {
     required this.subtitle,
     required this.available,
     required this.canEditNote,
+    this.registration,
+    this.changedInfo,
+    this.canOpenPerson = false,
+    this.canRemove = false,
   });
 
   final RdMember member;
   final String subtitle;
   final List<AttendanceStatus> available;
   final bool canEditNote;
+
+  /// "Mitfahrt: nein · Essen: normal".
+  final String? registration;
+
+  /// "Zuletzt geändert von … · …".
+  final String? changedInfo;
+  final bool canOpenPerson;
+  final bool canRemove;
 
   @override
   State<_StatusSheet> createState() => _StatusSheetState();
@@ -253,6 +348,12 @@ class _StatusSheetState extends State<_StatusSheet> {
     _note.dispose();
     super.dispose();
   }
+
+  void _close(RdPersonSheetAction? action) => Navigator.of(context).pop((
+        status: _status,
+        note: widget.canEditNote ? _note.text.trim() : widget.member.note,
+        action: action,
+      ));
 
   @override
   Widget build(BuildContext context) {
@@ -314,14 +415,46 @@ class _StatusSheetState extends State<_StatusSheet> {
                   ),
                 ),
               ],
+              if ((widget.registration ?? '').isNotEmpty) ...[
+                const SizedBox(height: 16),
+                RdGroupedList(children: [
+                  RdListRow(
+                    leading: const RdRowIcon(Icons.list_alt_outlined),
+                    title: l10n.attendanceRegFields,
+                    subtitle: widget.registration,
+                    showChevron: false,
+                  ),
+                ]),
+              ],
+              if (widget.canOpenPerson || widget.canRemove) ...[
+                const SizedBox(height: 16),
+                RdGroupedList(children: [
+                  if (widget.canOpenPerson)
+                    RdListRow(
+                      key: const Key('rd-person-open'),
+                      leading: const RdRowIcon(Icons.person_outline),
+                      title: l10n.redesignEventToPerson,
+                      onTap: () => _close(RdPersonSheetAction.openPerson),
+                    ),
+                  if (widget.canRemove)
+                    RdListRow(
+                      key: const Key('rd-person-remove'),
+                      leading: RdRowIcon(Icons.close_rounded, color: p.absent, background: p.absentSoft),
+                      title: l10n.redesignEventRemoveFromEvent,
+                      titleColor: p.absent,
+                      subtitle: l10n.redesignEventRemoveHint(widget.member.person.firstName),
+                      showChevron: false,
+                      onTap: () => _close(RdPersonSheetAction.remove),
+                    ),
+                ]),
+              ],
+              if ((widget.changedInfo ?? '').isNotEmpty)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(4, 12, 4, 0),
+                  child: Text(widget.changedInfo!, style: RdType.meta(p, size: 13)),
+                ),
               const SizedBox(height: 20),
-              RdPrimaryButton(
-                label: l10n.redesignCommonDone,
-                onPressed: () => Navigator.of(context).pop((
-                  status: _status,
-                  note: widget.canEditNote ? _note.text.trim() : widget.member.note,
-                )),
-              ),
+              RdPrimaryButton(label: l10n.redesignCommonDone, onPressed: () => _close(null)),
             ],
           ),
         ),
