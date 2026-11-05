@@ -3,9 +3,9 @@ import 'dart:io';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/statistics_utils.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/data/models/plan/plan.dart';
 import 'package:attendix/data/repositories/attendance_type_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/attendance_type_edit_page.dart';
-import 'package:attendix/features/settings/presentation/pages/attendance_types_page.dart';
 import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -70,6 +70,23 @@ void main() {
       expect(plan['time'], '18:00');
       expect(plan['end'], '20:00');
       expect(plan['fields'], hasLength(1));
+    });
+
+    test('plan rows with repeated ids keep their own extra keys (merged by uid)', () {
+      final originals = [
+        {'id': 'Pause', 'name': 'Pause', 'time': '10', 'uid': 'local-1', 'extra': 'first'},
+        {'id': 'Pause', 'name': 'Pause', 'time': '15', 'uid': 'local-2', 'extra': 'second', 'isNote': true},
+      ];
+      // First "Pause" deleted, the second one renamed.
+      final merged = mergePlanRows(originals, [
+        PlanField.fromJson(originals[1]).copyWith(name: 'Kaffee'),
+      ]);
+      expect(merged, hasLength(1));
+      expect(merged.single['extra'], 'second');
+      expect(merged.single['isNote'], isTrue);
+      expect(merged.single['name'], 'Kaffee');
+      expect(merged.single['time'], '15');
+      expect(merged.single.containsKey('isGroup'), isFalse);
     });
 
     test('edit page writes relevant_groups without null fallback', () {

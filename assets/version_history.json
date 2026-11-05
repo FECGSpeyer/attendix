@@ -1,6 +1,17 @@
 {
   "versions": [
     {
+      "version": "0.41.16",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Neuer Termintyp wird wie in Ionic direkt mit allen Einstellungen angelegt",
+        "🐛 Termintyp: Der Standard-Ablaufplan ist immer bearbeitbar (nicht nur bei „Werke verwalten“) und zeigt Uhrzeiten, Ausführende, Infos und Minuten direkt in der Zeile wie bisher",
+        "🐛 Termintyp: Über „+“ lassen sich wieder Felder, Notizfelder, Werk-Platzhalter und der Tagesordnungs-Platzhalter einfügen; beim Bearbeiten bleiben Ausführender und Info erhalten",
+        "🐛 Termintyp: Filter für Ja/Nein-Zusatzfelder, „Checkliste aktivieren“, To-Dos mit Deadline-Auswahl und „Erinnerungen konfigurieren“ wie bisher",
+        "🐛 Termintyp: Löschen funktioniert auch bei Typen mit Terminen; „Mehr erfahren“ beim Dienstplan"
+      ]
+    },
+    {
       "version": "0.41.15",
       "date": "5.11.2026",
       "changes": [

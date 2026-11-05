@@ -137,7 +137,9 @@ class _TypeProtocolSettingsTilesState extends State<TypeProtocolSettingsTiles> {
                   textAlign: TextAlign.end,
                   decoration: const InputDecoration(hintText: '10', isDense: true),
                   onChanged: (v) {
-                    final n = int.tryParse(v.trim());
+                    // Ionic validate(): rounded to a whole number of minutes.
+                    final p = num.tryParse(v.trim().replaceAll(',', '.'));
+                    final n = p != null && p.isFinite ? p.round() : null;
                     widget.onChanged(n != null && n > 0
                         ? s.copyWith(agendaDefaultDuration: n)
                         : s.copyWith(clearDuration: true));
