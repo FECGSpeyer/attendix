@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.40.5",
+      "version": "0.41.5",
       "date": "5.11.2026",
       "changes": [
         "🐛 Termine: „Anderer Dirigent“ fragt den Namen wieder in einem kleinen Dialog ab",
@@ -14,6 +14,17 @@
         "🐛 Termin: Der Excel-Export enthält nur die Personen der Liste (Helfer: nur ihre Gruppen) und ist nach Gruppen sortiert",
         "🐛 Termine: „Deine Dienste: bitte bestätigen“ sehen nur Admin, Verantwortliche und Helfer",
         "🐛 Termin: Ablaufplan-Export mit dem richtigen Titel und Dateinamen (Datum, „_alle“, „_2x“)"
+      ]
+    },
+    {
+      "version": "0.41.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin stehen Abmeldungen mit Grund direkt in der Karte oben, die Zuspätkommer in einer Zeile darunter; ab 7 Abmeldungen „Alle anzeigen“",
+        "✨ Beta: „Anwesenheit eintragen“ zeigt pro Stimme nur die Ausnahmen, dazu „x von y da“, die Suche „Wer fehlt?“, Filter nach Status und „+ Person“",
+        "✨ Beta: Personen-Sheet mit Anmeldefeldern, „Zuletzt geändert von“, „Zur Person“ und „Aus Termin entfernen“",
+        "✨ Beta: Menü ••• im Termin mit Status-Übersicht, Gemeinde-Übersicht, Excel-Export, Checkliste und Archivieren; „Termin löschen“ steht unten in „Bearbeiten“",
+        "✨ Beta: Nach dem Termin „Abschluss“ mit „Unentschuldigte anschreiben“ und den automatischen Nachrichten samt Antworten"
       ]
     },
     {
