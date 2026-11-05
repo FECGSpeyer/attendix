@@ -9,7 +9,8 @@
         "🐛 Person bearbeiten: Können die gemeinsamen Zusatzfelder nicht geladen werden, erscheint ein Hinweis und es wird nichts überschrieben",
         "🐛 Saisonstart lässt sich wie bisher bis heute und auch vor 2020 wählen",
         "🐛 Neuer Termintyp mit Dienst-Modus erinnert Unbestätigte wieder nach 2 Tagen",
-        "🐛 Schichtwechsel hält Dienste und Änderungsvermerk aktuell"
+        "🐛 Schichtwechsel hält Dienste und Änderungsvermerk aktuell",
+        "🐛 Person kopieren oder übertragen gibt dem Konto in der anderen Instanz wie bisher die Rolle Spieler"
       ]
     },
     {

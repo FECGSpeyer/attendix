@@ -4,10 +4,14 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 
+/// x-7da97d6aac: in the iOS look a toast must be visible above an open
+/// bottom sheet, once, whether or not the sheet has its own Scaffold.
 void main() {
-  testWidgets('x-7da97d6aac: iOS-look toast is drawn above an open sheet', (tester) async {
-    debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+  const message = 'Bitte einen Namen eingeben';
+
+  Future<BuildContext> openSheet(WidgetTester tester, {required bool ownScaffold}) async {
     late BuildContext pageContext;
+    late BuildContext sheetContext;
     await tester.pumpWidget(MaterialApp(
       localizationsDelegates: AppLocalizations.localizationsDelegates,
       supportedLocales: AppLocalizations.supportedLocales,
@@ -19,20 +23,38 @@ void main() {
     showModalBottomSheet<void>(
       context: pageContext,
       isScrollControlled: true,
-      builder: (_) => const SizedBox.expand(child: ColoredBox(color: Colors.white)),
+      builder: (_) => SizedBox.expand(
+        child: ownScaffold
+            // e.g. Stammdaten / Registerplan sheets.
+            ? Scaffold(body: Builder(builder: (c) {
+                sheetContext = c;
+                return const SizedBox.expand();
+              }))
+            : Builder(builder: (c) {
+                sheetContext = c;
+                return const ColoredBox(color: Colors.white);
+              }),
+      ),
     );
     await tester.pumpAndSettle();
+    return ownScaffold ? sheetContext : pageContext;
+  }
 
-    ToastHelper.showError(pageContext, 'Bitte einen Namen eingeben');
-    await tester.pump(const Duration(milliseconds: 300));
+  for (final ownScaffold in [false, true]) {
+    testWidgets('toast above a sheet ${ownScaffold ? 'with' : 'without'} its own Scaffold', (tester) async {
+      debugDefaultTargetPlatformOverride = TargetPlatform.iOS;
+      final context = await openSheet(tester, ownScaffold: ownScaffold);
 
-    expect(find.byType(SnackBar), findsNothing);
-    final toast = find.text('Bitte einen Namen eingeben');
-    expect(toast, findsOneWidget);
-    // Hit-testable = drawn above the sheet (the SnackBar was covered).
-    expect(toast.hitTestable(), findsOneWidget);
+      ToastHelper.showError(context, message);
+      await tester.pump(const Duration(milliseconds: 300));
 
-    await tester.pump(const Duration(seconds: 4));
-    debugDefaultTargetPlatformOverride = null;
-  });
+      expect(find.byType(SnackBar), findsNothing);
+      // Exactly once, and hit-testable = drawn above the sheet.
+      expect(find.text(message), findsOneWidget);
+      expect(find.text(message).hitTestable(), findsOneWidget);
+
+      await tester.pump(const Duration(seconds: 4));
+      debugDefaultTargetPlatformOverride = null;
+    });
+  }
 }

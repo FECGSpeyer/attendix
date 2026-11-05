@@ -1684,6 +1684,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// [targetTenantName] - Name of target tenant for history entry
   /// [sourceTenantName] - Name of source tenant for history entry
   /// [stayInInstance] - If true, copies player (COPIED_FROM/TO), otherwise transfers (TRANSFERRED_FROM/TO)
+  /// [responsibleForMainGroup] - false for the person page (Ionic: always
+  ///   PLAYER); the handover page keeps RESPONSIBLE for the main group.
   ///
   /// LOGIC_PEOPLE: Ionic db.handoverPerson — the target person is created
   /// FIRST (account linked/registered in the target instance with
@@ -1702,6 +1704,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required String targetTenantName,
     required String sourceTenantName,
     required bool stayInInstance,
+    bool responsibleForMainGroup = true,
   }) async {
     ensureNotDemo('handoverPlayer'); // DEMO_GUARD
     if (player.id == null) {
@@ -1739,8 +1742,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       String? appId = player.appId;
       final email = player.email?.trim() ?? '';
       if (email.isNotEmpty) {
-        final targetMainGroup = await _mainGroupId(tenantId: targetTenantId);
-        final role = targetGroupId != null && targetGroupId == targetMainGroup
+        final targetMainGroup = responsibleForMainGroup
+            ? await _mainGroupId(tenantId: targetTenantId)
+            : null;
+        final role = responsibleForMainGroup &&
+                targetGroupId != null &&
+                targetGroupId == targetMainGroup
             ? Role.responsible
             : Role.player;
         appId = await _registration().registerUser(
