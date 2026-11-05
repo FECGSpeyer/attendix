@@ -25,19 +25,43 @@ class _InstrumentCategoriesSheetState
   bool _isReordering = false;
   List<GroupCategory>? _working;
 
+  /// Whether a category was actually moved in the current reorder session
+  bool _moved = false;
+
   Future<void> _toggleReorder(List<GroupCategory> categories) async {
     if (!_isReordering) {
       setState(() {
         _isReordering = true;
+        _moved = false;
         _working = [...categories];
       });
       return;
     }
     final ordered = _working ?? categories;
+    final moved = _moved;
     setState(() {
       _isReordering = false;
       _working = null;
+      _moved = false;
     });
+
+    if (!moved) {
+      // Ionic saveCategoryOrder without a move: the existing category
+      // sort_order values are written unchanged (null stays null).
+      final ok = await ref
+          .read(groupNotifierProvider.notifier)
+          .saveCategoryOrder({
+        for (final c in categories)
+          if (c.id != null) c.id!: c.sortOrder,
+      });
+      if (!mounted) return;
+      if (ok) {
+        ToastHelper.showSuccess(context, context.l10n.typeSettingsOrderSaved);
+      } else {
+        ToastHelper.showError(context, context.l10n.instrumentsOrderFailed);
+      }
+      return;
+    }
 
     // New category sort_order (1-based) + resulting global instrument order
     final categoryOrders = <int, int>{};
@@ -203,6 +227,7 @@ class _InstrumentCategoriesSheetState
                                 setState(() {
                                   final list = [...working];
                                   if (newIndex > oldIndex) newIndex -= 1;
+                                  if (newIndex != oldIndex) _moved = true;
                                   final item = list.removeAt(oldIndex);
                                   list.insert(newIndex, item);
                                   _working = list;

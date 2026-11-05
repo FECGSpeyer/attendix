@@ -35,22 +35,34 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
   /// Local working copy while reordering
   List<InstrumentCategorySection>? _reorderSections;
 
+  /// Whether an item was actually moved in the current reorder session
+  bool _moved = false;
+
   Future<void> _toggleReorder(
       List<Group> groups, List<GroupCategory> categories) async {
     if (!_isReordering) {
       setState(() {
         _isReordering = true;
+        _moved = false;
         _reorderSections = groupInstrumentsByCategory(groups, categories);
       });
       return;
     }
 
-    // Leaving reorder mode → save global order
+    // Leaving reorder mode → save global order. Ionic saveOrder: without a
+    // move the existing sort_order values are written unchanged (null stays
+    // null); only a real move renumbers 1..n.
     final sections = _reorderSections ?? const <InstrumentCategorySection>[];
-    final orders = computeGlobalSortOrder(sections);
+    final Map<int, int?> orders = _moved
+        ? computeGlobalSortOrder(sections)
+        : {
+            for (final g in groups)
+              if (g.id != null) g.id!: g.sortOrder,
+          };
     setState(() {
       _isReordering = false;
       _reorderSections = null;
+      _moved = false;
     });
     final ok =
         await ref.read(groupNotifierProvider.notifier).saveGroupOrder(orders);
@@ -66,6 +78,7 @@ class _InstrumentsListPageState extends ConsumerState<InstrumentsListPage> {
       InstrumentCategorySection section, int oldIndex, int newIndex) {
     setState(() {
       if (newIndex > oldIndex) newIndex -= 1;
+      if (newIndex != oldIndex) _moved = true;
       final item = section.groups.removeAt(oldIndex);
       section.groups.insert(newIndex, item);
     });

@@ -230,7 +230,7 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
   }
 
   /// Save instrument order (id -> sort_order)
-  Future<bool> saveGroupOrder(Map<int, int> sortOrders) async {
+  Future<bool> saveGroupOrder(Map<int, int?> sortOrders) async {
     state = const AsyncValue.loading();
     try {
       await _repo.updateGroupSortOrders(sortOrders);
@@ -245,8 +245,8 @@ class GroupNotifier extends Notifier<AsyncValue<void>> {
 
   /// Save category order and the resulting global instrument order
   Future<bool> saveCategoryOrder(
-    Map<int, int> categorySortOrders, {
-    Map<int, int> groupSortOrders = const {},
+    Map<int, int?> categorySortOrders, {
+    Map<int, int?> groupSortOrders = const {},
   }) async {
     final repo = _repo; // SOL_FIX4: bind the tenant repository before the first await.
     state = const AsyncValue.loading();
