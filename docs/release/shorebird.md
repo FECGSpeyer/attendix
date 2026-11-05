@@ -7,7 +7,10 @@ aktualisiert sich selbst).
 
 **Verhalten in der App:** `auto_update: true` in `shorebird.yaml`. Ein Patch
 wird beim App-Start still im Hintergrund geladen und gilt ab dem nächsten
-Start. Kein Hinweis, kein Neustart während der Nutzung. Die laufende
+Start. Zusätzlich prüft die App beim Zurückkommen aus dem Hintergrund
+(höchstens alle 30 Minuten) und lädt einen neuen Patch ebenfalls still
+(`checkShorebirdPatchOnResume`), sodass meist ein Neustart reicht.
+Kein Hinweis, kein Neustart während der Nutzung. Die laufende
 Patch-Nummer steht in den Einstellungen bei „Was ist neu“ (z. B.
 `5.0.0 (Patch 2)`) und als Sentry-Tag `shorebird_patch`.
 

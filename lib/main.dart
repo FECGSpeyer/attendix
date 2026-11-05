@@ -142,9 +142,16 @@ class AttendixApp extends ConsumerStatefulWidget {
 }
 
 class _AttendixAppState extends ConsumerState<AttendixApp> {
+  // SHOREBIRD: download a new code push patch silently when the app returns
+  // from the background (active from the next start, nothing visible).
+  late final AppLifecycleListener _shorebirdResumeListener;
+
   @override
   void initState() {
     super.initState();
+    _shorebirdResumeListener = AppLifecycleListener(
+      onResume: () => unawaited(checkShorebirdPatchOnResume()),
+    );
     // Start update listener (web: service worker; NATIVE_MISC: native store check)
     ref.read(appUpdateServiceProvider).startListening();
     // PROFILE_OFFLINE: replay queued offline attendance writes
@@ -182,6 +189,12 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
         );
       }));
     });
+  }
+
+  @override
+  void dispose() {
+    _shorebirdResumeListener.dispose();
+    super.dispose();
   }
 
   @override
