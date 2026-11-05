@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.41.3",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Eine selbst gewählte Abmeldefrist wird wieder mit der gewählten Uhrzeit gespeichert, die Anmeldung schließt nicht mehr ein bis zwei Stunden zu früh",
+        "🐛 Termin: Die Fristauswahl bietet wie bisher nur 5-Minuten-Schritte und reicht bis zum Terminbeginn"
+      ]
+    },
+    {
       "version": "0.41.2",
       "date": "5.11.2026",
       "changes": [
