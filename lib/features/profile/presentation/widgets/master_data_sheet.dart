@@ -58,6 +58,8 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
   String? _img;
   Map<String, dynamic> _additional = {};
   OwnProfile? _profile;
+  // Last ownProfileProvider value taken over as comparison base.
+  OwnProfile? _loadedProfile;
   bool _initialized = false;
   bool _saving = false;
 
@@ -74,6 +76,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   void _init(OwnProfile profile, List<ProfileExtraField> visibleFields) {
     _profile = profile;
+    _loadedProfile = profile;
     final p = profile.person;
     _firstName.text = p.firstName;
     _lastName.text = p.lastName;
@@ -279,6 +282,19 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     if (!mounted) return;
     setState(() => _saving = false);
     if (ok) {
+      // The saved values are the comparison base for the next save right
+      // away; the reload of ownProfileProvider replaces it once it arrives.
+      _profile = OwnProfile(
+        person: profile.person.copyWith(
+          firstName: _firstName.text.trim(),
+          lastName: _lastName.text.trim(),
+          phone: _phone.text.trim(),
+          birthday: _birthday,
+        ),
+        globalPersonId: profile.globalPersonId,
+        organisationId: profile.organisationId,
+        additionalFields: {...profile.additionalFields, ..._additional},
+      );
       // Ionic updateUserData: toast only, the sheet stays open.
       ToastHelper.showSuccess(
           context, context.l10n.settingsProfileUpdated);
@@ -299,8 +315,16 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       _init(profile, visibleFields);
     }
     // The sheet stays open after saving: the next save compares against the
-    // freshly loaded profile (church/birthday change detection).
-    if (_initialized && profile != null && !_saving) _profile = profile;
+    // freshly loaded profile (church/birthday change detection). Only a newly
+    // loaded value replaces the base; the stale one still shown while
+    // reloading must not overwrite the just-saved values.
+    if (_initialized &&
+        profile != null &&
+        !_saving &&
+        !identical(profile, _loadedProfile)) {
+      _profile = profile;
+      _loadedProfile = profile;
+    }
     final inputStyle = ionItemInputStyle(context);
 
     // Ionic master data modal: sheet (breakpoint .9) with a plain toolbar
