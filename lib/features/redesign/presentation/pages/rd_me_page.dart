@@ -270,7 +270,7 @@ class RdMePage extends ConsumerWidget {
         const SizedBox(height: 8),
         Center(
           child: Text(
-            'Attendix ${AppConstants.appVersion}',
+            'Attendix ${AppConstants.displayVersion}',
             style: RdType.meta(p, size: 13),
           ),
         ),

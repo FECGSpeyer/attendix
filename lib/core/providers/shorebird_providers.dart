@@ -17,7 +17,7 @@ final appVersionLabelProvider = Provider<String>((ref) {
   return appVersionLabel(patch);
 });
 
-/// [AppConstants.appVersion] with ` (Patch N)` appended when [patch] is set.
+/// [AppConstants.displayVersion] with ` (Patch N)` appended when [patch] is set.
 String appVersionLabel(int? patch) => patch == null
-    ? AppConstants.appVersion
-    : '${AppConstants.appVersion} (Patch $patch)';
+    ? AppConstants.displayVersion
+    : '${AppConstants.displayVersion} (Patch $patch)';

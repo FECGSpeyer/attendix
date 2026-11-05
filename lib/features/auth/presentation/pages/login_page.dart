@@ -699,7 +699,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                           children: [
                             TextSpan(
                                 text: context.l10n
-                                    .loginVersion(AppConstants.appVersion)),
+                                    .loginVersion(AppConstants.displayVersion)),
                             const TextSpan(text: ' | '),
                             TextSpan(
                               text: context.l10n.loginStartDemo,
