@@ -407,6 +407,18 @@
     "lib/features/teachers/presentation/pages/teachers_list_page.dart"
    ],
    "n": "behoben in #295"
+  },
+  "utilities/Utils#x-562b23ba0c": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/share_origin.dart",
+    "lib/core/services/zip_service_io.dart",
+    "lib/core/services/zip_service_web.dart",
+    "lib/core/services/zip_service.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart",
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ],
+   "n": "behoben in #295"
   }
  },
  "extra": [],

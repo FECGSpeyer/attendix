@@ -8,6 +8,7 @@ import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/branding_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
+import '../../../../core/utils/share_origin.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'ion_items.dart';
@@ -143,7 +144,11 @@ String _safeName(String name) => name.replaceFirst('(', '').replaceFirst(')', ''
 /// Shares a link via the system share sheet, falls back to the clipboard.
 Future<void> sharePlanLink(BuildContext context, String url, {String? title}) async {
   try {
-    final result = await Share.share(url, subject: title);
+    final result = await Share.share(
+      url,
+      subject: title,
+      sharePositionOrigin: shareOriginFor(context),
+    );
     if (result.status == ShareResultStatus.unavailable) {
       throw Exception('unavailable');
     }

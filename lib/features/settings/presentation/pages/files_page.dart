@@ -17,6 +17,7 @@ import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/share_origin.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/storage/storage_entry.dart';
 import '../../../../data/repositories/base_repository.dart';
@@ -430,7 +431,7 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesLinkCopied);
     } catch (_) {
       try {
-        await Share.share(url);
+        await Share.share(url, sharePositionOrigin: shareOriginFor(context));
       } catch (_) {
         if (mounted) ToastHelper.showInfo(context, context.l10n.filesLinkToast(url));
       }

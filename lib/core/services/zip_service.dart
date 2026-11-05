@@ -55,7 +55,11 @@ class ZipService {
     final fileName = '${safeName}_files.zip';
 
     // Use platform-specific implementation
-    await platform.saveZipFile(Uint8List.fromList(zipData), fileName);
+    await platform.saveZipFile(
+      Uint8List.fromList(zipData),
+      fileName,
+      text: l10nWithoutContext.coreFlutterSongFiles,
+    );
   }
 
   /// [name], or "name (2).ext", "name (3).ext" … when [used] has it; the
