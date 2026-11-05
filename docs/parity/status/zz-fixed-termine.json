@@ -3,6 +3,14 @@
   "afterRound": 3,
   "ionic": "9f9b82af",
   "items": {
+    "attendance/attendance/attendance.page#field-7e76e2fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774",
+        "lib/shared/widgets/adaptive/app_pickers.dart:79"
+      ],
+      "n": "behoben in #291"
+    },
     "attendance/att-list/att-list.page#modal-c5dfef61": {
       "s": "ok",
       "f": [

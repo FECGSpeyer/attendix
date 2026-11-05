@@ -17,6 +17,7 @@ import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../core/utils/attendance_logic_utils.dart';
+import '../../../../core/utils/event_list_utils.dart';
 import '../widgets/attendance_detail/ad_hoc_reminder_sheet.dart';
 import '../widgets/attendance_detail/auto_message_panel.dart';
 import '../widgets/attendance_detail/attendance_view_options.dart';
@@ -1777,50 +1778,74 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (attendance == null) return;
 
     final attendanceDate = DateTime.tryParse(attendance.date);
-    final currentDeadline = attendance.deadline != null
-        ? DateTime.tryParse(attendance.deadline!)
-        : null;
+    // LOGIC_ATT: Ionic binds the deadline to ion-datetime, which ignores the
+    // offset when reading and writes the picked wall time without one, so
+    // the column holds local wall time in UTC notation (see
+    // EventListUtils.deadlineLocal). Read and write it the same way.
+    final currentDeadline = EventListUtils.deadlineLocal(attendance.deadline);
 
+    // Ionic maxDeadlineDate: Termin day at the type start time (19:30 without).
+    // Wait for a still loading type so the limit is not the 19:30 fallback.
+    AttendanceType? type;
+    try {
+      type = await ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId).future);
+    } catch (_) {
+      type = null;
+    }
+    if (!mounted) return;
+    final start = type?.startTime;
+    final startHour = start != null && start.length >= 5 ? int.tryParse(start.substring(0, 2)) ?? 19 : 19;
+    final startMin = start != null && start.length >= 5 ? int.tryParse(start.substring(3, 5)) ?? 30 : 30;
     final now = DateTime.now();
-    final initialDate = currentDeadline ?? attendanceDate?.subtract(const Duration(days: 1)) ?? now;
+    final maxDeadline = attendanceDate == null
+        ? now.add(const Duration(days: 365))
+        : DateTime(attendanceDate.year, attendanceDate.month, attendanceDate.day, startHour, startMin);
+    final firstDate = DateTime(now.year, now.month, now.day);
+    final lastDate = maxDeadline.isBefore(firstDate) ? firstDate : maxDeadline;
+
+    var initialDate = currentDeadline ?? attendanceDate?.subtract(const Duration(days: 1)) ?? now;
+    if (initialDate.isBefore(firstDate)) initialDate = firstDate;
+    if (initialDate.isAfter(lastDate)) initialDate = lastDate;
 
     final selectedDate = await showAppDatePicker(
       context: context,
       initialDate: initialDate,
-      firstDate: now,
-      lastDate: attendanceDate ?? now.add(const Duration(days: 365)),
+      firstDate: firstDate,
+      lastDate: lastDate,
       helpText: context.l10n.attendanceFlutterChooseDeadline,
     );
 
     if (selectedDate == null || !mounted) return;
 
+    // Snap to the 5-minute grid first: the iOS wheel shows the snapped time
+    // and returns null when left unchanged, so that is what gets saved.
+    final rawTime = TimeOfDay.fromDateTime(currentDeadline ?? initialDate);
+    final initialTime = TimeOfDay(hour: rawTime.hour, minute: rawTime.minute - rawTime.minute % 5);
     final selectedTime = await showAppTimePicker(
       context: context,
-      initialTime: TimeOfDay.fromDateTime(initialDate),
+      initialTime: initialTime,
+      // Ionic minuteValues="0,5,10,…,55"
+      minuteInterval: 5,
     );
 
     if (!mounted) return;
 
-    final finalDeadline = DateTime(
-      selectedDate.year,
-      selectedDate.month,
-      selectedDate.day,
-      selectedTime?.hour ?? 23,
-      selectedTime?.minute ?? 59,
-    );
+    // The iOS wheel returns null when the time was left unchanged.
+    final time = selectedTime ?? initialTime;
+    var picked = DateTime(selectedDate.year, selectedDate.month, selectedDate.day, time.hour, time.minute);
+    // ion-datetime clamps to [min, max].
+    if (picked.isAfter(maxDeadline)) picked = maxDeadline;
+    final deadlineStr = DateTime.utc(picked.year, picked.month, picked.day, picked.hour, picked.minute)
+        .toIso8601String();
 
     try {
       if (!repo.hasTenantId) return;
       await repo.updateAttendance(
         widget.attendanceId,
-        {'deadline': finalDeadline.toUtc().toIso8601String()},
+        {'deadline': deadlineStr},
       );
 
       ref.invalidate(attendanceDetailProvider(widget.attendanceId));
-
-      if (mounted) {
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterDeadlineUpdated);
-      }
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
