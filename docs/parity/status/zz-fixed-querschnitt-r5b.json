@@ -1,7 +1,7 @@
 {
  "batch": "zz-fixed-querschnitt-r5b",
  "ionic": "1923d203",
- "afterRound": 5,
+ "afterRound": 6,
  "items": {
   "x-7da97d6aac": {
    "s": "ok",
@@ -73,6 +73,13 @@
     "lib/features/people/presentation/widgets/person_transfer_sheet.dart"
    ],
    "n": "Person kopieren/übertragen von der Personenseite vergibt immer Spieler wie Ionic; die Übergabe-Seite behält Verantwortlich für die Hauptgruppe"
+  },
+  "services/auth/auth.service#toast-fe3978a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ],
+   "n": "Teams-Verknüpfung: email_not_confirmed zeigt „Bitte bestätige zuerst deine E-Mail-Adresse.“ (gleiche Ursache wie db-5e5596ce)"
   }
  }
 }
