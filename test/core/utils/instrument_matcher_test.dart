@@ -117,6 +117,25 @@ void main() {
       expect(_label('Glockenspiel.pdf', ['Schlagzeug', 'Glockenspiel']), 'Glockenspiel');
     });
 
+    test('terms and abbreviations from Ionic', () {
+      final more = [..._orchestra, 'Blockflöte', 'Akkordeon', 'Kleine Trommel', 'Große Trommel', 'Becken', 'Triangel'];
+      expect(_label('skripka 1.pdf', _orchestra), 'Violine 1');
+      expect(_label('litavry.pdf', _orchestra), 'Pauke');
+      expect(_label('ф-но.pdf', _orchestra), 'Klavier');
+      expect(_label('к-б.pdf', _orchestra), 'Kontrabass');
+      expect(_label('Akkordeon.pdf', more), 'Akkordeon');
+      expect(_label('Баян.pdf', more), 'Akkordeon');
+      expect(_label('Recorder.pdf', more), 'Blockflöte');
+      expect(_label('Flauto dolce.pdf', more), 'Blockflöte');
+      expect(_label('Flute.pdf', more), 'Flöte');
+      expect(_label('Snare.pdf', more), 'Kleine Trommel');
+      expect(_label('Bass Drum.pdf', more), 'Große Trommel');
+      expect(_label('Cymbals.pdf', more), 'Becken');
+      expect(_label('Triangle.pdf', more), 'Triangel');
+      // "Royal" is also an English word: only unsure.
+      expect(_confidence('Royal Fireworks.pdf', _orchestra), MatchConfidence.unsure);
+    });
+
     test('ambiguous abbreviation is unsure', () {
       expect(_confidence('Kl 1.pdf', _orchestra), MatchConfidence.unsure);
       expect(_confidence('Bass.pdf', _orchestra), MatchConfidence.unsure);

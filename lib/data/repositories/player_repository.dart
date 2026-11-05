@@ -17,6 +17,7 @@ import '../../core/utils/paged_query.dart';
 import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
 import 'base_repository.dart';
+import 'profile_repository.dart' show syncOwnPlayerImage;
 import 'user_registration_repository.dart';
 import '../../l10n/l10n.dart';
 import '../../core/services/error_reporter.dart';
@@ -423,7 +424,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// ASTRA_PHOTO: Ionic ImageService.updateImage – upload the picture to the
   /// `profiles` bucket under the bare player id (upsert) and store its plain
   /// public URL in `player.img`. Returns the public URL.
-  Future<String> updateImage(int playerId, Uint8List bytes) async {
+  Future<String> updateImage(int playerId, Uint8List bytes, {String? appId}) async {
     ensureNotDemo('updateImage'); // DEMO_GUARD
     try {
       final storagePath = profileImageStoragePath(playerId);
@@ -443,11 +444,21 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .update({'img': publicUrl})
           .eq('id', playerId)
           .eq('tenantId', currentTenantId);
+      await syncOwnImage(appId, publicUrl);
       return publicUrl;
     } catch (e, stack) {
       handleError(e, stack, 'updateImage');
       rethrow;
     }
+  }
+
+  /// Ionic `ImageService.updateImage` / `removeImage` with the own appId
+  /// (`appId === currentUserId`): the picture is written to every player
+  /// row of the account, i.e. in all instances. No-op for other persons.
+  Future<void> syncOwnImage(String? appId, String img) async {
+    final userId = supabase.auth.currentUser?.id;
+    if (appId == null || appId.isEmpty || userId == null || appId != userId) return;
+    await syncOwnPlayerImage(supabase, userId: userId, img: img);
   }
 
   /// Ionic 4.19.3 `ImageService.copyProfileImage`: copies a person's picture
@@ -1151,6 +1162,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .lte('paused_until', today);
 
       for (final playerData in pausedPlayers as List) {
+        // Ionic unpauses via updatePlayer → checkDemoRestriction(): demo
+        // toast, nothing written (the DemoModeException reaches the caller).
+        ensureNotDemo('checkAndUnpausePlayers'); // DEMO_GUARD
         final player = Person.fromJson(playerData as Map<String, dynamic>);
 
         // Add history entry
@@ -1175,8 +1189,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         await addToUpcomingAttendances(player);
       }
     } catch (e, stack) {
-      handleError(e, stack, 'checkAndUnpausePlayers');
-      // Don't rethrow - this runs in the background
+      // Only the demo error reaches the caller (demo toast).
+      if (e is DemoModeException) rethrow;
+      // Don't rethrow anything else - this runs in the background.
+      if (kDebugMode) {
+        debugPrint('[PlayerRepository] Error in checkAndUnpausePlayers: $e');
+      }
+      ErrorReporter.report(
+        e,
+        stack,
+        where: 'PlayerRepository.checkAndUnpausePlayers',
+      );
     }
   }
 
@@ -1339,13 +1362,15 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     try {
       final response = await supabase
           .from('player')
-          .select('instrument')
+          .select('instrument, paused')
           .eq('tenantId', currentTenantId)
           .isFilter('pending', false)
           .isFilter('left', null);
 
+      // Ionic getPlayerCountByGroup: active people only (not left, not paused)
       final counts = <int, int>{};
       for (final row in response as List) {
+        if (row['paused'] == true) continue;
         final instrument = row['instrument'] as int?;
         if (instrument != null) {
           counts[instrument] = (counts[instrument] ?? 0) + 1;
@@ -1990,18 +2015,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', targetId)
           .eq('tenantId', currentTenantId);
 
-      // Role like Ionic createAccount: main group → RESPONSIBLE.
-      final mainGroup = await supabase
-          .from('instruments')
-          .select('id')
-          .eq('tenantId', currentTenantId)
-          .eq('maingroup', true)
-          .limit(1)
-          .maybeSingle();
-      final role = UserRegistrationRepository.accountRoleFor(
-        instrumentId: target.instrument,
-        mainGroupId: mainGroup?['id'] as int?,
-      );
+      // Ionic mergePendingPlayerIntoExisting: updateTenantUser({role:
+      // PLAYER}) and the approval mail with PLAYER, whatever the group (like
+      // approvePlayer; a main-group person gets no RESPONSIBLE rights here).
+      const role = Role.player;
 
       if (pending.appId != null) {
         await supabase

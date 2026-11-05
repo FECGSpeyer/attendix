@@ -73,13 +73,15 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
 
     final userPrefs = ref.read(userPreferencesProvider);
 
-    // If user wants to see selection, don't auto-navigate (Ionic: only right
-    // after a sign-in; a restored session opens the stored instance).
-    if (InstanceSelectionGate.wanted(userPrefs)) return;
+    // Ionic getWantedTenant(): with "Instanzauswahl aktivieren" a radio
+    // alert asks right after a sign-in (a restored session opens the stored
+    // instance). It runs here and not on the login page, because the router
+    // replaces /login with /tenants as soon as the session exists.
+    final ask = InstanceSelectionGate.wanted(userPrefs);
 
     // If tenant is already set, user navigated here to switch - show selection
     final currentTenant = ref.read(currentTenantProvider);
-    if (currentTenant != null) return;
+    if (!ask && currentTenant != null) return;
 
     setState(() => _isAutoNavigating = true);
 
@@ -94,17 +96,26 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
-      // IONIC_SESSION: after the store update the Ionic group wins (only if
-      // the user still belongs to it, i.e. it is in this list); setting it
-      // below also ends the pending restore in CurrentTenantNotifier. A
-      // group that restore set meanwhile is kept.
-      final ionicTenantId = await pendingIonicTenantId();
+      // Same order as the background restore (Ionic setTenant): a group the
+      // restore set meanwhile is kept; otherwise IONIC_SESSION's pending
+      // Ionic group, this device's instance, then user_metadata. Setting it
+      // below also ends the pending restore in CurrentTenantNotifier.
       final restoredId = container.read(currentTenantProvider)?.id;
-      final savedTenant =
-          tenants.where((t) => t.id == restoredId).firstOrNull ??
-          tenants.where((t) => t.id == ionicTenantId).firstOrNull ??
-          tenants.where((t) => t.id == userPrefs.currentTenantId).firstOrNull ??
-          tenants.firstOrNull;
+      Tenant? storedTenant = tenants.where((t) => t.id == restoredId).firstOrNull;
+      if (storedTenant == null) {
+        for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+          storedTenant = tenants.where((t) => t.id == id).firstOrNull;
+          if (storedTenant != null) break;
+        }
+      }
+      var savedTenant = storedTenant ?? tenants.firstOrNull;
+      if (ask && savedTenant != null) {
+        if (!mounted) return;
+        savedTenant = await _askWantedTenant(tenants, storedTenant);
+        if (!mounted) return;
+        // The choice is made; a later visit of the list shows it normally.
+        InstanceSelectionGate.afterSignIn = false;
+      }
 
       // No tenant at all: show the (empty) list with "Neue Instanz anlegen"
       if (savedTenant == null) {
@@ -148,6 +159,26 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         setState(() => _isAutoNavigating = false);
       }
     }
+  }
+
+  /// Ionic `getWantedTenant()`: radio alert "Instanz auswählen" (no
+  /// backdrop dismiss). "Abbrechen" opens the stored tenant, otherwise the
+  /// first one; "Öffnen" the checked one.
+  Future<Tenant> _askWantedTenant(List<Tenant> tenants, Tenant? stored) async {
+    final fallback = stored ?? tenants.first;
+    final result = await showAppRadioAlert<int>(
+      context,
+      title: context.l10n.dbChooseInstanceHeader,
+      subtitle: context.l10n.dbChooseInstanceMessage,
+      options: [for (final t in tenants) (t.id!, t.longName)],
+      initialValue: stored?.id,
+      confirmText: context.l10n.commonOpen,
+      cancelDestructive: true,
+      barrierDismissible: false,
+    );
+    // Cancelled, or "Öffnen" without a checked tenant → fallback.
+    final id = result?.value;
+    return tenants.where((t) => t.id == id).firstOrNull ?? fallback;
   }
 
   /// Get the user's role for a specific tenant
@@ -314,6 +345,16 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final rootContext = router.routerDelegate.navigatorKey.currentContext;
       final sheetNavigator = widget.sheet ? Navigator.of(context) : null;
       final wasCurrent = tenant.id == ref.read(currentTenantProvider)?.id;
+      // Ionic deleteInstance: setTenant() + Utils.getUrl(role) after every
+      // delete – the open instance's start page (read before the sheet closes).
+      final currentId = ref.read(currentTenantIdProvider);
+      final home = currentId == null
+          ? null
+          : homeRouteFor(
+              ref.read(currentRoleProvider),
+              currentId,
+              ref.read(supabaseAuthProvider).currentUser?.userMetadata,
+            );
       await deleteTenant(ref, tenant.id!);
       sheetNavigator?.pop();
       final toastContext = widget.sheet ? rootContext : (mounted ? context : null);
@@ -321,6 +362,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
         ToastHelper.showSuccess(toastContext, toastContext.l10n.dbInstanceDeleted);
       }
       if (wasCurrent) router.go('/tenants');
+      if (!wasCurrent && home != null) goReplacingHistory(router, home);
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.dbDeleteInstanceFailed);
     } finally {

@@ -1,6 +1,6 @@
 # Fix-Paket „uebersicht“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 14
@@ -90,7 +90,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher, nur erneutes Öffnen.
   Flutter: lib/features/statistics/presentation/pages/statistics_page.dart:163
 
-## Kleinigkeiten (niedrig): 45
+## Kleinigkeiten (niedrig): 40
 
 - [ ] **niedrig** `export/export.page` `alert-ed41a2f2` [export/export.page.ts:159](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/export/export.page.ts#L159)
   Header 'Feld hinzufügen', Buttons Abbrechen/Hinzufügen gleich. Ionic: Textfeld ohne Label, leere Eingabe fügt eine leere Spalte hinzu / Flutter: Feld mit Label 'Spaltenname' (Flutter-Text), leere Eingabe wird ignoriert.
@@ -143,21 +143,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `history/history.page` `field-aa62edcf` [history/history.page.html:196](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/history/history.page.html#L196)
   Ionic: ion-datetime als Datumsrad (preferWheel, Montag zuerst), Wert wird sofort übernommen, schließt bei Tageswechsel, unbegrenzter Bereich / Flutter: Kalender-Datepicker (md mit OK-Bestätigung), Bereich 01.01.2000 bis heute+365 Tage.
   Flutter: lib/features/history/presentation/pages/history_page.dart:420, lib/shared/widgets/adaptive/app_pickers.dart:12
-- [ ] **niedrig** `home-dashboard/components/absences-card/absences-card.component` `modal-6daf3e85` [home-dashboard/components/absences-card/absences-card.component.ts:99](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/components/absences-card/absences-card.component.ts#L99) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
-  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
-- [ ] **niedrig** `home-dashboard/components/birthdays-card/birthdays-card.component` `modal-388a556f` [home-dashboard/components/birthdays-card/birthdays-card.component.ts:99](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/components/birthdays-card/birthdays-card.component.ts#L99) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
-  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
-- [ ] **niedrig** `home-dashboard/components/critical-persons-card/critical-persons-card.component` `modal-160799e3` [home-dashboard/components/critical-persons-card/critical-persons-card.component.ts:49](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/components/critical-persons-card/critical-persons-card.component.ts#L49) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
-  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
-- [ ] **niedrig** `home-dashboard/components/member-changes-card/member-changes-card.component` `modal-04f3c3d5` [home-dashboard/components/member-changes-card/member-changes-card.component.ts:67](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/components/member-changes-card/member-changes-card.component.ts#L67) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Person öffnet als Seite statt als Modal, Bearbeitbarkeit und Neuladen gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, md Vollbild, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') als normale Detailseite im Shell. Bearbeitbarkeit gleich (Dashboard nur Admin/Verantwortlicher; Route /home-dashboard ebenso geschützt), danach Neuladen der Personenkarten.
-  Flutter: lib/features/dashboard/presentation/widgets/people_cards.dart:14
-- [ ] **niedrig** `home-dashboard/components/next-event-card/next-event-card.component` `modal-29087654` [home-dashboard/components/next-event-card/next-event-card.component.ts:112](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/components/next-event-card/next-event-card.component.ts#L112) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Termin öffnet als Seite statt als Modal, Rollen und Neuladen gleich. – Befund: Ionic: AttendancePage als Modal (isModal, iOS Karten-Modal, md Vollbild) / Flutter: context.push('/attendance/<id>') als normale Seite. Rollenbedingung (Admin, Verantwortlicher, Helfer, Stimmführer-Helfer) und Neuladen danach gleich.
-  Flutter: lib/features/dashboard/presentation/widgets/event_cards.dart:48
 - [ ] **niedrig** `home-dashboard/home-dashboard.page` `loading-bee7e5e1` [home-dashboard/home-dashboard.page.ts:76](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/home-dashboard/home-dashboard.page.ts#L76)
   Ionic: blockierendes Lade-Overlay (max. 3 s) während Tenantwechsel / Flutter: kein Overlay, UI bleibt bedienbar bis zur Navigation.
   Flutter: lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180

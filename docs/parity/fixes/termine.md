@@ -1,6 +1,6 @@
 # Fix-Paket „termine“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 0
@@ -87,7 +87,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: (1) Ionic schließt nur Personen aus this.players aus – ein eingeschränkter Stimmführer-Helfer bekommt Personen anderer Gruppen angeboten, die schon im Termin sind (Doppelzeile möglich); Flutter schließt alle vorhandenen Zeilen aus. (2) Ionic sucht die Gruppe in this.instruments ohne Hauptgruppe → Personen der Hauptgruppe heißen „Keine Gruppe“ und stehen ganz unten; Flutter zeigt deren Gruppennamen und sortiert nach deren sort_order.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1356, lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:55, lib/features/attendance/presentation/attendance_add_persons.dart:51
 
-## Kleinigkeiten (niedrig): 63
+## Kleinigkeiten (niedrig): 62
 
 - [ ] **niedrig** `attendance/att-list/att-list.page` `loading-e1caea8b` [attendance/att-list/att-list.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L254)
   Ionic: blockierendes Loading-Overlay (3 s) während setTenant + Navigation / Flutter: switchTenant ohne Overlay oder Ladeanzeige.
@@ -167,9 +167,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `attendance/attendance/attendance.page` `loading-c10b1ad4` [attendance/attendance/attendance.page.ts:2488](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L2488)
   Ionic: blockierendes Loading „Personen werden hinzugefügt...“ / Flutter: kein Overlay.
   Flutter: lib/features/attendance/presentation/attendance_add_persons.dart:55
-- [ ] **niedrig** `attendance/attendance/attendance.page` `action-64b05ba6` [attendance/attendance/attendance.page.html:5](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.html#L5)
-  Ionic: vom Dashboard („Nächster Termin“) als Modal mit X (close-outline) geöffnet / Flutter: Seite wird gepusht, Zurück-Pfeil statt X.
-  Flutter: lib/features/dashboard/presentation/widgets/event_cards.dart:50, lib/features/attendance/presentation/pages/attendance_detail_page.dart:465
 - [ ] **niedrig** `attendance/attendance/attendance.page` `text-4ed35fba` [attendance/attendance/attendance.page.html:251](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.html#L251)
   Ionic: Typ nicht auflösbar → Badge „Unbekannt“ / Flutter: Zeile „Typ“ fehlt dann ganz.
   Flutter: lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:171, lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:182

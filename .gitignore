@@ -61,3 +61,6 @@ app.*.map.json
 android/app/google-services.json
 ios/Runner/GoogleService-Info.plist
 .tmp-parity/
+
+# Golden test failure output (flutter test writes diff images here)
+test/**/failures/

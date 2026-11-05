@@ -1,20 +1,23 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../people/presentation/widgets/person_modal.dart';
 import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 
-/// Opens the person detail page (Ionic opens PersonPage as modal).
+/// Opens the person page as modal (Ionic PersonPage with presentingElement).
 Future<void> _openPerson(BuildContext context, WidgetRef ref, Person? person) async {
   final id = person?.id;
   if (id == null) return;
-  await context.push('/people/$id');
+  await showPersonModal(context, id);
+  // The modal also closes when the app navigates away (e.g. instance
+  // switch); the card may be gone then and its ref must not be used.
+  if (!context.mounted) return;
   // The person may have been changed (e.g. Problemfall gelöst).
   ref.invalidate(dashboardPersonsProvider);
 }

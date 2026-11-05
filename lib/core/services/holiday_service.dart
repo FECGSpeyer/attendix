@@ -119,7 +119,7 @@ class HolidayService {
           name: name,
           startDate: startDate,
           endDate: endDate,
-          isPast: endDate.isBefore(now),
+          isPast: isHolidayGone(startDate, now),
         );
       }).toList();
     } catch (e) {
@@ -165,7 +165,7 @@ class HolidayService {
           name: name,
           startDate: startDate,
           endDate: endDate,
-          isPast: endDate.isBefore(now),
+          isPast: isHolidayGone(startDate, now),
         );
       }).toList();
     } catch (e) {
@@ -176,4 +176,13 @@ class HolidayService {
   String _formatDate(DateTime date) {
     return '${date.year}-${date.month.toString().padLeft(2, '0')}-${date.day.toString().padLeft(2, '0')}';
   }
+}
+
+/// Ionic `gone: dayjs(startDate).isBefore(dayjs(), 'day')`: a holiday counts
+/// as past once its start day lies before today (a holiday today is still
+/// shown, running school holidays are hidden).
+bool isHolidayGone(DateTime startDate, DateTime now) {
+  final start = DateTime(startDate.year, startDate.month, startDate.day);
+  final today = DateTime(now.year, now.month, now.day);
+  return start.isBefore(today);
 }

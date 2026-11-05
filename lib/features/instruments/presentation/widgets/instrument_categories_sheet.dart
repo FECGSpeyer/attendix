@@ -294,7 +294,11 @@ class _InstrumentCategoriesSheetState
     );
 
     if (result != null && mounted) {
-      await ref.read(groupNotifierProvider.notifier).createGroupCategory(result);
+      final created = await ref.read(groupNotifierProvider.notifier).createGroupCategory(result);
+      // Ionic GroupCategoryService: 'Fehler beim Hinzufügen der Kategorie'.
+      if (created == null && mounted) {
+        ToastHelper.showError(this.context, this.context.l10n.svcAddCategoryFailed);
+      }
     }
   }
 
@@ -336,9 +340,12 @@ class _InstrumentCategoriesSheetState
     );
 
     if (result != null && category.id != null && mounted) {
-      await ref
+      final updated = await ref
           .read(groupNotifierProvider.notifier)
           .updateGroupCategory(category.id!, {'name': result});
+      if (updated == null && mounted) {
+        ToastHelper.showError(this.context, this.context.l10n.svcUpdateCategoryFailed);
+      }
     }
   }
 
@@ -369,6 +376,9 @@ class _InstrumentCategoriesSheetState
       await ref
           .read(groupNotifierProvider.notifier)
           .deleteGroupCategory(category.id!);
+      if (mounted && ref.read(groupNotifierProvider).hasError) {
+        ToastHelper.showError(this.context, this.context.l10n.svcDeleteCategoryFailed);
+      }
     }
   }
 }

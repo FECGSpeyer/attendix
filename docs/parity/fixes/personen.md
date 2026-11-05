@@ -1,13 +1,10 @@
 # Fix-Paket „personen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 2
+## Angleichen (hoch/mittel): 1
 
-- [ ] **hoch** `people/import/import.page` `field-bdcf25e7` [people/import/import.page.html:25](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L25) (2. Prüfung: bestätigt)
-  Auswahl .xlsx/.xls/.csv gleich. Ionic: SheetJS liest auch .xls / Flutter: .xls wird mit 'Das alte Excel-Format (.xls) wird nicht unterstützt…' abgelehnt, obwohl der Einleitungstext .xls nennt.
-  Flutter: lib/core/utils/import_file_io.dart:10, lib/core/utils/spreadsheet_reader.dart:43
 - [ ] **hoch** `people/import/import.page` `x-dce118d389` **.xls-Dateien nicht lesbar** [src/app/people/import/import.page.ts:101-104](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L101-L104) (2. Prüfung: bestätigt)
   Real: Ionic readSpreadsheetFile/SheetJS read() liest auch .xls (accept '.xlsx,.xls,.csv'). Flutter: Dateiauswahl erlaubt .xls, readSpreadsheet lehnt ab mit 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' – obwohl der Einleitungstext (wie Ionic) 'Excel- (.xlsx/.xls)' verspricht. Import aus .xls nicht möglich → hoch.
   Flutter: lib/core/utils/spreadsheet_reader.dart:39-50, lib/core/utils/import_file_io.dart:13, lib/features/people/presentation/pages/person_import_page.dart:249
@@ -99,7 +96,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen in der Instanz (auch archivierte/ausstehende) „Mögliches Duplikat“ – „Eine Person mit dem Namen "{name}" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.
   Flutter: lib/features/people/presentation/pages/person_create_page.dart:997, lib/features/people/presentation/pages/person_create_page.dart:999
 
-## Kleinigkeiten (niedrig): 166
+## Kleinigkeiten (niedrig): 165
 
 - [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-e612daf1` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:77](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L77)
   Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.
@@ -227,9 +224,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `people/list/list.page` `loading-a2fa55fe` [people/list/list.page.ts:97](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L97)
   Ionic: blockierendes Loading-Overlay (ohne Text, 3 s) beim Instanzwechsel über das Header-Popover / Flutter: switchTenant ohne Overlay.
   Flutter: lib/shared/widgets/tenant/tenant_switcher_title.dart:389
-- [ ] **niedrig** `people/list/list.page` `modal-38ba21ec` [people/list/list.page.ts:233](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L233) (2. Prüfung: bestätigt)
-  Nur Optik (Leon 05.11.2026): Nur Darstellung als Seite statt Modal, Inhalt und Leserechte gleich. – Befund: Ionic: PersonPage als Modal (iOS Karten-Modal mit presentingElement, backdropDismiss false), readOnly = nicht Admin/Verantwortlicher / Flutter: context.push('/people/<id>') bzw. '/people/new' als normale Seite im Shell. Leserecht für Betrachter in der Detailseite gleich.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:604, lib/features/people/presentation/pages/people_list_page.dart:563, lib/features/people/presentation/pages/people_list_page.dart:664, lib/core/router/app_router.dart:799, lib/core/router/app_router.dart:804, lib/features/people/presentation/pages/person_detail_page.dart:1702
 - [ ] **niedrig** `people/list/list.page` `loading-275de79e` [people/list/list.page.ts:377](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.ts#L377)
   Ionic: blockierendes Overlay 'Reihenfolge wird gespeichert...' / Flutter: nur Spinner im Häkchen-Button, kein Overlay (X-Abbrechen und Ziehen bleiben bedienbar).
   Flutter: lib/features/people/presentation/pages/people_list_page.dart:463, lib/features/people/presentation/pages/people_list_page.dart:1169

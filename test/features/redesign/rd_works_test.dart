@@ -168,7 +168,11 @@ class _FakePrintService extends SongPrintService {
   var done = Completer<SongPrintResult?>();
 
   @override
-  Future<SongPrintResult?> printEntries(List<SongPrintEntry> entries, String fileName) {
+  Future<SongPrintResult?> printEntries(
+    List<SongPrintEntry> entries,
+    String fileName, {
+    VoidCallback? onMerged,
+  }) {
     calls++;
     if (done.isCompleted) done = Completer<SongPrintResult?>();
     return done.future;

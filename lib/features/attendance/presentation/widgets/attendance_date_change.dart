@@ -90,12 +90,15 @@ Future<bool> promptAttendanceDateChange(
   }
 
   final current = DateTime.tryParse(attendance.date)?.toLocal() ?? DateTime.now();
-  final picked = await showAppDatePicker(
-    context: context,
+  // Ionic: alert "Datum ändern" with a date input and "Abbrechen"/"Weiter".
+  final picked = await showAppDateAlert(
+    context,
+    title: context.l10n.dateDialogChangeDate,
+    message: context.l10n.dateDialogMoveTo,
     initialDate: current,
-    firstDate: DateTime(current.year - 5),
-    lastDate: DateTime(current.year + 5),
-    helpText: context.l10n.dateDialogMoveTo,
+    firstDate: DateTime(1900),
+    lastDate: DateTime(2200),
+    confirmText: context.l10n.commonNext,
   );
   if (picked == null || !context.mounted) return false;
   if (DateUtils.isSameDay(picked, current)) return false;

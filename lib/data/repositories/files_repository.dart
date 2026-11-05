@@ -7,6 +7,7 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 import '../models/storage/storage_entry.dart';
 import 'base_repository.dart';
 import '../../l10n/l10n.dart';
+import '../../core/utils/nfkd_fold.dart';
 
 /// Provider for FilesRepository (ohne Tenant – nutze filesRepositoryWithTenantProvider)
 final filesRepositoryProvider = Provider<FilesRepository>((ref) {
@@ -121,14 +122,15 @@ class FilesRepository extends BaseRepository with TenantAwareRepository {
   }
 
   static String _sanitizeExtension(String ext) {
-    return _transliterate(_replaceGermanChars(ext))
+    return foldNfkdForFileName(_transliterate(_replaceGermanChars(ext)))
         .replaceAll(RegExp(r'[^a-zA-Z0-9]+'), '')
         .toLowerCase();
   }
 
   /// Bereinigt einen Ordner-/Dateinamen-Teil (wie FilesService.sanitizeSegment in Ionic).
   static String sanitizeSegment(String name) {
-    var s = _transliterate(_replaceGermanChars(name));
+    // Ionic: .normalize('NFKD').replace(/[\u0300-\u036f]/g, '')
+    var s = foldNfkdForFileName(_transliterate(_replaceGermanChars(name)));
     s = s
         .replaceAll(RegExp(r'[\u0000-\u001F\u007F]'), '')
         .replaceAll(RegExp(r'[\\/:*?"<>|]+'), '-')

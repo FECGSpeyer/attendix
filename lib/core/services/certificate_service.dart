@@ -5,6 +5,8 @@ import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
 import 'package:pdf/widgets.dart' as pw;
 
+import 'pdf_fonts.dart';
+
 /// Asset path of the Vorkurs certificate background (A4 portrait, copied
 /// from Ionic `src/assets/urkunde-vorkurs.jpg`).
 const String vorkursCertificateAsset = 'assets/certificates/urkunde-vorkurs.jpg';
@@ -39,6 +41,11 @@ class CertificateService {
 
     final boldItalic = pw.Font.timesBoldItalic();
     final italic = pw.Font.timesItalic();
+    // Ionic draws with jsPDF's Times (no Cyrillic). The look stays Times;
+    // glyphs Times lacks (Cyrillic names, „“) come from the export font.
+    final export = (await PdfFonts.theme())?.defaultTextStyle;
+    final boldFallback = [if (export?.fontBold != null) export!.fontBold!];
+    final italicFallback = [if (export?.fontItalic != null) export!.fontItalic!];
 
     final doc = pw.Document();
     const w = 210.0;
@@ -48,7 +55,8 @@ class CertificateService {
     double topFor(double baselineMm, double fontSizePt) =>
         (baselineMm * _mm) - fontSizePt * 0.78;
 
-    pw.Widget centered(String text, double baselineMm, double size, pw.Font font) {
+    pw.Widget centered(String text, double baselineMm, double size, pw.Font font,
+        List<pw.Font> fallback) {
       return pw.Positioned(
         left: 30 * _mm,
         right: 30 * _mm,
@@ -60,6 +68,7 @@ class CertificateService {
               text,
               style: pw.TextStyle(
                 font: font,
+                fontFallback: fallback,
                 fontSize: size,
                 color: const PdfColor.fromInt(0xFF141414),
               ),
@@ -78,9 +87,9 @@ class CertificateService {
           build: (_) => pw.Stack(
             children: [
               pw.Positioned.fill(child: pw.Image(image, fit: pw.BoxFit.fill)),
-              centered(fullName, 138, 48, boldItalic),
-              centered('hat die Vorkursprüfung', 168, 33, boldItalic),
-              centered('erfolgreich bestanden', 186, 33, boldItalic),
+              centered(fullName, 138, 48, boldItalic, boldFallback),
+              centered('hat die Vorkursprüfung', 168, 33, boldItalic, boldFallback),
+              centered('erfolgreich bestanden', 186, 33, boldItalic, boldFallback),
               pw.Positioned(
                 left: 35 * _mm,
                 top: topFor(252, 24),
@@ -90,6 +99,7 @@ class CertificateService {
                     '$city, den $today',
                     style: pw.TextStyle(
                       font: italic,
+                      fontFallback: italicFallback,
                       fontSize: 24,
                       color: const PdfColor.fromInt(0xFF141414),
                     ),

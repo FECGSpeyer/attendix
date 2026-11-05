@@ -7,6 +7,7 @@ import '../../../../core/providers/song_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/song/song_filter.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Filter, sort and view options of the songs list (Ionic filter popover)
@@ -220,4 +221,224 @@ Future<void> showSongFilterSheet(BuildContext context, SongsListData data) {
     useSafeArea: true,
     builder: (context) => SongFilterSheet(data: data),
   );
+}
+
+/// Ionic songs `ion-popover trigger="filter-trigger-songs"`: one row per
+/// option, only an icon at the start (no headings) and the current value at
+/// the end – Sortierung (filter), Schwierigkeit (speedometer), Chor &
+/// Orchester / Solo toggles, Kategorien (pricetag), Instrumente (musical
+/// notes, orchestras only), Ansicht (eye) and a select per Zusatzfeld
+/// (funnel) at the end. [builder] draws the trigger button.
+class SongFilterMenu extends ConsumerWidget {
+  const SongFilterMenu({super.key, required this.data, required this.builder});
+
+  final SongsListData data;
+  final Widget Function(BuildContext context, VoidCallback toggle) builder;
+
+  @override
+  Widget build(BuildContext context, WidgetRef ref) {
+    final filter = ref.watch(songFilterProvider(data.tenantId));
+    final view = ref.watch(songViewOptionsProvider(data.tenantId));
+    final notifier = ref.read(songFilterProvider(data.tenantId).notifier);
+    final viewNotifier = ref.read(songViewOptionsProvider(data.tenantId).notifier);
+    final orchestra = data.isOrchestra;
+    final l10n = context.l10n;
+    final lastLabel = orchestra ? l10n.songsLastPlayed : l10n.songsLastSung;
+    final ios = useIosLook(context);
+
+    final menuStyle = MenuStyle(
+      backgroundColor: WidgetStatePropertyAll(
+        Theme.of(context).brightness == Brightness.dark ? AppColors.surfaceDark : Colors.white,
+      ),
+      shape: WidgetStatePropertyAll(RoundedRectangleBorder(
+        borderRadius: BorderRadius.circular(ios ? 13 : 4),
+      )),
+      padding: const WidgetStatePropertyAll(EdgeInsets.symmetric(vertical: 4)),
+    );
+    final itemStyle = MenuItemButton.styleFrom(
+      minimumSize: const Size(256, 44),
+      textStyle: Theme.of(context).textTheme.bodyLarge?.copyWith(fontSize: 16),
+    );
+    Widget check(bool on) => SizedBox(
+          width: 24,
+          child: on ? const Icon(Icons.check, size: 20, color: AppColors.primary) : null,
+        );
+    // Ionic: ion-select slot="end" shows the value (or placeholder) at the end
+    Widget valueText(String text, {bool placeholder = false}) => SizedBox(
+          width: 144,
+          child: Text(
+            text,
+            textAlign: TextAlign.right,
+            maxLines: 1,
+            overflow: TextOverflow.ellipsis,
+            style: placeholder ? const TextStyle(color: AppColors.medium) : null,
+          ),
+        );
+
+    Widget select<T>({
+      required IconData icon,
+      required T value,
+      required List<(T, String)> options,
+      required void Function(T) onSelected,
+      String? placeholder,
+    }) {
+      final current = options.where((o) => o.$1 == value).firstOrNull;
+      return SubmenuButton(
+        style: itemStyle,
+        menuStyle: menuStyle,
+        leadingIcon: Icon(icon, size: 18),
+        menuChildren: [
+          for (final o in options)
+            MenuItemButton(
+              style: itemStyle,
+              leadingIcon: check(o.$1 == value),
+              onPressed: () => onSelected(o.$1),
+              child: Text(o.$2),
+            ),
+        ],
+        // [placeholder] is only passed while no value is set (the "Alle"
+        // option would match the empty value otherwise).
+        child: placeholder != null
+            ? valueText(placeholder, placeholder: true)
+            : valueText(current?.$2 ?? ''),
+      );
+    }
+
+    Widget multi<T>({
+      required IconData icon,
+      required List<T> selected,
+      required List<(T, String)> options,
+      required void Function(T, bool) onChanged,
+    }) {
+      return SubmenuButton(
+        style: itemStyle,
+        menuStyle: menuStyle,
+        leadingIcon: Icon(icon, size: 18),
+        menuChildren: [
+          for (final o in options)
+            CheckboxMenuButton(
+              style: itemStyle,
+              closeOnActivate: false,
+              value: selected.contains(o.$1),
+              onChanged: (v) => onChanged(o.$1, v == true),
+              child: Text(o.$2),
+            ),
+        ],
+        child: valueText(options.where((o) => selected.contains(o.$1)).map((o) => o.$2).join(', ')),
+      );
+    }
+
+    Widget toggle({
+      required IconData icon,
+      required String label,
+      required bool value,
+      required ValueChanged<bool> onChanged,
+    }) {
+      return MenuItemButton(
+        style: itemStyle,
+        closeOnActivate: false,
+        leadingIcon: Icon(icon, size: 18),
+        trailingIcon: Switch.adaptive(value: value, onChanged: onChanged),
+        onPressed: () => onChanged(!value),
+        child: Text(label),
+      );
+    }
+
+    List<T> toggled<T>(List<T> list, T id, bool on) =>
+        on ? [...list.where((e) => e != id), id] : list.where((e) => e != id).toList();
+
+    final sortOptions = SongSortOption.values.where((o) => !o.isLastSung || !data.isPublic).toList();
+    final viewEntries = <(String, String)>[
+      ('link', l10n.songsLink),
+      ('difficulty', l10n.songsDifficulty),
+      ('withChoir', l10n.songsChoirOrchestra),
+      ('withSolo', l10n.songsSolo),
+      ('missingInstruments', l10n.songsMissingInstruments),
+      if (!data.isPublic) ('lastSung', lastLabel),
+      for (final f in data.additionalFields) (f.id, f.name),
+    ];
+    // Ionic fills the instrument options only for orchestras.
+    final instruments = orchestra ? data.instruments : const [];
+
+    return MenuAnchor(
+      style: menuStyle,
+      menuChildren: [
+        select<SongSortOption>(
+          icon: Icons.filter_list,
+          value: sortOptions.contains(filter.sortOption) ? filter.sortOption : SongSortOption.numberAsc,
+          options: [for (final o in sortOptions) (o, o.labelFor(orchestra: orchestra))],
+          onSelected: notifier.setSortOption,
+        ),
+        select<int?>(
+          icon: Icons.speed,
+          value: filter.difficulty,
+          options: [
+            (null, l10n.commonAll),
+            (1, l10n.songsEasy),
+            (2, l10n.songsMedium),
+            (3, l10n.songsHard),
+          ],
+          onSelected: notifier.setDifficulty,
+        ),
+        toggle(
+          icon: Icons.people,
+          label: l10n.songsChoirOrchestra,
+          value: filter.withChoir,
+          onChanged: notifier.setWithChoir,
+        ),
+        toggle(
+          icon: Icons.person,
+          label: l10n.songsSolo,
+          value: filter.withSolo,
+          onChanged: notifier.setWithSolo,
+        ),
+        if (data.categories.isNotEmpty)
+          multi<String>(
+            icon: Icons.sell_outlined,
+            selected: filter.categoryIds,
+            options: [
+              for (final c in data.categories)
+                if (c.id != null) (c.id!, c.name),
+            ],
+            onChanged: (id, on) => notifier.setCategoryIds(toggled(filter.categoryIds, id, on)),
+          ),
+        if (instruments.isNotEmpty)
+          multi<int>(
+            icon: Icons.music_note,
+            selected: filter.instrumentIds,
+            options: [
+              for (final g in instruments)
+                if (g.id != null) (g.id!, g.name),
+            ],
+            onChanged: (id, on) => notifier.setInstrumentIds(toggled(filter.instrumentIds, id, on)),
+          ),
+        multi<String>(
+          icon: Icons.visibility,
+          selected: [for (final e in viewEntries) if (view.has(e.$1)) e.$1],
+          options: viewEntries,
+          onChanged: (id, _) => viewNotifier.toggle(id),
+        ),
+        for (final field in data.additionalFields)
+          if (field.isSelect || field.isBoolean)
+            select<String>(
+              icon: Icons.filter_alt_outlined,
+              value: filter.fieldFilters[field.id] ?? '',
+              placeholder: filter.fieldFilters.containsKey(field.id) ? null : field.name,
+              options: [
+                ('', l10n.commonAll),
+                if (field.isBoolean) ...[
+                  ('true', l10n.commonYes),
+                  ('false', l10n.commonNo),
+                ] else
+                  for (final opt in field.options) (opt, opt),
+              ],
+              onSelected: (v) => notifier.setFieldFilter(field.id, v),
+            ),
+      ],
+      builder: (context, controller, _) => builder(
+        context,
+        () => controller.isOpen ? controller.close() : controller.open(),
+      ),
+    );
+  }
 }

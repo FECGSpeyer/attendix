@@ -1,0 +1,115 @@
+{
+  "batch": "zz-fixed-werke",
+  "ionic": "9f9b82af",
+  "flutter": "2353b98",
+  "afterRound": 4,
+  "items": {
+    "x-65c1fb4b3b": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "x-47806f440c": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "x-6e2b231559": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293 (Werk und Werkhistorie werden beim Öffnen der Seite neu geladen, auch für Spieler)"
+    },
+    "x-1a9462e316": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/song/song.page#action-399b39c6": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart",
+        "lib/data/repositories/player_repository.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/song/song.page#toast-394c8bb6": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/group_pdf_print.dart",
+        "lib/data/repositories/player_repository.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/song/song.page#action-7999bdf1": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/song/song.page#text-e14adf08": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/song/song.page#modal-81e9f13d": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_detail_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/songs.page#action-a3de1883": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/songs_list_page.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/songs.page#popover-21a14c45": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/songs.page#field-a0424ef7": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/songs.page#field-4796fb04": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "songs/songs.page#field-5c68cf0f": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+      ],
+      "n": "behoben in #293"
+    },
+    "x-e99fb6352e": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/songs_list_page.dart"
+      ],
+      "n": "behoben in #293"
+    }
+  }
+}

@@ -4,6 +4,8 @@ import '../../data/models/person/person.dart';
 import 'group_providers.dart';
 import 'player_providers.dart';
 import '../services/offline_list_cache.dart';
+import '../utils/global_toast.dart';
+import '../../l10n/l10n.dart';
 
 /// Provider for conductors (main group members)
 /// Conductors are members of the "main group" (Hauptgruppe/Dirigenten)
@@ -23,7 +25,13 @@ final conductorsProvider = FutureProvider<List<Person>>((ref) async {
       final mainGroup = await ref.read(mainGroupProvider.future);
       final mainGroupId = mainGroup?.id;
       if (mainGroupId == null) return <Person>[];
-      return repo.getConductors(mainGroupId, includeLeft: true);
+      try {
+        return await repo.getConductors(mainGroupId, includeLeft: true);
+      } catch (_) {
+        // Ionic ConductorService: toast 'Fehler beim Laden der Hauptgruppen-Personen'.
+        GlobalToast.error(l10nWithoutContext.svcLoadMainGroupPeopleFailed);
+        rethrow;
+      }
     },
     toJson: (p) => p.toJson(),
     fromJson: Person.fromJson,
