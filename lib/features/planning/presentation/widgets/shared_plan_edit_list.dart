@@ -43,7 +43,8 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
   }
 
   Future<void> _edit(int index) async {
-    final field = fields[index];
+    final opened = fields;
+    final field = opened[index];
     final isNote = PlanUtils.isNote(field);
     final isHead = PlanUtils.isGroupHead(field);
     final r = await showPlanFieldDialog(
@@ -68,7 +69,7 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
     // was open: re-find the field in the current list (uid, else a unique id)
     // instead of writing the stale one back. Gone or ambiguous -> drop the edit.
     final current = widget.fields;
-    final i = PlanUtils.indexOfField(current, field);
+    final i = PlanUtils.indexOfField(current, field, openedIn: opened);
     if (i == -1) return;
     final base = current[i];
     final updated = [...current];

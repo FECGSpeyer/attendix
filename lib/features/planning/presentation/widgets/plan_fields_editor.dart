@@ -158,7 +158,8 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   // ---------------------------------------------------------------------------
 
   Future<void> _editField(int index) async {
-    final field = _fields[index];
+    final opened = _fields;
+    final field = opened[index];
     if (PlanUtils.isGroupHead(field)) {
       await _showGroupOptions(field);
       return;
@@ -187,7 +188,7 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
       if (!mounted) return;
       // The list may have changed (Realtime) while the dialog was open:
       // re-find the row; gone or ambiguous -> leave the list as it is.
-      final i = PlanUtils.indexOfField(_fields, field);
+      final i = PlanUtils.indexOfField(_fields, field, openedIn: opened);
       if (deleted) {
         if (i != -1) _emit([..._fields]..removeAt(i));
         return;

@@ -55,23 +55,26 @@ class PlanUtils {
   /// the row with the same `uid`, otherwise (no uid) the row with the same
   /// `id`. -1 when the row is gone or the match is not unique (a song or
   /// org field inserted twice shares its id), so nothing is written to the
-  /// wrong row.
-  static int indexOfField(List<PlanField> fields, PlanField field) {
-    int unique(bool Function(PlanField f) test) {
+  /// wrong row. [openedIn] is the list the field was taken from: the `id`
+  /// fallback needs the id to have been unique there too (otherwise deleting
+  /// the edited duplicate would leave the other one as a "unique" match).
+  static int indexOfField(List<PlanField> fields, PlanField field, {List<PlanField>? openedIn}) {
+    int unique(List<PlanField> list, bool Function(PlanField f) test) {
       var found = -1;
-      for (var i = 0; i < fields.length; i++) {
-        if (!test(fields[i])) continue;
+      for (var i = 0; i < list.length; i++) {
+        if (!test(list[i])) continue;
         if (found != -1) return -1;
         found = i;
       }
       return found;
     }
 
-    final same = unique((f) => identical(f, field));
+    final same = unique(fields, (f) => identical(f, field));
     if (same != -1) return same;
     final uid = field.uid;
-    if (uid != null && uid.isNotEmpty) return unique((f) => f.uid == uid);
-    return unique((f) => f.id == field.id);
+    if (uid != null && uid.isNotEmpty) return unique(fields, (f) => f.uid == uid);
+    if (openedIn != null && unique(openedIn, (f) => f.id == field.id) == -1) return -1;
+    return unique(fields, (f) => f.id == field.id);
   }
 
   // ---------------------------------------------------------------------------
