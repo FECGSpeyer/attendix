@@ -546,7 +546,7 @@ class SettingsPage extends ConsumerWidget {
                   icon: Icons.auto_awesome_outlined,
                   title: l10n.settingsWhatsNew,
                   detail: false,
-                  trailing: const IonBadge(text: AppConstants.appVersion),
+                  trailing: const IonBadge(text: AppConstants.displayVersion),
                   onTap: () => showVersionHistorySheet(context),
                 ),
                 // NATIVE_MISC: Ionic liveUpdate.updateAvailable() → "Update installieren"

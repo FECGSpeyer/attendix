@@ -7,7 +7,16 @@ class AppConstants {
   AppConstants._();
 
   static const String appName = 'Attendix';
-  static const String appVersion = '5.0.0';
+  /// Internal developer version (0.x) of the Flutter app: Sentry release and
+  /// internal history in `assets/version_history.json`. Not shown to users.
+  static const String appVersion = '0.42.1';
+
+  /// Version users see (settings badge, login footer, "Was ist neu").
+  ///
+  /// Matches the store version and continues the Ionic version history.
+  /// Only raise it on store releases; it must equal the topmost entry in
+  /// `assets/version_history_user.json`.
+  static const String displayVersion = '5.0.0';
 
   /// Demo credentials from environment (Ionic `environment.demoMail` /
   /// `environment.demoPassword`).

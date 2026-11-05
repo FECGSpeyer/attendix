@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:attendix/core/constants/app_constants.dart';
+import 'package:attendix/core/models/version_history.dart';
 import 'package:attendix/shared/widgets/sheets/version_history_sheet.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
@@ -58,38 +60,41 @@ void main() {
     group('entries (Ionic shows the full text)', () {
       widgetTest('changes wrap instead of being cut to one line',
           (tester) async {
-        // earlier tests leave a cached (never completed) load behind
-        rootBundle.evict('assets/version_history.json');
-        tester.view.physicalSize = const Size(393, 852);
-        tester.view.devicePixelRatio = 1;
-        addTearDown(tester.view.reset);
-        await tester.pumpApp(
-          Scaffold(
-            body: Builder(
-              builder: (context) => TextButton(
-                onPressed: () => showVersionHistorySheet(context),
-                child: const Text('open'),
-              ),
-            ),
-          ),
-        );
-        await tester.tap(find.text('open'));
-        await tester.pump();
-        final json = jsonDecode(
-                File('assets/version_history.json').readAsStringSync())
-            as Map<String, dynamic>;
-        final first = ((json['versions'] as List).first
+        final first = (_userHistory().first
             as Map<String, dynamic>)['changes'] as List;
         final change = first.first as String;
-        for (var i = 0; i < 100 && find.text(change).evaluate().isEmpty; i++) {
-          await tester.runAsync(
-              () => Future<void>.delayed(const Duration(milliseconds: 50)));
-          await tester.pump();
-        }
+        await _openSheetAndWaitFor(tester, find.text(change));
         final text = tester.widget<Text>(find.text(change).first);
         expect(text.maxLines, isNull);
         expect(text.overflow, isNot(TextOverflow.ellipsis));
         expect(text.softWrap, isNot(false));
+      });
+    });
+
+    group('user history (Ionic history continued)', () {
+      widgetTest(
+          'loads the user file; top entry is displayVersion, '
+          'header without date', (tester) async {
+        final versions = _userHistory();
+        final top = versions.first as Map<String, dynamic>;
+        expect(top['version'], AppConstants.displayVersion);
+        expect(top.containsKey('date'), isFalse);
+        // every entry of the user file must parse
+        VersionHistory.fromJson({'versions': versions});
+
+        final second = versions[1] as Map<String, dynamic>;
+        await _openSheetAndWaitFor(
+            tester, find.text('Version ${AppConstants.displayVersion}'));
+        // no date in parentheses for the top entry (like Ionic) …
+        expect(find.text('Version ${AppConstants.displayVersion}'),
+            findsOneWidget);
+        // … the Ionic entries below keep "Version x (date)"
+        expect(
+            find.text('Version ${second['version']} (${second['date']})'),
+            findsOneWidget);
+        // the internal 0.x developer history is not shown
+        expect(find.text('Version ${AppConstants.appVersion}'), findsNothing);
+        expect(find.textContaining('Version 0.'), findsNothing);
       });
     });
 
@@ -103,4 +108,38 @@ void main() {
       });
     });
   });
+}
+
+/// Entries of the user-facing history the sheet shows.
+List<dynamic> _userHistory() {
+  final json = jsonDecode(File(versionHistoryUserAsset).readAsStringSync())
+      as Map<String, dynamic>;
+  return json['versions'] as List;
+}
+
+/// Opens the sheet via [showVersionHistorySheet] and waits until the asset
+/// is loaded and [finder] shows up.
+Future<void> _openSheetAndWaitFor(WidgetTester tester, Finder finder) async {
+  // earlier tests leave a cached (never completed) load behind
+  rootBundle.evict(versionHistoryUserAsset);
+  tester.view.physicalSize = const Size(393, 852);
+  tester.view.devicePixelRatio = 1;
+  addTearDown(tester.view.reset);
+  await tester.pumpApp(
+    Scaffold(
+      body: Builder(
+        builder: (context) => TextButton(
+          onPressed: () => showVersionHistorySheet(context),
+          child: const Text('open'),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text('open'));
+  await tester.pump();
+  for (var i = 0; i < 100 && finder.evaluate().isEmpty; i++) {
+    await tester.runAsync(
+        () => Future<void>.delayed(const Duration(milliseconds: 50)));
+    await tester.pump();
+  }
 }

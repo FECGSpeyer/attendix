@@ -204,7 +204,7 @@ class RdMePage extends ConsumerWidget {
             RdListRow(
               leading: const RdRowIcon(Icons.new_releases_outlined),
               title: l10n.redesignMeWhatsNew,
-              value: AppConstants.appVersion,
+              value: AppConstants.displayVersion,
               onTap: () => showVersionHistorySheet(context),
             ),
             // Like the old settings: "Update installieren" while a new web
@@ -268,7 +268,7 @@ class RdMePage extends ConsumerWidget {
         const SizedBox(height: 8),
         Center(
           child: Text(
-            'Attendix ${AppConstants.appVersion}',
+            'Attendix ${AppConstants.displayVersion}',
             style: RdType.meta(p, size: 13),
           ),
         ),
