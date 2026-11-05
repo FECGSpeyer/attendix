@@ -1,5 +1,7 @@
 {
   "batch": "zz-fixed-termine",
+  "afterRound": 3,
+  "ionic": "9f9b82af",
   "items": {
     "attendance/att-list/att-list.page#alert-c973a254": {
       "s": "ok",
