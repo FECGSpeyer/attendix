@@ -138,6 +138,11 @@ nach Dateinamen. Dabei gilt:
 
 Ein Fix-PR trägt behobene Punkte in `status/zz-fixed-<bereich>.json` ein
 (Element-ID oder Befund-ID `x-…` mit `s: "ok"` und Verweis auf den PR in `n`).
+Befund-IDs stehen als reines `x-…` im Schlüssel, nie als `<baustein>#x-…`
+(sonst meldet der Bericht „not in the inventory“ und der Fix zählt nicht).
+`"ionic"` ist der Ionic-Stand, gegen den der Fix geprüft wurde (derzeit
+1923d203 = 4.19.9): Hat sich ein Punkt in Ionic danach geändert, verwirft das
+Werkzeug das Urteil und meldet es als Warnung.
 Pflichtfeld ist `"afterRound": N`, die letzte Prüfrunde, deren
 Flutter-Stand vor dem Fix lag (Runde 3: b218510, Runde 4: 8004a44; ein Fix,
 der nach 8004a44 gemergt wurde, trägt also 4): Die Datei gilt nach Runde N
@@ -147,7 +152,7 @@ noch vor dem Fix gesehen hat, den Fix überschreiben. Ohne `afterRound` bricht
 das Werkzeug ab.
 
 ```json
-{ "batch": "zz-fixed-termine", "afterRound": 4, "ionic": "9f9b82af", "flutter": "<commit>",
+{ "batch": "zz-fixed-termine", "afterRound": 4, "ionic": "1923d203", "flutter": "<commit>",
   "items": { "<element-id>": { "s": "ok", "n": "PR #123" } } }
 ```
 

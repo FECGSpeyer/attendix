@@ -164,7 +164,11 @@ const readStatuses = () => {
   }
   // verdicts older than a later Ionic change of their item no longer count
   if (changes) {
-    for (const [id, st] of Object.entries(out.items)) if (changedAfter(changes, st.ionicAt).has(id)) delete out.items[id];
+    for (const [id, st] of Object.entries(out.items)) {
+      if (!changedAfter(changes, st.ionicAt).has(id)) continue;
+      if (st.fixed) out.warnings.push(`${st.src}: fix for ${id} discarded, item changed in Ionic after ${st.ionicAt ?? '(no "ionic")'} – re-check and record it with the current Ionic commit`);
+      delete out.items[id];
+    }
     // extras and withdrawals: their unit changed later → open again, flagged
     for (const [id, e] of extras) {
       const unitChanged = (at) => [...changedAfter(changes, at)].some((x) => x.split('#')[0] === e.unit);
