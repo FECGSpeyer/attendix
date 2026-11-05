@@ -49,12 +49,14 @@ void main() {
     expect(offenders, isEmpty);
   });
 
-  test('org number field default is stored as a finite number (Ionic type=number)', () {
-    expect(parseNumberFieldDefault(' 5 '), 5);
-    expect(parseNumberFieldDefault('2.5'), 2.5);
-    expect(parseNumberFieldDefault(''), isNull);
-    expect(parseNumberFieldDefault('NaN'), isNull);
-    expect(parseNumberFieldDefault('Infinity'), isNull);
+  test('org number field default is stored as a string like Ionic (TextValueAccessor)', () {
+    expect(numberFieldDefaultText(' 5 '), '5');
+    expect(numberFieldDefaultText('2.5'), '2.5');
+    // Cleared or invalid → '' (not null: null would make persons show 0).
+    expect(numberFieldDefaultText(''), '');
+    expect(numberFieldDefaultText('abc'), '');
+    expect(numberFieldDefaultText('NaN'), '');
+    expect(numberFieldDefaultText('Infinity'), '');
   });
 }
 
