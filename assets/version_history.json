@@ -1,13 +1,51 @@
 {
   "versions": [
     {
-      "version": "0.41.4",
+      "version": "0.41.5",
       "date": "5.11.2026",
       "changes": [
         "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
         "🐛 Ablaufplan: Helfer sehen archivierte Termine nicht mehr in der Terminauswahl",
         "🐛 Ablaufplan: Ohne kommenden Termin ist kein Termin vorausgewählt",
         "🐛 Ablaufplan: „Tag zuordnen“ als Auswahl mit Abbrechen und Speichern, „Link teilen“ nur mit Nur-Lesen- und Bearbeitungs-Link"
+      ]
+    },
+    {
+      "version": "0.41.4",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Öffentliche Planung: Das gewählte Branding (FECG Speyer, FECG Schwegenheim oder keins) erscheint wieder in PDF, Bild und Telegram, statt des Brandings der eigenen Gruppe",
+        "🐛 Geteilter Plan: PDF trägt das Branding des Plans, Termin-Pläne bleiben ohne",
+        "🐛 Öffentliche Planung: „Kein Branding“ entfernt ein vorher gewähltes Branding auch in „Meine Pläne“",
+        "🐛 Dateinamen der Plan-Exporte wie bisher (Titel mit Wochentag und Datum)"
+      ]
+    },
+    {
+      "version": "0.41.3",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termine: Der Ablaufplan aus der Terminliste zeigt wieder alle Pläne eines Termins (Tages-Chips)",
+        "🐛 Termine: Im Ablaufplan aus der Terminliste öffnen Werke wieder die Noten",
+        "🐛 Termine: Dirigenten und Helfer können den Ablaufplan aus der Terminliste direkt bearbeiten (Stift)"
+      ]
+    },
+    {
+      "version": "0.41.2",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Eine selbst gewählte Abmeldefrist wird wieder mit der gewählten Uhrzeit gespeichert, die Anmeldung schließt nicht mehr ein bis zwei Stunden zu früh",
+        "🐛 Termin: Die Fristauswahl bietet wie bisher nur 5-Minuten-Schritte und reicht bis zum Terminbeginn"
+      ]
+    },
+    {
+      "version": "0.41.1",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Beta: Werke-Liste, Statuszeile und Filter nutzen dieselbe eigene Stimme (nie die Hauptgruppe der Leitung)",
+        "🐛 Beta: „Meine Noten öffnen“ ist gesperrt und zeigt eine Ladeanzeige, solange das PDF erstellt wird",
+        "🐛 Beta: Eine gespeicherte absteigende Sortierung erscheint als „Nummer ↓“ bzw. „Titel ↓“; „Nummer“ und „Titel“ sortieren aufsteigend",
+        "🐛 Beta: „Als Nächstes“ und „Meine Mappe“ zeigen keine Termine mehr, die heute schon vorbei sind",
+        "🐛 Beta: Im Chor heißt „Mehr zu …“ auf der Werk-Seite richtig „Chor (alle)“"
       ]
     },
     {
