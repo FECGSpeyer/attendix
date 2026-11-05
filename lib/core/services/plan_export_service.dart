@@ -8,6 +8,7 @@ import 'package:printing/printing.dart';
 import '../../data/models/plan/plan.dart';
 import '../utils/plan_utils.dart';
 import 'pdf_branding.dart';
+import 'pdf_fonts.dart';
 import '../../l10n/l10n.dart';
 import 'native/native_file_service.dart';
 
@@ -57,7 +58,7 @@ class PlanExportService {
   /// A4 plans shrink font and padding step by step until they fit on one
   /// page, like Ionic `createPlanExport`.
   Future<Uint8List> buildPdf(List<PlanExportPage> pages, {bool sideBySide = false, PdfBranding? branding}) async {
-    final doc = pw.Document();
+    final doc = await PdfFonts.document();
     for (final page in pages) {
       if (sideBySide) {
         doc.addPage(pw.Page(
@@ -96,7 +97,7 @@ class PlanExportService {
 
   /// Number of A4 pages [page] takes with [style] (probe render).
   Future<int> a4PageCount(PlanExportPage page, PlanExportStyle style, {PdfBranding? branding}) async {
-    final probe = pw.Document();
+    final probe = await PdfFonts.document();
     _addA4Page(probe, page, branding, style);
     await probe.save();
     return probe.document.pdfPageList.pages.length;
@@ -124,11 +125,13 @@ class PlanExportService {
     throw StateError(l10nWithoutContext.coreFlutterExportPdfRenderFailed);
   }
 
-  /// Opens the system print / save dialog with the PDF.
-  Future<void> sharePdf(List<PlanExportPage> pages,
+  /// Saves the PDF like Ionic `Utils.downloadFileNative`: browser download /
+  /// share sheet on the web, cache dir + system viewer in the native app.
+  /// File name `{fileName}.pdf`, `{fileName}_2x.pdf` for "2x A5".
+  Future<void> savePdf(List<PlanExportPage> pages,
       {bool sideBySide = false, required String fileName, PdfBranding? branding}) async {
     final bytes = await buildPdf(pages, sideBySide: sideBySide, branding: branding);
-    await Printing.layoutPdf(onLayout: (_) async => bytes, name: '$fileName.pdf');
+    await NativeFileService.saveBytes(bytes, '$fileName${sideBySide ? '_2x' : ''}.pdf');
   }
 
   /// Saves the PNG via the share sheet / download.

@@ -100,7 +100,15 @@ final groupCategoriesProvider = FutureProvider<List<GroupCategory>>((ref) async 
 
   if (!repo.hasTenantId) return [];
 
-  return repo.getGroupCategories();
+  // Ionic GroupCategoryService: offline the cached categories.
+  return OfflineListCache.read<GroupCategory>(
+    ref,
+    tenantId: repo.currentTenantId,
+    part: 'group_categories',
+    fetch: repo.getGroupCategories,
+    toJson: (c) => c.toJson(),
+    fromJson: GroupCategory.fromJson,
+  );
 });
 
 /// Provider for player counts per group (instrument)

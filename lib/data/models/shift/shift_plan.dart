@@ -15,9 +15,17 @@ class _ShiftDefinitionListConverter
   List<ShiftDefinition> fromJson(dynamic json) {
     if (json == null) return [];
     if (json is List) {
-      return json
-          .map((e) => ShiftDefinition.fromJson(e as Map<String, dynamic>))
-          .toList();
+      final indexed = [
+        for (var i = 0; i < json.length; i++)
+          (pos: i, def: ShiftDefinition.fromJson(json[i] as Map<String, dynamic>)),
+      ];
+      // Ionic loadShifts: definition.sort((a, b) => a.index - b.index);
+      // stable, so equal indexes keep their stored order.
+      indexed.sort((a, b) {
+        final c = a.def.index.compareTo(b.def.index);
+        return c != 0 ? c : a.pos.compareTo(b.pos);
+      });
+      return [for (final e in indexed) e.def];
     }
     return [];
   }

@@ -1,14 +1,21 @@
 import 'dart:js_interop';
 import 'dart:typed_data';
+import 'dart:ui' show Rect;
 
 import 'package:web/web.dart' as web;
 
-/// Save ZIP file on web platform - triggers browser download
-Future<void> saveZipFile(Uint8List data, String fileName) async {
-  // Create a blob from the data
+/// Save a generated file on web platform - triggers browser download.
+/// [text] and [sharePositionOrigin] only matter for the native share sheet.
+Future<void> saveZipFile(
+  Uint8List data,
+  String fileName, {
+  String? text,
+  Rect? sharePositionOrigin,
+}) async {
+  // Create a blob from the data (type from the file name, not always ZIP)
   final blob = web.Blob(
     [data.toJS].toJS,
-    web.BlobPropertyBag(type: 'application/zip'),
+    web.BlobPropertyBag(type: _mimeType(fileName)),
   );
 
   // Create object URL
@@ -28,4 +35,16 @@ Future<void> saveZipFile(Uint8List data, String fileName) async {
   Future.delayed(const Duration(seconds: 1), () {
     web.URL.revokeObjectURL(url);
   });
+}
+
+String _mimeType(String fileName) {
+  final ext = fileName.split('.').last.toLowerCase();
+  return switch (ext) {
+    'zip' => 'application/zip',
+    'xlsx' => 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet',
+    'xls' => 'application/vnd.ms-excel',
+    'csv' => 'text/csv',
+    'pdf' => 'application/pdf',
+    _ => 'application/octet-stream',
+  };
 }

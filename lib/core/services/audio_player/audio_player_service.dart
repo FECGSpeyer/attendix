@@ -204,7 +204,14 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
     final token = ++_loadToken;
     _setQueue(_queue, index);
     await _player?.pause();
-    final url = await item.resolveUrl();
+    final String url;
+    try {
+      url = await item.resolveUrl();
+    } catch (_) {
+      // Ionic playQueueItem: a URL that cannot be resolved resets the player.
+      if (token == _loadToken) await _stopInternal();
+      rethrow;
+    }
     if (token != _loadToken) return;
     await _load(url, item.fileName, item.title);
   }

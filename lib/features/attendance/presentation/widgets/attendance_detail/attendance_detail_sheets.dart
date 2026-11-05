@@ -264,9 +264,28 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: [
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 0, 16, 8),
-              child: Text(context.l10n.folderPickerTitle, style: Theme.of(context).textTheme.titleMedium),
+            // Ionic toolbar: X (start), title, checkmark (end, disabled at
+            // the root or while loading).
+            Row(
+              children: [
+                IconButton(
+                  tooltip: context.l10n.commonCancel,
+                  icon: const Icon(Icons.close),
+                  onPressed: () => Navigator.pop(context),
+                ),
+                Expanded(
+                  child: Text(
+                    context.l10n.folderPickerTitle,
+                    textAlign: TextAlign.center,
+                    style: Theme.of(context).textTheme.titleMedium,
+                  ),
+                ),
+                IconButton(
+                  tooltip: context.l10n.folderPickerChooseThis,
+                  icon: const Icon(Icons.check),
+                  onPressed: _path.isEmpty || _loading ? null : () => Navigator.pop(context, _path),
+                ),
+              ],
             ),
             SingleChildScrollView(
               scrollDirection: Axis.horizontal,
@@ -286,58 +305,63 @@ class _FilesFolderPickerState extends State<_FilesFolderPicker> {
             ),
             const Divider(height: 1),
             Flexible(
-              child: _loading
-                  ? const Padding(
+              child: ListView(
+                shrinkWrap: true,
+                children: [
+                  if (segments.isNotEmpty) ...[
+                    // Ionic files-folder-picker: first row in primary,
+                    // "Diesen Ordner wählen: {Ordner}", disabled while loading.
+                    ListTile(
+                      enabled: !_loading,
+                      tileColor: AppColors.primary,
+                      iconColor: Colors.white,
+                      textColor: Colors.white,
+                      leading: const Icon(Icons.check_circle_outline),
+                      title: Text('${context.l10n.folderPickerChooseThis}: ${segments.last}'),
+                      onTap: () => Navigator.pop(context, _path),
+                    ),
+                    ListTile(
+                      leading: const Icon(Icons.arrow_upward),
+                      title: Text(context.l10n.folderPickerParent),
+                      onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
+                    ),
+                  ],
+                  if (_loading)
+                    const Padding(
                       padding: EdgeInsets.all(24),
                       child: Center(child: AppSpinner()),
                     )
-                  : ListView(
-                      shrinkWrap: true,
-                      children: [
-                        if (_error != null)
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                  else ...[
+                    if (_error != null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(_error!, style: const TextStyle(color: AppColors.danger)),
+                      ),
+                    for (final folder in _folders)
+                      ListTile(
+                        leading: const Icon(Icons.folder_outlined, color: AppColors.primary),
+                        title: Text(folder),
+                        trailing: TextButton(
+                          onPressed: () => Navigator.pop(
+                            context,
+                            _path.isEmpty ? folder : '$_path/$folder',
                           ),
-                        if (segments.isNotEmpty)
-                          ListTile(
-                            leading: const Icon(Icons.arrow_upward),
-                            title: Text(context.l10n.folderPickerParent),
-                            onTap: () => _navigate(segments.sublist(0, segments.length - 1).join('/')),
-                          ),
-                        for (final folder in _folders)
-                          ListTile(
-                            leading: const Icon(Icons.folder_outlined),
-                            title: Text(folder),
-                            trailing: TextButton(
-                              onPressed: () => Navigator.pop(
-                                context,
-                                _path.isEmpty ? folder : '$_path/$folder',
-                              ),
-                              child: IonButtonLabel(context.l10n.folderPickerChoose),
-                            ),
-                            onTap: () => _navigate(_path.isEmpty ? folder : '$_path/$folder'),
-                          ),
-                        if (_folders.isEmpty && _error == null)
-                          Padding(
-                            padding: const EdgeInsets.all(16),
-                            child: Text(
-                              context.l10n.folderPickerNoSubfolders,
-                              style: const TextStyle(color: AppColors.medium),
-                            ),
-                          ),
-                      ],
-                    ),
-            ),
-            if (_path.isNotEmpty)
-              Padding(
-                padding: const EdgeInsets.all(12),
-                child: FilledButton.icon(
-                  onPressed: () => Navigator.pop(context, _path),
-                  icon: const Icon(Icons.check),
-                  label: IonButtonLabel(context.l10n.folderPickerChooseThis),
-                ),
+                          child: IonButtonLabel(context.l10n.folderPickerChoose),
+                        ),
+                        onTap: () => _navigate(_path.isEmpty ? folder : '$_path/$folder'),
+                      ),
+                    if (_folders.isEmpty && _error == null)
+                      Padding(
+                        padding: const EdgeInsets.all(16),
+                        child: Text(
+                          context.l10n.folderPickerNoSubfolders,
+                          style: const TextStyle(color: AppColors.medium),
+                        ),
+                      ),
+                  ],
+                ],
               ),
+            ),
           ],
         ),
       ),

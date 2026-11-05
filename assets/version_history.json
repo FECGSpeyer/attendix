@@ -1,6 +1,40 @@
 {
   "versions": [
     {
+      "version": "0.41.23",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 PDF-Exporte zeigen kyrillische Namen, „Anführungszeichen“, Gedankenstriche und € wieder richtig an",
+        "🐛 Ablaufplan als PDF wird wieder gespeichert (Download bzw. Dateiansicht) statt den Druckdialog zu öffnen, auch der Registerprobenplan",
+        "🐛 Ablaufplan-PDF trägt wieder den Plantitel des Termintyps im Kopf und im Dateinamen",
+        "🐛 Ein neues oder gelöschtes Profilbild gilt wieder für alle Instanzen deines Kontos",
+        "🐛 Anwesenheitstypen lassen sich wieder löschen, auch wenn es Termine dazu gibt (die Termine werden mitgelöscht, wie angekündigt)",
+        "🐛 Sortierung wie bisher: Werke im Termin nach Werk, Personen mit Ä/Ö/Ü richtig einsortiert, Schichten in ihrer Reihenfolge",
+        "🐛 Anwesenheitsquote zählt den heutigen Termin wieder mit",
+        "🐛 Geteilte Datei-Links öffnen sich auch nach einem Neustart der App nach dem Login",
+        "🐛 Die auf diesem Gerät zuletzt geöffnete Instanz hat Vorrang",
+        "🐛 Benachrichtigungen: Tippen auf Einträge ohne Ziel wechselt nicht mehr die Instanz",
+        "🐛 Fehlermeldungen wie bisher, wenn Kirchen, Personen, Kategorien, Benutzer oder Organisationen nicht geladen oder gespeichert werden können",
+        "🐛 Audio-Player: Fehler bei Zurück/Weiter zeigen eine Meldung statt still zu stoppen",
+        "🐛 Ordnerauswahl: Häkchen oben und „Diesen Ordner wählen: …“ als erste Zeile",
+        "🐛 Nachrichten-Editor: Link-Dialog mit Abbrechen, Entfernen und Übernehmen, https:// wird ergänzt; Rückgängig-Knopf in der Leiste",
+        "🐛 „Datum ändern“ und „Termin anlegen“ fragen das Datum wieder in einem Dialog mit Weiter bzw. Anlegen ab",
+        "🐛 Mit aktivierter Instanzauswahl erscheint nach dem Login wieder der Dialog „Instanz auswählen“",
+        "🐛 Personen- und Werk-Import liest wieder alte Excel-Dateien (.xls) und übernimmt bei Formeln den berechneten Wert",
+        "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)",
+        "🐛 Zusammenführen einer Registrierung mit einer vorhandenen Person vergibt wie bisher immer die Rolle Mitglied",
+        "🐛 Lehrerliste wie bisher ohne Löschen per Wischen",
+        "🐛 Android 13 und neuer: Die Frage nach Push-Benachrichtigungen und die Systemabfrage erscheinen wieder, wenn die App noch nie gefragt hat",
+        "🐛 Wird die Frage nach Push-Benachrichtigungen ohne Knopf geschlossen, gilt das wie „Später“ und sie kommt nicht bei jedem Start wieder",
+        "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
+        "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis",
+        "🐛 iPad: Teilen und Herunterladen von Werk-Dateien und Plan-Links öffnet wieder das Teilen-Fenster statt eines Fehlers",
+        "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an",
+        "🐛 Die Suche in der Hilfe findet Artikel und Begriffe wieder wie in der alten App, auch bei Tippfehlern und mehreren Wörtern, in derselben Reihenfolge",
+        "🐛 Beim Hochladen von Noten erkennt Attendix weitere Instrument-Namen und Kürzel, z. B. Skripka, Litavry, Ф-но, Blockflöte, Akkordeon, Becken, Triangel und kleine/große Trommel"
+      ]
+    },
+    {
       "version": "0.41.22",
       "date": "5.11.2026",
       "changes": [

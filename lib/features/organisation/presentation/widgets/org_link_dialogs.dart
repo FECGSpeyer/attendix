@@ -71,7 +71,8 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
     if (!context.mounted) return;
     ok
         ? ToastHelper.showSuccess(context, context.l10n.orgSelected)
-        : ToastHelper.showError(context, context.l10n.linkPersonsFailed);
+        // Ionic OrganisationService.linkTenantToOrganisation toast.
+        : ToastHelper.showError(context, context.l10n.svcLinkOrgFailed);
   }
 }
 
@@ -126,16 +127,23 @@ Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) a
       builder: (_) => const PopScope(canPop: false, child: Center(child: AppSpinner())),
     );
     Organisation? org;
+    var linked = false;
     try {
       org = await notifier.create(name);
-      if (org?.id != null) await notifier.linkCurrentTenant(org!.id!);
+      // Ionic db.createOrganisation links the instance right away; a failed
+      // link ends with 'Fehler beim Verknüpfen der Organisation', not success.
+      linked = org?.id != null && await notifier.linkCurrentTenant(org!.id!);
     } finally {
       navigator.pop();
     }
     if (!context.mounted) return;
-    org != null
-        ? ToastHelper.showSuccess(context, context.l10n.orgCreated)
-        : ToastHelper.showError(context, context.l10n.svcCreateOrgFailed);
+    if (org == null) {
+      ToastHelper.showError(context, context.l10n.svcCreateOrgFailed);
+    } else if (!linked) {
+      ToastHelper.showError(context, context.l10n.svcLinkOrgFailed);
+    } else {
+      ToastHelper.showSuccess(context, context.l10n.orgCreated);
+    }
   } finally {
     controller.dispose();
   }

@@ -142,6 +142,25 @@ class SharedPrefsPushPromptStore implements PushPromptStore {
       await prefs.setBool(kPushPromptShownKey, true);
     } catch (_) {}
   }
+
+  @override
+  Future<bool> wasPermissionRequested() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool(kPushPermissionRequestedKey) ?? false;
+    } catch (_) {
+      // Unknown: keep "denied" as denied (no repeated system prompt).
+      return true;
+    }
+  }
+
+  @override
+  Future<void> markPermissionRequested() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(kPushPermissionRequestedKey, true);
+    } catch (_) {}
+  }
 }
 
 /// Locations of the startup flow; push navigation waits until the app has
@@ -211,7 +230,11 @@ class RiverpodPushHost implements PushHost {
     // removed together with that page by the startup redirect.
     await waitUntilReadyForNavigation();
     final context = _context;
-    if (context == null || !context.mounted) return null;
+    if (context == null || !context.mounted) {
+      // Not shown at all: PushService asks again next time.
+      throw StateError('push prompt: no navigator context');
+    }
+    // null = dismissed (backdrop / back): PushService treats it as "Später".
     return showAppDialog<bool>(
       context: context,
       builder: (dialogContext) {

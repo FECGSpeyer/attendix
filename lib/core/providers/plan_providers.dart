@@ -56,6 +56,8 @@ final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async
 /// One Termin with its plans
 final planAttendanceByIdProvider = FutureProvider.family<PlanAttendance?, int>((ref, id) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
+  // Archived Termine only for admin/responsible (repository check by role).
+  ref.watch(currentRoleProvider);
   if (!repo.hasTenantId) return null;
   return repo.getPlanAttendanceById(id);
 });

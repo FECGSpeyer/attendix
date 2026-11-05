@@ -531,6 +531,18 @@ class PlanUtils {
         : l10n.coreFlutterPlanStartsInHours(h);
   }
 
+  /// Ionic `Utils.getPlanningTitle(type, typeInfo)`: "{planning_title}
+  /// ({Info})", planning_title, Info, type name, "Probenplan".
+  static String planningTitle({String? planningTitle, String? typeName, String? typeInfo}) {
+    final pt = planningTitle ?? '';
+    final info = typeInfo ?? '';
+    if (pt.isNotEmpty && info.isNotEmpty) return '$pt ($info)';
+    if (pt.isNotEmpty) return pt;
+    if (info.isNotEmpty) return info;
+    if ((typeName ?? '').isNotEmpty) return typeName!;
+    return l10nWithoutContext.defaultsTypesRehearsalPlan;
+  }
+
   /// "Samstag, 18.10.2025"
   static String longDate(DateTime? date) {
     if (date == null) return '';
