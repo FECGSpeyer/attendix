@@ -1882,6 +1882,9 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         }
         return;
       }
+      // The saved type is the new baseline for the null-keeping rules of
+      // _buildTypeData (end_time, duration_days, planning_title, default_plan).
+      _originalType = updated;
 
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.typeSettingsUpdated);
