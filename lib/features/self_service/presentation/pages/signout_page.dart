@@ -29,6 +29,7 @@ import '../widgets/plan_viewer_sheet.dart';
 import '../widgets/self_service_event_actions.dart';
 import '../widgets/upcoming_songs_sheet.dart';
 import '../widgets/self_service_absences.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../duty/presentation/widgets/duty_actions.dart';
@@ -127,6 +128,11 @@ class _SignoutPageState extends ConsumerState<SignoutPage> {
     // reloads the duty Termine ("Bitte bestätigen", "Offene Dienste",
     // "Meine Dienste", counters).
     ref.invalidate(upcomingDutyTermineProvider);
+    // A failed Termin-type load would otherwise keep the duty overview (and
+    // with it saving an absence) failing until the next tenant switch.
+    if (ref.read(attendanceTypesProvider).hasError) {
+      ref.invalidate(attendanceTypesProvider);
+    }
     await ref.read(signoutDataProvider.future);
   }
 
