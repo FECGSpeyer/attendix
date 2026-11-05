@@ -112,13 +112,6 @@
    ],
    "n": "behoben in #298"
   },
-  "x-a5a4d95ac2": {
-   "s": "ok",
-   "f": [
-    "lib/features/self_service/data/providers/upcoming_songs_provider.dart:92"
-   ],
-   "n": "behoben in #298"
-  },
   "x-3b9835638f": {
    "s": "ok",
    "f": [

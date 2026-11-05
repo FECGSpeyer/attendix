@@ -63,6 +63,45 @@
     "lib/data/repositories/auto_message_repository.dart:248"
    ],
    "n": "behoben in #298"
+  },
+  "stats/stats.page#media-57ebfc11": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:789",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-315d630a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:758",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-42266499": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:945",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-9766bdb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:916",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-ac43f03a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "behoben in #298 (Titel „Anwesenheitsverlauf (letzte 20 Termine)“)"
   }
  }
 }

@@ -549,8 +549,12 @@ class _TrendLineChart extends ConsumerWidget {
                       if (index < 0 || index >= data.labels.length) {
                         return const SizedBox.shrink();
                       }
-                      return Padding(
-                        padding: const EdgeInsets.only(top: 8),
+                      // "03.11." is wider than "3.11": keep the first and
+                      // last label inside the card instead of centred on
+                      // the edge.
+                      return SideTitleWidget(
+                        axisSide: meta.axisSide,
+                        fitInside: SideTitleFitInsideData.fromTitleMeta(meta),
                         child: Text(
                           data.labels[index],
                           style: const TextStyle(fontSize: 10),

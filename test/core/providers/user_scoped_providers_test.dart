@@ -190,9 +190,8 @@ void main() {
       'notificationConfigProvider': 'lib/core/services/telegram_service.dart',
       'upcomingSongsProvider':
           'lib/features/self_service/data/providers/upcoming_songs_provider.dart',
-      // currentPlayerInstrumentProvider: now follows
-      // currentSelfServicePlayerProvider (person of the current instance,
-      // which watches the auth state), PARITY_SELF.
+      'currentPlayerInstrumentProvider':
+          'lib/features/self_service/data/providers/upcoming_songs_provider.dart',
       'userPreferencesProvider':
           'lib/core/providers/user_preferences_provider.dart',
     };

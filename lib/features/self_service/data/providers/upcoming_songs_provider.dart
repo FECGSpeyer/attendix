@@ -83,12 +83,14 @@ final upcomingSongsProvider =
   ];
 });
 
-/// Provider to get the current user's instrument ID
-///
-/// PARITY_SELF: Ionic uses `this.player.instrument` – the person of the
-/// current instance (appId AND tenantId, multi-tenant rule), not any person
-/// of the account in another instance.
+/// Provider to get the current user's instrument ID in the CURRENT tenant
+/// (Ionic signout.page uses this.player.instrument). Reading by appId alone
+/// returned the group of an arbitrary tenant for members of several groups.
 final currentPlayerInstrumentProvider = FutureProvider<int?>((ref) async {
+  // SOL_FIX14: per-user data – reload when the account changes.
+  final userId = ref.watch(currentAuthUserIdProvider);
+  if (userId == null) return null;
+
   final player = await ref.watch(currentSelfServicePlayerProvider.future);
   return player?.instrument;
 });

@@ -12,7 +12,7 @@ import '../../../../../core/services/song_file_service.dart';
 import '../../../../../core/services/zip_service.dart';
 import '../../../../../core/services/zip_service_stub.dart'
     if (dart.library.io) '../../../../../core/services/zip_service_io.dart'
-    if (dart.library.html) '../../../../../core/services/zip_service_web.dart'
+    if (dart.library.js_interop) '../../../../../core/services/zip_service_web.dart'
     as file_saver;
 import '../../../../../core/theme/redesign/rd_palette.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
