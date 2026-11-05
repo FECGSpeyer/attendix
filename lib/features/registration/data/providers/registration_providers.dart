@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/constants/app_constants.dart';
 import '../../../../core/constants/table_names.dart';
 import '../../../../core/constants/enums.dart';
 import '../../../../core/utils/db_helpers.dart';
@@ -65,6 +66,18 @@ List<ExtraField> orderedRegistrationFields(
     if (field != null) fields.add(field);
   }
   return fields;
+}
+
+/// Ionic ion-input type=number (NumericValueAccessor parseFloat): the entered
+/// number, whole numbers as int. Accepts a decimal comma (German keyboards).
+/// `null` when the input is not a finite number.
+num? parseRegistrationNumber(String input) {
+  final parsed = double.tryParse(input.trim().replaceAll(',', '.'));
+  if (parsed == null || !parsed.isFinite) return null;
+  if (parsed == parsed.truncateToDouble() && parsed.abs() <= 9007199254740991) {
+    return parsed.toInt();
+  }
+  return parsed;
 }
 
 /// Ionic tenant-register ngOnInit: every registration field starts with its
@@ -376,6 +389,9 @@ Map<String, dynamic> buildRegistrationPlayerData({
     'playsSince': todayIso,
     'joined': todayIso,
     'additional_fields': formData.additionalFields,
+    // Ionic addPlayer: without a picture the row gets DEFAULT_IMAGE; a chosen
+    // picture is uploaded afterwards and sets `img` then.
+    if (formData.profileImageBytes == null) 'img': kDefaultAvatarUrl,
   };
 }
 
