@@ -1,13 +1,24 @@
 {
   "versions": [
     {
-      "version": "0.40.4",
+      "version": "0.41.4",
       "date": "5.11.2026",
       "changes": [
         "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
         "🐛 Ablaufplan: Helfer sehen archivierte Termine nicht mehr in der Terminauswahl",
         "🐛 Ablaufplan: Ohne kommenden Termin ist kein Termin vorausgewählt",
         "🐛 Ablaufplan: „Tag zuordnen“ als Auswahl mit Abbrechen und Speichern, „Link teilen“ nur mit Nur-Lesen- und Bearbeitungs-Link"
+      ]
+    },
+    {
+      "version": "0.41.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin stehen Abmeldungen mit Grund direkt in der Karte oben, die Zuspätkommer in einer Zeile darunter; ab 7 Abmeldungen „Alle anzeigen“",
+        "✨ Beta: „Anwesenheit eintragen“ zeigt pro Stimme nur die Ausnahmen, dazu „x von y da“, die Suche „Wer fehlt?“, Filter nach Status und „+ Person“",
+        "✨ Beta: Personen-Sheet mit Anmeldefeldern, „Zuletzt geändert von“, „Zur Person“ und „Aus Termin entfernen“",
+        "✨ Beta: Menü ••• im Termin mit Status-Übersicht, Gemeinde-Übersicht, Excel-Export, Checkliste und Archivieren; „Termin löschen“ steht unten in „Bearbeiten“",
+        "✨ Beta: Nach dem Termin „Abschluss“ mit „Unentschuldigte anschreiben“ und den automatischen Nachrichten samt Antworten"
       ]
     },
     {
