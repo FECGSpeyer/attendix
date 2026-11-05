@@ -94,8 +94,13 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
-      final storedTenant =
-          tenants.where((t) => t.id == userPrefs.currentTenantId).firstOrNull;
+      // Same order as the background restore: this device's instance
+      // first, then user_metadata (Ionic setTenant).
+      Tenant? storedTenant;
+      for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+        storedTenant = tenants.where((t) => t.id == id).firstOrNull;
+        if (storedTenant != null) break;
+      }
       var savedTenant = storedTenant ?? tenants.firstOrNull;
       if (ask && savedTenant != null) {
         if (!mounted) return;

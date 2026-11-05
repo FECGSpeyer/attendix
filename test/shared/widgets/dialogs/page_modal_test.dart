@@ -4,10 +4,15 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 
 void main() {
-  for (final platform in [TargetPlatform.android, TargetPlatform.iOS]) {
+  // Phone: iOS card modal / md full screen; tablet: centred card.
+  for (final platform in [TargetPlatform.android, TargetPlatform.iOS])
+  for (final size in [const Size(390, 844), const Size(1024, 768)]) {
     testWidgets(
-      'page modal closes itself before a router navigation (Ionic isModal, $platform)',
+      'page modal closes itself before a router navigation (Ionic isModal, $platform, $size)',
       (tester) async {
+        tester.view.physicalSize = size;
+        tester.view.devicePixelRatio = 1;
+        addTearDown(tester.view.reset);
         late BuildContext homeContext;
         // Like the app: tabs in a ShellRoute, the target pushed onto it.
         final router = GoRouter(

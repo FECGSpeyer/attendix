@@ -21,7 +21,8 @@ const String kDefaultProfileImage =
 
 /// Ionic `ImageService.updateImage(..., appId, currentUserId)` with the own
 /// account: `update({img}).match({appId})` – every player row of [userId]
-/// (all instances) gets [img]. Each row is updated by id + its tenantId.
+/// (all instances) gets [img]. Each row is updated by id + its tenantId,
+/// only while [userId] is still the signed-in account.
 Future<void> syncOwnPlayerImage(
   SupabaseClient supabase, {
   required String userId,
@@ -32,6 +33,11 @@ Future<void> syncOwnPlayerImage(
       .select('id, tenantId')
       .eq('appId', userId);
   for (final row in (rows as List).cast<Map<String, dynamic>>()) {
+    // SOL_FIX15: an account switch mid-loop must not write A's picture
+    // with B's session (B may administrate A's rows in a shared instance).
+    if (supabase.auth.currentUser?.id != userId) {
+      throw const OfflineSessionChangedException();
+    }
     final targetTenantId = row['tenantId'] as int;
     await supabase
         .from('player')

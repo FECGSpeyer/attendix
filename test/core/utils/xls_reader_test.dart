@@ -23,4 +23,14 @@ void main() {
     expect(data.rows[1]['Doppelt'], 5);
     expect(data.rows[1]['Aktiv'], false);
   });
+
+  test('headers below empty rows stay the headers (SheetJS !ref)', () {
+    final data = tableToRows([
+      ['', ''],
+      ['Vorname', 'Nachname'],
+      ['Anna', 'Muster'],
+    ]);
+    expect(data.headers, ['Vorname', 'Nachname']);
+    expect(data.rows.single['Vorname'], 'Anna');
+  });
 }

@@ -22,6 +22,22 @@ final currentTenantIdProvider = Provider<int?>((ref) {
   return ref.watch(currentTenantProvider)?.id;
 });
 
+/// Ionic `setTenant`: the instance stored on this device (localStorage)
+/// wins over `user_metadata.currentTenantId` ([serverTenantId]). Used by the
+/// login / instance selection so they pick the same instance as the
+/// background restore of [CurrentTenantNotifier]. Returns both in order of
+/// preference (without duplicates); callers take the first accessible one.
+Future<List<int>> preferredTenantIds(int? serverTenantId) async {
+  int? cached;
+  try {
+    cached = (await SharedPreferences.getInstance()).getInt(_tenantIdKey);
+  } catch (_) {}
+  return [
+    if (cached != null) cached,
+    if (serverTenantId != null && serverTenantId != cached) serverTenantId,
+  ];
+}
+
 /// Notifier for current tenant
 /// Uses dual-storage strategy:
 /// - SharedPreferences for fast local cache

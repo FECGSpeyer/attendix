@@ -200,11 +200,16 @@ dynamic cellToDart(CellValue? value) {
 
 /// Turn a raw table (first row = headers) into header-keyed row maps, like
 /// SheetJS `sheet_to_json(sheet, { defval: '' })`.
+///
+/// Leading empty rows are skipped: SheetJS reads from the first used cell
+/// of the sheet (`!ref`), so headers in row 2 are still the headers.
 SpreadsheetData tableToRows(List<List<dynamic>> table) {
-  if (table.isEmpty) return const SpreadsheetData(headers: [], rows: []);
+  final start = table.indexWhere(
+      (r) => r.any((c) => (c ?? '').toString().trim().isNotEmpty));
+  if (start < 0) return const SpreadsheetData(headers: [], rows: []);
 
-  final headerRow = table.first;
-  final dataRows = table.skip(1).toList();
+  final headerRow = table[start];
+  final dataRows = table.skip(start + 1).toList();
   final width = [headerRow.length, ...dataRows.map((r) => r.length)]
       .reduce((a, b) => a > b ? a : b);
 
