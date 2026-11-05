@@ -153,6 +153,23 @@ bool _openedByKeyboard(BuildContext context) {
   return inside;
 }
 
+/// Ionic `ion-popover` with free content (`<ion-content class="ion-padding">`)
+/// behind an info button, e.g. a help text: [showAppPopover] at the button
+/// with [child] inside 16 px padding. A tap outside closes it.
+///
+/// [context] must be the trigger button's context (use a [Builder]).
+Future<void> showAppContentPopover({
+  required BuildContext context,
+  required Widget child,
+  double iosWidth = 200,
+}) {
+  return showAppPopover<void>(
+    context: context,
+    width: useIosLook(context) ? iosWidth : 250,
+    builder: (_) => Padding(padding: const EdgeInsets.all(16), child: child),
+  );
+}
+
 /// Global rect of [context]'s widget inside [overlay].
 Rect _anchorOf(BuildContext context, RenderBox overlay) {
   final box = context.findRenderObject()! as RenderBox;

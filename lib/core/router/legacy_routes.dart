@@ -21,6 +21,12 @@ const String kOpenLinkTargetParam = 'to';
 /// `tab`) are carried over.
 String? legacyRouteRedirect(Uri uri) {
   final path = uri.path;
+  // Ionic app-routing: '' → /login (LoginGuard then opens the role's home).
+  // An attendix.de root link opens the app on '/', which has no route.
+  if (path.isEmpty || path == '/') {
+    if (uri.queryParameters.isEmpty) return '/login';
+    return Uri(path: '/login', queryParameters: uri.queryParameters).toString();
+  }
   if (path == '/resetPassword' || path == '/reset-password') {
     // The recovery tokens are read from the browser URL by the auth link
     // handling; the route itself only needs to show "Neues Passwort".
@@ -50,7 +56,8 @@ String _mapTabs(List<String> s) {
       }
       return '/attendance/${rest.first}';
     case 'songs-tab':
-      return rest.isEmpty ? '/songs-tab' : '/settings/songs/${rest.first}';
+      // Ionic tabs route songs-tab/:id (Werke tab stays selected).
+      return rest.isEmpty ? '/songs-tab' : '/songs-tab/${rest.first}';
     case 'messages':
       return rest.isEmpty ? '/settings/messages' : '/messages/${rest.first}';
     case 'org-plans':
@@ -87,6 +94,10 @@ String _mapSettings(List<String> t) {
       if (rest.isEmpty) return '/settings/general';
       if (rest.first == 'types') {
         return rest.length > 1 ? '/settings/types/${rest[1]}' : '/settings/types';
+      }
+      // Ionic /tabs/settings/general/shifts(/:id) → Flutter /settings/shifts
+      if (rest.first == 'shifts') {
+        return rest.length > 1 ? '/settings/shifts/${rest[1]}' : '/settings/shifts';
       }
       return '/settings/general/${rest.first}'; // branding, extra-fields
     case 'org-settings':

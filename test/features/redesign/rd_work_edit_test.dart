@@ -14,7 +14,9 @@ import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/song/song_additional_field.dart';
 import 'package:attendix/data/repositories/song_repository.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_work_create_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_edit_page.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -36,10 +38,17 @@ class _FakeSongRepo extends SongRepository {
   }
 
   final updates = <Map<String, dynamic>>[];
+  final created = <Song>[];
   bool deleted = false;
 
   /// The next writes that fail (offline).
   int failures = 0;
+
+  @override
+  Future<Song> createSong(Song song) async {
+    created.add(song);
+    return song.copyWith(id: 99);
+  }
 
   @override
   Future<Song> updateSong(int id, Map<String, dynamic> updates) async {
@@ -62,14 +71,16 @@ Widget _editApp(
   void Function(_FakeSongRepo) onRepo, {
   Future<List<Song>>? songs,
   List<SongAdditionalField> fields = const [],
+  bool create = false,
 }) {
   final router = GoRouter(
-    initialLocation: '/werke/5/bearbeiten',
+    initialLocation: create ? '/werke/neu' : '/werke/5/bearbeiten',
     routes: [
       GoRoute(
         path: '/werke',
         builder: (_, __) => const Scaffold(body: Text('page works')),
         routes: [
+          GoRoute(path: 'neu', builder: (_, __) => const RdWorkCreatePage()),
           GoRoute(path: ':id', builder: (_, s) => Scaffold(body: Text('page work ${s.pathParameters['id']}'))),
           GoRoute(
             path: ':id/bearbeiten',
@@ -110,6 +121,7 @@ Widget _editApp(
         ),
       ),
       songsProvider.overrideWith((ref) => songs ?? Future.value(const [_song, _ave])),
+      songCategoriesProvider.overrideWith((ref) async => const [SongCategory(id: 'k', name: 'Konzert', index: 0)]),
       songSyncedTenantNamesProvider.overrideWith((ref) async => const []),
     ],
     child: MaterialApp.router(
@@ -268,6 +280,34 @@ void main() {
       expect(find.text('page works'), findsOneWidget);
       expect(repo.updates, isEmpty);
     });
+  });
+
+  testWidgets('Neues Werk: next free number once the Werke are loaded, no Besetzung, then the Werk page', (
+    tester,
+  ) async {
+    _phone(tester);
+    late _FakeSongRepo repo;
+    final songs = Completer<List<Song>>();
+    await tester.pumpWidget(_editApp((r) => repo = r, create: true, songs: songs.future));
+    await _settle(tester);
+    await tester.enterText(find.byKey(const Key('rd-work-create-name')), 'Tochter Zion');
+    await tester.pump();
+    // No number and no Werk before the list is there to check against.
+    expect(tester.widget<RdPrimaryButton>(find.byKey(const Key('rd-work-create-submit'))).onPressed, isNull);
+    songs.complete(const [_song, _ave]);
+    await _settle(tester);
+
+    expect(find.widgetWithText(TextField, '42'), findsOneWidget);
+    expect(find.textContaining('42 ist die nächste freie Nummer.'), findsOneWidget);
+    await tester.tap(find.text('Mit Chor'));
+    await tester.pump();
+    await tester.tap(find.byKey(const Key('rd-work-create-submit')));
+    await _settle(tester);
+
+    final song = repo.created.single;
+    expect((song.name, song.number, song.prefix, song.withChoir), ('Tochter Zion', 42, '', true));
+    expect(song.instrumentIds, isEmpty);
+    expect(find.text('page work 99'), findsOneWidget);
   });
 
   test('old song links open the Werk pages, editing only for leads', () {

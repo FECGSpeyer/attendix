@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/player_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
@@ -15,11 +17,18 @@ import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import 'package:attendix/core/services/song_file_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/song/song.dart';
+import 'package:attendix/data/models/song/song_filter.dart';
+import 'package:attendix/features/redesign/data/rd_dates.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
+import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart';
+import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
+import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
@@ -28,6 +37,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -152,6 +162,19 @@ const _abend = Song(
 );
 
 /// Bounded pumps: loading spinners never settle.
+/// Builds no PDF: counts the calls and waits for [done].
+class _FakePrintService extends SongPrintService {
+  var calls = 0;
+  var done = Completer<SongPrintResult?>();
+
+  @override
+  Future<SongPrintResult?> printEntries(List<SongPrintEntry> entries, String fileName) {
+    calls++;
+    if (done.isCompleted) done = Completer<SongPrintResult?>();
+    return done.future;
+  }
+}
+
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -183,9 +206,29 @@ List<Override> _common(Role role) => [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     ];
 
-Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false, bool overview = false}) {
+/// The two coming Termine of [_worksApp], relative to today: "Als Nächstes"
+/// leaves out Termine already over, so fixed dates would expire.
+final _soon = rdAddDays(DateTime.now(), 1);
+final _later = rdAddDays(DateTime.now(), 8);
+
+/// "2026-11-05T19:00:00" for [day].
+String _evening(DateTime day) => '${DateFormat('yyyy-MM-dd').format(day)}T19:00:00';
+
+/// "Do., 5. Nov. · Probe" for [day].
+String _eventLabel(DateTime day) => '${DateFormat.MMMEd('de').format(day)} · Probe';
+
+Widget _worksApp(
+  Role role, {
+  List<Song>? songs,
+  bool twoLists = false,
+  bool overview = false,
+  int? instrument = 11,
+  Map<int, int>? counts,
+  bool folder = false,
+  List<Override> overrides = const [],
+}) {
   final router = GoRouter(
-    initialLocation: '/werke',
+    initialLocation: folder ? '/werke/mappe' : '/werke',
     routes: [
       GoRoute(
         path: '/werke',
@@ -198,6 +241,11 @@ Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false, bool over
               ])
             : const RdWorksPage(),
         routes: [
+          GoRoute(path: 'neu', builder: (_, __) => const Scaffold(body: Text('page new'))),
+          GoRoute(
+            path: 'mappe',
+            builder: (_, __) => folder ? const RdFolderPage() : const Scaffold(body: Text('page folder')),
+          ),
           GoRoute(path: ':id', builder: (_, s) => Scaffold(body: Text('page work ${s.pathParameters['id']}'))),
         ],
       ),
@@ -216,11 +264,30 @@ Widget _worksApp(Role role, {List<Song>? songs, bool twoLists = false, bool over
             groups: _groups,
             groupCategories: const [],
             currentSongs: [
-              (date: '2026-11-05', history: const [SongHistory(songId: 6)]),
-              (date: '2026-11-03', history: const [SongHistory(songId: 5), SongHistory(songId: 6)]),
+              (
+                date: '${DateFormat('dd.MM.yyyy').format(_later)} | Probe',
+                history: [SongHistory(songId: 6, attendanceId: 32, attendanceDate: _evening(_later))],
+              ),
+              (
+                date: '${DateFormat('dd.MM.yyyy').format(_soon)} | Probe',
+                history: [
+                  SongHistory(songId: 5, attendanceId: 31, attendanceDate: _evening(_soon)),
+                  SongHistory(songId: 6, attendanceId: 31, attendanceDate: _evening(_soon)),
+                ],
+              ),
             ],
             additionalFields: const [],
           )),
+      currentSelfServicePlayerProvider.overrideWith(
+        (ref) async => TestFactories.createPerson(id: 3, tenantId: 7, instrument: instrument),
+      ),
+      missingGroupsPlayerCountsProvider.overrideWithValue(counts),
+      currentOrganisationProvider.overrideWith((ref) async => null),
+      currentTenantIdProvider.overrideWithValue(7),
+      // No times of the Termine: "Als Nächstes" keeps them until midnight.
+      realtimeAttendanceListProvider.overrideWith((ref) async => const <Attendance>[]),
+      attendanceTypesProvider.overrideWith((ref) async => const <AttendanceType>[]),
+      ...overrides,
     ],
     child: _material(router),
   );
@@ -306,10 +373,7 @@ void main() {
       expect(current.map((s) => s.id), [5, 6, 7]);
     });
 
-    test('files: badges, own part, recording, score, categories', () {
-      expect(rdHasPdf(_ouverture), isTrue);
-      expect(rdHasAudio(_ouverture), isTrue);
-      expect(rdHasAudio(_abend), isFalse);
+    test('files: own part, recording, score, categories', () {
       expect(rdPartFiles(_ouverture, 11).single.fileName, 'klar.pdf');
       expect(rdPartFiles(_ouverture, 1), isEmpty);
       expect(rdPartFiles(_ouverture, null), isEmpty);
@@ -349,6 +413,97 @@ void main() {
       expect(split.others.map((f) => f.fileName), ['floete.pdf']);
     });
 
+    test('Termine of one day stay apart; a recording is no Noten; Chor (alle) is everyone\'s part', () {
+      final events = rdNextEvents([
+        (
+          date: '05.11.2026 | Probe',
+          history: const [
+            SongHistory(songId: 5, attendanceId: 31, attendanceDate: '2026-11-05T10:00:00Z'),
+            SongHistory(songId: 6, attendanceId: 32, attendanceDate: '2026-11-05T18:00:00Z'),
+          ],
+        ),
+      ], [_ouverture, _ave]);
+      expect(events.map((e) => '${e.attendanceId}: ${e.songs.map((s) => s.id).join(',')}'), ['31: 5', '32: 6']);
+
+      const mp3 = SongFile(fileName: 'take.mp3', fileType: 'audio/mpeg', url: 'https://x/take.mp3', instrumentId: 1);
+      const recordingOnly = Song(id: 8, name: 'Nur Aufnahme', files: [mp3]);
+      expect(rdWorkLacksNotes(recordingOnly, _groups, null, orchestra: false), isTrue);
+      expect(rdWorkLacksNotes(_abend, _groups, {12: 1}, orchestra: true), isFalse);
+
+      const choirAll = SongFile(fileName: 'chor.pdf', fileType: _pdf, url: 'https://x/chor.pdf', note: 'Chor');
+      // An own practice recording is no Noten: Chor (alle) still comes.
+      const practice = SongFile(fileName: 'sopran.mp3', fileType: 'audio/mpeg', url: 'https://x/s.mp3', instrumentId: 11);
+      const choirWork = Song(id: 9, name: 'Chorsatz', files: [practice, choirAll, mp3]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: true), [choirAll, practice]);
+      expect(rdMemberPartFiles(choirWork, 11, choir: false), [practice]);
+      expect(
+        rdApplyOnly(
+          [choirWork, recordingOnly],
+          {RdWorksOnly.myPart},
+          groupId: 11,
+          groups: _groups,
+          playerCounts: null,
+          orchestra: false,
+          choir: true,
+        ).map((s) => s.id),
+        [9],
+      );
+    });
+
+    test('Als Nächstes leaves out Termine over today (end, else start; date only until midnight)', () {
+      final now = DateTime(2026, 11, 4, 20);
+      RdNextEvent event(int id, {int day = 4}) =>
+          RdNextEvent(date: DateTime(2026, 11, day), type: '', attendanceId: id, songs: const [_ave]);
+      final events = [event(1), event(2), event(3), event(4), event(5), event(6, day: 5), event(7)];
+      const types = [
+        AttendanceType(id: 't', name: 'Probe', startTime: '10:00', endTime: '12:00'),
+        AttendanceType(id: 'a', name: 'Freizeit', startTime: '19:00', allDay: true),
+      ];
+      const attendances = [
+        Attendance(id: 1, date: '2026-11-04', startTime: '10:00', endTime: '19:30'), // over
+        Attendance(id: 2, date: '2026-11-04', startTime: '19:00', endTime: '21:00'), // running
+        Attendance(id: 3, date: '2026-11-04', startTime: '18:00'), // start only: over
+        Attendance(id: 4, date: '2026-11-04', typeId: 't'), // type 10–12: over
+        // 5: no Termin loaded, date only: stays until midnight.
+        Attendance(id: 6, date: '2026-11-05', startTime: '09:00', endTime: '10:00'),
+        // Own start, the type's end (12:00) does not make it overnight: over.
+        Attendance(id: 7, date: '2026-11-04', startTime: '19:00', typeId: 't'),
+        // All day: the Ablauf time 19:00 does not end it, it stays until midnight.
+        Attendance(id: 8, date: '2026-11-04', startTime: '19:00', typeId: 'a'),
+        // Two days, ends today at 21:00: running.
+        Attendance(id: 9, date: '2026-11-03', durationDays: 2, startTime: '18:00', endTime: '21:00'),
+        // Yesterday 20:00 to 01:00 today: over.
+        Attendance(id: 10, date: '2026-11-03', startTime: '20:00', endTime: '01:00'),
+      ];
+      List<int?> left(List<RdNextEvent> events, DateTime now) => [
+        for (final e in rdWithoutEndedEvents(events, now: now, types: types, attendances: attendances)) e.attendanceId,
+      ];
+      expect(left([...events, event(8), event(9, day: 3), event(10, day: 3)], now), [2, 5, 6, 8, 9]);
+      // The end limits: midnight after the (last) day, the end time, the overnight end.
+      final ends = [event(5), event(8), event(9, day: 3), event(10, day: 3)];
+      expect(left(ends, DateTime(2026, 11, 4, 0, 59)), [5, 8, 9, 10]);
+      expect(left(ends, DateTime(2026, 11, 4, 21, 1)), [5, 8]);
+      expect(left(ends, DateTime(2026, 11, 5)), isEmpty);
+    });
+
+    test('old descending sort orders are shown as such', () {
+      final l10n = lookupAppLocalizations(const Locale('de'));
+      expect(
+        rdWorksSortLabel(l10n, SongSortOption.numberDesc, orchestra: true),
+        '${l10n.redesignWorksSortNumber} ↓',
+      );
+      expect(rdWorksSortLabel(l10n, SongSortOption.nameDesc, orchestra: true), '${l10n.redesignWorksSortTitle} ↓');
+      expect(rdWorksSortOptions(SongSortOption.numberAsc), rdWorksSorts);
+      expect(rdWorksSortOptions(SongSortOption.numberDesc).take(2), [
+        SongSortOption.numberAsc,
+        SongSortOption.numberDesc,
+      ]);
+      expect(rdWorksSortOptions(SongSortOption.nameDesc).skip(1).take(2), [
+        SongSortOption.nameAsc,
+        SongSortOption.nameDesc,
+      ]);
+    });
+
     test('Werke routes follow the /songs-tab guard', () {
       for (final role in [Role.parent, Role.applicant]) {
         expect(RedesignRoutes.roleRedirect('/werke', role), '/heute', reason: role.name);
@@ -362,27 +517,62 @@ void main() {
   });
 
   group('RdWorksPage', () {
-    testWidgets('current works, categories, rows with badges', (tester) async {
+    testWidgets('member: Als Nächstes with the own Noten, one status line per Werk', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.player));
       await _settle(tester);
 
       expect(find.text('Werke'), findsOneWidget);
-      expect(find.text('Gerade geprobt'), findsOneWidget);
+      expect(find.text('Meine Mappe'), findsOneWidget);
+      expect(find.text('Titel oder Nummer'), findsOneWidget);
+      // The next Termin with its Werke and the own part as one PDF.
+      expect(find.text('Als Nächstes'), findsOneWidget);
+      expect(find.text(_eventLabel(_soon)), findsOneWidget);
+      expect(find.byKey(const Key('rd-works-open-mine')), findsOneWidget);
+      expect(find.text('Deine Stimme als PDF, auch zum Drucken'), findsOneWidget);
+      // The one after it as a single line.
+      expect(find.text(_eventLabel(_later)), findsOneWidget);
+      // Status instead of PDF / Audio badges (in "Als Nächstes" and the list).
+      expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsNWidgets(2));
+      expect(find.text('noch keine Noten · Kirche'), findsNWidgets(2));
+      expect(find.text('keine Noten für Klarinette · Kirche'), findsOneWidget);
+      expect(find.text('PDF'), findsNothing);
       expect(find.text('Alle · 3'), findsOneWidget);
-      expect(find.text('Konzert'), findsOneWidget);
-      expect(find.text('Kirche'), findsOneWidget);
-      expect(find.text('12'), findsOneWidget);
-      expect(find.text('PDF'), findsNWidgets(2));
-      expect(find.text('Audio'), findsOneWidget);
-      // Players get no "Werk hinzufügen".
+      // Players get no "+".
       expect(find.byType(FloatingActionButton), findsNothing);
-      expect(find.bySemanticsLabel('Dateien der Gruppe'), findsOneWidget);
       // Sorted by number like the old list.
       expect(
         tester.getTopLeft(find.text('Abendlied').last).dy,
         lessThan(tester.getTopLeft(find.text('Ave verum corpus').last).dy),
       );
+
+      await tester.tap(find.text('Meine Mappe'));
+      await _settle(tester);
+      expect(find.text('page folder'), findsOneWidget);
+    });
+
+    testWidgets('Meine Noten öffnen is locked and loading while the PDF is built', (tester) async {
+      _phone(tester);
+      final printer = _FakePrintService();
+      await tester.pumpWidget(_worksApp(Role.player, overrides: [songPrintServiceProvider.overrideWithValue(printer)]));
+      await _settle(tester);
+
+      final button = find.byKey(const Key('rd-works-open-mine'));
+      final spinner = find.descendant(of: button, matching: find.byType(CircularProgressIndicator));
+      await tester.tap(button);
+      await tester.pump();
+      await tester.tap(button, warnIfMissed: false);
+      await tester.pump();
+      expect(printer.calls, 1);
+      expect(spinner, findsOneWidget);
+      expect(tester.widget<FilledButton>(find.descendant(of: button, matching: find.byType(FilledButton))).onPressed, isNull);
+
+      printer.done.complete(const SongPrintResult(pageCount: 1, skipped: 0));
+      await _settle(tester);
+      expect(spinner, findsNothing);
+      await tester.tap(button);
+      await tester.pump();
+      expect(printer.calls, 2);
     });
 
     testWidgets('category chips and search filter the list', (tester) async {
@@ -390,22 +580,63 @@ void main() {
       await tester.pumpWidget(_worksApp(Role.player));
       await _settle(tester);
 
-      await tester.tap(find.text('Kirche'));
+      await tester.tap(find.widgetWithText(RdChoiceChip, 'Kirche'));
       await _settle(tester);
-      expect(find.text('Festliche Ouvertüre'), findsNothing);
-      expect(find.text('Gerade geprobt'), findsNothing);
       expect(find.text('Abendlied'), findsOneWidget);
+      expect(find.text('Festliche Ouvertüre'), findsOneWidget); // only in "Als Nächstes"
 
       await tester.tap(find.text('Alle · 3'));
       await _settle(tester);
       await tester.enterText(find.byType(TextField), 'mozart');
       await _settle(tester);
+      expect(find.text('Als Nächstes'), findsNothing);
       expect(find.text('Ave verum corpus'), findsOneWidget);
       expect(find.text('Abendlied'), findsNothing);
 
       await tester.enterText(find.byType(TextField), 'zzz');
       await _settle(tester);
       expect(find.text('Kein Werk passt zur Suche.'), findsOneWidget);
+    });
+
+    testWidgets('lead: missing Noten, sort and filter, the + menu', (tester) async {
+      _phone(tester);
+      await tester.pumpWidget(_worksApp(Role.admin, instrument: null, counts: const {11: 2, 12: 1}));
+      await _settle(tester);
+
+      expect(find.text('Mappen'), findsOneWidget);
+      expect(find.byKey(const Key('rd-works-open-mine')), findsNothing);
+      // Both Termine still lack Noten (Ave has none).
+      expect(find.text('Noten fehlen'), findsNWidgets(2));
+      expect(find.text('ohne Noten'), findsOneWidget);
+      expect(find.text('Klarinette fehlt'), findsOneWidget);
+
+      await tester.tap(find.text('Filter'));
+      await _settle(tester);
+      expect(find.text('Sortieren & Filtern'), findsOneWidget);
+      expect(find.text('3 Werke anzeigen'), findsOneWidget);
+      await tester.tap(find.widgetWithText(RdChoiceChip, 'Noten fehlen'));
+      await tester.tap(find.text('Am längsten nicht gespielt'));
+      await tester.pump();
+      expect(find.text('2 Werke anzeigen'), findsOneWidget);
+      await tester.tap(find.byKey(const Key('rd-works-filter-show')));
+      await _settle(tester);
+
+      expect(find.text('Filter · 1'), findsOneWidget);
+      expect(find.text('Festliche Ouvertüre'), findsNothing); // has all its Noten
+      expect(find.text('Festliche Ouvertüre, Ave verum corpus'), findsOneWidget); // the Termin
+      expect(find.text('Noch nie gespielt · Kirche'), findsNWidgets(2));
+      // The sort can be removed above the list.
+      await tester.tap(find.bySemanticsLabel('Sortierung „Am längsten nicht gespielt“ entfernen'));
+      await _settle(tester);
+      expect(find.text('Kirche'), findsNWidgets(3)); // chip and two rows
+
+      await tester.tap(find.byType(FloatingActionButton));
+      await _settle(tester);
+      expect(find.text('Werkliste importieren'), findsOneWidget);
+      expect(find.text('Aus anderer Gruppe übernehmen'), findsNothing); // no organisation
+      await tester.tap(find.text('Neues Werk'));
+      await _settle(tester);
+      expect(find.text('page new'), findsOneWidget);
     });
 
     testWidgets('the search is shared by every copy of the list (split view, back)', (tester) async {
@@ -428,9 +659,11 @@ void main() {
       expect(find.text('Ave verum corpus'), findsNothing);
     });
 
-    testWidgets('a row and a current card open the work', (tester) async {
+    testWidgets('a row opens the work', (tester) async {
       _phone(tester);
       await tester.pumpWidget(_worksApp(Role.player));
+      await _settle(tester);
+      await tester.ensureVisible(find.text('Abendlied'));
       await _settle(tester);
       await tester.tap(find.text('Abendlied'));
       await _settle(tester);
@@ -519,15 +752,24 @@ void main() {
       expect(find.text('NOCH OHNE NOTEN'), findsNothing);
       expect(find.text('Werk hinzufügen'), findsNothing);
     });
+  });
 
-    testWidgets('admin may add works; no group files, no Dateien', (tester) async {
-      _phone(tester);
-      await tester.pumpWidget(_worksApp(Role.admin, songs: const [_ave]));
-      await _settle(tester);
-      expect(find.byType(FloatingActionButton), findsOneWidget);
-      expect(find.bySemanticsLabel('Dateien der Gruppe'), findsNothing);
-      expect(find.bySemanticsLabel('Mehr'), findsOneWidget);
-    });
+  testWidgets('Meine Mappe: the own part for the next Termine or all Werke', (tester) async {
+    _phone(tester);
+    await tester.pumpWidget(_worksApp(Role.player, folder: true));
+    await _settle(tester);
+
+    expect(find.text('Meine Mappe'), findsOneWidget);
+    expect(find.text('Klarinette'), findsOneWidget);
+    expect(find.text('Als Nächstes · 2'), findsOneWidget);
+    // Ave has no Klarinette part yet (in both Termine).
+    expect(find.text('fehlt'), findsNWidgets(2));
+    expect(find.byKey(const Key('rd-folder-open-all')), findsOneWidget);
+
+    await tester.tap(find.text('Alle Werke · 1'));
+    await _settle(tester);
+    expect(find.text('Festliche Ouvertüre'), findsOneWidget);
+    expect(find.text('Ave verum corpus'), findsNothing);
   });
 
   group('RdWorkPage', () {

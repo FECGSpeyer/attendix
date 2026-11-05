@@ -1,6 +1,7 @@
 import 'package:intl/intl.dart';
 
 import '../../core/utils/extra_field_utils.dart';
+import '../../core/utils/people_sort.dart';
 import '../../data/models/person/person.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../../l10n/l10n.dart';
@@ -139,7 +140,11 @@ String exportFieldValue(
   }
 }
 
-/// Sort players for export (Ionic applySort).
+/// Sort players for export (Ionic applySort). Like JS `Array.sort` the sort
+/// is stable, so players with equal values keep the input order (Ionic
+/// pre-sorts with getModifiedPlayersForList: group, sort_order, last name),
+/// and strings compare like `localeCompare` (umlauts next to their base
+/// letter).
 List<Person> sortPlayersForExport(
   List<Person> players,
   String sortField, {
@@ -147,8 +152,7 @@ List<Person> sortPlayersForExport(
   Map<int, int> percentages = const {},
 }) {
   final dir = ascending ? 1 : -1;
-  final list = [...players];
-  list.sort((a, b) {
+  int compare(Person a, Person b) {
     if (sortField == 'anwesenheit') {
       final av = percentages[a.id] ?? 0;
       final bv = percentages[b.id] ?? 0;
@@ -182,7 +186,13 @@ List<Person> sortPlayersForExport(
           bv = '';
       }
     }
-    return av.toLowerCase().compareTo(bv.toLowerCase()) * dir;
+    return localeCompareDe(av, bv) * dir;
+  }
+
+  final indexed = [for (var i = 0; i < players.length; i++) (i, players[i])];
+  indexed.sort((a, b) {
+    final c = compare(a.$2, b.$2);
+    return c != 0 ? c : a.$1.compareTo(b.$1);
   });
-  return list;
+  return [for (final e in indexed) e.$2];
 }
