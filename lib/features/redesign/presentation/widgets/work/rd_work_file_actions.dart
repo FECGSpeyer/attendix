@@ -283,6 +283,7 @@ Future<void> rdShowWorkMenu(
         useRootNavigator: true,
         isScrollControlled: true,
         useSafeArea: true,
+        enableDrag: false, // not closable while copying
         builder: (_) => CopyToTenantSheet(song: song, availableTenants: copyTargets),
       );
     case _WorkAction.groupPdfs:

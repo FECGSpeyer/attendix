@@ -55,10 +55,13 @@ class SongPrintService {
   }
 
   /// Merge and print. Returns null if a print job is already running.
+  /// [onMerged] runs once merging is done, before the print dialog opens
+  /// (Ionic dismisses its loading overlay there).
   Future<SongPrintResult?> printEntries(
     List<SongPrintEntry> entries,
-    String fileName,
-  ) async {
+    String fileName, {
+    VoidCallback? onMerged,
+  }) async {
     if (_printing) return null;
     _printing = true;
     try {
@@ -112,10 +115,9 @@ class SongPrintService {
         }
       }
 
-      if (pages > 0) {
-        final data = await doc.save();
-        await NativeFileService.printPdf(data, fileName);
-      }
+      final data = pages > 0 ? await doc.save() : null;
+      onMerged?.call();
+      if (data != null) await NativeFileService.printPdf(data, fileName);
       return SongPrintResult(pageCount: pages, skipped: skipped);
     } finally {
       _printing = false;
