@@ -296,7 +296,9 @@ class SongFilterMenu extends ConsumerWidget {
               child: Text(o.$2),
             ),
         ],
-        child: current == null && placeholder != null
+        // [placeholder] is only passed while no value is set (the "Alle"
+        // option would match the empty value otherwise).
+        child: placeholder != null
             ? valueText(placeholder, placeholder: true)
             : valueText(current?.$2 ?? ''),
       );

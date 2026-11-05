@@ -82,7 +82,10 @@ Future<void> printGroupPdfs({
     return;
   }
   if (result.skipped > 0) {
+    // A new toast replaces the previous one (md), so the summary below would
+    // hide this warning right away.
     ToastHelper.showWarning(context, context.l10n.songsFlutterFilesSkipped(result.skipped));
+    return;
   }
   final summary = entries
       .where((e) => e.copies > 0)
