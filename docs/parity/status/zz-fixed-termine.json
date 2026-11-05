@@ -1,6 +1,7 @@
 {
   "batch": "zz-fixed-termine",
   "afterRound": 4,
+  "flutter": "4e13f22",
   "ionic": "9f9b82af",
   "items": {
     "attendance/attendance/attendance.page#field-7e76e2fd": {
@@ -43,7 +44,7 @@
       ],
       "n": "behoben in #305"
     },
-    "planning/plan-viewer/plan-viewer.component#x-de53b1e39b": {
+    "x-de53b1e39b": {
       "s": "ok",
       "f": [
         "lib/features/attendance/presentation/pages/attendance_list_page.dart",
@@ -113,21 +114,21 @@
       ],
       "n": "behoben in #301"
     },
-    "planning/planning.page#x-7d55a70233": {
+    "x-7d55a70233": {
       "s": "ok",
       "f": [
         "lib/features/planning/presentation/pages/planning_page.dart"
       ],
       "n": "behoben in #301"
     },
-    "planning/planning.page#x-9b169a1078": {
+    "x-9b169a1078": {
       "s": "ok",
       "f": [
         "lib/features/planning/presentation/pages/planning_page.dart"
       ],
       "n": "behoben in #301"
     },
-    "planning/planning.page#x-5e1a396117": {
+    "x-5e1a396117": {
       "s": "ok",
       "f": [
         "lib/data/repositories/plan_repository.dart",
@@ -223,7 +224,7 @@
       ],
       "n": "behoben in #306"
     },
-    "attendance/att-list/att-list.page#x-9616cc8ac2": {
+    "x-9616cc8ac2": {
       "s": "ok",
       "f": [
         "lib/features/attendance/presentation/pages/attendance_list_page.dart"

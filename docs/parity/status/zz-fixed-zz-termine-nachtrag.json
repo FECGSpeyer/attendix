@@ -1,0 +1,14 @@
+{
+  "batch": "zz-fixed-zz-termine-nachtrag",
+  "afterRound": 4,
+  "ionic": "1923d203",
+  "flutter": "4e13f22",
+  "note": "zz-fixed-termine.json ist gegen Ionic 9f9b82af notiert; der Toast wurde in 4.19.9 nur auf i18n umgestellt (gleicher Text). Fix aus #306 gegen 4.19.9 nachgeprüft.",
+  "items": {
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "ok",
+      "f": ["lib/features/attendance/presentation/pages/attendance_detail_page.dart:384-397"],
+      "n": "behoben in #306: Laden fehlgeschlagen → Toast (Fehler) „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und zurück zur Liste, wie Ionic 4.19.9 (dort nur auf translate umgestellt)."
+    }
+  }
+}
