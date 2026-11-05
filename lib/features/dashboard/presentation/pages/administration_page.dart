@@ -7,6 +7,7 @@ import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/error_message.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/church/church.dart';
 import '../../../../l10n/l10n.dart';
@@ -90,23 +91,37 @@ class _AdministrationPageState extends ConsumerState<AdministrationPage> {
   }
 
   Future<void> _addChurch() async {
+    // Ionic openChurchInput: an empty name keeps the alert open with
+    // "Bitte gib gültige Werte ein.", creating shows a blocking loading
+    // overlay, errors are shown with their message.
     final name = await DialogHelper.showTextInput(
       context,
       title: context.l10n.adminAddChurch,
       hint: context.l10n.adminChurchName,
       confirmText: context.l10n.attendanceAdd,
+      validator: (v) => v.trim().isEmpty ? context.l10n.adminInvalidValues : null,
     );
     if (name == null || !mounted) return;
-    if (name.trim().isEmpty) {
-      ToastHelper.showWarning(context, context.l10n.adminInvalidValues);
-      return;
-    }
-    final id = await ref.read(churchNotifierProvider.notifier).createChurch(name.trim());
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(
+        canPop: false,
+        child: Center(child: AppSpinner()),
+      ),
+    );
+    final notifier = ref.read(churchNotifierProvider.notifier);
+    final id = await notifier.createChurch(name.trim());
+    navigator.pop();
     if (!mounted) return;
     if (id != null) {
       ToastHelper.showSuccess(context, context.l10n.adminChurchAdded);
     } else {
-      ToastHelper.showError(context, context.l10n.adminFlutterAddFailed);
+      ToastHelper.showError(
+        context,
+        friendlyErrorMessage(ref.read(churchNotifierProvider).error),
+      );
     }
   }
 

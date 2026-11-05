@@ -73,9 +73,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get adminEvaluation => 'Auswertung';
 
   @override
-  String get adminFlutterAddFailed => 'Fehler beim Hinzufügen';
-
-  @override
   String adminGb(Object value) {
     return '$value GB';
   }
@@ -2980,12 +2977,7 @@ class AppLocalizationsDe extends AppLocalizations {
   String get coreFlutterRuleOverall => 'insgesamt';
 
   @override
-  String get coreFlutterRuleSinceSeasonStart => 'seit Saisonstart';
-
-  @override
-  String coreFlutterRuleStatusN(Object n) {
-    return 'Status $n';
-  }
+  String get coreFlutterRuleSinceSeasonStart => 'seit Saisonbeginn';
 
   @override
   String get coreFlutterSchoolHolidays => 'Schulferien';
@@ -4020,6 +4012,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons =>
+      'Personen werden aktualisiert...';
+
+  @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
 
   @override
@@ -4732,12 +4728,6 @@ class AppLocalizationsDe extends AppLocalizations {
   String get generalSettingsFlutterOrShort => 'ODER';
 
   @override
-  String get generalSettingsFlutterPracticeEnd => 'Probenende';
-
-  @override
-  String get generalSettingsFlutterPracticeStart => 'Probenbeginn';
-
-  @override
   String get generalSettingsFlutterRuleAdded => 'Regel hinzugefügt';
 
   @override
@@ -4752,10 +4742,6 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get generalSettingsFlutterRuleUpdated => 'Regel aktualisiert';
-
-  @override
-  String get generalSettingsFlutterStatusCritical =>
-      'Status (zählt als kritisch)';
 
   @override
   String get generalSettingsForeignInfo => 'Info-Text für fremde Termine';
@@ -6241,6 +6227,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orgFieldsApplyChanges => 'Änderungen übernehmen';
+
+  @override
+  String get orgFieldsFlutterClearDefault => 'Standardwert entfernen';
 
   @override
   String get orgFieldsFlutterFirstOptionDefault =>

@@ -17,6 +17,7 @@ import '../../../../core/services/native/native_file_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
+import '../../../../core/utils/system_share.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/storage/storage_entry.dart';
 import '../../../../data/repositories/base_repository.dart';
@@ -423,17 +424,32 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     return Uri.https('attendix.de', '/open-file', params).toString();
   }
 
+  /// Ionic shareEntry: the system share sheet first (`navigator.share`,
+  /// where available), cancelling it does nothing; otherwise the link is
+  /// copied, and if that fails too it is shown in a toast.
   Future<void> _shareEntry([StorageEntry? entry]) async {
     final url = _shareLink(entry?.path ?? _currentPath, entry?.isFolder ?? true);
+    final segments = _currentPath.split('/').where((s) => s.isNotEmpty).toList();
+    final title = entry?.name ??
+        (segments.isNotEmpty ? segments.last : context.l10n.filesTitle);
+    if (canUseSystemShareSheet()) {
+      try {
+        final box = context.findRenderObject() as RenderBox?;
+        // iPad: the share popover needs an origin.
+        final origin = box == null || !box.hasSize
+            ? null
+            : box.localToGlobal(Offset.zero) & box.size;
+        await Share.share(url, subject: title, sharePositionOrigin: origin);
+        return; // shared or cancelled (Ionic AbortError)
+      } catch (_) {
+        // no share sheet after all: copy instead
+      }
+    }
     try {
       await Clipboard.setData(ClipboardData(text: url));
       if (mounted) ToastHelper.showSuccess(context, context.l10n.filesLinkCopied);
     } catch (_) {
-      try {
-        await Share.share(url);
-      } catch (_) {
-        if (mounted) ToastHelper.showInfo(context, context.l10n.filesLinkToast(url));
-      }
+      if (mounted) ToastHelper.showInfo(context, context.l10n.filesLinkToast(url));
     }
   }
 
@@ -859,33 +875,77 @@ class _FilesPageState extends ConsumerState<FilesPage> {
     await _loadEntries();
   }
 
-  /// Ionic renders the search help keys as HTML; the alert shows plain text.
-  static String _plainHtml(String html) => html
-      .replaceAll(RegExp(r'<[^>]+>'), '')
-      .replaceAll('&lt;', '<')
-      .replaceAll('&gt;', '>')
-      .replaceAll('&amp;', '&');
-
-  void _showSearchHelp() {
-    DialogHelper.showAlert(
-      context,
-      title: context.l10n.filesSearch,
-      message: [
-        context.l10n.filesSearchHelp,
-        context.l10n.filesSearchType,
-        context.l10n.filesSearchDate,
-        context.l10n.filesSearchCombine,
-      ].map(_plainHtml).join('\n\n'),
+  /// Ionic files search help: an `ion-popover` at the help button – "Suche"
+  /// with the free-text hint, then the filter examples (HTML, bold).
+  void _showSearchHelp(BuildContext button) {
+    showAppPopover<void>(
+      context: button,
+      builder: (context) {
+        final heading = AppPopoverText.heading(context);
+        final p = AppPopoverText.paragraph(context);
+        Widget item(List<Widget> children) => Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: children,
+              ),
+            );
+        return Column(
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            item([
+              Text(context.l10n.filesSearch, style: heading),
+              const SizedBox(height: 2),
+              Text(context.l10n.filesSearchHelp, style: p),
+            ]),
+            item([
+              for (final html in [
+                context.l10n.filesSearchType,
+                context.l10n.filesSearchDate,
+                context.l10n.filesSearchCombine,
+              ])
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 2),
+                  child: Text.rich(TextSpan(style: p, children: _strongSpans(html))),
+                ),
+            ]),
+          ],
+        );
+      },
     );
   }
 
-  Future<void> _showEntryActions(StorageEntry entry) async {
+  /// The search help keys are HTML with `<strong>` and escaped `<`/`>`.
+  static List<TextSpan> _strongSpans(String html) {
+    String decode(String s) => s
+        .replaceAll(RegExp(r'<[^>]+>'), '')
+        .replaceAll('&lt;', '<')
+        .replaceAll('&gt;', '>')
+        .replaceAll('&amp;', '&');
+    final spans = <TextSpan>[];
+    final strong = RegExp(r'<strong>(.*?)</strong>');
+    var last = 0;
+    for (final m in strong.allMatches(html)) {
+      if (m.start > last) spans.add(TextSpan(text: decode(html.substring(last, m.start))));
+      spans.add(TextSpan(
+        text: decode(m.group(1)!),
+        style: const TextStyle(fontWeight: FontWeight.bold),
+      ));
+      last = m.end;
+    }
+    if (last < html.length) spans.add(TextSpan(text: decode(html.substring(last))));
+    return spans;
+  }
+
+  /// Ionic `ion-popover` at the ⋯ button of an entry (same entries,
+  /// order and conditions; a tap outside closes it).
+  Future<void> _showEntryActions(BuildContext button, StorageEntry entry) async {
     final canEdit = _canEdit;
     final isAudio = FilesSearch.isAudio(entry);
-    final action = await showAppActionSheet<VoidCallback>(
-      context,
-      actions: [
-        AppActionSheetAction(
+    final action = await showAppPopoverMenu<VoidCallback>(
+      context: button,
+      items: [
+        AppPopoverMenuItem(
           value: () => _openEntry(entry),
           icon: isAudio ? Icons.play_circle_outline : Icons.open_in_new,
           label: entry.isFolder
@@ -895,45 +955,45 @@ class _FilesPageState extends ConsumerState<FilesPage> {
                   : context.l10n.filesFlutterOpenDownload,
         ),
         if (!entry.isFolder)
-          AppActionSheetAction(
+          AppPopoverMenuItem(
             value: () => _downloadEntry(entry),
             icon: Icons.download_outlined,
             label: context.l10n.filesDownload,
           ),
-        AppActionSheetAction(
+        AppPopoverMenuItem(
           value: () => _shareEntry(entry),
           icon: Icons.link,
           label: context.l10n.filesShareLink,
         ),
         // INTEGRATION: Ionic files "Per Telegram senden"
         if (!entry.isFolder && (_telegramChatId?.isNotEmpty ?? false))
-          AppActionSheetAction(
+          AppPopoverMenuItem(
             value: () => _sendEntryPerTelegram(entry),
             icon: Icons.send_outlined,
             label: context.l10n.filesSendTelegram,
           ),
         if (canEdit) ...[
-          AppActionSheetAction(
+          AppPopoverMenuItem(
             value: () => _renameEntry(entry),
             icon: Icons.edit_outlined,
             label: context.l10n.filesRename,
           ),
-          AppActionSheetAction(
+          AppPopoverMenuItem(
             value: () => _moveEntry(entry),
             icon: Icons.swap_horiz,
             label: context.l10n.filesMove,
           ),
           // Ionic 4.19.1: "Mehrere auswählen" (starts with this entry)
-          AppActionSheetAction(
+          AppPopoverMenuItem(
             value: () => _startSelection(entry),
             icon: Icons.check_circle_outline,
             label: context.l10n.filesSelectMultiple,
           ),
-          AppActionSheetAction(
+          // Ionic: plain item (not red) like the others
+          AppPopoverMenuItem(
             value: () => _deleteEntry(entry),
             icon: Icons.delete_outline,
             label: context.l10n.commonDelete,
-            destructive: true,
           ),
         ],
       ],
@@ -1237,10 +1297,12 @@ class _FilesPageState extends ConsumerState<FilesPage> {
             ),
             Padding(
               padding: EdgeInsets.only(right: ios ? 8 : 4),
-              child: IconButton(
-                icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline,
-                    color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
-                onPressed: _showSearchHelp,
+              child: Builder(
+                builder: (button) => IconButton(
+                  icon: Icon(ios ? CupertinoIcons.question_circle : Icons.help_outline,
+                      color: AppColors.medium, semanticLabel: context.l10n.a11yHelp),
+                  onPressed: () => _showSearchHelp(button),
+                ),
               ),
             ),
           ],
@@ -1350,9 +1412,11 @@ class _FilesPageState extends ConsumerState<FilesPage> {
       onTap: () => _selectionMode ? _toggleSelection(entry) : _openEntry(entry),
       trailing: _selectionMode
           ? null
-          : IconButton(
-              icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
-              onPressed: () => _showEntryActions(entry),
+          : Builder(
+              builder: (button) => IconButton(
+                icon: Icon(Icons.more_horiz, color: AppColors.medium, semanticLabel: context.l10n.a11yMoreActions),
+                onPressed: () => _showEntryActions(button, entry),
+              ),
             ),
     );
   }

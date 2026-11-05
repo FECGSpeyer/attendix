@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/debug_providers.dart';
@@ -54,14 +55,15 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
-      builder: (_) => const _FieldEditorSheet(),
+      // Ionic addField checks the name before closing: the sheet stays open
+      // with all inputs.
+      builder: (_) => _FieldEditorSheet(
+        nameExists: (name) => _fields!.any((f) => f.id == orgFieldId(orgId, name)),
+      ),
     );
     if (field == null || !mounted) return;
     final id = orgFieldId(orgId, field.name);
-    if (_fields!.any((f) => f.id == id)) {
-      ToastHelper.showError(context, context.l10n.orgFieldsNameExists);
-      return;
-    }
+    if (_fields!.any((f) => f.id == id)) return;
     setState(() => _fields = [..._fields!, field.copyWith(id: id)]);
   }
 
@@ -268,8 +270,11 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
 
 /// Add / edit sheet of one org extra field.
 class _FieldEditorSheet extends StatefulWidget {
-  const _FieldEditorSheet({this.initial});
+  const _FieldEditorSheet({this.initial, this.nameExists});
   final OrgExtraField? initial;
+
+  /// Add mode: true when an org field with this name exists already.
+  final bool Function(String name)? nameExists;
 
   @override
   State<_FieldEditorSheet> createState() => _FieldEditorSheetState();
@@ -277,8 +282,47 @@ class _FieldEditorSheet extends StatefulWidget {
 
 class _FieldEditorSheetState extends State<_FieldEditorSheet> {
   late final TextEditingController _name = TextEditingController(text: widget.initial?.name ?? '');
-  late final TextEditingController _default =
-      TextEditingController(text: widget.initial?.defaultValue is String ? widget.initial!.defaultValue as String : '');
+  /// Ionic binds the default of every type (e.g. the number 0 or a date)
+  /// and keeps it unless the user edits it.
+  late dynamic _defaultValue = widget.initial?.defaultValue ?? '';
+  late final TextEditingController _default = TextEditingController(text: _defaultText(_defaultValue));
+
+  static String _defaultText(dynamic v) => v == null || v is bool ? '' : '$v';
+
+  /// Ionic onNewFieldTypeChanged: boolean → false, otherwise
+  /// getFieldTypeDefaultValue (Zahl 0, Datum heute, Text ''). The date is
+  /// stored as yyyy-MM-dd right away, like a date picked in [_pickDate].
+  void _onTypeChanged(String type) {
+    setState(() {
+      _type = type;
+      _defaultValue = switch (type) {
+        'boolean' => false,
+        'number' => 0,
+        'date' => DateFormat('yyyy-MM-dd').format(DateTime.now()),
+        _ => '',
+      };
+      _boolDefault = false;
+      _default.text = _defaultText(_defaultValue);
+    });
+  }
+
+  /// `ion-input type="date"`: yyyy-MM-dd, empty for other values.
+  String _dateLabel() {
+    final d = DateTime.tryParse('$_defaultValue');
+    return d == null ? '' : DateFormat(dateFmt()).format(d.toLocal());
+  }
+
+  Future<void> _pickDate() async {
+    final current = DateTime.tryParse('$_defaultValue')?.toLocal() ?? DateTime.now();
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: current,
+      firstDate: DateTime(1900),
+      lastDate: DateTime(2100),
+    );
+    if (picked == null || !mounted) return;
+    setState(() => _defaultValue = DateFormat('yyyy-MM-dd').format(picked));
+  }
   late String _type = widget.initial?.type ?? 'text';
   late String _displayMode = widget.initial?.displayMode ?? 'chip';
   late bool _visible = widget.initial?.visibleToPlayers ?? false;
@@ -305,6 +349,10 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
       ToastHelper.showError(context, context.l10n.extraFieldsInvalidName);
       return;
     }
+    if (widget.nameExists?.call(name) ?? false) {
+      ToastHelper.showError(context, context.l10n.orgFieldsNameExists);
+      return;
+    }
     final options = _options.map((c) => c.text.trim()).where((o) => o.isNotEmpty).toList();
     if (_type == 'select' && options.isEmpty) {
       ToastHelper.showError(context, context.l10n.orgFieldsAddOption);
@@ -313,7 +361,9 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
     final dynamic defaultValue = switch (_type) {
       'select' => options.first,
       'boolean' => _boolDefault,
-      _ => _default.text,
+      'date' => _defaultValue,
+      // Unchanged input keeps the bound value (e.g. the number 0).
+      _ => _default.text == _defaultText(_defaultValue) ? _defaultValue : _default.text,
     };
     Navigator.pop(
       context,
@@ -357,7 +407,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   items: [
                     for (final e in _fieldTypes(context.l10n).entries) DropdownMenuItem(value: e.key, child: Text(e.value)),
                   ],
-                  onChanged: (v) => setState(() => _type = v ?? 'text'),
+                  onChanged: (v) => _onTypeChanged(v ?? 'text'),
                 ),
               TextField(
                 controller: _name,
@@ -425,6 +475,26 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                   title: Text(context.l10n.extraFieldsDefaultValue),
                   value: _boolDefault,
                   onChanged: (v) => setState(() => _boolDefault = v),
+                )
+              else if (_type == 'date')
+                // Ionic `ion-input type="date"`.
+                ListTile(
+                  contentPadding: EdgeInsets.zero,
+                  title: Text(_isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_dateLabel()),
+                      // The default is optional: allow clearing a picked date.
+                      if (_dateLabel().isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          tooltip: context.l10n.orgFieldsFlutterClearDefault,
+                          onPressed: () => setState(() => _defaultValue = ''),
+                        ),
+                    ],
+                  ),
+                  onTap: _pickDate,
                 )
               else
                 TextField(

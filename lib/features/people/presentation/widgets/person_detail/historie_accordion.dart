@@ -178,7 +178,8 @@ class HistorieAccordion extends ConsumerWidget {
     WidgetRef ref,
     Map<String, dynamic> item,
   ) {
-    final date = DateTime.tryParse(item['date'] ?? '');
+    // Ionic date pipe: local time (history entries are stored as UTC ISO).
+    final date = DateTime.tryParse(item['date'] ?? '')?.toLocal();
     final type = item['type'] as int?;
     final text = item['text']?.toString() ?? '';
     final meetingName = item['meetingName']?.toString();
@@ -237,7 +238,7 @@ class HistorieAccordion extends ConsumerWidget {
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text(titleStr, style: IonText.h2(context)),
+          if (titleStr.isNotEmpty) Text(titleStr, style: IonText.h2(context)),
           if (notes != null && notes.isNotEmpty)
             Padding(
               padding: const EdgeInsets.only(top: 2),
@@ -384,7 +385,9 @@ String historyEntryTitle(int? type, DateTime date) {
     9 => l10n.personReactivatedAt(d),
     10 || 11 => l10n.personTransferredAt(d),
     12 || 13 => l10n.personCopiedAt(d),
-    _ => d,
+    7 => d,
+    // Ionic: no <h2> for the other types (e.g. 14 genehmigt, 15 abgelehnt).
+    _ => '',
   };
 }
 

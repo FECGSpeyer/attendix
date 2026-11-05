@@ -3,9 +3,10 @@ import 'dart:io';
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/statistics_utils.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
+import 'package:attendix/data/models/plan/plan.dart';
+import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/attendance_type_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/attendance_type_edit_page.dart';
-import 'package:attendix/features/settings/presentation/pages/attendance_types_page.dart';
 import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
@@ -72,6 +73,23 @@ void main() {
       expect(plan['fields'], hasLength(1));
     });
 
+    test('plan rows with repeated ids keep their own extra keys (merged by uid)', () {
+      final originals = [
+        {'id': 'Pause', 'name': 'Pause', 'time': '10', 'uid': 'local-1', 'extra': 'first'},
+        {'id': 'Pause', 'name': 'Pause', 'time': '15', 'uid': 'local-2', 'extra': 'second', 'isNote': true},
+      ];
+      // First "Pause" deleted, the second one renamed.
+      final merged = mergePlanRows(originals, [
+        PlanField.fromJson(originals[1]).copyWith(name: 'Kaffee'),
+      ]);
+      expect(merged, hasLength(1));
+      expect(merged.single['extra'], 'second');
+      expect(merged.single['isNote'], isTrue);
+      expect(merged.single['name'], 'Kaffee');
+      expect(merged.single['time'], '15');
+      expect(merged.single.containsKey('isGroup'), isFalse);
+    });
+
     test('edit page writes relevant_groups without null fallback', () {
       final src = File(
         'lib/features/settings/presentation/pages/attendance_type_edit_page.dart',
@@ -84,6 +102,36 @@ void main() {
   });
 
   group('general settings normalisation', () {
+    test('critical rule text like Ionic getCriticalRuleDescription', () {
+      final types = [
+        TestFactories.createAttendanceType(id: 'a', name: 'Probe'),
+        TestFactories.createAttendanceType(id: 'b', name: 'Konzert'),
+      ];
+      const rule = CriticalRule(
+        id: 'r',
+        name: 'Fehlzeiten',
+        attendanceTypeIds: ['b', 'a'],
+        statuses: [4, 3, 1],
+        thresholdType: CriticalRuleThresholdType.count,
+        thresholdValue: 3,
+        periodType: CriticalRulePeriodType.days,
+        periodDays: 30,
+        operator: CriticalRuleOperator.or,
+      );
+      expect(rule.describe(types),
+          'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen (Probe, Konzert)');
+      // types not loaded (yet): no empty parentheses
+      expect(rule.describe(const []), 'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen');
+      // all types, season; legacy rule without period_type counts its days
+      expect(
+        rule
+            .copyWith(name: null, attendanceTypeIds: [], periodType: CriticalRulePeriodType.season)
+            .describe(types),
+        '3x Abwesend, Verspätet, Anwesend seit Saisonbeginn (Alle Typen)',
+      );
+      expect(rule.copyWith(periodType: null).description, '3x Abwesend, Verspätet, Anwesend in 30 Tagen');
+    });
+
     test('reasons: blanks filtered, empty -> null', () {
       expect(normalizeReasons(['', '  ']), isNull);
       expect(normalizeReasons(['Krank', ' ', 'Urlaub']), ['Krank', 'Urlaub']);

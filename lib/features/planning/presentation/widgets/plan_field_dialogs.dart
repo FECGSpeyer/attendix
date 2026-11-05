@@ -331,36 +331,45 @@ Future<String?> showPlanTextPrompt(
   String? hint,
   String? confirmText,
   bool allowEmpty = false,
+  String? emptyMessage,
 }) {
   final controller = TextEditingController(text: initialValue ?? '');
+  // Ionic `alert.message = …; return false`: an empty name shows
+  // [emptyMessage] in the dialog, which stays open.
+  String? shownMessage = message;
   return showAppDialog<String>(
     context: context,
-    builder: (ctx) => AppAlertDialog(
-      title: Text(title),
-      content: Column(
-        mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          if (message != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(message)),
-          TextField(
-            controller: controller,
-            autofocus: true,
-            textCapitalization: TextCapitalization.sentences,
-            decoration: InputDecoration(hintText: hint),
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setDialogState) => AppAlertDialog(
+        title: Text(title),
+        content: Column(
+          mainAxisSize: MainAxisSize.min,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            if (shownMessage != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(shownMessage!)),
+            TextField(
+              controller: controller,
+              autofocus: true,
+              textCapitalization: TextCapitalization.sentences,
+              decoration: InputDecoration(hintText: hint),
+            ),
+          ],
+        ),
+        actions: [
+          TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
+          FilledButton(
+            onPressed: () {
+              final v = controller.text.trim();
+              if (!allowEmpty && v.isEmpty) {
+                if (emptyMessage != null) setDialogState(() => shownMessage = emptyMessage);
+                return;
+              }
+              Navigator.pop(ctx, v);
+            },
+            child: Text(confirmText ?? ctx.l10n.commonSave),
           ),
         ],
       ),
-      actions: [
-        TextButton(onPressed: () => Navigator.pop(ctx), child: Text(ctx.l10n.commonCancel)),
-        FilledButton(
-          onPressed: () {
-            final v = controller.text.trim();
-            if (!allowEmpty && v.isEmpty) return;
-            Navigator.pop(ctx, v);
-          },
-          child: Text(confirmText ?? ctx.l10n.commonSave),
-        ),
-      ],
     ),
   );
 }

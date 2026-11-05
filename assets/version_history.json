@@ -1,10 +1,134 @@
 {
   "versions": [
     {
-      "version": "0.41.12",
+      "version": "0.41.21",
       "date": "5.11.2026",
       "changes": [
         "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
+      "version": "0.41.20",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personen-Import: Zusatzfelder der Organisation werden wie bisher angeboten und stehen in der Vorlage, die Vorlage öffnet in der App direkt bzw. wird im Web geteilt oder heruntergeladen"
+      ]
+    },
+    {
+      "version": "0.41.19",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: Speichern schließt die Seite mit „Person aktualisiert“, neue E-Mail legt auf Wunsch gleich das Konto an, Historie (Problemfall, Gruppenwechsel, Notizen) wie bisher",
+        "🐛 Person: Problemfall „Gespräch geführt“ als Schalter mit Bemerkung, Aktionen wie Pausieren, Freischalten, Ablehnen und Konto entfernen schließen die Seite wie bisher",
+        "🐛 Person: Zusatzfelder zeigen ihre Standardwerte, Zahlenfelder mit Komma, Datumsfelder auch per Eingabe TT.MM.JJJJ",
+        "🐛 Neue Person: Standarddaten heute, Zusatzfeld-Standardwerte, keine strengere E-Mail-Prüfung, nur Admins und Verantwortliche können anlegen",
+        "🐛 Person: Archivieren als eigenes Fenster mit Austrittsdatum und Notiz, Account-Hilfe als Blatt, Historie in Ortszeit",
+        "🐛 Person: Passbild antippen zeigt das Bild mit Ersetzen/Entfernen, in der App mit Kamera oder Galerie",
+        "🐛 Person kopieren/übertragen: Ziel-Instanz und Ziel-Gruppe wie bisher, mit Rückfrage und Duplikat-Prüfung"
+      ]
+    },
+    {
+      "version": "0.41.18",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
+        "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
+      "version": "0.41.17",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Problemfall-Regeln: Neue Regeln gelten ohne Auswahl für alle Anwesenheits-Typen; Typen und Status werden wie gewohnt per Auswahlliste gewählt, auch „Anwesend“ und „Entschuldigt“",
+        "🐛 Problemfall-Regeln: Die Beschreibung zeigt wieder die Typen in Klammern, alle Status-Namen und „seit Saisonbeginn“",
+        "🐛 Abwesenheits- und Verspätungsgründe lassen sich direkt in der Liste bearbeiten; „Grund hinzufügen“ fügt eine neue Zeile hinzu",
+        "🐛 Einstellungen: Probenbeginn/-ende werden nicht mehr angezeigt (wie in der bisherigen App)",
+        "🐛 Gemeinde hinzufügen: Ohne Namen bleibt der Dialog mit Hinweis offen, beim Speichern erscheint eine Ladeanzeige",
+        "🐛 Automatische Nachrichten: Ladefehler werden als Meldung angezeigt, die Seite bleibt bedienbar"
+      ]
+    },
+    {
+      "version": "0.41.16",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Neuer Termintyp wird wie in Ionic direkt mit allen Einstellungen angelegt",
+        "🐛 Termintyp: Der Standard-Ablaufplan ist immer bearbeitbar (nicht nur bei „Werke verwalten“) und zeigt Uhrzeiten, Ausführende, Infos und Minuten direkt in der Zeile wie bisher",
+        "🐛 Termintyp: Über „+“ lassen sich wieder Felder, Notizfelder, Werk-Platzhalter und der Tagesordnungs-Platzhalter einfügen; beim Bearbeiten bleiben Ausführender und Info erhalten",
+        "🐛 Termintyp: Filter für Ja/Nein-Zusatzfelder, „Checkliste aktivieren“, To-Dos mit Deadline-Auswahl und „Erinnerungen konfigurieren“ wie bisher",
+        "🐛 Termintyp: Löschen funktioniert auch bei Typen mit Terminen; „Mehr erfahren“ beim Dienstplan"
+      ]
+    },
+    {
+      "version": "0.41.15",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Schichtplan kopieren nur in verknüpfte Instanzen der Organisation (wie Ionic)",
+        "🐛 Dateiablage: „Link teilen“ öffnet zuerst das Teilen-Menü des Systems, nur ohne Teilen-Menü wird der Link kopiert",
+        "🐛 Dateiablage: Hilfe zur Suche und das ⋯-Menü erscheinen als kleines Fenster direkt am Knopf, Tippen daneben schließt es",
+        "🐛 Hilfe: Fachbegriffe öffnen ihre Erklärung als kleines Fenster direkt am Begriff",
+        "🐛 Hilfe: Artikel „Beamer-Dateien im Ablaufplan“ nennt, welche ORG-Pläne die Gemeinde App zeigt",
+        "🐛 Schichtpläne: „In Instanz kopieren“ fragt die Ziel-Instanz und danach, ob die Zuweisungen mitkopiert werden sollen (wie in der bisherigen App)",
+        "🐛 Schichtpläne: Beim Löschen erklärt die Rückfrage wieder, was dabei mitgelöscht wird",
+        "🐛 Übergabe: Personen und Gruppen der Ziel-Instanz stehen in derselben Reihenfolge wie sonst in der App",
+        "🐛 Stimmführer: Namen mit Umlauten werden richtig einsortiert, und kommende Abwesenheiten fehlen auch in großen Gruppen nicht mehr"
+      ]
+    },
+    {
+      "version": "0.41.14",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Instanzen: Der Schalter „Instanzauswahl aktivieren“ springt nicht mehr zurück und lässt sich beliebig oft umschalten",
+        "🐛 Meine Stammdaten: Speichern lässt das Fenster offen; in der App kann das Passbild auch mit der Kamera aufgenommen werden"
+      ]
+    },
+    {
+      "version": "0.41.13",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Die Checkliste zeigt Änderungen anderer sofort (auch nach Rückkehr in die App); Abhaken, Hinzufügen und Löschen überschreiben sie nicht mehr",
+        "🐛 Termin: Gemeinde-Übersicht und Erinnerung „nur Unentschiedene“ berücksichtigen bei Helfern ohne Zugriff auf alle Gruppen nur die eigene Gruppe",
+        "🐛 Termin: „Person hinzufügen“ bietet noch nicht freigegebene Registrierungen nicht mehr an"
+      ]
+    },
+    {
+      "version": "0.41.12",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Organisation: Leere Namen beim Anlegen oder Umbenennen von Organisation und Vorlagen zeigen wieder einen Hinweis im Dialog",
+        "🐛 Organisation: Beim Anlegen einer Organisation erscheint ein Ladehinweis",
+        "🐛 Planungsvorlagen: Minuten der Standardfelder direkt in der Zeile änderbar, „Feld hinzufügen“ öffnet ein Menü am Button mit eigener Rubrik für Standardfelder",
+        "🐛 Personenfelder: Doppelte Namen werden vor dem Schließen gemeldet, Standardwert passt sich dem Feldtyp an (inkl. Datumsauswahl)",
+        "🐛 Org-Pläne: Verlauf aktualisiert sich, öffentlicher Plan bietet wieder „Anleitung öffnen“"
+      ]
+    },
+    {
+      "version": "0.41.11",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Archivierte/ausstehende Personen und neue Instanz öffnen wie in Ionic als Karte"
+      ]
+    },
+    {
+      "version": "0.41.10",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Zusatzfelder: Schließen des Bearbeiten-Fensters (X, Wischen, Tippen daneben) übernimmt die Änderungen wie bisher, der zusätzliche Button „Übernehmen“ entfällt",
+        "🐛 Zusatzfelder: Beim Hinzufügen bleibt das Fenster bei Fehlern (z. B. Feld existiert schon) mit allen Eingaben offen",
+        "🐛 Zusatzfelder: „Werte zurücksetzen“ setzt beim Gemeinde-Feld wieder die Gemeinde und überspringt einzelne fehlgeschlagene Personen statt abzubrechen",
+        "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
+        "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
+        "🐛 Zusatzfelder: Beim Speichern werden aktive Personen und Werke der eigenen Bibliothek angepasst"
+      ]
+    },
+    {
+      "version": "0.41.9",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personenliste: Zusatzfelder ohne Wert zeigen, filtern und zählen (Gemeinde-Übersicht) mit ihrem Standardwert wie bisher; Zahl 0 erscheint nicht mehr als Badge",
+        "🐛 Personenliste: Ansicht „Lehrer“ zeigt wieder den Namen des Lehrers, Prozent-Badge auch bei 0 %",
+        "🐛 Personenliste: Sortierung nach Gruppe und Nachname mit Umlauten wie bisher, Reihenfolge speichern ändert nur verschobene Gruppen",
+        "🐛 Personenliste: Zusatzfeld-Filter mit Auswahl und „Filtern“/„Abbrechen“",
+        "🐛 Massenbearbeitung und Mitglieder-Filter: Startwerte und Personen ohne Wert wie bisher"
       ]
     },
     {

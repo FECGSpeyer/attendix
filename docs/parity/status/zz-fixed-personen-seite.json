@@ -1,0 +1,300 @@
+{
+ "batch": "zz-fixed-personen-seite",
+ "ionic": "9f9b82af",
+ "afterRound": 4,
+ "flutter": "3cdaaa1",
+ "items": {
+  "people/person/person.page#field-8adac9da": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-7b7c2d2d": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-247f92a0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-0a2daf88": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#alert-f1974eb4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#alert-75bf15c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#actionsheet-fba9657b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#alert-97cf5262": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#alert-692c7626": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-a9ab8c88": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_image_picker.dart",
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-40313396": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#modal-ecac8535": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-ea218e71": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-0a1221be": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#text-b133c084": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart",
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-fe3a2971": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-3abdeaf8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-6c24372b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-0755eef9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-528d183b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#modal-b80602d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-b8f6d19b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-8438f479": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-53209882": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-bf4fde99": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-29de3e84": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-77040b65": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-c704728e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#modal-75561fb4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#modal-f11c7cfb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#field-272c2c28": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/list/list.page#action-4792cae3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/list/list.page#modal-11a551b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #324"
+  },
+  "people/person/person.page#action-caeb0a85": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "behoben in #324"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "people/person/person.page",
+   "title": "Veraltete Anzeige nach Aktionen auf der Seite",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Notiz-Historie bei jedem Speichern ohne Notiz",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Zusatzfelder: keine Standardwerte bei bestehenden Personen",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: Zusatzfeld-Standardwerte",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: Standarddaten Geburtsdatum/Spielt seit",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Neu-Seite: strengere E-Mail-Prüfung",
+   "drop": true,
+   "why": "behoben in #324"
+  },
+  {
+   "unit": "people/person/person.page",
+   "title": "Problemfall: Kasten „Grund“ zeigt Rohwert",
+   "drop": true,
+   "why": "behoben in #324"
+  }
+ ]
+}
