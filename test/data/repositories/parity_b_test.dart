@@ -41,6 +41,20 @@ void main() {
       expect(merged.last, other);
     });
 
+    test('new Termine see shared values of raw player rows', () {
+      final rows = mergeSharedFieldValuesIntoRows([
+        {'id': 1, 'global_person_id': 'g1', 'appId': 'u1', 'additional_fields': {'a': 1}},
+        {'id': 2, 'appId': 'u2', 'additional_fields': null},
+        {'id': 3},
+      ], {
+        'global:g1': {'org': true},
+        'app:u2': {'org': false},
+      });
+      expect(rows[0]['additional_fields'], {'a': 1, 'org': true});
+      expect(rows[1]['additional_fields'], {'org': false});
+      expect(rows[2], {'id': 3});
+    });
+
     test('organisationFieldDefaults maps id -> defaultValue (I1)', () {
       expect(
         organisationFieldDefaults([

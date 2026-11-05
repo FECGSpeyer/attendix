@@ -21,6 +21,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/attendance_repository.dart';
 import '../../export_fields.dart';
+import '../../../people/people_list_utils.dart' show sortPeopleByGroup;
 import '../../../../core/services/tracking/tracking_event.dart';
 import '../../../../core/services/tracking/tracking_service.dart';
 import '../../../../l10n/l10n.dart';
@@ -366,12 +367,18 @@ class _ExportPageState extends ConsumerState<ExportPage> {
           .hydrateSharedPersonFieldValues(
               await ref.read(playersProvider.future));
       final groupsMap = await ref.read(groupsMapProvider.future);
-      final players = rawPlayers
-          .map((p) => p.copyWith(
-                groupName:
-                    p.instrument != null ? groupsMap[p.instrument] : null,
-              ))
-          .toList();
+      // Ionic allPlayers = Utils.getModifiedPlayersForList (group order,
+      // sort_order, last name) — the stable export sort keeps that order
+      // for equal values.
+      final players = sortPeopleByGroup(
+        rawPlayers
+            .map((p) => p.copyWith(
+                  groupName:
+                      p.instrument != null ? groupsMap[p.instrument] : null,
+                ))
+            .toList(),
+        await ref.read(groupsProvider.future),
+      );
 
       final percentages =
           await ref.read(playerAttendancePercentagesProvider.future);

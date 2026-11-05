@@ -1,13 +1,62 @@
 {
   "versions": [
     {
-      "version": "0.39.7",
-      "date": "4.11.2026",
+      "version": "0.40.7",
+      "date": "5.11.2026",
       "changes": [
         "🐛 Geteilter Plan: Bearbeiten zeigt einfache Zeilen mit rotem Papierkorb und Griff; Tippen öffnet den Feld-Dialog mit Dauer",
         "🐛 Geteilter Plan: Programmblöcke zeigen in der Ansicht nur die Startzeit",
         "🐛 Öffentliche Planung: „Feld bearbeiten“ mit „Löschen“, „Abbrechen“ und „Speichern“, ohne Minuten",
         "🐛 Web: Link teilen kopiert nur noch, wenn der Browser kein Teilen kann"
+      ]
+    },
+    {
+      "version": "0.40.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Werke-Liste neu: „Als Nächstes“ zeigt die Werke der nächsten Termine, Mitglieder öffnen dort ihre Stimmen mit „Meine Noten öffnen“ als ein PDF",
+        "✨ Beta: Jedes Werk mit einer Statuszeile (deine Stimme, Aufnahme, fehlende Noten); die Leitung sieht, wo noch Noten fehlen",
+        "✨ Beta: „Sortieren & Filtern“ mit Nummer, Titel, Zuletzt gespielt und Am längsten nicht gespielt, dazu Nur-zeigen-Filter",
+        "✨ Beta: „+“ mit Neues Werk, Werkliste importieren und Aus anderer Gruppe übernehmen; „Neues Werk“ schlägt die nächste freie Nummer vor und fragt keine Besetzung ab",
+        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken",
+        "🐛 Beta: Im Chor gelten „Chor (alle)“-Noten als eigene Stimme, wenn es keine Datei für die Stimme gibt (Werk-Seite, Werke-Liste, Meine Noten)"
+      ]
+    },
+    {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Gruppen und Lehrer: Die Personenzahl zählt keine ausstehenden Registrierungen bzw. ausgetretenen Personen mehr mit",
+        "🐛 Gruppe bearbeiten: Speichern schließt erst nach dem Speichern, bei einem Fehler bleiben die Eingaben erhalten; Entfernen prüft sofort, ob die Gruppe noch Personen hat",
+        "🐛 Gruppen: Hinweise bei leerem Kategorienamen und nach dem Speichern der Reihenfolge wie bisher in der alten App",
+        "🐛 Lehrer: Die Instrumentauswahl ist auch direkt nach dem App-Start gefüllt",
+        "🐛 Dienste verteilen: Person tauschen wie bisher mit Auswahl und „Übernehmen“; „Auch geplante Termine“ meldet Fehler statt „0 Termine angepasst“"
+      ]
+    },
+    {
+      "version": "0.39.1",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Excel-Exporte öffnen direkt mit den Daten (kein leeres erstes Blatt mehr), Termin-Excel wie bisher mit Nachname, Vorname, Gruppe, Status-Kürzel und Bemerkung",
+        "🐛 Export nach Gruppe sortiert innerhalb der Gruppe wieder nach Name, Umlaute richtig einsortiert",
+        "🐛 Schichtplan löschen setzt die schichtbedingten Entschuldigungen in kommenden Terminen zurück",
+        "🐛 Meine Termine und Stimmführer-Seite funktionieren auch, wenn ein Konto mehrere Personen in einer Gruppe hat",
+        "🐛 Gruppenwechsel nimmt die Stimmführer-Rolle weg, neue Personen starten in der ersten Gruppe",
+        "🐛 Person: \"Andere Instanzen\" zeigt nur verknüpfte Gruppen mit der richtigen Rolle",
+        "🐛 Import legt zuerst das Konto an und übernimmt vorhandene Personen dieses Kontos",
+        "🐛 \"Instanzauswahl aktivieren\" zeigt die Auswahl nur nach dem Anmelden, nicht bei jedem App-Start",
+        "🐛 Instanz wechseln in den Einstellungen öffnet die Startseite der Rolle",
+        "🐛 Mail- und Telefon-Links bei Stimmführern und im Account öffnen wieder die Mail- bzw. Telefon-App",
+        "🐛 Tippen neben ein Eingabefeld schließt die Tastatur (auch die Zahlentastatur)",
+        "🐛 Statistik: Altersverteilung mit allen Altersgruppen, Verlauf mit Datum wie TT.MM.",
+        "🐛 Web: Wer die alte Web-App installiert hat, bekommt beim nächsten Öffnen die neue App",
+        "🐛 Android: App heißt wieder \"Attendix\" und das Symbol auf dem Startbildschirm bleibt nach dem Update erhalten",
+        "🐛 Web-App: Excel-Export und Excel-Import funktionieren wieder (schlugen in Chrome und aktuellem Safari fehl)",
+        "🐛 Web-App: Noten als ZIP herunterladen funktioniert wieder",
+        "🐛 Web-App: \"Person hinzufügen\" öffnet wieder das Formular statt einer grauen Seite",
+        "🐛 Statistik: Das letzte Datum im Verlauf ragt nicht mehr über den Kartenrand",
+        "🐛 Termine anlegen: Ein Filter auf ein Organisationsfeld nutzt den gemeinsamen Wert der Person statt des Standardwerts",
+        "🐛 Personen-Import: Erneut importieren legt schon gespeicherte Personen nicht doppelt an, sondern trägt sie nur noch in die Termine ein"
       ]
     },
     {
@@ -84,7 +133,6 @@
         "🐛 Dirigenten sind auch ohne Netz verfügbar",
         "✨ iPhone: Laufender Ablaufplan als Live-Aktivität auf dem Sperrbildschirm und in der Dynamic Island",
         "✨ iPhone und Android: Die App nutzt die App-ID der bisherigen Attendix-App und kommt später als Update im Store, Push läuft weiter"
-
       ]
     },
     {

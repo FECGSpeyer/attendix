@@ -303,10 +303,9 @@ class AccountAccordion extends ConsumerWidget {
 
   Future<void> _launchEmail(String email) async {
     try {
-      final uri = Uri.parse('mailto:$email');
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      }
+      // No canLaunchUrl pre-check: without LSApplicationQueriesSchemes /
+      // <queries> it reports false for mailto: on iOS and Android 11+.
+      await launchUrl(Uri.parse('mailto:$email'));
     } catch (_) {
       // PWA may not support mailto: links
     }
