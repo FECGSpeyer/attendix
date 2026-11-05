@@ -3,20 +3,8 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , 6945c13, 4e13f22 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 4
+## Angleichen (hoch/mittel): 0
 
-- [ ] **hoch** `attendance/attendance/attendance.page` `x-a5bcacc4df` **Checkliste wird nicht nachgeladen – Fremdänderungen werden überschrieben** [src/app/attendance/attendance/attendance.page.ts:670](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L670)
-  Ionic: Realtime-Update (this.attendance = payload.new) und Resume-Refetch zeigen Checklisten-Änderungen anderer sofort; Abhaken/Hinzufügen/Löschen arbeitet auf der aktuellen Liste / Flutter: _localChecklist wird einmal geladen (_checklistLoaded), _onAttendanceUpdated und _onBecameVisible laden nur den Termin neu, die angezeigte Checkliste bleibt alt; das nächste Abhaken/Hinzufügen/Löschen schreibt die ganze alte Liste (_saveChecklist) und macht Häkchen oder Punkte anderer rückgängig; eine von anderen begonnene Checkliste erscheint nicht, „Checkliste starten“ bleibt im Menü.
-  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:156, lib/features/attendance/presentation/pages/attendance_detail_page.dart:552, lib/features/attendance/presentation/pages/attendance_detail_page.dart:1420, lib/features/attendance/presentation/pages/attendance_detail_page.dart:1673
-- [ ] **mittel** `attendance/attendance/attendance.page` `x-01ddfb1bfc` **Gemeinde-Übersicht ohne Helfer-Gruppenfilter** [src/app/attendance/attendance/attendance.page.ts:2246](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L2246)
-  Ionic: showChurchOverview zählt this.players – bei Helfer/Stimmführer-Helfer ohne attendance_all_groups nur die eigene Gruppe / Flutter: _showChurchOverview übergibt alle Personen des Termins ohne attendanceGroupScope → eingeschränkte Helfer sehen die Anwesenden aller Gruppen je Gemeinde (Menüeintrag in beiden für alle Rollen mit Gemeinde-Feld).
-  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1360, lib/features/attendance/presentation/attendance_extra_actions.dart:102
-- [ ] **mittel** `attendance/attendance/attendance.page` `x-47702cd6f0` **Erinnerung „nur Unentschiedene“ ohne Gruppenfilter** [src/app/attendance/attendance/attendance.page.ts:2321](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L2321)
-  Ionic: neutralAppIds (und hasNeutralPersons) aus this.players → ein Stimmführer-Helfer ohne attendance_all_groups erinnert mit „nur Unentschiedene“ nur die eigene Gruppe / Flutter: neutralAppIds aus allen Personen des Termins → Push/E-Mail an Unentschiedene aller Gruppen. HELPER kann in beiden nicht senden.
-  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1383
-- [ ] **mittel** `attendance/attendance/attendance.page` `x-e549f975e1` **„Person hinzufügen“ bietet ausstehende Registrierungen an** [src/app/attendance/attendance/attendance.page.ts:2385](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L2385)
-  Ionic: Kandidaten aus db.getPlayers(true) = player mit pending = false (db.service.ts:1564) / Flutter: allPersonsForAttendanceProvider lädt alle player des Mandanten ohne pending-Filter, computeAddPersonCandidates filtert nur pausiert/ausgetreten → noch nicht freigegebene Anmeldungen stehen in der Liste und können dem Termin hinzugefügt werden.
-  Flutter: lib/core/providers/attendance_detail_providers.dart:159, lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:33
 
 ## Flutter besser – Leon entscheidet: 26
 
