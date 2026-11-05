@@ -269,14 +269,23 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       }
     }
 
+    // Snapshot of the inputs: the fields stay editable while saving, so the
+    // write and the next comparison base must use the same values (a church
+    // changed meanwhile is not saved yet and must still be synced next time).
+    final firstName = _firstName.text;
+    final lastName = _lastName.text;
+    final phone = _phone.text;
+    final birthday = _birthday;
+    final additional = Map<String, dynamic>.of(_additional);
+
     setState(() => _saving = true);
     final ok = await ref.read(profileNotifierProvider.notifier).saveMasterData(
           original: profile,
-          firstName: _firstName.text,
-          lastName: _lastName.text,
-          phone: _phone.text,
-          birthday: _birthday,
-          additionalFields: _additional,
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          birthday: birthday,
+          additionalFields: additional,
           visibleFields: visibleFields,
         );
     if (!mounted) return;
@@ -286,14 +295,14 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       // away; the reload of ownProfileProvider replaces it once it arrives.
       _profile = OwnProfile(
         person: profile.person.copyWith(
-          firstName: _firstName.text.trim(),
-          lastName: _lastName.text.trim(),
-          phone: _phone.text.trim(),
-          birthday: _birthday,
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.trim(),
+          birthday: birthday,
         ),
         globalPersonId: profile.globalPersonId,
         organisationId: profile.organisationId,
-        additionalFields: {...profile.additionalFields, ..._additional},
+        additionalFields: {...profile.additionalFields, ...additional},
       );
       // Ionic updateUserData: toast only, the sheet stays open.
       ToastHelper.showSuccess(

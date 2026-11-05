@@ -558,10 +558,9 @@ class _TenantTile extends StatelessWidget {
 }
 
 /// Ionic ngModel: the toggle flips at once and every change is written
-/// (settings.page.ts onTenantSelectionChange). Writes are serialized: only one
-/// runs at a time and afterwards the latest wanted value is written once if it
-/// differs, so an older write can't finish last. While writing, the toggle
-/// shows the wanted value; on failure it shows a toast and the stored value.
+/// (settings.page.ts onTenantSelectionChange). The writes are serialized in
+/// [UserPreferencesNotifier.setWantInstanceSelection]; while writing, the
+/// toggle shows the wanted value; on failure a toast and the stored value.
 class _InstanceSelectionToggle extends ConsumerStatefulWidget {
   const _InstanceSelectionToggle();
 
@@ -570,34 +569,29 @@ class _InstanceSelectionToggle extends ConsumerStatefulWidget {
 }
 
 class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionToggle> {
-  /// Value wanted by the user while a write is running (null: stored value).
-  bool? _wanted;
-  bool _writing = false;
+  /// Write loop this toggle already waits for (one toast per failed loop).
+  Future<void>? _awaiting;
 
   Future<void> _onChanged(bool newValue) async {
-    setState(() => _wanted = newValue);
-    if (_writing) return; // the running write picks up the latest value
-    _writing = true;
-    final notifier = ref.read(userPreferencesNotifierProvider.notifier);
+    final write = ref
+        .read(userPreferencesNotifierProvider.notifier)
+        .setWantInstanceSelection(newValue);
+    if (identical(write, _awaiting)) return;
+    _awaiting = write;
     try {
-      bool written;
-      do {
-        written = _wanted!;
-        await notifier.updatePreferences(wantInstanceSelection: written);
-      } while (_wanted != written);
+      await write;
     } catch (_) {
       if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
     } finally {
-      _writing = false;
-      _wanted = null;
-      if (mounted) setState(() {});
+      if (identical(_awaiting, write)) _awaiting = null;
     }
   }
 
   @override
   Widget build(BuildContext context) {
     final prefs = ref.watch(userPreferencesProvider);
-    final value = _wanted ?? prefs.wantInstanceSelection;
+    final value = ref.watch(wantedInstanceSelectionProvider) ??
+        prefs.wantInstanceSelection;
     return SafeArea(
       child: Padding(
         padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
