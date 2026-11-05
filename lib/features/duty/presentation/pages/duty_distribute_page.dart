@@ -233,29 +233,22 @@ class _DutyDistributePageState extends ConsumerState<DutyDistributePage> {
       return;
     }
     const none = '__none';
-    final value = await showAppDialog<String>(
-      context: context,
-      builder: (ctx) => AppSimpleDialog(
-        title: Text(current != null ? context.l10n.dutySwap(current.firstName ?? '') : context.l10n.dutyChoosePerson),
-        children: [
-          Padding(
-            padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: Text('${row.termin.title} · ${_dateLabel(row.termin)}',
-                style: const TextStyle(color: AppColors.medium)),
-          ),
-          if (current != null)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(ctx).pop(none),
-              child: Text(context.l10n.dutyNobody),
-            ),
-          for (final o in options)
-            SimpleDialogOption(
-              onPressed: () => Navigator.of(ctx).pop(o.id),
-              child: Text('${o.fullName} (${countOf(o)})'),
-            ),
-        ],
-      ),
+    // Ionic: ion-alert with radio inputs ("Niemand" first when swapping),
+    // "Abbrechen" / "Übernehmen"; the choice only counts with "Übernehmen".
+    final result = await showAppRadioAlert<String>(
+      context,
+      title: current != null
+          ? context.l10n.dutySwap(current.firstName ?? '')
+          : context.l10n.dutyChoosePerson,
+      subtitle: '${row.termin.title} · ${_dateLabel(row.termin)}',
+      options: [
+        if (current != null) (none, context.l10n.dutyNobody),
+        for (final o in options)
+          if (o.id != null) (o.id!, '${o.fullName} (${countOf(o)})'),
+      ],
+      confirmText: context.l10n.commonApply,
     );
+    final value = result?.value;
     if (value == null) return;
     final next = value == none ? null : options.where((o) => o.id == value).firstOrNull;
     setState(() {

@@ -282,7 +282,7 @@ void main() {
       final manifest = read('android/app/src/main/AndroidManifest.xml');
       expect(manifest, contains('.liveplan.LivePlanMessagingService'));
       expect(manifest, contains('android:scheme="attendix" android:host="live-plan"'));
-      expect(read('android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt'),
+      expect(read('android/app/src/main/kotlin/io/stephanus/attendix/MainActivity.kt'),
           contains('LiveActivityPlugin('));
     });
   });

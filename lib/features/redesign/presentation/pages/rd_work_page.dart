@@ -104,8 +104,8 @@ class RdWorkPage extends ConsumerWidget {
     );
     final groupId = ref.watch(currentSelfServicePlayerProvider).valueOrNull?.instrument;
     final ownGroup = groups.where((g) => g.id == groupId).firstOrNull;
-    final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false);
-    final part = rdPartFiles(song, groupId);
+    final lead = rdWorkLead(song, groupId, isMainGroup: ownGroup?.maingroup ?? false, choir: data.isChoir);
+    final part = rdMemberPartFiles(song, groupId, choir: data.isChoir);
     final recording = rdRecording(song);
     final score = rdScore(song);
     // Choirs: the practice recording of the voice ("Sopran.mp3").
@@ -113,7 +113,7 @@ class RdWorkPage extends ConsumerWidget {
     final workspace = canEdit && width >= rdWorkFilesMinWidth;
     final missing =
         canEdit && data.isOrchestra
-            ? rdMissingGroups(files, groups, ref.watch(missingGroupsPlayerCountsProvider))
+            ? rdWorkMissingGroups(song, groups, ref.watch(missingGroupsPlayerCountsProvider))
             : const <Group>[];
     final copyTargets =
         data.isPublic
@@ -135,7 +135,8 @@ class RdWorkPage extends ConsumerWidget {
     final header = Row(
       children: [
         Expanded(child: back),
-        if (canEdit) RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
+        if (canEdit)
+          RdTextLink(label: l10n.redesignWorkEdit, onTap: () => context.push(RedesignRoutes.workEdit(songId))),
         if (rdWorkMenuHasActions(data, files, copyTargets)) ...[
           const SizedBox(width: 4),
           Builder(
@@ -194,12 +195,16 @@ class RdWorkPage extends ConsumerWidget {
           RdWorkLead.part => [
             _PartCard(
               eyebrow: l10n.redesignWorkYourPart,
-              title: ownGroup?.name ?? SongUtils.fileLabel(part.first, groups),
+              // A choir without an own file gets "Chor (alle)".
+              title:
+                  part.first.instrumentId == groupId
+                      ? ownGroup?.name ?? SongUtils.fileLabel(part.first, groups)
+                      : SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir),
               detail: [
                 rdFileKind(part.first),
                 if (part.length > 1) l10n.redesignWorkFileCount(part.length),
               ].join(' · '),
-              moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups)),
+              moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir)),
               onOpen: () => rdOpenWorkFile(context, ref, song, part.first),
               onMore: (button) => more(button, part.first),
             ),
@@ -403,7 +408,8 @@ class RdWorkPage extends ConsumerWidget {
     List<Group> groups,
   ) {
     final l10n = context.l10n;
-    final fileGroups = data.isOrchestra ? rdFileGroups(files, groups) : const <Group>[];
+    // A practice recording is no Noten: same groups as "X fehlt".
+    final fileGroups = data.isOrchestra ? rdFileGroups([...files.where(rdIsNotes)], groups) : const <Group>[];
     final beamer = !data.isPublic && PlanBeamer.active(ref.watch(currentOrganisationProvider).valueOrNull, true);
     return [
       if (song.nextPlanned != null)

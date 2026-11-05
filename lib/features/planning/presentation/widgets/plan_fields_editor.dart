@@ -44,6 +44,7 @@ class PlanFieldsEditor extends StatefulWidget {
     this.onAddTopics,
     this.beamerFileOf,
     this.templateMode = false,
+    this.publicFieldDialog = false,
   });
 
   final List<PlanField> fields;
@@ -74,6 +75,10 @@ class PlanFieldsEditor extends StatefulWidget {
   /// (no indent), the Tagesordnung marker as a fixed two-line row and the
   /// "Feld bearbeiten" alert without minutes (they are edited in the row).
   final bool templateMode;
+
+  /// Ionic public-planning `editField`: the field dialog has "Löschen" /
+  /// "Abbrechen" / "Speichern", no Minuten (they stay inline in the row).
+  final bool publicFieldDialog;
 
   @override
   State<PlanFieldsEditor> createState() => _PlanFieldsEditorState();
@@ -162,7 +167,8 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
   // ---------------------------------------------------------------------------
 
   Future<void> _editField(int index) async {
-    final field = _fields[index];
+    final opened = _fields;
+    final field = opened[index];
     if (PlanUtils.isGroupHead(field)) {
       await _showGroupOptions(field);
       return;
@@ -171,6 +177,42 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     final isNote = PlanUtils.isNote(field);
     if (widget.templateMode) {
       await _editTemplateField(index, field, isNote: isNote);
+      return;
+    }
+    if (widget.publicFieldDialog) {
+      var deleted = false;
+      final r = await showPlanFieldDialog(
+        context,
+        title: context.l10n.planningEditField,
+        nameLabel: isNote ? context.l10n.planningNote : context.l10n.planningItem,
+        nameHint: isNote ? context.l10n.planningNote : context.l10n.planningItem,
+        conductorHint: context.l10n.planningPerformer,
+        infoHint: context.l10n.planningInfoOptional,
+        confirmText: context.l10n.commonSave,
+        emptyNameMessage: context.l10n.planningEnterItemPlease,
+        initialName: field.name,
+        initialConductor: field.conductor,
+        initialInfo: field.info,
+        withConductor: !isNote,
+        withInfo: !isNote,
+        withMinutes: false,
+        onDelete: () => deleted = true,
+      );
+      if (!mounted) return;
+      // The list may have changed (Realtime) while the dialog was open:
+      // re-find the row; gone or ambiguous -> leave the list as it is.
+      final i = PlanUtils.indexOfField(_fields, field, openedIn: opened);
+      if (deleted) {
+        if (i != -1) _emit([..._fields]..removeAt(i));
+        return;
+      }
+      if (r == null || i == -1) return;
+      final base = _fields[i];
+      final updated = [..._fields];
+      updated[i] = isNote
+          ? base.copyWith(name: r.name)
+          : base.copyWith(name: r.name, conductor: r.conductor, info: r.info);
+      _emit(updated);
       return;
     }
     final beamerFileOf = widget.beamerFileOf;

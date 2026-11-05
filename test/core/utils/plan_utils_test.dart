@@ -204,4 +204,16 @@ void main() {
       expect(split.past.last.title, 'Plan');
     });
   });
+
+  test('indexOfField: id fallback needs a unique id when the dialog opened', () {
+    final a = f('song-1', '5');
+    final b = f('song-1', '5');
+    final opened = [a, b];
+    // Realtime: the edited duplicate (b) was deleted elsewhere, a was reloaded.
+    final current = [f('song-1', '5')];
+    expect(PlanUtils.indexOfField(current, b, openedIn: opened), -1);
+    // A row whose id was unique when opened is still found after a reload.
+    final c = f('x', '3');
+    expect(PlanUtils.indexOfField([f('x', '3')], c, openedIn: [c]), 0);
+  });
 }

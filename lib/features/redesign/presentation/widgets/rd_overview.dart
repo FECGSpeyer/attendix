@@ -13,7 +13,6 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../songs/presentation/utils/song_utils.dart';
-import '../../../songs/presentation/widgets/add_song_sheet.dart';
 import '../../data/rd_overview_logic.dart';
 import 'rd_widgets.dart';
 import 'today/rd_today_common.dart' show RdInfoCard;
@@ -74,10 +73,8 @@ class RdWorksOverviewPanel extends ConsumerWidget {
                 label: l10n.redesignWorksAdd,
                 icon: Icons.add,
                 height: 40,
-                onPressed: () async {
-                  final id = await showAddSongSheet(context, data);
-                  if (id != null && context.mounted) context.go(RedesignRoutes.work(id));
-                },
+                // "Neues Werk" without a Besetzung (it follows from the Noten).
+                onPressed: () => context.push(RedesignRoutes.newWork),
               )
               : null,
       children: [
