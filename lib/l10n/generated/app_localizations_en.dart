@@ -6174,6 +6174,9 @@ class AppLocalizationsEn extends AppLocalizations {
   String get orgFieldsApplyChanges => 'Apply changes';
 
   @override
+  String get orgFieldsFlutterClearDefault => 'Remove default value';
+
+  @override
   String get orgFieldsFlutterFirstOptionDefault =>
       'The first option is the default value';
 

@@ -481,7 +481,19 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
                 ListTile(
                   contentPadding: EdgeInsets.zero,
                   title: Text(_isEdit ? context.l10n.extraFieldsDefaultValue : context.l10n.extraFieldsDefaultOptional),
-                  trailing: Text(_dateLabel()),
+                  trailing: Row(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      Text(_dateLabel()),
+                      // The default is optional: allow clearing a picked date.
+                      if (_dateLabel().isNotEmpty)
+                        IconButton(
+                          icon: const Icon(Icons.close),
+                          tooltip: context.l10n.orgFieldsFlutterClearDefault,
+                          onPressed: () => setState(() => _defaultValue = ''),
+                        ),
+                    ],
+                  ),
                   onTap: _pickDate,
                 )
               else
