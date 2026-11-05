@@ -13,7 +13,8 @@ Flutter-App geprüft. Ein Ergebnis wird über die ID in Klammern zurück in den
 Tracker getragen.
 
 Testgruppe: „Attendix Test“. Konten: `leonjaeger00+attx-<rolle>@gmail.com`
-(Rolle zum Beispiel `conductor`, `helper`, `player`). Das Passwort steht nicht
+(`<rolle>` = `admin`, `verantwortlich`, `beobachter`, `helfer`, `stimmfuehrer`,
+`stimmhelfer`, `spieler`, `eltern`, `bewerber`). Das Passwort steht nicht
 in dieser Datei. Es kommt nur über die Umgebungsvariable `ATTX_PASSWORD`.
 
 Legende: ☐ offen · ✓ gleich · ✗ abweichend (Notiz dazu) · – nicht zutreffend
