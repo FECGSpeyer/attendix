@@ -3,7 +3,7 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 18
+## Angleichen (hoch/mittel): 16
 
 - [ ] **hoch** `songs/import/import.page` `field-601fe7d3` [songs/import/import.page.html:25](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/import/import.page.html#L25) (2. Prüfung: bestätigt)
   Ionic: accept .xlsx,.xls,.csv, SheetJS liest alle drei / Flutter: Picker erlaubt xlsx/xls/csv, .xls wird aber mit rotem Toast 'Das alte Excel-Format (.xls) wird nicht unterstützt. Bitte als .xlsx oder .csv speichern.' abgelehnt.
@@ -35,18 +35,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `songs/song/song.page` `text-e14adf08` [songs/song/song.page.html:135](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L135) (2. Prüfung: bestätigt)
   Eingeloggt gleich (Felder des aktuellen Tenants, Text „Zusatzfelder“). Ionic: Abschnitt nur mit db.tenant()?.song_additional_fields – öffentliche Freigabe-Ansicht ohne Login nie, eingeloggt die Felder des eigenen Tenants / Flutter: Freigabe-Ansicht zeigt die Zusatzfelder des geteilten Tenants mit Werten (read-only), auch ohne Login – Werte damit über den Link öffentlich sichtbar.
   Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:333, lib/features/songs/presentation/pages/song_detail_page.dart:547-571, lib/core/providers/song_providers.dart:455-457
-- [ ] **mittel** `songs/song/song.page` `modal-81e9f13d` [songs/song/song.page.html:590](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L590) (2. Prüfung: bestätigt)
-  Ionic: Sheet-Modal (Breakpoint 1) mit Toolbar „Kategorie ändern“, „Abbrechen“ oben rechts, Radio-Liste, Freitext mit Löschen-Knopf, „Speichern“ als Block-Button / Flutter: AlertDialog mit Titel, Radio-Liste, Freitext-Feld und Aktionen „Abbrechen“/„Speichern“ unten. Vorbelegung (Chor (alle)) und geschriebene Werte (files + instrument_ids ohne 1/2/Hauptgruppe) gleich.
-  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1174-1204, lib/features/songs/presentation/pages/song_detail_page.dart:1241-1296
 - [ ] **mittel** `songs/song/song.page` `x-1a9462e316` **Teil-Fehler beim Upload: Liste nicht aktualisiert** [src/app/songs/song/song.page.ts:485](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.ts#L485) (2. Prüfung: bestätigt)
   Real. Ionic performUpload lädt das Werk auch bei Teil-Fehlern neu. Flutter: bei Teil-Fehler bleibt das Sheet offen, X gibt false zurück → kein _refresh; erfolgreich hochgeladene Dateien fehlen in der Liste – wegen gecachtem songByIdProvider auch nach erneutem Öffnen, bis Pull-to-Refresh oder ein erfolgreicher Wiederholversuch.
   Flutter: lib/features/songs/presentation/widgets/file_upload_sheet.dart:446-465, lib/features/songs/presentation/widgets/file_upload_sheet.dart:506-509, lib/features/songs/presentation/pages/song_detail_page.dart:928
 - [ ] **mittel** `songs/songs.page` `action-a3de1883` [songs/songs.page.html:5](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L5) (2. Prüfung: bestätigt)
   Ionic: Zurück-Button ohne Text (defaultHref "/" öffentlich bzw. "tabs/settings") überall außer im Werke-Tab, also auch auf der öffentlichen Freigabe-Seite / Flutter: automaticallyImplyLeading: !isPublic → auf der gültigen öffentlichen Seite kein Zurück-Button (nur beim ungültigen Link); /settings/songs gleich, Werke-Tab mit Menü-Button wie Ionic.
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:258, lib/features/songs/presentation/pages/songs_list_page.dart:260
-- [ ] **mittel** `songs/songs.page` `popover-21a14c45` [songs/songs.page.html:134](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L134) (2. Prüfung: bestätigt)
-  Ionic: Popover am Filter-Button, Einträge nur mit Icons, ohne Überschriften (Sortierung, Schwierigkeit, Chor & Orchester, Solo, Kategorien, Instrumente, Ansicht, Zusatzfeld-Filter) / Flutter: Bottom-Sheet „Filter & Ansicht“ mit Abschnittsüberschriften (Sortierung, Schwierigkeitsgrad, Kategorien, Gruppen, Ansicht), Kategorien/Gruppen als Chips, „Zurücksetzen“ bei aktiven Filtern und Schließen-Button.
-  Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:42, lib/features/songs/presentation/widgets/song_filter_sheet.dart:52, lib/features/songs/presentation/widgets/song_filter_sheet.dart:215
 - [ ] **mittel** `songs/songs.page` `field-a0424ef7` [songs/songs.page.html:185](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L185) (2. Prüfung: bestätigt)
   Ionic: Mehrfach-Select (Noten-Icon), Optionen nur bei Orchester (instruments wird nur für isOrchestra gefüllt), bei Chor/Allgemein leer / Flutter: Chips „Gruppen“ mit allen Nicht-Hauptgruppen bei jedem Tenant-Typ; in Chören haben Werke meist keine instrument_ids, die Auswahl einer Stimme blendet dann alle Werke aus.
   Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:133, lib/core/providers/song_providers.dart:307-309
@@ -126,7 +120,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic setzt bei Filter-/Kategorie-/Sortierwechsel searchTerm = '' und filtert ohne Suche, obwohl der Suchtext im Feld stehen bleibt / Flutter: Suchbegriff bleibt angewendet.
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:227-232
 
-## Kleinigkeiten (niedrig): 52
+## Kleinigkeiten (niedrig): 54
 
 - [ ] **niedrig** `songs/import/import.page` `loading-4a98212a` [songs/import/import.page.ts:90](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/import/import.page.ts#L90)
   Ionic: blockierendes Overlay „Datei wird gelesen...“ (people.readingFile; Slice zeigt fälschlich die Dauer 10000 als Text) / Flutter: Spinner-Overlay über dem Inhalt ohne Text
@@ -211,6 +205,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `songs/song/song.page` `action-f4482020` [songs/song/song.page.html:584](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L584)
   Insert ohne Kategorie/instrument_ids, Dateien kopieren, instrument_ids ohne 1/2, Toasts gleich. Gruppen-Mapping: Ionic nur über this.instruments (nur Orchester, ohne Hauptgruppe) mit Unicode-normalize() – in Chor/allgemeinen Tenants und für die Hauptgruppe wird die Datei-Gruppe null / Flutter mappt über alle Gruppen des Tenants (jeder Typ, inkl. Hauptgruppe) per Name/Synonym, ohne normalize().
   Flutter: lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:222-235, lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:245-372, lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:375-427
+- [ ] **niedrig** `songs/song/song.page` `modal-81e9f13d` [songs/song/song.page.html:590](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L590) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): AlertDialog statt Sheet-Modal, gleiche Auswahl, Vorbelegung und gespeicherte Werte. – Befund: Ionic: Sheet-Modal (Breakpoint 1) mit Toolbar „Kategorie ändern“, „Abbrechen“ oben rechts, Radio-Liste, Freitext mit Löschen-Knopf, „Speichern“ als Block-Button / Flutter: AlertDialog mit Titel, Radio-Liste, Freitext-Feld und Aktionen „Abbrechen“/„Speichern“ unten. Vorbelegung (Chor (alle)) und geschriebene Werte (files + instrument_ids ohne 1/2/Hauptgruppe) gleich.
+  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1174-1204, lib/features/songs/presentation/pages/song_detail_page.dart:1241-1296
 - [ ] **niedrig** `songs/song/song.page` `field-f08105ca` [songs/song/song.page.html:631](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L631)
   Ionic: ion-input mit clearInput (X zum Leeren) / Flutter: TextField ohne Leeren-Button; Platzhalter gleich.
   Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1268-1278
@@ -229,6 +226,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `songs/songs.page` `action-f4c583da` [songs/songs.page.html:131](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L131)
   Öffnet Filter (siehe popover-21a14c45). Icon tune statt options (ähnlich); Flutter zusätzlich Punkt-Badge bei aktiven Filtern
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:413, lib/features/songs/presentation/pages/songs_list_page.dart:430
+- [ ] **niedrig** `songs/songs.page` `popover-21a14c45` [songs/songs.page.html:134](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L134) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): Gleiche Filter- und Ansichtsoptionen, nur Bottom-Sheet mit Überschriften und Chips statt Popover. – Befund: Ionic: Popover am Filter-Button, Einträge nur mit Icons, ohne Überschriften (Sortierung, Schwierigkeit, Chor & Orchester, Solo, Kategorien, Instrumente, Ansicht, Zusatzfeld-Filter) / Flutter: Bottom-Sheet „Filter & Ansicht“ mit Abschnittsüberschriften (Sortierung, Schwierigkeitsgrad, Kategorien, Gruppen, Ansicht), Kategorien/Gruppen als Chips, „Zurücksetzen“ bei aktiven Filtern und Schließen-Button.
+  Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:42, lib/features/songs/presentation/widgets/song_filter_sheet.dart:52, lib/features/songs/presentation/widgets/song_filter_sheet.dart:215
 - [ ] **niedrig** `songs/songs.page` `field-de9835a0` [songs/songs.page.html:174](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L174)
   Logik (mind. eine gewählte Kategorie), Bedingung und Speicherung gleich. Ionic: Mehrfach-Select (Alert mit Checkboxen) mit Preisschild-Icon ohne Label / Flutter: FilterChips unter Überschrift „Kategorien“
   Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:114

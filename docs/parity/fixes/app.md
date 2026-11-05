@@ -3,7 +3,7 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 14
+## Angleichen (hoch/mittel): 10
 
 - [ ] **hoch** `register/tenant-register/tenant-register.page` `field-ac71b961` [register/tenant-register/tenant-register.page.html:165](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.html#L165) (2. Prüfung: bestätigt)
   Ionic: ion-select mit defaultValue vorbelegt, Wert wird immer in additional_fields gespeichert / Flutter: Default nur angezeigt, ohne aktive Auswahl fehlt der Schlüssel in additional_fields (anderer DB-Wert; Leser fallen zwar auf defaultValue zurück, der gespeicherte Datensatz unterscheidet sich).
@@ -17,32 +17,20 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `app.component` `alert-df60fa5d` [app.component.ts:113](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.component.ts#L113) (2. Prüfung: bestätigt)
   Ionic: Alert „Neues Passwort“ mit Passwortfeld (Platzhalter „Min. 6 Zeichen eingeben...“), Buttons Abbrechen/Passwort ändern, bleibt bei Fehler offen / Flutter: eigene Seite /new-password, nach Erfolg oder Abbrechen → /tenants. Gleiche Mindestlänge, anderer Dialogtyp/Flow.
   Flutter: lib/features/auth/presentation/pages/new_password_page.dart:34-115
-- [ ] **mittel** `app.component` `nav-3a7bceb6-2` [app.component.ts:352](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.component.ts#L352) (2. Prüfung: bestätigt)
-  Ionic: Recovery-Link → /login; LoginGuard leitet Nutzer mit Instanz weiter auf die Startseite, der Alert erscheint dort / Flutter: Recovery-Link → Seite /new-password.
-  Flutter: lib/features/auth/data/auth_link_listener.dart:119-120
 - [ ] **mittel** `app.component` `x-fde4d51685` **Passwort-Recovery als Seite statt Alert** [src/app/app.component.ts:108-160](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.component.ts#L108-L160) (2. Prüfung: bestätigt)
   Echt: Ionic: Recovery-Link/PASSWORD_RECOVERY öffnet Alert "Neues Passwort eingeben" (Passwortfeld, "Abbrechen"/"Passwort ändern") über der aktuellen Seite (nach /login leitet LoginGuard angemeldete Nutzer auf ihre Startseite); Abbrechen/Erfolg lässt den Nutzer dort / Flutter: eigene Seite /new-password (Feld mit Anzeigen-Schalter, "Passwort ändern", "Abbrechen"), Erfolg und Abbrechen führen auf /tenants. Funktion (min. 6 Zeichen, updatePassword, Toasts) gleich.
   Flutter: lib/features/auth/data/auth_link_listener.dart:28-32, lib/features/auth/data/auth_link_listener.dart:118-120, lib/features/auth/presentation/pages/new_password_page.dart:34-115
 - [ ] **mittel** `login/login.page` `x-8af7179780` **Teams-Verknüpfung: Wechsel zur Code-Anmeldung** [src/app/login/login.page.ts:90-117](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/login/login.page.ts#L90-L117) (2. Prüfung: bestätigt)
   Real: Ionic ssoLink fängt den Fehler von authSvc.login ab (nur Fehler-Toast, z. B. „Ungültige Anmeldedaten“, keine Nachfrage). Flutter: ssoLink lässt LoginFailure bis _login durch → Toast plus Dialog „Anmeldung fehlgeschlagen“ mit „Code per E-Mail“ (bzw. bei unbestätigter E-Mail/unbekanntem Konto auch Bestätigungs-/Registrieren-Dialog); nach „Code per E-Mail“ ist der Code-Modus aktiv, das Segment bleibt im Verknüpfungsmodus ausgeblendet (kein Rückweg zu Passwort) und die Code-Anmeldung verknüpft das Microsoft-Konto nicht. Nur in Teams, daher mittel.
   Flutter: lib/features/auth/presentation/pages/login_page.dart:196, lib/features/auth/presentation/pages/login_page.dart:211, lib/features/auth/presentation/pages/login_page.dart:412, lib/features/auth/presentation/pages/login_page.dart:724, lib/core/services/teams/teams_service.dart:181
-- [ ] **mittel** `register/register.page` `popover-f947f492` [register/register.page.html:130](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/register.page.html#L130) (2. Prüfung: bestätigt)
-  Ionic: Info-Popover am Info-Icon (Hauptgruppe) / Flutter: AlertDialog mit gleichem Text und OK-Button.
-  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:347-351, lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:541-558
 - [ ] **mittel** `register/tenant-register/tenant-register.page` `toast-23c76f81` [register/tenant-register/tenant-register.page.ts:456](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L456) (2. Prüfung: bestätigt)
   Ionic: Ja/Nein-Feld ohne booleschen Wert → Toast „Bitte geben Sie einen gültigen Wert für das Feld "…" ein.“ und Abbruch / Flutter: kein Check, unberührter Schalter wird als false gespeichert. Selten, da Ionic beim Anlegen eines Ja/Nein-Felds defaultValue false setzt.
-- [ ] **mittel** `register/tenant-register/tenant-register.page` `actionsheet-ab6f737a` [register/tenant-register/tenant-register.page.ts:480](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L480) (2. Prüfung: bestätigt)
-  Ionic: bei vorhandenem Passbild Action-Sheet „Passbild ersetzen“/„Abbrechen“ vor der Dateiauswahl / Flutter: kein Action-Sheet, Tap öffnet direkt die Auswahl.
-  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:283, lib/features/registration/presentation/pages/tenant_registration_page.dart:295
 - [ ] **mittel** `register/tenant-register/tenant-register.page` `field-9f610a4d` [register/tenant-register/tenant-register.page.html:107](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.html#L107) (2. Prüfung: bestätigt)
   Ionic: Datei-Input accept=image/* (Systemauswahl inkl. Kamera/Dateien), Original wird hochgeladen / Flutter: ImagePicker Galerie; im Web bietet der Browser weiter Kamera an (Input ohne capture), in den nativen Apps nur Galerie; Bild auf 800×800, Qualität 80 verkleinert.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:590-600
 - [ ] **mittel** `register/tenant-register/tenant-register.page` `field-a9922b49` [register/tenant-register/tenant-register.page.html:149](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.html#L149) (2. Prüfung: bestätigt)
   Ionic: Reihenfolge Kategorie, sort_order, Name; Filter maingroup !== true / Flutter: nur nach Name, Filter maingroup = false (NULL fällt raus). Dadurch ist auch die vorausgewählte erste Gruppe eine andere.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:350-395, lib/features/registration/data/providers/registration_providers.dart:33-46
-- [ ] **mittel** `tabs/side-nav/side-nav.component` `modal-186fad14` [tabs/side-nav/side-nav.component.ts:144](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/tabs/side-nav/side-nav.component.ts#L144) (2. Prüfung: bestätigt)
-  Ionic: „Ablaufpläne“ öffnet PlanningPage als Modal / Flutter: context.push('/planning') – normale Seite im Shell.
-  Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:109, lib/core/router/app_router.dart:899-912
 - [ ] **mittel** `terms/terms.page` `nav-4df0f2ac` [terms/terms.page.ts:61](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/terms/terms.page.ts#L61) (2. Prüfung: bestätigt)
   Ionic: nach Zustimmung direkt Utils.getUrl(role) / Flutter: gemerkter Link oder /tenants; nach Login ist die Instanz meist schon gesetzt, dann bleibt die Instanzauswahl stehen statt zur Startseite zu gehen.
   Flutter: lib/features/legal/presentation/pages/terms_page.dart:58, lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:78-80
@@ -188,7 +176,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic speichert firstName/lastName ungetrimmt und akzeptiert reine Leerzeichen / Flutter: onSaved trimmt, reine Leerzeichen scheitern an „Name erforderlich“.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:307, lib/features/registration/presentation/pages/tenant_registration_page.dart:318, lib/features/registration/presentation/pages/tenant_registration_page.dart:1060-1062
 
-## Kleinigkeiten (niedrig): 80
+## Kleinigkeiten (niedrig): 84
 
 - [ ] **niedrig** `app-redirect/app-redirect.page` `nav-0ce724a0` [app-redirect/app-redirect.page.ts:38](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app-redirect/app-redirect.page.ts#L38)
   Ziel (App-Store-URL) und Erkennung gleich (Ionic UA iPad/iPhone/iPod oder MacIntel+Touch; Flutter defaultTargetPlatform aus navigator.platform, Mac+maxTouchPoints>2 = iPadOS), nativ beide → /login. Ionic: window.location.replace, /app bleibt nicht im Verlauf / Flutter: launchUrl(webOnlyWindowName '_self') = window.open(_self), /app bleibt im Verlauf; Browser-Zurück landet wieder auf /app und leitet erneut weiter.
@@ -241,6 +229,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `app.component` `effect-330e1045` [app.component.ts:227](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.component.ts#L227) (2. Prüfung: korrigiert)
   Ionic showNativeAppAd: nur Web, nicht in Teams (teams.isInTeams() → return), einmalig (localStorage) → window.open(Store-URL, '_blank') / Flutter NativeAppAdGate: Web + einmalig, aber ohne Teams-Prüfung → Hinweis und Store-Öffnen auch im Teams-Tab. Gleiche Lücke wie Extra "Native-App-Hinweis in Teams" (b01-app). Erstprüfung hat die Teams-Bedingung nicht berücksichtigt.
   Flutter: lib/shared/widgets/dialogs/native_app_ad.dart:77-87, lib/shared/widgets/dialogs/native_app_ad.dart:44-50, lib/core/router/app_router.dart:145
+- [ ] **niedrig** `app.component` `nav-3a7bceb6-2` [app.component.ts:352](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.component.ts#L352) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): Recovery-Link öffnet eine eigene Seite statt eines Alerts mit gleicher Funktion; das abweichende Ziel danach ist in x-fde4d51685 erfasst. – Befund: Ionic: Recovery-Link → /login; LoginGuard leitet Nutzer mit Instanz weiter auf die Startseite, der Alert erscheint dort / Flutter: Recovery-Link → Seite /new-password.
+  Flutter: lib/features/auth/data/auth_link_listener.dart:119-120
 - [ ] **niedrig** `app.module` `logic-0c401cb7` [app.module.ts:1](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/app.module.ts#L1)
   Ionic: TeamsService.init als APP_INITIALIZER (App startet erst nach Teams-Erkennung); SW im iframe deaktiviert / Flutter: TeamsService.init() wird nicht abgewartet (unawaited), SSO startet nach Erkennung. Sichtbar höchstens als kurzer Zwischenstand im Teams-Tab.
   Flutter: lib/main.dart:102-105, lib/main.dart:155
@@ -292,6 +283,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `register/register.page` `toast-243480af` [register/register.page.ts:119](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/register.page.ts#L119) (2. Prüfung: korrigiert)
   Vorlage "Fehler beim Löschen: {error}" gleich, aber {error}: Ionic FunctionsHttpError "Edge Function returned a non-2xx status code" / Flutter RepositoryException aus FunctionException.toString() → "FunctionException(status: 500, details: {error: …}, reasonPhrase: …)". Erstprüfung hat den Fehlertext nicht verglichen.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:530-537, lib/data/repositories/account_repository.dart:27-42
+- [ ] **niedrig** `register/register.page` `popover-f947f492` [register/register.page.html:130](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/register.page.html#L130) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): Gleicher Infotext, nur Dialog statt Popover. – Befund: Ionic: Info-Popover am Info-Icon (Hauptgruppe) / Flutter: AlertDialog mit gleichem Text und OK-Button.
+  Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:347-351, lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:541-558
 - [ ] **niedrig** `register/register.page` `text-f594a3e2` [register/register.page.html:156](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/register.page.html#L156) (2. Prüfung: korrigiert)
   Kürzel " (MV)" gleich. Ionic: die ganze erste Summary-Zeile ist ein ion-label-<p> und damit grau (iOS step-400 #999, md step-600 #666) / Flutter: Standard-Textfarbe (schwarz), nur Zeilen 2–3 grau. Text und Daten gleich; Bedingung ist Formularzustand, kein Rollen-/Mandantenbezug.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:387-393
@@ -334,6 +328,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `toast-02f7573a` [register/tenant-register/tenant-register.page.ts:451](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L451)
   Ionic: Datumsfelder haben kein Eingabeelement, geprüft wird nur der defaultValue / Flutter: Datumsauswahl; ohne Auswahl Toast (defaultValue wird ignoriert).
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:1089, lib/features/registration/presentation/pages/tenant_registration_page.dart:552
+- [ ] **niedrig** `register/tenant-register/tenant-register.page` `actionsheet-ab6f737a` [register/tenant-register/tenant-register.page.ts:480](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L480) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): Das Action-Sheet bot nur „Ersetzen“/„Abbrechen“; das Bild ist bis zum Absenden nur lokal und die Auswahl lässt sich abbrechen, Ergebnis gleich. – Befund: Ionic: bei vorhandenem Passbild Action-Sheet „Passbild ersetzen“/„Abbrechen“ vor der Dateiauswahl / Flutter: kein Action-Sheet, Tap öffnet direkt die Auswahl.
+  Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:283, lib/features/registration/presentation/pages/tenant_registration_page.dart:295
 - [ ] **niedrig** `register/tenant-register/tenant-register.page` `loading-19c310bc` [register/tenant-register/tenant-register.page.ts:498](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/register/tenant-register/tenant-register.page.ts#L498)
   Ionic: Loading-Overlay während Bild eingelesen wird / Flutter: kein Ladeindikator.
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:590
@@ -367,6 +364,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `tabs/side-nav/side-nav.component` `loading-e9133cc5` [tabs/side-nav/side-nav.component.ts:124](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/tabs/side-nav/side-nav.component.ts#L124) (2. Prüfung: bestätigt)
   Ionic: Loading-Overlay während Instanzwechsel / Flutter: switchTenant ohne Ladeanzeige.
   Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:128, lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405
+- [ ] **niedrig** `tabs/side-nav/side-nav.component` `modal-186fad14` [tabs/side-nav/side-nav.component.ts:144](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/tabs/side-nav/side-nav.component.ts#L144) (2. Prüfung: bestätigt)
+  Nur Optik (Leon 05.11.2026): Ablaufpläne öffnen als normale Seite statt als Modal, Funktion gleich. – Befund: Ionic: „Ablaufpläne“ öffnet PlanningPage als Modal / Flutter: context.push('/planning') – normale Seite im Shell.
+  Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:109, lib/core/router/app_router.dart:899-912
 - [ ] **niedrig** `tabs/side-nav/side-nav.component` `media-8fae1184` [tabs/side-nav/side-nav.component.html:27](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/tabs/side-nav/side-nav.component.html#L27) (2. Prüfung: bestätigt)
   Ionic: mit tenants.logo_url zeigt der Instanz-Knopf im Sidepanel das Logo-Bild / Flutter: Tenant-Modell hat kein logo_url, immer Initialen. Nur Tablet/Desktop, alle Rollen.
   Flutter: lib/shared/widgets/layout/side_nav/side_nav.dart:614-626
