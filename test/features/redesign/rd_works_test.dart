@@ -455,24 +455,35 @@ void main() {
       RdNextEvent event(int id, {int day = 4}) =>
           RdNextEvent(date: DateTime(2026, 11, day), type: '', attendanceId: id, songs: const [_ave]);
       final events = [event(1), event(2), event(3), event(4), event(5), event(6, day: 5), event(7)];
-      const types = [AttendanceType(id: 't', name: 'Probe', startTime: '10:00', endTime: '12:00')];
-      final left = rdWithoutEndedEvents(
-        events,
-        now: now,
-        types: types,
-        attendances: const [
-          Attendance(id: 1, date: '2026-11-04', startTime: '10:00', endTime: '19:30'), // over
-          Attendance(id: 2, date: '2026-11-04', startTime: '19:00', endTime: '21:00'), // running
-          Attendance(id: 3, date: '2026-11-04', startTime: '18:00'), // start only: over
-          Attendance(id: 4, date: '2026-11-04', typeId: 't'), // type 10–12: over
-          // 5: no Termin loaded, date only: stays until midnight.
-          Attendance(id: 6, date: '2026-11-05', startTime: '09:00', endTime: '10:00'),
-          // Own start, the type's end (12:00) does not make it overnight: over.
-          Attendance(id: 7, date: '2026-11-04', startTime: '19:00', typeId: 't'),
-        ],
-      );
-      expect(left.map((e) => e.attendanceId), [2, 5, 6]);
-      expect(rdWithoutEndedEvents([event(5)], now: DateTime(2026, 11, 5)), isEmpty);
+      const types = [
+        AttendanceType(id: 't', name: 'Probe', startTime: '10:00', endTime: '12:00'),
+        AttendanceType(id: 'a', name: 'Freizeit', startTime: '19:00', allDay: true),
+      ];
+      const attendances = [
+        Attendance(id: 1, date: '2026-11-04', startTime: '10:00', endTime: '19:30'), // over
+        Attendance(id: 2, date: '2026-11-04', startTime: '19:00', endTime: '21:00'), // running
+        Attendance(id: 3, date: '2026-11-04', startTime: '18:00'), // start only: over
+        Attendance(id: 4, date: '2026-11-04', typeId: 't'), // type 10–12: over
+        // 5: no Termin loaded, date only: stays until midnight.
+        Attendance(id: 6, date: '2026-11-05', startTime: '09:00', endTime: '10:00'),
+        // Own start, the type's end (12:00) does not make it overnight: over.
+        Attendance(id: 7, date: '2026-11-04', startTime: '19:00', typeId: 't'),
+        // All day: the Ablauf time 19:00 does not end it, it stays until midnight.
+        Attendance(id: 8, date: '2026-11-04', startTime: '19:00', typeId: 'a'),
+        // Two days, ends today at 21:00: running.
+        Attendance(id: 9, date: '2026-11-03', durationDays: 2, startTime: '18:00', endTime: '21:00'),
+        // Yesterday 20:00 to 01:00 today: over.
+        Attendance(id: 10, date: '2026-11-03', startTime: '20:00', endTime: '01:00'),
+      ];
+      List<int?> left(List<RdNextEvent> events, DateTime now) => [
+        for (final e in rdWithoutEndedEvents(events, now: now, types: types, attendances: attendances)) e.attendanceId,
+      ];
+      expect(left([...events, event(8), event(9, day: 3), event(10, day: 3)], now), [2, 5, 6, 8, 9]);
+      // The end limits: midnight after the (last) day, the end time, the overnight end.
+      final ends = [event(5), event(8), event(9, day: 3), event(10, day: 3)];
+      expect(left(ends, DateTime(2026, 11, 4, 0, 59)), [5, 8, 9, 10]);
+      expect(left(ends, DateTime(2026, 11, 4, 21, 1)), [5, 8]);
+      expect(left(ends, DateTime(2026, 11, 5)), isEmpty);
     });
 
     test('old descending sort orders are shown as such', () {

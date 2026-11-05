@@ -264,8 +264,9 @@ List<RdNextEvent> rdNextEvents(List<CurrentSongsGroup> groups, List<Song> songs)
 /// ([rdNextEvents]' input) keeps everything from the start of today, so a
 /// Termin of this morning would stay until midnight. Over means: the end
 /// time (else the start time) of the Termin, from [attendances] or its type
-/// in [types], on its last day lies before [now]. Without any time the
-/// Termin stays until the end of its (last) day.
+/// in [types], on its last day lies before [now]. Without any time, or with
+/// an all-day type (its times are only for the Ablauf), the Termin stays
+/// until the end of its (last) day.
 List<RdNextEvent> rdWithoutEndedEvents(
   List<RdNextEvent> events, {
   required DateTime now,
@@ -285,6 +286,7 @@ bool _rdEventOver(RdNextEvent event, Attendance? att, List<AttendanceType> types
   final type = att?.typeId == null ? null : types.where((t) => t.id == att!.typeId).firstOrNull;
   final days = (att?.durationDays ?? 1) < 1 ? 1 : (att?.durationDays ?? 1);
   final lastDay = rdAddDays(date, days - 1);
+  if (type?.allDay ?? false) return !now.isBefore(rdAddDays(lastDay, 1));
   // Start and end from one source: the Termin's own times, else its type's
   // (a Termin at 19:00 with a type ending at 12:00 is not overnight).
   final own = _rdClock(att?.startTime) != null || _rdClock(att?.endTime) != null;
