@@ -1,10 +1,13 @@
 # Fix-Paket „planung“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 0
+## Angleichen (hoch/mittel): 1
 
+- [ ] **mittel** `org-settings/org-person-fields/org-person-fields.page` `field-3207b9c2` [org-settings/org-person-fields/org-person-fields.page.html:197](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-settings/org-person-fields/org-person-fields.page.html#L197) (2. Prüfung: korrigiert)
+  Edit-Sheet „Standardwert“ je Typ gleich. Abweichender DB-Wert: Ein geänderter Zahl-Standardwert wird als Text gespeichert („5“), Ionic speichert die Zahl (ion-input type=number). Personen erhalten den Standard dann als Text; in der Anzeige gleich, aber anderer Wert in extraFields (Sortieren/Vergleichen). Fix: bei Typ number num.tryParse.
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:361-367
 
 ## Flutter besser – Leon entscheidet: 19
 
@@ -66,7 +69,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
 
-## Kleinigkeiten (niedrig): 145
+## Kleinigkeiten (niedrig): 148
 
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b7046159` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-plan-public/org-plan-public.page.ts#L182) (2. Prüfung: bestätigt)
   Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.
@@ -376,12 +379,18 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `public-planning/public-planning.page` `effect-5c5e4502` [public-planning/public-planning.page.ts:830](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L830)
   Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171, lib/features/planning/presentation/pages/public_planning_page.dart:782-784
+- [ ] **niedrig** `public-planning/public-planning.page` `effect-9082e8f4` [public-planning/public-planning.page.ts:832](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L832) (2. Prüfung: korrigiert)
+  Web behoben: Web Share API wenn vorhanden, sonst Kopieren + „Link in Zwischenablage kopiert“ (kein doppeltes Kopieren, kein mailto). Rest niedrig: native Android-App – Ionic-WebView hat kein navigator.share → kopiert + Toast / Flutter öffnet das System-Teilen-Sheet (Kopieren dort möglich). Flutter besser: scheitert Web Share (nicht Abbruch), wird kopiert. Erstreviewer übersah die native Abweichung.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205, lib/core/services/web_window_web.dart:87-99, lib/features/planning/presentation/pages/public_planning_page.dart:772-797
 - [ ] **niedrig** `public-planning/public-planning.page` `toast-c76fea2d` [public-planning/public-planning.page.ts:833](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L833)
   „Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153
 - [ ] **niedrig** `public-planning/public-planning.page` `effect-5c5e4502-2` [public-planning/public-planning.page.ts:860](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L860)
   Systemteilen mit URL und Titel. Ionic: URL immer https://attendix.de/plan?key=…[&edit=…] / Flutter: nativ gleich, im Web `<origin><path>#/plan?key=…` (planPublicUrl); im Web meldet share_plus auch ein erfolgreiches Teilen als „unavailable“ → Link wird zusätzlich kopiert und Toast „Link in Zwischenablage kopiert“ erscheint
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:144-154, lib/features/planning/presentation/widgets/plan_export_actions.dart:166-171, lib/features/planning/presentation/pages/public_planning_page.dart:782-784
+- [ ] **niedrig** `public-planning/public-planning.page` `effect-9082e8f4-2` [public-planning/public-planning.page.ts:862](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L862) (2. Prüfung: korrigiert)
+  Anonymer Zweig wie effect-9082e8f4: Web gleich (Teilen, sonst Kopieren + Toast). Rest niedrig: native Android – Ionic kopiert + Toast / Flutter System-Teilen-Sheet. Erstreviewer übersah die native Abweichung.
+  Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205, lib/core/services/web_window_web.dart:87-99, lib/features/planning/presentation/pages/public_planning_page.dart:777-797
 - [ ] **niedrig** `public-planning/public-planning.page` `toast-c76fea2d-2` [public-planning/public-planning.page.ts:863](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.ts#L863)
   „Link in Zwischenablage kopiert“ (success) gleich; Flutter im Web zusätzlich nach erfolgreichem Teilen (share_plus liefert dort „unavailable“)
   Flutter: lib/features/planning/presentation/widgets/plan_export_actions.dart:150-153
@@ -406,6 +415,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `shared-plan/shared-plan.page` `actionsheet-7d9d8ba7` [shared-plan/shared-plan.page.ts:505](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.ts#L505) (2. Prüfung: bestätigt)
   Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: Icons picture_as_pdf, content_copy.
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:713-733, lib/features/planning/presentation/widgets/plan_export_actions.dart:57-77
+- [ ] **niedrig** `shared-plan/shared-plan.page` `effect-228109d7` [shared-plan/shared-plan.page.ts:514](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.ts#L514) (2. Prüfung: korrigiert)
+  Hauptlücke behoben: Branding aus branding_id des Ad-hoc-Plans (FECG-Logo + Text), Termin-Pläne und 'Kein Branding' ohne, nie das Instanz-Branding des Betrachters; Datei 'Titel_Wochentag, Datum(_2x).pdf'. Übrig (niedrig): bei mehreren Plänen fehlt im Dateinamen ' · Planname' (Ionic nimmt den ganzen Untertitel); Flutter besser: ohne Felder Warn-Toast 'Kein Plan verfügbar' (Ionic stumm), Untertitel bei einem Plan immer Plandatum (Ionic bei Zeit 'HH:mm' das heutige Datum).
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:714, lib/features/planning/presentation/pages/shared_plan_page.dart:737, lib/features/planning/presentation/public_brandings.dart:28, lib/features/planning/presentation/widgets/plan_export_actions.dart:127
 - [ ] **niedrig** `shared-plan/shared-plan.page` `action-47ec43ec` [shared-plan/shared-plan.page.html:6](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.html#L6)
   nur bei isLiveNow, Farbe danger/primary, schaltet Live-Modus – gleich. Ionic: Icon radio/radio-outline / Flutter: sensors/sensors_outlined
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:750-757

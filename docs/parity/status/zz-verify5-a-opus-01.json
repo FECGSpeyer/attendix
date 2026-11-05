@@ -1,0 +1,415 @@
+{
+ "batch": "zz-verify5-a-opus-01",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:76",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:123",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:216",
+    "lib/features/team_organization/presentation/utils/route_return_reload.dart:34"
+   ],
+   "n": "Behoben (#296): Thema wird bei jedem Öffnen frisch geladen (_loadFresh, Spinner bis dahin), Verlauf/Aufgaben bei Rückkehr auf die Seite neu (RouteReturnReload = ionViewWillEnter), „Einplanen“ lädt die nächsten Protokoll-Termine bei jedem Tippen neu (invalidate upcomingProtocolAttendancesProvider). Die beiden mittel-Lücken (Cache Verlauf/Thema, Einplanen-Liste) sind zu. Rest bleibt als eigene niedrig-Befunde x-5b249b81bc (Flutter besser: „Thema nicht gefunden“) und x-05b82aec95 (Einplanen nach gespeichertem Stand).",
+   "v": "bestätigt"
+  },
+  "app-routing.module#route-d98e9634": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:466",
+    "lib/core/router/app_router.dart:332",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:393"
+   ],
+   "n": "Behoben: /register leitet auf /login; abgemeldet bleibt /login, angemeldet führt der Login-Redirect zur Startseite der offenen Instanz bzw. zu /tenants, das ohne Instanz die nicht schließbare Seite „Neue Instanz anlegen“ zeigt (= Ionic RegisterGuard + RegisterPage). Randfall angemeldet mit Instanzen, aber keiner offenen: Ionic /login, Flutter Instanzauswahl – gleiches Ergebnis.",
+   "v": "bestätigt"
+  },
+  "app.component#logic-4a296d90": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:19",
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:142",
+    "lib/features/auth/data/auth_link_listener.dart:28",
+    "lib/features/auth/data/auth_link_listener.dart:118"
+   ],
+   "n": "Behoben (#296): Recovery-Link und PASSWORD_RECOVERY-Ereignis öffnen über /login den Dialog „Neues Passwort“ (Platzhalter „Min. 6 Zeichen…“, Abbrechen/Passwort ändern), nur einmal gleichzeitig, < 6 Zeichen → Fehler-Toast und Dialog bleibt offen, Update-Fehler → Toast und bleibt offen, Erfolg → Toast und schließt – wie Ionic. Push-Init, SSO/Deep-Links, Abmelden, Offline-Queue unverändert gleich. Übrige niedrig-Punkte stehen als eigene Befunde (x-5a9899a9e3, x-426ed5e6fe, x-0cf36be089, x-b0bab159d8, x-796b20e6b2).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#alert-0c061d4b": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:27",
+    "lib/features/duty/presentation/widgets/duty_actions.dart:94",
+    "lib/core/providers/duty_providers.dart:256"
+   ],
+   "n": "Behoben (#306): „Deine Dienste“ nur noch für Admin, Verantwortlich, Helfer, Helfer-Stimmführer (Ionic myPersonId nur bei isConductor||isHelper); Beobachter u. a. sehen den Abschnitt nicht mehr. Dialog „Kann nicht“, Eingabe „Grund (optional)“, Abbrechen/Bestätigen, Schreiben (Entschuldigt, notes, isSelf-Telegram) und duty-notify understaffed wie Ionic. Flutter trimmt den Grund zusätzlich (unerheblich).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#logic-d52a9296": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:331",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:125",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:27",
+    "lib/core/providers/attendance_providers.dart:193",
+    "lib/core/providers/attendance_providers.dart:252",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:224"
+   ],
+   "n": "Gegen aktuellen Stand neu geprüft: Grundlogik weiter gleich (Laden ab Saisonstart mit Offline-Cache, Archiv-Rollenfilter, Typ-/Archivfilter, aktueller/kommende/vergangene Termine, Beobachter-Liste, Durchschnitt ohne unbesetzte Dienste, Rollenflags, Löschen, Anlegen mit gleichen Spalten, Personen-/Schicht-/Abwesenheits-/Verhinderungslogik). Der mittel-Grund ist behoben: ref.listen auf die Terminliste erneuert nach jedem Neuladen (Realtime, Pull-to-Refresh, Rückkehr, Anlegen) dutyTermineById/upcomingDutyTermine/myDutyOverview (x-9616cc8ac2 zu); „Deine Dienste“ jetzt rollengeprüft; Ablaufplan-Viewer mit Bearbeiten, Zusatzplänen und Werk-Aktionen. Übrig nur niedrig: x-57163c321f, x-62e5886e11 (Rest: Quelle ab heute, Meta-Format), x-9a86a96938, x-ca6698be06 und Flutter-besser-Punkte. Sev mittel → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "attendance/att-list/att-list.page#modal-66d0050c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:149",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:154",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:180"
+   ],
+   "n": "Behoben (#305): Stift im Ablaufplan-Viewer nur mit canAddAttendance (Admin/Verantw./Helfer/Helfer-Stimmführer = Ionic canEdit) schließt den Viewer und öffnet den Editor /planning?attendanceId=…&plan=<Index> (Ionic PlanningPage mit attendanceId/initialPlanIndex). Seite statt planningModal = nur Darstellung.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#modal-c5dfef61": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:125",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart:25"
+   ],
+   "n": "Behoben (#305): Viewer bekommt die Zusatzpläne (getPlanAttendanceById → extraPlans, Tages-Chips mit Start beim heutigen Plan), Werke (songAction → Notenaktionen), defaultLive bei laufendem Termin und onEdit für Dirigent/Helfer; Beobachter sehen keinen Plan (_hasPlan). Bei Lade-/Netzfehler nur Hauptplan (Ionic hat extra_plans schon in der Liste) – Randfall.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#toast-a71d4842": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/widgets/duty_actions.dart:118",
+    "lib/features/duty/presentation/widgets/my_duty_requests_section.dart:27"
+   ],
+   "n": "„Abgesagt, das Team wird informiert.“ grün nach „Kann nicht“; durch die Rollenprüfung jetzt nur für dieselben Rollen erreichbar wie in Ionic.",
+   "v": "bestätigt"
+  },
+  "x-9616cc8ac2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:331",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:346",
+    "lib/core/providers/realtime_providers.dart:144"
+   ],
+   "n": "Behoben (#306): Die Liste hört auf realtimeAttendanceListProvider und invalidiert nach jedem Neuladen (gebündelt 1 s, nicht beim Instanzwechsel) dutyTermineByIdProvider, upcomingDutyTermineProvider und myDutyOverviewProvider. Damit folgen „x/y“-Pill, Namen, Heute-Karte und „Deine Dienste“ wie in Ionic jedem getAttendance (Realtime inkl. person_attendances, Pull-to-Refresh, Rückkehr aus dem Termin, Anlegen, Dienste verteilen).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#effect-7cdd0978": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:149",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:166",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:261",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:170"
+   ],
+   "n": "mittel-Lücke behoben (#306): Bei mehreren Plänen Teilen-Sheet mit „Nur <Plan>“/„Alle n Pläne“, Telegram PDF / PDF 2x A5 für einen oder alle Pläne, Bild nur für einen (nur mit Chat-ID), Titel plan.title || planning_title (typeInfo) || typeInfo || Typname, Name mit „_alle“/„_2x“. Rest niedrig: Dateiname nimmt immer das Termin-Startdatum (Ionic planDate des ersten exportierten Plans → bei „Nur Tag 2“ anderes Datum) und bei „Alle“ den Titel des gerade gezeigten statt des ersten Plans.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#effect-839f92ba": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:128",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:154",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:114"
+   ],
+   "n": "mittel-Lücke behoben (#306): Segment „Nur <Plan>“/„Alle n Pläne“ × PDF / PDF 2x A5 (2x A5 jetzt auch für alle), Titel mit planning_title/Typname wie getPlanningTitle, Name „…_alle“/„_2x“. Rest niedrig: Dateidatum = Termin-Start statt Plandatum (bei „Nur“ eines späteren Tages), Unterzeile hängt bei mehreren Plänen immer „· <Plan>“ an (Ionic planSubtitle nur ohne Tag oder mit eigenem Namen), „Alle“ nimmt auch Pläne ohne Punkte als Seite auf (Ionic filtert sie heraus).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#effect-8f43ff82": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2517",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2533",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2539",
+    "lib/core/providers/role_permission_providers.dart:97"
+   ],
+   "n": "hoch-Lücke behoben (#306): Excel exportiert jetzt die Personen der Liste (Helfer/Helfer-Stimmführer ohne attendance_all_groups nur die eigene Gruppe, resolvedGroupScope) sortiert nach Hauptgruppe/Gruppenreihenfolge/Name. Spalten, Status, Gemeinde, Dateiname gleich. Bleibt: Flutter besser: HELPER ohne player_notes_view bekommt eine leere Notizspalte (Ionic exportiert user.notes ungefiltert, obwohl die Ansicht sie verbirgt).",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#logic-8c42fa1f": {
+   "s": "diff",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:420",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1411",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1431",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2517",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:37"
+   ],
+   "n": "Erstbefund (Stand 8004a44) traf zu, ist aber im aktuellen Code behoben (#306/#323): Checkliste folgt jedem Neuladen des Termins (Realtime-UPDATE, Wiedersichtbarwerden), außer während eines eigenen Speicherns, danach Neuladen (x-a5bcacc4df zu); Gemeinde-Übersicht und „nur Unentschiedene“ nutzen die gruppengefilterte Liste (x-01ddfb1bfc, x-47702cd6f0 zu); „Person hinzufügen“ ohne ausstehende Registrierungen (x-e549f975e1 zu); Excel mit Gruppenfilter. Rest nur niedrig: x-4dd0cff1ed, x-33b53c7e65, x-5905254b84, x-7bed677ddc und Flutter-besser-Punkte (x-b6a4d5b9be, x-443cc37b67). Sev hoch → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "attendance/attendance/attendance.page#text-be8be344": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:79"
+   ],
+   "n": "Behoben: „{relativ} · {dd.MM.yyyy HH:mm} Uhr“ (lokale Zeit) nur bei gesetzter Fälligkeit, wie Ionic. Rot/Gelb als Zeilenhintergrund statt Textfarbe = Optik.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#toast-821c46bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:392"
+   ],
+   "n": "Behoben: Erstes Laden endet im Fehler → roter Toast „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ und zurück (pop bzw. /attendance), für alle Rollen; spätere Neulade-Fehler mit vorhandenem Stand lösen ihn nicht aus.",
+   "v": "bestätigt"
+  },
+  "x-01ddfb1bfc": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1411",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1422",
+    "lib/features/attendance/presentation/attendance_extra_actions.dart:110"
+   ],
+   "n": "Behoben (#323): _showChurchOverview übergibt _scopedPersonsInAttendance (Gruppenfilter für eingeschränkte Helfer, = Ionic this.players), gezählt werden Anwesend/Verspätet/Verspätet entschuldigt.",
+   "v": "bestätigt"
+  },
+  "x-47702cd6f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1446"
+   ],
+   "n": "Behoben (#323): neutralAppIds (und hasNeutralPersons) aus der gruppengefilterten Personenliste wie Ionic this.players.",
+   "v": "bestätigt"
+  },
+  "x-a5bcacc4df": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:420",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1481",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:155",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1739"
+   ],
+   "n": "Behoben (#323): ref.listen auf attendanceDetailProvider ersetzt _localChecklist bei jedem neuen Termin-Stand (Realtime-UPDATE → invalidate, Wiedersichtbarwerden), nicht während eines laufenden eigenen Speicherns; nach jedem Speichern wird neu geladen. Löschen arbeitet per id. Eine von anderen begonnene Checkliste erscheint (Laden auch beim ersten nicht-null Stand). Schreiben der ganzen Liste wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-e549f975e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:37"
+   ],
+   "n": "Behoben (#323): computeAddPersonCandidates schließt pending-Personen aus (Ionic getPlayers(true)), dazu pausiert/ausgetreten wie bisher.",
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43": {
+   "s": "diff",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:148",
+    "lib/data/repositories/duty_repository.dart:464",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:234",
+    "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+   ],
+   "n": "Gegen aktuellen Stand neu geprüft: mittel-Grund behoben – „Auch geplante“: Update-Fehler → applyUnavailabilityToFuture liefert null → roter Toast „Fehler beim Übernehmen in geplante Termine“, kein grüner „0 Termine angepasst“; Lese-Fehler → 0 wie Ionic. Rest unverändert gleich (sichtbare Typen, Neu mit Dienst-Typen, Wochentag-Pflicht, Vorschau max. 4, Vorname bei forOther, Löschen mit Bestätigung). Übrig niedrig: x-1017c7460d (Ladefehler ohne Button), x-21dc916f43 (Typnamen unsichtbarer Typen), Grund wird getrimmt. Sev mittel → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14",
+    "lib/features/people/presentation/widgets/person_modal.dart:10",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Behoben (#295): showPersonModal → showPageModal (iOS Karten-Modal über der Seite, md Vollbild/Desktop-Karte, barrierDismissible false = backdropDismiss false), PersonDetailPage im Modal; bearbeitbar wie Ionic (Dashboard nur Admin/Verantwortlich, readOnly=false). Danach Neuladen der Personenkarten (Ionic nur bei der Problemfall-Karte; harmlos).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14",
+    "lib/features/people/presentation/widgets/person_modal.dart:10",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Behoben (#295): showPersonModal → showPageModal (iOS Karten-Modal über der Seite, md Vollbild/Desktop-Karte, barrierDismissible false = backdropDismiss false), PersonDetailPage im Modal; bearbeitbar wie Ionic (Dashboard nur Admin/Verantwortlich, readOnly=false). Danach Neuladen der Personenkarten (Ionic nur bei der Problemfall-Karte; harmlos).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14",
+    "lib/features/people/presentation/widgets/person_modal.dart:10",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Behoben (#295): showPersonModal → showPageModal (iOS Karten-Modal über der Seite, md Vollbild/Desktop-Karte, barrierDismissible false = backdropDismiss false), PersonDetailPage im Modal; bearbeitbar wie Ionic (Dashboard nur Admin/Verantwortlich, readOnly=false). Danach Neuladen der Personenkarten (Ionic nur bei der Problemfall-Karte; harmlos).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14",
+    "lib/features/people/presentation/widgets/person_modal.dart:10",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109"
+   ],
+   "n": "Behoben (#295): showPersonModal → showPageModal (iOS Karten-Modal über der Seite, md Vollbild/Desktop-Karte, barrierDismissible false = backdropDismiss false), PersonDetailPage im Modal; bearbeitbar wie Ionic (Dashboard nur Admin/Verantwortlich, readOnly=false). Danach Neuladen der Personenkarten (Ionic nur bei der Problemfall-Karte; harmlos).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#effect-e221ccc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:179",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Behoben (#298): Instanzwechsel im Dashboard setzt die Instanz, wartet auf die Rolle und geht auf role.defaultRoute (Admin/Verantw./Beobachter → /people, Eltern → /parents, sonst /signout) = Utils.getUrl; nicht mehr aufs Dashboard.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#nav-1c9dc137": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:179",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "n": "Behoben (#298): Instanzwechsel im Dashboard setzt die Instanz, wartet auf die Rolle und geht auf role.defaultRoute (Admin/Verantw./Beobachter → /people, Eltern → /parents, sonst /signout) = Utils.getUrl; nicht mehr aufs Dashboard.",
+   "v": "bestätigt"
+  },
+  "instruments/instrument/instrument.page#logic-2c2cd89a": {
+   "s": "diff",
+   "f": [
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:718",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:762",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:772"
+   ],
+   "n": "Gegen aktuellen Stand neu geprüft: mittel-Grund behoben – Speichern läuft im Dialog (Toast „… aktualisiert“, Schließen erst nach Erfolg; bei Fehler Toast „Es kann nur eine Hauptgruppe existieren“/„Fehler beim updaten…“ und Eingaben bleiben), Löschprüfung (Personen inkl. Archiv) vor der Bestätigung mit Toast, dann „Bestätigen“/„Gruppe wirklich löschen?“ Abbrechen/Ja. Synonyme (Name-Pflicht, Erfolg/Fehler) gleich. Übrig niedrig: x-718f3b20d0 (getrimmte Werte, leer → null, tuning/clefs immer geschrieben); Zählfehler bei der Löschprüfung → Löschen wird angeboten (Ionic: Abbruch). Sev mittel → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "messages/message-detail/message-detail.page#logic-9a7e9461": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/message_repository.dart:48",
+    "lib/core/providers/message_providers.dart:58",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:201",
+    "lib/data/repositories/auto_message_repository.dart:240"
+   ],
+   "n": "Gegen aktuellen Stand neu geprüft: Kernlogik weiter gleich (Instanzwechsel zur Mitteilung, Manager = Admin/Verantw. der Instanz der Mitteilung, Inhalt eingeklappt für Manager, markRead, Personalisierung, Zähler/Chips/Filter, frühere Mitteilungen, Löschen → /settings/messages). Neu gleich: Lade-Fehler-Toast; Termin-Karte auch bei archiviertem Termin (x-ad6a974bce zu). Weiter real: getMessageById filtert auf aktuelle + eigene Instanzen → Mitteilung einer verlassenen Instanz zeigt „gibt es nicht mehr…“ statt der eigenen Kopie (x-b5f5a215de, mittel).",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "messages/message-detail/message-detail.page#toast-264998c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:52",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:64"
+   ],
+   "n": "Behoben (#298): einmal roter Toast „Mitteilung konnte nicht geladen werden“, wenn Mitteilung, Instanzwechsel, Empfänger (Manager) oder frühere Mitteilungen (Mitglied) fehlschlagen; Pull-to-Refresh setzt zurück.",
+   "v": "bestätigt"
+  },
+  "x-ad6a974bce": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:240"
+   ],
+   "n": "Behoben (#298): getAttendanceInfo liest archived mit, verwirft archivierte Termine aber nicht mehr (Filter nur tenantId) → Mitglieder sehen Termin-Karte und Antwort-Knöpfe auch bei archiviertem Termin wie Ionic.",
+   "v": "bestätigt"
+  },
+  "x-b5f5a215de": {
+   "s": "diff",
+   "f": [
+    "lib/data/repositories/message_repository.dart:48",
+    "lib/core/providers/message_providers.dart:58",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:201"
+   ],
+   "n": "Weiter real auf 57bb011: getMessageById filtert .inFilter(tenantId, aktuelle + eigene Instanzen); Ionic getMessage ohne Instanzfilter (RLS lässt Empfänger ihre Kopie lesen). Nach Austritt aus einer Instanz zeigt ein alter Push-/Mail-Link in Flutter „Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.“ statt der Mitteilung. Seltener Fall, mittel bleibt.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "x-3340d46ef9": {
+   "s": "ok",
+   "f": [
+    "android/app/src/main/AndroidManifest.xml:14"
+   ],
+   "n": "Behoben (#285): MainActivity mit android:launchMode=\"singleTask\" wie Ionic, taskAffinity=\"\" entfernt → Links aus fremden Apps landen in der einen Instanz. Gerätetest (Link aus Gmail/WhatsApp, dann Icon) laut device-checklist.md noch offen.",
+   "v": "bestätigt"
+  },
+  "x-4beeb3b857": {
+   "s": "diff",
+   "f": [
+    "pubspec.yaml:4",
+    "android/app/build.gradle.kts:40",
+    "android/app/build.gradle.kts:41",
+    "docs/push-setup.md:23",
+    "docs/parity/device-checklist.md:31"
+   ],
+   "n": "Weiter real auf 57bb011: pubspec 0.41.25+137 → versionCode 137 / versionName 0.41.25; Ionic 4.19.9 hat versionCode 230 / „4.19.9“ (build.gradle:10-11). Play nimmt nur Codes > 230 an → --build-number ≥ 231 und --build-name ≥ 5.0.0 nötig; kein Skript/CI setzt sie. Veraltet: docs/push-setup.md:23-24 (227/228) und device-checklist.md:31 („≥ 229“ – 229/230 würden abgelehnt).",
+   "v": "bestätigt",
+   "sev": "hoch"
+  },
+  "x-6d9a24bfe2": {
+   "s": "diff",
+   "f": [
+    "lib/core/services/native/ionic_session_takeover.dart:114",
+    "ios/Runner/AppDelegate.swift:188",
+    "android/app/src/main/kotlin/de/attendix/attendix/ionic/IonicSessionPlugin.kt:126"
+   ],
+   "n": "Weiter teilweise real: Übernahme liest nur Sitzung (sb-…-auth-token) und currentTenantId aus dem Ionic-localStorage. Nicht übernommen: Offline-Warteschlange offline_writes_v1 (nicht synchronisierte Änderungen gehen beim Update verloren), Ansichts-/Sortieroptionen aus Ionic Storage, push_prompt_shown. mittel passt; Gerätetest laut device-checklist.md offen.",
+   "v": "bestätigt",
+   "sev": "mittel"
+  },
+  "x-cb1c5c9d93": {
+   "s": "diff",
+   "f": [
+    "ios/Runner/Info.plist:37",
+    "ios/Runner/Info.plist:41",
+    "pubspec.yaml:4"
+   ],
+   "n": "Weiter real auf 57bb011: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.41.25 (137); Ionic 4.19.9 Release MARKETING_VERSION 4.19.9 / CURRENT_PROJECT_VERSION 239 (project.pbxproj:457/465). App Store Connect lehnt eine Version unter 4.19.9 ab → --build-name ≥ 5.0.0 nötig, kein Skript/CI übergibt es.",
+   "v": "bestätigt",
+   "sev": "hoch"
+  },
+  "org-plan-public/org-plan-public.page#native-c9096ded": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:178"
+   ],
+   "n": "Behoben (#307): Kalender-Dialog hat „Anleitung öffnen“ zwischen „Link kopieren“ und „Schließen“; öffnet support.apple.com/de-de/102301 (iOS, auch iOS-Browser) bzw. die Google-Kalender-Hilfe im In-App-Browser (= Browser.open) und schließt den Dialog.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-a15cd8e0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:61",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:352"
+   ],
+   "n": "Behoben (#307): Namensprüfung (orgFieldId wie Ionic org_<orgId>_<name>) läuft im Sheet vor dem Schließen; Toast „Ein Zusatzfeld mit diesem Namen existiert bereits.“ (rot), Sheet bleibt mit allen Eingaben offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-14d3ff8c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:30",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:364"
+   ],
+   "n": "Behoben (#307): leerer Name → Hinweis „Bitte gib einen gültigen Namen ein.“ im offenen Dialog (emptyMessage), sonst getrimmt speichern und „Organisation umbenannt“. Fehlertext beim Speichern „Fehler beim Speichern“ statt Ionic svc.renameOrgFailed gehört zum Service-Toast.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#logic-84c1649d": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:116",
+    "lib/features/people/presentation/pages/people_list_page.dart:331",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:169"
+   ],
+   "n": "Gegen aktuellen Stand neu geprüft: beide mittel-Gründe behoben – „Für alle setzen“-Startwert wie Ionic getFieldTypeDefaultValue(type, undefined) (Ja/Nein true, Zahl 0, Auswahl erste Option, Gemeinde erste, Datum jetzt, Text ''), und die Liste übergibt Personen mit aufgefüllten Defaults (_withDefaults) → gleiche Anzeige, Änderungszahl und Schreibwerte. Speichern (player bzw. tenant_group_person_fields), Termin-Sync, Demo-Sperre gleich. Übrig niedrig: x-a485e4b055, x-1aab272cf3 (Flutter besser), x-5b376c7a36 (zweiter Fehler-Toast fehlt, „Fehler beim Speichern“ kommt). Sev mittel → niedrig.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "people/import/import.page#effect-31a0aedd": {
+   "s": "diff",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:137",
+    "lib/core/services/native/native_file_service.dart:167",
+    "lib/core/services/native/native_file_io.dart:14"
+   ],
+   "n": "hoch-Lücke behoben (#325): nativ (auch iPad) Datei im Cache + Systemviewer (OpenFilex) wie Ionic, kein Teilen-Popover mehr; Vorlage mit Org- und Instanz-Zusatzfeldern, Name/Blatt/Kopf/Beispiel gleich. Rest niedrig: mobiler Browser bekommt einen Anker-Download (printing sharePdf, Blob-Typ application/pdf) statt des Web-Share-Sheets (Ionic downloadFileNative); auf iPhone-Safari/PWA prüfen – lässt sich die .xlsx dort nicht speichern, wäre es mittel.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  }
+ },
+ "extra": []
+}

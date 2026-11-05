@@ -1,6 +1,6 @@
 # Fix-Paket „termine“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 0
@@ -87,7 +87,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: (1) Ionic schließt nur Personen aus this.players aus – ein eingeschränkter Stimmführer-Helfer bekommt Personen anderer Gruppen angeboten, die schon im Termin sind (Doppelzeile möglich); Flutter schließt alle vorhandenen Zeilen aus. (2) Ionic sucht die Gruppe in this.instruments ohne Hauptgruppe → Personen der Hauptgruppe heißen „Keine Gruppe“ und stehen ganz unten; Flutter zeigt deren Gruppennamen und sortiert nach deren sort_order.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1356, lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:55, lib/features/attendance/presentation/attendance_add_persons.dart:51
 
-## Kleinigkeiten (niedrig): 62
+## Kleinigkeiten (niedrig): 67
 
 - [ ] **niedrig** `attendance/att-list/att-list.page` `loading-e1caea8b` [attendance/att-list/att-list.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L254)
   Ionic: blockierendes Loading-Overlay (3 s) während setTenant + Navigation / Flutter: switchTenant ohne Overlay oder Ladeanzeige.
@@ -98,6 +98,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `attendance/att-list/att-list.page` `toast-2921a95c` [attendance/att-list/att-list.page.ts:385](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L385) (2. Prüfung: bestätigt)
   Ionic: Toast (danger) „Ungültiger Anwesenheitstyp ausgewählt“, wenn type_id keinem Typ entspricht (z. B. kein sichtbarer Typ) / Flutter: neutrale SnackBar „Bitte wähle einen Veranstaltungstyp“ (attListInvalidType ungenutzt), Prüfung vor der Datumsprüfung.
   Flutter: lib/features/attendance/presentation/pages/attendance_create_page.dart:821
+- [ ] **niedrig** `attendance/att-list/att-list.page` `alert-c973a254` [attendance/att-list/att-list.page.ts:621](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L621) (2. Prüfung: korrigiert)
+  Alert „Dirigent eingeben“ (Platzhalter „Dirigent“, Abbrechen/Speichern) gleich. Flutter besser: bei Abbrechen oder leerem Namen wird die vorherige Dirigentenauswahl wiederhergestellt; Ionic lässt „Anderer Dirigent“ ohne Namen stehen bzw. speichert leeren Namen.
+  Flutter: lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:106
 - [ ] **niedrig** `attendance/att-list/att-list.page` `action-d02e9e23` [attendance/att-list/att-list.page.html:115](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.html#L115)
   Ionic: Titel getEventTitle (typeInfo / Typname außer hide_name / Datum), Meta "Di., 20.10.2026 · 19:00–21:00"; Tap öffnet Termin nur für Dirigent/Helfer / Flutter: Titel typeInfo / Typname / "Dienst" (hide_name ignoriert), Meta "Di, 20.10. · 19:00" (ohne Jahr, ohne Endzeit); Tap ohne Rollenprüfung.
   Flutter: lib/features/duty/presentation/widgets/my_duty_requests_section.dart:42, lib/features/duty/presentation/widgets/my_duty_requests_section.dart:71, lib/data/repositories/duty_repository.dart:41
@@ -149,12 +152,24 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `attendance/attendance/attendance.page` `loading-41558b08` [attendance/attendance/attendance.page.ts:1077](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1077)
   Ionic: blockierendes Loading während des Uploads / Flutter: nur Spinner im Sheet, nicht blockierend.
   Flutter: lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:110
+- [ ] **niedrig** `attendance/attendance/attendance.page` `effect-839f92ba` [attendance/attendance/attendance.page.ts:1275](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1275) (2. Prüfung: korrigiert)
+  mittel-Lücke behoben (#306): Segment „Nur <Plan>“/„Alle n Pläne“ × PDF / PDF 2x A5 (2x A5 jetzt auch für alle), Titel mit planning_title/Typname wie getPlanningTitle, Name „…_alle“/„_2x“. Rest niedrig: Dateidatum = Termin-Start statt Plandatum (bei „Nur“ eines späteren Tages), Unterzeile hängt bei mehreren Plänen immer „· <Plan>“ an (Ionic planSubtitle nur ohne Tag oder mit eigenem Namen), „Alle“ nimmt auch Pläne ohne Punkte als Seite auf (Ionic filtert sie heraus).
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:128, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:154, lib/features/planning/presentation/widgets/plan_export_actions.dart:114
+- [ ] **niedrig** `attendance/attendance/attendance.page` `effect-7cdd0978` [attendance/attendance/attendance.page.ts:1436](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1436) (2. Prüfung: korrigiert)
+  mittel-Lücke behoben (#306): Bei mehreren Plänen Teilen-Sheet mit „Nur <Plan>“/„Alle n Pläne“, Telegram PDF / PDF 2x A5 für einen oder alle Pläne, Bild nur für einen (nur mit Chat-ID), Titel plan.title || planning_title (typeInfo) || typeInfo || Typname, Name mit „_alle“/„_2x“. Rest niedrig: Dateiname nimmt immer das Termin-Startdatum (Ionic planDate des ersten exportierten Plans → bei „Nur Tag 2“ anderes Datum) und bei „Alle“ den Titel des gerade gezeigten statt des ersten Plans.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:149, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:166, lib/features/planning/presentation/widgets/plan_export_actions.dart:261, lib/features/planning/presentation/widgets/plan_export_actions.dart:170
 - [ ] **niedrig** `attendance/attendance/attendance.page` `actionsheet-0085a6c3` [attendance/attendance/attendance.page.ts:1574](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1574)
   Optionen gleich („Dirigent ändern“, „Zum Werk“, Abbrechen). Header Ionic „12 Name“ (Nummer ohne Präfix) / Flutter Song.displayName mit Präfix und „ - “; unbekannt: Ionic „Unbekanntes Lied“ / „Unbekannter Dirigent“, Flutter „Unbekanntes Werk“ / „Unbekannt“.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:2126, lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:33
+- [ ] **niedrig** `attendance/attendance/attendance.page` `alert-aadedcba` [attendance/attendance/attendance.page.ts:1692](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1692) (2. Prüfung: korrigiert)
+  Alert „Dirigent eingeben“ (Platzhalter „Dirigent“, Abbrechen/Speichern) gleich. Flutter besser: bei Abbrechen oder leerem Namen wird die vorherige Dirigentenauswahl wiederhergestellt; Ionic lässt „Anderer Dirigent“ ohne Namen stehen bzw. speichert leeren Namen.
+  Flutter: lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:106
 - [ ] **niedrig** `attendance/attendance/attendance.page` `actionsheet-1aaa2155` [attendance/attendance/attendance.page.ts:1954](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1954)
   Reihenfolge und Bedingungen gleich. Flutter besser: „Erinnerung“ für eine Person ohne Account zeigt „Die Person hat keinen Account“; Ionic sendet dann (playerAppId undefined) an alle Personen des Termins.
   Flutter: lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:207, lib/features/attendance/presentation/pages/attendance_detail_page.dart:775
+- [ ] **niedrig** `attendance/attendance/attendance.page` `effect-8f43ff82` [attendance/attendance/attendance.page.ts:1963](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1963) (2. Prüfung: korrigiert)
+  hoch-Lücke behoben (#306): Excel exportiert jetzt die Personen der Liste (Helfer/Helfer-Stimmführer ohne attendance_all_groups nur die eigene Gruppe, resolvedGroupScope) sortiert nach Hauptgruppe/Gruppenreihenfolge/Name. Spalten, Status, Gemeinde, Dateiname gleich. Bleibt: Flutter besser: HELPER ohne player_notes_view bekommt eine leere Notizspalte (Ionic exportiert user.notes ungefiltert, obwohl die Ansicht sie verbirgt).
+  Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:2517, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2533, lib/features/attendance/presentation/pages/attendance_detail_page.dart:2539, lib/core/providers/role_permission_providers.dart:97
 - [ ] **niedrig** `attendance/attendance/attendance.page` `alert-3e7845a6` [attendance/attendance/attendance.page.ts:2022](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L2022)
   Dialog gleich („To-Do hinzufügen“, Text, Frist in Stunden, Abbrechen/Hinzufügen). Flutter zeigt zusätzlich Toast „To-Do hinzugefügt“.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1530, lib/features/attendance/presentation/pages/attendance_detail_page.dart:1601

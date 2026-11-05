@@ -1,10 +1,13 @@
 # Fix-Paket „selbstservice“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 0
+## Angleichen (hoch/mittel): 1
 
+- [ ] **mittel** `selfService/parents/parents.page` `x-afb9c7a207` **Reihenfolge der Kinder** [src/app/services/db.service.ts:1586](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L1586) (2. Prüfung: korrigiert)
+  Fix unvollständig: getChildrenForParent übernimmt Ionics Sortierfolge instrument, isLeader absteigend, lastName – aber .order('instrument') und .order('lastName') ohne ascending sind in postgrest-dart 2.6.0 absteigend (order(column, {ascending = false}), postgrest_transform_builder.dart:72-75); postgrest-js (Ionic) sortiert aufsteigend. Kinder (und über childOrder die Termin-Zeilen je Kind) erscheinen in umgekehrter Instrument-/Nachnamen-Reihenfolge.
+  Flutter: lib/data/repositories/player_repository.dart:266, lib/data/repositories/player_repository.dart:268, lib/features/parents/data/providers/parents_providers.dart:294
 
 ## Flutter besser – Leon entscheidet: 13
 

@@ -1,0 +1,383 @@
+{
+ "batch": "zz-verify5-a-opus-02",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "people/import/import.page#logic-5814da2d": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart",
+    "lib/core/utils/spreadsheet_reader.dart:39-48",
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/providers/profile_providers.dart:67-91"
+   ],
+   "n": "Die hoch/mittel-Abweichungen sind behoben: Org-Zusatzfelder (personListExtraFieldsProvider) in Zuordnung und Vorlage, .xls-Import über xls_reader, Vorlage per NativeFileService.saveBytes. Rest niedrig: Fehlgrund in der Liste „Nicht importiert“ als technischer Text ('$name: $e'), kein Ladetext „Datei wird gelesen…“, Liste wird immer invalidiert (Flutter besser), bei Teilfehlern bleibt die Seite offen. Erstreviewer: hoch zu streng.",
+   "v": "korrigiert"
+  },
+  "x-dce118d389": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/spreadsheet_reader.dart:39-48",
+    "lib/core/utils/xls_reader.dart"
+   ],
+   "n": "Zurückgezogen: .xls (OLE2/BIFF8) wird jetzt per isOle2File → _readXls gelesen, keine Ablehnungsmeldung mehr.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#alert-76ef2f5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1053-1124"
+   ],
+   "n": "Zusatzfeld-Filter als Radio-Alert (showAppRadioAlert) mit Ionic-Optionen und „Filtern“.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#db-a9ead6a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1207-1250",
+    "lib/data/repositories/player_repository.dart:1883-1897"
+   ],
+   "n": "savePlayerOrder schreibt sort_order nur für umsortierte Gruppen, Filter id + tenantId.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#logic-9183f2d4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:331-350",
+    "lib/features/people/presentation/pages/people_list_page.dart:476-480",
+    "lib/features/people/presentation/utils/people_list_utils.dart:59-139"
+   ],
+   "n": "hoch/mittel behoben: Zusatzfeld-Defaults (withExtraFieldDefaults), Sortierung nach Gruppe mit deutschem Vergleich (localeCompareDe), Lehrernamen aus teachersProvider, Umsortieren speichert nur geänderte Gruppen. Rest nur Darstellung/Anordnung (niedrig). Erstreviewer: hoch nicht mehr zutreffend.",
+   "v": "korrigiert"
+  },
+  "people/list/list.page#modal-38ba21ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_modal.dart",
+    "lib/shared/widgets/dialogs/ion_modal.dart:109-128"
+   ],
+   "n": "Person-Modal als Vollseiten-Modal ohne Schließen per Hintergrund (barrierDismissible:false) wie Ionic backdropDismiss false.",
+   "v": "bestätigt"
+  },
+  "people/members/members.page#logic-a08c75f7": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/members/data/providers/members_providers.dart:24-71",
+    "lib/features/members/data/providers/members_providers.dart:92-100"
+   ],
+   "n": "mittel behoben: Zusatzfeld-Defaults und Sortierung nach Gruppe (sortPeopleByGroup, Hauptgruppe nicht vorn) wie Ionic, Einteilungs-Optionen gleich. Rest: Ladefehler inline statt Toast (niedrig, Nutzer erfährt den Fehler). Erstreviewer: mittel zu streng.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#action-0a1221be": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:159-310",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:393-395"
+   ],
+   "n": "Bildbetrachter-Aktion „Ersetzen“ nur mit canEdit, Viewer schließt vor der Aktion.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-29de3e84": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1268-1296"
+   ],
+   "n": "Pausierung aufheben schließt die Seite ohne Toast wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-77040b65": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1298"
+   ],
+   "n": "Archivieren öffnet das Archiv-Modal wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-caeb0a85": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_create_page.dart:944-1035",
+    "lib/features/people/presentation/pages/people_list_page.dart"
+   ],
+   "n": "Neu-Anlage: Speichern mit Ionic-Ablauf (Zusatzfeld-Defaults, Sperre für Nicht-Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-ea218e71": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/person_header.dart:159-310"
+   ],
+   "n": "„Entfernen“ mit Bestätigung, img = '' und syncOwnImage wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#actionsheet-fba9657b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1505-1556"
+   ],
+   "n": "Weitere-Aktionen-Sheet mit Ionic-Einträgen und Bedingungen.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-97cf5262": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart",
+    "lib/data/repositories/player_repository.dart:1714-1724"
+   ],
+   "n": "Dialog „Person kopieren/übertragen“ mit Ionic-Texten und Abbrechen/Ja gleich. Flutter besser: handoverPlayer setzt Rolle RESPONSIBLE, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist; Ionic vergleicht mit der Hauptgruppe der Quellinstanz und vergibt dadurch praktisch immer PLAYER. Erstreviewer übersah die Rollenabweichung.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#alert-f1974eb4": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:689-930"
+   ],
+   "n": "E-Mail-hinzugefügt-Dialog mit Abbrechen/Ja wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-272c2c28": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart"
+   ],
+   "n": "Ziel-Instanz/Ziel-Gruppe-Auswahl wie Ionic, Hinweis „… nicht möglich“ bei fehlender Gruppe.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-fe3a2971": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1870-2136"
+   ],
+   "n": "Problemfall-Schalter setzt Änderungsstatus, gespeichert mit Speichern wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#logic-8a6cf6df": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:353-460",
+    "lib/features/people/presentation/pages/person_detail_page.dart:689-930",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1019-1077",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1737-1815"
+   ],
+   "n": "hoch/mittel behoben: Entwurf bei Datenwechsel neu aufgesetzt (didUpdateWidget/_rebaseDraft), Zusatzfeld-Defaults, Notizen-Historie nur bei Änderung, Rollen-Sync, Konto anlegen/zuordnen wie Ionic, canEdit = (Admin||Verantwortlich) && !left. Rest nur Darstellung (niedrig). Erstreviewer: hoch nicht mehr zutreffend.",
+   "v": "korrigiert"
+  },
+  "people/person/person.page#modal-b80602d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:174-184",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:278-323"
+   ],
+   "n": "Hilfe-Sheet zum Konto wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-34177970": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:17-130"
+   ],
+   "n": "Andere Instanzen mit Text und Daten wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-b133c084": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/allgemein_accordion.dart:271-289"
+   ],
+   "n": "Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-9e8a666e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:689-930"
+   ],
+   "n": "Speichern schließt mit Erfolgstoast wie Ionic.",
+   "v": "bestätigt"
+  },
+  "planning/plan-viewer/plan-viewer.component#action-705fc86e": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:114-157",
+    "lib/features/planning/presentation/attendance_plan_viewer.dart"
+   ],
+   "n": "Viewer aus der Terminliste mit allen Plänen (extraPlans), Bearbeiten nur mit canAddAttendance.",
+   "v": "bestätigt"
+  },
+  "x-de53b1e39b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:114-157",
+    "lib/features/self_service/presentation/widgets/plan_viewer_sheet.dart:384-466",
+    "lib/data/repositories/sign_in_out_repository.dart:21-23"
+   ],
+   "n": "Zurückgezogen: Terminliste und Selbstservice übergeben extra_plans, Viewer zeigt Chips je Plan/Tag, Start = heutiger Plan.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#logic-5522ee54": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:697-763",
+    "lib/features/planning/presentation/pages/planning_page.dart:790-845",
+    "lib/features/planning/presentation/pages/planning_page.dart:906-925",
+    "lib/data/repositories/plan_repository.dart:44-95"
+   ],
+   "n": "hoch/mittel-Extras behoben (archivierte Termine für Helfer gefiltert, Standardplan-Logik und Start-Termin wie Ionic, siehe x-5e1a396117/x-7d55a70233/x-9b169a1078). Rest nur niedrig (Darstellung, Nachladen per ID = Flutter besser). Erstreviewer: hoch nicht mehr zutreffend.",
+   "v": "korrigiert"
+  },
+  "x-5e1a396117": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:790-845",
+    "lib/core/providers/plan_providers.dart:45-61"
+   ],
+   "n": "Zurückgezogen: archivierte Termine werden für Helfer/SF-Helfer wie Ionic filterArchivedForRole ausgeblendet.",
+   "v": "bestätigt"
+  },
+  "x-7d55a70233": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:906-925",
+    "lib/features/planning/presentation/pages/planning_page.dart:1019-1024"
+   ],
+   "n": "Zurückgezogen: Termin ohne Plan folgt jetzt Ionic (Typ-Vorlage nur mit Historie, sonst nichts geschrieben).",
+   "v": "bestätigt"
+  },
+  "x-9b169a1078": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/planning_page.dart:697-763"
+   ],
+   "n": "Zurückgezogen: ohne kommenden Termin wird wie Ionic kein Termin gewählt und nichts gespeichert.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol-pdf#logic-3a7d97db": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/core/services/pdf_fonts.dart",
+    "lib/features/team_organization/protocol_pdf.dart:55"
+   ],
+   "n": "Schriftproblem behoben (NotoSans, Umlaute). Rest: PDF-Layout weicht im Aussehen von Ionic jsPDF ab (niedrig). Erstreviewer übersah die Layout-Abweichung.",
+   "v": "korrigiert"
+  },
+  "protocols/protocol/protocol.page#logic-82b3528c": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:467-476",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:740-748",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:813-845",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1011-1080"
+   ],
+   "n": "Zusammenführung bei gleichzeitig geöffneten Editoren behoben. Rest niedrig: nach Veröffentlichen kein erneutes Zusammenführen (enges Race-Fenster), Teilnehmer-Sortierung per compareTo statt localeCompare. Erstreviewer: ok zu großzügig.",
+   "v": "korrigiert"
+  },
+  "public-planning/public-planning.page#db-b17aa9e7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:275-296",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:300-350"
+   ],
+   "n": "Upsert shared_plans onConflict id mit id, edit_key, plan_title (getrimmt/„Ablaufplan“), date, time, end_time, fields, creator_user_id; branding_id wird jetzt explizit gesetzt (null bei „Kein Branding“) wie Ionic. Flutter besser: Autosave-Fehler → Toast.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-1ad39a4e": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/public_brandings.dart:1-35",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:738-760",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:96-170"
+   ],
+   "n": "Telegram (PDF, 2x A5, Bild) nur mit verknüpftem Chat, Branding = gewähltes öffentliches Branding (FECG-Logo + Text, keins bei „Kein Branding“) wie Ionic buildBranding.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-6021ff44": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/public_brandings.dart:1-35",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:736-741",
+    "lib/core/services/plan_export_service.dart:138-142"
+   ],
+   "n": "Bild (A4) mit gewähltem öffentlichen Branding, Datei „Titel_JJJJ-MM-TT.png“ über saveBytes wie Ionic downloadFileNative.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-73ff88d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/public_brandings.dart:1-35",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:731-760",
+    "lib/core/services/plan_export_service.dart:131-135"
+   ],
+   "n": "PDF A4/2x A5 mit gewähltem öffentlichen Branding, Datei „Titel_Wochentag, TT.MM.JJJJ(_2x).pdf“ gespeichert (kein Druckdialog mehr) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205",
+    "lib/core/services/web_window_web.dart:87-99",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:772-797"
+   ],
+   "n": "Web behoben: Web Share API wenn vorhanden, sonst Kopieren + „Link in Zwischenablage kopiert“ (kein doppeltes Kopieren, kein mailto). Rest niedrig: native Android-App – Ionic-WebView hat kein navigator.share → kopiert + Toast / Flutter öffnet das System-Teilen-Sheet (Kopieren dort möglich). Flutter besser: scheitert Web Share (nicht Abbruch), wird kopiert. Erstreviewer übersah die native Abweichung.",
+   "v": "korrigiert"
+  },
+  "public-planning/public-planning.page#effect-9082e8f4-2": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:183-205",
+    "lib/core/services/web_window_web.dart:87-99",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:777-797"
+   ],
+   "n": "Anonymer Zweig wie effect-9082e8f4: Web gleich (Teilen, sonst Kopieren + Toast). Rest niedrig: native Android – Ionic kopiert + Toast / Flutter System-Teilen-Sheet. Erstreviewer übersah die native Abweichung.",
+   "v": "korrigiert"
+  },
+  "register/tenant-register/tenant-register.page#field-9f610a4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:380-420",
+    "lib/features/registration/data/providers/registration_providers.dart:33-60"
+   ],
+   "n": "Gruppenauswahl: Reihenfolge Kategorie/sort_order/Name, maingroup != true, erste Gruppe vorausgewählt wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#field-a9922b49": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart:60-85",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:470-560"
+   ],
+   "n": "Zusatzfelder in der Reihenfolge von registration_fields (orderedRegistrationFields) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#field-ac71b961": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:207-212",
+    "lib/features/registration/data/providers/registration_providers.dart:60-85"
+   ],
+   "n": "Auswahl-Zusatzfeld mit Default vorbelegt; Default wird über registrationFieldDefaults in additional_fields gespeichert wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#logic-b461582a": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:470-672",
+    "lib/features/registration/data/providers/registration_providers.dart:137-330"
+   ],
+   "n": "hoch/mittel behoben (Default von Auswahlfeldern gespeichert, Gruppen- und Zusatzfeld-Reihenfolge). Rest niedrig: Textarea/Datum-Zusatzfelder haben in Flutter Eingaben (Ionic leeres Item), Bestandskonto über registerUser (kein Duplikat), img ohne Passbild nicht auf DEFAULT_IMAGE gesetzt (Anzeige gleich), Namen getrimmt (Flutter besser). Erstreviewer: ok übersieht die verbliebenen niedrig-Extras.",
+   "v": "korrigiert"
+  }
+ },
+ "extra": []
+}

@@ -1,31 +1,22 @@
 # Fix-Paket „einstellungen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 7
+## Angleichen (hoch/mittel): 4
 
-- [ ] **mittel** `settings/general/type/type.page` `field-e2cc3102` [settings/general/type/type.page.html:550](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L550) (2. Prüfung: bestätigt)
-  Schreibt wie Ionic type.start_time und ist bei ganztägigen Typen editierbar, aber nur bei „Werke verwalten“; kein 5-Minuten-Raster; keine Neuberechnung einer Endzeit (Flutter zeigt keine).
-  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:563-574, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1196-1213
-- [ ] **mittel** `settings/settings/settings.page` `field-f65b81d3` [settings/settings/settings.page.html:165](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L165) (2. Prüfung: bestätigt)
-  Ionic: <input type=file accept=image/*> – in der App (iOS-WebView) Auswahl Mediathek/Foto aufnehmen/Datei, Originaldatei wird hochgeladen / Flutter: native Apps nur ImageSource.gallery (keine Kamera-Option; PWA: Browser-Dateiauswahl ohne capture wie Ionic); Bild wird auf max. 1200 px, Qualität 85 verkleinert.
-  Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:165, lib/features/profile/presentation/widgets/master_data_sheet.dart:166, lib/features/profile/presentation/widgets/master_data_sheet.dart:169
-- [ ] **mittel** `settings/settings/settings.page` `action-100a2fb9` [settings/settings/settings.page.html:269](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L269) (2. Prüfung: bestätigt)
-  Speichern-Eintrag und Felder (Name, Telefon, Geburtstag mit correctBirthday nur bei Änderung, Zusatzfelder inkl. Org-Feldern, Kirche) gleich. Ionic: Sheet bleibt nach dem Speichern offen, Eingaben wirken sofort live auf die Hero-Karte (auch ungespeichert) / Flutter: Sheet schließt nach Erfolg, ungespeicherte Eingaben verfallen beim Schließen; Flutter trimmt Namen/Telefon. Korrektur zur Erstnotiz: Ionic meldet Fehler sehr wohl (db.updateProfile zeigt 'Fehler beim Aktualisieren des Profils', wie Flutter). Instanzübergreifender Schreibweg ist im Service-Batch (b17 db-d030c88f) bewertet.
-  Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:346, lib/features/profile/presentation/widgets/master_data_sheet.dart:349, lib/features/profile/presentation/widgets/master_data_sheet.dart:227, lib/features/profile/presentation/widgets/master_data_sheet.dart:256, lib/features/profile/presentation/widgets/master_data_sheet.dart:258
 - [ ] **mittel** `settings/settings/settings.page` `text-87e51c97` [settings/settings/settings.page.html:780](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L780) (2. Prüfung: bestätigt)
-  Ionic: Badge mit package.json-Version (4.19.7) / Flutter: AppConstants.appVersion (0.38.1) – Nutzer sehen eine niedrigere, andere Versionsnummer.
+  Weiter gültig: Ionic-Badge package.json-Version 4.19.9 / Flutter AppConstants.appVersion 0.41.25 – Nutzer sehen eine niedrigere, andere Versionsnummer.
   Flutter: lib/features/settings/presentation/pages/settings_page.dart:549, lib/core/constants/app_constants.dart:10
 - [ ] **mittel** `settings/settings/settings.page` `text-7dea9c51` [settings/settings/settings.page.html:912](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L912) (2. Prüfung: bestätigt)
-  Kopf „Version x (Datum)“ gleich. Inhalt verschieden: Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.0 … 0.1.0, 106 Einträge, darunter „Beta:“-Einträge). Gleiche Ursache wie text-8938a6a0.
+  Weiter gültig: Kopf 'Version x (Datum)' gleich, Inhalt verschieden – Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.25 … 0.1.0, 131 Einträge).
   Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:166, assets/version_history.json:1
 - [ ] **mittel** `settings/settings/settings.page` `text-b8c80f4b` [settings/settings/settings.page.html:914](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L914) (2. Prüfung: bestätigt)
-  Fallback „Version x“ ohne Datum im Code vorhanden, erscheint aber nie: alle Flutter-Einträge haben ein Datum / Ionic zeigt ihn für 58 alte Einträge (3.5.0 … 1.4.0). Ursache und Behebung wie text-7dea9c51 (eigene Flutter-Historie).
+  Weiter gültig: Fallback 'Version x' ohne Datum im Code, erscheint nie (alle 131 Flutter-Einträge haben ein Datum) / Ionic zeigt ihn für 56 alte Einträge. Ursache wie text-7dea9c51.
   Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:167, assets/version_history.json:1
 - [ ] **mittel** `settings/settings/settings.page` `text-8938a6a0` [settings/settings/settings.page.html:921](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L921) (2. Prüfung: bestätigt)
-  Gleiche Darstellung ('Version x (Datum)' + je Änderung eine Zeile). Inhalt: Ionic version-history.json (4.19.x-Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.38.x, andere Einträge).
-  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:37, lib/shared/widgets/sheets/version_history_sheet.dart:176, lib/shared/widgets/sheets/version_history_sheet.dart:178, assets/version_history.json:1
+  Weiter gültig: gleiche Darstellung (je Änderung eine Zeile), aber andere Einträge – Ionic 4.19.x-Historie / Flutter eigene Historie (aktuell 0.41.25, 131 Versionen).
+  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:176, lib/shared/widgets/sheets/version_history_sheet.dart:178, assets/version_history.json:1
 
 ## Flutter besser – Leon entscheidet: 35
 
@@ -135,7 +126,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addReminder akzeptiert jede Zahl ≥ 0 (max=168 nur als Input-Attribut) / Flutter lehnt > 168 mit Toast „Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)“ ab.
   Flutter: lib/features/settings/presentation/widgets/type_reminders_editor.dart:39-41
 
-## Kleinigkeiten (niedrig): 194
+## Kleinigkeiten (niedrig): 199
 
 - [ ] **niedrig** `settings/administration/administration.page` `toast-4886e3c8` [settings/administration/administration.page.ts:59](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/administration/administration.page.ts#L59)
   Texte gleich ("Speicher: unbegrenzt" / "Speicherlimit: {gb} GB"). Ionic: {gb} = rohe JS-Zahl mit Dezimalpunkt, ungerundet ("2.5") / Flutter: _fmtGb mit Dezimalkomma, auf 2 Stellen gerundet ("2,5").
@@ -191,6 +182,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/files/files.page` `nav-c401b9ed` [settings/files/files.page.ts:55](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/files/files.page.ts#L55)
   Ionic: navCtrl.back() ohne Zugriff / Flutter bleibt auf der Seite (Hinweistext, Menü ausgeblendet); _init lädt trotzdem die Einträge (ggf. Fehler-Toast).
   Flutter: lib/features/settings/presentation/pages/files_page.dart:1128-1134, lib/features/settings/presentation/pages/files_page.dart:209-210
+- [ ] **niedrig** `settings/files/files.page` `effect-c39ff4df` [settings/files/files.page.ts:93](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/files/files.page.ts#L93) (2. Prüfung: korrigiert)
+  Fix greift im Browser (Web Share API zuerst, Abbruch tut nichts, sonst Kopieren + Toast 'Link kopiert', sonst Link-Toast) und in der iOS-App (WKWebView hat navigator.share). Android-App: Ionic-WebView hat kein navigator.share → Ionic kopiert den Link mit Toast 'Link kopiert' / Flutter öffnet nativ immer das Teilen-Sheet (canUseSystemShareSheet = true). Gleiche Funktion, anderer Weg.
+  Flutter: lib/features/settings/presentation/pages/files_page.dart:430, lib/features/settings/presentation/pages/files_page.dart:435, lib/features/settings/presentation/pages/files_page.dart:449, lib/core/utils/system_share/system_share_stub.dart:2, lib/core/utils/system_share/system_share_web.dart:11
 - [ ] **niedrig** `settings/files/files.page` `toast-767d441c` [settings/files/files.page.ts:106](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/files/files.page.ts#L106)
   Ionic: Toast „Link: {url}“ (medium), wenn die Zwischenablage fehlschlägt / Flutter öffnet dann Share.share; Toast (Info) erst, wenn auch das fehlschlägt.
   Flutter: lib/features/settings/presentation/pages/files_page.dart:431-436
@@ -429,12 +423,18 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/type/type.page` `popover-31d23755` [settings/general/type/type.page.html:417](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L417) (2. Prüfung: bestätigt)
   Nur Optik (Leon 05.11.2026): Gleiche 9 Farben und Auswahl, nur Dialog statt Popover. – Befund: Ionic: Popover am Farb-Eintrag mit 3er-Raster / Flutter: zentrierter Dialog mit Farb-Raster; 9 Farben, Reihenfolge und graue Markierung der Auswahl gleich, Tippen übernimmt und schließt.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:744-781
+- [ ] **niedrig** `settings/general/type/type.page` `field-1ef7f6fa` [settings/general/type/type.page.html:452](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L452) (2. Prüfung: korrigiert)
+  Erste Bewertung ok; Randfall: Ionic zeigt den Filter auch wenn nur Organisations-Felder select/boolean sind (getPersonExtraFields), Flutter nur Instanz-Felder (tenant.additionalFields). Optionen listet Ionic selbst nur aus der Instanz, praktische Wirkung minimal.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1050
 - [ ] **niedrig** `settings/general/type/type.page` `field-c6f43718` [settings/general/type/type.page.html:475](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L475)
   Label „Wert“ statt „Option“; Optionen und Vorauswahl (erste Option) gleich.
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1152-1171
 - [ ] **niedrig** `settings/general/type/type.page` `action-b172177a` [settings/general/type/type.page.html:514](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L514) (2. Prüfung: bestätigt)
   Popover-Eintrag „Tagesordnung Platzhalter“ fehlt; der Marker ist (wie in Ionic auch) über „Platzhalter einfügen“ im Protokoll-Bereich einfügbar.
   Flutter: lib/features/settings/presentation/widgets/type_protocol_settings.dart:156-165
+- [ ] **niedrig** `settings/general/type/type.page` `field-e2cc3102` [settings/general/type/type.page.html:550](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L550) (2. Prüfung: korrigiert)
+  Nach Änderung: 'Start' im Ablaufplan immer sichtbar (nicht mehr nur bei 'Werke verwalten'), nur bei ganztägigen Typen editierbar, schreibt start_time und berechnet 'Ende' neu wie Ionic. Übrig: Zeitauswahl im 1-Minuten-Raster statt minuteValues 0,5,…,55 (showAppTimePicker ohne minuteInterval).
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1440, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1266, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1354
 - [ ] **niedrig** `settings/general/type/type.page` `modal-8afdfb0b-4` [settings/general/type/type.page.html:604](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L604) (2. Prüfung: bestätigt)
   Kein (gesperrter) Endzeit-Picker; siehe text-d7a84674-2.
 - [ ] **niedrig** `settings/general/type/type.page` `field-076bd829` [settings/general/type/type.page.html:606](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L606) (2. Prüfung: bestätigt)
@@ -581,6 +581,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/settings/settings.page` `text-a4f92d9f` [settings/settings/settings.page.html:144](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L144)
   'Name: Wert' für alle für Spieler sichtbaren Zusatzfelder, '—' bei leer, Gemeindename. Abweichend: Feldtyp Datum – Ionic Rohwert (z. B. 2024-05-01) / Flutter dd.MM.yyyy; Ja/Nein-Feld ohne Wert (nicht editierbar) – Ionic 'Nein' / Flutter Default-Wert.
   Flutter: lib/features/profile/presentation/widgets/profile_hero_card.dart:49, lib/features/profile/presentation/widgets/profile_hero_card.dart:53, lib/features/profile/presentation/widgets/profile_helpers.dart:49, lib/features/profile/presentation/widgets/profile_helpers.dart:57, lib/features/profile/presentation/widgets/profile_helpers.dart:67
+- [ ] **niedrig** `settings/settings/settings.page` `field-f65b81d3` [settings/settings/settings.page.html:165](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L165) (2. Prüfung: korrigiert)
+  Nach Änderung: iOS/Android-App bieten Galerie oder Kamera (wie Ionic input type=file in der App), PWA die Browser-Dateiauswahl. Übrig: Flutter verkleinert auf max. 1200 px/Qualität 85 vor der 2-MB-Prüfung (Ionic lädt das Original hoch, lehnt > 2 MB ab – Flutter besser), keine Option 'Datei auswählen' in der iOS-App.
+  Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:164, lib/features/profile/presentation/widgets/master_data_sheet.dart:186, lib/features/profile/presentation/widgets/master_data_sheet.dart:198
 - [ ] **niedrig** `settings/settings/settings.page` `field-3a03c0eb` [settings/settings/settings.page.html:186](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L186)
   Datums-Button im Format '16. Feb. 2002'. Ohne Geburtsdatum: Ionic ion-datetime-button zeigt das heutige Datum / Flutter 'Auswählen'.
   Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:326, lib/features/profile/presentation/widgets/master_data_sheet.dart:329, lib/features/profile/presentation/widgets/master_data_sheet.dart:331, lib/features/profile/presentation/widgets/profile_helpers.dart:41
@@ -593,6 +596,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/settings/settings.page` `text-88aeecc7` [settings/settings/settings.page.html:261](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L261)
   Anzeige nicht editierbarer Felder wie getExtraFieldDisplayValue, außer: Datum – Ionic Rohwert / Flutter dd.MM.yyyy; Ja/Nein ohne Wert – Ionic 'Nein' / Flutter Default-Wert.
   Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:364, lib/features/profile/presentation/widgets/profile_helpers.dart:49, lib/features/profile/presentation/widgets/profile_helpers.dart:67
+- [ ] **niedrig** `settings/settings/settings.page` `action-100a2fb9` [settings/settings/settings.page.html:269](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L269) (2. Prüfung: korrigiert)
+  Nach Änderung: Sheet bleibt nach dem Speichern offen, Toast 'Profil aktualisiert', Fehler 'Fehler beim Aktualisieren des Profils'; Felder (Name, Telefon, Geburtstag mit correctBirthday nur bei Änderung, Zusatzfelder inkl. Org-Feldern, Gemeinde) gleich. Übrig: Ionic zeigt Eingaben schon ungespeichert live auf der Hero-Karte und behält sie bis zum Neuladen / Flutter erst nach dem Speichern, beim Schließen verfallen sie; Flutter trimmt Namen/Telefon. Gleiche Funktion → niedrig.
+  Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:258, lib/features/profile/presentation/widgets/master_data_sheet.dart:309
 - [ ] **niedrig** `settings/settings/settings.page` `action-46a45423` [settings/settings/settings.page.html:282](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L282)
   Ionic setzt nur das HTML-Attribut title='Passbild' (Kopfzeile des Viewers bleibt leer, Tooltip im Web) / Flutter zeigt 'Passbild.jpg' als Titel in der Kopfzeile.
   Flutter: lib/features/profile/presentation/widgets/master_data_sheet.dart:153, lib/shared/widgets/sheets/image_viewer_sheet.dart:276

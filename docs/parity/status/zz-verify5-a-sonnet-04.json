@@ -1,0 +1,344 @@
+{
+ "batch": "zz-verify5-a-sonnet-04",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/general/type/type.page#field-4366c1dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Neues To-Do/Platzhalter \"To-Do Text eingeben...\" nur bei aktivierter Checkliste; Hinzufuegen-Button deaktiviert bei leerem Text, Text wird getrimmt. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-5028d2f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Toggle \"Werke verwalten\" + Helper nur wenn !isGeneral, schreibt manage_songs. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-557c3624": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Deadline-Auswahl: Keine Deadline, 1 Stunde/1 Tag/2 Tage/1 Woche vorher, Benutzerdefiniert...; Custom-Feld \"Stunden vor Termin\"; 0/leer -> null wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-81819267": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Wert Ja/Nein nur bei Boolean-Zusatzfeld; Standard true beim Wechsel wie onAdditionalFieldFilterChanged.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-9786b85d-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Startzeit des Ablaufplans, nur bei ganztaegigen Terminen editierbar, sonst deaktiviert; Ende wird neu berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-9786b85d-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Ende read-only, berechnet aus Start + Minuten.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-ba7f8aa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "Minuten-Eingabe pro Zeile (Platzhalter \"min\"), nicht bei Notizen; Ende wird neu berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-d34df4b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Toggle \"Checkliste aktivieren\": an = [], aus = null (checklist null gespeichert).",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-e6aa9e5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Relevante Gruppen Mehrfachauswahl mit Helper; Auswahl in Gruppenreihenfolge gespeichert, leer = alle. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#field-f51fa00c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Ablaufplan-Ueberschrift mit Helper-Text, schreibt planning_title.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#modal-0895b1d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Erinnerungs-Sheet nur bei type.notification; Inhalt (max. 3, Schnellauswahl 1/24/48/72, Custom, Warnkarte) gleich. Kleinigkeit: Flutter lehnt >168 h ab (Ionic nur max-Attribut) - niedrig, kein Verlust.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Zeitwahl fuer Start/Ende des Plans (Picker statt ion-datetime); gleiches Verhalten.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#nav-bc1cad79": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "\"Mehr erfahren\" -> /settings/help/article/duty-setup, nur wenn !isNew. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#popover-26fe60f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "\"+\"-Menue: Feld, Notizfeld, Werk-Platzhalter (nicht general), Tagesordnung-Platzhalter (nur bei enable_protocol). Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-2c11308c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Abschnittsueberschrift \"Filter\".",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-6289c3a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Abschnittsueberschrift \"Ablaufplan\".",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-80219924": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Hinweis \"Startzeit fuer den Ablaufplan bei ganztaegigen Terminen\" nur bei all_day.",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-8c888e7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Label \"Ablaufplan Ueberschrift\".",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-a94e358b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Label \"Start\".",
+   "v": "bestätigt"
+  },
+  "settings/general/type/type.page#text-d7a84674-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Label \"Ende\", nur wenn Ende berechnet.",
+   "v": "bestätigt"
+  },
+  "settings/general/types/types.page#modal-c0d2c05c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "\"+\" in Terminarten oeffnet Typ-Seite im Neu-Modus als Modal; Validierung (Name, 2 Status), Insert mit tenant_id und index 999, Erfolgs-/Fehlertoast, Verwerfen-Abfrage. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/help/article/help-article.page#popover-c1b18c0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart",
+    "lib/features/help/presentation/widgets/glossary_term_popover.dart",
+    "lib/features/help/presentation/widgets/help_markdown.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "Glossar-Popover am angetippten Begriff mit Titel + Definition, Tap ausserhalb schliesst.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#field-fdb790d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/core/providers/user_preferences_provider.dart"
+   ],
+   "n": "Toggle \"Instanzauswahl aktivieren\" + Helper schreibt user_metadata.wantInstanceSelection (Metadaten gemerged), Login wertet es aus. Gleich, plus Fehlertoast.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-2d9ef553": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ],
+   "n": "\"+\" im Instanzen-Sheet schliesst Sheet und oeffnet Instanz-anlegen-Seite als Modal. Gleich.",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-35a628ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "Ausgetretene: Person als Modal, schreibgeschuetzt, nur \"Person reaktivieren\" (hasLeft).",
+   "v": "bestätigt"
+  },
+  "settings/settings/settings.page#modal-fb3873fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "Ausstehende Personen: Person als Modal mit Genehmigen/Ablehnen; Approve schreibt pending=false, History, Rolle Spieler, Mail, addPlayerToAttendancesByDate wie Ionic.",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-a9ede0e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart"
+   ],
+   "n": "Roter Muelleimer pro Zeile nur im Bearbeitungsmodus; entfernt Feld, Unterpunkte werden normale Felder (normalizeGroups).",
+   "v": "bestätigt"
+  },
+  "shared-plan/shared-plan.page#action-ec0c1511": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart",
+    "lib/features/planning/presentation/widgets/shared_plan_edit_list.dart",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ],
+   "n": "Reorder nur im Bearbeitungsmodus; Minuten-Anzeige \"{min} min\" im Lesemodus.",
+   "v": "bestätigt"
+  },
+  "shared/audio-player/audio-player.component#toast-8cb59de1": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart",
+    "lib/core/services/audio_player/audio_player_service.dart"
+   ],
+   "n": "Fehler bei Zurueck/Weiter -> Toast \"Fehler beim Abspielen: {error}\".",
+   "v": "bestätigt"
+  },
+  "shared/files-folder-picker/files-folder-picker.component#action-c2019029": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ],
+   "n": "\"Diesen Ordner waehlen: {Ordner}\" nur ausserhalb der Wurzel, waehrend Laden deaktiviert.",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#action-445826b3": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+   ],
+   "n": "Undo-Button \"↶\" am Ende der Toolbar.",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#alert-bc736d27": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart"
+   ],
+   "n": "Link-Dialog: URL (https://…), Text nur ohne Auswahl/Link, Abbrechen/Entfernen (nur bei Link)/Uebernehmen, https:// ergaenzt. Gleich.",
+   "v": "bestätigt"
+  },
+  "songs/import/import.page#field-601fe7d3": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/xls_reader.dart",
+    "lib/core/utils/spreadsheet_reader.dart"
+   ],
+   "n": "Dateiauswahl .xlsx/.xls/.csv; .xls wird jetzt per eigenem BIFF8-Leser gelesen (Testfixture vorhanden); leere/unlesbare Datei -> Warn-/Fehlertoast wie Ionic.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-7999bdf1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart"
+   ],
+   "n": "Schliessen-Button (X) im Kopieren-Sheet; waehrend des Kopierens gesperrt (Ionic Overlay).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#modal-81e9f13d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ],
+   "n": "Kategorie-Sheet: Chor (alle) nur im Chor, Sonstige (Freitext), Aufnahme, Liedtext, Gruppen; Freitext nur bei Sonstige; Speichern/Abbrechen. Chor -> note \"Chor\".",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-394c8bb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/group_pdf_print.dart",
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "Warn-Toast \"Keine Gruppen mit zugewiesenen Personen gefunden\"; zaehlt aktive Personen (nicht ausgetreten, nicht pausiert, nicht pending).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#action-a3de1883": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ],
+   "n": "Zurueck-Button nur wenn nicht Standalone-Tab.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#field-a0424ef7": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ],
+   "n": "Gruppenfilter im Filter-Sheet (Mehrfach); Filter ueber instrument_ids. Flutter zeigt ihn auch bei Choeren (Ionic: Liste dort leer) - nur Zusatz.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#popover-21a14c45": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_filter_sheet.dart"
+   ],
+   "n": "Filter-Sheet enthaelt Sortierung, Schwierigkeit, Chor/Solo, Kategorien, Gruppen, Ansicht, Zusatzfeld-Filter (Select/Boolean); lastSung nicht oeffentlich.",
+   "v": "bestätigt"
+  },
+  "stats/stats.page#field-2d5da58e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1029"
+   ],
+   "n": "Instanzen filtern (Mehrfach-Modal) nur mit Organisation; leer = alle; Personenliste nach Instanzen gefiltert, mehrfach vorkommende zuerst.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

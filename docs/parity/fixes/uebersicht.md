@@ -1,13 +1,13 @@
 # Fix-Paket „uebersicht“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
 ## Angleichen (hoch/mittel): 1
 
 - [ ] **mittel** `messages/message-detail/message-detail.page` `x-b5f5a215de` **Mitteilung aus verlassener Instanz nicht mehr abrufbar** [src/app/services/message/message.service.ts:46](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/message/message.service.ts#L46) (2. Prüfung: bestätigt)
-  Real: Ionic getMessage ohne Instanzfilter; RLS 'recipient can read messages' (add_messages.sql) lässt die eigene Kopie auch nach Austritt lesen (alter Push-/E-Mail-Link, Glocke 'Alle Instanzen'), Ionic zeigt dann die Mitgliederansicht. Flutter getMessageById filtert auf aktuelle + eigene Instanzen → 'Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.' Seltener Fall, mittel passt.
-  Flutter: lib/data/repositories/message_repository.dart:48-66, lib/core/providers/message_providers.dart:58-68, lib/features/messages/presentation/pages/message_detail_page.dart:145-161
+  Weiter real auf 57bb011: getMessageById filtert .inFilter(tenantId, aktuelle + eigene Instanzen); Ionic getMessage ohne Instanzfilter (RLS lässt Empfänger ihre Kopie lesen). Nach Austritt aus einer Instanz zeigt ein alter Push-/Mail-Link in Flutter „Diese Mitteilung gibt es nicht mehr oder du hast keinen Zugriff darauf.“ statt der Mitteilung. Seltener Fall, mittel bleibt.
+  Flutter: lib/data/repositories/message_repository.dart:48, lib/core/providers/message_providers.dart:58, lib/features/messages/presentation/pages/message_detail_page.dart:201
 
 ## Flutter besser – Leon entscheidet: 13
 

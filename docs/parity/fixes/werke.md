@@ -1,10 +1,13 @@
 # Fix-Paket „werke“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 0
+## Angleichen (hoch/mittel): 1
 
+- [ ] **mittel** `songs/song/song.page` `action-399b39c6` [songs/song/song.page.html:200](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L200) (2. Prüfung: korrigiert)
+  Zählung jetzt richtig (tenantId, pending=false, left=null, ohne pausierte; frisch geladen). Aber Fehlermeldung fehlt: Ionic printSongFiles → db.getPlayers zeigt bei Fehler Toast „Fehler beim Laden der Personen“ (danger) und bricht ab / Flutter: await playerCountByInstrumentProvider.future ohne try/catch, _printGroupPdfs nicht in _run → unbehandelter Fehler, Nutzer erfährt nichts. Erstprüfung „ok“ übersah das.
+  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1165, lib/features/songs/presentation/pages/song_detail_page.dart:1200, lib/features/songs/presentation/widgets/group_pdf_print.dart:30, lib/data/repositories/player_repository.dart:1365
 
 ## Flutter besser – Leon entscheidet: 21
 
@@ -72,7 +75,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic setzt bei Filter-/Kategorie-/Sortierwechsel searchTerm = '' und filtert ohne Suche, obwohl der Suchtext im Feld stehen bleibt / Flutter: Suchbegriff bleibt angewendet.
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:227-232
 
-## Kleinigkeiten (niedrig): 52
+## Kleinigkeiten (niedrig): 54
 
 - [ ] **niedrig** `songs/import/import.page` `loading-4a98212a` [songs/import/import.page.ts:90](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/import/import.page.ts#L90)
   Ionic: blockierendes Overlay „Datei wird gelesen...“ (people.readingFile; Slice zeigt fälschlich die Dauer 10000 als Text) / Flutter: Spinner-Overlay über dem Inhalt ohne Text
@@ -181,6 +184,12 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `songs/songs.page` `field-d23661dc` [songs/songs.page.html:195](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L195)
   Optionen/Reihenfolge gleich (Link, Schwierigkeitsgrad, Chor & Orchester, Solo, Fehlende Instrumente, Zuletzt gespielt/gesungen nur nicht-öffentlich, Zusatzfelder), Default und Speicherung gleich. Ionic: Mehrfach-Select im Popover (Auge-Icon) / Flutter: Checkbox-Liste direkt im Sheet unter „Ansicht“. Öffentliche Seite: Ionic listet Zusatzfelder des eingeloggten Tenants, Flutter die des freigebenden
   Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:32, lib/features/songs/presentation/widgets/song_filter_sheet.dart:170
+- [ ] **niedrig** `songs/songs.page` `field-4796fb04` [songs/songs.page.html:221](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L221) (2. Prüfung: korrigiert)
+  Eingeloggt gleich: Auswahl je SELECT-Zusatzfeld, Platzhalter = Feldname, „Alle“ + Optionen. Abweichung öffentliche Freigabeseite: Ionic zeigt Felder aus db.tenant() (eingeloggter Tenant, ohne Login keine), Flutter die Zusatzfelder des freigebenden Tenants. Nur Randfall, niedrig.
+  Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:153, lib/core/providers/song_providers.dart:353
+- [ ] **niedrig** `songs/songs.page` `field-5c68cf0f` [songs/songs.page.html:232](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L232) (2. Prüfung: korrigiert)
+  Eingeloggt gleich: Ja/Nein-Filter je BOOLEAN-Zusatzfeld („Alle“/„Ja“/„Nein“, Platzhalter = Feldname). Abweichung öffentliche Freigabeseite: Ionic db.tenant() des eingeloggten Nutzers, Flutter Felder des freigebenden Tenants. Niedrig.
+  Flutter: lib/features/songs/presentation/widgets/song_filter_sheet.dart:153, lib/core/providers/song_providers.dart:353
 - [ ] **niedrig** `songs/songs.page` `action-c4805ac6` [songs/songs.page.html:327](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L327)
   Druck als „Mappe_<Gruppe>_<yyyy-MM-dd>.pdf“ gleich. Sortierung nach Präfix: Ionic localeCompare / Flutter compareTo (Codepoint) – abweichend nur bei Groß-/Kleinschreibung oder Umlauten im Präfix
   Flutter: lib/features/songs/presentation/widgets/group_files_sheet.dart:35, lib/features/songs/presentation/widgets/group_files_sheet.dart:84

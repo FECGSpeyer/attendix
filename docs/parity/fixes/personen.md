@@ -1,10 +1,13 @@
 # Fix-Paket „personen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 0
+## Angleichen (hoch/mittel): 1
 
+- [ ] **mittel** `people/person/person.page` `alert-97cf5262` [people/person/person.page.ts:1354](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1354) (2. Prüfung: korrigiert)
+  Dialog „Person kopieren/übertragen“ mit Ionic-Texten und Abbrechen/Ja gleich. Rollen-Abweichung: Flutter handoverPlayer vergibt RESPONSIBLE, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart:1716-1718). Ionic person.page.ts:1365 übergibt als mainGroup die Gruppe der QUELLE (isMainGroup ? player.instrument : null), db.service.ts:3824 vergleicht die Zielgruppe damit → praktisch immer PLAYER. Nur die Übergabe-Seite (handover-detail) vergibt in Ionic RESPONSIBLE für die Hauptgruppe. Die übertragene Person bekommt in Flutter also mehr Rechte als in Ionic (mittel statt niedrig wegen Rollenrechten; Leon entscheidet, ob wie Ionic PLAYER oder wie die Übergabe-Seite).
+  Flutter: lib/features/people/presentation/widgets/person_transfer_sheet.dart, lib/data/repositories/player_repository.dart:1714-1724
 
 ## Flutter besser – Leon entscheidet: 28
 
@@ -93,7 +96,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addPerson legt ohne Namensprüfung an / Flutter fragt bei gleichem Vor- und Nachnamen in der Instanz (auch archivierte/ausstehende) „Mögliches Duplikat“ – „Eine Person mit dem Namen "{name}" existiert bereits ({count}x). Trotzdem erstellen?“ mit Abbrechen/„Trotzdem erstellen“.
   Flutter: lib/features/people/presentation/pages/person_create_page.dart:997, lib/features/people/presentation/pages/person_create_page.dart:999
 
-## Kleinigkeiten (niedrig): 165
+## Kleinigkeiten (niedrig): 166
 
 - [ ] **niedrig** `duty/duty-distribute-modal/duty-distribute-modal.component` `loading-e612daf1` [duty/duty-distribute-modal/duty-distribute-modal.component.ts:77](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts#L77)
   Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.
@@ -203,6 +206,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `people/import/import.page` `alert-3b9d1c7b` [people/import/import.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L254)
   Titel 'Nicht importierte Personen', max. 10 Zeilen '• Vorname Nachname: Grund', '… und N weitere', Button 'OK' gleich. Grund: Ionic error.message / Flutter '$e' (z. B. 'RepositoryException: … (operation: …, code: …)').
   Flutter: lib/features/people/presentation/pages/person_import_page.dart:198, lib/features/people/presentation/pages/person_import_page.dart:220, lib/features/people/presentation/widgets/import_widgets.dart:226-243
+- [ ] **niedrig** `people/import/import.page` `effect-31a0aedd` [people/import/import.page.ts:275](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.ts#L275) (2. Prüfung: korrigiert)
+  hoch-Lücke behoben (#325): nativ (auch iPad) Datei im Cache + Systemviewer (OpenFilex) wie Ionic, kein Teilen-Popover mehr; Vorlage mit Org- und Instanz-Zusatzfeldern, Name/Blatt/Kopf/Beispiel gleich. Rest niedrig: mobiler Browser bekommt einen Anker-Download (printing sharePdf, Blob-Typ application/pdf) statt des Web-Share-Sheets (Ionic downloadFileNative); auf iPhone-Safari/PWA prüfen – lässt sich die .xlsx dort nicht speichern, wäre es mittel.
+  Flutter: lib/features/people/presentation/pages/person_import_page.dart:137, lib/core/services/native/native_file_service.dart:167, lib/core/services/native/native_file_io.dart:14
 - [ ] **niedrig** `people/import/import.page` `text-da6273ad` [people/import/import.page.html:16](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/import/import.page.html#L16) (2. Prüfung: bestätigt)
   Text gleich. Ionic: grau (.intro medium, 0.9rem) / Flutter: normale Textfarbe. Der Text nennt .xls, das Flutter ablehnt (siehe field-bdcf25e7).
   Flutter: lib/features/people/presentation/pages/person_import_page.dart:245, lib/features/people/presentation/widgets/import_widgets.dart:30
