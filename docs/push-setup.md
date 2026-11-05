@@ -20,8 +20,9 @@ unavailable, and in debug builds the log shows
 Since November 2026 the app uses the Ionic ID **`io.stephanus.attendix`** on iOS and
 Android, so it reuses the existing Ionic apps in Firebase (and the iOS APNs key). It
 replaces the Ionic app on a device and ships as an update of the store app "Attendix".
-Store versions must be higher than Ionic's (4.19.6, Android versionCode 227), e.g.
-`--build-name 5.0.0 --build-number 228`.
+Store versions must be higher than Ionic's. Ionic's last state is 4.19.9 (Android
+versionCode 230, iOS build 239); the app itself carries `5.0.0+240` from `pubspec.yaml`,
+so the `--build-name`/`--build-number` flags are only needed to override it.
 
 **Android signing:** Play App Signing is active, so Play only needs our *upload* key.
 Put it in `android/key.properties` (gitignored, never commit):
