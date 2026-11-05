@@ -593,7 +593,7 @@
     "lib/features/settings/presentation/pages/left_players_page.dart",
     "lib/features/people/presentation/pages/person_detail_page.dart"
    ],
-   "n": "behoben in diesem PR (modale)"
+   "n": "behoben in #322"
   },
   "settings/settings/settings.page#modal-fb3873fe": {
    "s": "ok",
@@ -601,7 +601,7 @@
     "lib/features/settings/presentation/pages/pending_players_page.dart",
     "lib/features/people/presentation/pages/person_detail_page.dart"
    ],
-   "n": "behoben in diesem PR (modale)"
+   "n": "behoben in #322"
   },
   "settings/settings/settings.page#modal-2d9ef553": {
    "s": "ok",
@@ -609,7 +609,7 @@
     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
    ],
-   "n": "behoben in diesem PR (modale)"
+   "n": "behoben in #322"
   }
  }
 }
