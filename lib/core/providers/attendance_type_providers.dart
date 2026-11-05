@@ -7,7 +7,7 @@ import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/attendance_type_repository.dart';
 import '../utils/demo_guard.dart';
 import 'attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider;
-import 'plan_providers.dart' show planAttendanceTypesProvider;
+import 'plan_providers.dart' show orgPlansProvider, planAttendanceTypesProvider, planAttendancesProvider;
 import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
@@ -137,6 +137,8 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       ref.invalidate(attendancesProvider);
       ref.invalidate(upcomingAttendancesProvider);
       ref.invalidate(planAttendanceTypesProvider);
+      ref.invalidate(planAttendancesProvider);
+      ref.invalidate(orgPlansProvider);
       return success;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

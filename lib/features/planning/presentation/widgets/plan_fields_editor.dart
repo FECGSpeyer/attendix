@@ -101,7 +101,10 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
     for (var index = 0; index < fields.length; index++) {
       final field = fields[index];
       if (field.groupId != null && _collapsed.contains(field.groupId)) continue;
-      rows.add(_EditorRow.field(field, index, rowKey(field.id)));
+      // Ids repeat (song rows, free text "Pause" twice): the row's uid keeps
+      // the key stable when rows are removed or moved; the counter still
+      // keeps keys unique.
+      rows.add(_EditorRow.field(field, index, rowKey(field.uid ?? field.id)));
       final next = index + 1 < fields.length ? fields[index + 1] : null;
       final isHead = PlanUtils.isGroupHead(field);
       final closesBlock = isHead ? next?.groupId == null : (field.groupId != null && next?.groupId != field.groupId);

@@ -117,6 +117,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// Ionic `newChecklistDeadline`: null = keine, -1 = benutzerdefiniert.
   int? _newTodoDeadline;
   List<Map<String, dynamic>> _planFields = [];
+
+  /// Row identities given only in memory (local uid → stored uid, null =
+  /// the row had none); restored before saving. See [_withRowUid].
+  final Map<String, String?> _localPlanUids = {};
   String _planningTitle = '';
   bool _planningPrefixInstanceName = false;
   bool _isDefaultOrgPlan = false;
@@ -258,10 +262,12 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _planningTitleController.text = _planningTitle;
         // Ionic ngOnInit: the agenda marker takes no time (older plans
         // stored 30 min on it).
-        _planFields = [
-          for (final f in _parsePlanFields(type.defaultPlan))
-            f['id'] == agendaItemsPlaceholderId ? {...f, 'time': '0'} : f,
-        ];
+        // Added one by one so _withRowUid sees the rows already loaded.
+        _localPlanUids.clear();
+        _planFields = [];
+        for (final f in _parsePlanFields(type.defaultPlan)) {
+          _planFields.add(_withRowUid(f['id'] == agendaItemsPlaceholderId ? {...f, 'time': '0'} : f));
+        }
         _relevantGroups = List<int>.from(type.relevantGroups ?? []);
         _additionalFieldsFilter = type.additionalFieldsFilter != null
             ? Map<String, dynamic>.from(type.additionalFieldsFilter!)
@@ -561,7 +567,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                       _hasChanges = true;
                     }),
                     onInsertPlaceholder: () => setState(() {
-                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(agendaPlaceholderField());
+                      if (!hasAgendaPlaceholder(_planFields)) _planFields.add(_withRowUid(agendaPlaceholderField()));
                       _hasChanges = true;
                     }),
                   ),
@@ -1305,34 +1311,42 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   List<PlanField> get _planFieldModels => [for (final f in _planFields) PlanField.fromJson(f)];
 
-  /// Back to the stored map: the original row (matched by id) is kept and
-  /// only updated, so unknown keys and the legacy `isNote` flag survive. The
-  /// Flutter-only `isGroup: false` default is not written.
-  void _setPlanFields(List<PlanField> fields) {
-    final originals = [..._planFields];
-    setState(() {
-      _planFields = [
-        for (final f in fields) _mergePlanRow(originals, f),
+  /// Gives a row a unique `uid` as its identity while editing: ids repeat
+  /// (free text id = text, e.g. "Pause" twice), the uid travels through the
+  /// [PlanFieldsEditor] unchanged. A stored, unique uid is kept; otherwise a
+  /// local one is set and removed (or the stored one restored) on save.
+  Map<String, dynamic> _withRowUid(Map<String, dynamic> row) {
+    final stored = row['uid'];
+    final storedUid = stored is String && stored.isNotEmpty ? stored : null;
+    final taken = storedUid != null &&
+        (_localPlanUids.containsKey(storedUid) || _planFields.any((f) => f['uid'] == storedUid));
+    if (storedUid != null && !taken) return row;
+    final local = 'local-${PlanUtils.uuid()}';
+    _localPlanUids[local] = storedUid;
+    return {...row, 'uid': local};
+  }
+
+  /// [_planFields] as stored: local row identities removed again.
+  List<Map<String, dynamic>> get _planFieldsForSave => [
+        for (final f in _planFields)
+          if (_localPlanUids.containsKey(f['uid']))
+            _localPlanUids[f['uid']] == null
+                ? ({...f}..remove('uid'))
+                : {...f, 'uid': _localPlanUids[f['uid']]}
+          else
+            f,
       ];
+
+  /// Back to the stored map: the original row (matched by its row identity
+  /// `uid`, see [_withRowUid]) is kept and only updated, so unknown keys and
+  /// the legacy `isNote` flag survive. The Flutter-only `isGroup: false`
+  /// default is not written.
+  void _setPlanFields(List<PlanField> fields) {
+    setState(() {
+      _planFields = mergePlanRows(_planFields, fields);
       _calculateEnd();
       _hasChanges = true;
     });
-  }
-
-  static const _planFieldKeys = {
-    'id', 'name', 'time', 'conductor', 'currentTime', 'songId', 'info', 'agendaItemId',
-    'isGroup', 'groupId', 'uid', 'needsBeamer', 'beamerFile',
-  };
-
-  Map<String, dynamic> _mergePlanRow(List<Map<String, dynamic>> originals, PlanField field) {
-    final json = field.toJson();
-    final idx = originals.indexWhere((o) => '${o['id']}' == '${json['id']}');
-    final original = idx >= 0 ? originals.removeAt(idx) : const <String, dynamic>{};
-    // Keys PlanField knows but dropped (cleared to null) must not come back
-    // from the original row.
-    final merged = {...original, ...json}..removeWhere((k, _) => _planFieldKeys.contains(k) && !json.containsKey(k));
-    if (merged['isGroup'] == false && !original.containsKey('isGroup')) merged.remove('isGroup');
-    return merged;
   }
 
   /// Ionic calculateEnd(): start time + all minutes, shown as "Ende".
@@ -1347,7 +1361,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
 
   void _addPlanRow(Map<String, dynamic> field) {
     setState(() {
-      _planFields = [..._planFields, field];
+      _planFields = [..._planFields, _withRowUid(field)];
       _calculateEnd();
       _hasChanges = true;
     });
@@ -1397,15 +1411,18 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               }),
             ),
           // ORG_PLANS: Ionic `@if (db.organisation())`, saved with the FAB.
+          // Disabled until the stored value is loaded (it is only saved then).
           if (org != null)
             SwitchListTile.adaptive(
               contentPadding: EdgeInsets.zero,
               title: Text(l10n.typeSettingsOrgPlanDefault),
               value: _isDefaultOrgPlan,
-              onChanged: (v) => setState(() {
-                _isDefaultOrgPlan = v;
-                _hasChanges = true;
-              }),
+              onChanged: _isDefaultOrgPlanLoaded
+                  ? (v) => setState(() {
+                        _isDefaultOrgPlan = v;
+                        _hasChanges = true;
+                      })
+                  : null,
             ),
           // Ionic: "Start" always; editable only for all-day types (otherwise
           // the type's start time, disabled).
@@ -1889,7 +1906,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         // (never null) and preserves the stored time/end.
         'default_plan': buildDefaultPlanUpdate(
           _originalType?.defaultPlan,
-          _planFields,
+          _planFieldsForSave,
         ),
         // Ionic writes the input as is ('' once edited); untouched null stays null.
         'planning_title': _planningTitle.isEmpty && _originalType?.planningTitle == null
@@ -1984,4 +2001,37 @@ Map<String, dynamic> buildDefaultPlanUpdate(
     'end': original?['end'] ?? '',
     'fields': fields,
   };
+}
+
+const _planFieldKeys = {
+  'id', 'name', 'time', 'conductor', 'currentTime', 'songId', 'info', 'agendaItemId',
+  'isGroup', 'groupId', 'uid', 'needsBeamer', 'beamerFile',
+};
+
+/// Merges the edited [fields] back into the stored [originals] rows: each
+/// row is matched by its `uid` (the row identity, ids repeat), else by id.
+/// The matched row keeps unknown keys and the legacy `isNote` flag; keys
+/// PlanField knows but dropped (cleared to null) are removed, the
+/// Flutter-only `isGroup: false` default is not added.
+@visibleForTesting
+List<Map<String, dynamic>> mergePlanRows(
+  List<Map<String, dynamic>> originals,
+  List<PlanField> fields,
+) {
+  final remaining = [...originals];
+  return [
+    for (final field in fields) _mergePlanRow(remaining, field),
+  ];
+}
+
+Map<String, dynamic> _mergePlanRow(List<Map<String, dynamic>> remaining, PlanField field) {
+  final json = field.toJson();
+  final uid = json['uid'];
+  final idx = uid != null
+      ? remaining.indexWhere((o) => o['uid'] == uid)
+      : remaining.indexWhere((o) => '${o['id']}' == '${json['id']}');
+  final original = idx >= 0 ? remaining.removeAt(idx) : const <String, dynamic>{};
+  final merged = {...original, ...json}..removeWhere((k, _) => _planFieldKeys.contains(k) && !json.containsKey(k));
+  if (merged['isGroup'] == false && !original.containsKey('isGroup')) merged.remove('isGroup');
+  return merged;
 }
