@@ -14,6 +14,7 @@ import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
 import 'native/native_file_service.dart';
 import 'pdf_branding.dart';
+import 'pdf_fonts.dart';
 
 /// Font size (pt) and cell padding (mm) of one auto-fit step of the
 /// player / attendance list PDF (Ionic jspdf-autotable styles).
@@ -251,8 +252,9 @@ class ExportService {
     required List<ExportTableStyle> fitSteps,
     bool statusColors = false,
   }) async {
+    final theme = await PdfFonts.theme();
     pw.Document build(ExportTableStyle style) {
-      final doc = pw.Document();
+      final doc = pw.Document(theme: theme);
       doc.addPage(pw.MultiPage(
         pageFormat: PdfPageFormat.a4,
         margin: pdfMargin,
@@ -466,6 +468,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) async {
     final pdf = _buildPlanPdfDocument(
+      theme: await PdfFonts.theme(),
       tenantName: tenantName,
       date: date,
       startTime: startTime,
@@ -481,6 +484,7 @@ class ExportService {
 
   /// Build a plan PDF document (shared logic for export and bytes generation)
   pw.Document _buildPlanPdfDocument({
+    pw.ThemeData? theme,
     required String tenantName,
     required String date,
     required String startTime,
@@ -488,7 +492,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) {
     final l10n = l10nWithoutContext;
-    final pdf = pw.Document();
+    final pdf = pw.Document(theme: theme);
 
     // Calculate times for each field and build rows
     var currentMinutes = _parseTime(startTime);
@@ -718,6 +722,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) async {
     final pdf = _buildPlan2xA5PdfDocument(
+      theme: await PdfFonts.theme(),
       tenantName: tenantName,
       date: date,
       startTime: startTime,
@@ -733,6 +738,7 @@ class ExportService {
 
   /// Build a 2xA5 plan PDF document (shared logic for export and bytes generation)
   pw.Document _buildPlan2xA5PdfDocument({
+    pw.ThemeData? theme,
     required String tenantName,
     required String date,
     required String startTime,
@@ -740,7 +746,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) {
     final l10n = l10nWithoutContext;
-    final pdf = pw.Document();
+    final pdf = pw.Document(theme: theme);
 
     // Build single plan widget with note support
     pw.Widget buildPlanContent() {
@@ -924,6 +930,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) async {
     final pdf = _buildPlanPdfDocument(
+      theme: await PdfFonts.theme(),
       tenantName: tenantName,
       date: date,
       startTime: startTime,
@@ -943,6 +950,7 @@ class ExportService {
     required List<Map<String, dynamic>> fields,
   }) async {
     final pdf = _buildPlan2xA5PdfDocument(
+      theme: await PdfFonts.theme(),
       tenantName: tenantName,
       date: date,
       startTime: startTime,

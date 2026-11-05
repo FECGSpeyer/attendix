@@ -19,17 +19,27 @@ import 'push_navigation.dart';
 /// localStorage key of Ionic (`push_prompt_shown`).
 const String kPushPromptShownKey = 'push_prompt_shown';
 
+/// Whether this app ever asked Android for `POST_NOTIFICATIONS` itself.
+const String kPushPermissionRequestedKey = 'push_permission_requested';
+
 /// Persists whether the "Push-Benachrichtigungen aktivieren?" prompt was
 /// answered (Ionic localStorage `push_prompt_shown`).
 abstract class PushPromptStore {
   Future<bool> wasShown();
   Future<void> markShown();
+
+  /// Android: whether [PushMessagingClient.requestPermission] was ever
+  /// called by this app (see `PushService._checkPermission`).
+  Future<bool> wasPermissionRequested();
+  Future<void> markPermissionRequested();
 }
 
 /// UI / navigation side of push handling.
 abstract class PushHost {
   /// Ionic alert `svc.pushTitle` / `svc.pushPrompt` with "Später" /
-  /// "Aktivieren": true = activate, false = later, null = dismissed.
+  /// "Aktivieren": true = activate, false = later, null = dismissed without
+  /// a button (handled like "Später", Ionic `role: 'cancel'`). Throws when
+  /// the dialog could not be shown at all (asked again next time).
   Future<bool?> confirmEnablePush();
 
   /// Ionic foreground alert (title, body, "OK" / "Anzeigen"):
@@ -263,7 +273,7 @@ class PushService {
       return;
     }
 
-    final permission = await client.checkPermission();
+    final permission = await _checkPermission();
     if (_isStale(generation)) return;
     if (permission == PushPermission.granted) {
       await promptStore.markShown();
@@ -275,13 +285,46 @@ class PushService {
       return;
     }
 
-    final answer = await host.confirmEnablePush();
-    if (answer == null) return; // dismissed: ask again next time (Ionic backdrop)
+    final bool? answer;
+    try {
+      answer = await host.confirmEnablePush();
+    } catch (e) {
+      // Dialog could not be shown: ask again next time.
+      _log('push prompt not shown', e);
+      return;
+    }
+    // Dismissed without a button (backdrop / back) counts as "Später" like
+    // the Ionic `role: 'cancel'` handler: remembered, not asked again.
     await promptStore.markShown();
-    if (answer && !_isStale(generation)) {
+    if (answer == true && !_isStale(generation)) {
       await _initPush(generation);
       if (!_isStale(generation)) await _setPushEnabled(true);
     }
+  }
+
+  /// Ionic `PushNotifications.checkPermissions()`.
+  ///
+  /// Android 13+: firebase_messaging reports `denied` as long as
+  /// `POST_NOTIFICATIONS` is not granted, also when it was never asked for
+  /// (never `notDetermined`). Capacitor reports `'prompt'` there, so until
+  /// this app has requested the permission itself, `denied` is treated as
+  /// [PushPermission.prompt]. iOS reports `notDetermined` correctly.
+  Future<PushPermission> _checkPermission() async {
+    final permission = await client.checkPermission();
+    if (permission == PushPermission.denied &&
+        platform == 'android' &&
+        !await promptStore.wasPermissionRequested()) {
+      return PushPermission.prompt;
+    }
+    return permission;
+  }
+
+  /// Ionic `PushNotifications.requestPermissions()`; on Android remembers
+  /// that the system prompt was requested (see [_checkPermission]).
+  Future<PushPermission> _requestPermission() async {
+    final result = await client.requestPermission();
+    if (platform == 'android') await promptStore.markPermissionRequested();
+    return result;
   }
 
   /// Ionic initPush: permission → FCM token → device_tokens, clear badge.
@@ -298,10 +341,10 @@ class PushService {
     await _ready();
     if (!_available || _isStale(generation)) return;
 
-    final permission = await client.checkPermission();
+    final permission = await _checkPermission();
     if (_isStale(generation)) return;
     if (permission == PushPermission.prompt) {
-      final result = await client.requestPermission();
+      final result = await _requestPermission();
       if (result != PushPermission.granted || _isStale(generation)) return;
     } else if (permission != PushPermission.granted) {
       return;

@@ -6,6 +6,7 @@ import '../../data/models/plan/plan.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
+import '../utils/archived_attendance.dart';
 import '../utils/plan_utils.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -46,12 +47,17 @@ final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async
   final repo = ref.watch(planRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
-  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart));
+  // Ionic getAttendance → filterArchivedForRole (only admin/responsible
+  // see archived Termine in the Ablaufplan editor).
+  final includeArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart), includeArchived: includeArchived);
 });
 
 /// One Termin with its plans
 final planAttendanceByIdProvider = FutureProvider.family<PlanAttendance?, int>((ref, id) async {
   final repo = ref.watch(planRepositoryWithTenantProvider);
+  // Archived Termine only for admin/responsible (repository check by role).
+  ref.watch(currentRoleProvider);
   if (!repo.hasTenantId) return null;
   return repo.getPlanAttendanceById(id);
 });
@@ -239,8 +245,38 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
   Future<bool> updatePlanningTemplates(List<Plan> templates) =>
       _updateOrg((repo, id) => repo.updatePlanningTemplates(id, templates));
 
-  Future<bool> updateDefaultFields(List<PlanField> fields) =>
-      _updateOrg((repo, id) => repo.updateDefaultFields(id, fields));
+  final Map<int, Future<bool>> _defaultFieldsRunning = {};
+  final Map<int, Future<bool>> _defaultFieldsQueued = {};
+  final Map<int, List<PlanField>> _defaultFieldsNext = {};
+
+  /// Writes the Standardfelder of organisation [orgId] serialized: one
+  /// request runs, at most one waits and then sends the newest list, so a
+  /// slow older write can never overwrite a newer one. Callers pass the
+  /// organisation id they captured up front (also usable from `dispose()`).
+  Future<bool> saveDefaultFields(int orgId, List<PlanField> fields) {
+    final running = _defaultFieldsRunning[orgId];
+    if (running == null) return _writeDefaultFields(orgId, fields);
+    _defaultFieldsNext[orgId] = fields;
+    // A failed write never blocks the queue.
+    return _defaultFieldsQueued[orgId] ??= running.catchError((_) => false).then((_) {
+      _defaultFieldsQueued.remove(orgId);
+      return _writeDefaultFields(orgId, _defaultFieldsNext.remove(orgId)!);
+    });
+  }
+
+  Future<bool> _writeDefaultFields(int orgId, List<PlanField> fields) {
+    // Started on the next event-loop turn: callers may be in a widget's
+    // `dispose()`, where changing provider state synchronously is not allowed.
+    final write = Future<bool>(() => _run(
+          () => ref.read(orgPlanRepositoryProvider).updateDefaultFields(orgId, fields),
+          invalidate: [currentOrganisationProvider],
+        )).catchError((Object _) => false);
+    _defaultFieldsRunning[orgId] = write;
+    write.whenComplete(() {
+      if (identical(_defaultFieldsRunning[orgId], write)) _defaultFieldsRunning.remove(orgId);
+    });
+    return write;
+  }
 
   Future<bool> updateOrgName(String name) => _updateOrg((repo, id) => repo.updateOrgName(id, name));
 

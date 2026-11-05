@@ -26,10 +26,13 @@ Future<T?> showSettingsSheet<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   double initialBreakpoint = 1,
+  bool useRootNavigator = false,
 }) {
   return showModalBottomSheet<T>(
     context: context,
-    useRootNavigator: false, // IOS_SETTINGS2: shell navigator, so pages pushed from the sheet open above it like Ionic
+    // IOS_SETTINGS2: shell navigator by default, so pages pushed from the
+    // sheet open above it like Ionic.
+    useRootNavigator: useRootNavigator,
     isScrollControlled: true,
     useSafeArea: true,
     clipBehavior: Clip.antiAlias,

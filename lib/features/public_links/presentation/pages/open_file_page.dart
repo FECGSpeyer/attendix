@@ -1,6 +1,9 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/role_permission_providers.dart';
@@ -12,18 +15,50 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// Shared Dateiablage link that was opened while signed out. The router
 /// resumes it after login (Ionic `FilesService.setPendingLink`).
+///
+/// Like Ionic the link is also kept in local storage (`pendingFileLink`), so
+/// it survives a reload / app restart during the login (e-mail confirmation,
+/// OAuth redirect on the web). [restore] loads it at app start.
 class PendingFileLink {
   PendingFileLink._();
 
+  static const storageKey = 'pendingFileLink';
   static String? _value;
 
-  static void set(String link) => _value = link;
+  /// Loads a link stored by an earlier app start (call before runApp).
+  static Future<void> restore() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      _value ??= prefs.getString(storageKey);
+    } catch (_) {
+      // Storage not available – the link is lost after a reload (Ionic).
+    }
+  }
+
+  static void set(String link) {
+    _value = link;
+    unawaited(_persist(link));
+  }
 
   /// Returns the stashed link once and clears it.
   static String? consume() {
     final v = _value;
     _value = null;
+    if (v != null) unawaited(_persist(null));
     return v;
+  }
+
+  static Future<void> _persist(String? link) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      if (link == null) {
+        await prefs.remove(storageKey);
+      } else {
+        await prefs.setString(storageKey, link);
+      }
+    } catch (_) {
+      // Storage not available – keep the in-memory value only.
+    }
   }
 }
 

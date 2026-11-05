@@ -1,3 +1,4 @@
+import 'dart:convert';
 import 'dart:io' show Platform;
 
 import 'package:file_picker/file_picker.dart';
@@ -48,6 +49,8 @@ import '../../../../shared/widgets/adaptive/adaptive.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../core/theme/redesign/rd_theme.dart' show RdSkinContext;
 import '../../../../core/router/redesign_routes.dart';
+import '../../../settings/presentation/widgets/settings_sheet.dart'
+    show settingsSheetBar, showSettingsSheet;
 
 /// Song detail page (Ionic `songs/song`): inline editing for admins and
 /// responsibles, read-only view for everybody else and for the public share
@@ -76,7 +79,32 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   List<int> _instrumentIds = [];
   List<String> _categoryIds = [];
   Map<String, dynamic> _additional = {};
-  bool _saving = false;
+  /// Saves queued or running. Ionic saves on every ionBlur/ionChange; here
+  /// every change is queued and written in order, so a change made while a
+  /// save is running is not lost and an older save never lands last.
+  int _saving = 0;
+  Future<void> _saveQueue = Future.value();
+
+  /// Form values of the last queued save (or as loaded): text typed last is
+  /// still saved when the page closes without a focus change.
+  String? _lastQueued;
+  SongNotifier? _notifier;
+  bool _disposed = false;
+
+  /// Files the form was last synced with (url + group per file).
+  String? _filesKey;
+
+  /// Latest loaded data; a queued save uses it instead of an older copy.
+  SongDetailData? _data;
+
+  /// Files state at "Alle löschen": until the reload shows the empty list,
+  /// the deleted files must not add their groups back to the Besetzung.
+  String? _clearedFilesKey;
+
+  /// Instance the form was loaded for and the container to check it in a
+  /// queued save (also after dispose, where `ref` is gone).
+  int? _tenantId;
+  ProviderContainer? _container;
 
   int? get _songId => int.tryParse(widget.songId);
 
@@ -84,7 +112,28 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       (songId: _songId ?? 0, sharingId: widget.songSharingId);
 
   @override
+  void initState() {
+    super.initState();
+    // Ionic ngOnInit loads the Werk and its Werkhistorie on every open, so
+    // changes from other people / devices or the Termin page show up.
+    final id = _songId;
+    _container = ProviderScope.containerOf(context, listen: false);
+    // Invalidated before the first build, so the form starts with fresh data
+    // (`ref` cannot be used in initState).
+    if (id != null && widget.songSharingId == null) {
+      _container!
+        ..invalidate(songByIdProvider(id))
+        ..invalidate(songHistoryProvider(id));
+    }
+  }
+
+  @override
   void dispose() {
+    _disposed = true;
+    final data = _data;
+    if (data != null && !data.readOnly && _snapshot(_formValues(data)) != _lastQueued) {
+      _update(data);
+    }
     _prefix.dispose();
     _number.dispose();
     _name.dispose();
@@ -95,10 +144,39 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     super.dispose();
   }
 
+  static String _filesKeyOf(Song song) => [
+        for (final f in song.files ?? const <SongFile>[]) '${f.url}|${f.instrumentId}',
+      ].join(',');
+
   void _init(SongDetailData data) {
     final song = data.song;
-    if (_initializedFor == song.id) return;
+    _data = data;
+    final filesKey = _filesKeyOf(song);
+    if (_initializedFor == song.id) {
+      // Ionic reloads the Werk after upload, file delete, delete all and
+      // category change (syncInstrumentIdsFromFiles): the Besetzung shows the
+      // instrument_ids the file service wrote, so the next save does not
+      // write the old selection back.
+      // After "Alle löschen" a reload of an older save may still carry the
+      // old instrument_ids: the emptied Besetzung stays until a reload
+      // (whatever its files) confirms the empty list.
+      if (_clearedFilesKey != null && (song.instrumentIds?.isEmpty ?? true)) {
+        _clearedFilesKey = null;
+      }
+      if (filesKey != _filesKey) {
+        _filesKey = filesKey;
+        final cleared = _clearedFilesKey != null;
+        _instrumentIds = {
+          ...(cleared ? _instrumentIds : song.instrumentIds ?? const <int>[]),
+          ..._idsFromFiles(data),
+        }.toList();
+      }
+      return;
+    }
     _initializedFor = song.id;
+    _filesKey = filesKey;
+    _notifier = ref.read(songNotifierProvider.notifier);
+    _tenantId = ref.read(currentTenantIdProvider);
     _prefix.text = song.prefix ?? '';
     _number.text = song.number?.toString() ?? '';
     _name.text = song.name;
@@ -106,7 +184,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     _withChoir = song.withChoir;
     _withSolo = song.withSolo;
     _difficulty = song.difficulty;
-    _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(song)}.toList();
+    _instrumentIds = {...?song.instrumentIds, ..._idsFromFiles(data)}.toList();
     _categoryIds = [...?song.categoryIds];
     _additional = {...?song.additionalFields};
     for (final field in data.additionalFields) {
@@ -118,29 +196,111 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
             TextEditingController(text: _additional[field.id]?.toString() ?? '');
       }
     }
+    _lastQueued = _snapshot(_formValues(data));
   }
 
-  /// Ionic `instrumentIdsFromFiles`: groups that have files (id > 2)
-  List<int> _idsFromFiles(Song song) => {
-        for (final f in song.files ?? const <SongFile>[])
-          if (f.instrumentId != null && f.instrumentId! > 2) f.instrumentId!,
-      }.toList();
+  /// Ionic `instrumentIdsFromFiles`: groups that have files, without
+  /// Aufnahme (1), Liedtext (2) and the main group (as the file service).
+  List<int> _idsFromFiles(SongDetailData data) =>
+      _clearedFilesKey == _filesKeyOf(data.song)
+          ? const []
+          : SongFileService.instrumentIdsFromFiles(
+        [
+          for (final f in data.song.files ?? const <SongFile>[])
+            {'instrumentId': f.instrumentId},
+        ],
+        mainGroupId: data.mainGroupId,
+        excludeLyrics: true,
+      );
 
-  /// Ionic `update()`: save the whole form
-  Future<void> _update(SongDetailData data) async {
-    if (data.readOnly || _saving) return;
+  /// Queues a write behind all saves queued before it.
+  Future<Song?> _enqueue(
+    SongNotifier notifier,
+    int id,
+    Map<String, dynamic> values,
+  ) {
+    final tenantId = _tenantId;
+    final container = _container;
+    final run = _saveQueue.then((_) {
+      // Instance switched meanwhile: the save would run against the new
+      // instance; drop it (counts as failed).
+      if (container != null && container.read(currentTenantIdProvider) != tenantId) {
+        return Future<Song?>.value();
+      }
+      return notifier.updateSong(id, values);
+    });
+    _saveQueue = run.then((_) {}, onError: (_) {});
+    return run;
+  }
+
+  /// "Alle löschen": empties the Besetzung through the save queue, so it
+  /// lands after a running save and is not overwritten by it.
+  Future<void> _clearInstrumentIds() async {
+    final data = _data;
+    final id = data?.song.id;
+    final notifier = _notifier;
+    if (data == null || id == null || notifier == null) return;
+    final values = _formValues(data);
+    final before = _lastQueued;
+    // Nothing else pending: the form as saved now has an empty Besetzung,
+    // so closing the page does not save again.
+    final pending = _snapshot(values) != before;
+    _instrumentIds = [];
+    _clearedFilesKey = _filesKeyOf(data.song);
+    values['instrument_ids'] = <int>[];
+    final result = await _enqueue(notifier, id, {'instrument_ids': <int>[]});
+    if (result != null && !pending && _lastQueued == before) {
+      _lastQueued = _snapshot(values);
+    }
+  }
+
+  /// Ionic `update()`: save the whole form. Saves run one after another in
+  /// the order of the changes.
+  Future<void> _update(SongDetailData built) async {
+    final data = _data ?? built;
     final id = data.song.id;
-    if (id == null) return;
-    final merged = {..._instrumentIds, ..._idsFromFiles(data.song)}.toList();
+    final notifier = _notifier;
+    if (data.readOnly || id == null || notifier == null) return;
+    final values = _formValues(data);
+    final snapshot = _snapshot(values);
+    _lastQueued = snapshot;
+    if (!_disposed) setState(() => _saving++);
+    final run = _enqueue(notifier, id, values);
+    Song? result;
+    try {
+      result = await run;
+    } catch (_) {
+      result = null;
+    }
+    // A failed save counts as not saved: closing the page tries again.
+    if (result == null && _lastQueued == snapshot) _lastQueued = null;
+    if (!mounted || _disposed) return;
+    setState(() => _saving--);
+    if (result == null) {
+      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
+    }
+  }
+
+  /// Comparable form state; a state that cannot be encoded never equals
+  /// another one, so it is always saved.
+  static String _snapshot(Map<String, dynamic> values) {
+    try {
+      return jsonEncode(values);
+    } catch (_) {
+      return '!${identityHashCode(values)}';
+    }
+  }
+
+  /// The whole form as written by Ionic `editSong`.
+  Map<String, dynamic> _formValues(SongDetailData data) {
+    final merged = {..._instrumentIds, ..._idsFromFiles(data)}.toList();
     _instrumentIds = merged;
     for (final field in data.additionalFields) {
       final c = _fieldControllers[field.id];
       if (c == null) continue;
       _additional[field.id] = field.isNumber ? num.tryParse(c.text) ?? 0 : c.text;
     }
-
-    setState(() => _saving = true);
-    final result = await ref.read(songNotifierProvider.notifier).updateSong(id, {
+    return {
       'prefix': _prefix.text.trim(),
       'number': int.tryParse(_number.text.trim()),
       'name': _name.text.trim(),
@@ -149,14 +309,9 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       'withChoir': _withChoir,
       'withSolo': _withSolo,
       'instrument_ids': merged,
-      'category_ids': _categoryIds,
-      'additional_fields': _additional,
-    });
-    if (!mounted) return;
-    setState(() => _saving = false);
-    if (result == null) {
-      ToastHelper.showError(context, context.l10n.extraFieldsSaveFailed);
-    }
+      'category_ids': [..._categoryIds],
+      'additional_fields': {..._additional},
+    };
   }
 
   void _refresh() {
@@ -210,7 +365,12 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       );
     }
     final dataAsync = ref.watch(songDetailDataProvider(_params));
-    final data = dataAsync.valueOrNull;
+    // Is the same Werk still open below in the stack, the provider keeps the
+    // old value while it reloads after initState: the form starts only with
+    // the fresh data (spinner until then, as on a first open).
+    final data = _initializedFor == null && dataAsync.isLoading
+        ? null
+        : dataAsync.valueOrNull;
 
     if (data == null) {
       final sharingId = widget.songSharingId;
@@ -303,7 +463,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
           children: [
             const IonContentTopInset(),
             IonLargeTitle(title),
-            if (_saving) const LinearProgressIndicator(minHeight: 2),
+            if (_saving > 0) const LinearProgressIndicator(minHeight: 2),
             if (!data.readOnly) _buildEditForm(data),
             if (data.readOnly && (song.categoryIds?.isNotEmpty ?? false)) ...[
               IonListHeader(context.l10n.songsCategories),
@@ -330,11 +490,15 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
                     song.withSolo ||
                     (data.isOrchestra && (song.instrumentIds?.isNotEmpty ?? false))))
               _buildReadOnlyInstrumentation(data),
-            if (data.additionalFields.isNotEmpty) _buildAdditionalFields(data),
+            // Ionic: only with the logged-in tenant's fields, never on the
+            // public share page (values are not public).
+            if (data.additionalFields.isNotEmpty && !data.isPublic)
+              _buildAdditionalFields(data),
             if (data.history.isNotEmpty) _buildHistory(data),
             _FilesSection(
               data: data,
               onChanged: _refresh,
+              onClearInstrumentIds: _clearInstrumentIds,
             ),
             // Ionic 4.17.10: SongBeamer-Datei (Gemeinde App)
             if (!data.isPublic) SongBeamerFileSection(song: song),
@@ -387,7 +551,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       );
 
   Widget _buildEditForm(SongDetailData data) {
-    final fileIds = _idsFromFiles(data.song);
+    final fileIds = _idsFromFiles(data);
     return IonInsetList(children: [
       Padding(
         padding: const EdgeInsets.fromLTRB(16, 12, 16, 4),
@@ -866,6 +1030,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
             useRootNavigator: true, // IOS_SHELL2: above the tab bar
             isScrollControlled: true,
             useSafeArea: true,
+            enableDrag: false, // not closable while copying
             builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
           ),
         ),
@@ -879,10 +1044,17 @@ class _CopyToOtherInstance extends ConsumerWidget {
 // ============================================================================
 
 class _FilesSection extends ConsumerStatefulWidget {
-  const _FilesSection({required this.data, required this.onChanged});
+  const _FilesSection({
+    required this.data,
+    required this.onChanged,
+    required this.onClearInstrumentIds,
+  });
 
   final SongDetailData data;
   final VoidCallback onChanged;
+
+  /// "Alle löschen": empty the Besetzung through the page's save queue.
+  final Future<void> Function() onClearInstrumentIds;
 
   @override
   ConsumerState<_FilesSection> createState() => _FilesSectionState();
@@ -909,7 +1081,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
   }
 
   Future<void> _upload([List<PlatformFile> initialFiles = const []]) async {
-    final result = await showModalBottomSheet<bool>(
+    await showModalBottomSheet<bool>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       isScrollControlled: true,
@@ -925,7 +1097,9 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
         workName: song.name,
       ),
     );
-    if (result == true) widget.onChanged();
+    // Ionic performUpload reloads the Werk after every run, also when some
+    // files failed and the sheet is closed afterwards.
+    if (mounted) widget.onChanged();
   }
 
   /// Ionic `handlePageDrop`: one file -> single-file modal, several files ->
@@ -982,9 +1156,7 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     if (!ok) return;
     await _run(() async {
       await (await ref.read(readySongFileServiceProvider.future)).deleteAllFiles(songId: song.id!);
-      await ref
-          .read(songNotifierProvider.notifier)
-          .updateSong(song.id!, {'instrument_ids': <int>[]});
+      await widget.onClearInstrumentIds();
       widget.onChanged();
     });
   }
@@ -1169,12 +1341,27 @@ class _FilesSectionState extends ConsumerState<_FilesSection> {
     }
   }
 
+  Future<({int? instrumentId, String? note})?> _showCategorySheet(Widget picker) =>
+      showSettingsSheet<({int? instrumentId, String? note})>(
+        context,
+        useRootNavigator: true, // IOS_SHELL2: above the tab bar
+        builder: (_) => picker,
+      );
+
+  Future<({int? instrumentId, String? note})?> _showCategoryDialog(Widget picker) =>
+      showAppDialog<({int? instrumentId, String? note})>(
+        context: context,
+        builder: (_) => picker,
+      );
+
   /// Ionic category modal: Chor (alle) (choirs) / Sonstige (Freitext) /
   /// Aufnahme / Liedtext / groups
   Future<void> _changeCategory(SongFile file) async {
-    final result = await showAppDialog<({int? instrumentId, String? note})>(
-      context: context,
-      builder: (_) => FileCategoryDialog(
+    // Ionic: sheet modal (breakpoints [0, 1]); the Beta skin keeps its dialog.
+    final asSheet = context.rdSkin == null;
+    final result = await (asSheet ? _showCategorySheet : _showCategoryDialog)(
+      FileCategoryDialog(
+        asSheet: asSheet,
         instruments: data.instruments,
         isChoir: data.isChoir,
         // Ionic 4.17.16 changeCategory: in choirs a file without group and
@@ -1212,9 +1399,14 @@ class FileCategoryDialog extends StatefulWidget {
     required this.initialInstrumentId,
     required this.initialNote,
     this.isChoir = false,
+    this.asSheet = false,
   });
 
   final List<Group> instruments;
+
+  /// Ionic sheet modal (normal design): toolbar with "Abbrechen", radio
+  /// list, free text and a block "Speichern" button. Otherwise a dialog.
+  final bool asSheet;
 
   /// Picker value: an instrumentId, null ("Sonstige (Freitext)") or
   /// [kChoirAllOptionValue] ("Chor (alle)").
@@ -1247,6 +1439,7 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
       (2, context.l10n.songsLyrics),
       for (final g in widget.instruments) (g.id, g.name),
     ];
+    if (widget.asSheet) return _buildSheet(context, options);
     return AppAlertDialog(
       title: Text(context.l10n.songsChangeCategory),
       content: SizedBox(
@@ -1292,6 +1485,77 @@ class _FileCategoryDialogState extends State<FileCategoryDialog> {
           child: Text(context.l10n.commonSave),
         ),
       ],
+    );
+  }
+
+  Widget _buildSheet(BuildContext context, List<(int?, String)> options) {
+    final theme = Theme.of(context);
+    return Scaffold(
+      appBar: settingsSheetBar(
+        context,
+        title: context.l10n.songsChangeCategory,
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.pop(context),
+            child: Text(context.l10n.commonCancel),
+          ),
+        ],
+      ),
+      body: ListView(
+        padding: const EdgeInsets.only(bottom: 16),
+        children: [
+          for (final o in options)
+            RadioListTile<int?>(
+              value: o.$1,
+              groupValue: _id,
+              controlAffinity: ListTileControlAffinity.trailing,
+              title: Text(o.$2),
+              subtitle: o.$1 == kChoirAllOptionValue
+                  ? Text(context.l10n.songsChoirAllHint)
+                  : null,
+              onChanged: (v) => setState(() => _id = v),
+            ),
+          if (_id == null) ...[
+            // Ionic `ion-item-divider` + `ion-input clearInput`
+            Container(
+              color: theme.colorScheme.surfaceContainerHighest,
+              padding: const EdgeInsets.fromLTRB(16, 8, 16, 8),
+              child: Text(context.l10n.songsFreeText,
+                  style: theme.textTheme.bodySmall),
+            ),
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16),
+              child: ValueListenableBuilder<TextEditingValue>(
+                valueListenable: _note,
+                builder: (context, value, _) => TextField(
+                  controller: _note,
+                  decoration: InputDecoration(
+                    hintText: context.l10n.songsEnterCategory,
+                    border: InputBorder.none,
+                    suffixIcon: value.text.isEmpty
+                        ? null
+                        : IconButton(
+                            icon: const Icon(Icons.cancel, size: 18),
+                            tooltip: context.l10n.a11yClearInput,
+                            onPressed: _note.clear,
+                          ),
+                  ),
+                ),
+              ),
+            ),
+          ],
+          Padding(
+            padding: const EdgeInsets.all(16),
+            child: ElevatedButton(
+              onPressed: () => Navigator.pop(
+                context,
+                resolveFileCategoryOption(_id, _note.text.trim()),
+              ),
+              child: IonButtonLabel(context.l10n.commonSave),
+            ),
+          ),
+        ],
+      ),
     );
   }
 }

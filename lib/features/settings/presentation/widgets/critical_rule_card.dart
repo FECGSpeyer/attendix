@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 
 import '../../../../core/theme/app_colors.dart';
+import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
 import 'settings_list.dart';
@@ -10,11 +11,15 @@ class CriticalRuleCard extends StatelessWidget {
   const CriticalRuleCard({
     super.key,
     required this.rule,
+    required this.attendanceTypes,
     required this.onDelete,
     required this.onEdit,
   });
 
   final CriticalRule rule;
+
+  /// The tenant's attendance types (names shown in parentheses).
+  final List<AttendanceType> attendanceTypes;
   final VoidCallback onDelete;
   final VoidCallback onEdit;
 
@@ -24,9 +29,7 @@ class CriticalRuleCard extends StatelessWidget {
     // group — wrapped description (h2), operator ion-badge (AND primary /
     // OR secondary) and a red trash button. Tap edits (Flutter extra).
     final isAnd = rule.operator == CriticalRuleOperator.and;
-    final text = rule.name != null && rule.name!.isNotEmpty
-        ? '${rule.name}: ${rule.description}'
-        : rule.description;
+    final text = rule.describe(attendanceTypes);
     return ListTile(
       onTap: onEdit,
       title: Text(text),

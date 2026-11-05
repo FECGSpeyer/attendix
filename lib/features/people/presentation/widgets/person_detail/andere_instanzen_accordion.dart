@@ -6,6 +6,7 @@ import '../../../../../core/constants/enums.dart';
 import '../../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/services/cross_tenant_service.dart';
+import '../../../../../core/utils/archived_attendance.dart';
 import '../../../../../data/repositories/user_registration_repository.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
@@ -20,6 +21,7 @@ final otherTenantsProvider =
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account
   final supabase = ref.watch(supabaseClientProvider);
   final currentTenant = ref.watch(currentTenantProvider);
+  final showArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
 
   if (currentTenant == null) return [];
 
@@ -71,27 +73,35 @@ final otherTenantsProvider =
 
       if (playerId != null) {
 
-        // Get attendance stats
-        final now = DateTime.now().toIso8601String().substring(0, 10);
+        // Ionic getAttendanceFromOtherTenant → db.getPersonAttendances:
+        // Termine ab Saisonstart der AKTUELLEN Instanz, archivierte nur für
+        // Rollen, die sie sehen dürfen, gezählt bis jetzt; "anwesend" inkl.
+        // schichtbedingt entschuldigt, wenn die aktuelle Instanz das so zählt.
+        final seasonStart = currentTenant.seasonStart ?? '2023-01-01T00:00:00.000Z';
         final attendanceResponse = await supabase
             .from('person_attendances')
-            .select('status, attendance:attendance_id!inner(date, tenantId)')
+            .select('status, notes, attendance:attendance_id!inner(date, archived, tenantId)')
             .eq('person_id', playerId)
-            .eq('attendance.tenantId', tenantId);
+            .eq('attendance.tenantId', tenantId)
+            .gt('attendance.date', seasonStart);
 
+        final now = DateTime.now();
         final attendances = (attendanceResponse as List).where((a) {
           final attendance = a['attendance'] as Map<String, dynamic>?;
-          final date = attendance?['date']?.toString();
-          return date != null && date.compareTo(now) <= 0;
+          if (attendance == null) return false;
+          if (!showArchived && attendance['archived'] == true) return false;
+          final date = DateTime.tryParse(attendance['date']?.toString() ?? '');
+          return date != null && date.isBefore(now);
         }).toList();
 
         final total = attendances.length;
         final attended = attendances.where((a) {
           final status = a['status'];
-          if (status is int) {
-            return AttendanceStatus.fromValue(status).countsAsPresent;
-          }
-          return false;
+          return status is int &&
+              AttendanceStatus.fromValue(status).countsAsAttended(
+                notes: a['notes'] as String?,
+                shiftExcusedAsPresent: currentTenant.shiftExcusedAsPresent,
+              );
         }).length;
 
         percentage = total > 0 ? (attended / total * 100).round() : null;

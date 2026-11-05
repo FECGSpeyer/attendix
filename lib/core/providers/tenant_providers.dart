@@ -1,15 +1,29 @@
 import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import 'package:supabase_flutter/supabase_flutter.dart' show UserAttributes;
 
 import '../../core/config/supabase_config.dart';
 import '../../data/models/tenant/tenant.dart';
 import '../constants/enums.dart';
+import '../services/native/ionic_session_takeover.dart'
+    show ionicTakeoverTenantKey;
 import 'user_preferences_provider.dart';
 import '../utils/demo_guard.dart';
 import '../../l10n/l10n.dart';
 
 const _tenantIdKey = 'current_tenant_id';
+
+/// IONIC_SESSION: group of the Ionic app still waiting to be restored after
+/// the store update (null otherwise). The automatic tenant choice on
+/// `/tenants` prefers it, like `CurrentTenantNotifier` does.
+Future<int?> pendingIonicTenantId() async {
+  try {
+    return (await SharedPreferences.getInstance()).getInt(ionicTakeoverTenantKey);
+  } catch (_) {
+    return null;
+  }
+}
 
 /// Provider for current selected tenant
 final currentTenantProvider =
@@ -21,6 +35,27 @@ final currentTenantProvider =
 final currentTenantIdProvider = Provider<int?>((ref) {
   return ref.watch(currentTenantProvider)?.id;
 });
+
+/// Ionic `setTenant`: the instance stored on this device (localStorage)
+/// wins over `user_metadata.currentTenantId` ([serverTenantId]). Used by the
+/// login / instance selection so they pick the same instance as the
+/// background restore of [CurrentTenantNotifier]. Returns the ids in order
+/// of preference (without duplicates); callers take the first accessible one.
+Future<List<int>> preferredTenantIds(int? serverTenantId) async {
+  int? ionic;
+  int? cached;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    ionic = prefs.getInt(ionicTakeoverTenantKey);
+    cached = prefs.getInt(_tenantIdKey);
+  } catch (_) {}
+  // IONIC_SESSION: a pending Ionic group wins once, like the restore.
+  return {
+    if (ionic != null) ionic,
+    if (cached != null) cached,
+    if (serverTenantId != null) serverTenantId,
+  }.toList();
+}
 
 /// Notifier for current tenant
 /// Uses dual-storage strategy:
@@ -48,26 +83,100 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     final userMetadata = auth.currentUser?.userMetadata;
     final serverTenantId = userMetadata?['currentTenantId'] as int?;
 
-    // Step 3: Determine which tenant ID to use (server takes precedence)
-    final tenantIdToLoad = serverTenantId ?? cachedTenantId;
+    // IONIC_SESSION: after the store update the group of the Ionic app wins
+    // once (Ionic preferred its local value over user_metadata).
+    final ionicTenantId = prefs.getInt(ionicTakeoverTenantKey);
+    if (ionicTenantId != null && await _restoreIonicTenant(ionicTenantId)) {
+      return;
+    }
+
+    // Step 3: Ionic setTenant – the same-device value (localStorage) wins
+    // over user_metadata.currentTenantId when they disagree (a switch via
+    // setTenantLocal does not write the metadata); metadata is the
+    // cross-device fallback.
+    final tenantIdToLoad = cachedTenantId ?? serverTenantId;
 
     if (tenantIdToLoad != null) {
-      await _loadAndValidateTenant(tenantIdToLoad);
+      // A cached id that differs from the account's metadata may belong to
+      // another account of this device: if it is not accessible, drop only
+      // the local cache and fall back to the metadata – never clear the
+      // metadata of the signed-in account because of a foreign cache entry.
+      final fallback = cachedTenantId != null &&
+              serverTenantId != null &&
+              serverTenantId != cachedTenantId
+          ? serverTenantId
+          : null;
+      final loaded = await _loadAndValidateTenant(
+        tenantIdToLoad,
+        localOnly: fallback != null,
+      );
 
-      // Sync cache if server had different value
-      if (serverTenantId != null && serverTenantId != cachedTenantId) {
+      if (loaded == false && fallback != null && !_explicitlySet) {
+        if (await _loadAndValidateTenant(fallback) == true && !_explicitlySet) {
+          await prefs.setInt(_tenantIdKey, fallback);
+        }
+      }
+
+      // Fill the cache from the server value on a new device.
+      if (cachedTenantId == null && serverTenantId != null) {
         await prefs.setInt(_tenantIdKey, serverTenantId);
       }
     }
   }
 
-  /// Load tenant by ID and validate user still has access
-  Future<void> _loadAndValidateTenant(int tenantId) async {
+  /// IONIC_SESSION: loads the Ionic group if the user still belongs to it
+  /// and syncs it to user_metadata. The pending key is removed once the
+  /// outcome is final; network errors keep it for the next start.
+  Future<bool> _restoreIonicTenant(int tenantId) async {
+    final prefs = await SharedPreferences.getInstance();
+    try {
+      final supabase = ref.read(supabaseClientProvider);
+      final userId = supabase.auth.currentUser?.id;
+      if (userId == null) return false;
+      final member = await supabase
+          .from('tenantUsers')
+          .select('tenantId')
+          .eq('tenantId', tenantId)
+          .eq('userId', userId)
+          .maybeSingle();
+      final response = member == null
+          ? null
+          : await supabase
+              .from('tenants')
+              .select('*')
+              .eq('id', tenantId)
+              .maybeSingle();
+      if (response == null) {
+        await prefs.remove(ionicTakeoverTenantKey);
+        return false;
+      }
+      if (_explicitlySet) return true;
+      state = Tenant.fromJson(response);
+      await prefs.setInt(_tenantIdKey, tenantId);
+      final metadata = supabase.auth.currentUser?.userMetadata;
+      if (metadata?['currentTenantId'] != tenantId) {
+        await supabase.auth.updateUser(UserAttributes(
+          data: {...?metadata, 'currentTenantId': tenantId},
+        ));
+      }
+      await prefs.remove(ionicTakeoverTenantKey);
+      return true;
+    } catch (e) {
+      debugPrint('Ionic group not restored yet: $e');
+      return state?.id == tenantId;
+    }
+  }
+
+  /// Load tenant by ID and validate user still has access.
+  /// Returns true when loaded, false when the tenant is not accessible (or
+  /// gone; storage was cleared – only the local cache with [localOnly]) and
+  /// null when nothing was decided (no user, explicit choice, error).
+  Future<bool?> _loadAndValidateTenant(int tenantId, {bool localOnly = false}) async {
     try {
       final supabase = ref.read(supabaseClientProvider);
       final userId = supabase.auth.currentUser?.id;
 
-      if (userId == null) return;
+      if (userId == null) return null;
 
       // Verify user still has access to this tenant
       final tenantUserResponse = await supabase
@@ -77,12 +186,12 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('userId', userId)
           .maybeSingle();
 
-      if (_explicitlySet) return;
+      if (_explicitlySet) return null;
       // User no longer has access to this tenant
       if (tenantUserResponse == null) {
         debugPrint('User no longer has access to tenant $tenantId');
-        await _clearAllStorage();
-        return;
+        await _clearStorage(localOnly: localOnly);
+        return false;
       }
 
       // Load the tenant data
@@ -92,20 +201,28 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
           .eq('id', tenantId)
           .maybeSingle();
 
-      if (_explicitlySet) return;
+      if (_explicitlySet) return null;
       if (response != null) {
         state = Tenant.fromJson(response);
-      } else {
-        // Tenant doesn't exist anymore
-        await _clearAllStorage();
+        return true;
       }
+      // Tenant doesn't exist anymore
+      await _clearStorage(localOnly: localOnly);
+      return false;
     } catch (e, stack) {
       debugPrint('Failed to load saved tenant: $e');
       // SEC-008: Only log stack trace in debug mode
       if (kDebugMode) {
         debugPrint('$stack');
       }
+      return null;
     }
+  }
+
+  Future<void> _clearStorage({required bool localOnly}) async {
+    if (!localOnly) return _clearAllStorage();
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(_tenantIdKey);
   }
 
   /// Set the current tenant locally without triggering auth sync.
@@ -116,6 +233,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
     state = tenant;
 
     final prefs = await SharedPreferences.getInstance();
+    await prefs.remove(ionicTakeoverTenantKey);
     final tenantId = tenant?.id;
     if (tenantId != null) {
       await prefs.setInt(_tenantIdKey, tenantId);
@@ -166,6 +284,7 @@ class CurrentTenantNotifier extends StateNotifier<Tenant?> {
   Future<void> _clearAllStorage() async {
     final prefs = await SharedPreferences.getInstance();
     await prefs.remove(_tenantIdKey);
+    await prefs.remove(ionicTakeoverTenantKey);
 
     // Also clear from user_metadata
     ref.read(userPreferencesNotifierProvider.notifier).clearCurrentTenantId();

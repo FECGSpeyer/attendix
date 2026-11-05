@@ -327,15 +327,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     // routeAfterAuth → setTenant(…, showSelector)).
     InstanceSelectionGate.afterSignIn = true;
 
-    if (!userPrefs.wantInstanceSelection && userPrefs.currentTenantId != null) {
-      // Try to auto-navigate to saved tenant
-      final navigated = await _tryAutoNavigateToTenant(
-        userPrefs.currentTenantId!,
-      );
-      if (navigated) return;
+    if (!userPrefs.wantInstanceSelection) {
+      // Try to auto-navigate to the saved tenant: this device's instance
+      // first, then user_metadata (Ionic setTenant, same order as the
+      // background restore).
+      for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+        if (await _tryAutoNavigateToTenant(id)) return;
+      }
     }
 
-    // Default: show tenant selection
+    // Default: show tenant selection. With "Instanzauswahl aktivieren" it
+    // asks with the Ionic radio alert (TenantSelectionPage), which also
+    // works when the router already replaced this page after the sign-in.
     if (mounted) {
       context.go('/tenants');
     }

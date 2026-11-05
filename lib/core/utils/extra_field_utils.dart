@@ -81,3 +81,11 @@ String formatExtraFieldValue(
       return value.toString();
   }
 }
+
+/// Ionic `ion-input type="number"` + ngModel: empty input → no value (null),
+/// decimals allowed ("1.5" / "1,5" → 1.5), whole numbers stay int.
+num? parseExtraFieldNumber(String input) {
+  final text = input.trim().replaceAll(',', '.');
+  if (text.isEmpty) return null;
+  return num.tryParse(text);
+}

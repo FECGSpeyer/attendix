@@ -275,28 +275,54 @@ class AccountAccordion extends ConsumerWidget {
     );
   }
 
+  /// Ionic accountHelpModal: sheet modal (breakpoint 0.5) with toolbar
+  /// "Hilfe" and a close button.
   void _showHelp(BuildContext context) {
-    showAppDialog<void>(
+    showModalBottomSheet<void>(
       context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.personHelp),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            if (person.appId == null) ...[
-              Text(context.l10n.personAccountHelp),
-              const SizedBox(height: AppDimensions.paddingM),
-            ],
-            Text(context.l10n.personExistingUserHint),
-          ],
+      useRootNavigator: true,
+      isScrollControlled: true,
+      useSafeArea: true,
+      builder: (ctx) => ConstrainedBox(
+        constraints: BoxConstraints(
+          minHeight: MediaQuery.sizeOf(ctx).height * 0.5,
         ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(context.l10n.commonClose),
+        child: Padding(
+          padding: const EdgeInsets.fromLTRB(
+            AppDimensions.paddingM,
+            AppDimensions.paddingS,
+            AppDimensions.paddingM,
+            AppDimensions.paddingL,
           ),
-        ],
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Row(
+                children: [
+                  const SizedBox(width: 48),
+                  Expanded(
+                    child: Text(
+                      ctx.l10n.personHelp,
+                      textAlign: TextAlign.center,
+                      style: const TextStyle(fontSize: 17, fontWeight: FontWeight.w600),
+                    ),
+                  ),
+                  IconButton(
+                    icon: Icon(Icons.close, semanticLabel: ctx.l10n.commonClose),
+                    onPressed: () => Navigator.pop(ctx),
+                  ),
+                ],
+              ),
+              const SizedBox(height: AppDimensions.paddingM),
+              if (person.appId == null) ...[
+                Text(ctx.l10n.personAccountHelp),
+                const SizedBox(height: AppDimensions.paddingM),
+              ],
+              Text(ctx.l10n.personExistingUserHint),
+            ],
+          ),
+        ),
       ),
     );
   }

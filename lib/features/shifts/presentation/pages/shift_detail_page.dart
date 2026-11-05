@@ -4,7 +4,6 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/providers/shift_providers.dart';
-import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/shift/shift_definition.dart';
@@ -95,8 +94,8 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
   Widget build(BuildContext context) {
     final shiftAsync = ref.watch(shiftByIdProvider(widget.shiftId));
     final usageCount = ref.watch(shiftUsageCountProvider(widget.shiftId));
-    final tenantsAsync = ref.watch(userTenantsProvider);
-    final currentTenantId = ref.watch(currentTenantIdProvider);
+    // Ionic `@if (linkedTenants.length > 0)`: hidden while loading/on error.
+    final copyTargetsAsync = ref.watch(shiftCopyTargetTenantsProvider);
 
     return IonCondenseScaffold(
       title: context.l10n.shiftsEdit,
@@ -107,24 +106,23 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       ),
       actions: [
         // Copy to tenant button (only with linked tenants)
-        tenantsAsync.when(
+        copyTargetsAsync.when(
           loading: () => const SizedBox.shrink(),
           error: (_, __) => const SizedBox.shrink(),
-          data: (tenants) {
-            final otherTenants = tenants.where((t) => t.id != currentTenantId).toList();
-            if (otherTenants.isEmpty) return const SizedBox.shrink();
+          data: (targets) {
+            if (targets.isEmpty) return const SizedBox.shrink();
 
             return IconButton(
               icon: const Icon(Icons.copy_outlined),
               tooltip: context.l10n.shiftsCopyToTenant,
-              onPressed: () => _showCopySheet(context, shiftAsync.valueOrNull),
+              onPressed: () => _copyToTenant(context, shiftAsync.valueOrNull),
             );
           },
         ),
         IconButton(
           icon: const Icon(Icons.delete_outline, color: AppColors.danger),
           tooltip: context.l10n.commonDelete,
-          onPressed: () => _confirmDelete(context, usageCount.valueOrNull ?? 0),
+          onPressed: () => _confirmDelete(context),
         ),
       ],
       floatingActionButton: TabBarFab.wrap(FloatingActionButton(
@@ -367,6 +365,15 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     }
   }
 
+  /// The segments with `index` = list position. Loading sorts by `index`
+  /// (Ionic loadShifts); deleting a segment leaves gaps and a new segment
+  /// gets `_definitions.length`, which could equal a remaining index and
+  /// move the new segment on the next load.
+  List<ShiftDefinition> _numberedDefinitions() => [
+        for (var i = 0; i < _definitions.length; i++)
+          _definitions[i].index == i ? _definitions[i] : _definitions[i].copyWith(index: i),
+      ];
+
   // Definition segment methods
   void _addSegment() {
     setState(() {
@@ -444,7 +451,7 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
       id: widget.shiftId,
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
@@ -465,12 +472,10 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     }
   }
 
-  Future<void> _confirmDelete(BuildContext context, int usageCount) async {
+  Future<void> _confirmDelete(BuildContext context) async {
     final l10n = context.l10n;
-    String message = l10n.shiftsFlutterDeleteConfirm;
-    if (usageCount > 0) {
-      message = l10n.shiftsFlutterDeleteConfirmUsed(usageCount);
-    }
+    // Ionic shifts.deleteMessage (warns about the shifts and assignments).
+    final message = l10n.shiftsDeleteMessage;
 
     final confirmed = await showAppDialog<bool>(
       context: context,
@@ -511,31 +516,25 @@ class _ShiftDetailPageState extends ConsumerState<ShiftDetailPage> {
     final previewPlan = shift.copyWith(
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
     showShiftPreviewSheet(context, previewPlan, startInstance: startInstance);
   }
 
-  Future<void> _showCopySheet(BuildContext context, ShiftPlan? shift) async {
+  Future<void> _copyToTenant(BuildContext context, ShiftPlan? shift) async {
     if (shift == null) return;
 
-    // Create updated plan with current edits
+    // Ionic copies the bound model, i.e. including unsaved edits.
     final currentPlan = shift.copyWith(
       name: _nameController.text.trim(),
       description: _descriptionController.text.trim(),
-      definition: _definitions,
+      definition: _numberedDefinitions(),
       shifts: _shifts,
     );
 
-    await showModalBottomSheet(
-      context: context,
-      useRootNavigator: true, // IOS_SHELL2: above the tab bar
-      isScrollControlled: true,
-      useSafeArea: true,
-      builder: (context) => CopyShiftToTenantSheet(shift: currentPlan),
-    );
+    await copyShiftToTenant(context, ref, currentPlan);
   }
 }
 

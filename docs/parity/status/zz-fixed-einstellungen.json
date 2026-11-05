@@ -1,0 +1,616 @@
+{
+ "batch": "zz-fixed-einstellungen",
+ "afterRound": 4,
+ "ionic": "9f9b82af",
+ "items": {
+  "settings/general/extra-fields/extra-fields.page#alert-89775995": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/data/repositories/extra_fields_repository.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-67f7ba0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-5fa87742": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#modal-48c8bdd3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-38045a06": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/general.page#field-6d77eb19": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart",
+    "lib/shared/widgets/adaptive/app_multi_select.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/general.page#field-7d3ff9d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart",
+    "lib/shared/widgets/adaptive/app_multi_select.dart",
+    "lib/data/models/tenant/tenant.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/shifts/shift/shift.page#action-34770ae6": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/shift_providers.dart",
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/general/type/type.page#alert-57a11ee0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#alert-ae40e4a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#alert-4bd8b87d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#alert-7993d27e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-1ef7f6fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-81819267": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-6289c3a9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-c71a96a2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-c4c2cba9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-3a657512": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/settings/settings.page#field-fdb790d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/core/providers/user_preferences_provider.dart"
+   ],
+   "n": "behoben in #294"
+  },
+  "settings/administration/administration.page#alert-8fd4640e": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart",
+    "lib/core/utils/dialog_helper.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-3c8301fd": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/files/files.page#effect-c39ff4df": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart",
+    "lib/core/utils/system_share.dart",
+    "lib/core/utils/system_share/system_share_web.dart",
+    "lib/core/utils/system_share/system_share_stub.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/files/files.page#popover-f66de769": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/files/files.page#popover-92206ccb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/files_page.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-924f922c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-918527db": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#alert-bc12427a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/data/repositories/extra_fields_repository.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-26cfdf12": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#action-e93b0747": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-618124b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ],
+   "n": "behoben in #303"
+  },
+  "settings/general/general.page#field-34705c68": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/general.page#action-578da7ee": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/general.page#field-0d3aad25": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/general.page#action-50952c99": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/general.page#text-e7ca4bc1": {
+   "s": "ok",
+   "f": [
+    "lib/data/models/tenant/tenant.dart",
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart",
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "x-759bccbc9e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ],
+   "n": "behoben in #304"
+  },
+  "settings/general/shifts/shift/shift.page#alert-9674aef6": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/general/shifts/shift/shift.page#alert-8f8ff7ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart",
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/general/shifts/shift/shift.page#alert-0ef2eadc": {
+   "s": "ok",
+   "f": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/general/type/type.page#nav-bc1cad79": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-2be774f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart",
+    "lib/shared/widgets/adaptive/ios_card_modal.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-1e46173e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-5028d2f7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-2e6f9d01": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-d5d47659": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#modal-0895b1d0": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-2c11308c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-e6aa9e5e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-8950195c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#popover-26fe60f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-af88791e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-a5acb470": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-8c888e7c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-f51fa00c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-111f251b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-246edae3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-a94e358b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-80219924": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-9786b85d-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#modal-8afdfb0b-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-ba7f8aa7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-f45c84b6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-c1a3e2f1": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#text-d7a84674-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-9786b85d-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-4366c1dd": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-557c3624": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-bab9d008": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#field-d34df4b8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/type/type.page#action-a1e62eae": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/settings/presentation/pages/attendance_types_page.dart",
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "x-0ad1beb81e": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "settings/general/types/types.page#modal-c0d2c05c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
+    "lib/data/repositories/attendance_type_repository.dart",
+    "lib/core/providers/attendance_type_providers.dart"
+   ],
+   "n": "behoben in #302"
+  },
+  "x-6fbc5fbd93": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "x-bb2ef2fc5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/help/article/help-article.page#popover-c1b18c0d": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/presentation/pages/help_article_page.dart",
+    "lib/features/help/presentation/widgets/glossary_term_popover.dart",
+    "lib/features/help/presentation/widgets/help_markdown.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "x-8d00ffba99": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/data/help_content.dart",
+    "lib/features/help/data/help_content_en.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "x-6eff6305bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "x-7da9b986f8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart",
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
+   ],
+   "n": "behoben in #299"
+  },
+  "settings/settings/settings.page#modal-35a628ef": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/left_players_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #322"
+  },
+  "settings/settings/settings.page#modal-fb3873fe": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/pending_players_page.dart",
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #322"
+  },
+  "settings/settings/settings.page#modal-2d9ef553": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart"
+   ],
+   "n": "behoben in #322"
+  }
+ }
+}

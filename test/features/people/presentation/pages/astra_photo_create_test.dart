@@ -1,6 +1,7 @@
 import 'dart:io';
 import 'dart:typed_data';
 
+import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/church_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/parent_providers.dart';
@@ -40,6 +41,8 @@ Widget _app(PersonImagePicker picker) => ProviderScope(
         parentsProvider.overrideWith((ref) async => const []),
         shiftsProvider.overrideWith((ref) async => const []),
         personImagePickerProvider.overrideWithValue(picker),
+        // The create form is locked for viewers (Ionic readOnly).
+        currentRoleProvider.overrideWithValue(Role.admin),
       ],
       child: MaterialApp(
         theme: AppTheme.light,
@@ -131,11 +134,11 @@ void main() {
       final page = _read(
           'lib/features/people/presentation/pages/person_create_page.dart');
       expect(page, contains('imageBytes: _pickedImage'));
-      expect(page, contains('ref.read(personImagePickerProvider)()'));
+      expect(page, contains('pickPersonImage(context, ref)'));
       final header = _read(
           'lib/features/people/presentation/widgets/person_detail/person_header.dart');
-      expect(header, contains('ref.read(personImagePickerProvider)()'));
-      expect(header, contains('repo.updateImage(personId, bytes)'));
+      expect(header, contains('pickPersonImage(context, ref)'));
+      expect(header, contains('repo.updateImage(personId, bytes, appId: person.appId)'));
       expect(header, isNot(contains('ImagePicker()')));
     });
   });
