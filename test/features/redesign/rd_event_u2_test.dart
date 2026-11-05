@@ -42,7 +42,7 @@ void main() {
     final list = File('lib/features/attendance/presentation/pages/attendance_list_page.dart').readAsStringSync();
     final beta = File('lib/features/redesign/presentation/pages/rd_event_page.dart').readAsStringSync();
     final sections = File('lib/features/redesign/presentation/widgets/event/rd_event_sections.dart').readAsStringSync();
-    expect(list, contains('openAttendancePlanViewer(context, att)'));
+    expect(list, contains('await openAttendancePlanViewer(\n      context,\n      att,'));
     expect(sections, contains('openAttendancePlanViewer(context, att)'));
     // Delete is bound to the tenant repository before the dialog.
     expect(beta, contains('final repo = ref.read(attendanceRepositoryWithTenantProvider);'));
