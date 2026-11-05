@@ -222,29 +222,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
-      builder:
-          (sheetContext) => Consumer(
-            builder: (context, ref, _) {
-              final prefs = ref.watch(userPreferencesProvider);
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    child: SwitchListTile.adaptive(
-                      title: Text(context.l10n.settingsEnableTenantSelect),
-                      subtitle: Text(context.l10n.settingsTenantSelectHelper),
-                      value: prefs.wantInstanceSelection,
-                      onChanged:
-                          (value) => ref
-                              .read(userPreferencesNotifierProvider.notifier)
-                              .updatePreferences(wantInstanceSelection: value),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+      builder: (sheetContext) => const _InstanceSelectionToggle(),
     );
   }
 
@@ -595,6 +573,58 @@ class _TenantTile extends StatelessWidget {
               },
             ),
           ],
+        ),
+      ),
+    );
+  }
+}
+
+/// Ionic ngModel: the toggle flips at once and every change is written
+/// (settings.page.ts onTenantSelectionChange). The writes are serialized in
+/// [UserPreferencesNotifier.setWantInstanceSelection]; while writing, the
+/// toggle shows the wanted value; on failure a toast and the stored value.
+class _InstanceSelectionToggle extends ConsumerStatefulWidget {
+  const _InstanceSelectionToggle();
+
+  @override
+  ConsumerState<_InstanceSelectionToggle> createState() => _InstanceSelectionToggleState();
+}
+
+class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionToggle> {
+  /// Write loop this toggle already waits for (one toast per failed loop).
+  Future<void>? _awaiting;
+
+  Future<void> _onChanged(bool newValue) async {
+    final write = ref
+        .read(userPreferencesNotifierProvider.notifier)
+        .setWantInstanceSelection(newValue);
+    if (identical(write, _awaiting)) return;
+    _awaiting = write;
+    try {
+      await write;
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
+    } finally {
+      if (identical(_awaiting, write)) _awaiting = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefs = ref.watch(userPreferencesProvider);
+    final value = ref.watch(wantedInstanceSelectionProvider) ??
+        prefs.wantInstanceSelection;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: SwitchListTile.adaptive(
+            title: Text(context.l10n.settingsEnableTenantSelect),
+            subtitle: Text(context.l10n.settingsTenantSelectHelper),
+            value: value,
+            onChanged: _onChanged,
+          ),
         ),
       ),
     );

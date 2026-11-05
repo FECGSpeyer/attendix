@@ -72,8 +72,7 @@
         "noInstanceSelected": "Keine Instanz ausgewählt",
         "voices": "Stimmen",
         "rule": {
-          "statusN": "Status {n}",
-          "sinceSeasonStart": "seit Saisonstart",
+          "sinceSeasonStart": "seit Saisonbeginn",
           "overall": "insgesamt"
         },
         "noEmailAddress": "Keine E-Mail-Adresse vorhanden",
@@ -210,7 +209,6 @@
         "noInstanceSelected": "No instance selected",
         "voices": "Voices",
         "rule": {
-          "statusN": "Status {n}",
           "sinceSeasonStart": "since season start",
           "overall": "overall"
         },

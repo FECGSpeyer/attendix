@@ -121,29 +121,23 @@ Future<T?> showAppPopoverMenu<T>({
   List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
   // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
   double iosWidth = 200,
-  // Free content instead of [items] (see [showAppContentPopover]).
-  Widget? content,
 }) {
-  final button = context.findRenderObject()! as RenderBox;
   final navigator = Navigator.of(context, rootNavigator: true);
   final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
-  final anchor = Rect.fromPoints(
-    button.localToGlobal(Offset.zero, ancestor: overlay),
-    button.localToGlobal(
-      button.size.bottomRight(Offset.zero),
-      ancestor: overlay,
-    ),
-  );
+  final anchor = _anchorOf(context, overlay);
   final ios = useIosLook(context);
 
   return navigator.push<T>(
     _PopoverRoute<T>(
       ios: ios,
       anchor: anchor,
+      // Opened from the keyboard (the focused trigger): the first entry
+      // gets the focus, like the former action sheet. A mouse/touch open
+      // keeps nothing highlighted; Tab still reaches the first entry.
+      autofocusFirst: _openedByKeyboard(context),
       overlaySize: overlay.size,
       items: items,
       itemsBuilder: itemsBuilder,
-      content: content,
       width: ios ? iosWidth : 250,
       barrierLabel: context.l10n.commonClose,
       capturedThemes: InheritedTheme.capture(
@@ -154,10 +148,30 @@ Future<T?> showAppPopoverMenu<T>({
   );
 }
 
+/// Whether [context]'s widget (or a widget inside it) has the keyboard focus
+/// while focus highlights are shown, i.e. it was activated from the keyboard
+/// (buttons don't take the focus on a mouse click or tap).
+bool _openedByKeyboard(BuildContext context) {
+  if (FocusManager.instance.highlightMode != FocusHighlightMode.traditional) {
+    return false;
+  }
+  final focused = FocusManager.instance.primaryFocus?.context;
+  if (focused == null) return false;
+  if (focused == context) return true;
+  var inside = false;
+  focused.visitAncestorElements((element) {
+    if (element == context) {
+      inside = true;
+      return false;
+    }
+    return true;
+  });
+  return inside;
+}
+
 /// Ionic `ion-popover` with free content (`<ion-content class="ion-padding">`)
-/// behind an info button, e.g. a help text: same card, position and backdrop
-/// as [showAppPopoverMenu], [child] inside 16 px padding. A tap outside
-/// closes it.
+/// behind an info button, e.g. a help text: [showAppPopover] at the button
+/// with [child] inside 16 px padding. A tap outside closes it.
 ///
 /// [context] must be the trigger button's context (use a [Builder]).
 Future<void> showAppContentPopover({
@@ -165,12 +179,356 @@ Future<void> showAppContentPopover({
   required Widget child,
   double iosWidth = 200,
 }) {
-  return showAppPopoverMenu<void>(
+  return showAppPopover<void>(
     context: context,
-    items: const [],
-    iosWidth: iosWidth,
-    content: Padding(padding: const EdgeInsets.all(16), child: child),
+    width: useIosLook(context) ? iosWidth : 250,
+    builder: (_) => Padding(padding: const EdgeInsets.all(16), child: child),
   );
+}
+
+/// Global rect of [context]'s widget inside [overlay].
+Rect _anchorOf(BuildContext context, RenderBox overlay) {
+  final box = context.findRenderObject()! as RenderBox;
+  return Rect.fromPoints(
+    box.localToGlobal(Offset.zero, ancestor: overlay),
+    box.localToGlobal(box.size.bottomRight(Offset.zero), ancestor: overlay),
+  );
+}
+
+/// Ionic `ion-popover` with free content (a help text, a glossary card)
+/// instead of a menu – same surface, backdrop and animation as
+/// [showAppPopoverMenu]. There is no button: a tap outside closes it.
+///
+/// Placement follows Ionic:
+/// - anchored on [context]'s widget (the trigger button), or on [anchor]
+///   (global coordinates, e.g. the point of a tapped text link – Ionic
+///   `popoverController.create({event})`);
+/// - md: below the anchor, left edge at the anchor;
+/// - iOS: a button trigger ([anchor] null) is covered by the popover,
+///   right-aligned with it (ios27 "replace", like [showAppPopoverMenu]);
+///   any other anchor gets the popover below it, centred;
+/// - pushed back into the viewport, and above the anchor when there is no
+///   room below.
+///
+/// [width] is Ionic `--width` (default iOS 200 / md 250), [maxHeight] is
+/// Ionic `--max-height`.
+Future<T?> showAppPopover<T>({
+  required BuildContext context,
+  required WidgetBuilder builder,
+  Rect? anchor,
+  double? width,
+  double? maxHeight,
+}) {
+  final navigator = Navigator.of(context, rootNavigator: true);
+  final overlay = navigator.overlay!.context.findRenderObject()! as RenderBox;
+  final ios = useIosLook(context);
+  return navigator.push<T>(
+    _ContentPopoverRoute<T>(
+      ios: ios,
+      anchor: anchor == null
+          ? _anchorOf(context, overlay)
+          : Rect.fromPoints(
+              overlay.globalToLocal(anchor.topLeft),
+              overlay.globalToLocal(anchor.bottomRight),
+            ),
+      coverAnchor: ios && anchor == null,
+      width: width ?? (ios ? 200 : 250),
+      maxHeight: maxHeight,
+      builder: builder,
+      barrierLabel: context.l10n.commonClose,
+      capturedThemes: InheritedTheme.capture(
+        from: context,
+        to: navigator.context,
+      ),
+    ),
+  );
+}
+
+class _ContentPopoverRoute<T> extends PopupRoute<T> {
+  _ContentPopoverRoute({
+    required this.ios,
+    required this.anchor,
+    required this.coverAnchor,
+    required this.width,
+    required this.maxHeight,
+    required this.builder,
+    required this.barrierLabel,
+    required this.capturedThemes,
+  });
+
+  final bool ios;
+  final Rect anchor;
+  final bool coverAnchor;
+  final double width;
+  final double? maxHeight;
+  final WidgetBuilder builder;
+  final CapturedThemes capturedThemes;
+
+  @override
+  final String barrierLabel;
+
+  // Same backdrop as [_PopoverRoute].
+  @override
+  Color? get barrierColor =>
+      ios ? Colors.transparent : Colors.black.withValues(alpha: 0.32);
+
+  @override
+  bool get barrierDismissible => true;
+
+  @override
+  Duration get transitionDuration => const Duration(milliseconds: 220);
+
+  @override
+  Duration get reverseTransitionDuration => const Duration(milliseconds: 150);
+
+  @override
+  Widget buildPage(
+    BuildContext context,
+    Animation<double> animation,
+    Animation<double> secondaryAnimation,
+  ) {
+    final padding = MediaQuery.of(context).padding;
+    final curved = CurvedAnimation(
+      parent: animation,
+      curve: Curves.easeOutCubic,
+      reverseCurve: Curves.easeIn,
+    );
+    return capturedThemes.wrap(
+      MediaQuery.removePadding(
+        context: context,
+        removeTop: true,
+        removeBottom: true,
+        child: _AnchoredPopover(
+          ios: ios,
+          anchor: anchor,
+          coverAnchor: coverAnchor,
+          width: width,
+          maxHeight: maxHeight,
+          topPadding: padding.top,
+          bottomPadding: padding.bottom,
+          animation: curved,
+          originX: 0,
+          child: _PopoverCard(
+            ios: ios,
+            children: [Builder(builder: builder)],
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Where an [_AnchoredPopover] was put on its first layout. Like Ionic, a
+/// popover is positioned once when it opens: when its content grows later
+/// (e.g. a "Filter aktiv" subtitle) it keeps its top edge and scrolls
+/// inside instead of jumping (a nested popover stays at its row).
+class _PopoverPlacement {
+  Size? viewport;
+  double? top;
+}
+
+/// Popover surface at [anchor] with the Ionic enter animation (fade +
+/// scale). The scale origin follows the placement: the top edge, or the
+/// bottom edge when the popover opened above its anchor (Ionic
+/// `originY = 'bottom'`); [originX] is the horizontal origin (-1 left,
+/// 0 centre, 1 right).
+class _AnchoredPopover extends StatefulWidget {
+  const _AnchoredPopover({
+    required this.ios,
+    required this.anchor,
+    required this.coverAnchor,
+    required this.width,
+    required this.maxHeight,
+    required this.topPadding,
+    required this.bottomPadding,
+    required this.animation,
+    required this.originX,
+    required this.child,
+  });
+
+  final bool ios;
+  final Rect anchor;
+  final bool coverAnchor;
+  final double width;
+  final double? maxHeight;
+  final double topPadding;
+  final double bottomPadding;
+  final Animation<double> animation;
+  final double originX;
+  final Widget child;
+
+  @override
+  State<_AnchoredPopover> createState() => _AnchoredPopoverState();
+}
+
+class _AnchoredPopoverState extends State<_AnchoredPopover> {
+  final _placement = _PopoverPlacement();
+  bool _above = false;
+
+  /// Called from layout: the scale origin is updated after the frame.
+  void _onPlaced(bool above) {
+    if (above == _above) return;
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted && above != _above) setState(() => _above = above);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return CustomSingleChildLayout(
+      delegate: _AnchoredPopoverLayout(
+        ios: widget.ios,
+        anchor: widget.anchor,
+        coverAnchor: widget.coverAnchor,
+        width: widget.width,
+        maxHeight: widget.maxHeight,
+        topPadding: widget.topPadding,
+        bottomPadding: widget.bottomPadding,
+        placement: _placement,
+        onPlaced: _onPlaced,
+      ),
+      child: FadeTransition(
+        opacity: widget.animation,
+        child: ScaleTransition(
+          scale: Tween<double>(
+            begin: widget.ios ? 0.85 : 0.8,
+            end: 1,
+          ).animate(widget.animation),
+          alignment: Alignment(widget.originX, _above ? 1 : -1),
+          child: widget.child,
+        ),
+      ),
+    );
+  }
+}
+
+/// Places a popover card at its anchor (see [showAppPopover]) and keeps it
+/// fully inside the safe viewport: below (or, [coverAnchor], over) the
+/// anchor, above it when there is no room below, otherwise pinned to the
+/// bottom edge. The height is capped at the visible area (scrolls inside).
+/// The top edge is decided on the first layout and kept ([placement]).
+/// Shared by [showAppPopover] and the [showAppPopoverMenu] parent menu.
+class _AnchoredPopoverLayout extends SingleChildLayoutDelegate {
+  _AnchoredPopoverLayout({
+    required this.ios,
+    required this.anchor,
+    required this.coverAnchor,
+    required this.width,
+    required this.maxHeight,
+    required this.topPadding,
+    required this.bottomPadding,
+    required this.placement,
+    required this.onPlaced,
+  });
+
+  static const _margin = 8.0;
+
+  final bool ios;
+  final Rect anchor;
+  final bool coverAnchor;
+  final double width;
+  final double? maxHeight;
+  final double topPadding;
+  final double bottomPadding;
+  final _PopoverPlacement placement;
+  final ValueChanged<bool> onPlaced;
+
+  /// The top edge kept from the first layout in this viewport.
+  double? _fixedTop(Size viewport) =>
+      placement.viewport == viewport ? placement.top : null;
+
+  @override
+  BoxConstraints getConstraintsForChild(BoxConstraints constraints) {
+    final size = constraints.biggest;
+    final w = math.min(width, size.width - 2 * _margin);
+    final fixedTop = _fixedTop(size);
+    final room = fixedTop != null
+        // Placed already: grow down to the bottom edge, then scroll.
+        ? math.max(0.0, size.height - bottomPadding - _margin - fixedTop)
+        : math.max(
+            120.0,
+            size.height - topPadding - bottomPadding - 2 * _margin,
+          );
+    return BoxConstraints(
+      minWidth: w,
+      maxWidth: w,
+      maxHeight: maxHeight == null ? room : math.min(maxHeight!, room),
+    );
+  }
+
+  @override
+  Offset getPositionForChild(Size size, Size childSize) {
+    final w = childSize.width;
+    final double preferredLeft;
+    if (!ios) {
+      preferredLeft = anchor.left;
+    } else if (coverAnchor) {
+      preferredLeft = anchor.right - w;
+    } else {
+      preferredLeft = anchor.center.dx - w / 2;
+    }
+    final left = preferredLeft
+        .clamp(_margin, math.max(_margin, size.width - w - _margin))
+        .toDouble();
+
+    final fixedTop = _fixedTop(size);
+    if (fixedTop != null) return Offset(left, fixedTop);
+
+    // A trigger in the toolbar may sit inside the top safe-area margin: a
+    // popover covering it keeps the trigger's top (Ionic "replace").
+    final minTop = math.min(topPadding + _margin, math.max(0.0, anchor.top));
+    final maxBottom = size.height - bottomPadding - _margin;
+    var top = coverAnchor ? anchor.top : anchor.bottom;
+    var isAbove = false;
+    if (top + childSize.height > maxBottom) {
+      // No room below: above the anchor (covering: bottom at its bottom).
+      final above =
+          (coverAnchor ? anchor.bottom : anchor.top) - childSize.height;
+      isAbove = above >= minTop;
+      top = isAbove ? above : maxBottom - childSize.height;
+    }
+    top = math.max(minTop, top);
+    placement
+      ..viewport = size
+      ..top = top;
+    onPlaced(isAbove);
+    return Offset(left, top);
+  }
+
+  @override
+  bool shouldRelayout(_AnchoredPopoverLayout old) =>
+      old.anchor != anchor ||
+      old.ios != ios ||
+      old.coverAnchor != coverAnchor ||
+      old.width != width ||
+      old.maxHeight != maxHeight ||
+      old.topPadding != topPadding ||
+      old.bottomPadding != bottomPadding;
+}
+
+/// Text styles of an `ion-label` inside a popover list (h3 heading and `p`
+/// lines), shared by content popovers.
+class AppPopoverText {
+  const AppPopoverText._();
+
+  static TextStyle heading(BuildContext context) => TextStyle(
+        fontSize: useIosLook(context) ? 17 : 16,
+        color: Theme.of(context).colorScheme.onSurface,
+      );
+
+  static TextStyle paragraph(BuildContext context) {
+    final ios = useIosLook(context);
+    final brightness = Theme.of(context).brightness;
+    return TextStyle(
+      fontSize: ios ? IonIos.pFontSize : 14,
+      height: ios ? null : 20 / 14,
+      color: ios
+          ? IonIos.labelP(brightness)
+          : (brightness == Brightness.dark
+              ? const Color(0xFF999999)
+              : const Color(0xFF666666)),
+    );
+  }
 }
 
 Color? _itemColor(AppPopoverMenuItem<dynamic> item) =>
@@ -180,10 +538,10 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   _PopoverRoute({
     required this.ios,
     required this.anchor,
+    required this.autofocusFirst,
     required this.overlaySize,
     required this.items,
     required this.itemsBuilder,
-    this.content,
     required this.width,
     required this.barrierLabel,
     required this.capturedThemes,
@@ -191,10 +549,10 @@ class _PopoverRoute<T> extends PopupRoute<T> {
 
   final bool ios;
   final Rect anchor;
+  final bool autofocusFirst;
   final Size overlaySize;
   final List<AppPopoverMenuItem<T>> items;
   final List<AppPopoverMenuItem<T>> Function()? itemsBuilder;
-  final Widget? content;
   final double width;
   final CapturedThemes capturedThemes;
 
@@ -268,11 +626,46 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
   int? _openIndex;
   Rect? _openRowRect;
 
+  /// Focus node of the nested popover's first entry: it gets the focus when
+  /// the nested popover is opened from the keyboard (`autofocus` doesn't
+  /// apply, the parent entry already has the focus in this scope).
+  final _nestedFirstFocus = FocusNode(debugLabel: 'nested popover row 0');
+
+  /// Focus nodes of the parent entries (keyboard: Tab / arrow keys,
+  /// Enter / Space; Escape in a nested popover returns to its entry).
+  final List<FocusNode> _rowFocus = [];
+
+  FocusNode _rowFocusNode(int index) {
+    while (_rowFocus.length <= index) {
+      _rowFocus.add(FocusNode(debugLabel: 'popover row ${_rowFocus.length}'));
+    }
+    return _rowFocus[index];
+  }
+
+  @override
+  void dispose() {
+    for (final node in _rowFocus) {
+      node.dispose();
+    }
+    _nestedFirstFocus.dispose();
+    super.dispose();
+  }
+
   void _refresh() {
     setState(() {
       final builder = widget.route.itemsBuilder;
       if (builder != null) _items = builder();
     });
+  }
+
+  /// Escape inside a nested popover closes only that one and puts the focus
+  /// back on its entry.
+  void _closeNested() {
+    final index = _openIndex;
+    setState(() => _openIndex = null);
+    if (index != null && index < _rowFocus.length) {
+      _rowFocus[index].requestFocus();
+    }
   }
 
   void _onRowTap(int index, BuildContext rowContext) {
@@ -286,10 +679,16 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
     if (row == null || stack == null) return;
     final topLeft = row.localToGlobal(Offset.zero, ancestor: stack);
+    final keyboard = _openedByKeyboard(rowContext);
     setState(() {
       _openIndex = index;
       _openRowRect = topLeft & row.size;
     });
+    if (keyboard) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _openIndex == index) _nestedFirstFocus.requestFocus();
+      });
+    }
   }
 
   @override
@@ -300,7 +699,8 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     final anchor = route.anchor;
     final w = math.min(route.width, size.width - 2 * _margin);
     // iOS: right-aligned with the trigger button. md (`alignment: start`):
-    // left edge at the trigger, pushed back into the viewport.
+    // left edge at the trigger, pushed back into the viewport. Same as
+    // [_AnchoredPopoverLayout] places it; kept here for the nested popover.
     final double left;
     if (ios) {
       final right =
@@ -320,16 +720,9 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     // top at `trigger.top + trigger.height - trigger.height`, i.e. the menu
     // opens over its trigger (Ionic iPhone emulation: ⋮ and menu top y 16).
     // md (`popover.md`, side bottom): directly below the trigger.
-    final top = ios ? anchor.top : anchor.bottom;
-    final maxHeight = math.max(
-      120.0,
-      size.height - top - widget.bottomPadding - _margin,
-    );
-    // Ionic `calculateWindowAdjustment`: when the content does not fit below
-    // the trigger, the popover opens above it instead (md: ending at the
-    // trigger's top; iOS "replace": ending at the trigger's bottom).
-    final bottomWhenAbove = ios ? anchor.bottom : anchor.top;
-    final maxHeightAbove = bottomWhenAbove - widget.topPadding - _margin;
+    // Sol review: like Ionic, the menu flips above the trigger when it does
+    // not fit below and always stays inside the visible area (lower entries
+    // stay reachable) – see [_AnchoredPopoverLayout].
     final curved = CurvedAnimation(
       parent: widget.animation,
       curve: Curves.easeOutCubic,
@@ -338,61 +731,53 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
 
     final children = <Widget>[
       Positioned.fill(
-        child: CustomSingleChildLayout(
-          delegate: _MainPopoverLayout(
-            left: left,
-            width: w,
-            top: top,
-            maxHeight: maxHeight,
-            bottomWhenAbove: bottomWhenAbove,
-            maxHeightAbove: maxHeightAbove,
-          ),
-          child: FadeTransition(
-            opacity: curved,
-            child: ScaleTransition(
-              scale: Tween<double>(
-                begin: ios ? 0.85 : 0.8,
-                end: 1,
-              ).animate(curved),
-              alignment: ios ? Alignment.topRight : Alignment.topLeft,
-              child: _PopoverCard(
-                ios: ios,
-                // PARITY_R8: while a nested popover is open the parent
-                // stays a plain opaque card – no glass smear of the page
-                // behind its labels.
-                opaque: ios && _openIndex != null,
-                // Ionic: a tap inside the parent (not on the trigger)
-                // dismisses the nested popover.
-                onBackgroundTap:
-                    _openIndex == null
-                        ? null
-                        : () => setState(() => _openIndex = null),
-                children: [
-                  if (route.content != null) route.content!,
-                  for (var i = 0; i < _items.length; i++)
-                    if (_items[i].header)
-                      _PopoverHeader(ios: ios, label: _items[i].label)
-                    else
-                      Builder(
-                        builder:
-                            (rowContext) => _PopoverRow(
-                              ios: ios,
-                              icon: _items[i].icon,
-                              label: _items[i].label,
-                              subtitle: _items[i].subtitle,
-                              color: _itemColor(_items[i]),
-                              chevron: _items[i]._hasChevron,
-                              onTap: () {
-                                if (_openIndex != null && _openIndex != i) {
-                                  setState(() => _openIndex = null);
-                                }
-                                _onRowTap(i, rowContext);
-                              },
-                            ),
+        child: _AnchoredPopover(
+          ios: ios,
+          anchor: anchor,
+          coverAnchor: ios,
+          width: w,
+          maxHeight: null,
+          topPadding: widget.topPadding,
+          bottomPadding: widget.bottomPadding,
+          animation: curved,
+          originX: ios ? 1 : -1,
+          child: _PopoverCard(
+            ios: ios,
+            // PARITY_R8: while a nested popover is open the parent
+            // stays a plain opaque card – no glass smear of the page
+            // behind its labels.
+            opaque: ios && _openIndex != null,
+            // Ionic: a tap inside the parent (not on the trigger)
+            // dismisses the nested popover.
+            onBackgroundTap:
+                _openIndex == null
+                    ? null
+                    : () => setState(() => _openIndex = null),
+            children: [
+              for (var i = 0; i < _items.length; i++)
+                if (_items[i].header)
+                  _PopoverHeader(ios: ios, label: _items[i].label)
+                else
+                Builder(
+                  builder:
+                      (rowContext) => _PopoverRow(
+                        ios: ios,
+                        icon: _items[i].icon,
+                        label: _items[i].label,
+                        subtitle: _items[i].subtitle,
+                        color: _itemColor(_items[i]),
+                        chevron: _items[i]._hasChevron,
+                        focusNode: _rowFocusNode(i),
+                        autofocus: i == 0 && route.autofocusFirst,
+                        onTap: () {
+                          if (_openIndex != null && _openIndex != i) {
+                            setState(() => _openIndex = null);
+                          }
+                          _onRowTap(i, rowContext);
+                        },
                       ),
-                ],
-              ),
-            ),
+                ),
+            ],
           ),
         ),
       ),
@@ -436,23 +821,34 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                             _margin,
                       ),
             ),
-            child: _PopoverCard(
-              ios: ios,
-              children: [
-                for (final s in sub)
-                  _PopoverRow(
-                    ios: ios,
-                    icon: s.icon,
-                    checked: s.checked,
-                    label: s.label,
-                    subtitle: s.subtitle,
-                    color: s.color,
-                    onTap: () {
-                      s.onTap();
-                      _refresh();
-                    },
-                  ),
-              ],
+            child: Actions(
+              actions: <Type, Action<Intent>>{
+                DismissIntent: CallbackAction<DismissIntent>(
+                  onInvoke: (_) {
+                    _closeNested();
+                    return null;
+                  },
+                ),
+              },
+              child: _PopoverCard(
+                ios: ios,
+                children: [
+                  for (var j = 0; j < sub.length; j++)
+                    _PopoverRow(
+                      ios: ios,
+                      icon: sub[j].icon,
+                      checked: sub[j].checked,
+                      label: sub[j].label,
+                      subtitle: sub[j].subtitle,
+                      color: sub[j].color,
+                      focusNode: j == 0 ? _nestedFirstFocus : null,
+                      onTap: () {
+                        sub[j].onTap();
+                        _refresh();
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -461,55 +857,6 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
 
     return Stack(key: _stackKey, children: children);
   }
-}
-
-/// Places the main popover at [top] (below / over the trigger) like before.
-/// Only when its content is taller than the room there ([maxHeight]) and
-/// there is more room above, it ends at [bottomWhenAbove] instead (Ionic
-/// flips the popover above the trigger).
-class _MainPopoverLayout extends SingleChildLayoutDelegate {
-  _MainPopoverLayout({
-    required this.left,
-    required this.width,
-    required this.top,
-    required this.maxHeight,
-    required this.bottomWhenAbove,
-    required this.maxHeightAbove,
-  });
-
-  final double left;
-  final double width;
-  final double top;
-  final double maxHeight;
-  final double bottomWhenAbove;
-  final double maxHeightAbove;
-
-  bool get _aboveHasMoreRoom => maxHeightAbove > maxHeight;
-
-  @override
-  BoxConstraints getConstraintsForChild(BoxConstraints constraints) =>
-      BoxConstraints(
-        minWidth: width,
-        maxWidth: width,
-        maxHeight: _aboveHasMoreRoom ? maxHeightAbove : maxHeight,
-      );
-
-  @override
-  Offset getPositionForChild(Size size, Size childSize) {
-    if (_aboveHasMoreRoom && childSize.height > maxHeight) {
-      return Offset(left, bottomWhenAbove - childSize.height);
-    }
-    return Offset(left, top);
-  }
-
-  @override
-  bool shouldRelayout(_MainPopoverLayout old) =>
-      old.left != left ||
-      old.width != width ||
-      old.top != top ||
-      old.maxHeight != maxHeight ||
-      old.bottomWhenAbove != bottomWhenAbove ||
-      old.maxHeightAbove != maxHeightAbove;
 }
 
 /// Places a nested popover: [left]/[width] fixed; vertically centred on
@@ -681,6 +1028,8 @@ class _PopoverRow extends StatelessWidget {
     this.subtitle,
     this.color,
     this.chevron = false,
+    this.focusNode,
+    this.autofocus = false,
   });
 
   final bool ios;
@@ -691,6 +1040,8 @@ class _PopoverRow extends StatelessWidget {
   final String? subtitle;
   final Color? color;
   final bool chevron;
+  final FocusNode? focusNode;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -703,15 +1054,20 @@ class _PopoverRow extends StatelessWidget {
 
     Widget? leading;
     if (checked != null) {
-      leading = IgnorePointer(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            value: checked,
-            onChanged: (_) {},
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
+      // Purely decorative: IgnorePointer alone leaves it Tab-focusable, where
+      // Enter / Space would hit the no-op onChanged. ExcludeFocus keeps the
+      // focus on the row itself, which toggles (semantics stay for the state).
+      leading = ExcludeFocus(
+        child: IgnorePointer(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: checked,
+              onChanged: (_) {},
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
           ),
         ),
       );
@@ -722,10 +1078,13 @@ class _PopoverRow extends StatelessWidget {
 
     return InkWell(
       // No ripple on iOS, grey press highlight; nothing highlighted
-      // initially (no focus / initial value).
+      // initially (no initial value). Focusable for the keyboard (Tab /
+      // arrow keys, Enter / Space); the focus highlight only shows in
+      // keyboard mode, a mouse click or tap doesn't take the focus.
       splashFactory: ios ? NoSplash.splashFactory : null,
       highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
-      canRequestFocus: false,
+      focusNode: focusNode,
+      autofocus: autofocus,
       onTap: onTap,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: ios ? 44 : 48),
