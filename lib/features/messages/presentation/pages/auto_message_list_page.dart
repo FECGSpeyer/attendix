@@ -113,6 +113,10 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
     // A tenant switch reloads both providers: one new toast per tenant.
     ref.listen(currentTenantIdProvider, (_, _) => _loadFailedShown = false);
     ref.listen(autoMessageRulesProvider, (previous, next) {
+      // One toast per load cycle, however the load was triggered (pull to
+      // refresh, toggle, or invalidation from the rule editor after save or
+      // delete): a new load or a successful result releases the lock.
+      if (next.isLoading || !next.hasError) _loadFailedShown = false;
       if (next is AsyncData && !next.isLoading) _saved.clear();
       _onLoadResult(previous, next);
     });
