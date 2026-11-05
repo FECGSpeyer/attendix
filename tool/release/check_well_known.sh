@@ -49,12 +49,11 @@ ok() { echo "  OK    $*"; }
 fail() { echo "  FAIL  $*"; failures=$((failures + 1)); }
 warn() { echo "  WARN  $*"; }
 
-# check_json <kind: aasa|assetlinks> <file> <label>
-# Validates JSON and that the app IDs are present. Python runs isolated (-I)
-# because the file may come from the network.
-check_json() {
-  local kind="$1" file="$2" label="$3" out rc
-  out="$(python3 -I - "$kind" "$file" "$IOS_APP_ID" "$ANDROID_PACKAGE" <<'PY'
+# validate_json <kind: aasa|assetlinks> <file>
+# Prints OK/WARN/FAIL lines: valid JSON (not the HTML SPA fallback) with the
+# app IDs. Python runs isolated (-I) because the file may come from the network.
+validate_json() {
+  python3 -I - "$1" "$2" "$IOS_APP_ID" "$ANDROID_PACKAGE" <<'PY'
 import json, sys
 
 kind, path, ios_id, android_pkg = sys.argv[1:5]
@@ -70,19 +69,23 @@ except Exception as e:
     print(f"FAIL invalid JSON: {e}")
     sys.exit(1)
 
+def get(obj, key):
+    return obj.get(key) if isinstance(obj, dict) else None
+
 errors, warnings = [], []
 if kind == "aasa":
     ids = []
-    details = (data.get("applinks") or {}).get("details") if isinstance(data, dict) else None
-    for d in details or []:
+    details = get(get(data, "applinks"), "details")
+    for d in details if isinstance(details, list) else []:
         if isinstance(d, dict):
             if isinstance(d.get("appID"), str):
                 ids.append(d["appID"])
-            ids.extend(x for x in d.get("appIDs") or [] if isinstance(x, str))
+            if isinstance(d.get("appIDs"), list):
+                ids.extend(x for x in d["appIDs"] if isinstance(x, str))
     if ios_id not in ids:
         errors.append(f"applinks has no entry for {ios_id}")
-    creds = (data.get("webcredentials") or {}).get("apps") if isinstance(data, dict) else None
-    if ios_id not in (creds or []):
+    creds = get(get(data, "webcredentials"), "apps")
+    if not isinstance(creds, list) or ios_id not in creds:
         warnings.append(f"webcredentials does not list {ios_id} (no password suggestions)")
 else:
     found = False
@@ -90,7 +93,8 @@ else:
         target = s.get("target") if isinstance(s, dict) else None
         if isinstance(target, dict) and target.get("package_name") == android_pkg:
             found = True
-            if "delegate_permission/common.handle_all_urls" not in (s.get("relation") or []):
+            relation = s.get("relation")
+            if not isinstance(relation, list) or "delegate_permission/common.handle_all_urls" not in relation:
                 errors.append(f"{android_pkg} lacks relation handle_all_urls")
             if not target.get("sha256_cert_fingerprints"):
                 errors.append(f"{android_pkg} has no sha256_cert_fingerprints")
@@ -105,7 +109,12 @@ if not errors:
     print("OK valid JSON with app IDs")
 sys.exit(1 if errors else 0)
 PY
-)"
+}
+
+# check_json <kind: aasa|assetlinks> <file> <label>
+check_json() {
+  local kind="$1" file="$2" label="$3" out rc
+  out="$(validate_json "$kind" "$file")"
   rc=$?
   while IFS= read -r line; do
     [[ -z "$line" ]] && continue
@@ -145,12 +154,13 @@ check_url() {
   tmp="$(mktemp)"
   # No -L: a redirect must fail, iOS does not follow it for the AASA.
   if ! meta="$(curl -sS -o "$tmp" --max-time 20 \
-      -w '%{http_code}\t%{content_type}\t%{redirect_url}' "$url")"; then
+      -w '%{http_code}|%{content_type}|%{redirect_url}' "$url")"; then
     fail "$label: request failed ($url)"
     rm -f "$tmp"
     return
   fi
-  IFS=$'\t' read -r status ctype redirect <<< "$meta"
+  # '|' instead of a tab: IFS whitespace would merge an empty Content-Type.
+  IFS='|' read -r status ctype redirect <<< "$meta"
   if [[ "$status" != "200" ]]; then
     fail "$label: HTTP $status${redirect:+ -> $redirect} ($url)"
     rm -f "$tmp"
