@@ -143,13 +143,15 @@ class UserPreferencesNotifier extends AsyncNotifier<void> {
     // Don't update if already the same
     if (currentMetadata['currentTenantId'] == tenantId) return;
 
+    // Ionic updateUser({data: {currentTenantId, …}}): only the changed key is
+    // sent. GoTrue merges it into user_metadata, so a stale local copy can't
+    // reset settings changed on another device (showSongsTab_*,
+    // dashboardCards_*, wantInstanceSelection). gotrue-dart stores the
+    // returned user (fresh metadata) as the local copy.
     auth
         .updateUser(
           UserAttributes(
-            data: {
-              ...currentMetadata,
-              'currentTenantId': tenantId,
-            },
+            data: {'currentTenantId': tenantId},
           ),
         )
         .then((_) {})
