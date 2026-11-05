@@ -59,10 +59,10 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
     return ok;
   }
 
+  /// Ionic saves the templates as edited; `end` is not computed into them
+  /// (new templates keep `end: ''`), the end is only shown.
   Future<void> _saveTemplates() async {
-    final ok = await _notifier.updatePlanningTemplates([
-      for (final t in _templates!) t.copyWith(end: _computeEnd(t)),
-    ]);
+    final ok = await _notifier.updatePlanningTemplates(_templates!);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
   }
 
@@ -297,7 +297,9 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       ),
     );
     if (picked == null) return;
-    _updateTemplate(index, tpl.copyWith(time: PlanUtils.formatMinutes(picked.hour * 60 + picked.minute)));
+    // Ionic ion-datetime writes tpl.time as ISO date time; Ionic
+    // public-planning only takes it over when dayjs(tpl.time).isValid().
+    _updateTemplate(index, tpl.copyWith(time: PlanUtils.ionTimeValue(picked.hour, picked.minute, previous: tpl.time)));
     await _saveTemplates();
   }
 

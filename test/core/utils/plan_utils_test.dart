@@ -118,6 +118,15 @@ void main() {
       expect(PlanUtils.formatTime('2026-10-28T09:35:00'), '09:35');
     });
 
+    test('template start time is stored as ion-datetime ISO value (not HH:mm)', () {
+      final v = PlanUtils.ionTimeValue(10, 5, now: DateTime(2026, 11, 5));
+      expect(v, '2026-11-05T10:05:00');
+      expect(PlanUtils.formatTime(v), '10:05');
+      // Keeps the date of an ISO value, "HH:mm" (old data) falls back to today.
+      expect(PlanUtils.ionTimeValue(8, 0, previous: '2025-01-02T10:00:00'), '2025-01-02T08:00:00');
+      expect(PlanUtils.ionTimeValue(8, 0, previous: '10:00', now: DateTime(2026, 11, 5)), '2026-11-05T08:00:00');
+    });
+
     test('computes start times and end (heads count 0 min)', () {
       final fields = [f('a', '20'), f('h', '0', isGroup: true), f('b', '15', groupId: 'h'), f('c', '10')];
       expect(PlanUtils.computeEnd('10:00', fields), '10:45');
