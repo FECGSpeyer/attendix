@@ -85,10 +85,6 @@
   "@adminEvaluation": {
     "description": "admin.evaluation"
   },
-  "adminFlutterAddFailed": "Fehler beim Hinzufügen",
-  "@adminFlutterAddFailed": {
-    "description": "admin.flutter.addFailed"
-  },
   "adminGb": "{value} GB",
   "@adminGb": {
     "description": "admin.gb",
@@ -3708,16 +3704,9 @@
   "@coreFlutterRuleOverall": {
     "description": "core.flutter.rule.overall"
   },
-  "coreFlutterRuleSinceSeasonStart": "seit Saisonstart",
+  "coreFlutterRuleSinceSeasonStart": "seit Saisonbeginn",
   "@coreFlutterRuleSinceSeasonStart": {
     "description": "core.flutter.rule.sinceSeasonStart"
-  },
-  "coreFlutterRuleStatusN": "Status {n}",
-  "@coreFlutterRuleStatusN": {
-    "description": "core.flutter.rule.statusN",
-    "placeholders": {
-      "n": {}
-    }
   },
   "coreFlutterSchoolHolidays": "Schulferien",
   "@coreFlutterSchoolHolidays": {
@@ -5879,14 +5868,6 @@
   "@generalSettingsFlutterOrShort": {
     "description": "generalSettings.flutter.orShort"
   },
-  "generalSettingsFlutterPracticeEnd": "Probenende",
-  "@generalSettingsFlutterPracticeEnd": {
-    "description": "generalSettings.flutter.practiceEnd"
-  },
-  "generalSettingsFlutterPracticeStart": "Probenbeginn",
-  "@generalSettingsFlutterPracticeStart": {
-    "description": "generalSettings.flutter.practiceStart"
-  },
   "generalSettingsFlutterRuleAdded": "Regel hinzugefügt",
   "@generalSettingsFlutterRuleAdded": {
     "description": "generalSettings.flutter.ruleAdded"
@@ -5906,10 +5887,6 @@
   "generalSettingsFlutterRuleUpdated": "Regel aktualisiert",
   "@generalSettingsFlutterRuleUpdated": {
     "description": "generalSettings.flutter.ruleUpdated"
-  },
-  "generalSettingsFlutterStatusCritical": "Status (zählt als kritisch)",
-  "@generalSettingsFlutterStatusCritical": {
-    "description": "generalSettings.flutter.statusCritical"
   },
   "generalSettingsForeignInfo": "Info-Text für fremde Termine",
   "@generalSettingsForeignInfo": {
@@ -7732,6 +7709,10 @@
   "orgFieldsApplyChanges": "Änderungen übernehmen",
   "@orgFieldsApplyChanges": {
     "description": "orgFields.applyChanges"
+  },
+  "orgFieldsFlutterClearDefault": "Standardwert entfernen",
+  "@orgFieldsFlutterClearDefault": {
+    "description": "orgFields.flutter.clearDefault"
   },
   "orgFieldsFlutterFirstOptionDefault": "Erste Option ist der Standardwert",
   "@orgFieldsFlutterFirstOptionDefault": {
