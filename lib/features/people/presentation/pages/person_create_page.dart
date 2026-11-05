@@ -66,7 +66,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   bool _birthdayEdited = false;
   bool _isLoading = false;
   final Map<String, dynamic> _additionalFieldValues = {};
-  bool _extraFieldsInitialized = false;
+  final Set<String> _defaultedFields = {};
 
   // Cross-tenant person matching (Ionic person.page onNameInput/onEmailBlur)
   final _emailFocus = FocusNode();
@@ -277,14 +277,16 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // wait for the churches when such a field exists.
     final hasChurchField = extraFields.any((f) => f.type == 'bfecg_church');
     final churchesAsync = hasChurchField ? ref.watch(churchesProvider) : null;
-    if (!_extraFieldsInitialized &&
-        extraFields.isNotEmpty &&
+    // Per field, so organisation fields loaded later still get their
+    // default; typed values are never overwritten (sol review).
+    if (extraFields.any((f) => !_defaultedFields.contains(f.id)) &&
         (churchesAsync == null || !churchesAsync.isLoading)) {
       final churchIds = <Object>[
         for (final c in churchesAsync?.valueOrNull ?? const <Church>[])
           if (c.id != null) c.id!,
       ];
       for (final field in extraFields) {
+        if (!_defaultedFields.add(field.id)) continue;
         _additionalFieldValues[field.id] ??= extraFieldDefaultValue(
           field.type,
           defaultValue: field.defaultValue,
@@ -292,7 +294,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           churchIds: churchIds,
         );
       }
-      _extraFieldsInitialized = true;
     }
 
     final ios = ionIsIos(context);
@@ -311,7 +312,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           if (rd != null)
             TextButton(
               key: const Key('person_create_save'),
-              onPressed: _isLoading ? null : _save,
+              onPressed: _isLoading || !_canEdit ? null : _save,
               child: Text(context.l10n.commonSave),
             ),
           IconButton(
@@ -326,13 +327,15 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         child: IonFabButton(
           key: const Key('person_create_save'),
           tooltip: context.l10n.commonSave,
-          onPressed: _isLoading ? null : _save,
+          onPressed: _isLoading || !_canEdit ? null : _save,
           icon: Icons.person_add_alt_1_outlined,
         ),
       ),
       // Ionic person.page readOnly (= not admin/responsible): the create form
       // is shown locked (disabled inputs) for viewers.
-      body: IgnorePointer(
+      body: ExcludeFocus(
+        excluding: !_canEdit,
+        child: IgnorePointer(
         ignoring: !_canEdit,
         child: Opacity(
           opacity: _canEdit ? 1 : 0.5,
@@ -506,6 +509,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         ),
       ),
         ),
+      ),
       ),
     );
   }
@@ -921,7 +925,13 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   }
 
   Future<void> _save() async {
-    if (!_formKey.currentState!.validate()) return;
+    // Ionic readOnly: only admins and responsibles can create persons.
+    final role = ref.read(currentRoleProvider);
+    if (!(role.isAdmin || role.isResponsible) || _isLoading) return;
+    // Commit a typed date (applied on focus loss) before reading the form.
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future<void>.delayed(Duration.zero);
+    if (!mounted || !_formKey.currentState!.validate()) return;
 
     setState(() => _isLoading = true);
 

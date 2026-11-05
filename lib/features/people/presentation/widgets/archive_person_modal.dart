@@ -17,6 +17,7 @@ typedef ArchiveInput = ({String date, String note});
 Future<ArchiveInput?> showArchivePersonModal(BuildContext context, String name) {
   return showIonModal<ArchiveInput>(
     context,
+    barrierDismissible: false, // Ionic backdropDismiss false
     builder: (_) => _ArchivePersonModal(name: name),
   );
 }

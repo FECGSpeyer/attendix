@@ -17,6 +17,7 @@ import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../data/services/auth_service.dart';
 import '../widgets/planned_absences.dart';
 import '../../../duty/presentation/pages/unavailability_page.dart';
@@ -315,24 +316,63 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       _initDraft();
       _loadSharedFieldValues();
     } else {
-      // Keep the unsaved edits, take over what other actions changed.
-      _draft = _draft.copyWith(
-        img: next.img,
-        appId: next.appId,
-        globalPersonId: next.globalPersonId,
-        email: _changedFields.contains('email') ? _draft.email : next.email,
-        isCritical: next.isCritical,
-        lastSolve: next.lastSolve,
-        paused: next.paused,
-        left: next.left,
-        pending: next.pending,
-        history: next.history,
-        correctBirthday: next.correctBirthday,
-      );
+      // Keep the unsaved edits; every field the user did not touch takes
+      // over the new value so saving does not write stale data back.
+      _rebaseDraft(next);
     }
     if (old.appId != next.appId) {
       _userRole = null;
       _loadUserRole();
+    }
+  }
+
+  /// Draft = [next] plus the fields changed on this page (sol review).
+  void _rebaseDraft(Person next) {
+    bool keep(String f) => _changedFields.contains(f);
+    final d = _draft;
+    _draft = next.copyWith(
+      firstName: keep('firstName') ? d.firstName : next.firstName,
+      lastName: keep('lastName') ? d.lastName : next.lastName,
+      notes: keep('notes') ? d.notes : next.notes,
+      phone: keep('phone') ? d.phone : next.phone,
+      birthday: keep('birthday') ? d.birthday : next.birthday,
+      correctBirthday: keep('birthday') ? true : next.correctBirthday,
+      playsSince: keep('playsSince') ? d.playsSince : next.playsSince,
+      joined: keep('joined') ? d.joined : next.joined,
+      img: keep('img') ? d.img : next.img,
+      otherExercise: keep('otherExercise') ? d.otherExercise : next.otherExercise,
+      range: keep('range') ? d.range : next.range,
+      instruments: keep('instruments') ? d.instruments : next.instruments,
+      examinee: keep('examinee') ? d.examinee : next.examinee,
+      testResult: keep('testResult') ? d.testResult : next.testResult,
+      email: keep('email') ? d.email : next.email,
+      otherOrchestras: keep('otherOrchestras') ? d.otherOrchestras : next.otherOrchestras,
+    );
+    if (!keep('instrument')) _selectedGroupId = next.instrument;
+    if (!keep('instrument') && !keep('isLeader')) _isLeader = next.isLeader;
+    if (!keep('hasTeacher')) _hasTeacher = next.hasTeacher;
+    if (!keep('teacher')) _selectedTeacherId = next.teacher;
+    if (!keep('shiftId')) _selectedShiftId = next.shiftId;
+    if (!keep('shiftName')) _selectedShiftName = next.shiftName;
+    if (!keep('shiftStart')) {
+      _shiftStart = next.shiftStart != null ? DateTime.tryParse(next.shiftStart!) : null;
+    }
+    if (!keep('parentId')) _selectedParentId = next.parentId;
+    _draft = _draft.copyWith(
+      instrument: _selectedGroupId,
+      isLeader: _isLeader,
+      hasTeacher: _hasTeacher,
+      teacher: _selectedTeacherId,
+      shiftId: _selectedShiftId,
+      shiftName: _selectedShiftName,
+      shiftStart: _shiftStart?.toIso8601String(),
+      parentId: _selectedParentId,
+    );
+    final nextExtra = _withExtraDefaults(Map.from(next.additionalFields ?? {}));
+    for (final e in nextExtra.entries) {
+      if (!_orgFieldIds.contains(e.key) && !keep('additionalFields.${e.key}')) {
+        _additionalFieldValues[e.key] = e.value;
+      }
     }
   }
 
@@ -590,7 +630,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final mainGroupFuture = ref
         .read(mainGroupProvider.future)
         .then<Group?>((g) => g, onError: (Object _) => null);
-    if (_isSaving || !_hasChanges) return;
+    if (_isSaving) return;
+    // A typed date is applied on focus loss; tapping the FAB keeps the
+    // focus, so commit it first (sol review).
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future<void>.delayed(Duration.zero);
+    if (!mounted || _isSaving || !_hasChanges) return;
 
     // Validate required fields
     if (_draft.firstName.isEmpty || _draft.lastName.isEmpty) {
@@ -854,8 +899,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       };
 
   /// Ionic dismisses the person modal after save / account / pause actions.
+  bool _closing = false;
+
   void _closePage() {
-    if (!mounted) return;
+    if (!mounted || _closing) return;
+    _closing = true;
     setState(() => _hasChanges = false);
     if (context.canPop()) {
       context.pop();
@@ -1604,7 +1652,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// Synchronous lock: a second tap while the account is created is ignored.
+  bool _creatingAccount = false;
+
   Future<void> _createAccount(Person person, {bool confirm = true}) async {
+    if (_creatingAccount) return;
+    _creatingAccount = true;
+    try {
+      await _createAccountInner(person, confirm: confirm);
+    } finally {
+      _creatingAccount = false;
+    }
+  }
+
+  Future<void> _createAccountInner(Person person, {bool confirm = true}) async {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.isConductor) {
       if (mounted) {
@@ -1711,6 +1772,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   @override
   Widget build(BuildContext context) {
+    // Organisation fields can arrive after initState: give them their
+    // defaults too, without touching edited values (sol review).
+    ref.listen<List<ExtraField>>(personListExtraFieldsProvider, (_, __) {
+      final filled = _withExtraDefaults(_additionalFieldValues);
+      final added = filled.keys
+          .where((k) => _additionalFieldValues[k] == null)
+          .toList();
+      if (added.isEmpty) return;
+      setState(() {
+        for (final k in added) {
+          _additionalFieldValues[k] = filled[k];
+          _initialAdditionalFields = {..._initialAdditionalFields, k: filled[k]};
+        }
+      });
+    });
     final person = _draft;
     final statsAsync = ref.watch(personAttendanceStatsProvider(widget.personId));
     final historyAsync = ref.watch(personHistoryProvider(widget.personId));

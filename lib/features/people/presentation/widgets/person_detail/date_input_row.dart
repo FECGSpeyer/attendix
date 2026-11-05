@@ -24,12 +24,25 @@ String? parseManualDate(String input) {
   return utcMidnightIso(DateTime(year, month, day));
 }
 
-/// Display value of a stored date (Ionic formatDateForDisplay, local date).
+/// Calendar day of a stored date: UTC midnight (how dates are saved) is
+/// shown as that day in every time zone, other values in local time.
+DateTime? storedCalendarDate(String? value) {
+  final date = DateTime.tryParse(value ?? '');
+  if (date == null) return null;
+  if (date.isUtc &&
+      date.hour == 0 &&
+      date.minute == 0 &&
+      date.second == 0 &&
+      date.millisecond == 0) {
+    return DateTime(date.year, date.month, date.day);
+  }
+  return date.isUtc ? date.toLocal() : date;
+}
+
+/// Display value of a stored date (Ionic formatDateForDisplay).
 String formatStoredDate(String? value) {
-  if (value == null || value.isEmpty) return '';
-  final date = DateTime.tryParse(value);
-  if (date == null) return '';
-  return DateFormat('dd.MM.yyyy').format(date.isUtc ? date.toLocal() : date);
+  final date = storedCalendarDate(value);
+  return date == null ? '' : DateFormat('dd.MM.yyyy').format(date);
 }
 
 /// Ionic person.page date item: stacked label, `ion-input` with placeholder
@@ -88,6 +101,7 @@ class _DateInputRowState extends State<DateInputRow> {
   void _applyTyped() {
     final text = _controller.text.trim();
     if (text.isEmpty) return; // Ionic: empty input changes nothing
+    if (text == formatStoredDate(widget.value)) return; // unchanged
     final iso = parseManualDate(text);
     if (iso == null) {
       _controller.text = formatStoredDate(widget.value); // revert
@@ -97,13 +111,10 @@ class _DateInputRowState extends State<DateInputRow> {
   }
 
   Future<void> _pick() async {
-    final current = DateTime.tryParse(widget.value ?? '');
     final date = await DateEditorSheet.show(
       context,
       title: widget.label,
-      initialDate: current == null
-          ? null
-          : (current.isUtc ? current.toLocal() : current),
+      initialDate: storedCalendarDate(widget.value),
       lastDate: widget.lastDate,
     );
     if (date == null || !mounted) return;
