@@ -994,15 +994,20 @@ class _PopoverRow extends StatelessWidget {
 
     Widget? leading;
     if (checked != null) {
-      leading = IgnorePointer(
-        child: SizedBox(
-          width: 24,
-          height: 24,
-          child: Checkbox(
-            value: checked,
-            onChanged: (_) {},
-            materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
-            visualDensity: VisualDensity.compact,
+      // Purely decorative: IgnorePointer alone leaves it Tab-focusable, where
+      // Enter / Space would hit the no-op onChanged. ExcludeFocus keeps the
+      // focus on the row itself, which toggles (semantics stay for the state).
+      leading = ExcludeFocus(
+        child: IgnorePointer(
+          child: SizedBox(
+            width: 24,
+            height: 24,
+            child: Checkbox(
+              value: checked,
+              onChanged: (_) {},
+              materialTapTargetSize: MaterialTapTargetSize.shrinkWrap,
+              visualDensity: VisualDensity.compact,
+            ),
           ),
         ),
       );

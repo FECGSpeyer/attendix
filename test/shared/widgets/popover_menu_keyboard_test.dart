@@ -10,10 +10,12 @@ import 'package:flutter_test/flutter_test.dart';
 void main() {
   late List<String?> results;
   late List<String> subTaps;
+  late List<bool> flags;
 
   Future<void> pumpMenu(WidgetTester tester, TargetPlatform platform) async {
     results = [];
     subTaps = [];
+    flags = [false, false];
     await tester.pumpWidget(MaterialApp(
       theme: AppTheme.forPlatform(Brightness.light, platform)
           .copyWith(platform: platform),
@@ -38,6 +40,12 @@ void main() {
                           label: 'Nur aktive',
                           onTap: () => subTaps.add('aktiv'),
                         ),
+                        for (var i = 0; i < 2; i++)
+                          AppPopoverSubItem(
+                            label: 'Option $i',
+                            checked: flags[i],
+                            onTap: () => flags[i] = !flags[i],
+                          ),
                       ],
                     ),
                     const AppPopoverMenuItem(value: 'delete', label: 'Löschen'),
@@ -99,6 +107,34 @@ void main() {
     // Its first entry has the focus: Space triggers it, menu stays open.
     await key(tester, LogicalKeyboardKey.space);
     expect(subTaps, ['aktiv']);
+    expect(find.text('Nur aktive'), findsOneWidget);
+
+    // Entries with a (decorative) checkbox: the row toggles per Space/Enter
+    // and Tab never lands on the checkbox itself (there Enter/Space would
+    // only hit its no-op onChanged).
+    Iterable<bool?> boxes() =>
+        tester.widgetList<Checkbox>(find.byType(Checkbox)).map((c) => c.value);
+    bool focusOnCheckbox() =>
+        FocusManager.instance.primaryFocus?.context
+            ?.findAncestorWidgetOfExactType<Checkbox>() !=
+        null;
+    expect(boxes(), [false, false]);
+    await key(tester, LogicalKeyboardKey.arrowDown);
+    expect(focusOnCheckbox(), isFalse);
+    await key(tester, LogicalKeyboardKey.space);
+    expect(flags, [true, false]);
+    expect(boxes(), [true, false]);
+    await key(tester, LogicalKeyboardKey.arrowDown);
+    await key(tester, LogicalKeyboardKey.enter);
+    expect(flags, [true, true]);
+    expect(boxes(), [true, true]);
+    for (var i = 0; i < 6; i++) {
+      await key(tester, LogicalKeyboardKey.tab);
+      expect(focusOnCheckbox(), isFalse, reason: 'Tab #$i focused a checkbox');
+    }
+    // Back on the first entry of the nested popover for the steps below.
+    await key(tester, LogicalKeyboardKey.escape);
+    await key(tester, LogicalKeyboardKey.enter);
     expect(find.text('Nur aktive'), findsOneWidget);
 
     // Escape: nested closes, focus back on "Filter" (Enter reopens it).

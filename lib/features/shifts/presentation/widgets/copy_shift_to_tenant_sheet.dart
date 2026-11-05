@@ -3,6 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/organisation_providers.dart';
 import '../../../../core/providers/shift_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -126,10 +127,10 @@ Future<void> copyShiftToTenant(
   final int assignedCount;
   try {
     assignedCount = await _executeCopy(
+      ref,
       supabase,
       shift,
       targetTenantId: targetTenantId,
-      allowedTenantIds: tenants.map((t) => t.id).whereType<int>().toSet(),
       copyAssignments: copyAssignments,
       playersWithShift: playersWithShift,
     );
@@ -234,15 +235,23 @@ class _TargetTenantAlertState extends State<_TargetTenantAlert> {
 /// there with the same account (appId), then recalculates their upcoming
 /// attendances. Returns the number of assigned people.
 Future<int> _executeCopy(
+  WidgetRef ref,
   SupabaseClient supabase,
   ShiftPlan shift, {
   required int targetTenantId,
-  required Set<int> allowedTenantIds,
   required bool copyAssignments,
   required List<Map<String, dynamic>> playersWithShift,
 }) async {
   // Last guard before any write: only linked instances of the organisation
   // where the user is not an observer (shiftCopyTargetTenantsProvider).
+  // The source providers (memberships/roles, organisation links) are cached,
+  // so invalidate them and recompute the list: access or the link may have
+  // changed while the dialogs were open. A failure here (e.g. offline) also
+  // aborts before writing; the caller shows the copy-failed toast.
+  ref.invalidate(userTenantsProvider);
+  ref.invalidate(allLinkedTenantsProvider);
+  final freshTargets = await ref.refresh(shiftCopyTargetTenantsProvider.future);
+  final allowedTenantIds = freshTargets.map((t) => t.id).whereType<int>();
   if (!allowedTenantIds.contains(targetTenantId)) {
     throw StateError('Shift copy target $targetTenantId is not allowed');
   }
