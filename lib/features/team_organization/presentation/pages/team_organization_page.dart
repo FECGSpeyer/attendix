@@ -35,7 +35,7 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
     // Ionic: each tab loads on init (also when the segment changes, @switch
     // creates it anew), the cached lists stay visible meanwhile.
     _controller.addListener(_onTabChanged);
-    WidgetsBinding.instance.addPostFrameCallback((_) => _reloadActive());
+    WidgetsBinding.instance.addPostFrameCallback((_) => _reloadActive(firstLoad: true));
   }
 
   @override
@@ -54,9 +54,11 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
   @override
   void onRouteReturn() => _reloadActive();
 
-  void _reloadActive() {
+  /// [firstLoad] only on the first open; tab change and return always load
+  /// anew (a running load may predate a change).
+  void _reloadActive({bool firstLoad = false}) {
     if (!mounted) return;
-    reloadTeamOrgTab(ref, _tabs[_controller.index]);
+    reloadTeamOrgTab(ref, _tabs[_controller.index], firstLoad: firstLoad);
   }
 
   @override

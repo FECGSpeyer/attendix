@@ -66,15 +66,20 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     if (_isNew) return;
     WidgetsBinding.instance.addPostFrameCallback((_) {
       if (!mounted) return;
-      unawaited(_loadFresh());
-      _reloadRelated();
+      unawaited(_loadFresh(firstLoad: true));
+      _reloadRelated(firstLoad: true);
     });
   }
 
   /// Loads the topic anew; sets [_fresh] once settled, [_loadFailed] on error.
-  Future<void> _loadFresh() async {
+  /// [firstLoad]: a load already running (first open) is kept.
+  Future<void> _loadFresh({bool firstLoad = false}) async {
     final id = _itemId;
-    refreshUnlessLoading(ref, agendaItemByIdProvider(id));
+    if (firstLoad) {
+      refreshUnlessLoading(ref, agendaItemByIdProvider(id));
+    } else {
+      ref.invalidate(agendaItemByIdProvider(id));
+    }
     try {
       await ref.read(agendaItemByIdProvider(id).future);
       if (mounted) setState(() => _fresh = true);
@@ -99,10 +104,17 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     await _loadFresh();
   }
 
-  /// Ionic loadRelated(): linked tasks and history.
-  void _reloadRelated() {
-    refreshUnlessLoading(ref, agendaItemHistoryProvider(_itemId));
-    refreshUnlessLoading(ref, tasksForAgendaItemProvider(_itemId));
+  /// Ionic loadRelated(): linked tasks and history. [firstLoad]: loads already
+  /// running (first open) are kept; otherwise always loaded anew, a running
+  /// load may predate a change (e.g. a result saved in the protocol).
+  void _reloadRelated({bool firstLoad = false}) {
+    if (firstLoad) {
+      refreshUnlessLoading(ref, agendaItemHistoryProvider(_itemId));
+      refreshUnlessLoading(ref, tasksForAgendaItemProvider(_itemId));
+    } else {
+      ref.invalidate(agendaItemHistoryProvider(_itemId));
+      ref.invalidate(tasksForAgendaItemProvider(_itemId));
+    }
   }
 
   /// Ionic ionViewWillEnter: back from a task or protocol → reload tasks and

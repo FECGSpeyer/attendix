@@ -438,8 +438,12 @@ Future<Map<String, dynamic>> addTopicsToAttendance(
 
 // ── Reload (Ionic ionViewWillEnter / segment change / refresher) ──────
 
-/// Starts a fresh load of [provider] unless one is already running (e.g. the
-/// first load a page just started by watching it).
+/// First open of a page only: starts a fresh load of [provider] unless one is
+/// already running (the load the page just started by watching it).
+///
+/// Not for returns, tab changes or pull to refresh: a running load may have
+/// started before a change elsewhere and would then show the old state, so
+/// those use `ref.invalidate` (the running load is discarded).
 void refreshUnlessLoading<T>(WidgetRef ref, ProviderBase<AsyncValue<T>> provider) {
   if (ref.read(provider).isLoading) return;
   ref.invalidate(provider);
@@ -449,22 +453,28 @@ void refreshUnlessLoading<T>(WidgetRef ref, ProviderBase<AsyncValue<T>> provider
 /// (`tasks` | `topics` | `protocols`). The tabs keep their current content
 /// while it loads. Completes when the tab's main list has loaded (errors are
 /// shown by the tab).
-Future<void> reloadTeamOrgTab(WidgetRef ref, String tab) async {
+///
+/// [firstLoad]: first open of the page, a load already running is kept
+/// ([refreshUnlessLoading]). Otherwise (return, tab change, pull to refresh)
+/// always loads anew.
+Future<void> reloadTeamOrgTab(WidgetRef ref, String tab, {bool firstLoad = false}) async {
+  void reload<T>(ProviderBase<AsyncValue<T>> provider) =>
+      firstLoad ? refreshUnlessLoading(ref, provider) : ref.invalidate(provider);
   try {
     switch (tab) {
       case 'tasks':
         // Members: getMyTasks is loaded fresh as well.
-        refreshUnlessLoading(ref, myTasksProvider);
-        refreshUnlessLoading(ref, teamTasksProvider);
+        reload(myTasksProvider);
+        reload(teamTasksProvider);
         await ref.read(teamTasksProvider.future);
       case 'topics':
         // Leadership: topics, protocols (vertagt) and the next Termine.
-        refreshUnlessLoading(ref, agendaItemsProvider);
-        refreshUnlessLoading(ref, protocolsProvider);
-        refreshUnlessLoading(ref, upcomingProtocolAttendancesProvider);
+        reload(agendaItemsProvider);
+        reload(protocolsProvider);
+        reload(upcomingProtocolAttendancesProvider);
         await ref.read(agendaItemsProvider.future);
       case 'protocols':
-        refreshUnlessLoading(ref, protocolsProvider);
+        reload(protocolsProvider);
         await ref.read(protocolsProvider.future);
     }
   } catch (_) {
