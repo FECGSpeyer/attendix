@@ -1189,8 +1189,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         await addToUpcomingAttendances(player);
       }
     } catch (e, stack) {
-      // Throws (RepositoryException, or the DemoModeException as is).
-      handleError(e, stack, 'checkAndUnpausePlayers');
+      // Only the demo error reaches the caller (demo toast).
+      if (e is DemoModeException) rethrow;
+      // Don't rethrow anything else - this runs in the background.
+      if (kDebugMode) {
+        debugPrint('[PlayerRepository] Error in checkAndUnpausePlayers: $e');
+      }
+      ErrorReporter.report(
+        e,
+        stack,
+        where: 'PlayerRepository.checkAndUnpausePlayers',
+      );
     }
   }
 
