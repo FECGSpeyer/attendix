@@ -47,56 +47,74 @@ class InstrumentMatcher {
   /// as a word or ends with it ("Altsaxophon" → saxophon).
   static const Map<String, List<String>> translations = {
     // Strings
-    'violine': ['violin', 'violins', 'geige', 'violino', 'violini', 'violon', 'скрипка', 'скрипки'],
+    'violine': ['violin', 'violins', 'geige', 'violino', 'violini', 'violon', 'скрипка', 'скрипки', 'skripka'],
     'viola': ['bratsche', 'alto viola', 'viole', 'альт', 'альты'],
-    'cello': ['violoncello', 'violoncelli', 'violoncell', 'violoncelle', 'виолончель', 'виолончели'],
+    'cello': ['violoncello', 'violoncelli', 'violoncell', 'violoncelle', 'виолончель', 'виолончели', 'violonchel'],
     'kontrabass': ['contrabass', 'contrabbasso', 'contrabbassi', 'double bass', 'string bass', 'contrebasse', 'bass', 'контрабас', 'контрабасы'],
 
     // Woodwinds
-    'piccolo': ['piccoloflöte', 'piccolo flute', 'ottavino'],
-    'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта', 'флейты'],
-    'oboe': ['hautbois', 'oboi', 'гобой', 'гобои'],
+    'piccolo': ['piccoloflöte', 'piccolo flute', 'ottavino', 'pikkoloflöte', 'пикколо', 'малая флейта'],
+    'flöte': ['flute', 'flauto', 'flauti', 'querflöte', 'flote', 'флейта', 'флейты', 'fleita', 'flauta'],
+    'blockflöte': ['recorder', 'блокфлейта', 'blokfleita', 'flauto dolce'],
+    'oboe': ['hautbois', 'oboi', 'гобой', 'гобои', 'goboi', 'goboj'],
     'englischhorn': ['english horn', 'cor anglais', 'corno inglese'],
-    'klarinette': ['clarinet', 'clarinetto', 'clarinetti', 'clarinette', 'кларнет', 'кларнеты'],
+    'klarinette': ['clarinet', 'clarinetto', 'clarinetti', 'clarinette', 'кларнет', 'кларнеты', 'klarnet'],
     'bassklarinette': ['bass clarinet', 'bassclarinet', 'clarinetto basso', 'clarinette basse'],
     'fagott': ['bassoon', 'fagotto', 'fagotti', 'basson', 'фагот', 'фаготы'],
-    'kontrafagott': ['contrabassoon', 'contrafagotto', 'double bassoon'],
-    'saxophon': ['saxophone', 'saxofon', 'саксофон'],
+    'kontrafagott': ['contrabassoon', 'contrafagotto', 'double bassoon', 'контрафагот'],
+    'saxophon': ['saxophone', 'saxofon', 'саксофон', 'saksofon', 'sassofono'],
     'sopransaxophon': ['soprano sax', 'soprano saxophone', 'sopransax'],
     'altsaxophon': ['alto sax', 'alto saxophone', 'altsax', 'altsaxofon'],
     'tenorsaxophon': ['tenor sax', 'tenor saxophone', 'tenorsax', 'tenorsaxofon'],
     'baritonsaxophon': ['baritone sax', 'baritone saxophone', 'baritonsax', 'baritonsaxofon'],
 
     // Brass
-    'horn': ['french horn', 'corno', 'corni', 'cor', 'waldhorn', 'валторна', 'валторны'],
-    'trompete': ['trumpet', 'tromba', 'trombe', 'trompette', 'труба', 'трубы'],
+    'horn': ['french horn', 'corno', 'corni', 'cor', 'waldhorn', 'валторна', 'валторны', 'valtorna', 'рог'],
+    'trompete': ['trumpet', 'tromba', 'trombe', 'trompette', 'труба', 'трубы', 'truba'],
     'flügelhorn': ['flugelhorn', 'flicorno'],
-    'kornett': ['cornet', 'cornetto'],
+    'kornett': ['cornet', 'cornetto', 'корнет', 'cornetta'],
     'posaune': ['trombone', 'tromboni', 'trombon', 'тромбон', 'тромбоны'],
     'bassposaune': ['bass trombone', 'basstrombone'],
     'tenorhorn': ['tenor horn'],
-    'euphonium': ['bariton', 'baritone', 'baritonhorn', 'eufonium'],
+    // Also the baritone voice (Ionic: baritone → баритон, baritono), so
+    // these are ambiguous terms.
+    'euphonium': ['bariton', 'baritone', 'baritonhorn', 'eufonium', 'эуфониум', 'eufonio', 'баритон', 'baritono'],
     'tuba': ['basstuba', 'туба'],
 
     // Percussion
-    'schlagzeug': ['percussion', 'drums', 'drum set', 'drumset', 'batterie', 'schlagwerk', 'перкуссия'],
-    'pauke': ['timpani', 'pauken', 'kettledrum', 'timbales', 'литавры'],
-    'glockenspiel': ['mallets', 'xylophon', 'xylophone', 'vibraphon', 'vibraphone', 'marimba'],
+    'schlagzeug': [
+      'percussion', 'drums', 'drum set', 'drumset', 'batterie', 'schlagwerk', 'перкуссия',
+      'ударные', 'udarnye', 'барабан', 'baraban', 'batteria', 'percussioni',
+    ],
+    'kleine trommel': ['snare', 'малый барабан', 'rullante'],
+    'große trommel': ['bass drum', 'большой барабан', 'gran cassa'],
+    'becken': ['cymbals', 'тарелки', 'tarelki', 'piatti'],
+    'triangel': ['triangle', 'треугольник', 'treugolnik', 'triangolo'],
+    'pauke': ['timpani', 'pauken', 'kettledrum', 'timbales', 'литавры', 'litavry', 'litavri'],
+    'glockenspiel': [
+      'mallets', 'xylophon', 'xylophone', 'vibraphon', 'vibraphone', 'marimba',
+      'ксилофон', 'ksilofon', 'xilofono', 'колокольчики', 'kolokolchiki', 'campanelli',
+      'marimbaphon', 'маримба', 'вибрафон', 'vibrafon', 'vibrafono',
+    ],
 
     // Keyboard
-    'klavier': ['piano', 'pianoforte', 'flügel', 'фортепиано', 'пианино'],
+    'klavier': ['piano', 'pianoforte', 'flügel', 'фортепиано', 'пианино', 'fortepiano', 'рояль', 'royal'],
     'orgel': ['organ', 'organo', 'orgue', 'орган'],
-    'cembalo': ['harpsichord', 'clavecin', 'клавесин'],
-    'keyboard': ['keys', 'synth', 'synthesizer'],
+    'cembalo': ['harpsichord', 'clavecin', 'клавесин', 'klavesin', 'clavicembalo'],
+    'celesta': ['челеста', 'chelesta'],
+    'keyboard': ['keys', 'synth', 'synthesizer', 'tastatur', 'клавишные', 'tastiera'],
+    'akkordeon': ['accordion', 'аккордеон', 'баян', 'bayan', 'гармонь', 'fisarmonica'],
 
     // Other
-    'harfe': ['harp', 'arpa', 'harpe', 'арфа'],
-    'gitarre': ['guitar', 'chitarra', 'guitare', 'гитара'],
+    'harfe': ['harp', 'arpa', 'harpe', 'арфа', 'arfa'],
+    'gitarre': ['guitar', 'chitarra', 'guitare', 'гитара', 'gitara'],
     'e-bass': ['ebass', 'bass guitar', 'electric bass', 'bassgitarre'],
+    'mandoline': ['mandolin', 'мандолина', 'mandolina', 'mandolino'],
+    'banjo': ['банджо', 'bandzho'],
 
     // Choir voices
     'sopran': ['soprano', 'сопрано'],
-    'alt': ['alto', 'альт'],
+    'alt': ['alto', 'альт', 'contralto'],
     'tenor': ['tenore', 'тенор'],
     'bass': ['basso', 'бас'],
 
@@ -114,7 +132,7 @@ class InstrumentMatcher {
     'violine': ['vl', 'vln', 'vi', 'viol', 'vn', 'vni', 'скр'],
     'viola': ['va', 'vla', 'br', 'vle'],
     'cello': ['vc', 'vlc', 'vcl', 'vcs', 'влч', 'вчл', 'вл ч'],
-    'kontrabass': ['kb', 'cb', 'db', 'кб', 'к бас', 'кбас'],
+    'kontrabass': ['kb', 'cb', 'db', 'кб', 'к бас', 'кбас', 'к-б'],
     'piccolo': ['picc', 'pic'],
     'flöte': ['fl', 'flt', 'fls', 'фл'],
     'oboe': ['ob', 'obs', 'гоб'],
@@ -132,11 +150,12 @@ class InstrumentMatcher {
     'posaune': ['pos', 'tb', 'tbn', 'trb', 'тромб', 'трб'],
     'tuba': ['tu', 'tba', 'туб'],
     'euphonium': ['euph', 'bar'],
-    'schlagzeug': ['perc', 'schlg', 'drs', 'dr'],
+    'schlagzeug': ['perc', 'schlg', 'drs', 'dr', 'уд'],
     'pauke': ['timp', 'pk', 'pauk', 'лит'],
     'glockenspiel': ['glsp', 'glock', 'xyl', 'vib'],
-    'klavier': ['pf', 'pno', 'kl'],
+    'klavier': ['pf', 'pno', 'kl', 'ф-но'],
     'orgel': ['org'],
+    'akkordeon': ['acc'],
     'harfe': ['hp', 'hrf', 'hfe', 'арф'],
     'gitarre': ['gt', 'gtr', 'git'],
     'sopran': ['sop'],
@@ -145,7 +164,11 @@ class InstrumentMatcher {
   };
 
   /// Terms that also mean something else: a match on them is only "unsure".
-  static const Set<String> _ambiguousTerms = {'bass', 'kl', 'bariton', 'baritone', 'cor', 'as', 'bs', 'ts', 'bar', 'dr', 'alto', 'кл', 'тр'};
+  static const Set<String> _ambiguousTerms = {
+    'bass', 'kl', 'bariton', 'baritone', 'cor', 'as', 'bs', 'ts', 'bar', 'dr', 'alto', 'кл', 'тр',
+    // Voice or instrument / an English word / "accompaniment".
+    'баритон', 'baritono', 'royal', 'acc',
+  };
 
   /// Words that only describe the tuning ("Klarinette in B", "Horn in F").
   static const Set<String> _tuningWords = {

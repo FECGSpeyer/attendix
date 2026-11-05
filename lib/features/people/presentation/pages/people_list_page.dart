@@ -2,7 +2,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
-import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -17,6 +16,7 @@ import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/providers/profile_providers.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
 import '../../../../core/theme/app_colors.dart';
+import '../../../../core/utils/demo_guard.dart' show DemoModeException;
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/providers/organisation_providers.dart';
@@ -34,6 +34,7 @@ import '../widgets/archive_person_modal.dart';
 import '../widgets/handover_sheet.dart';
 import '../../../../core/utils/haptic_helper.dart';
 import '../widgets/pause_person_sheet.dart';
+import '../widgets/person_modal.dart';
 import '../widgets/ion/ion_widgets.dart';
 import '../../../messages/presentation/widgets/notification_bell.dart';
 import 'bulk_edit_page.dart';
@@ -137,7 +138,11 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
     if (!(role.isAdmin || role.isResponsible)) return;
     final repo = ref.read(playerRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
-    await repo.checkAndUnpausePlayers();
+    try {
+      await repo.checkAndUnpausePlayers();
+    } on DemoModeException {
+      // Demo account: the guard already showed the demo hint; load anyway.
+    }
     if (mounted) ref.invalidate(realtimePlayersProvider);
   }
 
@@ -238,7 +243,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         _otherInstanceName = name;
       });
     } catch (_) {
-      // Keep "Alle anzeigen" when the instance cannot be resolved
+      // Keep "Alle anzeigen"; Ionic shows the service toast here too.
+      if (mounted) ToastHelper.showError(context, context.l10n.svcLoadUsersFailed);
     }
   }
 
@@ -570,7 +576,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
         SliverToBoxAdapter(
           child: _BirthdayBanner(
             people: todaysBirthdays(peopleAsync.valueOrNull ?? const []),
-            onTap: (p) => context.push('/people/${p.id}'),
+            onTap: (p) {
+              if (p.id != null) showPersonModal(context, p.id!);
+            },
           ),
         ),
       ...peopleAsync.when(
@@ -604,7 +612,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   actions: [
                     (
                       context.l10n.attendanceAddPerson,
-                      () => context.push('/people/new'),
+                      () => showPersonCreateModal(context),
                     ),
                     if (isAdmin)
                       (context.l10n.peopleImportPeople, _openImport),
@@ -645,7 +653,9 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
                   _filterOption == 'otherInstance' ? _otherInstanceName : null,
               onTap: _isSelectionMode && person.id != null
                   ? () => _togglePlayerSelection(person.id!)
-                  : () => context.push('/people/${person.id}'),
+                  : () {
+                      if (person.id != null) showPersonModal(context, person.id!);
+                    },
               onPause: isAdmin ? () => _showPauseDialog(person) : null,
               onUnpause: isAdmin ? () => _unpausePerson(person) : null,
               onRemove: isAdmin ? () => _remove(person) : null,
@@ -709,7 +719,7 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
           : isAdmin
               // IOS_SHELL: iOS → ion-fab in the tab bar row
               ? TabBarFab(
-                  child: IonFabButton(onPressed: () => context.push('/people/new')))
+                  child: IonFabButton(onPressed: () => showPersonCreateModal(context)))
               : null,
     );
   }
@@ -1169,7 +1179,8 @@ class _PeopleListPageState extends ConsumerState<PeopleListPage> {
       });
       _saveFilterOption();
     } catch (e) {
-      if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
+      // Ionic CrossTenantService.getUserIdsInTenant: 'Fehler beim Laden der Benutzer'.
+      if (mounted) ToastHelper.showError(context, context.l10n.svcLoadUsersFailed);
     }
   }
 

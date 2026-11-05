@@ -79,7 +79,7 @@ void main() {
       'updatePersonAttendance', 'createPersonAttendances',
       'updateShiftAssignmentsForAttendance', 'addHistoryEntries',
     ],
-    'player': ['checkAndUnpausePlayers', 'mergePendingPlayerIntoExisting'],
+    'player': ['mergePendingPlayerIntoExisting'],
     'sign_in_out': ['updateAttendanceNote'],
     'user_notification': ['setRead', 'markAllRead', 'deleteOne'],
     'feedback': ['sendQuestion', 'sendFeedback'],
@@ -130,6 +130,20 @@ void main() {
         });
       }
     });
+  });
+
+  // Ionic checkAndUnpausePlayers unpauses via updatePlayer →
+  // checkDemoRestriction(): reading the paused players is fine, every
+  // write is blocked.
+  test('player.checkAndUnpausePlayers checks demo before writing', () {
+    final source =
+        File('lib/data/repositories/player_repository.dart').readAsStringSync();
+    final body = _methodBody(source, 'checkAndUnpausePlayers');
+    expect(body, isNotNull);
+    final guardIdx = body!.indexOf("ensureNotDemo('checkAndUnpausePlayers')");
+    expect(guardIdx, greaterThanOrEqualTo(0));
+    expect(guardIdx, lessThan(body.indexOf('.update(')));
+    expect(guardIdx, lessThan(body.indexOf('addToUpcomingAttendances(')));
   });
 
   group('Demo Guard - operations Ionic keeps open', () {

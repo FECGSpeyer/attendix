@@ -35,12 +35,16 @@ import 'features/auth/data/auth_link_listener.dart';
 import 'core/services/teams/teams_service.dart';
 import 'core/services/app_icon_service.dart';
 import 'core/providers/push_providers.dart';
+import 'core/providers/tenant_providers.dart' show currentTenantIdProvider;
+import 'core/services/telegram_service.dart' show notificationConfigProvider;
 import 'l10n/l10n.dart';
 import 'shared/widgets/dialogs/ion_modal.dart';
 import 'shared/widgets/adaptive/app_toolbar.dart' show IonToolbarMetrics;
 import 'shared/widgets/layout/tap_outside_dismiss.dart';
 import 'core/services/error_reporter.dart';
 import 'core/constants/app_constants.dart';
+import 'features/public_links/presentation/pages/open_file_page.dart' show PendingFileLink;
+import 'core/utils/global_toast.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -72,6 +76,8 @@ void main() async {
   final initialLanguage = await loadInitialLanguage();
   // REDESIGN: "Neues Design (Beta)", Farbwelt and hell/dunkel of this device
   final initialRedesign = await loadInitialRedesignSettings();
+  // Ionic setPendingLink: a shared file link survives reload / restart.
+  await PendingFileLink.restore();
 
   // Load environment variables (PWA_OFFLINE: web keeps a copy for offline starts)
   await loadAppEnv();
@@ -193,7 +199,17 @@ class _AttendixAppState extends ConsumerState<AttendixApp> {
             ref.read(offlineQueueNotifierProvider.notifier).onUserChanged());
       }
     });
+    // Ionic setTenant → getNotifcationConfig: the user's notifications row
+    // (default flags) exists as soon as an instance is open, so e.g. the
+    // push prompt's push_enabled update has a row to write to.
+    ref.listen(currentTenantIdProvider, (previous, next) {
+      if (next != null && next != previous) {
+        ref.read(notificationConfigProvider.future).ignore();
+      }
+    });
     final router = ref.watch(routerProvider);
+    // Ionic service toasts (GlobalToast) use the router's root context.
+    GlobalToast.contextResolver = () => router.routerDelegate.navigatorKey.currentContext;
     // PWA_UPDATE: the web app updates at the next start, without a toast.
     final updateAvailable =
         showUpdateHint(ref.watch(appUpdateAvailableProvider));

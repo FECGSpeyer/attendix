@@ -13,6 +13,7 @@ import '../../../data/models/song/song_additional_field.dart';
 import '../presentation/utils/song_utils.dart';
 import '../../../l10n/l10n.dart';
 import '../../../core/services/native/native_file_service.dart';
+import '../../../core/services/pdf_fonts.dart';
 
 /// One file to print (optionally several copies)
 class SongPrintEntry {
@@ -163,7 +164,7 @@ class SongPrintService {
       return row;
     }).toList();
 
-    final doc = pw.Document();
+    final doc = await PdfFonts.document();
     doc.addPage(pw.MultiPage(
       pageFormat: PdfPageFormat.a4,
       margin: const pw.EdgeInsets.fromLTRB(28, 28, 28, 40),

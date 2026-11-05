@@ -220,7 +220,8 @@ class PersonHeader extends ConsumerWidget {
       final storagePath = profileImageStoragePath(personId);
       final legacyPath = profileImagePathFromUrl(person.img);
 
-      final publicUrl = await repo.updateImage(personId, bytes);
+      // Ionic: own picture → all instances of the account (appId).
+      final publicUrl = await repo.updateImage(personId, bytes, appId: person.appId);
 
       // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
       if (legacyPath != null && legacyPath != storagePath) {
@@ -287,6 +288,8 @@ class PersonHeader extends ConsumerWidget {
       // code calls img.split and breaks on null), then delete the object
       // whose key is taken from the stored URL.
       await repo.updatePlayerFields(personId, {'img': ''});
+      // Ionic removeImage with the own appId clears every instance's row.
+      await repo.syncOwnImage(person.appId, '');
 
       final storagePath = profileImagePathFromUrl(person.img);
       if (storagePath != null) {

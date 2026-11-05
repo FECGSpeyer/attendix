@@ -1,7 +1,7 @@
 name: attendix
 description: "Attendance Management App - Flutter Version"
 publish_to: 'none'
-version: 0.41.23+135
+version: 0.41.24+136
 
 environment:
   sdk: ^3.7.0
@@ -133,6 +133,10 @@ flutter:
     - assets/icons/
     - assets/version_history.json
     - assets/certificates/urkunde-vorkurs.jpg
+    # Ionic registerExportFont: Unicode font of all PDF exports (PdfFonts)
+    - assets/fonts/NotoSans-Regular.ttf
+    - assets/fonts/NotoSans-Bold.ttf
+    - assets/fonts/NotoSans-Italic.ttf
     - .env.app
 
   # WEB_FONTS: Roboto with real 400/500/600/700 weights (+ 400 italic), as

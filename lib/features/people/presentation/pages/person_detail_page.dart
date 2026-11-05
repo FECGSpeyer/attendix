@@ -24,6 +24,7 @@ import '../../../duty/presentation/pages/unavailability_page.dart';
 import '../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../core/utils/text_utils.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
+import '../../../../core/utils/person_matcher.dart' show RankedMatch;
 import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
 import '../widgets/person_transfer_sheet.dart';
@@ -1092,6 +1093,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       matches = await crossTenantPersonRepo
           .getPossiblePersonsByEmail(email, linkedTenantIds: linkedIds);
     } catch (_) {
+      // Ionic getPossiblePersonsByEmail: error toast.
+      if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
       return;
     }
     matches = matches.where((m) => m.person.id != widget.person.id).toList();
@@ -1130,12 +1133,20 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final person = widget.person;
     final personId = person.id;
     if (personId == null) return;
-    final linkedIds = await ref.read(linkedTenantIdsProvider.future);
-    final matches = await repo.getPossiblePersonsByName(
-      _draft.firstName,
-      _draft.lastName,
-      linkedTenantIds: linkedIds,
-    );
+    final List<int> linkedIds;
+    final List<RankedMatch<CrossTenantPersonCandidate>> matches;
+    try {
+      linkedIds = await ref.read(linkedTenantIdsProvider.future);
+      matches = await repo.getPossiblePersonsByName(
+        _draft.firstName,
+        _draft.lastName,
+        linkedTenantIds: linkedIds,
+      );
+    } catch (_) {
+      // Ionic getPossiblePersonsByName: error toast.
+      if (mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+      return;
+    }
     if (!mounted) return;
     if (matches.isEmpty) {
       ScaffoldMessenger.of(context).showSnackBar(

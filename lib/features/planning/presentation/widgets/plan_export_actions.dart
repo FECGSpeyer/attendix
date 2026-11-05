@@ -5,11 +5,16 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/branding_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/services/web_window.dart' show shareUrlInBrowser;
+import '../../../../core/utils/share_origin.dart';
+import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
+import '../../../../data/models/plan/plan.dart' show PlanAttendance;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'ion_items.dart';
@@ -104,8 +109,8 @@ Future<void> showPlanExportSheet(
 
 /// Runs one export action.
 ///
-/// [pdf2xSuffix]: the 2x A5 PDF file gets `_2x` like the Telegram upload
-/// (Ionic Termin page).
+/// [pdf2xSuffix]: kept for callers; the saved 2x A5 PDF always gets `_2x`
+/// (Ionic `createPlanExportFile` → `downloadFileNative`).
 Future<void> runPlanExport(
   BuildContext context,
   WidgetRef ref,
@@ -136,11 +141,9 @@ Future<void> runPlanExport(
     switch (action) {
       case PlanExportAction.pdf:
       case PlanExportAction.pdf2x:
-        final pdfName = pdfFileName ?? fileName;
-        await service.sharePdf(pages,
-            sideBySide: sideBySide,
-            fileName: sideBySide && (pdf2xSuffix || pdfFileName != null) ? '${pdfName}_2x' : pdfName,
-            branding: resolved);
+        // Ionic downloadFileNative: saved, `_2x` added by savePdf.
+        await service.savePdf(pages,
+            sideBySide: sideBySide, fileName: pdfFileName ?? fileName, branding: resolved);
       case PlanExportAction.image:
         await service.shareImage(pages, fileName: imageFileName ?? fileName, branding: resolved);
       case PlanExportAction.telegram:
@@ -187,7 +190,11 @@ Future<void> sharePlanLink(BuildContext context, String url, {String? title}) as
     return;
   }
   try {
-    final result = await Share.share(url, subject: title);
+    final result = await Share.share(
+      url,
+      subject: title,
+      sharePositionOrigin: shareOriginFor(context),
+    );
     if (result.status == ShareResultStatus.unavailable) {
       throw Exception('unavailable');
     }
@@ -315,5 +322,26 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
         ),
       ],
     );
+  }
+}
+
+/// Type of [att] for export titles (Ionic `getPlanningTitle(type, typeInfo)`).
+/// Waits for the types of the current instance instead of treating "still
+/// loading" as "no type"; an org plan of another instance reads its type in
+/// that instance (repository bound to `att.tenantId`, filtered by it).
+/// Null when unknown or not readable.
+Future<AttendanceType?> resolvePlanAttendanceType(WidgetRef ref, PlanAttendance att) async {
+  final typeId = att.typeId;
+  if (typeId == null || typeId.isEmpty) return null;
+  try {
+    final current = ref.read(currentTenantIdProvider);
+    final tenantId = att.tenantId;
+    if (tenantId == null || tenantId == current) {
+      final types = await ref.read(attendanceTypesProvider.future);
+      return types.where((t) => t.id == typeId).firstOrNull;
+    }
+    return await ref.read(attendanceTypeRepositoryForTenantProvider(tenantId)).getTypeById(typeId);
+  } catch (_) {
+    return null;
   }
 }

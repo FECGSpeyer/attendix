@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/plan_providers.dart';
@@ -115,12 +114,9 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   /// Ionic export title: `plan.title`, else `Utils.getPlanningTitle` (the
   /// type's planning_title, with typeInfo in brackets), else typeInfo, else
   /// the type name.
-  String _title(PlanAttendance att, Plan plan) {
+  String _title(PlanAttendance att, Plan plan, AttendanceType? type) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    final typeId = att.typeId ?? widget.attendance.typeId;
-    final types = ref.read(attendanceTypesProvider).valueOrNull ?? const [];
-    final type = typeId == null ? null : types.where((x) => x.id == typeId).firstOrNull;
     final pt = type?.planningTitle?.trim() ?? '';
     final info = att.typeInfo?.trim() ?? '';
     if (pt.isNotEmpty) return info.isNotEmpty ? '$pt ($info)' : pt;
@@ -130,11 +126,16 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
+    // Resolved before the sheet (awaits the types; an org plan's type is
+    // read in its own tenant): titles and file names use the same type.
+    final type = await resolvePlanAttendanceType(
+        ref, att.typeId != null ? att : att.copyWith(typeId: widget.attendance.typeId));
+    if (!mounted) return;
     PlanExportPage page(int i) {
       final p = plans[i];
       final label = plans.length > 1 ? ' · ${PlanUtils.planLabel(att, i, plans)}' : '';
       return PlanExportPage(
-        title: _title(att, p),
+        title: _title(att, p, type),
         subtitle: '${PlanUtils.longDate(PlanUtils.planDate(att, i, plans) ?? DateTime.tryParse(att.date))}$label',
         time: p.time,
         end: p.end,
@@ -146,7 +147,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
     // for 2x A5 (added by runPlanExport).
     final d = DateTime.tryParse(att.date)?.toLocal();
     final date = d == null ? '' : '_${d.day.toString().padLeft(2, '0')}_${d.month.toString().padLeft(2, '0')}_${d.year}';
-    final fileName = '${_title(att, plans[index])}$date';
+    final fileName = '${_title(att, plans[index], type)}$date';
     if (plans.length > 1) {
       // Ionic sharePlan with several plans: openPlanShareSheet (this plan /
       // all plans: PDF, PDF 2x A5, Telegram PDF / 2x A5; Bild only for one).
