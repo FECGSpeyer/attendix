@@ -34,6 +34,14 @@
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
       "n": "behoben in #305"
+    },
+    "planning/plan-viewer/plan-viewer.component#x-de53b1e39b": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart",
+        "lib/features/planning/presentation/attendance_plan_viewer.dart"
+      ],
+      "n": "Terminliste behoben in #305, Selbstservice in #298"
     }
   },
   "extraOverride": [
