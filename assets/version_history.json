@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.41.5",
+      "version": "0.41.6",
       "date": "5.11.2026",
       "changes": [
         "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
@@ -11,7 +11,7 @@
       ]
     },
     {
-      "version": "0.41.4",
+      "version": "0.41.5",
       "date": "5.11.2026",
       "changes": [
         "🐛 Öffentliche Planung: Das gewählte Branding (FECG Speyer, FECG Schwegenheim oder keins) erscheint wieder in PDF, Bild und Telegram, statt des Brandings der eigenen Gruppe",
@@ -21,7 +21,7 @@
       ]
     },
     {
-      "version": "0.41.3",
+      "version": "0.41.4",
       "date": "5.11.2026",
       "changes": [
         "🐛 Termine: Der Ablaufplan aus der Terminliste zeigt wieder alle Pläne eines Termins (Tages-Chips)",
@@ -30,11 +30,25 @@
       ]
     },
     {
-      "version": "0.41.2",
+      "version": "0.41.3",
       "date": "5.11.2026",
       "changes": [
         "🐛 Termin: Eine selbst gewählte Abmeldefrist wird wieder mit der gewählten Uhrzeit gespeichert, die Anmeldung schließt nicht mehr ein bis zwei Stunden zu früh",
         "🐛 Termin: Die Fristauswahl bietet wie bisher nur 5-Minuten-Schritte und reicht bis zum Terminbeginn"
+      ]
+    },
+    {
+      "version": "0.41.2",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Registrierung: Vorbelegte Auswahl-Zusatzfelder werden gespeichert, Felder und Gruppen stehen in der Reihenfolge wie bisher",
+        "🐛 Registrierung: Ja/Nein-Feld ohne Wert wird gemeldet; vor dem Ersetzen des Passbilds kommt eine Abfrage, Kamera oder Mediathek wählbar",
+        "🐛 Passwort zurücksetzen: „Neues Passwort“ erscheint wieder als Hinweisfenster über der Startseite",
+        "🐛 Nach der Zustimmung zu den Bedingungen geht es direkt zur Startseite; Ablaufpläne öffnen sich aus der Seitenleiste als Fenster",
+        "🐛 Alte Schichten-Links und /register führen wieder an die richtige Stelle",
+        "🐛 Teamorganisation: Aufgaben, Themen und Protokolle laden beim Öffnen, Tabwechsel und Zurückkehren neu, Ladefehler mit Hinweis und Ziehen zum Neuladen",
+        "🐛 Protokoll: „Aufgabe“ in den allgemeinen Notizen lässt die Notizen offen; vor der Freigabe erscheinen Notizen anderer Leitungen auch in schon geöffneten Abschnitten",
+        "🐛 Teams: Bei falschem Passwort während der Konto-Verknüpfung erscheint nur noch der Hinweis „Ungültige Anmeldedaten“"
       ]
     },
     {
