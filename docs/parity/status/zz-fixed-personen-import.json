@@ -1,0 +1,43 @@
+{
+ "batch": "zz-fixed-personen-import",
+ "ionic": "9f9b82af",
+ "afterRound": 3,
+ "flutter": "8004a44",
+ "items": {
+  "people/import/import.page#field-2d96b151": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ],
+   "n": "behoben in #PR"
+  },
+  "people/import/import.page#effect-31a0aedd": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ],
+   "n": "behoben in #PR"
+  },
+  "people/import/import.page#action-2d35c2c8": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart"
+   ],
+   "n": "behoben in #PR"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "people/import/import.page",
+   "title": "Org-Zusatzfelder beim Import nicht verfügbar",
+   "drop": true,
+   "why": "behoben in #PR"
+  },
+  {
+   "unit": "people/import/import.page",
+   "title": "Vorlage herunterladen: Ausgabe",
+   "drop": true,
+   "why": "behoben in #PR"
+  }
+ ]
+}
