@@ -106,13 +106,16 @@ Special cases:
 
 ## Severity for `diff` / `missing` (`sev`)
 
-- `hoch`: a feature/action is missing or behaves differently, wrong or missing
-  data, a role sees something it must not or misses something it should, a
-  different DB write.
-- `mittel`: the same feature works differently for the user: different steps
-  or target in a flow, different data shown, filtered, sorted or defaulted, a
-  text with different meaning, a missing confirmation before a destructive
-  action, a missing error or hint the user needs.
+- `hoch`: the function is missing or delivers a wrong result, wrong or
+  missing data, a wrong DB write, a role sees or may do too much or too
+  little.
+- `mittel`: the function exists but with a different flow, a different
+  presentation of data with the same result (different steps or target in a
+  flow, data shown, filtered, sorted or defaulted differently, a text with
+  different meaning), or missing hints.
+- A missing error, validation or security message (the user does not learn
+  that something failed or why nothing happens; missing confirmation before
+  deleting) is never "just look" and stays at least `mittel`.
 - `niedrig`: same function, only look or arrangement differs: icon, colour,
   layout, position or order of controls, dialog type (sheet, dialog, page)
   with the same choices and result, same meaning in other words, success
