@@ -82,6 +82,16 @@ Each entry has a `reason`:
   Write it under its `id` (`x-…`) in `items`: `s` `diff` or `missing` with
   `sev` keeps it, `s` `ok` or `na` withdraws it (say why in `n`), always
   with `v`.
+- `flutter-geaendert`: at least one Flutter file the verdict references
+  (`first.f`, or `extra.f`) was changed, renamed or deleted after the Flutter
+  commit the verdict was made at (`first.flutterAt`); this applies to every
+  status, including `ok` and `na`. The changed files are listed in
+  `flutterChanged`: look at them first (are the referenced places still
+  there, does the code still do what `first.n` describes?), then judge the
+  item again against the current Flutter code, as in the main steps above. An `ok` may have
+  become a regression, a `diff`/`missing` may be fixed now. Always with `v`.
+  Entries picked for another reason can also carry `flutterChanged`; then
+  judge against the current code as well.
 
 Every item id (and every `x-…` id) of the slice appears once. Notes in German, short and concrete.
 Write the file regularly and validate it at the end. Do not edit anything

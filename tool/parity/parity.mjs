@@ -6,10 +6,14 @@
 //   node tool/parity/parity.mjs diff <old.json> [new]   → items added/removed by a new Ionic version
 //   node tool/parity/parity.mjs todo                    → items without a status yet, per batch
 //   node tool/parity/parity.mjs verify-slices <dir> [n] [b01-x,b02-y] → input files for the second pass
+//   node tool/parity/parity.mjs verify-round <N> <dir> [n] [--since <old.json>] → input files for a full round
 //   node tool/parity/parity.mjs fixlists            → docs/parity/fixes/<paket>.md work lists
+//   verify-round and report check whether referenced Flutter files changed since
+//   each verdict (--flutter <path>: Flutter checkout, default "."; --no-flutter-check)
 import { readFileSync, writeFileSync, readdirSync, existsSync, mkdirSync } from 'node:fs';
 import { join } from 'node:path';
 import { createHash } from 'node:crypto';
+import { execFileSync } from 'node:child_process';
 import { ROLE_TEXT } from './roles.mjs';
 
 const DIR = 'docs/parity';
@@ -173,6 +177,71 @@ const readStatuses = () => {
   // units whose logic item only summarises: their findings are the extras
   out.extraAll.forEach((e) => out.extraUnits.add(e.unit));
   return out;
+};
+
+// Options shared by several commands: --flutter <path> (Flutter checkout,
+// default this repo) and --no-flutter-check.
+const optValue = (name) => (rest.includes(name) ? rest[rest.indexOf(name) + 1] : null);
+const OPTS_WITH_VALUE = new Set(['--since', '--flutter']);
+const positional = () => rest.filter((x, k) => !OPTS_WITH_VALUE.has(x) && !OPTS_WITH_VALUE.has(rest[k - 1]) && x !== '--no-flutter-check');
+
+// Flutter files changed since a verdict. A verdict carries the Flutter commit
+// it was made at (flutterAt, short SHA) and its Flutter references (f:
+// "lib/x.dart", "lib/x.dart:12", "lib/x.dart:12-30,41"). Per commit one
+// `git diff --name-status` against HEAD of the Flutter checkout (lazy, cached),
+// so a check costs one process per distinct commit, not per file. A file
+// counts as changed when it was modified, renamed away or deleted; a reference
+// ending in "/" (directory) when anything below it changed. Unknown commits
+// (not in the checkout) are reported once and never mark anything.
+const refPath = (r) => String(r).trim().replace(/:\d.*$/, '');
+const makeFlutterCheck = (root = '.') => {
+  const byCommit = new Map();
+  const warned = new Set();
+  let head = null;
+  let disabled = false;
+  const git = (...a) => execFileSync('git', ['-C', root, ...a], { encoding: 'utf8', stdio: ['ignore', 'pipe', 'pipe'], maxBuffer: 256 * 1024 * 1024 });
+  try { head = git('rev-parse', '--short', 'HEAD').trim(); } catch {
+    console.warn(`warning: ${root} is no git checkout: Flutter change check skipped`);
+    disabled = true;
+  }
+  const changedPaths = (commit) => {
+    if (byCommit.has(commit)) return byCommit.get(commit);
+    let paths = null;
+    try {
+      git('rev-parse', '--verify', '-q', `${commit}^{commit}`);
+      paths = new Map();
+      // -z: NUL-separated "status path [new path]"; renames keep the old path
+      const tok = git('diff', '--name-status', '-M', '-z', commit, 'HEAD', '--').split('\0');
+      for (let k = 0; k < tok.length - 1;) {
+        const s = tok[k][0];
+        if (s === 'R' || s === 'C') {
+          if (s === 'R') paths.set(tok[k + 1], 'R');
+          k += 3;
+        } else {
+          paths.set(tok[k + 1], s);
+          k += 2;
+        }
+      }
+    } catch {
+      if (!warned.has(commit)) console.warn(`warning: Flutter commit ${commit} not found in ${root}: verdicts made at it are not checked for Flutter changes`);
+      warned.add(commit);
+      paths = null;
+    }
+    byCommit.set(commit, paths);
+    return paths;
+  };
+  // changed reference paths (deduplicated, without line numbers) or []
+  const changed = (commit, refs) => {
+    if (disabled || !commit || !refs?.length) return [];
+    const paths = changedPaths(commit);
+    if (!paths?.size) return [];
+    const out = new Set();
+    for (const p of refs.map(refPath).filter(Boolean)) {
+      if (paths.has(p) || (p.endsWith('/') && [...paths.keys()].some((x) => x.startsWith(p)))) out.add(p);
+    }
+    return [...out];
+  };
+  return { changed, head: () => head };
 };
 
 // Content fingerprint of an inventory item: what a user sees or the code
@@ -366,12 +435,19 @@ if (cmd === 'batches') {
   // unresolved DB call, every item or extra fixed by a fix PR (zz-fixed-*)
   // that no round has looked at since, every hoch/mittel extra finding
   // without a second verdict and every extra whose page changed in Ionic later.
-  const since = rest.includes('--since') ? rest[rest.indexOf('--since') + 1] : null;
-  const args = rest.filter((x, k) => x !== '--since' && rest[k - 1] !== '--since');
+  // Last: every verdict (any status) and open extra whose referenced Flutter
+  // files changed since the commit it was made at (flutter-geaendert; off with
+  // --no-flutter-check). Every picked entry lists those files in flutterChanged.
+  const since = optValue('--since');
+  const args = positional();
   const [N, outDir, perFile = '40'] = cmd === 'verify2-slices' ? ['2', ...args] : args;
-  if (!/^\d+$/.test(N ?? '') || !outDir) throw new Error('usage: verify-round <N> <outDir> [perFile] [--since <old-inventory.json>]');
+  if (!/^\d+$/.test(N ?? '') || !outDir) throw new Error('usage: verify-round <N> <outDir> [perFile] [--since <old-inventory.json>] [--flutter <path>] [--no-flutter-check]');
+  if (!existsSync(outDir)) mkdirSync(outDir, { recursive: true });
   const inv = load(INVENTORY);
   const st = readStatuses();
+  const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
+  const flutterChangedOf = (at, refs) => (fcheck ? fcheck.changed(at, refs) : []);
+  let fcOther = 0;
   const { batches } = load(join(DIR, 'batches.json'));
   const recheck = new Set();
   if (since) { const d = diffInv(load(since), inv); [...d.changed, ...d.viaText].forEach((id) => recheck.add(id)); }
@@ -435,13 +511,22 @@ if (cmd === 'batches') {
     return set;
   };
   const roleItems = new Set(inv.units.flatMap((u) => [...roleItemsOf(u)]));
-  const extraEntry = (e, reason) => {
+  const extraEntry = (e, reason, changed) => {
     const u = unitOf.get(e.unit);
-    return { reason, unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [], stale: e.stale ?? false }, ...(e.fixed ? { fix: { src: e.wsrc, n: e.wn } } : {}) };
+    return { reason, unit: e.unit, ionic: { ts: u?.ts, html: u?.html }, extra: { id: e.id, title: e.title, n: e.n, sev: e.sev, ionic: e.ionic ?? null, f: e.f ?? [], stale: e.stale ?? false }, ...(e.fixed ? { fix: { src: e.wsrc, n: e.wn } } : {}), ...(changed.length ? { flutterChanged: changed } : {}) };
   };
-  // withdrawn extras only come back when a fix PR withdrew them (not yet re-checked)
-  const extraReason = (e) => (e.withdrawn ? (e.fixed ? 'behoben-ungeprueft' : null)
-    : e.stale ? 'zusatzbefund-ionic-geaendert' : !e.v && ['hoch', 'mittel'].includes(e.sev) ? 'zusatzbefund' : null);
+  // withdrawn extras only come back when a fix PR withdrew them (not yet
+  // re-checked); open extras also when their Flutter files changed since
+  const extraPick = (e) => {
+    const changed = e.withdrawn ? [] : flutterChangedOf(e.flutterAt, e.f);
+    const reason = e.withdrawn ? (e.fixed ? 'behoben-ungeprueft' : null)
+      : e.stale ? 'zusatzbefund-ionic-geaendert' : !e.v && ['hoch', 'mittel'].includes(e.sev) ? 'zusatzbefund' : changed.length ? 'flutter-geaendert' : null;
+    return reason ? { reason, changed } : null;
+  };
+  const count = (reason, changed) => {
+    why[reason] = (why[reason] ?? 0) + 1;
+    if (changed.length && reason !== 'flutter-geaendert') fcOther += 1;
+  };
   const write = (name, part) => {
     writeFileSync(join(outDir, `${name}.json`), `${JSON.stringify({ batch: name, ionicCommit: inv.meta.ionicCommit, items: part }, null, 1)}\n`);
     console.log(`${name} ${part.length}`);
@@ -451,39 +536,48 @@ if (cmd === 'batches') {
     for (const u of inv.units.filter((x) => b.units.includes(x.id))) {
       for (const i of u.items) {
         const s0 = st.items[i.id];
+        const changed = s0 ? flutterChangedOf(s0.flutterAt, s0.f) : [];
         let reason = null;
         if (!s0) reason = 'neu';
         else if (recheck.has(i.id)) reason = 'geaendert';
         else if (s0.fixed) reason = 'behoben-ungeprueft';
-        else if (s0.v || s0.src?.startsWith('zz-fixed-')) continue;
+        else if (s0.v || s0.src?.startsWith('zz-fixed-')) reason = null; // checked twice: only a Flutter change re-opens it
         else if (i.unresolved) reason = 'db-unaufgeloest';
         else if (s0.s === 'missing' || s0.s === 'unclear' || (s0.s === 'diff' && s0.sev !== 'niedrig')) reason = 'abweichung-ungeprueft';
         else if ((s0.s === 'ok' || s0.s === 'na') && roleItems.has(i.id)) reason = 'rolle-mandant';
+        if (!reason && changed.length) reason = 'flutter-geaendert';
         if (!reason) continue;
-        why[reason] = (why[reason] ?? 0) + 1;
+        count(reason, changed);
         // via: the role dependence comes from the element opening the modal/popover
         const via = reason === 'rolle-mandant' && inherited.has(i.id) ? { via: 'ausloeser' } : {};
         if (via.via) viaOpener += 1;
-        pick.push({ reason, ...via, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev, v: s0.v ?? null, src: s0.fixed ? s0.src : undefined } : null });
+        pick.push({ reason, ...via, unit: u.id, ionic: { ts: u.ts, html: u.html }, item: i, first: s0 ? { s: s0.s, f: s0.f, n: s0.n, sev: s0.sev, v: s0.v ?? null, src: s0.fixed ? s0.src : undefined, flutterAt: s0.flutterAt ?? null } : null, ...(changed.length ? { flutterChanged: changed } : {}) });
       }
     }
     for (const e of st.extraAll) {
-      const reason = b.units.includes(e.unit) && extraReason(e);
-      if (!reason) continue;
-      why[reason] = (why[reason] ?? 0) + 1;
-      pick.push(extraEntry(e, reason));
+      const p = b.units.includes(e.unit) && extraPick(e);
+      if (!p) continue;
+      count(p.reason, p.changed);
+      pick.push(extraEntry(e, p.reason, p.changed));
     }
     for (let k = 0; k * n < pick.length; k++) write(`zz-verify${N}-${b.id}${k ? `-${k + 1}` : ''}`, pick.slice(k * n, (k + 1) * n));
     total += pick.length;
   }
   // native/* findings (store build, permissions, icons) belong to no page batch
-  const orphan = st.extraAll.filter((e) => !batches.some((b) => b.units.includes(e.unit)) && extraReason(e));
+  const orphan = st.extraAll.filter((e) => !batches.some((b) => b.units.includes(e.unit))).map((e) => [e, extraPick(e)]).filter(([, p]) => p);
   if (orphan.length) {
-    write(`zz-verify${N}-native`, orphan.map((e) => extraEntry(e, extraReason(e))));
+    orphan.forEach(([, p]) => count(p.reason, p.changed));
+    // native findings can be many: split like the page batches
+    const all = orphan.map(([e, p]) => extraEntry(e, p.reason, p.changed));
+    for (let k = 0; k * n < all.length; k++) write(`zz-verify${N}-native${k ? `-${k + 1}` : ''}`, all.slice(k * n, (k + 1) * n));
     total += orphan.length;
-    orphan.forEach((e) => { why[extraReason(e)] = (why[extraReason(e)] ?? 0) + 1; });
   }
-  console.log(`${total} items to verify`, why, viaOpener ? `(rolle-mandant über Modal-Auslöser: ${viaOpener})` : '');
+  const notes = [
+    viaOpener ? `rolle-mandant über Modal-Auslöser: ${viaOpener}` : '',
+    fcOther ? `Flutter seit Urteil geändert, anderer Grund behalten: ${fcOther}` : '',
+    fcheck ? `Flutter-Stand: ${fcheck.head() ?? '?'}` : 'Flutter-Prüfung aus',
+  ].filter(Boolean);
+  console.log(`${total} items to verify`, why, `(${notes.join('; ')})`);
 } else if (cmd === 'report') {
   const inv = load(INVENTORY);
   const st = readStatuses();
@@ -498,6 +592,10 @@ if (cmd === 'batches') {
       rows.push({ unit: u.id, unitKind: u.kind, routes: u.routes, item: i, status, summary, sev: s?.sev ?? null, flutter: s?.f ?? [], note: s?.n ?? '', verified: s?.v ?? null, flutterAt: s?.flutterAt ?? null });
     }
   }
+  // verdicts whose referenced Flutter files changed since (see makeFlutterCheck)
+  const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
+  rows.forEach((r) => { r.fchanged = r.status !== 'offen' && fcheck ? fcheck.changed(r.flutterAt, r.flutter).length > 0 : false; });
+  const fchangedExtra = new Set(fcheck ? st.extra.filter((e) => fcheck.changed(e.flutterAt, e.f).length).map((e) => e.id) : []);
   // verdicts for ids the inventory does not know (removed or mistyped)
   const invIds = new Set(inv.units.flatMap((u) => u.items.map((i) => i.id)));
   const orphans = st.refs.filter(([id]) => !invIds.has(id));
@@ -512,6 +610,13 @@ if (cmd === 'batches') {
   const lines = [];
   lines.push('# Parität Ionic → Flutter (normales Design)', '');
   lines.push(`Ionic ${inv.meta.ionicVersion} (${inv.meta.ionicCommit}), ${inv.meta.items} Punkte in ${inv.meta.units} Bausteinen.`, '');
+  if (fcheck) {
+    // "Abweichungen": diff/missing items and open extra findings
+    const fc = rows.filter((r) => r.fchanged);
+    const fcOk = fc.filter((r) => r.status === 'ok').length;
+    const fcGap = fc.filter((r) => r.status === 'diff' || r.status === 'missing').length + fchangedExtra.size;
+    lines.push(`Flutter seit Urteil geändert: ${fc.length + fchangedExtra.size} Punkte (davon ok ${fcOk}, Abweichungen ${fcGap}), Stand ${fcheck.head() ?? '?'}.`, '');
+  }
   lines.push('| Status | Anzahl |', '|---|---|');
   for (const [k, v] of Object.entries(total).sort()) lines.push(`| ${k} | ${v} |`);
   if (total[SUMMARY]) lines.push('', `\`${SUMMARY}\`: Logik-Einträge mit diff/missing, deren Befunde einzeln als Zusatzbefunde stehen (nicht unter diff/missing gezählt).`);
@@ -553,10 +658,10 @@ if (cmd === 'batches') {
     meta: { ...inv.meta, flutterCommits, appTop: appTopOf(inv), generatedAt: new Date().toISOString(), batches: st.files.map((f) => f.batch) },
     units: inv.units.map((u) => [u.id, u.kind, u.routes, family(u.id)]),
     summaryUnits: [...st.extraUnits].sort(),
-    // [id, unit, kind, file, line, label, status, sev, flutterRefs, note, cond, verified, flutterCommitIdx]
-    rows: rows.map((r) => [r.item.id, unitIdx.get(r.unit), r.item.kind, r.item.file, r.item.line, labelOf(r.item), r.status, r.sev, r.flutter, short(r.note, 600), short(r.item.cond ?? [], 200), r.verified, fcOf(r.flutterAt)]),
-    // [id, unit, title, note, sev, ionicRef, flutterRefs, verified, flutterCommitIdx, stale]
-    extra: st.extra.map((e) => [e.id, e.unit, e.title, short(e.n, 700), e.sev, e.ionic ?? null, e.f ?? [], e.v ?? null, fcOf(e.flutterAt), e.stale ? 1 : 0]),
+    // [id, unit, kind, file, line, label, status, sev, flutterRefs, note, cond, verified, flutterCommitIdx, flutterChanged]
+    rows: rows.map((r) => [r.item.id, unitIdx.get(r.unit), r.item.kind, r.item.file, r.item.line, labelOf(r.item), r.status, r.sev, r.flutter, short(r.note, 600), short(r.item.cond ?? [], 200), r.verified, fcOf(r.flutterAt), r.fchanged ? 1 : 0]),
+    // [id, unit, title, note, sev, ionicRef, flutterRefs, verified, flutterCommitIdx, stale, flutterChanged]
+    extra: st.extra.map((e) => [e.id, e.unit, e.title, short(e.n, 700), e.sev, e.ionic ?? null, e.f ?? [], e.v ?? null, fcOf(e.flutterAt), e.stale ? 1 : 0, fchangedExtra.has(e.id) ? 1 : 0]),
   };
   // the tracker stores Leon's decisions under these ids: they must stay unique
   const docId = (id) => id.replace(/[^A-Za-z0-9_.~:@+-]/g, (c) => (c === '/' ? '~' : c === '#' ? '@' : '+'));
@@ -618,6 +723,6 @@ if (cmd === 'batches') {
   }
   index.forEach((x) => console.log(x));
 } else {
-  console.error('usage: node tool/parity/parity.mjs batches|slice|todo|diff <old> [new] [--stale]|verify-slices|verify-round <N> <dir> [n] [--since <old>]|report|fixlists');
+  console.error('usage: node tool/parity/parity.mjs batches|slice|todo|diff <old> [new] [--stale]|verify-slices|verify-round <N> <dir> [n] [--since <old>] [--flutter <path>] [--no-flutter-check]|report [--flutter <path>] [--no-flutter-check]|fixlists');
   process.exit(64);
 }
