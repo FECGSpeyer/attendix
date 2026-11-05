@@ -121,6 +121,8 @@ Future<T?> showAppPopoverMenu<T>({
   List<AppPopoverMenuItem<T>> Function()? itemsBuilder,
   // Ionic `popover.ios.css`: `--width: 200px` (md 250px).
   double iosWidth = 200,
+  // Free content instead of [items] (see [showAppContentPopover]).
+  Widget? content,
 }) {
   final button = context.findRenderObject()! as RenderBox;
   final navigator = Navigator.of(context, rootNavigator: true);
@@ -141,6 +143,7 @@ Future<T?> showAppPopoverMenu<T>({
       overlaySize: overlay.size,
       items: items,
       itemsBuilder: itemsBuilder,
+      content: content,
       width: ios ? iosWidth : 250,
       barrierLabel: context.l10n.commonClose,
       capturedThemes: InheritedTheme.capture(
@@ -148,6 +151,25 @@ Future<T?> showAppPopoverMenu<T>({
         to: navigator.context,
       ),
     ),
+  );
+}
+
+/// Ionic `ion-popover` with free content (`<ion-content class="ion-padding">`)
+/// behind an info button, e.g. a help text: same card, position and backdrop
+/// as [showAppPopoverMenu], [child] inside 16 px padding. A tap outside
+/// closes it.
+///
+/// [context] must be the trigger button's context (use a [Builder]).
+Future<void> showAppContentPopover({
+  required BuildContext context,
+  required Widget child,
+  double iosWidth = 200,
+}) {
+  return showAppPopoverMenu<void>(
+    context: context,
+    items: const [],
+    iosWidth: iosWidth,
+    content: Padding(padding: const EdgeInsets.all(16), child: child),
   );
 }
 
@@ -161,6 +183,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
     required this.overlaySize,
     required this.items,
     required this.itemsBuilder,
+    this.content,
     required this.width,
     required this.barrierLabel,
     required this.capturedThemes,
@@ -171,6 +194,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   final Size overlaySize;
   final List<AppPopoverMenuItem<T>> items;
   final List<AppPopoverMenuItem<T>> Function()? itemsBuilder;
+  final Widget? content;
   final double width;
   final CapturedThemes capturedThemes;
 
@@ -344,6 +368,7 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                         ? null
                         : () => setState(() => _openIndex = null),
                 children: [
+                  if (route.content != null) route.content!,
                   for (var i = 0; i < _items.length; i++)
                     if (_items[i].header)
                       _PopoverHeader(ios: ios, label: _items[i].label)

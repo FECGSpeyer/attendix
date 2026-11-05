@@ -20,13 +20,28 @@ const rdWorksSorts = [
   SongSortOption.lastSungAsc,
 ];
 
-/// Label of a sort order of [rdWorksSorts] ("gespielt" for orchestras).
+/// Label of a sort order ("gespielt" for orchestras). The descending number
+/// and title orders of the old design (still saved) get a "↓".
 String rdWorksSortLabel(AppLocalizations l10n, SongSortOption sort, {required bool orchestra}) => switch (sort) {
-  SongSortOption.nameAsc || SongSortOption.nameDesc => l10n.redesignWorksSortTitle,
+  SongSortOption.nameAsc => l10n.redesignWorksSortTitle,
+  SongSortOption.nameDesc => '${l10n.redesignWorksSortTitle} ↓',
   SongSortOption.lastSungDesc => orchestra ? l10n.redesignWorksSortLastPlayed : l10n.redesignWorksSortLastSung,
   SongSortOption.lastSungAsc => orchestra ? l10n.redesignWorksSortLongestPlayed : l10n.redesignWorksSortLongestSung,
-  _ => l10n.redesignWorksSortNumber,
+  SongSortOption.numberAsc => l10n.redesignWorksSortNumber,
+  SongSortOption.numberDesc => '${l10n.redesignWorksSortNumber} ↓',
 };
+
+/// The sort orders of the sheet: [rdWorksSorts], plus a descending order of
+/// the old design while it is still saved ([current]), right after its
+/// ascending pair, so the check mark shows how the list is sorted.
+List<SongSortOption> rdWorksSortOptions(SongSortOption current) => [
+  for (final option in rdWorksSorts) ...[
+    option,
+    if ((option == SongSortOption.numberAsc && current == SongSortOption.numberDesc) ||
+        (option == SongSortOption.nameAsc && current == SongSortOption.nameDesc))
+      current,
+  ],
+];
 
 /// "Sortieren & Filtern" (canvas "Werke neu gedacht", board "Filter"):
 /// changes apply at once, the button shows how many Werke are left. Leads
@@ -110,7 +125,7 @@ class _FilterSheet extends ConsumerWidget {
         if (filter.instrumentIds.contains(g.id)) g.name,
     ];
     final booleanFields = data.additionalFields.where((f) => f.isBoolean).toList();
-    final sort = rdWorksSorts.contains(filter.sortOption) ? filter.sortOption : SongSortOption.numberAsc;
+    final sort = filter.sortOption;
 
     return ListView(
       controller: controller,
@@ -144,7 +159,7 @@ class _FilterSheet extends ConsumerWidget {
         RdGroupLabel(l10n.redesignWorksSort),
         RdGroupedList(
           children: [
-            for (final option in rdWorksSorts)
+            for (final option in rdWorksSortOptions(sort))
               RdListRow(
                 title: rdWorksSortLabel(l10n, option, orchestra: data.isOrchestra),
                 showChevron: false,

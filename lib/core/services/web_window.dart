@@ -28,3 +28,10 @@ bool downloadBytesInBrowser(Uint8List bytes, String fileName) =>
 /// Does nothing outside the web.
 void setUnloadWarning(Object owner, bool unsaved) =>
     impl.setUnloadWarning(owner, unsaved);
+
+/// Ionic `if (navigator.share) navigator.share({url, title}) else copy`:
+/// shares [url] through the Web Share API. Returns false when the browser
+/// has none or sharing failed (the caller copies instead), true once shared
+/// or cancelled by the user (AbortError), null outside the web.
+Future<bool?> shareUrlInBrowser(String url, {String? title}) =>
+    impl.shareUrlInBrowser(url, title: title);
