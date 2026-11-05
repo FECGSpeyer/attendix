@@ -9,7 +9,7 @@
         "🐛 Zusatzfelder: „Werte zurücksetzen“ setzt beim Gemeinde-Feld wieder die Gemeinde und überspringt einzelne fehlgeschlagene Personen statt abzubrechen",
         "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
         "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
-        "🐛 Zusatzfelder: Beim Speichern werden nur aktive Personen und bei genutzter Werk-Bibliothek deren Werke angepasst"
+        "🐛 Zusatzfelder: Beim Speichern werden aktive Personen und Werke der eigenen Bibliothek angepasst"
       ]
     },
     {
