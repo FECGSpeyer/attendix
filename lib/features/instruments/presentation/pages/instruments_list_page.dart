@@ -724,29 +724,51 @@ class _InstrumentEditDialogState extends ConsumerState<_InstrumentEditDialog> {
   /// dialog), so one cannot close or confirm the other.
   bool _busy = false;
 
+  /// Trimmed text of [controller]; an empty field whose loaded value was null
+  /// stays null (Ionic ngModel untouched), otherwise '' is written as ''.
+  static String? _textValue(TextEditingController controller, String? loaded) {
+    final text = controller.text.trim();
+    return text.isEmpty && loaded == null ? null : text;
+  }
+
   /// Ionic InstrumentPage.update(): saves, shows "{name} wurde erfolgreich
   /// aktualisiert" and closes only after the save. On an error the service
   /// toasts "Es kann nur eine Hauptgruppe existieren" (23505) or "Fehler beim
   /// updaten des Instruments" and the page stays open with the input.
   Future<void> _save() async {
     if (_busy || !_formKey.currentState!.validate()) return;
+    // Ionic InstrumentPage.update() writes the fields as loaded/entered:
+    // '' stays '', an untouched null stays null, and fields hidden for this
+    // group (choir/general/main group) keep their value. Text is trimmed.
+    final group = widget.group!;
+    final showMusicFields = !_isChoir && !_isGeneral && !_isMain;
     final result = <String, dynamic>{
       'name': _nameController.text.trim(),
-      'tuning': _selectedTuning,
-      'clefs': _selectedClefs.map((c) => c.toLowerCase()).toList(),
+      // Category — send the value even if null to clear it
+      'category': _selectedCategoryId,
+      'notes': _textValue(_notesController, group.notes),
     };
 
-    // Category — send the value even if null to clear it
-    result['category'] = _selectedCategoryId;
+    if (showMusicFields) {
+      // The picker shows 'C' / {'G'} for an unset value; only a real change
+      // is written, otherwise the loaded value (also null / []) stays.
+      final initialTuning = group.tuning ?? 'C';
+      if (_selectedTuning != initialTuning) {
+        result['tuning'] = _selectedTuning;
+      }
+      final initialClefs =
+          (group.clefs ?? const ['g']).map((c) => c.toUpperCase()).toSet();
+      if (initialClefs.isEmpty) initialClefs.add('G');
+      if (_selectedClefs.length != initialClefs.length ||
+          !_selectedClefs.containsAll(initialClefs)) {
+        result['clefs'] = _selectedClefs.map((c) => c.toLowerCase()).toList();
+      }
+      result['range'] = _textValue(_rangeController, group.range);
+    }
 
-    final range = _rangeController.text.trim();
-    result['range'] = range.isNotEmpty ? range : null;
-
-    final synonyms = _synonymsController.text.trim();
-    result['synonyms'] = synonyms.isNotEmpty ? synonyms : null;
-
-    final notes = _notesController.text.trim();
-    result['notes'] = notes.isNotEmpty ? notes : null;
+    if (!_isGeneral && !_isMain) {
+      result['synonyms'] = _textValue(_synonymsController, group.synonyms);
+    }
 
     final notifier = ref.read(groupNotifierProvider.notifier);
     setState(() => _busy = true);
