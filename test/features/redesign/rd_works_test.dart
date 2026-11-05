@@ -20,6 +20,7 @@ import 'package:attendix/core/theme/redesign/rd_theme.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/song/song.dart';
 import 'package:attendix/data/models/song/song_filter.dart';
+import 'package:attendix/features/redesign/data/rd_dates.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
@@ -36,6 +37,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -204,6 +206,17 @@ List<Override> _common(Role role) => [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     ];
 
+/// The two coming Termine of [_worksApp], relative to today: "Als Nächstes"
+/// leaves out Termine already over, so fixed dates would expire.
+final _soon = rdAddDays(DateTime.now(), 1);
+final _later = rdAddDays(DateTime.now(), 8);
+
+/// "2026-11-05T19:00:00" for [day].
+String _evening(DateTime day) => '${DateFormat('yyyy-MM-dd').format(day)}T19:00:00';
+
+/// "Do., 5. Nov. · Probe" for [day].
+String _eventLabel(DateTime day) => '${DateFormat.MMMEd('de').format(day)} · Probe';
+
 Widget _worksApp(
   Role role, {
   List<Song>? songs,
@@ -252,14 +265,14 @@ Widget _worksApp(
             groupCategories: const [],
             currentSongs: [
               (
-                date: '12.11.2026 | Probe',
-                history: const [SongHistory(songId: 6, attendanceId: 32, attendanceDate: '2026-11-12T19:00:00')],
+                date: '${DateFormat('dd.MM.yyyy').format(_later)} | Probe',
+                history: [SongHistory(songId: 6, attendanceId: 32, attendanceDate: _evening(_later))],
               ),
               (
-                date: '05.11.2026 | Probe',
-                history: const [
-                  SongHistory(songId: 5, attendanceId: 31, attendanceDate: '2026-11-05T19:00:00'),
-                  SongHistory(songId: 6, attendanceId: 31, attendanceDate: '2026-11-05T19:00:00'),
+                date: '${DateFormat('dd.MM.yyyy').format(_soon)} | Probe',
+                history: [
+                  SongHistory(songId: 5, attendanceId: 31, attendanceDate: _evening(_soon)),
+                  SongHistory(songId: 6, attendanceId: 31, attendanceDate: _evening(_soon)),
                 ],
               ),
             ],
@@ -501,11 +514,11 @@ void main() {
       expect(find.text('Titel oder Nummer'), findsOneWidget);
       // The next Termin with its Werke and the own part as one PDF.
       expect(find.text('Als Nächstes'), findsOneWidget);
-      expect(find.text('Do., 5. Nov. · Probe'), findsOneWidget);
+      expect(find.text(_eventLabel(_soon)), findsOneWidget);
       expect(find.byKey(const Key('rd-works-open-mine')), findsOneWidget);
       expect(find.text('Deine Stimme als PDF, auch zum Drucken'), findsOneWidget);
       // The one after it as a single line.
-      expect(find.text('Do., 12. Nov. · Probe'), findsOneWidget);
+      expect(find.text(_eventLabel(_later)), findsOneWidget);
       // Status instead of PDF / Audio badges (in "Als Nächstes" and the list).
       expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsNWidgets(2));
       expect(find.text('noch keine Noten · Kirche'), findsNWidgets(2));
