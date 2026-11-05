@@ -255,8 +255,8 @@ class OrganisationRepository extends BaseRepository {
           .inFilter('tenantId', tenantIds)
           .eq('pending', false)
           .isFilter('left', null)
-          .order('lastName')
-          .order('firstName');
+          .order('lastName', ascending: true)
+          .order('firstName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))

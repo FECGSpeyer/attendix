@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import '../../../l10n/l10n.dart';
+import '../../../core/utils/toast_helper.dart';
+import '../../../core/utils/error_message.dart';
 
 /// Mini audio player bar. Hidden when no file is loaded.
 ///
@@ -19,6 +21,17 @@ class AudioPlayerWidget extends ConsumerStatefulWidget {
 class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
   // Local drag value for smooth slider feedback during a drag gesture.
   double? _dragValueMs;
+
+  /// Ionic onPrevious/onNext: errors end in 'Fehler beim Abspielen: {error}'.
+  Future<void> _skip(BuildContext context, Future<void> Function() action) async {
+    try {
+      await action();
+    } catch (e) {
+      if (context.mounted) {
+        ToastHelper.showError(context, context.l10n.audioPlayFailed(friendlyErrorMessage(e)));
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -69,7 +82,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
               children: [
                 // INTEGRATION: queue controls (Ionic audio player: previous/next)
                 if (queue.hasQueue) ...[
-                  iconButton(Icons.skip_previous, 22, primary, svc.previous,
+                  iconButton(Icons.skip_previous, 22, primary, () => _skip(context, svc.previous),
                       tooltip: context.l10n.commonBack),
                   const SizedBox(width: 4),
                 ],
@@ -81,7 +94,7 @@ class _AudioPlayerWidgetState extends ConsumerState<AudioPlayerWidget> {
                 ),
                 if (queue.hasQueue) ...[
                   const SizedBox(width: 4),
-                  iconButton(Icons.skip_next, 22, primary, queue.hasNext ? svc.next : null,
+                  iconButton(Icons.skip_next, 22, primary, queue.hasNext ? () => _skip(context, svc.next) : null,
                       tooltip: context.l10n.commonNext),
                 ],
                 const SizedBox(width: 10),

@@ -2,7 +2,6 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/attendance/attendance.dart';
 import 'base_repository.dart';
-import '../../l10n/l10n.dart';
 
 /// Repository for AttendanceType CRUD operations
 class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository {
@@ -117,6 +116,24 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
+  /// Ionic `createType` from the type page (isNew): inserts the columns as
+  /// edited on the page. The tenant is set here and cannot be overridden.
+  Future<AttendanceType> createTypeFromData(Map<String, dynamic> data) async {
+    ensureNotDemo('createType'); // DEMO_GUARD
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .insert({...data, 'tenant_id': currentTenantId})
+          .select()
+          .single();
+
+      return AttendanceType.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'createTypeFromData');
+      rethrow;
+    }
+  }
+
   /// Update an attendance type
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateType'); // DEMO_GUARD
@@ -169,21 +186,12 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
-  /// Delete an attendance type
-  /// BL-009: Checks for references before deletion
+  /// Delete an attendance type.
+  /// Ionic attendance-type.service deleteAttendanceType deletes without a
+  /// pre-check; the dialog tells that the Termine of this type go with it.
   Future<bool> deleteType(String id) async {
     ensureNotDemo('deleteType'); // DEMO_GUARD
     try {
-      // BL-009: Check for attendances using this type
-      final usageCount = await getAttendanceCountForType(id);
-      if (usageCount > 0) {
-        throw RepositoryException(
-          message: l10nWithoutContext.coreFlutterRepoTypeInUse(usageCount),
-          operation: 'deleteType',
-          code: 'FK_VIOLATION',
-        );
-      }
-
       await supabase
           .from('attendance_types')
           .delete()

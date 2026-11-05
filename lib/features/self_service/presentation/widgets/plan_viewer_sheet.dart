@@ -401,6 +401,10 @@ Future<void> showPlanViewerSheet(
   } catch (e, st) {
     ErrorReporter.report(e, st, where: 'plan_viewer_sheet');
   }
+  // PARITY_SELF: "Meine Termine" loads extra_plans with the Termin (Ionic
+  // getPersonAttendances), so multi-day Termine get the day chips there too.
+  extraPlans ??= attendance.extraPlans;
+  durationDays ??= attendance.durationDays;
   final extra = <Plan>[];
   for (final p in extraPlans ?? const <Map<String, dynamic>>[]) {
     try {
@@ -428,7 +432,6 @@ Future<void> showPlanViewerSheet(
   }
 
   final date = attendance.date ?? '';
-  final isToday = DateUtils.isSameDay(DateTime.tryParse(date), DateTime.now());
   return showPlanViewer(
     context,
     attendance: PlanAttendance(
@@ -444,7 +447,9 @@ Future<void> showPlanViewerSheet(
     // attendance.plan), so leave it out when there are further plans.
     plan: extra.isEmpty ? plan : null,
     title: (attendance.typeInfo?.isNotEmpty ?? false) ? attendance.typeInfo : context.l10n.signoutRunSheet,
-    defaultLive: isToday,
+    // PARITY_SELF: Ionic opens the viewer without defaultLive (signout,
+    // parents, overview), so the live mode only starts within the plan's
+    // time window (isLiveNow: 5 min before start to 15 min after the end).
     fieldWarning: (f) => missing(f.songId) ? l10nWithoutContext.planningNoScoresInstrument : null,
     songAction: memberSongs.isEmpty
         ? null

@@ -18,6 +18,8 @@ import '../router/app_router.dart';
 import '../router/redesign_routes.dart';
 import '../services/live_activity_service.dart'
     show endLiveActivitiesBeforeSignOut, liveActivityServiceProvider;
+import '../services/native/ionic_session_takeover.dart'
+    show markIonicSessionTakeoverDone;
 import '../services/push/firebase_push_messaging_client.dart';
 import '../services/push/push_messaging_client.dart';
 import '../services/push/push_navigation.dart';
@@ -60,11 +62,18 @@ final pushBootstrapProvider = Provider<void>((ref) {
 
   unawaited(service.start());
 
+  var firstEvent = true;
   ref.listen<AsyncValue<AuthState>>(authStateProvider, (_, next) {
     final state = next.valueOrNull;
     if (state == null) return;
+    final isFirst = firstEvent;
+    firstEvent = false;
     switch (state.event) {
       case AuthChangeEvent.signedIn:
+        // IONIC_SESSION: signed in in this app -> a later logout must not
+        // bring back the old Ionic session on the next start. Not on
+        // initialSession (that is the takeover itself, which marks it done).
+        unawaited(markIonicSessionTakeoverDone());
         unawaited(service.promptAndEnable());
       case AuthChangeEvent.initialSession:
         // Restored session on app start: refresh the token registration.
@@ -74,7 +83,12 @@ final pushBootstrapProvider = Provider<void>((ref) {
         // session); the next sign-in's registration waits for it.
         unawaited(service.removeToken());
       default:
-        break;
+        // IONIC_SESSION: the replayed last event at bootstrap can be another
+        // type (userUpdated after the Ionic takeover synced the group). A
+        // session that is already there still gets its token registered.
+        if (isFirst && state.session != null) {
+          unawaited(service.promptAndEnable());
+        }
     }
   }, fireImmediately: true);
 
@@ -126,6 +140,25 @@ class SharedPrefsPushPromptStore implements PushPromptStore {
     try {
       final prefs = await SharedPreferences.getInstance();
       await prefs.setBool(kPushPromptShownKey, true);
+    } catch (_) {}
+  }
+
+  @override
+  Future<bool> wasPermissionRequested() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      return prefs.getBool(kPushPermissionRequestedKey) ?? false;
+    } catch (_) {
+      // Unknown: keep "denied" as denied (no repeated system prompt).
+      return true;
+    }
+  }
+
+  @override
+  Future<void> markPermissionRequested() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.setBool(kPushPermissionRequestedKey, true);
     } catch (_) {}
   }
 }
@@ -197,7 +230,11 @@ class RiverpodPushHost implements PushHost {
     // removed together with that page by the startup redirect.
     await waitUntilReadyForNavigation();
     final context = _context;
-    if (context == null || !context.mounted) return null;
+    if (context == null || !context.mounted) {
+      // Not shown at all: PushService asks again next time.
+      throw StateError('push prompt: no navigator context');
+    }
+    // null = dismissed (backdrop / back): PushService treats it as "Später".
     return showAppDialog<bool>(
       context: context,
       builder: (dialogContext) {

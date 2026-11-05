@@ -105,13 +105,13 @@ void main() {
   });
 
   group('LOW10 merge pending player', () {
-    test('role follows the main group and paused targets are not backfilled',
+    test('role is always PLAYER (Ionic) and paused targets are not backfilled',
         () {
       final source = read('lib/data/repositories/player_repository.dart');
       final merge =
           body(source, 'Future<void> mergePendingPlayerIntoExisting(', 4500);
-      expect(merge, contains('UserRegistrationRepository.accountRoleFor('));
-      expect(merge, contains(".eq('maingroup', true)"));
+      expect(merge, contains('const role = Role.player;'));
+      expect(merge, isNot(contains('accountRoleFor(')));
       expect(merge, contains(".update({'role': role.value})"));
       expect(merge, contains('if (!target.paused)'));
     });
@@ -121,8 +121,8 @@ void main() {
     test('person_attendances paging has a stable order', () {
       final source = read('lib/data/repositories/attendance_repository.dart');
       final q = body(source, 'getPersonAttendancesForAttendances(', 1500);
-      expect(q.indexOf(".order('id')"), lessThan(q.indexOf('.range(')));
-      expect(q.indexOf(".order('id')"), greaterThan(-1));
+      expect(q.indexOf(".order('id', ascending: true)"), lessThan(q.indexOf('.range(')));
+      expect(q.indexOf(".order('id', ascending: true)"), greaterThan(-1));
     });
   });
 

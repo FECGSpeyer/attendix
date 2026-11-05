@@ -27,6 +27,7 @@ Future<T?> showIosCardModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   Color? backgroundColor,
+  bool barrierDismissible = true,
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final snapshot = _PresentingSnapshot.take(context, navigator);
@@ -34,6 +35,7 @@ Future<T?> showIosCardModal<T>(
     builder: builder,
     snapshot: snapshot,
     backgroundColor: backgroundColor,
+    backdropDismiss: barrierDismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     capturedThemes:
         InheritedTheme.capture(from: context, to: navigator.context),
@@ -93,6 +95,7 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     required this.builder,
     required this.snapshot,
     required this.backgroundColor,
+    required this.backdropDismiss,
     required this.barrierLabel,
     required this.capturedThemes,
   });
@@ -101,6 +104,9 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
   final _PresentingSnapshot? snapshot;
   final Color? backgroundColor;
   final CapturedThemes capturedThemes;
+
+  /// Ionic `backdropDismiss`: a tap on the strip above the card closes it.
+  final bool backdropDismiss;
 
   @override
   final String barrierLabel;
@@ -129,7 +135,14 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     if (c == null) return;
     final velocity = details.velocity.pixelsPerSecond.dy;
     if (velocity > 700 || c.value < 0.6) {
-      navigator?.pop();
+      if (popDisposition == RoutePopDisposition.doNotPop) {
+        // A PopScope blocks (e.g. unsaved input, Ionic canDismiss): snap
+        // back and let it decide (discard alert) like the strip's maybePop.
+        c.forward();
+        navigator?.maybePop();
+      } else {
+        navigator?.pop();
+      }
     } else {
       c.forward();
     }
@@ -235,10 +248,12 @@ class _IosCardModalFrame extends StatelessWidget {
           height: cardTop,
           child: Semantics(
             label: route.barrierLabel,
-            button: true,
+            button: route.backdropDismiss,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => Navigator.of(context).maybePop(),
+              onTap: route.backdropDismiss
+                  ? () => Navigator.of(context).maybePop()
+                  : null,
             ),
           ),
         ),

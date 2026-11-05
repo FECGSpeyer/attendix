@@ -915,7 +915,20 @@ class RiverpodLiveActivityHost implements LiveActivityHost {
   Future<void> openPlan(int attendanceId) async {
     final repo = _ref.read(planRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
-    final attendance = await repo.getPlanAttendanceById(attendanceId);
+    var attendance = await repo.getPlanAttendanceById(attendanceId);
+    // Ionic getAttendanceById has no tenant filter: a Live Activity of an
+    // ORG-Plan of another choir / a Termin of another instance opens too.
+    if (attendance == null) {
+      // Own instances with the own role there; linked instances of the
+      // organisation without a role (archived Termine stay hidden there).
+      final tenantRoles = <int, Role?>{
+        for (final t in await _ref.read(linkedTenantsProvider.future))
+          if (t.id != null) t.id!: null,
+        for (final t in await _ref.read(userTenantsProvider.future))
+          if (t.id != null) t.id!: t.role == null ? null : Role.fromValue(t.role!),
+      };
+      attendance = await repo.getPlanAttendanceByIdInTenants(attendanceId, tenantRoles);
+    }
     if (attendance?.plan == null) return;
     final context = _ref.read(routerProvider).routerDelegate.navigatorKey.currentContext;
     if (context == null || !context.mounted) return;

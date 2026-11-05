@@ -13,6 +13,166 @@
       ]
     },
     {
+      "version": "0.41.26",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Listen sind wieder aufsteigend sortiert wie bisher, z. B. Kinder der Eltern, Gruppenkategorien, Gemeinden, Zuschauer und die nächsten Termine in der Übersicht",
+        "🐛 Gruppen-PDFs drucken: Schlägt das Laden der Personen fehl, erscheint „Fehler beim Laden der Personen“",
+        "🐛 Organisations-Zusatzfelder: Ein geänderter Zahl-Standardwert wird als Zahl gespeichert"
+      ]
+    },
+    {
+      "version": "0.41.25",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Abwesenheit melden oder löschen ändert nur noch die Termine, die unter „Meine Termine“ stehen (keine fremden oder nicht zugeteilten Dienste)",
+        "✨ Übersicht: Bei „Entschuldigt“ oder „Verspätung gemeldet“ stehen im Aktionsblatt dieselben Einträge wie bisher",
+        "✨ Ablaufplan aus „Meine Termine“ zeigt bei mehrtägigen Terminen die Tage zur Auswahl; der Live-Modus startet nur während des Ablaufs",
+        "✨ Beschreibungen von Terminen werden formatiert angezeigt, Links lassen sich antippen",
+        "✨ Unbestätigte Dienste zeigen „Bitte bestätigen“; Aktualisieren lädt auch die Dienste neu",
+        "✨ Eltern: Kinder in derselben Reihenfolge wie bisher, Anmeldungen benachrichtigen die Dirigenten wieder",
+        "✨ Statistik: Balken waagrecht mit Namen, Diagramme mit Titel und Achsenbeschriftung",
+        "🐛 Verlauf: „+“ öffnet sofort, das erste Werk ist vorausgewählt",
+        "✨ Mitteilungen, Instanzwechsel im Dashboard und Live-Activity-Text wie bisher"
+      ]
+    },
+    {
+      "version": "0.41.24",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Werk bearbeiten: Änderungen, die während des Speicherns gemacht werden, gehen nicht mehr verloren",
+        "🐛 Werk bearbeiten: Die Besetzung zeigt nach Hochladen, Löschen oder Kategorie-Wechsel von Dateien die richtigen Gruppen",
+        "🐛 Werk bearbeiten: Nach teilweise fehlgeschlagenem Hochladen erscheinen die hochgeladenen Dateien sofort",
+        "🐛 Werk-Seite lädt beim Öffnen immer den aktuellen Stand und Verlauf",
+        "🐛 Gruppen-PDFs drucken: Pausierte Personen zählen nicht mehr mit, Hinweis während die PDF entsteht",
+        "🐛 Werk in andere Instanz kopieren: Fenster lässt sich während des Kopierens nicht mehr schließen",
+        "🐛 Kategorie einer Datei ändern öffnet wieder das gewohnte Fenster von unten",
+        "🐛 Werke-Liste: Filter wieder als kleines Menü am Filter-Knopf; Freigabe-Seite mit Zurück-Knopf; gelöschte Kategorie bleibt nicht als Filter hängen"
+      ]
+    },
+    {
+      "version": "0.41.23",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 PDF-Exporte zeigen kyrillische Namen, „Anführungszeichen“, Gedankenstriche und € wieder richtig an",
+        "🐛 Ablaufplan als PDF wird wieder gespeichert (Download bzw. Dateiansicht) statt den Druckdialog zu öffnen, auch der Registerprobenplan",
+        "🐛 Ablaufplan-PDF trägt wieder den Plantitel des Termintyps im Kopf und im Dateinamen",
+        "🐛 Ein neues oder gelöschtes Profilbild gilt wieder für alle Instanzen deines Kontos",
+        "🐛 Anwesenheitstypen lassen sich wieder löschen, auch wenn es Termine dazu gibt (die Termine werden mitgelöscht, wie angekündigt)",
+        "🐛 Sortierung wie bisher: Werke im Termin nach Werk, Personen mit Ä/Ö/Ü richtig einsortiert, Schichten in ihrer Reihenfolge",
+        "🐛 Anwesenheitsquote zählt den heutigen Termin wieder mit",
+        "🐛 Geteilte Datei-Links öffnen sich auch nach einem Neustart der App nach dem Login",
+        "🐛 Die auf diesem Gerät zuletzt geöffnete Instanz hat Vorrang",
+        "🐛 Benachrichtigungen: Tippen auf Einträge ohne Ziel wechselt nicht mehr die Instanz",
+        "🐛 Fehlermeldungen wie bisher, wenn Kirchen, Personen, Kategorien, Benutzer oder Organisationen nicht geladen oder gespeichert werden können",
+        "🐛 Audio-Player: Fehler bei Zurück/Weiter zeigen eine Meldung statt still zu stoppen",
+        "🐛 Ordnerauswahl: Häkchen oben und „Diesen Ordner wählen: …“ als erste Zeile",
+        "🐛 Nachrichten-Editor: Link-Dialog mit Abbrechen, Entfernen und Übernehmen, https:// wird ergänzt; Rückgängig-Knopf in der Leiste",
+        "🐛 „Datum ändern“ und „Termin anlegen“ fragen das Datum wieder in einem Dialog mit Weiter bzw. Anlegen ab",
+        "🐛 Mit aktivierter Instanzauswahl erscheint nach dem Login wieder der Dialog „Instanz auswählen“",
+        "🐛 Personen- und Werk-Import liest wieder alte Excel-Dateien (.xls) und übernimmt bei Formeln den berechneten Wert",
+        "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)",
+        "🐛 Zusammenführen einer Registrierung mit einer vorhandenen Person vergibt wie bisher immer die Rolle Mitglied",
+        "🐛 Lehrerliste wie bisher ohne Löschen per Wischen",
+        "🐛 Android 13 und neuer: Die Frage nach Push-Benachrichtigungen und die Systemabfrage erscheinen wieder, wenn die App noch nie gefragt hat",
+        "🐛 Wird die Frage nach Push-Benachrichtigungen ohne Knopf geschlossen, gilt das wie „Später“ und sie kommt nicht bei jedem Start wieder",
+        "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
+        "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis",
+        "🐛 iPad: Teilen und Herunterladen von Werk-Dateien und Plan-Links öffnet wieder das Teilen-Fenster statt eines Fehlers",
+        "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an",
+        "🐛 Die Suche in der Hilfe findet Artikel und Begriffe wieder wie in der alten App, auch bei Tippfehlern und mehreren Wörtern, in derselben Reihenfolge",
+        "🐛 Beim Hochladen von Noten erkennt Attendix weitere Instrument-Namen und Kürzel, z. B. Skripka, Litavry, Ф-но, Blockflöte, Akkordeon, Becken, Triangel und kleine/große Trommel"
+      ]
+    },
+    {
+      "version": "0.41.22",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Meinen Benutzer zuweisen“ legt das Konto wie bisher über die Kontoanlage an und lehnt ein schon verknüpftes Konto ab"
+      ]
+    },
+    {
+      "version": "0.41.21",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
+      "version": "0.41.20",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personen-Import: Zusatzfelder der Organisation werden wie bisher angeboten und stehen in der Vorlage, die Vorlage öffnet in der App direkt bzw. wird im Web geteilt oder heruntergeladen"
+      ]
+    },
+    {
+      "version": "0.41.19",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: Speichern schließt die Seite mit „Person aktualisiert“, neue E-Mail legt auf Wunsch gleich das Konto an, Historie (Problemfall, Gruppenwechsel, Notizen) wie bisher",
+        "🐛 Person: Problemfall „Gespräch geführt“ als Schalter mit Bemerkung, Aktionen wie Pausieren, Freischalten, Ablehnen und Konto entfernen schließen die Seite wie bisher",
+        "🐛 Person: Zusatzfelder zeigen ihre Standardwerte, Zahlenfelder mit Komma, Datumsfelder auch per Eingabe TT.MM.JJJJ",
+        "🐛 Neue Person: Standarddaten heute, Zusatzfeld-Standardwerte, keine strengere E-Mail-Prüfung, nur Admins und Verantwortliche können anlegen",
+        "🐛 Person: Archivieren als eigenes Fenster mit Austrittsdatum und Notiz, Account-Hilfe als Blatt, Historie in Ortszeit",
+        "🐛 Person: Passbild antippen zeigt das Bild mit Ersetzen/Entfernen, in der App mit Kamera oder Galerie",
+        "🐛 Person kopieren/übertragen: Ziel-Instanz und Ziel-Gruppe wie bisher, mit Rückfrage und Duplikat-Prüfung"
+      ]
+    },
+    {
+      "version": "0.41.18",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
+        "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
+      "version": "0.41.17",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Problemfall-Regeln: Neue Regeln gelten ohne Auswahl für alle Anwesenheits-Typen; Typen und Status werden wie gewohnt per Auswahlliste gewählt, auch „Anwesend“ und „Entschuldigt“",
+        "🐛 Problemfall-Regeln: Die Beschreibung zeigt wieder die Typen in Klammern, alle Status-Namen und „seit Saisonbeginn“",
+        "🐛 Abwesenheits- und Verspätungsgründe lassen sich direkt in der Liste bearbeiten; „Grund hinzufügen“ fügt eine neue Zeile hinzu",
+        "🐛 Einstellungen: Probenbeginn/-ende werden nicht mehr angezeigt (wie in der bisherigen App)",
+        "🐛 Gemeinde hinzufügen: Ohne Namen bleibt der Dialog mit Hinweis offen, beim Speichern erscheint eine Ladeanzeige",
+        "🐛 Automatische Nachrichten: Ladefehler werden als Meldung angezeigt, die Seite bleibt bedienbar"
+      ]
+    },
+    {
+      "version": "0.41.16",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Neuer Termintyp wird wie in Ionic direkt mit allen Einstellungen angelegt",
+        "🐛 Termintyp: Der Standard-Ablaufplan ist immer bearbeitbar (nicht nur bei „Werke verwalten“) und zeigt Uhrzeiten, Ausführende, Infos und Minuten direkt in der Zeile wie bisher",
+        "🐛 Termintyp: Über „+“ lassen sich wieder Felder, Notizfelder, Werk-Platzhalter und der Tagesordnungs-Platzhalter einfügen; beim Bearbeiten bleiben Ausführender und Info erhalten",
+        "🐛 Termintyp: Filter für Ja/Nein-Zusatzfelder, „Checkliste aktivieren“, To-Dos mit Deadline-Auswahl und „Erinnerungen konfigurieren“ wie bisher",
+        "🐛 Termintyp: Löschen funktioniert auch bei Typen mit Terminen; „Mehr erfahren“ beim Dienstplan"
+      ]
+    },
+    {
+      "version": "0.41.15",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Schichtplan kopieren nur in verknüpfte Instanzen der Organisation (wie Ionic)",
+        "🐛 Dateiablage: „Link teilen“ öffnet zuerst das Teilen-Menü des Systems, nur ohne Teilen-Menü wird der Link kopiert",
+        "🐛 Dateiablage: Hilfe zur Suche und das ⋯-Menü erscheinen als kleines Fenster direkt am Knopf, Tippen daneben schließt es",
+        "🐛 Hilfe: Fachbegriffe öffnen ihre Erklärung als kleines Fenster direkt am Begriff",
+        "🐛 Hilfe: Artikel „Beamer-Dateien im Ablaufplan“ nennt, welche ORG-Pläne die Gemeinde App zeigt",
+        "🐛 Schichtpläne: „In Instanz kopieren“ fragt die Ziel-Instanz und danach, ob die Zuweisungen mitkopiert werden sollen (wie in der bisherigen App)",
+        "🐛 Schichtpläne: Beim Löschen erklärt die Rückfrage wieder, was dabei mitgelöscht wird",
+        "🐛 Übergabe: Personen und Gruppen der Ziel-Instanz stehen in derselben Reihenfolge wie sonst in der App",
+        "🐛 Stimmführer: Namen mit Umlauten werden richtig einsortiert, und kommende Abwesenheiten fehlen auch in großen Gruppen nicht mehr"
+      ]
+    },
+    {
+      "version": "0.41.14",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Instanzen: Der Schalter „Instanzauswahl aktivieren“ springt nicht mehr zurück und lässt sich beliebig oft umschalten",
+        "🐛 Meine Stammdaten: Speichern lässt das Fenster offen; in der App kann das Passbild auch mit der Kamera aufgenommen werden"
+      ]
+    },
+    {
       "version": "0.41.13",
       "date": "5.11.2026",
       "changes": [

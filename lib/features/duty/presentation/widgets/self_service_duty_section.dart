@@ -370,6 +370,11 @@ Future<void> showOpenDutiesSheet(BuildContext context) {
   );
 }
 
+/// Scrolls the duty section [id] (`duty-mine`, `duty-requests`, `duty-open`)
+/// into view (Ionic `scrollToSection`). Returns false when the section is not
+/// built (not shown, or outside the built part of a lazy list).
+bool scrollToDutySection(String id) => _DutyAnchor.scrollTo(id);
+
 /// Ionic `scrollToSection(id)` targets (`duty-mine`, `duty-requests`,
 /// `duty-open`): each section title registers its context, a tap on a stat
 /// tile scrolls it into view. A registry instead of GlobalKeys, so two
@@ -382,14 +387,15 @@ class _DutyAnchor extends StatefulWidget {
 
   static final Map<String, BuildContext> _contexts = {};
 
-  static void scrollTo(String id) {
+  static bool scrollTo(String id) {
     final ctx = _contexts[id];
-    if (ctx == null || !ctx.mounted) return;
+    if (ctx == null || !ctx.mounted) return false;
     Scrollable.ensureVisible(
       ctx,
       duration: const Duration(milliseconds: 300),
       curve: Curves.easeInOut,
     );
+    return true;
   }
 
   @override

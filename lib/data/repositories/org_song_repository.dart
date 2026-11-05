@@ -97,8 +97,8 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
             .from('songs')
             .select('*')
             .eq('tenantId', libraryId)
-            .order('number')
-            .order('id')
+            .order('number', ascending: true)
+            .order('id', ascending: true)
             .range(from, from + _pageSize - 1);
         final rows = page as List;
         songs.addAll(rows.map((e) => Map<String, dynamic>.from(e as Map)));
@@ -114,7 +114,7 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
   /// Groups of a target library (Ionic `db.getGroups(libraryId)`).
   Future<List<Group>> getLibraryGroups(int libraryId) async {
     try {
-      final response = await supabase.from('instruments').select('*').eq('tenantId', libraryId).order('name');
+      final response = await supabase.from('instruments').select('*').eq('tenantId', libraryId).order('name', ascending: true);
       return (response as List).map((e) => Group.fromJson(e as Map<String, dynamic>)).toList();
     } catch (e, stack) {
       handleError(e, stack, 'getLibraryGroups');
@@ -128,7 +128,7 @@ class OrgSongRepository extends BaseRepository with TenantAwareRepository {
     ensureNotDemo('ensureSongCategories'); // DEMO_GUARD
     try {
       await _ensureOrgLibrary(libraryId);
-      final response = await supabase.from('song_categories').select('*').eq('tenant_id', libraryId).order('index');
+      final response = await supabase.from('song_categories').select('*').eq('tenant_id', libraryId).order('index', ascending: true);
       final existing = (response as List).map((e) => SongCategory.fromJson(e as Map<String, dynamic>)).toList();
       var nextIndex = existing.fold<int>(-1, (m, c) => c.index > m ? c.index : m) + 1;
       final ids = <String>[];

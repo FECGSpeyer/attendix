@@ -59,25 +59,35 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
     _targetTenantId = firstTenant!.id!;
   }
 
+  // Ionic: the loading overlay covers the modal while copying, so it cannot
+  // be closed before the copy is complete.
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context) =>
+      PopScope(canPop: !_isCopying, child: _buildSheet(context));
+
+  Widget _buildSheet(BuildContext context) {
     return DraggableScrollableSheet(
       initialChildSize: 0.6,
       minChildSize: 0.4,
       maxChildSize: 0.9,
       expand: false,
+      // Dragging down to the bottom closes the sheet: not while copying.
+      shouldCloseOnMinExtent: !_isCopying,
       builder: (context, scrollController) {
         return Column(
           children: [
             // Header
+            // Ionic: close button in `ion-buttons slot="end"`
             AppBar(
               toolbarHeight: ionModalToolbarHeight(context),
               title: Text(context.l10n.songsCopySong),
-              leading: IconButton(
-                icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
-                onPressed: () => Navigator.pop(context),
-              ),
               automaticallyImplyLeading: false,
+              actions: [
+                IconButton(
+                  icon: Icon(Icons.close, semanticLabel: context.l10n.commonClose),
+                  onPressed: _isCopying ? null : () => Navigator.pop(context),
+                ),
+              ],
             ),
 
             // Content
@@ -242,10 +252,16 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
     );
   }
 
+  /// setState that is safe when the sheet was closed meanwhile (e.g. dragged
+  /// down): the copy then still finishes completely.
+  void _set(VoidCallback fn) {
+    if (mounted) setState(fn);
+  }
+
   Future<void> _copySong() async {
     if (DemoGuard.blocked()) return; // DEMO_GUARD
     final l10n = context.l10n;
-    setState(() {
+    _set(() {
       _isCopying = true;
       _progressMessage = l10n.songsCopying;
     });
@@ -256,8 +272,11 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       final sourceGroups = sourceGroupsAsync.valueOrNull ?? [];
 
       // Get target groups
-      setState(() => _progressMessage = l10n.songsFlutterLoadingTargetGroups);
+      _set(() => _progressMessage = l10n.songsFlutterLoadingTargetGroups);
       final supabase = ref.read(supabaseClientProvider);
+      // Read before the first await: the copy finishes even if the sheet
+      // is gone by then.
+      final songFileService = ref.read(songFileServiceProvider);
       final targetGroupsResponse = await supabase
           .from('instruments')
           .select('*')
@@ -283,7 +302,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
 
       // Create song in target tenant
-      setState(() => _progressMessage = l10n.songsFlutterCreatingInTarget);
+      _set(() => _progressMessage = l10n.songsFlutterCreatingInTarget);
 
       final newSongData = {
         'tenantId': _targetTenantId,
@@ -312,13 +331,12 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       // RT-008: Extract to local variable for null-safety
       final files = widget.song.files;
       if (files != null && files.isNotEmpty) {
-        final songFileService = ref.read(songFileServiceProvider);
         final fileCount = files.length;
         final mappedInstrumentIds = <int?>[];
 
         for (var i = 0; i < fileCount; i++) {
           final file = files[i];
-          setState(() => _progressMessage =
+          _set(() => _progressMessage =
               l10n.songsCopyingFile(i + 1, fileCount));
 
           // Download file bytes. Ionic copySongToTenant: a failed download
@@ -366,7 +384,7 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       }
     } finally {
       if (mounted) {
-        setState(() => _isCopying = false);
+        _set(() => _isCopying = false);
       }
     }
   }

@@ -20,7 +20,7 @@ class ShiftRepository extends BaseRepository with TenantAwareRepository {
           .from(SupabaseTable.shiftPlans.tableName)
           .select('*')
           .eq('tenant_id', currentTenantId)
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => ShiftPlan.fromJson(e as Map<String, dynamic>))

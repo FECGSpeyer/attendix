@@ -26,7 +26,16 @@ Future<void> printGroupPdfs({
     ToastHelper.showWarning(context, context.l10n.songsNoGroupPdfs);
     return;
   }
-  final counts = await ref.read(playerCountByInstrumentProvider.future);
+  // Ionic loads the people for the print (not a session cache).
+  ref.invalidate(playerCountByInstrumentProvider);
+  final Map<int, int> counts;
+  try {
+    counts = await ref.read(playerCountByInstrumentProvider.future);
+  } catch (_) {
+    // Ionic db.getPlayers: danger toast, then the print stops.
+    if (context.mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+    return;
+  }
   if (!context.mounted) return;
   final withPlayers =
       groupPdfs.where((f) => (counts[f.instrumentId] ?? 0) > 0).toList();
@@ -49,10 +58,54 @@ Future<void> printGroupPdfs({
         copies: ratio == 0 ? 1 : ((counts[f.instrumentId] ?? 0) / ratio).ceil(),
       ),
   ];
-  final result = await ref
-      .read(songPrintServiceProvider)
-      .printEntries(entries, '${song.name.isEmpty ? 'song' : song.name}_print.pdf');
-  if (!context.mounted || result == null || result.pageCount == 0) return;
+  // Ionic PrintService.printEntries: loading overlay while merging, then a
+  // warning for no pages / skipped files.
+  // Close exactly the overlay's route: a redirect may have removed it or
+  // pushed something on top in the meantime.
+  Route<dynamic>? overlayRoute;
+  var overlay = true;
+  void removeOverlay() {
+    final route = overlayRoute;
+    if (route != null && route.isActive) route.navigator?.removeRoute(route);
+  }
+
+  void closeOverlay() {
+    if (!overlay) return;
+    overlay = false;
+    removeOverlay();
+  }
+
+  showAppDialog<void>(
+    context: context,
+    barrierDismissible: false,
+    builder: (ctx) {
+      overlayRoute ??= ModalRoute.of(ctx);
+      // Closed before the first frame of the dialog was built.
+      if (!overlay) WidgetsBinding.instance.addPostFrameCallback((_) => removeOverlay());
+      return PrintLoadingOverlay(message: context.l10n.songsCreatingPdf);
+    },
+  );
+  SongPrintResult? result;
+  try {
+    result = await ref.read(songPrintServiceProvider).printEntries(
+          entries,
+          '${song.name.isEmpty ? 'song' : song.name}_print.pdf',
+          onMerged: closeOverlay,
+        );
+  } finally {
+    closeOverlay();
+  }
+  if (!context.mounted || result == null) return;
+  if (result.pageCount == 0) {
+    ToastHelper.showWarning(context, context.l10n.svcNoPrintableScores);
+    return;
+  }
+  if (result.skipped > 0) {
+    // A new toast replaces the previous one (md), so the summary below would
+    // hide this warning right away.
+    ToastHelper.showWarning(context, context.l10n.songsFlutterFilesSkipped(result.skipped));
+    return;
+  }
   final summary = entries
       .where((e) => e.copies > 0)
       .map((e) => '${SongUtils.fileLabel(e.file, groups)}: ${e.copies}x')
@@ -112,6 +165,37 @@ class _GroupPdfRatioDialogState extends State<GroupPdfRatioDialog> {
           child: Text(l10n.songsPrint),
         ),
       ],
+    );
+  }
+}
+
+/// Ionic `Utils.getLoadingElement(…, message)`: blocking spinner with text.
+class PrintLoadingOverlay extends StatelessWidget {
+  const PrintLoadingOverlay({super.key, required this.message});
+
+  final String message;
+
+  @override
+  Widget build(BuildContext context) {
+    return PopScope(
+      canPop: false,
+      child: Center(
+        child: Material(
+          color: Theme.of(context).colorScheme.surface,
+          borderRadius: BorderRadius.circular(8),
+          child: Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 24, vertical: 20),
+            child: Row(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                const SizedBox(width: 28, height: 28, child: AppSpinner()),
+                const SizedBox(width: 16),
+                Flexible(child: Text(message)),
+              ],
+            ),
+          ),
+        ),
+      ),
     );
   }
 }

@@ -21,9 +21,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('instruments')
           .select('*, categoryData:category(*)')
           .eq('tenantId', currentTenantId)
-          .order('category')
+          .order('category', ascending: true)
           .order('sort_order', ascending: true, nullsFirst: false)
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))
@@ -277,7 +277,7 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenant_id', currentTenantId)
           .order('sort_order', ascending: true, nullsFirst: false)
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => GroupCategory.fromJson(e as Map<String, dynamic>))

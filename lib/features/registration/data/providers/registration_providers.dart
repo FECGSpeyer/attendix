@@ -11,6 +11,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/account_repository.dart';
 import '../../../../data/repositories/player_repository.dart';
+import '../../../../data/repositories/profile_repository.dart' show syncOwnPlayerImage;
 import '../../../../data/repositories/user_registration_repository.dart';
 import '../../../auth/data/auth_flow_service.dart';
 import '../../../../l10n/l10n.dart';
@@ -279,6 +280,11 @@ class RegistrationService {
               .update({'img': publicUrl})
               .eq('id', playerId)
               .eq('tenantId', tenantId);
+          // Ionic tenant-register: updateImage with the signed-in account →
+          // the picture goes to all of its instances.
+          if (supabase.auth.currentUser?.id == userId) {
+            await syncOwnPlayerImage(supabase, userId: userId, img: publicUrl);
+          }
         } catch (e, stack) {
           // Log but don't block registration
           debugPrint('Profile image upload failed: $e\n$stack');

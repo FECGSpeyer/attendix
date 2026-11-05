@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../adaptive/adaptive.dart';
 
@@ -23,6 +24,7 @@ Future<T?> showIonModal<T>(
   required WidgetBuilder builder,
   double width = 600,
   double? height,
+  bool barrierDismissible = true,
 }) {
   final size = MediaQuery.sizeOf(context);
   final cardHeight = height ?? ionModalCardHeight(size);
@@ -32,6 +34,7 @@ Future<T?> showIonModal<T>(
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
+      barrierDismissible: barrierDismissible,
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(16),
         clipBehavior: Clip.antiAlias,
@@ -90,4 +93,101 @@ class IonModalTheme extends StatelessWidget {
       child: child,
     );
   }
+}
+
+/// Ionic `modalController.create({ component: <Page>, presentingElement })`
+/// for whole pages (e.g. PersonPage / AttendancePage from the dashboard or
+/// the people list):
+/// - iOS phone: card modal ([showIosCardModal]) over the shrunk page,
+/// - md phone: full screen, desktop/tablet: centred card ([showIonModal]).
+///
+/// The page sees [IonPageModalScope.isIn] = true (Ionic `isModal`: close X
+/// instead of back). Like Ionic ("navigate behind the modal, so close it
+/// first") the modal closes itself as soon as the app navigates to another
+/// location while it is open – a `context.push` / `go` from inside the page
+/// therefore lands on the target page instead of behind the modal.
+Future<T?> showPageModal<T>(
+  BuildContext context, {
+  required WidgetBuilder builder,
+  Color? iosBackgroundColor,
+  bool barrierDismissible = true,
+}) {
+  final router = GoRouter.maybeOf(context);
+  Widget wrap(BuildContext ctx) => IonPageModalScope(
+        child: _CloseOnNavigation(router: router, child: builder(ctx)),
+      );
+  if (useIosLook(context) && !isIonModalCard(MediaQuery.sizeOf(context))) {
+    return showIosCardModal<T>(
+      context,
+      backgroundColor: iosBackgroundColor,
+      barrierDismissible: barrierDismissible,
+      builder: wrap,
+    );
+  }
+  return showIonModal<T>(context, builder: wrap, barrierDismissible: barrierDismissible);
+}
+
+/// Marks a page that is shown by [showPageModal] (Ionic `isModal`).
+class IonPageModalScope extends InheritedWidget {
+  const IonPageModalScope({super.key, required super.child});
+
+  /// Whether [context] lies inside a page opened by [showPageModal].
+  static bool isIn(BuildContext context) =>
+      context.getInheritedWidgetOfExactType<IonPageModalScope>() != null;
+
+  @override
+  bool updateShouldNotify(IonPageModalScope oldWidget) => false;
+}
+
+/// Closes the surrounding modal route when the router location changes.
+class _CloseOnNavigation extends StatefulWidget {
+  const _CloseOnNavigation({required this.router, required this.child});
+
+  final GoRouter? router;
+  final Widget child;
+
+  @override
+  State<_CloseOnNavigation> createState() => _CloseOnNavigationState();
+}
+
+class _CloseOnNavigationState extends State<_CloseOnNavigation> {
+  String? _location;
+
+  /// Location plus the top route entry: a `push` (also into a ShellRoute)
+  /// adds an entry with its own page key even where the URI stays the same.
+  String? _current() {
+    final config = widget.router?.routerDelegate.currentConfiguration;
+    if (config == null) return null;
+    final last = config.isEmpty ? null : config.last;
+    return '${config.uri}|${config.matches.length}|${last?.pageKey.value}';
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _location = _current();
+    widget.router?.routerDelegate.addListener(_onRouteChanged);
+  }
+
+  @override
+  void dispose() {
+    widget.router?.routerDelegate.removeListener(_onRouteChanged);
+    super.dispose();
+  }
+
+  void _onRouteChanged() {
+    final now = _current();
+    if (now == _location) return;
+    _location = now;
+    // Not while the router rebuilds the navigator's pages.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final route = ModalRoute.of(context);
+      if (route == null || !route.isActive) return;
+      route.navigator?.removeRoute(route);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) => widget.child;
 }

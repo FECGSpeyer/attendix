@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform;
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -222,7 +223,9 @@ class _NotificationsPageState extends ConsumerState<NotificationsPage> {
                 if (ref.read(liveActivityServiceProvider).hasNativePlugin)
                   IonToggleItem(
                     title: context.l10n.notifLiveActivity,
-                    helper: LiveActivityService.isSupportedPlatform
+                    // PARITY_UEBERSICHT: Ionic `isIos` – Dynamic Island text
+                    // only on iOS, Android gets the lock screen text.
+                    helper: defaultTargetPlatform == TargetPlatform.iOS
                         ? context.l10n.notifLiveActivityHelperIos
                         : context.l10n.notifLiveActivityHelper,
                     value: config.liveActivity != false,

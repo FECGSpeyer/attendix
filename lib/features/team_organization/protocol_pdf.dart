@@ -6,6 +6,7 @@ import 'package:pdf/widgets.dart' as pw;
 import '../../core/services/pdf_branding.dart';
 import '../../l10n/l10n.dart';
 import 'tiptap_delta.dart';
+import '../../core/services/pdf_fonts.dart';
 
 class ProtocolPdfSection {
   ProtocolPdfSection({required this.title, this.meta, this.outcome, this.doc, this.tasks = const []});
@@ -51,7 +52,7 @@ const _taskColor = PdfColor.fromInt(0xFF3B7D84); // Ionic [59, 125, 132]
 
 /// Builds the protocol as A4 PDF (port of Ionic protocol-pdf.ts).
 Future<Uint8List> createProtocolPdf(ProtocolPdfData data) async {
-  final doc = pw.Document();
+  final doc = await PdfFonts.document();
   final l10n = l10nWithoutContext;
 
   List<pw.Widget> docWidgets(Map<String, dynamic>? d) => [

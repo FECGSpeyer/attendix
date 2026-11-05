@@ -6,6 +6,7 @@ import '../../../core/theme/redesign/rd_palette.dart';
 import '../../../core/theme/redesign/rd_theme.dart';
 import '../../../l10n/l10n.dart';
 import 'adaptive_platform.dart';
+import 'app_pickers.dart';
 import 'ion_button_label.dart';
 
 /// IOS_LOOK: [showDialog] with the Ionic overlay backdrop.
@@ -914,70 +915,6 @@ Future<bool> showAppConfirm(
   return result ?? false;
 }
 
-/// Result of [showAppRadioAlert]: [value] is the checked radio when the
-/// confirm button was tapped (null if none was checked).
-class AppRadioAlertResult<T> {
-  const AppRadioAlertResult(this.value);
-  final T? value;
-}
-
-/// ion-alert with `inputs` of type radio, "Abbrechen" (role cancel) and a
-/// confirm button. The choice only counts with the confirm button. Returns
-/// null when cancelled or dismissed.
-Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
-  BuildContext context, {
-  required String title,
-  String? subtitle,
-  required List<(T value, String label)> options,
-  T? initialValue,
-  String? confirmText,
-  String? cancelText,
-}) {
-  T? selected = initialValue;
-  return showAppDialog<AppRadioAlertResult<T>>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AppAlertDialog(
-        title: Text(title),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (subtitle != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(subtitle),
-                ),
-              for (final (value, label) in options)
-                RadioListTile<T>(
-                  contentPadding: EdgeInsets.zero,
-                  value: value,
-                  // ignore: deprecated_member_use
-                  groupValue: selected,
-                  title: Text(label),
-                  // ignore: deprecated_member_use
-                  onChanged: (v) => setState(() => selected = v),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(cancelText ?? ctx.l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () =>
-                Navigator.of(ctx).pop(AppRadioAlertResult<T>(selected)),
-            child: Text(confirmText ?? ctx.l10n.commonOk),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 /// ion-alert with one text input. Returns the entered text, or null when
 /// cancelled.
 Future<String?> showAppPrompt(
@@ -1116,6 +1053,8 @@ class IosAlertInput extends StatelessWidget {
     this.autofocus = false,
     this.keyboardType,
     this.onSubmitted,
+    this.readOnly = false,
+    this.onTap,
   });
 
   final TextEditingController controller;
@@ -1124,6 +1063,11 @@ class IosAlertInput extends StatelessWidget {
   final bool autofocus;
   final TextInputType? keyboardType;
   final ValueChanged<String>? onSubmitted;
+
+  /// A read-only field that reacts to [onTap] (e.g. the date input of
+  /// [showAppDateAlert]).
+  final bool readOnly;
+  final VoidCallback? onTap;
 
   /// `.alert-input { font-size: 1rem }` on iOS.
   static const double fontSize = 17;
@@ -1147,6 +1091,8 @@ class IosAlertInput extends StatelessWidget {
         autofocus: autofocus,
         keyboardType: keyboardType,
         onSubmitted: onSubmitted,
+        readOnly: readOnly,
+        onTap: onTap,
         style:
             TextStyle(fontSize: fontSize, color: theme.colorScheme.onSurface),
         decoration: InputDecoration(
@@ -1165,6 +1111,292 @@ class IosAlertInput extends StatelessWidget {
           disabledBorder: border,
         ),
       ),
+    );
+  }
+}
+
+/// Ionic `ion-alert` with one `type: 'date'` input (e.g. "Datum ändern",
+/// "{Typ} anlegen"): title, message, the date field (tapping it opens the
+/// date picker) and "Abbrechen" / [confirmText]. Returns the chosen day,
+/// or null when cancelled.
+Future<DateTime?> showAppDateAlert(
+  BuildContext context, {
+  required String title,
+  String? message,
+  required DateTime initialDate,
+  required DateTime firstDate,
+  required DateTime lastDate,
+  required String confirmText,
+}) {
+  return showAppDialog<DateTime>(
+    context: context,
+    builder: (_) => _DateAlert(
+      title: title,
+      message: message,
+      initialDate: initialDate,
+      firstDate: firstDate,
+      lastDate: lastDate,
+      confirmText: confirmText,
+    ),
+  );
+}
+
+class _DateAlert extends StatefulWidget {
+  const _DateAlert({
+    required this.title,
+    required this.message,
+    required this.initialDate,
+    required this.firstDate,
+    required this.lastDate,
+    required this.confirmText,
+  });
+
+  final String title;
+  final String? message;
+  final DateTime initialDate;
+  final DateTime firstDate;
+  final DateTime lastDate;
+  final String confirmText;
+
+  @override
+  State<_DateAlert> createState() => _DateAlertState();
+}
+
+class _DateAlertState extends State<_DateAlert> {
+  late DateTime _value = widget.initialDate;
+  final _text = TextEditingController();
+
+  @override
+  void didChangeDependencies() {
+    super.didChangeDependencies();
+    _text.text = MaterialLocalizations.of(context).formatCompactDate(_value);
+  }
+
+  @override
+  void dispose() {
+    _text.dispose();
+    super.dispose();
+  }
+
+  Future<void> _pick() async {
+    final picked = await showAppDatePicker(
+      context: context,
+      initialDate: _value,
+      firstDate: widget.firstDate,
+      lastDate: widget.lastDate,
+    );
+    if (picked == null || !mounted) return;
+    setState(() {
+      _value = picked;
+      _text.text = MaterialLocalizations.of(context).formatCompactDate(picked);
+    });
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final l10n = context.l10n;
+    void cancel() => Navigator.of(context).pop();
+    void confirm() => Navigator.of(context).pop(_value);
+    if (useIosLook(context)) {
+      return IosAlertCard(
+        title: Text(widget.title),
+        message: widget.message,
+        contentPadding: const EdgeInsets.fromLTRB(16, 0, 16, 21),
+        content: IosAlertInput(controller: _text, readOnly: true, onTap: _pick),
+        actions: [
+          IosAlertButton(onPressed: cancel, child: Text(l10n.commonCancel)),
+          IosAlertButton(onPressed: confirm, child: Text(widget.confirmText)),
+        ],
+      );
+    }
+    return AppAlertDialog(
+      title: Text(widget.title),
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (widget.message != null) ...[
+            Text(widget.message!),
+            const SizedBox(height: 12),
+          ],
+          TextField(
+            controller: _text,
+            readOnly: true,
+            onTap: _pick,
+            decoration: const InputDecoration(suffixIcon: Icon(Icons.calendar_today_outlined)),
+          ),
+        ],
+      ),
+      actions: [
+        TextButton(onPressed: cancel, child: Text(l10n.commonCancel)),
+        TextButton(onPressed: confirm, child: Text(widget.confirmText)),
+      ],
+    );
+  }
+}
+
+/// Result of [showAppRadioAlert]: [value] is the checked radio when the
+/// confirm button was tapped (null if none was checked).
+class AppRadioAlertResult<T> {
+  const AppRadioAlertResult(this.value);
+  final T? value;
+}
+
+/// Ionic `ion-alert` with `type: 'radio'` inputs: title, [subtitle] (the
+/// alert message), the options as a radio list ([initialValue] checked),
+/// "Abbrechen" (role cancel) and a confirm button. The choice only counts
+/// with the confirm button: returns an [AppRadioAlertResult] on confirm
+/// (value null when nothing is checked), null when cancelled or dismissed.
+/// [cancelDestructive] shows the cancel button red on iOS (Ionic
+/// `role: 'destructive'`); [barrierDismissible] false = Ionic
+/// `backdropDismiss: false`.
+Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
+  BuildContext context, {
+  required String title,
+  String? subtitle,
+  required List<(T value, String label)> options,
+  T? initialValue,
+  String? confirmText,
+  String? cancelText,
+  bool cancelDestructive = false,
+  bool barrierDismissible = true,
+}) {
+  return showAppDialog<AppRadioAlertResult<T>>(
+    context: context,
+    barrierDismissible: barrierDismissible,
+    builder: (_) => _RadioAlert<T>(
+      title: title,
+      message: subtitle,
+      options: options,
+      initialValue: initialValue,
+      confirmText: confirmText,
+      cancelText: cancelText,
+      cancelDestructive: cancelDestructive,
+    ),
+  );
+}
+
+class _RadioAlert<T> extends StatefulWidget {
+  const _RadioAlert({
+    required this.title,
+    required this.message,
+    required this.options,
+    required this.initialValue,
+    required this.confirmText,
+    required this.cancelText,
+    required this.cancelDestructive,
+  });
+
+  final String title;
+  final String? message;
+  final List<(T, String)> options;
+  final T? initialValue;
+  final String? confirmText;
+  final String? cancelText;
+  final bool cancelDestructive;
+
+  @override
+  State<_RadioAlert<T>> createState() => _RadioAlertState<T>();
+}
+
+class _RadioAlertState<T> extends State<_RadioAlert<T>> {
+  late T? _value = widget.initialValue;
+
+  @override
+  Widget build(BuildContext context) {
+    final cancelText = widget.cancelText ?? context.l10n.commonCancel;
+    final confirmText = widget.confirmText ?? context.l10n.commonOk;
+    void cancel() => Navigator.of(context).pop();
+    void confirm() => Navigator.of(context).pop(AppRadioAlertResult<T>(_value));
+    final maxHeight = MediaQuery.sizeOf(context).height * 0.5;
+    if (useIosLook(context)) {
+      // Ionic iOS radio alert: rows with the label (primary when checked)
+      // and a checkmark at the end.
+      final primary = Theme.of(context).colorScheme.primary;
+      return IosAlertCard(
+        title: Text(widget.title),
+        message: widget.message,
+        contentPadding: EdgeInsets.zero,
+        content: ConstrainedBox(
+          constraints: BoxConstraints(maxHeight: maxHeight),
+          child: SingleChildScrollView(
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              children: [
+                for (final (value, label) in widget.options)
+                  InkWell(
+                    onTap: () => setState(() => _value = value),
+                    child: Container(
+                      constraints: const BoxConstraints(minHeight: 44),
+                      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
+                      decoration: BoxDecoration(
+                        border: Border(
+                          top: BorderSide(color: Theme.of(context).dividerColor, width: 0.55),
+                        ),
+                      ),
+                      child: Row(
+                        children: [
+                          Expanded(
+                            child: Text(
+                              label,
+                              style: TextStyle(
+                                fontSize: 17,
+                                color: value == _value ? primary : null,
+                              ),
+                            ),
+                          ),
+                          if (value == _value) Icon(Icons.check, color: primary, size: 22),
+                        ],
+                      ),
+                    ),
+                  ),
+              ],
+            ),
+          ),
+        ),
+        actions: [
+          IosAlertButton(
+            onPressed: cancel,
+            destructive: widget.cancelDestructive,
+            child: Text(cancelText),
+          ),
+          IosAlertButton(onPressed: confirm, child: Text(confirmText)),
+        ],
+      );
+    }
+    return AppAlertDialog(
+      title: Text(widget.title),
+      contentPadding: const EdgeInsets.only(top: 12, bottom: 8),
+      content: ConstrainedBox(
+        constraints: BoxConstraints(maxHeight: maxHeight),
+        child: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (widget.message != null)
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(24, 0, 24, 8),
+                  child: Text(widget.message!),
+                ),
+              for (final (value, label) in widget.options)
+                // ignore: deprecated_member_use
+                RadioListTile<T>(
+                  value: value,
+                  // ignore: deprecated_member_use
+                  groupValue: _value,
+                  title: Text(label),
+                  // ignore: deprecated_member_use
+                  onChanged: (v) => setState(() => _value = v),
+                ),
+            ],
+          ),
+        ),
+      ),
+      actions: [
+        TextButton(onPressed: cancel, child: Text(cancelText)),
+        TextButton(onPressed: confirm, child: Text(confirmText)),
+      ],
     );
   }
 }

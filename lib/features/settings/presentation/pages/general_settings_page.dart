@@ -64,9 +64,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
   final _shortNameController = TextEditingController();
   final _longNameController = TextEditingController();
 
-  // Times
-  final _practiceStartController = TextEditingController();
-  final _practiceEndController = TextEditingController();
+  // Ionic: practiceStart/practiceEnd are not editable on this page, only
+  // written back unchanged (default 18:00/20:00). Planning uses
+  // practiceStart as the default time of a Probe.
+  String _practiceStart = '18:00';
+  String _practiceEnd = '20:00';
 
   // Settings
   DateTime? _seasonStart;
@@ -110,8 +112,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
     setUnloadWarning(this, false);
     _shortNameController.dispose();
     _longNameController.dispose();
-    _practiceStartController.dispose();
-    _practiceEndController.dispose();
     _showAllInfoTextController.dispose();
     super.dispose();
   }
@@ -129,8 +129,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       _longNameController.text = tenant.longName;
       // PARITY_R10: Ionic general.page defaults (practice 18:00–20:00,
       // season start db.getCurrentAttDate() → 2023-01-01) and the local date.
-      _practiceStartController.text = tenant.practiceStart ?? '18:00';
-      _practiceEndController.text = tenant.practiceEnd ?? '20:00';
+      _practiceStart = (tenant.practiceStart ?? '').isNotEmpty ? tenant.practiceStart! : '18:00';
+      _practiceEnd = (tenant.practiceEnd ?? '').isNotEmpty ? tenant.practiceEnd! : '20:00';
       _seasonStart = (tenant.seasonStart != null
               ? DateTime.tryParse(tenant.seasonStart!)?.toLocal()
               : null) ??
@@ -221,10 +221,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
       await supabase.from('tenants').update({
         'shortName': _shortNameController.text.trim(),
         'longName': _longNameController.text.trim(),
-        'practiceStart': _practiceStartController.text.trim().isNotEmpty
-            ? _practiceStartController.text.trim() : null,
-        'practiceEnd': _practiceEndController.text.trim().isNotEmpty
-            ? _practiceEndController.text.trim() : null,
+        'practiceStart': _practiceStart,
+        'practiceEnd': _practiceEnd,
         'seasonStart': _seasonStart?.toIso8601String().split('T')[0],
         'region': _selectedRegion.isNotEmpty ? _selectedRegion : null,
         'showHolidays': _showHolidays,
@@ -331,28 +329,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         _hasChanges = true;
       });
     }
-  }
-
-  Future<void> _selectTime(TextEditingController controller) async {
-    final initialTime = _parseTime(controller.text) ?? const TimeOfDay(hour: 19, minute: 0);
-    final picked = await showAppTimePicker(
-      context: context,
-      initialTime: initialTime,
-    );
-    if (picked != null) {
-      controller.text = '${picked.hour.toString().padLeft(2, '0')}:${picked.minute.toString().padLeft(2, '0')}';
-      _markChanged();
-    }
-  }
-
-  TimeOfDay? _parseTime(String time) {
-    if (time.isEmpty) return null;
-    final parts = time.split(':');
-    if (parts.length != 2) return null;
-    final hour = int.tryParse(parts[0]);
-    final minute = int.tryParse(parts[1]);
-    if (hour == null || minute == null) return null;
-    return TimeOfDay(hour: hour, minute: minute);
   }
 
   List<Widget> _buildRegistrationFieldChips() {
@@ -505,27 +481,6 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                         helper: context.l10n.generalSettingsSeasonHelper,
                         trailing: ionIsIos(context) ? null : const Icon(Icons.calendar_today_outlined),
                         onTap: _selectSeasonStart,
-                      ),
-                      // Flutter: Probenzeiten (Standardzeiten für neue Termine)
-                      IonStackedField(
-                        label: context.l10n.generalSettingsFlutterPracticeStart,
-                        hint: '19:00',
-                        builder: (decoration) => TextFormField(
-                          controller: _practiceStartController,
-                          decoration: decoration,
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceStartController),
-                        ),
-                      ),
-                      IonStackedField(
-                        label: context.l10n.generalSettingsFlutterPracticeEnd,
-                        hint: '21:30',
-                        builder: (decoration) => TextFormField(
-                          controller: _practiceEndController,
-                          decoration: decoration,
-                          readOnly: true,
-                          onTap: () => _selectTime(_practiceEndController),
-                        ),
                       ),
                       SettingsListTile(
                         title: context.l10n.generalSettingsAttTypes,
@@ -774,6 +729,7 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
                       for (var index = 0; index < _criticalRules.length; index++)
                         CriticalRuleCard(
                           rule: _criticalRules[index],
+                          attendanceTypes: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
                           onEdit: () => _showEditCriticalRuleSheet(index),
                           onDelete: () => _confirmDeleteCriticalRule(index),
                         ),

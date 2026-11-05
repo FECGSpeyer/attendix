@@ -57,6 +57,11 @@ class HistoryPage extends ConsumerStatefulWidget {
 
 class _HistoryPageState extends ConsumerState<HistoryPage> {
   String _searchQuery = '';
+
+  /// PARITY_UEBERSICHT: Ionic `selectedSongs` lives on the page: the first
+  /// Werk is preselected once (ngOnInit), the choice survives closing the
+  /// sheet and is cleared after adding. `null` = not set up yet.
+  Set<int>? _selectedSongIds;
   final _searchController = TextEditingController();
 
   @override
@@ -68,6 +73,9 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   @override
   Widget build(BuildContext context) {
     final historyAsync = ref.watch(performanceHistoryProvider);
+    // PARITY_UEBERSICHT: Ionic loads the Werke when the page opens, so the
+    // "+" sheet opens right away.
+    ref.watch(planSongsProviderHistory);
 
     return Scaffold(
       // IOS_FORMS2: Ionic `ion-content` without colour → white page, so the
@@ -257,10 +265,18 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
   // (search + checkboxes), the Dirigent select, the Datum field with a
   // calendar button and the block button "Hinzufügen".
   Future<void> _showAddDialog() async {
-    final songsAsync = ref.read(planSongsProviderHistory);
     final conductorsAsync = ref.read(conductorsProvider);
 
-    final songs = songsAsync.valueOrNull ?? [];
+    // PARITY_UEBERSICHT: wait for the Werke if they are still loading
+    // (a plain read returned an empty list → "Keine Werke gefunden").
+    List<Song> songs;
+    try {
+      songs = ref.read(planSongsProviderHistory).valueOrNull ??
+          await ref.read(planSongsProviderHistory.future);
+    } catch (_) {
+      songs = const [];
+    }
+    if (!mounted) return;
     // P10_ATTENDANCE: wait for the conductors so the default can be set.
     final List<Person> conductors;
     final cached = conductorsAsync.valueOrNull;
@@ -282,7 +298,12 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
       return;
     }
 
-    final selectedSongIds = <int>{};
+    // Only Werke of the loaded library (e.g. after an instance switch).
+    final songIds = {for (final s in songs) s.id};
+    _selectedSongIds?.retainWhere(songIds.contains);
+    final selectedSongIds = _selectedSongIds ??= {
+      if (songs.first.id != null) songs.first.id!,
+    };
     // P10_ATTENDANCE: Ionic preselects the first active conductor
     // (historyEntry.person_id = activeConductors[0].id).
     int? selectedConductorId = defaultHistoryConductorId(conductors);
@@ -466,8 +487,11 @@ class _HistoryPageState extends ConsumerState<HistoryPage> {
     applyTypedDate();
 
     if (result == true && selectedSongIds.isNotEmpty) {
+      final added = Set<int>.of(selectedSongIds);
+      // Ionic addHistoryEntry: selectedSongs = [] afterwards.
+      _selectedSongIds = <int>{};
       await _addEntries(
-        songIds: selectedSongIds,
+        songIds: added,
         conductorId: selectedConductorId,
         otherConductor: otherConductor,
         date: selectedDate,

@@ -194,8 +194,10 @@ class _PauseSheetState extends State<_PauseSheet> {
 Future<bool> pausePersonFlow(
   BuildContext context,
   WidgetRef ref,
-  Person person,
-) async {
+  Person person, {
+  // Ionic person.page confirmPause shows no success toast (it closes).
+  bool showSuccessToast = true,
+}) async {
   final repo = ref.read(playerRepositoryWithTenantProvider);
   final crossRepo = ref.read(crossTenantPersonRepositoryWithTenantProvider);
   final input = await showPauseSheet(context, person);
@@ -216,12 +218,14 @@ Future<bool> pausePersonFlow(
     return false;
   }
 
-  messenger.showSnackBar(
-    SnackBar(
-      content: Text(l10nWithoutContext.peopleFlutterPausedToast(person.firstName)),
-      backgroundColor: AppColors.success,
-    ),
-  );
+  if (showSuccessToast) {
+    messenger.showSnackBar(
+      SnackBar(
+        content: Text(l10nWithoutContext.peopleFlutterPausedToast(person.firstName)),
+        backgroundColor: AppColors.success,
+      ),
+    );
+  }
 
   final appId = person.appId;
   if (appId == null || !context.mounted) return true;
