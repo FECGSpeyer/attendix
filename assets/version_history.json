@@ -1,10 +1,73 @@
 {
   "versions": [
     {
-      "version": "0.41.6",
+      "version": "0.41.12",
       "date": "5.11.2026",
       "changes": [
         "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
+      "version": "0.41.8",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Geteilter Plan: Bearbeiten zeigt einfache Zeilen mit rotem Papierkorb und Griff; Tippen öffnet den Feld-Dialog mit Dauer",
+        "🐛 Geteilter Plan: Programmblöcke zeigen in der Ansicht nur die Startzeit",
+        "🐛 Öffentliche Planung: „Feld bearbeiten“ mit „Löschen“, „Abbrechen“ und „Speichern“, ohne Minuten",
+        "🐛 Web: Link teilen kopiert nur noch, wenn der Browser kein Teilen kann"
+      ]
+    },
+    {
+      "version": "0.41.7",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termine: „Anderer Dirigent“ fragt den Namen wieder in einem kleinen Dialog ab",
+        "🐛 Termine: Die Info zu Ferien und Feiertagen zeigt beim ersten Öffnen sofort die Termin-Arten",
+        "🐛 Termine: Neue oder geänderte Dienst-Termine zeigen Besetzung und „Deine Dienste“ gleich richtig an",
+        "🐛 Termin: Kann ein Termin nicht geladen werden, kommt ein Hinweis und es geht zurück zur Liste",
+        "🐛 Termin: „Ablaufplan teilen“ wieder mit Exportieren (PDF), (PDF 2x A5) und Telegram; bei mehreren Plänen Auswahl „dieser Plan / alle Pläne“",
+        "🐛 Termin: Ein einzelnes Anmeldefeld wird wieder in einem kleinen Dialog bearbeitet",
+        "🐛 Termin: Checklisten-Punkte zeigen wieder Datum und Uhrzeit der Fälligkeit",
+        "🐛 Termin: Der Excel-Export enthält nur die Personen der Liste (Helfer: nur ihre Gruppen) und ist nach Gruppen sortiert",
+        "🐛 Termine: „Deine Dienste: bitte bestätigen“ sehen nur Admin, Verantwortliche und Helfer",
+        "🐛 Termin: Ablaufplan-Export mit dem richtigen Titel und Dateinamen (Datum, „_alle“, „_2x“)"
+      ]
+    },
+    {
+      "version": "0.41.6",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
+        "🐛 Ablaufplan: Helfer sehen archivierte Termine nicht mehr in der Terminauswahl",
+        "🐛 Ablaufplan: Ohne kommenden Termin ist kein Termin vorausgewählt",
+        "🐛 Ablaufplan: „Tag zuordnen“ als Auswahl mit Abbrechen und Speichern, „Link teilen“ nur mit Nur-Lesen- und Bearbeitungs-Link"
+      ]
+    },
+    {
+      "version": "0.41.5",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Öffentliche Planung: Das gewählte Branding (FECG Speyer, FECG Schwegenheim oder keins) erscheint wieder in PDF, Bild und Telegram, statt des Brandings der eigenen Gruppe",
+        "🐛 Geteilter Plan: PDF trägt das Branding des Plans, Termin-Pläne bleiben ohne",
+        "🐛 Öffentliche Planung: „Kein Branding“ entfernt ein vorher gewähltes Branding auch in „Meine Pläne“",
+        "🐛 Dateinamen der Plan-Exporte wie bisher (Titel mit Wochentag und Datum)"
+      ]
+    },
+    {
+      "version": "0.41.4",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termine: Der Ablaufplan aus der Terminliste zeigt wieder alle Pläne eines Termins (Tages-Chips)",
+        "🐛 Termine: Im Ablaufplan aus der Terminliste öffnen Werke wieder die Noten",
+        "🐛 Termine: Dirigenten und Helfer können den Ablaufplan aus der Terminliste direkt bearbeiten (Stift)"
+      ]
+    },
+    {
+      "version": "0.41.3",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Eine selbst gewählte Abmeldefrist wird wieder mit der gewählten Uhrzeit gespeichert, die Anmeldung schließt nicht mehr ein bis zwei Stunden zu früh",
+        "🐛 Termin: Die Fristauswahl bietet wie bisher nur 5-Minuten-Schritte und reicht bis zum Terminbeginn"
       ]
     },
     {
