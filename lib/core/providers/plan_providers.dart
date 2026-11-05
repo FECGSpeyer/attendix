@@ -6,6 +6,7 @@ import '../../data/models/plan/plan.dart';
 import '../../data/repositories/org_plan_repository.dart';
 import '../../data/repositories/plan_repository.dart';
 import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
+import '../utils/archived_attendance.dart';
 import '../utils/plan_utils.dart';
 import 'organisation_providers.dart';
 import 'tenant_providers.dart';
@@ -46,7 +47,10 @@ final planAttendancesProvider = FutureProvider<List<PlanAttendance>>((ref) async
   final repo = ref.watch(planRepositoryWithTenantProvider);
   if (!repo.hasTenantId) return [];
   final seasonStart = ref.watch(currentTenantProvider.select((t) => t?.seasonStart));
-  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart));
+  // Ionic getAttendance → filterArchivedForRole (only admin/responsible
+  // see archived Termine in the Ablaufplan editor).
+  final includeArchived = canSeeArchivedAttendances(ref.watch(currentRoleProvider));
+  return repo.getPlanAttendances(since: attendanceListStartDate(seasonStart), includeArchived: includeArchived);
 });
 
 /// One Termin with its plans
