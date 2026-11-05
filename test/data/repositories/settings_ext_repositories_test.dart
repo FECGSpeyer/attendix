@@ -81,17 +81,26 @@ void main() {
       expect(update!.group(0), contains(".eq('id', currentTenantId)"));
     });
 
+    // Rows are filtered by the current tenant, or for songs by the effective
+    // song tenant (Ionic db.getSongs(): song_source_tenant_id ?? own tenant).
     test('player/songs SELECT filters tenantId', () {
       final select = RegExp(r"\.from\(table\)\s*\.select\([^;]+", multiLine: true).firstMatch(extraFieldsSource);
       expect(select, isNotNull);
-      expect(select!.group(0), contains(".eq('tenantId', currentTenantId)"));
+      expect(select!.group(0), contains(".eq('tenantId', tenantId)"));
+      expect(extraFieldsSource, contains('final tenantId = rowTenantId ?? currentTenantId;'));
     });
 
     test('player/songs UPDATE filters id AND tenantId', () {
       final update = RegExp(r"\.from\(table\)\s*\.update\([^;]+", multiLine: true).firstMatch(extraFieldsSource);
       expect(update, isNotNull);
       expect(update!.group(0), contains(".eq('id', id)"));
-      expect(update.group(0), contains(".eq('tenantId', currentTenantId)"));
+      expect(update.group(0), contains(".eq('tenantId', tenantId)"));
+      expect(RegExp(r'final tenantId = rowTenantId \?\? currentTenantId;').allMatches(extraFieldsSource).length, 2);
+    });
+
+    test('songs only use another tenant via songTenantId, persons stay own and active', () {
+      expect(extraFieldsSource, contains('final rowTenantId = isPlayer ? null : songTenantId;'));
+      expect(extraFieldsSource, contains("query.isFilter('left', null).isFilter('pending', false)"));
     });
   });
 

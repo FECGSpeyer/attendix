@@ -29,7 +29,11 @@ void main() {
   test('person more menu has the Ionic header and closes after a transfer', () {
     final src = read('lib/features/people/presentation/pages/person_detail_page.dart');
     expect(src, contains('title: context.l10n.personActions'));
+<<<<<<< HEAD
     expect(src, contains('if (!copy) _closePage();'));
+=======
+    expect(src, contains('updated.left != null)) _close()'));
+>>>>>>> origin/master
   });
 
   test('late warning card uses the Ionic texts', () {
