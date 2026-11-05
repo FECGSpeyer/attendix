@@ -1,13 +1,10 @@
 # Fix-Paket „uebersicht“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, ed511da (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 525a06f, ed511da (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `home-dashboard/components/current-songs-card/current-songs-card.component` `x-7ff54f52b2` **„Aktuelle Werke“: heutige manuelle Einträge fehlen** [src/app/services/db.service.ts:3128](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L3128) (2. Prüfung: korrigiert)
-  Ionic getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht in UTC), Flutter gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone, Postgres wertet das als 00:00Z. Für heute in der Werkhistorie eingetragene Werke (Datum YYYY-MM-DD = 00:00Z) fehlen deshalb in Flutter auf der Karte „Aktuelle Werke“. Angezeigte Daten fehlen → mittel; gleiche UTC-Ursache wie der Archivieren-Befund. Fix in #343.
-  Flutter: lib/data/repositories/dashboard_repository.dart:171, lib/features/history/presentation/pages/history_page.dart:560
 
 ## Flutter besser – Leon entscheidet: 12
 
