@@ -185,19 +185,19 @@ class _PlanFieldsEditorState extends State<PlanFieldsEditor> {
         onDelete: () => deleted = true,
       );
       if (!mounted) return;
+      // The list may have changed (Realtime) while the dialog was open:
+      // re-find the row; gone or ambiguous -> leave the list as it is.
+      final i = PlanUtils.indexOfField(_fields, field);
       if (deleted) {
-        final i = _fields.indexWhere((f) => identical(f, field));
         if (i != -1) _emit([..._fields]..removeAt(i));
         return;
       }
-      if (r == null) return;
-      // The list may have changed (Realtime) while the dialog was open.
-      final i = _fields.indexWhere((f) => identical(f, field));
-      if (i == -1) return;
+      if (r == null || i == -1) return;
+      final base = _fields[i];
       final updated = [..._fields];
       updated[i] = isNote
-          ? field.copyWith(name: r.name)
-          : field.copyWith(name: r.name, conductor: r.conductor, info: r.info);
+          ? base.copyWith(name: r.name)
+          : base.copyWith(name: r.name, conductor: r.conductor, info: r.info);
       _emit(updated);
       return;
     }
