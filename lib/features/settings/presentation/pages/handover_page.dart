@@ -13,6 +13,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../people/people_list_utils.dart';
 import '../widgets/ion_condense.dart';
 import '../widgets/settings_list.dart' show ionIsIos;
 import 'package:attendix/shared/widgets/layout/ionic_ios.dart' show IonTranslucentAppBar, IonContentTopInset;
@@ -118,7 +119,12 @@ class _HandoverPageState extends ConsumerState<HandoverPage> {
     _groupId ??= groups.isNotEmpty ? groups.first.id : null;
 
     final groupNames = {for (final g in groups) g.id: g.name};
-    final filtered = _filtered(playersAsync.valueOrNull ?? const [], mainGroupId);
+    // Ionic Utils.getModifiedPlayersForList order: main group first, group
+    // sort_order, group name, person sort_order, last name.
+    final filtered = _filtered(
+      sortPeopleByGroup(playersAsync.valueOrNull ?? const [], groups),
+      mainGroupId,
+    );
     final selectedPersons =
         filtered.where((p) => p.id != null && _selected.contains(p.id)).toList();
 

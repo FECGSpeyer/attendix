@@ -13,6 +13,40 @@
       ]
     },
     {
+      "version": "0.41.16",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Neuer Termintyp wird wie in Ionic direkt mit allen Einstellungen angelegt",
+        "🐛 Termintyp: Der Standard-Ablaufplan ist immer bearbeitbar (nicht nur bei „Werke verwalten“) und zeigt Uhrzeiten, Ausführende, Infos und Minuten direkt in der Zeile wie bisher",
+        "🐛 Termintyp: Über „+“ lassen sich wieder Felder, Notizfelder, Werk-Platzhalter und der Tagesordnungs-Platzhalter einfügen; beim Bearbeiten bleiben Ausführender und Info erhalten",
+        "🐛 Termintyp: Filter für Ja/Nein-Zusatzfelder, „Checkliste aktivieren“, To-Dos mit Deadline-Auswahl und „Erinnerungen konfigurieren“ wie bisher",
+        "🐛 Termintyp: Löschen funktioniert auch bei Typen mit Terminen; „Mehr erfahren“ beim Dienstplan"
+      ]
+    },
+    {
+      "version": "0.41.15",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Schichtplan kopieren nur in verknüpfte Instanzen der Organisation (wie Ionic)",
+        "🐛 Dateiablage: „Link teilen“ öffnet zuerst das Teilen-Menü des Systems, nur ohne Teilen-Menü wird der Link kopiert",
+        "🐛 Dateiablage: Hilfe zur Suche und das ⋯-Menü erscheinen als kleines Fenster direkt am Knopf, Tippen daneben schließt es",
+        "🐛 Hilfe: Fachbegriffe öffnen ihre Erklärung als kleines Fenster direkt am Begriff",
+        "🐛 Hilfe: Artikel „Beamer-Dateien im Ablaufplan“ nennt, welche ORG-Pläne die Gemeinde App zeigt",
+        "🐛 Schichtpläne: „In Instanz kopieren“ fragt die Ziel-Instanz und danach, ob die Zuweisungen mitkopiert werden sollen (wie in der bisherigen App)",
+        "🐛 Schichtpläne: Beim Löschen erklärt die Rückfrage wieder, was dabei mitgelöscht wird",
+        "🐛 Übergabe: Personen und Gruppen der Ziel-Instanz stehen in derselben Reihenfolge wie sonst in der App",
+        "🐛 Stimmführer: Namen mit Umlauten werden richtig einsortiert, und kommende Abwesenheiten fehlen auch in großen Gruppen nicht mehr"
+      ]
+    },
+    {
+      "version": "0.41.14",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Instanzen: Der Schalter „Instanzauswahl aktivieren“ springt nicht mehr zurück und lässt sich beliebig oft umschalten",
+        "🐛 Meine Stammdaten: Speichern lässt das Fenster offen; in der App kann das Passbild auch mit der Kamera aufgenommen werden"
+      ]
+    },
+    {
       "version": "0.41.13",
       "date": "5.11.2026",
       "changes": [
