@@ -515,7 +515,10 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
     );
     if (action == null || !mounted) return;
     if (action.startsWith('orgfield:')) {
-      setState(() => _fields = [..._fields, orgFields[int.parse(action.substring(9))]]);
+      // Every inserted occurrence is its own row (own uid), so editing or
+      // deleting the second one does not hit the first.
+      final orgField = orgFields[int.parse(action.substring(9))];
+      setState(() => _fields = [..._fields, orgField.copyWith(uid: PlanUtils.uuid())]);
       _changed();
       return;
     }
@@ -982,6 +985,7 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
                         PlanFieldsEditor(
                           fields: _fields,
                           startTime: _time,
+                          publicFieldDialog: true,
                           onChanged: (f) {
                             setState(() => _fields = f);
                             _changed();
