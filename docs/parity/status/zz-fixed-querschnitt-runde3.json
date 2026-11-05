@@ -1,6 +1,6 @@
 {
  "batch": "zz-fixed-querschnitt-runde3",
- "afterRound": 3,
+ "afterRound": 4,
  "items": {
   "services/push/push.service#native-7521b3d9": {
    "s": "ok",
