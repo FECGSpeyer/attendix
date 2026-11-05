@@ -258,7 +258,7 @@
 - [ ] Anwesenheitstypen verwalten
 - [ ] Typ hinzufügen/bearbeiten
 - [ ] Verfügbare Status konfigurieren
-- [ ] Critical Rules
+- [x] Critical Rules
 
 ### 14.4 Handover
 - [ ] Admin-Übergabe

@@ -4,6 +4,7 @@ import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/utils/statistics_utils.dart';
 import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/plan/plan.dart';
+import 'package:attendix/data/models/tenant/tenant.dart';
 import 'package:attendix/data/repositories/attendance_type_repository.dart';
 import 'package:attendix/features/settings/presentation/pages/attendance_type_edit_page.dart';
 import 'package:attendix/features/settings/presentation/pages/general_settings_page.dart';
@@ -101,6 +102,36 @@ void main() {
   });
 
   group('general settings normalisation', () {
+    test('critical rule text like Ionic getCriticalRuleDescription', () {
+      final types = [
+        TestFactories.createAttendanceType(id: 'a', name: 'Probe'),
+        TestFactories.createAttendanceType(id: 'b', name: 'Konzert'),
+      ];
+      const rule = CriticalRule(
+        id: 'r',
+        name: 'Fehlzeiten',
+        attendanceTypeIds: ['b', 'a'],
+        statuses: [4, 3, 1],
+        thresholdType: CriticalRuleThresholdType.count,
+        thresholdValue: 3,
+        periodType: CriticalRulePeriodType.days,
+        periodDays: 30,
+        operator: CriticalRuleOperator.or,
+      );
+      expect(rule.describe(types),
+          'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen (Probe, Konzert)');
+      // types not loaded (yet): no empty parentheses
+      expect(rule.describe(const []), 'Fehlzeiten: 3x Abwesend, Verspätet, Anwesend in 30 Tagen');
+      // all types, season; legacy rule without period_type counts its days
+      expect(
+        rule
+            .copyWith(name: null, attendanceTypeIds: [], periodType: CriticalRulePeriodType.season)
+            .describe(types),
+        '3x Abwesend, Verspätet, Anwesend seit Saisonbeginn (Alle Typen)',
+      );
+      expect(rule.copyWith(periodType: null).description, '3x Abwesend, Verspätet, Anwesend in 30 Tagen');
+    });
+
     test('reasons: blanks filtered, empty -> null', () {
       expect(normalizeReasons(['', '  ']), isNull);
       expect(normalizeReasons(['Krank', ' ', 'Urlaub']), ['Krank', 'Urlaub']);
