@@ -1,0 +1,2027 @@
+{
+ "batch": "zz-verify5c-sonnet-39",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 165,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline",
+     "color": "medium",
+     "[disabled]": "\"isDeciding(item)\""
+    },
+    "events": [
+     "(click)=reject(item)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.reject"
+    ],
+    "de": [
+     "Ablehnen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.reject' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-8d43340c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:247",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:312",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:229"
+    ],
+    "n": "Grauer Outline-Button „Ablehnen“, nur Leitung, Schreibvorgang gleich. Ionic: [disabled]=isDeciding → während des Speicherns gesperrt / Flutter: Sheet-Inhalt (Consumer) baut bei setState(_deciding) der Seite nicht neu, Button bleibt während des Updates aktiv; erneutes Tippen öffnet den Ablehnen-Dialog nochmal, Bestätigen bleibt dann wirkungslos (Guard in _decide). Erstprüfer: „während Entscheidung gesperrt“ trifft nicht zu.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 22,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (pending.length)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "size": "small"
+    },
+    "events": [
+     "(click)=isReviewOpen = true; $event.stopPropagation()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.review"
+    ],
+    "de": [
+     "Prüfen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.review' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-a3959875"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:402",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:408"
+    ],
+    "n": "Kleiner gefüllter Button „Prüfen“ öffnet Prüf-Sheet, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 34,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true"
+    },
+    "events": [
+     "(click)=openNextAttendance()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "teamOrg.minutes"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ nextTitle }} {{ 'teamOrg.minutes' | transloco: { min: nextTopMinutes } }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-a454cdde"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:423",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:431"
+    ],
+    "n": "Kalender-Icon, „{Typ} · {Wt}, {TT.MM.}“, Minuten-Notiz nur > 0, Chevron; öffnet /attendance/:id (Leitung darf Termin öffnen, attendance_detail_guard). Nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 71,
+    "cond": [
+     "@else if (isLeader)",
+     "@else (not nextAttendance)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none",
+     "[disabled]": "\"creatingAttendance\""
+    },
+    "events": [
+     "(click)=createAttendance()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "teamOrg.createEvent"
+    ],
+    "de": [
+     "Termin anlegen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.createEvent' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-a6616d6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:463",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:466",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:115"
+    ],
+    "n": "„Termin anlegen“ während Anlegen deaktiviert; Schnellanlage (Typwahl, Tag) und Auswahl des neuen Termins. Nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 44,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)",
+     "@for (top of nextTops; track top.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=topAction(top)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.topName",
+     "teamOrg.minutes"
+    ],
+    "de": [
+     "TOP {n} · {name}",
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.topName' | transloco: { n: topNumber(top), name: top.name } }} {{ top.conductor }} {{ 'teamOrg.minutes' | transloco: { min: top.time } }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-a9fd8aa7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:433",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:441"
+    ],
+    "n": "„TOP n · Name“, Leitung als Untertitel, „{min} min“; Tippen → Aktionsblatt Öffnen/Entfernen (Plan-Update mit tenantId-Filter). Nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 85,
+    "cond": [
+     "@else if (isLeader)",
+     "@for (item of openTopics; track item.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openTopic(item.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.postponedLower",
+     "teamOrg.plannedLower"
+    ],
+    "de": [
+     "vertagt",
+     "eingeplant"
+    ],
+    "literals": [],
+    "text": "{{ item.title }} {{ 'teamOrg.postponedLower' | transloco }} {{ 'teamOrg.plannedLower' | transloco }} {{ topicSubtitle(item) }} {{ priorityLabels[item.priority] }}",
+    "id": "team-organization/topics-tab/topics-tab.component#action-db6a6c6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:479",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:508"
+    ],
+    "n": "Titel, Badges „vertagt“/„eingeplant“, Untertitel Verantwortlich · Vorschlag von, Prioritäts-Badge; öffnet /settings/agenda-items/:id. Nur Leitung. Sortierung siehe extra team-org.utils.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 171,
+    "method": "TeamTopicsTabComponent.changeAttendance",
+    "cond": [],
+    "header": {
+     "keys": [
+      "teamOrg.planForWhich"
+     ],
+     "de": [
+      "Für welchen Termin planen?"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.planForWhich')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "505225b4",
+    "mbody": "60c61347",
+    "id": "team-organization/topics-tab/topics-tab.component#actionsheet-8e3d3c47"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:419",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:69"
+    ],
+    "n": "„Ändern“ nur im Leitungsteil bei vorhandenem Termin (beide Apps). Kopf „Für welchen Termin planen?“, bis 8 Termine, „Datum dieses Termins ändern“, „Neuen Termin anlegen“, Abbrechen; aktueller Termin per Häkchen-Icon statt „ ✓“-Suffix.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 206,
+    "method": "TeamTopicsTabComponent.topAction",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "top.name"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "teamOrg.openTopic"
+       ],
+       "de": [
+        "Thema öffnen"
+       ],
+       "literals": [],
+       "expr": "translate('teamOrg.openTopic')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.openTopic(top.agendaItemId); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "teamOrg.removeFromEvent"
+       ],
+       "de": [
+        "Aus diesem Termin entfernen"
+       ],
+       "literals": [],
+       "expr": "translate('teamOrg.removeFromEvent')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.removeTop(top); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "383d1e58",
+    "mbody": "7508fd60",
+    "id": "team-organization/topics-tab/topics-tab.component#actionsheet-f0556e68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:441",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:128"
+    ],
+    "n": "TOP-Zeilen nur im Leitungsteil. Kopf TOP-Name, „Thema öffnen“, „Aus diesem Termin entfernen“ (destruktiv), Abbrechen; Entfernen nimmt den TOP aus dem Plan, Thema bleibt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 239,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"suggestDescription\"",
+    "bindings": [
+     "[label]=\"'tasks.description' | transloco\"",
+     "[placeholder]=\"'teamOrg.descPlaceholder' | transloco\"",
+     "[autoGrow]=\"true\""
+    ],
+    "icons": [],
+    "keys": [
+     "tasks.description",
+     "teamOrg.descPlaceholder"
+    ],
+    "de": [
+     "Beschreibung",
+     "Worum geht es? (optional)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'tasks.description' | transloco\" [placeholder]=\"'teamOrg.descPlaceholder' | transloco\"",
+    "id": "team-organization/topics-tab/topics-tab.component#field-12915c8b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:722"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 235,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"suggestTitle\"",
+    "bindings": [
+     "[label]=\"'tasks.title' | transloco\"",
+     "[placeholder]=\"'teamOrg.titlePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "tasks.title",
+     "teamOrg.titlePlaceholder"
+    ],
+    "de": [
+     "Titel",
+     "z. B. Neue Notenpulte"
+    ],
+    "literals": [],
+    "text": "[label]=\"'tasks.title' | transloco\" [placeholder]=\"'teamOrg.titlePlaceholder' | transloco\"",
+    "id": "team-organization/topics-tab/topics-tab.component#field-a7c2d1da"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:717"
+    ],
+    "n": "Gestapeltes Label „Titel“, Platzhalter „z. B. Neue Notenpulte“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 110,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (doneTopics.length)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"showDone\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "teamOrg.showDone"
+    ],
+    "de": [
+     "Erledigte anzeigen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.showDone' | transloco: { count: doneTopics.length } }}",
+    "id": "team-organization/topics-tab/topics-tab.component#field-ab65ddc9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:516",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:519"
+    ],
+    "n": "Schalter „Erledigte anzeigen ({n})“ nur bei erledigten/verworfenen Themen, Standard aus, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 221,
+    "cond": [
+     "@else if (inCircle)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isSuggestOpen\""
+    },
+    "events": [
+     "(didDismiss)=isSuggestOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isSuggestOpen\"",
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "team-organization/topics-tab/topics-tab.component#modal-0f4cf4d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:555",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:700"
+    ],
+    "n": "Ionic: Sheet in voller Höhe (breakpoints [0,1], initial 1) / Flutter: Bottom-Sheet nur so hoch wie der Inhalt (mainAxisSize.min).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 133,
+    "cond": [
+     "@else if (isLeader)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isReviewOpen\""
+    },
+    "events": [
+     "(didDismiss)=isReviewOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isReviewOpen\"",
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "team-organization/topics-tab/topics-tab.component#modal-f91a5777"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:240-251",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:267-275"
+    ],
+    "n": "Titel „Vorschläge“, X links gleich. Ionic: Sheet in voller Höhe (Breakpoint 1); schließt automatisch, sobald nach einer Entscheidung keine Vorschläge mehr offen sind (loadLeader: isReviewOpen=false) / Flutter: Bottom-Sheet 85 % Höhe, bleibt nach der letzten Entscheidung offen.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 82,
+    "cond": [
+     "@else if (isLeader)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "class": "header-note"
+    },
+    "keys": [
+     "teamOrg.openCount"
+    ],
+    "de": [
+     "{count} offen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.openCount' | transloco: { count: openTopics.length } }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-0a7991a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:476"
+    ],
+    "n": "„{n} offen“ (Anzahl offener Themen), nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 160,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)",
+     "@if (item.description)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "proposal-description"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.description }}"
+    ],
+    "text": "{{ item.description }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-1373b371"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:297"
+    ],
+    "n": "Beschreibung nur wenn vorhanden, Zeilenumbrüche erhalten.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 202,
+    "cond": [
+     "@else if (inCircle)",
+     "@for (item of items; track item.id)",
+     "@if (item.proposal_status === 'accepted')"
+    ],
+    "tag": "#text",
+    "keys": [
+     "teamOrg.acceptedByLeaders"
+    ],
+    "de": [
+     "Von der Leitung übernommen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.acceptedByLeaders' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-15024791"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:618"
+    ],
+    "n": "Mitglieder im Kreis (inTeamCircle, gleiche Logik inkl. Eltern/Bewerber ausgeschlossen): bei angenommenem Vorschlag „Von der Leitung übernommen“ unter dem Titel; Leitung sieht diesen Teil in beiden Apps nicht.",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 150,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "ion-avatar",
+    "attrs": {
+     "slot": "start",
+     "class": "initials"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ initials(item.proposer) || '?' }}"
+    ],
+    "text": "{{ initials(item.proposer) || '?' }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-1e54bcf8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:281",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:285"
+    ],
+    "n": "Initialen-Avatar 36 px, primary-shade, weiß; „?“ ohne Namen.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 153,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ relativeDay(item.created_at) }}"
+    ],
+    "text": "{{ relativeDay(item.created_at) }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-1e977710"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:293"
+    ],
+    "n": "relativeDay: heute/gestern/vor n Tagen/Datum ab 14 Tagen, gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 55,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)",
+     "@empty of nextTops"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "teamOrg.noTopsYet"
+    ],
+    "de": [
+     "Noch keine Themen auf der Tagesordnung."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noTopsYet' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-3367c740"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:443",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:445"
+    ],
+    "n": "„Noch keine Themen auf der Tagesordnung.“ grau, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 31,
+    "cond": [
+     "@else if (isLeader)",
+     "@if (nextAttendance)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ nextHeader }}"
+    ],
+    "text": "{{ nextHeader }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-35aed666"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:417"
+    ],
+    "n": "„Nächster Termin“ bzw. „Gewählter Termin“ (Vergleich mit erstem kommenden Termin), nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 211,
+    "cond": [
+     "@else if (inCircle)",
+     "@for (item of items; track item.id)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"suggestionStatus(item).color\""
+    },
+    "bindings": [
+     "[color]=\"suggestionStatus(item).color\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ suggestionStatus(item).label }}"
+    ],
+    "text": "{{ suggestionStatus(item).label }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-569e6f57"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:627"
+    ],
+    "n": "Übernommen grün / Abgelehnt rot / Wartet grau.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 232,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "sheet-hint"
+    },
+    "keys": [
+     "teamOrg.suggestHint"
+    ],
+    "de": [
+     "Du hast ein Anliegen für die nächste Sitzung? Die Leitung entscheidet, ob es auf die Tagesordnung kommt."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestHint' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-59b7f7b0-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:713"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 66,
+    "cond": [
+     "@else if (isLeader)",
+     "@else (not nextAttendance)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "teamOrg.nextEvent"
+    ],
+    "de": [
+     "Nächster Termin"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.nextEvent' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-5af62190"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:458"
+    ],
+    "n": "Kopf „Nächster Termin“ ohne geplanten Termin, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 158,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "h2",
+    "attrs": {
+     "class": "proposal-title"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.title }}"
+    ],
+    "text": "{{ item.title }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:296"
+    ],
+    "n": "Vorschlagstitel fett (600).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 199,
+    "cond": [
+     "@else if (inCircle)",
+     "@for (item of items; track item.id)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.title }}"
+    ],
+    "text": "{{ item.title }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-5ea5f4d9-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:612"
+    ],
+    "n": "Darunter „Von der Leitung übernommen“ bzw. „Eingereicht am {Datum}“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 170,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@empty of pending"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "sheet-hint"
+    },
+    "keys": [
+     "teamOrg.allDecided"
+    ],
+    "de": [
+     "Alle Vorschläge sind entschieden."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.allDecided' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-62bc2cc3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:270-275"
+    ],
+    "n": "Ionic: unter dem Hinweis, praktisch nur kurz beim automatischen Schließen sichtbar / Flutter: Sheet bleibt offen und zeigt „Alle Vorschläge sind entschieden.“ dauerhaft anstelle des Hinweises.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 254,
+    "cond": [
+     "@else (not loading / isLeader / inCircle)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "teamOrg.leadersPlan"
+    ],
+    "de": [
+     "Themen und Tagesordnungen plant die Leitung. Du gehörst zu keiner Gruppe mit Protokoll & Tagesordnung."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.leadersPlan' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-6db4964a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:33",
+     "lib/core/providers/team_org_providers.dart:139"
+    ],
+    "n": "Gleicher Text, Bedingung in beiden: weder Leitung noch im Kreis. inCircle = teamOrg aktiv && (Leitung || Person nicht ausgetreten && isInAnyCircle). Eltern und Bewerber nie im Kreis; Helfer, Stimmführer, Spieler und Beobachter je nach Gruppe des Typs bzw. nur mit eigenem player-Datensatz – in beiden gleich. Icon forum statt chatbubbles. Hinweis (gemeinsamer Code, eigener Batch): Flutter getPlayerByAppId nutzt maybeSingle und wirft bei zwei player-Zeilen mit gleicher appId; Ionic nimmt die aktive Zeile. Betroffene sähen hier diesen Text statt der Mitgliederansicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 69,
+    "cond": [
+     "@else if (isLeader)",
+     "@else (not nextAttendance)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "teamOrg.noProtocolEvent"
+    ],
+    "de": [
+     "Kein Termin mit Protokoll & Tagesordnung geplant."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noProtocolEvent' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-8ee75432"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:461"
+    ],
+    "n": "„Kein Termin mit Protokoll & Tagesordnung geplant.“ grau, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 152,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">",
+     "@for (item of pending; track item.id)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Mitglied"
+    ],
+    "bound": [
+     "{{ personName(item.proposer) || 'Mitglied' }}"
+    ],
+    "text": "{{ personName(item.proposer) || 'Mitglied' }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-921d34f9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:289",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:290"
+    ],
+    "n": "Name bzw. „Mitglied“ (teamOrgFlutterMember).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 81,
+    "cond": [
+     "@else if (isLeader)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "agenda.topicStore"
+    ],
+    "de": [
+     "Themenspeicher"
+    ],
+    "literals": [],
+    "text": "{{ 'agenda.topicStore' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-a13b4369"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:473"
+    ],
+    "n": "„Themenspeicher“, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 146,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "sheet-hint"
+    },
+    "keys": [
+     "teamOrg.suggestionsHint"
+    ],
+    "de": [
+     "Übernommene Vorschläge landen im Themenspeicher. Wer vorgeschlagen hat, wird über deine Entscheidung informiert."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestionsHint' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-c03f0b71"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:273"
+    ],
+    "n": "Hinweis wortgleich, solange Vorschläge offen sind (Ionic-Sheet schließt sich, wenn keine mehr offen sind; Abweichung des Offenbleibens unter modal-f91a5777).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 142,
+    "cond": [
+     "@else if (isLeader)",
+     "in <ion-modal isOpen=\"isReviewOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "teamOrg.suggestions"
+    ],
+    "de": [
+     "Vorschläge"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestions' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-d2385962"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:262"
+    ],
+    "n": "Sheet-Titel „Vorschläge“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 102,
+    "cond": [
+     "@else if (isLeader)",
+     "@empty of openTopics"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "teamOrg.noOpenTopics"
+    ],
+    "de": [
+     "Keine offenen Themen. Lege mit + ein neues an."
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.noOpenTopics' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-d8a32d79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:510",
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:512"
+    ],
+    "n": "„Keine offenen Themen. Lege mit + ein neues an.“, nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 228,
+    "cond": [
+     "@else if (inCircle)",
+     "in <ion-modal isOpen=\"isSuggestOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "teamOrg.suggestTopic"
+    ],
+    "de": [
+     "Thema vorschlagen"
+    ],
+    "literals": [],
+    "text": "{{ 'teamOrg.suggestTopic' | transloco }}",
+    "id": "team-organization/topics-tab/topics-tab.component#text-ea18beab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:708"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "team-organization/topics-tab/topics-tab.component.html",
+    "line": 208,
+    "cond": [
+     "@else if (inCircle)",
+     "@for (item of items; track item.id)",
+     "@if (item.proposal_status === 'rejected' && item.decision_note)"
+    ],
+    "tag": "p",
+    "attrs": {
+     "class": "decision-note"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "„{{ item.decision_note }}“"
+    ],
+    "text": "„{{ item.decision_note }}“",
+    "id": "team-organization/topics-tab/topics-tab.component#text-fd9c6263"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:622"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 223,
+    "method": "TeamTopicsTabComponent.removeTop",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.removedStays"
+     ],
+     "de": [
+      "Aus dem Termin entfernt, bleibt im Themenspeicher"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.removedStays')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "b5cc91be",
+    "mbody": "4bc9d0ee",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-11df5505"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:153"
+    ],
+    "n": "Text gleich. Ionic: grüner Erfolgs-Toast (Default success) / Flutter: neutraler Info-Toast (showInfo).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 325,
+    "method": "TeamTopicsTabComponent.decide",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.decisionFailed"
+     ],
+     "de": [
+      "Entscheidung konnte nicht gespeichert werden"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.decisionFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "4e4baf63",
+    "mbody": "6d478b0f",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-40fc1c31"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:234"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 321,
+    "method": "TeamTopicsTabComponent.decide",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "doneText"
+    },
+    "color": null,
+    "duration": null,
+    "src": "f3f77088",
+    "mbody": "6d478b0f",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-6b9b25ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:232"
+    ],
+    "n": "„Übernommen“ / „Abgelehnt“ grün; team-notify proposal_decided wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 226,
+    "method": "TeamTopicsTabComponent.removeTop",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.removeFailed"
+     ],
+     "de": [
+      "Thema konnte nicht entfernt werden"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.removeFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "02ee0581",
+    "mbody": "4bc9d0ee",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-7dbb4368"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:155"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "team-organization/topics-tab/topics-tab.component",
+   "ionic": {
+    "ts": "team-organization/topics-tab/topics-tab.component.ts",
+    "html": "team-organization/topics-tab/topics-tab.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "team-organization/topics-tab/topics-tab.component.ts",
+    "line": 354,
+    "method": "TeamTopicsTabComponent.sendSuggestion",
+    "cond": [],
+    "message": {
+     "keys": [
+      "teamOrg.suggestionFailed"
+     ],
+     "de": [
+      "Vorschlag konnte nicht gesendet werden"
+     ],
+     "literals": [],
+     "expr": "translate('teamOrg.suggestionFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "31320ad2",
+    "mbody": "666892e1",
+    "id": "team-organization/topics-tab/topics-tab.component#toast-b78247a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/widgets/topics_tab.dart:689"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "terms/terms.page.html",
+    "line": 30,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "lines": "none",
+     "button": "",
+     "detail": "true"
+    },
+    "events": [
+     "(click)=openPrivacy($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "document-text-outline"
+    ],
+    "keys": [
+     "terms.read"
+    ],
+    "de": [
+     "Datenschutzerklärung & Impressum lesen"
+    ],
+    "literals": [],
+    "text": "{{ 'terms.read' | transloco }}",
+    "id": "terms/terms.page#action-0217fb55"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:146"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "terms/terms.page.html",
+    "line": 55,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"!privacyAccepted\""
+    },
+    "events": [
+     "(click)=accept()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-circle-outline"
+    ],
+    "keys": [
+     "terms.acceptContinue"
+    ],
+    "de": [
+     "Akzeptieren und fortfahren"
+    ],
+    "literals": [],
+    "text": "{{ 'terms.acceptContinue' | transloco }}",
+    "id": "terms/terms.page#action-88056e97"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:183"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "terms/terms.page.html",
+    "line": 48,
+    "cond": [],
+    "tag": "a",
+    "attrs": {
+     "href": "#"
+    },
+    "events": [
+     "(click)=openPrivacy($event)"
+    ],
+    "link": "#",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "terms.privacy"
+    ],
+    "de": [
+     "Datenschutzerklärung"
+    ],
+    "literals": [],
+    "text": "{{ 'terms.privacy' | transloco }}",
+    "id": "terms/terms.page#action-c5b88349"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:169"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "terms/terms.page",
+   "ionic": {
+    "ts": "terms/terms.page.ts",
+    "html": "terms/terms.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "terms/terms.page.html",
+    "line": 40,
+    "cond": [],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"privacyAccepted\"",
+    "bindings": [
+     "[attr.aria-label]=\"'terms.acceptAria' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "terms/terms.page#field-b576bf25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/legal/presentation/pages/terms_page.dart:161"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/legal/presentation/pages/terms_page.dart"
+   ]
+  }
+ ]
+}

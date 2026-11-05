@@ -1,0 +1,1293 @@
+{
+ "batch": "zz-verify5c-opus-06",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-4beeb3b857",
+    "title": "versionCode/versionName unter Ionic-Stand",
+    "n": "Weiter real auf 57bb011: pubspec 0.41.25+137 → versionCode 137 / versionName 0.41.25; Ionic 4.19.9 hat versionCode 230 / „4.19.9“ (build.gradle:10-11). Play nimmt nur Codes > 230 an → --build-number ≥ 231 und --build-name ≥ 5.0.0 nötig; kein Skript/CI setzt sie. Veraltet: docs/push-setup.md:23-24 (227/228) und device-checklist.md:31 („≥ 229“ – 229/230 würden abgelehnt).",
+    "sev": "hoch",
+    "ionic": "android/app/build.gradle:10",
+    "f": [
+     "pubspec.yaml:4",
+     "android/app/build.gradle.kts:40",
+     "android/app/build.gradle.kts:41",
+     "docs/push-setup.md:23",
+     "docs/parity/device-checklist.md:31"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml",
+    "docs/parity/device-checklist.md"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-5da3efae62",
+    "title": "INTERNET-Berechtigung nur implizit",
+    "n": "Ionic: android.permission.INTERNET explizit im App-Manifest / Flutter: nur im debug-/profile-Manifest; Release erhält sie allein per Manifest-Merge aus Plugin-Bibliotheken (u. a. firebase-messaging).",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:56",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:4",
+     "android/app/src/debug/AndroidManifest.xml:6"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-6afce27e8e",
+    "title": "Kamera-Berechtigung neu (mobile_scanner)",
+    "n": "Kern des Befunds falsch: das Plugin-Manifest von mobile_scanner 7.4.3 (/root/.pub-cache/hosted/pub.dev/mobile_scanner-7.4.3/android/src/main/AndroidManifest.xml:3-4) bringt neben CAMERA auch <uses-feature android.hardware.camera required=\"false\"/> mit → Play filtert keine Geräte ohne Kamera. Echt bleibt: neue Berechtigung CAMERA im Store-Eintrag (Ionic keine), und weil sie im Manifest steht, fragt image_picker vor „Foto hinzufügen → Kamera“ (Termin) erst die Kamera-Laufzeitberechtigung ab (ImagePickerDelegate.java:368); der QR-Scan selbst ist nur Beta. → niedrig.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:56",
+    "f": [
+     "pubspec.yaml:104",
+     "lib/features/attendance/presentation/attendance_extra_actions.dart:35"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-8140fe9e0d",
+    "title": "Push-Kanal 'default' neu mit hoher Wichtigkeit",
+    "n": "Nur Optik (Leon 05.11.2026): Pushes kommen gleich an, nur als Heads-up-Banner statt still in der Leiste. – Befund: Echt; Pfad korrigiert (MainActivity liegt auf 2157fa0 unter kotlin/de/attendix/attendix, nicht io/stephanus/attendix). Ionic legt keinen Kanal 'default' an (nur live_plan), kein default_notification_channel_id → FCM-Fallback-Kanal mit IMPORTANCE_DEFAULT (kein Heads-up). Flutter: Kanal 'default' „Benachrichtigungen“ IMPORTANCE_HIGH beim Activity-Start + Manifest-Default → alle Pushes als Heads-up-Banner; Stummschaltung o. Ä. am alten Fallback-Kanal gilt nicht mehr. Entspricht der Absicht von send-push.ts (channel_id 'default'), ist aber sichtbar anders.",
+    "sev": "niedrig",
+    "ionic": "supabase/functions/_shared/send-push.ts:140",
+    "f": [
+     "android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt:54",
+     "android/app/src/main/AndroidManifest.xml:84"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/kotlin/de/attendix/attendix/MainActivity.kt",
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-839700db13",
+    "title": "Audio-Steuerung über exportierten MediaBrowserService",
+    "n": "Ionic: @capgo/capacitor-media-session (Service/Receiver aus dem Plugin) / Flutter: audio_service mit AudioService (exported, MediaBrowserService) + MediaButtonReceiver (exported) und eigenem Kanal 'de.attendix.attendix.audio' \"Audio\"; Medientasten/Bluetooth können die Wiedergabe fortsetzen.",
+    "sev": "niedrig",
+    "ionic": "package.json:55",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:63",
+     "lib/core/services/audio_player/media_session_native.dart:41"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-a1c35481e4",
+    "title": "Kein runder Launcher-Icon-Eintrag",
+    "n": "Ionic: android:roundIcon=@mipmap/ic_launcher_round (+ PNGs je Dichte) / Flutter: nur android:icon → Launcher auf Android 7.1, die runde Icons verwenden, zeigen das eckige Icon.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:8",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:10"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-bc26763c9d",
+    "title": "Adaptives Icon: Logo deutlich kleiner",
+    "n": "Nur Optik (Leon 05.11.2026): Nur die Größe des Logos im App-Icon weicht ab. – Befund: Nachgemessen: Ionic-Vordergrund (192 px, volles Icon) Logo-Höhe 150 px = 78 %, mit 16,7 % Inset → Logo ≈ 52 % der 108-dp-Ebene ≈ 78 % der sichtbaren 72 dp. Flutter-Vordergrund (432 px, transparent) Logo 251 px = 58 % und zusätzlich 16 % Inset → ≈ 39 % der Ebene ≈ 59 % der sichtbaren Fläche; Logo rund ein Viertel kleiner. Türkis #3EA5AE gleich. Dauerhaft auf jedem Android-8+-Homescreen sichtbar, daher mittel statt rein kosmetisch.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:7",
+    "f": [
+     "android/app/src/main/res/mipmap-anydpi-v26/ic_launcher.xml:6",
+     "pubspec.yaml:177"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-c131a10604",
+    "title": "App-Name „attendix“ kleingeschrieben",
+    "n": "Ionic: application-Label @string/app_name und Activity-Label @string/title_activity_main = „Attendix“ / Flutter: android:label=\"attendix\" (Template-Wert, keine String-Ressource) → nach dem Update steht unter dem Homescreen-Icon, im App-Drawer, in jeder Benachrichtigungs-Kopfzeile, in Berechtigungsdialogen („attendix erlauben …“) und in den App-Infos „attendix“. Die Erstprüfung (Flutter 1aba6be) meldete hier „Attendix“ – auf 2157fa0 nicht zutreffend. iOS unverändert (CFBundleDisplayName „Attendix“).",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:7",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:8"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/android",
+   "ionic": {},
+   "extra": {
+    "id": "x-d7a83d946f",
+    "title": "Eigener FileProvider entfällt",
+    "n": "Ionic: androidx FileProvider ${applicationId}.fileprovider (file_paths: external + cache) im App-Manifest / Flutter: keiner im App-Manifest; share_plus, open_filex, image_picker bringen eigene Provider mit anderen Authorities mit. Für Nutzer unsichtbar.",
+    "sev": "niedrig",
+    "ionic": "android/app/src/main/AndroidManifest.xml:45",
+    "f": [
+     "android/app/src/main/AndroidManifest.xml:7"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "android/app/src/main/AndroidManifest.xml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/config",
+   "ionic": {},
+   "extra": {
+    "id": "x-ab62bd7676",
+    "title": "OTA-Live-Updates entfallen",
+    "n": "Ionic: @capawesome/capacitor-live-update (publicKey, autoDeleteBundles, Kanal 'production' in Info.plist und resValue) liefert Web-Bundles ohne Store-Release / Flutter: keine OTA-Updates, nur Store-Updates (+ in_app_update/Store-Versionscheck). Für Nutzer kaum sichtbar, Fixes brauchen künftig einen Store-Release.",
+    "sev": "niedrig",
+    "ionic": "capacitor.config.json:13",
+    "f": [
+     "pubspec.yaml:99"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/ios",
+   "ionic": {},
+   "extra": {
+    "id": "x-02f00abb78",
+    "title": "App-Icon minimal anders gezeichnet",
+    "n": "Ionic: AppIcon-512@2x.png (eine 1024er-Datei, mit dünner Linie am oberen Rand) / Flutter: neu gerendertes app_icon.png (1024 + alle Einzelgrößen), gleiches Motiv und Farbe, Logo leicht anders gezeichnet (mittlere Pixeldifferenz ca. 3 %).",
+    "sev": "niedrig",
+    "ionic": "ios/App/App/Assets.xcassets/AppIcon.appiconset/Contents.json:5",
+    "f": [
+     "ios/Runner/Assets.xcassets/AppIcon.appiconset/Contents.json:1",
+     "pubspec.yaml:175"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/ios",
+   "ionic": {},
+   "extra": {
+    "id": "x-5df7b898da",
+    "title": "Alternative App-Icons neu",
+    "n": "Ionic: nur AppIcon / Flutter: vier alternative Icons (Konzertsaal, Nachtblau, Klar, Bühne) per setAlternateIconName wählbar; nur auf Nutzerwunsch, iOS zeigt dabei einen Systemhinweis.",
+    "sev": "niedrig",
+    "ionic": "ios/App/App.xcodeproj/project.pbxproj:454",
+    "f": [
+     "ios/Runner.xcodeproj/project.pbxproj:611",
+     "ios/Runner/AppDelegate.swift:26"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "ios/Runner/AppDelegate.swift"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/ios",
+   "ionic": {},
+   "extra": {
+    "id": "x-cb1c5c9d93",
+    "title": "CFBundleShortVersionString/CFBundleVersion unter Ionic-Stand",
+    "n": "Weiter real auf 57bb011: CFBundleShortVersionString/CFBundleVersion = $(FLUTTER_BUILD_NAME)/$(FLUTTER_BUILD_NUMBER) → ohne Flags 0.41.25 (137); Ionic 4.19.9 Release MARKETING_VERSION 4.19.9 / CURRENT_PROJECT_VERSION 239 (project.pbxproj:457/465). App Store Connect lehnt eine Version unter 4.19.9 ab → --build-name ≥ 5.0.0 nötig, kein Skript/CI übergibt es.",
+    "sev": "hoch",
+    "ionic": "ios/App/App.xcodeproj/project.pbxproj:465",
+    "f": [
+     "ios/Runner/Info.plist:37",
+     "ios/Runner/Info.plist:41",
+     "pubspec.yaml:4"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "pubspec.yaml"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "native/ios",
+   "ionic": {},
+   "extra": {
+    "id": "x-cb4b199ab5",
+    "title": "Template-Einträge der Info.plist",
+    "n": "Ionic: CFBundleName/Executable 'App', UIRequiredDeviceCapabilities armv7, Scene mit UISceneStoryboardFile Main / Flutter: CFBundleName 'attendix', Executable 'Runner', keine UIRequiredDeviceCapabilities (Entfernen ist bei Updates erlaubt), CADisableMinimumFrameDurationOnPhone (120 Hz), UIApplicationSupportsIndirectInputEvents, Fenster per SceneDelegate im Code. Ohne sichtbare Wirkung.",
+    "sev": "niedrig",
+    "ionic": "ios/App/App/Info.plist:80",
+    "f": [
+     "ios/Runner/Info.plist:32",
+     "ios/Runner/Info.plist:78",
+     "ios/Runner/AppDelegate.swift:101"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "ios/Runner/AppDelegate.swift"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "notifications/notifications.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get hasDutyTypes:21-23",
+     "constructor:32-41",
+     "ngOnInit:43-57",
+     "ngOnDestroy:59-61",
+     "updateNotificationConfig:63-65",
+     "connectTelegram:67-69",
+     "disconnectTelegram:71-89",
+     "isTenantEnabled:91-95",
+     "toggleTenant:97-105",
+     "toggleLiveActivity:107-111",
+     "togglePush:113-118"
+    ],
+    "bodies": {
+     "get hasDutyTypes": "e3258e01",
+     "constructor": "c85f12a3",
+     "ngOnInit": "2d758eee",
+     "ngOnDestroy": "f3819aab",
+     "updateNotificationConfig": "3783c050",
+     "connectTelegram": "06aaface",
+     "disconnectTelegram": "9038201b",
+     "isTenantEnabled": "aacc7cc8",
+     "toggleTenant": "33acc77f",
+     "toggleLiveActivity": "77e4282b",
+     "togglePush": "3758fd05"
+    },
+    "id": "notifications/notifications.page#logic-4cbdd102"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:60",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:103",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:119",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:125",
+     "lib/core/services/telegram_service.dart:181",
+     "lib/core/services/telegram_service.dart:207"
+    ],
+    "n": "Gleich: Konfiguration per Benutzer-Id (fehlende Zeile mit denselben Defaults angelegt), Realtime-Abo, jede Änderung schreibt die ganze Zeile (eq id), Telegram trennen → telegram_chat_id '', enabled_tenants als Zahlen, Live Activity speichern + setEnabled, Push über togglePush (push_enabled + initPush), Dienste-Schalter nur bei duty_mode. Abweichungen nur bei Fehlern/Laden (extra der Erstprüfung, niedrig).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart",
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "notifications/notifications.page.ts",
+    "line": 68,
+    "method": "NotificationsPage.connectTelegram",
+    "cond": [],
+    "plugin": "Browser",
+    "call": "open",
+    "args": "{ url: `https://t.me/attendix_bot?start=${this.db.tenantUser().userId}` }",
+    "src": "072d916f",
+    "mbody": "06aaface",
+    "id": "notifications/notifications.page#native-1f2aa2b5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:130",
+     "lib/core/services/telegram_service.dart:176"
+    ],
+    "n": "Gleicher Link https://t.me/attendix_bot?start=<userId>. Ionic: Capacitor Browser.open (In-App-Browser in der App, neuer Tab im Web) / Flutter: launchUrl externalApplication (öffnet direkt Telegram bzw. externen Browser), bei Fehler Toast 'Konnte Telegram nicht öffnen'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart",
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 140,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)",
+     "@if (db.tenants().length)"
+    ],
+    "tag": "ion-card-subtitle",
+    "attrs": {},
+    "keys": [
+     "notif.tenantSettings"
+    ],
+    "de": [
+     "Instanz-Einstellungen"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.tenantSettings' | transloco }}",
+    "id": "notifications/notifications.page#text-68264c2e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:250",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:324-325"
+    ],
+    "n": "'Instanz-Einstellungen' wenn Benachrichtigungen aktiv und der Nutzer Instanzen hat. Seiteneintrag in beiden für alle Rollen ohne Bedingung; Instanzliste = alle tenantUsers-Instanzen des Nutzers (jede Rolle), in beiden gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 144,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)",
+     "@if (db.tenants().length)",
+     "@for (tenant of db.tenants(); track tenant.id; let idx = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.longName }}"
+    ],
+    "text": "{{ tenant.longName }}",
+    "id": "notifications/notifications.page#text-809405e4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:332"
+    ],
+    "n": "Flutter fällt bei leerem longName auf shortName zurück.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "extra": {
+    "id": "x-1957eb8534",
+    "title": "Fehler beim Speichern der Einstellungen",
+    "n": "Ionic: Toast 'Fehler beim Updaten der Konfiguration, bitte versuche es später erneut.', der Schalter bleibt im neuen (nicht gespeicherten) Zustand / Flutter: Toast 'Fehler beim Aktualisieren der Konfiguration', der Schalter springt zurück.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/notification/notification.service.ts:55",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:103"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "extra": {
+    "id": "x-87f20645a2",
+    "title": "Laden der Einstellungen",
+    "n": "Flutter besser: Ionic zeigt beim Laden und bei Ladefehler eine leere Seite (nur Titel) / Flutter zeigt Spinner, bei Fehler Toast 'Fehler beim Laden: …' und Text 'Konfiguration nicht gefunden'.",
+    "sev": "niedrig",
+    "ionic": "src/app/notifications/notifications.page.ts:43",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:60",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:158"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-attendance/open-attendance.page",
+   "ionic": {
+    "ts": "open-attendance/open-attendance.page.ts",
+    "html": "open-attendance/open-attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-attendance/open-attendance.page.ts",
+    "line": 55,
+    "method": "OpenAttendancePage.ngOnInit",
+    "cond": [
+     "(Number.isNaN(attendanceId))"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "6e692538",
+    "roleGuarded": true,
+    "id": "open-attendance/open-attendance.page#nav-e5a2e051-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/open_attendance_page.dart:38-43",
+     "lib/core/router/app_router.dart:340-361"
+    ],
+    "n": "Nicht-numerische id → /login, für alle Rollen gleich; eingeloggt leitet /login wie Ionic LoginGuard auf die Startseite der Rolle weiter.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-attendance/open-attendance.page",
+   "ionic": {
+    "ts": "open-attendance/open-attendance.page.ts",
+    "html": "open-attendance/open-attendance.page.html"
+   },
+   "extra": {
+    "id": "x-6584f621dd",
+    "title": "Fortsetzen nach Login",
+    "n": "Flutter besser: Ionic merkt sich die ID nur in pendingAttendanceId (geht bei Reload verloren) / Flutter setzt den Link nach dem Login fort.",
+    "sev": "niedrig",
+    "ionic": "src/app/open-attendance/open-attendance.page.ts:62-67",
+    "f": [
+     "lib/core/router/app_router.dart:311-316",
+     "lib/features/planning/presentation/pages/open_attendance_page.dart:40-43"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-file/open-file.page.ts",
+    "line": 83,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/files'], { queryParams, replaceUrl: true }",
+    "src": "ddc13abd",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#nav-034261c8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:115-124"
+    ],
+    "n": "Ionic: navigateByUrl(..., replaceUrl) – Zurück führt nicht auf /open-file / Flutter: context.go ohne Ersetzen des Browser-History-Eintrags, Zurück im Browser öffnet /open-file erneut.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-file/open-file.page.ts",
+    "line": 37,
+    "method": "OpenFilePage.ngOnInit",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "922a2171",
+    "id": "open-file/open-file.page#nav-c403b48f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:64"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "open-file/open-file.page.ts",
+    "line": 48,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [
+     "(!tenantId || Number.isNaN(tenantId))"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/login'",
+    "src": "bd94d0e7",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#nav-e132ddd2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:69-73",
+     "lib/core/router/app_router.dart:1342-1347"
+    ],
+    "n": "Fehlende/ungültige tenantId → /login in beiden (angemeldet leitet /login auf die Startseite weiter); rollenunabhängig.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "open-file/open-file.page.ts",
+    "line": 63,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [
+     "(!this.db.tenantUsers().some((tu) => tu.tenantId === tenantId))",
+     "(tenantId !== this.db.tenant()?.id)"
+    ],
+    "message": {
+     "keys": [
+      "openFile.noTenantAccess"
+     ],
+     "de": [
+      "Du hast keinen Zugriff auf diese Instanz."
+     ],
+     "literals": [],
+     "expr": "translate('openFile.noTenantAccess')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8b6b3b5a",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#toast-0367da77"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:87-97"
+    ],
+    "n": "Link-Instanz nicht unter den eigenen tenantUsers (jede Rolle inkl. Bewerber/Beobachter zählt, Flutter userTenantsProvider liest ebenfalls alle tenantUsers-Zeilen): roter Toast \"Du hast keinen Zugriff auf diese Instanz.\", dann Startseite der aktuellen Instanz (Dashboard-Logik über homeRouteFor).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "open-file/open-file.page.ts",
+    "line": 86,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [
+     "(!navigated)"
+    ],
+    "message": {
+     "keys": [
+      "openFile.linkFailed"
+     ],
+     "de": [
+      "Der Link konnte nicht geöffnet werden."
+     ],
+     "literals": [],
+     "expr": "translate('openFile.linkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "405790ea",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#toast-c088ac66"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:124",
+     "lib/core/router/app_router.dart:364-372"
+    ],
+    "n": "Flutter besser: Erstprüfung übersah TermsGuard. Ionic: Nutzer ohne terms_accepted_at (z. B. Login über geteilten Link) → TermsGuard bricht ab → Toast \"Der Link konnte nicht geöffnet werden.\" + routeAfterAuth, Link verloren / Flutter: Terms-Gate im Router leitet still auf /terms, ein vor dem Login gemerkter Link wird nach Zustimmung fortgesetzt.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "open-file/open-file.page.ts",
+    "line": 71,
+    "method": "OpenFilePage.resolveLink",
+    "cond": [
+     "(!this.db.canAccessFiles())"
+    ],
+    "message": {
+     "keys": [
+      "files.noAccess"
+     ],
+     "de": [
+      "Du hast keinen Zugriff auf Dateien."
+     ],
+     "literals": [],
+     "expr": "translate('files.noAccess')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "afad6fa1",
+    "mbody": "146c44ea",
+    "roleGuarded": true,
+    "id": "open-file/open-file.page#toast-ef87d2b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:107-113",
+     "lib/core/providers/role_permission_providers.dart:116-120"
+    ],
+    "n": "canAccessFilesFor = Ionic canAccessFiles: files_shared → alle außer Bewerber/none; sonst Admin, Verantwortlich, Helfer, Stimmführer-Helfer (nicht Spieler, Stimmführer, Eltern, Beobachter). Toast \"Du hast keinen Zugriff auf Dateien.\" (danger) + Startseite der Rolle in der Link-Instanz.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 199,
+    "method": "OrgPlanPublicPage.subscribeRealtime",
+    "cond": [
+     "!(entry.kind === 'attendance')"
+    ],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "bc636f59",
+    "mbody": "bf965efa",
+    "id": "org-plan-public/org-plan-public.page#db-2f01c860"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+    ],
+    "n": "Ionic: Realtime-Kanal je kommendem Plan, Änderungen erscheinen sofort / Flutter: kein Realtime-Kanal (SOL_FIX7: Payload enthielte share_edit_key/edit_key für anonyme Betrachter); stattdessen Polling der öffentlichen Selects alle 15 s, nur bereits angezeigte kommende Einträge werden aktualisiert → Änderungen erscheinen bis zu 15 s später (shared_plans UPDATE id=eq)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 199,
+    "method": "OrgPlanPublicPage.subscribeRealtime",
+    "cond": [
+     "!(entry.kind === 'attendance')"
+    ],
+    "table": "realtime",
+    "op": "channel",
+    "payload": "`org-adhoc-${entry.id}`",
+    "filters": [],
+    "src": "8ec5e361",
+    "mbody": "bf965efa",
+    "id": "org-plan-public/org-plan-public.page#db-508eb016"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125"
+    ],
+    "n": "Ionic: Kanal `org-adhoc-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 182,
+    "method": "OrgPlanPublicPage.subscribeRealtime",
+    "cond": [
+     "(entry.kind === 'attendance')"
+    ],
+    "table": "realtime",
+    "op": "subscribe",
+    "payload": null,
+    "filters": [],
+    "src": "5fe0b02c",
+    "mbody": "bf965efa",
+    "id": "org-plan-public/org-plan-public.page#db-b7046159"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:342"
+    ],
+    "n": "Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 182,
+    "method": "OrgPlanPublicPage.subscribeRealtime",
+    "cond": [
+     "(entry.kind === 'attendance')"
+    ],
+    "table": "realtime",
+    "op": "channel",
+    "payload": "`org-att-${entry.id}`",
+    "filters": [],
+    "src": "ccfe3c64",
+    "mbody": "bf965efa",
+    "id": "org-plan-public/org-plan-public.page#db-b99f855a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:46",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125"
+    ],
+    "n": "Ionic: Kanal `org-att-${id}` / Flutter: kein Kanal, Polling alle 15 s (siehe db-b7046159)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 370,
+    "method": "OrgPlanPublicPage.exportPlan",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: entry.time, end: entry.end, fields: entry.fields }, entry.title",
+    "src": "ea2815f9",
+    "mbody": "1ce17859",
+    "id": "org-plan-public/org-plan-public.page#effect-45237c25"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:91",
+     "lib/core/providers/branding_providers.dart:40"
+    ],
+    "n": "PDF A4 wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 371,
+    "method": "OrgPlanPublicPage.exportPlan",
+    "cond": [],
+    "call": "Utils.createPlanExport",
+    "args": "{ time: entry.time, end: entry.end, fields: entry.fields, sideBySide: true }, entry.title",
+    "src": "5adec451",
+    "mbody": "1ce17859",
+    "id": "org-plan-public/org-plan-public.page#effect-b996f803"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:104",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:111"
+    ],
+    "n": "PDF 2x A5 (sideBySide) wird erzeugt und geteilt/gespeichert. Unterschiede: (1) Flutter fügt das Branding der aktuell gewählten Instanz ein, wenn der Betrachter eingeloggt ist (resolvePdfBranding), Ionic exportiert hier immer ohne Branding; (2) Untertitel: Ionic Datum aus plan.time (bei „HH:mm“ das heutige Datum) / Flutter Plandatum (PlanUtils.longDate); (3) Flutter besser: Plan ohne Felder → Warn-Toast statt leerem PDF",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 349,
+    "method": "OrgPlanPublicPage.showCalendarAlert",
+    "cond": [],
+    "call": "navigator.clipboard.writeText",
+    "args": "link",
+    "src": "475d213d",
+    "mbody": "36822c19",
+    "id": "org-plan-public/org-plan-public.page#effect-c4281c2a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:154",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:173",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:158"
+    ],
+    "n": "Mit Key gleich (Clipboard.setData(link), Dialog bleibt offen). Erster Prüfer übersah den Guard: Ionic subscribeCalendar bricht ohne publicKey ab (`if (!this.publicKey) return`, /org-plan ohne ?key=), der immer sichtbare Kalender-Button tut dann nichts. Flutter: _subscribeCalendar ohne Key-Guard → Sheet + Dialog mit „…/ical-org-plans?key=null“, „Link kopieren“ kopiert diesen kaputten Link.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:65-65",
+     "ngOnInit:67-95",
+     "handleRefresh:97-100",
+     "loadPlans:102-173",
+     "ngOnDestroy:175-178",
+     "subscribeRealtime:180-216",
+     "getDateFormatted:218-220",
+     "getStartTime:222-228",
+     "getEndTime:230-236",
+     "calculateTime:238-246",
+     "getActiveCountdown:248-264",
+     "isLiveNow:266-276",
+     "toggleLive:278-286",
+     "stopLive:288-291",
+     "updateActiveIndex:293-306",
+     "scrollToActive:310-318",
+     "subscribeCalendar:320-339",
+     "showCalendarAlert:341-364",
+     "exportPlan:366-376",
+     "trackByPlan:378-378",
+     "trackByField:379-379"
+    ],
+    "bodies": {
+     "constructor": "f1feacf7",
+     "ngOnInit": "7cd48ad5",
+     "handleRefresh": "5476094d",
+     "loadPlans": "e50f2770",
+     "ngOnDestroy": "b5373de4",
+     "subscribeRealtime": "bf965efa",
+     "getDateFormatted": "82d98169",
+     "getStartTime": "22f4d830",
+     "getEndTime": "1466efb7",
+     "calculateTime": "99d99195",
+     "getActiveCountdown": "c1d65b99",
+     "isLiveNow": "313b6327",
+     "toggleLive": "3ca5508c",
+     "stopLive": "faf033f3",
+     "updateActiveIndex": "f299cad1",
+     "scrollToActive": "e9c69591",
+     "subscribeCalendar": "7d861801",
+     "showCalendarAlert": "36822c19",
+     "exportPlan": "1ce17859",
+     "trackByPlan": "a5bcd290",
+     "trackByField": "8300f490"
+    },
+    "id": "org-plan-public/org-plan-public.page#logic-7396311f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:69",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:100",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:125",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:86",
+     "lib/core/utils/plan_utils.dart:455"
+    ],
+    "n": "Laden (Org per public_plan_key, Instanzen, Termine is_org_plan + shared_plans), Sortierung, Aufteilung kommend/vergangen (vergangen absteigend), Titel-Fallback „Plan“, Live-Fenster (−5 min … Ende+15 min), Auto-Live beim Laden, Countdown-Format gleich. Abweichungen im Live-Modus vor Beginn, kein Auto-Scroll, Fehlerfall, Lade-Skeleton, Vergangene-Pläne-Darstellung: siehe extra. Realtime→Polling: siehe db-Items.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart",
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 65,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (entry.kind === 'attendance' && entry.tenantName)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "org-name"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ entry.tenantName }}"
+    ],
+    "text": "{{ entry.tenantName }}",
+    "id": "org-plan-public/org-plan-public.page#text-278f4c08"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:215",
+     "lib/core/providers/plan_providers.dart:119"
+    ],
+    "n": "Ionic: Instanzname nur bei Termin-Plänen, Stil GROSSBUCHSTABEN/fett 0.75rem / Flutter: Instanzname bei Termin-Plänen, bei Ad-hoc-Plänen zusätzlich „Org-Plan“; 12px grau, nicht uppercase/fett",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 151,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (entry.kind === 'attendance' && entry.tenantName)"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "org-name"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ entry.tenantName }}"
+    ],
+    "text": "{{ entry.tenantName }}",
+    "id": "org-plan-public/org-plan-public.page#text-278f4c08-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:215",
+     "lib/core/providers/plan_providers.dart:119"
+    ],
+    "n": "Ionic: Instanzname nur bei Termin-Plänen (kind attendance), klein/fett/uppercase grau / Flutter: tenantLabel – bei Ad-hoc-Plänen zusätzlich „Org-Plan“, Stil 12 px grau ohne uppercase/fett.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-0f1bb03f8d",
+    "title": "Live-Modus: Programmblock-Kopf",
+    "n": "Ionic: Block-Köpfe vor dem aktiven Feld werden wie erledigte Felder ausgegraut (opacity .4), kein Block-Rahmen / Flutter: Kopf des laufenden Blocks bleibt voll sichtbar und erhält einen blauen linken Rand; Köpfe werden nie aktiv",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.html:94",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:113",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:198"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "extra": {
+    "id": "x-5eddb5c43b",
+    "title": "Vergangene Pläne: Darstellung",
+    "n": "Ionic: alle Felder im Verlauf ausgegraut (class done-slot, opacity .4) und ohne Info-Zeile / Flutter: Felder voll sichtbar, Info-Zeile wird angezeigt",
+    "sev": "niedrig",
+    "ionic": "src/app/org-plan-public/org-plan-public.page.html:169",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:237",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:138"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  }
+ ]
+}

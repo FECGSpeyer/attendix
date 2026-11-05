@@ -1,0 +1,2490 @@
+{
+ "batch": "zz-verify5c-sonnet-30",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 252,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "addCriticalRuleBtn",
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#action-76f36472"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:757"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 361,
+    "cond": [],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=saveGeneralSettings()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "save-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#action-81c091ba"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:441",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:221",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:612"
+    ],
+    "n": "FAB gleich, gleiche Spalten. Unterschiede beim Schreiben: Instanz-Name/-Kürzel getrimmt; seasonStart als 'YYYY-MM-DD'; leerer Regelname weggelassen statt ''; register_id/song_sharing_id: nach Aus-Speichern und erneutem Einschalten ohne Neuladen wird die alte ID wieder geschrieben (Ionic erzeugt dann eine neue).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 352,
+    "cond": [
+     "@for (rule of criticalRules; track rule.id; let i = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger",
+     "size": "small"
+    },
+    "events": [
+     "(click)=removeCriticalRule(i)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#action-afce87e0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_card.dart:43",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:864"
+    ],
+    "n": "Roter Papierkorb je Regel öffnet Lösch-Rückfrage und entfernt die Regel lokal (Speichern nötig); Dialogtext und Flutter-Zusatztoast „Regel gelöscht“ gehören zum Alert-Item.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart",
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=navigateBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#action-c55b1420"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:427"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/general.page.ts",
+    "line": 214,
+    "method": "GeneralPage.confirmUnsavedChanges",
+    "cond": [],
+    "header": {
+     "keys": [
+      "rolePerm.unsaved"
+     ],
+     "de": [
+      "Ungespeicherte Änderungen"
+     ],
+     "literals": [],
+     "expr": "translate('rolePerm.unsaved')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "rolePerm.unsavedMessage"
+     ],
+     "de": [
+      "Du hast ungespeicherte Änderungen. Möchtest du sie speichern bevor du die Seite verlässt?"
+     ],
+     "literals": [],
+     "expr": "translate('rolePerm.unsavedMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve(false)"
+     },
+     {
+      "text": {
+       "keys": [
+        "rolePerm.discard"
+       ],
+       "de": [
+        "Verwerfen"
+       ],
+       "literals": [],
+       "expr": "translate('rolePerm.discard')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => resolve(true)"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { await this.saveGeneralSettings(); resolve(true); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "fd7853b4",
+    "mbody": "359e830e",
+    "id": "settings/general/general.page#alert-5b397ef5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:901"
+    ],
+    "n": "„Ungespeicherte Änderungen“ mit Abbrechen/Verwerfen/Speichern in gleicher Reihenfolge; Speichern speichert (auch bei Validierungsfehler) und verlässt die Seite. Abweichende Änderungserkennung ist als b23-Extra erfasst. Rollen: Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg Einstellungen → Einstellungen bei isAdmin, Flutter-Route /settings/general + Eintrag bei isAdmin||isResponsible); isSuperAdmin wird in Ionic gesetzt, aber im Template nicht genutzt – keine Unterschiede zwischen Admin und Verantwortlich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/general.page.ts",
+    "line": 460,
+    "method": "GeneralPage.removeCriticalRule",
+    "cond": [],
+    "header": {
+     "keys": [
+      "generalSettings.deleteRule"
+     ],
+     "de": [
+      "Regel löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.deleteRule')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "generalSettings.deleteRuleMessage"
+     ],
+     "de": [
+      "Möchtest du diese Regel wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.deleteRuleMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.criticalRules.splice(index, 1); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bdeeceea",
+    "mbody": "696e7465",
+    "id": "settings/general/general.page#alert-98bdf09a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:867",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:896"
+    ],
+    "n": "Titel „Regel löschen?“ und Buttons gleich. Ionic: „Möchtest du diese Regel wirklich löschen?“ / Flutter: „Möchtest du die Regel \"{Name oder Beschreibung}\" wirklich löschen?“; danach zusätzlicher Toast „Regel gelöscht“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 180,
+    "cond": [
+     "@if (registerAllowed)"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"selectedRegisterFields\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"field.key\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ field.label }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ field.label }}",
+    "id": "settings/general/general.page#field-031d9492"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:653",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:358",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:159"
+    ],
+    "n": "Ionic: Mehrfach-Select, Reihenfolge Passbild, Vorname, Nachname, Gruppe, Geburtsdatum, Handynummer, Zusatzfelder; Vorname/Nachname/Gruppe deaktiviert; gespeicherte Liste wird unverändert übernommen / Flutter: FilterChips inline, Reihenfolge Vorname, Nachname, Gruppe, Passbild, Geburtsdatum, Handynummer, Zusatzfelder; Pflichtfelder nicht abwählbar und beim Laden immer ergänzt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 24,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"longName\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#field-1ecea16a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:475"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 58,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"shiftExcusedAsPresent\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.shiftPresentHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.shiftPresentHelper",
+     "generalSettings.shiftPresent"
+    ],
+    "de": [
+     "Aktivieren, um schicht- oder arbeitsbedingt entschuldigte Abwesenheiten als anwesend für die prozentuale Berechnung zu werten.",
+     "Schicht-/Arbeitsbedingt = Anwesend"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.shiftPresentHelper' | transloco\" {{ 'generalSettings.shiftPresent' | transloco }}",
+    "id": "settings/general/general.page#field-216622e2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:542"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 195,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"songSharingEnabled\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.shareSongsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.shareSongsHelper",
+     "generalSettings.shareSongs"
+    ],
+    "de": [
+     "Aktivieren, um Werke als öffentlichen link zu teilen. Jeder mit dem Link kann die Werke ansehen aber nicht bearbeiten. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.",
+     "Werke öffentlich teilen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.shareSongsHelper' | transloco\" {{ 'generalSettings.shareSongs' | transloco }}",
+    "id": "settings/general/general.page#field-2beff123"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:674"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 309,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>",
+     "@if (newCriticalRule.period_type === CriticalRulePeriodType.DAYS)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newCriticalRule.period_days\"",
+    "bindings": [
+     "[label]=\"'generalSettings.days' | transloco\"",
+     "[helperText]=\"'generalSettings.daysHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.days",
+     "generalSettings.daysHelper"
+    ],
+    "de": [
+     "Anzahl Tage",
+     "Anzahl der Tage, die zurück geprüft werden"
+    ],
+    "literals": [],
+    "text": "[label]=\"'generalSettings.days' | transloco\" [helperText]=\"'generalSettings.daysHelper' | transloco\"",
+    "id": "settings/general/general.page#field-34b50a2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:302"
+    ],
+    "n": "Zusätzlich Suffix „Tage“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 41,
+    "cond": [
+     "in <ion-modal trigger=date-modal #attModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[max]": "\"max\"",
+     "#": "attDatePicker"
+    },
+    "events": [
+     "(ionChange)=onAttDateChange(attDatePicker.value, attModal)"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attDate\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/general.page#field-51c6d116"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:320"
+    ],
+    "n": "Ionic: max = heute (keine Zukunftsdaten), kein Minimum, Wochenstart Montag / Flutter: firstDate 2020, lastDate 2030 – Zukunftsdaten wählbar, Daten vor 2020 nicht. Gespeichert wird 'YYYY-MM-DD' (Ionic: ISO-Wert des Pickers; genaues Ionic-Format ohne @ionic/core im Container nicht prüfbar).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 63,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"showAllAttendances\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.allEventsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.allEventsHelper",
+     "generalSettings.allEvents"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder auf der Abmelde-Seite alle Termine der Instanz sehen können (nicht nur eigene). Eigene Termine werden hervorgehoben.",
+     "Alle Termine für Mitglieder sichtbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.allEventsHelper' | transloco\" {{ 'generalSettings.allEvents' | transloco }}",
+    "id": "settings/general/general.page#field-5c76e90e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:548"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 300,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newCriticalRule.period_type\"",
+    "bindings": [
+     "[label]=\"'generalSettings.periodType' | transloco\"",
+     "[helperText]=\"'generalSettings.periodHelper' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"CriticalRulePeriodType.DAYS\"",
+      "keys": [
+       "generalSettings.lastXDays"
+      ],
+      "de": [
+       "Letzte X Tage"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.lastXDays' | transloco }}"
+     },
+     {
+      "value": "\"CriticalRulePeriodType.SEASON\"",
+      "keys": [
+       "generalSettings.sinceSeason"
+      ],
+      "de": [
+       "Seit Saisonbeginn"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.sinceSeason' | transloco }}"
+     },
+     {
+      "value": "\"CriticalRulePeriodType.ALL_TIME\"",
+      "keys": [
+       "generalSettings.allTime"
+      ],
+      "de": [
+       "Gesamte Historie"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.allTime' | transloco }}"
+     }
+    ],
+    "keys": [
+     "generalSettings.periodType",
+     "generalSettings.periodHelper",
+     "generalSettings.lastXDays",
+     "generalSettings.sinceSeason",
+     "generalSettings.allTime"
+    ],
+    "de": [
+     "Zeitraum-Typ",
+     "Bestimmt den Zeitraum für die Zählung",
+     "Letzte X Tage",
+     "Seit Saisonbeginn",
+     "Gesamte Historie"
+    ],
+    "literals": [],
+    "text": "[label]=\"'generalSettings.periodType' | transloco\" [helperText]=\"'generalSettings.periodHelper' | transloco\" {{ 'generalSettings.lastXDays' | transloco }} {{ 'generalSettings.sinceSeason' | transloco…",
+    "id": "settings/general/general.page#field-62b8bcb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:273"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 69,
+    "cond": [
+     "@if (hasDutyTypes)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"dutyView\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.dutyViewHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.dutyViewHelper",
+     "generalSettings.dutyView"
+    ],
+    "de": [
+     "„Meine Termine“ zeigt für Personen aus einem Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Andere Termine stehen eingeklappt darunter.",
+     "Dienstplan-Ansicht für Meine Termine"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.dutyViewHelper' | transloco\" {{ 'generalSettings.dutyView' | transloco }}",
+    "id": "settings/general/general.page#field-7b209ad2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:554-561",
+     "lib/core/providers/duty_providers.dart:56-58",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:246"
+    ],
+    "n": "Nur wenn ein Typ duty_mode hat, gleiche Position (nach 'Alle Termine für Mitglieder sichtbar'), Texte gleich; duty_view wird nur dann gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart",
+    "lib/core/providers/duty_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 28,
+    "cond": [],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"shortName\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.shortNameHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.shortNameHelper"
+    ],
+    "de": [
+     "Wird vor allem als Dateiname bei Exports verwendet"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.shortNameHelper' | transloco\"",
+    "id": "settings/general/general.page#field-7d192fa2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:485"
+    ],
+    "n": "Hilfetext „Wird vor allem als Dateiname bei Exports verwendet“ vorhanden.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 240,
+    "cond": [
+     "@if (showHolidays)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"region\"",
+    "bindings": [],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"state.code\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ state.name }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ state.name }}",
+    "id": "settings/general/general.page#field-8155f670"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:733-749",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:32-50"
+    ],
+    "n": "Nur bei 'Ferien/Feiertage anzeigen', Label 'Bundesland für Ferien/Feiertage', 16 Länder in gleicher Reihenfolge. Flutter: zusätzliche erste Option 'Keine Feiertage' (speichert region = null); Tenant ohne region zeigt diese statt leerer Auswahl.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 76,
+    "cond": [
+     "@if (showAllAttendances)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"showAllAttendancesInfoText\"",
+    "bindings": [
+     "[label]=\"'generalSettings.foreignInfo' | transloco\"",
+     "[placeholder]=\"'generalSettings.foreignInfoPh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.foreignInfo",
+     "generalSettings.foreignInfoPh"
+    ],
+    "de": [
+     "Info-Text für fremde Termine",
+     "Du bist bei diesem Termin nicht dabei."
+    ],
+    "literals": [],
+    "text": "[label]=\"'generalSettings.foreignInfo' | transloco\" [placeholder]=\"'generalSettings.foreignInfoPh' | transloco\"",
+    "id": "settings/general/general.page#field-98648dc9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:563"
+    ],
+    "n": "Ionic: Feld bei leerem Wert mit Standardtext „Du bist bei diesem Termin nicht dabei.“ vorbefüllt, mit Lösch-Button (clearInput) / Flutter: Feld leer, Text nur als Platzhalter, kein Lösch-Button. Gespeicherter Wert gleich (leer → Standardtext, aus → null).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 155,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"registerAllowed\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.registerHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.registerHelper",
+     "generalSettings.allowRegister"
+    ],
+    "de": [
+     "Aktivieren, um neuen Personen die Registrierung in dieser Instanz zu erlauben. Der Link wird automatisch generiert und kann nach dem Speichern kopiert werden.",
+     "Registrierung erlauben"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.registerHelper' | transloco\" {{ 'generalSettings.allowRegister' | transloco }}",
+    "id": "settings/general/general.page#field-a6c6701b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:606"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 233,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"showHolidays\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.holidaysHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.holidaysHelper",
+     "generalSettings.showHolidays"
+    ],
+    "de": [
+     "Aktivieren, um beim Anlegen der Anwesenheiten die Ferien und Feiertage hervorzuheben. (nur verfügbar für Deutschland)",
+     "Ferien/Feiertage anzeigen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.holidaysHelper' | transloco\" {{ 'generalSettings.showHolidays' | transloco }}",
+    "id": "settings/general/general.page#field-c312324f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:727"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 223,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"parentsEnabled\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.parentsHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.parentsHelper",
+     "generalSettings.parentsFeature"
+    ],
+    "de": [
+     "Aktivieren, um Eltern die Möglichkeit zu geben, Einsicht in die Anwesenheiten ihrer Kinder zu geben und Abwesenheiten pflegen zu können.",
+     "Eltern-Funktion"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.parentsHelper' | transloco\" {{ 'generalSettings.parentsFeature' | transloco }}",
+    "id": "settings/general/general.page#field-cc956d6f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:715"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 218,
+    "cond": [
+     "@if (isOrchestra)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"maintainTeachers\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.teachersHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.teachersHelper",
+     "generalSettings.maintainTeachers"
+    ],
+    "de": [
+     "Aktivieren, um die Lehrer der Spieler verwalten zu können.",
+     "Lehrer pflegen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.teachersHelper' | transloco\" {{ 'generalSettings.maintainTeachers' | transloco }}",
+    "id": "settings/general/general.page#field-cda497d1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:708"
+    ],
+    "n": "„Lehrer pflegen“ mit Hilfetext nur bei Instanztyp orchestra (Mandantenmerkmal gleich).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 293,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newCriticalRule.threshold_value\"",
+    "bindings": [
+     "[label]=\"newCriticalRule.threshold_type === CriticalRuleThresholdType.COUNT ? 'Anzahl' : 'Prozent'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "newCriticalRule.threshold_type === CriticalRuleThresholdType.COUNT ? 'Anzahl' : 'Prozent'"
+    ],
+    "text": "[label]=\"newCriticalRule.threshold_type === CriticalRuleThresholdType.COUNT ? 'Anzahl' : 'Prozent'\"",
+    "id": "settings/general/general.page#field-cf813d87"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:257"
+    ],
+    "n": "Ionic: Label je nach Typ „Anzahl“/„Prozent“ / Flutter: Label „Wert“ mit Suffix „x“/„%“; nur ganze Zahlen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 174,
+    "cond": [
+     "@if (registerAllowed)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"autoApproveRegistrations\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.autoApproveHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.autoApproveHelper",
+     "generalSettings.autoApprove"
+    ],
+    "de": [
+     "Aktivieren, um neue Registrierungen automatisch zu genehmigen. Andernfalls müssen neue Registrierungen manuell genehmigt werden.",
+     "Auto-Genehmigung"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.autoApproveHelper' | transloco\" {{ 'generalSettings.autoApprove' | transloco }}",
+    "id": "settings/general/general.page#field-e08702e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:638"
+    ],
+    "n": "Toggle „Auto-Genehmigung“ mit Hilfetext nur bei Registrierung an; gespeichert nur bei Registrierung an, sonst false.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 317,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newCriticalRule.operator\"",
+    "bindings": [
+     "[label]=\"'generalSettings.combine' | transloco\"",
+     "[helperText]=\"'generalSettings.combineHelper' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"CriticalRuleOperator.OR\"",
+      "keys": [
+       "generalSettings.or"
+      ],
+      "de": [
+       "ODER (eine Regel muss zutreffen)"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.or' | transloco }}"
+     },
+     {
+      "value": "\"CriticalRuleOperator.AND\"",
+      "keys": [
+       "generalSettings.and"
+      ],
+      "de": [
+       "UND (alle Regeln müssen zutreffen)"
+      ],
+      "literals": [],
+      "text": "{{ 'generalSettings.and' | transloco }}"
+     }
+    ],
+    "keys": [
+     "generalSettings.combine",
+     "generalSettings.combineHelper",
+     "generalSettings.or",
+     "generalSettings.and"
+    ],
+    "de": [
+     "Verknüpfung",
+     "Wie diese Regel mit anderen Regeln kombiniert wird",
+     "ODER (eine Regel muss zutreffen)",
+     "UND (alle Regeln müssen zutreffen)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'generalSettings.combine' | transloco\" [helperText]=\"'generalSettings.combineHelper' | transloco\" {{ 'generalSettings.or' | transloco }} {{ 'generalSettings.and' | transloco }}",
+    "id": "settings/general/general.page#field-e64f6a72"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:315"
+    ],
+    "n": "Ionic: Select „Verknüpfung“ mit Hilfetext „Wie diese Regel mit anderen Regeln kombiniert wird“, Optionen „ODER (eine Regel muss zutreffen)“/„UND (alle Regeln müssen zutreffen)“ / Flutter: Segmented-Button „ODER“/„UND“ mit Hinweis „Person ist kritisch, wenn EINE der Regeln zutrifft“ bzw. „…ALLE Regeln…“; Hilfetext fehlt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/general.page.html",
+    "line": 228,
+    "cond": [],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"showMembersList\"",
+    "bindings": [
+     "[helperText]=\"'generalSettings.membersListHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "generalSettings.membersListHelper",
+     "generalSettings.membersList"
+    ],
+    "de": [
+     "Aktivieren, um Mitgliedern (Spieler, Helfer, Stimmführer) eine Übersicht aller Personen anzuzeigen.",
+     "Mitgliederliste für alle"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'generalSettings.membersListHelper' | transloco\" {{ 'generalSettings.membersList' | transloco }}",
+    "id": "settings/general/general.page#field-ee66a39d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:721"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/general.page.html",
+    "line": 255,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "addCriticalRuleBtn",
+     "#": "addCriticalRuleModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/general.page#modal-9a5764bc"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:809",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:822"
+    ],
+    "n": "Bottom-Sheet in voller Höhe wie Ionic. Flutter öffnet es nicht, wenn keine Anwesenheits-Typen existieren (Toast „Keine Terminarten vorhanden“); Ionic öffnet immer.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/general.page.html",
+    "line": 38,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "class": "attDateModal",
+     "trigger": "date-modal",
+     "#": "attModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/general.page#modal-bedc4546"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:319"
+    ],
+    "n": "Flutter-Datumsdialog statt Inline-ion-modal (native Entsprechung).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 239,
+    "cond": [
+     "@if (showHolidays)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "generalSettings.holidayState"
+    ],
+    "de": [
+     "Bundesland für Ferien/Feiertage"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.holidayState' | transloco }}",
+    "id": "settings/general/general.page#text-5de5c707"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:735"
+    ],
+    "n": "Label „Bundesland für Ferien/Feiertage“ nur bei aktivem „Ferien anzeigen“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 259,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "generalSettings.newRule"
+    ],
+    "de": [
+     "Neue Regel hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.newRule' | transloco }}",
+    "id": "settings/general/general.page#text-6ddfbec5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:143"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 162,
+    "cond": [
+     "@if (registerAllowed && noSelectableGroups)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "generalSettings.noGroupsYet"
+    ],
+    "de": [
+     "Es sind noch keine Gruppen vorhanden. Bitte lege zuerst mindestens eine Gruppe an, bevor du die Registrierung aktivierst."
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.noGroupsYet' | transloco }}",
+    "id": "settings/general/general.page#text-b494ec56"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:624"
+    ],
+    "n": "Warnfarbe mit Warn-Icon bei Registrierung an und keiner auswählbaren Gruppe, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 187,
+    "cond": [
+     "@if (registerAllowed)"
+    ],
+    "tag": "ion-note",
+    "attrs": {},
+    "bindings": [
+     "[style.marginBottom]=\"'5px'\""
+    ],
+    "keys": [
+     "generalSettings.registerFieldsHint"
+    ],
+    "de": [
+     "Wähle die Felder aus, die bei der Registrierung angezeigt werden sollen. Alle ausgewählten Felder sind Pflichtfelder."
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.registerFieldsHint' | transloco }}",
+    "id": "settings/general/general.page#text-c804cb9e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:660"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/general.page.html",
+    "line": 179,
+    "cond": [
+     "@if (registerAllowed)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "generalSettings.registerFields"
+    ],
+    "de": [
+     "Registrierungsfelder"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.registerFields' | transloco }}",
+    "id": "settings/general/general.page#text-ce0e448a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:647"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 389,
+    "method": "GeneralPage.copySongSharingLink",
+    "cond": [],
+    "message": {
+     "keys": [
+      "settings.linkCopied"
+     ],
+     "de": [
+      "Der Link wurde in die Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('settings.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5f107907",
+    "mbody": "866b1132",
+    "id": "settings/general/general.page#toast-06df0b2b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:407"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 398,
+    "method": "GeneralPage.copyRegisterLink",
+    "cond": [],
+    "message": {
+     "keys": [
+      "settings.linkCopied"
+     ],
+     "de": [
+      "Der Link wurde in die Zwischenablage kopiert"
+     ],
+     "literals": [],
+     "expr": "translate('settings.linkCopied')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5f107907",
+    "mbody": "2af24df1",
+    "id": "settings/general/general.page#toast-0e87f2e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:407"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 443,
+    "method": "GeneralPage.addCriticalRule",
+    "cond": [
+     "(this.newCriticalRule.period_type === CriticalRulePeriodType.DAYS && (!this.newCriticalRule.period_days || this.newCriti…)"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.periodPositive"
+     ],
+     "de": [
+      "Der Zeitraum muss größer als 0 sein."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.periodPositive')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8f26db36",
+    "mbody": "b0d35a3a",
+    "id": "settings/general/general.page#toast-3a55a82e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:98"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 433,
+    "method": "GeneralPage.addCriticalRule",
+    "cond": [
+     "(this.newCriticalRule.statuses.length === 0)"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.selectStatus"
+     ],
+     "de": [
+      "Bitte wähle mindestens einen Status aus."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.selectStatus')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "28885dd2",
+    "mbody": "b0d35a3a",
+    "id": "settings/general/general.page#toast-3e9db773"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:87"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 438,
+    "method": "GeneralPage.addCriticalRule",
+    "cond": [
+     "(this.newCriticalRule.threshold_value <= 0)"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.thresholdPositive"
+     ],
+     "de": [
+      "Der Schwellenwert muss größer als 0 sein."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.thresholdPositive')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "3708b083",
+    "mbody": "b0d35a3a",
+    "id": "settings/general/general.page#toast-ae9cf87e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:92"
+    ],
+    "n": "Gleicher Text. Ionic akzeptiert Dezimalwerte (z. B. 33.5 %) / Flutter nur ganze Zahlen (int.tryParse) – Dezimalwert löst diesen Toast aus.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 151,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.shifts && shift.shifts.length > 0)",
+     "@for (s of shift.shifts; let i = $index; track s)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=calculateShifts(s)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "shifts.example"
+    ],
+    "de": [
+     "Beispiel-Rechnung"
+    ],
+    "literals": [],
+    "text": "{{ 'shifts.example' | transloco }}",
+    "id": "settings/general/shifts/shift/shift.page#action-02eec1c5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:627",
+     "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44"
+    ],
+    "n": "Flutter besser: Ionic-Berechnung läuft in eine Endlosschleife, wenn der Plan feste Schichten aber keine Definition hat (currentDate.add(0)); Flutter zeigt eine leere Liste. Sonst gleich (Start am Anfangsdatum).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 64,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.definition && shift.definition.length > 0)",
+     "@for (s of shift.definition; let i = $index; track s)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "light"
+    },
+    "events": [
+     "(click)=removeEntry(i)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-4d7456a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:298"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 55,
+    "cond": [
+     "@if (shift)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "primary"
+    },
+    "events": [
+     "(click)=addEntry()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-54992f8a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:244",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:371"
+    ],
+    "n": "Ionic: neuer Abschnitt übernimmt die Dauer des letzten Abschnitts (sonst 8) / Flutter: immer 8 Stunden.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 112,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.definition && shift.definition.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=calculateShifts()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "shifts.example"
+    ],
+    "de": [
+     "Beispiel-Rechnung"
+    ],
+    "literals": [],
+    "text": "{{ 'shifts.example' | transloco }}",
+    "id": "settings/general/shifts/shift/shift.page#action-7a146ceb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:251"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 124,
+    "cond": [
+     "@if (shift)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "primary"
+    },
+    "events": [
+     "(click)=addShift()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-8d7f0fbe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:260",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:403"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 136,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.shifts && shift.shifts.length > 0)",
+     "@for (s of shift.shifts; let i = $index; track s)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "danger",
+     "[disabled]": "\"isUsed\""
+    },
+    "events": [
+     "(click)=removeShift(i)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-cbed5f84"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:609"
+    ],
+    "n": "Deaktiviert, wenn der Plan Personen zugewiesen ist.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 200,
+    "cond": [],
+    "tag": "ion-fab-button",
+    "attrs": {},
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "save-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#action-e0fdaa55"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:130",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:443"
+    ],
+    "n": "FAB gleich; Flutter speichert Name und Beschreibung getrimmt (Ionic unverändert).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 99,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.definition && shift.definition.length > 0)",
+     "@for (s of shift.definition; let i = $index; track s)",
+     "@if (!s.free)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"s.duration\"",
+    "bindings": [
+     "[helperText]=\"'shifts.decimalHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "shifts.decimalHelper"
+    ],
+    "de": [
+     "Wenn die Schichtdauer keine ganze Zahl ist, bitte Dezimalstellen mit Punkt angeben. (z.B. 8.5 für 8 1/2 Stunden)"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'shifts.decimalHelper' | transloco\"",
+    "id": "settings/general/shifts/shift/shift.page#field-24d478af"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:320"
+    ],
+    "n": "Label und Hilfetext gleich. Flutter akzeptiert Komma, begrenzt auf 0–24 Stunden und ignoriert ungültige/leere Eingaben (Feld zeigt dann anderen Wert als gespeichert) / Ionic speichert die Zahl unverändert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 146,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.shifts && shift.shifts.length > 0)",
+     "@for (s of shift.shifts; let i = $index; track s)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"s.date\"",
+    "bindings": [
+     "[id]=\"'datetimestartshift' + i\"",
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#field-3c4c975e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:637"
+    ],
+    "n": "Ionic: Datumsauswahl ohne feste Grenzen, Wochenstart Montag / Flutter: nur 2020–2030 wählbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 45,
+    "cond": [
+     "@if (shift)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"shift.name\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#field-41098c1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:230"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 82,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.definition && shift.definition.length > 0)",
+     "@for (s of shift.definition; let i = $index; track s)",
+     "@if (!s.free)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "time"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"s.start_time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[id]=\"'datetimestartatt' + i\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#field-5fdbaf8e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:354"
+    ],
+    "n": "Ionic: Zeitrad mit 5-Minuten-Schritten (0, 5, …, 55), 24h / Flutter: Standard-Zeitauswahl mit jeder Minute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/shifts/shift/shift.page.html",
+    "line": 79,
+    "cond": [
+     "@if (shift)",
+     "@if (shift.definition && shift.definition.length > 0)",
+     "@for (s of shift.definition; let i = $index; track s)",
+     "@if (!s.free)"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[datetime]=\"'datetimestartatt' + i\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/shifts/shift/shift.page#field-71ac18b1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:315"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  }
+ ]
+}

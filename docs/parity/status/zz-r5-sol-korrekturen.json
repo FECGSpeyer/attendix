@@ -1,0 +1,21 @@
+{
+ "batch": "zz-r5-sol-korrekturen",
+ "afterRound": 5,
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "note": "Sol-Review 6663947239 (PR #290) zu Runde 5: Schwere nach den eigenen Kriterien (hoch = falscher DB-Schreibzugriff, Rolle darf zu viel).",
+ "items": {
+  "people/person/person.page#alert-97cf5262": {
+   "sev": "hoch",
+   "n": "Dialog gleich, aber die übertragene Person wird in Flutter Verantwortlich, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart handoverPlayer); Ionic person.page.ts:1365 vergibt praktisch immer Spieler. Rolle bekommt mehr Rechte als in Ionic → hoch (Sol-Review). Fix: wie Ionic immer PLAYER."
+  },
+  "services/organisation/organisation.service#db-ad59e983": {
+   "sev": "hoch",
+   "n": "Upsert wie Ionic, aber Personendetail verschluckt Ladefehler der gemeinsamen Organisationsfelder (_loadSharedFieldValues) und _splitAndSaveSharedFields überschreibt danach die echten Werte der Person in allen Instanzen der Organisation; Ionic bricht die Seite ab. Falscher DB-Schreibzugriff → hoch (Sol-Review)."
+  },
+  "utilities/db-helpers#db-f424eb31": {
+   "sev": "hoch",
+   "n": "updateShiftAssignmentsForPerson schreibt status/notes ohne Dienst-Abgleich (syncDutyWithStatus) und ohne changed_at/changed_by; Ionic geht über updatePersonAttendance. Folge: duty_state bleibt „confirmed“ bei Neutral, inkonsistenter DB-Zustand → hoch (Sol-Review)."
+  }
+ }
+}

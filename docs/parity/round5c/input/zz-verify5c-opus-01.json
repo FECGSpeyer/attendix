@@ -1,0 +1,1356 @@
+{
+ "batch": "zz-verify5c-opus-01",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 275,
+    "method": "AgendaItemDetailPage.save",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "90eaccbf",
+    "roleGuarded": true,
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#loading-ff407ba2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:78",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:233"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während des Speicherns deaktiviert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 164,
+    "method": "AgendaItemDetailPage.openHistory",
+    "cond": [],
+    "via": "navController.navigateForward",
+    "to": "['/tabs/attendance', entry.attendance_id, 'protocol']",
+    "src": "efc3feb6",
+    "mbody": "b9077a6e",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-9a96f482"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:418"
+    ],
+    "n": "Push auf das Protokoll des Termins; Pfad /settings/protocol/:id statt /tabs/attendance/:id/protocol (Route-Mapping im Routing-Batch).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 168,
+    "method": "AgendaItemDetailPage.openTask",
+    "cond": [],
+    "via": "navController.navigateForward",
+    "to": "['/tabs/settings/tasks', task.id]",
+    "src": "7cd4fd51",
+    "mbody": "eff48ea3",
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#nav-f7bc89a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:474"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 291,
+    "method": "AgendaItemDetailPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "agenda.saveFailed"
+     ],
+     "de": [
+      "Thema konnte nicht gespeichert werden"
+     ],
+     "literals": [],
+     "expr": "translate('agenda.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "729f34f5",
+    "mbody": "90eaccbf",
+    "roleGuarded": true,
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-69e94eec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:108"
+    ],
+    "n": "Roter Toast „Thema konnte nicht gespeichert werden“; nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "line": 288,
+    "method": "AgendaItemDetailPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "duty.saved"
+     ],
+     "de": [
+      "Gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('duty.saved')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "dcaabb2f",
+    "mbody": "90eaccbf",
+    "roleGuarded": true,
+    "id": "agenda-items/agenda-item-detail/agenda-item-detail.page#toast-de8c40b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:106"
+    ],
+    "n": "Grüner Toast „Gespeichert“ nach Anlegen und Ändern; nur Leitung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "extra": {
+    "id": "x-05b82aec95",
+    "title": "Einplanen nach gespeichertem Stand",
+    "n": "Ionic: item ist per ngModel ans Formular gebunden – Status-Auswahl ≠ „Offen“ blendet „Einplanen“ sofort (ungespeichert) aus, eingeplant werden ungespeicherter Titel und Dauer / Flutter: Button-Bedingung und eingeplantes Feld (Name, Dauer) kommen aus dem gespeicherten Thema (agendaItemByIdProvider), Formularänderungen wirken erst nach Speichern. Betrifft Item action-6d6140de (Erstprüfung ok).",
+    "sev": "niedrig",
+    "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.html:106",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:260",
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:264"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "ionic": {
+    "ts": "agenda-items/agenda-item-detail/agenda-item-detail.page.ts",
+    "html": "agenda-items/agenda-item-detail/agenda-item-detail.page.html"
+   },
+   "extra": {
+    "id": "x-5b249b81bc",
+    "title": "Thema nicht ladbar",
+    "n": "Flutter besser: Ionic zeigt bei nicht ladbarem/nicht sichtbarem Thema eine leere Seite ohne Hinweis (item undefined) / Flutter zeigt „Thema nicht gefunden“.",
+    "sev": "niedrig",
+    "ionic": "src/app/agenda-items/agenda-item-detail/agenda-item-detail.page.ts:128",
+    "f": [
+     "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:240"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-plan.helpers",
+   "ionic": {
+    "ts": "agenda-items/agenda-plan.helpers.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "agenda-items/agenda-plan.helpers.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "function defaultTopicDuration:21-26",
+     "function parsePlanTime:29-36",
+     "function computePlanEnd:42-49",
+     "function initialPlan:55-64",
+     "function planWithTopics:72-85",
+     "function insertAfterName:88-94",
+     "function upcomingProtocolAttendances:100-110",
+     "function addTopicsToAttendance:117-139"
+    ],
+    "bodies": {
+     "function defaultTopicDuration": "c48a2bbf",
+     "function parsePlanTime": "8d5b29be",
+     "function computePlanEnd": "e35e200e",
+     "function initialPlan": "0199dbe0",
+     "function planWithTopics": "486800cc",
+     "function insertAfterName": "4649b9a8",
+     "function upcomingProtocolAttendances": "01591cc5",
+     "function addTopicsToAttendance": "ab1b6d81"
+    },
+    "id": "agenda-items/agenda-plan.helpers#logic-71d6aee7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/team_org_utils.dart:169",
+     "lib/features/team_organization/team_org_utils.dart:178",
+     "lib/features/team_organization/team_org_utils.dart:195",
+     "lib/features/team_organization/team_org_utils.dart:219",
+     "lib/features/team_organization/team_org_utils.dart:230",
+     "lib/core/providers/team_org_providers.dart:413"
+    ],
+    "n": "defaultTopicDuration, initialPlan (ohne Song-Platzhalter, Zeit Typ-Plan→Typ-Start→Termin→19:00), planWithTopics, insertAfterName, upcomingProtocolAttendances, Neuberechnung des Endes und Neuladen des Plans vor dem Schreiben gleich. Abweichung nur bei inzwischen gelöschtem Plan (extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "agenda-items/agenda-plan.helpers",
+   "ionic": {
+    "ts": "agenda-items/agenda-plan.helpers.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-17fbb26884",
+    "title": "Gelöschter Ablaufplan beim Einplanen",
+    "n": "Flutter besser: Ionic addTopicsToAttendance übernimmt einen inzwischen gelöschten Plan als null und schreibt einen neuen Standardplan (initialPlan) mit dem Thema / Flutter wirft bei gelöschtem Plan einen Fehler → Toast „Thema konnte nicht eingeplant werden“ bzw. „Ablaufplan konnte nicht gespeichert werden“, nichts wird geschrieben.",
+    "sev": "niedrig",
+    "ionic": "src/app/agenda-items/agenda-plan.helpers.ts:127",
+    "f": [
+     "lib/core/providers/team_org_providers.dart:427"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/team_org_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "notifications/notifications-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/notifications",
+    "component": "NotificationsPage",
+    "unit": "notifications/notifications.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-0351b31a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1056-1060"
+    ],
+    "n": "Flutter besser: Ionic: Rollenprüfung nur beim Kaltstart/Betreten von /tabs (AuthGuard, Standardzweig nur ADMIN/RESPONSIBLE/VIEWER) bzw. TabsPage-effect mit isUrlAccessAllowed → Reload/Deep-Link landet für andere Rollen auf Utils.getUrl(role). Flutter: Rollenprüfung bei jeder Navigation, abgelehnte Rollen → role.defaultRoute. (VIEWER fehlt in isUrlAccessAllowed, Spieler-Rollen blockiert der AuthGuard).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/songs-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/songs-tab",
+    "component": "SongsPage",
+    "unit": "songs/songs.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-05ed08a7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/route_access.dart:89-93",
+     "lib/core/router/app_router.dart:1283-1300"
+    ],
+    "n": "Flutter besser: Ionic: Rollenprüfung nur beim Kaltstart/Betreten von /tabs (AuthGuard, Standardzweig nur ADMIN/RESPONSIBLE/VIEWER) bzw. TabsPage-effect mit isUrlAccessAllowed → Reload/Deep-Link landet für andere Rollen auf Utils.getUrl(role). Flutter: Rollenprüfung bei jeder Navigation, abgelehnte Rollen → role.defaultRoute. /tabs/songs-tab fällt im AuthGuard in den Standardzweig.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/auto-messages/list/auto-message-list.module.ts",
+    "line": 9,
+    "cond": [],
+    "path": "/tabs/settings/auto-messages",
+    "component": "AutoMessageListPage",
+    "unit": "settings/auto-messages/list/auto-message-list.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-0a62fac7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:178",
+     "lib/core/router/app_router.dart:1012-1016"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "attendance/att-list/att-list-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/attendance",
+    "component": "AttListPage",
+    "unit": "attendance/att-list/att-list.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-117fac13"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:194",
+     "lib/core/router/app_router.dart:820-847"
+    ],
+    "n": "Flutter besser: Ionic: isUrlAccessAllowed kennt nur /tabs/attendance mit Unterpfad, Reload der nackten URL schickt Helfer auf /tabs/signout / Flutter: Helfer dürfen /attendance öffnen (gleiche Rollen wie Tab).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/shifts/shift/shift-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/shifts/:id",
+    "component": "ShiftPage",
+    "unit": "settings/general/shifts/shift/shift.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-174d1db9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:93-98",
+     "lib/core/router/app_router.dart:1110-1124"
+    ],
+    "n": "Korrektur mittel→niedrig: Auch in Ionic öffnet ein Reload von /tabs/settings/general/shifts/:id die Schicht nicht (AuthGuard/TabsPage-effect → getUrl(role)). In-App-Navigation existiert in Flutter unter /settings/shifts/:id. Nur Legacy-URL: Ionic → Startseite / Flutter → Fehlerseite „Seite nicht gefunden“ mit „Zur Startseite“.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/help/article/help-article-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/help/article/:id",
+    "component": "HelpArticlePage",
+    "unit": "settings/help/article/help-article.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-1a651acd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1180-1198"
+    ],
+    "n": "Flutter besser: wie /tabs/settings/help – Ionic Reload für Nicht-Dirigenten abgebrochen / Flutter: Artikel für alle Rollen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "dashboard/dashboard-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/dashboard",
+    "component": "DashboardPage",
+    "unit": "dashboard/dashboard.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-1f551f78"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1276-1281"
+    ],
+    "n": "Ionic: SuperDeveloperGuard leitet Nicht-Superdevs auf /tabs/player um / Flutter: Umleitung auf /settings.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "team-organization/team-organization-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/team-organization",
+    "component": "TeamOrganizationPage",
+    "unit": "team-organization/team-organization.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-3e6c6d33"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1028-1034"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/shifts/shifts-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/shifts",
+    "component": "ShiftsPage",
+    "unit": "settings/general/shifts/shifts.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-409dca75"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:93-98",
+     "lib/core/router/app_router.dart:1110-1124"
+    ],
+    "n": "Korrektur mittel→niedrig: Auch in Ionic öffnet ein Reload/Lesezeichen von /tabs/settings/general/shifts die Seite nie – AuthGuard (Standardzweig) bzw. TabsPage-effect (URL fehlt in isUrlAccessAllowed) leiten auf getUrl(role) um. In der App navigiert Flutter korrekt nach /settings/shifts. Unterschied nur bei Legacy-URL: Ionic landet auf der Startseite / Flutter zeigt Fehlerseite „Seite nicht gefunden: …“ mit Button „Zur Startseite“.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "terms/terms-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/terms",
+    "component": "TermsPage",
+    "unit": "terms/terms.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-4f64d874"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:365-376",
+     "lib/core/router/app_router.dart:492-496"
+    ],
+    "n": "Ionic: nach Akzeptieren der AGB → getUrl(role) / Flutter: → /tenants → homeRouteFor (Dashboard-Logik); TermsGuard-Äquivalent im Redirect.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/extra-fields/extra-fields-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/general/extra-fields",
+    "component": "ExtraFieldsPage",
+    "unit": "settings/general/extra-fields/extra-fields.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-58f7f3b8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1217-1221"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/song/song-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/songs/:id",
+    "component": "SongPage",
+    "unit": "songs/song/song.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-692f435d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:960-967"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "register/register-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/register",
+    "component": "RegisterPage",
+    "unit": "register/register.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-6b4589f8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:91-92",
+     "lib/core/router/app_router.dart:547-551"
+    ],
+    "n": "Flutter besser: Ionic: /tabs/settings/register (RegisterPage) – Reload bricht für Nicht-Dirigenten ab / Flutter: Legacy-URL → /tenants/new für alle angemeldeten Rollen.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "attendance/attendance/attendance-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/attendance/:id",
+    "component": "AttendancePage",
+    "unit": "attendance/attendance/attendance.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-70e49d30"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/attendance_detail_guard.dart:22-27",
+     "lib/core/router/app_router.dart:222-230"
+    ],
+    "n": "Korrektur hoch→niedrig: In Ionic kommt VIEWER nur per getippter URL auf /tabs/attendance/:id; es gibt keinen UI-Weg. att-list openAttendance verlangt isConductor (ADMIN/RESPONSIBLE) oder isHelper, nextAttendance im Topics-Tab nur für Teamleiter (ADMIN/RESPONSIBLE), „Termin öffnen“ in der Nachricht nur isManager, Push navigateToAttendance schickt VIEWER auf /tabs/signout, Dienst-Mails nur an Rollen 1/5. Die Behauptung „Beobachter öffnen den Termin aus Liste, Topics und Nachrichten“ stimmt nicht. Ionic: URL öffnet für VIEWER die Terminseite / Flutter: attendanceDetailRedirect (canAddAttendance) leitet VIEWER auf /people um.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/delete-account/delete-account-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/delete-account",
+    "component": "DeleteAccountPage",
+    "unit": "settings/delete-account/delete-account.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-81a96071"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1199-1203"
+    ],
+    "n": "Flutter besser: Ionic: delete-account fehlt in isUrlAccessAllowed, Reload leitet Nicht-Dirigenten auf getUrl um / Flutter: /settings/delete-account für alle angemeldeten Rollen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/song/song-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/songs-tab/:id",
+    "component": "SongPage",
+    "unit": "songs/song/song.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-82191e46"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1293-1300"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "protocols/protocol/protocol-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/attendance/:attendanceId/protocol",
+    "component": "ProtocolPage",
+    "unit": "protocols/protocol/protocol.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-902a5855"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:54-56",
+     "lib/core/router/app_router.dart:1045-1055"
+    ],
+    "n": "Flutter besser: nur für PLAYER/VL/NONE: Sie bekommen Team-Benachrichtigungs-Links /tabs/attendance/:id/protocol, Ionic leitet sie beim Kaltstart auf /tabs/signout um. Flutter mappt auf /settings/protocol/:id ohne Rollensperre. Notiz des Erstreviewers präzisiert: Die URL fehlt NICHT in den Guards – AuthGuard und isUrlAccessAllowed decken /tabs/attendance* für ADMIN/HELPER/VLH/VIEWER/RESPONSIBLE ab.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tasks/task-detail/task-detail-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/tasks/:id",
+    "component": "TaskDetailPage",
+    "unit": "tasks/task-detail/task-detail.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-903b9699"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1035-1039"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute. (team-notify-Links /tabs/settings/tasks/:id)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "messages/message-list/message-list-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/messages",
+    "component": "MessageListPage",
+    "unit": "messages/message-list/message-list.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-a1ee1df3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:176",
+     "lib/core/router/app_router.dart:1006-1010"
+    ],
+    "n": "Flutter besser: Ionic: /tabs/settings/messages steht nicht in isUrlAccessAllowed → Reload wirft sogar ADMIN auf die Startseite / Flutter: Route für admin/responsible erreichbar, andere → defaultRoute.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 9,
+    "cond": [
+     "canActivate: [AuthGuard, TermsGuard]"
+    ],
+    "path": "/tabs",
+    "component": "TabsPage",
+    "unit": "tabs/tabs.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-b64546c1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:276-441",
+     "lib/core/router/legacy_routes.dart:44-45"
+    ],
+    "n": "Flutter besser: /tabs ohne Anmeldung → Ionic: AuthGuard → /login, nach Login routeAfterAuth (Link geht verloren) / Flutter: Link wird gemerkt (PendingFileLink) und nach Login fortgesetzt; /tabs → /open-link → Rollen-Startseite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 228,
+    "cond": [],
+    "path": "/tabs",
+    "component": null,
+    "unit": null,
+    "redirectTo": "/tabs/player",
+    "data": null,
+    "id": "app-routing.module#route-b64546c1-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:45",
+     "lib/features/deep_links/presentation/pages/open_link_page.dart:81-89"
+    ],
+    "n": "Ionic: Tabs-Kindroute '' → redirect /tabs/player (danach effect → getUrl(role)) / Flutter: /tabs → /open-link → Rollen-Startseite (homeRouteFor/defaultRoute) direkt, ohne Zwischenstopp auf /people.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "tabs/tabs-routing.module.ts",
+    "line": 235,
+    "cond": [],
+    "path": "/tabs",
+    "component": null,
+    "unit": null,
+    "redirectTo": "/tabs/player",
+    "data": null,
+    "id": "app-routing.module#route-b64546c1-3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:74-75",
+     "lib/features/deep_links/presentation/pages/open_link_page.dart:81-89"
+    ],
+    "n": "Ionic: Wildcard/Leer-Route unter /tabs → /tabs/player / Flutter: unbekannte /tabs/...-Pfade → /open-link → Rollen-Startseite.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "messages/message-detail/message-detail-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/messages/:id",
+    "component": "MessageDetailPage",
+    "unit": "messages/message-detail/message-detail.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-b987dd8e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:930-935",
+     "lib/core/router/legacy_routes.dart:61-62"
+    ],
+    "n": "Flutter besser: Nachrichten-Mail-Links /tabs/messages/:id landen in Ionic für Spieler beim Kaltstart auf getUrl(role) / Flutter: Legacy-URL → /messages/:id, Seite öffnet.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart",
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "public-planning/public-planning-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/org-plans/planung",
+    "component": "PublicPlanningPage",
+    "unit": "public-planning/public-planning.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-b9a9398e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:63-64"
+    ],
+    "n": "Ionic: /tabs/org-plans/planung bleibt im Tab Org-Pläne / Flutter: Legacy-URL → /settings/org-plans/planung (Einstellungen statt Tab /org-plans-tab/planung).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/help/help-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/help",
+    "component": "HelpPage",
+    "unit": "settings/help/help.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-bac0fe82"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1180-1198"
+    ],
+    "n": "Flutter besser: Ionic: Reload von /tabs/settings/help bricht für Nicht-Dirigenten ab (AuthGuard) / Flutter: Hilfe für alle Rollen erreichbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/help/glossary/help-glossary-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/help/glossary",
+    "component": "HelpGlossaryPage",
+    "unit": "settings/help/glossary/help-glossary.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-d6960ea2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1180-1198"
+    ],
+    "n": "Flutter besser: wie /tabs/settings/help – Ionic Reload für Nicht-Dirigenten abgebrochen / Flutter: Glossar für alle Rollen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/general/branding/branding-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/org-settings/branding",
+    "component": "BrandingPage",
+    "unit": "settings/general/branding/branding.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-dd04c3d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/legacy_routes.dart:99-102"
+    ],
+    "n": "Ionic: /tabs/settings/org-settings/branding öffnet die Org-Branding-Seite / Flutter: Legacy-URL → /settings/org-settings (Branding ist dort enthalten, keine eigene Seite).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/legacy_routes.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/administration/administration-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/administration",
+    "component": "AdministrationPage",
+    "unit": "settings/administration/administration.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-ddf8f625"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1238-1245"
+    ],
+    "n": "Ionic: SuperDeveloperGuard leitet Nicht-Superdevs auf /tabs/player um / Flutter: Umleitung auf /settings.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "songs/songs-routing.module.ts",
+    "line": 7,
+    "cond": [],
+    "path": "/tabs/settings/songs",
+    "component": "SongsPage",
+    "unit": "songs/songs.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-e032468e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:950-981",
+     "lib/core/router/route_access.dart:117-122"
+    ],
+    "n": "Flutter besser: Ionic: Reload von /tabs/settings/songs bricht für Nicht-Dirigenten ab (AuthGuard) / Flutter: alle Rollen inkl. Bewerber können /settings/songs öffnen; Anlegen/Bearbeiten nur Admin/Verantwortl. (route_access).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "settings/auto-messages/rule/auto-message-rule.module.ts",
+    "line": 10,
+    "cond": [],
+    "path": "/tabs/settings/auto-messages/:id",
+    "component": "AutoMessageRulePage",
+    "unit": "settings/auto-messages/rule/auto-message-rule.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-e4f28d41"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1017-1025"
+    ],
+    "n": "Flutter besser: Ionic prüft die Rolle nur beim Betreten von /tabs (AuthGuard) bzw. per TabsPage-effect/isUrlAccessAllowed; diese URL fehlt dort, daher bricht ein Reload/Deep-Link für Nicht-Dirigenten ab (leere Seite) bzw. leitet auf getUrl(role) um. Flutter: Route existiert, Rollenprüfung bei jeder Navigation, abgelehnte Rollen landen auf role.defaultRoute.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "app-routing.module",
+   "ionic": {
+    "ts": "app-routing.module.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "route",
+    "file": "agenda-items/agenda-item-detail/agenda-item-detail-routing.module.ts",
+    "line": 6,
+    "cond": [],
+    "path": "/tabs/settings/agenda-items/:id",
+    "component": "AgendaItemDetailPage",
+    "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+    "redirectTo": null,
+    "data": null,
+    "id": "app-routing.module#route-f024e0aa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:1040-1044"
+    ],
+    "n": "Flutter besser: Ionic: Rollenprüfung nur beim Kaltstart/Betreten von /tabs (AuthGuard, Standardzweig nur ADMIN/RESPONSIBLE/VIEWER) bzw. TabsPage-effect mit isUrlAccessAllowed → Reload/Deep-Link landet für andere Rollen auf Utils.getUrl(role). Flutter: Rollenprüfung bei jeder Navigation, abgelehnte Rollen → role.defaultRoute.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  }
+ ]
+}

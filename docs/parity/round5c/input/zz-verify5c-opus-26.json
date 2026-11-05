@@ -1,0 +1,1402 @@
+{
+ "batch": "zz-verify5c-opus-26",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 349,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [],
+    "message": {
+     "keys": [
+      "generalSettings.saved"
+     ],
+     "de": [
+      "Einstellungen gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "d2b46186",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#toast-a82c1284"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:282"
+    ],
+    "n": "Grüner Toast „Einstellungen gespeichert“, danach Dialog mit „Neu laden“ wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 282,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [
+     "(!this.longName?.trim())"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.groupNameEmpty"
+     ],
+     "de": [
+      "Der Gruppenname darf nicht leer sein."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.groupNameEmpty')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8b730461",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#toast-b6c301a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:188"
+    ],
+    "n": "Roter Toast „Der Gruppenname darf nicht leer sein.“ als erste Prüfung. Rollen wie alert-5b397ef5.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 296,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [
+     "(this.registerAllowed && !this.hasSelectableGroups())"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.registerNoGroups"
+     ],
+     "de": [
+      "Registrierung kann nicht aktiviert werden: Bitte lege zuerst mindestens eine Gruppe an."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.registerNoGroups')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "034e80db",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#toast-dcf43f84"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:201"
+    ],
+    "n": "Roter Toast, wenn Registrierung an und keine Gruppe ohne maingroup existiert (Ionic db.groups(), Flutter groupsProvider).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 367,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [],
+    "message": {
+     "keys": [
+      "generalSettings.saveFailed"
+     ],
+     "de": [
+      "Fehler beim Aktualisieren der Einstellungen"
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.saveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e4a945ca",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#toast-f79901f5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:304"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "extra": {
+    "id": "x-17553629eb",
+    "title": "Gründe per Drag sortierbar nur in Flutter",
+    "n": "Ionic: feste Reihenfolge / Flutter: Drag-Handle zum Umsortieren der Abwesenheits- und Verspätungsgründe.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/general.page.html:98",
+    "f": [
+     "lib/features/settings/presentation/widgets/reasons_list_editor.dart:122"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "extra": {
+    "id": "x-42634188f9",
+    "title": "Legacy-Regeln ohne period_type",
+    "n": "Ionic: ergänzt beim Laden period_type = 'days' und speichert es beim nächsten Speichern mit / Flutter: lässt period_type leer und schreibt die Regel ohne period_type (Auswertung durch evaluate-critical-rules ggf. anders).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/general.page.ts:146",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:164",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:262"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "extra": {
+    "id": "x-42b30dc6ee",
+    "title": "Problemfall-Regel bearbeiten nur in Flutter",
+    "n": "Ionic: Regeln nur hinzufügen/löschen / Flutter: Tippen auf eine Regel öffnet Sheet „Regel bearbeiten“ (Button „Speichern“, Toast „Regel aktualisiert“).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/general.page.html:343",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_card.dart:31",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:839"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_card.dart",
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "extra": {
+    "id": "x-d86d0880b8",
+    "title": "Änderungserkennung für Ungespeichert-Dialog",
+    "n": "Ionic: Vergleich mit Ausgangszustand (JSON); Abwesenheits-/Verspätungsgründe nicht erfasst, Zurückschalten gilt als keine Änderung; Prüfung nur beim Header-Zurück und beforeunload / Flutter: Dirty-Flag bei jeder Eingabe inkl. Gründe, bleibt nach Zurückschalten gesetzt; Dialog auch bei System-Zurück (PopScope).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/general.page.ts:160",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:313",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:415"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:24-30",
+     "ngOnInit:32-38",
+     "save:40-52",
+     "removeEntry:54-56",
+     "addEntry:58-77",
+     "removeShift:79-81",
+     "addShift:83-92",
+     "delete:94-118",
+     "copyToInstance:120-161",
+     "showCopyAssignmentsAlert:163-191",
+     "executeCopy:193-267",
+     "calculateShifts:269-305",
+     "trackByShiftIndex:307-307",
+     "goBack:309-311"
+    ],
+    "bodies": {
+     "constructor": "17d125d1",
+     "ngOnInit": "58999b42",
+     "save": "ee4cb567",
+     "removeEntry": "6bf8a7e6",
+     "addEntry": "78e0f926",
+     "removeShift": "4f3a4dbd",
+     "addShift": "0c39e44e",
+     "delete": "39e8fab8",
+     "copyToInstance": "1f8f313b",
+     "showCopyAssignmentsAlert": "90fc8776",
+     "executeCopy": "18f787df",
+     "calculateShifts": "b39465b2",
+     "trackByShiftIndex": "2b7121c9",
+     "goBack": "afa5fb38"
+    },
+    "id": "settings/general/shifts/shift/shift.page#logic-c5f7ff6e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:65-76",
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:434-466",
+     "lib/core/providers/shift_providers.dart:108-133",
+     "lib/features/shifts/presentation/widgets/shift_preview_sheet.dart:44-87"
+    ],
+    "n": "Laden (Plan, Nutzung, andere Instanzen), Speichern (Name-Pflicht, Update shifts), Löschen (vorher künftige Schicht-Entschuldigungen der Personen zurücksetzen, dann löschen), Kopieren und Beispielrechnung (Start Montag nächster Woche bzw. Anfangsdatum, 30 Tage, (+1)) wie Ionic. Abweichungen in Items (Dauer neuer Abschnitt, Trim, Grenzen, Texte) und extra (Cache), alle niedrig/mittel in Items.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart",
+    "lib/core/providers/shift_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 310,
+    "method": "ShiftPage.goBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/general/shifts'",
+    "src": "7e674b98",
+    "mbody": "afa5fb38",
+    "id": "settings/general/shifts/shift/shift.page#nav-6104294b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:86"
+    ],
+    "n": "pop bzw. go('/settings/shifts').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 109,
+    "method": "ShiftPage.delete",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/general/shifts']",
+    "src": "43833f52",
+    "mbody": "39e8fab8",
+    "id": "settings/general/shifts/shift/shift.page#nav-64b3c9d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:501"
+    ],
+    "n": "Nach Löschen zurück zur Schichtplan-Liste (Ionic router.navigate auf die Liste, Flutter context.pop()). Seite in beiden Apps nur Admin/Verantwortlich (Ionic Einstieg über Einstellungen → Einstellungen, Flutter-Route /settings/shifts).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/shifts/shift/shift.page.ts",
+    "line": 142,
+    "method": "ShiftPage.copyToInstance",
+    "cond": [
+     "(!tenantId)"
+    ],
+    "message": {
+     "keys": [
+      "shifts.selectTenant"
+     ],
+     "de": [
+      "Bitte wähle eine Instanz aus."
+     ],
+     "literals": [],
+     "expr": "translate('shifts.selectTenant')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "22f5ce5d",
+    "mbody": "1f8f313b",
+    "roleGuarded": true,
+    "id": "settings/general/shifts/shift/shift.page#toast-4ae23615"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart:91"
+    ],
+    "n": "Flutter wählt die erste Instanz vor; der Hinweis „Bitte wähle eine Instanz aus.“ entfällt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/widgets/copy_shift_to_tenant_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shift/shift.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shift/shift.page.ts",
+    "html": "settings/general/shifts/shift/shift.page.html"
+   },
+   "extra": {
+    "id": "x-e9a63ed372",
+    "title": "Ungespeicherte Änderungen im Cache",
+    "n": "Flutter besser: Ionic bearbeitet das Objekt aus db.shifts() direkt – ungespeicherte Änderungen erscheinen nach Zurück in der Liste bis zum Neuladen / Flutter arbeitet auf einer lokalen Kopie, die Liste bleibt unverändert.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/shifts/shift/shift.page.ts:34",
+    "f": [
+     "lib/features/shifts/presentation/pages/shift_detail_page.dart:65"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/shifts/presentation/pages/shift_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shifts.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shifts.page.ts",
+    "html": "settings/general/shifts/shifts.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/shifts/shifts.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:19-23",
+     "ngOnInit:25-26",
+     "goBack:28-30",
+     "createShift:32-51",
+     "trackByShiftId:53-53"
+    ],
+    "bodies": {
+     "constructor": "19be8177",
+     "ngOnInit": "8a0d08a2",
+     "goBack": "b4169157",
+     "createShift": "62cea43a",
+     "trackByShiftId": "3be39a06"
+    },
+    "id": "settings/general/shifts/shifts.page#logic-541274b4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/shifts/presentation/pages/shifts_list_page.dart:113-210",
+     "lib/data/repositories/shift_repository.dart:17-32"
+    ],
+    "n": "Ablauf gleich (Sheet schließen, Name prüfen, Plan anlegen mit definition/shifts [], zum Plan navigieren, Liste nach Name sortiert); Abweichungen siehe extra (Erfolgs-Toast, Trim, Navigation per ID).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shift_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/shifts/shifts.page",
+   "ionic": {
+    "ts": "settings/general/shifts/shifts.page.ts",
+    "html": "settings/general/shifts/shifts.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/shifts/shifts.page.ts",
+    "line": 50,
+    "method": "ShiftsPage.createShift",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/general/shifts/', shift.id]",
+    "src": "d8cc26d2",
+    "mbody": "62cea43a",
+    "id": "settings/general/shifts/shifts.page#nav-cfc6f85d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/shifts/presentation/pages/shifts_list_page.dart:199-202",
+     "lib/core/router/app_router.dart:1110-1121"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/type/type.page.ts",
+    "line": 388,
+    "method": "TypePage.offerDutyView",
+    "cond": [],
+    "header": {
+     "keys": [
+      "typeSettings.useDutyView"
+     ],
+     "de": [
+      "Dienstplan-Ansicht verwenden?"
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.useDutyView')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "typeSettings.useDutyViewMessage"
+     ],
+     "de": [
+      "Sind Dienste bei euch der Normalfall? Dann zeigt „Meine Termine“ für alle im Dienst-Team zuerst ihre Dienste, offene Dienste und Zahlen statt der Anwesenheitsquote. Du kannst das jederzeit unter Mehr → Einstellungen ändern."
+     ],
+     "literals": [],
+     "expr": "translate('typeSettings.useDutyViewMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "typeSettings.normalView"
+       ],
+       "de": [
+        "Nein, normale Ansicht"
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.normalView')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "typeSettings.useIt"
+       ],
+       "de": [
+        "Ja, verwenden"
+       ],
+       "literals": [],
+       "expr": "translate('typeSettings.useIt')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.updateTenantData({ duty_view: true }); Utils.showToast(translate('typeSettings.dutyViewActive'), 'success'); } catch { Utils.showToast(translate('typeSettings.viewFailed'), 'danger'); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "b8e01695",
+    "mbody": "88ca4c16",
+    "roleGuarded": true,
+    "id": "settings/general/type/type.page#alert-0d2e84fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1009-1037",
+     "lib/data/repositories/duty_repository.dart:227-238"
+    ],
+    "n": "Nach Speichern/Anlegen: nur wenn Dienst-Modus neu an, tenant.duty_view aus und kein anderer Dienst-Typ; Titel/Text, „Nein, normale Ansicht“ / „Ja, verwenden“; schreibt tenants.duty_view=true (eq id=aktueller Tenant) wie updateTenantData. Seite nur Admin/Verantwortlich in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/type/type.page.html",
+    "line": 377,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>",
+     "@if (canAddReminder())"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"customReminderHours\"",
+    "bindings": [
+     "[label]=\"'typeSettings.hoursBefore' | transloco\"",
+     "[placeholder]=\"'typeSettings.hoursPlaceholder' | transloco\"",
+     "[helperText]=\"'typeSettings.validHours' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.hoursBefore",
+     "typeSettings.hoursPlaceholder",
+     "typeSettings.validHours"
+    ],
+    "de": [
+     "Stunden vor Termin",
+     "z.B. 12 für 12 Stunden vorher",
+     "Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.hoursBefore' | transloco\" [placeholder]=\"'typeSettings.hoursPlaceholder' | transloco\" [helperText]=\"'typeSettings.validHours' | transloco\"",
+    "id": "settings/general/type/type.page#field-2bab6162"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:147-158",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Zahlenfeld „Stunden vor Termin“, Platzhalter „z.B. 12 für 12 Stunden vorher“, Hilfetext „Gültige Werte: 0-168 …“, nur bei < 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/type/type.page.ts",
+    "line": 415,
+    "method": "TypePage.openTeamHelp",
+    "cond": [],
+    "via": "navController.navigateForward",
+    "to": "'/tabs/settings/help/article/team-activate'",
+    "src": "16bf11a3",
+    "mbody": "9a684bed",
+    "id": "settings/general/type/type.page#nav-ab53d5e9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_protocol_settings.dart:121-127",
+     "lib/core/router/app_router.dart:1180-1191"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 356,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>",
+     "@if (canAddReminder())"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.quickSelect"
+    ],
+    "de": [
+     "Schnellauswahl"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.quickSelect' | transloco }}",
+    "id": "settings/general/type/type.page#text-5cb01ac6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:129-130",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "„Schnellauswahl“ nur solange < 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 394,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>",
+     "@else (not canAddReminder())"
+    ],
+    "tag": "ion-card-content",
+    "attrs": {},
+    "keys": [
+     "typeSettings.maxReached"
+    ],
+    "de": [
+     "Maximum von 3 Erinnerungen erreicht. Entferne eine bestehende Erinnerung, um eine neue hinzuzufügen."
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.maxReached' | transloco }}",
+    "id": "settings/general/type/type.page#text-dfaf8c58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:168-183",
+     "lib/core/router/app_router.dart:167"
+    ],
+    "n": "Warnkarte mit Warn-Icon und „Maximum von 3 Erinnerungen erreicht …“ bei 3 Erinnerungen. Rolle: Seite nur Admin/Verantwortlich (Ionic: Einstellungen-Eintrag isAdmin=ADMIN|RESPONSIBLE, isUrlAccessAllowed für /tabs/settings/general/types/…; Flutter: _protectedRoutes /settings/types → _isAdminOrResponsible). Helfer, Stimmführer, Spieler, Eltern, Beobachter, Bewerber in beiden ohne Zugang; keine Mandanten-Bedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-0f8c22baa3",
+    "title": "System-Zurück fragt nach",
+    "n": "Flutter besser: PopScope fragt auch bei Android-Zurück/iOS-Wischgeste nach ungespeicherten Änderungen / Ionic nur beim Zurück-Button.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:148-154",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:214-218"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-4296344228",
+    "title": "Agenda-Marker-Zeit nicht auf 0 gesetzt",
+    "n": "Ionic: ngOnInit setzt time des Tagesordnungs-Markers auf '0' (ältere Pläne speicherten 30 min) und speichert es so / Flutter: übernimmt die gespeicherte Zeit unverändert, zeigt z.B. „30 Min.“ und zählt sie in „Gesamt“.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:117",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1228-1235"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-698d8902b1",
+    "title": "Speichern schreibt null statt leerer Werte",
+    "n": "Ionic: schreibt das ganze Typ-Objekt – reminders [], checklist [] (wenn aktiviert), planning_title '', end_time/duration_days unverändert / Flutter: reminders null wenn leer, checklist null wenn leer, planning_title null wenn leer, end_time null bei ganztägig, duration_days null bei nicht ganztägig.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:195",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1474-1496"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-79fd46d253",
+    "title": "Änderungserkennung und Speichern-FAB",
+    "n": "Ionic: hasUnsavedChanges per JSON-Vergleich mit dem Ladezustand, Speichern-FAB immer aktiv / Flutter: Flag bei jeder Eingabe (Hin- und Zurückschalten zählt als Änderung → Rückfrage), Speichern-FAB ohne Änderung deaktiviert.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:131",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:239",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:245"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-91589b8337",
+    "title": "System-Zurück mit Rückfrage",
+    "n": "Flutter besser: Ionic fragt nur beim Zurück-Pfeil (navigateBack) nach ungespeicherten Änderungen, Hardware-/Wisch-Zurück verlässt ohne Rückfrage / Flutter: PopScope fragt auch bei System-Zurück.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:148",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:214-218"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-975297fc93",
+    "title": "Nutzungs-Hinweiskarte nur in Flutter",
+    "n": "Ionic: kein Hinweis / Flutter: Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.html:26-34",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:251-271"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-b41f2f171e",
+    "title": "Agenda-Marker-Zeit nicht normalisiert",
+    "n": "Ionic: setzt beim Laden die Zeit des Tagesordnungs-Markers auf 0 (ältere Pläne: 30 Min.) / Flutter: übernimmt die gespeicherte Zeit, zählt sie in „Gesamt“ mit und speichert sie wieder.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:113-119",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1228-1235"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-c81359471b",
+    "title": "Veralteter Zusatzfeld-Filter",
+    "n": "Ionic: zeigt „Kein Filter“, wenn der gespeicherte Schlüssel kein aktuelles Personen-Zusatzfeld ist (Filter bleibt gespeichert) / Flutter: übergibt den unbekannten Schlüssel als Dropdown-Wert ohne passenden Eintrag (Debug-Assertion, sonst leere Auswahl).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:122",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1107",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1122-1124"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-c9929afd0d",
+    "title": "Änderungserkennung per Flag",
+    "n": "Ionic: Vergleich mit Original-JSON (Zurückändern = keine Änderung) / Flutter: Flag _hasChanges bleibt nach Zurückändern gesetzt → Rückfrage beim Verlassen trotz unverändertem Stand.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:131-143",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:95",
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:245"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-f8e7ccbb61",
+    "title": "Speichern schreibt null statt Werte",
+    "n": "Ionic: schreibt das ganze Typ-Objekt (reminders [], planning_title '', end_time/duration_days bleiben) / Flutter: reminders/checklist/planning_title leer → null, end_time bei ganztägig → null, duration_days bei nicht-ganztägig → null.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.ts:189-196",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1470-1511"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "extra": {
+    "id": "x-fdbae2f115",
+    "title": "Nutzungshinweis nur in Flutter",
+    "n": "Ionic: kein Hinweis / Flutter: Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“ (zusätzliche Abfrage der Termine des Typs).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/type/type.page.html:26",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:251-271"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/types/types.page",
+   "ionic": {
+    "ts": "settings/general/types/types.page.ts",
+    "html": "settings/general/types/types.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/general/types/types.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:18-23",
+     "ngOnInit:25-25",
+     "goBack:27-29",
+     "saveOrder:31-46",
+     "openTypeModal:48-57",
+     "onReorderAttendanceTypes:59-61"
+    ],
+    "bodies": {
+     "constructor": "b62e8e95",
+     "ngOnInit": "8a0d08a2",
+     "goBack": "b4169157",
+     "saveOrder": "6a37a892",
+     "openTypeModal": "7a43c6a5",
+     "onReorderAttendanceTypes": "a8d588ef"
+    },
+    "id": "settings/general/types/types.page#logic-8220f429"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:144-242",
+     "lib/data/repositories/attendance_type_repository.dart:201-217"
+    ],
+    "n": "Sortieren/Speichern gleich (index = Position für alle Typen, Liste nach index), Anlegen-Ablauf anders (siehe modal-c0d2c05c), kein Loading (siehe loading-b4bbe04a); Fehlerbehandlung siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart",
+    "lib/data/repositories/attendance_type_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/types/types.page",
+   "ionic": {
+    "ts": "settings/general/types/types.page.ts",
+    "html": "settings/general/types/types.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/types/types.page.ts",
+    "line": 28,
+    "method": "TypesPage.goBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/general'",
+    "src": "9da983a4",
+    "mbody": "b4169157",
+    "id": "settings/general/types/types.page#nav-08d36e35"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:45-48"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/types/types.page",
+   "ionic": {
+    "ts": "settings/general/types/types.page.ts",
+    "html": "settings/general/types/types.page.html"
+   },
+   "extra": {
+    "id": "x-cacb75d561",
+    "title": "Fehler beim Speichern der Reihenfolge",
+    "n": "Flutter besser: Ionic ohne Fehlerbehandlung (Loading bleibt bei Fehler offen) / Flutter: Toast „Fehler beim Speichern. Bitte erneut versuchen.“, Sortiermodus bleibt erhalten.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/types/types.page.ts:31-46",
+    "f": [
+     "lib/features/settings/presentation/pages/attendance_types_page.dart:163-173"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/attendance_types_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover-detail/handover-detail.page",
+   "ionic": {
+    "ts": "settings/handover-detail/handover-detail.page.ts",
+    "html": "settings/handover-detail/handover-detail.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "settings/handover-detail/handover-detail.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:22-28",
+     "ngOnInit:30-60",
+     "changeGroup:62-86",
+     "getInsName:88-90",
+     "confirmProceed:92-111",
+     "proceed:113-149",
+     "trackByPersonId:151-151",
+     "goBack:153-155"
+    ],
+    "bodies": {
+     "constructor": "d05d1f66",
+     "ngOnInit": "5ee28f27",
+     "changeGroup": "3c05a96c",
+     "getInsName": "1b62ad7d",
+     "confirmProceed": "f48cc138",
+     "proceed": "0d0f4375",
+     "trackByPersonId": "3a373d8d",
+     "goBack": "18214997"
+    },
+    "id": "settings/handover-detail/handover-detail.page#logic-1c212d0f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:27",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:61",
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:129",
+     "lib/data/repositories/player_repository.dart:1635"
+    ],
+    "n": "Nach Änderung: Zielgruppen wie GroupService.getGroups nach category, sort_order (nulls last), name sortiert (x-6fbc5fbd93 behoben) → gleiche Reihenfolge und Vorbelegung. Auto-Zuordnung, Gruppenwahl, Bestätigung, Übergabe je Person mit Fehlerliste, Tracking, Rücknavigation gleich. Übrig: Flutter besser: Ladefehler der Zielgruppen mit Toast (x-c62672af53, niedrig).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover-detail/handover-detail.page",
+   "ionic": {
+    "ts": "settings/handover-detail/handover-detail.page.ts",
+    "html": "settings/handover-detail/handover-detail.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/handover-detail/handover-detail.page.ts",
+    "line": 34,
+    "method": "HandoverDetailPage.ngOnInit",
+    "cond": [
+     "(!this.handoverData)"
+    ],
+    "message": {
+     "keys": [
+      "handover.noData"
+     ],
+     "de": [
+      "Keine Daten für die Personenübergabe vorhanden."
+     ],
+     "literals": [],
+     "expr": "translate('handover.noData')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "06057ad4",
+    "mbody": "5ee28f27",
+    "roleGuarded": true,
+    "id": "settings/handover-detail/handover-detail.page#toast-1afd9d81"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_detail_page.dart:61-64",
+     "lib/core/router/app_router.dart:180"
+    ],
+    "n": "Ohne Übergabedaten (Reload/Direktaufruf) Fehler-Toast „Keine Daten für die Personenübergabe vorhanden.“. Seite wie Ionic (isUrlAccessAllowed '/tabs/settings/handover/detail') nur für Admin/Verantwortlich erreichbar (_protectedRoutes '/settings/handover' gilt auch für /detail).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/handover/handover.page.ts",
+    "line": 90,
+    "method": "HandoverPage.toDetail",
+    "cond": [],
+    "via": "navCtrl.navigateForward",
+    "to": "'/tabs/settings/handover/detail'",
+    "src": "4b03e0d8",
+    "mbody": "9e71c000",
+    "id": "settings/handover/handover.page#nav-f9737832"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:136",
+     "lib/core/router/app_router.dart:1253"
+    ],
+    "n": "Ionic: navigateForward /tabs/settings/handover/detail mit DataService.setHandoverData / Flutter: push /settings/handover/detail mit HandoverData (Personen, Ziel-Instanz, stayInInstance) als extra.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/handover/handover.page.ts",
+    "line": 55,
+    "method": "HandoverPage.ngOnInit",
+    "cond": [
+     "!(this.tenants.length > 0)"
+    ],
+    "message": {
+     "keys": [
+      "handover.noOtherTenants"
+     ],
+     "de": [
+      "Es sind keine weiteren Instanzen vorhanden. Bitte füge weitere Instanzen dieser Organisation hinzu."
+     ],
+     "literals": [],
+     "expr": "translate('handover.noOtherTenants')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "1c4a62b6",
+    "mbody": "c0920ee2",
+    "id": "settings/handover/handover.page#toast-3db15108"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:103-113",
+     "lib/data/repositories/organisation_repository.dart:312-330"
+    ],
+    "n": "Gleiche Datenquelle (tenant_group_tenants der Organisation ohne aktuelle Instanz; ohne Organisation leer) → einmal roter Toast „Es sind keine weiteren Instanzen vorhanden…“. Bei Ladefehler in beiden nicht dieser Toast. Seite nur Admin/Verantwortlich.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/help/article/help-article.page.ts",
+    "line": 55,
+    "method": "HelpArticlePage.navigateBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/help'",
+    "src": "d4eb3500",
+    "mbody": "dc6cd59c",
+    "id": "settings/help/article/help-article.page#nav-63850d0a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:34",
+     "lib/features/settings/presentation/widgets/type_protocol_settings.dart:126"
+    ],
+    "n": "Flutter besser: Ionic navigateBack('/tabs/settings/help') führt immer zur Hilfe-Übersicht, auch wenn der Artikel aus der Termin-Art-Seite (Teamorganisation aktivieren) geöffnet wurde / Flutter maybePop kehrt zur aufrufenden Seite zurück (aus der Hilfe: Hilfe-Übersicht, aus der Termin-Art: Termin-Art).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart",
+    "lib/features/settings/presentation/widgets/type_protocol_settings.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/content/index",
+   "ionic": {
+    "ts": "settings/help/content/index.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-ed039cfb84",
+    "title": "Hilfeartikel songs-add bewusst abweichend",
+    "n": "Ionic: \"Tippst du auf eine Datei und dann auf \\\"Datei öffnen\\\", öffnet sie sich in einem neuen Tab. Nutzt du Attendix als installierte Web-App …, zeigt Attendix PDFs und Bilder direkt in der App an.\" / Flutter: \"… zeigt Attendix PDFs und Bilder direkt in der App an. Andere Dateien öffnen sich in einem neuen Tab bzw. in der passenden App.\" (Override OVERRIDES_DE/EN in tool/help/build_help.mjs, beschreibt das Flutter-Verhalten).",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/help/content/articles/songs.articles.ts:11",
+    "f": [
+     "lib/features/help/data/help_content.dart:268",
+     "lib/features/help/data/help_content_en.dart:162"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/help/data/help_content.dart",
+    "lib/features/help/data/help_content_en.dart"
+   ]
+  }
+ ]
+}

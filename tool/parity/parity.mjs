@@ -200,14 +200,21 @@ const positional = () => rest.filter((x, k) => !OPTS_WITH_VALUE.has(x) && !OPTS_
 // counts as changed when it was modified, renamed away or deleted; a reference
 // ending in "/" (directory) when anything below it changed. Unknown commits
 // (not in the checkout) are reported once and never mark anything.
-const refPath = (r) => String(r).trim().replace(/:\d.*$/, '');
-// Item kinds whose behaviour depends on more than the referenced lines
-// (logic, data access, routing): any change of a referenced file counts.
-// Other kinds (texts, fields, actions, dialogs …) only when the referenced
-// lines ± LINE_MARGIN changed.
+// "lib/x.dart:12-30", "lib/x.dart:~160", "lib/x.dart (Zeile 5)" → "lib/x.dart"
+const refPath = (r) => String(r).trim().replace(/\s*\(.*\)$/, '').replace(/:[^/]*$/, '');
+// Only plain texts and media without any condition, role guard or binding are
+// checked line by line: they show what the referenced lines say. Everything
+// else (actions, fields, dialogs, toasts, logic, data access, routing …) may
+// change through a role computation, handler or value elsewhere in the file,
+// so any change of a referenced file counts (Sol review 6663947239).
 const LINE_MARGIN = 10;
-const FILE_LEVEL_KINDS = new Set(['logic', 'db', 'route', 'native', 'effect']);
-const fileLevelFor = (kind) => !kind || FILE_LEVEL_KINDS.has(kind);
+const LINE_LEVEL_KINDS = new Set(['text', 'media']);
+const fileLevelFor = (item) => {
+  if (!item || typeof item === 'string') return true;
+  if (!LINE_LEVEL_KINDS.has(item.kind)) return true;
+  if (item.roleGuarded || item.cond?.length || item.bindings?.length || item.bound?.length || item.events?.length) return true;
+  return false;
+};
 const makeFlutterCheck = (root = '.') => {
   const byCommit = new Map();
   const warned = new Set();
@@ -258,11 +265,33 @@ const makeFlutterCheck = (root = '.') => {
     }
     return byFile.get(k);
   };
-  // "lib/x.dart:12-30,41" → [[12,30],[41,41]]; no line numbers → null
+  // "lib/x.dart:12-30,41" → [[12,30],[41,41]]; no or malformed line
+  // numbers ("~160", "12ff") → null, so the whole file counts
   const rangesOf = (r) => {
-    const m = String(r).trim().match(/:(\d[\d,\s-]*)$/);
+    const m = String(r).trim().match(/:(\d+(?:\s*-\s*\d+)?(?:\s*,\s*\d+(?:\s*-\s*\d+)?)*)$/);
     if (!m) return null;
-    return m[1].split(',').map((x) => x.trim().match(/^(\d+)(?:-(\d+))?/)).filter(Boolean).map((x) => [Number(x[1]), Number(x[2] ?? x[1])]);
+    return m[1].split(',').map((x) => x.trim().match(/^(\d+)(?:\s*-\s*(\d+))?$/)).filter(Boolean).map((x) => [Number(x[1]), Number(x[2] ?? x[1])]);
+  };
+  // line count of a file at a commit; null when it did not exist there
+  const lenAt = new Map();
+  const linesAt = (commit, p) => {
+    const k = `${commit}\0${p}`;
+    if (!lenAt.has(k)) {
+      let n = null;
+      try { n = git('show', `${commit}:${p}`).split('\n').length; } catch { n = null; }
+      lenAt.set(k, n);
+    }
+    return lenAt.get(k);
+  };
+  // references the verdict could not have been checked against: the file did
+  // not exist at the verdict's commit or a line lies past its end
+  const invalid = (commit, r) => {
+    const p = refPath(r);
+    if (!p || p.endsWith('/')) return false;
+    const n = linesAt(commit, p);
+    if (n === null) return true;
+    const ranges = rangesOf(r);
+    return !!ranges?.some(([a, b]) => a < 1 || b > n);
   };
   // changed reference paths (deduplicated, without line numbers) or [].
   // fileLevel false: a modified file only counts when a hunk touches the
@@ -271,11 +300,14 @@ const makeFlutterCheck = (root = '.') => {
   const changed = (commit, refs, { fileLevel = true } = {}) => {
     if (disabled || !commit || !refs?.length) return [];
     const paths = changedPaths(commit);
-    if (!paths?.size) return [];
+    if (!paths) return [];
     const out = new Set();
     for (const r of refs) {
       const p = refPath(r);
       if (!p) continue;
+      // conservative: a reference that did not fit the code at the verdict's
+      // commit is re-checked even if the file did not change since
+      if (invalid(commit, r)) { out.add(`${p} (Referenz ungültig)`); continue; }
       if (p.endsWith('/') ? [...paths.keys()].some((x) => x.startsWith(p)) : !paths.has(p)) {
         if (p.endsWith('/')) out.add(p);
         continue;
@@ -492,7 +524,7 @@ if (cmd === 'batches') {
   const inv = load(INVENTORY);
   const st = readStatuses();
   const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
-  const flutterChangedOf = (at, refs, kind) => (fcheck ? fcheck.changed(at, refs, { fileLevel: fileLevelFor(kind) }) : []);
+  const flutterChangedOf = (at, refs, item) => (fcheck ? fcheck.changed(at, refs, { fileLevel: fileLevelFor(item) }) : []);
   let fcOther = 0;
   const { batches } = load(join(DIR, 'batches.json'));
   const recheck = new Set();
@@ -582,7 +614,7 @@ if (cmd === 'batches') {
     for (const u of inv.units.filter((x) => b.units.includes(x.id))) {
       for (const i of u.items) {
         const s0 = st.items[i.id];
-        const changed = s0 ? flutterChangedOf(s0.flutterAt, s0.f, i.kind) : [];
+        const changed = s0 ? flutterChangedOf(s0.flutterAt, s0.f, i) : [];
         let reason = null;
         if (!s0) reason = 'neu';
         else if (recheck.has(i.id)) reason = 'geaendert';
@@ -640,7 +672,7 @@ if (cmd === 'batches') {
   }
   // verdicts whose referenced Flutter files changed since (see makeFlutterCheck)
   const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
-  rows.forEach((r) => { r.fchanged = r.status !== 'offen' && fcheck ? fcheck.changed(r.flutterAt, r.flutter, { fileLevel: fileLevelFor(r.item.kind) }).length > 0 : false; });
+  rows.forEach((r) => { r.fchanged = r.status !== 'offen' && fcheck ? fcheck.changed(r.flutterAt, r.flutter, { fileLevel: fileLevelFor(r.item) }).length > 0 : false; });
   const fchangedExtra = new Set(fcheck ? st.extra.filter((e) => fcheck.changed(e.flutterAt, e.f).length).map((e) => e.id) : []);
   // verdicts for ids the inventory does not know (removed or mistyped)
   const invIds = new Set(inv.units.flatMap((u) => u.items.map((i) => i.id)));

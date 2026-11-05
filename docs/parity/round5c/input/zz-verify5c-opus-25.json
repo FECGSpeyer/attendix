@@ -1,0 +1,1722 @@
+{
+ "batch": "zz-verify5c-opus-25",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/files/files.page.ts",
+    "line": 1110,
+    "method": "FilesPage.moveEntries",
+    "cond": [],
+    "component": "FilesMoveModalComponent",
+    "props": [
+     "tenantId",
+     "items",
+     "currentPath"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "3f2c09f2",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#modal-b8bd9613"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:601-606",
+     "lib/features/settings/presentation/widgets/files_move_modal.dart:20-38"
+    ],
+    "n": "Übergebene Daten (Einträge, aktueller Ordner, Tenant über gebundenes Repository) gleich. Ionic: Vollbild-Modal (ohne presentingElement) / Flutter iOS: Karten-Modal (per Wischen schließbar); md wie Ionic.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/files/files.page.ts",
+    "line": 55,
+    "method": "FilesPage.ngOnInit",
+    "cond": [
+     "(!this.db.canAccessFiles())"
+    ],
+    "via": "navCtrl.back",
+    "to": "",
+    "src": "ef5ae68c",
+    "mbody": "8f42ab22",
+    "id": "settings/files/files.page#nav-c401b9ed"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1128-1134",
+     "lib/features/settings/presentation/pages/files_page.dart:209-210"
+    ],
+    "n": "Ionic: navCtrl.back() ohne Zugriff / Flutter bleibt auf der Seite (Hinweistext, Menü ausgeblendet); _init lädt trotzdem die Einträge (ggf. Fehler-Toast).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/files/files.page.ts",
+    "line": 1170,
+    "method": "FilesPage.goBack",
+    "cond": [],
+    "via": "navCtrl.navigateBack",
+    "to": "'/tabs/settings'",
+    "src": "8dc34d31",
+    "mbody": "cd1360e7",
+    "id": "settings/files/files.page#nav-ce9fcd43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1012-1029"
+    ],
+    "n": "Flutter: pop bzw. go('/settings').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 108,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)",
+     "@if (maxBytes !== null)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "files.storageUsedOf"
+    ],
+    "de": [
+     "Speicher: {used} von {max} belegt"
+    ],
+    "literals": [],
+    "text": "{{ 'files.storageUsedOf' | transloco: { used: formatFileSize(usedBytes), max: formatFileSize(maxBytes) } }}",
+    "id": "settings/files/files.page#text-7c9c40ef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1142",
+     "lib/features/settings/presentation/pages/files_page.dart:1192",
+     "lib/core/providers/role_permission_providers.dart:143"
+    ],
+    "n": "Nur Admin/Verantwortlich (canEditFilesFor = Ionic canEditFiles) mit geladener Belegung (RPC files_used_bytes nur für diese Rollen) und Limit tenants.files_max_bytes: „Speicher: {used} von {max} belegt“ + Status-Zusatz, gleiche Größenformatierung.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 108,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)",
+     "@else (not maxBytes !== null)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "files.storageUsed"
+    ],
+    "de": [
+     "Speicher: {used} belegt"
+    ],
+    "literals": [],
+    "text": "{{ 'files.storageUsed' | transloco: { used: formatFileSize(usedBytes) } }}",
+    "id": "settings/files/files.page#text-9dbd2f61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1194"
+    ],
+    "n": "Ohne Limit „Speicher: {used} belegt“; gleiche Rollen-/Ladebedingung wie text-7c9c40ef.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 107,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)"
+    ],
+    "tag": "ion-note",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ storageStatusLabel }}"
+    ],
+    "text": "{{ storageStatusLabel }}",
+    "id": "settings/files/files.page#text-c3f98fef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1142",
+     "lib/features/settings/presentation/pages/files_page.dart:245-253",
+     "lib/features/settings/presentation/pages/files_page.dart:1200-1201"
+    ],
+    "n": "Nur Admin/Verantwortlich mit geladener Belegung (Belegung wird wie in Ionic nur bei Bearbeitungsrecht geladen, files_used_bytes); „ · fast voll“ ab 80 %, „ · voll“ ab 100 % an den Speichertext angehängt.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 849,
+    "method": "FilesPage.sendEntryPerTelegram",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.telegramFailed"
+     ],
+     "de": [
+      "Telegram-Versand fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.telegramFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "9e235abb",
+    "mbody": "af822469",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-030d7a9b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:386-401",
+     "lib/core/services/telegram_service.dart:357-366"
+    ],
+    "n": "Fehler beim Signieren der URL gleich („Telegram-Versand fehlgeschlagen: {error}“). Fehler der Edge Function send-document: Ionic (TelegramService.sendSongPerTelegram) „Fehler beim Senden der Nachricht, versuche es später erneut!“ / Flutter „Telegram-Versand fehlgeschlagen: {error}“.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart",
+    "lib/core/services/telegram_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1160,
+    "method": "FilesPage.moveEntries",
+    "cond": [
+     "(skipped || failed)",
+     "!(entries.length === 1 && skipped)",
+     "!(entries.length === 1 && failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.moveSummary"
+     ],
+     "de": [
+      "{ok} verschoben, {skipped} übersprungen (gibt es im Ziel schon), {failed} fehlgeschlagen."
+     ],
+     "literals": [],
+     "expr": "translate('files.moveSummary', { ok, skipped, failed })"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "b884ec4a",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-1b899539"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:595-599",
+     "lib/features/settings/presentation/pages/files_page.dart:641-642",
+     "lib/core/providers/role_permission_providers.dart:143"
+    ],
+    "n": "Rolle: _moveEntries bricht wie Ionic moveEntries ohne Bearbeitungsrecht mit „Du darfst Dateien nicht bearbeiten.“ ab; canEditFilesFor = Admin/Verantwortlich wie Ionic canEditFiles (Helfer, Stimmführer(-Helfer), Spieler, Eltern, Beobachter, Bewerber in beiden nie, files_shared ändert nur das Lesen). Text mit {ok}/{skipped}/{failed} und Warnfarbe gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 954,
+    "method": "FilesPage.renameEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.renamed"
+     ],
+     "de": [
+      "Eintrag wurde umbenannt."
+     ],
+     "literals": [],
+     "expr": "translate('files.renamed')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5999fdc9",
+    "mbody": "4c953ec9",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-1d01aef6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:474"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1156,
+    "method": "FilesPage.moveEntries",
+    "cond": [
+     "(entries.length === 1 && failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.moveFailed"
+     ],
+     "de": [
+      "Verschieben fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.moveFailed', { error: lastError })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "14735a13",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-264882fe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:637-638"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1149,
+    "method": "FilesPage.moveEntries",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.moveFailed"
+     ],
+     "de": [
+      "Verschieben fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.moveFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "14a6ffe1",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-2e9bf690"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:631-633"
+    ],
+    "n": "Fehler beim Lesen des Zielordners → roter Toast, nichts verschoben (Ausnahme läuft durch _withLoading).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 911,
+    "method": "FilesPage.deleteEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.deleted"
+     ],
+     "de": [
+      "Eintrag wurde gelöscht."
+     ],
+     "literals": [],
+     "expr": "translate('files.deleted')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "6cec164c",
+    "mbody": "02091d71",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-354386ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:650-664"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1162,
+    "method": "FilesPage.moveEntries",
+    "cond": [
+     "!(skipped || failed)",
+     "!(entries.length === 1 && skipped)",
+     "!(entries.length === 1 && failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.movedMany"
+     ],
+     "de": [
+      "{count, plural, one {Eintrag wurde verschoben.} other {# Einträge wurden verschoben.}}"
+     ],
+     "literals": [],
+     "expr": "translate('files.movedMany', { count: ok })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "5183879f",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-3992cefe"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:643-644"
+    ],
+    "n": "Gleiche Rollen-/Fallbedingung wie moveSummary (nur Admin/Verantwortlich); Plural-Text „Eintrag wurde verschoben.“ / „# Einträge wurden verschoben.“ und Erfolgsfarbe gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 585,
+    "method": "FilesPage.openImagePreview",
+    "cond": [
+     "(!url)"
+    ],
+    "message": {
+     "keys": [
+      "files.previewFailed"
+     ],
+     "de": [
+      "Bildvorschau fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.previewFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "460921a4",
+    "mbody": "d3a73964",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-4647060a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:345-353"
+    ],
+    "n": "Roter Toast „Bildvorschau fehlgeschlagen: {error}“, wenn die signierte URL nicht erzeugt werden kann; für alle Rollen mit Dateizugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 805,
+    "method": "FilesPage.createFolder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.folderFailed"
+     ],
+     "de": [
+      "Ordner konnte nicht erstellt werden: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.folderFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c1da4ff3",
+    "mbody": "f55ee061",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-571055f7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:457-458"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 957,
+    "method": "FilesPage.renameEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.renameFailed"
+     ],
+     "de": [
+      "Umbenennen fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.renameFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e83ff645",
+    "mbody": "4c953ec9",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-5dc634c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:477"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 106,
+    "method": "FilesPage.shareEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.linkToast"
+     ],
+     "de": [
+      "Link: {url}"
+     ],
+     "literals": [],
+     "expr": "translate('files.linkToast', { url })"
+    },
+    "color": "medium",
+    "duration": null,
+    "src": "e311e199",
+    "mbody": "a1dd95be",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-767d441c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:431-436"
+    ],
+    "n": "Ionic: Toast „Link: {url}“ (medium), wenn die Zwischenablage fehlschlägt / Flutter öffnet dann Share.share; Toast (Info) erst, wenn auch das fehlschlägt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 802,
+    "method": "FilesPage.createFolder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.folderCreated"
+     ],
+     "de": [
+      "Ordner wurde erstellt."
+     ],
+     "literals": [],
+     "expr": "translate('files.folderCreated')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "418916af",
+    "mbody": "f55ee061",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-7acc9af8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:455"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1087,
+    "method": "FilesPage.deleteSelected",
+    "cond": [
+     "(failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.deleteSummary"
+     ],
+     "de": [
+      "{ok} gelöscht, {failed} fehlgeschlagen."
+     ],
+     "literals": [],
+     "expr": "translate('files.deleteSummary', { ok, failed })"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "9bba6fc4",
+    "mbody": "e671b005",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-97edb5ea"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:583-584"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 542,
+    "method": "FilesPage.playAudioEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.playFailed"
+     ],
+     "de": [
+      "Fehler beim Abspielen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.playFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "8a8e678c",
+    "mbody": "f35317e2",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-a1bcde4f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:362-378"
+    ],
+    "n": "Roter Toast „Fehler beim Abspielen: {error}“; Audio-Warteschlange aller (gefilterten) Audiodateien, für alle Rollen mit Dateizugriff.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 826,
+    "method": "FilesPage.downloadEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.downloadFailed"
+     ],
+     "de": [
+      "Download fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.downloadFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "b3ec3613",
+    "mbody": "06969811",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-d3727a66"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:411-412"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 244,
+    "method": "FilesPage.requestMoreStorage",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.requestFailed"
+     ],
+     "de": [
+      "Fehler beim Senden der Anfrage: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.requestFailed', { error: error?.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "aa304b1e",
+    "mbody": "5ee3ac72",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-d3bd6d1e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:712-715"
+    ],
+    "n": "Ionic: {error} = error.message (+ Service-Toast „Fehler beim Senden der Frage“) / Flutter: {error} = toString der RepositoryException („RepositoryException: … (operation: sendQuestion…)“), kein Service-Toast.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1089,
+    "method": "FilesPage.deleteSelected",
+    "cond": [
+     "!(failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.deletedMany"
+     ],
+     "de": [
+      "{count, plural, one {Eintrag wurde gelöscht.} other {# Einträge wurden gelöscht.}}"
+     ],
+     "literals": [],
+     "expr": "translate('files.deletedMany', { count: ok })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "2b1a1de1",
+    "mbody": "e671b005",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-d5528849"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:585-586"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 1158,
+    "method": "FilesPage.moveEntries",
+    "cond": [
+     "(entries.length === 1 && skipped)",
+     "!(entries.length === 1 && failed)"
+    ],
+    "message": {
+     "keys": [
+      "files.moveExists"
+     ],
+     "de": [
+      "Im Zielordner gibt es schon „{name}“. Nichts verschoben."
+     ],
+     "literals": [],
+     "expr": "translate('files.moveExists', { name: entries[0].name })"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3553a1a5",
+    "mbody": "ebefea87",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-e09b9e9c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:639-640"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 242,
+    "method": "FilesPage.requestMoreStorage",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.requestSent"
+     ],
+     "de": [
+      "Deine Anfrage wurde gesendet. Wir melden uns so schnell wie möglich."
+     ],
+     "literals": [],
+     "expr": "translate('files.requestSent')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "0f50ee76",
+    "mbody": "5ee3ac72",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-e8156c86"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:669-715",
+     "lib/features/settings/presentation/pages/files_page.dart:1142",
+     "lib/features/settings/presentation/pages/files_page.dart:1209-1213"
+    ],
+    "n": "Grüner Toast nach gesendeter Anfrage. „Mehr Speicher anfragen“ nur für canEditFiles (Admin/Verantwortlich) über die Speicheranzeige ab 80 % bzw. den Speicher-voll-Dialog – gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 914,
+    "method": "FilesPage.deleteEntry",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.deleteFailed"
+     ],
+     "de": [
+      "Löschen fehlgeschlagen: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.deleteFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0e753623",
+    "mbody": "02091d71",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-f1cb9a95"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:665"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 838,
+    "method": "FilesPage.sendEntryPerTelegram",
+    "cond": [
+     "(!this.db.tenantUser()?.telegram_chat_id)"
+    ],
+    "message": {
+     "keys": [
+      "files.connectTelegram"
+     ],
+     "de": [
+      "Bitte verbinde zuerst Telegram in den Benachrichtigungen."
+     ],
+     "literals": [],
+     "expr": "translate('files.connectTelegram')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "d619a01a",
+    "mbody": "af822469",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-f38f08f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:381-391",
+     "lib/core/providers/tenant_providers.dart:241-253"
+    ],
+    "n": "Bedingung ist keine Rolle, sondern telegram_chat_id der eigenen tenantUsers-Zeile (beide gleich, keine Rollenprüfung; Dateiablage selbst per canAccessFiles gleich). Toast „Bitte verbinde zuerst Telegram in den Benachrichtigungen.“ (warning) praktisch nur bei Race erreichbar, da der Menüpunkt ohne Chat-ID ausgeblendet ist.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart",
+    "lib/core/providers/tenant_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 135,
+    "method": "FilesPage.loadEntries",
+    "cond": [],
+    "message": {
+     "keys": [
+      "files.loadFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Dateien: {error}"
+     ],
+     "literals": [],
+     "expr": "translate('files.loadFailed', { error: error.message || error })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e3595ca2",
+    "mbody": "9fdeacb7",
+    "roleGuarded": true,
+    "id": "settings/files/files.page#toast-f5e032f8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:268-285",
+     "lib/core/providers/role_permission_providers.dart:116-120,141-142"
+    ],
+    "n": "Roter Toast „Fehler beim Laden der Dateien: {error}“. Seite nur bei canAccessFiles: files_shared → alle außer Bewerber/ohne Rolle, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer – in Flutter identisch.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 54,
+    "method": "FilesPage.ngOnInit",
+    "cond": [
+     "(!this.db.canAccessFiles())"
+    ],
+    "message": {
+     "keys": [
+      "files.noAccess"
+     ],
+     "de": [
+      "Du hast keinen Zugriff auf Dateien."
+     ],
+     "literals": [],
+     "expr": "translate('files.noAccess')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "afad6fa1",
+    "mbody": "8f42ab22",
+    "id": "settings/files/files.page#toast-f69d0e8d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1128-1134"
+    ],
+    "n": "Ionic: Toast (danger) „Du hast keinen Zugriff auf Dateien.“ + zurück / Flutter: kein Toast, derselbe Text als Seiteninhalt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "extra": {
+    "id": "x-0f583f0feb",
+    "title": "Ladeanzeige beim Ordnerwechsel",
+    "n": "Ionic: während loadEntries ersetzt ein Spinner die Liste / Flutter: Spinner nur bei leerer Liste; beim Ordnerwechsel bleibt die alte Liste sichtbar (Breadcrumb zeigt schon den neuen Ordner), bis die neue geladen ist.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/files/files.page.html:159-163",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1257-1260"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/branding/branding.page",
+   "ionic": {
+    "ts": "settings/general/branding/branding.page.ts",
+    "html": "settings/general/branding/branding.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/branding/branding.page.ts",
+    "line": 89,
+    "method": "BrandingPage.goBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/org-settings'",
+    "src": "f05950af",
+    "mbody": "a2549fcc",
+    "id": "settings/general/branding/branding.page#nav-de11d527"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/branding_page.dart:119-122",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:540",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:196"
+    ],
+    "n": "Flutter besser: Ionic navigateBack immer nach /tabs/settings/org-settings – auch wenn die Seite aus Allgemeine Einstellungen geöffnet wurde / Flutter: Navigator.maybePop zurück zur aufrufenden Seite (Allgemeine Einstellungen bzw. Organisation)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 388,
+    "method": "ExtraFieldsPage.goBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings/general'",
+    "src": "9da983a4",
+    "mbody": "b4169157",
+    "id": "settings/general/extra-fields/extra-fields.page#nav-599a827b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:522-527",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:503-515",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:535-538",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:704"
+    ],
+    "n": "Ziel gleich (zurück zu Allgemeine Einstellungen, einziger Aufrufer). Flutter besser: bei ungespeicherten Änderungen Dialog 'Ungespeicherte Änderungen' / 'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?' (Abbrechen/Verwerfen); Ionic verwirft still",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "extra": {
+    "id": "x-a3d381bce7",
+    "title": "Werk-Bereinigung bei synchronisierter Werkbibliothek",
+    "n": "Flutter besser (mit Einschränkung): Befund real. Ionic schreibt bei genutzter Quell-Bibliothek die Werkfelder der eigenen Instanz in die Werke der Quell-Instanz (RLS admins_manage_songs erlaubt es) und löscht dort Werte von Feldern, die nur die Quell-Instanz kennt – fremde Daten werden verändert. Flutter fasst nur eigene Werke an. Folge in Flutter: ungültige Auswahlwerte/Reste gelöschter Felder in Bibliothekswerken bleiben; fehlende Standardwerte zeigen beide Apps beim Öffnen ohnehin an. Erstreview mittel zu hoch.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/extra-fields/extra-fields.page.ts:353",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:72",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:187",
+     "lib/features/songs/presentation/pages/song_detail_page.dart:112"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/features/songs/presentation/pages/song_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "extra": {
+    "id": "x-b7ea470e58",
+    "title": "Personen-Bereinigung erfasst andere Personen",
+    "n": "Flutter besser: Befund real (Flutter bereinigt alle Personen der Instanz inkl. archivierter und ausstehender, gepaged; Ionic db.getPlayers() nur aktive, nicht ausstehende, max. 1000), aber ohne sichtbare Folge: fehlende Werte zeigen beide Apps ohnehin als Standard an, entfernt werden nur Werte gelöschter Felder, ungültige Auswahlwerte werden ersetzt. Ergebnis: konsistente Daten auch bei Archivierten/Bewerbern. Erstreview mittel zu hoch.",
+    "sev": "niedrig",
+    "ionic": "src/app/settings/general/extra-fields/extra-fields.page.ts:319",
+    "f": [
+     "lib/data/repositories/extra_fields_repository.dart:72",
+     "lib/data/repositories/extra_fields_repository.dart:94",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:186"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/data/repositories/extra_fields_repository.dart",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 200,
+    "cond": [
+     "@if (db.tenant().song_sharing_id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=copySongSharingLink()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "settings.copyLink"
+    ],
+    "de": [
+     "Link kopieren"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.copyLink' | transloco }}",
+    "id": "settings/general/general.page#action-b6b291b1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:683",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:397"
+    ],
+    "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic zeigt immer den Erfolgs-Toast. Sonst gleich (Bedingung, Text „Link kopieren“, Link https://attendix.de/<id>).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 168,
+    "cond": [
+     "@if (db.tenant().register_id && registerAllowed)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=copyRegisterLink()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "settings.copyLink"
+    ],
+    "de": [
+     "Link kopieren"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.copyLink' | transloco }}",
+    "id": "settings/general/general.page#action-c0d0384b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:630",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:397"
+    ],
+    "n": "Flutter besser: meldet einen Kopierfehler (Toast „Link konnte nicht kopiert werden“), Ionic zeigt immer den Erfolgs-Toast. Sonst gleich (Bedingung, Text „Link kopieren“, Link https://attendix.de/register/<id>).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/general/general.page.ts",
+    "line": 351,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [],
+    "header": {
+     "keys": [
+      "generalSettings.saved"
+     ],
+     "de": [
+      "Einstellungen gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.saved')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "generalSettings.savedReload"
+     ],
+     "de": [
+      "Die Einstellungen wurden erfolgreich gespeichert. Bitte lade die Seite neu, um die Änderungen zu sehen."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.savedReload')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "generalSettings.reload"
+       ],
+       "de": [
+        "Neu laden"
+       ],
+       "literals": [],
+       "expr": "translate('generalSettings.reload')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { window?.location?.reload(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "60b51b2e",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#alert-c2833d76"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:283",
+     "lib/core/utils/page_reload.dart:4"
+    ],
+    "n": "Dialog, Text und Buttons „Abbrechen“/„Neu laden“ gleich. Ionic: „Neu laden“ lädt Seite/App neu (auch nativ via window.location.reload) / Flutter: Reload nur im Web, nativ ohne Wirkung (Tenant-Provider wird nach dem Speichern ohnehin invalidiert).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/general/general.page.ts",
+    "line": 305,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [],
+    "message": {
+     "keys": [
+      "generalSettings.saving"
+     ],
+     "de": [
+      "Einstellungen werden gespeichert..."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.saving')"
+    },
+    "duration": "999999",
+    "src": "c235cfa2",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#loading-c8bf88e0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:444"
+    ],
+    "n": "Ionic: blockierendes Overlay „Einstellungen werden gespeichert...“ / Flutter: nur Spinner im FAB, kein Overlay, kein Text (generalSettingsSaving ungenutzt).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "settings/general/general.page.ts",
+    "line": 206,
+    "method": "GeneralPage.navigateBack",
+    "cond": [],
+    "via": "navController.navigateBack",
+    "to": "'/tabs/settings'",
+    "src": "93936620",
+    "mbody": "f290399d",
+    "id": "settings/general/general.page#nav-0643e80a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:433"
+    ],
+    "n": "context.pop() zurück zu den Einstellungen (Ionic navigateBack('/tabs/settings')).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/general.page.ts",
+    "line": 286,
+    "method": "GeneralPage.saveGeneralSettings",
+    "cond": [
+     "(!this.shortName?.trim())"
+    ],
+    "message": {
+     "keys": [
+      "generalSettings.shortNameEmpty"
+     ],
+     "de": [
+      "Der Kurzname darf nicht leer sein."
+     ],
+     "literals": [],
+     "expr": "translate('generalSettings.shortNameEmpty')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "293b4a1b",
+    "mbody": "a08e0334",
+    "roleGuarded": true,
+    "id": "settings/general/general.page#toast-41f907d8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:192"
+    ],
+    "n": "Roter Toast „Der Kurzname darf nicht leer sein.“ als zweite Prüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  }
+ ]
+}

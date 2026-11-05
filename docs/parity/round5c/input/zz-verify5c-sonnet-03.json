@@ -1,0 +1,2945 @@
+{
+ "batch": "zz-verify5c-sonnet-03",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 75,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(3))"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=toggleStatusFilter(5)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.status.lateExcused"
+    ],
+    "de": [
+     "Verspätet entschuldigt"
+    ],
+    "literals": [],
+    "text": "{{ 'common.status.lateExcused' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-d7e1cae2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1213"
+    ],
+    "n": "„Verspätet entschuldigt“ erscheint wie in Ionic, wenn der Typ Verspätet (3) erlaubt, und filtert Status 5.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 161,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=showLegend(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "information-circle-outline"
+    ],
+    "keys": [
+     "signout.legend"
+    ],
+    "de": [
+     "Legende"
+    ],
+    "literals": [],
+    "text": "{{ 'signout.legend' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-da48cc91"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1122"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 378,
+    "cond": [
+     "@if (attendance)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=descriptionModal.present()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.editDescription"
+    ],
+    "de": [
+     "Beschreibung & Anhang bearbeiten"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.editDescription' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-da89e903"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:398",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:674"
+    ],
+    "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen ohne Bedingung, also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canEditAttendanceDescription = canEdit). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 63,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(2))"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=toggleStatusFilter(2)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.status.excused"
+    ],
+    "de": [
+     "Entschuldigt"
+    ],
+    "literals": [],
+    "text": "{{ 'common.status.excused' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-dd4e8bf5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1211"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 87,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (isFilterActive)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=clearStatusFilter()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close-circle-outline"
+    ],
+    "keys": [
+     "attendance.clearFilter"
+    ],
+    "de": [
+     "Filter löschen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.clearFilter' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-de07ad3e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1231"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1045,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"selectedPersonsToAdd.length === 0\""
+    },
+    "events": [
+     "(click)=addPersonsToAttendance(addPersonModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.addPersonsCount",
+     "attendance.choosePeople"
+    ],
+    "de": [
+     "{count, plural, one {# Person hinzufügen} other {# Personen hinzufügen}}",
+     "Personen auswählen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addPersonsCount' | transloco: { count: selectedPersonsToAdd.length } }} {{ 'attendance.choosePeople' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-e24264a7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:200",
+     "lib/features/attendance/presentation/attendance_add_persons.dart:63"
+    ],
+    "n": "„Personen auswählen“ (deaktiviert) bzw. „n Personen hinzufügen“; Status nach Typ/Schicht wie Ionic.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 156,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (churchField)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=showChurchOverview(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "business-outline"
+    ],
+    "keys": [
+     "attendance.churchOverview"
+    ],
+    "de": [
+     "Gemeinde-Übersicht"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.churchOverview' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-facf83f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1121"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 96,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (getSortableExtraFields().length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openSortPicker(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"extraFieldSortId ? 'swap-vertical' : 'swap-vertical-outline'\""
+    ],
+    "keys": [
+     "attendance.sorting"
+    ],
+    "de": [
+     "Sortierung"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.sorting' | transloco }} {{ getActiveExtraSortLabel() }}",
+    "id": "attendance/attendance/attendance.page#action-fc458692"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1109"
+    ],
+    "n": "Nur wenn sortierbare Felder existieren; Untertitel „Feld ↑/↓“.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 29,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "attendance-options-trigger"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "ellipsis-vertical"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ statusFilter.size }}",
+    "id": "attendance/attendance/attendance.page#action-fd60899f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:505"
+    ],
+    "n": "Icon primary + Badge mit Anzahl bei aktivem Filter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1574,
+    "method": "AttendancePage.onHistoryEntryClick",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "this.getSongInfo(entry)"
+    },
+    "subHeader": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "this.getConductorInfo(entry)"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "attendance.changeConductor"
+       ],
+       "de": [
+        "Dirigent ändern"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.changeConductor')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (): Promise<void> => { await this.changeConductor(entry); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.toSong"
+       ],
+       "de": [
+        "Zum Werk"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.toSong')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (): Promise<void> => { await this.navigateToSong(entry.songId); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "251889b5",
+    "mbody": "9007cef0",
+    "id": "attendance/attendance/attendance.page#actionsheet-0085a6c3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2126",
+     "lib/features/attendance/presentation/widgets/attendance_detail/songs_history_accordion.dart:33"
+    ],
+    "n": "Optionen gleich („Dirigent ändern“, „Zum Werk“, Abbrechen). Header Ionic „12 Name“ (Nummer ohne Präfix) / Flutter Song.displayName mit Präfix und „ - “; unbekannt: Ionic „Unbekanntes Lied“ / „Unbekannter Dirigent“, Flutter „Unbekanntes Werk“ / „Unbekannt“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 789,
+    "method": "AttendancePage.addNote",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.addNote"
+     ],
+     "de": [
+      "Notiz hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.addNote')"
+    },
+    "subHeader": {
+     "keys": [
+      "attendance.currentNote"
+     ],
+     "de": [
+      "Aktuell: {note}"
+     ],
+     "literals": [],
+     "expr": "player.notes ? translate('attendance.currentNote', { note: player.notes }) : undefined"
+    },
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "5e5a65f3",
+    "mbody": "e057a8d0",
+    "id": "attendance/attendance/attendance.page#actionsheet-5fe69f80"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:26",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:857"
+    ],
+    "n": "Sheet gleich (Header „Notiz hinzufügen“, „Aktuell: …“, Gründe, „Eigene Notiz...“, „Notiz löschen“ destruktiv, Abbrechen). Flutter zeigt nach dem Speichern zusätzlich einen Erfolgs-Toast „Notiz hinzugefügt“/„Notiz gelöscht“ (Ionic: kein Toast).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1641,
+    "method": "AttendancePage.promptOtherConductor",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attList.enterConductor"
+     ],
+     "de": [
+      "Dirigent eingeben"
+     ],
+     "literals": [],
+     "expr": "translate('attList.enterConductor')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data: { conductor: string }): Promise<void> => { const name = (data.conductor || '').trim(); if (!name) { return; } await this.db.updateHistoryEntry(entry.id, { person_id: null, otherConductor: name, }); this.historyEntries = await …"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'conductor'",
+      "placeholder": {
+       "keys": [
+        "attList.conductor"
+       ],
+       "de": [
+        "Dirigent"
+       ],
+       "literals": [],
+       "expr": "translate('attList.conductor')"
+      },
+      "value": "entry.otherConductor || ''",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "52ab2412",
+    "mbody": "a546b5ad",
+    "id": "attendance/attendance/attendance.page#alert-1119c6cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:145"
+    ],
+    "n": "„Dirigent eingeben“, Platzhalter „Dirigent“, vorbelegt mit otherConductor; leerer Name speichert nichts.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 800,
+    "method": "AttendancePage.promptCustomNote",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.customNote"
+     ],
+     "de": [
+      "Eigene Notiz"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.customNote')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (evt: { note: string }): Promise<void> => { await this.savePlayerNotes(player.id, evt.note); }"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "textarea",
+      "label": null,
+      "name": "'note'",
+      "placeholder": {
+       "keys": [
+        "attendance.enterNote"
+       ],
+       "de": [
+        "Notiz eingeben..."
+       ],
+       "literals": [],
+       "expr": "translate('attendance.enterNote')"
+      },
+      "value": "isPreset ? '' : (player.notes || '')",
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "2af01bb3",
+    "mbody": "f44af55e",
+    "id": "attendance/attendance/attendance.page#alert-1a679783"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:55",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:600",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:765",
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:197"
+    ],
+    "n": "Flutter besser: Helfer (HELPER) ohne player_notes_view bekommt in Ionic im Dialog „Eigene Notiz“ die echte Notiz vorbelegt (value = player.notes); Flutter belegt die maskierte Notiz „Notiz hinzugefügt“ vor (visibleNotes) und speichert sie unverändert nicht zurück. Sonst gleich (Platzhalter „Notiz eingeben...“, Abbrechen/Speichern, leer bei Standardgrund aus tenant.absence_reasons, alle Rollen der Seite); Flutter trimmt. Erstprüfer übersah die Rollen-Maskierung.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2022,
+    "method": "AttendancePage.addChecklistItem",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.addTodo"
+     ],
+     "de": [
+      "To-Do hinzufügen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.addTodo')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.add"
+       ],
+       "de": [
+        "Hinzufügen"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.add')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (data) => { if (!data.text?.trim()) { Utils.showToast(translate('attendance.enterText'), 'warning'); return false; } if (!this.attendance.checklist) { this.attendance.checklist = []; } const deadlineHours = data.deadlineHours ? parse…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "text",
+      "label": null,
+      "name": "'text'",
+      "placeholder": {
+       "keys": [
+        "attendance.todoText"
+       ],
+       "de": [
+        "To-Do Text..."
+       ],
+       "literals": [],
+       "expr": "translate('attendance.todoText')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "number",
+      "label": null,
+      "name": "'deadlineHours'",
+      "placeholder": {
+       "keys": [
+        "attendance.deadlineHours"
+       ],
+       "de": [
+        "Deadline in Stunden (optional)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.deadlineHours')"
+      },
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bb6e1a75",
+    "mbody": "afe9f1e2",
+    "id": "attendance/attendance/attendance.page#alert-3e7845a6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1530",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1601"
+    ],
+    "n": "Dialog gleich („To-Do hinzufügen“, Text, Frist in Stunden, Abbrechen/Hinzufügen). Flutter zeigt zusätzlich Toast „To-Do hinzugefügt“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1613,
+    "method": "AttendancePage.changeConductor",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.changeConductor"
+     ],
+     "de": [
+      "Dirigent ändern"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.changeConductor')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.save"
+       ],
+       "de": [
+        "Speichern"
+       ],
+       "literals": [],
+       "expr": "translate('common.save')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (selected: number): Promise<void> => { if (selected === undefined || selected === null) { return; } if (selected === this.otherConductor) { await this.promptOtherConductor(entry); } else { await this.db.updateHistoryEntry(entry.id, {…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "inputs",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "81aa70f8",
+    "mbody": "5b559bfa",
+    "id": "attendance/attendance/attendance.page#alert-5a49adc7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:89",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2150",
+     "lib/features/attendance/presentation/attendance_song_history.dart:85"
+    ],
+    "n": "Werke-Abschnitt nur bei manage_songs und Mandant ≠ general (showSongsForType), keine Rollenbedingung – gleich. Radios aktive Dirigenten + „Anderer Dirigent“, Abbrechen/Speichern; Update person_id/otherConductor der history-Zeile.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2632,
+    "method": "AttendancePage.openSortPicker",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.sorting"
+     ],
+     "de": [
+      "Sortierung"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.sorting')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.ok"
+       ],
+       "de": [
+        "OK"
+       ],
+       "literals": [],
+       "expr": "translate('common.ok')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "(value: string) => { if (value === '__default__' || !value) { this.extraFieldSortId = null; this.extraFieldSortLevel = null; this.extraFieldSortDir = 'asc'; void this.storage.set(`attSortField${this.attendanceId}`, ''); void this.storage.s…"
+     }
+    ],
+    "inputs": [
+     {
+      "text": null,
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": "radio",
+      "label": {
+       "keys": [
+        "attendance.defaultSortGroup"
+       ],
+       "de": [
+        "Standard (Gruppe)"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.defaultSortGroup')"
+      },
+      "name": null,
+      "placeholder": null,
+      "value": "'__default__'",
+      "checked": "currentValue === '__default__'",
+      "handler": null
+     },
+     {
+      "expr": "...fields.flatMap(f => [ { type: 'radio' as const, label: `${f.name} ↑`, value: `${f.id}__asc`, checked: currentValue =…",
+      "keys": [],
+      "de": [],
+      "literals": [
+       "${f.name} ↑",
+       "${f.name} ↓"
+      ]
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "bf80b9dd",
+    "mbody": "781ece21",
+    "id": "attendance/attendance/attendance.page#alert-69df322a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1244",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1108"
+    ],
+    "n": "Nur wenn sortierbare Felder existieren (Personen-Zusatzfelder ohne textarea + Anmeldefelder), keine Rollenbedingung; Radios „Standard (Gruppe)“ und je Feld ↑/↓, Abbrechen/OK, gleiche Speicher-Keys.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2126,
+    "method": "AttendancePage.removeChecklistItem",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.deleteTodo"
+     ],
+     "de": [
+      "To-Do löschen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.deleteTodo')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "attendance.deleteTodoConfirm"
+     ],
+     "de": [
+      "Möchtest du dieses To-Do wirklich löschen?"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.deleteTodoConfirm')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.delete"
+       ],
+       "de": [
+        "Löschen"
+       ],
+       "literals": [],
+       "expr": "translate('common.delete')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { if (this.attendance.checklist) { this.attendance.checklist.splice(index, 1); await this.db.updateAttendance({ checklist: this.attendance.checklist }, this.attendance.id); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "5b850eec",
+    "mbody": "41c5a6ca",
+    "id": "attendance/attendance/attendance.page#alert-87434869"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1610"
+    ],
+    "n": "Titel „To-Do löschen?“ (Flutter-Key), Text und Buttons gleich. Flutter zeigt nach dem Löschen zusätzlich Toast „To-Do gelöscht“.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1749,
+    "method": "AttendancePage.removeFromAttendance",
+    "cond": [],
+    "header": {
+     "keys": [
+      "attendance.removePerson"
+     ],
+     "de": [
+      "Person entfernen"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.removePerson')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "attendance.removePersonConfirm"
+     ],
+     "de": [
+      "Möchtest du {name} wirklich aus dieser Anwesenheit entfernen? Diese Aktion kann nicht rückgängig gemacht werden."
+     ],
+     "literals": [
+      "${player.firstName} ${player.lastName}"
+     ],
+     "expr": "translate('attendance.removePersonConfirm', { name: `${player.firstName} ${player.lastName}` })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.remove"
+       ],
+       "de": [
+        "Entfernen"
+       ],
+       "literals": [],
+       "expr": "translate('common.remove')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.deletePersonAttendanceById(player.id); // Reload attendance data to properly rebuild the list with headers this.attendance = await this.db.getAttendanceById(this.attendanceId); this.initializeAttObjects();…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "7288d49b",
+    "mbody": "fc4ff18d",
+    "id": "attendance/attendance/attendance.page#alert-a4a881ba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2477",
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:240",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:774"
+    ],
+    "n": "Nur ohne isHelper = role === HELPER (Stimmführer-Helfer darf) – Flutter showModifierInfo: role != helper. Header, Text mit Name, Abbrechen/Entfernen (destruktiv) gleich.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1806,
+    "method": "AttendancePage.getModifierInfo",
+    "cond": [],
+    "header": null,
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "message"
+    },
+    "buttons": [
+     {
+      "expr": "translate('common.ok')",
+      "keys": [
+       "common.ok"
+      ],
+      "de": [
+       "OK"
+      ],
+      "literals": []
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "6a3f4c5c",
+    "mbody": "75edb284",
+    "id": "attendance/attendance/attendance.page#alert-ad3c579a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:870"
+    ],
+    "n": "Flutter besser: sucht den Ändernden unter allen Personen des Mandanten (Ionic nur unter den Personen des Termins → sonst „'Unbekannt'“). Ionic-Sonderfall UUID 665fe2b4-… → „Matthias Eckstädt“ fehlt in Flutter.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 240,
+    "cond": [
+     "@if (attendance)"
+    ],
+    "tag": "app-auto-message-panel",
+    "bindings": [
+     "[attendance]",
+     "[people]"
+    ],
+    "bindingExprs": [
+     "[attendance]=\"attendance\"",
+     "[people]=\"players\""
+    ],
+    "events": [],
+    "id": "attendance/attendance/attendance.page#embed-76bd1527"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:627"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 114,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-view-trigger>",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"showAvatars\"",
+    "bindings": [
+     "[checked]=\"showAvatars\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-093444e8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1320"
+    ],
+    "n": "„Bilder anzeigen“ im Untermenü „Ansicht“, Standard aus wie Ionic (showAvatars ?? false), lokal gespeichert.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 264,
+    "cond": [
+     "@if (attendance)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [
+     "(ionBlur)=onInfoChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.notes\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-291ed873"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:99",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:639"
+    ],
+    "n": "Speichern beim Verlassen wie Ionic; leeres Feld: Ionic schreibt '' / Flutter null (gleiche Anzeige).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 530,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "false",
+     "#": "select"
+    },
+    "events": [
+     "(ionChange)=onConChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"historyEntry.person_id\"",
+    "bindings": [
+     "[label]=\"'attList.conductor' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"con.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ con.firstName }} {{ con.lastName }}"
+     },
+     {
+      "value": "\"otherConductor\"",
+      "keys": [
+       "attList.otherConductor"
+      ],
+      "de": [
+       "Anderer Dirigent"
+      ],
+      "literals": [],
+      "text": "{{ 'attList.otherConductor' | transloco }}"
+     }
+    ],
+    "keys": [
+     "attList.conductor",
+     "attList.otherConductor"
+    ],
+    "de": [
+     "Dirigent",
+     "Anderer Dirigent"
+    ],
+    "literals": [],
+    "text": "[label]=\"'attList.conductor' | transloco\" {{ con.firstName }} {{ con.lastName }} {{ 'attList.otherConductor' | transloco }}",
+    "id": "attendance/attendance/attendance.page#field-2a3cbef9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:163",
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:95"
+    ],
+    "n": "Optionen (aktive Dirigenten + „Anderer Dirigent“), Label „Dirigent“ und Rollen gleich. Aber Vorauswahl: Ionic setzt immer den ersten aktiven Dirigenten / Flutter liest im postFrameCallback ref.read(activeConductorsProvider).valueOrNull; der Provider wird erst beim Öffnen des Sheets erzeugt und ist dann noch AsyncLoading → beim ersten Öffnen pro App-Sitzung keine Vorauswahl („Wählen“), „Werk(e) hinzufügen“ bleibt bis zur manuellen Auswahl deaktiviert. Erstprüfung nahm Vorauswahl als gegeben an.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 369,
+    "cond": [
+     "@if (attendance)",
+     "@if (type?.place_enabled)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {},
+    "events": [
+     "(ionBlur)=onPlaceChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.place\"",
+    "bindings": [
+     "[placeholder]=\"'attendance.addressPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "attendance.addressPlaceholder"
+    ],
+    "de": [
+     "Adresse oder Ortsname"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'attendance.addressPlaceholder' | transloco\"",
+    "id": "attendance/attendance/attendance.page#field-2c20cb73"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:372",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2200"
+    ],
+    "n": "Platzhalter „Adresse oder Ortsname“, Speichern beim Verlassen, leer → null.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 512,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-att #songSelectModal>",
+     "@if (filteredSongs.length > 0)",
+     "@for (song of filteredSongs; track song.id)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"selectedSongs.includes(song.id)\"",
+    "bindings": [
+     "[checked]=\"selectedSongs.includes(song.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-2eb6811a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:361"
+    ],
+    "n": "Checkbox zeigt Auswahl. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 119,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-view-trigger>",
+     "@if (hasRegFields)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"showRegFields\"",
+    "bindings": [
+     "[checked]=\"showRegFields\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-36f00c0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1330"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 259,
+    "cond": [
+     "@if (attendance)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [
+     "(ionBlur)=onInfoChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.typeInfo\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-3d7244ba"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:93",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2280"
+    ],
+    "n": "Speichern beim Verlassen wie Ionic; leeres Feld: Ionic schreibt '' / Flutter null (gleiche Anzeige).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 493,
+    "cond": [
+     "@if (attendance)",
+     "@if (manageSongs && !isGeneral)",
+     "@if (manageSongs)",
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-att #songSelectModal>"
+    ],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [
+     "(ionInput)=onSongSearch($event)",
+     "(ionClear)=resetSongSearch()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"songSearchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'attList.searchSong' | transloco\"",
+     "[debounce]=\"250\""
+    ],
+    "icons": [],
+    "keys": [
+     "attList.searchSong"
+    ],
+    "de": [
+     "Werk suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'attList.searchSong' | transloco\"",
+    "id": "attendance/attendance/attendance.page#field-3ee5c084"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:330",
+     "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:343"
+    ],
+    "n": "Ionic: ion-searchbar mit Lösch-X (ionClear → resetSongSearch) / Flutter: SearchBar ohne Lösch-Button, Text nur manuell löschbar. Platzhalter „Werk suchen...“ und Suche über „Präfix+Nummer Name“ gleich. Rollen/Mandant gleich: Werke-Bereich für alle Rollen mit Terminzugriff (Admin, Verantwortlich, Helfer, StF-Helfer), nur bei Typ manage_songs und Mandant ≠ general (showSongsForType), keine weitere Rollenprüfung. Erstprüfung übersah das fehlende Clear.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 124,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-view-trigger>",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"attendanceViewMode === AttendanceViewMode.SELECT\"",
+    "bindings": [
+     "[checked]=\"attendanceViewMode === AttendanceViewMode.SELECT\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-417d9077"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1340"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 82,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(4))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(4)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(4)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-54fc17c1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 270,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isDeadlineReadonly)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [
+     "(ionChange)=onDeadlineToggleChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"hasDeadline\"",
+    "bindings": [
+     "[helperText]=\"'attendance.deadlineHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "attendance.deadlineHelper"
+    ],
+    "de": [
+     "Personen können sich nur bis zu diesem Datum anmelden. Eine Abmeldung ist weiterhin möglich."
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'attendance.deadlineHelper' | transloco\"",
+    "id": "attendance/attendance/attendance.page#field-55765067"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:220",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1735"
+    ],
+    "n": "Standardfrist (Vortag, Typ-Start+2 h, sonst Termintag) wie Ionic. Flutter zeigt zusätzlich Toast „Frist aktiviert/deaktiviert“; auf iOS ohne Hilfetext (laut Flutter-Kommentar wie Ionic iOS; ion-toggle-Interna nicht im Container).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 64,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(2))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(2)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(2)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-635df2fc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 52,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(0))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(0)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(0)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-735def41"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 316,
+    "cond": [
+     "@if (attendance)",
+     "@if (!type?.all_day)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "time",
+     "id": "datetimeendatt"
+    },
+    "events": [
+     "(ionChange)=onInfoChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.end_time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-95734d84"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:275",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2352"
+    ],
+    "n": "Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; Flutter zeigt zusätzlich einen Erfolgs-Toast.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1089,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@if (field.type === 'text')"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"regFieldAnswers[field.id]\"",
+    "bindings": [
+     "[label]=\"field.label\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"...\" [label]=\"field.label\"",
+    "id": "attendance/attendance/attendance.page#field-a9cd06ca"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:361"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1112,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@else if (field.type === 'multi_select')",
+     "@for (opt of field.options; track opt)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"regFieldAnswers[field.id]?.includes(opt)\"",
+    "bindings": [
+     "[checked]=\"regFieldAnswers[field.id]?.includes(opt)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-b12f8242"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:346"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 70,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(3))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(3)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(3)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-b46ff290"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1006,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (filteredAvailablePersons.length > 0)",
+     "@for (person of filteredAvailablePersons; track person.id)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {},
+    "events": [
+     "(ionChange)=togglePersonSelection(person.id, $event)"
+    ],
+    "link": null,
+    "model": "[checked]=\"isPersonSelected(person.id)\"",
+    "bindings": [
+     "[checked]=\"isPersonSelected(person.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ person.firstName }} {{ person.lastName }} {{ person.groupName }}",
+    "id": "attendance/attendance/attendance.page#field-b5b11f80"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:115"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1030,
+    "cond": [
+     "in <ion-modal isOpen=\"isAddPersonModalOpen\" #addPersonModal>",
+     "@if (!isLoadingPersons)",
+     "@if (filteredAvailablePersons.length > 0 || availablePersons.length > 0)",
+     "@if (availablePersons.length > 0)",
+     "@for (person of availablePersons; track person.id)"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {},
+    "events": [
+     "(ionChange)=togglePersonSelection(person.id, $event)"
+    ],
+    "link": null,
+    "model": "[checked]=\"isPersonSelected(person.id)\"",
+    "bindings": [
+     "[checked]=\"isPersonSelected(person.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ person.firstName }} {{ person.lastName }} {{ person.groupName }}",
+    "id": "attendance/attendance/attendance.page#field-b5b11f80-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:188"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 58,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(1))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(1)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(1)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-b975e0f1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1099,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@else if (field.type === 'select')"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"regFieldAnswers[field.id]\"",
+    "bindings": [
+     "[label]=\"field.label\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"opt\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ opt }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.label\" {{ opt }}",
+    "id": "attendance/attendance/attendance.page#field-bbe33afa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:322"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 76,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "in <ion-popover trigger=attendance-filter-trigger>",
+     "@if (type?.available_statuses.includes(3))",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"statusFilter.has(5)\"",
+    "bindings": [
+     "[checked]=\"statusFilter.has(5)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-cd0f2af8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1220"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1095,
+    "cond": [
+     "in <ion-modal isOpen=\"isRegFieldsModalOpen\">",
+     "@if (regFieldsPlayer)",
+     "@for (field of type?.registration_fields; track field.id)",
+     "@else if (field.type === 'boolean')"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"regFieldAnswers[field.id]\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-e98b30bf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:316"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 297,
+    "cond": [
+     "@if (attendance)",
+     "@if (!type?.all_day)",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "time",
+     "id": "datetimestartatt"
+    },
+    "events": [
+     "(ionChange)=onInfoChanged()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"attendance.start_time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#field-f27959a3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:265",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2297"
+    ],
+    "n": "Speichern + Schicht-Neuberechnung wie Ionic. Ionic: Minuten nur in 5er-Schritten / Flutter: freie Minutenwahl; Flutter zeigt zusätzlich einen Erfolgs-Toast.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2225,
+    "method": "AttendancePage.showStatusInfo",
+    "cond": [],
+    "component": "StatusInfoComponent",
+    "props": [
+     "players"
+    ],
+    "sheet": true,
+    "breakpoints": "[0, 0.5, 0.75]",
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "7fff6129",
+    "mbody": "abe3de9e",
+    "id": "attendance/attendance/attendance.page#modal-1e1a6630"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2502"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 1069,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isRegFieldsModalOpen\""
+    },
+    "events": [
+     "(ionModalDidDismiss)=isRegFieldsModalOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isRegFieldsModalOpen\"",
+     "[breakpoints]=\"[0, 0.85, 1]\"",
+     "[initialBreakpoint]=\"0.85\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-2816ad2c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/event_list/excuse_reason_sheet.dart:238"
+    ],
+    "n": "Bottom-Sheet (Ionic 0.85); bei nur einem Feld siehe alert-9b3e485d.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 280,
+    "cond": [
+     "@if (attendance)",
+     "@if (attendance.deadline)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-761bba53"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1774"
+    ],
+    "n": "Ionic: ein Modal mit Datum+Uhrzeit (date-time) / Flutter: erst Datums-, dann Uhrzeit-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 295,
+    "cond": [
+     "@if (attendance)",
+     "@if (!type?.all_day)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-761bba53-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2297"
+    ],
+    "n": "Uhrzeit-Dialog statt ion-datetime-Modal.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 314,
+    "cond": [
+     "@if (attendance)",
+     "@if (!type?.all_day)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "attendance/attendance/attendance.page#modal-761bba53-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2352"
+    ],
+    "n": "Uhrzeit-Dialog statt ion-datetime-Modal.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1466,
+    "method": "AttendancePage.editPlan",
+    "cond": [],
+    "component": "PlanningPage",
+    "props": [
+     "attendanceId",
+     "initialPlanIndex"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": "'planningModal'",
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "49f97fe2",
+    "mbody": "07c613f1",
+    "id": "attendance/attendance/attendance.page#modal-80b3cbae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:244",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:716"
+    ],
+    "n": "Ablaufplan-Editor als Seite (/planning?attendanceId=…&plan=i) statt Vollbild-Modal; Planindex wird übergeben.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  }
+ ]
+}

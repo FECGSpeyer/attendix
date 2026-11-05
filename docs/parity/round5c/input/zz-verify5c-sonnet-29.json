@@ -1,0 +1,2409 @@
+{
+ "batch": "zz-verify5c-sonnet-29",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 19,
+    "cond": [
+     "@else (not selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=goBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-3c274606"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1012-1029"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 67,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=setSort('name', filesMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "text-outline"
+    ],
+    "keys": [
+     "files.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "{{ 'files.name' | transloco }}",
+    "id": "settings/files/files.page#action-42b3d799"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:135-151",
+     "lib/features/settings/presentation/pages/files_page.dart:1074-1077",
+     "lib/features/settings/presentation/pages/files_page.dart:955"
+    ],
+    "n": "Eintrag „Name“ mit Icon, sortiert Ordner zuerst – gleich. Ionic: localeCompare(Sprache, sensitivity base) / Flutter: toLowerCase().compareTo (Codepoint: Umlaute/Akzente hinter z). Gilt auch für die Standardsortierung beim Laden.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 75,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=setSort('size', filesMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "resize-outline"
+    ],
+    "keys": [
+     "files.size"
+    ],
+    "de": [
+     "Dateigröße"
+    ],
+    "literals": [],
+    "text": "{{ 'files.size' | transloco }}",
+    "id": "settings/files/files.page#action-4c8c34ab"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1082-1085"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 71,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=setSort('updatedAt', filesMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "files.modified"
+    ],
+    "de": [
+     "Änderungsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'files.modified' | transloco }}",
+    "id": "settings/files/files.page#action-54fc9b6c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1078-1081"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 99,
+    "cond": [
+     "@if (pathSegments.length)",
+     "@for (segment of pathSegments; track segment; let i = $index)"
+    ],
+    "tag": "ion-breadcrumb",
+    "attrs": {
+     "href": "#"
+    },
+    "events": [
+     "(click)=$event.preventDefault(); openSegment(i)"
+    ],
+    "link": "#",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ segment }}",
+    "id": "settings/files/files.page#action-64a83941"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1171-1181",
+     "lib/features/settings/presentation/pages/files_page.dart:317-323"
+    ],
+    "n": "Ionic: openSegment behält den Suchbegriff / Flutter: _navigateTo leert das Suchfeld.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 263,
+    "cond": [
+     "in <ion-modal isOpen=\"isImagePreviewOpen\">"
+    ],
+    "tag": "app-image-viewer",
+    "attrs": {},
+    "events": [
+     "(closed)=closeImagePreview()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"selectedImageUrl\"",
+     "[title]=\"selectedImageName || 'Bildvorschau'\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "selectedImageName || 'Bildvorschau'"
+    ],
+    "text": "[title]=\"selectedImageName || 'Bildvorschau'\"",
+    "id": "settings/files/files.page#action-65e414cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:357"
+    ],
+    "n": "Titel = Dateiname.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 273,
+    "cond": [
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "[disabled]": "\"!selectedPaths.size\""
+    },
+    "events": [
+     "(click)=moveSelected()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "swap-horizontal-outline"
+    ],
+    "keys": [
+     "files.move"
+    ],
+    "de": [
+     "Verschieben"
+    ],
+    "literals": [],
+    "text": "{{ 'files.move' | transloco }}",
+    "id": "settings/files/files.page#action-6d64975f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1108-1112"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 277,
+    "cond": [
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger",
+     "[disabled]": "\"!selectedPaths.size\""
+    },
+    "events": [
+     "(click)=deleteSelected()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "common.delete"
+    ],
+    "de": [
+     "Löschen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.delete' | transloco }}",
+    "id": "settings/files/files.page#action-9231c827"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1113-1118"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 11,
+    "cond": [
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=toggleSelectAll()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "files.selectNone",
+     "files.selectAll"
+    ],
+    "de": [
+     "Keine",
+     "Alle"
+    ],
+    "literals": [],
+    "text": "{{ (allVisibleSelected ? 'files.selectNone' : 'files.selectAll') | transloco }}",
+    "id": "settings/files/files.page#action-a5bf7664"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1000-1005"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 5,
+    "cond": [
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=exitSelection()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'files.selectionDone' | transloco\""
+    ],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-ac60d4db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:993-997"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 212,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "in <ion-popover #actionPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=handleEntryAction('open', entry, actionPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"isAudioEntry(entry) ? 'play-circle-outline' : 'open-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Ordner öffnen",
+     "Aufnahme abspielen",
+     "Datei öffnen/downloaden"
+    ],
+    "text": "{{ entry.isFolder ? 'Ordner öffnen' : isAudioEntry(entry) ? 'Aufnahme abspielen' : 'Datei öffnen/downloaden' }}",
+    "id": "settings/files/files.page#action-bdaec002"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:888-896",
+     "lib/features/settings/presentation/pages/files_page.dart:329-333"
+    ],
+    "n": "Texte/Icon/Effekt gleich; bei „Ordner öffnen“ behält Ionic den Suchbegriff / Flutter leert ihn.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 79,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=toggleSortDirection(filesMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"sortDirection === 'asc' ? 'arrow-up-outline' : 'arrow-down-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Aufsteigend",
+     "Absteigend"
+    ],
+    "text": "{{ sortDirection === 'asc' ? 'Aufsteigend' : 'Absteigend' }}",
+    "id": "settings/files/files.page#action-d9c2fc1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1086-1093"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files.page.html",
+    "line": 88,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#action-dec822a9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1135-1136"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/files/files.page.ts",
+    "line": 668,
+    "method": "FilesPage.hasEnoughSpace",
+    "cond": [],
+    "header": {
+     "keys": [
+      "files.storageFull"
+     ],
+     "de": [
+      "Speicher voll"
+     ],
+     "literals": [],
+     "expr": "translate('files.storageFull')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "files.storageFullMessage"
+     ],
+     "de": [
+      "Für diesen Upload werden {needed} benötigt, frei sind noch {free} von {max}. Lösche nicht mehr benötigte Dateien oder frage mehr Speicher an."
+     ],
+     "literals": [],
+     "expr": "translate('files.storageFullMessage', { needed: this.formatFileSize(neededBytes), free: this.formatFileSize(freeBytes), max: this.formatFileSize(maxBytes) })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "OK"
+       ],
+       "expr": "'OK'"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "files.requestMore"
+       ],
+       "de": [
+        "Mehr Speicher anfragen"
+       ],
+       "literals": [],
+       "expr": "translate('files.requestMore')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.requestMoreStorage(); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "73f8335d",
+    "mbody": "a283649d",
+    "id": "settings/files/files.page#alert-2f654766"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:737-772"
+    ],
+    "n": "„Speicher voll“ mit benötigt/frei/max, „OK“ / „Mehr Speicher anfragen“ → Anfrage-Dialog; nur im Upload mit Speicherlimit (canEditFiles).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/files/files.page.html",
+    "line": 92,
+    "cond": [],
+    "tag": "input",
+    "attrs": {
+     "type": "file",
+     "multiple": "",
+     "#": "fileInput"
+    },
+    "events": [
+     "(change)=onFileSelected($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/files/files.page#field-23c77ab6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:783"
+    ],
+    "n": "FilePicker (Mehrfachauswahl) statt <input type=file multiple>.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/files/files.page.html",
+    "line": 124,
+    "cond": [],
+    "tag": "ion-searchbar",
+    "attrs": {
+     "class": "files-search"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"searchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'files.searchPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "files.searchPlaceholder"
+    ],
+    "de": [
+     "Dateien & Ordner suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'files.searchPlaceholder' | transloco\"",
+    "id": "settings/files/files.page#field-5bd09165"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:50-60",
+     "lib/features/settings/presentation/pages/files_page.dart:1231-1236"
+    ],
+    "n": "Ionic normalisiert per NFKD und entfernt Akzente (z. B. „cafe“ findet „Café“) / Flutter ersetzt nur ä/ö/ü/ß, Akzente werden nicht ignoriert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "settings/files/files.page.html",
+    "line": 188,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not !entries.length / !filteredEntries.length)",
+     "@for (entry of filteredEntries; track entry.path; let last = $last; let i = $index)",
+     "in <ion-item>",
+     "@if (isImageEntry(entry) && getImagePreviewUrl(entry))"
+    ],
+    "tag": "img",
+    "src": "\"getImagePreviewUrl(entry)\"",
+    "alt": "\"entry.name\"",
+    "bindings": [
+     "[src]=\"getImagePreviewUrl(entry)\"",
+     "[alt]=\"entry.name\""
+    ],
+    "events": [],
+    "id": "settings/files/files.page#media-53111c26"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:155-156",
+     "lib/features/settings/presentation/pages/files_page.dart:297-315",
+     "lib/features/settings/presentation/pages/files_page.dart:1294-1309"
+    ],
+    "n": "Vorschaubild (38px, Radius 6) statt Ordner/Dokument-Icon für Bilddateien (gleiche Endungen png/jpe?g/gif/webp/bmp/svg/heic/heif/avif), signierte URL 3600 s, vor dem Anzeigen der Liste geladen; ohne URL Fallback-Icon wie Ionic. Kein alt-Text (nur Barrierefreiheit).",
+    "v": null,
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "settings/files/files.page.html",
+    "line": 38,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "#": "filesMenuPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/files/files.page#popover-7cf1e4d9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1041-1095"
+    ],
+    "n": "PopupMenuButton statt ion-popover, gleicher Inhalt und Reihenfolge.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 143,
+    "cond": [
+     "in <ion-popover trigger=files-search-help-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'files.searchType' | transloco\""
+    ],
+    "keys": [
+     "files.searchType"
+    ],
+    "de": [
+     "<strong>typ:&lt;wert&gt;</strong> · Filtert nach Dateityp oder Art (z. B. <strong>typ:pdf</strong>, <strong>typ:ordner</strong>, <strong>typ:datei</strong>)."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'files.searchType' | transloco\"",
+    "id": "settings/files/files.page#text-308e6820"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:869-879",
+     "lib/features/settings/presentation/pages/files_page.dart:863-867"
+    ],
+    "n": "Text „typ:<wert> · Filtert nach Dateityp oder Art (z. B. typ:pdf, typ:ordner, typ:datei).“ gleich, im Such-Hilfe-Dialog (Dialog statt Popover: siehe popover-f66de769). Ionic: innerHTML mit fetten Beispielen / Flutter: _plainHtml entfernt den Fettdruck. Für alle Rollen wie Ionic.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 144,
+    "cond": [
+     "in <ion-popover trigger=files-search-help-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'files.searchDate' | transloco\""
+    ],
+    "keys": [
+     "files.searchDate"
+    ],
+    "de": [
+     "<strong>datum:&lt;wert&gt;</strong> · Filtert nach Änderungsdatum (z. B. <strong>datum:2026</strong>, <strong>datum:03.2026</strong>, <strong>datum:03.03.2026</strong>)."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'files.searchDate' | transloco\"",
+    "id": "settings/files/files.page#text-4f3365df"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:869-879",
+     "lib/features/settings/presentation/pages/files_page.dart:863-867"
+    ],
+    "n": "Text „datum:<wert> · Filtert nach Änderungsdatum (z. B. datum:2026, datum:03.2026, datum:03.03.2026).“ gleich. Ionic: innerHTML mit fetten Beispielen / Flutter: ohne Fettdruck (_plainHtml).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 23,
+    "cond": [
+     "@else (not selectionMode)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "files.title"
+    ],
+    "de": [
+     "Dateien"
+    ],
+    "literals": [],
+    "text": "{{ 'files.title' | transloco }}",
+    "id": "settings/files/files.page#text-55b1e283"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1009"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 175,
+    "cond": [
+     "@else (not isLoading)",
+     "@else if (!filteredEntries.length)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "files.noHits"
+    ],
+    "de": [
+     "Keine Treffer für „{term}“."
+    ],
+    "literals": [],
+    "text": "{{ 'files.noHits' | transloco: { term: searchTerm } }}",
+    "id": "settings/files/files.page#text-6acb38db"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1265-1266"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 9,
+    "cond": [
+     "@if (selectionMode)"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "files.selectedCount"
+    ],
+    "de": [
+     "{count, plural, =0 {Nichts ausgewählt} one {# ausgewählt} other {# ausgewählt}}"
+    ],
+    "literals": [],
+    "text": "{{ 'files.selectedCount' | transloco: { count: selectedPaths.size } }}",
+    "id": "settings/files/files.page#text-6c970750"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:998"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 168,
+    "cond": [
+     "@else (not isLoading)",
+     "@if (!entries.length)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "files.folderEmpty"
+    ],
+    "de": [
+     "Dieser Ordner ist leer."
+    ],
+    "literals": [],
+    "text": "{{ 'files.folderEmpty' | transloco }}",
+    "id": "settings/files/files.page#text-75644c0c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1261-1262"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 63,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "files.sorting"
+    ],
+    "de": [
+     "Sortierung"
+    ],
+    "literals": [],
+    "text": "{{ 'files.sorting' | transloco }}",
+    "id": "settings/files/files.page#text-7ded9a32"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1070-1073"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 64,
+    "cond": [
+     "in <ion-popover #filesMenuPopover>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ sortLabel }}"
+    ],
+    "text": "{{ sortLabel }}",
+    "id": "settings/files/files.page#text-c86920a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:255-266",
+     "lib/features/settings/presentation/pages/files_page.dart:1072"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 145,
+    "cond": [
+     "in <ion-popover trigger=files-search-help-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'files.searchCombine' | transloco\""
+    ],
+    "keys": [
+     "files.searchCombine"
+    ],
+    "de": [
+     "Filter sind kombinierbar, z. B. <strong>protokoll typ:pdf datum:2026</strong>."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'files.searchCombine' | transloco\"",
+    "id": "settings/files/files.page#text-cd4b6647"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:869-879",
+     "lib/features/settings/presentation/pages/files_page.dart:863-867"
+    ],
+    "n": "Text „Filter sind kombinierbar, z. B. protokoll typ:pdf datum:2026.“ gleich. Ionic: Beispiel fett (innerHTML) / Flutter: ohne Fettdruck (_plainHtml).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/files/files.page.ts",
+    "line": 78,
+    "method": "FilesPage.applyLinkParams",
+    "cond": [
+     "(!entry)"
+    ],
+    "message": {
+     "keys": [
+      "files.linkedNotFound"
+     ],
+     "de": [
+      "Die verlinkte Datei wurde nicht gefunden."
+     ],
+     "literals": [],
+     "expr": "translate('files.linkedNotFound')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "1004dfbc",
+    "mbody": "763707f7",
+    "id": "settings/files/files.page#toast-e5e719e1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:213-216"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/files_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 216,
+    "cond": [],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"extraFields.length < 2\""
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($any($event), 'person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "eye-outline",
+     "pencil-outline",
+     "trash-outline"
+    ],
+    "keys": [
+     "extraFields.typeLine",
+     "extraFields.displayLine",
+     "extraFields.visible",
+     "extraFields.editableSuffix",
+     "extraFields.underName",
+     "extraFields.asChip"
+    ],
+    "de": [
+     "Typ: {type}",
+     "Anzeige: {mode}",
+     "Für Mitglieder sichtbar",
+     " (bearbeitbar)",
+     "Unter dem Namen",
+     "Als Chip"
+    ],
+    "literals": [],
+    "text": "{{ field.name }} {{ 'extraFields.typeLine' | transloco: { type: getFieldTypeName(field.type) } }} {{ 'extraFields.displayLine' | transloco: { mode: ((field.displayMode === 'underneath' ? 'extraFields…",
+    "id": "settings/general/extra-fields/extra-fields.page#action-2279dc11"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:603-651"
+    ],
+    "n": "Name, 'Typ: …' (nicht bei bfecg_church), 'Anzeige: …', 'Für Mitglieder sichtbar (bearbeitbar)', Stift/Papierkorb und Sortiergriff ab 2 Feldern gleich. Ionic: Augen-Icon (eye-outline) vor 'Für Mitglieder sichtbar' / Flutter: ohne Icon",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 417,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger",
+     "size": "small"
+    },
+    "events": [
+     "(click)=removeExtraField(i, 'song')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-2348e9b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:635-638"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 406,
+    "cond": [],
+    "tag": "ion-reorder-group",
+    "attrs": {
+     "[disabled]": "\"songExtraFields.length < 2\""
+    },
+    "events": [
+     "(ionItemReorder)=handleReorder($any($event), 'song')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil-outline",
+     "trash-outline"
+    ],
+    "keys": [
+     "extraFields.typeLine",
+     "extraFields.displayLine",
+     "extraFields.underName",
+     "extraFields.asChip"
+    ],
+    "de": [
+     "Typ: {type}",
+     "Anzeige: {mode}",
+     "Unter dem Namen",
+     "Als Chip"
+    ],
+    "literals": [],
+    "text": "{{ field.name }} {{ 'extraFields.typeLine' | transloco: { type: getFieldTypeName(field.type) } }} {{ 'extraFields.displayLine' | transloco: { mode: ((field.displayMode === 'underneath' ? 'extraFields…",
+    "id": "settings/general/extra-fields/extra-fields.page#action-2a285919"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:603",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:156",
+     "lib/core/router/app_router.dart:168"
+    ],
+    "n": "Werk-Zusatzfelder: Name, „Typ: …“, „Anzeige: Unter dem Namen/Als Chip“, Stift/Papierkorb, Sortieren erst ab 2 Feldern ([disabled]=length < 2, Flutter Griff nur bei > 1) – gleich; Reihenfolge nur lokal, gespeichert mit „Speichern“ (beide). Keine Rollen-/Mandantenbedingung im Abschnitt; Seite nur über Allgemeine Einstellungen (Admin/Verantwortlich), Flutter /settings/general gleich.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 428,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.save"
+    ],
+    "de": [
+     "Speichern"
+    ],
+    "literals": [],
+    "text": "{{ 'common.save' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#action-6c3f7ab8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:565-568"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=goBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-a20ffd04"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:535-538",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:522-527"
+    ],
+    "n": "Pfeil-zurück vorhanden; wie nav-599a827b: Flutter besser – Rückfrage bei ungespeicherten Änderungen, Ionic verwirft still",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 414,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "primary",
+     "size": "small"
+    },
+    "events": [
+     "(click)=openEditExtraField(i, 'song')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-a6d1009b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:631-634"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 229,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "primary",
+     "size": "small"
+    },
+    "events": [
+     "(click)=openEditExtraField(i, 'person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-dcfca024"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:631-634"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 232,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger",
+     "size": "small"
+    },
+    "events": [
+     "(click)=removeExtraField(i, 'person')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/general/extra-fields/extra-fields.page#action-e80b8cdb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:635-638"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 104,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>",
+     "@if (newExtraField.type !== fieldTypes.BFECG_CHURCH && newExtraField.type !== fieldTypes.SELECT)",
+     "@else (not newExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.defaultValue\"",
+    "bindings": [
+     "[type]=\"newExtraField.type === fieldTypes.NUMBER ? 'number' : 'text'\"",
+     "[label]=\"'extraFields.defaultOptional' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.defaultOptional"
+    ],
+    "de": [
+     "Standardwert (optional)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.defaultOptional' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-1dbe68d1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:318",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:494-497"
+    ],
+    "n": "Label 'Standardwert (optional)', Zahlentastatur bei Zahl gleich. Flutter besser: Ionic startet mit defaultValue false (emptyField); bleibt der Typ 'Text' unverändert und das Feld leer, speichert Ionic defaultValue false und befüllt Personen mit false / Flutter speichert ''",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 309,
+    "cond": [
+     "in <ion-modal trigger=addSongFieldBtn #addSongFieldModal>",
+     "@if (newSongExtraField.type !== fieldTypes.SELECT)",
+     "@else (not newSongExtraField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newSongExtraField.defaultValue\"",
+    "bindings": [
+     "[type]=\"newSongExtraField.type === fieldTypes.NUMBER ? 'number' : 'text'\"",
+     "[label]=\"'extraFields.defaultOptional' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.defaultOptional"
+    ],
+    "de": [
+     "Standardwert (optional)"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.defaultOptional' | transloco\"",
+    "id": "settings/general/extra-fields/extra-fields.page#field-cf72db04"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:456-463",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:318",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:494-497"
+    ],
+    "n": "Label 'Standardwert (optional)' gleich. Flutter besser: Ionic speichert bei unverändertem Typ 'Text' und leerem Feld defaultValue false (emptyField) und füllt Werke beim Speichern mit false / Flutter speichert ''.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 44,
+    "cond": [
+     "in <ion-modal trigger=addExtraFieldBtn #addPersonFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [
+     "(ionChange)=setDefaultValue('person')"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"newExtraField.type\"",
+    "bindings": [
+     "[label]=\"'typeSettings.type' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"fieldTypes.TEXT\"",
+      "keys": [
+       "typeSettings.text"
+      ],
+      "de": [
+       "Text"
+      ],
+      "literals": [],
+      "text": "{{ 'typeSettings.text' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.NUMBER\"",
+      "keys": [
+       "extraFields.number"
+      ],
+      "de": [
+       "Zahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.number' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.BOOLEAN\"",
+      "keys": [
+       "extraFields.yesNo"
+      ],
+      "de": [
+       "Ja/Nein"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.yesNo' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.SELECT\"",
+      "keys": [
+       "extraFields.select"
+      ],
+      "de": [
+       "Auswahl"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.select' | transloco }}"
+     },
+     {
+      "value": "\"fieldTypes.BFECG_CHURCH\"",
+      "keys": [
+       "extraFields.church"
+      ],
+      "de": [
+       "BFECG Gemeinde"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.church' | transloco }}"
+     }
+    ],
+    "keys": [
+     "typeSettings.type",
+     "typeSettings.text",
+     "extraFields.number",
+     "extraFields.yesNo",
+     "extraFields.select",
+     "extraFields.church"
+    ],
+    "de": [
+     "Typ",
+     "Text",
+     "Zahl",
+     "Ja/Nein",
+     "Auswahl",
+     "BFECG Gemeinde"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.type' | transloco\" {{ 'typeSettings.text' | transloco }} {{ 'extraFields.number' | transloco }} {{ 'extraFields.yesNo' | transloco }} {{ 'extraFields.select' | transloco }} {{ …",
+    "id": "settings/general/extra-fields/extra-fields.page#field-e584f2a8"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:363-380"
+    ],
+    "n": "Optionen Text/Zahl/Ja-Nein/Auswahl in gleicher Reihenfolge, Typwechsel setzt Standard zurück (Zahl → 0). Ionic: 'BFECG Gemeinde' bei db.isBeta() = Instanz 12 ODER Benutzer-E-Mail endet auf developer@attendix.de / Flutter: nur Instanz 12. Ionic speichert beim Wechsel auf BFECG die erste Gemeinde als defaultValue, Flutter null",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 276,
+    "method": "ExtraFieldsPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "extraFields.saving"
+     ],
+     "de": [
+      "Felder werden gespeichert..."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.saving')"
+    },
+    "duration": "999999",
+    "src": "55f96ccf",
+    "mbody": "4fb72fd9",
+    "id": "settings/general/extra-fields/extra-fields.page#loading-a708240a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:549-601"
+    ],
+    "n": "Overlay mit Spinner und 'Felder werden gespeichert...', Eingaben gesperrt (AbsorbPointer), Zurück gesperrt (PopScope)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 251,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "addSongFieldBtn",
+     "#": "addSongFieldModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/extra-fields/extra-fields.page#modal-3b9ec807"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:113-115",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:344-354"
+    ],
+    "n": "Beides Bottom-Sheet 'Neues Feld hinzufügen'. Ionic: volle Höhe (initialBreakpoint 1), kein Schließen-Button, Entwurf bleibt nach Wegwischen für das nächste Öffnen / Flutter: Inhaltshöhe mit X-Button, Formular bei jedem Öffnen leer.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 33,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "addExtraFieldBtn",
+     "#": "addPersonFieldModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/general/extra-fields/extra-fields.page#modal-e091cca3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:113-115",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:214-238",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:344-354"
+    ],
+    "n": "Beides Bottom-Sheet. Ionic: Sheet in voller Höhe (initialBreakpoint 1), ohne Schließen-Button, Entwurf bleibt nach Wegwischen für das nächste Öffnen erhalten / Flutter: Sheet in Inhaltshöhe mit X-Button, Formular bei jedem Öffnen leer",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 140,
+    "cond": [
+     "in <ion-modal isOpen=\"isEditExtraFieldModalOpen\" #editPersonFieldModal>",
+     "@if (editingExtraField)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getFieldTypeName(editingExtraField.type) }}"
+    ],
+    "text": "{{ getFieldTypeName(editingExtraField.type) }}",
+    "id": "settings/general/extra-fields/extra-fields.page#text-06537600"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361",
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:46-47"
+    ],
+    "n": "Flutter besser: Ionic getFieldTypeName kennt bfecg_church nicht → 'Unbekannt' / Flutter 'BFECG Gemeinde'; übrige Typen gleich.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 213,
+    "cond": [
+     "@if (extraFields.length === 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.noneYet"
+    ],
+    "de": [
+     "Es wurden noch keine zusätzlichen Felder hinzugefügt."
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.noneYet' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#text-b6ab4515"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:606"
+    ],
+    "n": "„Es wurden noch keine zusätzlichen Felder hinzugefügt.“ im Abschnitt Personen, wenn leer.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/extra-fields/extra-fields.page.html",
+    "line": 403,
+    "cond": [
+     "@if (songExtraFields.length === 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.noneYet"
+    ],
+    "de": [
+     "Es wurden noch keine zusätzlichen Felder hinzugefügt."
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.noneYet' | transloco }}",
+    "id": "settings/general/extra-fields/extra-fields.page#text-b6ab4515-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:606"
+    ],
+    "n": "Gleicher Text im Abschnitt Werke (gemeinsames _buildSection), wenn leer.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 292,
+    "method": "ExtraFieldsPage.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "extraFields.saved"
+     ],
+     "de": [
+      "Felder gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "ec955cac",
+    "mbody": "4fb72fd9",
+    "id": "settings/general/extra-fields/extra-fields.page#toast-1b391737"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:202"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 266,
+    "method": "ExtraFieldsPage.save",
+    "cond": [
+     "(!field.options?.length)",
+     "(field.type === FieldType.SELECT)"
+    ],
+    "message": {
+     "keys": [
+      "extraFields.selectNeedsOption"
+     ],
+     "de": [
+      "Das Auswahlfeld „{name}“ muss mindestens eine Option haben."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.selectNeedsOption', { name: field.name })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "0b355002",
+    "mbody": "4fb72fd9",
+    "id": "settings/general/extra-fields/extra-fields.page#toast-7c30c93f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:58-61"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/extra-fields/extra-fields.page",
+   "ionic": {
+    "ts": "settings/general/extra-fields/extra-fields.page.ts",
+    "html": "settings/general/extra-fields/extra-fields.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/general/extra-fields/extra-fields.page.ts",
+    "line": 270,
+    "method": "ExtraFieldsPage.save",
+    "cond": [
+     "(field.options.some(opt => !opt?.trim()))",
+     "(field.type === FieldType.SELECT)"
+    ],
+    "message": {
+     "keys": [
+      "extraFields.optionsEmptyIn"
+     ],
+     "de": [
+      "Die Optionen im Feld „{name}“ dürfen nicht leer sein."
+     ],
+     "literals": [],
+     "expr": "translate('extraFields.optionsEmptyIn', { name: field.name })"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e13b474b",
+    "mbody": "4fb72fd9",
+    "id": "settings/general/extra-fields/extra-fields.page#toast-ca61b0b3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/extra_fields_page.dart:62-64"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 208,
+    "cond": [],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "[routerLink]": "\"['/tabs/settings/general/extra-fields']\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/general/extra-fields']\"",
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "extraFields.title",
+     "generalSettings.none"
+    ],
+    "de": [
+     "Zusatzfelder",
+     "Keine"
+    ],
+    "literals": [
+     "Feld",
+     "Felder"
+    ],
+    "text": "{{ 'extraFields.title' | transloco }} {{ total }} {{ total === 1 ? 'Feld' : 'Felder' }} {{ 'generalSettings.none' | transloco }}",
+    "id": "settings/general/general.page#action-2951fe6e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/general_settings_page.dart:696"
+    ],
+    "n": "„Zusatzfelder“ mit Notiz „n Feld/Felder“ bzw. „Keine“ (additional + song_additional fields), Ziel /settings/general/extra-fields.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/general/general.page",
+   "ionic": {
+    "ts": "settings/general/general.page.ts",
+    "html": "settings/general/general.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/general/general.page.html",
+    "line": 325,
+    "cond": [
+     "in <ion-modal trigger=addCriticalRuleBtn #addCriticalRuleModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addCriticalRule(addCriticalRuleModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "generalSettings.addRule"
+    ],
+    "de": [
+     "Regel hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'generalSettings.addRule' | transloco }}",
+    "id": "settings/general/general.page#action-2a371131"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:82-122",
+     "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:351-358",
+     "lib/features/settings/presentation/pages/general_settings_page.dart:828-834"
+    ],
+    "n": "Gleicher Button 'Regel hinzufügen' unten im Sheet, gleiche Validierungen (Status, Schwelle > 0, Tage > 0), Sheet schließt, Regel wird angehängt. Flutter zeigt danach zusätzlich Toast 'Regel hinzugefügt'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart",
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ]
+  }
+ ]
+}

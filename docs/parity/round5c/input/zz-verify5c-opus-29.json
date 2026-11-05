@@ -1,0 +1,1566 @@
+{
+ "batch": "zz-verify5c-opus-29",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 44,
+    "cond": [
+     "in <ion-popover #songsMenuPopover>",
+     "@if (!tenantData)",
+     "@if (isAdmin)",
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=openOrgSongSearch(songsMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "search-outline"
+    ],
+    "keys": [
+     "orgSongs.menuEntry"
+    ],
+    "de": [
+     "In der Organisation suchen"
+    ],
+    "literals": [],
+    "text": "{{ 'orgSongs.menuEntry' | transloco }}",
+    "id": "songs/songs.page#action-380a0b3a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:338",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:282"
+    ],
+    "n": "Nur Admin/Verantwortlicher, nicht öffentlich, nur mit Organisation (currentOrganisationProvider = Ionic db.organisation()); Ziel /settings/org-settings/songs mit q = Suchbegriff wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 285,
+    "cond": [
+     "@else (not !loaded)",
+     "in <ion-modal isOpen=\"isCurrentSongsModalOpen\" #currentSongsModal>",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=printNotesForGroup()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "print-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "songs/songs.page#action-3f72e6db"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:85",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:466"
+    ],
+    "n": "Flutter besser: Druck-Button nur für Admin/Verantwortlichen und nie auf der öffentlichen Seite / Ionic: isAdmin = Rolle im eingeloggten Tenant, daher auch auf fremder Freigabe-Seite sichtbar (druckt dann Werke des eigenen Tenants)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 39,
+    "cond": [
+     "in <ion-popover #songsMenuPopover>",
+     "@if (!tenantData)",
+     "@if (isAdmin)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=openImportModal(songsMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cloud-upload-outline"
+    ],
+    "keys": [
+     "songs.importSongs"
+    ],
+    "de": [
+     "Werke importieren"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.importSongs' | transloco }}",
+    "id": "songs/songs.page#action-684cb018"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:326",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:160",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:98"
+    ],
+    "n": "Nur Admin/Verantwortlicher (Ionic isAdmin = Rolle 1/5), nicht auf der öffentlichen Seite (Flutter isAdmin enthält !_isPublic); Helfer, Stimmführer, Spieler, Eltern, Beobachter ohne Eintrag wie Ionic. Öffnet den Import, danach Neuladen.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 497,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-songs-button #addSongsModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"(!number.value && number.value !== 0) || !name.value\""
+    },
+    "events": [
+     "(click)=addSong(addSongsModal, number.value, name.value, link.value, prefix.value)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.add"
+    ],
+    "de": [
+     "Hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.add' | transloco }}",
+    "id": "songs/songs.page#action-761fe550"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/add_song_sheet.dart:58",
+     "lib/features/songs/presentation/widgets/add_song_sheet.dart:61",
+     "lib/features/songs/presentation/widgets/add_song_sheet.dart:218",
+     "lib/data/repositories/song_repository.dart:252"
+    ],
+    "n": "Flutter besser: „Hinzufügen“ nur aktiv mit Nummer und Name, Duplikat-/Link-Prüfung, Insert-Spalten und Navigation zum neuen Werk gleich. Flutter trimmt Name/Präfix/Link, parst die Nummer als Zahl, sendet leeren Link nicht (Ionic: \"\"), zeigt bei Fehler „Werk konnte nicht erstellt werden“ und lässt das Sheet offen (Ionic schließt das Modal ohne Meldung, keine Navigation)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/songs.page.html",
+    "line": 34,
+    "cond": [
+     "in <ion-popover #songsMenuPopover>",
+     "@if (!tenantData)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": ""
+    },
+    "events": [
+     "(click)=toggleSongsTab(songsMenuPopover)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"showSongsTab ? 'bookmark' : 'bookmark-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Tab ausblenden",
+     "Als Tab anzeigen"
+    ],
+    "text": "{{ showSongsTab ? 'Tab ausblenden' : 'Als Tab anzeigen' }}",
+    "id": "songs/songs.page#action-ed429618"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:310",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:123",
+     "lib/core/providers/optional_tabs_providers.dart:87",
+     "lib/core/router/route_access.dart:46"
+    ],
+    "n": "Flutter besser: Text „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon, Speichern in user_metadata showSongsTab_<tenantId> gleich, nicht auf der öffentlichen Seite. Erstprüfer irrte bei Eltern: settings.page.html:522 schließt Eltern nicht aus. Ionic: Eltern (Handy) erreichen Werke über Einstellungen und sehen den Eintrag; danach erscheint der Werke-Tab (tabs.page.ts:49 ohne Eltern-Ausschluss), obwohl isUrlAccessAllowed /tabs/songs-tab für Eltern sperrt (Utils.ts:1305) und das Sidepanel ihn ausblendet (nav-items.ts:82) / Flutter: für Eltern weder Eintrag noch Tab (canOpenSongsTab). Übrige Rollen gleich (Bewerber und Allgemein-Instanzen erreichen die Seite in beiden nicht).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "songs/songs.page.ts",
+    "line": 277,
+    "method": "SongsPage.printNotesForGroup",
+    "cond": [],
+    "header": {
+     "keys": [
+      "songs.chooseGroup"
+     ],
+     "de": [
+      "Gruppe wählen"
+     ],
+     "literals": [],
+     "expr": "translate('songs.chooseGroup')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "songs.printScores"
+       ],
+       "de": [
+        "Noten drucken"
+       ],
+       "literals": [],
+       "expr": "translate('songs.printScores')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async (groupId: number) => { if (!groupId) { Utils.showToast(translate('songs.chooseGroupPlease'), 'warning'); return false; } const currentSongs = await this.db.getCurrentSongs(); const filesToPrint: { song: Song; file: SongFile }[] = [];…"
+     }
+    ],
+    "inputs": [
+     {
+      "expr": "groups.map(g => ({ type: 'radio' as const, label: g.name, value: g.id, }))",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "0b714155",
+    "mbody": "7b86a74d",
+    "roleGuarded": true,
+    "id": "songs/songs.page#alert-4b046a4c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:27",
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:85",
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:147",
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:171",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:466"
+    ],
+    "n": "Druck-Knopf nur Admin/Verantwortlich (Ionic isAdmin Rolle 1/5, Flutter canPrint = isAdmin; Freigabe-Seite siehe action-3f72e6db). „Gruppe wählen“, Radio-Liste aller Nicht-Hauptgruppen, „Abbrechen“/„Noten drucken“; ohne Auswahl Warn-Toast, Dialog bleibt offen; Datei je Gruppe, im Chor Fallback „Chor (alle)“; Noten_<Gruppe>_<yyyy-MM-dd>.pdf. Flutter nutzt die geladenen aktuellen Werke (Ionic lädt neu) und schließt den Dialog vor dem Druck.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "songs/songs.page.ts",
+    "line": 479,
+    "method": "SongsPage.exportSongsPdf",
+    "cond": [],
+    "call": "Utils.downloadFileNative",
+    "args": "doc.output('blob'), fileName",
+    "src": "1dafb1a7",
+    "mbody": "1f2c0b38",
+    "roleGuarded": true,
+    "id": "songs/songs.page#effect-97c69a71"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/data/song_print_service.dart:192",
+     "lib/features/songs/data/song_print_service.dart:193",
+     "lib/core/services/native/native_file_service.dart:35",
+     "lib/core/services/native/native_file_service.dart:167"
+    ],
+    "n": "Menüpunkt für alle Rollen und auf der Freigabe-Seite (beide); Dateiname <Kurzname>_Werkverzeichnis_<dd-MM-yyyy>.pdf gleich; nativ Datei in Cache + Viewer, Desktop-Browser Download wie Ionic. Ionic downloadFileNative im mobilen Browser (iOS/Android, auch PWA) → Web-Share-Sheet / Flutter → Anker-Download (Printing.sharePdf web, printing-5.15.1 printing_web.dart:249-277). Erstprüfer übersah den Mobil-Web-Zweig; wie export effect-b206f4b4.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/data/song_print_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "songs/songs.page.ts",
+    "line": 479,
+    "method": "SongsPage.exportSongsPdf",
+    "cond": [],
+    "call": "doc.output",
+    "args": "'blob'",
+    "src": "e5784968",
+    "mbody": "1f2c0b38",
+    "roleGuarded": true,
+    "id": "songs/songs.page#effect-cd42ffa6"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/data/song_print_service.dart:125",
+     "lib/features/songs/data/song_print_service.dart:164",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:137"
+    ],
+    "n": "Inhalt gleich: Kopf „Werkverzeichnis …“/„Stand: …“ mit Branding, Spalten Nr./Name, ggf. Zuletzt gespielt/gesungen (nicht öffentlich), Schwierigkeit, Chor/Orch., Solo, sichtbare Zusatzfelder; Zeilen = gefilterte Liste. Ionic: 11 pt, automatische Verkleinerung (Padding 2 → 9 pt → 8 pt), damit die Liste möglichst auf eine Seite passt; Export-Schrift / Flutter: feste 9 pt (Kopf 10 pt), Standardschrift; Flutter meldet Fehler als Toast. Öffentliche Seite: Ionic nimmt Zusatzfelder/Branding des eingeloggten Tenants, Flutter Felder des freigebenden, kein Branding",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/data/song_print_service.dart",
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "songs/songs.page.html",
+    "line": 456,
+    "cond": [
+     "@if (isAdmin)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "add-songs-button",
+     "#": "addSongsModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "songs/songs.page#modal-b27e7f62"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:360",
+     "lib/features/songs/presentation/widgets/add_song_sheet.dart:238"
+    ],
+    "n": "FAB „+“ nur für Admin/Verantwortlichen. Ionic: Sheet in voller Höhe (breakpoints [0,1]) / Flutter: Bottom-Sheet in Inhaltshöhe. Flutter besser: auf der öffentlichen Seite nie (Ionic zeigt den FAB einem eingeloggten Admin auch dort und legt dann im eigenen Tenant an)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "songs/songs.page.ts",
+    "line": 369,
+    "method": "SongsPage.openOrgSongSearch",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/org-settings/songs'], { queryParams: this.searchTerm ? { q: this.searchTerm } : {}, }",
+    "src": "e5b64490",
+    "mbody": "1b9d67f4",
+    "id": "songs/songs.page#nav-3b77363a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:282"
+    ],
+    "n": "Push auf /settings/org-settings/songs, Suchbegriff als ?q= (Flutter getrimmt)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "songs/songs.page.ts",
+    "line": 507,
+    "method": "SongsPage.addSong",
+    "cond": [
+     "(this.isStandaloneTab)",
+     "(song?.id)"
+    ],
+    "via": "router.navigate",
+    "to": "['tabs', 'songs-tab', `${song.id}`]",
+    "src": "1aa022ae",
+    "mbody": "a2b146be",
+    "id": "songs/songs.page#nav-4756a104"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:114",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:364"
+    ],
+    "n": "im Werke-Tab → /songs-tab/<id>",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "songs/songs.page.ts",
+    "line": 721,
+    "method": "SongsPage.openSong",
+    "cond": [
+     "(!this.tenantData)"
+    ],
+    "via": "router.navigate",
+    "to": "[`/tabs/settings/songs/`, songId]",
+    "src": "f86560ff",
+    "mbody": "9bcfd048",
+    "roleGuarded": true,
+    "id": "songs/songs.page#nav-48b97106"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:114",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:111"
+    ],
+    "n": "Flutter besser: Ionic öffnet ein Werk aus „Aktuelle Werke“ immer unter /tabs/settings/songs/<id>, auch im Werke-Tab (Wechsel in den Einstellungen-Kontext) / Flutter: im Werke-Tab /songs-tab/<id>, sonst /settings/songs/<id>",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "songs/songs.page.ts",
+    "line": 724,
+    "method": "SongsPage.openSong",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "[`${this.tenantData?.song_sharing_id ?? this.db.tenant().song_sharing_id}`, `${songId}`]",
+    "src": "1c347af1",
+    "mbody": "9bcfd048",
+    "roleGuarded": true,
+    "id": "songs/songs.page#nav-bb5caed5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:111",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:113",
+     "lib/features/songs/presentation/widgets/current_songs_sheet.dart:114"
+    ],
+    "n": "Auf der Freigabe-Seite: Sheet schließen und push /<sharing_id>/<songId> wie Ionic; sonst /settings/songs/<id> bzw. im Werke-Tab /songs-tab/<id> (siehe action-cda4f15d).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "songs/songs.page.ts",
+    "line": 509,
+    "method": "SongsPage.addSong",
+    "cond": [
+     "!(this.isStandaloneTab)",
+     "(song?.id)"
+    ],
+    "via": "router.navigate",
+    "to": "[`tabs`, `settings`, 'songs', `${song.id}`]",
+    "src": "f133b6b9",
+    "mbody": "a2b146be",
+    "id": "songs/songs.page#nav-ecc8ff90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:118",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:364"
+    ],
+    "n": "sonst → /settings/songs/<id>",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 109,
+    "cond": [
+     "@if (tenantData)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenantData.longName }}"
+    ],
+    "text": "{{ tenantData.longName }}",
+    "id": "songs/songs.page#text-5ecb67ec-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:376",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:245"
+    ],
+    "n": "Großer Titel (nur iOS, IonLargeTitle) = longName beim öffentlichen Link, wie Ionic collapse=condense.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 111,
+    "cond": [
+     "@else (not tenantData)"
+    ],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [
+     "songs.songsCount"
+    ],
+    "de": [
+     "Werke ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.songsCount' | transloco: { count: songs?.length } }}",
+    "id": "songs/songs.page#text-b8539fda-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:376",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:245"
+    ],
+    "n": "„Werke ({count})“ mit Anzahl aller Werke; großer Titel nur iOS.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "songs/songs.page.html",
+    "line": 461,
+    "cond": [
+     "@if (isAdmin)",
+     "in <ion-modal trigger=add-songs-button #addSongsModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "songs.addSong"
+    ],
+    "de": [
+     "Werk hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'songs.addSong' | transloco }}",
+    "id": "songs/songs.page#text-c364c614"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/widgets/add_song_sheet.dart:156",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:360"
+    ],
+    "n": "„Werk hinzufügen“. FAB/Sheet nur Admin/Verantwortlicher und nicht auf der öffentlichen Seite (Ionic dort ohne Login kein tenantUser → isAdmin false).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "songs/songs.page.ts",
+    "line": 99,
+    "method": "SongsPage.ngOnInit",
+    "cond": [
+     "(!this.tenantData)",
+     "(!isAuthenticatedRoute)"
+    ],
+    "message": {
+     "keys": [
+      "songs.invalidShareLink"
+     ],
+     "de": [
+      "Ungültiger Freigabe-Link."
+     ],
+     "literals": [],
+     "expr": "translate('songs.invalidShareLink')"
+    },
+    "color": null,
+    "duration": null,
+    "src": "9c0110fc",
+    "mbody": "ae6d888f",
+    "roleGuarded": true,
+    "id": "songs/songs.page#toast-9ab6d68a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:175",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:183"
+    ],
+    "n": "Text „Ungültiger Freigabe-Link.“ gleich. Ionic: Toast in Standardfarbe success (grün); Seite bleibt mit Titel „Werke (0)“, ⋮-Menü, Suchleiste und Skeleton-Liste stehen / Flutter: neutraler Info-Toast; Seite mit Titel „Werke“, Zurück-Button (→ /login) und leerem Inhalt",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-0d67592c4c",
+    "title": "Dirigentenname in „Zuletzt gesungen am …“ aus anderer Quelle",
+    "n": "Ionic: Name nur, wenn person_id ein Mitglied der Hauptgruppe ist (getConductors inkl. Ausgetretene, ohne pending), sonst otherConductor; ohne Hauptgruppe wirft getConductors und die Seite lädt nicht / Flutter: Name jeder verknüpften Person (Join person_id), sonst otherConductor; keine Hauptgruppe nötig. Wirkt auch auf die Suche nach Dirigent",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.ts:205",
+    "f": [
+     "lib/core/providers/song_providers.dart:110",
+     "lib/data/repositories/song_repository.dart:706"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart",
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-33fec24313",
+    "title": "Leerzustand nur in Flutter",
+    "n": "Ionic: bei 0 Treffern nur Kopf „Werke (0)“ / Flutter: Icon + „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ und bei aktiven Filtern Button „Filter zurücksetzen“",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.html:366",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:487"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-3ea3047248",
+    "title": "Suchbegriff wird in Ionic still verworfen",
+    "n": "Flutter besser: Ionic setzt bei Filter-/Sortier-/Segmentwechsel, Pull-to-Refresh und Realtime-Reload searchTerm = \"\" und zeigt die Liste ohne Suche, obwohl der Text in der Suchleiste stehen bleibt (auch „In der Organisation suchen“ übergibt dann kein q) / Flutter: Suche bleibt angewendet, solange Text in der Leiste steht",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.ts:586",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:227"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-7853e7d520",
+    "title": "Suche bleibt bei Filterwechsel",
+    "n": "Flutter besser: Ionic setzt bei Filter-/Kategorie-/Sortierwechsel searchTerm = '' und filtert ohne Suche, obwohl der Suchtext im Feld stehen bleibt / Flutter: Suchbegriff bleibt angewendet.",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.ts:587",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:227-232"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-bb07f924d9",
+    "title": "Dirigentenname-Quelle",
+    "n": "Ionic: Name nur, wenn person_id ein Dirigent der Hauptgruppe ist (getConductors(true)), sonst otherConductor / Flutter: Name jeder verknüpften Person (Join person:person_id), sonst otherConductor.",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.ts:205",
+    "f": [
+     "lib/core/providers/song_providers.dart:108-113",
+     "lib/data/repositories/song_repository.dart:520-536"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/providers/song_providers.dart",
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-d7e836d454",
+    "title": "Lade- und Fehlerzustand",
+    "n": "Ionic: beim Laden volle Toolbar (Titel „Werke (0)“, ⋮-Menü), Suchleiste, Refresher und Skeleton-Inset-Liste (Kopf + 10 zweizeilige Einträge); Ladefehler → Skeleton bleibt dauerhaft / Flutter: nur AppBar „Werke“ (öffentlich leer) und 10 einzeilige Skeleton-Zeilen ohne Menü/Suche; Ladefehler → ErrorStateView mit „Erneut versuchen“ (Flutter besser)",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.html:245",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:168",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:206"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "songs/songs.page",
+   "ionic": {
+    "ts": "songs/songs.page.ts",
+    "html": "songs/songs.page.html"
+   },
+   "extra": {
+    "id": "x-ee1abf09a6",
+    "title": "Fehler- und Leerzustand",
+    "n": "Ionic: nur Skeleton beim Laden, kein Fehler- oder Leerzustand (leere Liste unter „Werke (0)“) / Flutter: Fehleransicht mit „Erneut versuchen“, Leerzustand mit Icon und „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ + „Filter zurücksetzen“, Lade-Balken beim Aktualisieren.",
+    "sev": "niedrig",
+    "ionic": "src/app/songs/songs.page.html:245",
+    "f": [
+     "lib/features/songs/presentation/pages/songs_list_page.dart:168-173",
+     "lib/features/songs/presentation/pages/songs_list_page.dart:487-510"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 345,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>",
+     "@for (u of uniquePersons; track trackByPersonId($index, u))",
+     "@for (tenant of u.tenants; track tenant.id)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenant.longName }}"
+    ],
+    "text": "{{ tenant.longName }}",
+    "id": "stats/stats.page#text-445b00dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1414-1450",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1374-1410"
+    ],
+    "n": "Personen-Sheet der Organisation: je Instanz eine Zeile mit Langname. Statistik nur Admin/Verantwortlich (Ionic settings isAdmin, Flutter Guard '/statistics'), Abschnitt nur bei Organisation – gleich. Randfall: Flutter sammelt Instanznamen als Set (doppelte Zeilen derselben Person in einer Instanz nur einmal, Ionic zweimal).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "extra": {
+    "id": "x-82cbaeffb4",
+    "title": "Pull-to-refresh nur in Flutter",
+    "n": "Flutter besser: Herunterziehen lädt Termine und Personen neu / Ionic: kein Refresher, nur erneutes Öffnen.",
+    "sev": "niedrig",
+    "ionic": "src/app/stats/stats.page.html:12",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:163"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "extra": {
+    "id": "x-c78a5253ee",
+    "title": "Statusverteilung: Legende ohne Prozent",
+    "n": "Ionic: Legende 'Anwesend (x%)', 'Entschuldigt (x%)', 'Verspätet (x%)', 'Abwesend (x%)' über dem Kreisdiagramm / Flutter: Prozent auf den Segmenten, Legende rechts nur mit Statusnamen, Ring statt voller Kreis.",
+    "sev": "niedrig",
+    "ionic": "src/app/stats/stats.page.ts:240",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:603",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:692"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "extra": {
+    "id": "x-d30471180e",
+    "title": "Leere Einzeldiagramme mit Platzhaltertext",
+    "n": "Ionic: leeres Diagramm (mit Titel), wenn keine Daten / Flutter: Platzhalter 'Keine Daten verfügbar', 'Keine Geburtsdaten vorhanden' bzw. 'Keine unentschuldigten Abwesenheiten'.",
+    "sev": "niedrig",
+    "ionic": "src/app/stats/stats.page.ts:380",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1197",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:929",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1112"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 48,
+    "cond": [
+     "@if (hasMultipleTenants())",
+     "in <ion-popover trigger=side-nav-tenant>",
+     "@for (tenant of db.tenants(); track tenant.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=onTenantChange(tenant.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "settings.current"
+    ],
+    "de": [
+     "Aktuell"
+    ],
+    "literals": [],
+    "text": "{{ tenant.longName }} {{ 'settings.current' | transloco }}",
+    "id": "tabs/side-nav/side-nav.component#action-58669ad9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:661-700",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:128-131",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-407"
+    ],
+    "n": "Nur bei mehr als einer Instanz (alle tenantUsers-Instanzen, jede Rolle) in beiden Apps; Einträge longName + Badge 'Aktuell'; aktuelle Instanz -> nichts; sonst Wechsel und Startseite der neuen Rolle (role.defaultRoute = Utils.getUrl). Fehlendes Loading siehe loading-e9133cc5.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "tabs/side-nav/side-nav.component.ts",
+    "line": 124,
+    "method": "SideNavComponent.onTenantChange",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "21983526",
+    "roleGuarded": true,
+    "id": "tabs/side-nav/side-nav.component#loading-e9133cc5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:128",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405"
+    ],
+    "n": "Ionic: Loading-Overlay während Instanzwechsel / Flutter: switchTenant ohne Ladeanzeige.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "tabs/side-nav/side-nav.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "url:34-34",
+     "hasOwnTasks:35-35",
+     "activeId:55-55",
+     "hasMultipleTenants:56-56",
+     "tenantInitials:57-57",
+     "userName:58-58",
+     "constructor:61-77",
+     "onKeydown:80-90",
+     "toggleCollapsed:92-94",
+     "closeOverlay:96-98",
+     "badgeFor:100-102",
+     "onItem:104-113",
+     "openProfile:115-120",
+     "onTenantChange:122-132",
+     "logout:134-137",
+     "runAction:139-152",
+     "refreshBadges:154-174",
+     "loadProfile:176-184",
+     "roleKey:186-200",
+     "initialsOf:202-204",
+     "function initials:207-212"
+    ],
+    "bodies": {
+     "url": "d8855087",
+     "hasOwnTasks": "f7b0df44",
+     "activeId": "167edb17",
+     "hasMultipleTenants": "40a40d7c",
+     "tenantInitials": "828b0eb1",
+     "userName": "1d2941aa",
+     "constructor": "30772cbc",
+     "onKeydown": "060f2edf",
+     "toggleCollapsed": "cd094053",
+     "closeOverlay": "fe2ac035",
+     "badgeFor": "bacf4c9c",
+     "onItem": "124232e3",
+     "openProfile": "b20258a8",
+     "onTenantChange": "21983526",
+     "logout": "5d5f547c",
+     "runAction": "c5df4527",
+     "refreshBadges": "b89a7df5",
+     "loadProfile": "db33809b",
+     "roleKey": "21a4732f",
+     "initialsOf": "6c575f7b",
+     "function initials": "1dbdb06d"
+    },
+    "id": "tabs/side-nav/side-nav.component#logic-4d49612e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:145",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:68",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:102",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:128",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:133",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:370"
+    ],
+    "n": "Gruppen, aktiver Eintrag, Badges (Flutter live statt 60-s-Drosselung), Profilname/Avatar, Rollenlabel, Strg/⌘+B, Instanzwechsel, Logout gleich. Abweichungen: Instanzlogo (logo_url) wird nie gezeigt (extra); Ablaufpläne als Seite statt Modal und kein Loading beim Instanzwechsel (eigene Items).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 27,
+    "cond": [
+     "@if (db.tenant()?.logo_url)"
+    ],
+    "tag": "img",
+    "src": "\"db.tenant()?.logo_url\"",
+    "bindings": [
+     "[src]=\"db.tenant()?.logo_url\""
+    ],
+    "events": [],
+    "id": "tabs/side-nav/side-nav.component#media-8fae1184"
+   },
+   "first": {
+    "s": "missing",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:614-626"
+    ],
+    "n": "Ionic: mit tenants.logo_url zeigt der Instanz-Knopf im Sidepanel das Logo-Bild / Flutter: Tenant-Modell hat kein logo_url, immer Initialen. Nur Tablet/Desktop, alle Rollen.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "tabs/side-nav/side-nav.component.ts",
+    "line": 130,
+    "method": "SideNavComponent.onTenantChange",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "Utils.getUrl(this.db.tenantUser().role)",
+    "src": "0f9aa057",
+    "mbody": "21983526",
+    "roleGuarded": true,
+    "id": "tabs/side-nav/side-nav.component#nav-8a63e2cc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:128-131",
+     "lib/shared/widgets/tenant/tenant_switcher_title.dart:389-405",
+     "lib/core/constants/enums.dart:137-141"
+    ],
+    "n": "Nach Instanzwechsel Startseite der Rolle in der neuen Instanz: Admin/Verantwortlich/Beobachter → /people (≙ /tabs/player, auch bei aktivem Dashboard-Tab), Eltern → /parents, alle anderen (Helfer, Stimmführer, Spieler, Bewerber) → /signout. Gleiche Instanz: nichts. Ionic zeigt dabei ein Lade-Overlay.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "tabs/side-nav/side-nav.component.ts",
+    "line": 119,
+    "method": "SideNavComponent.openProfile",
+    "cond": [],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/settings'",
+    "src": "314f41b7",
+    "mbody": "b20258a8",
+    "id": "tabs/side-nav/side-nav.component#nav-9b5ddf8f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:323"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 44,
+    "cond": [
+     "@if (hasMultipleTenants())"
+    ],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "trigger": "side-nav-tenant"
+    },
+    "events": [],
+    "bindings": [
+     "[side]=\"layout.collapsed() ? 'end' : 'bottom'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "tabs/side-nav/side-nav.component#popover-bfa8543b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:667-698"
+    ],
+    "n": "Nur bei mehreren Instanzen: Liste aller Instanzen, aktuelle mit Badge „Aktuell“, Breite 240, eingeklappt seitlich. Rollenunabhängig.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 29,
+    "cond": [
+     "@else (not db.tenant()?.logo_url)"
+    ],
+    "tag": "span",
+    "attrs": {
+     "class": "sn-logo sn-logo--text"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ tenantInitials() }}"
+    ],
+    "text": "{{ tenantInitials() }}",
+    "id": "tabs/side-nav/side-nav.component#text-2e5c2fe9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:614-626",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:741-750"
+    ],
+    "n": "Initialen gleich (shortName, sonst longName; ein Wort -> 2 Buchstaben, sonst erster+letzter Anfangsbuchstabe), alle Rollen. Flutter zeigt sie auch bei gesetztem logo_url, siehe media-8fae1184.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 35,
+    "cond": [
+     "@if (!layout.collapsed())",
+     "@if (hasMultipleTenants())"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "nav.instances"
+    ],
+    "de": [
+     "{count, plural, one {# Instanz} other {# Instanzen}}"
+    ],
+    "literals": [],
+    "text": "{{ 'nav.instances' | transloco: { count: db.tenants()?.length } }}",
+    "id": "tabs/side-nav/side-nav.component#text-9e2fb11a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:650-652"
+    ],
+    "n": "„# Instanz/Instanzen“ nur bei mehr als einer Instanz und ausgeklapptem Panel; rollenunabhängig in beiden.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "extra": {
+    "id": "x-20bbe67ad6",
+    "title": "Instanzlogo im Sidepanel fehlt",
+    "n": "Ionic: tenants.logo_url gesetzt -> Logo-Bild statt Initialen im Instanz-Button / Flutter: Tenant-Modell kennt logo_url nicht, es werden immer die Initialen gezeigt.",
+    "sev": "niedrig",
+    "ionic": "src/app/tabs/side-nav/side-nav.component.html:26",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:614"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "tabs/tabs.page",
+   "ionic": {
+    "ts": "tabs/tabs.page.ts",
+    "html": "tabs/tabs.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "tabs/tabs.page.ts",
+    "line": 65,
+    "method": "TabsPage.initialize",
+    "cond": [],
+    "call": "Utils.getUrl",
+    "args": "this.db.tenantUser().role",
+    "src": "599c2113",
+    "mbody": "25a9a0fa",
+    "roleGuarded": true,
+    "id": "tabs/tabs.page#effect-179a0567"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/router/app_router.dart:212-243",
+     "lib/core/router/app_router.dart:428-442",
+     "lib/core/constants/enums.dart:137-141"
+    ],
+    "n": "Flutter besser: Ziel gleich (defaultRoute = Utils.getUrl je Rolle). Erstprüfung übersah die Regel effect=nav: gleiches Urteil wie nav-0ccaf6f8 (zz-verify2). Ionic leitet beim Laden/Instanzwechsel per isUrlAccessAllowed um, dessen Liste Lücken hat: Helfer/Helfer-Stimmführer landen beim Neuladen von /tabs/attendance auf „Meine Termine“, Spieler/Helfer beim Neuladen von /tabs/overview / Flutter lässt beide passend zu den sichtbaren Tabs zu.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  }
+ ]
+}

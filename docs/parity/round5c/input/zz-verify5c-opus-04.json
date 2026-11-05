@@ -1,0 +1,1608 @@
+{
+ "batch": "zz-verify5c-opus-04",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2300,
+    "method": "AttendancePage.toggleArchived",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "translate(archive ? 'attendance.archivedToast' : 'attendance.restoredToast')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "b21c58ae",
+    "mbody": "5117fd46",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#toast-3c53fce6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1193"
+    ],
+    "n": "„Termin archiviert“ / „Termin wiederhergestellt“ (Erfolg).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2303,
+    "method": "AttendancePage.toggleArchived",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.archiveFailed"
+     ],
+     "de": [
+      "Der Termin konnte nicht geändert werden."
+     ],
+     "literals": [],
+     "expr": "translate('attendance.archiveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "33dfc6cb",
+    "mbody": "5117fd46",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#toast-d7a6342e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1196"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2365,
+    "method": "AttendancePage.sendAdHocReminder",
+    "cond": [
+     "!(error)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.reminderSent"
+     ],
+     "de": [
+      "Erinnerung versendet"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.reminderSent')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "f08d5546",
+    "mbody": "de224efc",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#toast-d8dd95d2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1410"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2363,
+    "method": "AttendancePage.sendAdHocReminder",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "attendance.sendFailed"
+     ],
+     "de": [
+      "Fehler beim Versenden"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.sendFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "e7a98d80",
+    "mbody": "de224efc",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#toast-f2ad9095"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1412"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-33b53c7e65",
+    "title": "Sortierung „Person hinzufügen“",
+    "n": "Weiter real: Ionic sortiert gleiche Gruppen nach Nachname/Vorname mit localeCompare (attendance.page.ts:2444), Flutter computeAddPersonCandidates mit String.compareTo (Umlaute/Kleinbuchstaben hinten). Die Personenliste selbst nutzt localeCompareDe, nur „Person hinzufügen“ nicht.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:2421",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:60"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-443cc37b67",
+    "title": "„Person hinzufügen“: Kandidaten",
+    "n": "Flutter besser: (1) Ionic schließt nur Personen aus this.players aus – ein eingeschränkter Stimmführer-Helfer bekommt Personen anderer Gruppen angeboten, die schon im Termin sind (Doppelzeile möglich); Flutter schließt alle vorhandenen Zeilen aus. (2) Ionic sucht die Gruppe in this.instruments ohne Hauptgruppe → Personen der Hauptgruppe heißen „Keine Gruppe“ und stehen ganz unten; Flutter zeigt deren Gruppennamen und sortiert nach deren sort_order.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:2388",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1356",
+     "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:55",
+     "lib/features/attendance/presentation/attendance_add_persons.dart:51"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-4dd0cff1ed",
+    "title": "history.visible-Abgleich fehlt",
+    "n": "Weiter real (Ionic attendance.page.ts:1533–1537 unverändert): onInfoChanged setzt nach Info/Notizen/Zeiten/Frist alle Werke-Einträge auf visible = save_in_history, wenn der erste abweicht; Flutter liest save_in_history nirgends. Wirkt nur bei Alt-Terminen mit save_in_history false/null (beide Apps legen true an, Feld nicht editierbar), daher niedrig.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:1521",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2280"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-5905254b84",
+    "title": "Helfer-Gruppenrecht bei Ladefehler",
+    "n": "Flutter besser, weiter real: Ionic (Z. 425–437) zeigt einem eingeschränkten Helfer/Stimmführer-Helfer bei Fehler beim Profil-Laden oder Profil ohne Gruppe die ungefilterte Liste aller Gruppen; Flutter zeigt dann niemanden (AttendanceGroupScope.denied, auch während des Ladens). Fehlt die Berechtigungszeile, sehen beide alle Gruppen.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:425",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:569",
+     "lib/core/providers/role_permission_providers.dart:227"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-7bed677ddc",
+    "title": "Feldsortierung: Reihenfolge bei gleichem Wert",
+    "n": "Ionic: sortiert this.players (bereits Hauptgruppe/Gruppe/Nachname) stabil → gleiche Werte bleiben nach Gruppe und Name geordnet / Flutter: sortiert die nach Nachname geladene Liste mit List.sort (ab 33 Personen nicht stabil) → gleiche Werte nur nach Nachname bzw. beliebig.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:133",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:578",
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_view_options.dart:124"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "extra": {
+    "id": "x-b6a4d5b9be",
+    "title": "Realtime übernimmt mehr",
+    "n": "Flutter besser: von anderen Geräten hinzugefügte Personenzeilen (INSERT) erscheinen sofort, changed_by/changed_at werden live übernommen („Wer hat geändert?“ aktuell) / Ionic: INSERT wird ignoriert (players[-1]), Änderer-Info bleibt auf dem Ladestand.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/attendance/attendance.page.ts:691",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:307",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:352"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 136,
+    "method": "AutoMessagePanelComponent.decide",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "this.nameOf(r)"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "translate(accept ? (r.kind === 'was_present' ? 'autoMessages.decideAcceptPresent' : 'autoMessages.decideAcceptReason') : 'autoMessages.decideReject')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [],
+       "expr": "translate(accept ? (r.kind === 'was_present' ? 'autoMessages.setPresent' : 'autoMessages.excuse') : 'autoMessages.reject')"
+      },
+      "role": "accept ? undefined : destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { void this.doDecide(r, accept); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "579c8942",
+    "mbody": "45a8bfa5",
+    "roleGuarded": true,
+    "id": "attendance/auto-message-panel/auto-message-panel.component#alert-ca65276f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:196",
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:204"
+    ],
+    "n": "Rollen gleich: Panel nur Admin/Verantwortlich und erst nach Terminbeginn (Ionic isManager && started, Flutter role.isAdmin||isResponsible + Startprüfung). Titel = Name, Text je nach Art, Buttons „Abbrechen“ / „Auf anwesend“|„Entschuldigen“|„Ablehnen“ (rot); Edge-Function attendance-response decide.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 130,
+    "method": "AutoMessagePanelComponent.openRun",
+    "cond": [
+     "!(s.run?.message_id)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/settings/auto-messages/${s.rule.id}?tab=history`",
+    "src": "b3218241",
+    "mbody": "61ab59da",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#nav-bd2317ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:192",
+     "lib/core/router/app_router.dart:1013"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/auto-message-panel/auto-message-panel.component",
+   "ionic": {
+    "ts": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "html": "attendance/auto-message-panel/auto-message-panel.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/auto-message-panel/auto-message-panel.component.ts",
+    "line": 128,
+    "method": "AutoMessagePanelComponent.openRun",
+    "cond": [
+     "(s.run?.message_id)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "`/tabs/messages/${s.run.message_id}`",
+    "src": "43addbb1",
+    "mbody": "61ab59da",
+    "id": "attendance/auto-message-panel/auto-message-panel.component#nav-e5389e36"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:190",
+     "lib/core/router/app_router.dart:931"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart",
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 77,
+    "method": "DutyDistributeModalComponent.calculate",
+    "cond": [],
+    "message": {
+     "keys": [
+      "duty.distributing"
+     ],
+     "de": [
+      "Verteile Dienste…"
+     ],
+     "literals": [],
+     "expr": "translate('duty.distributing')"
+    },
+    "duration": "{ message: translate('duty.distributing') }",
+    "src": "9ffef076",
+    "mbody": "4067c1e1",
+    "roleGuarded": true,
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#loading-e612daf1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:326"
+    ],
+    "n": "Ionic: blockierendes Overlay „Verteile Dienste…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, das X in der AppBar bleibt bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 232,
+    "method": "DutyDistributeModalComponent.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "duty.assigning"
+     ],
+     "de": [
+      "Teile ein…"
+     ],
+     "literals": [],
+     "expr": "translate('duty.assigning')"
+    },
+    "duration": "{ message: translate('duty.assigning') }",
+    "src": "3a2959a8",
+    "mbody": "e0f57d76",
+    "roleGuarded": true,
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#loading-ef16b6da"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:326",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:347"
+    ],
+    "n": "Ionic: blockierendes Overlay „Teile ein…“ / Flutter: Body durch Spinner mit gleichem Text ersetzt, Speichern-Button deaktiviert, aber „Zurück“ und „Neu verteilen“ in der AppBar bleiben während des Speicherns bedienbar.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngOnInit:57-60",
+     "toggleType:62-66",
+     "changeMax:68-70",
+     "calculate:72-99",
+     "candidatesOf:101-106",
+     "run:109-133",
+     "name:135-138",
+     "firstName:140-142",
+     "dateLabel:144-147",
+     "title:149-151",
+     "countsById:154-166",
+     "get personCounts:168-175",
+     "range:177-179",
+     "get plannedTotal:181-183",
+     "get missingTotal:185-187",
+     "change:190-224",
+     "save:226-245",
+     "back:247-249",
+     "cancel:251-253"
+    ],
+    "bodies": {
+     "ngOnInit": "4b419977",
+     "toggleType": "8ea309bb",
+     "changeMax": "7bf15dfa",
+     "calculate": "4067c1e1",
+     "candidatesOf": "0ddfa0e4",
+     "run": "b62b4359",
+     "name": "54c76174",
+     "firstName": "71bf11a9",
+     "dateLabel": "0ff0c223",
+     "title": "fa494f24",
+     "countsById": "5d8f1cbc",
+     "get personCounts": "57c7d332",
+     "range": "95a27162",
+     "get plannedTotal": "1fd397e5",
+     "get missingTotal": "b7548e9b",
+     "change": "94170a94",
+     "save": "e0f57d76",
+     "back": "101078d3",
+     "cancel": "c9853b37"
+    },
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#logic-488dd772"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:77",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:107",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:161",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:222",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:269"
+    ],
+    "n": "Defaults (nächster Monat, alle Dienst-Typen, max 2, nicht zweimal am Tag), Kandidaten-Filter, Zählung (Basis + geplant), Summen, Tauschen, Speichern pro Termin über assign wie Ionic. Abweichungen: Gleicher-Tag-Sperre zählt mehr Termine, Fehlerbehandlung beim Laden und Speichern, Namens-Tiebreak (siehe extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 74,
+    "method": "DutyDistributeModalComponent.calculate",
+    "cond": [
+     "(!this.selectedTypeIds.length)"
+    ],
+    "message": {
+     "keys": [
+      "duty.chooseTypeMin"
+     ],
+     "de": [
+      "Bitte wähle mindestens einen Termintyp"
+     ],
+     "literals": [],
+     "expr": "translate('duty.chooseTypeMin')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "94f561fb",
+    "mbody": "4067c1e1",
+    "roleGuarded": true,
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#toast-2f70fc41"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:108"
+    ],
+    "n": "Gelber Toast „Bitte wähle mindestens einen Termintyp“, wenn kein Typ gewählt. Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "line": 239,
+    "method": "DutyDistributeModalComponent.save",
+    "cond": [],
+    "message": {
+     "keys": [
+      "duty.assignedToast"
+     ],
+     "de": [
+      "{count, plural, one {# Dienst eingeteilt} other {# Dienste eingeteilt}}. Alle bekommen eine Push-Nachricht."
+     ],
+     "literals": [],
+     "expr": "translate('duty.assignedToast', { count: this.plannedTotal })"
+    },
+    "color": "success",
+    "duration": "4000",
+    "src": "be7b262e",
+    "mbody": "e0f57d76",
+    "roleGuarded": true,
+    "id": "duty/duty-distribute-modal/duty-distribute-modal.component#toast-79fe0ace"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:291"
+    ],
+    "n": "Grüner Toast mit gleichem Plural-Text nach dem Einteilen, danach Schließen mit Ergebnis; Dauer 3 s statt 4 s. Rolle: Modal in beiden nur für Admin/Verantwortlicher bei vorhandenen Dienst-Typen (Ionic att-list isConductor && hasDutyTypes / Flutter attendance_list_page:314), im Modal keine weitere Prüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "extra": {
+    "id": "x-3829883249",
+    "title": "Namens-Tiebreak nicht locale-aware",
+    "n": "Ionic: „Dienste pro Person“ und Tausch-Optionen bei Gleichstand mit localeCompare sortiert / Flutter: String.compareTo (Umlaute nach Z, Kleinbuchstaben nach Großbuchstaben).",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:174",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:229",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:469"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "extra": {
+    "id": "x-41b22d1e2d",
+    "title": "Speichern bei Fehler",
+    "n": "Ionic: dutySvc.assign zeigt „Fehler beim Einteilen“ und wirft, die Schleife bricht beim ersten fehlerhaften Termin ab, übrige Termine werden nicht eingeteilt / Flutter: Fehler pro Termin abgefangen, alle übrigen Termine werden trotzdem eingeteilt, danach ein Toast „Fehler beim Einteilen“; Seite bleibt in beiden offen.",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:236",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:277"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "extra": {
+    "id": "x-9bddce3977",
+    "title": "Ladefehler beim Berechnen",
+    "n": "Flutter besser: Ionic: kein catch, getUpcomingDutyTermine verschluckt Fehler und liefert [], dann Vorschau „Im Zeitraum gibt es keine Termine mit Dienst-Modus.“ / Flutter: roter Toast „Fehler: …“, bleibt im Regeln-Schritt.",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:79",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:145"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/duty-distribute-modal/duty-distribute-modal.component",
+   "ionic": {
+    "ts": "duty/duty-distribute-modal/duty-distribute-modal.component.ts",
+    "html": "duty/duty-distribute-modal/duty-distribute-modal.component.html"
+   },
+   "extra": {
+    "id": "x-d3edffbcbe",
+    "title": "Gleicher-Tag-Sperre zählt mehr Termine",
+    "n": "Flutter besser: Ionic: lädt nur die gewählten Termintypen und filtert voll besetzte Termine vor distributeDuties heraus, deren Eingeteilte blockieren den Tag daher nicht / Flutter: lädt alle Dienst-Typen und gibt voll besetzte und nicht gewählte Termine mit open 0 mit, deren Eingeteilte blockieren bei „Nicht zweimal am selben Tag“ den Tag. Der Vorschlag kann sich dadurch unterscheiden.",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/duty-distribute-modal/duty-distribute-modal.component.ts:111",
+    "f": [
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:123",
+     "lib/features/duty/presentation/pages/duty_distribute_page.dart:164"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/duty_distribute_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 119,
+    "method": "UnavailabilityModalComponent.offerApplyToFuture",
+    "cond": [],
+    "header": {
+     "keys": [
+      "duty.alsoPlanned"
+     ],
+     "de": [
+      "Auch geplante Termine?"
+     ],
+     "literals": [],
+     "expr": "translate('duty.alsoPlanned')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "duty.alsoPlannedOther",
+      "duty.alsoPlannedSelf"
+     ],
+     "de": [
+      "{count, plural, one {# schon geplanter Termin passt} other {# schon geplante Termine passen}} zu dieser Regel ({preview}). Soll {name} dort als entschuldigt eingetragen werden? Termine mit eigener Antwort oder Einteilung bleiben unverändert.",
+      "{count, plural, one {# schon geplanter Termin passt} other {# schon geplante Termine passen}} zu dieser Regel ({preview}). Sollst du dort als entschuldigt eingetragen werden? Termine mit eigener Antwort oder Einteilung bleiben unverändert."
+     ],
+     "literals": [],
+     "expr": "this.forOther ? translate('duty.alsoPlannedOther', { count, preview, name: this.personName.split(' ')[0] }) : translate('duty.alsoPlannedSelf', { count, preview })"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "duty.onlyNew"
+       ],
+       "de": [
+        "Nur neue Termine"
+       ],
+       "literals": [],
+       "expr": "translate('duty.onlyNew')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "duty.alsoPlannedButton"
+       ],
+       "de": [
+        "Auch geplante"
+       ],
+       "literals": [],
+       "expr": "translate('duty.alsoPlannedButton')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { const changed = await this.db.dutySvc.applyUnavailabilityToFuture(rule, tenantId, this.types, this.db.user?.id); Utils.showToast(translate('duty.eventsAdjusted', { count: changed }), 'success'); }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "a1ccafc3",
+    "mbody": "c51bcc7d",
+    "roleGuarded": true,
+    "id": "duty/unavailability-modal/unavailability-modal.component#alert-b577ca37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:122-147",
+     "lib/data/repositories/duty_repository.dart:422-490",
+     "lib/core/providers/duty_providers.dart:308-321"
+    ],
+    "n": "Titel, Text (selbst / für andere mit Vorname, Vorschau max. 4 Daten „DD.MM.“ + „ …“), „Nur neue Termine“ / „Auch geplante“; Übernehmen schreibt person_attendances status Entschuldigt, notes, changed_by/at für dieselben Zeilen (Standardstatus, ohne Dienst, Entschuldigt erlaubt, Regel passt, sichtbare Typen; Mandant über attendance.tenantId). Rollen-Erreichbarkeit unverändert; im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "ngOnInit:45-48",
+     "load:50-58",
+     "typesText:60-63",
+     "untilText:65-67",
+     "add:69-79",
+     "edit:81-83",
+     "toggleWeekday:85-88",
+     "toggleType:90-93",
+     "save:95-109",
+     "offerApplyToFuture:111-136",
+     "remove:138-155",
+     "close:157-159"
+    ],
+    "bodies": {
+     "ngOnInit": "40a69481",
+     "load": "983f23e8",
+     "typesText": "0d5d7f2a",
+     "untilText": "1a2df8e6",
+     "add": "dcde5829",
+     "edit": "b6ae4a7b",
+     "toggleWeekday": "1ef5f64f",
+     "toggleType": "5a9df67f",
+     "save": "8c453e23",
+     "offerApplyToFuture": "c51bcc7d",
+     "remove": "d13ef547",
+     "close": "979e2b34"
+    },
+    "id": "duty/unavailability-modal/unavailability-modal.component#logic-8717ad43"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:148",
+     "lib/data/repositories/duty_repository.dart:464",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:234",
+     "lib/features/duty/presentation/pages/unavailability_page.dart:237"
+    ],
+    "n": "Gegen aktuellen Stand neu geprüft: mittel-Grund behoben – „Auch geplante“: Update-Fehler → applyUnavailabilityToFuture liefert null → roter Toast „Fehler beim Übernehmen in geplante Termine“, kein grüner „0 Termine angepasst“; Lese-Fehler → 0 wie Ionic. Rest unverändert gleich (sichtbare Typen, Neu mit Dienst-Typen, Wochentag-Pflicht, Vorschau max. 4, Vorname bei forOther, Löschen mit Bestätigung). Übrig niedrig: x-1017c7460d (Ladefehler ohne Button), x-21dc916f43 (Typnamen unsichtbarer Typen), Grund wird getrimmt. Sev mittel → niedrig.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/duty_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 115,
+    "method": "UnavailabilityModalComponent.offerApplyToFuture",
+    "cond": [
+     "(!count)"
+    ],
+    "message": {
+     "keys": [
+      "duty.saved"
+     ],
+     "de": [
+      "Gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('duty.saved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "742ca226",
+    "mbody": "c51bcc7d",
+    "roleGuarded": true,
+    "id": "duty/unavailability-modal/unavailability-modal.component#toast-b910e419"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:127"
+    ],
+    "n": "Grüner Toast „Gespeichert“, wenn keine geplanten Termine passen (countFutureMatches mit sichtbaren Typen, Fehler → 0 in beiden). Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "extra": {
+    "id": "x-1017c7460d",
+    "title": "Ladefehler der Regeln",
+    "n": "Ionic: Toast „Fehler beim Laden der Verfügbarkeit“, dann leere Liste mit „Noch keine Regel…“ und Button „Regel hinzufügen“ / Flutter: nur Text „Fehler: …“ im Body, kein Button „Regel hinzufügen“.",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/unavailability-modal/unavailability-modal.component.ts:54",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:233"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "extra": {
+    "id": "x-21dc916f43",
+    "title": "Typnamen in der Regel-Liste",
+    "n": "Ionic: typesText sucht nur in den sichtbaren Typen (visible !== false), unsichtbare Typen fehlen im Text / Flutter: Liste nutzt alle Typen, Namen unsichtbarer Typen erscheinen.",
+    "sev": "niedrig",
+    "ionic": "src/app/duty/unavailability-modal/unavailability-modal.component.ts:62",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:230"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "export/export.page",
+   "ionic": {
+    "ts": "export/export.page.ts",
+    "html": "export/export.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "export/export.page.ts",
+    "line": 433,
+    "method": "ExportPage.exportAttPDF",
+    "cond": [],
+    "call": "Utils.downloadFileNative",
+    "args": "doc.output('blob'), attFileName",
+    "src": "6ed583c5",
+    "mbody": "94d0bdb3",
+    "id": "export/export.page#effect-b206f4b4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/export_service.dart:178",
+     "lib/core/services/native/native_file_service.dart:167"
+    ],
+    "n": "Wie beim Spieler-PDF: Ionic mobiler Browser → Web-Share-Sheet / Flutter → Anchor-Download (Printing.sharePdf web); nativ und Desktop gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "export/export.page",
+   "ionic": {
+    "ts": "export/export.page.ts",
+    "html": "export/export.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "export/export.page.ts",
+    "line": 278,
+    "method": "ExportPage.exportPlayerPDF",
+    "cond": [],
+    "call": "Utils.downloadFileNative",
+    "args": "doc.output('blob'), fileName",
+    "src": "1dafb1a7",
+    "mbody": "ae946504",
+    "id": "export/export.page#effect-b5cfc616"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/export_service.dart:88",
+     "lib/core/services/native/native_file_service.dart:167"
+    ],
+    "n": "Nativ (iOS/Android): Datei in Cache schreiben und öffnen wie Ionic; Desktop-Browser: Download wie Ionic. Ionic mobiler Browser (iOS/Android-PWA): Web-Share-Sheet (navigator.share) / Flutter: Printing.sharePdf → im Web nur Anchor-Download, kein Teilen-Dialog.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "export/export.page",
+   "ionic": {
+    "ts": "export/export.page.ts",
+    "html": "export/export.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "export/export.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:51-56",
+     "ngOnInit:58-75",
+     "updateFields:77-81",
+     "updateSortableFields:83-100",
+     "fieldLabel:102-105",
+     "applySort:107-134",
+     "dismiss:136-138",
+     "onSegmentChange:140-147",
+     "handleReorder:149-151",
+     "removeField:153-156",
+     "addExtraField:158-176",
+     "export:178-185",
+     "exportPlayerExcel:187-205",
+     "exportPlayerPDF:207-279",
+     "exportType:281-320",
+     "exportAttExcel:322-336",
+     "exportAttPDF:338-434",
+     "getFieldValues:436-481",
+     "formatAdditionalFieldValue:483-498"
+    ],
+    "bodies": {
+     "constructor": "3cda5107",
+     "ngOnInit": "ee553c95",
+     "updateFields": "264b1a1f",
+     "updateSortableFields": "50b817b0",
+     "fieldLabel": "839ae294",
+     "applySort": "3e709e94",
+     "dismiss": "69a7489b",
+     "onSegmentChange": "26bf53b4",
+     "handleReorder": "bade49ed",
+     "removeField": "d24f992c",
+     "addExtraField": "236f62ac",
+     "export": "31c9a4de",
+     "exportPlayerExcel": "fe1e4598",
+     "exportPlayerPDF": "ae946504",
+     "exportType": "0e4cdd1d",
+     "exportAttExcel": "8d6275f8",
+     "exportAttPDF": "94d0bdb3",
+     "getFieldValues": "79ae3bf2",
+     "formatAdditionalFieldValue": "a91b93d0"
+    },
+    "id": "export/export.page#logic-fc4181cd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/export/export_fields.dart:12",
+     "lib/features/export/export_fields.dart:70",
+     "lib/features/export/export_fields.dart:102",
+     "lib/features/export/export_fields.dart:148",
+     "lib/features/export/presentation/pages/export_page.dart:82",
+     "lib/features/export/presentation/pages/export_page.dart:346",
+     "lib/core/services/export_service.dart:184"
+    ],
+    "n": "Kernlogik gleich: Standard-/Default-Felder, Extrafelder (Ja/Nein, Datum, Gemeinde), Sortierschlüssel inkl. extra_<id>, stabile localeCompare-Sortierung, Segmentwechsel setzt Felder/Sortierung zurück, Anwesenheit nur vergangene Saison-Termine mit Personen, PDF max. 8 (neueste, aufsteigend), Statuscodes X/A/E/L/N, Dateinamen/Sheetname/Titel gleich, Tracking report_exported. Abweichungen nur Flutter-Zusatzhinweise/-meldungen (siehe extra). Anwesenheit % kommt aus playerAttendancePercentagesProvider (geteilte Logik, eigener Batch).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/export_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "history/history.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:41-45",
+     "trackByHistoryId:48-48",
+     "trackByGroupDate:49-49",
+     "handleRefresh:51-54",
+     "ngOnInit:56-65",
+     "getHistory:67-94",
+     "isSongInPlan:96-107",
+     "search:109-122",
+     "onDateChanged:124-132",
+     "onManualDateInput:134-158",
+     "filter:160-173",
+     "initializeItems:175-177",
+     "formatDate:179-181",
+     "dismiss:183-185",
+     "onConChange:187-210",
+     "addHistoryEntry:212-244",
+     "remove:246-271",
+     "onSongSearch:273-286",
+     "resetSongSearch:288-291",
+     "toggleSongSelection:293-303"
+    ],
+    "bodies": {
+     "constructor": "1c2a4608",
+     "trackByHistoryId": "29636e5b",
+     "trackByGroupDate": "955fce4d",
+     "handleRefresh": "81b32ca5",
+     "ngOnInit": "bc611e5c",
+     "getHistory": "1d9c5b73",
+     "isSongInPlan": "82134e36",
+     "search": "bb62c753",
+     "onDateChanged": "5d1123e1",
+     "onManualDateInput": "c16cbddb",
+     "filter": "8fa48d43",
+     "initializeItems": "d382ac6b",
+     "formatDate": "d70a73a9",
+     "dismiss": "e67be770",
+     "onConChange": "a6a41166",
+     "addHistoryEntry": "68081f7e",
+     "remove": "f7966e2a",
+     "onSongSearch": "29d05bd5",
+     "resetSongSearch": "962183ea",
+     "toggleSongSelection": "15288e34"
+    },
+    "id": "history/history.page#logic-41631a29"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/history_providers.dart:18",
+     "lib/features/history/history_utils.dart:23",
+     "lib/features/history/presentation/pages/history_page.dart:230",
+     "lib/features/history/presentation/pages/history_page.dart:241",
+     "lib/features/history/presentation/pages/history_page.dart:884"
+    ],
+    "n": "Gleich: history (tenantId, visible=true, date desc) mit Termindatum vor Eintragsdatum, Dirigentenname über alle Dirigenten (inkl. ausgetretene), Probenzähler (uebung mit Plan, 4 Monate davor, alle Pläne), Gruppierung nach Datum, Datumseingabe TT.MM.JJJJ, Löschen mit Haptik + Bestätigung, Einfügen mehrerer Werke mit visible=true. Unterschiede siehe extra und Einzel-Items.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "extra": {
+    "id": "x-74a55a2af4",
+    "title": "Platzhaltertexte bei fehlendem Werk/Dirigent",
+    "n": "Ionic: leerer Name bzw. leerer Dirigent hinter '|' / Flutter: 'Unbekanntes Werk' bzw. 'Unbekannt'.",
+    "sev": "niedrig",
+    "ionic": "src/app/history/history.page.ts:73",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:731",
+     "lib/data/models/history/history_entry.dart:42"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "extra": {
+    "id": "x-7ddfeabbe3",
+    "title": "Reihenfolge der Datumsgruppen",
+    "n": "Flutter besser: Ionic sortiert die Gruppen mit dayjs('DD.MM.YYYY') ohne customParseFormat → browserabhängig (iOS/Safari: Invalid Date → Einfügereihenfolge = neueste zuerst; Chrome/Android: teils als MM.DD. fehlgeparst, Reihenfolge durcheinander) / Flutter: stabil neueste zuerst (DB-Reihenfolge).",
+    "sev": "niedrig",
+    "ionic": "src/app/history/history.page.ts:86",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:241"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "extra": {
+    "id": "x-b33e35745e",
+    "title": "Zusätzliche Rückmeldungen in Flutter",
+    "n": "Flutter besser: Toasts '{n} Werke hinzugefügt' / 'Eintrag gelöscht', Fehlertoast beim Hinzufügen, Fehleransicht mit 'Erneut versuchen' beim Laden; Ionic zeigt nichts davon (und bricht bei leerer Werkbibliothek in ngOnInit ab, songs[0].id).",
+    "sev": "niedrig",
+    "ionic": "src/app/history/history.page.ts:59",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:114",
+     "lib/features/history/presentation/pages/history_page.dart:554",
+     "lib/features/history/presentation/pages/history_page.dart:594"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/absences-card/absences-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "html": "home-dashboard/components/absences-card/absences-card.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:32-42",
+     "load:44-94",
+     "openPerson:96-106",
+     "subtitle:111-122"
+    ],
+    "bodies": {
+     "constructor": "b0ccd978",
+     "load": "1e51c306",
+     "openPerson": "3f1aaa4a",
+     "subtitle": "bea5c0a1"
+    },
+    "id": "home-dashboard/components/absences-card/absences-card.component#logic-443db571"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/dashboard_providers.dart:252",
+     "lib/core/utils/dashboard_utils.dart:193",
+     "lib/core/utils/dashboard_utils.dart:240",
+     "lib/data/repositories/dashboard_repository.dart:124"
+    ],
+    "n": "Gleich: player_absences des Tenants + alle nicht-pending Personen; Abwesenheiten mit Beginn oder Ende nach heute−28 Tage; pausierte, nicht archivierte Personen mit letztem Pausiert-Historieneintrag (sonst paused_until, Grund 'Pausiert'); absteigend nach Beginn; Untertitel 'bis {Datum}'/'pausiert' bzw. 'von – bis' + Grund. Öffnen siehe modal-Item. Fehlerfall: Flutter zeigt Fehlerzeile statt leerer Karte.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/dashboard_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "html": "home-dashboard/components/current-songs-card/current-songs-card.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:31-38",
+     "load:40-68",
+     "openSong:70-72",
+     "numberLabel:76-78",
+     "songSubtitle:80-84"
+    ],
+    "bodies": {
+     "constructor": "426673cb",
+     "load": "bd51780d",
+     "openSong": "ece97c29",
+     "numberLabel": "4eca4606",
+     "songSubtitle": "1366bc4e"
+    },
+    "id": "home-dashboard/components/current-songs-card/current-songs-card.component#logic-844e5465"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/dashboard_providers.dart:275",
+     "lib/core/utils/dashboard_logic.dart:157",
+     "lib/data/repositories/dashboard_repository.dart:148",
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:314"
+    ],
+    "n": "Gleiche Abfrage (history ab heute, mit Werk/Dirigent/Termin, tenantId), Gruppierung 'Datum | Typinfo' (Typname nur ohne hide_name), ein Eintrag je Werk (erste Fundstelle), Nummer prefix+number, Untertitel 'Dirigent · Typ' sonst 'Wochentag, TT.MM.', relative Tage. Unterschied Sortierung siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/dashboard_repository.dart",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "html": "home-dashboard/components/current-songs-card/current-songs-card.component.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "line": 71,
+    "method": "CurrentSongsCardComponent.openSong",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "['/tabs/songs-tab', songId]",
+    "src": "0ee40102",
+    "mbody": "ece97c29",
+    "id": "home-dashboard/components/current-songs-card/current-songs-card.component#nav-dac62404"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:326",
+     "lib/core/router/route_access.dart:46"
+    ],
+    "n": "Admin/Verantwortliche (einzige Dashboard-Nutzer) → /songs-tab/:id wie Ionic /tabs/songs-tab/:id (Push).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:43-58",
+     "load:60-109",
+     "openAttendance:111-120",
+     "formatDate:122-124",
+     "isToday:130-132",
+     "percTile:134-138",
+     "statusLabel:140-142",
+     "isShift:144-146"
+    ],
+    "bodies": {
+     "constructor": "b5760836",
+     "load": "eac4a865",
+     "openAttendance": "b901e858",
+     "formatDate": "7eeff418",
+     "isToday": "7ac94780",
+     "percTile": "c6b2bfed",
+     "statusLabel": "407e103b",
+     "isShift": "cce89721"
+    },
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#logic-4b019c62"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/providers/dashboard_providers.dart:260",
+     "lib/core/utils/dashboard_logic.dart:107",
+     "lib/data/repositories/dashboard_repository.dart:62",
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:40"
+    ],
+    "n": "Gleich: letzter = jüngster beendeter Termin (mehrtägige erst nach letztem Tag), nächster = frühester nicht beendeter; Anwesend = anwesend+verspätet, Abgemeldet = entschuldigt+verspätet entschuldigt, Schicht über 'Schichtbedingt/Arbeitsbedingt', Offen = neutral, Prozent wie Utils.getPercentage inkl. shift_excused_as_present; Öffnen nur Admin/Verantwortlich/Helfer/Stimmführer-Helfer, danach Neuladen. Flutter lädt nur je 5 Termine vor/ab heute statt aller Saisontermine (gleiches Ergebnis). Sortierunterschied siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/dashboard_repository.dart",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "home-dashboard/home-dashboard.page.ts",
+    "line": 76,
+    "method": "HomeDashboardPage.onTenantChange",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "a99fac6c",
+    "roleGuarded": true,
+    "id": "home-dashboard/home-dashboard.page#loading-bee7e5e1"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+    ],
+    "n": "Ionic: blockierendes Lade-Overlay (max. 3 s) während Tenantwechsel / Flutter: kein Overlay, UI bleibt bedienbar bis zur Navigation.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/home-dashboard.page",
+   "ionic": {
+    "ts": "home-dashboard/home-dashboard.page.ts",
+    "html": "home-dashboard/home-dashboard.page.html"
+   },
+   "item": {
+    "kind": "logic",
+    "file": "home-dashboard/home-dashboard.page.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "get isIos:35-37",
+     "constructor:39-45",
+     "ionViewWillEnter:47-54",
+     "refreshAllCards:56-68",
+     "get visibleCards:70-72",
+     "onTenantChange:74-81"
+    ],
+    "bodies": {
+     "get isIos": "87164997",
+     "constructor": "22d0a265",
+     "ionViewWillEnter": "a39f0a0b",
+     "refreshAllCards": "ebe0d604",
+     "get visibleCards": "9df94b76",
+     "onTenantChange": "a99fac6c"
+    },
+    "id": "home-dashboard/home-dashboard.page#logic-a918ee9c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:42",
+     "lib/core/providers/dashboard_providers.dart:218",
+     "lib/core/providers/dashboard_providers.dart:298",
+     "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180"
+    ],
+    "n": "Gleich: Kartenkonfiguration je Tenant, sichtbare Karten in Reihenfolge, 'Meine Aufgaben' nur mit Teamorganisation, Pull-to-Refresh lädt alle Karten neu, Tenantwechsel nur bei anderem Tenant, Spaltenzahl 1/2/3 ab 768/1200 px (Flutter verteilt nach Anzahl statt CSS-Höhenausgleich). Unterschiede siehe extra.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart"
+   ]
+  }
+ ]
+}

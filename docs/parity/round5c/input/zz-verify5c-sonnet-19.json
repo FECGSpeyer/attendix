@@ -1,0 +1,2294 @@
+{
+ "batch": "zz-verify5c-sonnet-19",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 37,
+    "cond": [
+     "@if (attendance && notes)"
+    ],
+    "tag": "ion-textarea",
+    "attrs": {
+     "disabled": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ notes }}",
+    "id": "planning/planning.page#field-219cb90c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2231"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 237,
+    "cond": [],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "planning/planning.page#field-6e765eaa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2161"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 339,
+    "cond": [
+     "@if (end)"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "planning/planning.page#field-6e765eaa-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2179"
+    ],
+    "n": "Ionic: Ende-Zeile sobald end gesetzt / Flutter: nur wenn der Plan Felder hat.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 382,
+    "cond": [
+     "in <ion-modal trigger=trigger-button isOpen=\"isPlanModalOpen\" #planModal>",
+     "@for (group of planGroups; track trackByIndex($index); let last = $last)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"planGroups[$index]\"",
+    "bindings": [
+     "[placeholder]=\"'planning.groupName' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.groupName"
+    ],
+    "de": [
+     "Gruppenname"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'planning.groupName' | transloco\"",
+    "id": "planning/planning.page#field-74e4ebf9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:190"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 314,
+    "cond": [
+     "in <ion-reorder-group>",
+     "@else",
+     "@else",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "required": "true",
+     "type": "number",
+     "slot": "end"
+    },
+    "events": [
+     "(ionBlur)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"field.time\"",
+    "bindings": [
+     "[placeholder]=\"'planning.minPlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.minPlaceholder"
+    ],
+    "de": [
+     "min"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'planning.minPlaceholder' | transloco\"",
+    "id": "planning/planning.page#field-908d6fcd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:569",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:610"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 404,
+    "cond": [
+     "in <ion-modal trigger=trigger-button isOpen=\"isPlanModalOpen\" #planModal>",
+     "@for (con of planConductors; track trackByIndex($index); let last = $last)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"planConductors[$index]\"",
+    "bindings": [
+     "[placeholder]=\"'planning.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "planning.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'planning.name' | transloco\"",
+    "id": "planning/planning.page#field-9f5fc570"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:203"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 65,
+    "cond": [
+     "@if (hasBranding())"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"includeBranding\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.includeBranding"
+    ],
+    "de": [
+     "Branding einbeziehen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.includeBranding' | transloco }}",
+    "id": "planning/planning.page#field-db353430"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2272",
+     "lib/core/providers/branding_providers.dart"
+    ],
+    "n": "Ionic: Sichtbarkeit nach Tenant-Branding, Wert nur für diese Seite / Flutter: hasBranding prüft Org-Branding zuerst; Schalterzustand gilt sitzungsweit.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 42,
+    "cond": [
+     "@if (attendance)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=toggleSharePlan()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"sharePlan\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.shareWithMembers"
+    ],
+    "de": [
+     "Plan mit Mitgliedern teilen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.shareWithMembers' | transloco }}",
+    "id": "planning/planning.page#field-e6429340"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2238"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 240,
+    "cond": [
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "time",
+     "id": "datetime"
+    },
+    "events": [
+     "(ionChange)=calculateEnd()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"time\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[formatOptions]=\"{ time: { hour: '2-digit', minute: '2-digit', hour12: false } }\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "planning/planning.page#field-f33048e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2161",
+     "lib/features/planning/presentation/pages/planning_page.dart:2022",
+     "lib/features/planning/presentation/pages/planning_page.dart:907"
+    ],
+    "n": "Startzeit-Auswahl (24 h) im Editor, geöffnet über den Zeit-Chip; keine eigene Rollen-/Mandantenbedingung (ion-modal hängt nur am ion-datetime-button). Änderung → Ende neu berechnet und Plan gespeichert (Ionic calculateEnd → updateAttendance, Flutter _changed → Autosave). Zugang wie Editor (siehe field-fe37eb3d).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "planning/planning.page.html",
+    "line": 48,
+    "cond": [
+     "@if (attendance)",
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=toggleOrgPlan()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"isOrgPlan\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "planning.orgPlan"
+    ],
+    "de": [
+     "Organisationsplan"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.orgPlan' | transloco }}",
+    "id": "planning/planning.page#field-fe37eb3d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2251",
+     "lib/features/planning/presentation/pages/planning_page.dart:1111",
+     "lib/core/providers/organisation_providers.dart:11",
+     "lib/core/router/route_access.dart:110"
+    ],
+    "n": "„Organisationsplan“ nur mit gewähltem Termin und wenn die Instanz einer Organisation angehört (Ionic db.organisation(), Flutter currentOrganisationProvider – beide für jede Rolle geladen); keine weitere Rollenbedingung. Startwert resolveOrgPlan (gespeichertes is_org_plan bei vorhandenem Plan, sonst is_default_org_plan des Typs) und Schreiben von attendance.is_org_plan gleich. Editor-Zugang gleich: Admin/Verantwortlich immer, Helfer/Stimmführer-Helfer nur mit attendanceId, Stimmführer/Spieler/Eltern/Bewerber nie; Beobachter nur über den Ionic-iOS-FAB (als Flutter besser in attendance action-84a45123 erfasst).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "planning/planning.page.html",
+    "line": 238,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "planning/planning.page#modal-42d9d843"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2022"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "planning/planning.page.html",
+    "line": 340,
+    "cond": [
+     "@if (end)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "planning/planning.page#modal-42d9d843-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2179"
+    ],
+    "n": "Ionic: Ende-Chip öffnet einen deaktivierten Zeit-Picker / Flutter: Chip ohne Aktion.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "planning/planning.page.html",
+    "line": 185,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isSongSelectorOpen\"",
+     "#": "songSelectModal"
+    },
+    "events": [
+     "(ionModalDidDismiss)=isSongSelectorOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isSongSelectorOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "planning/planning.page#modal-ffaa7230"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1542",
+     "lib/features/planning/presentation/widgets/plan_song_helper.dart:95"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "popover",
+    "file": "planning/planning.page.html",
+    "line": 93,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-popover",
+    "attrs": {
+     "class": "add-popover",
+     "trigger": "add-trigger",
+     "#": "addPopover"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "planning/planning.page#popover-e86b26e7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1615"
+    ],
+    "n": "Popover als showMenu.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 362,
+    "cond": [
+     "in <ion-modal trigger=trigger-button isOpen=\"isPlanModalOpen\" #planModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "planning.sectionalPlan"
+    ],
+    "de": [
+     "Registerprobenplan"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.sectionalPlan' | transloco }}",
+    "id": "planning/planning.page#text-18279507"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:170"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 395,
+    "cond": [
+     "in <ion-modal trigger=trigger-button isOpen=\"isPlanModalOpen\" #planModal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "planning.conductors"
+    ],
+    "de": [
+     "Dirigenten"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.conductors' | transloco }}",
+    "id": "planning/planning.page#text-69ed5195"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:196"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 373,
+    "cond": [
+     "in <ion-modal trigger=trigger-button isOpen=\"isPlanModalOpen\" #planModal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "planning.groups"
+    ],
+    "de": [
+     "Gruppen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.groups' | transloco }}",
+    "id": "planning/planning.page#text-6c5f535b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/register_plan_sheet.dart:183"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 36,
+    "cond": [
+     "@if (attendance && notes)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "planning.attendanceNotes"
+    ],
+    "de": [
+     "Anwesenheitsnotizen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.attendanceNotes' | transloco }}",
+    "id": "planning/planning.page#text-7cfe3610"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2231"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 147,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (availableTemplates.length || orgDefaultFields.length)",
+     "@if (availableTemplates.length)"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "planning.templates"
+    ],
+    "de": [
+     "Vorlagen"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.templates' | transloco }}",
+    "id": "planning/planning.page#text-92612b82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1695"
+    ],
+    "n": "„Vorlagen“ nur mit Org-Vorlagen (organisation.planning_templates), keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 129,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (blockTemplates.length)"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "planning.blocks"
+    ],
+    "de": [
+     "Programmblöcke"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.blocks' | transloco }}",
+    "id": "planning/planning.page#text-c14e181a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1674"
+    ],
+    "n": "„Programmblöcke“ nur wenn die Instanz Bausteinvorlagen hat (tenants.plan_block_templates), für jede Rolle mit Editor-Zugang.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 338,
+    "cond": [
+     "@if (end)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "planning/planning.page#text-ea874fbd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:2179"
+    ],
+    "n": "Ionic: Ende-Zeile sobald end gesetzt (@if end) / Flutter: nur wenn der Plan Felder hat.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "planning/planning.page.html",
+    "line": 157,
+    "cond": [
+     "in <ion-popover trigger=add-trigger #addPopover>",
+     "@if (availableTemplates.length || orgDefaultFields.length)",
+     "@if (orgDefaultFields.length)"
+    ],
+    "tag": "b",
+    "attrs": {},
+    "keys": [
+     "planning.fields"
+    ],
+    "de": [
+     "Felder"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.fields' | transloco }}",
+    "id": "planning/planning.page#text-feff39c2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1699"
+    ],
+    "n": "„Felder“ nur mit Org-Standardfeldern, keine Rollenbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 1234,
+    "method": "PlanningPage.nextAtt",
+    "cond": [
+     "!(currentIndex > 0)"
+    ],
+    "message": {
+     "keys": [
+      "planning.firstEvent"
+     ],
+     "de": [
+      "Dies ist die aktuell erste Veranstaltung"
+     ],
+     "literals": [],
+     "expr": "translate('planning.firstEvent')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3c23e625",
+    "mbody": "4d968537",
+    "id": "planning/planning.page#toast-096e3af1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1191"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 934,
+    "method": "PlanningPage.validate",
+    "cond": [
+     "(showToast)",
+     "(!this.time || !this.selectedFields.length)"
+    ],
+    "message": {
+     "keys": [
+      "planning.chooseFieldMin"
+     ],
+     "de": [
+      "Bitte wähle mindestens ein Feld aus."
+     ],
+     "literals": [],
+     "expr": "translate('planning.chooseFieldMin')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "dcb0e6ed",
+    "mbody": "18e769bb",
+    "id": "planning/planning.page#toast-0eda0832"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:917",
+     "lib/features/planning/presentation/pages/planning_page.dart:1967"
+    ],
+    "n": "Keine Rollenbedingung. „Bitte wähle mindestens ein Feld aus.“ (warning) bei fehlender Startzeit/ohne Felder beim Export/Telegram (beforeExport).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 682,
+    "method": "PlanningPage.saveBlockTemplate",
+    "cond": [],
+    "message": {
+     "keys": [
+      "planning.templateSaved"
+     ],
+     "de": [
+      "„{name}“ als Vorlage gespeichert"
+     ],
+     "literals": [],
+     "expr": "translate('planning.templateSaved', { name: template.name })"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "f368ec15",
+    "mbody": "d7233798",
+    "id": "planning/planning.page#toast-141f0770"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1569"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 790,
+    "method": "PlanningPage.addAgendaItemsPlaceholder",
+    "cond": [
+     "(this.selectedFields.some(f => f.id === AGENDA_ITEMS_PLACEHOLDER_ID))"
+    ],
+    "message": {
+     "keys": [
+      "planning.agendaExists"
+     ],
+     "de": [
+      "Ein Tagesordnungs-Platzhalter ist bereits vorhanden"
+     ],
+     "literals": [],
+     "expr": "translate('planning.agendaExists')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3aefef2b",
+    "mbody": "8685b04d",
+    "id": "planning/planning.page#toast-435087dc"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1761"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 941,
+    "method": "PlanningPage.validate",
+    "cond": [
+     "(showToast)",
+     "(!this.selectedFields.every(field => field.time))"
+    ],
+    "message": {
+     "keys": [
+      "planning.fillRequired"
+     ],
+     "de": [
+      "Bitte fülle alle erforderlichen Felder aus."
+     ],
+     "literals": [],
+     "expr": "translate('planning.fillRequired')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "1f98b32e",
+    "mbody": "18e769bb",
+    "id": "planning/planning.page#toast-49787446"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:917",
+     "lib/features/planning/presentation/pages/planning_page.dart:1967"
+    ],
+    "n": "Keine Rollenbedingung. „Bitte fülle alle erforderlichen Felder aus.“ (warning), wenn ein Feld keine Dauer hat.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 811,
+    "method": "PlanningPage.addCurrentSongs",
+    "cond": [
+     "(!currentIds.length)"
+    ],
+    "message": {
+     "keys": [
+      "planning.noCurrentSongs"
+     ],
+     "de": [
+      "Keine aktuellen Werke vorhanden"
+     ],
+     "literals": [],
+     "expr": "translate('planning.noCurrentSongs')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "fa7db0e1",
+    "mbody": "4bf28ee7",
+    "id": "planning/planning.page#toast-68f53270"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1509",
+     "lib/features/planning/presentation/pages/planning_page.dart:1518",
+     "lib/features/planning/presentation/pages/planning_page.dart:1665"
+    ],
+    "n": "Eintrag nur bei Instanztyp ≠ general (beide); keine Rollenprüfung. „Keine aktuellen Werke vorhanden“ (warning) wenn keine Werke der Historie existieren. Quelle/Reihenfolge der Historie: bekannter Befund „Reihenfolge der aktuellen Werke“.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 684,
+    "method": "PlanningPage.saveBlockTemplate",
+    "cond": [],
+    "message": {
+     "keys": [
+      "planning.templateSaveFailed"
+     ],
+     "de": [
+      "Die Vorlage konnte nicht gespeichert werden."
+     ],
+     "literals": [],
+     "expr": "translate('planning.templateSaveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "2d7560ab",
+    "mbody": "d7233798",
+    "id": "planning/planning.page#toast-a4629d9d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1569"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "planning/planning.page",
+   "ionic": {
+    "ts": "planning/planning.page.ts",
+    "html": "planning/planning.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "planning/planning.page.ts",
+    "line": 1244,
+    "method": "PlanningPage.prevAtt",
+    "cond": [
+     "!(currentIndex < this.attendances.length - 1)"
+    ],
+    "message": {
+     "keys": [
+      "planning.lastEvent"
+     ],
+     "de": [
+      "Dies ist die aktuell letzte Veranstaltung"
+     ],
+     "literals": [],
+     "expr": "translate('planning.lastEvent')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "60e63af5",
+    "mbody": "0737e1ef",
+    "id": "planning/planning.page#toast-b7e0e2e8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/planning_page.dart:1191"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 262,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (l of leftovers; track l.key)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "agenda-item leftover"
+    },
+    "events": [
+     "(click)=activate(l.key)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.sel]=\"activeId === l.key\""
+    ],
+    "icons": [
+     "archive-outline"
+    ],
+    "keys": [
+     "protocol.moreNotes"
+    ],
+    "de": [
+     "Weitere Notizen"
+    ],
+    "literals": [],
+    "text": "{{ l.title }} {{ 'protocol.moreNotes' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-099ebe1a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1746"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 349,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=createTask(GENERAL)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'protocol.generalTask' | transloco\""
+    ],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "protocols/protocol/protocol.page#action-0bec9107"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1891"
+    ],
+    "n": "Plus-Icon-Button im Kopf „Allgemeine Notizen“ (breites Layout, Leitung), Tooltip „Aufgabe zu den allgemeinen Notizen“; legt ggf. Protokoll an, öffnet Aufgaben-Formular (Kontext „Allgemeine Notizen“, ohne Thema) und fügt die Referenz in die allgemeinen Notizen ein.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 167,
+    "cond": [
+     "<ng-template #phoneLayout>",
+     "@for (s of sections; track s.id)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button",
+     "class": "card-head"
+    },
+    "events": [
+     "(click)=toggleSection(s.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-expanded]=\"activeId === s.id\""
+    ],
+    "icons": [
+     "checkmark-circle-outline",
+     "[name]=\"activeId === s.id ? 'chevron-up' : 'chevron-down'\""
+    ],
+    "keys": [
+     "protocol.top",
+     "planning.minShort"
+    ],
+    "de": [
+     "TOP {n}",
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.top' | transloco: { n: s.topNumber } }} · {{ s.start }} {{ s.name }} {{ s.conductor }} {{ s.start }} · {{ s.name }} {{ preview(s.id) }} {{ OUTCOME_LABELS[outcomes[s.id]] }} {{ 'planning.…",
+    "id": "protocols/protocol/protocol.page#action-15655d8b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1452"
+    ],
+    "n": "Kopf mit TOP/Startzeit, Name, Erledigt-Haken, Vorschau, Ergebnis-Badge, Minuten und Pfeil gleich. Ionic: Verantwortliche/r steht auch bei eingeklappter Karte mit Vorschau, Öffnen scrollt die Karte ins Bild / Flutter: bei Vorschau ersetzt diese die Verantwortliche/n, kein Scroll.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 281,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "div",
+    "attrs": {
+     "class": "resizer"
+    },
+    "events": [
+     "(pointerdown)=startResize('left', $event)",
+     "(dblclick)=resetWidth('left')",
+     "(keydown)=resizeByKey('left', $event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active]=\"resizing === 'left'\"",
+     "[attr.aria-label]=\"'protocol.resizeAgenda' | transloco\"",
+     "[attr.aria-valuenow]=\"columnWidths.left\"",
+     "[attr.title]=\"'protocol.dragResize' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "protocol.dragResize"
+    ],
+    "de": [
+     "Ziehen, um die Breite anzupassen (Doppelklick setzt zurück)"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'protocol.dragResize' | transloco\"",
+    "id": "protocols/protocol/protocol.page#action-198ecb5e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1961",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1594"
+    ],
+    "n": "Ziehen, Doppelklick/Pos1 setzt zurück, Pfeiltasten (Shift = 48 px), Tooltip gleich; Breite pro Gerät gespeichert.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 57,
+    "cond": [
+     "@if (showFooter)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=openNotes()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "document-text-outline"
+    ],
+    "keys": [
+     "protocol.notes"
+    ],
+    "de": [
+     "Notizen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.notes' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-237eefeb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1100",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1258"
+    ],
+    "n": "Nur Leitung im Handy-Layout (Fußleiste), beide Apps; „Notizen“ öffnet das Sheet „Allgemeine Notizen“, Punkt-Markierung bei vorhandenen Notizen. Breitenband siehe text-7068fef6.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 205,
+    "cond": [
+     "<ng-template #phoneLayout>",
+     "@for (s of sections; track s.id)",
+     "@if (activeId === s.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=createTask(s.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "tasks.task"
+    ],
+    "de": [
+     "Aufgabe"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.task' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-238ec080"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1496"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 311,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@for (s of (activeSection ? [activeSection] : []); track s.id)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline",
+     "size": "small"
+    },
+    "events": [
+     "(click)=createTask(s.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "tasks.task"
+    ],
+    "de": [
+     "Aufgabe"
+    ],
+    "literals": [],
+    "text": "{{ 'tasks.task' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-238ec080-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1826"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 118,
+    "cond": [
+     "<ng-template #taskList>",
+     "@if (list.length)",
+     "@for (task of list; track task.id)"
+    ],
+    "tag": "a",
+    "attrs": {
+     "class": "task-row",
+     "[routerLink]": "\"['/tabs/settings/tasks', task.id]\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/tasks', task.id]\"",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"task.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ task.title }} {{ taskLine(task) }}",
+    "id": "protocols/protocol/protocol.page#action-320caa0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1337",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1353"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 368,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@if (tasks.length)",
+     "@for (task of tasks; track task.id)"
+    ],
+    "tag": "a",
+    "attrs": {
+     "class": "task-row",
+     "[routerLink]": "\"['/tabs/settings/tasks', task.id]\""
+    },
+    "events": [],
+    "link": "\"['/tabs/settings/tasks', task.id]\"",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"task.status === 'completed' ? 'checkmark-circle' : 'ellipse-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ task.title }} {{ sectionLabelOfTask(task) }} \" · \" {{ task.responsible_person?.firstName }}",
+    "id": "protocols/protocol/protocol.page#action-320caa0f-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1919",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1935"
+    ],
+    "n": "Untertitel „TOP n/Punkt/Allgemein · Vorname“ gleich.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 216,
+    "cond": [
+     "<ng-template #phoneLayout>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "expand": "block",
+     "class": "add-point"
+    },
+    "events": [
+     "(click)=addSpontaneousTopic()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [
+     "protocol.point"
+    ],
+    "de": [
+     "Punkt"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.point' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-346ac4ae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1422"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 106,
+    "cond": [
+     "<ng-template #outcomeSeg>",
+     "@for (o of OUTCOMES; track o.value)"
+    ],
+    "tag": "button",
+    "attrs": {
+     "type": "button"
+    },
+    "events": [
+     "(click)=setOutcome(s.id, o.value)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-checked]=\"outcomes[s.id] === o.value\"",
+     "[class.on]=\"outcomes[s.id] === o.value\"",
+     "[class]=\"'o-' + o.value\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ o.label }}",
+    "id": "protocols/protocol/protocol.page#action-433417f5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1359"
+    ],
+    "n": "Besprochen/Beschlossen/Vertagt als ChoiceChips, erneutes Tippen hebt auf.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"backHref\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "protocols/protocol/protocol.page#action-48d91b74"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1049",
+     "lib/core/router/app_router.dart:1074",
+     "lib/core/providers/push_providers.dart:311",
+     "lib/core/services/push/push_navigation.dart:117"
+    ],
+    "n": "In der App gleich: AppBar-Zurück (Pop) zur aufrufenden Seite, Speichern beim Verlassen (PopScope). Rollenabhängiger Fallback fehlt: Ionic defaultHref = backHref (Leitung → Termin /tabs/attendance/:id, Mitglieder → Teamorganisation › Protokolle), greift, wenn der Tab-Stack keinen Vorgänger hat (Push „protocol“, Direktlink/Neuladen) / Flutter: /settings/protocol/:id liegt unter /settings, Push öffnet per go → Zurück führt für alle Rollen auf die Einstellungen-Seite. Erstprüfer schob das in den Routing-Batch; gleiche Abweichung wie task-detail action-367e5078 (dort diff niedrig).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart",
+    "lib/core/router/app_router.dart",
+    "lib/core/providers/push_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 276,
+    "cond": [
+     "<ng-template #wideLayout>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "class": "publish-button side-publish"
+    },
+    "events": [
+     "(click)=openPublish()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "protocol.republish",
+     "protocol.publish"
+    ],
+    "de": [
+     "Erneut freigeben",
+     "Protokoll freigeben"
+    ],
+    "literals": [],
+    "text": "{{ (isPublished ? 'protocol.republish' : 'protocol.publish') | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-5ae5d0d7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1768"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 16,
+    "cond": [
+     "@if (attendance && !notAvailable && !loadFailed)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=sharePdf()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'protocol.sharePdf' | transloco\"",
+     "[attr.title]=\"'protocol.sharePdf' | transloco\""
+    ],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "protocol.sharePdf"
+    ],
+    "de": [
+     "Als PDF teilen"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'protocol.sharePdf' | transloco\"",
+    "id": "protocols/protocol/protocol.page#action-69bd2a16"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1070"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 450,
+    "cond": [
+     "<ng-template #readLayout>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "fill": "outline",
+     "class": "share-button"
+    },
+    "events": [
+     "(click)=sharePdf()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "protocol.sharePdf"
+    ],
+    "de": [
+     "Als PDF teilen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.sharePdf' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-69bd2a16-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:2066"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 37,
+    "cond": [
+     "@else if (loadFailed || !attendance)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=load()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "protocol.retry"
+    ],
+    "de": [
+     "Erneut versuchen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.retry' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-6ddd6834"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1136"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 335,
+    "cond": [
+     "<ng-template #wideLayout>",
+     "@empty of (activeSection ? [activeSection] : [])",
+     "@else (not activeLeftover)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "outline"
+    },
+    "events": [
+     "(click)=addSpontaneousTopic()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "protocol.addPoint"
+    ],
+    "de": [
+     "Punkt hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'protocol.addPoint' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-747eafd6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1879"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 650,
+    "cond": [
+     "in <ion-modal isOpen=\"publishOpen\">",
+     "@if (summary; as sum)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "class": "publish-button",
+     "[disabled]": "\"publishing\""
+    },
+    "events": [
+     "(click)=publish()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "paper-plane-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Erneut freigeben & benachrichtigen",
+     "Freigeben & benachrichtigen"
+    ],
+    "text": "{{ isPublished ? 'Erneut freigeben & benachrichtigen' : 'Freigeben & benachrichtigen' }}",
+    "id": "protocols/protocol/protocol.page#action-75501172"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:944",
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:970"
+    ],
+    "n": "Text „(Erneut) Freigeben & benachrichtigen“ und Ablauf gleich. Ionic: Sheet bleibt während der Freigabe offen (Button deaktiviert) und bei Fehler offen / Flutter: Sheet schließt sofort, bei Fehler muss es neu geöffnet werden.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 464,
+    "cond": [
+     "in <ion-modal isOpen=\"attendeesOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=attendeesOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "person.done"
+    ],
+    "de": [
+     "Fertig"
+    ],
+    "literals": [],
+    "text": "{{ 'person.done' | transloco }}",
+    "id": "protocols/protocol/protocol.page#action-75d6acff"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1211"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 74,
+    "cond": [
+     "<ng-template #attendeeRow>"
+    ],
+    "tag": "button",
+    "attrs": {
+     "class": "attendee-row",
+     "type": "button"
+    },
+    "events": [
+     "(click)=attendeesOpen = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "chevron-forward"
+    ],
+    "keys": [
+     "protocol.presentCount",
+     "protocol.excusedCount",
+     "protocol.fromAttendance"
+    ],
+    "de": [
+     "{count} anwesend",
+     "{count} entschuldigt · ",
+     "aus der Anwesenheit"
+    ],
+    "literals": [],
+    "text": "{{ a.initials }} +{{ avatarPreview.more }} {{ 'protocol.presentCount' | transloco: { count: present.length } }} {{ 'protocol.excusedCount' | transloco: { count: excused.length } }} {{ 'protocol.fromA…",
+    "id": "protocols/protocol/protocol.page#action-7a8159ba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1153"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ]
+  }
+ ]
+}

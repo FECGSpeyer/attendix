@@ -105,11 +105,16 @@ Urteil unter dieser ID (`s` ok/na nimmt den Befund zurück).
 Zuletzt prüft `verify-round` per `git`, ob sich eine im Urteil referenzierte
 Flutter-Datei (`f`) seit dem Flutter-Commit des Urteils (`flutterAt`) bis
 `HEAD` geändert hat (geändert, umbenannt oder gelöscht; ein
-`git diff --name-status` je Commit). Bei Elementen der Arten `logic`, `db`,
-`route`, `native`, `effect` und bei Zusatzbefunden zählt jede Änderung der
-Datei; bei allen anderen Arten (Texte, Felder, Aktionen, Dialoge …) nur eine
-Änderung an den genannten Zeilen ± 10 (`git diff -U0`, Zeilen des alten
-Stands); Verweise ohne Zeilenangabe zählen immer. Solche Elemente (jeder
+`git diff --name-status` je Commit). Grundsätzlich zählt jede Änderung der
+Datei. Nur bei reinen Texten und Medien ohne Bedingung, Rollenprüfung,
+Bindung oder Ereignis zählt allein eine Änderung an den genannten Zeilen ± 10
+(`git diff -U0`, Zeilen des alten Stands); Aktionen, Felder, Dialoge, Toasts
+usw. können sich über eine Rollenberechnung, einen Handler oder einen Wert an
+anderer Stelle der Datei ändern (Sol-Review 6663947239). Verweise ohne oder mit
+unlesbarer Zeilenangabe (`:~160`) zählen dateiweit. Ein Verweis, der beim
+Urteil gar nicht passte (Datei fehlte im Flutter-Stand des Urteils oder Zeile
+hinter dem Dateiende), gilt immer als geändert und erscheint in
+`flutterChanged` als „(Referenz ungültig)“. Solche Elemente (jeder
 Status, auch `ok`/`na`) und offene Zusatzbefunde kommen mit dem Grund
 `flutter-geaendert` dazu, sofern kein anderer Grund greift; jeder
 ausgewählte Eintrag nennt die geänderten Dateien in `flutterChanged`.

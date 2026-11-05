@@ -1,0 +1,1858 @@
+{
+ "batch": "zz-verify5c-opus-03",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-ca6698be06",
+    "title": "Formular-Zustand nach Schließen ohne Speichern",
+    "n": "Ionic: Eingaben (Daten, Info-Text, Ort, Werke, Werk-Auswahl) bleiben im Modal erhalten, zurückgesetzt wird nur nach erfolgreichem Anlegen / Flutter: Sheet wird jedes Mal neu aufgebaut (heute, erster Typ, leere Felder).",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:426",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:29"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/att-list/att-list.page",
+   "ionic": {
+    "ts": "attendance/att-list/att-list.page.ts",
+    "html": "attendance/att-list/att-list.page.html"
+   },
+   "extra": {
+    "id": "x-faa1356e28",
+    "title": "Typauswahl springt bei Neuladen zurück (Ionic)",
+    "n": "Flutter besser: Ionic applyAttendances setzt type_id bei jedem Neuladen (z. B. Realtime-Ereignis) auf den ersten sichtbaren Typ, auch bei offenem Anlege-Modal / Flutter behält die gewählte Auswahl.",
+    "sev": "niedrig",
+    "ionic": "src/app/attendance/att-list/att-list.page.ts:311",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_create_page.dart:155"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 785,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)",
+     "@for (field of shownPlan.fields; track field; let i = $index)",
+     "@if (field.id !== AGENDA_ITEMS_PLACEHOLDER_ID)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "[button]": "\"!!field.agendaItemId && isTeamLeader\"",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openPlanField(field)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active-slot]=\"planLiveMode && i === planActiveFieldIndex\"",
+     "[class.plan-group-head]=\"field.isGroup\"",
+     "[class.plan-group-child]=\"!!field.groupId\"",
+     "[class.done-slot]=\"planLiveMode && i < planActiveFieldIndex\""
+    ],
+    "icons": [
+     "list-circle-outline"
+    ],
+    "keys": [
+     "attendance.minutesShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ fieldName(field) }} {{ getMissingGroups(field.songId) }} {{ calculateTime(field, i) }} {{ getPlanActiveCountdown() }} {{ 'attendance.minutesShort' | transloco: { min: (field | planMinutes: shownPl…",
+    "id": "attendance/attendance/attendance.page#action-0c508800"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:150",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:161",
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:239"
+    ],
+    "n": "Tap auf TOP öffnet das Thema (nur Leitung) wie Ionic. Ionic: list-circle-Icon vor TOP-Feldern, Minuten als Badge / Flutter: kein Icon, Minuten als graue Notiz.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 815,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)",
+     "@if (type?.enable_protocol && isTeamLeader && planIndex === 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openAgendaPicker()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "attendance.addTopics"
+    ],
+    "de": [
+     "Themen aufnehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addTopics' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-292b5b5a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:198",
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:243"
+    ],
+    "n": "Nur enable_protocol + Admin/Verantwortliche (isTeamLeader, ohne Teamorg-Schalter wie Ionic) + erster Plan; Helfer/Stimmführer-Helfer nicht.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 832,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (!attendance.plan)",
+     "@if (type?.enable_protocol && isTeamLeader)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openAgendaPicker()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "attendance.addTopics"
+    ],
+    "de": [
+     "Themen aufnehmen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addTopics' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-292b5b5a-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:219"
+    ],
+    "n": "Ohne Plan: gleiche Bedingung enable_protocol + Admin/Verantwortliche, vor „Ablaufplan erstellen“.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 604,
+    "cond": [
+     "@if (attendance)",
+     "@if ((!isHelper || canViewChecklist) && attendance.checklist && attendance.checklist.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addChecklistItem()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "attendance.addTodo"
+    ],
+    "de": [
+     "To-Do hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addTodo' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-2f4b32ed"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:137",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1577",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1601"
+    ],
+    "n": "Dialog gleich (Header „To-Do hinzufügen“, Text + Stunden, Abbrechen/Hinzufügen, Warnung ohne Text, dueDate ab Terminbeginn); Flutter zeigt nach dem Speichern zusätzlich Toast „To-Do hinzugefügt“ (Ionic keiner). Erstreviewer hat das als ok gewertet, die gleichartigen Zusatz-Toasts bei action-9a1384d5/action-5fb9b753 aber als diff.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 837,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (!attendance.plan)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=editPlan()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.createRunSheet"
+    ],
+    "de": [
+     "Ablaufplan erstellen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.createRunSheet' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-2ffbbc70"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:222",
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:183"
+    ],
+    "n": "Für alle Nicht-Beobachter. Flutter wertet einen Plan ohne Felder auch als „kein Plan“; Ionic speichert keinen leeren Plan (validate verlangt ≥ 1 Feld), daher praktisch gleich.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 777,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)",
+     "@if (planLabels.length)"
+    ],
+    "tag": "app-plan-chips",
+    "attrs": {},
+    "events": [
+     "(selectedChange)=selectPlan($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[labels]=\"planLabels\"",
+     "[selected]=\"planIndex\"",
+     "[todayIndex]=\"todayPlanChip\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#action-33a93547"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:227"
+    ],
+    "n": "Chips nur bei > 1 Plan, Vorauswahl heutiger Plan, „Heute“-Markierung; für alle Nicht-Beobachter.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 358,
+    "cond": [
+     "@if (attendance)",
+     "@if (db.canAccessFiles())",
+     "@if (attendance.files_folder)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "danger"
+    },
+    "events": [
+     "(click)=removeFilesFolder()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.aria-label]=\"'attendance.removeFolder' | transloco\""
+    ],
+    "icons": [
+     "close-circle-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#action-3afb4fa9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:361",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2216"
+    ],
+    "n": "Entfernt ohne Rückfrage, files_folder = null wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 820,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=editPlan()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.editRunSheet"
+    ],
+    "de": [
+     "Ablaufplan bearbeiten"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.editRunSheet' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-525fcc66"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:246",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:725",
+     "lib/core/router/route_access.dart:110"
+    ],
+    "n": "Für alle Nicht-Beobachter (auch Helfer/Stimmführer-Helfer): Route /planning?attendanceId=… ist für canAddAttendance freigegeben; Planindex wird übergeben. Seite statt Modal.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 178,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (canToggleArchived())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=toggleArchived(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"attendance?.archived ? 'arrow-undo-outline' : 'archive-outline'\""
+    ],
+    "keys": [
+     "attendance.restore",
+     "attendance.archive"
+    ],
+    "de": [
+     "Wiederherstellen",
+     "Archivieren"
+    ],
+    "literals": [],
+    "text": "{{ (attendance?.archived ? 'attendance.restore' : 'attendance.archive') | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-9cb015ae"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1132",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1147"
+    ],
+    "n": "Menüeintrag „Archivieren“/„Wiederherstellen“ nur Admin/Verantwortlich und beendete/archivierte Termine wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 166,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (!isHelper)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=sendAdHocReminder(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "notifications-outline"
+    ],
+    "keys": [
+     "attendance.sendReminder"
+    ],
+    "de": [
+     "Erinnerung versenden"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.sendReminder' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-9dea2cd5"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1123"
+    ],
+    "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 140,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (!isHelper && (!attendance?.checklist || attendance?.checklist?.length === 0))"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addChecklistItem(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkbox-outline"
+    ],
+    "keys": [
+     "attendance.startChecklist"
+    ],
+    "de": [
+     "Checkliste starten"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.startChecklist' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-ab758e8d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1115",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2579"
+    ],
+    "n": "Flutter besser: Ionic zeigt „Checkliste starten“ allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern / Flutter nur Admin, Verantwortliche, Stimmführer-Helfer (canMutateAttendanceDetail). Praktisch selten: Beobachter erreichen die Ionic-Detailseite nur über Umwege (Liste, Dashboard und Push öffnen sie für VIEWER nicht).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 134,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (!isHelper)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openAddPersonModal(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "person-add-outline"
+    ],
+    "keys": [
+     "attendance.addPerson"
+    ],
+    "de": [
+     "Person hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.addPerson' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-d5ac7ad9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1113",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2579"
+    ],
+    "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 146,
+    "cond": [
+     "in <ion-popover trigger=attendance-options-trigger #optionsPopover>",
+     "@if (!isHelper && canRestoreChecklist())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=restoreChecklist(); optionsPopover.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "refresh-outline"
+    ],
+    "keys": [
+     "attendance.resetChecklist"
+    ],
+    "de": [
+     "Checkliste zurücksetzen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.resetChecklist' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-eb230380"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1117"
+    ],
+    "n": "Flutter besser: Ionic zeigt den Eintrag allen Rollen außer HELPER (isHelper = role === HELPER), also auch Beobachtern (VIEWER); Flutter blendet ihn für Beobachter aus (canMutateAttendanceDetail = canEdit && !helper). Ob Ionic-Beobachter das speichern dürfen (RLS), ist hier nicht prüfbar – Leon entscheidet. Wiederherstellen ohne Rückfrage wie Ionic.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 351,
+    "cond": [
+     "@if (attendance)",
+     "@if (db.canAccessFiles())",
+     "@if (attendance.files_folder)"
+    ],
+    "tag": "ion-chip",
+    "attrs": {},
+    "events": [
+     "(click)=openFilesFolder()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "folder-open-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ attendance.files_folder }}",
+    "id": "attendance/attendance/attendance.page#action-eea3b09d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:348",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:669"
+    ],
+    "n": "Chip öffnet /settings/files?path=… (Ionic /tabs/settings/files).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 363,
+    "cond": [
+     "@if (attendance)",
+     "@if (db.canAccessFiles())"
+    ],
+    "tag": "app-files-folder-picker",
+    "attrs": {
+     "#": "filesFolderPicker"
+    },
+    "events": [
+     "(folderSelect)=onFilesFolderSelected($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[tenantId]=\"db.tenant()?.id\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "attendance/attendance/attendance.page#action-eeca698c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2203",
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart:173"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/features/attendance/presentation/widgets/attendance_detail/attendance_detail_sheets.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 823,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=sharePlan()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "attendance.share"
+    ],
+    "de": [
+     "Teilen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.share' | transloco }}",
+    "id": "attendance/attendance/attendance.page#action-f16184a4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:252"
+    ],
+    "n": "„Teilen“ mit Teilen-Icon für alle Nicht-Beobachter; Sheet-Inhalt siehe actionsheet-19467990.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1954,
+    "method": "AttendancePage.openMoreSheet",
+    "cond": [],
+    "header": {
+     "keys": [],
+     "de": [],
+     "literals": [
+      "${player.firstName} ${player.lastName}"
+     ],
+     "expr": "`${player.firstName} ${player.lastName}`"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "expr": "buttons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     }
+    ],
+    "src": "4b9cae51",
+    "mbody": "4afa24ea",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#actionsheet-1aaa2155"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/attendance_person_tile.dart:207",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:775"
+    ],
+    "n": "Reihenfolge und Bedingungen gleich. Flutter besser: „Erinnerung“ für eine Person ohne Account zeigt „Die Person hat keinen Account“; Ionic sendet dann (playerAppId undefined) an alle Personen des Termins.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2279,
+    "method": "AttendancePage.toggleArchived",
+    "cond": [
+     "(archive)"
+    ],
+    "header": {
+     "keys": [
+      "attendance.archiveConfirmHeader"
+     ],
+     "de": [
+      "Termin archivieren?"
+     ],
+     "literals": [],
+     "expr": "translate('attendance.archiveConfirmHeader')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "attendance.archiveConfirmMessage"
+     ],
+     "de": [
+      "Mitglieder sehen den Termin und ihre Anwesenheit dazu dann nicht mehr. Admins und Verantwortliche sehen ihn weiterhin und können ihn jederzeit wiederherstellen."
+     ],
+     "literals": [],
+     "expr": "translate('attendance.archiveConfirmMessage')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "attendance.archive"
+       ],
+       "de": [
+        "Archivieren"
+       ],
+       "literals": [],
+       "expr": "translate('attendance.archive')"
+      },
+      "role": "confirm",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "cc434d92",
+    "mbody": "5117fd46",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#alert-742e0a0f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1164",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1151"
+    ],
+    "n": "Nur Admin/Verantwortlich und beendete oder archivierte Termine (canArchiveAttendance) wie Ionic; „Termin archivieren?“, Hinweistext, Abbrechen/Archivieren; Wiederherstellen ohne Rückfrage.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1083,
+    "method": "AttendancePage.onAttachmentSelect",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "upload",
+    "payload": "path, file, { upsert: true }",
+    "filters": [],
+    "src": "bfb6f176",
+    "mbody": "0ed18b25",
+    "id": "attendance/attendance/attendance.page#db-4914fe1c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1055-1086",
+     "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:108-128"
+    ],
+    "n": "Bucket attendances, Pfad <id>/attachment/<safeName> (gleiche Regex), upsert, danach attachment_url/attachment_name (id + tenantId); Toasts „hochgeladen“/„Upload fehlgeschlagen“. Hochladen nur ohne Anhang angeboten (wie Ionic), daher greift das Löschen einer Vorgängerdatei praktisch nie.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1089,
+    "method": "AttendancePage.onAttachmentSelect",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "getPublicUrl",
+    "payload": "path",
+    "filters": [],
+    "src": "6aad54a6",
+    "mbody": "0ed18b25",
+    "id": "attendance/attendance/attendance.page#db-4d232055"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1081-1086"
+    ],
+    "n": "getPublicUrl(path), danach Update attachment_url/attachment_name mit id- und tenantId-Filter.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2352,
+    "method": "AttendancePage.sendAdHocReminder",
+    "cond": [],
+    "table": "edge:send-ad-hoc-reminder",
+    "op": "invoke",
+    "payload": "{ body: { attendanceId: this.attendance.id, tenantId: this.attendance.tenantId, title: data.title || undefined, message: data.message || undefined, playerAppId: playerAppId || undefined, playerAppIds: (data.neutralOnly && !playerAppId) ? neutralAppIds : undefined, }, }",
+    "filters": [],
+    "src": "9d763abc",
+    "mbody": "de224efc",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#db-633099eb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1024-1040",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1431-1470"
+    ],
+    "n": "send-ad-hoc-reminder mit attendanceId, tenantId, title/message nur wenn gesetzt, playerAppId, playerAppIds = neutrale Personen mit appId (Gruppen-Scope wie Ionic players) bei „nur ohne Rückmeldung“; vorher Mandanten-Prüfung des Termins. Menü für Admin/Verantw./Helfer-Stimmführer (canMutate = Ionic !isHelper), pro Person für alle.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "db",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1112,
+    "method": "AttendancePage.removeAttachment",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "remove",
+    "payload": "[path]",
+    "filters": [],
+    "src": "c33b498c",
+    "mbody": "c533b9e2",
+    "id": "attendance/attendance/attendance.page#db-f3ad3394"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1113",
+     "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:131"
+    ],
+    "n": "Flutter besser: Ionic löscht `<id>/attachment/<attachment_name>` mit dem Originalnamen, hochgeladen wurde aber unter dem bereinigten Namen → bei Leer-/Sonderzeichen bleibt die Datei im Bucket liegen / Flutter löscht den bereinigten Pfad (attachmentPath). DB-Update attachment_url/attachment_name = null gleich. Erstreviewer hat den Pfadunterschied übersehen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2349,
+    "method": "AttendancePage.sendAdHocReminder",
+    "cond": [],
+    "message": {
+     "keys": [
+      "attendance.sending"
+     ],
+     "de": [
+      "Wird versendet..."
+     ],
+     "literals": [],
+     "expr": "translate('attendance.sending')"
+    },
+    "duration": "{ message: translate('attendance.sending') }",
+    "src": "0e6cdfad",
+    "mbody": "de224efc",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#loading-b675baf2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1401"
+    ],
+    "n": "Ionic: blockierendes Loading „Wird versendet...“ / Flutter: kein Overlay (nur Doppelversand-Sperre).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1343,
+    "method": "AttendancePage.openAgendaPicker",
+    "cond": [],
+    "component": "AgendaPickerComponent",
+    "props": [
+     "attendance",
+     "type"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "643658c0",
+    "mbody": "6700109c",
+    "roleGuarded": true,
+    "id": "attendance/attendance/attendance.page#modal-9d951002"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:198",
+     "lib/features/team_organization/presentation/widgets/attendance_protocol_section.dart:44",
+     "lib/features/team_organization/presentation/widgets/agenda_picker_sheet.dart:18"
+    ],
+    "n": "Nur enable_protocol && Admin/Verantwortlich (isTeamLeaderProvider), bei vorhandenem Plan nur für Plan 1 – wie Ionic. Vollhohes Sheet statt Vollbild-Modal; Plan wird danach neu geladen.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "native",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 290,
+    "method": "AttendancePage.teardown",
+    "cond": [],
+    "plugin": "Network",
+    "call": "removeAllListeners",
+    "args": "",
+    "src": "ff21b20a",
+    "mbody": "07b2d38d",
+    "id": "attendance/attendance/attendance.page#native-248ec156"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/offline_queue_service.dart:540",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:383"
+    ],
+    "n": "Flutter besser: Ionic teardown ruft Network.removeAllListeners() und entfernt damit auch den globalen Reconnect-Listener der OfflineQueue (offline-queue.service.ts:44) → nach dem ersten Öffnen/Schließen eines Termins werden offline erfasste Status bei Reconnect nicht mehr automatisch gesendet (nur noch bei offenem Termin oder App-Neustart). Flutter: Seiten-Listener endet mit dem Widget, OfflineQueueNotifier flusht weiter global bei jedem Reconnect.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 644,
+    "method": "AttendancePage.navigateBack",
+    "cond": [
+     "!(window.history.length > 1)"
+    ],
+    "via": "router.navigateByUrl",
+    "to": "'/tabs/attendance'",
+    "src": "5e164edc",
+    "mbody": "e9516418",
+    "id": "attendance/attendance/attendance.page#nav-560ce93a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1440",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1456"
+    ],
+    "n": "Ohne Back-Stack go('/attendance').",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 1061,
+    "method": "AttendancePage.openFilesFolder",
+    "cond": [
+     "(this.attendance.files_folder)"
+    ],
+    "via": "router.navigate",
+    "to": "['/tabs/settings/files'], { queryParams: { path: this.attendance.files_folder, t: String(Date.now()) }, }",
+    "src": "04985646",
+    "mbody": "c01ad622",
+    "id": "attendance/attendance/attendance.page#nav-a37ce0ce"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:669",
+     "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:25"
+    ],
+    "n": "push auf die Dateiablage mit path-Parameter.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "nav",
+    "file": "attendance/attendance/attendance.page.ts",
+    "line": 2582,
+    "method": "AttendancePage.navigateToSong",
+    "cond": [],
+    "via": "router.navigate",
+    "to": "[`/tabs/settings/songs/`, songId]",
+    "src": "f86560ff",
+    "mbody": "21d527c7",
+    "id": "attendance/attendance/attendance.page#nav-be608956"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2144"
+    ],
+    "n": "push /settings/songs/:id.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 772,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.runSheetAgenda",
+     "signout.runSheet"
+    ],
+    "de": [
+     "Ablaufplan & Tagesordnung",
+     "Ablaufplan"
+    ],
+    "literals": [],
+    "text": "{{ (type?.enable_protocol ? 'attendance.runSheetAgenda' : 'signout.runSheet') | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-1956196d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:216",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:715"
+    ],
+    "n": "„Ablaufplan & Tagesordnung“ bei enable_protocol des Typs, sonst „Ablaufplan“. Admin/Verantwortliche/Helfer/Stimmführer-Helfer sehen es in beiden; Beobachter nicht (Flutter zusätzlich Seite gesperrt).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 781,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: shownPlan.time } }}",
+    "id": "attendance/attendance/attendance.page#text-1ffb6841"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+    ],
+    "n": "Ionic: „19:00 Uhr“ als Badge / Flutter: graue Textnotiz.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 812,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: (shownPlan.end | date:'HH:mm') } }}",
+    "id": "attendance/attendance/attendance.page#text-1ffb6841-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+    ],
+    "n": "Ionic: Uhrzeit als Badge / Flutter: graue Textnotiz.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 780,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.startLabel"
+    ],
+    "de": [
+     "Start"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.startLabel' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-39e7db32"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:88",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:99",
+     "lib/core/utils/plan_utils.dart:459"
+    ],
+    "n": "Label „Start“ und Rollen gleich. Aber Live-Modus in den 5 Min vor Beginn: Ionic markiert schon das erste Feld als aktiv (Countdown-Badge bis Feldende), unter „Start“ nichts / Flutter: kein aktives Feld vor Beginn, dafür Flutter-eigene Zeile „beginnt in X Min.“ unter „Start“. Erstprüfung hat den Live-Modus übersehen.",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart",
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 573,
+    "cond": [
+     "@if (attendance)",
+     "@if ((!isHelper || canViewChecklist) && attendance.checklist && attendance.checklist.length > 0)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "[color]": "\"getChecklistProgress().completed === getChecklistProgress().total ? 'success' : 'primary'\""
+    },
+    "bindings": [
+     "[color]=\"getChecklistProgress().completed === getChecklistProgress().total ? 'success' : 'primary'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getChecklistProgress().completed }}/{{ getChecklistProgress().total }}"
+    ],
+    "text": "{{ getChecklistProgress().completed }}/{{ getChecklistProgress().total }}",
+    "id": "attendance/attendance/attendance.page#text-4e772282"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:53",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:691",
+     "lib/core/providers/role_permission_providers.dart:105"
+    ],
+    "n": "„erledigt/gesamt“, grün wenn alles erledigt, sonst primary. Sichtbarkeit gleich: Admin/Verantwortliche/Stimmführer-Helfer immer, Helfer nur mit checklist_view (Ionic isHelper = nur HELPER), nur mit Einträgen.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 342,
+    "cond": [
+     "@if (attendance)",
+     "@if (db.canAccessFiles())"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "attendance.filesFolder"
+    ],
+    "de": [
+     "Ordner in der Dateiablage"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.filesFolder' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-880e7fa9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/general_info_accordion.dart:305",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:612"
+    ],
+    "n": "canAccessFiles wie Ionic (files_shared: alle außer Bewerber/none, sonst Admin/Verantwortlich/Helfer/Stimmführer-Helfer) – für alle Rollen der Seite sichtbar.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 572,
+    "cond": [
+     "@if (attendance)",
+     "@if ((!isHelper || canViewChecklist) && attendance.checklist && attendance.checklist.length > 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.checklist"
+    ],
+    "de": [
+     "Checkliste"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.checklist' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-8f5d1834"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:46",
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:608"
+    ],
+    "n": "Sichtbar für Nicht-Helfer bzw. Helfer mit checklist_view und nur mit Einträgen.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 879,
+    "cond": [
+     "@if (attendance)",
+     "@for (player of filteredPlayers; track player.id)",
+     "@if (attendanceViewMode === AttendanceViewMode.SELECT)",
+     "@if (isHelper && !canViewNotes && player.notes)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "attendance.noteAdded"
+    ],
+    "de": [
+     "Notiz hinzugefügt"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.noteAdded' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-c40504a2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/pages/attendance_detail_page.dart:598",
+     "lib/core/providers/role_permission_providers.dart:97"
+    ],
+    "n": "Nur Rolle HELPER ohne player_notes_view sieht „Notiz hinzugefügt“ statt der Notiz (beide Ansichtsmodi); Stimmführer-Helfer und Leitung sehen die Notiz wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 811,
+    "cond": [
+     "@if (attendance)",
+     "@if (!isViewer)",
+     "@if (attendance.plan)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "attendance/attendance/attendance.page#text-e7f02a78-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:213"
+    ],
+    "n": "„Ende“ mit Uhrzeit; Uhrzeit-Badge vs. Notiz siehe text-1ffb6841-2.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "attendance/attendance/attendance.page",
+   "ionic": {
+    "ts": "attendance/attendance/attendance.page.ts",
+    "html": "attendance/attendance/attendance.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "attendance/attendance/attendance.page.html",
+    "line": 587,
+    "cond": [
+     "@if (attendance)",
+     "@if ((!isHelper || canViewChecklist) && attendance.checklist && attendance.checklist.length > 0)",
+     "@for (item of attendance.checklist; track item.id; let i = $index)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "bindings": [
+     "[class.text-strikethrough]=\"item.completed\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ item.text }}"
+    ],
+    "text": "{{ item.text }}",
+    "id": "attendance/attendance/attendance.page#text-ed6ba539"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:108"
+    ],
+    "n": "Text, bei erledigt durchgestrichen; gleiche Rollenbedingung wie die Checkliste.",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
+   ]
+  }
+ ]
+}

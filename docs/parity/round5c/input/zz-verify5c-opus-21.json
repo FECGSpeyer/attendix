@@ -1,0 +1,1688 @@
+{
+ "batch": "zz-verify5c-opus-21",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 106,
+    "method": "HistoryService.addSongsToHistory",
+    "cond": [],
+    "table": "history",
+    "op": "insert",
+    "payload": "dbEntries as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "4ed0c641",
+    "mbody": "e8778426",
+    "id": "services/history/history.service#db-3f68f645"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/attendance/presentation/attendance_song_history.dart:92",
+     "lib/data/repositories/attendance_repository.dart:907",
+     "lib/features/attendance/presentation/attendance_create_writes.dart:427"
+    ],
+    "n": "Insert history mit songId, attendance_id, date des Termins, tenantId (erzwungen), person_id null bei anderem Dirigenten, otherConductor, visible true.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 46,
+    "method": "HistoryService.getHistoryForAttendances",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'id, songId, attendance_id, otherConductor, person_id(firstName, lastName)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "in('attendance_id', ids.slice(i, i + 150))",
+     "order('id', { ascending: true })"
+    ],
+    "tenantFilter": true,
+    "src": "64b0d928",
+    "mbody": "989fbd23",
+    "id": "services/history/history.service#db-a47f9039"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/song_repository.dart:614"
+    ],
+    "n": "Flutter besser: Ionic lädt mit fester range (durch PostgREST max-rows gekappt) / Flutter paginiert alle Einträge.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 92,
+    "method": "HistoryService.removeHistoryEntry",
+    "cond": [],
+    "table": "history",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "db36888a",
+    "mbody": "dbdc357b",
+    "id": "services/history/history.service#db-bf7ab02d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:935",
+     "lib/features/history/presentation/pages/history_page.dart:614",
+     "lib/features/attendance/presentation/attendance_song_history.dart:82"
+    ],
+    "n": "Delete per id, zusätzlich tenantId; Historie-Seite fragt vorher „history.removeConfirm“ (Abbrechen/Ja), Fehler-Toast.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 83,
+    "method": "HistoryService.addHistoryEntry",
+    "cond": [],
+    "table": "history",
+    "op": "insert",
+    "payload": "dbEntries as any",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "4ed0c641",
+    "mbody": "2bbfd469",
+    "id": "services/history/history.service#db-e0dfe811"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:562",
+     "lib/data/repositories/attendance_repository.dart:907"
+    ],
+    "n": "Gleiche Spalten inkl. tenantId, visible true, person_id null bei anderem Dirigenten; Datum als 'YYYY-MM-DD' statt ISO-Zeitstempel (gleicher Tag).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 117,
+    "method": "HistoryService.getHistoryBySongId",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, attendance:attendance_id(date, type_id, typeInfo, att_type:type_id(name, hide_name)), person:person_id(firstName, lastName)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('songId', songId)",
+     "eq('visible', true)",
+     "order('date', { ascending: false })"
+    ],
+    "tenantFilter": true,
+    "src": "142b89ee",
+    "mbody": "19a20920",
+    "id": "services/history/history.service#db-efc64758"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:542"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/history/history.service.ts",
+    "line": 17,
+    "method": "HistoryService.getHistory",
+    "cond": [],
+    "table": "history",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, attendance:attendance_id(date)'",
+    "filters": [
+     "eq('tenantId', tenantId)",
+     "eq('visible', true)",
+     "order('date', { ascending: false })"
+    ],
+    "tenantFilter": true,
+    "src": "f210ab4e",
+    "mbody": "af2fd299",
+    "id": "services/history/history.service#db-fd5d2861"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/core/providers/history_providers.dart:31",
+     "lib/data/repositories/song_repository.dart:523"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/history/history.service",
+   "ionic": {
+    "ts": "services/history/history.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/history/history.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:14-14",
+     "getHistory:16-25",
+     "getHistoryByAttendanceId:27-36",
+     "getHistoryForAttendances:42-64",
+     "updateHistoryEntry:66-79",
+     "addHistoryEntry:81-89",
+     "removeHistoryEntry:91-102",
+     "addSongsToHistory:104-114",
+     "getHistoryBySongId:116-143",
+     "getUpcomingHistory:145-154",
+     "getCurrentSongs:156-172"
+    ],
+    "bodies": {
+     "constructor": "e58f9596",
+     "getHistory": "af2fd299",
+     "getHistoryByAttendanceId": "51da1b55",
+     "getHistoryForAttendances": "989fbd23",
+     "updateHistoryEntry": "4ce52104",
+     "addHistoryEntry": "2bbfd469",
+     "removeHistoryEntry": "dbdc357b",
+     "addSongsToHistory": "e8778426",
+     "getHistoryBySongId": "19a20920",
+     "getUpcomingHistory": "23d246af",
+     "getCurrentSongs": "6c33e37c"
+    },
+    "id": "services/history/history.service#logic-c395b5b7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/song_repository.dart:520",
+     "lib/data/repositories/song_repository.dart:539",
+     "lib/data/repositories/song_repository.dart:637",
+     "lib/data/repositories/attendance_repository.dart:889",
+     "lib/data/repositories/attendance_repository.dart:907",
+     "lib/data/repositories/attendance_repository.dart:920",
+     "lib/data/repositories/attendance_repository.dart:935"
+    ],
+    "n": "Methoden entsprechen Song-/AttendanceRepository (Sortierungen mit explizitem ascending: date absteigend, songId/id aufsteigend); Abweichungen (visible-Sync, Paging, Toast) stehen bei den Items. getUpcomingHistory/getCurrentSongs sind toter Code.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/song_repository.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 83,
+    "method": "ImageService.copyProfileImage",
+    "cond": [
+     "(sourcePath && sourcePath !== targetPath)",
+     "(markerIndex !== -1)"
+    ],
+    "table": "storage:profiles",
+    "op": "copy",
+    "payload": "sourcePath, targetPath",
+    "filters": [],
+    "src": "162fba89",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-0414a654"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:499",
+     "lib/data/repositories/player_repository.dart:1793"
+    ],
+    "n": "Gleiche Logik: profiles/<quelle> → profiles/<neue Personen-ID> (vorher remove), Fehler → URL behalten, Cache-Bust ?v=, img-Update mit tenantId.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 159,
+    "method": "ImageService.updateAttendanceImage",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "upload",
+    "payload": "id.toString(), image, { upsert: true }",
+    "filters": [],
+    "src": "c50b0150",
+    "mbody": "e2e49a01",
+    "id": "services/image/image.service#db-04a84907"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1104",
+     "lib/features/attendance/presentation/attendance_extra_actions.dart:80"
+    ],
+    "n": "Bucket attendances, Key <id>, upsert, danach attendance.img = publicUrl (mit tenantId). Flutter setzt keinen contentType (octet-stream); Anzeige als Bild unverändert.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 42,
+    "method": "ImageService.updateImage",
+    "cond": [],
+    "table": "storage:profiles",
+    "op": "getPublicUrl",
+    "payload": "fileName",
+    "filters": [],
+    "src": "61bc668a",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-12611d90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:443",
+     "lib/data/repositories/profile_repository.dart:462"
+    ],
+    "n": "getPublicUrl(<playerId>) im Bucket profiles nach dem Upload; gespeichert wird die nackte URL wie Ionic (Person: PlayerRepository.updateImage, eigenes Profil: uploadOwnImage).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 85,
+    "method": "ImageService.copyProfileImage",
+    "cond": [
+     "(!error)",
+     "(sourcePath && sourcePath !== targetPath)",
+     "(markerIndex !== -1)"
+    ],
+    "table": "storage:profiles",
+    "op": "getPublicUrl",
+    "payload": "targetPath",
+    "filters": [],
+    "src": "201dad3a",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-4cfbc031"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:501",
+     "lib/data/repositories/player_repository.dart:1793"
+    ],
+    "n": "Nach erfolgreichem copy: getPublicUrl(<targetId>) + '?v=<ms>' wie Ionic; Kopierfehler behält die Quell-URL (Ionic: if (!error)).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 48,
+    "method": "ImageService.updateImage",
+    "cond": [
+     "(appId && currentUserId === appId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ appId })"
+    ],
+    "tenantFilter": false,
+    "src": "6b85ee89",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-58f14585"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:431",
+     "lib/data/repositories/player_repository.dart:462",
+     "lib/data/repositories/profile_repository.dart:26",
+     "lib/features/registration/data/providers/registration_providers.dart:286"
+    ],
+    "n": "Fix greift: bei eigener appId schreibt syncOwnPlayerImage {img} in alle player-Zeilen des Kontos (je id + tenantId + appId) – Personen-Seite (updateImage), Profil und Registrierung eines angemeldeten Nutzers wie Ionic match({appId}).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 53,
+    "method": "ImageService.updateImage",
+    "cond": [
+     "!(appId && currentUserId === appId)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "fc7d0600",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-58f14585-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:448",
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:224"
+    ],
+    "n": "update player {img: publicUrl} .eq('id').eq('tenantId') nach Upload; fremde Person wie Ionic match({id}). Eigenes Konto zusätzlich syncOwnImage (alle Zeilen des appId) = Ionic-appId-Zweig.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 172,
+    "method": "ImageService.updateAttendanceImage",
+    "cond": [],
+    "table": "attendance",
+    "op": "update",
+    "payload": "{ img: data.publicUrl }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "4f4e5b06",
+    "mbody": "e2e49a01",
+    "id": "services/image/image.service#db-7913e521"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1110",
+     "lib/features/attendance/presentation/attendance_extra_actions.dart:80"
+    ],
+    "n": "update attendance {img: url} .eq('id').eq('tenantId') nach Upload in Bucket attendances, Key <id>, upsert – wie Ionic (zusätzlich Tenant-Prüfung).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 92,
+    "method": "ImageService.copyProfileImage",
+    "cond": [],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: url }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: targetId })"
+    ],
+    "tenantFilter": false,
+    "src": "6eccc9c8",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-99d7e9b8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:509",
+     "lib/data/repositories/player_repository.dart:1793"
+    ],
+    "n": "update player {img: url} auf die Zielzeile .eq('id', targetId).eq('tenantId', targetTenantId); Fehler wird geworfen und im Handover nur geloggt wie Ionic (console.error).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 34,
+    "method": "ImageService.updateImage",
+    "cond": [],
+    "table": "storage:profiles",
+    "op": "upload",
+    "payload": "fileName, image, { upsert: true }",
+    "filters": [],
+    "src": "7c5b8b25",
+    "mbody": "36ea5476",
+    "id": "services/image/image.service#db-a5100067"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:435",
+     "lib/data/repositories/profile_repository.dart:453"
+    ],
+    "n": "Gleicher Bucket profiles, Key <playerId>, upsert: true; Upload-Fehler wird geworfen und als Fehler-Toast gezeigt wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 82,
+    "method": "ImageService.copyProfileImage",
+    "cond": [
+     "(sourcePath && sourcePath !== targetPath)",
+     "(markerIndex !== -1)"
+    ],
+    "table": "storage:profiles",
+    "op": "remove",
+    "payload": "[targetPath]",
+    "filters": [],
+    "src": "a7475ccf",
+    "mbody": "b2f44db8",
+    "id": "services/image/image.service#db-a7577189"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:494"
+    ],
+    "n": "remove([targetPath]) nur bei profiles-URL und sourcePath != targetPath, vor dem copy – wie Ionic; Fehler ignoriert.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 14,
+    "method": "ImageService.removeImage",
+    "cond": [
+     "(appId && currentUserId === appId)",
+     "(!newUser)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: '' }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ appId })"
+    ],
+    "tenantFilter": false,
+    "src": "d4edf889",
+    "mbody": "6da28d13",
+    "id": "services/image/image.service#db-a8a5f597"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:290",
+     "lib/data/repositories/player_repository.dart:462",
+     "lib/data/repositories/profile_repository.dart:26"
+    ],
+    "n": "Fix greift: Entfernen auf der Personen-Seite leert img ('') und bei eigener appId per syncOwnImage in allen Instanzen wie Ionic removeImage.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 19,
+    "method": "ImageService.removeImage",
+    "cond": [
+     "!(appId && currentUserId === appId)",
+     "(!newUser)"
+    ],
+    "table": "player",
+    "op": "update",
+    "payload": "{ img: '' }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id })"
+    ],
+    "tenantFilter": false,
+    "src": "47a357fe",
+    "mbody": "6da28d13",
+    "id": "services/image/image.service#db-a8a5f597-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/people/presentation/widgets/person_detail/person_header.dart:290",
+     "lib/data/repositories/player_repository.dart:586"
+    ],
+    "n": "Nach Bestätigungsdialog update player {img: ''} .eq('id').eq('tenantId') (updatePlayerFields), danach Storage-Remove; nur für bestehende Person wie Ionic (existingPlayer, newUser=false).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/image/image.service.ts",
+    "line": 167,
+    "method": "ImageService.updateAttendanceImage",
+    "cond": [],
+    "table": "storage:attendances",
+    "op": "getPublicUrl",
+    "payload": "id.toString()",
+    "filters": [],
+    "src": "69ec163c",
+    "mbody": "e2e49a01",
+    "id": "services/image/image.service#db-dd0a299b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/attendance_repository.dart:1109"
+    ],
+    "n": "getPublicUrl('<attendanceId>') im Bucket attendances wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/image/image.service",
+   "ionic": {
+    "ts": "services/image/image.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/image/image.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "removeImage:11-29",
+     "updateImage:31-60",
+     "copyProfileImage:70-102",
+     "updateTenantLogo:110-128",
+     "removeTenantLogo:130-134",
+     "updateOrgLogo:136-151",
+     "removeOrgLogo:153-157",
+     "updateAttendanceImage:159-178"
+    ],
+    "bodies": {
+     "removeImage": "6da28d13",
+     "updateImage": "36ea5476",
+     "copyProfileImage": "b2f44db8",
+     "updateTenantLogo": "fd039478",
+     "removeTenantLogo": "53c3afaf",
+     "updateOrgLogo": "0b3fb2d0",
+     "removeOrgLogo": "28e94321",
+     "updateAttendanceImage": "e2e49a01"
+    },
+    "id": "services/image/image.service#logic-48858de3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/player_repository.dart:431",
+     "lib/data/repositories/player_repository.dart:473",
+     "lib/data/repositories/profile_repository.dart:26",
+     "lib/data/repositories/profile_repository.dart:442",
+     "lib/data/repositories/profile_repository.dart:480",
+     "lib/data/repositories/organisation_settings_repository.dart:93",
+     "lib/data/repositories/organisation_settings_repository.dart:112",
+     "lib/data/repositories/attendance_repository.dart:1099"
+    ],
+    "n": "Upload/Entfernen/Kopieren von Profilbild, Org-Logo (branding, org-<id>, ?v=) und Termin-Bild entsprechen den Repositories. Der appId-Zweig (eigenes Konto, alle Instanzen) ist inzwischen über syncOwnImage/syncOwnPlayerImage bzw. _syncOwnPersonalData umgesetzt (je Zeile id+tenantId+appId); die alte Notiz zur Abweichung ist überholt. updateTenantLogo/removeTenantLogo sind toter Code (keine Aufrufer).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 295,
+    "method": "LiveActivityService.openSharedOrgPlan",
+    "cond": [],
+    "table": "shared_plans",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('id', id)",
+     "maybeSingle()"
+    ],
+    "tenantFilter": false,
+    "src": "bf263539",
+    "mbody": "3650229e",
+    "id": "services/live-activity/live-activity.service#db-9e7fa6e4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/live_activity_service.dart:926",
+     "lib/data/repositories/org_plan_repository.dart:151",
+     "lib/data/repositories/org_plan_repository.dart:157"
+    ],
+    "n": "Ionic: Tipp auf die Live-Aktivität eines Ad-hoc-ORG-Plans liest shared_plans nur nach id (RLS: Admin/Verantwortlich einer Instanz der Org) und öffnet den Plan-Viewer im Live-Modus. Flutter: zusätzlich org_id = Organisation der aktuellen Instanz, ohne Org kein Lesen. Wer Leiter in Instanzen zweier Organisationen ist und eine vom Server gestartete Aktivität der anderen Org antippt, sieht in Flutter nichts. Sonst gleich.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/live-activity/live-activity.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "constructor:48-57",
+     "hasNativePlugin:60-62",
+     "init:64-83",
+     "loadEnabled:85-90",
+     "setEnabled:93-102",
+     "startLoop:104-108",
+     "stopLoop:110-112",
+     "sync:115-149",
+     "runningPlans:152-189",
+     "addOrgPlans:196-233",
+     "registerTokenListeners:235-251",
+     "saveToken:253-266",
+     "openFromUrl:269-290",
+     "openSharedOrgPlan:293-309"
+    ],
+    "bodies": {
+     "constructor": "994dae6d",
+     "hasNativePlugin": "5afb6a32",
+     "init": "7bee0196",
+     "loadEnabled": "aee9099b",
+     "setEnabled": "a2d3cf52",
+     "startLoop": "3ab06bfc",
+     "stopLoop": "60882191",
+     "sync": "2b34d7e4",
+     "runningPlans": "05036cce",
+     "addOrgPlans": "662d2886",
+     "registerTokenListeners": "4470ec4e",
+     "saveToken": "8b2c467d",
+     "openFromUrl": "e8ae8f45",
+     "openSharedOrgPlan": "3650229e"
+    },
+    "id": "services/live-activity/live-activity.service#logic-4792c201"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/core/services/live_activity_service.dart:392",
+     "lib/core/services/live_activity_service.dart:565",
+     "lib/core/services/live_activity_service.dart:679",
+     "lib/core/services/live_activity_service.dart:915"
+    ],
+    "n": "Start/Update/Ende, Token-Registrierung und Sync entsprechen LiveActivityService; Öffnen per Tap siehe modal-9b4e9fd5; Zeitzonen-Fallback weicht ab (Extra).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/live-activity/live-activity.service",
+   "ionic": {
+    "ts": "services/live-activity/live-activity.service.ts",
+    "html": null
+   },
+   "extra": {
+    "id": "x-297fea9fb7",
+    "title": "Zeitzonen-Fallback der Live Activity",
+    "n": "Ionic: tenant.timezone, sonst Geräte-Zeitzone, sonst Europe/Berlin / Flutter: tenant.timezone, sonst fest Europe/Berlin – bei leerer Tenant-Zeitzone und Gerät in anderer Zeitzone andere Uhrzeiten.",
+    "sev": "niedrig",
+    "ionic": "src/app/services/live-activity/live-activity.service.ts:156",
+    "f": [
+     "lib/core/services/live_activity_service.dart:565",
+     "lib/core/services/live_activity_service.dart:828"
+    ],
+    "stale": false
+   },
+   "flutterChanged": [
+    "lib/core/services/live_activity_service.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 124,
+    "method": "OrganisationService.linkTenantToOrganisation",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "insert",
+    "payload": "{ tenant_id: tenantId, tenant_group: organisation.id, }",
+    "options": [],
+    "columns": null,
+    "filters": [],
+    "tenantFilter": false,
+    "src": "4dfff24b",
+    "mbody": "793e250b",
+    "id": "services/organisation/organisation.service#db-00837cfa"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:78"
+    ],
+    "n": "Gleiche Einfügung {tenant_id, tenant_group}; Flutter prüft vorher Rolle (Admin/Verantwortlicher) und überspringt eine bestehende Verknüpfung still.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 150,
+    "method": "OrganisationService.unlinkTenantFromOrganisation",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "eq('tenant_group', orgId)"
+    ],
+    "tenantFilter": false,
+    "src": "25a63c15",
+    "mbody": "98b91952",
+    "id": "services/organisation/organisation.service#db-1ed5b4d3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:127"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 13,
+    "method": "OrganisationService.updateOrgExtraFields",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "update",
+    "payload": "{ additional_fields: fields as any }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('id', orgId)",
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "f819c43d",
+    "mbody": "291e96da",
+    "id": "services/organisation/organisation.service#db-2b71bceb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:260",
+     "lib/core/providers/plan_providers.dart:288",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:111"
+    ],
+    "n": "update tenant_groups {additional_fields} .eq('id', orgId).select().single() wie Ionic (Org der aktuellen Instanz, nur Admin); Feld-JSON gleiche Keys (id, name, type, defaultValue, options, visibleToPlayers, editableByPlayers, displayMode).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 50,
+    "method": "OrganisationService.getPersonFieldValuesForPeople",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'person_key, field_id, value'",
+    "filters": [
+     "eq('tenant_group', orgId)",
+     "in('person_key', personKeys)"
+    ],
+    "tenantFilter": false,
+    "src": "0218faf5",
+    "mbody": "0153add0",
+    "id": "services/organisation/organisation.service#db-3ed669cb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/shared_person_fields.dart:86"
+    ],
+    "n": "Gleiche Spalten/Filter (tenant_group, in person_key); Flutter lädt in 100er-Blöcken seitenweise mit .order('id') (Reihenfolge für das Ergebnis-Map ohne Bedeutung).",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 201,
+    "method": "OrganisationService.getAllPersonsFromOrganisation",
+    "cond": [],
+    "table": "player",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*'",
+    "filters": [
+     "in('tenantId', tenants.map(t => t.id))",
+     "is('pending', false)",
+     "is('left', null)",
+     "order('lastName', { ascending: true })",
+     "order('firstName', { ascending: true })"
+    ],
+    "tenantFilter": false,
+    "src": "c93ea96b",
+    "mbody": "fcd61c58",
+    "id": "services/organisation/organisation.service#db-4821b9a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:252"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 253,
+    "method": "OrganisationService.getTenantsFromOrganisation",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, tenant:tenant_id(*)'",
+    "filters": [
+     "eq('tenant_group', organisation.id)"
+    ],
+    "tenantFilter": false,
+    "src": "e502b424",
+    "mbody": "4d7dad0d",
+    "id": "services/organisation/organisation.service#db-5a736bd3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:317",
+     "lib/core/providers/organisation_providers.dart:39"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 230,
+    "method": "OrganisationService.getOrganisationsFromUser",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, tenant_group_data:tenant_group(*)'",
+    "filters": [
+     "in('tenant_id', tenants.map((t: any) => t.tenantId.id))"
+    ],
+    "tenantFilter": false,
+    "src": "24c9ebc9",
+    "mbody": "d5cd4ba4",
+    "roleGuarded": true,
+    "id": "services/organisation/organisation.service#db-6030916f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:287"
+    ],
+    "n": "tenant_group_tenants in(tenant_id, Admin/Verantwortlich-Instanzen), Dubletten entfernt wie Ionic; leere Liste → [] (Ionic: in() mit leerer Liste → leer). Gleiche Rollenbeschränkung über die erste Abfrage.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 96,
+    "method": "OrganisationService.deletePersonFieldValues",
+    "cond": [],
+    "table": "tenant_group_person_fields",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenant_group', orgId)",
+     "in('field_id', fieldIds)"
+    ],
+    "tenantFilter": false,
+    "src": "e6dae50d",
+    "mbody": "e778f8dc",
+    "id": "services/organisation/organisation.service#db-ac6b27bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/org_plan_repository.dart:304",
+     "lib/core/providers/plan_providers.dart:288",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:111"
+    ],
+    "n": "delete tenant_group_person_fields .eq('tenant_group').in('field_id') nach dem Speichern der Felder, gelöschte IDs = original minus aktuell, leere Liste → nichts, wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 169,
+    "method": "OrganisationService.getOrganisationFromTenant",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, tenant_group_data:tenant_group(*)'",
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "single()"
+    ],
+    "tenantFilter": true,
+    "src": "74aaa568",
+    "mbody": "f5228d40",
+    "id": "services/organisation/organisation.service#db-b30750d4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:145"
+    ],
+    "n": "Flutter mit limit(1).maybeSingle (kein Fehler bei doppelter Verknüpfung).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 161,
+    "method": "OrganisationService.unlinkTenantFromOrganisation",
+    "cond": [
+     "(data.length === 0)"
+    ],
+    "table": "tenant_groups",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "match({ id: orgId })"
+    ],
+    "tenantFilter": false,
+    "src": "29b42bb1",
+    "mbody": "98b91952",
+    "id": "services/organisation/organisation.service#db-bdc55acf"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:134"
+    ],
+    "n": "Keine Verknüpfung mehr → delete tenant_groups .eq('id', orgId), wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 219,
+    "method": "OrganisationService.getOrganisationsFromUser",
+    "cond": [],
+    "table": "tenantUsers",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'*, tenantId(*)'",
+    "filters": [
+     "eq('userId', userId)",
+     "or('role.eq.1, role.eq.5')"
+    ],
+    "tenantFilter": false,
+    "src": "fd7262d2",
+    "mbody": "d5cd4ba4",
+    "roleGuarded": true,
+    "id": "services/organisation/organisation.service#db-be14ed40"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:271",
+     "lib/core/providers/organisation_providers.dart:21",
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:15",
+     "lib/features/organisation/presentation/pages/org_settings_page.dart:155"
+    ],
+    "n": "tenantUsers .eq(userId).or(role.eq.1,role.eq.5), danach tenant_group_tenants in(tenant_id) mit Duplikat-Entfernung wie Ionic (Flutter liest nur tenantId, gleiche Daten). Rolle unverändert: Eintrag nur ohne Organisation und nur für Admin (isSuperAdmin = Role.admin, org_settings_page.dart:142/155). Geänderter Dialog: Auswahl mit erster Organisation vorausgewählt, Abbrechen/Auswählen/Neue Organisation erstellen, Erfolg-/Fehlertoast wie Ionic. Ladefehler → direkt „Organisation erstellen“ ist in toast-f9193a09 erfasst.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 187,
+    "method": "OrganisationService.getInstancesOfOrganisation",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "select",
+    "payload": null,
+    "options": [],
+    "columns": "'tenant:tenant_id(*)'",
+    "filters": [
+     "eq('tenant_group', orgId)"
+    ],
+    "tenantFilter": false,
+    "src": "f4f0cb2a",
+    "mbody": "5ff846dd",
+    "id": "services/organisation/organisation.service#db-c0cfaef7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:206"
+    ],
+    "n": "Flutter zusätzlich Mitgliedsprüfung (siehe Extra).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 109,
+    "method": "OrganisationService.createOrganisation",
+    "cond": [],
+    "table": "tenant_groups",
+    "op": "insert",
+    "payload": "{ name }",
+    "options": [],
+    "columns": null,
+    "filters": [
+     "single()"
+    ],
+    "tenantFilter": false,
+    "src": "be2682f6",
+    "mbody": "41c7f6ff",
+    "id": "services/organisation/organisation.service#db-d081bc1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:19",
+     "lib/core/providers/organisation_providers.dart:76",
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:82"
+    ],
+    "n": "insert tenant_groups {name} .select().single(), danach Verknüpfung mit der aktuellen Instanz wie db.createOrganisation; leerer Name → „Bitte gib gültige Werte ein.“ im offenen Dialog, blockierender Spinner, Fehler „Fehler beim Erstellen/Verknüpfen der Organisation“, Erfolg „Die Organisation wurde erfolgreich erstellt.“. Flutter trimmt den Namen.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "db",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 138,
+    "method": "OrganisationService.unlinkTenantFromOrganisation",
+    "cond": [],
+    "table": "tenant_group_tenants",
+    "op": "delete",
+    "payload": null,
+    "options": [],
+    "columns": null,
+    "filters": [
+     "eq('tenant_id', tenantId)",
+     "eq('tenant_group', orgId)"
+    ],
+    "tenantFilter": true,
+    "src": "3c5a9d2d",
+    "mbody": "98b91952",
+    "id": "services/organisation/organisation.service#db-f9c49f6d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:120"
+    ],
+    "n": "delete tenant_group_tenants .eq('tenant_id').eq('tenant_group') wie Ionic; Flutter zusätzlich Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "logic",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 1,
+    "cond": [],
+    "methods": [
+     "updateOrgExtraFields:12-26",
+     "getPersonFieldValues:28-42",
+     "getPersonFieldValuesForPeople:44-68",
+     "updatePersonFieldValues:70-92",
+     "deletePersonFieldValues:94-106",
+     "createOrganisation:108-121",
+     "linkTenantToOrganisation:123-135",
+     "unlinkTenantFromOrganisation:137-166",
+     "getOrganisationFromTenant:168-184",
+     "getInstancesOfOrganisation:186-198",
+     "getAllPersonsFromOrganisation:200-216",
+     "getOrganisationsFromUser:218-245",
+     "getTenantsFromOrganisation:247-264",
+     "getLinkedTenants:266-280",
+     "getOrgPlans:282-318",
+     "generatePublicPlanKey:320-333",
+     "revokePublicPlanKey:335-345",
+     "updateOrgPlanningTemplates:347-361",
+     "updateOrgDefaultFields:363-377",
+     "updateOrgName:379-393",
+     "updateOrgBranding:395-409",
+     "updateOrgGemeindeApp:412-426"
+    ],
+    "bodies": {
+     "updateOrgExtraFields": "291e96da",
+     "getPersonFieldValues": "e4f09741",
+     "getPersonFieldValuesForPeople": "0153add0",
+     "updatePersonFieldValues": "f1398995",
+     "deletePersonFieldValues": "e778f8dc",
+     "createOrganisation": "41c7f6ff",
+     "linkTenantToOrganisation": "793e250b",
+     "unlinkTenantFromOrganisation": "98b91952",
+     "getOrganisationFromTenant": "f5228d40",
+     "getInstancesOfOrganisation": "5ff846dd",
+     "getAllPersonsFromOrganisation": "fcd61c58",
+     "getOrganisationsFromUser": "d5cd4ba4",
+     "getTenantsFromOrganisation": "4d7dad0d",
+     "getLinkedTenants": "53030699",
+     "getOrgPlans": "c5c01426",
+     "generatePublicPlanKey": "dd3e893a",
+     "revokePublicPlanKey": "82a4e955",
+     "updateOrgPlanningTemplates": "b5c39cd2",
+     "updateOrgDefaultFields": "25a138cf",
+     "updateOrgName": "80bdc228",
+     "updateOrgBranding": "77dc3881",
+     "updateOrgGemeindeApp": "9f4114a3"
+    },
+    "id": "services/organisation/organisation.service#logic-cbe58015"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/data/repositories/organisation_repository.dart:22",
+     "lib/data/repositories/org_plan_repository.dart:36",
+     "lib/data/repositories/shared_person_fields.dart:66"
+    ],
+    "n": "Alle Methoden (Org-Zusatzfelder, gemeinsame Feldwerte, Organisation erstellen/verknüpfen/trennen, Instanzen/Personen der Organisation, Org-Pläne, öffentlicher Planlink, Vorlagen, Name, Branding, Gemeinde-App) haben Gegenstücke. Unterschiede siehe Extras (beide Flutter besser).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/organisation_repository.dart",
+    "lib/data/repositories/shared_person_fields.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "services/organisation/organisation.service",
+   "ionic": {
+    "ts": "services/organisation/organisation.service.ts",
+    "html": null
+   },
+   "item": {
+    "kind": "toast",
+    "file": "services/organisation/organisation.service.ts",
+    "line": 236,
+    "method": "OrganisationService.getOrganisationsFromUser",
+    "cond": [
+     "(error)"
+    ],
+    "message": {
+     "keys": [
+      "svc.loadOrgsFailed"
+     ],
+     "de": [
+      "Fehler beim Laden der Organisationen"
+     ],
+     "literals": [],
+     "expr": "translate('svc.loadOrgsFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "f217e7d9",
+    "mbody": "d5cd4ba4",
+    "roleGuarded": true,
+    "id": "services/organisation/organisation.service#toast-dfc90bbf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:17"
+    ],
+    "n": "Ionic: \"Fehler beim Laden der Organisationen\". / Flutter: wie toast-f9193a09 kein Toast, Dialog \"Organisation erstellen\" öffnet direkt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart"
+   ]
+  }
+ ]
+}

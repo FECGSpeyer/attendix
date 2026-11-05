@@ -1,0 +1,2365 @@
+{
+ "batch": "zz-verify5c-sonnet-10",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 103,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)",
+     "@if (hasDutyTypes)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=notificationConfig.duties = $event.detail.checked; updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[checked]=\"notificationConfig.duties !== false\"",
+    "bindings": [
+     "[helperText]=\"'notif.dutiesHelper' | transloco\"",
+     "[checked]=\"notificationConfig.duties !== false\"",
+     "[attr.label]=\"'notif.duties' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.dutiesHelper",
+     "notif.duties"
+    ],
+    "de": [
+     "Wenn du für einen Dienst eingeteilt wirst, an die Bestätigung erinnert wirst oder jemand zum Einspringen gesucht wird. Dringende Anfragen kommen trotzdem an.",
+     "Dienste"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.dutiesHelper' | transloco\" [attr.label]=\"'notif.duties' | transloco\" {{ 'notif.duties' | transloco }}",
+    "id": "notifications/notifications.page#field-1c9e3397"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:279",
+     "lib/core/providers/notification_settings_providers.dart:38"
+    ],
+    "n": "Nur wenn ein Termintyp duty_mode hat; null zählt als an.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 22,
+    "cond": [
+     "@if (notificationConfig)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.enabled\"",
+    "bindings": [
+     "[attr.label]=\"'notif.enable' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.enable"
+    ],
+    "de": [
+     "Benachrichtigungen aktivieren"
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'notif.enable' | transloco\"",
+    "id": "notifications/notifications.page#field-23dab456"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:203"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 83,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.updates\"",
+    "bindings": [
+     "[attr.label]=\"'notif.appUpdates' | transloco\"",
+     "[helperText]=\"'notif.appUpdatesHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.appUpdates",
+     "notif.appUpdatesHelper"
+    ],
+    "de": [
+     "App-Updates",
+     "Erhalte Benachrichtigungen über App-Updates sobald verfügbar"
+    ],
+    "literals": [],
+    "text": "[attr.label]=\"'notif.appUpdates' | transloco\" [helperText]=\"'notif.appUpdatesHelper' | transloco\" {{ 'notif.appUpdates' | transloco }}",
+    "id": "notifications/notifications.page#field-55a1dea9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:255"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 120,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.signins\"",
+    "bindings": [
+     "[helperText]=\"'notif.responsibleOnly' | transloco\"",
+     "[attr.label]=\"'notif.signIns' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.responsibleOnly",
+     "notif.signIns"
+    ],
+    "de": [
+     "Nur möglich, wenn du Verantwortlicher einer Gruppe bist.",
+     "Anmeldungen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.responsibleOnly' | transloco\" [attr.label]=\"'notif.signIns' | transloco\" {{ 'notif.signIns' | transloco }}",
+    "id": "notifications/notifications.page#field-71fbcd82"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:298"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 88,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.birthdays\"",
+    "bindings": [
+     "[helperText]=\"'notif.birthdaysHelper' | transloco\"",
+     "[attr.label]=\"'notif.birthdays' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.birthdaysHelper",
+     "notif.birthdays"
+    ],
+    "de": [
+     "Erhalte täglich um 8:00 Uhr eine Benachrichtigung, falls jemand heute Geburtstag hat",
+     "Geburtstage"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.birthdaysHelper' | transloco\" [attr.label]=\"'notif.birthdays' | transloco\" {{ 'notif.birthdays' | transloco }}",
+    "id": "notifications/notifications.page#field-7eec9958"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:261"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 93,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.messages\"",
+    "bindings": [
+     "[helperText]=\"'notif.announcementsHelper' | transloco\"",
+     "[attr.label]=\"'notif.announcements' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.announcementsHelper",
+     "notif.announcements"
+    ],
+    "de": [
+     "Nachrichten von Admins und Verantwortlichen deiner Instanz",
+     "Mitteilungen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.announcementsHelper' | transloco\" [attr.label]=\"'notif.announcements' | transloco\" {{ 'notif.announcements' | transloco }}",
+    "id": "notifications/notifications.page#field-832701e5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:267"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 125,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.signouts\"",
+    "bindings": [
+     "[helperText]=\"'notif.responsibleOnly' | transloco\"",
+     "[attr.label]=\"'notif.signOuts' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.responsibleOnly",
+     "notif.signOuts"
+    ],
+    "de": [
+     "Nur möglich, wenn du Verantwortlicher einer Gruppe bist.",
+     "Abmeldungen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.responsibleOnly' | transloco\" [attr.label]=\"'notif.signOuts' | transloco\" {{ 'notif.signOuts' | transloco }}",
+    "id": "notifications/notifications.page#field-92991b01"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:304"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 28,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (!notificationConfig.telegram_chat_id)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text",
+     "readonly": "true"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.id\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "notifications/notifications.page#field-cb78f4aa"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:208",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:410",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:446"
+    ],
+    "n": "Flutter besser: Material-Darstellung mit zusätzlichem Kopieren-Button (Toast 'Benutzer-Id kopiert') und Monospace-Wert; iOS wie Ionic (Label + markierbarer Wert). Sichtbar nur ohne Telegram-Verknüpfung wie Ionic.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 130,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.criticals\"",
+    "bindings": [
+     "[helperText]=\"'notif.responsibleOnly' | transloco\"",
+     "[attr.label]=\"'notif.signOuts' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.responsibleOnly",
+     "notif.signOuts",
+     "notif.newProblemCases"
+    ],
+    "de": [
+     "Nur möglich, wenn du Verantwortlicher einer Gruppe bist.",
+     "Abmeldungen",
+     "Neue Problemfälle"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.responsibleOnly' | transloco\" [attr.label]=\"'notif.signOuts' | transloco\" {{ 'notif.newProblemCases' | transloco }}",
+    "id": "notifications/notifications.page#field-d5e44720"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:310"
+    ],
+    "n": "Ionic [attr.label]='Abmeldungen' ist nur ein wirkungsloses HTML-Attribut; sichtbarer Text 'Neue Problemfälle' + Helfertext gleich.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "notifications/notifications.page.html",
+    "line": 110,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [
+     "(ionChange)=updateNotificationConfig()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"notificationConfig.checklist\"",
+    "bindings": [
+     "[helperText]=\"'notif.checklistHelper' | transloco\"",
+     "[attr.label]=\"'notif.checklist' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "notif.checklistHelper",
+     "notif.checklist"
+    ],
+    "de": [
+     "Erhalte Erinnerungen für fällige To-Dos in deiner Checkliste. Nur möglich, wenn du Verantwortlicher einer Gruppe bist.",
+     "Checklisten-Erinnerungen"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'notif.checklistHelper' | transloco\" [attr.label]=\"'notif.checklist' | transloco\" {{ 'notif.checklist' | transloco }}",
+    "id": "notifications/notifications.page#field-fc9454f0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:286"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 21,
+    "cond": [
+     "@if (notificationConfig)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "notif.enable"
+    ],
+    "de": [
+     "Benachrichtigungen aktivieren"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.enable' | transloco }}",
+    "id": "notifications/notifications.page#text-709edc1e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:204"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 80,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.enabled)"
+    ],
+    "tag": "ion-card-subtitle",
+    "attrs": {},
+    "keys": [
+     "notif.title"
+    ],
+    "de": [
+     "Benachrichtigungen"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.title' | transloco }}",
+    "id": "notifications/notifications.page#text-72de2ce1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:251"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 35,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.telegram_chat_id)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "color": "success"
+    },
+    "keys": [
+     "notif.linked"
+    ],
+    "de": [
+     "Konto erfolgreich verknüpft"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.linked' | transloco }}",
+    "id": "notifications/notifications.page#text-9e4486a0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:490"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 72,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (notificationConfig.push_enabled && notificationConfig.telegram_chat_id)",
+     "@if (!notificationConfig.push_and_telegram)"
+    ],
+    "tag": "ion-note",
+    "attrs": {
+     "color": "medium",
+     "class": "ion-text-wrap"
+    },
+    "keys": [
+     "notif.pushPreferred"
+    ],
+    "de": [
+     "Push wird bevorzugt. Telegram wird nur als Fallback genutzt, wenn keine Push-Zustellung möglich ist."
+    ],
+    "literals": [],
+    "text": "{{ 'notif.pushPreferred' | transloco }}",
+    "id": "notifications/notifications.page#text-b0255cc9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:240"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 33,
+    "cond": [
+     "@if (notificationConfig)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [
+     "notif.telegram"
+    ],
+    "de": [
+     "Telegramverknüpfung"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.telegram' | transloco }}",
+    "id": "notifications/notifications.page#text-bd81b782"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:485",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:531"
+    ],
+    "n": "Text 'Telegramverknüpfung' gleich. Material: zusätzliches Telegram-Icon vor dem Titel (grün wenn verknüpft); Ionic ohne Icon. iOS wie Ionic.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "notifications/notifications.page",
+   "ionic": {
+    "ts": "notifications/notifications.page.ts",
+    "html": "notifications/notifications.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "notifications/notifications.page.html",
+    "line": 27,
+    "cond": [
+     "@if (notificationConfig)",
+     "@if (!notificationConfig.telegram_chat_id)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "notif.userId"
+    ],
+    "de": [
+     "Benutzer-Id"
+    ],
+    "literals": [],
+    "text": "{{ 'notif.userId' | transloco }}",
+    "id": "notifications/notifications.page#text-c3c6e93d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/notifications/presentation/pages/notifications_page.dart:430",
+     "lib/features/notifications/presentation/pages/notifications_page.dart:439"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "open-file/open-file.page",
+   "ionic": {
+    "ts": "open-file/open-file.page.ts",
+    "html": "open-file/open-file.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "open-file/open-file.page.ts",
+    "line": 36,
+    "method": "OpenFilePage.ngOnInit",
+    "cond": [],
+    "message": {
+     "keys": [
+      "openFile.linkFailed"
+     ],
+     "de": [
+      "Der Link konnte nicht geöffnet werden."
+     ],
+     "literals": [],
+     "expr": "translate('openFile.linkFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "405790ea",
+    "mbody": "922a2171",
+    "id": "open-file/open-file.page#toast-d3c8175b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/public_links/presentation/pages/open_file_page.dart:58-64"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 70,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (isLiveNow(entry))"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "[color]": "\"entry.liveMode ? 'danger' : 'primary'\""
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); toggleLive(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"entry.liveMode ? 'radio' : 'radio-outline'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-plan-public/org-plan-public.page#action-610d3d65"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:220"
+    ],
+    "n": "Live-Schalter nur bei isLiveNow, Farbe danger/primary, toggelt Live-Modus ohne das Akkordeon zu schalten – gleich. Ionic: Icon radio/radio-outline (Funkwellen) neben dem Akkordeon-Pfeil / Flutter: radio_button_checked/unchecked, ersetzt den Aufklapp-Pfeil (ExpansionTile.trailing), Tooltip „Live“",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 136,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=showHistory = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-plan-public/org-plan-public.page#action-62549630"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:251"
+    ],
+    "n": "Schließen-Icon close",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 77,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "full"
+    },
+    "events": [
+     "(click)=exportPlan(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "planning.export"
+    ],
+    "de": [
+     "Exportieren"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.export' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#action-905ad3b9"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:230"
+    ],
+    "n": "„Exportieren“ mit Teilen-Icon in Primärfarbe → Export-Sheet",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 157,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "full"
+    },
+    "events": [
+     "(click)=exportPlan(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [
+     "planning.export"
+    ],
+    "de": [
+     "Exportieren"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.export' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#action-905ad3b9-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:230"
+    ],
+    "n": "„Exportieren“ auch in vergangenen Plänen",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=subscribeCalendar()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.title]=\"'plans.subscribeCalendar' | transloco\""
+    ],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [
+     "plans.subscribeCalendar"
+    ],
+    "de": [
+     "Kalender abonnieren"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'plans.subscribeCalendar' | transloco\"",
+    "id": "org-plan-public/org-plan-public.page#action-b3c45e32"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:283"
+    ],
+    "n": "Kalender-Button (calendar_month_outlined, Tooltip „Kalender abonnieren“) immer sichtbar wie Ionic. Ionic: ohne key in der URL tut der Button nichts (`if (!this.publicKey) return`) / Flutter: öffnet trotzdem das Sheet mit Link „…?key=null“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 18,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-plan-public/org-plan-public.page#action-cd29a676"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:319"
+    ],
+    "n": "IonRefresher → _loadPlans (nur sichtbar, wenn geladen und Link gültig)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 9,
+    "cond": [
+     "@if (pastPlans.length > 0)"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=showHistory = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[attr.title]=\"'plans.pastPlans' | transloco\""
+    ],
+    "icons": [
+     "time-outline"
+    ],
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'plans.pastPlans' | transloco\"",
+    "id": "org-plan-public/org-plan-public.page#action-cf309d5a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:288"
+    ],
+    "n": "nur bei vergangenen Plänen; Icon schedule statt time-outline, Tooltip „Vergangene Pläne“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 367,
+    "method": "OrgPlanPublicPage.exportPlan",
+    "cond": [],
+    "header": {
+     "keys": [
+      "planning.export"
+     ],
+     "de": [
+      "Exportieren"
+     ],
+     "literals": [],
+     "expr": "translate('planning.export')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "PDF (A4)"
+       ],
+       "expr": "'PDF (A4)'"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => void Utils.createPlanExport({ time: entry.time, end: entry.end, fields: entry.fields }, entry.title)"
+     },
+     {
+      "text": {
+       "keys": [],
+       "de": [],
+       "literals": [
+        "PDF (2x A5)"
+       ],
+       "expr": "'PDF (2x A5)'"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => void Utils.createPlanExport({ time: entry.time, end: entry.end, fields: entry.fields, sideBySide: true }, entry.title)"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "689b0125",
+    "mbody": "1ce17859",
+    "id": "org-plan-public/org-plan-public.page#actionsheet-4c267725"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:180",
+     "lib/features/planning/presentation/widgets/plan_export_actions.dart:59"
+    ],
+    "n": "Header „Exportieren“, „PDF (A4)“, „PDF (2x A5)“, „Abbrechen“ gleich (kein Bild/Telegram). Ionic: ohne Icons / Flutter: mit Icons (picture_as_pdf, content_copy)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "org-plan-public/org-plan-public.page.ts",
+    "line": 324,
+    "method": "OrgPlanPublicPage.subscribeCalendar",
+    "cond": [],
+    "header": {
+     "keys": [
+      "plans.subscribeCalendar"
+     ],
+     "de": [
+      "Kalender abonnieren"
+     ],
+     "literals": [],
+     "expr": "translate('plans.subscribeCalendar')"
+    },
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "plans.simpleCalendar"
+       ],
+       "de": [
+        "Einfach (1 Termin je Plan)"
+       ],
+       "literals": [],
+       "expr": "translate('plans.simpleCalendar')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.showCalendarAlert(base)"
+     },
+     {
+      "text": {
+       "keys": [
+        "plans.detailedCalendar"
+       ],
+       "de": [
+        "Detailliert (je Programmpunkt)"
+       ],
+       "literals": [],
+       "expr": "translate('plans.detailedCalendar')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => this.showCalendarAlert(`${base}&detailed=true`)"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "69b7a900",
+    "mbody": "7d861801",
+    "id": "org-plan-public/org-plan-public.page#actionsheet-876a0d5b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:154",
+     "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:404"
+    ],
+    "n": "Header „Kalender abonnieren“, Buttons „Einfach (1 Termin je Plan)“, „Detailliert (je Programmpunkt)“, „Abbrechen“ und Links (…/functions/v1/ical-org-plans?key=…[&lang=xx][&detailed=true]) gleich. Ionic: Buttons ohne Icons / Flutter: zusätzlich Icons (event, event_note)",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 130,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"showHistory\""
+    },
+    "events": [
+     "(didDismiss)=showHistory = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"showHistory\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "org-plan-public/org-plan-public.page#modal-a0d38218"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:243"
+    ],
+    "n": "Vollbild-Modal (rootNavigator, fullscreenDialog) über Uhr-Button, nur bei vergangenen Plänen; Pläne zugeklappt wie Ionic.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 85,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.startLabel"
+    ],
+    "de": [
+     "Start"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.startLabel' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-07043320"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+    ],
+    "n": "„Start“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 165,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.startLabel"
+    ],
+    "de": [
+     "Start"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.startLabel' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-07043320-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:97"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 43,
+    "cond": [
+     "@if (!loading && notFound)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "plans.linkInvalid"
+    ],
+    "de": [
+     "Link ungültig oder abgelaufen."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.linkInvalid' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-092b2e71"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:306",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:314"
+    ],
+    "n": "„Link ungültig oder abgelaufen.“ (Karte statt Inset-Liste)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 115,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (getEndTime(entry))"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-188d296f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:207"
+    ],
+    "n": "Ionic: Zeile „Ende“ nur wenn plan.end gesetzt / Flutter: ohne plan.end wird Ende aus Start + Summe der Dauern berechnet und angezeigt",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 183,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (getEndTime(entry))"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.end"
+    ],
+    "de": [
+     "Ende"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.end' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-188d296f-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:207"
+    ],
+    "n": "wie text-188d296f: Flutter zeigt berechnetes Ende auch ohne plan.end",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 86,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: getStartTime(entry) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-24593650"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+    ],
+    "n": "„{time} Uhr“ mit HH:mm gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 116,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (getEndTime(entry))"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: getEndTime(entry) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-24593650-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+    ],
+    "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette), Zeile nur wenn plan.end gesetzt / Flutter: graue Text-Notiz rechts; bei leerem end berechnet Flutter das Ende aus Start + Minuten und zeigt die Zeile trotzdem (Randfall, Ionic-Planung speichert end immer).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 166,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: getStartTime(entry) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-24593650-3"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:102"
+    ],
+    "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 184,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)",
+     "@if (getEndTime(entry))"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "attendance.timeOClock"
+    ],
+    "de": [
+     "{time} Uhr"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.timeOClock' | transloco: { time: getEndTime(entry) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-24593650-4"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:214"
+    ],
+    "n": "„{time} Uhr“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 134,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.pastPlans' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-370bc016"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:249"
+    ],
+    "n": "„Vergangene Pläne“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 108,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (!field.id.includes('noteFld'))",
+     "@else (not entry.liveMode && fi === entry.activeFieldIndex)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.minShort' | transloco: { min: (field | planMinutes: entry.fields) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-4841bd3c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:149"
+    ],
+    "n": "„{min} min“ (Block-Kopf = Summe der Unterpunkte) gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 177,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ 'planning.minShort' | transloco: { min: (field | planMinutes: entry.fields) } }}",
+    "id": "org-plan-public/org-plan-public.page#text-4841bd3c-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:149"
+    ],
+    "n": "„{min} min“ gleich. Ionic: ion-badge (gefüllte Plakette) / Flutter: graue Text-Notiz rechts",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 52,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (upcomingPlans.length === 0)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "plans.noUpcomingPlans"
+    ],
+    "de": [
+     "Keine bevorstehenden Org-Pläne vorhanden."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.noUpcomingPlans' | transloco }}",
+    "id": "org-plan-public/org-plan-public.page#text-48b8a885"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:325"
+    ],
+    "n": "Text „Keine bevorstehenden Org-Pläne vorhanden.“ gleich. Ionic: grauer p-Text in Inset-Liste / Flutter: ListTile mit zusätzlichem Icon event_outlined, normale Textfarbe",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 63,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getDateFormatted(entry) }}"
+    ],
+    "text": "{{ getDateFormatted(entry) }}",
+    "id": "org-plan-public/org-plan-public.page#text-80d2f3fd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:217",
+     "lib/core/utils/plan_utils.dart:508"
+    ],
+    "n": "Format „Wochentag, TT.MM.JJJJ“ gleich. Ionic: ohne Datum (Ad-hoc-Plan ohne date) wird der Titel angezeigt / Flutter: leere Zeile (longDate(null) = '')",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 149,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getDateFormatted(entry) }}"
+    ],
+    "text": "{{ getDateFormatted(entry) }}",
+    "id": "org-plan-public/org-plan-public.page#text-80d2f3fd-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:217",
+     "lib/core/utils/plan_utils.dart:508"
+    ],
+    "n": "wie text-80d2f3fd: ohne Datum Ionic Titel / Flutter leer",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 98,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ calculateTime(entry, field, fi) }}"
+    ],
+    "text": "{{ calculateTime(entry, field, fi) }}",
+    "id": "org-plan-public/org-plan-public.page#text-8367e2d0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:130",
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:133"
+    ],
+    "n": "Startzeit + „ | Dirigent“ gleich. Ionic: Programmblock-Kopf zeigt nur Startzeit / Flutter: Zeitspanne „10:37 – 10:55“",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 173,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (!field.id.includes('noteFld'))"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ calculateTime(entry, field, fi) }}"
+    ],
+    "text": "{{ calculateTime(entry, field, fi) }}",
+    "id": "org-plan-public/org-plan-public.page#text-8367e2d0-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:130"
+    ],
+    "n": "wie text-8367e2d0: Block-Kopf Zeitspanne statt Startzeit",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 3,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Organisationspläne"
+    ],
+    "bound": [
+     "{{ orgName || 'Organisationspläne' }}"
+    ],
+    "text": "{{ orgName || 'Organisationspläne' }}",
+    "id": "org-plan-public/org-plan-public.page#text-8d2c4133"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:268",
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:281"
+    ],
+    "n": "orgName bzw. Fallback „Organisationspläne“ (plansFlutterOrgPlansTitle)",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 23,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {
+     "size": "large"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Organisationspläne"
+    ],
+    "bound": [
+     "{{ orgName || 'Organisationspläne' }}"
+    ],
+    "text": "{{ orgName || 'Organisationspläne' }}",
+    "id": "org-plan-public/org-plan-public.page#text-8d2c4133-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:271"
+    ],
+    "n": "IonLargeTitle (iOS-Look) mit gleichem Titel",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 106,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)",
+     "@if (!field.id.includes('noteFld'))",
+     "@if (entry.liveMode && fi === entry.activeFieldIndex)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end",
+     "color": "primary"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getActiveCountdown(entry) }}"
+    ],
+    "text": "{{ getActiveCountdown(entry) }}",
+    "id": "org-plan-public/org-plan-public.page#text-902a9ead"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:144",
+     "lib/core/utils/plan_utils.dart:470"
+    ],
+    "n": "Countdown „mm:ss“/„h:mm:ss“ in primärer Plakette (IonBadge) beim aktiven Feld",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart",
+    "lib/core/utils/plan_utils.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 82,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ entry.title }}"
+    ],
+    "text": "{{ entry.title }}",
+    "id": "org-plan-public/org-plan-public.page#text-9bfc6bc4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:236",
+     "lib/core/providers/plan_providers.dart:107"
+    ],
+    "n": "Titel: plan.title || typeInfo || „Plan“ bzw. plan_title || „Plan“",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart",
+    "lib/core/providers/plan_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 162,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">",
+     "@for (entry of pastPlans; track trackByPlan($index, entry); let i = $index)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ entry.title }}"
+    ],
+    "text": "{{ entry.title }}",
+    "id": "org-plan-public/org-plan-public.page#text-9bfc6bc4-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plan_public_page.dart:236"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "org-plan-public/org-plan-public.page",
+   "ionic": {
+    "ts": "org-plan-public/org-plan-public.page.ts",
+    "html": "org-plan-public/org-plan-public.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plan-public/org-plan-public.page.html",
+    "line": 96,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@for (entry of upcomingPlans; track trackByPlan($index, entry); let i = $index)",
+     "@for (field of entry.fields; track trackByField($index, field); let fi = $index)"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "org-plan-public/org-plan-public.page#text-e42e4358"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:166"
+    ],
+    "n": "Ionic: field.name / Flutter: PlanUtils.fieldDisplayName → bei Tagesordnungs-Feldern „TOP n · Titel“; Agenda-Platzhalter-Feld wird in Flutter ausgeblendet, in Ionic als Zeile angezeigt",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart"
+   ]
+  }
+ ]
+}

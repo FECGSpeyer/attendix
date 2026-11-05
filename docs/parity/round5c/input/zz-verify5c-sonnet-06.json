@@ -1,0 +1,2302 @@
+{
+ "batch": "zz-verify5c-sonnet-06",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "duty/unavailability-modal/unavailability-modal.component",
+   "ionic": {
+    "ts": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "html": "duty/unavailability-modal/unavailability-modal.component.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "duty/unavailability-modal/unavailability-modal.component.ts",
+    "line": 97,
+    "method": "UnavailabilityModalComponent.save",
+    "cond": [
+     "(!this.editing?.weekdays.length)"
+    ],
+    "message": {
+     "keys": [
+      "duty.chooseWeekday"
+     ],
+     "de": [
+      "Bitte wähle mindestens einen Wochentag"
+     ],
+     "literals": [],
+     "expr": "translate('duty.chooseWeekday')"
+    },
+    "color": "warning",
+    "duration": null,
+    "src": "3d5a370f",
+    "mbody": "8c453e23",
+    "id": "duty/unavailability-modal/unavailability-modal.component#toast-08cde731"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/pages/unavailability_page.dart:104"
+    ],
+    "n": "Gelber Toast „Bitte wähle mindestens einen Wochentag“ beim Speichern ohne Wochentag, Bearbeitung bleibt offen. Rolle: in beiden erreichbar selbst über „Meine Termine“ (Rollen außer Dirigent/Beobachter/Eltern, nur im Dienstkreis) und für Admin/Verantwortlicher über Person → Abwesenheiten (canManagePlannedAbsences, Dienst-Typen vorhanden, nicht ausgetreten; person_detail_page:1914); im Modal selbst keine Rollenprüfung.",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 101,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "true",
+     "id": "song-select-trigger-his"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "history.songs",
+     "history.selectedCount",
+     "history.noneSelected"
+    ],
+    "de": [
+     "Werk(e)",
+     "{count} Werk(e) ausgewählt",
+     "Keine Werke ausgewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'history.songs' | transloco }} {{ 'history.selectedCount' | transloco: { count: selectedSongs.length } }} {{ 'history.noneSelected' | transloco }}",
+    "id": "history/history.page#action-6dccb9eb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:326"
+    ],
+    "n": "Zeile 'Werk(e)' mit 'N Werk(e) ausgewählt'/'Keine Werke ausgewählt' und Chevron öffnet die Auswahl. Ionic: beim ersten Öffnen ist das erste Werk der Bibliothek vorausgewählt ('1 Werk(e) ausgewählt'), Auswahl bleibt nach Schließen ohne Hinzufügen erhalten / Flutter: startet bei jedem Öffnen leer.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 81,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))",
+     "@for (his of group.parts; track trackByHistoryId($index, his))"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(his.id, sliding)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-74b628bd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:739"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 13,
+    "cond": [],
+    "tag": "ion-refresher",
+    "attrs": {
+     "slot": "fixed"
+    },
+    "events": [
+     "(ionRefresh)=handleRefresh($event)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-85678212"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:177"
+    ],
+    "n": "Ionic: Pull-to-Refresh immer (auch im Leerzustand) / Flutter: RefreshIndicator nur um die gefüllte Liste – im Leerzustand ('Noch keine Werke gespielt', keine Treffer) kein Pull-to-Refresh.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 188,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "slot": "end",
+     "id": "historyDate-trigger"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "calendar-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-8f1945e2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:418"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 146,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>",
+     "@if (filteredSongs.length > 0)",
+     "@for (song of filteredSongs; track song.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=toggleSongSelection(song.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ song.prefix }}{{ song.number }} {{ song.name }} {{ song.composer }}",
+    "id": "history/history.page#action-a34c7dc7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:854",
+     "lib/data/models/song/song.dart:150"
+    ],
+    "n": "Checkbox-Zeile mit Komponist, Tippen schaltet um. Ionic Titel: '{prefix}{nummer} {name}' / Flutter: '{prefix}{nummer} - {name}' (zusätzlicher Bindestrich).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 5,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "close"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-a4e47659"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:86"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 206,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block"
+    },
+    "events": [
+     "(click)=addHistoryEntry(addHisModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "attendance.add"
+    ],
+    "de": [
+     "Hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.add' | transloco }}",
+    "id": "history/history.page#action-a6f939ed"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:443",
+     "lib/features/history/presentation/pages/history_page.dart:538",
+     "lib/data/repositories/attendance_repository.dart:897"
+    ],
+    "n": "Prüfung 'mind. ein Werk' (Flutter Warn- statt Danger-Toast, niedrig), je Werk history-Zeile songId/person_id/otherConductor/date/visible=true, tenantId im Repo erzwungen; Datum YYYY-MM-DD, gleicher Tag.",
+    "v": "bestätigt",
+    "flutterAt": "57bb011"
+   },
+   "flutterChanged": [
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 46,
+    "cond": [
+     "@if (searchTerm)",
+     "@for (entry of historyFiltered; track trackByHistoryId($index, entry))"
+    ],
+    "tag": "ion-item-option",
+    "attrs": {
+     "color": "danger"
+    },
+    "events": [
+     "(click)=remove(entry.id, sliding)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-ac09cfa7"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:739"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "history/history.page.html",
+    "line": 118,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=songSelectModal.dismiss()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#action-ada537fb"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:821"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "history/history.page.ts",
+    "line": 248,
+    "method": "HistoryPage.remove",
+    "cond": [],
+    "header": {
+     "keys": [
+      "history.removeConfirm"
+     ],
+     "de": [
+      "Möchtest du den Eintrag wirklich entfernen?"
+     ],
+     "literals": [],
+     "expr": "translate('history.removeConfirm')"
+    },
+    "subHeader": null,
+    "message": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { sliding.close(); }"
+     },
+     {
+      "text": {
+       "keys": [
+        "common.yes"
+       ],
+       "de": [
+        "Ja"
+       ],
+       "literals": [],
+       "expr": "translate('common.yes')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { await this.db.removeHistoryEntry(id); await this.getHistory(); } catch (error) { Utils.showToast(error, 'danger'); } }"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "79056885",
+    "mbody": "f7966e2a",
+    "id": "history/history.page#alert-2038761e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:570",
+     "lib/data/repositories/attendance_repository.dart:925"
+    ],
+    "n": "Header 'Möchtest du den Eintrag wirklich entfernen?', Abbrechen/Ja; Ja löscht (Flutter zusätzlich mit tenantId-Filter) und lädt neu.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart",
+    "lib/data/repositories/attendance_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 179,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "@if (historyEntry.person_id === otherConductor && historyEntry.otherConductor)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"historyEntry.otherConductor\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#field-1bf71ecb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:388"
+    ],
+    "n": "Ionic: eingegebener Name als editierbares ion-input / Flutter: nur als Textzeile; Korrektur nur über erneute Auswahl 'Anderer Dirigent'.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 184,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[value]": "\"formatDate(historyEntry.date)\""
+    },
+    "events": [
+     "(ionBlur)=onManualDateInput($event)"
+    ],
+    "link": null,
+    "model": "[value]=\"formatDate(historyEntry.date)\"",
+    "bindings": [
+     "[placeholder]=\"'history.datePlaceholder' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "history.datePlaceholder"
+    ],
+    "de": [
+     "TT.MM.JJJJ"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'history.datePlaceholder' | transloco\"",
+    "id": "history/history.page#field-1d1fb30d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:399",
+     "lib/features/history/presentation/pages/history_page.dart:884"
+    ],
+    "n": "Feld mit Platzhalter 'TT.MM.JJJJ', Übernahme beim Verlassen, ungültig → letzter gültiger Wert. Ionic: nach erfolgreichem Hinzufügen bleibt das zuletzt gewählte Datum für den nächsten Eintrag / Flutter: jedes Öffnen startet mit heute. Flutter besser: Tage wie 31.02. werden verworfen (Ionic rollt auf 03.03.).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 147,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>",
+     "@if (filteredSongs.length > 0)",
+     "@for (song of filteredSongs; track song.id)",
+     "in <ion-item>"
+    ],
+    "tag": "ion-checkbox",
+    "attrs": {
+     "slot": "start"
+    },
+    "events": [],
+    "link": null,
+    "model": "[checked]=\"selectedSongs.includes(song.id)\"",
+    "bindings": [
+     "[checked]=\"selectedSongs.includes(song.id)\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#field-2be7f50e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:854"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 167,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {
+     "multiple": "false",
+     "#": "select"
+    },
+    "events": [
+     "(ionChange)=onConChange()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"historyEntry.person_id\"",
+    "bindings": [
+     "[label]=\"'attList.conductor' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"con.id\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ con.firstName }} {{ con.lastName }}"
+     },
+     {
+      "value": "\"otherConductor\"",
+      "keys": [
+       "attList.otherConductor"
+      ],
+      "de": [
+       "Anderer Dirigent"
+      ],
+      "literals": [],
+      "text": "{{ 'attList.otherConductor' | transloco }}"
+     }
+    ],
+    "keys": [
+     "attList.conductor",
+     "attList.otherConductor"
+    ],
+    "de": [
+     "Dirigent",
+     "Anderer Dirigent"
+    ],
+    "literals": [],
+    "text": "[label]=\"'attList.conductor' | transloco\" {{ con.firstName }} {{ con.lastName }} {{ 'attList.otherConductor' | transloco }}",
+    "id": "history/history.page#field-85282cc3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:351",
+     "lib/features/history/history_utils.dart:83"
+    ],
+    "n": "Label 'Dirigent', Optionen aktive Dirigenten + 'Anderer Dirigent', Default erster aktiver Dirigent, Alert-Interface auf iOS.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart",
+    "lib/features/history/history_utils.dart (Referenz ungültig)"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 196,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=historyDate-trigger #dateModal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "presentation": "date",
+     "[value]": "\"historyEntry.date\""
+    },
+    "events": [
+     "(ionChange)=onDateChanged($event.detail.value, dateModal)"
+    ],
+    "link": null,
+    "model": "[value]=\"historyEntry.date\"",
+    "bindings": [
+     "[preferWheel]=\"true\"",
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "history/history.page#field-aa62edcf"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:420",
+     "lib/shared/widgets/adaptive/app_pickers.dart:12"
+    ],
+    "n": "Ionic: ion-datetime als Datumsrad (preferWheel, Montag zuerst), Wert wird sofort übernommen, schließt bei Tageswechsel, unbegrenzter Bereich / Flutter: Kalender-Datepicker (md mit OK-Bestätigung), Bereich 01.01.2000 bis heute+365 Tage.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart",
+    "lib/shared/widgets/adaptive/app_pickers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 17,
+    "cond": [],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [
+     "(ionInput)=search($event)"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"searchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'history.searchSong' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "history.searchSong"
+    ],
+    "de": [
+     "Werk suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'history.searchSong' | transloco\"",
+    "id": "history/history.page#field-ac79647a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:104",
+     "lib/features/history/presentation/pages/history_page.dart:230",
+     "lib/features/history/presentation/pages/history_page.dart:160"
+    ],
+    "n": "Platzhalter 'Werk suchen...' gleich. Ionic: filtert nur nach Werkname, ohne Treffer leere Liste / Flutter: filtert zusätzlich nach Werknummer und Dirigent und zeigt bei 0 Treffern 'Keine Werke gefunden' mit Icon.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "history/history.page.html",
+    "line": 124,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>"
+    ],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [
+     "(ionInput)=onSongSearch($event)",
+     "(ionClear)=resetSongSearch()"
+    ],
+    "link": null,
+    "model": "[(ngModel)]=\"songSearchTerm\"",
+    "bindings": [
+     "[placeholder]=\"'history.searchSong' | transloco\"",
+     "[debounce]=\"250\""
+    ],
+    "icons": [],
+    "keys": [
+     "history.searchSong"
+    ],
+    "de": [
+     "Werk suchen..."
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'history.searchSong' | transloco\"",
+    "id": "history/history.page#field-c1a5fc20"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:812",
+     "lib/features/history/presentation/pages/history_page.dart:829",
+     "lib/data/models/song/song.dart:150"
+    ],
+    "n": "Platzhalter 'Werk suchen...' gleich. Ionic sucht in '{prefix}{nummer} {name}' (Anzeige ebenso) / Flutter in displayName '{prefix}{nummer} - {name}' (Anzeige mit ' - '); Suchbegriffe über Nummer und Name hinweg ('12 Ave') finden in Flutter nichts.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "history/history.page.html",
+    "line": 194,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "historyDate-trigger",
+     "class": "dateModal",
+     "#": "dateModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "history/history.page#modal-83362f58"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:420"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "history/history.page.html",
+    "line": 112,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "song-select-trigger-his",
+     "#": "songSelectModal"
+    },
+    "events": [],
+    "bindings": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "history/history.page#modal-9b3d2b28"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:510"
+    ],
+    "n": "Vollbild (fullscreenDialog). Auswahl wird in Flutter nur mit ✓ übernommen; Schließen per System-Zurück verwirft Änderungen (Ionic übernimmt live).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 138,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>",
+     "@if (filteredSongs.length === 0 && songSearchTerm)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "history.noneFound"
+    ],
+    "de": [
+     "Keine Werke gefunden"
+    ],
+    "literals": [],
+    "text": "{{ 'history.noneFound' | transloco }}",
+    "id": "history/history.page#text-0ad9679c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:839"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 37,
+    "cond": [
+     "@if (searchTerm)",
+     "@for (entry of historyFiltered; track trackByHistoryId($index, entry))",
+     "@if (entry.attendance?.date)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ entry.attendance.date | date: ('common.ngDate' | transloco) }} | {{ entry.conductorName }}",
+    "id": "history/history.page#text-12c0b16e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:756",
+     "lib/core/providers/history_providers.dart:52"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 41,
+    "cond": [
+     "@if (searchTerm)",
+     "@for (entry of historyFiltered; track trackByHistoryId($index, entry))",
+     "@if (!entry.attendance?.date)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ entry.date | date: ('common.ngDate' | transloco) }} | {{ entry.conductorName }}",
+    "id": "history/history.page#text-12c0b16e-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:756",
+     "lib/core/providers/history_providers.dart:52"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 69,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))",
+     "@for (his of group.parts; track trackByHistoryId($index, his))",
+     "@if (his.attendance?.date)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ his.attendance.date | date: ('common.ngDate' | transloco) }} | {{ his.conductorName }}",
+    "id": "history/history.page#text-12c0b16e-3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:756"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 73,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))",
+     "@for (his of group.parts; track trackByHistoryId($index, his))",
+     "@if (!his.attendance?.date)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [
+     "common.ngDate"
+    ],
+    "de": [
+     "dd.MM.yyyy"
+    ],
+    "literals": [],
+    "text": "{{ his.date | date: ('common.ngDate' | transloco) }} | {{ his.conductorName }}",
+    "id": "history/history.page#text-12c0b16e-4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:756"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 98,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "history.addSongs"
+    ],
+    "de": [
+     "Werk(e) hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'history.addSongs' | transloco }}",
+    "id": "history/history.page#text-28f39b12"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:320"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 35,
+    "cond": [
+     "@if (searchTerm)",
+     "@for (entry of historyFiltered; track trackByHistoryId($index, entry))"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ entry.name }}"
+    ],
+    "text": "{{ entry.name }}",
+    "id": "history/history.page#text-49ced4d0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:197",
+     "lib/features/history/presentation/pages/history_page.dart:749"
+    ],
+    "n": "Suchmodus: flache Liste, nur Werkname, kein Proben-Badge.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 116,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>",
+     "in <ion-modal trigger=song-select-trigger-his #songSelectModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "history.selectSongs"
+    ],
+    "de": [
+     "Werke auswählen"
+    ],
+    "literals": [],
+    "text": "{{ 'history.selectSongs' | transloco }}",
+    "id": "history/history.page#text-913595c5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:817"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 24,
+    "cond": [
+     "@if (groupedHistory.length === 0 && !searchTerm)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "history.noneYet"
+    ],
+    "de": [
+     "Noch keine Werke gespielt"
+    ],
+    "literals": [],
+    "text": "{{ 'history.noneYet' | transloco }}",
+    "id": "history/history.page#text-a2c9f652"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:152"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 183,
+    "cond": [
+     "in <ion-modal trigger=add-his-button #addHisModal>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "attendance.date"
+    ],
+    "de": [
+     "Datum"
+    ],
+    "literals": [],
+    "text": "{{ 'attendance.date' | transloco }}",
+    "id": "history/history.page#text-af3f8717"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:396"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 67,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))",
+     "@for (his of group.parts; track trackByHistoryId($index, his))"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ his.number }} {{ his.name }}"
+    ],
+    "text": "{{ his.number }} {{ his.name }}",
+    "id": "history/history.page#text-be8b6a49"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:749"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 77,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))",
+     "@for (his of group.parts; track trackByHistoryId($index, his))",
+     "@if (his.count !== 0)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {},
+    "keys": [
+     "history.rehearsals"
+    ],
+    "de": [
+     "{count, plural, one {# Probe} other {# Proben}}"
+    ],
+    "literals": [],
+    "text": "{{ 'history.rehearsals' | transloco: { count: his.count } }}",
+    "id": "history/history.page#text-decdb8ba"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:771",
+     "lib/features/history/history_utils.dart:71"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "history/history.page.html",
+    "line": 60,
+    "cond": [
+     "@if (!searchTerm)",
+     "@for (group of groupedHistory; track trackByGroupDate($index, group))"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ group.date }}"
+    ],
+    "text": "{{ group.date }}",
+    "id": "history/history.page#text-dff66123"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:648",
+     "lib/features/history/presentation/pages/history_page.dart:653"
+    ],
+    "n": "Datums-Akkordeon (hellgrau, anfangs zu) vorhanden. Ionic: ion-accordion-group – immer nur ein Datum gleichzeitig offen / Flutter: jede Gruppe unabhängig, mehrere gleichzeitig offen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "history/history.page.ts",
+    "line": 214,
+    "method": "HistoryPage.addHistoryEntry",
+    "cond": [
+     "(!this.selectedSongs.length)"
+    ],
+    "message": {
+     "keys": [
+      "history.selectAtLeastOne"
+     ],
+     "de": [
+      "Bitte wähle mindestens ein Werk an"
+     ],
+     "literals": [],
+     "expr": "translate('history.selectAtLeastOne')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "cad660d7",
+    "mbody": "68081f7e",
+    "id": "history/history.page#toast-a7d10e87"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:445"
+    ],
+    "n": "Text 'Bitte wähle mindestens ein Werk an' gleich. Ionic: Farbe danger (rot) / Flutter: ToastHelper.showWarning (orange). Zudem startet Flutter ohne vorausgewähltes Werk (Ionic: selectedSongs = [songs[0].id]), der Hinweis kommt in Flutter also schon beim ersten 'Hinzufügen' ohne Auswahl.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "history/history.page",
+   "ionic": {
+    "ts": "history/history.page.ts",
+    "html": "history/history.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "history/history.page.ts",
+    "line": 263,
+    "method": "HistoryPage.remove",
+    "cond": [],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c44cf0d9",
+    "mbody": "f7966e2a",
+    "id": "history/history.page#toast-cafe4207"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/history/presentation/pages/history_page.dart:598"
+    ],
+    "n": "Ionic: 'Fehler beim Löschen des Eintrags' (danger) / Flutter: 'Fehler: <technische Meldung>' (danger).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/absences-card/absences-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "html": "home-dashboard/components/absences-card/absences-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/absences-card/absences-card.component.html",
+    "line": 22,
+    "cond": [
+     "@else (not loading / entries.length === 0)",
+     "@for (e of entries; track e.fromDate + e.firstName)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "class": "dash-row",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openPerson(e.player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pause"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Pause",
+     "Abwesend"
+    ],
+    "text": "{{ tileDay(e.fromDate) }} {{ tileMonth(e.fromDate) }} {{ e.firstName }} {{ e.lastName }} {{ subtitle(e) }} {{ e.type === 'pause' ? 'Pause' : 'Abwesend' }}",
+    "id": "home-dashboard/components/absences-card/absences-card.component#action-dc318865"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:160",
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:179"
+    ],
+    "n": "Datumskachel (orange bzw. grau bei Pause, Pause-Icon ohne Datum), Name, Untertitel, Chip 'Pause'/'Abwesend'; Tippen öffnet die Person (Darstellung siehe modal-Item).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/absences-card/absences-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/absences-card/absences-card.component.ts",
+    "html": "home-dashboard/components/absences-card/absences-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/absences-card/absences-card.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (entries.length === 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noAbsences"
+    ],
+    "de": [
+     "Keine Abwesenheiten im Zeitraum."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noAbsences' | transloco }}",
+    "id": "home-dashboard/components/absences-card/absences-card.component#text-775a5bf4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:154"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/birthdays-card/birthdays-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/birthdays-card/birthdays-card.component.ts",
+    "html": "home-dashboard/components/birthdays-card/birthdays-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/birthdays-card/birthdays-card.component.html",
+    "line": 36,
+    "cond": [
+     "<ng-template #row>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "class": "dash-row",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openPerson(entry.player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.row-highlight]=\"entry.daysOffset === 0\"",
+     "[class.row-dim]=\"entry.daysOffset < 0\""
+    ],
+    "icons": [
+     "sparkles"
+    ],
+    "keys": [
+     "teamOrg.todayCap"
+    ],
+    "de": [
+     "Heute"
+    ],
+    "literals": [],
+    "text": "{{ entry.day }} {{ entry.month }} {{ entry.firstName }} {{ entry.lastName }} {{ entry.weekday }} · {{ ageText(entry) }} {{ 'teamOrg.todayCap' | transloco }} {{ formatDaysOffset(entry.daysOffset) }}",
+    "id": "home-dashboard/components/birthdays-card/birthdays-card.component#action-9374f372"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:60"
+    ],
+    "n": "Kachel pink (heute solid, vergangen grau/gedimmt), Zeile rosa hinterlegt am Geburtstag, 'Wochentag · Alterstext', rechts Chip 'Heute' mit Sparkles bzw. relative Tage.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/birthdays-card/birthdays-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/birthdays-card/birthdays-card.component.ts",
+    "html": "home-dashboard/components/birthdays-card/birthdays-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/birthdays-card/birthdays-card.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (entries.length === 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noBirthdays"
+    ],
+    "de": [
+     "Keine Geburtstage im Zeitraum."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noBirthdays' | transloco }}",
+    "id": "home-dashboard/components/birthdays-card/birthdays-card.component#text-17c34187"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:41"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/birthdays-card/birthdays-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/birthdays-card/birthdays-card.component.ts",
+    "html": "home-dashboard/components/birthdays-card/birthdays-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/birthdays-card/birthdays-card.component.html",
+    "line": 25,
+    "cond": [
+     "@else (not loading / entries.length === 0)",
+     "@if (past.length)"
+    ],
+    "tag": "ion-item-divider",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.recently"
+    ],
+    "de": [
+     "Zuletzt"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.recently' | transloco }}",
+    "id": "home-dashboard/components/birthdays-card/birthdays-card.component#text-b3d3eb43"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:50",
+     "lib/features/dashboard/presentation/widgets/dashboard_card.dart:191"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/critical-persons-card/critical-persons-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/critical-persons-card/critical-persons-card.component.ts",
+    "html": "home-dashboard/components/critical-persons-card/critical-persons-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/critical-persons-card/critical-persons-card.component.html",
+    "line": 22,
+    "cond": [
+     "@else (not loading / criticalPersons.length === 0)",
+     "@for (person of criticalPersons; track person.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "class": "dash-row",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openPerson(person)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Problemfall"
+    ],
+    "text": "{{ initials(person) }} {{ person.firstName }} {{ person.lastName }} {{ getReasonText(person) || 'Problemfall' }}",
+    "id": "home-dashboard/components/critical-persons-card/critical-persons-card.component#action-fb7def79"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:214"
+    ],
+    "n": "Rote Initialen-Kachel, Name, Grund bzw. 'Problemfall'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/critical-persons-card/critical-persons-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/critical-persons-card/critical-persons-card.component.ts",
+    "html": "home-dashboard/components/critical-persons-card/critical-persons-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/critical-persons-card/critical-persons-card.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (criticalPersons.length === 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noProblemCases"
+    ],
+    "de": [
+     "Keine Problemfälle vorhanden."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noProblemCases' | transloco }}",
+    "id": "home-dashboard/components/critical-persons-card/critical-persons-card.component#text-2a682321"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:208"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-plan-card/current-plan-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-plan-card/current-plan-card.component.ts",
+    "html": "home-dashboard/components/current-plan-card/current-plan-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/current-plan-card/current-plan-card.component.html",
+    "line": 10,
+    "cond": [
+     "@else if (plan)"
+    ],
+    "tag": "ion-card",
+    "attrs": {
+     "class": "dashboard-card",
+     "button": ""
+    },
+    "events": [
+     "(click)=openPlan()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "list-outline",
+     "chevron-forward-outline"
+    ],
+    "keys": [
+     "homeDashboard.currentPlan",
+     "homeDashboard.live",
+     "homeDashboard.planTimes"
+    ],
+    "de": [
+     "Aktueller Ablaufplan",
+     "Live",
+     "{start} – {end} Uhr · {count, plural, one {# Position} other {# Positionen}}"
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.currentPlan' | transloco }} {{ typeName }} {{ 'homeDashboard.live' | transloco }} {{ tileDay(planDayValue) }} {{ tileMonth(planDayValue) }} {{ dateLabel }} {{ 'homeDashboard.planTim…",
+    "id": "home-dashboard/components/current-plan-card/current-plan-card.component#action-337f2999"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:481",
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:524"
+    ],
+    "n": "Ganze Karte tippbar → Planansicht; Titel 'Aktueller Ablaufplan', Untertitel Typname, Badge 'Live' (danger), Kachel teal, Datum/Heute, '{start} – {end} Uhr · N Positionen', Chevron, Punkte mit Nummer/Name/Dirigent, Startzeit bzw. Countdown-Chip, vergangene abgeblendet.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-plan-card/current-plan-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-plan-card/current-plan-card.component.ts",
+    "html": "home-dashboard/components/current-plan-card/current-plan-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/current-plan-card/current-plan-card.component.ts",
+    "line": 80,
+    "method": "CurrentPlanCardComponent.openPlan",
+    "cond": [],
+    "component": "PlanViewerComponent",
+    "props": [
+     "attendance",
+     "plan",
+     "isPractice",
+     "songs"
+    ],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": false,
+    "canDismiss": null,
+    "src": "9216ec67",
+    "mbody": "f0c93a59",
+    "id": "home-dashboard/components/current-plan-card/current-plan-card.component#modal-0f9e8264"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:397",
+     "lib/features/planning/presentation/pages/plan_viewer_page.dart:223"
+    ],
+    "n": "Vollbild-Planansicht (fullscreenDialog) mit Termin inkl. extra_plans; isPractice/songs werden im Ionic-Viewer nicht genutzt. Flutter-Fallback: Termin öffnen, falls der Plan nicht parsebar ist.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "html": "home-dashboard/components/current-songs-card/current-songs-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/current-songs-card/current-songs-card.component.html",
+    "line": 22,
+    "cond": [
+     "@else (not loading / entries.length === 0)",
+     "@for (entry of entries; track entry.songId)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "class": "dash-row",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openSong(entry.songId)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ numberLabel(entry) }} {{ entry.name }} {{ songSubtitle(entry) }} {{ relativeDays(entry.date) }}",
+    "id": "home-dashboard/components/current-songs-card/current-songs-card.component#action-b43ba01c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:314"
+    ],
+    "n": "Lila Nummernkachel (klein ab >3 Zeichen), Werkname, Untertitel, relative Tage rechts.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/current-songs-card/current-songs-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/current-songs-card/current-songs-card.component.ts",
+    "html": "home-dashboard/components/current-songs-card/current-songs-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/current-songs-card/current-songs-card.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (entries.length === 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noPlannedSongs"
+    ],
+    "de": [
+     "Keine geplanten Werke."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noPlannedSongs' | transloco }}",
+    "id": "home-dashboard/components/current-songs-card/current-songs-card.component#text-830f9c8d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:300"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/member-changes-card/member-changes-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/member-changes-card/member-changes-card.component.ts",
+    "html": "home-dashboard/components/member-changes-card/member-changes-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/member-changes-card/member-changes-card.component.html",
+    "line": 22,
+    "cond": [
+     "@else (not loading / changes.length === 0)",
+     "@for (c of changes; track c.date + c.firstName)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "class": "dash-row",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=openPerson(c.player)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "[name]=\"c.type === 'joined' ? 'arrow-forward' : 'arrow-back'\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Beitritt",
+     "Austritt"
+    ],
+    "text": "{{ tileDay(c.date) }} {{ tileMonth(c.date) }} {{ c.firstName }} {{ c.lastName }} {{ relativeDays(c.date) }} {{ c.type === 'joined' ? 'Beitritt' : 'Austritt' }}",
+    "id": "home-dashboard/components/member-changes-card/member-changes-card.component#action-cd789740"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:111"
+    ],
+    "n": "Kachel grün/rot, Name, relative Tage, Chip mit Pfeil vor/zurück und 'Beitritt'/'Austritt'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/member-changes-card/member-changes-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/member-changes-card/member-changes-card.component.ts",
+    "html": "home-dashboard/components/member-changes-card/member-changes-card.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "home-dashboard/components/member-changes-card/member-changes-card.component.html",
+    "line": 17,
+    "cond": [
+     "@else if (changes.length === 0)"
+    ],
+    "tag": "span",
+    "attrs": {},
+    "keys": [
+     "homeDashboard.noChanges"
+    ],
+    "de": [
+     "Keine Veränderungen im Zeitraum."
+    ],
+    "literals": [],
+    "text": "{{ 'homeDashboard.noChanges' | transloco }}",
+    "id": "home-dashboard/components/member-changes-card/member-changes-card.component#text-eab120a3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/people_cards.dart:105"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 112,
+    "cond": [
+     "@else (not loading)",
+     "@if (lastEvent)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "class": "dash-row",
+     "lines": "none",
+     "[button]": "\"canOpenAttendance\"",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=canOpenAttendance && openAttendance(lastEvent.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "homeDashboard.lastSummary"
+    ],
+    "de": [
+     "{present}/{total} anwesend · {excused} entschuldigt"
+    ],
+    "literals": [],
+    "text": "{{ tileDay(lastEvent.date) }} {{ tileMonth(lastEvent.date) }} {{ lastEvent.typeInfo }} {{ 'homeDashboard.lastSummary' | transloco: { present: lastPresent, total: lastTotal, excused: lastExcused } }} …",
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#action-debeb343"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:101"
+    ],
+    "n": "Gleiche Rollenbedingung wie die Nächster-Termin-Zeile (onTap nur bei canOpen). Graue Kachel, Typinfo, '{present}/{total} anwesend · {excused} entschuldigt', Prozent-Chip grün ≥75 / orange ≥50 / rot.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "home-dashboard/components/next-event-card/next-event-card.component",
+   "ionic": {
+    "ts": "home-dashboard/components/next-event-card/next-event-card.component.ts",
+    "html": "home-dashboard/components/next-event-card/next-event-card.component.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "home-dashboard/components/next-event-card/next-event-card.component.html",
+    "line": 77,
+    "cond": [
+     "@else (not loading)",
+     "@if (nextEvent)",
+     "@if (nextTotal > 0)",
+     "@if (nextExcused > 0)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "open-excused-modal"
+    },
+    "events": [],
+    "bindings": [
+     "[initialBreakpoint]=\"0.75\"",
+     "[breakpoints]=\"[0, 0.5, 0.75, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "home-dashboard/components/next-event-card/next-event-card.component#modal-0aa79f4a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:183",
+     "lib/features/dashboard/presentation/widgets/event_cards.dart:228"
+    ],
+    "n": "Tippen auf 'Abgemeldet' (nur bei >0) öffnet Bottom-Sheet, Start 75 %, bis Vollhöhe ziehbar (Ionic Breakpoints 0/0.5/0.75/1).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart"
+   ]
+  }
+ ]
+}

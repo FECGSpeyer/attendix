@@ -1,0 +1,2342 @@
+{
+ "batch": "zz-verify5c-sonnet-33",
+ "ionicCommit": "1923d203",
+ "items": [
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/handover/handover.page",
+   "ionic": {
+    "ts": "settings/handover/handover.page.ts",
+    "html": "settings/handover/handover.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/handover/handover.page.html",
+    "line": 79,
+    "cond": [
+     "@if (filters.includes('younger') || filters.includes('older'))",
+     "@if (filters.includes('younger'))"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "handover.youngerThan"
+    ],
+    "de": [
+     "Jünger als"
+    ],
+    "literals": [],
+    "text": "{{ 'handover.youngerThan' | transloco }}",
+    "id": "settings/handover/handover.page#text-9ab2f207"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/handover_page.dart:225"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/settings/presentation/pages/handover_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/help/article/help-article.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=navigateBack()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "arrow-back"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/help/article/help-article.page#action-40c0f47e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:32",
+     "lib/features/help/presentation/pages/help_article_page.dart:34"
+    ],
+    "n": "Flutter besser: Button (arrow-back) gleich; Wirkung wie nav-63850d0a (Flutter kehrt zur aufrufenden Seite zurück statt immer zur Hilfe-Übersicht).",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/help/article/help-article.page.html",
+    "line": 8,
+    "cond": [],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [
+     "Hilfe"
+    ],
+    "bound": [
+     "{{ article?.title ?? 'Hilfe' }}"
+    ],
+    "text": "{{ article?.title ?? 'Hilfe' }}",
+    "id": "settings/help/article/help-article.page#text-6bc16511"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:36"
+    ],
+    "n": "Artikeltitel, sonst „Hilfe“ (Flutter l10n helpTitle, Ionic festes Literal).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/help/article/help-article.page",
+   "ionic": {
+    "ts": "settings/help/article/help-article.page.ts",
+    "html": "settings/help/article/help-article.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/help/article/help-article.page.html",
+    "line": 16,
+    "cond": [
+     "@else (not article)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "help.articleNotFound"
+    ],
+    "de": [
+     "Dieser Artikel wurde nicht gefunden."
+    ],
+    "literals": [],
+    "text": "{{ 'help.articleNotFound' | transloco }}",
+    "id": "settings/help/article/help-article.page#text-f416d4a2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/help/presentation/pages/help_article_page.dart:43"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/help/presentation/pages/help_article_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 212,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=openChurchModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ getChurchLabel() }}",
+    "id": "settings/settings/settings.page#action-2226c143"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:402",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:403",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:493"
+    ],
+    "n": "Text-Button rechts mit „Bitte auswählen“ / „Nicht gelistet“ / Gemeindename wie getChurchLabel, öffnet die Gemeinde-Auswahl (Suche geleert). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 282,
+    "cond": [
+     "@if (userData?.img && userData.img !== 'https://ionicframework.com/docs/img/demos/avatar.svg')",
+     "in <ion-modal isOpen=\"isImageViewerOpen\">"
+    ],
+    "tag": "app-image-viewer",
+    "attrs": {},
+    "events": [
+     "(closed)=closePassImageViewer()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"userData.img.replace('?quality=20', '')\"",
+     "[attr.title]=\"'settings.passPhoto' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "settings.passPhoto"
+    ],
+    "de": [
+     "Passbild"
+    ],
+    "literals": [],
+    "text": "[attr.title]=\"'settings.passPhoto' | transloco\"",
+    "id": "settings/settings/settings.page#action-46a45423"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:153",
+     "lib/shared/widgets/sheets/image_viewer_sheet.dart:276"
+    ],
+    "n": "Ionic setzt nur das HTML-Attribut title='Passbild' (Kopfzeile des Viewers bleibt leer, Tooltip im Web) / Flutter zeigt 'Passbild.jpg' als Titel in der Kopfzeile.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 169,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "in <ion-item>"
+    ],
+    "tag": "img",
+    "attrs": {},
+    "events": [
+     "(error)=$event.target.src='assets/icon/avatar-placeholder.svg'"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[src]=\"userData.img || 'assets/icon/avatar-placeholder.svg'\"",
+     "[attr.alt]=\"'settings.profilePicture' | transloco\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#action-de860e09-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:299",
+     "lib/shared/widgets/display/avatar.dart:44"
+    ],
+    "n": "Passbild rechts im Eintrag; ohne Bild oder bei Ladefehler Platzhalter-Avatar (avatar-placeholder.svg nachgebildet).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 230,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=selectChurch(field.id, '')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [
+     "settings.notListed"
+    ],
+    "de": [
+     "Nicht gelistet"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.notListed' | transloco }}",
+    "id": "settings/settings/settings.page#action-ed6b5ba6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:133",
+     "lib/features/profile/presentation/widgets/church_picker.dart:134",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:515"
+    ],
+    "n": "„Nicht gelistet“ immer zuerst, Haken bei Wert '', setzt '' und schließt.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 945,
+    "cond": [
+     "in <ion-modal isOpen=\"isInstancesModalOpen\" #instancesModal>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "instance-settings-button"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "cog-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#action-f029eaa1-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:394",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:397",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:406"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 164,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=changeImg()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "settings.passPhoto"
+    ],
+    "de": [
+     "Passbild"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.passPhoto' | transloco }}",
+    "id": "settings/settings/settings.page#action-faf7c001"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:295",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:296",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:297"
+    ],
+    "n": "Zeile 'Passbild' mit Avatar rechts öffnet das Aktionsblatt.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "actionsheet",
+    "file": "settings/settings/settings.page.ts",
+    "line": 861,
+    "method": "SettingsPage.changeImg",
+    "cond": [],
+    "header": null,
+    "subHeader": null,
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "settings.replacePhoto"
+       ],
+       "de": [
+        "Passbild ersetzen"
+       ],
+       "literals": [],
+       "expr": "translate('settings.replacePhoto')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "() => { this.chooser.nativeElement.click(); }"
+     },
+     {
+      "expr": "...additionalButtons",
+      "keys": [],
+      "de": [],
+      "literals": []
+     },
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": null,
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     }
+    ],
+    "src": "3e66254a",
+    "mbody": "f0120b7d",
+    "id": "settings/settings/settings.page#actionsheet-0d48212e"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:118",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:121",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:126",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:132",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:137"
+    ],
+    "n": "Buttons 'Passbild ersetzen', bei echtem Bild 'Passbild ansehen' + 'Passbild entfernen' (destruktiv), 'Abbrechen' in gleicher Reihenfolge. Flutter zeigt zusätzlich Icons vor den Einträgen.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "alert",
+    "file": "settings/settings/settings.page.ts",
+    "line": 876,
+    "method": "SettingsPage.removeImg",
+    "cond": [],
+    "header": {
+     "keys": [
+      "settings.removePhoto"
+     ],
+     "de": [
+      "Passbild entfernen"
+     ],
+     "literals": [],
+     "expr": "translate('settings.removePhoto')"
+    },
+    "subHeader": null,
+    "message": {
+     "keys": [
+      "settings.removePhotoConfirm"
+     ],
+     "de": [
+      "Möchtest du dein Passbild wirklich entfernen?"
+     ],
+     "literals": [],
+     "expr": "translate('settings.removePhotoConfirm')"
+    },
+    "buttons": [
+     {
+      "text": {
+       "keys": [
+        "common.cancel"
+       ],
+       "de": [
+        "Abbrechen"
+       ],
+       "literals": [],
+       "expr": "translate('common.cancel')"
+      },
+      "role": "cancel",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": null
+     },
+     {
+      "text": {
+       "keys": [
+        "common.remove"
+       ],
+       "de": [
+        "Entfernen"
+       ],
+       "literals": [],
+       "expr": "translate('common.remove')"
+      },
+      "role": "destructive",
+      "icon": null,
+      "cssClass": null,
+      "type": null,
+      "label": null,
+      "name": null,
+      "placeholder": null,
+      "value": null,
+      "checked": null,
+      "handler": "async () => { try { const fileName = this.userData.img.split('/').pop().replace('?quality=20', ''); await this.db.removeImage(this.userData.id, fileName, false, this.userData.appId || ''); this.userData.img = DEFAULT_IMAGE; this.closePassI…"
+     }
+    ],
+    "inputs": [],
+    "cssClass": null,
+    "backdropDismiss": null,
+    "src": "6b4ed03e",
+    "mbody": "0caf3a18",
+    "id": "settings/settings/settings.page#alert-311384de"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:203",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:208",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:209",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:210",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:211"
+    ],
+    "n": "Nur in 'Meine Stammdaten' bei eigenem, nicht Standard-Passbild – jede Rolle mit eigenem player-Eintrag (beide). Titel 'Passbild entfernen', Nachricht, Abbrechen / Entfernen (destruktiv).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "embed",
+    "file": "settings/settings/settings.page.html",
+    "line": 33,
+    "cond": [],
+    "tag": "app-notification-bell",
+    "bindings": [],
+    "bindingExprs": [],
+    "events": [],
+    "id": "settings/settings/settings.page#embed-ea4c4538"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:148",
+     "lib/features/messages/presentation/widgets/notification_bell.dart:26"
+    ],
+    "n": "Glocke rechts in der Toolbar; mit Sidepanel ausgeblendet wie Ionic global.scss (body.side-panel-active).",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 182,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "tel"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.phone\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-2ea6e874"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:318",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:322"
+    ],
+    "n": "Tastatur Telefon.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 186,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-datetime-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-3a03c0eb"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:326",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:329",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:331",
+     "lib/features/profile/presentation/widgets/profile_helpers.dart:41"
+    ],
+    "n": "Datums-Button im Format '16. Feb. 2002'. Ohne Geburtsdatum: Ionic ion-datetime-button zeigt das heutige Datum / Flutter 'Auswählen'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 189,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "in <ion-modal>"
+    ],
+    "tag": "ion-datetime",
+    "attrs": {
+     "id": "birthday-master-data",
+     "presentation": "date",
+     "[max]": "\"max\""
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.birthday\"",
+    "bindings": [
+     "[locale]=\"'common.intlLocale' | transloco\"",
+     "[firstDayOfWeek]=\"1\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-3b74f121"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:103",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:107",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:108",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:113"
+    ],
+    "n": "Nur Datum, max. heute, App-Sprache; gespeichert als yyyy-MM-dd.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 174,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.firstName\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-3e74ed2d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:306",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:310"
+    ],
+    "n": "Text, Großschreibung Wörter; Flutter trimmt beim Speichern.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 256,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else (not field.type === fieldTypes.BOOLEAN / field.type === fieldTypes.SELECT / field.type === fieldTypes.BFECG_CHURCH / field.type === fieldTypes.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "settings/settings/settings.page#field-509e17fd-2"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:416"
+    ],
+    "n": "Flutter besser: Feldtyp textarea als dreizeiliges Eingabefeld (maxLines 3) / Ionic: für text, textarea und date dasselbe einzeilige ion-input. Sonst gleich (Label oben, Großschreibung Satzanfang, Rollen/editableByPlayers wie Ionic). Erstprüfer übersah die Textarea-Höhe. Nebenbei ohne Wirkung: unberührte leere Textfelder speichert Flutter als '', Ionic lässt den Schlüssel weg (Anzeige gleich).",
+    "sev": "niedrig",
+    "v": "korrigiert",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 178,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "text"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.lastName\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-62eaf0c4"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:312",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:316"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 205,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "\"option\"",
+      "keys": [],
+      "de": [],
+      "literals": [],
+      "text": "{{ option }}"
+     }
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\" {{ option }}",
+    "id": "settings/settings/settings.page#field-b5ead18a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:377",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:383",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:394"
+    ],
+    "n": "Auswahl mit Feldname und allen Optionen in Reihenfolge. Ohne Wert: Ionic leer / Flutter Platzhalter 'Bitte auswählen'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "loading",
+    "file": "settings/settings/settings.page.ts",
+    "line": 957,
+    "method": "SettingsPage.onImageSelect",
+    "cond": [],
+    "message": null,
+    "duration": "3000",
+    "src": "ed67f83b",
+    "mbody": "c402d055",
+    "id": "settings/settings/settings.page#loading-f3f08e9f"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:160",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:178"
+    ],
+    "n": "Ionic: blockierendes Loading während des Passbild-Uploads / Flutter: kein Ladeindikator beim Upload.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 279,
+    "method": "SettingsPage.openPlanning",
+    "cond": [],
+    "component": "PlanningPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": "'planningModal'",
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "59d76cda",
+    "mbody": "0f941a3b",
+    "id": "settings/settings/settings.page#modal-574f5f7c"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:360",
+     "lib/core/router/app_router.dart:901"
+    ],
+    "n": "Nur Optik (Leon 05.11.2026): Ablaufpläne öffnen als Seite statt Modal, gleiche Funktion und Rückkehr. – Befund: Ionic: 'Ablaufpläne' öffnet PlanningPage als Karten-Modal (presentingElement, cssClass planningModal, Schließen-X) / Flutter: context.push('/planning') – normale Seite im Shell mit Zurück-Pfeil (Statistik/Export/Verlauf öffnet Flutter dagegen als Modal).",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/core/router/app_router.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 261,
+    "method": "SettingsPage.openStats",
+    "cond": [],
+    "component": "StatsPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "998ea905",
+    "mbody": "4b9ace39",
+    "id": "settings/settings/settings.page#modal-6205e9c6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:443",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:44"
+    ],
+    "n": "iOS Karten-Modal, md showIonModal (Vollbild bzw. Desktop-Karte).",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 932,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isInstancesModalOpen\"",
+     "#": "instancesModal"
+    },
+    "events": [
+     "(ionModalDidDismiss)=isInstancesModalOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isInstancesModalOpen\"",
+     "[breakpoints]=\"[0, 0.5, 1]\"",
+     "[initialBreakpoint]=\".5\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-712205ec"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:119",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:33",
+     "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:35"
+    ],
+    "n": "Sheet initial halbe Höhe, auf volle Höhe ziehbar.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 187,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {},
+    "events": [],
+    "bindings": [
+     "[keepContentsMounted]=\"true\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-889ed29c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:101",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:103"
+    ],
+    "n": "Plattform-Datumsdialog statt ion-modal mit ion-datetime.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.ts",
+    "line": 252,
+    "method": "SettingsPage.openHistoryModal",
+    "cond": [],
+    "component": "HistoryPage",
+    "props": [],
+    "sheet": false,
+    "breakpoints": null,
+    "cssClass": null,
+    "presentingElement": true,
+    "canDismiss": null,
+    "src": "6dfd3ef0",
+    "mbody": "cee12efd",
+    "id": "settings/settings/settings.page#modal-8e265ba0"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/settings/presentation/pages/settings_page.dart:323",
+     "lib/features/history/presentation/pages/history_page.dart:32"
+    ],
+    "n": "iOS: Karten-Modal wie Ionic (presentingElement). md/Android/Desktop: Ionic Vollbild- bzw. zentriertes Desktop-Modal / Flutter context.push('/history') als normale Seite im Shell.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/history/presentation/pages/history_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 215,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "[isOpen]": "\"isChurchModalOpen\""
+    },
+    "events": [
+     "(didDismiss)=isChurchModalOpen = false"
+    ],
+    "bindings": [
+     "[isOpen]=\"isChurchModalOpen\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-b0fe3226"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:505",
+     "lib/features/profile/presentation/widgets/church_picker.dart:16",
+     "lib/features/profile/presentation/widgets/church_picker.dart:31"
+    ],
+    "n": "Ionic: Vollbild-ion-modal (ohne Breakpoints) / Flutter: Bottom-Sheet mit 95 % Höhe; Inhalt (Titel Feldname, Schließen, Suche, 'Nicht gelistet', Häkchen) gleich.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "settings/settings/settings.page.html",
+    "line": 154,
+    "cond": [
+     "@if (userData)"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "master-data-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, .9]\"",
+     "[initialBreakpoint]=\"0.9\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "settings/settings/settings.page#modal-d69db991"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/profile_hero_card.dart:76",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:25",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:35"
+    ],
+    "n": "Sheet mit 90 % Höhe ([0, .9]), Titel 'Meine Stammdaten'.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 219,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-2eb08111"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:83",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:507"
+    ],
+    "n": "Titel der Gemeinde-Auswahl = Feldname. Erreichbar nur über action-2226c143, gleiche Rollen-/Feldbedingung.",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 177,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.lastName"
+    ],
+    "de": [
+     "Nachname"
+    ],
+    "literals": [],
+    "text": "{{ 'people.lastName' | transloco }}",
+    "id": "settings/settings/settings.page#text-3f284c53"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:313"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 260,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@else (not field.editableByPlayers)"
+    ],
+    "tag": "h3",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-7b00fe14"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:360",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:363"
+    ],
+    "n": "Nicht editierbares Zusatzfeld: Feldname (h3) + Anzeigewert darunter.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 261,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@else (not field.editableByPlayers)"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getExtraFieldDisplayValue(field) }}"
+    ],
+    "text": "{{ getExtraFieldDisplayValue(field) }}",
+    "id": "settings/settings/settings.page#text-88aeecc7"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:364",
+     "lib/features/profile/presentation/widgets/profile_helpers.dart:49",
+     "lib/features/profile/presentation/widgets/profile_helpers.dart:67"
+    ],
+    "n": "Anzeige nicht editierbarer Felder wie getExtraFieldDisplayValue, außer: Datum – Ionic Rohwert / Flutter dd.MM.yyyy; Ja/Nein ohne Wert – Ionic 'Nein' / Flutter Default-Wert.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 196,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "settings.extraFields"
+    ],
+    "de": [
+     "Zusatzfelder"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.extraFields' | transloco }}",
+    "id": "settings/settings/settings.page#text-ae364b7b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:336",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:337"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 185,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.birthday"
+    ],
+    "de": [
+     "Geburtsdatum"
+    ],
+    "literals": [],
+    "text": "{{ 'people.birthday' | transloco }}",
+    "id": "settings/settings/settings.page#text-cc31d22d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:325"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 173,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "people.firstName"
+    ],
+    "de": [
+     "Vorname"
+    ],
+    "literals": [],
+    "text": "{{ 'people.firstName' | transloco }}",
+    "id": "settings/settings/settings.page#text-cded50f5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:307"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 181,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "settings.mobile"
+    ],
+    "de": [
+     "Handynummer"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.mobile' | transloco }}",
+    "id": "settings/settings/settings.page#text-d57cbb48"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:319"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 202,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-f17f7f72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:369",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:371"
+    ],
+    "n": "Feldname als Label vor dem Schalter (Typ boolean, editableByPlayers). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 211,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-f17f7f72-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:398",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:400"
+    ],
+    "n": "Feldname als Label der Gemeinde-Zeile (Typ bfecg_church). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+    "v": "bestätigt",
+    "flutterAt": "8004a44"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 984,
+    "method": "SettingsPage.onImageSelect",
+    "cond": [
+     "!(imgFile.type.substring(0, 5) === 'image')",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [
+      "settings.photoChangeFailed"
+     ],
+     "de": [
+      "Fehler beim ändern des Passbildes, versuche es später erneut"
+     ],
+     "literals": [],
+     "expr": "translate('settings.photoChangeFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "51280d68",
+    "mbody": "c402d055",
+    "id": "settings/settings/settings.page#toast-3f7aaa6b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:190",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:196"
+    ],
+    "n": "Flutter-Picker erlaubt nur Bilder; derselbe Text erscheint bei fehlgeschlagenem Upload.",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 964,
+    "method": "SettingsPage.onImageSelect",
+    "cond": [
+     "(imgFile.size > 2 * 1024 * 1024)",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [
+      "settings.imageTooBig"
+     ],
+     "de": [
+      "Das Bild darf maximal 2MB groß sein."
+     ],
+     "literals": [],
+     "expr": "translate('settings.imageTooBig')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "7efd55f7",
+    "mbody": "c402d055",
+    "id": "settings/settings/settings.page#toast-453ee9ac"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:165",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:175"
+    ],
+    "n": "Flutter besser: gleicher Text 'Das Bild darf maximal 2MB groß sein.', aber Flutter prüft erst nach dem Verkleinern (image_picker maxWidth/Height 1200, Qualität 85, auch im Web per Canvas) – große Fotos werden verkleinert hochgeladen statt abgelehnt; Meldung erscheint praktisch nie. Ionic lehnt Originaldateien > 2 MB ab.",
+    "sev": "niedrig",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 893,
+    "method": "SettingsPage.removeImg",
+    "cond": [],
+    "message": {
+     "keys": [
+      "settings.photoRemoved"
+     ],
+     "de": [
+      "Das Passbild wurde erfolgreich entfernt"
+     ],
+     "literals": [],
+     "expr": "translate('settings.photoRemoved')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "a59a9a94",
+    "mbody": "0caf3a18",
+    "id": "settings/settings/settings.page#toast-629827a8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:218"
+    ],
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 979,
+    "method": "SettingsPage.onImageSelect",
+    "cond": [
+     "(imgFile.type.substring(0, 5) === 'image')",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [],
+     "de": [],
+     "literals": [],
+     "expr": "error"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "c44cf0d9",
+    "mbody": "c402d055",
+    "id": "settings/settings/settings.page#toast-a9658903"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:188",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:193"
+    ],
+    "n": "Ionic: Upload-Fehler zeigt die rohe Fehlermeldung / Flutter: festen Text 'Fehler beim ändern des Passbildes, versuche es später erneut'.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 977,
+    "method": "SettingsPage.onImageSelect",
+    "cond": [
+     "(imgFile.type.substring(0, 5) === 'image')",
+     "(imgFile)"
+    ],
+    "message": {
+     "keys": [
+      "settings.photoChanged"
+     ],
+     "de": [
+      "Das Passbild wurde erfolgreich geändert."
+     ],
+     "literals": [],
+     "expr": "translate('settings.photoChanged')"
+    },
+    "color": "success",
+    "duration": null,
+    "src": "0fcc82f4",
+    "mbody": "c402d055",
+    "id": "settings/settings/settings.page#toast-b5f2fce2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:186"
+    ],
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "toast",
+    "file": "settings/settings/settings.page.ts",
+    "line": 895,
+    "method": "SettingsPage.removeImg",
+    "cond": [],
+    "message": {
+     "keys": [
+      "settings.photoRemoveFailed"
+     ],
+     "de": [
+      "Fehler beim Entfernen des Passbildes, versuche es später erneut"
+     ],
+     "literals": [],
+     "expr": "translate('settings.photoRemoveFailed')"
+    },
+    "color": "danger",
+    "duration": null,
+    "src": "7b91e937",
+    "mbody": "0caf3a18",
+    "id": "settings/settings/settings.page#toast-c11515af"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:220",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:222",
+     "lib/data/repositories/profile_repository.dart:456"
+    ],
+    "n": "Auch im Demo-Modus gleich (checkDemoRestriction ↔ ensureNotDemo wirft → dieser Toast).",
+    "v": "bestätigt",
+    "flutterAt": "b218510"
+   },
+   "flutterChanged": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart",
+    "lib/data/repositories/profile_repository.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/voice-leader/voice-leader.page.html",
+    "line": 81,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not groupMembers.length === 0)",
+     "@for (member of groupMembers; track member.id; let last = $last)",
+     "@if (member.upcomingAbsences.length > 0)",
+     "@for (absence of member.upcomingAbsences; track absence.id)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "class": "absence-badge",
+     "[color]": "\"getAbsenceColor(absence.status)\""
+    },
+    "bindings": [
+     "[color]=\"getAbsenceColor(absence.status)\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ getAbsenceText(absence) }}"
+    ],
+    "text": "{{ getAbsenceText(absence) }}",
+    "id": "settings/voice-leader/voice-leader.page#text-2c67af35"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:296",
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:298",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:125"
+    ],
+    "n": "Datum dd.MM., typeInfo bzw. Typname, Farben (Entschuldigt/Verspätet entschuldigt gelb, Abwesend rot) gleich. Ionic: getPersonAttendances lädt attType ohne hide_name → Typname wird auch bei \"Name ausblenden\" angezeigt (\"12.05. Probe\") / Flutter beachtet hide_name und zeigt nur \"12.05.\".",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/voice-leader/voice-leader.page.html",
+    "line": 51,
+    "cond": [
+     "@else (not isLoading)",
+     "@else (not groupMembers.length === 0)",
+     "@for (member of groupMembers; track member.id; let last = $last)",
+     "@if (member.isLeader)"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "color": "primary"
+    },
+    "keys": [
+     "voiceLeader.sfShort"
+    ],
+    "de": [
+     "Sf"
+    ],
+    "literals": [],
+    "text": "{{ 'voiceLeader.sfShort' | transloco }}",
+    "id": "settings/voice-leader/voice-leader.page#text-b3aad9b6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:255",
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:257"
+    ],
+    "n": "Badge „Sf“ (primary) bei isLeader; Seite in beiden nur Stimmführer/Stf.-Helfer (route_access.dart).",
+    "v": "bestätigt",
+    "flutterAt": "2157fa0"
+   },
+   "flutterChanged": [
+    "lib/features/voice_leader/presentation/pages/voice_leader_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "settings/voice-leader/voice-leader.page",
+   "ionic": {
+    "ts": "settings/voice-leader/voice-leader.page.ts",
+    "html": "settings/voice-leader/voice-leader.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/voice-leader/voice-leader.page.html",
+    "line": 27,
+    "cond": [
+     "@else (not isLoading)"
+    ],
+    "tag": "strong",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ groupName }}"
+    ],
+    "text": "{{ groupName }}",
+    "id": "settings/voice-leader/voice-leader.page#text-e0cad10d"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:84",
+     "lib/features/voice_leader/presentation/pages/voice_leader_page.dart:166",
+     "lib/features/voice_leader/data/providers/voice_leader_providers.dart:48"
+    ],
+    "n": "Gruppenname gleich. Fallback ohne Gruppe: Ionic \"Meine Stimme\" (voiceLeader.myVoice) / Flutter \"Stimmgruppe\" (voiceLeaderFlutterVoiceGroup); Flutter zeigt den Fallback auch kurz, solange der Name noch lädt.",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 48,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "@if (isEditMode)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "id": "add-field-trigger"
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared-plan/shared-plan.page#action-3a3d613f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:789-797",
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:668-676"
+    ],
+    "n": "„+“ nur im Bearbeitungsmodus, Popover mit „Feld hinzufügen“/„Notiz hinzufügen“.",
+    "v": "bestätigt",
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 71,
+    "cond": [
+     "@if (!loading && !notFound)",
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "[button]": "\"isEditMode\"",
+     "[detail]": "\"false\""
+    },
+    "events": [
+     "(click)=editField(field)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[class.active-slot]=\"liveMode && i === activeFieldIndex\"",
+     "[class.done-slot]=\"liveMode && i < activeFieldIndex\"",
+     "[class.plan-group-head]=\"field.isGroup\"",
+     "[class.plan-group-child]=\"!!field.groupId\""
+    ],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "planning.minShort"
+    ],
+    "de": [
+     "{min} min"
+    ],
+    "literals": [],
+    "text": "{{ field.name }} {{ calculateTime(field, i) }} {{ field.info }} {{ getActiveCountdown() }} {{ 'planning.minShort' | transloco: { min: (field | planMinutes: fields) } }}",
+    "id": "shared-plan/shared-plan.page#action-3bb4b647"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/planning/presentation/widgets/plan_view_list.dart:106-205",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:155-160",
+     "lib/features/planning/presentation/widgets/plan_fields_editor.dart:515"
+    ],
+    "n": "Zeile mit Name, „HH:mm | Ausführender“, Info, „{min} min“ bzw. Countdown-Plakette beim aktiven Feld, Tippen → Feld bearbeiten (nur Bearbeitungsmodus) gleich. Ionic: Block-Kopf zeigt Startzeit, Tippen auf Kopf → Feld bearbeiten / Flutter: Kopf zeigt Zeitspanne „10:37 – 10:55“, Tippen → Block-Aktionsblatt; Tagesordnungsfelder „TOP n · Titel“, Agenda-Platzhalter ausgeblendet",
+    "sev": "niedrig",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart"
+   ]
+  },
+  {
+   "reason": "flutter-geaendert",
+   "unit": "shared-plan/shared-plan.page",
+   "ionic": {
+    "ts": "shared-plan/shared-plan.page.ts",
+    "html": "shared-plan/shared-plan.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "shared-plan/shared-plan.page.html",
+    "line": 11,
+    "cond": [
+     "@if (!loading && !notFound)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=showExportOptions()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "share-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "shared-plan/shared-plan.page#action-3d7a5ead"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/planning/presentation/pages/shared_plan_page.dart:758-759"
+    ],
+    "n": "Teilen-Icon (ios_share) → Export-Sheet, nur geladen und gefunden",
+    "v": null,
+    "flutterAt": "1aba6be"
+   },
+   "flutterChanged": [
+    "lib/features/planning/presentation/pages/shared_plan_page.dart"
+   ]
+  }
+ ]
+}
