@@ -140,6 +140,11 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   int _dutyRequired = 1;
   bool _dutySelfSignup = true;
   int? _dutyConfirmReminderDays = 2;
+
+  /// Ionic onDutyToggle sets duty_confirm_reminder_days to 2 only while it
+  /// is still `undefined`: a new type whose reminder was never chosen
+  /// (field-8aa4fd37). A chosen "Aus" (null) stays.
+  bool _dutyReminderDaysUnset = false;
   bool _dutyNotifyUnderstaffed = true;
   int? _dutyUrgentHours;
 
@@ -248,6 +253,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         _dutyRequired = type.dutyRequired ?? 1;
         _dutySelfSignup = type.dutySelfSignup;
         _dutyConfirmReminderDays = type.dutyConfirmReminderDays;
+        _dutyReminderDaysUnset = _isNew;
         _dutyNotifyUnderstaffed = type.dutyNotifyUnderstaffed;
         _dutyUrgentHours = type.dutyUrgentHours;
         _color = type.color ?? 'primary';
@@ -900,6 +906,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
               if (value) {
                 // Nobody is expected until assigned, so new Termine start neutral.
                 if (_dutyRequired < 1) _dutyRequired = 1;
+                if (_dutyReminderDaysUnset) {
+                  _dutyConfirmReminderDays = 2;
+                  _dutyReminderDaysUnset = false;
+                }
                 _availableStatuses = {
                   ..._availableStatuses,
                   AttendanceStatus.neutral,
@@ -961,7 +971,10 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                   DropdownMenuItem(value: 3, child: Text(context.l10n.typeSettingsAfter3Days)),
                   DropdownMenuItem(value: 7, child: Text(context.l10n.typeSettingsAfter7Days)),
                 ],
-                onChanged: (v) => mark(() => _dutyConfirmReminderDays = v),
+                onChanged: (v) => mark(() {
+                  _dutyConfirmReminderDays = v;
+                  _dutyReminderDaysUnset = false;
+                }),
               ),
             ),
             SwitchListTile.adaptive(

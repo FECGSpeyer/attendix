@@ -208,10 +208,13 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         // Ionic login() in linkMode: ssoLink catches the sign-in error and
         // only shows a danger toast. No follow-up dialog, in particular no
         // switch to the code login (it would not link the Microsoft account).
-        _showError(failure.kind == LoginFailureKind.invalidCredentials ||
-                failure.message == null
-            ? context.l10n.authInvalidCredentials
-            : failure.message);
+        // Ionic AuthService.login: email_not_confirmed → "Bitte bestätige
+        // zuerst deine E-Mail-Adresse." (db-5e5596ce).
+        _showError(switch (failure.kind) {
+          LoginFailureKind.emailNotConfirmed => context.l10n.authConfirmEmailFirst,
+          LoginFailureKind.invalidCredentials => context.l10n.authInvalidCredentials,
+          _ => failure.message ?? context.l10n.authInvalidCredentials,
+        });
         return;
       }
       _showError(failure.message);
