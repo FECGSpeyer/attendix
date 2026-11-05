@@ -1,6 +1,6 @@
 import 'dart:typed_data';
 
-import 'package:excel/excel.dart';
+import 'package:excel_community/excel_community.dart';
 import 'package:flutter/material.dart';
 import 'package:intl/intl.dart';
 import 'package:pdf/pdf.dart';
@@ -9,6 +9,7 @@ import 'package:printing/printing.dart';
 
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
+import '../../data/models/church/church.dart';
 import '../../data/models/person/person.dart';
 import '../../l10n/l10n.dart';
 import 'native/native_file_service.dart';
@@ -28,6 +29,17 @@ class ExportTableStyle {
 ///
 /// Based on Ionic export.page.ts
 class ExportService {
+  /// Workbook with exactly one sheet named [name] (Ionic `book_new` +
+  /// `book_append_sheet`). `Excel.createExcel()` already contains an empty
+  /// default sheet "Sheet1", so rename it instead of adding a second sheet.
+  static Excel _singleSheetWorkbook(String name) {
+    final excel = Excel.createExcel();
+    final defaultSheet = excel.getDefaultSheet() ?? 'Sheet1';
+    if (defaultSheet != name) excel.rename(defaultSheet, name);
+    excel.setDefaultSheet(name);
+    return excel;
+  }
+
   /// Ionic `exportPlayerPDF` auto-fit steps (font size / cell padding in mm):
   /// default 11/3.5 → padding 2 → font 9 → font 8 + padding 1.5.
   static const List<ExportTableStyle> playerListFitSteps = [
@@ -117,12 +129,15 @@ class ExportService {
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
-    final excel = Excel.createExcel();
-    final sheet = excel[l10nWithoutContext.coreFlutterExportPlayerListSheet];
+    // Ionic exportPlayerExcel: one sheet "Anwesenheit", header row starts
+    // with an empty cell, no styling.
+    final sheetName = l10nWithoutContext.exportAttendance;
+    final excel = _singleSheetWorkbook(sheetName);
+    final sheet = excel[sheetName];
 
     // Header row
     sheet.appendRow([
-      TextCellValue('#'),
+      TextCellValue(''),
       ...fields.map((f) => TextCellValue(f)),
     ]);
 
@@ -134,16 +149,6 @@ class ExportService {
         ...fields.map((f) => TextCellValue(fieldValue(player, f))),
       ]);
       row++;
-    }
-
-    // Style header
-    for (int i = 0; i <= fields.length; i++) {
-      final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 0));
-      cell.cellStyle = CellStyle(
-        bold: true,
-        backgroundColorHex: ExcelColor.fromHexString('#005238'),
-        fontColorHex: ExcelColor.white,
-      );
     }
 
     return Uint8List.fromList(excel.encode()!);
@@ -197,9 +202,8 @@ class ExportService {
     // Prepare attendance dates
     final attDates = limitedAttendances.map((a) {
       final d = DateTime.tryParse(a.date);
-      return d != null
-          ? DateFormat(currentLanguage() == 'de' ? 'dd.MM' : dateFmt(DateFmtKind.dayMonth)).format(d)
-          : '';
+      // Ionic exportType: dayjs(att.date).format(dateFmt('short'))
+      return d != null ? DateFormat(dateFmt(DateFmtKind.short)).format(d) : '';
     }).toList();
 
     // Build data rows
@@ -345,8 +349,9 @@ class ExportService {
     String Function(Person player, String field)? valueOf,
   }) async {
     final fieldValue = valueOf ?? _getPlayerFieldValue;
-    final excel = Excel.createExcel();
-    final sheet = excel[l10nWithoutContext.exportAttendance];
+    final sheetName = l10nWithoutContext.exportAttendance;
+    final excel = _singleSheetWorkbook(sheetName);
+    final sheet = excel[sheetName];
 
     // Attendance dates
     final attDates = attendances.map((a) {
@@ -354,9 +359,9 @@ class ExportService {
       return d != null ? DateFormat(dateFmt(DateFmtKind.short)).format(d) : '';
     }).toList();
 
-    // Header row
+    // Header row (Ionic: first cell empty)
     sheet.appendRow([
-      TextCellValue('#'),
+      TextCellValue(''),
       ...fields.map((f) => TextCellValue(f)),
       ...attDates.map((d) => TextCellValue(d)),
     ]);
@@ -646,86 +651,60 @@ class ExportService {
     return '${hours.toString().padLeft(2, '0')}:${mins.toString().padLeft(2, '0')}';
   }
 
-  /// Export a single attendance to Excel
-  /// Shows all persons with their status for this attendance
+  /// Export a single attendance to Excel (Ionic Utils.exportAttendanceToExcel):
+  /// Nachname, Vorname, Gruppe, [Gemeinde], Status letter, Bemerkung; one
+  /// sheet "Anwesenheit"; file "{Termin}_{DD_MM_YYYY}_Anwesenheit.xlsx".
   Future<void> exportAttendanceToExcel({
     required BuildContext context,
     required Attendance attendance,
+    required String typeName,
     required List<Person> persons,
     required Map<int, AttendanceStatus> statuses,
-    required String tenantName,
+    required Map<int, String?> notes,
+    List<Church> churches = const [],
+    String? churchFieldId,
   }) async {
     final l10n = l10nWithoutContext;
-    final excel = Excel.createExcel();
-    final sheet = excel[l10n.exportAttendance];
+    final sheetName = l10n.exportAttendance;
+    final excel = _singleSheetWorkbook(sheetName);
+    final sheet = excel[sheetName];
+    final withChurch = churches.isNotEmpty;
 
-    // Format attendance date
+    sheet.appendRow([
+      TextCellValue(l10n.exportLastName),
+      TextCellValue(l10n.exportFirstName),
+      TextCellValue(l10n.exportGroup),
+      if (withChurch) TextCellValue(l10n.exportChurch),
+      TextCellValue(l10n.exportStatus),
+      TextCellValue(l10n.exportNotes),
+    ]);
+
+    for (final person in persons) {
+      final churchId = person.additionalFields?[churchFieldId ?? 'bfecg_church'];
+      sheet.appendRow([
+        TextCellValue(person.lastName),
+        TextCellValue(person.firstName),
+        TextCellValue(person.groupName ?? ''),
+        if (withChurch)
+          TextCellValue(
+              churches.where((c) => c.id == churchId).firstOrNull?.name ?? ''),
+        TextCellValue(_getStatusCode(
+            statuses[person.id] ?? AttendanceStatus.neutral)),
+        TextCellValue(notes[person.id] ?? ''),
+      ]);
+    }
+
     final dateObj = DateTime.tryParse(attendance.date);
     final dateStr = dateObj != null
-        ? DateFormat(dateFmt()).format(dateObj)
+        ? DateFormat('dd_MM_yyyy').format(dateObj.toLocal())
         : attendance.date;
+    final name = (attendance.typeInfo?.isNotEmpty ?? false)
+        ? attendance.typeInfo!
+        : typeName;
 
-    // Title row
-    sheet.appendRow([
-      TextCellValue('$tenantName - ${l10n.exportAttendance} $dateStr'),
-    ]);
-    sheet.appendRow([]); // Empty row
-
-    // Header row
-    sheet.appendRow([
-      TextCellValue('#'),
-      TextCellValue(l10n.exportFirstName),
-      TextCellValue(l10n.exportLastName),
-      TextCellValue(l10n.exportGroup),
-      TextCellValue(l10n.exportStatus),
-    ]);
-
-    // Style header
-    for (int i = 0; i < 5; i++) {
-      final cell = sheet.cell(CellIndex.indexByColumnRow(columnIndex: i, rowIndex: 2));
-      cell.cellStyle = CellStyle(
-        bold: true,
-        backgroundColorHex: ExcelColor.fromHexString('#005238'),
-        fontColorHex: ExcelColor.white,
-      );
-    }
-
-    // Data rows
-    int row = 1;
-    for (final person in persons) {
-      final status = statuses[person.id] ?? AttendanceStatus.neutral;
-      sheet.appendRow([
-        TextCellValue(row.toString()),
-        TextCellValue(person.firstName),
-        TextCellValue(person.lastName),
-        TextCellValue(person.groupName ?? ''),
-        TextCellValue(status.label),
-      ]);
-      row++;
-    }
-
-    // Summary section
-    sheet.appendRow([]); // Empty row
-    final present = statuses.values.where((s) => s.countsAsPresent).length;
-    final excused = statuses.values.where((s) => s == AttendanceStatus.excused).length;
-    final absent = statuses.values.where((s) => s == AttendanceStatus.absent).length;
-    final neutral = statuses.values.where((s) => s == AttendanceStatus.neutral).length;
-    final total = persons.length;
-    final percentage = total > 0 ? (present / total * 100).round() : 0;
-
-    sheet.appendRow([TextCellValue(l10n.protocolSummary)]);
-    sheet.appendRow([TextCellValue(l10n.churchOverviewTotal), TextCellValue(total.toString())]);
-    sheet.appendRow([TextCellValue(l10n.commonStatusPresent), TextCellValue(present.toString())]);
-    sheet.appendRow([TextCellValue(l10n.commonStatusExcused), TextCellValue(excused.toString())]);
-    sheet.appendRow([TextCellValue(l10n.commonStatusAbsent), TextCellValue(absent.toString())]);
-    sheet.appendRow([TextCellValue(l10n.coreFlutterExportOpen), TextCellValue(neutral.toString())]);
-    sheet.appendRow([TextCellValue(l10n.coreFlutterExportRate), TextCellValue('$percentage%')]);
-
-    // Save and share
     final bytes = Uint8List.fromList(excel.encode()!);
-    final fileName = '${tenantName}_${l10n.exportAttendance}_$dateStr.xlsx';
-
-    await NativeFileService.saveBytes(bytes, fileName);
+    await NativeFileService.saveBytes(
+        bytes, l10n.exportAttendanceFile(name, dateStr));
   }
 
   /// Generate plan/program PDF in 2xA5 format (two identical plans side-by-side on A4 landscape)

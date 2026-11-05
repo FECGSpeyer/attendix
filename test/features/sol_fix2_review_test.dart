@@ -102,7 +102,7 @@ void main() {
       final requested = init.indexOf('if (requestedId != null)');
       final fallback = init.indexOf('upcoming.isNotEmpty');
       expect(init.substring(requested, fallback), contains('return;'));
-      expect(src, contains('repo.getPlanAttendanceById(id)'));
+      expect(src, contains('repo.getPlanAttendanceById(id,'));
     });
 
     test('getPlanAttendanceById is tenant filtered', () {

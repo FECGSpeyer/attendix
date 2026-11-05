@@ -4,6 +4,21 @@ import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../config/supabase_config.dart';
 
+/// Ionic shows the instance selection ("Instanzauswahl aktivieren") only
+/// right after a real sign-in (routeAfterAuth → setTenant(…, showSelector)),
+/// never when a stored session is restored on app start (checkToken with
+/// showSelector = false). Set on AuthChangeEvent.signedIn (a restored session
+/// emits initialSession / tokenRefreshed), cleared once an instance opens.
+class InstanceSelectionGate {
+  InstanceSelectionGate._();
+
+  static bool afterSignIn = false;
+
+  /// [UserPreferences.wantInstanceSelection] applies to this navigation.
+  static bool wanted(UserPreferences prefs) =>
+      prefs.wantInstanceSelection && afterSignIn;
+}
+
 /// User preferences stored in Supabase user_metadata
 /// Used for cross-device sync of settings like last selected tenant
 class UserPreferences {
