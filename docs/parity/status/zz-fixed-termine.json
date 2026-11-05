@@ -50,20 +50,53 @@
         "lib/features/planning/presentation/attendance_plan_viewer.dart"
       ],
       "n": "Terminliste behoben in #305, Selbstservice in #298"
-    }
-  },
-  "extraOverride": [
-    {
-      "unit": "attendance/att-list/att-list.page",
-      "title": "Ablaufplan-Viewer aus der Liste unvollständig",
-      "drop": true,
-      "why": "behoben in #305"
     },
-    {
-      "unit": "planning/plan-viewer/plan-viewer.component",
-      "title": "Weitere Ablaufpläne fehlen im Viewer",
-      "drop": true,
-      "why": "Terminliste behoben in #305, Selbstservice in #298"
+    "public-planning/public-planning.page#effect-73ff88d2": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#effect-6021ff44": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#effect-1ad39a4e": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#db-b17aa9e7": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/plan_repository.dart:234"
+      ],
+      "n": "behoben in #300"
+    },
+    "public-planning/public-planning.page#field-2ffcb596": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
+    },
+    "shared-plan/shared-plan.page#effect-228109d7": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/public_brandings.dart:1",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
+      ],
+      "n": "behoben in #300"
     }
-  ]
+  }
 }
