@@ -123,5 +123,6 @@ under the name "Benachrichtigungen" ("Notifications" in English).
 | Settings → Benachrichtigungen → "Push-Benachrichtigungen" toggle (native only) | Same toggle in `NotificationsPage` (native only) → `togglePush` |
 
 Not ported: the Live Activity / live plan notifications (native Swift/Java
-code in Ionic). The iOS foreground system banner is suppressed. Only the
-in-app alert is shown, together with the sound.
+code in Ionic). Foreground pushes on iOS show the system banner, sound and
+badge like Ionic (`presentationOptions [badge, sound, alert]`) in addition to
+the in-app alert; Android shows only the in-app alert.
