@@ -1,3 +1,5 @@
+import 'package:supabase_flutter/supabase_flutter.dart';
+
 import '../models/person/person.dart';
 import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
@@ -44,6 +46,100 @@ List<Person> mergeSharedPersonFieldValues(
   ];
 }
 
+/// [organisationPersonKeyOf] for a raw `player` row (`global_person_id`,
+/// `appId`).
+String? organisationPersonKeyOfRow(Map<String, dynamic> row) {
+  final g = row['global_person_id']?.toString();
+  if (g != null && g.isNotEmpty) return 'global:$g';
+  final a = row['appId']?.toString();
+  if (a != null && a.isNotEmpty) return 'app:$a';
+  return null;
+}
+
+/// [mergeSharedPersonFieldValues] for raw `player` rows: shared values
+/// override `additional_fields` of the same person.
+List<Map<String, dynamic>> mergeSharedFieldValuesIntoRows(
+  List<Map<String, dynamic>> rows,
+  Map<String, Map<String, dynamic>> valuesByPersonKey,
+) {
+  if (valuesByPersonKey.isEmpty) return rows;
+  return [
+    for (final row in rows)
+      () {
+        final key = organisationPersonKeyOfRow(row);
+        final shared = key == null ? null : valuesByPersonKey[key];
+        if (shared == null) return row;
+        final own = row['additional_fields'];
+        return {
+          ...row,
+          'additional_fields': {
+            if (own is Map) ...Map<String, dynamic>.from(own),
+            ...shared,
+          },
+        };
+      }(),
+  ];
+}
+
+/// Ionic getPersonFieldValuesForPeople: shared values of [personKeys] in the
+/// organisation [organisationId], keyed by person key.
+Future<Map<String, Map<String, dynamic>>> fetchSharedFieldValuesForPeople(
+  SupabaseClient supabase,
+  int organisationId,
+  List<String> personKeys,
+) async {
+  if (personKeys.isEmpty) return {};
+  // Sol review: page through the rows (PostgREST max-rows) with a stable
+  // order, and chunk the key list so the `in` filter URL stays short.
+  const chunkSize = 100;
+  final rows = <Map<String, dynamic>>[];
+  for (var i = 0; i < personKeys.length; i += chunkSize) {
+    final chunk = personKeys.sublist(
+        i, (i + chunkSize).clamp(0, personKeys.length));
+    rows.addAll(await fetchAllPages<Map<String, dynamic>>((from, to) async {
+      final page = await supabase
+          .from('tenant_group_person_fields')
+          .select('person_key, field_id, value')
+          .eq('tenant_group', organisationId)
+          .inFilter('person_key', chunk)
+          .order('id')
+          .range(from, to);
+      return (page as List).cast<Map<String, dynamic>>();
+    }));
+  }
+
+  final values = <String, Map<String, dynamic>>{};
+  for (final row in rows) {
+    final key = row['person_key'].toString();
+    (values[key] ??= {})[row['field_id'].toString()] = row['value'];
+  }
+  return values;
+}
+
+/// Ionic hydrateSharedPersonFieldValues for raw `player` rows of [tenantId]
+/// (rows need `appId`, `global_person_id` and `additional_fields`). The
+/// organisation is resolved from [tenantId], so a filter on an organisation
+/// field sees the shared value instead of the field's default.
+Future<List<Map<String, dynamic>>> hydrateSharedFieldValuesForRows(
+  SupabaseClient supabase,
+  int tenantId,
+  List<Map<String, dynamic>> rows,
+) async {
+  if (rows.isEmpty) return rows;
+  final org = await supabase
+      .from('tenant_group_tenants')
+      .select('tenant_group')
+      .eq('tenant_id', tenantId)
+      .maybeSingle();
+  final organisationId = (org?['tenant_group'] as num?)?.toInt();
+  if (organisationId == null) return rows;
+  final keys =
+      rows.map(organisationPersonKeyOfRow).whereType<String>().toSet().toList();
+  final values =
+      await fetchSharedFieldValuesForPeople(supabase, organisationId, keys);
+  return mergeSharedFieldValuesIntoRows(rows, values);
+}
+
 /// Default values of the organisation fields (Ionic setGlobalPersonId:
 /// `Object.fromEntries(additional_fields.map(f => [f.id, f.defaultValue]))`).
 Map<String, dynamic> organisationFieldDefaults(List<dynamic>? additionalFields) {
@@ -59,33 +155,9 @@ mixin SharedPersonFieldsRepository on BaseRepository {
     int organisationId,
     List<String> personKeys,
   ) async {
-    if (personKeys.isEmpty) return {};
     try {
-      // Sol review: page through the rows (PostgREST max-rows) with a stable
-      // order, and chunk the key list so the `in` filter URL stays short.
-      const chunkSize = 100;
-      final rows = <Map<String, dynamic>>[];
-      for (var i = 0; i < personKeys.length; i += chunkSize) {
-        final chunk = personKeys.sublist(
-            i, (i + chunkSize).clamp(0, personKeys.length));
-        rows.addAll(await fetchAllPages<Map<String, dynamic>>((from, to) async {
-          final page = await supabase
-              .from('tenant_group_person_fields')
-              .select('person_key, field_id, value')
-              .eq('tenant_group', organisationId)
-              .inFilter('person_key', chunk)
-              .order('id')
-              .range(from, to);
-          return (page as List).cast<Map<String, dynamic>>();
-        }));
-      }
-
-      final values = <String, Map<String, dynamic>>{};
-      for (final row in rows) {
-        final key = row['person_key'].toString();
-        (values[key] ??= {})[row['field_id'].toString()] = row['value'];
-      }
-      return values;
+      return await fetchSharedFieldValuesForPeople(
+          supabase, organisationId, personKeys);
     } catch (e, stack) {
       handleError(e, stack, 'getSharedFieldValuesForPeople');
       rethrow;
