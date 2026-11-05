@@ -179,6 +179,16 @@ SignoutData applySignoutDutyView(SignoutData data, {required bool useDutyView}) 
   );
 }
 
+/// PARITY_SELF: Termine an own absence touches (Ionic confirmAbsence /
+/// deleteAbsence: `currentAttendance` + `actualAttendances`), i.e. current +
+/// upcoming of "Meine Termine" in the given view. Shared by the save path
+/// and the preview of the new design's absence sheet.
+List<CrossTenantPersonAttendance> absenceCandidates(
+  SignoutData raw, {
+  required bool useDutyView,
+}) =>
+    applySignoutDutyView(raw, useDutyView: useDutyView).allUpcoming;
+
 /// ASTRA_SIGNOUT_TOPICS: Ionic `otherTermineNames` – distinct titles of the
 /// "Weitere Termine", at most two.
 String otherTermineNames(SignoutData data) =>

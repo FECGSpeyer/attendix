@@ -46,6 +46,52 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
 
   bool _switchingTenant = false;
 
+  /// PARITY_UEBERSICHT: Ionic load() shows one red toast "Mitteilung konnte
+  /// nicht geladen werden" when any part of loading fails (message, instance
+  /// switch, recipients, earlier messages); reset on pull-to-refresh.
+  bool _loadErrorShown = false;
+
+  void _showLoadError() {
+    if (_loadErrorShown || !mounted) return;
+    _loadErrorShown = true;
+    ToastHelper.showError(context, context.l10n.messagesLoadFailed);
+  }
+
+  static bool _failed(AsyncValue<Object?>? value) =>
+      value != null && value.hasError && !value.isLoading;
+
+  /// Toast on every load that ends in an error, also error → reload → error.
+  void _listenLoadError<T>(ProviderListenable<AsyncValue<T>> provider) {
+    ref.listen<AsyncValue<T>>(provider, (prev, next) {
+      if (_failed(next) && (prev == null || prev.isLoading || !prev.hasError)) {
+        _showLoadError();
+      }
+    });
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    // ref.listen only reports changes: an error state that already exists
+    // when the page opens (e.g. a cached failed load) is reported once here.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      final messageAsync = ref.read(messageByIdProvider(widget.messageId));
+      final message = messageAsync.valueOrNull;
+      var failed = _failed(messageAsync);
+      if (message != null) {
+        final role = ref.read(effectiveRoleProvider);
+        final isManager = (role.isAdmin || role.isResponsible) &&
+            message.tenantId == ref.read(currentTenantIdProvider);
+        failed = failed ||
+            _failed(isManager
+                ? ref.read(messageRecipientsProvider(message.id))
+                : ref.read(receivedMessagesProvider));
+      }
+      if (failed) _showLoadError();
+    });
+  }
+
   bool get _isManager {
     final role = ref.watch(effectiveRoleProvider);
     return role.isAdmin || role.isResponsible;
@@ -68,6 +114,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
         await ref.read(currentTenantUserProvider.future);
       } catch (_) {
         // Stay on the current instance; the message is still shown.
+        _showLoadError();
       } finally {
         if (mounted) setState(() => _switchingTenant = false);
       }
@@ -108,6 +155,7 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
   }
 
   Future<void> _refresh() async {
+    _loadErrorShown = false;
     ref.invalidate(messageRecipientsProvider(widget.messageId));
     ref.invalidate(messageByIdProvider(widget.messageId));
     await ref.read(messageByIdProvider(widget.messageId).future);
@@ -121,6 +169,14 @@ class _MessageDetailPageState extends ConsumerState<MessageDetailPage> {
     final isManager = _isManager &&
         (message == null || message.tenantId == ref.watch(currentTenantIdProvider));
     final l10n = context.l10n;
+    _listenLoadError(messageByIdProvider(widget.messageId));
+    if (message != null) {
+      if (isManager) {
+        _listenLoadError(messageRecipientsProvider(message.id));
+      } else {
+        _listenLoadError(receivedMessagesProvider);
+      }
+    }
 
     return Scaffold(
       appBar: AppBar(

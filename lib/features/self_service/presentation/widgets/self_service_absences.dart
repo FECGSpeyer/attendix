@@ -5,6 +5,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/providers/player_absence_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
 import '../../../../core/providers/player_providers.dart';
@@ -37,6 +38,23 @@ void _refreshAfterAbsenceChange(WidgetRef ref) {
   ref.invalidate(currentSelfServicePlayerProvider);
 }
 
+/// PARITY_SELF: person_attendances that Ionic confirmAbsence/deleteAbsence
+/// touch: the Termine "Meine Termine" lists as current + upcoming
+/// (`currentAttendance` + `actualAttendances` after applyDutyView /
+/// applyDutyLayout). Unassigned duties never count; in the Dienstplan view
+/// the own duties stay untouched ("Weitere Termine" only). Termine of the
+/// tenant without an own row ("alle Termine" mode) have no id and are
+/// skipped. Waits for the duty overview (whether the Dienstplan view is
+/// active) and throws when it fails, so the callers write nothing.
+Future<Set<String>> selfServiceAbsenceCandidateIds(WidgetRef ref) async {
+  final raw = await ref.read(signoutDataProvider.future);
+  final duty = await ref.read(myDutyOverviewProvider.future);
+  return absenceCandidates(raw, useDutyView: duty.useDutyView)
+      .map((a) => a.id)
+      .whereType<String>()
+      .toSet();
+}
+
 /// "Abwesenheit melden" sheet + save (Ionic confirmAbsence).
 Future<void> selfServiceReportAbsence(
   BuildContext context,
@@ -64,11 +82,27 @@ Future<void> saveSelfServiceAbsence(
   AbsenceInput input,
 ) async {
   if (player.id == null) return;
+  // The write goes through the current group's repository: if the group
+  // changes while the candidates load, the ids belong to the old group.
+  final tenantId = ref.read(currentTenantIdProvider);
+  final Set<String> onlyIds;
+  try {
+    onlyIds = await selfServiceAbsenceCandidateIds(ref);
+    if (ref.read(currentTenantIdProvider) != tenantId) {
+      throw StateError('Instanz während des Speicherns gewechselt');
+    }
+  } catch (_) {
+    if (context.mounted) {
+      ToastHelper.showError(context, context.l10n.signoutFlutterAbsenceSaveFailed);
+    }
+    return;
+  }
   final count = await ref.read(playerAbsenceNotifierProvider.notifier).addAbsence(
         personId: player.id!,
         fromDate: input.fromDate,
         untilDate: input.untilDate,
         reason: input.reason,
+        onlyIds: onlyIds,
       );
   if (!context.mounted) return;
   if (count == null) {
@@ -191,6 +225,7 @@ class _SelfServicePlannedAbsencesState extends ConsumerState<SelfServicePlannedA
                   ref,
                   absence,
                   selfService: true,
+                  onlyIds: () => selfServiceAbsenceCandidateIds(ref),
                 );
                 if (ok) _refreshAfterAbsenceChange(ref);
               },
