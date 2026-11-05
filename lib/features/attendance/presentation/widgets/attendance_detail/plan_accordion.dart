@@ -115,13 +115,9 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
 
   /// Ionic `exportAttendancePlans` titleOf: plan title, else
   /// `Utils.getPlanningTitle(type, typeInfo)`.
-  String _title(PlanAttendance att, Plan plan) {
+  String _title(PlanAttendance att, Plan plan, AttendanceType? type) {
     final t = plan.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    final typeId = widget.attendance.typeId;
-    final type = (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-        .where((ty) => ty.id == typeId)
-        .firstOrNull;
     return PlanUtils.planningTitle(
       planningTitle: type?.planningTitle,
       typeName: type?.name,
@@ -130,11 +126,14 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
   }
 
   Future<void> _export(PlanAttendance att, List<Plan> plans, int index) async {
+    // Resolved before the sheet: titles and file names use the same type.
+    final type = await resolvePlanAttendanceType(ref, att);
+    if (!mounted) return;
     PlanExportPage page(int i) {
       final p = plans[i];
       final label = plans.length > 1 ? ' · ${PlanUtils.planLabel(att, i, plans)}' : '';
       return PlanExportPage(
-        title: _title(att, p),
+        title: _title(att, p, type),
         subtitle: '${PlanUtils.longDate(PlanUtils.planDate(att, i, plans) ?? DateTime.tryParse(att.date))}$label',
         time: p.time,
         end: p.end,
@@ -148,7 +147,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
       context,
       ref,
       pages: () => [page(index)],
-      fileName: '${_title(att, plans[index])}$date',
+      fileName: '${_title(att, plans[index], type)}$date',
       extraActions: [
         if (plans.length > 1)
           PlanSheetAction('all', context.l10n.planningExportPdfAll, icon: Icons.picture_as_pdf),
@@ -159,7 +158,7 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
         PlanExportAction.pdf,
         pages: [for (var i = 0; i < plans.length; i++) page(i)],
         // Ionic: title of the first plan + "_alle".
-        fileName: '${_title(att, plans.first)}${date}_alle',
+        fileName: '${_title(att, plans.first, type)}${date}_alle',
       ),
     );
   }

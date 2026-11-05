@@ -5,10 +5,14 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/branding_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/utils/share_origin.dart';
+import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
+import '../../../../data/models/plan/plan.dart' show PlanAttendance;
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../core/theme/app_colors.dart';
 import 'ion_items.dart';
@@ -276,5 +280,26 @@ class _PlanShareSheetState extends State<_PlanShareSheet> {
         ),
       ],
     );
+  }
+}
+
+/// Type of [att] for export titles (Ionic `getPlanningTitle(type, typeInfo)`).
+/// Waits for the types of the current instance instead of treating "still
+/// loading" as "no type"; an org plan of another instance reads its type in
+/// that instance (repository bound to `att.tenantId`, filtered by it).
+/// Null when unknown or not readable.
+Future<AttendanceType?> resolvePlanAttendanceType(WidgetRef ref, PlanAttendance att) async {
+  final typeId = att.typeId;
+  if (typeId == null || typeId.isEmpty) return null;
+  try {
+    final current = ref.read(currentTenantIdProvider);
+    final tenantId = att.tenantId;
+    if (tenantId == null || tenantId == current) {
+      final types = await ref.read(attendanceTypesProvider.future);
+      return types.where((t) => t.id == typeId).firstOrNull;
+    }
+    return await ref.read(attendanceTypeRepositoryForTenantProvider(tenantId)).getTypeById(typeId);
+  } catch (_) {
+    return null;
   }
 }

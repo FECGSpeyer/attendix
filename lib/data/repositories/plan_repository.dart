@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../models/plan/plan.dart';
+import '../../core/constants/enums.dart';
 import 'base_repository.dart';
 import '../../core/utils/archived_attendance.dart';
 import '../../core/utils/paged_query.dart';
@@ -94,18 +95,31 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
 
   /// Ionic live-activity `openFromUrl` loads the tapped Termin without a
   /// tenant filter (ORG-Plan of another choir, Termin of another instance).
-  /// Here the lookup is limited to [tenantIds] (the user's instances and the
-  /// instances of the organisation).
-  Future<PlanAttendance?> getPlanAttendanceByIdInTenants(int id, List<int> tenantIds) async {
+  /// Here the lookup is limited to [tenantRoles] (the user's instances and
+  /// the instances of the organisation, each with the user's role there or
+  /// null). The current instance is skipped: [getPlanAttendanceById] already
+  /// checked it. An archived Termin is only returned where the role may see
+  /// archived Termine (`filterArchivedForRole`), so this fallback never
+  /// opens what the current instance just refused.
+  Future<PlanAttendance?> getPlanAttendanceByIdInTenants(
+    int id,
+    Map<int, Role?> tenantRoles,
+  ) async {
     try {
-      for (final tenantId in tenantIds) {
+      for (final entry in tenantRoles.entries) {
+        final tenantId = entry.key;
+        if (hasTenantId && tenantId == currentTenantId) continue;
         final response = await supabase
             .from('attendance')
             .select(planAttendanceColumns)
             .eq('id', id)
             .eq('tenantId', tenantId)
             .maybeSingle();
-        if (response != null) return PlanAttendance.fromJson(response);
+        if (response == null) continue;
+        if (isArchivedRow(response) && !canSeeArchivedAttendances(entry.value)) {
+          return null;
+        }
+        return PlanAttendance.fromJson(response);
       }
       return null;
     } catch (e, stack) {

@@ -28,7 +28,8 @@
         "🐛 Wird die Frage nach Push-Benachrichtigungen ohne Knopf geschlossen, gilt das wie „Später“ und sie kommt nicht bei jedem Start wieder",
         "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
         "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis",
-        "🐛 iPad: Teilen und Herunterladen von Werk-Dateien, Plan-Links und Datei-Links öffnet wieder das Teilen-Fenster statt eines Fehlers"
+        "🐛 iPad: Teilen und Herunterladen von Werk-Dateien, Plan-Links und Datei-Links öffnet wieder das Teilen-Fenster statt eines Fehlers",
+        "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an"
       ]
     },
     {

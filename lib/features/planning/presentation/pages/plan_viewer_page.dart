@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../data/models/attendance/attendance.dart' show AttendanceType;
 import '../../../../core/utils/plan_utils.dart';
@@ -86,12 +85,12 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     return widget.title ?? context.l10n.plansRunSheet;
   }
 
-  PlanExportPage _page(int i) {
+  PlanExportPage _page(int i, AttendanceType? type) {
     final p = _plans[i];
     final date = _labels.isNotEmpty ? PlanUtils.planDate(widget.attendance, i, _plans) : DateTime.tryParse(widget.attendance.date);
     final label = _labels.isNotEmpty ? ' · ${_labels[i]}' : '';
     return PlanExportPage(
-      title: _exportTitle(p),
+      title: _exportTitle(p, type),
       subtitle: '${PlanUtils.longDate(date)}$label',
       time: p.time,
       end: p.end,
@@ -102,15 +101,9 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
   /// Ionic plan viewer export: plan title, else `Utils.getPlanningTitle(type,
   /// typeInfo)` of the Termin's type; plans without a known type (shared /
   /// org plans) keep the title they were opened with.
-  String _exportTitle(Plan p) {
+  String _exportTitle(Plan p, AttendanceType? type) {
     final t = p.title?.trim();
     if (t != null && t.isNotEmpty) return t;
-    final typeId = widget.attendance.typeId;
-    final type = typeId == null
-        ? null
-        : (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])
-            .where((ty) => ty.id == typeId)
-            .firstOrNull;
     if (type == null) return widget.title ?? context.l10n.plansRunSheet;
     return PlanUtils.planningTitle(
       planningTitle: type.planningTitle,
@@ -119,12 +112,15 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     );
   }
 
-  String get _fileName {
+  String _fileName(AttendanceType? type) {
     final date = _date;
-    return '${_exportTitle(_plan)}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}';
+    return '${_exportTitle(_plan, type)}_${date != null ? '${date.day.toString().padLeft(2, '0')}_${date.month.toString().padLeft(2, '0')}_${date.year}' : ''}';
   }
 
   Future<void> _export() async {
+    // Resolved before the sheet: titles and file names use the same type.
+    final type = await resolvePlanAttendanceType(ref, widget.attendance);
+    if (!mounted) return;
     if (_labels.isNotEmpty) {
       // Ionic: openPlanShareSheet (segment "Nur …" / "Alle n Pläne" + options).
       final choice = await showPlanShareSheet(
@@ -138,8 +134,8 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
         context,
         ref,
         choice.action,
-        pages: choice.all ? [for (var i = 0; i < _plans.length; i++) _page(i)] : [_page(_index)],
-        fileName: choice.all ? '${_fileName}_alle' : _fileName,
+        pages: choice.all ? [for (var i = 0; i < _plans.length; i++) _page(i, type)] : [_page(_index, type)],
+        fileName: choice.all ? '${_fileName(type)}_alle' : _fileName(type),
       );
       return;
     }
@@ -147,8 +143,8 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
     await showPlanExportSheet(
       context,
       ref,
-      pages: () => [_page(_index)],
-      fileName: _fileName,
+      pages: () => [_page(_index, type)],
+      fileName: _fileName(type),
       pdfLabel: context.l10n.planningExportPdf,
       pdf2xLabel: context.l10n.planningExportPdfA5,
       withImage: false,
@@ -157,7 +153,6 @@ class _PlanViewerPageState extends ConsumerState<PlanViewerPage> {
 
   @override
   Widget build(BuildContext context) {
-    ref.watch(attendanceTypesProvider); // export title (getPlanningTitle)
     final date = _date;
     return Scaffold(
       appBar: AppBar(
