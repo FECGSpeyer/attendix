@@ -23,6 +23,7 @@ Future<T?> showIonModal<T>(
   required WidgetBuilder builder,
   double width = 600,
   double? height,
+  bool barrierDismissible = true,
 }) {
   final size = MediaQuery.sizeOf(context);
   final cardHeight = height ?? ionModalCardHeight(size);
@@ -32,6 +33,7 @@ Future<T?> showIonModal<T>(
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
+      barrierDismissible: barrierDismissible,
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(16),
         clipBehavior: Clip.antiAlias,

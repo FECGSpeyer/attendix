@@ -13,14 +13,32 @@ import '../adaptive/adaptive.dart';
 /// - swipe down closes the viewer when not zoomed
 /// - single tap toggles the controls, zoom pill (- / % / +)
 /// - keyboard: Esc closes, + / - zoom, 0 resets
+/// Ionic image-viewer `[viewerActions]` button (e.g. Passbild "Ersetzen" /
+/// "Entfernen"). The viewer closes before [onPressed] runs.
+class ImageViewerAction {
+  const ImageViewerAction({
+    required this.label,
+    required this.icon,
+    required this.onPressed,
+    this.destructive = false,
+  });
+
+  final String label;
+  final IconData icon;
+  final VoidCallback onPressed;
+  final bool destructive;
+}
+
 class ImageViewerSheet extends StatefulWidget {
   final String url;
   final String fileName;
+  final List<ImageViewerAction> actions;
 
   const ImageViewerSheet({
     super.key,
     required this.url,
     required this.fileName,
+    this.actions = const [],
   });
 
   @override
@@ -296,7 +314,9 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
             // Zoom pill
             AnimatedPositioned(
               duration: const Duration(milliseconds: 200),
-              bottom: _showControls ? 24 + MediaQuery.paddingOf(context).bottom : -80,
+              bottom: _showControls
+                  ? 24 + (widget.actions.isEmpty ? 0 : 60) + MediaQuery.paddingOf(context).bottom
+                  : -80,
               left: 0,
               right: 0,
               child: Center(
@@ -344,9 +364,43 @@ class _ImageViewerSheetState extends State<ImageViewerSheet>
                 ),
               ),
             ),
+            // Ionic footer `.actions`: pill buttons below the zoom pill.
+            if (widget.actions.isNotEmpty)
+              AnimatedPositioned(
+                duration: const Duration(milliseconds: 200),
+                bottom: _showControls ? 16 + MediaQuery.paddingOf(context).bottom : -80,
+                left: 0,
+                right: 0,
+                child: Wrap(
+                  alignment: WrapAlignment.center,
+                  spacing: 12,
+                  children: [
+                    for (final a in widget.actions)
+                      TextButton.icon(
+                        style: TextButton.styleFrom(
+                          backgroundColor: const Color(0x8C28282C),
+                          foregroundColor:
+                              a.destructive ? const Color(0xFFFF6B6B) : Colors.white,
+                          minimumSize: const Size(0, 44),
+                          padding: const EdgeInsets.symmetric(horizontal: 18),
+                          shape: const StadiumBorder(
+                            side: BorderSide(color: Color(0x1FFFFFFF)),
+                          ),
+                        ),
+                        icon: Icon(a.icon, size: 20),
+                        label: Text(a.label,
+                            style: const TextStyle(fontSize: 15, fontWeight: FontWeight.w500)),
+                        onPressed: () {
+                          Navigator.of(context).pop();
+                          a.onPressed();
+                        },
+                      ),
+                  ],
+                ),
+              ),
             // Hint
             Positioned(
-              bottom: 96 + MediaQuery.paddingOf(context).bottom,
+              bottom: 96 + (widget.actions.isEmpty ? 0 : 60) + MediaQuery.paddingOf(context).bottom,
               left: 16,
               right: 16,
               child: IgnorePointer(
@@ -383,13 +437,15 @@ Future<void> showImageViewerSheet(
   BuildContext context, {
   required String url,
   required String fileName,
+  List<ImageViewerAction> actions = const [],
 }) {
   return Navigator.of(context, rootNavigator: true).push(
     PageRouteBuilder<void>(
       opaque: false,
       barrierColor: Colors.transparent,
       transitionDuration: const Duration(milliseconds: 180),
-      pageBuilder: (_, __, ___) => ImageViewerSheet(url: url, fileName: fileName),
+      pageBuilder: (_, __, ___) =>
+          ImageViewerSheet(url: url, fileName: fileName, actions: actions),
       transitionsBuilder: (_, animation, __, child) =>
           FadeTransition(opacity: animation, child: child),
     ),
