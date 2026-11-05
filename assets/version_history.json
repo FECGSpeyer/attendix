@@ -1,6 +1,48 @@
 {
   "versions": [
     {
+      "version": "0.41.22",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Meinen Benutzer zuweisen“ legt das Konto wie bisher über die Kontoanlage an und lehnt ein schon verknüpftes Konto ab"
+      ]
+    },
+    {
+      "version": "0.41.21",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
+      "version": "0.41.20",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personen-Import: Zusatzfelder der Organisation werden wie bisher angeboten und stehen in der Vorlage, die Vorlage öffnet in der App direkt bzw. wird im Web geteilt oder heruntergeladen"
+      ]
+    },
+    {
+      "version": "0.41.19",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: Speichern schließt die Seite mit „Person aktualisiert“, neue E-Mail legt auf Wunsch gleich das Konto an, Historie (Problemfall, Gruppenwechsel, Notizen) wie bisher",
+        "🐛 Person: Problemfall „Gespräch geführt“ als Schalter mit Bemerkung, Aktionen wie Pausieren, Freischalten, Ablehnen und Konto entfernen schließen die Seite wie bisher",
+        "🐛 Person: Zusatzfelder zeigen ihre Standardwerte, Zahlenfelder mit Komma, Datumsfelder auch per Eingabe TT.MM.JJJJ",
+        "🐛 Neue Person: Standarddaten heute, Zusatzfeld-Standardwerte, keine strengere E-Mail-Prüfung, nur Admins und Verantwortliche können anlegen",
+        "🐛 Person: Archivieren als eigenes Fenster mit Austrittsdatum und Notiz, Account-Hilfe als Blatt, Historie in Ortszeit",
+        "🐛 Person: Passbild antippen zeigt das Bild mit Ersetzen/Entfernen, in der App mit Kamera oder Galerie",
+        "🐛 Person kopieren/übertragen: Ziel-Instanz und Ziel-Gruppe wie bisher, mit Rückfrage und Duplikat-Prüfung"
+      ]
+    },
+    {
+      "version": "0.41.18",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
+        "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
       "version": "0.41.17",
       "date": "5.11.2026",
       "changes": [
