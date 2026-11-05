@@ -103,6 +103,11 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
   bool _isOrgPlan = false;
   bool _loaded = false;
 
+  /// [_init] has chosen the start Termin (or found none). Until then the
+  /// page shows its loading state instead of the editor, since edits made
+  /// before would be replaced by the loaded plan.
+  bool _started = false;
+
   /// Ionic 4.17.10: the organisation is linked to the Gemeinde App, so every
   /// row gets a stable uid when the plan is stored (kept from the last build,
   /// also used by [_flushOnDispose]).
@@ -703,12 +708,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       }
       if (!mounted) return;
       if (att == null) {
-        setState(() => _requestedNotFound = true);
+        setState(() {
+          _requestedNotFound = true;
+          _started = true;
+        });
         return;
       }
       if (!_attendances.any((a) => a.id == att!.id)) {
         _attendances = [..._attendances, att]..sort((a, b) => b.date.compareTo(a.date));
       }
+      _started = true;
       _loadAttendance(att, planIndex: widget.initialPlanIndex);
       return;
     }
@@ -721,6 +730,7 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }).toList();
     // Ionic: without an upcoming Termin none is selected.
     att = upcoming.isNotEmpty ? upcoming.last : null;
+    _started = true;
     if (att != null) {
       _loadAttendance(att);
     } else {
@@ -2135,8 +2145,12 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
         body: attendancesAsync.when(
           loading: () => const Center(child: AppSpinner()),
           error: (e, _) => Center(child: Text(context.l10n.planningFlutterErrorWith(friendlyErrorMessage(e)))),
+          // Until `_init` chose the Termin the editor is not usable (its
+          // edits would be replaced by the loaded plan).
           // SOL_FIX2: requested Termin not reachable → error, no fallback
-          data: (_) => _requestedNotFound
+          data: (_) => !_started
+              ? const Center(child: AppSpinner())
+              : _requestedNotFound
               ? Center(child: Text(context.l10n.attendanceFlutterNotFound))
               : ListView(
             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 80)),

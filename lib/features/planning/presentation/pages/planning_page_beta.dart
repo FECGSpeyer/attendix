@@ -44,7 +44,8 @@ extension _PlanningBeta on _PlanningPageState {
       Semantics(header: true, child: Text(l10n.redesignPlanTitle, style: RdType.title(p))),
     ];
 
-    if (!_loaded || (att == null && widget.attendanceId != null && !_requestedNotFound)) {
+    // Loading until `_init` chose the Termin (like the classic editor).
+    if (!_started) {
       children.addAll([
         const SizedBox(height: 16),
         attendancesAsync.hasError && !_loaded
