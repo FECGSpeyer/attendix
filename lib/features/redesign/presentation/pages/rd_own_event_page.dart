@@ -11,6 +11,7 @@ import '../../../../core/utils/event_list_utils.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../self_service/presentation/pages/signout_page.dart' show signoutEventActions;
 import '../../../self_service/presentation/widgets/self_service_event_actions.dart';
+import '../../data/providers/rd_phase_tick_provider.dart';
 import '../../data/rd_event_phase.dart';
 import '../widgets/event/rd_event_head.dart';
 import '../widgets/event/rd_event_now.dart';
@@ -40,10 +41,13 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
 /// A [past] Termin has no answer card; like the past rows of "Meine
 /// Termine" only an excused one keeps its answer actions (Ionic opens the
 /// action sheet there and nowhere else).
+/// [onCard]: what the card at the top offers instead (default: the answer
+/// card's Zusagen / Abmelden / Später).
 ({List<SelfServiceActionType> answer, List<SelfServiceActionType> info}) rdOwnEventActions(
   SelfServiceEventActions actions,
   CrossTenantPersonAttendance att, {
   bool past = false,
+  Set<SelfServiceActionType>? onCard,
 }) {
   const infoTypes = {
     SelfServiceActionType.showPlan,
@@ -59,13 +63,14 @@ bool rdIsPastOwnEvent(SignoutData data, CrossTenantPersonAttendance att) =>
     SelfServiceActionType.enterLate,
   };
   final hasCard = !past && actions.quickActions(att) != null;
+  final shown = hasCard ? (onCard ?? cardTypes) : const <SelfServiceActionType>{};
   final canAnswer = !past || att.isExcusedStatus;
   final all = actions.buildActions(att).map((a) => a.type).toList();
   return (
     answer: [
       if (canAnswer)
         for (final t in all)
-          if (!infoTypes.contains(t) && !(hasCard && cardTypes.contains(t))) t,
+          if (!infoTypes.contains(t) && !shown.contains(t)) t,
     ],
     info: [for (final t in all) if (infoTypes.contains(t)) t],
   );
@@ -128,16 +133,29 @@ class RdOwnEventPage extends ConsumerWidget {
       endTime: endTime,
       durationDays: att.effectiveDurationDays,
     );
+    // Head and top card follow the phase without new data.
+    if (span != null && now == null) ref.watch(rdPhaseTickProvider((start: span.start, end: span.end)));
     final phase = rdEventPhase(span, now: now);
     final running = phase == RdEventPhase.running;
-    // Over once its end time has passed, not only from the next day on.
-    final ended = rdIsPastOwnEvent(data!, att) || phase == RdEventPhase.after;
-    final split = rdOwnEventActions(actions, att, past: ended);
+    // Over once its end time has passed, not only from the next day on; a
+    // Termin until 01:00 still runs after midnight although the list
+    // already counts it as past.
+    final ended = !running && (rdIsPastOwnEvent(data!, att) || phase == RdEventPhase.after);
     final own = actions.isOwn(att);
     final qa = actions.quickActions(att);
     final plan = !ended && att.hasPlan ? rdPlanFromJson(att.plan) : null;
     final nowSlot = plan != null && running ? rdCurrentPlanSlot(day, plan, now: now) : null;
-    final noteLink = own && !ended && split.answer.contains(SelfServiceActionType.editNote);
+    final canLate = qa != null && qa.allowLate && !qa.blocked;
+    // "Jetzt im Ablauf" only offers "Ich komme später"; everything else of
+    // the answer card stays under "Mehr".
+    final nowCard = own && nowSlot != null;
+    final split = rdOwnEventActions(
+      actions,
+      att,
+      past: ended,
+      onCard: nowCard ? {if (canLate) SelfServiceActionType.enterLate} : null,
+    );
+    final noteLink = own && !ended && !nowCard && split.answer.contains(SelfServiceActionType.editNote);
     final answerRows = [
       for (final t in split.answer)
         if (!(noteLink && t == SelfServiceActionType.editNote)) t,
@@ -205,12 +223,12 @@ class RdOwnEventPage extends ConsumerWidget {
       const SizedBox(height: 18),
       if (ended && own && att.isMember)
         RdOwnAttendanceCard(attendance: att, now: now)
-      else if (!ended && own && nowSlot != null)
+      else if (nowCard)
         RdOwnNowCard(
           attendance: att,
           plan: plan!,
           now: now,
-          onLate: qa != null && qa.allowLate && !qa.blocked ? () => run(SelfServiceActionType.enterLate) : null,
+          onLate: canLate ? () => run(SelfServiceActionType.enterLate) : null,
         )
       else if (!ended && own)
         RdOwnAnswerSection(

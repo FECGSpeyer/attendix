@@ -6,7 +6,7 @@ import '../../../../../core/providers/signout_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
 import '../../../../../core/utils/event_list_utils.dart';
 import '../../../../../core/utils/toast_helper.dart';
-import '../../../../../data/models/auto_message/auto_message.dart' show autoMessageResponseDays;
+import '../../../../../data/models/auto_message/auto_message.dart' show autoMessageResponseUntil;
 import '../../../../../data/models/plan/plan.dart';
 import '../../../../../data/models/song/song.dart';
 import '../../../../../data/repositories/sign_in_out_repository.dart';
@@ -209,12 +209,12 @@ class RdOwnAttendanceCard extends ConsumerWidget {
     final key = att.id == null ? null : (tenantId: att.tenantId, personAttendanceId: att.id!);
     final info = key == null ? null : ref.watch(rdOwnResponseInfoProvider(key)).valueOrNull;
     final own = info?.own;
-    final day = EventListUtils.parse(att.date);
     final current = now ?? DateTime.now();
-    // Same window as the message: until 7 days after the Termin.
-    final lastDay = day == null ? null : rdAddDays(day, autoMessageResponseDays);
-    final daysLeft = lastDay == null ? -1 : rdDaysBetween(current, lastDay);
-    final canAnswer = info != null && daysLeft >= 0 && (own == null || own.isPending);
+    // Same window as in the message (MessageTerminSection).
+    final until = autoMessageResponseUntil(att.date);
+    final open = until != null && !current.isAfter(until);
+    final daysLeft = until == null ? 0 : rdDaysBetween(current, until);
+    final canAnswer = info != null && open && (own == null || own.isPending);
     final showAnswer = info != null && (att.status == AttendanceStatus.absent || own != null);
 
     Future<void> respond(String kind) async {

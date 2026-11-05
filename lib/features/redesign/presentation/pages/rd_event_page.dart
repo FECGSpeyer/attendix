@@ -35,6 +35,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../../data/providers/rd_phase_tick_provider.dart';
 import '../../data/rd_event_phase.dart';
 import '../../data/rd_write_queue.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
@@ -775,6 +776,8 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   Widget _head(Attendance attendance, AttendanceType? type) {
     final info = rdEventInfo(attendance, type);
     final span = _span(attendance, type);
+    // Head and top card follow the phase without new data.
+    if (span != null) ref.watch(rdPhaseTickProvider((start: span.start, end: span.end)));
     return RdEventHead(
       title: info.title,
       phase: rdEventPhase(span, archived: attendance.archived),

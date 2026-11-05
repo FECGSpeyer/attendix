@@ -34,9 +34,12 @@ Plan? rdPlanFromJson(Map<String, dynamic>? json) {
 /// One timed row of the Ablauf (notes and block heads take no time).
 typedef RdPlanSlot = ({int index, PlanField field, DateTime start, DateTime end});
 
-/// Timed rows of [plan] on the Termin [day]; empty without a start time.
+/// Timed rows of [plan] for a Termin starting on [day] (a plan for a later
+/// day of a multi-day Termin starts on that day); empty without a start
+/// time.
 List<RdPlanSlot> rdPlanSlots(DateTime? day, Plan plan) {
-  final start = PlanUtils.planStart(day, plan.time);
+  final planDay = day == null ? null : DateTime(day.year, day.month, day.day + (plan.day ?? 0));
+  final start = PlanUtils.planStart(planDay, plan.time);
   if (start == null) return const [];
   final slots = <RdPlanSlot>[];
   var t = start;
