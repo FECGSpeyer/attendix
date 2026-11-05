@@ -55,7 +55,7 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
   final _searchController = TextEditingController();
   Timer? _searchDebounce;
   String _search = '';
-  /// Category ids the stored filter was last checked against.
+  /// Instance and category ids the stored filter was last checked against.
   String? _prunedFor;
   bool _invalidLinkToastShown = false;
 
@@ -220,7 +220,8 @@ class _SongsListPageState extends ConsumerState<SongsListPage> {
     // Ionic getSongs (load, refresh, realtime, after deleting a category)
     // drops a stored category selection that no longer exists.
     final ids = data.categories.map((c) => c.id).whereType<String>().toSet();
-    final idsKey = (ids.toList()..sort()).join(',');
+    // Per instance: after a switch the new instance's filter is checked too.
+    final idsKey = '${data.tenantId}|${(ids.toList()..sort()).join(',')}';
     if (_prunedFor != idsKey) {
       _prunedFor = idsKey;
       WidgetsBinding.instance.addPostFrameCallback((_) {
