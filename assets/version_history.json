@@ -1,13 +1,24 @@
 {
   "versions": [
     {
-      "version": "0.40.7",
+      "version": "0.41.7",
       "date": "5.11.2026",
       "changes": [
         "🐛 Geteilter Plan: Bearbeiten zeigt einfache Zeilen mit rotem Papierkorb und Griff; Tippen öffnet den Feld-Dialog mit Dauer",
         "🐛 Geteilter Plan: Programmblöcke zeigen in der Ansicht nur die Startzeit",
         "🐛 Öffentliche Planung: „Feld bearbeiten“ mit „Löschen“, „Abbrechen“ und „Speichern“, ohne Minuten",
         "🐛 Web: Link teilen kopiert nur noch, wenn der Browser kein Teilen kann"
+      ]
+    },
+    {
+      "version": "0.41.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin stehen Abmeldungen mit Grund direkt in der Karte oben, die Zuspätkommer in einer Zeile darunter; ab 7 Abmeldungen „Alle anzeigen“",
+        "✨ Beta: „Anwesenheit eintragen“ zeigt pro Stimme nur die Ausnahmen, dazu „x von y da“, die Suche „Wer fehlt?“, Filter nach Status und „+ Person“",
+        "✨ Beta: Personen-Sheet mit Anmeldefeldern, „Zuletzt geändert von“, „Zur Person“ und „Aus Termin entfernen“",
+        "✨ Beta: Menü ••• im Termin mit Status-Übersicht, Gemeinde-Übersicht, Excel-Export, Checkliste und Archivieren; „Termin löschen“ steht unten in „Bearbeiten“",
+        "✨ Beta: Nach dem Termin „Abschluss“ mit „Unentschuldigte anschreiben“ und den automatischen Nachrichten samt Antworten"
       ]
     },
     {
