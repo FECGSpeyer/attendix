@@ -59,4 +59,3 @@ void main() {
     expect(numberFieldDefaultText('Infinity'), '');
   });
 }
-
