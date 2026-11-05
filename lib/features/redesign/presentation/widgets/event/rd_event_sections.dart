@@ -44,12 +44,23 @@ import '../today/rd_today_common.dart';
 
 /// Uppercase label with an optional text action on the right ("+ Werk").
 class RdSectionLabel extends StatelessWidget {
-  const RdSectionLabel(this.text, {super.key, this.actionLabel, this.actionSemantics, this.onAction});
+  const RdSectionLabel(
+    this.text, {
+    super.key,
+    this.actionLabel,
+    this.actionSemantics,
+    this.onAction,
+    this.actionIcon = Icons.add,
+  });
 
   final String text;
   final String? actionLabel;
   final String? actionSemantics;
   final VoidCallback? onAction;
+
+  /// "+ Aufgabe"; [Icons.chevron_right] goes after the label ("Ganz
+  /// ansehen ›").
+  final IconData actionIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +86,12 @@ class RdSectionLabel extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, size: 18, color: p.link),
-                        const SizedBox(width: 2),
+                        if (actionIcon != Icons.chevron_right) ...[
+                          Icon(actionIcon, size: 18, color: p.link),
+                          const SizedBox(width: 2),
+                        ],
                         Text(actionLabel!, style: TextStyle(fontSize: 15, color: p.link)),
+                        if (actionIcon == Icons.chevron_right) Icon(actionIcon, size: 18, color: p.link),
                       ],
                     ),
                   ),
@@ -392,9 +406,15 @@ bool rdShowsProgram(WidgetRef ref, AttendanceType? type) =>
 /// anlegen" without one. Everyone who edits Termine (Helfer too, like
 /// Ionic); Beobachter do not see it.
 class RdEventPlanSection extends ConsumerStatefulWidget {
-  const RdEventPlanSection({super.key, required this.attendance});
+  const RdEventPlanSection({super.key, required this.attendance, this.preview, this.range = ''});
 
   final Attendance attendance;
+
+  /// The Ablauf itself above the rows (Reiter Programm).
+  final Widget? preview;
+
+  /// "16:00–17:35" next to the heading.
+  final String range;
 
   @override
   ConsumerState<RdEventPlanSection> createState() => _RdEventPlanSectionState();
@@ -453,7 +473,15 @@ class _RdEventPlanSectionState extends ConsumerState<RdEventPlanSection> {
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
         const SizedBox(height: 24),
-        RdGroupLabel(l10n.redesignEventPlanSection),
+        RdGroupLabel(
+          widget.range.isEmpty
+              ? l10n.redesignEventPlanSection
+              : l10n.redesignEventSectionCount(l10n.redesignEventPlanSection, widget.range),
+        ),
+        if (hasPlan && widget.preview != null) ...[
+          widget.preview!,
+          const SizedBox(height: 12),
+        ],
         RdGroupedList(children: [
           if (hasPlan) ...[
             RdListRow(
@@ -741,20 +769,17 @@ Future<ChecklistItem?> rdAskChecklistItem(BuildContext context, Attendance atten
 // Infos zum Termin
 // ---------------------------------------------------------------------------
 
-/// Whether [RdEventInfoSection] has a row for [attendance].
-bool rdHasInfos(WidgetRef ref, Attendance attendance) =>
-    (attendance.place ?? '').trim().isNotEmpty ||
-    rdPlainText(attendance.description).isNotEmpty ||
-    (attendance.attachmentUrl ?? '').isNotEmpty ||
-    ((attendance.filesFolder ?? '').trim().isNotEmpty && ref.watch(canAccessFilesProvider)) ||
-    EventListUtils.deadlineLocal(attendance.deadline) != null;
-
-/// Navigation, Beschreibung & Anhang, Ordner, Abmeldeschluss: only rows
-/// with content (all of them are edited in "Termin bearbeiten").
+/// Navigation, Beschreibung & Anhang, Ordner, Antwort bis: only rows with
+/// content (all of them are edited in "Termin bearbeiten"). After the
+/// Termin without Navigation and Antwort bis.
 class RdEventInfoSection extends ConsumerWidget {
-  const RdEventInfoSection({super.key, required this.attendance});
+  const RdEventInfoSection({super.key, required this.attendance, this.title, this.ended = false});
 
   final Attendance attendance;
+
+  /// Heading; default "Infos".
+  final String? title;
+  final bool ended;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -768,7 +793,7 @@ class RdEventInfoSection extends ConsumerWidget {
     final canFiles = ref.watch(canAccessFilesProvider);
     final deadline = EventListUtils.deadlineLocal(att.deadline);
     final rows = <Widget>[
-      if (place.isNotEmpty)
+      if (place.isNotEmpty && !ended)
         RdListRow(
           leading: const RdRowIcon(Icons.navigation_outlined),
           title: l10n.signoutOpenNavigation,
@@ -792,7 +817,7 @@ class RdEventInfoSection extends ConsumerWidget {
           subtitle: folder,
           onTap: () => openFilesFolderRoute(context, folder),
         ),
-      if (deadline != null)
+      if (deadline != null && !ended)
         RdListRow(
           leading: const RdRowIcon(Icons.schedule),
           title: l10n.redesignCreateDeadline,
@@ -804,7 +829,8 @@ class RdEventInfoSection extends ConsumerWidget {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [
-        RdGroupLabel(l10n.redesignOwnInfos),
+        const SizedBox(height: 24),
+        RdGroupLabel(title ?? l10n.redesignOwnInfos),
         RdGroupedList(children: rows),
       ],
     );
