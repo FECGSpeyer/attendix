@@ -178,7 +178,7 @@ class PlanRepository extends BaseRepository with TenantAwareRepository {
           .from('attendance_types')
           .select('*')
           .eq('tenant_id', currentTenantId)
-          .order('index');
+          .order('index', ascending: true);
 
       return (response as List)
           .map((e) => PlanAttendanceType.fromJson(e as Map<String, dynamic>))

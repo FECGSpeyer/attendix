@@ -76,9 +76,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       }
 
       final response = await query
-          .order('instrument')
+          .order('instrument', ascending: true)
           .order('isLeader', ascending: false)
-          .order('lastName');
+          .order('lastName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -163,7 +163,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', currentTenantId)
           .eq('pending', true)
-          .order('created_at');
+          .order('created_at', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -208,7 +208,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .isFilter('left', null)
           .isFilter('pending', false)
           .order('isLeader', ascending: false)
-          .order('lastName');
+          .order('lastName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -233,7 +233,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         query = query.isFilter('left', null);
       }
 
-      final response = await query.order('lastName');
+      final response = await query.order('lastName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -263,9 +263,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .isFilter('left', null)
           // PARITY_SELF: Ionic getPlayers (PARENT) order – instrument,
           // isLeader descending, lastName.
-          .order('instrument')
+          .order('instrument', ascending: true)
           .order('isLeader', ascending: false)
-          .order('lastName');
+          .order('lastName', ascending: true);
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
           .toList();
@@ -285,9 +285,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('parent_id', parentId)
           .isFilter('pending', false)
           .isFilter('left', null)
-          .order('instrument')
+          .order('instrument', ascending: true)
           .order('isLeader', ascending: false)
-          .order('lastName');
+          .order('lastName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -1349,7 +1349,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .isFilter('pending', false)
           .isFilter('left', null)
           .or('firstName.ilike.%$sanitizedQuery%,lastName.ilike.%$sanitizedQuery%')
-          .order('lastName')
+          .order('lastName', ascending: true)
           .limit(20);
 
       return (response as List)
@@ -1397,7 +1397,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('isCritical', true)
           .isFilter('pending', false)
           .isFilter('left', null)
-          .order('lastName');
+          .order('lastName', ascending: true);
 
       return (response as List)
           .map((e) => Person.fromJson(e as Map<String, dynamic>))
@@ -1638,9 +1638,9 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .from('instruments')
           .select('*')
           .eq('tenantId', targetTenantId)
-          .order('category')
+          .order('category', ascending: true)
           .order('sort_order', ascending: true, nullsFirst: false)
-          .order('name');
+          .order('name', ascending: true);
       return (response as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))
           .toList();

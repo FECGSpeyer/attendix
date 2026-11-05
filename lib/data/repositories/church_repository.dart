@@ -20,7 +20,7 @@ class ChurchRepository extends BaseRepository {
       final response = await supabase
           .from('churches')
           .select('*')
-          .order('name');
+          .order('name', ascending: true);
 
       return (response as List)
           .map((e) => Church.fromJson(e as Map<String, dynamic>))
@@ -152,7 +152,7 @@ class ChurchRepository extends BaseRepository {
           .from('player')
           .select('id, tenantId, additional_fields')
           .eq(_churchFilterColumn, churchId)
-          .order('id')
+          .order('id', ascending: true)
           .range(from, to);
       return (page as List).cast<Map<String, dynamic>>();
     });

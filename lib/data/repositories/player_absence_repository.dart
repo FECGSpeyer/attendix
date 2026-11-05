@@ -32,7 +32,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
           .select('*')
           .eq('person_id', personId)
           .eq('tenant_id', currentTenantId)
-          .order('from_date');
+          .order('from_date', ascending: true);
 
       return (response as List)
           .map((e) => PlayerAbsence.fromJson(e as Map<String, dynamic>))
@@ -54,7 +54,7 @@ class PlayerAbsenceRepository extends BaseRepository with TenantAwareRepository 
             .from('player_absences')
             .select('*')
             .eq('tenant_id', currentTenantId)
-            .order('id')
+            .order('id', ascending: true)
             .range(from, to);
         return page as List;
       });

@@ -1,6 +1,15 @@
 {
   "versions": [
     {
+      "version": "0.41.26",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Listen sind wieder aufsteigend sortiert wie bisher, z. B. Kinder der Eltern, Gruppenkategorien, Gemeinden, Zuschauer und die nächsten Termine in der Übersicht",
+        "🐛 Gruppen-PDFs drucken: Schlägt das Laden der Personen fehl, erscheint „Fehler beim Laden der Personen“",
+        "🐛 Organisations-Zusatzfelder: Ein geänderter Zahl-Standardwert wird als Zahl gespeichert"
+      ]
+    },
+    {
       "version": "0.41.25",
       "date": "5.11.2026",
       "changes": [

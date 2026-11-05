@@ -80,7 +80,7 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
             .select(_attendanceWithPersonsSelect)
             .eq('tenantId', currentTenantId)
             .gte('date', startOfToday.toIso8601String())
-            .order('date')
+            .order('date', ascending: true)
             .limit(5),
       ]);
 
@@ -107,7 +107,7 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', currentTenantId)
           .gt('date', from.toIso8601String())
-          .order('date');
+          .order('date', ascending: true);
 
       return (response as List)
           .map((e) => _parseEvent(e as Map<String, dynamic>))
@@ -129,7 +129,7 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
             .from('player_absences')
             .select('*')
             .eq('tenant_id', currentTenantId)
-            .order('id')
+            .order('id', ascending: true)
             .range(from, to);
         return page as List;
       });

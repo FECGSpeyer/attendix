@@ -22,8 +22,8 @@ class ViewerRepository extends BaseRepository with TenantAwareRepository {
           .from('viewers')
           .select('*')
           .eq('tenantId', currentTenantId)
-          .order('lastName')
-          .order('firstName');
+          .order('lastName', ascending: true)
+          .order('firstName', ascending: true);
 
       return (response as List)
           .map((e) => Viewer.fromJson(e as Map<String, dynamic>))

@@ -20,7 +20,7 @@ void main() {
     test('$sig is paged, ordered and tenant-filtered', () {
       final b = body(path, sig);
       expect(b, contains('fetchAllPages'));
-      expect(b, contains(".order('id')"));
+      expect(b, contains(".order('id', ascending: true)"));
       expect(b, contains('.range(from, to)'));
       expect(b, contains(".eq('tenant_id', currentTenantId)"));
     });
