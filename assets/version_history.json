@@ -1,11 +1,34 @@
 {
   "versions": [
     {
-      "version": "0.39.2",
-      "date": "4.11.2026",
+      "version": "0.40.1",
+      "date": "5.11.2026",
       "changes": [
         "✨ iPhone- und Android-App: Nach dem Update von der bisherigen App bleibt man angemeldet und landet in derselben Gruppe – kein erneutes Einloggen nötig",
         "🐛 Android: Nach dem Öffnen eines Attendix-Links aus einer anderen App (Mail, Messenger) bleibt die App beim nächsten Start über das Symbol nicht mehr leer"
+      ]
+    },
+    {
+      "version": "0.40.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Werke-Liste neu: „Als Nächstes“ zeigt die Werke der nächsten Termine, Mitglieder öffnen dort ihre Stimmen mit „Meine Noten öffnen“ als ein PDF",
+        "✨ Beta: Jedes Werk mit einer Statuszeile (deine Stimme, Aufnahme, fehlende Noten); die Leitung sieht, wo noch Noten fehlen",
+        "✨ Beta: „Sortieren & Filtern“ mit Nummer, Titel, Zuletzt gespielt und Am längsten nicht gespielt, dazu Nur-zeigen-Filter",
+        "✨ Beta: „+“ mit Neues Werk, Werkliste importieren und Aus anderer Gruppe übernehmen; „Neues Werk“ schlägt die nächste freie Nummer vor und fragt keine Besetzung ab",
+        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken",
+        "🐛 Beta: Im Chor gelten „Chor (alle)“-Noten als eigene Stimme, wenn es keine Datei für die Stimme gibt (Werk-Seite, Werke-Liste, Meine Noten)"
+      ]
+    },
+    {
+      "version": "0.39.2",
+      "date": "4.11.2026",
+      "changes": [
+        "🐛 Gruppen und Lehrer: Die Personenzahl zählt keine ausstehenden Registrierungen bzw. ausgetretenen Personen mehr mit",
+        "🐛 Gruppe bearbeiten: Speichern schließt erst nach dem Speichern, bei einem Fehler bleiben die Eingaben erhalten; Entfernen prüft sofort, ob die Gruppe noch Personen hat",
+        "🐛 Gruppen: Hinweise bei leerem Kategorienamen und nach dem Speichern der Reihenfolge wie bisher in der alten App",
+        "🐛 Lehrer: Die Instrumentauswahl ist auch direkt nach dem App-Start gefüllt",
+        "🐛 Dienste verteilen: Person tauschen wie bisher mit Auswahl und „Übernehmen“; „Auch geplante Termine“ meldet Fehler statt „0 Termine angepasst“"
       ]
     },
     {
