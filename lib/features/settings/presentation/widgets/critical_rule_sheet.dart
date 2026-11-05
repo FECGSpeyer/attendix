@@ -89,7 +89,8 @@ class _CriticalRuleSheetState extends State<CriticalRuleSheet> {
     // from the German keyboard counts as the decimal point.
     final threshold =
         num.tryParse(_thresholdController.text.trim().replaceAll(',', '.'));
-    if (threshold == null || threshold <= 0) {
+    // NaN/Infinity would pass `<= 0` but break the JSON encoding on save.
+    if (threshold == null || !threshold.isFinite || threshold <= 0) {
       ToastHelper.showError(context, context.l10n.generalSettingsThresholdPositive);
       return;
     }
