@@ -885,19 +885,6 @@
         "lib/data/repositories/org_plan_repository.dart:92"
       ]
     },
-    "services/live-activity/live-activity.service#db-7504d213": {
-      "s": "ok",
-      "f": [
-        "lib/data/repositories/org_plan_repository.dart:102"
-      ]
-    },
-    "services/live-activity/live-activity.service#db-78d0cb9a": {
-      "s": "ok",
-      "f": [
-        "lib/data/repositories/org_plan_repository.dart:134"
-      ],
-      "n": "select * statt Spaltenliste; gleiche Daten."
-    },
     "services/live-activity/live-activity.service#native-f31c300f": {
       "s": "ok",
       "f": [
@@ -944,13 +931,6 @@
       ],
       "n": "Präsentation (Vollbild) gleich. Ionic lädt den Termin per getAttendanceById ohne Tenant-Filter / Flutter per planRepository.getPlanAttendanceById mit Filter auf den aktuellen Tenant – Tap auf die Live Activity eines ORG-Plans oder eines Termins aus einem anderen Tenant öffnet in Flutter nichts.",
       "sev": "mittel"
-    },
-    "services/live-activity/live-activity.service#db-fb999ada": {
-      "s": "ok",
-      "f": [
-        "lib/data/repositories/org_plan_repository.dart:153"
-      ],
-      "n": "Flutter filtert zusätzlich nach Organisation."
     },
     "services/live-activity/live-activity.service#modal-e1ddab08": {
       "s": "ok",

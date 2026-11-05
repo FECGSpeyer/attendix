@@ -550,14 +550,6 @@
       "n": "toter Code: InstanceService wird in db.service.ts:119 nur injiziert, nie aufgerufen; createInstance/deleteInstance sind in db.service.ts selbst implementiert.",
       "v": "bestätigt"
     },
-    "services/live-activity/live-activity.service#db-78d0cb9a": {
-      "s": "ok",
-      "f": [
-        "lib/data/repositories/org_plan_repository.dart:134"
-      ],
-      "n": "shared_plans der Organisation von gestern bis morgen ('YYYY-MM-DD'); select * statt Spaltenliste, gleiche Daten.",
-      "v": "bestätigt"
-    },
     "services/live-activity/live-activity.service#db-26911823": {
       "s": "ok",
       "f": [

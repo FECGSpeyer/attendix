@@ -30,14 +30,6 @@
    ],
    "n": "Eingeloggt auf /planung → /settings/planung (Router-Redirect ersetzt den Eintrag; zusätzlich context.go in initState)"
   },
-  "public-planning/public-planning.page#db-e4496b2e": {
-   "s": "ok",
-   "f": [
-    "lib/data/repositories/plan_repository.dart:279-296",
-    "lib/features/planning/presentation/pages/public_planning_page.dart:255-272"
-   ],
-   "n": "select org_id eq id maybeSingle, nur mit gespeicherter Plan-ID; Flutter zusätzlich eq creator_user_id; Fehler → lokaler Stand bleibt"
-  },
   "public-planning/public-planning.page#alert-b65125be": {
    "s": "ok",
    "f": [
