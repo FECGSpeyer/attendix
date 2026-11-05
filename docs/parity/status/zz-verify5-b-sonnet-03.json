@@ -1,0 +1,340 @@
+{
+ "batch": "zz-verify5-b-sonnet-03",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "org-plans/org-plans.page#text-65b70e40": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:303"
+   ],
+   "n": "Text und Globus-Icon (grün) weiterhin vorhanden, nur bei key != null; Button „Verwalten“ daneben.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#text-bac34896": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+   ],
+   "n": "Titel „Vergangene Pläne“ in Push-Seite, beobachtet orgPlansProvider; Auslöser nur bei past.isNotEmpty.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-08983ea4": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:517"
+   ],
+   "n": "Sheet-Button „Änderungen übernehmen“ im Edit-Modus; Select: Optionen getrimmt, leer → Toast, Standard = erste Option.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#action-ca7f0f1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:517",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:352"
+   ],
+   "n": "„Feld hinzufügen“-Button im Sheet; leerer Name, doppelte ID (orgFieldsNameExists) und fehlende Optionen werden vor dem Schließen mit Toast geprüft, Sheet bleibt offen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#alert-81661d54": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:85",
+    "lib/features/planning/presentation/widgets/plan_field_dialogs.dart:369"
+   ],
+   "n": "showPlanConfirm (Titel/Text „Zusatzfeld löschen?“, Abbrechen/Löschen destruktiv) unverändert; Löschen nur lokal, Papierkorb nur für Admin aktiv.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-0f91184f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:417"
+   ],
+   "n": "Dropdown „Anzeige in Listen“ Chip/Unter dem Namen auch im Edit-Sheet, mit aktuellem Wert vorbelegt.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-520a069e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:417"
+   ],
+   "n": "Dropdown „Anzeige in Listen“, Standard Chip; nur Admin (Add-Button disabled sonst; Route nur Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-a8961219": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:412"
+   ],
+   "n": "Textfeld „Name“, Satzanfang groß.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-b8cf354d": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:472"
+   ],
+   "n": "Schalter „Standardwert“ bei Ja/Nein im Edit-Sheet, vorbelegt mit aktuellem Wert.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#field-ca3e38af": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:472",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:295"
+   ],
+   "n": "Schalter Standardwert Ja/Nein; Typwechsel setzt false wie onNewFieldTypeChanged.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#modal-1fbef7b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:70"
+   ],
+   "n": "Edit-Bottom-Sheet mit Kopie des Feldes; Wegwischen verwirft, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8be14847": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:396"
+   ],
+   "n": "Typname rechts im Edit-Sheet (Typ nicht änderbar).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:473"
+   ],
+   "n": "„Standardwert“ bei Typ Ja/Nein (Add-Sheet).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:473"
+   ],
+   "n": "„Standardwert“ bei Typ Ja/Nein (Edit-Sheet).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-c77d8a1e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:357"
+   ],
+   "n": "Toast orgFieldsAddOption (rot) beim Übernehmen eines Auswahlfelds ohne Optionen; Sheet bleibt offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-3b2a1c77": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:420"
+   ],
+   "n": "Tippen auf Standardfeld-Zeile öffnet Bearbeiten-Dialog (Name, Ausführender, Minuten; ohne Info), Leername → Hinweis.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-628489c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:232"
+   ],
+   "n": "Menü-Eintrag „Feld hinzufügen“ im Popover des aufgeklappten Templates.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-7562664a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:234",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:278"
+   ],
+   "n": "„Werk-Platzhalter“ nur bei Instanztyp ≠ general; legt song-placeholder-{n} mit 20 min an und speichert. Seite nur Admin/Verantwortlich (Router-Guard).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-82bc5cc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:370"
+   ],
+   "n": "AppBar mit automatischem Zurück-Pfeil (Route unter /settings/org-settings).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-dd2c64eb": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:237",
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:247"
+   ],
+   "n": "Standardfelder im Menü unter Trenner/Überschrift; Kopie mit neuer UUID. Darstellung „Name“ + Untertitel „20 min“ statt Note – nur Optik.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#action-f38fd15e": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:233"
+   ],
+   "n": "Menü-Eintrag „Notizfeld hinzufügen“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#alert-894e27e7": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:249"
+   ],
+   "n": "Dialog „Feld hinzufügen“: Freitext/Ausführender/Info, 20 min Standard, kein Pflichtfeld, id = Name bzw. UUID wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-2a29f1b0": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:522"
+   ],
+   "n": "„Ende ca. {time}“ nur wenn Ende berechnet, grau.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-5b4524e2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:515"
+   ],
+   "n": "„Feld hinzufügen“-Button im aufgeklappten Template.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-f76ccd6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:440"
+   ],
+   "n": "Hinweistext Standardfelder vorhanden.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-planning-templates/org-planning-templates.page#text-fb7c6e3c": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_planning_templates_page.dart:370"
+   ],
+   "n": "Titel „Planvorlagen & Felder“ (AppBar + großer Titel).",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:610"
+   ],
+   "n": "Dropdown mit Optionen des Auswahlfelds, Platzhalter = Feldname, in „Für alle setzen“ und pro Person.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-0e4833d3-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:617"
+   ],
+   "n": "Dropdown Gemeinden (nur Kirchen mit id), Platzhalter Feldname; Standard erste Gemeinde via extraFieldDefaultValue.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-40247d7a-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:597"
+   ],
+   "n": "Schalter für Ja/Nein; bei „Für alle setzen“ mit Feldname, pro Person ohne Label; Standard true wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/bulk-edit/bulk-edit.page#field-90ab5ff6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:559",
+    "lib/features/people/presentation/pages/bulk_edit_page.dart:119"
+   ],
+   "n": "Gruppen-Dropdown „Gruppe wählen...“ (pro Person „Gruppe“), Startwert erste Gruppe.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#action-d036dd10": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/import_widgets.dart:35-40",
+    "lib/features/people/presentation/pages/person_import_page.dart:78"
+   ],
+   "n": "„Datei auswählen“ mit Upload-Icon in Primärfarbe, öffnet Dateiauswahl.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#text-2d988dd6": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:416"
+   ],
+   "n": "Vor- und Nachname in der Vorschau-Zeile.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#text-e0a87666": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:289"
+   ],
+   "n": "Titel „Personen importieren“.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-1363216a": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:99-103",
+    "lib/core/utils/spreadsheet_reader.dart:155-161"
+   ],
+   "n": "Fehler-Toast peopleFileUnreadable (rot) bei nicht lesbarer Datei; .xls/.xlsx-Lesefehler liefern denselben Text.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-18af3f0b": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:85-87"
+   ],
+   "n": "Warn-Toast peopleFileEmpty bei leerer Datei.",
+   "v": "bestätigt"
+  },
+  "people/import/import.page#toast-775db1e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_import_page.dart:182-184"
+   ],
+   "n": "Fehler-Toast peoplePreviewFailed (rot) bei Fehler in Vorschau.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-846fa8d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1495",
+    "lib/features/people/presentation/pages/people_list_page.dart:649"
+   ],
+   "n": "Sortierung ≠ Gruppe: flache Liste ohne Trenner. Badges/Zeilen wie Ionic; Wischaktionen (Löschen, Pause/Play) nur Admin/Verantwortlicher (isAdmin = admin||responsible wie Ionic).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-f9b0c465": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:576",
+    "lib/features/people/presentation/pages/people_list_page.dart:1745"
+   ],
+   "n": "Banner mit Avatar/🎂, Name und Alter (peopleAgeYears); Tipp öffnet Person; Bedingung confirmed Birthday + heute wie Ionic. Icon card_giftcard statt gift (Optik).",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#actionsheet-95b42378": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1429",
+    "lib/features/people/presentation/pages/people_list_page.dart:661"
+   ],
+   "n": "Nur Admin/Verantwortlicher; eigene Person (appId = Auth-User) → roter Toast; Sheet Archivieren/Entfernen/Abbrechen; Entfernen mit Bestätigung.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#field-1802f7a0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:73",
+    "lib/features/people/presentation/widgets/archive_person_modal.dart:84"
+   ],
+   "n": "Austrittsdatum per Picker (dd.MM.yyyy), Vorgabe heute, als lokale Mitternacht in UTC-ISO wie dayjs().toISOString().",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

@@ -1,0 +1,401 @@
+{
+ "batch": "zz-verify5-b-opus-02",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "app.component#native-f45e9256": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart:84-109",
+    "lib/main.dart:160",
+    "lib/core/services/live_activity_service.dart:771"
+   ],
+   "n": "Native Links (app_links uriLinkStream inkl. Kaltstart) für attendix.de: Auth-Link → gleiche Verarbeitung wie handleAuthUrl, sonst go(Pfad+Query) wie navigateByUrl(pathname+search); attendix://live-plan über den LiveActivity-Kanal (openFromUrl) wie Ionic liveActivity.openFromUrl. Zusätzlich werden Hash-Routen (#/plan?…) aufgelöst.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-2a77a09b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:594-600",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:116",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:125"
+   ],
+   "n": "„Ablaufplan“ (sekundärer CTA) nur auf der Karte Heute/Nächster Termin (nur canAddAttendance = Ionic isConductor||isHelper) und nur mit Planfeldern; Beobachter-Ausschluss in _hasPlan. Viewer startet live bei laufendem Termin und hat für Dirigent/Helfer jetzt wie Ionic (canEdit) den Bearbeiten-Stift → /planning?attendanceId=…&plan=i.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-3ec5afc7": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:586-592",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:78"
+   ],
+   "n": "„Anwesenheit“ mit Ablaufplan, sonst „Anwesenheit erfassen“; Karte nur für canAddAttendance; öffnet /attendance/:id (Guard canAddAttendance).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#action-b495283c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:636-642",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:116"
+   ],
+   "n": "Icon-Button mit Tooltip „Ablaufplan anzeigen“ nur in den kommenden Zeilen (nur Dirigent/Helfer) und nur mit Planfeldern; öffnet denselben Viewer.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#native-e5abdba5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:91",
+    "lib/core/utils/haptic_helper.dart:15"
+   ],
+   "n": "HapticHelper.medium() (try/catch) vor dem Lösch-Dialog, gleiche Auslöser wie Ionic remove (Karte für Dirigent+Helfer, Zeilen nur Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#nav-35a3dbc0": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:78-86",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:633",
+    "lib/core/router/attendance_detail_guard.dart:23"
+   ],
+   "n": "push /attendance/:id nur bei canAddAttendance (Admin/Verantw./Helfer/Helfer-Stimmführer = Ionic isConductor||isHelper), Beobachter-Zeilen ohne Tippen; Liste wird nach Rückkehr neu geladen.",
+   "v": "bestätigt"
+  },
+  "attendance/att-list/att-list.page#text-6a3aa5b0-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:357-358",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:715"
+   ],
+   "n": "Großer Titel „Termine“ nur im iOS-Look und nur bei ≤1 Instanz (sonst Instanz-Umschalter), auch im Lade-/Leerzustand; rollenunabhängig.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#action-0a51d6bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:95-107",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1666"
+   ],
+   "n": "Wischen → roter Papierkorb für alle, die die Checkliste sehen (canViewAttendanceChecklist = Ionic !isHelper||canViewChecklist); Bestätigungsdialog und Zusatz-Toast siehe alert-87434869; Löschen per id statt Index.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-1caf1a5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:203-208",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:296-304"
+   ],
+   "n": "dispose → _unsubscribeFromRealtimeChanges → removeChannel des einen Termin-Kanals (attendance- und person_attendances-Listener).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-2892edb3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:155-161",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:296-304"
+   ],
+   "n": "Beim Wiedersichtbarwerden (AppLifecycleListener onShow, Ionic visibilitychange) wird der alte Kanal entfernt und neu abonniert, Termin und Personen neu geladen.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-3049a21a": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:293"
+   ],
+   "n": "Ein subscribe() des gemeinsamen Kanals (person_attendances-Listener inklusive).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-4559214d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:203-208",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:296-304"
+   ],
+   "n": "Wie db-1caf1a5d: der person_attendances-Listener wird mit demselben Kanal beim dispose entfernt.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-461cedd5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:155-161",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:296-304"
+   ],
+   "n": "Wie db-2892edb3 (ein gemeinsamer Kanal).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-4914fe1c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1055-1086",
+    "lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:108-128"
+   ],
+   "n": "Bucket attendances, Pfad <id>/attachment/<safeName> (gleiche Regex), upsert, danach attachment_url/attachment_name (id + tenantId); Toasts „hochgeladen“/„Upload fehlgeschlagen“. Hochladen nur ohne Anhang angeboten (wie Ionic), daher greift das Löschen einer Vorgängerdatei praktisch nie.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-4d232055": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1081-1086"
+   ],
+   "n": "getPublicUrl(path), danach Update attachment_url/attachment_name mit id- und tenantId-Filter.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-633099eb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:1024-1040",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1431-1470"
+   ],
+   "n": "send-ad-hoc-reminder mit attendanceId, tenantId, title/message nur wenn gesetzt, playerAppId, playerAppIds = neutrale Personen mit appId (Gruppen-Scope wie Ionic players) bei „nur ohne Rückmeldung“; vorher Mandanten-Prüfung des Termins. Menü für Admin/Verantw./Helfer-Stimmführer (canMutate = Ionic !isHelper), pro Person für alle.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-6edfb9e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:252-272",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:306",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1490"
+   ],
+   "n": "Ionic: Kanal att-detail-person-changes-… auf person_attendances (alle Events, Client-Filter attendance_id). Flutter: gleicher Kanal-Inhalt mit Serverfilter attendance_id plus ungefiltertes DELETE (gezeigte Zeile gelöscht → „deletedByOther“ + zurück); Status/Notiz/duty_state übernommen, eigene laufende Writes übersprungen.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-aec79a62": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:252",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:275-292",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1481",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1507"
+   ],
+   "n": "Ionic: Kanal att-detail-changes-<id>-<zeit>-<zufall> auf attendance. Flutter: Kanal person-att-<id> mit attendance UPDATE (Filter id → Termin neu laden) und DELETE (→ „deletedByOther“ + zurück) – gleiche Wirkung. Eindeutiger Topic-Name unnötig: realtime_client 2.7.0 channel() legt immer einen neuen Kanal an, kein anderer Flutter-Kanal nutzt den Namen.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#db-e9c2c94c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:293",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:144",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:160"
+   ],
+   "n": "subscribe() des Termin-Kanals beim Öffnen und beim Wiedersichtbarwerden.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#effect-353ec499": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:117-126",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:173-184",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:149-167"
+   ],
+   "n": "Flutter besser: Telegram-Versand (PDF, 2x A5, Bild) über runPlanExport gleich, aber Titel im PDF und Dateiname „<Titel>_TT_MM_JJJJ[_2x]“ nehmen in Flutter zuerst die eigene Plan-Überschrift (plan.title); Ionic send() nutzt im Ein-Plan-Fall immer Utils.getPlanningTitle (Planungstitel (typeInfo)/typeInfo/Typname). Ohne eigene Überschrift identisch. Erster Befund „nur mit Chat-ID angeboten“ veraltet: im Ein-Plan-Sheet jetzt immer (alwaysTelegram) wie Ionic; ohne Chat-ID roter Toast „Telegram nicht konfiguriert“.",
+   "v": "korrigiert"
+  },
+  "attendance/attendance/attendance.page#effect-70a83fa3": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:713-715",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137"
+   ],
+   "n": "Nur mit Ort; iOS (auch iOS-Browser): Auswahl Apple Karten/Google Maps, sonst direkt Google Maps, extern geöffnet – wie Utils.openNavigation.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#effect-7e7a46ab": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:117-126",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:146-150",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:173-184",
+    "lib/core/services/plan_export_service.dart:131-134"
+   ],
+   "n": "PDF-Export A4 / 2x A5 (Ein-Plan-Sheet „Ablaufplan teilen“) vorhanden. Ionic exportPlan: Titel immer Utils.getPlanningTitle, Datei „<Titel>_<Wochentag, TT.MM.JJJJ>.pdf“ bzw. „…_2x.pdf“ / Flutter: Titel zuerst eigene Plan-Überschrift (plan.title, Flutter besser), Datei „<Titel>_TT_MM_JJJJ.pdf“ bzw. „_2x.pdf“. Inhalt/Briefkopf sonst gleich.",
+   "v": "korrigiert"
+  },
+  "attendance/attendance/attendance.page#field-ea675320": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart:111-113",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1558-1575",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1739-1758"
+   ],
+   "n": "Abhaken für jede Rolle, die die Checkliste sieht (Helfer nur mit checklist_view, Helfer-Stimmführer immer), ohne weitere Rollenprüfung wie Ionic; schreibt attendance.checklist (id + tenantId). Beobachter: Flutter sperrt /attendance/:id (Routing-Batch).",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#modal-2087914f": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1174",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1453-1460",
+    "lib/features/attendance/presentation/widgets/attendance_detail/ad_hoc_reminder_sheet.dart:52-73"
+   ],
+   "n": "Menü nur Admin/Verantwortlich/Helfer-Stimmführer (canMutateAttendanceDetail = Ionic !isHelper), pro Person im Mehr-Sheet für alle – wie Ionic. Bottom-Sheet mit gleichen Vorgaben (Titel/Nachricht, Link open-attendance?id&tenantId, hasNeutralPersons). Person ohne Account siehe actionsheet-1aaa2155.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#native-1dcfca94": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:404-415",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:479",
+    "lib/core/services/offline_queue_service.dart:544"
+   ],
+   "n": "connectivityProvider statt Network.getStatus; Toasts „Verbindung wiederhergestellt“/„Keine Verbindung“ nur bei echtem Online/Offline-Wechsel; Offline-Queue wird global beim Reconnect geflusht.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#native-7db6296b": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:404-415"
+   ],
+   "n": "Listener auf connectivityProvider, reagiert nur auf echten Wechsel (vorheriger Zustand verglichen) wie Ionic networkStatusChange.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/attendance.page#nav-a04742ad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:384-388"
+   ],
+   "n": "Mandantenwechsel bei offenem Termin → go('/attendance') (Ionic navigateByUrl('/tabs/attendance')); nur Mandanten-, keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "attendance/attendance/status-info/status-info.component#logic-2fc18c9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:12-27",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:34-46",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:49-56",
+    "lib/features/attendance/presentation/widgets/attendance_status_overview_sheet.dart:87-94",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2635-2657"
+   ],
+   "n": "Zählung über alle Personenzeilen des Termins (nur Helfer-Gruppe, nicht Such-/Statusfilter), Reihenfolge Anwesend/Entschuldigt/Verspätet/Verspätet (entschuldigt)/Abwesend/Neutral, nur count>0, gleiche Farben, „Gesamt: N Personen“; Sheet initial 0.5, max 0.75.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#logic-535f81f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:41-74",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:110-131",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:241-320",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:324-356",
+    "lib/data/repositories/auto_message_repository.dart:30",
+    "lib/data/repositories/auto_message_repository.dart:169",
+    "lib/data/repositories/auto_message_repository.dart:205-236",
+    "lib/data/repositories/auto_message_repository.dart:330",
+    "lib/data/repositories/auto_message_repository.dart:432"
+   ],
+   "n": "isManager (Admin/Verantwortlich), started, unexcused (Abwesend, nicht ausgetreten), pending, Laden Regeln/Runs/Antworten (gleiche Tabellen/Sortierung, zusätzlich tenantId-Filter), Regelfilter type_ids + enabled/enabled_at oder Run, sendAt = Ende + delay, startOf/endOf, suspend-Insert (rule_id, tenantId, attendance_id, suspended, created_by/_name) / unsuspend-Delete (id, status=suspended), openRun-Ziele, decide-Dialog + Edge Function attendance-response, Toasts – alles gleich.",
+   "v": "bestätigt"
+  },
+  "attendance/auto-message-panel/auto-message-panel.component#modal-0f458f28": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:79-105",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1177-1179",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:1024-1043",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:24-31"
+   ],
+   "n": "Menüpunkt nur Admin/Verantwortlich, Termin begonnen, ≥1 Unentschuldigter. Vollbild-Compose (fullscreenDialog) mit festen Empfängern (person_id), attendanceId, allowResponses, Label „N unentschuldigte Personen dieses Termins“, Titel „Wir haben euch vermisst“, Text mit termin/datum/instanz.",
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#alert-b577ca37": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:122-147",
+    "lib/data/repositories/duty_repository.dart:422-490",
+    "lib/core/providers/duty_providers.dart:308-321"
+   ],
+   "n": "Titel, Text (selbst / für andere mit Vorname, Vorschau max. 4 Daten „DD.MM.“ + „ …“), „Nur neue Termine“ / „Auch geplante“; Übernehmen schreibt person_attendances status Entschuldigt, notes, changed_by/at für dieselben Zeilen (Standardstatus, ohne Dienst, Entschuldigt erlaubt, Regel passt, sichtbare Typen; Mandant über attendance.tenantId). Rollen-Erreichbarkeit unverändert; im Modal selbst keine Rollenprüfung.",
+   "v": "bestätigt"
+  },
+  "duty/unavailability-modal/unavailability-modal.component#toast-872ca16f": {
+   "s": "ok",
+   "f": [
+    "lib/features/duty/presentation/pages/unavailability_page.dart:148-154"
+   ],
+   "n": "Grüner Toast „{n} Termine angepasst“ nach „Auch geplante“. Schreibfehler jetzt wie Ionic roter Toast „Fehler beim Übernehmen in geplante Termine“ statt Erfolg; Lese-Fehler → „0 Termine angepasst“ in beiden Apps.",
+   "v": "bestätigt"
+  },
+  "export/export.page#effect-02c7a701": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/export_service.dart:74-91",
+    "lib/core/services/export_service.dart:97-123",
+    "lib/core/services/export_service.dart:246-281"
+   ],
+   "n": "PDF mit pdf-Paket statt jsPDF: Briefkopf auf jeder Seite, Titel „{name} Spielerliste“, „Stand: {date}“, Plain-Tabelle mit Zebra, übersetzte Spaltenköpfe, gleiche Auto-Fit-Stufen (11/3.5 → 11/2 → 9/2 → 8/1.5), Datei „…Spielerliste_Stand_….pdf“.",
+   "v": "bestätigt"
+  },
+  "export/export.page#effect-885fb586": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/export_service.dart:160-181",
+    "lib/core/services/export_service.dart:185-242",
+    "lib/core/services/export_service.dart:444-459",
+    "lib/features/export/presentation/pages/export_page.dart:446-480"
+   ],
+   "n": "Titel „{name} Anwesenheit“, neueste 8 vergangene Termine mit Personen aufsteigend (wie Ionic slice+reverse), Codes X/A/E/L/N mit gleichen Farben zentriert, %-Zellen zentriert, Auto-Fit 8/2 → 8/1.5 → 7 → 6.",
+   "v": "bestätigt"
+  },
+  "history/history.page#native-74e8de75": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:592"
+   ],
+   "n": "HapticHelper.medium() vor dem Bestätigungsdialog in _deleteEntry, wie Ionic remove.",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#logic-8b7401f1": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:247-250",
+    "lib/core/utils/dashboard_utils.dart:263-285",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:14-23",
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:192-235"
+   ],
+   "n": "isCritical aus allen Personen (inkl. archivierte), Grundtext criticalReasonText bzw. Historientyp-Text, Fallback „Problemfall“, Initialen; Person als Modal, danach Neuladen (Ionic nach Modal-Schließen).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/components/current-plan-card/current-plan-card.component#logic-a3609a93": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/dashboard_providers.dart:289-295",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:351-400",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:406-422",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:424-478"
+   ],
+   "n": "Gleich: erster Termin mit befülltem Plan und (Admin/Verantwortlich oder share_plan), Tagesplan bei Mehrfachplänen, Startzeiten, Live-Zeitraum (Termin- bzw. Planzeiten), aktiver Punkt ohne Blockköpfe, Countdown h:mm:ss, Sekundentakt nur am Plantag, „Heute“ bzw. „Wochentag, TT.MM.JJJJ“, Positionen ohne Blockköpfe, Viewer mit Tagesplänen; ohne Plan keine Karte. Ladezustand mit Kartenkopf (Ionic nur Spinner).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#action-80e399a8": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:121-153",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:70-74",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:180-190"
+   ],
+   "n": "Eintrag je Instanz (Langname), Badge „Aktuell“ bei der aktuellen; gleiche Instanz → nichts; Wechsel per setTenant (inkl. user_metadata), danach role.defaultRoute (Ionic Utils.getUrl). Ladeoverlay/Ziel sind eigene Items (loading-bee7e5e1, nav-1c9dc137).",
+   "v": "bestätigt"
+  },
+  "home-dashboard/home-dashboard.page#action-98d61d4f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:44",
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:70-75",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:51-80",
+    "lib/core/providers/tenant_providers.dart:295-306"
+   ],
+   "n": "Nur bei > 1 Instanz (alle tenantUsers-Zeilen des Users, jede Rolle) wie db.tenants(); Seite nur Admin/Verantwortlich (_protectedRoutes '/home-dashboard'). Langname + Pfeil nach unten links in der Toolbar.",
+   "v": "bestätigt"
+  },
+  "i18n/i18n.providers#logic-5acbf933": {
+   "s": "ok",
+   "f": [
+    "l10n.yaml:4",
+    "lib/main.dart:265-273",
+    "lib/l10n/languages.dart:5-10"
+   ],
+   "n": "Transloco (de Default/Fallback, ICU-Plurale, de/en wählbar, ru/es versteckt) entspricht gen-l10n mit Template app_de.arb (fehlende Schlüssel aus de) und MaterialApp.locale aus localeProvider.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

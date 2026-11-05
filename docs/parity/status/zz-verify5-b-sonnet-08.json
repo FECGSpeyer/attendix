@@ -1,0 +1,344 @@
+{
+ "batch": "zz-verify5-b-sonnet-08",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "settings/general/extra-fields/extra-fields.page#field-de4f6670": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:427-439"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-f3d39802": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-f6d666d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:386-395"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#field-ffdffaab": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:396-403"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-0d0d3a83": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-0d0d3a83-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-3868e0d2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:360",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:31-51"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-696dba20": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-696dba20-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-696dba20-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-696dba20-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:413-417"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-7776dc9d": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-7776dc9d-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-8f66e68f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-8f66e68f-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-8f66e68f-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-8f66e68f-4": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:449-455"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-aaa7cf25": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-aaa7cf25-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:347-349"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-ca4abb00": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-ca4abb00-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:356-361"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-fe5543e5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#text-fe5543e5-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:424-426"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-2f727485": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:203-204"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-945683f7": {
+   "s": "unclear",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:308-311"
+   ],
+   "n": "Text und Bedingung gleich (Ionic addExtraField: Name, ID-Doppelung, Optionen, ID leer – gleiche Reihenfolge wie Flutter submit()). Offen: Toast kommt bei iOS-Look über ScaffoldMessenger-SnackBar (toast_helper.dart _showToast), das Sheet ist ein Root-Modal-BottomSheet und könnte die SnackBar verdecken; Android/md nutzt Root-Overlay (sichtbar). Ohne Gerätetest nicht entscheidbar. Hinweis zur Erstnotiz: Reihenfolge ist in Flutter identisch zu Ionic (ID-Check vor Optionen).",
+   "v": "korrigiert"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-b9ee5530": {
+   "s": "unclear",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:296-299"
+   ],
+   "n": "Text und Bedingung gleich (Ionic addExtraField: Name, ID-Doppelung, Optionen, ID leer – gleiche Reihenfolge wie Flutter submit()). Offen: Toast kommt bei iOS-Look über ScaffoldMessenger-SnackBar (toast_helper.dart _showToast), das Sheet ist ein Root-Modal-BottomSheet und könnte die SnackBar verdecken; Android/md nutzt Root-Overlay (sichtbar). Ohne Gerätetest nicht entscheidbar.",
+   "v": "korrigiert"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-f43756d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:54-57",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:174-178"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-fcd86ce2": {
+   "s": "unclear",
+   "f": [
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:304-307"
+   ],
+   "n": "Text und Bedingung gleich (Ionic addExtraField: Name, ID-Doppelung, Optionen, ID leer – gleiche Reihenfolge wie Flutter submit()). Offen: Toast kommt bei iOS-Look über ScaffoldMessenger-SnackBar (toast_helper.dart _showToast), das Sheet ist ein Root-Modal-BottomSheet und könnte die SnackBar verdecken; Android/md nutzt Root-Overlay (sichtbar). Ohne Gerätetest nicht entscheidbar. Hinweis zur Erstnotiz: Reihenfolge ist in Flutter identisch zu Ionic (ID-Check vor Optionen).",
+   "v": "korrigiert"
+  },
+  "settings/general/general.page#action-08962457": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:114"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-38254204": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:538"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-62d6aa37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:114"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-710fe69c": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:534"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-d6f67aed": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:530-533"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-d8e4368f": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:92"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#action-fcbed0bb": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:92"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-3a7058f8": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:155"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-ae5a958b": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/widgets/critical_rule_sheet.dart:234"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#field-dd151934": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:317-332",
+    "lib/features/settings/presentation/pages/general_settings_page.dart:477-484"
+   ],
+   "n": "Ionic: ion-datetime max=heute (kein Datum in der Zukunft wählbar, nach unten unbegrenzt). Flutter: showAppDatePicker firstDate 2020, lastDate 2030 – Zukunftsdatum wählbar, Datum vor 2020 nicht; auf Material crasht/assertet der Picker, wenn gespeicherter Saisonstart < 2020. Text/Hilfetext/Format dd.MM.yyyy sonst gleich.",
+   "v": "korrigiert"
+  },
+  "settings/general/general.page#text-2e97d7f5": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:767"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/general/general.page#text-32120c43": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:590",
+    "lib/features/settings/presentation/widgets/reasons_list_editor.dart:116"
+   ],
+   "n": "Aktueller Code geprüft, unverändert gleich zu Ionic.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "settings/general/general.page",
+   "title": "Regel hinzufügen ohne Anwesenheitstypen",
+   "n": "Ionic: Modal 'Neue Regel' öffnet immer. Flutter: _showAddCriticalRuleSheet bricht mit Fehler-Toast ab, wenn keine Anwesenheitstypen existieren.",
+   "sev": "niedrig",
+   "ionic": "src/app/settings/general/general.page.html:255",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart:768-777"
+   ]
+  }
+ ]
+}

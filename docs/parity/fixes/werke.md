@@ -75,7 +75,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic setzt bei Filter-/Kategorie-/Sortierwechsel searchTerm = '' und filtert ohne Suche, obwohl der Suchtext im Feld stehen bleibt / Flutter: Suchbegriff bleibt angewendet.
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:227-232
 
-## Kleinigkeiten (niedrig): 54
+## Kleinigkeiten (niedrig): 55
 
 - [ ] **niedrig** `songs/import/import.page` `loading-4a98212a` [songs/import/import.page.ts:90](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/import/import.page.ts#L90)
   Ionic: blockierendes Overlay „Datei wird gelesen...“ (people.readingFile; Slice zeigt fälschlich die Dauer 10000 als Text) / Flutter: Spinner-Overlay über dem Inhalt ohne Text
@@ -238,3 +238,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `songs/songs.page` `x-ee1abf09a6` **Fehler- und Leerzustand** [src/app/songs/songs.page.html:245](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L245)
   Ionic: nur Skeleton beim Laden, kein Fehler- oder Leerzustand (leere Liste unter „Werke (0)“) / Flutter: Fehleransicht mit „Erneut versuchen“, Leerzustand mit Icon und „Keine Werke vorhanden“ bzw. „Keine Werke gefunden“ + „Filter zurücksetzen“, Lade-Balken beim Aktualisieren.
   Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:168-173, lib/features/songs/presentation/pages/songs_list_page.dart:487-510
+- [ ] **niedrig** `songs/songs.page` `x-7427355b4a` **Menüeintrag „Werk-Kategorien“ nur für Admin/Verantwortlich** [src/app/songs/songs.page.html:23](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/songs.page.html#L23)
+  Ionic: Eintrag „Werk-Kategorien“ im ⋮-Menü ohne Rollenprüfung (alle Rollen, auch Freigabe-Ansicht). Flutter: nur bei isAdmin. Evtl. gewollt (Schreiben scheitert für andere per RLS), Leon entscheidet.
+  Flutter: lib/features/songs/presentation/pages/songs_list_page.dart:302

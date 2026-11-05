@@ -1,0 +1,209 @@
+{
+ "batch": "zz-verify5-b-opus-14",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "terms/terms.page#toast-be2dc843": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:110-115",
+    "lib/data/repositories/account_repository.dart:59-70",
+    "lib/core/providers/legal_providers.dart:24-33"
+   ],
+   "n": "Weiterhin gleich: updateUser-Fehler → handleError/rethrow → catch → roter Toast „Fehler beim Speichern. Bitte versuche es erneut.“, bleibt auf /terms. Neu nur: gemerkter Datei-Link wird bei Fehler wieder abgelegt (kein sichtbarer Unterschied).",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#toast-f7e63a46": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:104-109",
+    "lib/data/repositories/account_repository.dart:54-59"
+   ],
+   "n": "refreshSession-Fehler → signOut + SessionExpiredException → go('/login') + Warn-Toast „Deine Sitzung ist abgelaufen. Bitte melde dich erneut an.“ wie Ionic. Nuance: Anzeigedauer 3 s (md) / 4 s statt fest 4 s.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-28c159d1": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/plan_export_service.dart:59-86",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:152-169",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:124-139"
+   ],
+   "n": "„Alle Pläne“: buildPdf legt je Plan eigene Seite(n) in EINEM PDF an (A4 mit Auto-Fit bzw. 2x A5 quer), nie als Bild (Bild-Option bei „alle“ ausgeblendet) – wie createMultiPlanExport (asImage false, pdf-lib-Merge). Nuancen aus exportAttendancePlans (leere Pläne, Untertitel) als Extra erfasst.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-468e81fe": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/web_window_web.dart:37-51",
+    "lib/core/services/web_window_web.dart:10-20"
+   ],
+   "n": "openInNewTab: außerhalb installierter Web-App window.open(url,'_blank'), sonst bzw. bei null versteckter <a target=_blank rel=noopener>-Klick; isStandaloneWebApp prüft navigator.standalone + display-mode standalone/fullscreen/minimal-ui wie Ionic. Zusätzlich opener=null (unsichtbar).",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-576bec88": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:131",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:149-166",
+    "lib/core/services/plan_export_service.dart:59-80"
+   ],
+   "n": "telegram2x: buildPdf(sideBySide: true) → 2x A5 auf A4 quer als Bytes an sendPlanPerTelegram, Name mit „_2x“ (erstes „(“/„)“ entfernt) wie Ionic send(false, true).",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-576bec88-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:149-166",
+    "lib/core/services/plan_export_service.dart:59-102"
+   ],
+   "n": "Telegram-PDF: A4 mit Auto-Fit (11→9→8→7 pt) als Bytes an sendPlanPerTelegram wie doc.output('blob').",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-b60269d9": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/certificate_service.dart:31-115",
+    "lib/features/settings/presentation/widgets/vorkurs_certificates.dart:53-57"
+   ],
+   "n": "Eine A4-Seite je Person mit Hintergrund, Name Times fett-kursiv 48 pt (Baseline 138 mm), „hat die Vorkursprüfung“/„erfolgreich bestanden“ 33 pt, „Speyer, den D.M.YYYY“ kursiv 24 pt; Datei „Urkunden_Vorkurs_YYYY-MM-DD.pdf“ über saveBytes. Nuance: Name schrumpft per FittedBox ohne 28-pt-Untergrenze.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-cf6a6016": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/song_file_opener.dart:41-60",
+    "lib/core/services/native/native_file_service.dart:103-108",
+    "lib/core/services/native/native_file_service.dart:139-160",
+    "lib/core/services/web_window_web.dart:37-51"
+   ],
+   "n": "Web nicht installiert: openUrl → launchExternal → web_window.openInNewTab (window.open, sonst Link-Klick) wie Ionic; installierte Web-App: In-App-Viewer bzw. Keine-Vorschau-Dialog (eigener Zweig). PDF/Bild-In-App-Viewer an den Aufrufstellen bewertet.",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-d0866846-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:157-166",
+    "lib/core/services/plan_export_service.dart:119-125"
+   ],
+   "n": "Telegram-Bild: buildImage → erste Seite des A4-PDFs als PNG (Printing.raster 150 dpi statt pdf.js scale 6), asImage an sendPlanPerTelegram; nur einzelner Plan wie Ionic (asImage && !all).",
+   "v": "bestätigt"
+  },
+  "utilities/Utils#effect-e71503f7": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1133",
+    "lib/core/services/native/native_file_service.dart:103-116",
+    "lib/core/services/web_window_web.dart:37-51"
+   ],
+   "n": "Web: Google-Maps-URL (maps/search/?api=1&query=) über openExternal → openInNewTab wie Ionic; iOS(-Browser): Aktionsblatt „Apple Karten“/„Google Maps“. maps:// geht im Web über url_launcher (window.open) statt Link-Klick – Nuance.",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#logic-8dd6e8f4": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:63-231",
+    "lib/core/utils/attendance_logic_utils.dart:35-53",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:32-36",
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:170-308"
+   ],
+   "n": "Datum ändern: gleicher Tag → nichts; Rückfrage Abbrechen/Beibehalten/Zurücksetzen nur bei Abweichung vom Standardstatus; Datum 12:00, Deadline/Checklisten-Fälligkeiten verschoben, Historie-Daten, Abwesenheiten/Reset (dateChangeStatusUpdates = Ionic-Schleife), Schicht-Neuberechnung, alle Writes tenant-geprüft. protocolAttendanceTypes (Protokoll + sichtbar, nach index). Protokoll-Termin: Typwahl nur bei >1, Datum ab heute, Personen/Abwesenheiten/Verhinderungen, is_org_plan, Toasts. Bekannt: Flutter lädt Termin vor dem Datumsdialog; Abwesenheiten-Ladefehler bricht ab (b20-Extra).",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-37694bad": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:80-90",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:106-115"
+   ],
+   "n": "Roter Toast „Termin konnte nicht geladen werden“ bei Ladefehler von Termin/Typ bzw. Statusliste, danach Abbruch wie Ionic. Aufrufer unverändert (Termin-Detail, Themen-Tab „Datum ändern“ nur Leitung).",
+   "v": "bestätigt"
+  },
+  "utilities/attendance-date-dialog#toast-8fed68b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/quick_create_attendance.dart:221-238"
+   ],
+   "n": "Gleicher Warn-Toast „Bitte ein Datum ab heute wählen“; praktisch unerreichbar, da der Datumsdialog firstDate = heute setzt (Ionic min = heute) – kein Termin in der Vergangenheit.",
+   "v": "bestätigt"
+  },
+  "utilities/db-helpers#db-2d9892ee": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:662-666",
+    "lib/data/repositories/sign_in_out_repository.dart:141-158"
+   ],
+   "n": "Liest per id duty_state und attendance(tenantId, type_id, attType.duty_mode) – deckt Ionic id/duty_state/type_id + Dienst-Typ-Prüfung ab, zusätzlich Mandantenprüfung (Ionic ohne tenantId). duty_assigned_at liest Ionic, nutzt es aber nicht.",
+   "v": "bestätigt"
+  },
+  "utilities/db-helpers#db-f424eb31": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:683-695",
+    "lib/data/repositories/sign_in_out_repository.dart:186-190",
+    "lib/data/repositories/player_absence_repository.dart:285",
+    "lib/core/utils/duty_utils.dart:51-68",
+    "lib/data/repositories/player_repository.dart:1105-1110",
+    "lib/data/repositories/player_repository.dart:1137-1142"
+   ],
+   "n": "Spalten/Werte stimmen (duty_state nach dutyStateAfterStatus, bei „confirmed“ duty_reminder_sent=true, bei vorher leerem Dienst assigned_by/at), im selben Update wie der Status in updatePersonAttendance, signIn und Abwesenheits-Reset. Erster Prüfer übersah: Ionic ruft syncDutyWithStatus bei JEDEM db.updatePersonAttendance, auch in updateShiftAssignmentsForPerson (Schichtwechsel der Person, Schichtplan löschen). Flutter player_repository.updateShiftAssignmentsForPerson schreibt status/notes direkt ohne Dienst-Abgleich (und ohne changed_at/changed_by): Phase 1 setzt schicht-entschuldigte Zeilen auf den Standardstatus zurück, bei Dienst-Terminen mit Status Neutral bleibt duty_state „confirmed“, Ionic setzt „requested“. Seltene Kette, aber falscher DB-Wert.",
+   "v": "korrigiert"
+  },
+  "utilities/db-helpers#logic-19bf1565": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/db_helpers.dart:121",
+    "lib/core/utils/duty_utils.dart:51-68",
+    "lib/data/repositories/attendance_repository.dart:683-723",
+    "lib/data/repositories/sign_in_out_repository.dart:141-190",
+    "lib/data/repositories/player_repository.dart:480",
+    "lib/data/repositories/player_repository.dart:532"
+   ],
+   "n": "pick*-Helfer durch explizite Payloads ersetzt (updatePersonAttendance entfernt berechnete Felder), sanitizeImg = data:-Prüfung in player_repository, syncDutyWithStatus = dutySyncFieldsForStatus in updatePersonAttendance/signIn/Abwesenheits-Reset. Fehlender Abgleich beim Schicht-Reset ist unter db-f424eb31 erfasst.",
+   "v": "bestätigt"
+  },
+  "utilities/organisation-person-key#logic-285eabcd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/shared_person_fields.dart:20-26",
+    "lib/data/repositories/shared_person_fields.dart:50-55"
+   ],
+   "n": "„global:<id>“ vor „app:<uuid>“, sonst null – wie getOrganisationPersonKey (auch für rohe player-Zeilen).",
+   "v": "bestätigt"
+  },
+  "utilities/plan-groups#logic-7f5e06ab": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/plan_utils.dart:84-257",
+    "lib/core/utils/dashboard_utils.dart:347",
+    "lib/features/planning/presentation/widgets/plan_fields_editor.dart:125-163"
+   ],
+   "n": "isGroupHead/newGroupHead (grpFld-, time 0)/childrenOf/groupDuration/fieldMinutes/lastIndexOfGroup/normalizeGroups/cloneBlock (Song-/Notiz-ids bleiben, uid/beamerFile leer)/blockTemplateFrom (ohne agendaItemId) gleich; moveRow → moveField + Editor (_collapsed, Join über Hinzufügen-Zeile), Kopf nie in fremdem Block; fieldNumbers in dashboard_utils.",
+   "v": "bestätigt"
+  },
+  "utilities/unique-dates#logic-49754779": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:32-38",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:156"
+   ],
+   "n": "uniqueDays: ein Eintrag je lokalem Kalendertag in Originalreihenfolge, vor dem Anlegen angewandt.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": [
+  {
+   "unit": "utilities/Utils",
+   "title": "Alle Pläne exportieren: leere Pläne und Untertitel",
+   "n": "Ionic exportAttendancePlans überspringt Pläne ohne Felder (indexes.filter(fields.length)) und setzt den Untertitel per planSubtitle (bei Tagesplänen ohne eigenes Label nur das Datum). Flutter (Termin-Detail, Plan-Viewer, „alle Pläne“) nimmt jeden Plan, ein leerer Plan ergibt eine Seite nur mit Tabellenkopf; Untertitel immer „Datum · Label“ (z. B. „Samstag, 18.10.2025 · Sa 18.10.“). Nur Aussehen des PDFs.",
+   "sev": "niedrig",
+   "ionic": "src/app/utilities/Utils.ts:1088",
+   "f": [
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:134-143",
+    "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:165",
+    "lib/features/planning/presentation/pages/plan_viewer_page.dart:137"
+   ]
+  }
+ ]
+}

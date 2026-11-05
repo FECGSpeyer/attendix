@@ -3,8 +3,23 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 4
+## Angleichen (hoch/mittel): 9
 
+- [ ] **mittel** `settings/general/extra-fields/extra-fields.page` `toast-b9ee5530` [settings/general/extra-fields/extra-fields.page.ts:90](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/extra-fields/extra-fields.page.ts#L90) (2. Prüfung: korrigiert)
+  Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.
+  Flutter: lib/core/utils/toast_helper.dart:105-140, lib/features/settings/presentation/pages/extra_fields_page.dart:296-299
+- [ ] **mittel** `settings/general/extra-fields/extra-fields.page` `toast-fcd86ce2` [settings/general/extra-fields/extra-fields.page.ts:107](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/extra-fields/extra-fields.page.ts#L107) (2. Prüfung: korrigiert)
+  Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.
+  Flutter: lib/core/utils/toast_helper.dart:105-140, lib/features/settings/presentation/pages/extra_fields_page.dart:304-307
+- [ ] **mittel** `settings/general/extra-fields/extra-fields.page` `toast-945683f7` [settings/general/extra-fields/extra-fields.page.ts:111](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/extra-fields/extra-fields.page.ts#L111) (2. Prüfung: korrigiert)
+  Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.
+  Flutter: lib/core/utils/toast_helper.dart:105-140, lib/features/settings/presentation/pages/extra_fields_page.dart:308-311
+- [ ] **mittel** `settings/general/general.page` `field-dd151934` [settings/general/general.page.html:36](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/general.page.html#L36) (2. Prüfung: korrigiert)
+  Ionic: ion-datetime max=heute (kein Datum in der Zukunft wählbar, nach unten unbegrenzt). Flutter: showAppDatePicker firstDate 2020, lastDate 2030 – Zukunftsdatum wählbar, Datum vor 2020 nicht; auf Material crasht/assertet der Picker, wenn gespeicherter Saisonstart < 2020. Text/Hilfetext/Format dd.MM.yyyy sonst gleich.
+  Flutter: lib/features/settings/presentation/pages/general_settings_page.dart:317-332, lib/features/settings/presentation/pages/general_settings_page.dart:477-484
+- [ ] **mittel** `settings/general/type/type.page` `field-8aa4fd37` [settings/general/type/type.page.html:191](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L191) (2. Prüfung: korrigiert)
+  Ionic onDutyToggle setzt duty_confirm_reminder_days auf 2 (Tage), wenn noch undefined (neuer Typ; Insert ohne Schlüssel -> DB-Default 2). Flutter setzt es beim Einschalten nicht; _buildTypeData schreibt den Schlüssel immer, bei neuem Typ als null -> „Aus“. Neue Dienst-Typen schicken so keine Erinnerung an Unbestätigte, bis es manuell gesetzt wird. Rest (duty_required>=1, Status Neutral/Anwesend/Entschuldigt, Standard Neutral) stimmt.
+  Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:892-918, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1934, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1805-1824, lib/data/repositories/attendance_type_repository.dart:121-127
 - [ ] **mittel** `settings/settings/settings.page` `text-87e51c97` [settings/settings/settings.page.html:780](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L780) (2. Prüfung: bestätigt)
   Weiter gültig: Ionic-Badge package.json-Version 4.19.9 / Flutter AppConstants.appVersion 0.41.25 – Nutzer sehen eine niedrigere, andere Versionsnummer.
   Flutter: lib/features/settings/presentation/pages/settings_page.dart:549, lib/core/constants/app_constants.dart:10
@@ -126,7 +141,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic addReminder akzeptiert jede Zahl ≥ 0 (max=168 nur als Input-Attribut) / Flutter lehnt > 168 mit Toast „Gültige Werte: 0-168 Stunden (max. 1 Woche vorher)“ ab.
   Flutter: lib/features/settings/presentation/widgets/type_reminders_editor.dart:39-41
 
-## Kleinigkeiten (niedrig): 199
+## Kleinigkeiten (niedrig): 200
 
 - [ ] **niedrig** `settings/administration/administration.page` `toast-4886e3c8` [settings/administration/administration.page.ts:59](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/administration/administration.page.ts#L59)
   Texte gleich ("Speicher: unbegrenzt" / "Speicherlimit: {gb} GB"). Ionic: {gb} = rohe JS-Zahl mit Dezimalpunkt, ungerundet ("2.5") / Flutter: _fmtGb mit Dezimalkomma, auf 2 Stellen gerundet ("2,5").
@@ -716,3 +731,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `settings/general/type/type.page` `x-fdbae2f115` **Nutzungshinweis nur in Flutter** [src/app/settings/general/type/type.page.html:26](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.html#L26)
   Ionic: kein Hinweis / Flutter: Karte oben „Wird in {count} Termin(en) verwendet. Änderungen wirken sich auf bestehende Einträge aus.“ (zusätzliche Abfrage der Termine des Typs).
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:251-271
+- [ ] **niedrig** `settings/general/general.page` `x-957ca06716` **Regel hinzufügen ohne Anwesenheitstypen** [src/app/settings/general/general.page.html:255](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/general.page.html#L255)
+  Ionic: Modal 'Neue Regel' öffnet immer. Flutter: _showAddCriticalRuleSheet bricht mit Fehler-Toast ab, wenn keine Anwesenheitstypen existieren.
+  Flutter: lib/features/settings/presentation/pages/general_settings_page.dart:768-777

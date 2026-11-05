@@ -6,7 +6,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 ## Angleichen (hoch/mittel): 0
 
 
-## Flutter besser – Leon entscheidet: 26
+## Flutter besser – Leon entscheidet: 27
 
 - [ ] **niedrig** `attendance/att-list/att-list.page` `db-563bc99b` [attendance/att-list/att-list.page.ts:230](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L230)
   Flutter besser: Ionic-Handler lädt nur bei event.new.tenantId === Instanz neu, person_attendances hat aber keine tenantId-Spalte (Inserts ohne tenantId, alle Abfragen joinen attendance.tenantId) → Ionic aktualisiert die Liste bei Statusänderungen nie. Flutter lädt bei jedem person_attendances-UPDATE neu (INSERT/DELETE nicht).
@@ -32,6 +32,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `attendance/attendance/attendance.page` `db-f3ad3394` [attendance/attendance/attendance.page.ts:1112](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1112) (2. Prüfung: korrigiert)
   Flutter besser: Ionic löscht `<id>/attachment/<attachment_name>` mit dem Originalnamen, hochgeladen wurde aber unter dem bereinigten Namen → bei Leer-/Sonderzeichen bleibt die Datei im Bucket liegen / Flutter löscht den bereinigten Pfad (attachmentPath). DB-Update attachment_url/attachment_name = null gleich. Erstreviewer hat den Pfadunterschied übersehen.
   Flutter: lib/data/repositories/attendance_repository.dart:1113, lib/features/attendance/presentation/widgets/attendance_detail/description_attachment_sheet.dart:131
+- [ ] **niedrig** `attendance/attendance/attendance.page` `effect-353ec499` [attendance/attendance/attendance.page.ts:1452](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1452) (2. Prüfung: korrigiert)
+  Flutter besser: Telegram-Versand (PDF, 2x A5, Bild) über runPlanExport gleich, aber Titel im PDF und Dateiname „<Titel>_TT_MM_JJJJ[_2x]“ nehmen in Flutter zuerst die eigene Plan-Überschrift (plan.title); Ionic send() nutzt im Ein-Plan-Fall immer Utils.getPlanningTitle (Planungstitel (typeInfo)/typeInfo/Typname). Ohne eigene Überschrift identisch. Erster Befund „nur mit Chat-ID angeboten“ veraltet: im Ein-Plan-Sheet jetzt immer (alwaysTelegram) wie Ionic; ohne Chat-ID roter Toast „Telegram nicht konfiguriert“.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:117-126, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:173-184, lib/features/planning/presentation/widgets/plan_export_actions.dart:149-167
 - [ ] **niedrig** `attendance/attendance/attendance.page` `alert-ad3c579a` [attendance/attendance/attendance.page.ts:1806](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1806)
   Flutter besser: sucht den Ändernden unter allen Personen des Mandanten (Ionic nur unter den Personen des Termins → sonst „'Unbekannt'“). Ionic-Sonderfall UUID 665fe2b4-… → „Matthias Eckstädt“ fehlt in Flutter.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:870
@@ -87,7 +90,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: (1) Ionic schließt nur Personen aus this.players aus – ein eingeschränkter Stimmführer-Helfer bekommt Personen anderer Gruppen angeboten, die schon im Termin sind (Doppelzeile möglich); Flutter schließt alle vorhandenen Zeilen aus. (2) Ionic sucht die Gruppe in this.instruments ohne Hauptgruppe → Personen der Hauptgruppe heißen „Keine Gruppe“ und stehen ganz unten; Flutter zeigt deren Gruppennamen und sortiert nach deren sort_order.
   Flutter: lib/features/attendance/presentation/pages/attendance_detail_page.dart:1356, lib/features/attendance/presentation/widgets/attendance_detail/add_persons_sheet.dart:55, lib/features/attendance/presentation/attendance_add_persons.dart:51
 
-## Kleinigkeiten (niedrig): 67
+## Kleinigkeiten (niedrig): 68
 
 - [ ] **niedrig** `attendance/att-list/att-list.page` `loading-e1caea8b` [attendance/att-list/att-list.page.ts:254](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/att-list/att-list.page.ts#L254)
   Ionic: blockierendes Loading-Overlay (3 s) während setTenant + Navigation / Flutter: switchTenant ohne Overlay oder Ladeanzeige.
@@ -155,6 +158,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `attendance/attendance/attendance.page` `effect-839f92ba` [attendance/attendance/attendance.page.ts:1275](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1275) (2. Prüfung: korrigiert)
   mittel-Lücke behoben (#306): Segment „Nur <Plan>“/„Alle n Pläne“ × PDF / PDF 2x A5 (2x A5 jetzt auch für alle), Titel mit planning_title/Typname wie getPlanningTitle, Name „…_alle“/„_2x“. Rest niedrig: Dateidatum = Termin-Start statt Plandatum (bei „Nur“ eines späteren Tages), Unterzeile hängt bei mehreren Plänen immer „· <Plan>“ an (Ionic planSubtitle nur ohne Tag oder mit eigenem Namen), „Alle“ nimmt auch Pläne ohne Punkte als Seite auf (Ionic filtert sie heraus).
   Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:128, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:154, lib/features/planning/presentation/widgets/plan_export_actions.dart:114
+- [ ] **niedrig** `attendance/attendance/attendance.page` `effect-7e7a46ab` [attendance/attendance/attendance.page.ts:1285](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1285) (2. Prüfung: korrigiert)
+  PDF-Export A4 / 2x A5 (Ein-Plan-Sheet „Ablaufplan teilen“) vorhanden. Ionic exportPlan: Titel immer Utils.getPlanningTitle, Datei „<Titel>_<Wochentag, TT.MM.JJJJ>.pdf“ bzw. „…_2x.pdf“ / Flutter: Titel zuerst eigene Plan-Überschrift (plan.title, Flutter besser), Datei „<Titel>_TT_MM_JJJJ.pdf“ bzw. „_2x.pdf“. Inhalt/Briefkopf sonst gleich.
+  Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:117-126, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:146-150, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:173-184, lib/core/services/plan_export_service.dart:131-134
 - [ ] **niedrig** `attendance/attendance/attendance.page` `effect-7cdd0978` [attendance/attendance/attendance.page.ts:1436](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/attendance/attendance/attendance.page.ts#L1436) (2. Prüfung: korrigiert)
   mittel-Lücke behoben (#306): Bei mehreren Plänen Teilen-Sheet mit „Nur <Plan>“/„Alle n Pläne“, Telegram PDF / PDF 2x A5 für einen oder alle Pläne, Bild nur für einen (nur mit Chat-ID), Titel plan.title || planning_title (typeInfo) || typeInfo || Typname, Name mit „_alle“/„_2x“. Rest niedrig: Dateiname nimmt immer das Termin-Startdatum (Ionic planDate des ersten exportierten Plans → bei „Nur Tag 2“ anderes Datum) und bei „Alle“ den Titel des gerade gezeigten statt des ersten Plans.
   Flutter: lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:149, lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart:166, lib/features/planning/presentation/widgets/plan_export_actions.dart:261, lib/features/planning/presentation/widgets/plan_export_actions.dart:170

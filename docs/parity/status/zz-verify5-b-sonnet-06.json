@@ -1,0 +1,351 @@
+{
+ "batch": "zz-verify5-b-sonnet-06",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "register/register.page#text-69e955ca": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:364"
+   ],
+   "n": "Schritt-3-Überschrift „Hauptgruppe festlegen“ (registerStep3) weiter vorhanden (Zeile verschoben).",
+   "v": "bestätigt"
+  },
+  "register/register.page#text-9b44867b": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:565-569",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:652-680"
+   ],
+   "n": "Info-Text registerMainGroupInfoHtml über _HtmlBlocks (h3/p/li, strong/em) weiter vorhanden.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-3aa86c36": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:672-675"
+   ],
+   "n": "tenantRegisterPictureFailed-Toast bei Bildpicker-Fehler weiter vorhanden (Zeile verschoben).",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#alert-0041e6ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345-353",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:534-560",
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:52-55"
+   ],
+   "n": "showEventNoteDialog (Kopf „Notiz für Anmeldung“, Platzhalter „Gib hier deine Notiz ein“, Abbrechen/Anmelden); Übersicht ohne Anmeldefelder (supportsRegistrationFields=false) wie Ionic, signIn mit SignInType.fromStatus + Notiz.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#text-b9c91159": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-445"
+   ],
+   "n": "Sheet-Titel „Beschreibung“ (signoutDescription) in showEventDescriptionSheet vorhanden.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#text-2e3c9554": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:425-445"
+   ],
+   "n": "Sheet-Titel „Beschreibung“ vorhanden.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#toast-34a79f36": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:461-478"
+   ],
+   "n": "Erfolgs-Toast „Danke für die Anmeldung 🙂“ nach signInAll; Typ immer normal wie Ionic (Termin-Objekt ohne status).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-bf9b84ae": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:345-353",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:534-560"
+   ],
+   "n": "Notiz-Dialog wie Ionic, danach handleSigninWithFields mit Notiz.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-97b7c060": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:285-292"
+   ],
+   "n": "Toast „Abwesenheit gelöscht“ (signoutAbsenceDeleted) nach deleteAbsence, Fehler-Toast bei Misserfolg (Zeile verschoben).",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#toast-19979831": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1958-1965"
+   ],
+   "n": "Toast typeSettingsDeleteFailed „Fehler beim Löschen des Anwesenheitstyps“ in _deleteType (Zeilen verschoben; alte Zeile 1556 stimmt nicht mehr). Einmal statt doppelt.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#toast-78d01be6": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1865-1883"
+   ],
+   "n": "Toast typeSettingsUpdateFailed „Fehler beim Aktualisieren des Anwesenheitstyps“ in _save (Zeilen verschoben).",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-2bb30955": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:85",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): Konto deaktiviert (dbAccountDisabled), Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-33fbc2b1": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:97",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): zu viele Versuche, Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-3c2b67a1": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:110",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): Passwort-Stärke, Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-8eac467f": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:91",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): ungültige E-Mail, Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-9b33e197": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:101",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): ungültiges Passwort, Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-d0339c6d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:116",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): Default „Fehler beim Anmelden“, Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#toast-de3c8389": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_flow_service.dart:343",
+    "lib/features/auth/presentation/pages/login_page.dart:113-115",
+    "lib/features/auth/presentation/pages/login_page.dart:207-222"
+   ],
+   "n": "mapLoginError -> LoginFailure.message -> _showError (roter Toast): Daten fehlen (dbEnterCorrectData), Text wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/db.service#loading-67fad659": {
+   "s": "diff",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart:138-157"
+   ],
+   "n": "new_password_page.dart ist gelöscht; Passwort-Wiederherstellung läuft jetzt im PasswordRecoveryDialog. Ionic zeigt blockierenden Lade-Overlay; Flutter sperrt nur Doppel-Absenden/Abbrechen (_busy), kein sichtbarer Spinner. Funktion und Fehlertexte (mapUpdatePasswordError) wie Ionic.",
+   "v": "korrigiert",
+   "sev": "niedrig"
+  },
+  "services/db.service#toast-c41e2bb6": {
+   "s": "ok",
+   "f": [
+    "lib/features/profile/presentation/widgets/master_data_sheet.dart:275-312"
+   ],
+   "n": "Bei Speicherfehler Toast dbUpdateProfileFailed in _save (alte Zeile 258 gehört jetzt zu Foto-entfernen; Zeilen verschoben).",
+   "v": "bestätigt"
+  },
+  "services/organisation/organisation.service#toast-b5ada0e1": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:140-143"
+   ],
+   "n": "Fehler-Toast svcCreateOrgFailed wenn create null (Zeile verschoben).",
+   "v": "bestätigt"
+  },
+  "services/terms.guard#nav-8a2c0ef2": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:357-380"
+   ],
+   "n": "Redirect auf /terms ohne terms_accepted_at weiter vorhanden. Flutter-Gate gilt für alle Routen außer /register/ und /terms (Ionic nur /tabs), praktisch gleiches Ergebnis nach Login.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#alert-c786a931": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:140-155"
+   ],
+   "n": "Umbenennen-Dialog (Titel adminRenameChurch, Vorbelegung, Platzhalter, Abbrechen/Speichern; leer = nichts) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/administration/administration.page#toast-88c6cb3b": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/administration_page.dart:94-137"
+   ],
+   "n": "Gemeinde-Hinzufügen: Erfolgs-Toast adminChurchAdded, Fehler-Toast mit Fehlertext, Leereingabe hält Dialog offen mit „Bitte gib gültige Werte ein.“ (Zeilen verschoben).",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-2037e486": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:142-143",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:62-71"
+   ],
+   "n": "Pull-to-Refresh lädt Regeln und Letzte-7-Tage neu.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-2de680a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:192-203"
+   ],
+   "n": "Vorlagen-Liste absent/late/noAnswer/streak, Tap öffnet /settings/auto-messages/new?template=…, Name+Hinweis wie Ionic.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-7aa7e12a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:183-191"
+   ],
+   "n": "Button „Neue Regel“ → /settings/auto-messages/new.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-96b96381": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:141"
+   ],
+   "n": "Zurück-Button der AppBar (Standard-Back).",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#action-dba3737d": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:169-178",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:213-294",
+    "lib/features/messages/presentation/auto_message_texts.dart:108-141"
+   ],
+   "n": "Regelzeile mit Name, Summary (Status, Frequenz, Typen, Verzögerung), Chips; Tap öffnet Regel.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#field-bf877017": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:81-108",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:286-289"
+   ],
+   "n": "Schalter pro Regel mit Aria-Label „Aktiv“, setEnabled, Toast an/aus, bei Fehler zurück und Fehler-Toast.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#nav-23b2dfd0": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:73"
+   ],
+   "n": "Regel öffnen: /settings/auto-messages/<id>.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#nav-8a6fbd8f": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:75-79"
+   ],
+   "n": "Neu: /settings/auto-messages/new, mit ?template=… bei Vorlage.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-0caeba15": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:204"
+   ],
+   "n": "Hinweis „Admins und Verantwortliche können Regeln anlegen und ändern.“",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-17d56fb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:141"
+   ],
+   "n": "Titel „Automatische Nachrichten“.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-1d130ac5": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:164-167"
+   ],
+   "n": "Überschrift „Regeln“ nur bei vorhandenen Regeln.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-22b63d11": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:181-182"
+   ],
+   "n": "„Letzte 7 Tage: n Person(en) angeschrieben“ nur bei sent>0 und Regeln vorhanden, Plural one/other.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-7616322c": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:192-194"
+   ],
+   "n": "Überschrift „Vorlagen zum Start“.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#text-a1066ac4": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:154-160"
+   ],
+   "n": "Intro-Text vorhanden.",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-8dc92ec6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:56-60"
+   ],
+   "n": "Fehler-Toast „Automatische Nachrichten konnten nicht geladen werden“ bei Lade-Fehler (einmal pro Ladevorgang).",
+   "v": "bestätigt"
+  },
+  "settings/auto-messages/list/auto-message-list.page#toast-af684f5a": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:88-92"
+   ],
+   "n": "Fehler-Toast „Speichern fehlgeschlagen“ beim Umschalten.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

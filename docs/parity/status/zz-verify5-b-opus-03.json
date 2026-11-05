@@ -1,0 +1,382 @@
+{
+ "batch": "zz-verify5-b-opus-03",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "instruments/instrument-list/instrument-list.page#action-e212c1b4": {
+   "s": "ok",
+   "f": [
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:413",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:245",
+    "lib/features/instruments/presentation/widgets/instrument_categories_sheet.dart:352",
+    "lib/features/instruments/presentation/pages/instruments_list_page.dart:102"
+   ],
+   "n": "Aktueller Code: roter Mülleimer je Kategorie nur in der Normalansicht (im Sortiermodus eigene Liste ohne Buttons), Sheet nur für Admin/Verantwortlich (isAdmin wie Ionic). Tap → Bestätigung „Bestätigen“/„Möchtest du die Kategorie wirklich löschen?“ Abbrechen/Ja, dann deleteGroupCategory + Liste neu. Neu: bei Fehler Toast svcDeleteCategoryFailed (wie Ionic-Service-Toast).",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#effect-6fdffe28": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:131-137",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:95-98",
+    "lib/core/constants/enums.dart:137-141",
+    "lib/core/router/legacy_routes.dart:62"
+   ],
+   "n": "Zurück: mit Verlauf pop, sonst Manager (Admin/Verantwortlich) → /settings/messages, alle anderen Rolle-Startseite (defaultRoute: Admin/Verantwortlich/Beobachter /people, Eltern /parents, sonst /signout) = Utils.getUrl. Einziger Randfall: _back prüft die Instanz der Mitteilung nicht (Ionic isManager nur bei eigener Instanz) – nur bei Mitteilung einer fremden, nicht zugänglichen Instanz relevant, ohne Nutzerwirkung.",
+   "v": "bestätigt"
+  },
+  "messages/message-detail/message-detail.page#native-886951c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:583-588",
+    "lib/features/messages/presentation/pages/message_detail_page.dart:624",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "Links im Mitteilungstext (QuillEditor onLaunchUrl) → NativeFileService.openLinkInApp: In-App-Browser (SFSafariViewController/Custom Tabs) in der App, neuer Tab im Web – wie Capacitor Browser.open.",
+   "v": "bestätigt"
+  },
+  "messages/message-list/message-list.page#modal-bb949983": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_compose_page.dart:23-30",
+    "lib/features/messages/presentation/pages/message_list_page.dart:25-30"
+   ],
+   "n": "openMessageCompose: Vollbild-Dialog (fullscreenDialog, rootNavigator) wie Ionic-Modal ohne presentingElement; liefert beim Senden die neue id zurück.",
+   "v": "bestätigt"
+  },
+  "messages/message-list/message-list.page#nav-e075183e": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_list_page.dart:25-37",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:271",
+    "lib/core/router/app_router.dart:177"
+   ],
+   "n": "Nach erfolgreichem Senden pop(id) → push /messages/:id (= /tabs/messages/:id), danach Liste neu. Liste nur Admin/Verantwortlich (Guard /settings/messages) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#db-dd73b098": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:80-101"
+   ],
+   "n": "Kanal 'noti-changes-<userId>' statt 'noti-changes'; ohne Nutzerwirkung. Abo wird in dispose entfernt (removeChannel) wie Ionic ngOnDestroy.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#db-f59556e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:80-101",
+    "lib/features/settings/presentation/pages/settings_page.dart:521"
+   ],
+   "n": "postgres_changes auf notifications (Filter id = eigene User-Id serverseitig, Ionic clientseitig) übernimmt die neue Zeile. Für jede Rolle: Einstellungen-Eintrag ohne Rollenbedingung, Route ohne Guard – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "notifications/notifications.page#field-fbc6770a": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:329-341",
+    "lib/core/services/telegram_service.dart:150-162",
+    "lib/core/services/telegram_service.dart:207-212",
+    "lib/core/providers/tenant_providers.dart:295-347"
+   ],
+   "n": "Schalter je Instanz (nur bei aktivierten Benachrichtigungen, Instanzen des Nutzers nach longName, Favoriten zuerst), an = enabled_tenants enthält id; Umschalten fügt hinzu/entfernt und speichert die notifications-Zeile (update eq id). Flutter fällt bei leerem longName auf shortName zurück (kosmetisch); Fehler-Toast mit anderem Wortlaut und Rücksetzen des Schalters (Flutter besser, nicht Teil dieses Items).",
+   "v": "bestätigt"
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:311-315",
+    "lib/features/planning/presentation/pages/open_attendance_page.dart:64-67"
+   ],
+   "n": "Ohne Sitzung → Link merken + /login (Router-Redirect), rollenunabhängig. Flutter setzt den Link nach dem Login fort (Instanzwechsel), Ionic verwirft tenantId – bereits als Extra „Fortsetzen nach Login“ (Flutter besser) erfasst. Sonderfall angemeldet ohne Instanz: Ionic /login, Flutter /tenants.",
+   "v": "bestätigt"
+  },
+  "open-attendance/open-attendance.page#nav-e5a2e051-3": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:311-315",
+    "lib/core/router/app_router.dart:341"
+   ],
+   "n": "Mit id ohne Sitzung → Link merken + /login in beiden; nach Login öffnet Flutter den vollständigen Link (consume in Auth-Redirect), Ionic über pendingAttendanceId – bereits als Extra „Fortsetzen nach Login“ erfasst.",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#logic-76562f6f": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:93-160",
+    "lib/features/public_links/presentation/pages/open_file_page.dart:22-63"
+   ],
+   "n": "Alle Methoden gleich: Fehler → Toast „openFile.linkFailed“ + /login; ohne tenantId → /login; ohne Sitzung Link merken (jetzt auch in lokalem Speicher pendingFileLink wie Ionic localStorage) + /login; fremde Instanz ohne Zugang → Toast noTenantAccess + Startseite; Instanzwechsel; ohne Dateiablage-Recht → Toast files.noAccess + Startseite; sonst /settings/files mit path/open (ersetzt Verlauf).",
+   "v": "bestätigt"
+  },
+  "open-file/open-file.page#nav-e132ddd2-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/public_links/presentation/pages/open_file_page.dart:110-120",
+    "lib/core/router/app_router.dart:341"
+   ],
+   "n": "Ohne Sitzung: Link (tenantId, path, folder) merken, /login, nach dem Login fortsetzen – wie Ionic setPendingLink/routeAfterAuth; rollenunabhängig. Sonderfall angemeldet ohne Instanz und ohne Zugang zur Link-Instanz: Ionic merkt Link + /login, Flutter Toast + /tenants.",
+   "v": "bestätigt"
+  },
+  "org-plan-public/org-plan-public.page#db-f11d79f7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/public_plan_repository.dart:255-263",
+    "lib/features/organisation/presentation/pages/org_plan_public_page.dart:102-106"
+   ],
+   "n": "Gleiche Abfrage: attendance select('id, date, plan, typeInfo, tenantId') in tenantId der Organisations-Instanzen (tenant_group_tenants), is_org_plan=true, archived=false, plan not null, order date ascending: true; nur wenn Instanzen vorhanden. Öffentliche Seite per Schlüssel ohne Rollenbezug.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#db-ca5619e2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:167-176",
+    "lib/core/providers/plan_providers.dart:156-170"
+   ],
+   "n": "shared_plans select('*') eq org_id order date ascending: true; Fehler → leere Liste (catchError) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#db-d2b74a95": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/org_plan_repository.dart:185-196",
+    "lib/core/providers/plan_providers.dart:315-321",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:64-75"
+   ],
+   "n": "Aktionsblatt mit Plan-Titel, „Ablaufplan löschen“ (destruktiv); shared_plans delete eq id (Flutter zusätzlich eq org_id, gleiche Wirkung); Fehler → Toast „plans.deleteFailed“, sonst Liste neu (invalidate orgPlansProvider).",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#effect-35b5f6e6": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:97",
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:219-224",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:208-211"
+   ],
+   "n": "Kalender-Button nur bei public_plan_key; im Dialog „Link kopieren“ → Clipboard.setData(link) + Toast „Link kopiert“ success, Dialog bleibt offen (wie return false). Route nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "org-plans/org-plans.page#toast-95142758": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_plans_page.dart:138-144",
+    "lib/core/providers/plan_providers.dart:295-304",
+    "lib/data/repositories/org_plan_repository.dart:199-210"
+   ],
+   "n": "Ohne Key: neuer 16-Zeichen-Key in tenant_groups.public_plan_key (update eq id), Link kopiert, „Link erstellt und kopiert“ success; Fehler → „Fehler beim Erstellen des Links“ (Ionic Service-Toast ähnlich). Nur mit Organisation.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-04d937da": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:356-359",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:153-157"
+   ],
+   "n": "Nur Admin (Plus deaktiviert für Verantwortlich wie Ionic [disabled]=!isSuperAdmin); Auswahlfeld ohne nicht-leere Option → „Bitte füge mindestens eine Auswahloption hinzu.“ danger, Sheet bleibt offen.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-77469d60": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:347-351",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:153-157"
+   ],
+   "n": "Nur Admin. Leerer (getrimmter) Name → „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ danger, Sheet bleibt offen. Fall „ohne Organisation“ unerreichbar (Plus nur mit org.id).",
+   "v": "bestätigt"
+  },
+  "org-settings/org-person-fields/org-person-fields.page#toast-ffb36bd8": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:96-120",
+    "lib/core/providers/plan_providers.dart:288-293",
+    "lib/data/repositories/org_plan_repository.dart:304-316"
+   ],
+   "n": "Nur Admin; Prüfungen wie Ionic, dann Update tenant_groups.additional_fields (eq id) + Löschen tenant_group_person_fields (tenant_group, field_id in entfernte), danach „Organisations-Zusatzfelder gespeichert.“ success.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#alert-49a6136a": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:44-58",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:180-185",
+    "lib/data/repositories/organisation_repository.dart:91"
+   ],
+   "n": "Eintrag nur bei isSuperAdmin (Admin) in beiden. „Organisation von Instanz trennen?“, „Möchtest du die Organisation „{name}“ wirklich…“, Abbrechen/„Trennen“ (destruktiv); löscht tenant_group_tenants (tenant_id + tenant_group) und die leere Organisation, Toast „org.unlinked“.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-5c26b059": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/widgets/org_link_dialogs.dart:65-76",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:155-161"
+   ],
+   "n": "„Die Organisation wurde erfolgreich ausgewählt.“ success nach Insert tenant_group_tenants; Aufruf nur für Admin (isSuperAdmin). Fehler → svcLinkOrgFailed.",
+   "v": "bestätigt"
+  },
+  "org-settings/org-settings.page#toast-d99388c2": {
+   "s": "ok",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:30-42",
+    "lib/features/organisation/presentation/pages/org_settings_page.dart:173-179"
+   ],
+   "n": "„Organisation umbenannt“ success nach update tenant_groups.name; Umbenennen nur für Admin (Tap nur bei isSuperAdmin), leerer Name → „org.validName“ im Dialog.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-3afbca69": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:617-618",
+    "lib/features/people/presentation/pages/people_list_page.dart:533-534"
+   ],
+   "n": "Leerzustand: „Personen importieren“ nur Admin/Verantwortlicher (Beobachter nicht), wie Ionic isAdmin.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-67e74d37": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1000-1005",
+    "lib/features/people/presentation/pages/people_list_page.dart:1345-1358"
+   ],
+   "n": "Nur Admin/Verantwortlicher, Stift-Icon, „Bulk-Bearbeitung“ im Optionsmenü; übergibt die gefilterte/gesuchte Liste, lädt bei Änderung neu.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-8a40dbb1": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:659-661",
+    "lib/features/people/presentation/pages/people_list_page.dart:1699-1736"
+   ],
+   "n": "Wisch-Optionen nur bei isAdmin (Admin/Verantwortlicher), Beobachter ohne; Mülleimer (danger) + Pause (warning) bzw. Play (success); voller Wisch (DismissiblePane) → pausieren bzw. aktivieren wie ionSwipe.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#action-e4ea4870": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:719-722"
+   ],
+   "n": "FAB '+' nur Admin/Verantwortlicher (Beobachter nicht); öffnet Neuanlage.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#native-79bc7764": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1473-1474",
+    "lib/core/utils/haptic_helper.dart:15"
+   ],
+   "n": "Haptik Medium (try/catch) vor der Entfernen-Bestätigung; nur über das Admin/Verantwortlicher-Aktionsblatt erreichbar.",
+   "v": "bestätigt"
+  },
+  "people/list/list.page#native-fae6edc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/people_list_page.dart:1394-1395",
+    "lib/core/utils/haptic_helper.dart:8"
+   ],
+   "n": "Haptik Light (try/catch) beim Start des Pausieren-Flows (Wisch/Option), wie Ionic pausePlayer.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-99512786": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:314-318",
+    "lib/features/people/presentation/widgets/planned_absences.dart:249-296",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2099-2100"
+   ],
+   "n": "Roter Papierkorb je Abwesenheit nur bei canEdit (Admin/Verantwortlich, nicht archiviert) und canManagePlannedAbsences; Bestätigung „Abwesenheit löschen“ + Personen-Text, Löschen (destruktiv); löscht player_absences (id + tenant_id) und setzt entschuldigte Termine mit gleichem Grund auf Standardstatus zurück, Toast „Abwesenheit gelöscht“.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#action-a75ff037": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1908-1918",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1508-1555"
+   ],
+   "n": "„…“-FAB nur bei canEdit, nicht archiviert, nicht pending, ohne Änderungen und (Konto vorhanden oder keine E-Mail) wie Ionic; öffnet „Aktionen“.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-77f37654": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:766-786",
+    "lib/features/people/presentation/pages/person_detail_page.dart:992-1014",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1045-1065"
+   ],
+   "n": "Bedingung gleich (!general, Person hat Konto, Stimmführer neu eingeschaltet; E-Mail bei Konto nicht änderbar, daher Reihenfolge zum E-Mail-Dialog gleich). „Stimmführer aktivieren“, Text mit Name, Abbrechen (Schalter zurück, nichts gespeichert) / „Nur Stimmführer-Status“ / „Mit Rolle speichern“ (Helfer→Stimmführer & Helfer, sonst Stimmführer). Nur Admin/Verantwortliche (canEdit).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#alert-b55317e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1549-1551",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1603-1636",
+    "lib/data/repositories/player_repository.dart:814-829"
+   ],
+   "n": "„Entfernen“ nur wenn Person nicht der eigene Account; Menü nur Admin/Verantwortliche. „Person entfernen“, Text gleich, Abbrechen/Ja; löscht player (id + tenantId) und entzieht Konto-Zugang wie db.removePlayer, Toast „person.removed“. Ionic schließt die Seite vor dem Löschen, Flutter danach – ohne Unterschied im Ergebnis.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#field-36a3bcfe": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:61-72",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2023-2036",
+    "lib/features/people/presentation/pages/person_detail_page.dart:797-804"
+   ],
+   "n": "Aktueller Code: mehrzeiliges Feld „Bemerkungen“ nur wenn „Mit Person gesprochen“ an, nur bei canEdit; gespeichert jetzt wie Ionic mit dem Speichern-FAB (Historie Typ 3 mit Text, isCritical=false, lastSolve). Der frühere Zusatzhinweis und eigene Button sind entfallen.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-14657460": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1950-1953"
+   ],
+   "n": "„Person bearbeiten“ nur bei canEdit (Admin/Verantwortliche, nicht archiviert) und nicht pending (dann „Person genehmigen“); Beobachter/archivierte Person ohne Titel wie Ionic readOnly.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-408e4921": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:225",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:18-47",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2075-2080"
+   ],
+   "n": "Instanzen des Personen-Accounts (tenantUsers.userId = appId), nur mit der aktuellen per Organisation verknüpfte, ohne Rolle Beobachter (wie getTenantsFromUser/getLinkedTenants); h2 = longName. Nur mit Account – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-569fac2e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:280-306",
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:175-183"
+   ],
+   "n": "Titel „Hilfe“; jetzt wie Ionic als Sheet (min. 50 % Höhe) mit Schließen-X.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-67d8ca5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:322"
+   ],
+   "n": "„Falls schon ein Benutzer für die E-Mail Adresse existiert, wird dieser automatisch der Instanz zugewiesen.“ immer im Hilfe-Sheet.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-a48aa58c": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:114",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:228",
+    "lib/data/repositories/user_registration_repository.dart:47-58"
+   ],
+   "n": "Rollentext wie Utils.getRoleText (Admin, Mitglied, Beobachter, Helfer, Verantwortlicher, Elternteil, Stimmführer, Stimmführer & Helfer; NONE → Mitglied; Bewerber → Unbekannt).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-b4cb386f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/account_accordion.dart:318-321"
+   ],
+   "n": "Nur ohne Konto (appId null) wie Ionic; Text gleich.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

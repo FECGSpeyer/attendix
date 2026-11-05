@@ -1,0 +1,405 @@
+{
+ "batch": "zz-verify5-b-opus-13",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "shared/attendance-response-modal/attendance-response-modal.component#logic-412c5f37": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/messages/presentation/widgets/attendance_response_page.dart:63",
+    "lib/data/repositories/auto_message_repository.dart:402",
+    "lib/data/repositories/auto_message_repository.dart:408",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:96"
+   ],
+   "n": "Flutter besser: Demo-Konto – Ionic submitResponse (auto-message.service.ts:234) hat keine Demo-Sperre, das Demo-Konto kann Begründung/„Ich war da“ senden / Flutter: ensureNotDemo('submitAttendanceResponse') zeigt den Demo-Hinweis und sendet nicht. Sonst gleich: Edge Function attendance-response {action:'submit', messageId, kind, reasonCode nur bei 'reason', text getrimmt/''}, Doppelklick-Sperre _sending, Fehlertexte expired/alreadyDecided/respFailed rot, Rückgabe state → Aufrufer zeigt respDone/respDoneInstant; Abbrechen ohne Ergebnis.",
+   "v": "korrigiert"
+  },
+  "shared/attendance-songs/attendance-songs.component#native-3e96c37b": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:18",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:256",
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:265",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "Browser.open → openLinkInApp: nativ In-App-Browser (inAppBrowserView), Web/iOS-App auf Mac neuer Tab; nur bei vorhandenem Link (Link-Knopf und linkOnly-Tipp). Flutter zeigt zusätzlich einen Fehler-Toast, wenn nichts geöffnet werden kann.",
+   "v": "bestätigt"
+  },
+  "shared/audio-player/audio-player.component#logic-bc6be67c": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:26",
+    "lib/shared/widgets/audio_player/audio_player_widget.dart:166",
+    "lib/core/services/audio_player/audio_player_service.dart:187",
+    "lib/core/services/audio_player/audio_player_service.dart:302",
+    "lib/shared/widgets/layout/main_shell.dart:266"
+   ],
+   "n": "Zurück/Weiter (Zurück > Schwelle bzw. erster Titel → Anfang), Seek-Start/-Ende mit Positionsupdates gesperrt, Bar nur bei geladener Datei. Der früher fehlende showError-Toast ist jetzt da: _skip zeigt „Fehler beim Abspielen: {error}“ rot (audioPlayFailed), Service wirft bei URL-Fehler nach Reset wie Ionic.",
+   "v": "bestätigt"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#logic-350cdf98": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:20",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:62",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:73",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:77"
+   ],
+   "n": "Gründe je nach Verspätung/Abmeldung, Vorauswahl (heute oder keine Gründe → freier Text, sonst erster Grund), Bestätigbarkeit (freier Text getrimmt > 4 Zeichen), Rückgabe getrimmter Text bzw. Grund, Schließen ohne Ergebnis gleich. Breakpoint-Wechsel 0.6↔1 und Tastatur-Scrolllogik durch inhaltshohes Sheet mit viewInsets-Padding ersetzt. Sichtbare Abweichungen (zusätzlicher Bestätigen-Knopf, Autofokus) an den Items.",
+   "v": "bestätigt"
+  },
+  "shared/excuse-reason-picker/excuse-reason-picker.component#native-c4a31197": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:87",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:132"
+   ],
+   "n": "Flutter-nativ: Sheet wird um die Tastaturhöhe (viewInsets) angehoben, das TextField im SingleChildScrollView scrollt sich beim Fokus selbst in den sichtbaren Bereich – Feld bleibt über der Tastatur wie bei Keyboard keyboardWillShow → scrollIntoView.",
+   "v": "bestätigt"
+  },
+  "shared/image-viewer/image-viewer.component#logic-6075d2db": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:47",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:140",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:153",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:182",
+    "lib/shared/widgets/sheets/image_viewer_sheet.dart:436"
+   ],
+   "n": "Vollbild über allem (Fade-Route), Zoom 1–5×, Doppeltipp → 2,5× am Tippunkt bzw. zurück, Einfachtipp blendet Leisten aus/ein, Pinch/Mausrad über InteractiveViewer, Pan nur gezoomt, Tastatur Esc/+/=/-/0, Ladeanzeige und „Bild konnte nicht geladen werden“. Neu seit Erstprüfung: viewerActions-Slot (ImageViewerAction, Passbild Ersetzen/Entfernen in person_header.dart:170) und Wisch-nach-unten-Schließen (nur nach unten, > 120 px, ohne Geschwindigkeit; Ionic beide Richtungen 110 px/Velocity). Verbleibende Detailabweichungen an den Items: fallbackSrc, Titel (Dateiname), Hinweis bei jedem Öffnen statt einmalig, Zoomschritt 1,5 statt 1,6.",
+   "v": "bestätigt"
+  },
+  "shared/message-editor/message-editor.component#logic-58a8ed28": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:11",
+    "lib/features/messages/presentation/widgets/message_editor_toolbar.dart:74",
+    "lib/features/messages/presentation/pages/message_compose_page.dart:346",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:128",
+    "lib/features/messages/presentation/pages/auto_message_rule_page.dart:165",
+    "lib/core/utils/tiptap_converter.dart:47"
+   ],
+   "n": "Flutter-nativ mit flutter_quill statt Tiptap, gemeinsame MessageEditorToolbar (B I U S, Überschrift, Listen, Link-Dialog mit „Entfernen“/„Übernehmen“ und https://-Ergänzung, Rückgängig) in „Nachricht verfassen“ und Auto-Mitteilung. Inhalt wird als Tiptap-JSON gespeichert (Überschrift → h2/h3), Platzhalter-Einfügen an der Cursorposition/ersetzt Auswahl (insertText), Vorlage laden (setContent), Platzhaltertext. Überschrift als Quill-Auswahl statt H2-Umschalter → Toolbar-Item.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#db-f8a48025": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/message_providers.dart:224",
+    "lib/core/providers/message_providers.dart:231",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:213"
+   ],
+   "n": "postgres_changes (alle Events) auf public.user_notifications mit Filter user_id=eq.{userId}, eigenes Topic je Glocke, removeChannel beim Abbau; ohne Nutzer/Instanz kein Abo wie Ionic; Glocke für alle Rollen. Flutter lädt Badge und Listen bei jeder Änderung neu (Ionic nur bei passender Instanz/Segment) – gleiches sichtbares Ergebnis.",
+   "v": "bestätigt"
+  },
+  "shared/notification-bell/notification-bell.component#nav-a59d7530": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/widgets/notification_bell.dart:286",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:95",
+    "lib/features/messages/presentation/widgets/notification_bell.dart:121",
+    "lib/core/router/app_router.dart:966"
+   ],
+   "n": "Nachrichten-Benachrichtigung: ungelesen → als gelesen markieren, Sheet schließen, Nachricht öffnen (Ionic /tabs/messages/{id}, Flutter push /messages/{id}, Route ohne Rollensperre). Flutter wechselt die Instanz vorher selbst, Ionic auf der Nachrichtenseite – gleiches Ergebnis. Randfall verlassene Instanz in x-d204a080f2.",
+   "v": "bestätigt"
+  },
+  "song-viewer/song-viewer.page#logic-e405a309": {
+   "s": "na",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:62",
+    "lib/core/router/app_router.dart:258"
+   ],
+   "n": "toter Code: SongViewerPage wird in Ionic 4.19.9 von keiner Route/keinem Template geladen (app-routing.module.ts:84 lädt für `/:songSharingId` die SongsPage, keine Referenz auf SongViewer außerhalb des eigenen Ordners). Öffentliche Werkliste = SongsPage ↔ songs_list_page.dart (_isPublic), dort geprüft.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-1c80f6e4": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:505",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:509",
+    "lib/core/providers/song_providers.dart:469"
+   ],
+   "n": "„Externen Noten-Link öffnen“ (primary, Pfeil) nur bei readOnly und vorhandenem Link – alle Rollen außer Admin/Verantwortlich und der Freigabe-Link (readOnly: true) wie Ionic; Tipp → openLinkInApp wie openLink.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-59e01f20": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1189",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1083"
+   ],
+   "n": "Upload-Knopf (cloud-upload) nur bei !readOnly (Admin/Verantwortlich), bei vorhandenen Dateien vor dem …-Menü; öffnet das Upload-Sheet in voller Höhe, nicht wegwischbar (Ionic canDismiss !isUploading).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#action-59e01f20-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1189",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1083"
+   ],
+   "n": "Ohne Dateien ebenfalls nur für Admin/Verantwortlich (Flutter: ein Knopf für beide Ionic-Zweige, Bedingung !readOnly).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#effect-3284e3a8": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:505",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:513",
+    "lib/core/services/native/native_file_service.dart:123",
+    "lib/core/services/native/native_file_service.dart:103",
+    "lib/core/services/web_window_web.dart:37"
+   ],
+   "n": "Web: openLinkInApp → openExternal → web_window.openInNewTab: window.open(_blank), in installierter PWA bzw. wenn blockiert per Link-Klick – wie Utils.openInNewTab. Gleiche Sichtbarkeit (readOnly + Link: alle Rollen außer Admin/Verantwortlich, Freigabe-Link).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-3398e748": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:769",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:776",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:301"
+   ],
+   "n": "Zahl-Zusatzfeld (Zahlentastatur, Feldname als Label), Nur-Lese-Rollen readOnly, speichert beim Verlassen (num). Randfall geleertes Feld: Ionic schreibt null (beim nächsten Laden Standardwert), Flutter 0 – ohne Standardwert gleiche Anzeige. Freigabe-Ansicht s. text-e14adf08.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-3398e748-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:769",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:301"
+   ],
+   "n": "Text-Zusatzfeld (Feldname als Label), Nur-Lese-Rollen readOnly, speichert ungetrimmt beim Verlassen wie Ionic. Freigabe-Ansicht s. text-e14adf08.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-4e7c4cef": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:583",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:306"
+   ],
+   "n": "Textfeld „Name“, Satzanfang groß, speichert beim Verlassen (Flutter getrimmt); nur Admin/Verantwortlich (Formular nur bei !readOnly).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-8bb7c59d": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:574",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:305"
+   ],
+   "n": "Zahlenfeld „Nummer“, speichert beim Verlassen (int.tryParse, leer → null wie Ionic); nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-9b3e97d3": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:518",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:307"
+   ],
+   "n": "Mehrzeiliges Link-Feld (1–5 Zeilen, URL-Tastatur), speichert beim Verlassen (leer → null; Ionic ''), nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#field-a1c5c8c4": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:562",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:304"
+   ],
+   "n": "Textfeld „Präfix (optional)“ mit Hilfetext „Bspw. um Weihnachtslieder …“, Satzanfang groß, speichert beim Verlassen (Flutter getrimmt); nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#native-51a26cad": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:513",
+    "lib/core/services/native/native_file_service.dart:123"
+   ],
+   "n": "openLinkInApp: nativ In-App-Browser (inAppBrowserView = SFSafariViewController/Custom Tabs) wie Browser.open, iOS-App auf Mac extern (Ionic openInMacBrowser), Web neuer Tab.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-0685e298-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:412",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:465"
+   ],
+   "n": "Großer Titel „{Nummer} {Name}“ (iOS condense) bei readOnly, gleiche Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-0dee90a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:568",
+    "lib/core/providers/song_providers.dart:469"
+   ],
+   "n": "„Präfix (optional)“; Formular nur Admin/Verantwortlich.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-2352fce9": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:468"
+   ],
+   "n": "Überschrift „Kategorien“ nur bei readOnly und vorhandenen Kategorien – Nur-Lese-Rollen und Freigabe-Link wie Ionic (Kategorienamen s. text-21178ee6).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-3f41f257-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:412",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:465"
+   ],
+   "n": "Großer Titel „Werk bearbeiten“ bei !readOnly (Admin/Verantwortlich).",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-5406c8fa": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:487",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:681"
+   ],
+   "n": "Chip „Chor & Orchester“ (primary) im Besetzungsblock für Nur-Lese-Rollen/Freigabe, gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#text-65a55078": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/song_detail_page.dart:487",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:683"
+   ],
+   "n": "Chip „Mit Solo-Gesang“ (primary), gleiche Bedingung.",
+   "v": "bestätigt"
+  },
+  "songs/song/song.page#toast-1ed088c6": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/file_upload_sheet.dart:307",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1112",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1239"
+   ],
+   "n": "Upload-Sheet und Datei-Drop nur bei !readOnly (Admin/Verantwortlich, nicht Freigabe-Link). „Die Datei {name} überschreitet die maximale Größe von 20MB.“ rot, Datei wird übersprungen; Flutter prüft auch beim Einzeldatei-Drop. Anzeigedauer 4 s statt 5 s (Optik).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#db-3dd65a36": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/song_providers.dart:205",
+    "lib/core/providers/song_providers.dart:220",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:158"
+   ],
+   "n": "Ionic: alle Events auf public.songs ohne Filter, Reload wenn new.tenantId = effektiver Werk-Tenant (song_source_tenant_id ?? id) oder old.id vorhanden / Flutter: INSERT/UPDATE mit Filter tenantId = effektiver Werk-Tenant, DELETE nur wenn ID in den geladenen Werken, 300 ms Debounce, removeChannel beim Verlassen. Sichtbares Ergebnis gleich (Liste aktualisiert sich). Öffentliche Seite: Flutter ohne Realtime (Ionic abonniert dort den eingeloggten Tenant bzw. wirft ohne Login).",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#db-f4cfc4cb": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/song_providers.dart:209",
+    "lib/core/providers/song_providers.dart:221"
+   ],
+   "n": "Kanal `songs-changes-<song_source_tenant_id ?? tenantId>` identisch.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-5ecb67ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:250",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:262"
+   ],
+   "n": "Öffentlicher Freigabe-Link (ohne Login): Titel = longName der freigegebenen Instanz (data.isPublic). Keine Rollenbedingung.",
+   "v": "bestätigt"
+  },
+  "songs/songs.page#text-b8539fda": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/pages/songs_list_page.dart:250",
+    "lib/features/songs/presentation/pages/songs_list_page.dart:262"
+   ],
+   "n": "„Werke ({count})“ mit Anzahl aller Werke; öffentlich longName wie Ionic. Während des Ladens zeigt Flutter „Werke“ statt „Werke ()“/„Werke (0)“.",
+   "v": "bestätigt"
+  },
+  "tabs/tabs.page#logic-658293a9": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/main_shell.dart:60",
+    "lib/core/providers/optional_tabs_providers.dart:87",
+    "lib/core/router/app_router.dart:215",
+    "lib/core/router/app_router.dart:438"
+   ],
+   "n": "Rollenflags und Tab-Sichtbarkeit (Dashboard, Eltern-Termine, Meine Termine, Mitglieder mit showMembersList, Übersicht bei mehreren Instanzen, Personen, Termine, Werke/Org optional, Mehr) gleich; unerlaubte URL → Startseite der Rolle über roleRouteRedirect (Dateiablage prüft selbst, /open-file öffentlich wie Ionic isFilesUrl); Seiten-Glocke bei Sidepanel ausgeblendet. Einzige Abweichung beim Werke-Tab für Eltern (canOpenSongsTab, siehe action-8d0f89f7).",
+   "v": "bestätigt"
+  },
+  "tasks/task-detail/task-detail.page#logic-945723cf": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:28",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:52",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:64",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:168"
+   ],
+   "n": "isLeader (Bearbeiten/Löschen/Verantwortlich-Zeile/Thema-Link), isMine (zugewiesen an dich, Erinnerungstext), isOverdue, assigneeText, attendanceLabel (typeInfo → Typname → Fallback), hasSource, Laden bei jedem Öffnen, Status setzen mit „Danke“-/Fehler-Toast, Löschen mit Bestätigung, Toast und Rückkehr zur Teamorganisation, Zurück je Rolle gleich. Sichtbare Abweichungen nur in den Items (Segment nicht optimistisch, Refresh).",
+   "v": "bestätigt"
+  },
+  "tasks/task-form/task-form.component#modal-fbcd872a": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/task_form_sheet.dart:17",
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart:101",
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart:573",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:559",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:130",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:175"
+   ],
+   "n": "Alle Aufrufer nur Leitung wie Ionic: Aufgabe bearbeiten (Detail, isLeader), „Aufgabe hinzufügen“ am Thema (isLeader), Protokoll (Leitungs-Layouts), Aufgaben-Tab FAB (isLeader) und Leer-Button (isLeader && keine Aufgaben). Bottom-Sheet in voller Höhe (Ionic breakpoints [0,1], initial 1); liefert gespeicherte Aufgabe oder null.",
+   "v": "bestätigt"
+  },
+  "teacher/teacher.page#logic-4aa9911c": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:143",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:161",
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart:404",
+    "lib/data/repositories/teacher_repository.dart:75"
+   ],
+   "n": "Nur Admin/Verantwortlich öffnen (isAdmin), Kopie des Lehrers bearbeiten, Schüler = aktive Personen mit diesem Lehrer, Speichern ohne Validierung (name, number, notes, private, instruments), Erfolgs-Toast „Lehrer aktualisiert“, Liste neu geladen. Flutter speichert nach dem Schließen, trimmt Texte und filtert zusätzlich tenantId; DB-Fehler werden in beiden nicht gemeldet (Notifier liefert null). Demo-Konto: beide blockiert (Ionic checkDemoRestriction, Flutter ensureNotDemo, Erfolgs-Toast unterdrückt).",
+   "v": "bestätigt"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#logic-a2306e01": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:28",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:61",
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart:89",
+    "lib/core/providers/team_org_providers.dart:163"
+   ],
+   "n": "Laden (Leitung alle, Mitglieder eigene), Personen-Chips mit offenen Zählern, Filter-Reset bei verschwundener Person, Archiv-Zählung/Schalter, Gruppen nach Fälligkeit, Leertexte, optimistisches Abhaken mit Fehler-Toast und Rücksetzen, Anlegen über das Formular gleich; Ladefehler: roter Toast (teamOrg.tasksLoadFailed), alte Liste bleibt, Pull-to-Refresh (siehe action-411a87d7 und toast-1b91ff64).",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#nav-8447fd12": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:329",
+    "lib/core/router/app_router.dart:381"
+   ],
+   "n": "Ohne Sitzung leitet der Router /terms auf /login um (Ionic ngOnInit nach checkToken). Rollenunabhängig.",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#nav-efbc7cef": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:104",
+    "lib/data/repositories/account_repository.dart:56"
+   ],
+   "n": "Refresh-Fehler → Abmelden, /login und Warn-Toast „Sitzung abgelaufen …“ wie Ionic.",
+   "v": "bestätigt"
+  },
+  "terms/terms.page#toast-16e05266": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart:79"
+   ],
+   "n": "Gleicher roter Toast vorhanden; in beiden Apps praktisch unerreichbar (Knopf ohne Haken deaktiviert).",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

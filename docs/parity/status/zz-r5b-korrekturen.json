@@ -1,0 +1,51 @@
+{
+ "batch": "zz-r5b-korrekturen",
+ "afterRound": 5,
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "note": "Nachprüfung des Paritäts-Threads zu Runde 5 Teil B: offene unclear-Urteile per Widget-Test geklärt.",
+ "items": {
+  "settings/general/extra-fields/extra-fields.page#toast-b9ee5530": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:105-140",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:296-299"
+   ],
+   "n": "Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-945683f7": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:105-140",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:308-311"
+   ],
+   "n": "Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-fcd86ce2": {
+   "s": "diff",
+   "f": [
+    "lib/core/utils/toast_helper.dart:105-140",
+    "lib/features/settings/presentation/pages/extra_fields_page.dart:304-307"
+   ],
+   "n": "Text, Bedingung und Reihenfolge der Prüfungen gleich (Ionic addExtraField). Aber im iOS-Look (iPhone/iPad) ist der Toast unsichtbar, solange das Hinzufügen-Sheet offen ist: ToastHelper zeigt dort eine ScaffoldMessenger-SnackBar auf dem Scaffold der Seite, das Root-Modal-Sheet liegt darüber (Widget-Test mit Flutter 3.47.9: Pixel in der Toast-Mitte zeigt das Sheet). Der Nutzer sieht nicht, warum Speichern nicht geht. Android/Web (md) nutzt das Root-Overlay und ist sichtbar. Ursache und Fix gemeinsam im Zusatzbefund „Toasts hinter geöffneten Sheets (iOS-Look)“.",
+   "v": "korrigiert",
+   "sev": "mittel"
+  }
+ },
+ "extra": [
+  {
+   "unit": "utilities/Utils",
+   "title": "Toasts hinter geöffneten Sheets (iOS-Look)",
+   "sev": "hoch",
+   "ionic": "src/app/utilities/Utils.ts:372",
+   "f": [
+    "lib/core/utils/toast_helper.dart:105-140"
+   ],
+   "n": "Ionic ion-toast liegt immer über Modals und Sheets. Flutter ToastHelper._showToast nutzt im iOS-Look (Theme-Plattform iOS: iPhone, iPad) ScaffoldMessenger.showSnackBar; die SnackBar erscheint auf dem Scaffold der Seite, jedes per showModalBottomSheet geöffnete Sheet (meist useRootNavigator) liegt darüber. Widget-Test (Flutter 3.47.9, Sheet 500 bzw. 150 px hoch): ohne Sheet ist der Toast rot sichtbar, mit Sheet zeigt der Pixel in der Toast-Mitte das Sheet, am Rand nur abgedunkelt unter der Barriere. Auf dem Telefon ist das Sheet so breit wie der Bildschirm, der Toast also ganz verdeckt. Folge: Validierungs- und Fehlermeldungen aus Sheets, die offen bleiben (z. B. Zusatzfeld hinzufügen: Name ungültig, Optionen fehlen), sieht der Nutzer auf dem iPhone nicht; Speichern scheint ohne Grund nicht zu gehen. Erfolgsmeldungen nach dem Schließen sind sichtbar. Android und Web (md) zeigen den Toast über das Root-Overlay (showIonMdToast) und sind nicht betroffen. Fix-Vorschlag: auch im iOS-Look über Overlay.of(context, rootOverlay: true) anzeigen (iOS-Toast-Optik), dann sind alle Sheets auf einmal behoben."
+  }
+ ]
+}

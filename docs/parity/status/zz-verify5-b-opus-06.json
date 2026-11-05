@@ -1,0 +1,369 @@
+{
+ "batch": "zz-verify5-b-opus-06",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/attendance-type/attendance-type.service#db-b47455fe": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:138",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1862",
+    "lib/data/repositories/attendance_type_repository.dart:207"
+   ],
+   "n": "Weiter gleich: update attendance_types per id (+ tenant_id), Spalten aus _buildTypeData; Fehler → 'typeSettings.updateFailed'. Reihenfolge speichern (types.page saveOrder) über reorderTypes: index je Typ, id + tenant_id.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#db-e2de15bb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:25",
+    "lib/core/providers/attendance_type_providers.dart:42"
+   ],
+   "n": "Gleicher Select (tenant_id, order('index', ascending: true)); handleError wirft weiter (return [] unerreichbar).",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-0be3b674": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:554",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:2613"
+   ],
+   "n": "Delete person_attendances per id nach Mandantenprüfung (validatePersonAttendanceTenant); Bestätigungsdialog 'Person entfernen', Erfolgs-/Fehler-Toast wie Ionic removeFromAttendance.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-10ae6c21": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2333"
+   ],
+   "n": "Gleiche Löschung der Konfliktzeilen (in id), Flutter in 200er-Blöcken und zusätzlich .eq('person_id', fromId); Aufrufer mergePendingPlayerIntoExisting prüft vorher beide Personen auf den Mandanten.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-171db1c8": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2313",
+    "lib/data/repositories/player_repository.dart:2347"
+   ],
+   "n": "Gleicher Select (id, attendance_id, person_id = fromId); Flutter lädt alle Seiten (order id, range) statt max. 1000 Zeilen.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-171db1c8-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2316",
+    "lib/data/repositories/player_repository.dart:2347"
+   ],
+   "n": "Gleicher Select (person_id = toId), Flutter liest zusätzlich id und alle Seiten – gleiches Ergebnis.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-47905dba": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2340"
+   ],
+   "n": "Gleiches Update {person_id: toId} (in id), Flutter in Blöcken und zusätzlich .eq('person_id', fromId).",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-5d15bc79": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:251",
+    "lib/data/repositories/attendance_repository.dart:273"
+   ],
+   "n": "Update attendance per id + tenantId, entfernt id/created_at/tenantId/persons; Archiv-Spalten nur Admin/Verantwortlich (nur die Archivieren-Aktion sendet sie). Fehler werden weitergeworfen wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-8bef7f4d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:653",
+    "lib/data/repositories/attendance_repository.dart:722",
+    "lib/core/utils/duty_utils.dart:51"
+   ],
+   "n": "Gleiche Felder + changed_by/changed_at; Dienststatus (syncDutyWithStatus) im selben Update statt zweitem Update – gleiches Ergebnis; zusätzlich Mandantenprüfung.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-911d7b6c": {
+   "s": "ok",
+   "f": [
+    "lib/features/attendance/presentation/attendance_create_writes.dart:224",
+    "lib/data/repositories/protocol_repository.dart:270"
+   ],
+   "n": "Insert attendance mit tenantId (Spaltenwerte aus attendance-create, eigene Unit). Zweiter Pfad Teamorganisation-Schnellanlage über ProtocolRepository.createAttendance, tenantId erzwungen. AttendanceRepository.createAttendance (Doppel-Datum-Prüfung) wird im normalen Design nicht aufgerufen.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-9d206b1f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:295",
+    "lib/core/providers/attendance_providers.dart:414",
+    "lib/features/attendance/presentation/pages/attendance_list_page.dart:109"
+   ],
+   "n": "Delete attendance per id, Flutter zusätzlich .eq('tenantId'). Fehler: Ionic ignoriert sie, Flutter-Notifier fängt sie ohne Hinweis ab – gleiches Verhalten; danach Liste neu geladen.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-a93f1d01": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:636",
+    "lib/features/attendance/presentation/attendance_create_writes.dart:409",
+    "lib/features/attendance/presentation/attendance_add_persons.dart:88"
+   ],
+   "n": "Gleiche Spalten (attendance_id, person_id, status, notes). Ionic schluckt Duplikatfehler 23505 still; Flutter filtert vorhandene Personen vorher aus und meldet einen Fehler sonst (Flutter besser, bereits als extra erfasst).",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-d97eeb61": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:149"
+   ],
+   "n": "Gleicher Select (persons mit person:firstName,lastName,img,instrument(id,name),joined,appId,additional_fields; registration_answers über *), Flutter zusätzlich .eq('tenantId'), maybeSingle.",
+   "v": "bestätigt"
+  },
+  "services/attendance/attendance.service#db-f66ab5d4": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:946",
+    "lib/data/repositories/player_repository.dart:2268"
+   ],
+   "n": "Gleiche Löschung (person_id + attendance_id in …) beim Entfernen aus kommenden Terminen und beim Gruppen-/Feld-Abgleich; Termin-Ids nur des Mandanten.",
+   "v": "bestätigt"
+  },
+  "services/auth/auth.service#db-5e5596ce": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:207",
+    "lib/features/auth/presentation/pages/login_page.dart:245",
+    "lib/features/auth/data/auth_flow_service.dart:334",
+    "lib/core/services/teams/teams_service.dart:181"
+   ],
+   "n": "signInWithPassword im Teams-Verknüpfungsmodus vorhanden, aber Fehlertext weicht ab: Ionic AuthService.login zeigt bei email_not_confirmed 'Bitte bestätige zuerst deine E-Mail-Adresse.', Flutter (Link-Modus: message == null → authInvalidCredentials) zeigt 'Ungültige Anmeldedaten' – Nutzer erfährt den Grund nicht. user_not_found: Ionic 'Benutzer nicht gefunden' / Flutter 'Kein Konto … gefunden' (gleiche Bedeutung). Übrige Codes gleich. Erster Prüfer hat den Link-Modus-Zweig nicht geprüft.",
+   "v": "korrigiert"
+  },
+  "services/auto-message/auto-message.service#db-1ea71540": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:46"
+   ],
+   "n": "Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-28b2b0cb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:30"
+   ],
+   "n": "Gleich: tenantId, order created_at ascending: true.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-2e687b36": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:116"
+   ],
+   "n": "Delete per id, Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-2ed1fa7f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:186",
+    "lib/core/providers/auto_message_providers.dart:60"
+   ],
+   "n": "Gleich: tenantId, created_at >= jetzt−7 Tage, limit 500; nur status 'sent' gezählt.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-3aad4500": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:73",
+    "lib/data/models/auto_message/auto_message.dart:189"
+   ],
+   "n": "Ionic schreibt das ganze Regelobjekt, Flutter die Regelspalten + updated_at (+ enabled_at beim Einschalten) – gleiche Wirkung; Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-41dcf04c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:402"
+   ],
+   "n": "Gleicher Aufruf attendance-response {action: submit, messageId, kind, reasonCode, text}; Fehlertext aus details.error wie Ionic functionError.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-654c7b03": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:365",
+    "lib/features/messages/presentation/widgets/message_termin_section.dart:71"
+   ],
+   "n": "Gleicher Select per person_attendance_id, Flutter zusätzlich .eq('tenantId') (Spalte vorhanden).",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-747469e9": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:262"
+   ],
+   "n": "Flutter ohne person_attendance_id (im Regelverlauf ungenutzt), zusätzlich .eq('tenantId'), lädt alle Seiten statt max. 5000 Zeilen.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-763723bb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:347"
+   ],
+   "n": "Gleich (message_id in …), Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-82e43523": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:97",
+    "lib/features/messages/presentation/pages/auto_message_list_page.dart:87"
+   ],
+   "n": "Gleiches Update {enabled, updated_at, enabled_at beim Einschalten}, Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-90c67d97": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:131",
+    "lib/data/models/auto_message/auto_message.dart:212"
+   ],
+   "n": "send-auto-messages {dryRun: true, tenantId, rule}; Regel ohne created_by/created_at/updated_at (für den Dry-Run unerheblich).",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-a1c568ea": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:83"
+   ],
+   "n": "Gleiche Spalten inkl. tenantId, created_by, updated_at, enabled_at beim Einschalten; type_ids/group_ids leer → null.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-a2e9b773": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:432",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:308"
+   ],
+   "n": "Gleicher Aufruf attendance-response {action: decide, responseId, accept}.",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-b03b7913": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:169"
+   ],
+   "n": "Gleich (attendance_id), Flutter zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-c39e19de": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:151"
+   ],
+   "n": "Gleich: rule_id, order created_at ascending: false, limit 30; zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-cc224704": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:330"
+   ],
+   "n": "Gleich: attendance_id, order created_at ascending: true; zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-cc42f39d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:222"
+   ],
+   "n": "Delete id + status 'suspended', zusätzlich .eq('tenantId').",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-e1ebf9d7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:383"
+   ],
+   "n": "Gleicher Status-Select, Flutter zusätzlich Mandantenprüfung über attendance!inner(tenantId).",
+   "v": "bestätigt"
+  },
+  "services/auto-message/auto-message.service#db-fda0d3f0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:205",
+    "lib/features/attendance/presentation/widgets/attendance_detail/auto_message_panel.dart:241"
+   ],
+   "n": "Gleiche Spalten; tenantId = aktueller Mandant (= rule.tenantId), created_by_name aus eigenem Profil (Vor-/Nachname, sonst E-Mail) wie Ionic teamPerson.",
+   "v": "bestätigt"
+  },
+  "services/conductor/conductor.service#db-36e64412": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/data/repositories/player_repository.dart:236",
+    "lib/core/providers/conductor_providers.dart:29",
+    "lib/features/history/history_utils.dart:70",
+    "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart:145"
+   ],
+   "n": "Filter gleich (instrument = Hauptgruppe, pending false, tenantId), aber Sortierung umgekehrt: Ionic .order('lastName') = aufsteigend (postgrest-js), Flutter query.order('lastName') ohne ascending: = absteigend (postgrest-dart 2.6.0 Default false). Folge: Dirigenten-Auswahl in Verlauf/Werke-Sheet Z→A und vorausgewählt wird der alphabetisch letzte statt erste aktive Dirigent (Ionic activeConductors[0]) – bei Übernahme anderer person_id im Verlauf. Erster Prüfer hat den Sortier-Default übersehen.",
+   "v": "korrigiert"
+  },
+  "services/conductor/conductor.service#logic-f1c154da": {
+   "s": "diff",
+   "sev": "mittel",
+   "f": [
+    "lib/core/providers/conductor_providers.dart:12",
+    "lib/core/providers/conductor_providers.dart:42",
+    "lib/data/repositories/player_repository.dart:223",
+    "lib/core/services/offline_list_cache.dart:20"
+   ],
+   "n": "Filter, Offline-Cache der letzten Liste (offline_conductors_v1 ↔ OfflineListCache 'conductors'), Ausgetretene per activeConductorsProvider, Fehler-Toast 'svc.loadMainGroupPeopleFailed' wie Ionic. Abweichung: Sortierung nach Nachname absteigend statt aufsteigend (siehe db-36e64412, kein separates extra). Ohne Hauptgruppe: Ionic wirft 'db.mainGroupNotFound', Flutter leere Liste.",
+   "v": "korrigiert"
+  },
+  "services/conductor/conductor.service#native-2dd86017": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/offline_list_cache.dart:37",
+    "lib/core/providers/conductor_providers.dart:20"
+   ],
+   "n": "Netzstatus über connectivityCheckProvider; offline wird die zwischengespeicherte Liste geliefert, bei Netzfehler ebenfalls.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#db-303aa5ce": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/cross_tenant_person_repository.dart:262",
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:258",
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart:64"
+   ],
+   "n": "Gleicher Select (id, left; appId, tenantId, pending false; aktive Zeile bevorzugt), nur für verknüpfte Instanzen; Fehler beim Pausieren in anderer Instanz → 'Fehler bei {tenant}' wie Ionic.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#db-32748636": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:303",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:281",
+    "lib/features/tenant_selection/presentation/pages/tenant_detail_page.dart:55"
+   ],
+   "n": "Rollen je Instanz aus userTenantsProvider (tenantUsers tenantId, favorite, role für userId); 'Instanz löschen' nur als Admin und nicht im Demo ('settings.cannotDeleteTenant' sonst), deleteTenant prüft Admin-Rolle erneut.",
+   "v": "bestätigt"
+  },
+  "services/cross-tenant/cross-tenant.service#db-598f27a3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/cross_tenant_person_repository.dart:240",
+    "lib/features/people/presentation/pages/people_list_page.dart:1169",
+    "lib/features/people/presentation/pages/people_list_page.dart:238"
+   ],
+   "n": "Filter 'Mitglied anderer Instanz' (nur bei verknüpften Instanzen sichtbar): tenantId der gewählten Instanz, role ≠ Beobachter; Flutter liest nur userId und nur für verknüpfte Instanzen – gleiches Ergebnis; Fehler → 'svc.loadUsersFailed'.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

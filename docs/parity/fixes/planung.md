@@ -69,7 +69,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
 
-## Kleinigkeiten (niedrig): 148
+## Kleinigkeiten (niedrig): 152
 
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b7046159` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-plan-public/org-plan-public.page.ts#L182) (2. Prüfung: bestätigt)
   Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.
@@ -403,6 +403,15 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `public-planning/public-planning.page` `text-aefaf1bb` [public-planning/public-planning.page.html:259](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.html#L259) (2. Prüfung: bestätigt)
   „Ende“ gleich. Ionic: sichtbar sobald end gesetzt (auch bei leerem Ablauf, z. B. Vorlage „Leerer Ablauf“; nach „Neuer Plan“ bis zur nächsten Änderung aus) / Flutter: nur wenn mindestens ein Feld existiert.
   Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:981-986
+- [ ] **niedrig** `public-planning/public-planning.page` `field-51c31589-3` [public-planning/public-planning.page.html:260](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.html#L260) (2. Prüfung: korrigiert)
+  Ionic: "Ende"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:985
+- [ ] **niedrig** `public-planning/public-planning.page` `modal-419a4f08-3` [public-planning/public-planning.page.html:261](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.html#L261) (2. Prüfung: korrigiert)
+  Ionic: "Ende"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:985
+- [ ] **niedrig** `public-planning/public-planning.page` `field-3e7a1873` [public-planning/public-planning.page.html:263](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/public-planning/public-planning.page.html#L263) (2. Prüfung: korrigiert)
+  Ionic: "Ende"-Zeile hängt an `@if (end)`; `end` wird in ngOnInit/calculateEnd immer gesetzt, also auch bei leerem Ablauf (Ende = Start). Flutter: nur bei `_fields.isNotEmpty` (public_planning_page.dart ~Z.985). Nur nach Löschen aller Felder sichtbar, Funktion (Ende nur Anzeige) gleich.
+  Flutter: lib/features/planning/presentation/pages/public_planning_page.dart:985
 - [ ] **niedrig** `shared-plan/shared-plan.page` `alert-5d93ade6` [shared-plan/shared-plan.page.ts:382](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.ts#L382)
   Platzhalter „Notiz eingeben...“, „Abbrechen“/„Hinzufügen“, Notiz (noteFld, Dauer 0) gleich. Ionic: Titel „Notiz hinzufügen“ (attendance.addNote), leer → stumm offen / Flutter: Titel „Notizfeld hinzufügen“, Meldung „Bitte eine Notiz eingeben.“
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:692-705
@@ -427,6 +436,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `shared-plan/shared-plan.page` `text-36e09e6c` [shared-plan/shared-plan.page.html:107](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.html#L107)
   „Ende“ gleich. Ionic: nur wenn end gespeichert ist / Flutter (Nur-Lesen): ohne end aus Start + Summe der Dauern berechnet und angezeigt
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:830-834, lib/features/planning/presentation/widgets/plan_view_list.dart:207-217
+- [ ] **niedrig** `shared-plan/shared-plan.page` `text-d2f87d03` [shared-plan/shared-plan.page.html:108](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/shared-plan/shared-plan.page.html#L108) (2. Prüfung: korrigiert)
+  Ionic: Ende-Zeile nur wenn end_time gesetzt (@if (end)). Flutter: Ansicht (PlanViewList) berechnet bei leerem end Start+Summe der Minuten und zeigt trotzdem „{time} Uhr“; Bearbeitungsmodus wie Ionic (nur wenn end gesetzt). Extra-Info, Funktion gleich.
+  Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:843, lib/features/planning/presentation/widgets/plan_view_list.dart:205
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `x-ebdd8364a6` **Live-Modus vor Beginn** [src/app/org-plan-public/org-plan-public.page.ts:293](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-plan-public/org-plan-public.page.ts#L293)
   Ionic: in den 5 min vor Start ist das erste Feld aktiv (hervorgehoben, Countdown bis Ende des ersten Feldes) / Flutter: vor Start kein aktives Feld (activeIndex −1), stattdessen in der Start-Zeile „beginnt in X Min.“
   Flutter: lib/core/utils/plan_utils.dart:455, lib/features/planning/presentation/widgets/plan_view_list.dart:88

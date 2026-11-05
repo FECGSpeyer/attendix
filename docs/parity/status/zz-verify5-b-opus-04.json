@@ -1,0 +1,366 @@
+{
+ "batch": "zz-verify5-b-opus-04",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "people/person/person.page#text-b7dada5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:56",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1880",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2041"
+   ],
+   "n": "Weiter gleich: LateWarningCard nur bei canEdit (Admin/Verantwortlich && !left = Ionic !readOnly && isAdmin), lateCount (Verspätet nach lastSolve) ≥ Schwelle der ersten critical_rule mit Status Verspätet (sonst 999); 'Diese Person ist <strong>{n}x</strong> unentschuldigt zu spät gekommen.' mit fettem Zähler.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-df85d683": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:34",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2024",
+    "lib/features/people/presentation/pages/person_detail_page.dart:326"
+   ],
+   "n": "„Problemfall“ als Accordion-Titel nur bei canEdit && isCritical (Ionic !readOnly && isCritical), standardmäßig aufgeklappt (_showProblemfall = true, Ionic value=\"critical\"). Der frühere Zusatzkasten „Grund“ ist im aktuellen Code entfernt.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-e678fd99": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:47",
+    "lib/features/people/presentation/widgets/person_detail/late_warning_card.dart:34",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2041"
+   ],
+   "n": "Titel '🕐 Häufige Verspätungen' unverändert, gleiche Bedingung (canEdit, lateCount ≥ Schwelle).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#text-e7801fc0": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/problemfall_accordion.dart:65"
+   ],
+   "n": "„Anmerkungen“-Textfeld nur bei aktivem „Mit Person gesprochen“ im Problemfall-Bereich (canEdit); Text landet als CRITICAL_PERSON-Historie beim Speichern wie Ionic.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-2b97990f": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:741"
+   ],
+   "n": "Bedingung gleich (E-Mail gesetzt, geändert, ungültig) vor den weiteren Speicher-Dialogen, roter Toast 'Bitte gib eine valide E-Mail Adresse ein...', Abbruch. E-Mail-Feld nur im Account-Bereich (canEdit && !pending = Ionic !readOnly && !approveMode). Regex weicht in Randfällen von Utils.validateEmail ab.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-7d104b56": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:1630",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1550"
+   ],
+   "n": "„Entfernen“ nur wenn Person nicht der eigene Nutzer ist, Bestätigung Abbrechen/Ja, danach grüner Toast „Die Person wurde erfolgreich entfernt“ und Seite schließt; Fehler roter Toast.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-8064d400": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:914",
+    "lib/features/people/presentation/pages/person_detail_page.dart:915"
+   ],
+   "n": "Grüner Toast 'Die Spielerdaten wurden erfolgreich aktualisiert.' nach dem Speichern; Flutter schließt jetzt wie Ionic (dismiss) die Seite (_closePage). Speichern nur Admin/Verantwortliche.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-a9ba8d62": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart:921"
+   ],
+   "n": "Roter Toast 'Fehler beim aktualisieren des Spielers: {error}' (friendlyErrorMessage statt error.message). Fehler der Rollen-Synchronisierung meldet Flutter separat als Warnung.",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-aee32adb": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/planned_absences.dart:244",
+    "lib/features/people/presentation/widgets/planned_absences.dart:26",
+    "lib/features/people/presentation/widgets/planned_absences.dart:349",
+    "lib/features/people/presentation/pages/person_detail_page.dart:2099"
+   ],
+   "n": "Grüner Toast mit/ohne Anzahl der entschuldigten Termine (Termine im Zeitraum, Status ≠ Entschuldigt) wie Ionic; Bereich nur canEdit + canManagePlannedAbsences (= Ionic !readOnly && canManagePlannedAbsences).",
+   "v": "bestätigt"
+  },
+  "people/person/person.page#toast-b7159a13": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/pause_person_sheet.dart:275",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1254"
+   ],
+   "n": "Pro fehlgeschlagener Instanz roter Toast 'Fehler bei {Kurzname}: {Fehler}', Schleife läuft weiter; Pausieren nur Admin/Verantwortliche (canEdit) wie Ionic.",
+   "v": "bestätigt"
+  },
+  "planning/plan-chips/plan-chips.component#logic-5c667539": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_view_list.dart:269"
+   ],
+   "n": "PlanChips meldet Auswahl nur bei anderem Index (if (i != selected)), 'heute'-Zusatz am todayIndex, wie Ionic select().",
+   "v": "bestätigt"
+  },
+  "planning/plan-share-sheet/plan-share-sheet.component#logic-657c81c9": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:230",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:264",
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:316"
+   ],
+   "n": "Sheet 'Ablaufplan teilen' mit Segment Nur {label}/Alle {n} Pläne, Auswahl liefert (all, action), X/Wegwischen liefert null; Telegram-Optionen nur mit Chat-ID (Ionic tenantUser.telegram_chat_id = Benachrichtigungs-Konfig), 'Telegram (Bild)' nur bei 'nur dieser'. Höhe 0,75/0,5 fest statt Breakpoints bis 1 (nur Optik).",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-160cbfb2": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:370",
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:244",
+    "lib/features/planning/presentation/pages/planning_page.dart:1990"
+   ],
+   "n": "Registerprobenplan nur bei choir/orchestra, Telegram-Knöpfe nur mit Chat-ID; PDF-Bytes an sendPlanPerTelegram 'Registerprobenplan_DD_MM_YYYY', Toast 'Nachricht wurde erfolgreich gesendet!' bzw. Fehler-Toast wie TelegramService, danach Modal zu.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-af3bb049": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/plan_export_actions.dart:187",
+    "lib/features/planning/presentation/pages/planning_page.dart:1951"
+   ],
+   "n": "Web: Web Share API wenn vorhanden, sonst Link in Zwischenablage + Toast 'Link in Zwischenablage kopiert'; nativ Share-Sheet mit Clipboard-Fallback.",
+   "v": "bestätigt"
+  },
+  "planning/planning.page#effect-c1658399": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/widgets/register_plan_sheet.dart:360"
+   ],
+   "n": "Als Bild: erste PDF-Seite als PNG (Ionic pdf.js, Flutter Printing.raster 150 dpi), asImage an Telegram (send-photo); gleiche Bedingungen (choir/orchestra, Chat-ID).",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol-pdf#effect-1ae212ba": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/protocol_pdf.dart:155"
+   ],
+   "n": "createProtocolPdf liefert die PDF-Bytes (doc.save()) statt Blob.",
+   "v": "bestätigt"
+  },
+  "protocols/protocol/protocol.page#effect-9302ed46": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:805",
+    "lib/core/services/native/native_file_service.dart:167"
+   ],
+   "n": "Nach flushAll PDF erzeugen und mit NativeFileService.saveBytes speichern (Port von downloadFileNative); Dateiname 'Protokoll {Titel} {YYYY-MM-DD}.pdf' mit gleicher Zeichenbereinigung; Fehler-Toast 'PDF konnte nicht erstellt werden'.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#db-2f715edb": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:252",
+    "lib/core/providers/plan_providers.dart:82"
+   ],
+   "n": "shared_plans select * eq creator_user_id = eigener Nutzer, order created_at ascending:false (absteigend wie Ionic). Tabelle ohne tenantId.",
+   "v": "bestätigt"
+  },
+  "public-planning/my-plans/my-plans.component#db-7410a6fd": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:254",
+    "lib/core/providers/plan_providers.dart:82"
+   ],
+   "n": "Nutzer-ID aus der Sitzung (auth.currentUser); ohne Nutzer leere Liste wie Ionic.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning-templates#logic-d95ba1f0": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:58",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:109"
+   ],
+   "n": "Vorlagen (Namen, Startzeiten, Felder) und cloneTemplateFields (neue IDs '{stamp}-{i}' bzw. 'noteFld {stamp}-{i}') 1:1 portiert.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-252fc2e5": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:314",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:692"
+   ],
+   "n": "Nur mit Organisation: Validierung, Speichern, update shared_plans set org_id = Org-ID where id; Toasts 'zur Organisation hinzugefügt'/Fehler gleich. Flutter filtert zusätzlich creator_user_id und bricht ab, wenn das Speichern scheitert (Toast 'savePlanFailed').",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-7c1e7e29": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:169",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:182",
+    "lib/core/router/app_router.dart:308",
+    "lib/core/router/app_router.dart:182"
+   ],
+   "n": "Sitzung → _loggedIn (davon abhängig Org-Eintrag, Meine Pläne, Werke/Historie, DB-Speichern). Eingeloggt auf /planung → /settings/planung (nur Admin/Verantwortlich, sonst Startseite der Rolle) wie Ionic; anonym nur lokal + anonyme Links.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-99a947c6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart:314",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:675"
+   ],
+   "n": "update shared_plans set org_id = null where id, nur mit Plan-ID; Toasts 'entfernt'/Fehler gleich; Flutter zusätzlich eq creator_user_id.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-9fadbb62": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:324",
+    "lib/data/repositories/plan_repository.dart:275"
+   ],
+   "n": "Nutzer-ID aus der Sitzung, ohne Sitzung kein Speichern; upsert shared_plans onConflict id mit creator_user_id. Flutter bindet zusätzlich an das Konto, das die Seite geöffnet hat, und vergibt die Plan-ID erst nach erfolgreichem Speichern.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-a246cbc8": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:788",
+    "lib/data/repositories/public_plan_repository.dart:208"
+   ],
+   "n": "Anonym: insert shared_plans mit id/edit_key (je 8 Zeichen), plan_title (Fallback 'Ablaufplan'), date, time, end_time, fields, branding_id (bei 'Kein Branding' weggelassen = null); kein creator, keine tenantId (Tabelle ohne Mandant). Fehler → Toast 'plansLinkFailed'.",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#db-f6ff5ae6": {
+   "s": "ok",
+   "f": [
+    "lib/features/planning/presentation/pages/public_planning_page.dart:249",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:244",
+    "lib/data/repositories/plan_repository.dart:332"
+   ],
+   "n": "Nach Wiederherstellen (eingeloggt, gespeicherte Plan-ID) select org_id where id maybeSingle, übernimmt isOrgPlan und speichert lokales Backup; Fehler/keine Zeile → lokaler Stand bleibt. Flutter zusätzlich eq creator_user_id (gleiche Daten, Plan-IDs stammen aus eigenen Plänen).",
+   "v": "bestätigt"
+  },
+  "public-planning/public-planning.page#nav-d5e2c588": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:308",
+    "lib/core/router/app_router.dart:182",
+    "lib/features/planning/presentation/pages/public_planning_page.dart:182"
+   ],
+   "n": "Eingeloggt auf /planung → Redirect /settings/planung (ersetzt den Eintrag); dort für Rollen außer Admin/Verantwortlich Umleitung auf die Startseite der Rolle – wie Ionic TabsPage (isUrlAccessAllowed → Utils.getUrl).",
+   "v": "bestätigt"
+  },
+  "register/register.page#action-78b871cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:472",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:573",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:610"
+   ],
+   "n": "'Instanz jetzt erstellen' mit add-circle-outline, nur bei vollständigem Formular aktiv; legt Instanz an (Admin + Super-Developer, Hauptgruppe, Standard-Termintypen), Toast 'Instanz wurde erfolgreich erstellt!', Wechsel in die neue Instanz, Admin-Startseite, Modal zu. Keine Rollenbedingung. Trimmen der Namen ist eigenes Extra.",
+   "v": "bestätigt"
+  },
+  "register/register.page#action-a59eb784": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:179"
+   ],
+   "n": "Menü-Button nur ohne Instanz (TenantCreatePage(canDismiss: false) bei 0 Instanzen), Icon more_vert (iOS more_horiz).",
+   "v": "bestätigt"
+  },
+  "register/register.page#action-c30f1d58": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:165"
+   ],
+   "n": "Schließen-X nur mit vorhandener Instanz (canDismiss; Modal aus Instanzwechsel bzw. /tenants/new), für alle Rollen gleich; pop bzw. /tenants.",
+   "v": "bestätigt"
+  },
+  "register/register.page#popover-aecc1f28": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:179"
+   ],
+   "n": "PopupMenuButton unter dem Button mit 'Abmelden' (log-out) und 'Konto löschen' (rot, Mülleimer), schließt bei Auswahl.",
+   "v": "bestätigt"
+  },
+  "register/register.page#toast-dc5bddf6": {
+   "s": "na",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:575"
+   ],
+   "n": "toter Code: createInstance() wird nur vom Button im @if (tenant.longName && tenant.shortName && mainGroupName) aufgerufen, die Prüfung greift nie. Flutter hat dieselbe, ebenso unerreichbare Prüfung (Button bei unvollständigem Formular deaktiviert) mit gleichem Text.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#db-e2edcd1f": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1056",
+    "lib/features/auth/data/auth_flow_service.dart:403"
+   ],
+   "n": "Nach erfolgreicher OTP-Prüfung auth.updateUser(data: {terms_accepted_at: jetzt}), Seite bleibt für das Profil offen, danach Prüfung/Vorbelegung wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#field-25aab0fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:514",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:211",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1152"
+   ],
+   "n": "Schalter mit defaultValue vorbelegt (registrationFieldDefaults; ohne Default aus), Wert in additional_fields[id]; Validierung 'kein boolescher Wert' bzw. Einverständnis=false wie Ionic. Gleiche Mandantenbedingung (registration_fields).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#field-2818a621": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:736"
+   ],
+   "n": "Nur bei 'Nicht gelistet' (Wert ''), Label 'Gemeinde nicht gelistet? Bitte Namen eingeben', Platzhalter 'Name deiner Gemeinde', Wortgroßschreibung, Mindestlänge 5 nach Trim; bei Registrierung wird die Gemeinde angelegt (Flutter mit getrimmtem Namen).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#field-3d36f520": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:480"
+   ],
+   "n": "Texteingabe mit defaultValue vorbelegt, Satz-Großschreibung, Pflichtprüfung (nicht leer nach Trim) gleich.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-0a9708a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:377",
+    "lib/features/registration/data/providers/registration_providers.dart:48"
+   ],
+   "n": "Warnung (Farbe warning, Warn-Icon) wenn keine Nicht-Hauptgruppen; Text gleich, Abschließen-Knopf deaktiviert. Gruppenfilter jetzt maingroup != true wie Ionic (früherer Randfall maingroup = NULL ist behoben).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:487"
+   ],
+   "n": "Feldname als Label für Text-Zusatzfelder in der Reihenfolge von registration_fields.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:502"
+   ],
+   "n": "Feldname als Label für Zahl-Zusatzfelder.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-1e23f15b-3": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:520"
+   ],
+   "n": "Öffentliche Seite, keine Rollenabhängigkeit. Feld steht in registration_fields und additional_fields, Typ boolean; Label = field.name neben dem Schalter.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

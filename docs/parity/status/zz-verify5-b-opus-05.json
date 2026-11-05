@@ -1,0 +1,389 @@
+{
+ "batch": "zz-verify5-b-opus-05",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "register/tenant-register/tenant-register.page#text-9b17d1d9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:286"
+   ],
+   "n": "Listenkopf „Persönliche Daten“ (IonListHeader) nach dem Account-Block, nur bei geladener Instanz (tenantData) – unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#text-fecdb4cb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:282"
+   ],
+   "n": "Listenkopf „Account“ vor dem Account-Block, nur bei geladener Instanz – unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-2f09fbd9": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1152-1159",
+    "lib/features/registration/data/providers/registration_providers.dart:73-84",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1176"
+   ],
+   "n": "Ja/Nein-Feld mit „einverständnis“ im Namen und Wert false → roter Toast „Sie müssen dem Feld \"{field}\" zustimmen, um fortzufahren.“ wie Ionic. Inzwischen auch ohne gesetzten Wert wie Ionic: Vorbelegung nur mit defaultValue, Wert kein bool → fieldValue-Toast (die Abweichung aus der alten Notiz ist behoben).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-33d6e4ed": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1128-1131",
+    "lib/features/auth/data/auth_flow_service.dart:28-29"
+   ],
+   "n": "Gleiche Bedingung (registration_fields enthält 'phone'), gleiche Regex /^(\\+?[1-9]\\d{1,14}|0\\d+)$/ nach Entfernen der Leerzeichen, Text gleich, roter Toast.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-51ea8218": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:746-768",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:197-203",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:847",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1060"
+   ],
+   "n": "Öffentliche Seite ohne Rollenprüfung (Ionic wie Flutter); gleiche Bedingung: tenantUsers-Zeile für tenantId+userId (jede Rolle, auch Bewerber); Prüfung beim Laden (angemeldet), nach Login-Dialog und nach Codebestätigung wie Ionic, danach go('/login'). Text gleich, Farbe warning; Anzeigedauer 3–4 s statt 5 s (Kleinigkeit).",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-9de040da": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1125-1126",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:79-81"
+   ],
+   "n": "Gleiche Bedingung (registration_fields enthält 'birthDate'); in beiden praktisch unerreichbar, da Geburtsdatum mit heute−18 Jahre vorbelegt ist.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-cad3c644": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1160-1166",
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:728-741"
+   ],
+   "n": "„Nicht gelistet“ (leerer Wert) und eigener Gemeindename getrimmt < 5 Zeichen → „Bitte geben Sie den Namen Ihrer Gemeinde ein.“, roter Toast, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "register/tenant-register/tenant-register.page#toast-f6feb7fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart:1160-1161",
+    "lib/features/registration/data/providers/registration_providers.dart:80-82"
+   ],
+   "n": "Gemeinde nicht gewählt (bfecg_church ohne Vorbelegung, Wert kein String) → „Bitte wählen Sie eine Gemeinde aus.“; nur wenn bfecg_church in registration_fields, wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/overview/overview.page#action-71931241": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/self_service_overview_page.dart:312",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:794-808",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-475"
+   ],
+   "n": "„Weitere Optionen“ auf der Karte des aktuellen Termins (chronologische Ansicht) immer sichtbar, öffnet presentActions(hideQuickActions: true) im overviewMode: ohne Zusagen/Absagen/Verspätung (sofern als Button da) und ohne Chip-Einträge; leeres Blatt → Warn-Toast „signout.noActions“ wie Ionic. Inhaltsunterschiede des Blatts gehören zu actionsheet-1394033e bzw. x-9e43a66882.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#effect-11be3cc2": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:438",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:456-457",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137",
+    "lib/data/repositories/attendance_repository.dart:398-402"
+   ],
+   "n": "place wird weiterhin mitgeladen; Eintrag „Route öffnen“ nur bei Ort, an gleicher Stelle (nach Ablaufplan/Beschreibung/Anhang); iOS Auswahl Apple Karten/Google Maps, sonst direkt Google Maps – wie Utils.openNavigation.",
+   "v": "bestätigt"
+  },
+  "selfService/parents/parents.page#native-6ab3c266": {
+   "s": "ok",
+   "f": [
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:127-132",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:437",
+    "lib/features/parents/presentation/pages/parents_portal_page.dart:454-455",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140-1149"
+   ],
+   "n": "Anhang-Chip und Aktionsblatt-Eintrag nur bei attachment_url, öffnen über NativeFileService.openLinkInApp (nativ In-App-Browser, Web neuer Tab) wie Browser.open.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-5c9afb25": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:485-491",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:59-74",
+    "lib/core/providers/player_absence_providers.dart:69-73"
+   ],
+   "n": "Kachel „Abwesenheit“ / „melden“ mit Kalender-Icon nur ohne Dienstplan-Ansicht, mit geladener Person und player_planned_absence der eigenen Rolle (Ionic getPermissionForRole(tenantUser.role)); öffnet das Abwesenheits-Sheet. Rollenmenge der Seite unverändert gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-6edb2695": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:200-237",
+    "lib/features/people/presentation/widgets/planned_absences.dart:249-296",
+    "lib/data/repositories/player_absence_repository.dart:244-295"
+   ],
+   "n": "Liste „Geplante Abwesenheiten“ nur mit player_planned_absence und Einträgen; Papierkorb → Bestätigung „Abwesenheit löschen“ mit signout.deleteAbsenceMessage, Abbrechen/Löschen (destruktiv), Toast „Abwesenheit gelöscht“. Zurückgesetzt werden jetzt nur die Termine, die Ionic zurücksetzt (onlyIds = aktueller + anstehende Termine nach Dienst-Filter/Dienstplan-Ansicht, Status entschuldigt und notes = Grund, Rückfall auf default_status) – die Abweichung aus Runde 1 ist behoben.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-7d0a5a99": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:551-553",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:794-808",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:373-475",
+    "lib/core/router/route_access.dart:71-74"
+   ],
+   "n": "„Weitere Optionen“ nur bei quickActions (eigener Termin mit PA-id), öffnet Aktionsblatt mit hideQuickActions: Zusagen/Rücknahme/Absagen/Verspätung und Chip-Einträge entfallen, „Anmelden mit Notiz“, „Anmeldefelder“, „Notiz anpassen“ wie Ionic; leer → Warn-Toast noActions. Rollen gleich (Route nur !Dirigent&&!Eltern, Bewerber nur Wartekarte). Randfall: Ablaufplan ohne Felder bietet Ionic im Blatt an, Flutter nicht.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-9d141753": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:139-158",
+    "lib/features/self_service/presentation/pages/signout_page.dart:174",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:118-150",
+    "lib/shared/widgets/tenant/tenant_switcher_title.dart:330-370"
+   ],
+   "n": "Popover bei >1 Instanz mit Langname je Instanz und Badge „Aktuell“ bei der aktuellen; Tippen: gleiche Instanz → nichts, sonst Rolle der Zielinstanz laden, setzen, go(role.defaultRoute) = Utils.getUrl(role). Fehlendes Lade-Overlay gehört zum loading-Item.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#action-9e318750": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:217-222",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:431-466",
+    "lib/core/router/route_access.dart:71-74"
+   ],
+   "n": "Chip „Infos“ mit Info-Icon bei description, an gleicher Stelle in der Chip-Reihe; öffnet das Beschreibungs-Sheet (jetzt wie Ionic: Titel „Beschreibung“, X, Quill-Formatierung, 0.6-Höhe). Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#alert-4cca859e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:355-371",
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:528-558",
+    "lib/core/providers/signout_providers.dart:323-325"
+   ],
+   "n": "Nur bei text 'X' im Aktionsblatt; Dialog „Notiz anpassen“, mehrzeiliges Feld mit Hinweis „Gib hier deine Notiz ein“, vorbelegt mit der bisherigen Notiz, Abbrechen/Speichern; Speichern → updateAttendanceNote, Toast „Notiz aktualisiert“, Neuladen – wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#effect-1e56ad93": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:446-458"
+   ],
+   "n": "Nur im Mandanten-Modus „Alle Termine“ für fremde Termine ohne id; Reihenfolge Beschreibung → Ablaufplan → Anhang → Ort (openEventNavigation) → Dateien gleich (Plan ohne Felder: Ionic öffnet leeren Plan, Flutter springt weiter – Randfall).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#effect-1e56ad93-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:421-423",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:514-515"
+   ],
+   "n": "Eintrag „Route öffnen“ bei place und !hideQuickActions (signout: overviewMode=false), Position nach Anhang vor Dateien wie Ionic.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#effect-8c8a4f8d": {
+   "s": "ok",
+   "f": [
+    "lib/core/constants/enums.dart:137-141",
+    "lib/features/self_service/presentation/pages/signout_page.dart:146-154"
+   ],
+   "n": "Ziel aus der Rolle der neuen Instanz: Dirigent/Verantwortlich/Beobachter → /people, Eltern → /parents, sonst /signout – entspricht Utils.getUrl (unbekannte Rolle: Ionic /register, Flutter /signout – Randfall).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#effect-d259dd3f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:235-240",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1108-1137"
+   ],
+   "n": "Chip „Route“ bei place → openEventNavigation: iOS (auch iOS-Browser) Auswahl Apple Karten / Google Maps, sonst Google Maps.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#modal-40e4838d": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:59-74",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:242-411",
+    "lib/features/self_service/presentation/pages/signout_page.dart:343-346",
+    "lib/features/self_service/presentation/pages/signout_page.dart:485-491"
+   ],
+   "n": "Öffnung über Kachel (ohne Dienstplan-Ansicht) bzw. Zeile „Abwesenheit melden“ (Dienstplan-Ansicht), beide nur mit player_planned_absence der eigenen Rolle; jedes Öffnen beginnt leer (wie dismissAbsenceModal). Ionic Sheet 0.92 / Flutter Bottom-Sheet in Inhaltshöhe (Darstellung).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#native-90a9db81": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:223-228",
+    "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:512-513",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:1140-1149"
+   ],
+   "n": "Anhang-Chip (Name oder „Anhang“) und Blatt-Eintrag öffnen attachment_url über openLinkInApp (nativ In-App-Browser, Web neuer Tab) wie Browser.open.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#native-f179cb3a": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/upcoming_songs_sheet.dart:251-256",
+    "lib/features/self_service/presentation/widgets/song_options_sheet.dart:17-26"
+   ],
+   "n": "Download-Button bei song.link im Sheet „Aktuelle Werke“ → openSongLink → openLinkInApp (In-App-Browser/neuer Tab) wie Browser.open; Flutter zeigt zusätzlich einen Fehler-Toast, wenn nichts geöffnet werden kann.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#nav-abe2527f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:139-158",
+    "lib/core/constants/enums.dart:137-141"
+   ],
+   "n": "Ionic navigateByUrl(Utils.getUrl(role)) → /tabs/player | /tabs/parents | /tabs/signout; Flutter liest die Rolle der Ziel-Instanz (getTenantUserRole), setzt die Instanz und go(role.defaultRoute) → /people | /parents | /signout – gleiche Ziele je Rolle. Unbekannte Rolle: Ionic /register, Flutter /signout (Randfall).",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-037f4b7e": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:569-572",
+    "lib/core/providers/signout_providers.dart:168-181"
+   ],
+   "n": "Anzahl = data.upcoming.length (ohne aktuellen Termin, ohne nicht zugeteilte Dienste, in der Dienstplan-Ansicht ohne eigene Dienste) wie actualAttendances.length; nur wenn es weitere Termine gibt und (!useDutyView || showOtherTermine). Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-12426941": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:543",
+    "lib/data/repositories/sign_in_out_repository.dart:888-899"
+   ],
+   "n": "eventMeta(withDate: true, withPlace: false) wie getEventMeta(att, true, false): Datum (außer es ist schon Titel) · Zeitspanne. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-14a391d6": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:536-538",
+    "lib/core/utils/event_list_utils.dart:75"
+   ],
+   "n": "„Heute“ bei laufendem Termin (isRunning, tagesbasiert inkl. mehrtägig = attendanceIsRunning), sonst „Nächster Termin“. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-24cd62e0": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/event_list/excuse_reason_sheet.dart:446-448"
+   ],
+   "n": "Titel „Beschreibung“ des Beschreibungs-Sheets (Infos-Chip/Aktion), jetzt mit X-Schließen und formatierter Beschreibung wie Ionic. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-321ae3a4": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:542",
+    "lib/data/repositories/sign_in_out_repository.dart:872-880"
+   ],
+   "n": "eventTitle = typeInfo || Typname (außer hide_name) || Lesedatum wie getEventTitle. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-3822774c": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:569-572"
+   ],
+   "n": "Abschnitt „Anstehend“ nur bei weiteren Terminen (ohne aktuellen), nicht zugeteilte Dienste ausgeblendet, innerhalb (!useDutyView || showOtherTermine) wie Ionic. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-3ec229f3": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:541",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:139"
+   ],
+   "n": "Tag zweistellig (EventDateTile) wie dayjs DD. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-6f78d5d8": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:546",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:732-748"
+   ],
+   "n": "Ort mit location-Icon unter dem Kopf, nur bei place. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-8bc5216f": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:573-574",
+    "lib/core/utils/event_list_utils.dart:136"
+   ],
+   "n": "Monatsgruppen „MMMM yyyy“ lokalisiert über data.upcoming wie groupByMonth(actualAttendances). Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-d89e83ec": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:545",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:227"
+   ],
+   "n": "Pill „Nicht eingeladen“ mit Auge-Icon bei show_all_attendances && !isMember (actions.isOwn), sonst Status – gleich. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#text-f3fe22c1": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/pages/signout_page.dart:541",
+    "lib/shared/widgets/event_list/event_list_widgets.dart:128"
+   ],
+   "n": "Wochentag kurz („Mo“…) wie dayjs dd. Rollen gleich.",
+   "v": "bestätigt"
+  },
+  "selfService/signout/signout.page#toast-94e9b1fc": {
+   "s": "ok",
+   "f": [
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart:78-114",
+    "lib/features/people/presentation/widgets/planned_absences.dart:26-29",
+    "lib/data/repositories/player_absence_repository.dart:204-238"
+   ],
+   "n": "Nur mit player_planned_absence der eigenen Rolle. Grüner Toast „Abwesenheit eingetragen (n Termin(e) entschuldigt)“ bzw. ohne Anzahl bei 0. Entschuldigt (und gezählt) werden jetzt dieselben Termine wie in Ionic (onlyIds = aktueller + anstehende nach Dienst-Filter/Dienstplan-Ansicht, Status ≠ entschuldigt, Tag im Zeitraum); die Abweichung aus x-1962646a5f ist damit behoben. Randfall „Alle Termine“: Termine ohne eigene Zeile überspringt Flutter, Ionic versucht sie zu schreiben.",
+   "v": "bestätigt"
+  },
+  "services/agenda-item/agenda-item.service#logic-b353b264": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/agenda_item_repository.dart:13-14",
+    "lib/data/repositories/agenda_item_repository.dart:24-39",
+    "lib/data/repositories/agenda_item_repository.dart:77-120",
+    "lib/data/repositories/agenda_item_repository.dart:123-169",
+    "lib/data/repositories/agenda_item_repository.dart:174-196",
+    "lib/core/providers/team_org_providers.dart:203-231",
+    "lib/core/providers/team_org_providers.dart:339-406"
+   ],
+   "n": "Alle Methoden weiterhin portiert: gleicher Select inkl. responsible_person/proposer, Liste nach created_at absteigend (ascending: false explizit), Vorschlag mit status open/priority medium/proposal_status pending ohne Rücklesen, Update ohne id/created_at/Joins, Löschen mit Fehler 'svc.noDeletePermission' bei 0 Zeilen, Verlauf per RPC get_agenda_item_history (Provider sortiert aufsteigend nach Datum wie die Ionic-Detailseite). Flutter filtert zusätzlich nach tenant_id und prüft vor der RPC die Mandantenzugehörigkeit – gleiche Daten unter RLS. Notifier invalidiert Liste/Detail nach Mutationen.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#db-3dfb8b0f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:123-137",
+    "lib/data/repositories/attendance_type_repository.dart:97-117",
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1824"
+   ],
+   "n": "Insert in attendance_types mit tenant_id (fest gesetzt), .select().single(); die Typ-Seite nutzt createTypeFromData, Fehler werden weitergeworfen → „typeSettings.createFailed“. Spaltenumfang der Neuanlage gehört zur type.page-Unit.",
+   "v": "bestätigt"
+  },
+  "services/attendance-type/attendance-type.service#db-5bb313a7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_type_repository.dart:42-56",
+    "lib/core/providers/attendance_type_providers.dart:60-66"
+   ],
+   "n": "Select * auf attendance_types per id, single(); Flutter zusätzlich .eq('tenant_id'). Bei Fehler liefert Flutter null (Seite zeigt „nicht gefunden“) statt Ionic-Toast – betrifft das Toast-Item, nicht die Abfrage.",
+   "v": "bestätigt"
+  }
+ },
+ "extra": []
+}

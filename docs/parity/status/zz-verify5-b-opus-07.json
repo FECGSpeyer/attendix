@@ -1,0 +1,392 @@
+{
+ "batch": "zz-verify5-b-opus-07",
+ "ionic": "1923d203",
+ "flutter": "57bb011",
+ "items": {
+  "services/cross-tenant/cross-tenant.service#logic-cf175343": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/cross_tenant_person_repository.dart:84",
+    "lib/data/repositories/cross_tenant_person_repository.dart:91",
+    "lib/data/repositories/cross_tenant_person_repository.dart:141",
+    "lib/data/repositories/cross_tenant_person_repository.dart:208",
+    "lib/data/repositories/cross_tenant_person_repository.dart:240",
+    "lib/data/repositories/cross_tenant_person_repository.dart:262",
+    "lib/core/providers/tenant_providers.dart:295"
+   ],
+   "v": "bestätigt",
+   "n": "Geänderte Datei tenant_providers.dart: userTenantsProvider (jetzt Z. 295) liest weiter tenantUsers(tenantId, favorite, role) nach userId und hängt die Rolle je Instanz an (= getUserRolesForTenants, genutzt für canDeleteTenant). Übrige Methoden unverändert: Präfix-OR-Suche mit Bereinigung, Sortierung Nachname/Vorname aufsteigend, Limit 500, inkl. Ausgetretener; E-Mail-Suche case-insensitiv nur aktive (Flutter maskiert LIKE-Platzhalter zusätzlich); Nutzer einer verknüpften Instanz ohne Beobachter; Personen-Id bevorzugt aktiv. Farb-/Cross-Tenant-Anwesenheits-Methoden sind hier toter Code (DbService-Implementierung)."
+  },
+  "services/data.service#logic-38cae9e9": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/handover_page.dart:25",
+    "lib/features/settings/presentation/pages/handover_page.dart:142",
+    "lib/core/router/app_router.dart:1288"
+   ],
+   "v": "bestätigt",
+   "n": "Übergabedaten (Personen, in Instanz bleiben, Ziel-Instanz) gehen weiter als GoRouter-extra HandoverData an /settings/handover/detail statt über den Singleton-Service; gleiche Daten."
+  },
+  "services/db.service#db-01d8f953": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/protocol_repository.dart:302",
+    "lib/core/providers/team_org_providers.dart:292",
+    "lib/core/providers/team_org_providers.dart:377",
+    "lib/features/team_organization/presentation/pages/protocol_page.dart:1055"
+   ],
+   "v": "bestätigt",
+   "n": "Edge function team-notify mit Body + tenantId der aktuellen Instanz, Fehler verschluckt wie Ionic; Aufrufer (Aufgabe zugewiesen, Vorschlag entschieden, Protokoll veröffentlicht) gleich."
+  },
+  "services/db.service#db-09697835": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1600"
+   ],
+   "v": "bestätigt",
+   "n": "playerExistsInTenant: player.id nach Ziel-tenantId + ilike(email, getrimmt), limit 1; danach Namens-Fallback wie Ionic. Flutter maskiert LIKE-Platzhalter (% _) – exakter Treffer statt Muster, praktisch gleich."
+  },
+  "services/db.service#db-133f3370": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:412",
+    "lib/core/providers/signout_providers.dart:210"
+   ],
+   "v": "bestätigt",
+   "n": "Nur mit show_all_attendances: Termine der Instanz (tenantId, 31 Tage Rückblick, aufsteigend, nicht beendete) + eigene person_attendances (person_id, attendance_id in …) mit gleichen Spalten. Rückblick in Flutter ab jetzt-31 Tage statt Tagesbeginn-31 Tage – nur für >31-tägige Termine relevant."
+  },
+  "services/db.service#db-17024199": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/user_registration_repository.dart:256",
+    "lib/features/people/presentation/pages/person_detail_page.dart:563",
+    "lib/features/people/presentation/pages/person_detail_page.dart:1035"
+   ],
+   "v": "bestätigt",
+   "n": "tenantUsers.role nach tenantId + userId, maybeSingle; keine Zeile → Spieler; Bewerber-Reparatur (pending=false → Verantwortlich/Spieler) und Rollenwechsel bei Hauptgruppe/Stimmführer (AuthService.getUserRole, tenantId+userId) unverändert. Randfall Zeile mit Rolle NONE: Ionic zeigt Spieler, Flutter Role.none – praktisch nicht vorkommend."
+  },
+  "services/db.service#db-1c4d7b0d": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:63",
+    "lib/data/repositories/player_repository.dart:95"
+   ],
+   "v": "bestätigt",
+   "n": "getPlayers(all: true): tenantId + pending=false inkl. archivierter, für alle Rollen; Aufrufer laden teils mit eigenen tenantId-Abfragen (z. B. getPlayersByShift). Sortierung in Ionic ohne order – irrelevant."
+  },
+  "services/db.service#db-1e5584c0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:2141",
+    "lib/data/repositories/player_repository.dart:925",
+    "lib/data/repositories/player_repository.dart:652"
+   ],
+   "v": "bestätigt",
+   "n": "Eintritt: addPlayerToAttendancesByDate Termine mit date > Eintrittstag (tenantId bzw. Ziel-tenantId bei Übergabe, paginiert); Austritt: removeFromUpcomingAttendances(from: left) mit date >= Austrittstag, tenantId. Sortierung für Einfügen/Löschen ohne Bedeutung. Keine Rollenbedingung."
+  },
+  "services/db.service#db-241c9ebf": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/admin_repository.dart:153",
+    "lib/data/repositories/player_repository.dart:674"
+   ],
+   "v": "bestätigt",
+   "n": "deleteAdmin: tenantUsers delete mit tenantId + role=ADMIN + userId (AdminRepository.removeAdmin für Administratoren entfernen; gleicher Zweig in PlayerRepository.removeUserFromTenant)."
+  },
+  "services/db.service#db-2c362d4d": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:420",
+    "lib/core/providers/tenant_providers.dart:439",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:278"
+   ],
+   "v": "bestätigt",
+   "n": "tenants delete nach id; Flutter prüft vorher zusätzlich Admin-Rolle (Ionic nur in der UI canDeleteTenant: Admin und nicht Demo – Flutter-Seite prüft dasselbe). Erfolgs-/Fehlertoast gleich."
+  },
+  "services/db.service#db-2d9e88d3": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:950",
+    "lib/features/attendance/presentation/widgets/attendance_date_change.dart:175"
+   ],
+   "v": "bestätigt",
+   "n": "history.date = neues (12-Uhr-normiertes) Termindatum, Filter attendance_id + tenantId; beim Verschieben eines Termins."
+  },
+  "services/db.service#db-33aeae23": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:400",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:264"
+   ],
+   "v": "bestätigt",
+   "n": "tenantUsers.favorite nach userId + tenantId, danach Instanzliste neu geladen. Fehlertoast in Flutter „Fehler beim Speichern“ statt „Fehler beim Setzen des Favoriten…“ (Seiten-Item)."
+  },
+  "services/db.service#db-3570c95a": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/settings_page.dart:583",
+    "lib/shared/widgets/layout/side_nav/side_nav.dart:142",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:377",
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:520"
+   ],
+   "v": "bestätigt",
+   "n": "signOut + Navigation /login in Einstellungen, Seitenmenü, Instanzauswahl und „Neue Instanz anlegen“ ohne Rückfrage wie Ionic. Löschen von currentTenantId auf der Instanzauswahl siehe Extra des Erstreviews."
+  },
+  "services/db.service#db-35a09ab7": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:925",
+    "lib/data/repositories/player_repository.dart:873",
+    "lib/data/repositories/cross_tenant_person_repository.dart:340"
+   ],
+   "v": "bestätigt",
+   "n": "Pause mit Startdatum: Termine der Instanz ab Datum (gte, tenantId) → person_attendances der Person löschen; ohne Datum ab heute. Andere Instanz: deren tenantId wie Ionic (Flutter erlaubt dort nur Instanzen mit Admin/Verantwortlich, am Pause-Dialog erfasst)."
+  },
+  "services/db.service#db-4c1eb778": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:308"
+   ],
+   "v": "bestätigt",
+   "n": "Gleiche Spalten (name, number, prefix, withChoir, withSolo, link, difficulty, instrument_ids [], category null) + tenantId der Ziel-Instanz, select().single()."
+  },
+  "services/db.service#db-60a1d5d1": {
+   "s": "ok",
+   "f": [
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:345",
+    "lib/core/services/song_file_service.dart:547"
+   ],
+   "v": "bestätigt",
+   "n": "Download aus Bucket songs mit dem Pfad aus der öffentlichen URL (songs/<Instanz>/<Werk>/<Datei>); Fehler bricht die Kopie ab (Toast songs.copyFailed) wie Ionic."
+  },
+  "services/db.service#db-6f7cc08a": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:692"
+   ],
+   "v": "bestätigt",
+   "n": "Mit personId: weitere aktive Person desselben Kontos (tenantId, appId, left null, id ≠ personId, limit 1) → Zugang bleibt; Aufrufer (Archivieren, Löschen, Ablehnen, Konto trennen) übergeben personId."
+  },
+  "services/db.service#db-73e39b3e": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:539"
+   ],
+   "v": "bestätigt",
+   "n": "pickPersonFields ohne id/created_at (tenantId nicht im Body, dafür Filter id + tenantId); img nicht enthalten wie Ionic."
+  },
+  "services/db.service#db-7932c0e0": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:376",
+    "lib/data/repositories/player_repository.dart:1757",
+    "lib/features/people/presentation/pages/person_create_page.dart:1017",
+    "lib/features/registration/data/providers/registration_providers.dart:236"
+   ],
+   "v": "bestätigt",
+   "n": "player.id nach appId + tenantId (bzw. Ziel-tenantId bei Übergabe), limit 1, maybeSingle → vorhandene Zeile wird mit left=null reaktiviert statt eingefügt; Anlegen, Übergabe und Selbstregistrierung. Rolle des neuen Kontos gleich (Hauptgruppe → Verantwortlich, sonst Spieler)."
+  },
+  "services/db.service#db-7ea61b92": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:362",
+    "lib/data/repositories/player_repository.dart:1550",
+    "lib/data/repositories/attendance_repository.dart:392",
+    "lib/features/people/presentation/widgets/person_detail/historie_accordion.dart:91"
+   ],
+   "v": "bestätigt",
+   "n": "person_attendances der Person mit Join auf attendance (tenantId); archivierte nur für Admin/Verantwortlich in „Meine Termine“, Personenseite und Elternportal. Datumsgrenze: Meine Termine Saisonstart bzw. 2020 wie Ionic; Personenseite lädt alles und filtert Statistik (personAttendanceWindowStart) und Historie (Saisonstart) clientseitig – Zusatzschalter „Alle anzeigen“ und fehlender 2023-Fallback sind Seiten-Items."
+  },
+  "services/db.service#db-8d10beae": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:63",
+    "lib/core/providers/realtime_providers.dart:56",
+    "lib/features/members/data/providers/members_providers.dart:68",
+    "lib/features/people/people_list_utils.dart:60"
+   ],
+   "v": "bestätigt",
+   "n": "Standardzweig: tenantId, left null, pending=false. Flutter-.order() ohne ascending sortiert in der DB absteigend (Gruppe/Nachname), aber alle anzeigenden Aufrufer sortieren clientseitig wie Ionic getModifiedPlayersForList (sortPeopleByGroup: Hauptgruppe, Gruppen-sort_order/-name, Personen-sort_order, Nachname) – sichtbare Reihenfolge gleich. Eltern erreichen keine Seite mit getPlayers() (eigener Weg getChildrenForParent)."
+  },
+  "services/db.service#db-931b014c": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/sign_in_out_repository.dart:618"
+   ],
+   "v": "bestätigt",
+   "n": "Terminarten je Instanz per Join attType:type_id statt eigener Abfrage je Instanz; gleiche Daten für Titel/Farbe/Durchschnitt der Übersicht."
+  },
+  "services/db.service#db-973409b9": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/song_repository.dart:738",
+    "lib/features/planning/presentation/pages/planning_page.dart:892"
+   ],
+   "v": "bestätigt",
+   "n": "Planung: Dirigentenname je Werk aus künftiger history der aktuellen Instanz (currentTenantId, nicht Werk-Quellinstanz). Ionic filtert clientseitig nach Termin- bzw. Eintragsdatum ab heute, Flutter serverseitig nach history.date (wird beim Verschieben mitgeführt) – praktisch gleich."
+  },
+  "services/db.service#db-9c005a78": {
+   "s": "ok",
+   "f": [
+    "lib/core/providers/tenant_providers.dart:295"
+   ],
+   "v": "bestätigt",
+   "n": "tenants der eigenen tenantUsers-Ids; Favoriten zuerst, dann longName (case-insensitiv) wie Ionic order('longName') + Favoritensortierung."
+  },
+  "services/db.service#db-9e81b5f6": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:758"
+   ],
+   "v": "bestätigt",
+   "n": "left = null + History „Person wieder aktiviert“ (RETURNED), Filter id + tenantId; danach Aufnahme in kommende Termine."
+  },
+  "services/db.service#db-9f804cab": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:1617"
+   ],
+   "v": "bestätigt",
+   "n": "Namens-Fallback: Ziel-tenantId + ilike firstName/lastName (getrimmt), limit 1, auch wenn eine E-Mail gesetzt war, aber nicht gefunden – wie Ionic."
+  },
+  "services/db.service#db-abc49039": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:572",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:372"
+   ],
+   "v": "bestätigt",
+   "n": "Flutter schreibt files je Upload (gleiche Schlüssel storageName/fileName/fileType/url/instrumentId/note) und am Ende instrument_ids der gemappten Ids ohne null/1/2, Filter id + Ziel-tenantId; Endzustand gleich."
+  },
+  "services/db.service#db-cc6767aa": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/attendance_repository.dart:69",
+    "lib/core/providers/realtime_providers.dart:214",
+    "lib/features/export/presentation/pages/export_page.dart:450",
+    "lib/data/repositories/dashboard_repository.dart:83",
+    "lib/core/utils/dashboard_logic.dart:119",
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:43"
+   ],
+   "n": "Terminliste, Export und Statistik wie Ionic (tenantId, date > Saisonstart bzw. 2020, neueste zuerst, archivierte nur Admin/Verantwortlich). Übersehen: Ionic next-event-card nutzt dieselbe Abfrage (alle Termine seit Saisonstart, Aufteilung clientseitig). Flutter getEventsAroundToday lädt kommende Termine mit .gte(heute).order('date').limit(5) – postgrest-dart sortiert ohne ascending absteigend, also die 5 am weitesten entfernten Termine; computeNextEventSummary nimmt davon den frühesten. Bei mehr als 5 kommenden Terminen zeigt die Dashboard-Karte „Nächster Termin“ einen falschen Termin samt Zu-/Absagen."
+  },
+  "services/db.service#db-d030c88f-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:432"
+   ],
+   "v": "bestätigt",
+   "n": "additional_fields.bfecg_church in eigenen Zeilen (appId) mit gesetzter, abweichender Kirche; Filter id + tenantId + appId. Nur wenn sich die Kirche geändert hat."
+  },
+  "services/db.service#db-e29da71b": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/song_file_service.dart:572",
+    "lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart:357"
+   ],
+   "v": "bestätigt",
+   "n": "songs/<Zielinstanz>/<neue songId>/<storageName>, upsert, Dateityp der Quelle. Flutter vergibt bei gleichem Dateinamen einen freien Namen (Ionic überschreibt) – Flutter besser, Randfall."
+  },
+  "services/db.service#db-e6a0665f": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/import_repository.dart:27",
+    "lib/features/people/presentation/pages/person_import_page.dart:174"
+   ],
+   "v": "bestätigt",
+   "n": "E-Mails der Instanz (tenantId, seitenweise 1000, getrimmt/klein) für Duplikate beim Import; Import nur für Admin/Verantwortlich in beiden Apps."
+  },
+  "services/db.service#db-e7a94696": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:99",
+    "lib/data/repositories/dashboard_repository.dart:110",
+    "lib/core/providers/dashboard_providers.dart:293",
+    "lib/core/utils/dashboard_logic.dart:249",
+    "lib/data/repositories/protocol_repository.dart:190",
+    "lib/data/repositories/player_repository.dart:925"
+   ],
+   "n": "Ionic getUpcomingAttendances sortiert aufsteigend (order date ascending:true); current-plan-card nimmt mit includeRunning den ersten nicht beendeten Termin mit Plan (Admin/Verantwortlich oder share_plan). Flutter getUpcomingEventsIncludingRunning nutzt .order('date') ohne ascending → postgrest-dart absteigend; selectCurrentPlan nimmt den ersten Treffer → Dashboard-Karte „Aktueller Plan“ zeigt den am weitesten entfernten Termin mit Plan statt des nächsten/heutigen (sobald 2+ kommende Termine einen Plan haben). Übrige Nutzungen gleich: Agenda/Themen (protocol_repository aufsteigend), Planung (eigene Liste, nimmt den nächsten), Pausieren/Aufnehmen (Reihenfolge egal). attendance_repository.getUpcomingAttendances (ebenfalls absteigend) wird nirgends angezeigt."
+  },
+  "services/db.service#db-f46be416": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart:703"
+   ],
+   "v": "bestätigt",
+   "n": "tenantUsers delete nach tenantId + userId, außer Konto ist Admin der Instanz oder (mit personId) eine weitere aktive Person hält den Zugang; Fehler → „Fehler beim Löschen des Accounts vom Mandanten“."
+  },
+  "services/db.service#db-f5ce2029": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/profile_repository.dart:419"
+   ],
+   "v": "bestätigt",
+   "n": "Eigene player-Zeilen nach appId (alle Instanzen) laden, nur wenn sich die Kirche geändert hat."
+  },
+  "services/db.service#effect-1473b6bd": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:610",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "v": "bestätigt",
+   "n": "Utils.getUrl(ADMIN) = Personen; Flutter Role.admin.defaultRoute „/people“ – wie nav-c490be92."
+  },
+  "services/db.service#effect-75028b3e": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/dashboard_logic.dart:56",
+    "lib/features/auth/presentation/pages/login_page.dart:475"
+   ],
+   "v": "bestätigt",
+   "n": "homeRouteFor: Dashboard für Admin/Verantwortliche mit showDashboardTab_<Instanz>, sonst role.defaultRoute (= Utils.getUrl)."
+  },
+  "services/db.service#nav-138a96fb": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart:323",
+    "lib/features/auth/presentation/pages/login_page.dart:475",
+    "lib/core/utils/dashboard_logic.dart:46",
+    "lib/core/constants/enums.dart:137"
+   ],
+   "v": "bestätigt",
+   "n": "Ziel je Rolle gleich: Admin/Verantwortlich mit showDashboardTab_<Instanz> → Dashboard; Admin/Verantwortlich/Beobachter → Personen; Eltern → Elternportal; Helfer, Stimmführer(-Helfer), Spieler, Bewerber, NONE → Meine Termine. Instanzauswahl nach Login (Ionic Alert, Flutter /tenants) ist unter alert-f27cc642 erfasst."
+  },
+  "services/db.service#nav-7f5eeeac": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart:341",
+    "lib/core/router/app_router.dart:366",
+    "lib/features/public_links/presentation/pages/open_file_page.dart:133",
+    "lib/features/public_links/presentation/pages/open_file_page.dart:145"
+   ],
+   "v": "bestätigt",
+   "n": "Gemerkter Datei-Link wird nach Login (auch nach /terms) eingelöst; /open-file wechselt die Instanz und prüft den Dateizugriff wie Ionic. Randfall ohne jede Instanz: Ionic → /register, Link bleibt gespeichert; Flutter löst ihn sofort ein → Kein-Zugriff-Toast → Instanz anlegen (Zugriff in beiden Fällen nicht möglich). Persistenz über Reload: x-8fea36599e."
+  },
+  "services/db.service#nav-8f636066": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:364",
+    "lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:394",
+    "lib/core/providers/tenant_providers.dart:420"
+   ],
+   "v": "bestätigt",
+   "n": "Letzte Instanz gelöscht → aktuelle Instanz geleert, router.go('/tenants') zeigt ohne Instanzen die nicht schließbare Seite „Neue Instanz anlegen“ mit Konto-Menü (= Ionic /register), Toast „Instanz wurde erfolgreich gelöscht!“. Löschen nur Admin und nicht Demo wie Ionic canDeleteTenant."
+  },
+  "services/db.service#nav-c490be92": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:610",
+    "lib/features/tenant_selection/tenant_defaults.dart:29"
+   ],
+   "v": "bestätigt",
+   "n": "Ersteller ist immer Admin der neuen Instanz (Superentwickler-Konto immer, eigenes Konto außer beim Superentwickler) → Ionic /tabs/player, Flutter Role.admin.defaultRoute „/people“ nach Erfolgstoast. Demo gesperrt."
+  }
+ },
+ "extra": []
+}
