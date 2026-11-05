@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -36,6 +35,8 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../../data/providers/rd_phase_tick_provider.dart';
+import '../../data/rd_event_phase.dart';
 import '../../data/rd_write_queue.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/tenant_providers.dart';
@@ -54,11 +55,13 @@ import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/event/rd_event_head.dart';
+import '../widgets/event/rd_event_now.dart';
+import '../../../planning/presentation/attendance_plan_viewer.dart' show attendanceHasPlan, openAttendancePlanViewer;
 import '../widgets/today/rd_today_common.dart';
-import '../../data/rd_dates.dart';
 
 /// Tabs of a Termin in the new design.
-enum RdEventTab { overview, record }
+enum RdEventTab { overview, program, record }
 
 /// REDESIGN: a Termin for Dirigent and Helfer (canvas D4 "Überblick", D5
 /// "Anwesenheit" with Rückgängig; concept "Termin-Bereich neu", Schritt 1:
@@ -82,6 +85,14 @@ class RdEventPage extends ConsumerStatefulWidget {
 
 /// Entries of the ••• menu.
 enum _MenuAction { statusOverview, church, excel, checklist, archive }
+
+/// Days of [attendance], with the type's default for all-day types (a
+/// Freizeit without own `duration_days` still runs on day 2).
+int? _effectiveDays(Attendance attendance, AttendanceType? type) => rdEffectiveDurationDays(
+      attendance.durationDays,
+      typeAllDay: type?.allDay ?? false,
+      typeDurationDays: type?.durationDays,
+    );
 
 /// What "Rückgängig" restores: the previous status per person.
 class _Undo {
@@ -518,7 +529,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final canMutate = canMutateAttendanceDetail(role);
     final canArchive = canArchiveAttendance(
       date: attendance.date,
-      durationDays: attendance.durationDays,
+      durationDays: _effectiveDays(attendance, type),
       archived: attendance.archived,
       role: role,
     );
@@ -584,12 +595,13 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   bool _menuHasActions(Attendance attendance, List<RdMember> members) {
     if (members.isNotEmpty) return true;
     final role = ref.watch(effectiveRoleProvider);
+    final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
     return (canMutateAttendanceDetail(role) &&
             ref.watch(canViewAttendanceChecklistProvider) &&
             (attendance.checklist?.isEmpty ?? true)) ||
         canArchiveAttendance(
           date: attendance.date,
-          durationDays: attendance.durationDays,
+          durationDays: _effectiveDays(attendance, type),
           archived: attendance.archived,
           role: role,
         );
@@ -737,6 +749,56 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // Build
   // ---------------------------------------------------------------------------
 
+  /// Whether the Reiter Programm has something: Werke (types that manage
+  /// them) or the Ablauf (everyone but Beobachter; editors can create one).
+  bool _hasProgramTab(Attendance attendance, AttendanceType? type) {
+    if (rdShowsProgram(ref, type) && attendance.id != null) return true;
+    final role = ref.watch(effectiveRoleProvider);
+    if (role == Role.viewer) return false;
+    return attendanceHasPlan(attendance) || role.canEdit;
+  }
+
+  /// Reiter Programm (concept L2): the Werke, then the Ablauf as a list with
+  /// "Ablauf ansehen", "Bearbeiten" and "Für Mitglieder sichtbar".
+  List<Widget> _programChildren(Attendance attendance, AttendanceType? type) {
+    final plan = rdPlanOf(attendance);
+    return [
+      if (rdShowsProgram(ref, type) && attendance.id != null) RdEventProgramSection(attendance: attendance, type: type),
+      RdEventPlanSection(
+        attendance: attendance,
+        preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
+        range: plan == null ? '' : rdPlanRange(plan),
+      ),
+    ];
+  }
+
+  /// Start and end of the Termin (times of the Termin, else of its type).
+  ({DateTime start, DateTime end, bool hasTime})? _span(Attendance attendance, AttendanceType? type) => rdEventSpan(
+        day: EventListUtils.parse(attendance.date),
+        startTime: attendance.startTime ?? type?.startTime,
+        endTime: attendance.endTime ?? type?.endTime,
+        durationDays: _effectiveDays(attendance, type),
+      );
+
+  /// Type and phase, title, date · time · place (the same head as on the
+  /// members' Termin page).
+  Widget _head(Attendance attendance, AttendanceType? type) {
+    final info = rdEventInfo(attendance, type);
+    final span = _span(attendance, type);
+    // Head and top card follow the phase without new data.
+    if (span != null) ref.watch(rdPhaseTickProvider((start: span.start, end: span.end)));
+    return RdEventHead(
+      title: info.title,
+      phase: rdEventPhase(span, archived: attendance.archived),
+      span: span,
+      typeName: type?.name,
+      typeHighlight: type?.highlight ?? false,
+      timeRange: info.timeRange,
+      place: info.place,
+      durationDays: _effectiveDays(attendance, type),
+    );
+  }
+
   void _back() {
     if (context.canPop()) {
       context.pop();
@@ -807,20 +869,34 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     if (pultMembers != null && pultMembers.isNotEmpty) {
       return _pultPage(attendance, pultMembers, type);
     }
+    // Reiter Programm: Werke and Ablauf (not for roles that see neither).
+    final hasProgram = _hasProgramTab(attendance, type);
+    final tabs = [
+      RdEventTab.overview,
+      if (hasProgram) RdEventTab.program,
+      RdEventTab.record,
+    ];
+    final tab = tabs.contains(_tab) ? _tab : RdEventTab.overview;
     children.addAll([
       const SizedBox(height: 4),
-      _Header(attendance: attendance, type: type),
+      _head(attendance, type),
       const SizedBox(height: 16),
       RdSegmented<RdEventTab>(
-        values: RdEventTab.values,
-        selected: _tab,
-        labelOf: (t) => t == RdEventTab.overview ? l10n.redesignEventTabOverview : l10n.redesignEventTabRecord,
+        values: tabs,
+        selected: tab,
+        labelOf: (t) => switch (t) {
+          RdEventTab.overview => l10n.redesignEventTabOverview,
+          RdEventTab.program => l10n.redesignEventTabProgram,
+          RdEventTab.record => l10n.redesignEventTabRecord,
+        },
         onChanged: (t) => setState(() => _tab = t),
       ),
       const SizedBox(height: 16),
     ]);
 
-    if (members == null) {
+    if (tab == RdEventTab.program) {
+      children.addAll(_programChildren(attendance, type));
+    } else if (members == null) {
       children.add(RdInfoCard(text: l10n.redesignTodayLoading, loading: true));
     } else if (members.isEmpty) {
       final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
@@ -834,21 +910,26 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
               )
             : null,
       ));
-      // Programm and Ablauf can be prepared before anyone is invited.
-      children.addAll([
-        if (rdShowsProgram(ref, type) && attendance.id != null) ...[
-          const SizedBox(height: 24),
-          RdEventProgramSection(attendance: attendance, type: type),
-        ],
-        RdEventPlanSection(attendance: attendance),
-      ]);
-    } else if (_tab == RdEventTab.overview) {
+      // Programm and Ablauf can be prepared before anyone is invited
+      // (Reiter Programm).
+    } else if (tab == RdEventTab.overview) {
+      final span = _span(attendance, type);
       children.add(_Overview(
         attendance: attendance,
         type: type,
         members: members,
         personAttendanceIds: _paIds,
+        span: span,
+        phase: rdEventPhase(span, archived: attendance.archived),
+        hasProgramTab: hasProgram,
         onRecord: () => setState(() => _tab = RdEventTab.record),
+        onPult: () => setState(() {
+          _tab = RdEventTab.record;
+          _pult = true;
+          _search.clear();
+          _query = '';
+        }),
+        onProgram: () => setState(() => _tab = RdEventTab.program),
         onOpenMember: _openMember,
       ));
     } else {
@@ -1270,69 +1351,27 @@ class _MoreRow extends StatelessWidget {
   }
 }
 
-/// Type and day, title, date · time · place.
-class _Header extends StatelessWidget {
-  const _Header({required this.attendance, required this.type});
-
-  final Attendance attendance;
-  final AttendanceType? type;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    final info = rdEventInfo(attendance, type);
-    final start = info.start;
-    final locale = currentIntlLocale();
-    String day(DateTime d) =>
-        '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat.MMMd(locale).format(d)}';
-    final days = attendance.durationDays ?? 1;
-    final date = start == null
-        ? ''
-        : days > 1
-            ? '${day(start)} – ${day(rdAddDays(start, days - 1))}'
-            : day(start);
-    final meta = [date, info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
-    final relative = start == null || ended ? null : rdRelativeDay(l10n, start);
-    final showRelative = relative == l10n.redesignTodayDayToday || relative == l10n.redesignTodayDayTomorrow;
-    final typeName = type?.name ?? '';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (typeName.isNotEmpty || showRelative)
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              if (typeName.isNotEmpty) RdPill(typeName, tone: RdTone.primary),
-              if (showRelative) RdPill(relative!, tone: RdTone.late),
-            ],
-          ),
-        const SizedBox(height: 8),
-        Semantics(header: true, child: Text(info.title, style: RdType.title(p))),
-        if (meta.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          Text(meta, style: RdType.meta(p, size: 15)),
-        ],
-      ],
-    );
-  }
-}
-
-/// Canvas D4 plus the Termin details (concept "Vortrag im Beta-Design"),
-/// reworked in "Termin-Bereich neu" (Schritt 1): the answers card holds
-/// the register gaps, "Anwesenheit eintragen", "Offene erinnern" and who
-/// signed out and why; then Programm/Werke, Ablauf, Vorbereitung, Infos,
-/// notes, Dienst and Protokoll, and the Abschluss after the start.
+/// Überblick (concept "Termin-Bereich neu", Schritt 2): the card at the top
+/// follows the phase of the Termin (Jetzt-Karte):
+/// * vorher: Rückmeldungen, who signed out and why, "Offene erinnern";
+/// * heute: the same with "Heute 19:30 · in 40 Min.", "Anwesenheit
+///   eintragen", Pultmodus and Ablauf;
+/// * läuft: Anwesenheit, "Anwesenheit eintragen", "Jetzt im Ablauf";
+/// * danach: "35 von 38 · 92 %" and the Abschluss.
+/// Below: Programm (opens the Reiter), Vorbereitung, "Für Mitglieder",
+/// "Nur Leitung", Dienst and Protokoll.
 class _Overview extends ConsumerWidget {
   const _Overview({
     required this.attendance,
     required this.type,
     required this.members,
     required this.personAttendanceIds,
+    required this.span,
+    required this.phase,
+    required this.hasProgramTab,
     required this.onRecord,
+    required this.onPult,
+    required this.onProgram,
     required this.onOpenMember,
   });
 
@@ -1340,30 +1379,69 @@ class _Overview extends ConsumerWidget {
   final AttendanceType? type;
   final List<RdMember> members;
   final Map<int, String?> personAttendanceIds;
+  final ({DateTime start, DateTime end, bool hasTime})? span;
+  final RdEventPhase phase;
+  final bool hasProgramTab;
   final VoidCallback onRecord;
+  final VoidCallback onPult;
+  final VoidCallback onProgram;
   final ValueChanged<RdMember> onOpenMember;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     final p = context.rd;
     final l10n = context.l10n;
+    final role = ref.watch(effectiveRoleProvider);
     final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
-    final canMutate = canMutateAttendanceDetail(ref.watch(effectiveRoleProvider));
+    final canMutate = canMutateAttendanceDetail(role);
     final counts = RdStatusCounts.fromStatuses(members.map((m) => m.status));
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
+    final ended = EventListUtils.hasEnded(attendance.date, _effectiveDays(attendance, type));
     final info = rdEventInfo(attendance, type);
     final start = info.start;
-    final started = ended || (start != null && !DateTime.now().isBefore(start));
-    final gaps = ended ? const <RdRegisterGap>[] : rdRegisterGaps(members);
+    final over = phase == RdEventPhase.after || (phase == RdEventPhase.archived && ended);
+    final started = over || phase == RdEventPhase.running || (start != null && !DateTime.now().isBefore(start));
+    final now = phase == RdEventPhase.today || phase == RdEventPhase.running;
+    final gaps = started ? const <RdRegisterGap>[] : rdRegisterGaps(members);
     final notes = (attendance.notes ?? '').trim();
     final id = attendance.id;
-    final legend = [
-      (l10n.redesignTodayCountYes(counts.present), p.present),
-      if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
-      if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late),
-      if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent),
-      if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
-    ];
+    final hasPlan = attendanceHasPlan(attendance) && role != Role.viewer;
+
+    // Before the start: answers; from the start on: who is there.
+    final here = members.where((m) => m.status == AttendanceStatus.present).length;
+    final late = members.where((m) => m.status == AttendanceStatus.late || m.status == AttendanceStatus.lateExcused).length;
+    final List<(String, Color)> legend = started
+        ? [
+            (l10n.redesignEventCountHere(here), p.present),
+            if (late > 0) (l10n.redesignEventCountLateStarted(late), p.late),
+            if (counts.excused > 0) (l10n.redesignEventCountExcusedStarted(counts.excused), p.excused),
+            if (counts.absent > 0) (l10n.redesignEventCountAbsentStarted(counts.absent), p.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+          ]
+        : [
+            (l10n.redesignTodayCountYes(counts.present), p.present),
+            if (counts.excused > 0) (l10n.redesignTodayCountExcused(counts.excused), p.excused),
+            if (counts.lateAnnounced > 0) (l10n.redesignTodayCountLater(counts.lateAnnounced), p.late),
+            if (counts.absent > 0) (l10n.redesignTodayCountAbsent(counts.absent), p.absent),
+            if (counts.open > 0) (l10n.redesignEventCountNoAnswer(counts.open), p.text2),
+          ];
+    final total = counts.total;
+    final percent = total == 0 ? 0 : ((here + late) * 100 / total).round();
+    final String title;
+    final String side;
+    if (!started) {
+      title = l10n.redesignEventAnswers;
+      side = l10n.redesignEventInvited(total);
+    } else if (!over) {
+      title = l10n.redesignEventTabRecord;
+      side = l10n.redesignEventAttendancePersons(total);
+    } else {
+      title = l10n.redesignEventTabRecord;
+      side = l10n.redesignEventPresentOf(here + late, total, percent);
+    }
+    // "Heute 19:30 · in 40 Min."
+    final pill = phase == RdEventPhase.today ? rdPhasePill(l10n, phase, span: span) : null;
+    final countdown = phase == RdEventPhase.today ? rdCountdown(l10n, start, hasTime: span?.hasTime ?? false) : null;
+    final settled = over && counts.open == 0 && counts.absent == 0;
 
     return Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -1372,21 +1450,36 @@ class _Overview extends ConsumerWidget {
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.stretch,
             children: [
+              if (pill != null) ...[
+                Text(
+                  [pill.label, if (countdown != null) countdown].join(' · ').toUpperCase(),
+                  key: const Key('rd-event-now-eyebrow'),
+                  style: TextStyle(fontSize: 12, fontWeight: FontWeight.w700, letterSpacing: 0.6, color: p.late),
+                ),
+                const SizedBox(height: 6),
+              ],
               Row(
                 children: [
-                  Expanded(child: Text(l10n.redesignEventAnswers, style: RdType.section(p))),
-                  Text(l10n.redesignEventInvited(counts.total), style: RdType.meta(p, size: 13)),
+                  Expanded(child: Text(title, style: RdType.section(p))),
+                  Text(side, style: RdType.meta(p, size: 13)),
                 ],
               ),
               const SizedBox(height: 12),
               RdStatusBar(
-                total: counts.total,
-                segments: [
-                  RdBarSegment(counts.present, p.present),
-                  RdBarSegment(counts.lateAnnounced, p.late),
-                  RdBarSegment(counts.excused, p.excused),
-                  RdBarSegment(counts.absent, p.absent),
-                ],
+                total: total,
+                segments: started
+                    ? [
+                        RdBarSegment(here, p.present),
+                        RdBarSegment(late, p.late),
+                        RdBarSegment(counts.excused, p.excused),
+                        RdBarSegment(counts.absent, p.absent),
+                      ]
+                    : [
+                        RdBarSegment(counts.present, p.present),
+                        RdBarSegment(counts.lateAnnounced, p.late),
+                        RdBarSegment(counts.excused, p.excused),
+                        RdBarSegment(counts.absent, p.absent),
+                      ],
                 semanticLabel: legend.map((e) => e.$1).join(', '),
               ),
               const SizedBox(height: 12),
@@ -1413,15 +1506,42 @@ class _Overview extends ConsumerWidget {
                 const SizedBox(height: 12),
                 _GapNote(gap: gap),
               ],
-              const SizedBox(height: 16),
-              RdPrimaryButton(
-                label: l10n.redesignEventRecord,
-                icon: Icons.checklist_rounded,
-                onPressed: onRecord,
-              ),
+              // From the Termin day on: record, Pultmodus, Ablauf.
+              if (now) ...[
+                const SizedBox(height: 16),
+                RdPrimaryButton(
+                  label: l10n.redesignEventRecord,
+                  icon: Icons.checklist_rounded,
+                  onPressed: onRecord,
+                ),
+                const SizedBox(height: 10),
+                Wrap(
+                  spacing: 8,
+                  runSpacing: 8,
+                  children: [
+                    RdPillButton(
+                      key: const Key('rd-event-now-pult'),
+                      icon: Icons.grid_view_rounded,
+                      label: l10n.redesignPultOpen,
+                      onPressed: onPult,
+                    ),
+                    if (hasPlan)
+                      RdPillButton(
+                        key: const Key('rd-event-now-plan'),
+                        icon: Icons.view_timeline_outlined,
+                        label: phase == RdEventPhase.running ? l10n.redesignEventPlanLive : l10n.redesignEventPlanSection,
+                        onPressed: () => openAttendancePlanViewer(context, attendance),
+                      ),
+                  ],
+                ),
+              ],
+              if (phase == RdEventPhase.running && hasPlan) ...[
+                const SizedBox(height: 14),
+                if (rdPlanOf(attendance) case final plan?) RdPlanNow(day: EventListUtils.parse(attendance.date), plan: plan),
+              ],
               // Only Termin-Arten with "offen" (Zusage) have someone to remind.
               if (canMutate && !ended && counts.open > 0 && id != null) ...[
-                const SizedBox(height: 8),
+                SizedBox(height: now ? 10 : 16),
                 RdOutlineButton(
                   key: const Key('rd-event-remind-open'),
                   label: '${l10n.redesignEventRemindOpen} (${counts.open})',
@@ -1435,35 +1555,72 @@ class _Overview extends ConsumerWidget {
                   ),
                 ),
               ],
-              RdSignoutList(
-                members: members,
-                title: info.title,
-                showNote: canViewNotes,
-                started: started,
-                onOpen: onOpenMember,
-              ),
+              if (!over)
+                RdSignoutList(
+                  members: members,
+                  title: info.title,
+                  showNote: canViewNotes,
+                  started: started,
+                  onOpen: onOpenMember,
+                ),
+              if (settled) ...[
+                const SizedBox(height: 14),
+                Row(
+                  key: const Key('rd-event-settled'),
+                  children: [
+                    Icon(Icons.check_circle_outline, size: 18, color: p.present),
+                    const SizedBox(width: 6),
+                    Expanded(
+                      child: Text(
+                        [
+                          l10n.redesignEventAllSettled,
+                          if (!attendance.archived &&
+                              canArchiveAttendance(
+                                date: attendance.date,
+                                durationDays: _effectiveDays(attendance, type),
+                                archived: attendance.archived,
+                                role: role,
+                              ))
+                            l10n.redesignEventArchiveHint,
+                        ].join(' · '),
+                        style: RdType.meta(p, size: 14),
+                      ),
+                    ),
+                  ],
+                ),
+              ],
             ],
           ),
         ),
-        if (rdShowsProgram(ref, type) && id != null) ...[
-          const SizedBox(height: 24),
-          RdEventProgramSection(attendance: attendance, type: type),
-        ],
-        RdEventPlanSection(attendance: attendance),
-        if (ref.watch(canViewAttendanceChecklistProvider) && (attendance.checklist?.isNotEmpty ?? false)) ...[
+        // After the Termin: Unentschuldigte anschreiben, automatische Nachricht.
+        if (over)
+          RdEventClosingSection(
+            attendance: attendance,
+            type: type,
+            members: members,
+            personAttendanceIds: personAttendanceIds,
+          ),
+        if (hasProgramTab) RdProgramSummary(attendance: attendance, showWorks: rdShowsProgram(ref, type), onTap: onProgram),
+        if (ref.watch(canViewAttendanceChecklistProvider) &&
+            (attendance.checklist?.isNotEmpty ?? false) &&
+            !(over && attendance.checklist!.every((c) => c.completed))) ...[
           const SizedBox(height: 24),
           RdEventChecklistSection(attendance: attendance),
         ],
-        if (rdHasInfos(ref, attendance)) ...[
-          const SizedBox(height: 24),
-          RdEventInfoSection(attendance: attendance),
-        ],
+        RdEventInfoSection(attendance: attendance, title: l10n.redesignEventForMembers, ended: over),
         if (notes.isNotEmpty) ...[
           const SizedBox(height: 24),
-          RdGroupLabel(l10n.attendanceNotes),
+          RdGroupLabel(l10n.redesignEventLeadersOnly),
           RdCard(
             padding: const EdgeInsets.all(14),
-            child: Text(notes, style: RdType.body(p)),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(l10n.attendanceNotes, style: RdType.meta(p, size: 13)),
+                const SizedBox(height: 4),
+                Text(notes, style: RdType.body(p)),
+              ],
+            ),
           ),
         ],
         // Dienstplan "Besetzung" and Protokoll as on the Termin page.
@@ -1475,12 +1632,6 @@ class _Overview extends ConsumerWidget {
           const SizedBox(height: 24),
           AttendanceProtocolSection(attendanceId: id, typeId: attendance.typeId),
         ],
-        RdEventClosingSection(
-          attendance: attendance,
-          type: type,
-          members: members,
-          personAttendanceIds: personAttendanceIds,
-        ),
       ],
     );
   }

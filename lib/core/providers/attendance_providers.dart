@@ -2,6 +2,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../utils/event_list_utils.dart';
 import '../utils/archived_attendance.dart';
+import '../utils/attendance_percentage_utils.dart' show attendanceListStartDate;
 import '../config/supabase_config.dart';
 import '../constants/enums.dart';
 import '../../data/models/attendance/attendance.dart';
@@ -289,7 +290,8 @@ final playerAttendancePercentagesProvider =
   // Ionic getModifiedPlayersForList: Termine with date before now + 1 day
   // count (dates are stored at 12:00 → today always, tomorrow from noon).
   final tomorrow = DateTime.now().add(const Duration(days: 1)).toUtc().toIso8601String();
-  final seasonStart = tenant.seasonStart;
+  // Ionic getCurrentAttDate(): season start, fallback 2023-01-01.
+  final seasonStart = attendanceListStartDate(tenant.seasonStart);
 
   // Fetch all records using pagination to avoid the PostgREST 1000-row default limit.
   // A tenant with 50+ members and 25+ events easily exceeds 1000 person_attendances.
@@ -298,16 +300,13 @@ final playerAttendancePercentagesProvider =
   int offset = 0;
 
   while (true) {
-    var query = supabase
+    // Only count attendances from the current season
+    final query = supabase
         .from('person_attendances')
         .select('person_id, status, notes, duty_state, attendance:attendance_id!inner(date, tenantId, type_id, archived)')
         .eq('attendance.tenantId', tenant.id!)
-        .lt('attendance.date', tomorrow);
-
-    // Only count attendances from the current season
-    if (seasonStart != null) {
-      query = query.gte('attendance.date', seasonStart);
-    }
+        .lt('attendance.date', tomorrow)
+        .gte('attendance.date', seasonStart);
 
     // SOL_FIX1: stable order, otherwise pages can overlap / skip rows.
     final batch = await query

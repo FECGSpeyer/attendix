@@ -40,7 +40,7 @@ import '../widgets/today/rd_today_common.dart';
 /// every change is saved right away (text fields when they lose focus or
 /// the page closes) through the same writes: Info-Text, Datum (with the
 /// status question), Beginn/Ende (re-runs the shift computation), Ort,
-/// Abmeldeschluss, Beschreibung & Anhang, Ordner and Notizen. Werke,
+/// Antwort bis, Beschreibung & Anhang, Ordner and Notizen. Werke,
 /// Ablauf and Vorbereitung are changed in the Überblick. "Termin löschen"
 /// is at the bottom, like "Werk löschen" (concept "Termin-Bereich neu").
 class RdEventEditPage extends ConsumerStatefulWidget {
@@ -457,6 +457,7 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
     final days = att.durationDays ?? type?.durationDays ?? 1;
 
     return RdFormBody(children: [
+      RdGroupLabel(l10n.redesignEventEditBasics),
       RdGroupedList(children: [
         RdFieldRow(
           label: l10n.redesignCreateTitleLabel,
@@ -513,6 +514,11 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
               ],
             ),
           ),
+      ]),
+      const SizedBox(height: 20),
+      // What members see of the Termin, then what only the Leitung sees.
+      RdGroupLabel(l10n.redesignEventForMembers),
+      RdGroupedList(children: [
         if (type?.placeEnabled == true || (att.place ?? '').isNotEmpty)
           RdFieldRow(
             label: l10n.redesignCreatePlace,
@@ -548,9 +554,6 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
               ],
             ),
           ),
-      ]),
-      const SizedBox(height: 16),
-      RdGroupedList(children: [
         RdListRow(
           key: const Key('rd-edit-deadline'),
           title: l10n.redesignCreateDeadline,
@@ -570,7 +573,8 @@ class _RdEventEditPageState extends ConsumerState<RdEventEditPage> {
             onTap: () => _pickFolder(att),
           ),
       ]),
-      const SizedBox(height: 16),
+      const SizedBox(height: 20),
+      RdGroupLabel(l10n.redesignEventLeadersOnly),
       RdGroupedList(children: [
         RdFieldRow(
           label: l10n.attendanceNotes,
