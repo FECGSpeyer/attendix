@@ -314,15 +314,12 @@ class AllgemeinAccordion extends ConsumerWidget {
               title: context.l10n.personFlutterChooseLabel(groupLabel(tenantType)),
               items: items,
               selectedValue: currentGroupId,
-              noneLabel: context.l10n.personFlutterNoneLabel(groupLabel(tenantType)),
+              // Ionic person.page: the group select has no "none" entry.
               icon: Icons.group,
             );
 
-            if (result != null) {
-              onFieldChanged(
-                'instrument',
-                result.isNone ? null : result.value,
-              );
+            if (result != null && !result.isNone) {
+              onFieldChanged('instrument', result.value);
             }
           },
         );

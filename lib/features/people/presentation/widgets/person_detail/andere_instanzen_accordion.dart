@@ -3,7 +3,10 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../../../../core/config/supabase_config.dart';
 import '../../../../../core/constants/enums.dart';
+import '../../../../../core/providers/cross_tenant_person_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
+import '../../../../../core/services/cross_tenant_service.dart';
+import '../../../../../data/repositories/user_registration_repository.dart';
 import '../../../../../core/theme/app_colors.dart';
 import '../../../../../l10n/l10n.dart';
 import '../ion/ion_widgets.dart';
@@ -20,6 +23,10 @@ final otherTenantsProvider =
 
   if (currentTenant == null) return [];
 
+  // Ionic getTenantsFromUser: only tenants linked to the current one via an
+  // organisation, and not those where the account is only "Beobachter".
+  final linkedIds = (await ref.watch(linkedTenantIdsProvider.future)).toSet();
+
   // Get all tenants where this user has an entry
   final tenantUsersResponse = await supabase
       .from('tenantUsers')
@@ -30,7 +37,10 @@ final otherTenantsProvider =
       .where((tu) {
         final tenant = tu['tenant'] as Map<String, dynamic>?;
         final tenantId = tenant?['id'];
-        return tenantId != null && tenantId != currentTenant.id;
+        return tenantId != null &&
+            tenantId != currentTenant.id &&
+            linkedIds.contains(tenantId) &&
+            tu['role'] != Role.viewer.value;
       })
       .toList();
 
@@ -49,17 +59,17 @@ final otherTenantsProvider =
     // Find the player record in that tenant
     int? percentage;
     try {
-      // Find the player by appId in the other tenant
-      final playerResponse = await supabase
+      // Ionic getPersonIdFromTenant: not pending, prefer the active row.
+      final playerRows = await supabase
           .from('player')
-          .select('id')
+          .select('id, left, pending')
           .eq('appId', appId)
           .eq('tenantId', tenantId)
-          .isFilter('left', null)
-          .maybeSingle();
+          .eq('pending', false);
+      final playerId = CrossTenantService.pickPersonIdForTenant(
+          (playerRows as List).cast<Map<String, dynamic>>());
 
-      if (playerResponse != null) {
-        final playerId = playerResponse['id'] as int;
+      if (playerId != null) {
 
         // Get attendance stats
         final now = DateTime.now().toIso8601String().substring(0, 10);
@@ -90,26 +100,8 @@ final otherTenantsProvider =
       // Ignore errors for individual tenants
     }
 
-    String roleText;
-    switch (role) {
-      case 1:
-        roleText = l10nWithoutContext.commonRolesAdmin;
-        break;
-      case 2:
-        roleText = l10nWithoutContext.commonRolesMember;
-        break;
-      case 3:
-        roleText = l10nWithoutContext.commonRolesViewer;
-        break;
-      case 4:
-        roleText = l10nWithoutContext.commonRolesHelper;
-        break;
-      case 5:
-        roleText = l10nWithoutContext.commonRolesResponsible;
-        break;
-      default:
-        roleText = l10nWithoutContext.commonRolesMember;
-    }
+    // Ionic Utils.getRoleText
+    final roleText = UserRegistrationRepository.roleText(Role.fromValue(role));
 
     results.add({
       'tenantName': tenantName,
@@ -208,8 +200,9 @@ class _AndereInstanzenCardState extends State<_AndereInstanzenCard> {
               : AppColors.danger;
       badgeText = '$percentage%';
     } else {
-      badgeColor = AppColors.medium;
-      badgeText = 'n/a';
+      // Ionic: translate('person.notAvailable') in warning color.
+      badgeColor = AppColors.warning;
+      badgeText = context.l10n.personNotAvailable;
     }
 
     // Ionic: ion-item lines="none" with h2 name, p role, badge

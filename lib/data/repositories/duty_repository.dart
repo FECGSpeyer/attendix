@@ -2,6 +2,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 import '../../core/constants/enums.dart';
+import '../../core/services/error_reporter.dart';
 import '../../core/utils/duty_utils.dart';
 import '../../core/utils/paged_query.dart';
 import '../models/attendance/attendance.dart';
@@ -461,9 +462,17 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
   /// Sets "Entschuldigt" on already planned Termine the rule matches.
   /// Returns the number of changed Termine.
   Future<int> applyUnavailabilityToFuture(PersonUnavailability rule, List<AttendanceType> types) async {
+    final List<String> ids;
     try {
-      final ids = (await _futureMatches(rule, types)).map((r) => r['id'].toString()).toList();
-      if (ids.isEmpty) return 0;
+      ids = (await _futureMatches(rule, types)).map((r) => r['id'].toString()).toList();
+    } catch (e, stack) {
+      // Ionic: a failed lookup only logs, changes nothing and reports 0
+      // Termine (handleError would rethrow).
+      ErrorReporter.report(e, stack, where: 'DutyRepository.applyUnavailabilityToFuture');
+      return 0;
+    }
+    if (ids.isEmpty) return 0;
+    try {
       // person_attendances has no tenantId: ids come from a query filtered by attendance.tenantId
       await supabase.from('person_attendances').update({
         'status': AttendanceStatus.excused.value,
