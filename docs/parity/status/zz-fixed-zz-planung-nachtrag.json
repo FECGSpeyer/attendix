@@ -1,0 +1,12 @@
+{
+  "batch": "zz-fixed-zz-planung-nachtrag",
+  "afterRound": 4,
+  "ionic": "1923d203",
+  "flutter": "00e183c",
+  "note": "Die Fixes aus #301/#295 sind gegen Ionic 9f9b82af notiert; planning.page.ts hat sich in 4.19.9 nur im Zeilen-Cache des Renderers geändert (rows-Getter, sameFields), nicht in Terminauswahl oder Standardplan. Fixes daher gegen 4.19.9 bestätigt.",
+  "items": {
+    "x-7d55a70233": { "s": "ok", "f": ["lib/features/planning/presentation/pages/planning_page.dart"], "n": "behoben in #301; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht" },
+    "x-9b169a1078": { "s": "ok", "f": ["lib/features/planning/presentation/pages/planning_page.dart"], "n": "behoben in #301; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht" },
+    "x-5e1a396117": { "s": "ok", "f": ["lib/data/repositories/plan_repository.dart", "lib/core/providers/plan_providers.dart"], "n": "behoben in #301/#295; Ionic-Änderung 4.19.9 (Zeilen-Cache) betrifft den Befund nicht" }
+  }
+}

@@ -1,0 +1,10 @@
+{
+  "batch": "zz-fixed-zz-querschnitt-nachtrag",
+  "afterRound": 4,
+  "ionic": "1923d203",
+  "flutter": "00e183c",
+  "note": "Zusatzbefund, der dasselbe wie ein in #295 behobenes Element beschreibt (field-bdcf25e7), aber in zz-fixed-querschnitt.json nicht eingetragen war.",
+  "items": {
+    "x-dce118d389": { "s": "ok", "f": ["lib/core/utils/spreadsheet_reader.dart:39-48", "lib/core/utils/xls_reader.dart"], "n": "behoben in #295: .xls wird am Inhalt erkannt (OLE2/BIFF8) und gelesen, wie SheetJS read() (gleicher Befund wie field-bdcf25e7)" }
+  }
+}

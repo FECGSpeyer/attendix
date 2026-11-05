@@ -172,7 +172,10 @@ const readStatuses = () => {
     // extras and withdrawals: their unit changed later → open again, flagged
     for (const [id, e] of extras) {
       const unitChanged = (at) => [...changedAfter(changes, at)].some((x) => x.split('#')[0] === e.unit);
-      if (e.withdrawn && unitChanged(e.wAt)) extras.set(id, { ...e, withdrawn: false, stale: true });
+      if (e.withdrawn && unitChanged(e.wAt)) {
+        if (e.fixed) out.warnings.push(`${e.wsrc}: fix for ${id} reopened, its Ionic unit ${e.unit} changed after ${e.wAt ?? '(no "ionic")'} – re-check and record it with the current Ionic commit`);
+        extras.set(id, { ...e, withdrawn: false, stale: true });
+      }
       else if (!e.withdrawn && unitChanged(e.ionicAt)) extras.set(id, { ...e, stale: true });
     }
   }

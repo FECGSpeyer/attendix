@@ -1,19 +1,10 @@
 # Fix-Paket „planung“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98, 00e183c (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 3
+## Angleichen (hoch/mittel): 0
 
-- [ ] **hoch** `planning/planning.page` `x-7d55a70233` **Standardplan bei Termin ohne Ablaufplan** [src/app/planning/planning.page.ts:43](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/planning/planning.page.ts#L43) (2. Prüfung: bestätigt) (Ionic-Seite seither geändert)
-  Befund weiter gültig (ngOnInit/onAttChange in 4.19.9 unverändert). Ionic: Termin ohne Plan zeigt „Wort “ (id '', 10 min); nur mit kommender Werke-Historie ruft ngOnInit onAttChange → Typ-Vorlage (sofort gespeichert) bzw. leere Liste (nichts gespeichert); ohne Historie wird beim Öffnen nichts geschrieben. Beim Terminwechsel ohne Plan und ohne Historie bleiben Felder/Startzeit des vorigen Termins stehen und werden in den neuen Termin geschrieben. / Flutter _loadAttendance: immer Typ-Vorlage, sonst „Wort“ (id 'Wort') mit Termin-Startzeit, _dirty = true → beim Schließen, Wechsel, Verlassen oder dispose wird attendance.plan geschrieben, auch ohne Nutzeränderung. Andere DB-Schreibung (z. B. „Wort“-Plan allein durchs Öffnen).
-  Flutter: lib/features/planning/presentation/pages/planning_page.dart:759, lib/features/planning/presentation/pages/planning_page.dart:803, lib/features/planning/presentation/pages/planning_page.dart:809, lib/features/planning/presentation/pages/planning_page.dart:996, lib/features/planning/presentation/pages/planning_page.dart:255
-- [ ] **hoch** `planning/planning.page` `x-5e1a396117` **Archivierte Termine in der Terminauswahl für Helfer** [src/app/services/db.service.ts:2653](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L2653) (2. Prüfung: bestätigt) (Ionic-Seite seither geändert)
-  Befund gültig (Rollenlücke). Ionic: getAttendance → filterArchivedForRole; Helfer und Stimmführer-Helfer (einzige Nicht-Admin-Rollen mit Editor-Zugang) sehen in Terminauswahl und Vor/Zurück keine archivierten Termine, Admin/Verantwortlich schon. / Flutter: getPlanAttendances lädt archived nicht und filtert nicht; Helfer/SF-Helfer erreichen /planning?attendanceId=… und können archivierte Termine wählen und deren Plan, Teilen- und Org-Schalter schreiben. Admin/Verantwortlich gleich.
-  Flutter: lib/data/repositories/plan_repository.dart:44, lib/data/repositories/plan_repository.dart:13, lib/core/providers/plan_providers.dart:45, lib/core/router/route_access.dart:110
-- [ ] **mittel** `planning/planning.page` `x-9b169a1078` **Start-Termin ohne kommenden Termin** [src/app/planning/planning.page.ts:268](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/planning/planning.page.ts#L268) (2. Prüfung: bestätigt) (Ionic-Seite seither geändert)
-  Befund gültig. Ionic: ohne attendanceId upcomingAttendances[0] (Datum > heute 0 Uhr); gibt es keinen, ist kein Termin gewählt und Änderungen werden nicht gespeichert. / Flutter _init: wählt dann den neuesten (vergangenen) Termin der Saison; hat er keinen Plan, bekommt er beim Verlassen den Standardplan (x-7d55a70233). Nachladen einer attendanceId außerhalb der geladenen Liste per ID ist Flutter besser.
-  Flutter: lib/features/planning/presentation/pages/planning_page.dart:721, lib/features/planning/presentation/pages/planning_page.dart:700
 
 ## Flutter besser – Leon entscheidet: 19
 
