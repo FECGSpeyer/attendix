@@ -1,13 +1,10 @@
 # Fix-Paket „querschnitt“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, 4e13f22, 2353b98, 00e183c (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 4
+## Angleichen (hoch/mittel): 3
 
-- [ ] **hoch** `services/db.service` `db-ffa8e5a7` [services/db.service.ts:2752](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L2752) (2. Prüfung: korrigiert)
-  Ionic liest u.a. extra_plans mit (PlanViewer der Selbstverwaltung zeigt bei mehrtägigen Terminen Tages-/Plan-Chips) / Flutter: kSignoutAttendanceColumns ohne extra_plans → nur Hauptplan. Gleiche Ursache wie signout.page#modal-ef7b9f1b (b15). Filter tenantId + Datum −31 Tage gleich.
-  Flutter: lib/data/repositories/sign_in_out_repository.dart:21, lib/data/repositories/sign_in_out_repository.dart:425
 - [ ] **mittel** `services/history/history.service` `db-1996dec2` [services/history/history.service.ts:68](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/history/history.service.ts#L68) (2. Prüfung: bestätigt)
   Dirigent-Änderung gleich (person_id, otherConductor). Ionic ruft updateHistoryEntry zusätzlich bei jeder Termin-Info-Änderung mit {visible: attendance.save_in_history}, wenn die Einträge abweichen (attendance.page.ts:1521-1524; Alt-Termine mit save_in_history false/null → Werke verschwinden aus der Historie) / Flutter schreibt visible nie.
   Flutter: lib/data/repositories/attendance_repository.dart:914, lib/features/attendance/presentation/attendance_song_history.dart:85
