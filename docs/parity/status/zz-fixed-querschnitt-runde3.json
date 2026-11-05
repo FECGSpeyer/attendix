@@ -43,7 +43,7 @@
    ],
    "n": "behoben in #295"
   },
-  "planning/planning.page#x-5e1a396117": {
+  "x-5e1a396117": {
    "s": "ok",
    "f": [
     "lib/data/repositories/plan_repository.dart",
