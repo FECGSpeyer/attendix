@@ -1677,8 +1677,8 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// [stayInInstance] - If true, copies player (COPIED_FROM/TO), otherwise transfers (TRANSFERRED_FROM/TO)
   ///
   /// LOGIC_PEOPLE: Ionic db.handoverPerson — the target person is created
-  /// FIRST (account linked/registered in the target instance with
-  /// RESPONSIBLE for the target main group, else PLAYER; an existing row of
+  /// FIRST (account linked/registered in the target instance as PLAYER,
+  /// also for the target main group; an existing row of
   /// the same account is reactivated; attendances since today are
   /// backfilled). Only then is the source updated (history; on transfer
   /// `left`), so a failed insert never archives the source. The source keeps
@@ -1730,14 +1730,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       String? appId = player.appId;
       final email = player.email?.trim() ?? '';
       if (email.isNotEmpty) {
-        final targetMainGroup = await _mainGroupId(tenantId: targetTenantId);
-        final role = targetGroupId != null && targetGroupId == targetMainGroup
-            ? Role.responsible
-            : Role.player;
+        // Ionic person.page handover: always PLAYER, also for the target
+        // instance's main group (no RESPONSIBLE rights via a transfer).
         appId = await _registration().registerUser(
           email: email,
           name: player.firstName,
-          role: role,
+          role: Role.player,
           tenantId: targetTenantId,
         );
       }
