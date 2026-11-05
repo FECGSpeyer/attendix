@@ -1,0 +1,274 @@
+{
+ "batch": "zz-fixed-app",
+ "afterRound": 3,
+ "items": {
+  "register/tenant-register/tenant-register.page#field-ac71b961": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#logic-b461582a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart",
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#toast-23c76f81": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#actionsheet-ab6f737a": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#field-9f610a4d": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/presentation/pages/tenant_registration_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/tenant-register/tenant-register.page#field-a9922b49": {
+   "s": "ok",
+   "f": [
+    "lib/features/registration/data/providers/registration_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "register/register.page#popover-f947f492": {
+   "s": "ok",
+   "f": [
+    "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart",
+    "lib/shared/widgets/adaptive/app_popover_menu.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app-routing.module#route-d98e9634": {
+   "s": "ok",
+   "f": [
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#alert-df60fa5d": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#nav-3a7bceb6-2": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "app.component#logic-4a296d90": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/data/auth_link_listener.dart",
+    "lib/features/auth/presentation/widgets/password_recovery_alert.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "tabs/side-nav/side-nav.component#modal-186fad14": {
+   "s": "ok",
+   "f": [
+    "lib/shared/widgets/layout/side_nav/side_nav.dart",
+    "lib/features/planning/presentation/pages/planning_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "terms/terms.page#nav-4df0f2ac": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart",
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "terms/terms.page#logic-e0824f5f": {
+   "s": "ok",
+   "f": [
+    "lib/features/legal/presentation/pages/terms_page.dart",
+    "lib/core/router/app_router.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol-pdf#logic-3a7d97db": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/pdf_fonts.dart",
+    "lib/features/team_organization/protocol_pdf.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#logic-6eb2caff": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart",
+    "lib/features/team_organization/presentation/utils/route_return_reload.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol.page#logic-82b3528c": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "protocols/protocol/protocol.page#action-9e2bdbdb": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/protocol_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "tasks/task-detail/task-detail.page#action-df7b76e8": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/task_detail_page.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/protocols-tab/protocols-tab.component#logic-58a7de00": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/protocols_tab.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/tasks-tab/tasks-tab.component#toast-1b91ff64": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/tasks_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/team-organization.page#logic-cb8d3ed3": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/team-organization.page#action-411a87d7": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/team_organization_page.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "team-organization/topics-tab/topics-tab.component#toast-f0d73e65": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/widgets/topics_tab.dart",
+    "lib/core/providers/team_org_providers.dart"
+   ],
+   "n": "behoben in #296"
+  },
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
+   "s": "ok",
+   "f": [
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
+   ],
+   "n": "behoben in #296"
+  }
+ },
+ "extraOverride": [
+  {
+   "unit": "app-routing.module",
+   "title": "Legacy-Schichten-URLs ins Leere",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "app.component",
+   "title": "Passwort-Recovery als Seite statt Alert",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Gruppen-Auswahl",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Reihenfolge der Zusatzfelder",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "register/tenant-register/tenant-register.page",
+   "title": "Default von Auswahl-Zusatzfeldern nicht gespeichert",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "terms/terms.page",
+   "title": "Ziel nach Zustimmung zu den Bedingungen",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Verlauf/Thema veralten (Cache)",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "agenda-items/agenda-item-detail/agenda-item-detail.page",
+   "title": "Einplanen-Liste aus Cache",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "protocols/protocol/protocol-pdf",
+   "title": "PDF-Schrift ohne Unicode",
+   "drop": true,
+   "why": "behoben in #295"
+  },
+  {
+   "unit": "protocols/protocol/protocol.page",
+   "title": "Fremde Notizen vor Freigabe",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "team-organization/team-organization.page",
+   "title": "Kein Neuladen beim Zurückkehren/Tabwechsel",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "team-organization/protocols-tab/protocols-tab.component",
+   "title": "Ladefehler der Protokollliste",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "login/login.page",
+   "title": "Teams-Verknüpfung: Wechsel zur Code-Anmeldung",
+   "drop": true,
+   "why": "behoben in #296"
+  }
+ ]
+}

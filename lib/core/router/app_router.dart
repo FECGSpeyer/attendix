@@ -16,8 +16,6 @@ import '../services/browser_navigation.dart'
     show browserNavigationRouteChanged, setBrowserNavigationContext;
 import '../services/tracking/tracking_service.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
-import '../../features/auth/presentation/pages/register_page.dart';
-import '../../features/auth/presentation/pages/new_password_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_selection_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_create_page.dart';
 import '../../features/tenant_selection/presentation/pages/tenant_detail_page.dart';
@@ -290,7 +288,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (isLoggedIn) sessionSeen = true;
 
       final isAuthRoute = state.matchedLocation == '/login' ||
-          state.matchedLocation == '/register' ||
           state.matchedLocation == '/forgot-password';
 
       // Public tenant registration route - allow access without login
@@ -316,11 +313,6 @@ final routerProvider = Provider<GoRouter>((ref) {
       if (!isLoggedIn && state.matchedLocation == '/open-attendance') {
         PendingFileLink.set(state.uri.toString());
         return '/login';
-      }
-      // AUTH: "Neues Passwort" after a recovery link – needs the recovery
-      // session, but must not be redirected by the auth/terms gates.
-      if (state.matchedLocation == '/new-password') {
-        return isLoggedIn ? null : '/login';
       }
 
       // LINKS_STARTUP: resume an in-app link opened while signed out
@@ -371,7 +363,19 @@ final routerProvider = Provider<GoRouter>((ref) {
         final isTermsRoute = state.matchedLocation == '/terms';
         if (!termsAccepted && !isTermsRoute) return '/terms';
         if (termsAccepted && isTermsRoute) {
-          return PendingFileLink.consume() ?? '/tenants';
+          final pending = PendingFileLink.consume();
+          if (pending != null) return pending;
+          // Ionic terms accept(): Utils.getUrl(tenantUser.role) – the start
+          // page of the open instance, '/register' without one. While the
+          // role still loads the terms page navigates itself.
+          final tenantId = ref.read(currentTenantIdProvider);
+          if (tenantId == null) return '/register';
+          if (ref.read(isRoleLoadingProvider)) return null;
+          return homeRouteFor(
+            ref.read(currentRoleProvider),
+            tenantId,
+            ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+          );
         }
         if (isTermsRoute) return null;
       } else if (state.matchedLocation == '/terms') {
@@ -454,12 +458,14 @@ final routerProvider = Provider<GoRouter>((ref) {
         name: 'login',
         builder: (context, state) => const LoginPage(),
       ),
+      // Ionic /register = "Instanz anlegen" behind RegisterGuard: the login
+      // flow decides (signed out → login, otherwise start page or the
+      // selection, which shows the non-dismissable "Instanz anlegen" page
+      // without any instance). The account sign-up is the login modal.
       GoRoute(
         path: '/register',
         name: 'register',
-        builder: (context, state) => RegisterPage(
-          email: state.uri.queryParameters['email'],
-        ),
+        redirect: (context, state) => '/login',
       ),
       // UX_PRELOGIN: Ionic has no reset page, only the login alert
       // "Passwort zurücksetzen" → old links open it on /login.
@@ -474,11 +480,12 @@ final routerProvider = Provider<GoRouter>((ref) {
           }).toString();
         },
       ),
-      // AUTH: set a new password after a recovery link
+      // AUTH: old "Neues Passwort" path (and /resetPassword links). Ionic
+      // shows the alert over /login; the auth link handling opens it.
       GoRoute(
         path: '/new-password',
         name: 'newPassword',
-        builder: (context, state) => const NewPasswordPage(),
+        redirect: (context, state) => '/login',
       ),
 
       // Public tenant registration (no auth required)

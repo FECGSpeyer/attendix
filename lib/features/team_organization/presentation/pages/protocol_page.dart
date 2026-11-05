@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_quill/flutter_quill.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:freezed_annotation/freezed_annotation.dart' show DeepCollectionEquality;
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 import 'package:shared_preferences/shared_preferences.dart';
@@ -129,6 +130,10 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
 
   final Map<String, QuillController> _controllers = {};
   final Map<String, StreamSubscription<DocChange>> _subscriptions = {};
+
+  /// Local edits per section; lets a server merge skip sections edited
+  /// while it was loading.
+  final Map<String, int> _editCount = {};
   final Map<String, Timer> _timers = {};
   final Set<String> _pending = {};
 
@@ -363,12 +368,34 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
       readOnly: readOnly || !_isLeader,
     );
     if (_isLeader && !readOnly) {
-      _subscriptions[id] = document.changes.listen((change) {
-        if (change.source == ChangeSource.local) _queueSave(id);
-      });
+      _subscriptions[id] = _listenLocalChanges(id, document);
     }
     _controllers[id] = controller;
     return controller;
+  }
+
+  StreamSubscription<DocChange> _listenLocalChanges(String id, Document document) {
+    return document.changes.listen((change) {
+      if (change.source != ChangeSource.local) return;
+      _editCount[id] = (_editCount[id] ?? 0) + 1;
+      _queueSave(id);
+    });
+  }
+
+  /// Shows [doc] (saved by another leader) in the open editor of [id]
+  /// without queueing a save.
+  void _replaceEditorDoc(String id, QuillController controller, Map<String, dynamic> doc) {
+    Document document;
+    try {
+      document = Document.fromJson(tiptapToDelta(doc).ops);
+    } catch (_) {
+      return;
+    }
+    _subscriptions.remove(id)?.cancel();
+    controller.document = document;
+    if (_isLeader && !controller.readOnly) {
+      _subscriptions[id] = _listenLocalChanges(id, document);
+    }
   }
 
   Map<String, dynamic>? _currentDoc(String id) {
@@ -784,6 +811,9 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
   // ── Publish ────────────────────────────────────────────────
 
   Future<void> _openPublish() async {
+    // Taken before the flush: an edit typed while saving (and saved before
+    // the row below arrives) must not be overwritten by an older server row.
+    final editsBefore = Map<String, int>.of(_editCount);
     // SOL_FIX2: never offer publishing an incompletely saved protocol.
     if (!await _flushAll()) {
       if (mounted) ToastHelper.showError(context, context.l10n.protocolNotesSaveFailed);
@@ -792,10 +822,21 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
     // Other leaders may have written in other sections meanwhile.
     try {
       final row = await _repo.getProtocolForAttendance(widget.attendanceId);
-      if (row != null) {
+      if (row != null && mounted) {
+        // Ionic mergeServerRow: every section without an unsaved local
+        // change takes the server notes, opened editors included. Sections
+        // edited while the row loaded keep the newer local text.
         for (final e in row.content.entries) {
-          if (_controllers.containsKey(e.key) || _pending.contains(e.key) || e.value is! Map) continue;
-          _docs[e.key] = Map<String, dynamic>.from(e.value as Map);
+          if (_pending.contains(e.key) || _inFlight.containsKey(e.key) || e.value is! Map) continue;
+          if ((_editCount[e.key] ?? 0) != (editsBefore[e.key] ?? 0)) continue;
+          final doc = Map<String, dynamic>.from(e.value as Map);
+          final controller = _controllers[e.key];
+          // Compared by content: jsonb returns the keys sorted, a string
+          // compare would replace (cursor, undo) nearly every editor.
+          if (controller != null && !const DeepCollectionEquality().equals(_docs[e.key], doc)) {
+            _replaceEditorDoc(e.key, controller, doc);
+          }
+          _docs[e.key] = doc;
         }
         _outcomes = {for (final e in row.outcomes.entries) e.key: e.value.toString()};
       }
@@ -1279,18 +1320,26 @@ class _ProtocolPageState extends ConsumerState<ProtocolPage> {
                   Text(ctx.l10n.protocolWholeMeeting),
                   const SizedBox(height: AppDimensions.paddingS),
                   _editor(controller),
+                  // Ionic: the task form opens above the notes sheet; back in
+                  // the sheet the reference and the task are shown and
+                  // writing continues.
                   StatefulBuilder(
-                    builder: (ctx, _) => _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
-                  ),
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: TextButton.icon(
-                      onPressed: () async {
-                        Navigator.of(ctx).pop();
-                        await _createTask(protocolGeneralSectionId);
-                      },
-                      icon: const Icon(Icons.add_circle_outline),
-                      label: IonButtonLabel(ctx.l10n.tasksTask),
+                    builder: (sheetCtx, setSheet) => Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        _taskList(_tasksFor(protocolGeneralSectionId, _taskSectionMap)),
+                        Align(
+                          alignment: Alignment.centerLeft,
+                          child: TextButton.icon(
+                            onPressed: () async {
+                              await _createTask(protocolGeneralSectionId);
+                              if (sheetCtx.mounted) setSheet(() {});
+                            },
+                            icon: const Icon(Icons.add_circle_outline),
+                            label: IonButtonLabel(ctx.l10n.tasksTask),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
                 ],

@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart' show defaultTargetPlatform, kIsWeb;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
@@ -57,6 +58,8 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
   String? _img;
   Map<String, dynamic> _additional = {};
   OwnProfile? _profile;
+  // Last ownProfileProvider value taken over as comparison base.
+  OwnProfile? _loadedProfile;
   bool _initialized = false;
   bool _saving = false;
 
@@ -73,6 +76,7 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
 
   void _init(OwnProfile profile, List<ProfileExtraField> visibleFields) {
     _profile = profile;
+    _loadedProfile = profile;
     final p = profile.person;
     _firstName.text = p.firstName;
     _lastName.text = p.lastName;
@@ -161,9 +165,36 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     final playerId = _profile?.person.id;
     if (playerId == null) return;
     try {
+      // Ionic <input type="file" accept="image/*">: in the native app the
+      // system offers photo library and camera; the browser (PWA) opens its
+      // own file picker.
+      // Camera only on iOS/Android: image_picker has no camera on desktop.
+      var source = ImageSource.gallery;
+      final hasCamera = !kIsWeb &&
+          (defaultTargetPlatform == TargetPlatform.iOS ||
+              defaultTargetPlatform == TargetPlatform.android);
+      if (hasCamera) {
+        final picked = await showAppActionSheet<ImageSource>(
+          context,
+          actions: [
+            AppActionSheetAction(
+              value: ImageSource.gallery,
+              label: context.l10n.attendanceFlutterGallery,
+              icon: Icons.photo_library_outlined,
+            ),
+            AppActionSheetAction(
+              value: ImageSource.camera,
+              label: context.l10n.attendanceFlutterCamera,
+              icon: Icons.camera_alt_outlined,
+            ),
+          ],
+        );
+        if (picked == null || !mounted) return;
+        source = picked;
+      }
       final picker = ImagePicker();
       final image = await picker.pickImage(
-        source: ImageSource.gallery,
+        source: source,
         maxWidth: 1200,
         maxHeight: 1200,
         imageQuality: 85,
@@ -238,22 +269,44 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
       }
     }
 
+    // Snapshot of the inputs: the fields stay editable while saving, so the
+    // write and the next comparison base must use the same values (a church
+    // changed meanwhile is not saved yet and must still be synced next time).
+    final firstName = _firstName.text;
+    final lastName = _lastName.text;
+    final phone = _phone.text;
+    final birthday = _birthday;
+    final additional = Map<String, dynamic>.of(_additional);
+
     setState(() => _saving = true);
     final ok = await ref.read(profileNotifierProvider.notifier).saveMasterData(
           original: profile,
-          firstName: _firstName.text,
-          lastName: _lastName.text,
-          phone: _phone.text,
-          birthday: _birthday,
-          additionalFields: _additional,
+          firstName: firstName,
+          lastName: lastName,
+          phone: phone,
+          birthday: birthday,
+          additionalFields: additional,
           visibleFields: visibleFields,
         );
     if (!mounted) return;
     setState(() => _saving = false);
     if (ok) {
+      // The saved values are the comparison base for the next save right
+      // away; the reload of ownProfileProvider replaces it once it arrives.
+      _profile = OwnProfile(
+        person: profile.person.copyWith(
+          firstName: firstName.trim(),
+          lastName: lastName.trim(),
+          phone: phone.trim(),
+          birthday: birthday,
+        ),
+        globalPersonId: profile.globalPersonId,
+        organisationId: profile.organisationId,
+        additionalFields: {...profile.additionalFields, ...additional},
+      );
+      // Ionic updateUserData: toast only, the sheet stays open.
       ToastHelper.showSuccess(
           context, context.l10n.settingsProfileUpdated);
-      Navigator.of(context).pop();
     } else {
       ToastHelper.showError(context, context.l10n.dbUpdateProfileFailed);
     }
@@ -269,6 +322,17 @@ class _MasterDataSheetState extends ConsumerState<MasterDataSheet> {
     final profile = profileAsync.valueOrNull;
     if (!_initialized && profile != null && fieldsAsync.hasValue) {
       _init(profile, visibleFields);
+    }
+    // The sheet stays open after saving: the next save compares against the
+    // freshly loaded profile (church/birthday change detection). Only a newly
+    // loaded value replaces the base; the stale one still shown while
+    // reloading must not overwrite the just-saved values.
+    if (_initialized &&
+        profile != null &&
+        !_saving &&
+        !identical(profile, _loadedProfile)) {
+      _profile = profile;
+      _loadedProfile = profile;
     }
     final inputStyle = ionItemInputStyle(context);
 

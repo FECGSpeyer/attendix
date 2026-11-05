@@ -1,6 +1,7 @@
 import 'package:freezed_annotation/freezed_annotation.dart';
 import '../../../core/constants/enums.dart';
 import '../../../l10n/l10n.dart';
+import '../attendance/attendance.dart';
 
 part 'tenant.freezed.dart';
 part 'tenant.g.dart';
@@ -133,31 +134,67 @@ class CriticalRule with _$CriticalRule {
       _$CriticalRuleFromJson(json);
 }
 
+/// Ionic general.page `getAvailableStatuses` (status options of a rule).
+const criticalRuleStatuses = [
+  AttendanceStatus.present,
+  AttendanceStatus.absent,
+  AttendanceStatus.excused,
+  AttendanceStatus.late,
+  AttendanceStatus.lateExcused,
+];
+
+/// Ionic general.page `getStatusName`.
+String criticalRuleStatusName(int status, [AppLocalizations? l10n]) {
+  final t = l10n ?? l10nWithoutContext;
+  return switch (status) {
+    1 => t.commonStatusPresent,
+    4 => t.commonStatusAbsent,
+    2 => t.commonStatusExcused,
+    3 => t.commonStatusLateShort,
+    5 => t.generalSettingsLateExcusedShort,
+    0 => t.generalSettingsNeutral,
+    _ => t.commonUnknown,
+  };
+}
+
 /// Extension for CriticalRule
 extension CriticalRuleExtension on CriticalRule {
-  /// Build a human-readable description of the rule
+  /// Threshold, statuses and period of the rule, e.g.
+  /// "3x Abwesend, Verspätet in 30 Tagen".
   String get description {
+    final l10n = l10nWithoutContext;
     final threshold = thresholdType == CriticalRuleThresholdType.count
         ? '${thresholdValue}x'
         : '$thresholdValue%';
-
-    final l10n = l10nWithoutContext;
-    final statusLabels = statuses.map((s) {
-      return switch (s) {
-        4 => l10n.commonStatusAbsent,
-        3 => l10n.commonStatusLateShort,
-        5 => l10n.attendanceLateExcusedParen,
-        _ => l10n.coreFlutterRuleStatusN(s),
-      };
-    }).join(' / ');
-
+    final statusNames =
+        statuses.map((s) => criticalRuleStatusName(s, l10n)).join(', ');
     final period = switch (periodType) {
       CriticalRulePeriodType.days => l10n.homeDashboardInDays(periodDays ?? 30),
       CriticalRulePeriodType.season => l10n.coreFlutterRuleSinceSeasonStart,
-      _ => l10n.coreFlutterRuleOverall,
+      CriticalRulePeriodType.allTime => l10n.coreFlutterRuleOverall,
+      // Ionic fallback for legacy rules without period_type (the edge
+      // function counts their period_days, otherwise all time).
+      null => periodDays != null
+          ? l10n.homeDashboardInDays(periodDays!)
+          : l10n.coreFlutterRuleOverall,
     };
+    return '$threshold $statusNames $period';
+  }
 
-    return '$threshold $statusLabels $period';
+  /// Ionic general.page `getCriticalRuleDescription`, e.g.
+  /// "Name: 3x Abwesend, Verspätet in 30 Tagen (Probe, Konzert)" – the
+  /// names of [types] in the rule, or "Alle Typen" for none. Without
+  /// parentheses when no type name resolves (types loading or failed).
+  String describe(List<AttendanceType> types) {
+    final typeNames = attendanceTypeIds.isNotEmpty
+        ? types
+            .where((t) => attendanceTypeIds.contains(t.id))
+            .map((t) => t.name)
+            .join(', ')
+        : l10nWithoutContext.generalSettingsAllTypes;
+    final prefix = (name ?? '').isNotEmpty ? '$name: ' : '';
+    if (typeNames.isEmpty) return '$prefix$description';
+    return '$prefix$description ($typeNames)';
   }
 
   /// Display name (name or auto-generated description)

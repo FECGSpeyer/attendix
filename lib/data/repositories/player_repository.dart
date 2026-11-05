@@ -1602,13 +1602,17 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   }
 
   /// Groups of a handover target tenant (cross-tenant read by design, the
-  /// query is scoped to the explicit target tenantId).
+  /// query is scoped to the explicit target tenantId). Ionic db.getGroups
+  /// order: category, sort_order (nulls last), name – the first group is
+  /// the default mapping.
   Future<List<Group>> getTargetTenantGroups(int targetTenantId) async {
     try {
       final response = await supabase
           .from('instruments')
           .select('*')
           .eq('tenantId', targetTenantId)
+          .order('category')
+          .order('sort_order', ascending: true, nullsFirst: false)
           .order('name');
       return (response as List)
           .map((e) => Group.fromJson(e as Map<String, dynamic>))

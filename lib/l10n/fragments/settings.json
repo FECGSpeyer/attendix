@@ -87,7 +87,6 @@
         "disabled": "Deaktiviert",
         "andShort": "UND",
         "editRule": "Regel bearbeiten",
-        "statusCritical": "Status (zählt als kritisch)",
         "daysSuffix": "Tage",
         "orHint": "Person ist kritisch, wenn EINE der Regeln zutrifft",
         "andHint": "Person ist kritisch, wenn ALLE Regeln zutreffen",
@@ -95,8 +94,6 @@
         "ruleEnabledHelper": "Deaktivierte Regeln werden nicht ausgewertet",
         "orShort": "ODER",
         "noHolidays": "Keine Feiertage",
-        "practiceStart": "Probenbeginn",
-        "practiceEnd": "Probenende",
         "fieldsCount": "{count, plural, one {{count} Feld} other {{count} Felder}}",
         "deleteRuleNamed": "Möchtest du die Regel \"{name}\" wirklich löschen?",
         "excuses": "Entschuldigungen",
@@ -151,7 +148,8 @@
     "extraFields": {
       "flutter": {
         "firstOptionDefault": "Erste Option ist der Standardwert",
-        "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?"
+        "leaveMessage": "Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?",
+        "updatingPersons": "Personen werden aktualisiert..."
       }
     },
     "files": {
@@ -255,7 +253,6 @@
         "disabled": "Disabled",
         "andShort": "AND",
         "editRule": "Edit rule",
-        "statusCritical": "Status (counts as critical)",
         "daysSuffix": "days",
         "orHint": "Person is critical if ANY of the rules applies",
         "andHint": "Person is critical if ALL rules apply",
@@ -263,8 +260,6 @@
         "ruleEnabledHelper": "Disabled rules are not evaluated",
         "orShort": "OR",
         "noHolidays": "No holidays",
-        "practiceStart": "Rehearsal start",
-        "practiceEnd": "Rehearsal end",
         "fieldsCount": "{count, plural, one {{count} field} other {{count} fields}}",
         "deleteRuleNamed": "Do you really want to delete the rule \"{name}\"?",
         "excuses": "Excuses",
@@ -319,7 +314,8 @@
     "extraFields": {
       "flutter": {
         "firstOptionDefault": "The first option is the default value",
-        "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?"
+        "leaveMessage": "You have unsaved changes. Do you want to leave the page anyway?",
+        "updatingPersons": "Updating persons..."
       }
     },
     "files": {

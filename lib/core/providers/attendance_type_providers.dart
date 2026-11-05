@@ -6,6 +6,8 @@ import '../config/supabase_config.dart'
 import '../../data/models/attendance/attendance.dart';
 import '../../data/repositories/attendance_type_repository.dart';
 import '../utils/demo_guard.dart';
+import 'attendance_providers.dart' show attendancesProvider, upcomingAttendancesProvider;
+import 'plan_providers.dart' show orgPlansProvider, planAttendanceTypesProvider, planAttendancesProvider;
 import 'tenant_providers.dart';
 
 /// Initialized attendance type repository with tenant context
@@ -85,6 +87,21 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
     }
   }
 
+  /// Creates a type from the columns of the type page ("new" mode). Rethrows
+  /// like [createType] so the page shows `typeSettings.createFailed`.
+  Future<AttendanceType> createTypeFromData(Map<String, dynamic> data) async {
+    state = const AsyncValue.loading();
+    try {
+      final result = await _repo.createTypeFromData(data);
+      state = const AsyncValue.data(null);
+      ref.invalidate(attendanceTypesProvider);
+      return result;
+    } catch (e, stack) {
+      state = AsyncValue.error(e, stack);
+      rethrow;
+    }
+  }
+
   /// Saves the type. Returns null when the save itself failed (caller shows
   /// `typeSettings.updateFailed`); rethrows [DemoModeException] so the demo
   /// block is not reported as a generic failure.
@@ -116,6 +133,12 @@ class AttendanceTypeNotifier extends Notifier<AsyncValue<void>> {
       final success = await _repo.deleteType(id);
       state = const AsyncValue.data(null);
       ref.invalidate(attendanceTypesProvider);
+      // The type's Termine are deleted with it (no usage pre-check, like Ionic).
+      ref.invalidate(attendancesProvider);
+      ref.invalidate(upcomingAttendancesProvider);
+      ref.invalidate(planAttendanceTypesProvider);
+      ref.invalidate(planAttendancesProvider);
+      ref.invalidate(orgPlansProvider);
       return success;
     } catch (e, stack) {
       state = AsyncValue.error(e, stack);

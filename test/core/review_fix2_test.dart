@@ -65,9 +65,14 @@ void main() {
     final consume = s.indexOf('PendingFileLink.consume()', authBlock);
     expect(termsCheck, greaterThan(authBlock));
     expect(consume, greaterThan(termsCheck));
-    expect(s, contains("return PendingFileLink.consume() ?? '/tenants';"));
-    expect(src('lib/features/legal/presentation/pages/terms_page.dart'),
-        contains("PendingFileLink.consume() ?? '/tenants'"));
+    // After accepting the terms the stashed link wins over the start page.
+    final termsDone = s.indexOf('if (termsAccepted && isTermsRoute) {');
+    expect(s.indexOf('PendingFileLink.consume()', termsDone),
+        lessThan(s.indexOf('homeRouteFor(', termsDone)));
+    final page = src('lib/features/legal/presentation/pages/terms_page.dart');
+    final accept = page.indexOf('Future<void> _accept()');
+    expect(page.indexOf('PendingFileLink.consume()', accept),
+        lessThan(page.indexOf('await _goHome()', accept)));
   });
 
   test('main: Teams init not awaited, update toast uses root messenger', () {

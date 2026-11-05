@@ -166,7 +166,7 @@ void main() {
       final page = _read('lib/features/tenant_selection/presentation/pages/tenant_create_page.dart');
       expect(page, contains('timezone: deviceTimezone()'));
       expect(page, contains('context.l10n.dbInstanceCreated'));
-      expect(page, contains('context.go(Role.admin.defaultRoute)'));
+      expect(page, contains('router.go(Role.admin.defaultRoute)'));
     });
   });
 

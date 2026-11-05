@@ -2,6 +2,7 @@
 export 'adaptive_platform.dart';
 export 'app_action_sheet.dart';
 export 'app_dialog.dart';
+export 'app_multi_select.dart';
 export 'app_pickers.dart';
 export 'app_popover_menu.dart';
 export 'app_segmented_button.dart';

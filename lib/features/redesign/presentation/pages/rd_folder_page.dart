@@ -3,7 +3,9 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/router/redesign_routes.dart';
@@ -138,7 +140,12 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
       );
     }
 
-    final events = rdNextEvents(data.currentSongs, data.songs);
+    final events = rdWithoutEndedEvents(
+      rdNextEvents(data.currentSongs, data.songs),
+      now: DateTime.now(),
+      attendances: ref.watch(realtimeAttendanceListProvider).valueOrNull ?? const [],
+      types: ref.watch(attendanceTypesProvider).valueOrNull ?? const [],
+    );
     final nextSongs = {for (final e in events) ...e.songs};
     final allEntries = [
       for (final song in data.songs)
@@ -226,7 +233,8 @@ class _RdFolderPageState extends ConsumerState<RdFolderPage> {
             key: const Key('rd-folder-open-all'),
             icon: Icons.picture_as_pdf_outlined,
             label: l10n.redesignFolderOpen,
-            onPressed: _printing ? null : () => _openAll(shown, group.name),
+            loading: _printing,
+            onPressed: () => _openAll(shown, group.name),
           ),
           Padding(
             padding: const EdgeInsets.only(top: 8),
