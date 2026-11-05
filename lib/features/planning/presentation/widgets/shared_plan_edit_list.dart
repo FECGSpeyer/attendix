@@ -65,11 +65,10 @@ class _SharedPlanEditListState extends State<SharedPlanEditList> {
     );
     if (r == null || !mounted) return;
     // A Realtime update of another editor may have arrived while the dialog
-    // was open: re-find the field in the current list instead of writing the
-    // stale one back. Gone (deleted elsewhere) -> drop the edit.
+    // was open: re-find the field in the current list (uid, else a unique id)
+    // instead of writing the stale one back. Gone or ambiguous -> drop the edit.
     final current = widget.fields;
-    var i = current.indexWhere((f) => identical(f, field));
-    if (i == -1) i = current.indexWhere((f) => f.id == field.id);
+    final i = PlanUtils.indexOfField(current, field);
     if (i == -1) return;
     final base = current[i];
     final updated = [...current];
