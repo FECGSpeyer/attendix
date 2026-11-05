@@ -1,9 +1,9 @@
 # Fix-Paket „einstellungen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 525a06f, ed511da (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, 3fe913c9, 525a06f, ed511da (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 10
+## Angleichen (hoch/mittel): 6
 
 - [ ] **mittel** `settings/general/general.page` `toast-ae9cf87e` [settings/general/general.page.ts:438](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/general.page.ts#L438) (2. Prüfung: korrigiert)
   Gleicher Text bei Wert <= 0. Ionic akzeptiert Dezimalwerte (z. B. 0.5 oder 33.5 %), Flutter nur ganze Zahlen (int.tryParse): Dezimaleingabe löst diesen Toast aus und kann nicht gespeichert werden (Ursache siehe field-cf813d87).
@@ -23,18 +23,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **mittel** `settings/general/type/type.page` `x-698d8902b1` **Speichern schreibt null statt leerer Werte** [src/app/settings/general/type/type.page.ts:195](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/general/type/type.page.ts#L195) (2. Prüfung: korrigiert)
   Teilweise behoben: checklist jetzt wie Ionic (aus = null, an = Liste auch []), planning_title '' bleibt '' (null nur wenn vorher null und geleert). Weiter abweichend: reminders beim Bearbeiten leer → null (Ionic []), end_time bei ganztägig → null (Ionic behält; Ionic-Termine übernehmen type.end_time), duration_days bei nicht-ganztägig → null (Ionic behält; nach Zurückschalten zeigt Flutter 1). Bewertung korrigiert niedrig → mittel: anderer DB-Wert (Erinnerungs-Funktion liest reminders || [] gleich).
   Flutter: lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1895, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1905, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1908, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1910-1912, lib/features/settings/presentation/pages/attendance_type_edit_page.dart:1920-1922
-- [ ] **mittel** `settings/settings/settings.page` `text-87e51c97` [settings/settings/settings.page.html:780](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L780) (2. Prüfung: bestätigt)
-  Weiter gültig: Ionic-Badge package.json-Version 4.19.9 / Flutter AppConstants.appVersion 0.41.25 – Nutzer sehen eine niedrigere, andere Versionsnummer.
-  Flutter: lib/features/settings/presentation/pages/settings_page.dart:549, lib/core/constants/app_constants.dart:10
-- [ ] **mittel** `settings/settings/settings.page` `text-7dea9c51` [settings/settings/settings.page.html:912](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L912) (2. Prüfung: bestätigt)
-  Weiter gültig: Kopf 'Version x (Datum)' gleich, Inhalt verschieden – Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.25 … 0.1.0, 131 Einträge).
-  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:166, assets/version_history.json:1
-- [ ] **mittel** `settings/settings/settings.page` `text-b8c80f4b` [settings/settings/settings.page.html:914](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L914) (2. Prüfung: bestätigt)
-  Weiter gültig: Fallback 'Version x' ohne Datum im Code, erscheint nie (alle 131 Flutter-Einträge haben ein Datum) / Ionic zeigt ihn für 56 alte Einträge. Ursache wie text-7dea9c51.
-  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:167, assets/version_history.json:1
-- [ ] **mittel** `settings/settings/settings.page` `text-8938a6a0` [settings/settings/settings.page.html:921](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/settings/settings/settings.page.html#L921) (2. Prüfung: bestätigt)
-  Weiter gültig: gleiche Darstellung (je Änderung eine Zeile), aber andere Einträge – Ionic 4.19.x-Historie / Flutter eigene Historie (aktuell 0.41.25, 131 Versionen).
-  Flutter: lib/shared/widgets/sheets/version_history_sheet.dart:176, lib/shared/widgets/sheets/version_history_sheet.dart:178, assets/version_history.json:1
 
 ## Flutter besser – Leon entscheidet: 31
 
