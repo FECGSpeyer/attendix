@@ -78,7 +78,8 @@ class _AddSongSheetState extends ConsumerState<AddSongSheet> {
     final created = await ref.read(songNotifierProvider.notifier).createSong(Song(
           number: number,
           name: _name.text.trim(),
-          link: link.isEmpty ? null : link,
+          // Ionic addSong writes link = '' for an empty field (not NULL).
+          link: link,
           withChoir: _withChoir,
           withSolo: _withSolo,
           instrumentIds: _instrumentIds,
