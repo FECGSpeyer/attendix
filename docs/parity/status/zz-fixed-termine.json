@@ -1,5 +1,7 @@
 {
   "batch": "zz-fixed-termine",
+  "afterRound": 3,
+  "ionic": "9f9b82af",
   "items": {
     "public-planning/public-planning.page#effect-73ff88d2": {
       "s": "ok",
