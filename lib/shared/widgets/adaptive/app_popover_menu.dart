@@ -115,6 +115,10 @@ Future<T?> showAppPopoverMenu<T>({
     _PopoverRoute<T>(
       ios: ios,
       anchor: anchor,
+      // Opened from the keyboard (the focused trigger): the first entry
+      // gets the focus, like the former action sheet. A mouse/touch open
+      // keeps nothing highlighted; Tab still reaches the first entry.
+      autofocusFirst: _openedByKeyboard(context),
       overlaySize: overlay.size,
       items: items,
       itemsBuilder: itemsBuilder,
@@ -126,6 +130,27 @@ Future<T?> showAppPopoverMenu<T>({
       ),
     ),
   );
+}
+
+/// Whether [context]'s widget (or a widget inside it) has the keyboard focus
+/// while focus highlights are shown, i.e. it was activated from the keyboard
+/// (buttons don't take the focus on a mouse click or tap).
+bool _openedByKeyboard(BuildContext context) {
+  if (FocusManager.instance.highlightMode != FocusHighlightMode.traditional) {
+    return false;
+  }
+  final focused = FocusManager.instance.primaryFocus?.context;
+  if (focused == null) return false;
+  if (focused == context) return true;
+  var inside = false;
+  focused.visitAncestorElements((element) {
+    if (element == context) {
+      inside = true;
+      return false;
+    }
+    return true;
+  });
+  return inside;
 }
 
 /// Global rect of [context]'s widget inside [overlay].
@@ -480,6 +505,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
   _PopoverRoute({
     required this.ios,
     required this.anchor,
+    required this.autofocusFirst,
     required this.overlaySize,
     required this.items,
     required this.itemsBuilder,
@@ -490,6 +516,7 @@ class _PopoverRoute<T> extends PopupRoute<T> {
 
   final bool ios;
   final Rect anchor;
+  final bool autofocusFirst;
   final Size overlaySize;
   final List<AppPopoverMenuItem<T>> items;
   final List<AppPopoverMenuItem<T>> Function()? itemsBuilder;
@@ -566,11 +593,46 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
   int? _openIndex;
   Rect? _openRowRect;
 
+  /// Focus node of the nested popover's first entry: it gets the focus when
+  /// the nested popover is opened from the keyboard (`autofocus` doesn't
+  /// apply, the parent entry already has the focus in this scope).
+  final _nestedFirstFocus = FocusNode(debugLabel: 'nested popover row 0');
+
+  /// Focus nodes of the parent entries (keyboard: Tab / arrow keys,
+  /// Enter / Space; Escape in a nested popover returns to its entry).
+  final List<FocusNode> _rowFocus = [];
+
+  FocusNode _rowFocusNode(int index) {
+    while (_rowFocus.length <= index) {
+      _rowFocus.add(FocusNode(debugLabel: 'popover row ${_rowFocus.length}'));
+    }
+    return _rowFocus[index];
+  }
+
+  @override
+  void dispose() {
+    for (final node in _rowFocus) {
+      node.dispose();
+    }
+    _nestedFirstFocus.dispose();
+    super.dispose();
+  }
+
   void _refresh() {
     setState(() {
       final builder = widget.route.itemsBuilder;
       if (builder != null) _items = builder();
     });
+  }
+
+  /// Escape inside a nested popover closes only that one and puts the focus
+  /// back on its entry.
+  void _closeNested() {
+    final index = _openIndex;
+    setState(() => _openIndex = null);
+    if (index != null && index < _rowFocus.length) {
+      _rowFocus[index].requestFocus();
+    }
   }
 
   void _onRowTap(int index, BuildContext rowContext) {
@@ -584,10 +646,16 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
     final stack = _stackKey.currentContext?.findRenderObject() as RenderBox?;
     if (row == null || stack == null) return;
     final topLeft = row.localToGlobal(Offset.zero, ancestor: stack);
+    final keyboard = _openedByKeyboard(rowContext);
     setState(() {
       _openIndex = index;
       _openRowRect = topLeft & row.size;
     });
+    if (keyboard) {
+      WidgetsBinding.instance.addPostFrameCallback((_) {
+        if (mounted && _openIndex == index) _nestedFirstFocus.requestFocus();
+      });
+    }
   }
 
   @override
@@ -663,6 +731,8 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                         subtitle: _items[i].subtitle,
                         color: _itemColor(_items[i]),
                         chevron: _items[i]._hasChevron,
+                        focusNode: _rowFocusNode(i),
+                        autofocus: i == 0 && route.autofocusFirst,
                         onTap: () {
                           if (_openIndex != null && _openIndex != i) {
                             setState(() => _openIndex = null);
@@ -715,23 +785,34 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                             _margin,
                       ),
             ),
-            child: _PopoverCard(
-              ios: ios,
-              children: [
-                for (final s in sub)
-                  _PopoverRow(
-                    ios: ios,
-                    icon: s.icon,
-                    checked: s.checked,
-                    label: s.label,
-                    subtitle: s.subtitle,
-                    color: s.color,
-                    onTap: () {
-                      s.onTap();
-                      _refresh();
-                    },
-                  ),
-              ],
+            child: Actions(
+              actions: <Type, Action<Intent>>{
+                DismissIntent: CallbackAction<DismissIntent>(
+                  onInvoke: (_) {
+                    _closeNested();
+                    return null;
+                  },
+                ),
+              },
+              child: _PopoverCard(
+                ios: ios,
+                children: [
+                  for (var j = 0; j < sub.length; j++)
+                    _PopoverRow(
+                      ios: ios,
+                      icon: sub[j].icon,
+                      checked: sub[j].checked,
+                      label: sub[j].label,
+                      subtitle: sub[j].subtitle,
+                      color: sub[j].color,
+                      focusNode: j == 0 ? _nestedFirstFocus : null,
+                      onTap: () {
+                        sub[j].onTap();
+                        _refresh();
+                      },
+                    ),
+                ],
+              ),
             ),
           ),
         ),
@@ -887,6 +968,8 @@ class _PopoverRow extends StatelessWidget {
     this.subtitle,
     this.color,
     this.chevron = false,
+    this.focusNode,
+    this.autofocus = false,
   });
 
   final bool ios;
@@ -897,6 +980,8 @@ class _PopoverRow extends StatelessWidget {
   final String? subtitle;
   final Color? color;
   final bool chevron;
+  final FocusNode? focusNode;
+  final bool autofocus;
 
   @override
   Widget build(BuildContext context) {
@@ -928,10 +1013,13 @@ class _PopoverRow extends StatelessWidget {
 
     return InkWell(
       // No ripple on iOS, grey press highlight; nothing highlighted
-      // initially (no focus / initial value).
+      // initially (no initial value). Focusable for the keyboard (Tab /
+      // arrow keys, Enter / Space); the focus highlight only shows in
+      // keyboard mode, a mouse click or tap doesn't take the focus.
       splashFactory: ios ? NoSplash.splashFactory : null,
       highlightColor: ios ? IosGlass.itemActivated(theme.brightness) : null,
-      canRequestFocus: false,
+      focusNode: focusNode,
+      autofocus: autofocus,
       onTap: onTap,
       child: ConstrainedBox(
         constraints: BoxConstraints(minHeight: ios ? 44 : 48),
