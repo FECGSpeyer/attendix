@@ -1,0 +1,46 @@
+{
+ "batch": "zz-fixed-uebersicht",
+ "ionic": "9f9b82af",
+ "items": {
+  "home-dashboard/components/absences-card/absences-card.component#modal-6daf3e85": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:24",
+    "lib/features/people/presentation/pages/person_detail_page.dart:209"
+   ],
+   "n": "behoben in Issue #318"
+  },
+  "home-dashboard/components/birthdays-card/birthdays-card.component#modal-388a556f": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:24",
+    "lib/features/people/presentation/pages/person_detail_page.dart:209"
+   ],
+   "n": "behoben in Issue #318"
+  },
+  "home-dashboard/components/critical-persons-card/critical-persons-card.component#modal-160799e3": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:24",
+    "lib/features/people/presentation/pages/person_detail_page.dart:209"
+   ],
+   "n": "behoben in Issue #318"
+  },
+  "home-dashboard/components/member-changes-card/member-changes-card.component#modal-04f3c3d5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/people_cards.dart:24",
+    "lib/features/people/presentation/pages/person_detail_page.dart:209"
+   ],
+   "n": "behoben in Issue #318"
+  },
+  "home-dashboard/components/next-event-card/next-event-card.component#modal-29087654": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/widgets/event_cards.dart:57",
+    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:72"
+   ],
+   "n": "behoben in Issue #318"
+  }
+ }
+}

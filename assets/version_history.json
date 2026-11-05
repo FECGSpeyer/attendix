@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.1",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Übersicht: Personen und Termine aus den Dashboard-Karten öffnen sich wie bisher als Fenster mit Schließen-Knopf"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [
