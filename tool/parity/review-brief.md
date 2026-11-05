@@ -109,10 +109,19 @@ Special cases:
 - `hoch`: a feature/action is missing or behaves differently, wrong or missing
   data, a role sees something it must not or misses something it should, a
   different DB write.
-- `mittel`: visible difference in flow, position, order, dialog type, or a text
-  with different meaning; a missing hint or confirmation.
-- `niedrig`: cosmetic (icon, colour, punctuation, same meaning in other words,
-  loading indicator).
+- `mittel`: the same feature works differently for the user: different steps
+  or target in a flow, different data shown, filtered, sorted or defaulted, a
+  text with different meaning, a missing confirmation before a destructive
+  action, a missing error or hint the user needs.
+- `niedrig`: same function, only look or arrangement differs: icon, colour,
+  layout, position or order of controls, dialog type (sheet, dialog, page)
+  with the same choices and result, same meaning in other words, success
+  toast where the result is visible anyway, loading indicator.
+
+Leon (2026-11-05): what counts is that every feature of the Ionic app exists
+and works the same; buttons that look a bit different or small deviations
+because Flutter does it differently are fine. In doubt between `mittel` and
+`niedrig`, ask "can the user still do and learn the same?": yes → `niedrig`.
 
 ## Output
 
