@@ -1,6 +1,6 @@
 import 'dart:async';
 
-import 'package:flutter/foundation.dart' show kIsWeb;
+import 'package:flutter/foundation.dart' show debugPrint, kIsWeb;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:just_audio/just_audio.dart';
 
@@ -342,8 +342,22 @@ class AudioPlayerService extends Notifier<AudioPlayerState> {
           isPlaying: false,
           currentTime: Duration.zero,
         );
+        // Ionic (HTMLAudio): after 'ended' Play (bar or lock screen) starts
+        // the track from the beginning. just_audio keeps `playing` true after
+        // completion, so play() would be a no-op – pause and rewind.
+        unawaited(_rewindAfterEnd(player));
       }
     });
+  }
+
+  Future<void> _rewindAfterEnd(AudioPlayer player) async {
+    try {
+      await player.pause();
+      if (_player != player) return;
+      await player.seek(Duration.zero);
+    } catch (e) {
+      debugPrint('Audio rewind after end failed: $e');
+    }
   }
 
   Future<void> _stopInternal({bool keepQueue = false}) async {
