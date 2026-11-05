@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.21",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
       "version": "0.41.20",
       "date": "5.11.2026",
       "changes": [
