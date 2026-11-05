@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -18,6 +17,7 @@ import '../../../../core/providers/user_registration_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
+import '../../../../data/models/tenant/tenant.dart' show ExtraField;
 import '../../../../data/services/auth_service.dart';
 import '../widgets/planned_absences.dart';
 import '../../../duty/presentation/pages/unavailability_page.dart';
@@ -26,8 +26,9 @@ import '../../../../core/utils/text_utils.dart';
 import '../../../../data/repositories/cross_tenant_person_repository.dart';
 import '../widgets/person_match_suggestions.dart';
 import 'package:uuid/uuid.dart';
-import '../widgets/handover_sheet.dart';
+import '../widgets/person_transfer_sheet.dart';
 import '../widgets/pause_person_sheet.dart';
+import '../widgets/archive_person_modal.dart';
 import '../widgets/duplicate_candidates_card.dart';
 import '../widgets/person_detail/person_detail.dart';
 import '../widgets/ion/ion_widgets.dart';
@@ -40,9 +41,13 @@ import '../../../../core/utils/error_message.dart';
 import '../../person_stats.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
+import '../../../../core/providers/church_providers.dart';
+import '../../../../data/models/church/church.dart';
+import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
 
 /// Provider for single person with group name
 final personProvider =
@@ -126,11 +131,11 @@ final personHistoryProvider =
       (t) => t['id'] == typeId,
       orElse: () => <String, dynamic>{},
     );
+    // Ionic Utils.getTypeTitle: typeInfo, else the type name unless
+    // hide_name; no title without a known type.
     if (attType.isNotEmpty) {
-      final typeName = attType['name']?.toString() ?? '';
+      final typeName = attType['hide_name'] == true ? '' : attType['name']?.toString() ?? '';
       meetingName = (typeInfo != null && typeInfo.isNotEmpty) ? typeInfo : typeName;
-    } else {
-      meetingName = typeInfo ?? attendance?['type']?.toString() ?? l10nWithoutContext.peopleAttendance;
     }
 
     final statusValue = a['status'];
@@ -199,11 +204,49 @@ final personHistoryProvider =
   return allHistory;
 });
 
+/// How a person modal ([showPersonModal]) was closed (Ionic PersonPage
+/// dismiss data `{ activated }` / `{ approved }`).
+enum PersonModalResult {
+  /// An archived person was reactivated ("Person reaktivieren").
+  activated,
+
+  /// A pending registration was approved.
+  approved,
+
+  /// A pending registration was declined.
+  declined,
+}
+
+/// Ionic settings `openPlayerModal` / `openApprovePersonModal`:
+/// `modalController.create({ component: PersonPage, presentingElement })`.
+/// On iOS a card modal ([showIosCardModal]), in md mode a regular
+/// `ion-modal` ([showIonModal]: full screen on phones, centred card on
+/// desktop). Archived persons are read-only with "Person reaktivieren",
+/// pending ones offer approve / decline (both follow from the person).
+Future<PersonModalResult?> showPersonModal(
+    BuildContext context, int personId) {
+  Widget build(BuildContext _) =>
+      PersonDetailPage(personId: personId, asModal: true);
+  if (useIosLook(context)) {
+    return showIosCardModal<PersonModalResult>(
+      context,
+      backgroundColor: ionContentBackground(context),
+      builder: build,
+    );
+  }
+  return showIonModal<PersonModalResult>(context, builder: build);
+}
+
 /// Person detail page - with inline editing
 class PersonDetailPage extends ConsumerWidget {
-  const PersonDetailPage({super.key, required this.personId});
+  const PersonDetailPage(
+      {super.key, required this.personId, this.asModal = false});
 
   final int personId;
+
+  /// Shown via [showPersonModal]: closing pops the modal route (with a
+  /// [PersonModalResult]) instead of the go_router page.
+  final bool asModal;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -239,17 +282,20 @@ class PersonDetailPage extends ConsumerWidget {
             body: Center(child: Text(context.l10n.personFlutterNotFound)),
           );
         }
-        return _PersonDetailContent(person: person, personId: personId);
+        return _PersonDetailContent(
+            person: person, personId: personId, asModal: asModal);
       },
     );
   }
 }
 
 class _PersonDetailContent extends ConsumerStatefulWidget {
-  const _PersonDetailContent({required this.person, required this.personId});
+  const _PersonDetailContent(
+      {required this.person, required this.personId, this.asModal = false});
 
   final Person person;
   final int personId;
+  final bool asModal;
 
   @override
   ConsumerState<_PersonDetailContent> createState() =>
@@ -296,7 +342,146 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     _initDraft();
     _loadUserRole();
     _loadSharedFieldValues();
+    _fillChurchDefaultsWhenLoaded();
   }
+
+  /// Ionic updates `this.player` in place (Passbild, account) or closes the
+  /// page after an action. Here the page stays mounted while the person is
+  /// reloaded, so take over the new data instead of showing stale values.
+  @override
+  void didUpdateWidget(covariant _PersonDetailContent oldWidget) {
+    super.didUpdateWidget(oldWidget);
+    final old = oldWidget.person;
+    final next = widget.person;
+    if (old == next) return;
+    if (!_hasChanges) {
+      _initDraft();
+      _loadSharedFieldValues();
+    } else {
+      // Keep the unsaved edits; every field the user did not touch takes
+      // over the new value so saving does not write stale data back.
+      _rebaseDraft(next);
+    }
+    if (old.appId != next.appId) {
+      _userRole = null;
+      _loadUserRole();
+    }
+  }
+
+  /// Action of the FAB as of the last build.
+  VoidCallback? _fabCallback;
+
+  /// A typed date is applied on focus loss, and tapping the FAB keeps the
+  /// focus: commit it first, then run the action the FAB shows afterwards
+  /// (save once the date counts as a change) (sol review).
+  Future<void> _onFabPressed() async {
+    if (FocusManager.instance.primaryFocus?.hasFocus ?? false) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await Future<void>.delayed(Duration.zero);
+      if (!mounted) return;
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+    _fabCallback?.call();
+  }
+
+  /// Draft = [next] plus the fields changed on this page (sol review).
+  void _rebaseDraft(Person next) {
+    bool keep(String f) => _changedFields.contains(f);
+    final d = _draft;
+    _draft = next.copyWith(
+      firstName: keep('firstName') ? d.firstName : next.firstName,
+      lastName: keep('lastName') ? d.lastName : next.lastName,
+      notes: keep('notes') ? d.notes : next.notes,
+      phone: keep('phone') ? d.phone : next.phone,
+      birthday: keep('birthday') ? d.birthday : next.birthday,
+      correctBirthday: keep('birthday') ? true : next.correctBirthday,
+      playsSince: keep('playsSince') ? d.playsSince : next.playsSince,
+      joined: keep('joined') ? d.joined : next.joined,
+      img: keep('img') ? d.img : next.img,
+      otherExercise: keep('otherExercise') ? d.otherExercise : next.otherExercise,
+      range: keep('range') ? d.range : next.range,
+      instruments: keep('instruments') ? d.instruments : next.instruments,
+      examinee: keep('examinee') ? d.examinee : next.examinee,
+      testResult: keep('testResult') ? d.testResult : next.testResult,
+      email: keep('email') ? d.email : next.email,
+      otherOrchestras: keep('otherOrchestras') ? d.otherOrchestras : next.otherOrchestras,
+    );
+    if (!keep('instrument')) _selectedGroupId = next.instrument;
+    if (!keep('instrument') && !keep('isLeader')) _isLeader = next.isLeader;
+    if (!keep('hasTeacher')) _hasTeacher = next.hasTeacher;
+    if (!keep('teacher')) _selectedTeacherId = next.teacher;
+    if (!keep('shiftId')) _selectedShiftId = next.shiftId;
+    if (!keep('shiftName')) _selectedShiftName = next.shiftName;
+    if (!keep('shiftStart')) {
+      _shiftStart = next.shiftStart != null ? DateTime.tryParse(next.shiftStart!) : null;
+    }
+    if (!keep('parentId')) _selectedParentId = next.parentId;
+    _draft = _draft.copyWith(
+      instrument: _selectedGroupId,
+      isLeader: _isLeader,
+      hasTeacher: _hasTeacher,
+      teacher: _selectedTeacherId,
+      shiftId: _selectedShiftId,
+      shiftName: _selectedShiftName,
+      shiftStart: _shiftStart?.toIso8601String(),
+      parentId: _selectedParentId,
+    );
+    final nextExtra = _withExtraDefaults(Map.from(next.additionalFields ?? {}));
+    for (final e in nextExtra.entries) {
+      if (!_orgFieldIds.contains(e.key) && !keep('additionalFields.${e.key}')) {
+        _additionalFieldValues[e.key] = e.value;
+      }
+    }
+  }
+
+  /// Ionic ngOnInit: missing extra field values get
+  /// getFieldTypeDefaultValue(type, defaultValue, options, churches); they
+  /// are written with the next save (no change marker).
+  Map<String, dynamic> _withExtraDefaults(Map<String, dynamic> values) {
+    final fields = ref.read(personListExtraFieldsProvider);
+    final churchIds = <Object>[
+      for (final c in ref.read(churchesProvider).valueOrNull ?? const <Church>[])
+        if (c.id != null) c.id!,
+    ];
+    return {
+      ...values,
+      for (final f in fields)
+        if (values[f.id] == null)
+          f.id: extraFieldDefaultValue(
+            f.type,
+            defaultValue: f.defaultValue,
+            options: f.options,
+            churchIds: churchIds,
+          ),
+    };
+  }
+
+  /// Gemeinde defaults need the churches; fill them once they are loaded.
+  Future<void> _fillChurchDefaultsWhenLoaded() async {
+    final fields = ref
+        .read(personListExtraFieldsProvider)
+        .where((f) => f.type == 'bfecg_church' && f.defaultValue == null)
+        .toList();
+    if (fields.isEmpty || ref.read(churchesProvider).hasValue) return;
+    try {
+      final churches = await ref.read(churchesProvider.future);
+      final first = churches.where((c) => c.id != null).firstOrNull?.id;
+      if (!mounted || first == null) return;
+      setState(() {
+        for (final f in fields) {
+          if (_additionalFieldValues[f.id] == '' &&
+              !_changedFields.contains('additionalFields.${f.id}')) {
+            _additionalFieldValues[f.id] = first;
+          }
+        }
+      });
+    } catch (_) {}
+  }
+
+  /// Closes the page: the modal route ([showPersonModal], with [result])
+  /// or, opened via its route, the go_router page as before.
+  void _close([PersonModalResult? result]) => _closePage(result);
 
   /// Ionic getOrganisationPersonKey
   String? get _personKey {
@@ -329,6 +514,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               !_changedFields.contains('additionalFields.${e.key}')) {
             _additionalFieldValues[e.key] = e.value;
           }
+          // Ionic existingPlayer carries the shared values too (sync diff).
+          if (_orgFieldIds.contains(e.key)) _initialAdditionalFields[e.key] = e.value;
         }
       });
     } catch (_) {
@@ -363,8 +550,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     _selectedParentId = p.parentId;
     _isLeader = p.isLeader;
     _hasTeacher = p.hasTeacher;
-    _additionalFieldValues = Map.from(p.additionalFields ?? {});
+    _additionalFieldValues = _withExtraDefaults(Map.from(p.additionalFields ?? {}));
+    _initialAdditionalFields = Map.of(_additionalFieldValues);
+    _problemSolved = false;
+    _problemNotes = '';
   }
+
+  /// Extra field values as loaded (incl. defaults) – Ionic existingPlayer.
+  Map<String, dynamic> _initialAdditionalFields = const {};
 
   Future<void> _loadUserRole() async {
     if (widget.person.appId == null) return;
@@ -435,7 +628,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       } else if (field == 'phone') {
         _draft = _draft.copyWith(phone: value as String?);
       } else if (field == 'birthday') {
-        _draft = _draft.copyWith(birthday: value as String?);
+        // Ionic onBirthdayChange: correctBirthday = true right away (the
+        // warning colour disappears before saving).
+        _draft = _draft.copyWith(birthday: value as String?, correctBirthday: true);
       } else if (field == 'playsSince') {
         _draft = _draft.copyWith(playsSince: value as String?);
       } else if (field == 'joined') {
@@ -467,6 +662,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       } else if (field == 'parentId') {
         _selectedParentId = value as int?;
         _draft = _draft.copyWith(parentId: value);
+      } else if (field == 'img') {
+        _draft = _draft.copyWith(img: value as String?);
       } else if (field == 'otherExercise') {
         _draft = _draft.copyWith(otherExercise: value as String?);
       } else if (field == 'range') {
@@ -496,7 +693,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final mainGroupFuture = ref
         .read(mainGroupProvider.future)
         .then<Group?>((g) => g, onError: (Object _) => null);
-    if (_isSaving || !_hasChanges) return;
+    if (_isSaving) return;
+    // A typed date is applied on focus loss; tapping the FAB keeps the
+    // focus, so commit it first (sol review).
+    FocusManager.instance.primaryFocus?.unfocus();
+    await Future<void>.delayed(Duration.zero);
+    if (!mounted || _isSaving || !_hasChanges) return;
 
     // Validate required fields
     if (_draft.firstName.isEmpty || _draft.lastName.isEmpty) {
@@ -542,7 +744,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    var createAccountAfterSave = false;
+    var createAccount = false;
     var assignVoiceLeaderRole = false;
     if (emailChanged && emailValid && widget.person.appId == null) {
       final create = await showAppDialog<bool>(
@@ -550,14 +752,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         builder: (ctx) => AppAlertDialog(
           title: Text(context.l10n.personEmailAdded),
           content: Text(context.l10n.personCreateAccountNow),
+          // Ionic updatePlayer(): only "Abbrechen" (nothing saved) and "Ja"
+          // (register the account, then save).
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(ctx),
-              child: Text(context.l10n.commonCancel),
-            ),
-            TextButton(
               onPressed: () => Navigator.pop(ctx, false),
-              child: Text(context.l10n.personFlutterSaveOnly),
+              child: Text(context.l10n.commonCancel),
             ),
             FilledButton(
               onPressed: () => Navigator.pop(ctx, true),
@@ -566,8 +766,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           ],
         ),
       );
-      if (create == null || !mounted) return;
-      createAccountAfterSave = create;
+      if (create != true || !mounted) return;
+      createAccount = true;
     } else if (!isGeneral &&
         widget.person.appId != null &&
         !widget.person.isLeader &&
@@ -590,8 +790,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       // Sprint 2a: migrated to PlayerRepository.updatePlayerFields.
       final person = widget.person;
 
-      // Build history entries for tracked changes
+      // Build history entries for tracked changes (Ionic order: solved
+      // problem case, group change, notes).
       final List<Map<String, dynamic>> newHistoryEntries = [];
+      final solved = _problemSolved;
+      if (solved) {
+        newHistoryEntries.add({
+          'date': DateTime.now().toUtc().toIso8601String(),
+          'text': _problemNotes,
+          'type': PlayerHistoryType.criticalPerson.value,
+        });
+      }
       if (_selectedGroupId != person.instrument) {
         final groups = await ref.read(groupsMapProvider.future);
         final oldGroupName = groups[person.instrument] ?? 'Unbekannt';
@@ -603,7 +812,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         });
       }
 
-      if (_draft.notes != (person.notes ?? '')) {
+      if ((_draft.notes ?? '') != (person.notes ?? '')) {
         newHistoryEntries.add({
           'date': DateTime.now().toUtc().toIso8601String(),
           'text': person.notes ?? 'Keine Notiz',
@@ -619,38 +828,28 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         throw Exception('Person-ID oder Tenant-ID fehlt');
       }
 
+      // Ionic db.updatePlayer(…, createAccount): register first, the row
+      // then carries the new appId.
+      if (createAccount) {
+        await ref.read(accountCreationNotifierProvider.notifier).createAccount(
+              person.copyWith(
+                email: _draft.email?.trim(),
+                instrument: _selectedGroupId,
+              ),
+            );
+      }
+
       final localAdditional = await _splitAndSaveSharedFields();
 
       await repo.updatePlayerFields(personId, {
-        'firstName': _draft.firstName,
-        'lastName': _draft.lastName,
-        'phone': _draft.phone?.isEmpty ?? true ? null : _draft.phone,
-        'notes': _draft.notes?.isEmpty ?? true ? null : _draft.notes,
-        'otherExercise': _draft.otherExercise?.isEmpty ?? true ? null : _draft.otherExercise,
-        'instrument': _selectedGroupId,
-        'birthday': _draft.birthday,
-        'playsSince': _draft.playsSince,
-        'joined': _draft.joined,
-        'isLeader': _isLeader,
-        'hasTeacher': _hasTeacher,
-        'teacher': _hasTeacher ? _selectedTeacherId : null,
-        'shift_id': _selectedShiftId,
-        'shift_name': _selectedShiftName,
-        'shift_start': _shiftStart?.toIso8601String(),
-        'parent_id': _selectedParentId,
-        // LOGIC_PEOPLE: Ionic sets correctBirthday only when the birthday
-        // was edited (onBirthdayChange / manual input).
-        'correctBirthday':
-            _changedFields.contains('birthday') || person.correctBirthday,
+        ..._draftFields(),
         'history': updatedHistory,
         // Ionic writes `additional_fields: localAdditionalFields` ({}).
         'additional_fields': localAdditional,
-        'otherOrchestras': _draft.otherOrchestras,
-        'range': _draft.range?.isEmpty ?? true ? null : _draft.range,
-        'instruments': _draft.instruments?.isEmpty ?? true ? null : _draft.instruments,
-        'examinee': _draft.examinee,
-        'testResult': _draft.testResult?.isEmpty ?? true ? null : _draft.testResult,
-        'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
+        if (solved) ...{
+          'isCritical': false,
+          'lastSolve': DateTime.now().toUtc().toIso8601String(),
+        },
       });
       ref.read(trackingServiceProvider).track(TrackingEvent.playerUpdated);
 
@@ -676,7 +875,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             additionalFields: _additionalFieldValues,
           ),
           oldInstrument: _selectedGroupId,
-          oldAdditionalFields: person.additionalFields,
+          oldAdditionalFields: _initialAdditionalFields,
         );
       } catch (e, st) {
         ErrorReporter.report(e, st, where: 'person_detail_page');
@@ -709,23 +908,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         _changedFields.clear();
       });
 
-      if (createAccountAfterSave && mounted) {
-        await _createAccount(
-          widget.person.copyWith(
-            email: _draft.email?.trim(),
-            instrument: _selectedGroupId,
-          ),
-          confirm: false,
-        );
-      }
-
+      // Ionic: dismiss the page, then toast "Person aktualisiert".
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personUpdated),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personUpdated);
+        _closePage();
       }
     } catch (e) {
       if (mounted) {
@@ -740,6 +926,54 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (mounted) {
         setState(() => _isSaving = false);
       }
+    }
+  }
+
+  /// Editable person columns of the draft (Ionic writes the whole player).
+  Map<String, dynamic> _draftFields() => {
+        'firstName': _draft.firstName,
+        'lastName': _draft.lastName,
+        'phone': _draft.phone?.isEmpty ?? true ? null : _draft.phone,
+        'notes': _draft.notes?.isEmpty ?? true ? null : _draft.notes,
+        'otherExercise': _draft.otherExercise?.isEmpty ?? true ? null : _draft.otherExercise,
+        'instrument': _selectedGroupId,
+        'birthday': _draft.birthday,
+        'playsSince': _draft.playsSince,
+        'joined': _draft.joined,
+        'isLeader': _isLeader,
+        'hasTeacher': _hasTeacher,
+        // Ionic keeps the teacher when "Hat Lehrer" is switched off.
+        'teacher': _selectedTeacherId,
+        'shift_id': _selectedShiftId,
+        'shift_name': _selectedShiftName,
+        'shift_start': _shiftStart?.toIso8601String(),
+        'parent_id': _selectedParentId,
+        // LOGIC_PEOPLE: Ionic sets correctBirthday only when the birthday
+        // was edited (onBirthdayChange / manual input).
+        'correctBirthday':
+            _changedFields.contains('birthday') || widget.person.correctBirthday,
+        'otherOrchestras': _draft.otherOrchestras,
+        'range': _draft.range?.isEmpty ?? true ? null : _draft.range,
+        'instruments': _draft.instruments?.isEmpty ?? true ? null : _draft.instruments,
+        'examinee': _draft.examinee,
+        'testResult': _draft.testResult?.isEmpty ?? true ? null : _draft.testResult,
+        'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
+        if (_changedFields.contains('img')) 'img': _draft.img,
+      };
+
+  /// Ionic dismisses the person modal after save / account / pause actions.
+  bool _closing = false;
+
+  void _closePage([PersonModalResult? result]) {
+    if (!mounted || _closing) return;
+    _closing = true;
+    setState(() => _hasChanges = false);
+    if (widget.asModal) {
+      Navigator.of(context).pop(result);
+    } else if (context.canPop()) {
+      context.pop();
+    } else {
+      context.go('/people');
     }
   }
 
@@ -873,8 +1107,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (p.correctBirthday && p.birthday != null) {
       _onFieldChanged('birthday', p.birthday);
     }
-    if (p.otherExercise != null) _onFieldChanged('otherExercise', p.otherExercise);
-    if (p.range != null) _onFieldChanged('range', p.range);
+    // Ionic takes the picture and otherExercise/range even when empty.
+    _onFieldChanged('img', p.img);
+    _onFieldChanged('otherExercise', p.otherExercise);
+    _onFieldChanged('range', p.range);
     final groups = ref.read(groupsProvider).valueOrNull ?? const [];
     final group = groups.where((g) => g.name == chosen.groupName).firstOrNull;
     if (group?.id != null) _onFieldChanged('instrument', group!.id);
@@ -1004,10 +1240,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
     // PEOPLE2: Ionic confirmPause incl. "Pausiert ab" and other instances
-    final paused = await pausePersonFlow(context, ref, widget.person);
+    final paused = await pausePersonFlow(context, ref, widget.person,
+        showSuccessToast: false);
     if (paused && mounted) {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
+      _closePage(); // Ionic: dismiss, no toast
     }
   }
 
@@ -1034,11 +1272,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
 
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.personReactivated), backgroundColor: AppColors.success),
-        );
-      }
+      // Ionic openMoreMenu "Wieder aktivieren": dismiss, no toast.
+      _closePage();
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
@@ -1048,66 +1283,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// Ionic archive modal (full screen, "{Name} Archivieren", X, FAB).
   Future<void> _showArchiveDialog() async {
-    final noteController = TextEditingController();
-    DateTime archiveDate = DateTime.now();
-
-    try {
-      final result = await showAppDialog<Map<String, dynamic>>(
-        context: context,
-        builder: (context) => StatefulBuilder(
-          builder: (context, setDialogState) => AppAlertDialog(
-            title: Text(context.l10n.peopleArchiveTitle(widget.person.fullName)),
-            content: Column(
-              mainAxisSize: MainAxisSize.min,
-              children: [
-                ListTile(
-                  contentPadding: EdgeInsets.zero,
-                  title: Text(context.l10n.peopleLeaveDate),
-                  subtitle: Text(DateFormat(dateFmt()).format(archiveDate)),
-                  trailing: const Icon(Icons.calendar_today),
-                  onTap: () async {
-                    final date = await showAppDatePicker(
-                      context: context,
-                      initialDate: archiveDate,
-                      firstDate: DateTime(2000),
-                      lastDate: DateTime.now(),
-                    );
-                    if (date != null) {
-                      setDialogState(() => archiveDate = date);
-                    }
-                  },
-                ),
-                const SizedBox(height: AppDimensions.paddingM),
-                TextField(
-                  controller: noteController,
-                  decoration: InputDecoration(
-                    labelText: context.l10n.dutyReasonOptional,
-                    hintText: context.l10n.personFlutterArchiveReasonHint,
-                  ),
-                  maxLines: 2,
-                ),
-              ],
-            ),
-            actions: [
-              TextButton(onPressed: () => Navigator.pop(context), child: Text(context.l10n.commonCancel)),
-              FilledButton(
-                style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-                onPressed: () {
-                  Navigator.pop(context, {'date': archiveDate.toIso8601String(), 'note': noteController.text});
-                },
-                child: Text(context.l10n.peopleArchive),
-              ),
-            ],
-          ),
-        ),
-      );
-
-      if (result != null && mounted) {
-        await _archivePerson(result['date'], result['note']);
-      }
-    } finally {
-      noteController.dispose();
+    final result = await showArchivePersonModal(context, widget.person.fullName);
+    if (result != null && mounted) {
+      await _archivePerson(result.date, result.note);
     }
   }
 
@@ -1138,7 +1318,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.personArchived), backgroundColor: AppColors.success),
         );
-        context.pop();
+        _close();
       }
     } catch (e) {
       if (mounted) {
@@ -1176,81 +1356,44 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
-  Future<void> _resolveProblem() async {
-    if (!_problemSolved) return;
-
-    final notifier = ref.read(playerNotifierProvider.notifier);
-    final person = widget.person;
-
-    try {
-      await notifier.resolveCritical(person, _problemNotes.isNotEmpty ? _problemNotes : null);
-
-      ref.invalidate(personProvider(widget.personId));
-
-      if (mounted) {
-        setState(() {
-          _problemSolved = false;
-          _problemNotes = '';
-        });
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterProblemSolved),
-            backgroundColor: AppColors.success,
-          ),
-        );
-      }
-    } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-        );
-      }
-    }
-  }
-
+  /// Ionic approvePlayer(): no extra confirmation; the edited fields (incl.
+  /// a solved problem case) are written together with pending = false.
   Future<void> _approvePerson() async {
-    final confirmed = await showAppDialog<bool>(
-      context: context,
-      builder: (context) => AppAlertDialog(
-        title: Text(context.l10n.personFlutterApproveQuestion),
-        content: Text(context.l10n.personFlutterApproveMessage(widget.person.fullName)),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(context, false),
-            child: Text(context.l10n.commonCancel),
-          ),
-          FilledButton(
-            onPressed: () => Navigator.pop(context, true),
-            child: Text(context.l10n.personFlutterApprove),
-          ),
-        ],
-      ),
-    );
-
-    if (confirmed != true || !mounted) return;
-
+    final repo = ref.read(playerRepositoryWithTenantProvider);
+    final personId = widget.person.id;
+    if (personId == null || !repo.hasTenantId) return;
     try {
-      final notifier = ref.read(playerNotifierProvider.notifier);
-      await notifier.approvePlayer(widget.person);
+      final solved = _problemSolved;
+      if (_changedFields.isNotEmpty || solved) {
+        final localAdditional = await _splitAndSaveSharedFields();
+        await repo.updatePlayerFields(personId, {
+          ..._draftFields(),
+          'additional_fields': localAdditional,
+          if (solved) ...{
+            'isCritical': false,
+            'lastSolve': DateTime.now().toUtc().toIso8601String(),
+          },
+        });
+      }
+      await ref.read(playerNotifierProvider.notifier).approvePlayer(
+            widget.person.copyWith(
+              instrument: _selectedGroupId,
+              joined: _draft.joined,
+              email: _draft.email,
+              additionalFields: _additionalFieldValues,
+            ),
+          );
 
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterApproved),
-            backgroundColor: AppColors.success,
-          ),
-        );
-        context.pop();
+        // Ionic approve/declinePlayer: dismiss, then toast person.updated.
+        ToastHelper.showSuccess(context, context.l10n.personUpdated);
+        _close(PersonModalResult.approved);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-        );
-      }
+      if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailed);
     }
   }
 
@@ -1259,45 +1402,52 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     try {
       final reason = await showAppDialog<String>(
         context: context,
-        builder: (context) => AppAlertDialog(
-          title: Text(context.l10n.personDeclinePerson),
-          content: Column(
-            mainAxisSize: MainAxisSize.min,
-            children: [
-              Text(context.l10n.personFlutterDeclineMessage(widget.person.fullName)),
-              const SizedBox(height: AppDimensions.paddingM),
-              TextField(
-                controller: reasonController,
-                decoration: InputDecoration(
-                  labelText: context.l10n.peopleReasonRequired,
-                  hintText: context.l10n.personFlutterDeclineReasonHint,
-                  border: OutlineInputBorder(),
-                ),
-                maxLines: 2,
-                autofocus: true,
+        // Ionic declinePlayer: header, subHeader "Gib einen Grund an.",
+        // textarea without label; an empty reason shows the message in the
+        // alert itself.
+        builder: (context) {
+          var missing = false;
+          return StatefulBuilder(
+            builder: (context, setDialogState) => AppAlertDialog(
+              title: Text(context.l10n.personDeclinePerson),
+              content: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Text(context.l10n.personGiveReasonShort),
+                  if (missing) ...[
+                    const SizedBox(height: AppDimensions.paddingS),
+                    Text(context.l10n.signoutGiveReason),
+                  ],
+                  const SizedBox(height: AppDimensions.paddingM),
+                  TextField(
+                    controller: reasonController,
+                    decoration: const InputDecoration(border: OutlineInputBorder()),
+                    minLines: 2,
+                    maxLines: 4,
+                    autofocus: true,
+                  ),
+                ],
               ),
-            ],
-          ),
-          actions: [
-            TextButton(
-              onPressed: () => Navigator.pop(context),
-              child: Text(context.l10n.commonCancel),
+              actions: [
+                TextButton(
+                  onPressed: () => Navigator.pop(context),
+                  child: Text(context.l10n.commonCancel),
+                ),
+                TextButton(
+                  onPressed: () {
+                    if (reasonController.text.isEmpty) {
+                      setDialogState(() => missing = true);
+                      return;
+                    }
+                    Navigator.pop(context, reasonController.text);
+                  },
+                  child: Text(context.l10n.personDecline),
+                ),
+              ],
             ),
-            FilledButton(
-              style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
-              onPressed: () {
-                if (reasonController.text.isEmpty) {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(content: Text(context.l10n.signoutGiveReason)),
-                  );
-                  return;
-                }
-                Navigator.pop(context, reasonController.text);
-              },
-              child: Text(context.l10n.personDecline),
-            ),
-          ],
-        ),
+          );
+        },
       );
 
       if (reason == null || !mounted) return;
@@ -1309,20 +1459,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterDeclined),
-            backgroundColor: AppColors.success,
-          ),
-        );
-        context.pop();
+        // Ionic approve/declinePlayer: dismiss, then toast person.updated.
+        ToastHelper.showSuccess(context, context.l10n.personUpdated);
+        _close(PersonModalResult.declined);
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-        );
-      }
+      if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailed);
     } finally {
       reasonController.dispose();
     }
@@ -1401,22 +1543,14 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     action?.call();
   }
 
+  /// Ionic transfer modal for this person (target instance + target group).
+  /// A transfer (not a copy) closes the person page.
   Future<void> _showTransferSheet({bool copy = false}) async {
-    final result = await showHandoverSheet(
-      context,
-      selectedPlayers: [widget.person],
-      initialStayInInstance: copy,
-    );
-
-    if (result == true && mounted) {
-      ref.invalidate(personProvider(widget.personId));
-      ref.invalidate(realtimePlayersProvider);
-      // Ionic transferPerson: a transfer (not a copy) closes the person page.
-      // The sheet can switch between copy and transfer, so look at the
-      // result: a transferred person is archived (`left` set).
-      final updated = await ref.read(personProvider(widget.personId).future);
-      if (mounted && (updated == null || updated.left != null)) context.pop();
-    }
+    final done = await showPersonTransferSheet(context, widget.person, copy: copy);
+    if (!done || !mounted) return;
+    ref.invalidate(personProvider(widget.personId));
+    ref.invalidate(realtimePlayersProvider);
+    if (!copy) _closePage();
   }
 
   /// Ionic person.page activate(): "Person reaktivieren" for archived
@@ -1448,7 +1582,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (widget.person.id != null) ref.invalidate(personProvider(widget.person.id!));
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.personReactivated);
-      context.pop();
+      _close(PersonModalResult.activated);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -1483,7 +1617,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           );
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personRemoved);
-        context.pop();
+        _close();
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
@@ -1534,17 +1668,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final confirmed = await showAppDialog<bool>(
       context: context,
       builder: (context) => AppAlertDialog(
-        title: Text(context.l10n.personFlutterUnlinkQuestion),
-        content: Text(context.l10n.personFlutterUnlinkMessage(widget.person.fullName)),
+        // Ionic removeUserFromTenant alert.
+        title: Text(context.l10n.personRemoveAccount),
+        content: Text(context.l10n.personRemoveAccountMessage),
         actions: [
           TextButton(
             onPressed: () => Navigator.pop(context, false),
             child: Text(context.l10n.commonCancel),
           ),
-          FilledButton(
-            style: FilledButton.styleFrom(backgroundColor: AppColors.danger),
+          TextButton(
             onPressed: () => Navigator.pop(context, true),
-            child: Text(context.l10n.personFlutterUnlink),
+            child: Text(context.l10n.commonYes),
           ),
         ],
       ),
@@ -1578,23 +1712,28 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(personProvider(widget.personId));
 
       if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterUnlinked),
-            backgroundColor: AppColors.success,
-          ),
-        );
+        ToastHelper.showSuccess(context, context.l10n.personUserRemoved);
+        _closePage();
       }
     } catch (e) {
-      if (mounted) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
-        );
-      }
+      if (mounted) ToastHelper.showError(context, context.l10n.personUserRemoveFailed);
     }
   }
 
+  /// Synchronous lock: a second tap while the account is created is ignored.
+  bool _creatingAccount = false;
+
   Future<void> _createAccount(Person person, {bool confirm = true}) async {
+    if (_creatingAccount) return;
+    _creatingAccount = true;
+    try {
+      await _createAccountInner(person, confirm: confirm);
+    } finally {
+      _creatingAccount = false;
+    }
+  }
+
+  Future<void> _createAccountInner(Person person, {bool confirm = true}) async {
     final currentRole = ref.read(currentRoleProvider);
     if (!currentRole.isConductor) {
       if (mounted) {
@@ -1650,6 +1789,16 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
       ref.invalidate(personProvider(widget.personId));
 
+      // Ionic register() (key FAB): no confirmation, dismiss the page,
+      // toast "Account erstellt".
+      if (!confirm) {
+        if (mounted) {
+          ToastHelper.showSuccess(context, context.l10n.personAccountCreated);
+          _closePage();
+        }
+        return;
+      }
+
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1691,6 +1840,23 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   @override
   Widget build(BuildContext context) {
+    // Organisation fields can arrive after initState: give them their
+    // defaults too, without touching edited values (sol review).
+    ref.listen<List<ExtraField>>(personListExtraFieldsProvider, (_, __) {
+      final filled = _withExtraDefaults(_additionalFieldValues);
+      final added = filled.keys
+          .where((k) =>
+              !_additionalFieldValues.containsKey(k) &&
+              !_changedFields.contains('additionalFields.$k'))
+          .toList();
+      if (added.isEmpty) return;
+      setState(() {
+        for (final k in added) {
+          _additionalFieldValues[k] = filled[k];
+          _initialAdditionalFields = {..._initialAdditionalFields, k: filled[k]};
+        }
+      });
+    });
     final person = _draft;
     final statsAsync = ref.watch(personAttendanceStatsProvider(widget.personId));
     final historyAsync = ref.watch(personHistoryProvider(widget.personId));
@@ -1730,18 +1896,21 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     // account when e-mail but no account) / "..." more menu.
     final (VoidCallback?, IconData, String?)? fabAction = hasLeft
         ? (isAdmin ? (_activatePerson, Icons.undo, context.l10n.personReactivatePerson) : null)
-        : _hasChanges
+        : canEdit && widget.person.pending
+            ? (_showPendingActions, Icons.more_horiz, null)
+            : _hasChanges
             ? (_isSaving ? null : _saveChanges, Icons.save_outlined, context.l10n.commonSave)
             : !canEdit
                 ? null
-                : widget.person.pending
-                    ? (_showPendingActions, Icons.more_horiz, null)
                     : person.appId == null && (person.email?.isNotEmpty ?? false)
-                        ? (() => _createAccount(person), Icons.key_outlined, context.l10n.personFlutterCreateAccount)
+                        ? (() => _createAccount(person, confirm: false), Icons.key_outlined, context.l10n.personFlutterCreateAccount)
                         : (_showMoreActions, Icons.more_horiz, context.l10n.personFlutterMore);
+    _fabCallback = fabAction?.$1;
+    final VoidCallback? onFab = fabAction?.$1 == null ? null : _onFabPressed;
 
     return PopScope(
-      canPop: !_hasChanges,
+      // Ionic approve mode does not track changes (no discard prompt).
+      canPop: !_hasChanges || widget.person.pending,
       onPopInvokedWithResult: (didPop, result) async {
         if (didPop) return;
         final shouldDiscard = await showAppDialog<bool>(
@@ -1776,17 +1945,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           foregroundColor: person.isCritical ? Colors.white : null,
           actions: [
             if (rd != null && fabAction != null)
-              _hasChanges
+              _hasChanges && !widget.person.pending
                   ? TextButton(
                       key: const Key('person_detail_save'),
                       style: person.isCritical ? TextButton.styleFrom(foregroundColor: Colors.white) : null,
-                      onPressed: fabAction.$1,
+                      onPressed: onFab,
                       child: Text(context.l10n.commonSave),
                     )
                   : IconButton(
                       tooltip: fabAction.$3 ?? context.l10n.personFlutterMore,
                       color: person.isCritical ? Colors.white : null,
-                      onPressed: fabAction.$1,
+                      onPressed: onFab,
                       icon: Icon(fabAction.$2),
                     ),
             IconButton(
@@ -1832,12 +2001,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onMerged: () {
                   ref.invalidate(realtimePlayersProvider);
                   ref.invalidate(pendingPlayersProvider);
-                  if (mounted) context.pop();
+                  if (mounted) _close();
                 },
               ),
 
             // Ionic: "Notizen" textarea (existingPlayer && isAdmin)
-            if (canEdit) ...ionBetaGroup(context, [allgemein(AllgemeinPart.notes, 'notes')], inset: false),
+            // (archived persons: shown disabled for admins)
+            if (isAdmin) ...ionBetaGroup(context, [allgemein(AllgemeinPart.notes, 'notes')], inset: false),
 
             // Problem Person Accordion (Ionic: !readOnly && isCritical)
             if (canEdit)
@@ -1846,10 +2016,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
               isExpanded: _showProblemfall,
               onToggle: () => setState(() => _showProblemfall = !_showProblemfall),
               problemSolved: _problemSolved,
-              onProblemSolvedChanged: (v) => setState(() => _problemSolved = v),
+              // Ionic: the toggle marks a change, solved with the save.
+              onProblemSolvedChanged: (v) => setState(() {
+                _problemSolved = v;
+                _hasChanges = v || _changedFields.isNotEmpty;
+              }),
               problemNotes: _problemNotes,
               onProblemNotesChanged: (v) => _problemNotes = v,
-              onResolveProblem: _resolveProblem,
             ),
 
             // Late Warning Card (Ionic: !readOnly && isAdmin && lateCount >=
@@ -1942,7 +2115,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         floatingActionButton: rd != null || fabAction == null
             ? null
             : TabBarFab.wrap(IonFabButton(
-                onPressed: fabAction.$1,
+                onPressed: onFab,
                 tooltip: fabAction.$3,
                 icon: fabAction.$2,
               )),

@@ -1,11 +1,9 @@
 import 'package:flutter/material.dart';
 
 import '../../../../../core/constants/app_constants.dart';
-import '../../../../../core/theme/app_colors.dart';
 import '../../../../../data/models/person/person.dart';
 import '../../../../../l10n/l10n.dart';
 import '../ion/ion_widgets.dart';
-import '../../../../../shared/widgets/adaptive/ion_button_label.dart';
 
 /// Accordion section for problem person management.
 class ProblemfallAccordion extends StatelessWidget {
@@ -18,7 +16,6 @@ class ProblemfallAccordion extends StatelessWidget {
     required this.onProblemSolvedChanged,
     required this.problemNotes,
     required this.onProblemNotesChanged,
-    required this.onResolveProblem,
   });
 
   final Person person;
@@ -28,7 +25,6 @@ class ProblemfallAccordion extends StatelessWidget {
   final ValueChanged<bool> onProblemSolvedChanged;
   final String problemNotes;
   final ValueChanged<String> onProblemNotesChanged;
-  final VoidCallback onResolveProblem;
 
   @override
   Widget build(BuildContext context) {
@@ -50,74 +46,29 @@ class ProblemfallAccordion extends StatelessWidget {
     );
   }
 
+  /// Ionic person.page: toggle "Mit Person gesprochen" and, when on, the
+  /// "Bemerkungen" textarea. The case is solved with the save (FAB).
   Widget _buildContent(BuildContext context) {
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        // Reason display
-        if (person.criticalReason != null && person.criticalReason!.isNotEmpty) ...[
-          Container(
-            width: double.infinity,
-            padding: const EdgeInsets.all(AppDimensions.paddingM),
-            decoration: BoxDecoration(
-              color: AppColors.danger.withValues(alpha: 0.1),
-              borderRadius: BorderRadius.circular(AppDimensions.borderRadiusS),
-            ),
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  context.l10n.excuseReason,
-                  style: const TextStyle(
-                    fontSize: 12,
-                    fontWeight: FontWeight.w600,
-                    color: AppColors.danger,
-                  ),
-                ),
-                const SizedBox(height: AppDimensions.paddingXS),
-                Text(
-                  person.criticalReason!,
-                  style: const TextStyle(color: AppColors.dark),
-                ),
-              ],
-            ),
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-        ],
-
-        // Problem solved toggle
         SwitchListTile.adaptive(
           contentPadding: EdgeInsets.zero,
           title: Text(context.l10n.personTalkedTo),
-          subtitle: Text(context.l10n.personFlutterTalkedToHint),
           value: problemSolved,
           onChanged: onProblemSolvedChanged,
-          activeColor: AppColors.success,
         ),
-
-        // Notes and resolve button (only when solved)
         if (problemSolved) ...[
-          const SizedBox(height: AppDimensions.paddingM),
+          const SizedBox(height: AppDimensions.paddingS),
           TextField(
             decoration: InputDecoration(
               labelText: context.l10n.personRemarks,
-              hintText: context.l10n.personFlutterRemarksHint,
               border: const OutlineInputBorder(),
             ),
-            maxLines: 3,
+            textCapitalization: TextCapitalization.sentences,
+            minLines: 2,
+            maxLines: null,
             onChanged: onProblemNotesChanged,
-          ),
-          const SizedBox(height: AppDimensions.paddingM),
-          SizedBox(
-            width: double.infinity,
-            child: FilledButton.icon(
-              onPressed: onResolveProblem,
-              icon: const Icon(Icons.check_circle),
-              label: IonButtonLabel(context.l10n.personResetTalked),
-              style: FilledButton.styleFrom(
-                backgroundColor: AppColors.success,
-              ),
-            ),
           ),
         ],
       ],

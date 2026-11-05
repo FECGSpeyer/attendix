@@ -1,0 +1,15 @@
+{
+ "batch": "zz-fixed-personen-instanzen",
+ "ionic": "9f9b82af",
+ "afterRound": 4,
+ "flutter": "8004a44",
+ "items": {
+  "people/person/person.page#text-34177970": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart"
+   ],
+   "n": "behoben in #326"
+  }
+ }
+}

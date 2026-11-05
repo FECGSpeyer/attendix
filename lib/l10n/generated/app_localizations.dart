@@ -212,12 +212,6 @@ abstract class AppLocalizations {
   /// **'Auswertung'**
   String get adminEvaluation;
 
-  /// admin.flutter.addFailed
-  ///
-  /// In de, this message translates to:
-  /// **'Fehler beim Hinzufügen'**
-  String get adminFlutterAddFailed;
-
   /// admin.gb
   ///
   /// In de, this message translates to:
@@ -4952,14 +4946,8 @@ abstract class AppLocalizations {
   /// core.flutter.rule.sinceSeasonStart
   ///
   /// In de, this message translates to:
-  /// **'seit Saisonstart'**
+  /// **'seit Saisonbeginn'**
   String get coreFlutterRuleSinceSeasonStart;
-
-  /// core.flutter.rule.statusN
-  ///
-  /// In de, this message translates to:
-  /// **'Status {n}'**
-  String coreFlutterRuleStatusN(Object n);
 
   /// core.flutter.schoolHolidays
   ///
@@ -6635,6 +6623,12 @@ abstract class AppLocalizations {
   /// **'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?'**
   String get extraFieldsFlutterLeaveMessage;
 
+  /// extraFields.flutter.updatingPersons
+  ///
+  /// In de, this message translates to:
+  /// **'Personen werden aktualisiert...'**
+  String get extraFieldsFlutterUpdatingPersons;
+
   /// extraFields.forPersons
   ///
   /// In de, this message translates to:
@@ -7733,18 +7727,6 @@ abstract class AppLocalizations {
   /// **'ODER'**
   String get generalSettingsFlutterOrShort;
 
-  /// generalSettings.flutter.practiceEnd
-  ///
-  /// In de, this message translates to:
-  /// **'Probenende'**
-  String get generalSettingsFlutterPracticeEnd;
-
-  /// generalSettings.flutter.practiceStart
-  ///
-  /// In de, this message translates to:
-  /// **'Probenbeginn'**
-  String get generalSettingsFlutterPracticeStart;
-
   /// generalSettings.flutter.ruleAdded
   ///
   /// In de, this message translates to:
@@ -7774,12 +7756,6 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Regel aktualisiert'**
   String get generalSettingsFlutterRuleUpdated;
-
-  /// generalSettings.flutter.statusCritical
-  ///
-  /// In de, this message translates to:
-  /// **'Status (zählt als kritisch)'**
-  String get generalSettingsFlutterStatusCritical;
 
   /// generalSettings.foreignInfo
   ///
@@ -10234,6 +10210,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Änderungen übernehmen'**
   String get orgFieldsApplyChanges;
+
+  /// orgFields.flutter.clearDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Standardwert entfernen'**
+  String get orgFieldsFlutterClearDefault;
 
   /// orgFields.flutter.firstOptionDefault
   ///
