@@ -106,7 +106,7 @@ final accountSwitchBootstrapProvider = Provider<void>((ref) {
 
 /// True when [state] is an account change made in another browser tab
 /// while this tab ran as [previousUserId]. A password recovery is left to
-/// its own flow (the auth link listener opens the new-password page).
+/// its own flow (the auth link listener shows the alert "Neues Passwort").
 bool followsOtherTab(String? previousUserId, AuthState state) {
   final userId = state.session?.user.id;
   return state.fromBroadcast &&
