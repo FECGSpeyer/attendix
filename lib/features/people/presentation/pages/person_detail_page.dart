@@ -326,6 +326,23 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
+  /// Action of the FAB as of the last build.
+  VoidCallback? _fabCallback;
+
+  /// A typed date is applied on focus loss, and tapping the FAB keeps the
+  /// focus: commit it first, then run the action the FAB shows afterwards
+  /// (save once the date counts as a change) (sol review).
+  Future<void> _onFabPressed() async {
+    if (FocusManager.instance.primaryFocus?.hasFocus ?? false) {
+      FocusManager.instance.primaryFocus?.unfocus();
+      await Future<void>.delayed(Duration.zero);
+      if (!mounted) return;
+      await WidgetsBinding.instance.endOfFrame;
+      if (!mounted) return;
+    }
+    _fabCallback?.call();
+  }
+
   /// Draft = [next] plus the fields changed on this page (sol review).
   void _rebaseDraft(Person next) {
     bool keep(String f) => _changedFields.contains(f);
@@ -1777,7 +1794,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     ref.listen<List<ExtraField>>(personListExtraFieldsProvider, (_, __) {
       final filled = _withExtraDefaults(_additionalFieldValues);
       final added = filled.keys
-          .where((k) => _additionalFieldValues[k] == null)
+          .where((k) =>
+              !_additionalFieldValues.containsKey(k) &&
+              !_changedFields.contains('additionalFields.$k'))
           .toList();
       if (added.isEmpty) return;
       setState(() {
@@ -1835,6 +1854,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                     : person.appId == null && (person.email?.isNotEmpty ?? false)
                         ? (() => _createAccount(person, confirm: false), Icons.key_outlined, context.l10n.personFlutterCreateAccount)
                         : (_showMoreActions, Icons.more_horiz, context.l10n.personFlutterMore);
+    _fabCallback = fabAction?.$1;
+    final VoidCallback? onFab = fabAction?.$1 == null ? null : _onFabPressed;
 
     return PopScope(
       // Ionic approve mode does not track changes (no discard prompt).
@@ -1877,13 +1898,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                   ? TextButton(
                       key: const Key('person_detail_save'),
                       style: person.isCritical ? TextButton.styleFrom(foregroundColor: Colors.white) : null,
-                      onPressed: fabAction.$1,
+                      onPressed: onFab,
                       child: Text(context.l10n.commonSave),
                     )
                   : IconButton(
                       tooltip: fabAction.$3 ?? context.l10n.personFlutterMore,
                       color: person.isCritical ? Colors.white : null,
-                      onPressed: fabAction.$1,
+                      onPressed: onFab,
                       icon: Icon(fabAction.$2),
                     ),
             IconButton(
@@ -2043,7 +2064,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         floatingActionButton: rd != null || fabAction == null
             ? null
             : TabBarFab.wrap(IonFabButton(
-                onPressed: fabAction.$1,
+                onPressed: onFab,
                 tooltip: fabAction.$3,
                 icon: fabAction.$2,
               )),
