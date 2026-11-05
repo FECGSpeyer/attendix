@@ -445,13 +445,11 @@ class _IosSelectAlert<T> extends StatefulWidget {
     required this.header,
     required this.options,
     required this.value,
-    this.confirmText,
   });
 
   final String? header;
   final List<AppSelectOption<T>> options;
   final T? value;
-  final String? confirmText;
 
   @override
   State<_IosSelectAlert<T>> createState() => _IosSelectAlertState<T>();
@@ -492,94 +490,7 @@ class _IosSelectAlertState<T> extends State<_IosSelectAlert<T>> {
         ),
         IosAlertButton(
           onPressed: () => Navigator.of(context).pop(_selected),
-          child: Text(widget.confirmText ?? context.l10n.commonOk),
-        ),
-      ],
-    );
-  }
-}
-
-/// `ion-alert` with `type: 'radio'` inputs and the buttons „Abbrechen“ /
-/// [confirmText] (default „OK“): returns the checked option on confirm, null
-/// on cancel. iOS: the iOS select alert; elsewhere a Material dialog with
-/// radio rows (Ionic md alert).
-Future<AppSelection<T>?> showAppRadioAlert<T>({
-  required BuildContext context,
-  required List<AppSelectOption<T>> options,
-  required T? value,
-  String? header,
-  String? confirmText,
-}) {
-  if (useIosLook(context)) {
-    return showAppDialog<AppSelection<T>>(
-      context: context,
-      builder: (_) => _IosSelectAlert<T>(
-          header: header, options: options, value: value, confirmText: confirmText),
-    );
-  }
-  return showAppDialog<AppSelection<T>>(
-    context: context,
-    builder: (_) => _MdRadioAlert<T>(
-        header: header, options: options, value: value, confirmText: confirmText),
-  );
-}
-
-class _MdRadioAlert<T> extends StatefulWidget {
-  const _MdRadioAlert({
-    required this.header,
-    required this.options,
-    required this.value,
-    this.confirmText,
-  });
-
-  final String? header;
-  final List<AppSelectOption<T>> options;
-  final T? value;
-  final String? confirmText;
-
-  @override
-  State<_MdRadioAlert<T>> createState() => _MdRadioAlertState<T>();
-}
-
-class _MdRadioAlertState<T> extends State<_MdRadioAlert<T>> {
-  late AppSelection<T>? _selected = widget.options
-          .any((o) => o.value == widget.value)
-      ? AppSelection<T>(widget.value as T)
-      : null;
-
-  @override
-  Widget build(BuildContext context) {
-    final primary = Theme.of(context).colorScheme.primary;
-    return AlertDialog(
-      title: widget.header == null ? null : Text(widget.header!),
-      contentPadding: const EdgeInsets.symmetric(vertical: 8),
-      content: SingleChildScrollView(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            for (final o in widget.options)
-              ListTile(
-                enabled: o.enabled,
-                leading: Icon(
-                  _selected != null && _selected!.value == o.value
-                      ? Icons.radio_button_checked
-                      : Icons.radio_button_unchecked,
-                  color: _selected != null && _selected!.value == o.value ? primary : null,
-                ),
-                title: o.child ?? Text(o.label!),
-                onTap: () => setState(() => _selected = AppSelection<T>(o.value)),
-              ),
-          ],
-        ),
-      ),
-      actions: [
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(),
-          child: Text(context.l10n.commonCancel),
-        ),
-        TextButton(
-          onPressed: () => Navigator.of(context).pop(_selected),
-          child: Text(widget.confirmText ?? context.l10n.commonOk),
+          child: Text(context.l10n.commonOk),
         ),
       ],
     );

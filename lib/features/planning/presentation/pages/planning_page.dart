@@ -1381,10 +1381,10 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
           final options = PlanUtils.dayOptions(current);
           // Ionic: radio alert „Tag zuordnen“ with Abbrechen / Speichern.
           final picked = await showAppRadioAlert<int>(
-            context: context,
-            header: context.l10n.planningAssignDay,
-            options: [for (final o in options) AppSelectOption(value: o.day, label: o.label)],
-            value: list[index].day,
+            context,
+            title: context.l10n.planningAssignDay,
+            options: [for (final o in options) (o.day, o.label)],
+            initialValue: list[index].day,
             confirmText: context.l10n.commonSave,
           );
           final day = picked?.value;
