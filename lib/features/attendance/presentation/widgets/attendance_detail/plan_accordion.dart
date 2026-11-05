@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-import '../../../../../core/providers/attendance_type_providers.dart';
 import '../../../../../core/providers/group_providers.dart';
 import '../../../../../core/providers/player_providers.dart' show missingGroupsPlayerCountsProvider;
 import '../../../../../core/providers/plan_providers.dart';
