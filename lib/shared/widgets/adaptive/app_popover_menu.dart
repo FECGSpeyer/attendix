@@ -26,7 +26,20 @@ class AppPopoverMenuItem<T> {
     this.submenu = false,
     this.submenuItems,
     this.destructive = false,
+    this.header = false,
   });
+
+  /// Section header (Ionic `ion-item-divider` + `<small><b>` label): a
+  /// divider line and a small bold, non-tappable label. [value] is never
+  /// returned.
+  const AppPopoverMenuItem.header(this.label, this.value)
+    : icon = null,
+      subtitle = null,
+      color = null,
+      submenu = false,
+      submenuItems = null,
+      destructive = false,
+      header = true;
 
   /// Returned by [showAppPopoverMenu] when the entry is tapped (entries with
   /// [submenuItems] open their nested popover instead).
@@ -54,6 +67,9 @@ class AppPopoverMenuItem<T> {
 
   /// Red label and icon.
   final bool destructive;
+
+  /// See [AppPopoverMenuItem.header].
+  final bool header;
 
   bool get _hasChevron => submenu || submenuItems != null;
 }
@@ -739,6 +755,9 @@ class _PopoverLayerState<T> extends State<_PopoverLayer<T>> {
                     : () => setState(() => _openIndex = null),
             children: [
               for (var i = 0; i < _items.length; i++)
+                if (_items[i].header)
+                  _PopoverHeader(ios: ios, label: _items[i].label)
+                else
                 Builder(
                   builder:
                       (rowContext) => _PopoverRow(
@@ -971,6 +990,30 @@ class _PopoverCard extends StatelessWidget {
       borderRadius: BorderRadius.circular(4),
       clipBehavior: Clip.antiAlias,
       child: list,
+    );
+  }
+}
+
+class _PopoverHeader extends StatelessWidget {
+  const _PopoverHeader({required this.ios, required this.label});
+
+  final bool ios;
+  final String label;
+
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        Divider(height: 1, color: Theme.of(context).dividerColor),
+        Padding(
+          padding: const EdgeInsets.fromLTRB(16, 10, 16, 6),
+          child: Text(
+            label,
+            style: const TextStyle(fontSize: 13, fontWeight: FontWeight.bold),
+          ),
+        ),
+      ],
     );
   }
 }
