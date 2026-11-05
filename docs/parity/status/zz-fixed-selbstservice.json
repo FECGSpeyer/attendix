@@ -1,5 +1,6 @@
 {
  "batch": "zz-fixed-selbstservice",
+ "afterRound": 3,
  "items": {
   "selfService/overview/overview.page#actionsheet-1394033e": {
    "s": "ok",
