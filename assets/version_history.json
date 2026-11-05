@@ -1,6 +1,14 @@
 {
   "versions": [
     {
+      "version": "0.41.1",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Die Suche in der Hilfe findet Artikel und Begriffe wieder wie in der alten App, auch bei Tippfehlern und mehreren Wörtern, in derselben Reihenfolge",
+        "🐛 Beim Hochladen von Noten erkennt Attendix weitere Instrument-Namen und Kürzel, z. B. Skripka, Litavry, Ф-но, Blockflöte, Akkordeon, Becken, Triangel und kleine/große Trommel"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [
