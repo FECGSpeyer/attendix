@@ -131,7 +131,12 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
         await copyPlanLink(context, url);
       } else if (action == 'revoke') {
         final ok = await notifier.revokePublicPlanKey();
-        if (mounted && ok) ToastHelper.showSuccess(context, context.l10n.plansRevokeLink);
+        if (!mounted) return;
+        // Ionic OrganisationService.revokePublicPlanKey: danger toast on error,
+        // otherwise the admin doesn't learn that the link is still active.
+        ok
+            ? ToastHelper.showSuccess(context, context.l10n.plansRevokeLink)
+            : ToastHelper.showError(context, context.l10n.svcRevokePublicLinkFailed);
       }
       return;
     }
