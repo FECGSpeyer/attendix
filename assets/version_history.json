@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.20",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personen-Import: Zusatzfelder der Organisation werden wie bisher angeboten und stehen in der Vorlage, die Vorlage öffnet in der App direkt bzw. wird im Web geteilt oder heruntergeladen"
+      ]
+    },
+    {
       "version": "0.41.19",
       "date": "5.11.2026",
       "changes": [
