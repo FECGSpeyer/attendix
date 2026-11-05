@@ -347,7 +347,7 @@ class DutyRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('person_id', personId)
           .eq('tenant_id', currentTenantId)
-          .order('created_at');
+          .order('created_at', ascending: true);
       return (rows as List)
           .map((r) => PersonUnavailability.fromJson(Map<String, dynamic>.from(r as Map)))
           .toList();

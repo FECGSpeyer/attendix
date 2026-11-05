@@ -25,7 +25,7 @@ void main() {
       final src = File('lib/data/repositories/shared_person_fields.dart')
           .readAsStringSync();
       expect(src, contains('fetchAllPages'));
-      expect(src, contains(".order('id')"));
+      expect(src, contains(".order('id', ascending: true)"));
       expect(src, contains('.range(from, to)'));
     });
 

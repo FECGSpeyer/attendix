@@ -121,8 +121,8 @@ void main() {
     test('person_attendances paging has a stable order', () {
       final source = read('lib/data/repositories/attendance_repository.dart');
       final q = body(source, 'getPersonAttendancesForAttendances(', 1500);
-      expect(q.indexOf(".order('id')"), lessThan(q.indexOf('.range(')));
-      expect(q.indexOf(".order('id')"), greaterThan(-1));
+      expect(q.indexOf(".order('id', ascending: true)"), lessThan(q.indexOf('.range(')));
+      expect(q.indexOf(".order('id', ascending: true)"), greaterThan(-1));
     });
   });
 

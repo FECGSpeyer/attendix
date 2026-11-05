@@ -132,7 +132,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', currentTenantId)
           .gte('date', startOfDay.toIso8601String())
-          .order('date');
+          .order('date', ascending: true);
 
       final response = limit != null ? await ordered.limit(limit) : await ordered;
 
@@ -365,7 +365,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .inFilter('status', [2, 4, 5])
           .eq('attendance.tenantId', currentTenantId)
           .gte('attendance.date', from)
-          .order('id') // stable paging
+          .order('id', ascending: true) // stable paging
           .range(rangeFrom, rangeTo) as List);
 
       return response
@@ -818,7 +818,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
           .eq('tenantId', currentTenantId)
           .gte('date', startOfDay.toIso8601String())
           .lt('date', endOfDay.toIso8601String())
-          .order('date');
+          .order('date', ascending: true);
 
       return (response as List)
           .map((e) => Attendance.fromJson(e as Map<String, dynamic>))
@@ -849,7 +849,7 @@ class AttendanceRepository extends BaseRepository with TenantAwareRepository {
                 'attendance:attendance_id!inner(tenantId)')
             .inFilter('attendance_id', chunk)
             .eq('attendance.tenantId', currentTenantId)
-            .order('id') // stable paging
+            .order('id', ascending: true) // stable paging
             .range(from, to) as List),
       );
       return [

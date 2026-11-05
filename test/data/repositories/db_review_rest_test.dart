@@ -207,7 +207,7 @@ void main() {
       // SOL_FIX3 moved the paged load into a helper used by mergeChurches.
       final q = source.substring(source.indexOf('Future<int> mergeChurches'));
       expect(q, contains('fetchAllPages'));
-      expect(q, contains(".order('id')"));
+      expect(q, contains(".order('id', ascending: true)"));
     });
 
     test('extra fields', () {

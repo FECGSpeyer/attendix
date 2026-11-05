@@ -28,7 +28,14 @@ Future<void> printGroupPdfs({
   }
   // Ionic loads the people for the print (not a session cache).
   ref.invalidate(playerCountByInstrumentProvider);
-  final counts = await ref.read(playerCountByInstrumentProvider.future);
+  final Map<int, int> counts;
+  try {
+    counts = await ref.read(playerCountByInstrumentProvider.future);
+  } catch (_) {
+    // Ionic db.getPlayers: danger toast, then the print stops.
+    if (context.mounted) ToastHelper.showError(context, context.l10n.dbLoadPeopleFailed);
+    return;
+  }
   if (!context.mounted) return;
   final withPlayers =
       groupPdfs.where((f) => (counts[f.instrumentId] ?? 0) > 0).toList();

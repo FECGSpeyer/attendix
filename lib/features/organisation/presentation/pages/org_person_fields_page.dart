@@ -363,7 +363,10 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
       'boolean' => _boolDefault,
       'date' => _defaultValue,
       // Unchanged input keeps the bound value (e.g. the number 0).
-      _ => _default.text == _defaultText(_defaultValue) ? _defaultValue : _default.text,
+      _ when _default.text == _defaultText(_defaultValue) => _defaultValue,
+      // Ionic ion-input type=number binds a number (empty → null).
+      'number' => num.tryParse(_default.text.trim()),
+      _ => _default.text,
     };
     Navigator.pop(
       context,
