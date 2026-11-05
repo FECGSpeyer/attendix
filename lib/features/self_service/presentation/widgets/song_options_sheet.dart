@@ -108,12 +108,18 @@ Future<void> showSongOptionsSheet(
   final allFiles = song.files ?? const <SongFile>[];
   final songTitle = song.fullNumber.isEmpty ? song.name : '${song.fullNumber}. ${song.name}';
 
-  if (!hasSongNotesForPlayer(song, playerInstrumentId, isChoir: isChoir)) {
+  // Ionic `if (instrumentId && !hasNotesForInstrument)`: without an
+  // instrument (Terminliste viewer) no warning.
+  if (playerInstrumentId != null && !hasSongNotesForPlayer(song, playerInstrumentId, isChoir: isChoir)) {
     ToastHelper.showError(context, l10n.signoutNoScoresForInstrument);
   }
 
-  // Files for the player's instrument (choir: plus "Chor (alle)" files)
-  var files = allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
+  // Files for the player's instrument (choir: plus "Chor (alle)" files).
+  // Ionic compares with `=== undefined`, so without an instrument no file
+  // matches (link, choir, recording and lyrics entries remain).
+  var files = playerInstrumentId == null
+      ? <SongFile>[]
+      : allFiles.where((f) => f.instrumentId == playerInstrumentId).toList();
   if (isChoir) {
     files = [...files, ...allFiles.where((f) => isChoirAllFile(instrumentId: f.instrumentId, note: f.note))];
     final seen = <String>{};

@@ -25,6 +25,8 @@ import '../../../../data/models/song/song.dart';
 import '../../../../data/repositories/plan_repository.dart';
 import '../../../../data/repositories/public_plan_repository.dart';
 import '../../data/shared_plan_save_chain.dart';
+import '../../../../core/services/pdf_branding.dart';
+import '../public_brandings.dart';
 import '../widgets/plan_export_actions.dart';
 import '../widgets/plan_field_dialogs.dart';
 import '../widgets/plan_fields_editor.dart';
@@ -47,19 +49,6 @@ class PublicPlanningTemplate {
   final String? startTime;
   final List<PlanField> fields;
 }
-
-/// Branding selectable on the public planning page (Ionic `PUBLIC_BRANDINGS`).
-class PublicBranding {
-  const PublicBranding(this.id, this.name);
-  final String id;
-  final String name;
-}
-
-const publicBrandings = [
-  PublicBranding('none', 'Kein Branding'),
-  PublicBranding('fecg-speyer', 'FECG Speyer'),
-  PublicBranding('fecg-schwegenheim', 'FECG Schwegenheim'),
-];
 
 PlanField _f(String id, String name, String time, [String? conductor, String? info]) =>
     PlanField(id: id, name: name, time: time, conductor: conductor, info: info);
@@ -739,9 +728,26 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
   String get _fileName =>
       '${_title}_${_date.day.toString().padLeft(2, '0')}_${_date.month.toString().padLeft(2, '0')}_${_date.year}';
 
+  /// Ionic `export()`: „Titel_Wochentag, TT.MM.JJJJ“ (+ `_2x`).
+  // "/" (dd/MM/yyyy languages) is not allowed in file names.
+  String get _pdfFileName => '${_title}_${PlanUtils.longDate(_date)}'.replaceAll('/', '.');
+
+  /// Ionic `exportImage()`: „Titel_JJJJ-MM-TT“.
+  String get _imageFileName =>
+      '${_title}_${_date.year}-${_date.month.toString().padLeft(2, '0')}-${_date.day.toString().padLeft(2, '0')}';
+
+  /// Ionic `buildBranding()`: the chosen public branding, never the
+  /// instance branding (none for „Kein Branding“).
+  Future<PdfBranding?> _branding() => publicPdfBranding(_brandingId);
+
   Future<void> _showExportOptions() async {
     if (!_validate()) return;
-    await showPlanExportSheet(context, ref, pages: _pages, fileName: _fileName);
+    await showPlanExportSheet(context, ref,
+        pages: _pages,
+        fileName: _fileName,
+        pdfFileName: _pdfFileName,
+        imageFileName: _imageFileName,
+        branding: _branding);
   }
 
   Future<void> _shareCurrentPlan() async {
@@ -752,6 +758,9 @@ class _PublicPlanningPageState extends ConsumerState<PublicPlanningPage> {
       title: context.l10n.plansShareExport,
       pages: _pages,
       fileName: _fileName,
+      pdfFileName: _pdfFileName,
+      imageFileName: _imageFileName,
+      branding: _branding,
       extraActions: [
         PlanSheetAction('read', context.l10n.planningReadOnlyLink, icon: Icons.link),
         PlanSheetAction('edit', context.l10n.planningEditLink, icon: Icons.edit_note),
