@@ -1,14 +1,26 @@
 {
   "versions": [
     {
-      "version": "0.39.8",
-      "date": "4.11.2026",
+      "version": "0.40.1",
+      "date": "5.11.2026",
       "changes": [
         "🐛 Personenliste: Zusatzfelder ohne Wert zeigen, filtern und zählen (Gemeinde-Übersicht) mit ihrem Standardwert wie bisher; Zahl 0 erscheint nicht mehr als Badge",
         "🐛 Personenliste: Ansicht „Lehrer“ zeigt wieder den Namen des Lehrers, Prozent-Badge auch bei 0 %",
         "🐛 Personenliste: Sortierung nach Gruppe und Nachname mit Umlauten wie bisher, Reihenfolge speichern ändert nur verschobene Gruppen",
         "🐛 Personenliste: Zusatzfeld-Filter mit Auswahl und „Filtern“/„Abbrechen“",
         "🐛 Massenbearbeitung und Mitglieder-Filter: Startwerte und Personen ohne Wert wie bisher"
+      ]
+    },
+    {
+      "version": "0.40.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Werke-Liste neu: „Als Nächstes“ zeigt die Werke der nächsten Termine, Mitglieder öffnen dort ihre Stimmen mit „Meine Noten öffnen“ als ein PDF",
+        "✨ Beta: Jedes Werk mit einer Statuszeile (deine Stimme, Aufnahme, fehlende Noten); die Leitung sieht, wo noch Noten fehlen",
+        "✨ Beta: „Sortieren & Filtern“ mit Nummer, Titel, Zuletzt gespielt und Am längsten nicht gespielt, dazu Nur-zeigen-Filter",
+        "✨ Beta: „+“ mit Neues Werk, Werkliste importieren und Aus anderer Gruppe übernehmen; „Neues Werk“ schlägt die nächste freie Nummer vor und fragt keine Besetzung ab",
+        "✨ Beta: „Meine Mappe“ (Leitung: „Mappen“) zeigt die Noten einer Stimme für die nächsten Termine oder alle Werke, auch als ein PDF zum Drucken",
+        "🐛 Beta: Im Chor gelten „Chor (alle)“-Noten als eigene Stimme, wenn es keine Datei für die Stimme gibt (Werk-Seite, Werke-Liste, Meine Noten)"
       ]
     },
     {
