@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.11",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Archivierte/ausstehende Personen und neue Instanz öffnen wie in Ionic als Karte"
+      ]
+    },
+    {
       "version": "0.41.10",
       "date": "5.11.2026",
       "changes": [
