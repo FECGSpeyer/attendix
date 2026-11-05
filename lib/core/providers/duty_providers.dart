@@ -303,8 +303,8 @@ class DutyNotifier extends Notifier<AsyncValue<void>> {
     return ok;
   }
 
-  /// Number of adjusted Termine, null when the update failed (Ionic toast
-  /// 'Fehler beim Übernehmen in geplante Termine').
+  /// Number of adjusted Termine, or null when saving failed (Ionic: red
+  /// toast "Fehler beim Übernehmen in geplante Termine", no success toast).
   Future<int?> applyUnavailabilityToFuture(PersonUnavailability rule) async {
     // P10_SELF_PLAN: Ionic UnavailabilityModal passes its visible types.
     final types = (ref.read(attendanceTypesProvider).valueOrNull ?? const <AttendanceType>[])

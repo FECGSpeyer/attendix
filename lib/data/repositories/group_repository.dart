@@ -199,7 +199,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .from('player')
           .select('id')
           .eq('tenantId', currentTenantId)
-          .eq('instrument', groupId);
+          .eq('instrument', groupId)
+          // Ionic getPlayers(): pending registrations are not counted
+          .eq('pending', false);
       if (!includeArchived) {
         query = query.isFilter('left', null); // Only active players
       }
@@ -220,6 +222,9 @@ class GroupRepository extends BaseRepository with TenantAwareRepository {
           .select('instrument')
           .eq('tenantId', currentTenantId)
           .isFilter('left', null)
+          // Ionic instrument-list counts db.getPlayers() (left = null,
+          // pending = false): pending registrations are not counted.
+          .eq('pending', false)
           .not('instrument', 'is', null);
 
       final counts = <int, int>{};

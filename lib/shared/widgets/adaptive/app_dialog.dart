@@ -915,6 +915,70 @@ Future<bool> showAppConfirm(
   return result ?? false;
 }
 
+/// Result of [showAppRadioAlert]: [value] is the checked radio when the
+/// confirm button was tapped (null if none was checked).
+class AppRadioAlertResult<T> {
+  const AppRadioAlertResult(this.value);
+  final T? value;
+}
+
+/// ion-alert with `inputs` of type radio, "Abbrechen" (role cancel) and a
+/// confirm button. The choice only counts with the confirm button. Returns
+/// null when cancelled or dismissed.
+Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
+  BuildContext context, {
+  required String title,
+  String? subtitle,
+  required List<(T value, String label)> options,
+  T? initialValue,
+  String? confirmText,
+  String? cancelText,
+}) {
+  T? selected = initialValue;
+  return showAppDialog<AppRadioAlertResult<T>>(
+    context: context,
+    builder: (ctx) => StatefulBuilder(
+      builder: (ctx, setState) => AppAlertDialog(
+        title: Text(title),
+        content: SingleChildScrollView(
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              if (subtitle != null)
+                Padding(
+                  padding: const EdgeInsets.only(bottom: 8),
+                  child: Text(subtitle),
+                ),
+              for (final (value, label) in options)
+                RadioListTile<T>(
+                  contentPadding: EdgeInsets.zero,
+                  value: value,
+                  // ignore: deprecated_member_use
+                  groupValue: selected,
+                  title: Text(label),
+                  // ignore: deprecated_member_use
+                  onChanged: (v) => setState(() => selected = v),
+                ),
+            ],
+          ),
+        ),
+        actions: [
+          TextButton(
+            onPressed: () => Navigator.of(ctx).pop(),
+            child: Text(cancelText ?? ctx.l10n.commonCancel),
+          ),
+          TextButton(
+            onPressed: () =>
+                Navigator.of(ctx).pop(AppRadioAlertResult<T>(selected)),
+            child: Text(confirmText ?? ctx.l10n.commonOk),
+          ),
+        ],
+      ),
+    ),
+  );
+}
+
 /// ion-alert with one text input. Returns the entered text, or null when
 /// cancelled.
 Future<String?> showAppPrompt(
