@@ -138,13 +138,16 @@ nach Dateinamen. Dabei gilt:
 
 Ein Fix-PR trägt behobene Punkte in `status/zz-fixed-<bereich>.json` ein
 (Element-ID oder Befund-ID `x-…` mit `s: "ok"` und Verweis auf den PR in `n`).
-Pflichtfeld ist `"afterRound": N`, die letzte Prüfrunde vor dem Fix: Die
-Datei gilt nach Runde N (und deren Korrekturdateien), aber vor Runde N + 1;
-ein Urteil einer späteren Runde ersetzt den Fix also. Ohne `afterRound`
-bricht das Werkzeug ab.
+Pflichtfeld ist `"afterRound": N`, die letzte Prüfrunde, deren
+Flutter-Stand vor dem Fix lag (Runde 3: b218510, Runde 4: 8004a44; ein Fix,
+der nach 8004a44 gemergt wurde, trägt also 4): Die Datei gilt nach Runde N
+(und deren Korrekturdateien), aber vor Runde N + 1; ein Urteil einer späteren
+Runde ersetzt den Fix also. Ein zu kleines N lässt eine Runde, die den Punkt
+noch vor dem Fix gesehen hat, den Fix überschreiben. Ohne `afterRound` bricht
+das Werkzeug ab.
 
 ```json
-{ "batch": "zz-fixed-termine", "afterRound": 3, "ionic": "9f9b82af", "flutter": "<commit>",
+{ "batch": "zz-fixed-termine", "afterRound": 4, "ionic": "9f9b82af", "flutter": "<commit>",
   "items": { "<element-id>": { "s": "ok", "n": "PR #123" } } }
 ```
 

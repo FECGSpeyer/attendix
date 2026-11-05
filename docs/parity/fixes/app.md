@@ -1,13 +1,10 @@
 # Fix-Paket „app“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, c9dd1aa, 3bacc76, 8004a44 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `login/login.page` `x-8af7179780` **Teams-Verknüpfung: Wechsel zur Code-Anmeldung** [src/app/login/login.page.ts:90-117](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/login/login.page.ts#L90-L117) (2. Prüfung: bestätigt)
-  Real: Ionic ssoLink fängt den Fehler von authSvc.login ab (nur Fehler-Toast, z. B. „Ungültige Anmeldedaten“, keine Nachfrage). Flutter: ssoLink lässt LoginFailure bis _login durch → Toast plus Dialog „Anmeldung fehlgeschlagen“ mit „Code per E-Mail“ (bzw. bei unbestätigter E-Mail/unbekanntem Konto auch Bestätigungs-/Registrieren-Dialog); nach „Code per E-Mail“ ist der Code-Modus aktiv, das Segment bleibt im Verknüpfungsmodus ausgeblendet (kein Rückweg zu Passwort) und die Code-Anmeldung verknüpft das Microsoft-Konto nicht. Nur in Teams, daher mittel.
-  Flutter: lib/features/auth/presentation/pages/login_page.dart:196, lib/features/auth/presentation/pages/login_page.dart:211, lib/features/auth/presentation/pages/login_page.dart:412, lib/features/auth/presentation/pages/login_page.dart:724, lib/core/services/teams/teams_service.dart:181
 
 ## Flutter besser – Leon entscheidet: 45
 
