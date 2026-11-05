@@ -1,0 +1,64 @@
+{
+ "batch": "zz-fixed-querschnitt-runde3",
+ "afterRound": 3,
+ "items": {
+  "services/push/push.service#native-7521b3d9": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/push/push.service#alert-a499f987": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/push/push.service#native-9bb3502f": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/push/push.service#native-c30ca494": {
+   "s": "ok",
+   "f": [
+    "lib/core/services/push/push_service.dart",
+    "lib/core/providers/push_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/db.service#db-cc6767aa-2": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart",
+    "lib/core/providers/plan_providers.dart",
+    "lib/core/providers/attendance_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "planning/planning.page#x-5e1a396117": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/plan_repository.dart",
+    "lib/core/providers/plan_providers.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/db.service#db-6ed0d891": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/people/presentation/pages/people_list_page.dart",
+    "lib/features/self_service/presentation/widgets/self_service_absences.dart"
+   ],
+   "n": "behoben in #295"
+  }
+ }
+}

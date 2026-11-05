@@ -23,7 +23,11 @@
         "🐛 Personen- und Werk-Import liest wieder alte Excel-Dateien (.xls) und übernimmt bei Formeln den berechneten Wert",
         "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)",
         "🐛 Zusammenführen einer Registrierung mit einer vorhandenen Person vergibt wie bisher immer die Rolle Mitglied",
-        "🐛 Lehrerliste wie bisher ohne Löschen per Wischen"
+        "🐛 Lehrerliste wie bisher ohne Löschen per Wischen",
+        "🐛 Android 13 und neuer: Die Frage nach Push-Benachrichtigungen und die Systemabfrage erscheinen wieder, wenn die App noch nie gefragt hat",
+        "🐛 Wird die Frage nach Push-Benachrichtigungen ohne Knopf geschlossen, gilt das wie „Später“ und sie kommt nicht bei jedem Start wieder",
+        "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
+        "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis"
       ]
     },
     {
