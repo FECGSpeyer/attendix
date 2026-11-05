@@ -60,6 +60,22 @@ extension _PlanningBeta on _PlanningPageState {
         const SizedBox(height: 16),
         RdInfoCard(text: l10n.attendanceFlutterNotFound, icon: Icons.error_outline),
       ]);
+    } else if (att == null && _attendances.isNotEmpty) {
+      // Ionic: without an upcoming Termin none is selected; the Termin
+      // picker stays reachable (also for past Termine).
+      children.addAll([
+        const SizedBox(height: 16),
+        RdGroupedList(
+          children: [
+            RdListRow(
+              key: const Key('rd-plan-termin'),
+              leading: const RdRowIcon(Icons.event_outlined),
+              title: l10n.redesignPlanPlanPick,
+              onTap: _rdPickAttendance,
+            ),
+          ],
+        ),
+      ]);
     } else if (att == null) {
       children.addAll([
         const SizedBox(height: 16),
