@@ -481,13 +481,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
 
   /// Closes the page: the modal route ([showPersonModal], with [result])
   /// or, opened via its route, the go_router page as before.
-  void _close([PersonModalResult? result]) {
-    if (widget.asModal) {
-      Navigator.of(context).pop(result);
-    } else {
-      context.pop();
-    }
-  }
+  void _close([PersonModalResult? result]) => _closePage(result);
 
   /// Ionic getOrganisationPersonKey
   String? get _personKey {
@@ -970,11 +964,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic dismisses the person modal after save / account / pause actions.
   bool _closing = false;
 
-  void _closePage() {
+  void _closePage([PersonModalResult? result]) {
     if (!mounted || _closing) return;
     _closing = true;
     setState(() => _hasChanges = false);
-    if (context.canPop()) {
+    if (widget.asModal) {
+      Navigator.of(context).pop(result);
+    } else if (context.canPop()) {
       context.pop();
     } else {
       context.go('/people');
@@ -1391,18 +1387,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
-<<<<<<< HEAD
+        // Ionic approve/declinePlayer: dismiss, then toast person.updated.
         ToastHelper.showSuccess(context, context.l10n.personUpdated);
-        _closePage();
-=======
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterApproved),
-            backgroundColor: AppColors.success,
-          ),
-        );
         _close(PersonModalResult.approved);
->>>>>>> origin/master
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailed);
@@ -1471,18 +1458,9 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       ref.invalidate(realtimePlayersProvider);
 
       if (mounted) {
-<<<<<<< HEAD
+        // Ionic approve/declinePlayer: dismiss, then toast person.updated.
         ToastHelper.showSuccess(context, context.l10n.personUpdated);
-        _closePage();
-=======
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(context.l10n.personFlutterDeclined),
-            backgroundColor: AppColors.success,
-          ),
-        );
         _close(PersonModalResult.declined);
->>>>>>> origin/master
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailed);
@@ -1567,29 +1545,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// Ionic transfer modal for this person (target instance + target group).
   /// A transfer (not a copy) closes the person page.
   Future<void> _showTransferSheet({bool copy = false}) async {
-<<<<<<< HEAD
     final done = await showPersonTransferSheet(context, widget.person, copy: copy);
     if (!done || !mounted) return;
     ref.invalidate(personProvider(widget.personId));
     ref.invalidate(realtimePlayersProvider);
     if (!copy) _closePage();
-=======
-    final result = await showHandoverSheet(
-      context,
-      selectedPlayers: [widget.person],
-      initialStayInInstance: copy,
-    );
-
-    if (result == true && mounted) {
-      ref.invalidate(personProvider(widget.personId));
-      ref.invalidate(realtimePlayersProvider);
-      // Ionic transferPerson: a transfer (not a copy) closes the person page.
-      // The sheet can switch between copy and transfer, so look at the
-      // result: a transferred person is archived (`left` set).
-      final updated = await ref.read(personProvider(widget.personId).future);
-      if (mounted && (updated == null || updated.left != null)) _close();
-    }
->>>>>>> origin/master
   }
 
   /// Ionic person.page activate(): "Person reaktivieren" for archived
