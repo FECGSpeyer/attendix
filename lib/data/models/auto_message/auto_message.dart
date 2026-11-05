@@ -29,6 +29,13 @@ const autoMessageResponseReasons = ['sick', 'work', 'family', 'forgot', 'other']
 /// attendance-response Edge Function).
 const autoMessageResponseDays = 7;
 
+/// Until when members can answer a Termin message for the Termin on
+/// [terminDate] (the stored date, with its time); null when unparsable.
+DateTime? autoMessageResponseUntil(String? terminDate) {
+  final date = DateTime.tryParse(terminDate ?? '');
+  return date?.add(const Duration(days: autoMessageResponseDays + 1));
+}
+
 /// Wartezeit options in minutes (Ionic DELAY_OPTIONS).
 const autoMessageDelayOptions = [0, 30, 60, 120, 180, 360, 720, 1440, 2880];
 

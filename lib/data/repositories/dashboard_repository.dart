@@ -168,7 +168,9 @@ class DashboardRepository extends BaseRepository with TenantAwareRepository {
             )
           ''')
           .eq('tenantId', currentTenantId)
-          .gt('date', startOfToday.toIso8601String());
+          // Ionic dayjs().startOf('day').toISOString(): local midnight as
+          // UTC, so today's entries (date YYYY-MM-DD = 00:00Z) are included.
+          .gt('date', startOfToday.toUtc().toIso8601String());
 
       return (response as List).cast<Map<String, dynamic>>();
     } catch (e, stack) {
