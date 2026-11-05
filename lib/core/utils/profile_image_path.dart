@@ -20,3 +20,10 @@ String? profileImagePathFromUrl(String? url) {
   }
   return null;
 }
+
+/// Whether the storage [path] (see [profileImagePathFromUrl]) is a file of
+/// player [playerId]: Ionic key `<id>` or legacy `<tenantId>/<id>.jpg`.
+/// A picture adopted from a person of another instance points to that
+/// person's file, which must not be deleted when replacing / removing.
+bool isOwnProfileImagePath(String path, int playerId) =>
+    path == profileImageStoragePath(playerId) || path.endsWith('/$playerId.jpg');
