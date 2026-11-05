@@ -89,6 +89,13 @@
         "lib/features/planning/presentation/widgets/plan_export_actions.dart"
       ],
       "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#x-9616cc8ac2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+      ],
+      "n": "behoben in #306"
     }
   },
   "extraOverride": [
