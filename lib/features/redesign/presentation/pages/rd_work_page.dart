@@ -204,7 +204,7 @@ class RdWorkPage extends ConsumerWidget {
                 rdFileKind(part.first),
                 if (part.length > 1) l10n.redesignWorkFileCount(part.length),
               ].join(' · '),
-              moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups)),
+              moreLabel: l10n.redesignWorkFileMore(SongUtils.fileLabel(part.first, groups, isChoir: data.isChoir)),
               onOpen: () => rdOpenWorkFile(context, ref, song, part.first),
               onMore: (button) => more(button, part.first),
             ),

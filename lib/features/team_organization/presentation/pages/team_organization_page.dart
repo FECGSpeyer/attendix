@@ -7,6 +7,7 @@ import '../../../planning/presentation/widgets/ion_items.dart';
 import '../widgets/protocols_tab.dart';
 import '../widgets/tasks_tab.dart';
 import '../widgets/topics_tab.dart';
+import '../utils/route_return_reload.dart';
 import '../../../../shared/widgets/layout/ionic_ios.dart' show ionPlainContentBackground;
 
 /// Teamorganisation: one page for leadership and members. RLS decides what
@@ -22,7 +23,7 @@ class TeamOrganizationPage extends ConsumerStatefulWidget {
 }
 
 class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
-    with SingleTickerProviderStateMixin {
+    with SingleTickerProviderStateMixin, RouteReturnReload {
   static const _tabs = ['tasks', 'topics', 'protocols'];
   late final TabController _controller;
 
@@ -31,12 +32,33 @@ class _TeamOrganizationPageState extends ConsumerState<TeamOrganizationPage>
     super.initState();
     final index = _tabs.indexOf(widget.initialTab ?? 'tasks');
     _controller = TabController(length: 3, vsync: this, initialIndex: index < 0 ? 0 : index);
+    // Ionic: each tab loads on init (also when the segment changes, @switch
+    // creates it anew), the cached lists stay visible meanwhile.
+    _controller.addListener(_onTabChanged);
+    WidgetsBinding.instance.addPostFrameCallback((_) => _reloadActive(firstLoad: true));
   }
 
   @override
   void dispose() {
+    _controller.removeListener(_onTabChanged);
     _controller.dispose();
     super.dispose();
+  }
+
+  void _onTabChanged() {
+    if (!_controller.indexIsChanging) _reloadActive();
+  }
+
+  /// Ionic ionViewWillEnter: coming back to the page (from a task, topic,
+  /// protocol or any other page) reloads the active tab.
+  @override
+  void onRouteReturn() => _reloadActive();
+
+  /// [firstLoad] only on the first open; tab change and return always load
+  /// anew (a running load may predate a change).
+  void _reloadActive({bool firstLoad = false}) {
+    if (!mounted) return;
+    reloadTeamOrgTab(ref, _tabs[_controller.index], firstLoad: firstLoad);
   }
 
   @override
