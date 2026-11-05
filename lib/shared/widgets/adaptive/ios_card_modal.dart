@@ -27,6 +27,7 @@ Future<T?> showIosCardModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   Color? backgroundColor,
+  bool barrierDismissible = true,
 }) {
   final navigator = Navigator.of(context, rootNavigator: true);
   final snapshot = _PresentingSnapshot.take(context, navigator);
@@ -34,6 +35,7 @@ Future<T?> showIosCardModal<T>(
     builder: builder,
     snapshot: snapshot,
     backgroundColor: backgroundColor,
+    backdropDismiss: barrierDismissible,
     barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
     capturedThemes:
         InheritedTheme.capture(from: context, to: navigator.context),
@@ -93,6 +95,7 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     required this.builder,
     required this.snapshot,
     required this.backgroundColor,
+    required this.backdropDismiss,
     required this.barrierLabel,
     required this.capturedThemes,
   });
@@ -102,13 +105,17 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
   final Color? backgroundColor;
   final CapturedThemes capturedThemes;
 
+  /// Ionic `backdropDismiss`: a tap on the strip above the card closes it.
+  final bool backdropDismiss;
+
   @override
   final String barrierLabel;
 
   @override
   Color? get barrierColor => null;
 
-  // The strip above the card closes the modal (Ionic backdropDismiss).
+  // The strip above the card closes the modal (Ionic backdropDismiss),
+  // see [backdropDismiss].
   @override
   bool get barrierDismissible => false;
 
@@ -129,7 +136,10 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     if (c == null) return;
     final velocity = details.velocity.pixelsPerSecond.dy;
     if (velocity > 700 || c.value < 0.6) {
-      navigator?.pop();
+      // Settle open first: a page that blocks the pop (PopScope, e.g.
+      // "Änderungen verwerfen?") stays visible; otherwise the pop reverses.
+      c.forward();
+      navigator?.maybePop();
     } else {
       c.forward();
     }
@@ -235,10 +245,12 @@ class _IosCardModalFrame extends StatelessWidget {
           height: cardTop,
           child: Semantics(
             label: route.barrierLabel,
-            button: true,
+            button: route.backdropDismiss,
             child: GestureDetector(
               behavior: HitTestBehavior.opaque,
-              onTap: () => Navigator.of(context).maybePop(),
+              onTap: route.backdropDismiss
+                  ? () => Navigator.of(context).maybePop()
+                  : null,
             ),
           ),
         ),

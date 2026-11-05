@@ -120,6 +120,7 @@ Future<T?> showPageModal<T>(
     return showIosCardModal<T>(
       context,
       backgroundColor: iosBackgroundColor,
+      barrierDismissible: barrierDismissible,
       builder: wrap,
     );
   }

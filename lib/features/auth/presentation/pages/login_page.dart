@@ -324,20 +324,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (navigated) return;
     }
 
-    if (userPrefs.wantInstanceSelection && mounted) {
-      final chosen = await _askWantedTenant(userPrefs.currentTenantId);
-      if (chosen != null && mounted) {
-        final navigated = await _tryAutoNavigateToTenant(chosen);
-        if (navigated) {
-          // The selection was made in the alert; a later visit of the
-          // instance list must not count as "right after sign-in".
-          InstanceSelectionGate.afterSignIn = false;
-          return;
-        }
-      }
-    }
-
-    // Default: show tenant selection
+    // Default: show tenant selection. With "Instanzauswahl aktivieren" it
+    // asks with the Ionic radio alert (TenantSelectionPage), which also
+    // works when the router already replaced this page after the sign-in.
     if (mounted) {
       context.go('/tenants');
     }
@@ -434,33 +423,6 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   /// Try to auto-navigate to the saved tenant
   /// Returns true if navigation was successful, false otherwise
-  /// Ionic `getWantedTenant()`: radio alert "Instanz auswählen" over the
-  /// login page (no backdrop dismiss). "Abbrechen" opens the stored tenant,
-  /// otherwise the first one; "Öffnen" the checked one. Null when the user
-  /// has no tenant (→ selection page).
-  Future<int?> _askWantedTenant(int? storedTenantId) async {
-    final container = ProviderScope.containerOf(context, listen: false);
-    final tenants = await container
-        .read(userTenantsProvider.future)
-        .catchError((Object _) => const <Never>[]);
-    if (tenants.isEmpty || !mounted) return null;
-    final fallback = tenants.any((t) => t.id == storedTenantId)
-        ? storedTenantId
-        : tenants.first.id;
-    final result = await showAppRadioAlert<int>(
-      context,
-      title: context.l10n.dbChooseInstanceHeader,
-      subtitle: context.l10n.dbChooseInstanceMessage,
-      options: [for (final t in tenants) (t.id!, t.longName)],
-      initialValue: tenants.any((t) => t.id == storedTenantId) ? storedTenantId : null,
-      confirmText: context.l10n.commonOpen,
-      cancelDestructive: true,
-      barrierDismissible: false,
-    );
-    // Cancelled, or "Öffnen" without a checked tenant → fallback.
-    return result?.value ?? fallback;
-  }
-
   Future<bool> _tryAutoNavigateToTenant(int tenantId) async {
     // IOS_SHELL: the router may replace this page as soon as the session or
     // the tenant changes (e.g. demo login → /tenants), so never touch `ref`

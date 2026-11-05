@@ -107,7 +107,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   /// Ionic person.page `hasChanges` for a new person: something was entered.
   bool get _hasInput =>
       _pickedImage != null ||
-      [
+      _inputControllers.any((c) => c.text.trim().isNotEmpty);
+
+  List<TextEditingController> get _inputControllers => [
         _firstNameController,
         _lastNameController,
         _emailController,
@@ -117,7 +119,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
         _instrumentsController,
         _testResultController,
         _otherExerciseController,
-      ].any((c) => c.text.trim().isNotEmpty);
+      ];
 
   /// Ionic dismiss(): with changes ask "Änderungen verwerfen?" first.
   Future<void> _close() async {
@@ -308,7 +310,18 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Beta-Skin: fields in cards, "Sichern" in the header instead of the FAB.
     final rd = context.rdSkin;
 
-    return Scaffold(
+    // Swipe-down / back with input asks "Änderungen verwerfen?" like the
+    // close button (Ionic dismiss()).
+    return ListenableBuilder(
+      listenable: Listenable.merge(_inputControllers),
+      builder: (context, child) => PopScope(
+        canPop: !_hasInput,
+        onPopInvokedWithResult: (didPop, _) {
+          if (!didPop) _close();
+        },
+        child: child!,
+      ),
+      child: Scaffold(
       // Ionic person.page (create): title "Person hinzufügen", close button
       // at the end, save via the person-add FAB. UX_PEOPLE: modalBackground.
       backgroundColor: rd?.bg ?? ionContentBackground(context),
@@ -536,6 +549,7 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
           ],
         ),
         ),
+      ),
       ),
     );
   }
