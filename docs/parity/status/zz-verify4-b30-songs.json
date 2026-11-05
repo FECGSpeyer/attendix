@@ -1,0 +1,18 @@
+{
+  "batch": "zz-verify4-b30-songs",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "songs/import/import.page#action-1ebac815": {
+      "s": "ok",
+      "f": [
+        "lib/features/songs/presentation/pages/song_import_page.dart:255",
+        "lib/features/songs/presentation/pages/song_import_page.dart:257",
+        "lib/core/utils/import_mapper.dart:500"
+      ],
+      "n": "„Weiter“ im Zuordnungsschritt, aktiv nur wenn Nummer und Name zugeordnet sind (mappingSongHasRequired gleich), dann Vorschau mit Duplikatprüfung. Flutter zusätzlich während der Prüfung deaktiviert. Rollen: Import nur über Werke-Menü für Admin/Verantwortlich, nicht auf der öffentlichen Seite (Ionic isAdmin && !tenantData / Flutter songs_list_page.dart:160) – gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

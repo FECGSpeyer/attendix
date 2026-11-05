@@ -1,0 +1,123 @@
+{
+  "batch": "zz-verify4-b12-planning-org",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "planning/planning.page#logic-5522ee54": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:679",
+        "lib/features/planning/presentation/pages/planning_page.dart:759",
+        "lib/features/planning/presentation/pages/planning_page.dart:907",
+        "lib/features/planning/presentation/pages/planning_page.dart:996",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:85",
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:585",
+        "lib/core/providers/plan_providers.dart:45"
+      ],
+      "n": "Neu bewertet. Änderung 4.19.9: rows-Getter prüft zusätzlich, ob die gecachten Zeilen noch auf die aktuellen Feldobjekte zeigen (geladener Plan mit gleichen IDs wie die Startzeile). Flutter baut die Zeilen bei jedem Build ohne Cache (PlanFieldsEditor._buildRows: Schlüssel id bzw. id#n, eingeklappte Blöcke ausgeblendet, „Unterpunkt hinzufügen“-Zeile am Blockende), die Minuteneingabe übernimmt neue Werte (didUpdateWidget) – der behobene Fehler kann nicht auftreten, gleich. Übrige Logik wie Ionic: Saison-Termine, Werke, Historie laden; Plan laden mit Dirigent aus der Historie und Tagesordnung 0 min; normalizeGroups/Ende; Speichern plan bzw. plan+extra_plans (splitPlans, Zeit HH:mm, Gemeinde-App-UIDs); Mehrfach-Pläne, Blöcke, Blockvorlagen (Löschen/Speichern nur ADMIN), Org-Vorlagen/-Felder, Platzhalter-Auflösung, Präfix je Termintyp, Themen nur Plan 1 + Teamleitung. Abweichungen als Extras: Standardplan bei Termin ohne Plan (hoch), archivierte Termine für Helfer (hoch), Start-Termin ohne kommenden Termin (mittel), Werke-Reihenfolge, ungültiger Plan beim Wechsel (Flutter besser), Autosave/Entwürfe, Hinweis bei leerem Ablauf (neu, niedrig)."
+    },
+    "planning/planning.page#field-fe37eb3d": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:2251",
+        "lib/features/planning/presentation/pages/planning_page.dart:1111",
+        "lib/core/providers/organisation_providers.dart:11",
+        "lib/core/router/route_access.dart:110"
+      ],
+      "n": "„Organisationsplan“ nur mit gewähltem Termin und wenn die Instanz einer Organisation angehört (Ionic db.organisation(), Flutter currentOrganisationProvider – beide für jede Rolle geladen); keine weitere Rollenbedingung. Startwert resolveOrgPlan (gespeichertes is_org_plan bei vorhandenem Plan, sonst is_default_org_plan des Typs) und Schreiben von attendance.is_org_plan gleich. Editor-Zugang gleich: Admin/Verantwortlich immer, Helfer/Stimmführer-Helfer nur mit attendanceId, Stimmführer/Spieler/Eltern/Bewerber nie; Beobachter nur über den Ionic-iOS-FAB (als Flutter besser in attendance action-84a45123 erfasst).",
+      "v": "bestätigt"
+    },
+    "planning/planning.page#field-f33048e7": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:2161",
+        "lib/features/planning/presentation/pages/planning_page.dart:2022",
+        "lib/features/planning/presentation/pages/planning_page.dart:907"
+      ],
+      "n": "Startzeit-Auswahl (24 h) im Editor, geöffnet über den Zeit-Chip; keine eigene Rollen-/Mandantenbedingung (ion-modal hängt nur am ion-datetime-button). Änderung → Ende neu berechnet und Plan gespeichert (Ionic calculateEnd → updateAttendance, Flutter _changed → Autosave). Zugang wie Editor (siehe field-fe37eb3d).",
+      "v": "bestätigt"
+    },
+    "x-7d55a70233": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:759",
+        "lib/features/planning/presentation/pages/planning_page.dart:803",
+        "lib/features/planning/presentation/pages/planning_page.dart:809",
+        "lib/features/planning/presentation/pages/planning_page.dart:996",
+        "lib/features/planning/presentation/pages/planning_page.dart:255"
+      ],
+      "n": "Befund weiter gültig (ngOnInit/onAttChange in 4.19.9 unverändert). Ionic: Termin ohne Plan zeigt „Wort “ (id '', 10 min); nur mit kommender Werke-Historie ruft ngOnInit onAttChange → Typ-Vorlage (sofort gespeichert) bzw. leere Liste (nichts gespeichert); ohne Historie wird beim Öffnen nichts geschrieben. Beim Terminwechsel ohne Plan und ohne Historie bleiben Felder/Startzeit des vorigen Termins stehen und werden in den neuen Termin geschrieben. / Flutter _loadAttendance: immer Typ-Vorlage, sonst „Wort“ (id 'Wort') mit Termin-Startzeit, _dirty = true → beim Schließen, Wechsel, Verlassen oder dispose wird attendance.plan geschrieben, auch ohne Nutzeränderung. Andere DB-Schreibung (z. B. „Wort“-Plan allein durchs Öffnen).",
+      "v": "bestätigt"
+    },
+    "x-9b169a1078": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:721",
+        "lib/features/planning/presentation/pages/planning_page.dart:700"
+      ],
+      "n": "Befund gültig. Ionic: ohne attendanceId upcomingAttendances[0] (Datum > heute 0 Uhr); gibt es keinen, ist kein Termin gewählt und Änderungen werden nicht gespeichert. / Flutter _init: wählt dann den neuesten (vergangenen) Termin der Saison; hat er keinen Plan, bekommt er beim Verlassen den Standardplan (x-7d55a70233). Nachladen einer attendanceId außerhalb der geladenen Liste per ID ist Flutter besser.",
+      "v": "bestätigt"
+    },
+    "x-da444ed5b8": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:859",
+        "lib/data/repositories/song_repository.dart:738"
+      ],
+      "n": "Befund gültig. Ionic getUpcomingHistory: alle Historie-Einträge der Instanz, clientseitig gefiltert über attendance_id.date (sonst history.date) nach heute 0 Uhr, unsortiert (DB-Reihenfolge) / Flutter loadCurrentSongsForTenant: Server-Filter history.date > heute 0 Uhr, Gruppen nach Datum aufsteigend, im Termin nach ID absteigend. „Aktuelle Werke hinzufügen“ und song-placeholder der Typ-Vorlage können andere Werke/Reihenfolge ergeben; Ionic-Reihenfolge ist nicht definiert, daher niedrig.",
+      "v": "bestätigt"
+    },
+    "x-fde84859d1": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:970",
+        "lib/features/planning/presentation/pages/planning_page.dart:1179",
+        "lib/features/planning/presentation/pages/planning_page.dart:1220",
+        "lib/features/planning/presentation/pages/planning_page.dart:2075"
+      ],
+      "n": "Flutter besser: bestätigt. Ionic: updateAttendance/saveOpenPlan verwerfen einen ungültigen Plan (keine Felder, fehlende Minuten) beim Termin-/Planwechsel oder Schließen still (validate(false) → return) / Flutter _flushSaves: Wechsel und Schließen werden nach Nutzeränderungen mit Validierungs-Toast blockiert; ein fehlgeschlagenes Speichern lässt die Seite mit Fehler-Toast offen.",
+      "v": "bestätigt"
+    },
+    "x-0cf859bade": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart:907",
+        "lib/features/planning/presentation/pages/planning_page.dart:551",
+        "lib/features/planning/presentation/pages/planning_page.dart:603"
+      ],
+      "n": "Bestätigt. Ionic: jede Änderung wird sofort gespeichert (calculateEnd → updateAttendance), keine Entwürfe / Flutter: Autosave nach 400 ms über eine Schreib-Warteschlange (PlanningWriteSync), lokale Entwürfe (PlanningDraftStore) mit Wiederherstellung (Toast) und Konfliktdialog bei parallelen Änderungen.",
+      "v": "bestätigt"
+    },
+    "x-5e1a396117": {
+      "s": "diff",
+      "sev": "hoch",
+      "f": [
+        "lib/data/repositories/plan_repository.dart:44",
+        "lib/data/repositories/plan_repository.dart:13",
+        "lib/core/providers/plan_providers.dart:45",
+        "lib/core/router/route_access.dart:110"
+      ],
+      "n": "Befund gültig (Rollenlücke). Ionic: getAttendance → filterArchivedForRole; Helfer und Stimmführer-Helfer (einzige Nicht-Admin-Rollen mit Editor-Zugang) sehen in Terminauswahl und Vor/Zurück keine archivierten Termine, Admin/Verantwortlich schon. / Flutter: getPlanAttendances lädt archived nicht und filtert nicht; Helfer/SF-Helfer erreichen /planning?attendanceId=… und können archivierte Termine wählen und deren Plan, Teilen- und Org-Schalter schreiben. Admin/Verantwortlich gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": [
+    {
+      "unit": "planning/planning.page",
+      "title": "Leerer Ablauf zeigt Hinweis",
+      "n": "Ionic: ohne Felder bleibt die Ablaufliste leer (z. B. „Plan zurücksetzen“ ohne Typ-Vorlage, leerer Zusatzplan, letzter Plan gelöscht) / Flutter: grauer Text „Keine Programmpunkte“ (PlanFieldsEditor ohne emptyText)",
+      "sev": "niedrig",
+      "ionic": "src/app/planning/planning.page.html:252",
+      "f": [
+        "lib/features/planning/presentation/widgets/plan_fields_editor.dart:346",
+        "lib/features/planning/presentation/pages/planning_page.dart:2164"
+      ]
+    }
+  ]
+}

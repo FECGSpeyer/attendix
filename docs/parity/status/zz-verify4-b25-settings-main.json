@@ -1,0 +1,140 @@
+{
+  "batch": "zz-verify4-b25-settings-main",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "settings/settings/settings.page#text-f17f7f72": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:369",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:371"
+      ],
+      "n": "Feldname als Label vor dem Schalter (Typ boolean, editableByPlayers). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#field-09a32184": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:372",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:85"
+      ],
+      "n": "Schalter an bei Wert true, Vorbelegung mit defaultValue wie Ionic, gespeichert über „Speichern“ (Org-Felder als geteilte Werte). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-f17f7f72-2": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:398",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:400"
+      ],
+      "n": "Feldname als Label der Gemeinde-Zeile (Typ bfecg_church). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-2226c143": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:402",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:403",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:493"
+      ],
+      "n": "Text-Button rechts mit „Bitte auswählen“ / „Nicht gelistet“ / Gemeindename wie getChurchLabel, öffnet die Gemeinde-Auswahl (Suche geleert). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-2eb08111": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:83",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:507"
+      ],
+      "n": "Titel der Gemeinde-Auswahl = Feldname. Erreichbar nur über action-2226c143, gleiche Rollen-/Feldbedingung.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-d57207ac": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:86",
+        "lib/features/profile/presentation/widgets/church_picker.dart:88"
+      ],
+      "n": "„Schließen“ rechts in der Kopfzeile, schließt ohne Änderung.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#field-b4eb2bfd": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:102",
+        "lib/features/profile/presentation/widgets/church_picker.dart:121"
+      ],
+      "n": "Suchfeld „Gemeinde suchen“ in zweiter Kopfzeile, filtert sofort nach Namensteil ohne Groß/Klein (debounce 0 wie Ionic).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-ed6b5ba6": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:133",
+        "lib/features/profile/presentation/widgets/church_picker.dart:134",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:515"
+      ],
+      "n": "„Nicht gelistet“ immer zuerst, Haken bei Wert '', setzt '' und schließt.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#action-c49c7c68": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:137",
+        "lib/features/profile/presentation/widgets/church_picker.dart:141"
+      ],
+      "n": "Gefilterte Gemeinden (churches nach name sortiert wie Ionic), Haken bei gewählter, Tipp setzt die id und schließt.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-65e400f8": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/church_picker.dart:143",
+        "lib/features/profile/presentation/widgets/church_picker.dart:145"
+      ],
+      "n": "„Keine Gemeinde gefunden.“ grau, wenn der Filter nichts ergibt.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#field-509e17fd": {
+      "s": "ok",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:413",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:235"
+      ],
+      "n": "Typ number: Label oben, Zahlentastatur, gespeichert als Zahl, leer → null (Ionic NumericValueAccessor gleich). Rollen/Mandant wie Ionic: Stammdaten-Karte für jede Rolle mit eigener player-Zeile (aktive bevorzugt), Felder nach visibleToPlayers gefiltert, bearbeitbar nur bei editableByPlayers – gilt auch für Admins (profile_providers.dart:108, master_data_sheet.dart:360).",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#field-509e17fd-2": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": [
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+        "lib/features/profile/presentation/widgets/master_data_sheet.dart:416"
+      ],
+      "n": "Flutter besser: Feldtyp textarea als dreizeiliges Eingabefeld (maxLines 3) / Ionic: für text, textarea und date dasselbe einzeilige ion-input. Sonst gleich (Label oben, Großschreibung Satzanfang, Rollen/editableByPlayers wie Ionic). Erstprüfer übersah die Textarea-Höhe. Nebenbei ohne Wirkung: unberührte leere Textfelder speichert Flutter als '', Ionic lässt den Schlüssel weg (Anzeige gleich).",
+      "v": "korrigiert"
+    },
+    "settings/settings/settings.page#text-7dea9c51": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/shared/widgets/sheets/version_history_sheet.dart:166",
+        "assets/version_history.json:1"
+      ],
+      "n": "Kopf „Version x (Datum)“ gleich. Inhalt verschieden: Ionic version-history.json (4.19.9 … 1.4.0, 326 Einträge) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.41.0 … 0.1.0, 106 Einträge, darunter „Beta:“-Einträge). Gleiche Ursache wie text-8938a6a0.",
+      "v": "bestätigt"
+    },
+    "settings/settings/settings.page#text-b8c80f4b": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": [
+        "lib/shared/widgets/sheets/version_history_sheet.dart:167",
+        "assets/version_history.json:1"
+      ],
+      "n": "Fallback „Version x“ ohne Datum im Code vorhanden, erscheint aber nie: alle Flutter-Einträge haben ein Datum / Ionic zeigt ihn für 58 alte Einträge (3.5.0 … 1.4.0). Ursache und Behebung wie text-7dea9c51 (eigene Flutter-Historie).",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

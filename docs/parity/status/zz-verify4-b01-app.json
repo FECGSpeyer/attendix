@@ -1,0 +1,33 @@
+{
+  "batch": "zz-verify4-b01-app",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "register/register.page#text-68203b72": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:57", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281"],
+      "n": "„Ideal für Vereine, Teams oder sonstige Gruppen.“ mit grünem Häkchen unter Schritt 1 bei Typ general (auch Startwert, wie Ionic). Bedingung ist der im Formular gewählte Typ, keine Rolle/Mandanten-Einstellung.",
+      "v": "bestätigt"
+    },
+    "register/register.page#text-db3fe0a6": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:66", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281"],
+      "n": "„Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).“ bei gewähltem Typ choir; nur Formularzustand, rollenunabhängig.",
+      "v": "bestätigt"
+    },
+    "register/register.page#text-76739b9f": {
+      "s": "ok",
+      "f": ["lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:75", "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281"],
+      "n": "„Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.“ bei gewähltem Typ orchestra; nur Formularzustand, rollenunabhängig.",
+      "v": "bestätigt"
+    },
+    "x-8af7179780": {
+      "s": "diff",
+      "sev": "mittel",
+      "f": ["lib/features/auth/presentation/pages/login_page.dart:196", "lib/features/auth/presentation/pages/login_page.dart:211", "lib/features/auth/presentation/pages/login_page.dart:412", "lib/features/auth/presentation/pages/login_page.dart:724", "lib/core/services/teams/teams_service.dart:181"],
+      "n": "Real: Ionic ssoLink fängt den Fehler von authSvc.login ab (nur Fehler-Toast, z. B. „Ungültige Anmeldedaten“, keine Nachfrage). Flutter: ssoLink lässt LoginFailure bis _login durch → Toast plus Dialog „Anmeldung fehlgeschlagen“ mit „Code per E-Mail“ (bzw. bei unbestätigter E-Mail/unbekanntem Konto auch Bestätigungs-/Registrieren-Dialog); nach „Code per E-Mail“ ist der Code-Modus aktiv, das Segment bleibt im Verknüpfungsmodus ausgeblendet (kein Rückweg zu Passwort) und die Code-Anmeldung verknüpft das Microsoft-Konto nicht. Nur in Teams, daher mittel.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

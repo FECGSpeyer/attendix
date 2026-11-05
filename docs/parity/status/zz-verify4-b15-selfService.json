@@ -1,0 +1,18 @@
+{
+  "batch": "zz-verify4-b15-selfService",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "selfService/signout/signout.page#text-40830254": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190",
+        "lib/core/providers/duty_providers.dart:131",
+        "lib/core/providers/duty_providers.dart:193"
+      ],
+      "n": "Trenner „ · “ nach „Dringend“ vor Zeit/Belegung vorhanden (Flutter-Zeile „Datum · Dringend · 18:00 · 1/2 besetzt“; Datum gehört zu anderen Items). Bedingungen gleich: nicht Bewerber, Person vorhanden, Dienstplan-Ansicht = tenant.duty_view && im Dienstkreis, dringend nach duty_urgent_hours des Typs.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

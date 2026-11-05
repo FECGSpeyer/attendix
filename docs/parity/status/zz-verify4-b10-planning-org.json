@@ -1,0 +1,147 @@
+{
+  "batch": "zz-verify4-b10-planning-org",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "org-plans/org-plans.page#text-5c845db6": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_plans_page.dart:252", "lib/core/router/app_router.dart:185", "lib/core/router/app_router.dart:202"],
+      "n": "„Diese Instanz ist keiner Organisation zugeordnet.“ mit Info-Icon bei fehlender Organisation (currentOrganisationProvider == null). Seite in beiden Apps nur für Admin/Verantwortlich (Ionic: Einstieg über Org-Einstellungen/Tab + isUrlAccessAllowed, Flutter: Routen-Guard _isAdminOrResponsible für /settings/org-plans und /org-plans-tab).",
+      "v": "bestätigt"
+    },
+    "org-plans/org-plans.page#action-07229903": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_plans_page.dart:168", "lib/features/organisation/presentation/pages/org_plans_page.dart:73", "lib/data/repositories/org_plan_repository.dart:185"],
+      "n": "Papierkorb (grau) nur bei Ad-hoc-Plänen, ohne weitere Rollenprüfung – jeder, der die Seite öffnen darf (Admin/Verantwortlich), kann löschen, wie Ionic. Löschen shared_plans eq id (Flutter zusätzlich eq org_id), danach Liste neu geladen.",
+      "v": "bestätigt"
+    },
+    "org-plans/org-plans.page#action-cff3f483": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_plans_page.dart:279", "lib/features/organisation/presentation/pages/org_plans_page.dart:318", "lib/core/router/app_router.dart:185"],
+      "n": "„Ablaufplanung öffnen“ nur mit Organisation → /org-plans-tab/planung bzw. /settings/org-plans/planung (PublicPlanningPage), Guard Admin/Verantwortlich wie Ionic isUrlAccessAllowed. Ausblenden während Laden/Fehler ist als extra erfasst.",
+      "v": "bestätigt"
+    },
+    "org-plans/org-plans.page#action-3a0eef49": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_plans_page.dart:287"],
+      "n": "„Vergangene Pläne“ grau, ohne Chevron, nur bei vergangenen Plänen; keine Rollenabhängigkeit über den Seitenzugang hinaus.",
+      "v": "bestätigt"
+    },
+    "org-plans/org-plans.page#text-bac34896": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_plans_page.dart:150"],
+      "n": "Titel „Vergangene Pläne“; Auslöser (Eintrag „Vergangene Pläne“) nur bei past.isNotEmpty, wie Ionic. Präsentation (Push-Seite statt Modal) ist in modal-e1461116 erfasst.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-dbb21843": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:170", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:95"],
+      "n": "Häkchen deaktiviert während Speichern oder ohne Rolle Admin (Ionic isSuperAdmin = ADMIN, Flutter effectiveRole == admin); save() bricht für Nicht-Admin zusätzlich ab. Einstieg zur Seite in beiden nur für Admin (Org-Einstellungen „Personen“).",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-0bece271": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:151"],
+      "n": "„+“ im Listen-Header, nur für Admin aktiv (Flutter zusätzlich nur mit Organisation), öffnet das Hinzufügen-Sheet.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#modal-b6eb6b51": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:52", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:269"],
+      "n": "Auslöser und Rolle gleich (nur Admin über „+“), Bottom-Sheet. Erstprüfer nannte die Abweichung, wertete aber ok: Ionic: newField bleibt nach Wegwischen erhalten, erneutes Öffnen zeigt die letzten Eingaben (Typ, Name, Optionen …) / Flutter: Sheet startet jedes Mal leer, Eingaben gehen beim Wegwischen verloren.",
+      "v": "korrigiert"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#text-2cad8859": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"],
+      "n": "„Neues Feld hinzufügen“; Sheet nur für Admin erreichbar wie Ionic.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-a8961219": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:362"],
+      "n": "„Name“, Großschreibung am Satzanfang; nur für Admin erreichbar.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-520a069e": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"],
+      "n": "„Anzeige in Listen“: „Als Chip“ / „Unter dem Namen“, Standard Chip; nur für Admin erreichbar.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-e81d372e": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:377"],
+      "n": "„Für Mitglieder sichtbar“ mit Hilfetext, Standard aus; nur für Admin erreichbar.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-d6141d03": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:384", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:327"],
+      "n": "„Von Mitgliedern bearbeitbar“ mit Hilfetext nur bei „sichtbar“. Flutter speichert editableByPlayers=false, wenn „sichtbar“ aus ist (Ionic behält den Wert) – ohne Wirkung, Ionic wertet editableByPlayers nur für visibleToPlayers-Felder aus (settings.page getVisibleExtraFields).",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:395"],
+      "n": "„Optionen“ nur bei Typ Auswahl; nur für Admin erreichbar.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-a128acc3": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:396"],
+      "n": "„+“ fügt eine leere Option an.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#text-e85d8c9c": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:402"],
+      "n": "„Keine Optionen ausgewählt“ bei leerer Optionsliste.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-1e4f0881": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:407"],
+      "n": "Platzhalter „Wert eingeben...“, Hilfetext „Erste Option ist der Standardwert“ bei der ersten Option, Großschreibung am Satzanfang.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-8b32ffc1": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:416"],
+      "n": "Papierkorb (rot) entfernt die Option.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"],
+      "n": "„Standardwert“ bei Typ Ja/Nein.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#field-ca3e38af": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"],
+      "n": "Schalter Standardwert, Standard aus (Ionic setzt beim Wechsel auf Ja/Nein false).",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-ca7f0f1f": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:436", "lib/features/organisation/presentation/pages/org_person_fields_page.dart:302"],
+      "n": "„Feld hinzufügen“ (FilledButton statt primärem Listeneintrag); Namens-/Optionsprüfung im Sheet wie Ionic. Doppelte-ID-Prüfung erst nach dem Schließen ist in toast-a15cd8e0 erfasst, Standardwert beim Typwechsel in field-64695ee6.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-c43ceb90": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:254"],
+      "n": "Stift (primär), nur für Admin aktiv, öffnet das Bearbeiten-Sheet.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-person-fields/org-person-fields.page#action-cdcf5534": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_person_fields_page.dart:258"],
+      "n": "Papierkorb (rot), nur für Admin aktiv → Rückfrage „Zusatzfeld löschen?“.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

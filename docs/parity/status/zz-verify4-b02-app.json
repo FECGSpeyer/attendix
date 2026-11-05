@@ -1,0 +1,14 @@
+{
+  "batch": "zz-verify4-b02-app",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "tabs/side-nav/side-nav.component#text-179b9e05": {
+      "s": "ok",
+      "f": ["lib/shared/widgets/layout/side_nav/side_nav.dart:661", "lib/shared/widgets/layout/side_nav/side_nav.dart:668"],
+      "n": "Tooltip = Instanz-Langname in beiden Fällen: eine Instanz → nicht antippbarer Kopf mit Tooltip (Ionic [disabled]), mehrere → PopupMenuButton mit tooltip longName und Semantik „Instanz wechseln: …“. Bedingung (Anzahl Instanzen aus userTenantsProvider > 1) gilt für alle Rollen wie Ionic db.tenants().",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}

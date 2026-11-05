@@ -43,36 +43,6 @@
    "n": "Ionic: Toast (danger) „Neu laden fehlgeschlagen — bitte erneut versuchen.“ / Flutter: „Neu laden“ invalidiert nur die Provider; bei erneutem Fehler kein Toast, Banner/Fehlerseite bleibt.",
    "sev": "niedrig"
   },
-  "attendance/attendance/attendance.page#db-8e6ff93f": {
-   "s": "ok",
-   "f": [
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"
-   ],
-   "n": "Flutter: ein Kanal für attendance + person_attendances, serverseitig nach id/attendance_id gefiltert (Ionic filtert im Client)."
-  },
-  "attendance/attendance/attendance.page#db-221ca54c": {
-   "s": "ok",
-   "f": [
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:266",
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:278"
-   ],
-   "n": "Ionic Kanal „att-changes“ (alle attendance-Änderungen) / Flutter: UPDATE gefiltert auf id + DELETE auf demselben Kanal – gleiche Wirkung."
-  },
-  "attendance/attendance/attendance.page#db-2c9a711f": {
-   "s": "ok",
-   "f": [
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:285"
-   ]
-  },
-  "attendance/attendance/attendance.page#db-5ddb1746": {
-   "s": "ok",
-   "f": [
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:244",
-    "lib/features/attendance/presentation/pages/attendance_detail_page.dart:258"
-   ],
-   "n": "Kanal „person-att-<id>“ statt „person-changes“, Filter attendance_id; DELETE ungefiltert wie Ionic."
-  },
   "attendance/attendance/attendance.page#native-1dcfca94": {
    "s": "ok",
    "f": [

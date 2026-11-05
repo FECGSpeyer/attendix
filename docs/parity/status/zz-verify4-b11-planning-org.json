@@ -1,0 +1,64 @@
+{
+  "batch": "zz-verify4-b11-planning-org",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "org-settings/org-settings.page#text-ce868386": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:153", "lib/features/settings/presentation/pages/settings_page.dart:411", "lib/core/router/app_router.dart:186"],
+      "n": "„Keine Organisation verknüpft“ ohne Organisation. Seite in beiden Apps nur für Admin/Verantwortlich (Einstellungen „Organisation“ isAdmin, Flutter-Guard /settings/org-settings).",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#text-020d4514": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:175"],
+      "n": "Listen-Header „Organisation“ nur mit Organisation, für Admin und Verantwortlich sichtbar wie Ionic.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#action-95a1e432": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:176"],
+      "n": "Org-Name für Admin und Verantwortlich; „Tippen zum Umbenennen“, Chevron und Tippen → Umbenennen nur für Rolle Admin (Ionic isSuperAdmin, Flutter role == admin). Abweichung im Umbenennen-Dialog bei leerem Namen ist in alert-14d3ff8c erfasst.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#text-248ea768": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:190"],
+      "n": "„Darstellung & Pläne“ nur mit Organisation, ohne weitere Rollenprüfung (Admin + Verantwortlich) wie Ionic.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#action-14c8d226": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:192", "lib/core/router/app_router.dart:168"],
+      "n": "„Branding“ für Admin + Verantwortlich; gleiche BrandingPage (Org-Branding), Ionic-Pfad …/org-settings/branding, Flutter /settings/general/branding mit Guard Admin/Verantwortlich wie Ionic isUrlAccessAllowed; Zurück führt zu den Org-Einstellungen.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#action-0f593c87": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:198"],
+      "n": "„Planvorlagen & Felder“ → /settings/org-settings/planning-templates, für Admin + Verantwortlich wie Ionic.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-settings.page#action-9d64834f": {
+      "s": "ok",
+      "f": ["lib/features/organisation/presentation/pages/org_settings_page.dart:204"],
+      "n": "„Org-Pläne“ → /settings/org-plans, für Admin + Verantwortlich wie Ionic.",
+      "v": "bestätigt"
+    },
+    "org-settings/org-songs/org-songs.page#action-6bc33df9": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:418", "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:327", "lib/data/repositories/org_song_repository.dart:163"],
+      "n": "Flutter besser: Demo-Konto – Ionic copy() und songSvc.copyOrgSong haben keine Demo-Sperre, das Demo-Konto kann Werke in andere Instanzen kopieren / Flutter: DemoGuard.blocked() bzw. ensureNotDemo zeigt den Demo-Hinweis und kopiert nicht (nur relevant, wenn die Demo-Instanz einer Organisation mit weiteren Instanzen angehört). Sonst gleich: „Kopieren“ im Kopf, deaktiviert bei !canCopy (gleiche Bedingungen); Seite nur Admin/Verantwortlich mit Organisation, Ziele nur Instanzen mit Rolle Admin/Verantwortlich (buildOrgSongCopyTargets, zusätzlich _ensureOrgLibrary).",
+      "v": "korrigiert"
+    },
+    "org-settings/org-songs/org-songs.page#action-cc2aa10b": {
+      "s": "diff",
+      "sev": "niedrig",
+      "f": ["lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:631", "lib/features/organisation/presentation/widgets/org_song_copy_sheet.dart:327"],
+      "n": "Flutter besser: Demo-Konto – gleicher Handler wie action-6bc33df9: Ionic kopiert ohne Demo-Sperre / Flutter blockiert mit Demo-Hinweis. Sonst gleich: Button „In vorhandenes Werk kopieren“ bzw. „Als neues Werk kopieren“ je Modus, deaktiviert bei !canCopy; Rollen-/Zielauswahl wie Ionic.",
+      "v": "korrigiert"
+    }
+  },
+  "extra": []
+}

@@ -1,0 +1,27 @@
+{
+  "batch": "zz-verify4-b14-selfService",
+  "ionic": "1923d203",
+  "flutter": "8004a44",
+  "items": {
+    "selfService/overview/overview.page#action-f60f8ec5": {
+      "s": "ok",
+      "f": [
+        "lib/features/self_service/presentation/pages/self_service_overview_page.dart:50",
+        "lib/features/self_service/presentation/widgets/self_service_event_actions.dart:245",
+        "lib/core/utils/event_list_utils.dart:39"
+      ],
+      "n": "Keine Rollenbedingung am Picker; Mandantenabhängigkeit sind die Gründe: absence_reasons/late_reasons der aktuellen Instanz (auch für Termine anderer Instanzen), sonst Standardgründe – gleich. Geöffnet über Aktionsblatt bzw. Schnellaktionen (Absagen/Verspätung) mit isToday = Termin läuft heute (attendanceIsRunning bzw. att.isRunning); Abmelden schreibt für die gewählte Teilnahme mit Grund/isLate, Dank-Toast gleich. Seite nur für Spieler-/Helferrollen mit mehreren Instanzen (beide). Inhalt des Pickers eigene Unit.",
+      "v": "bestätigt"
+    },
+    "selfService/parents/parents.page#action-d04c7e28": {
+      "s": "ok",
+      "f": [
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:483",
+        "lib/features/parents/presentation/pages/parents_portal_page.dart:489"
+      ],
+      "n": "Nur Elternportal (Rolle Eltern, beide). Gründe der aktuellen Instanz bzw. Standardgründe; isToday = Termindatum ist heute (Ionic isSame day, Flutter isRunning mit Dauer 1 = gleich); Absage/Verspätung für die gewählten Kinder-Teilnahmen, Toasts „parentsThanks…“ gleich.",
+      "v": "bestätigt"
+    }
+  },
+  "extra": []
+}
