@@ -1,5 +1,7 @@
 {
   "batch": "zz-fixed-termine",
+  "afterRound": 3,
+  "ionic": "9f9b82af",
   "items": {
     "attendance/attendance/attendance.page#field-7e76e2fd": {
       "s": "ok",
