@@ -337,6 +337,12 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   Set<String> _orgFieldIds = {};
   int? _orgId;
 
+  /// db-ad59e983: Ionic person.page aborts when the shared organisation
+  /// values cannot be loaded (toast, nothing saved). Saving the shown
+  /// tenant/default values would overwrite the real shared values in every
+  /// instance of the organisation.
+  bool _sharedFieldsLoadFailed = false;
+
   @override
   void initState() {
     super.initState();
@@ -497,6 +503,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
   /// across the tenants of an organisation.
   Future<void> _loadSharedFieldValues() async {
     final repo = ref.read(profileRepositoryWithTenantProvider);
+    _sharedFieldsLoadFailed = false;
     try {
       final fields = await ref.read(personExtraFieldsProvider.future);
       _orgFieldIds = fields
@@ -520,8 +527,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         }
       });
     } catch (_) {
-      // Optional — tenant values are shown instead
+      if (!mounted) return;
+      setState(() => _sharedFieldsLoadFailed = true);
+      ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
     }
+  }
+
+  /// True (with Ionic's toast) when the shared values could not be loaded.
+  bool _blockedBySharedFieldsLoadError() {
+    if (!_sharedFieldsLoadFailed) return false;
+    ToastHelper.showError(context, context.l10n.svcLoadSharedFieldsFailed);
+    return true;
   }
 
   /// Ionic continueUpdatingPlayer: organisation field values go to
@@ -726,6 +742,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       }
       return;
     }
+
+    if (_blockedBySharedFieldsLoadError()) return;
 
     // STATS_PEOPLE_FIXES: Ionic updatePlayer() pre-save dialogs
     final tenantType = ref.read(currentTenantProvider)?.type;
@@ -1373,6 +1391,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final personId = widget.person.id;
     if (personId == null || !repo.hasTenantId) return;
+    if (_blockedBySharedFieldsLoadError()) return;
     try {
       final solved = _problemSolved;
       if (_changedFields.isNotEmpty || solved) {

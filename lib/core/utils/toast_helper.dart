@@ -111,12 +111,18 @@ class ToastHelper {
     Duration duration = const Duration(seconds: 4),
   }) {
     // MD_SWEEP: md (desktop / Android) shows the Ionic md toast.
-    if (!useIosLook(context)) {
-      final overlay = Overlay.maybeOf(context, rootOverlay: true);
-      if (overlay != null) {
-        showIonMdToast(overlay, message, color: _ionColorFor(backgroundColor));
-        return;
-      }
+    // x-7da97d6aac: the iOS look uses the root overlay too (Ionic ion-toast
+    // sits above every modal); a SnackBar of the page Scaffold was hidden
+    // behind any open bottom sheet.
+    final overlay = Overlay.maybeOf(context, rootOverlay: true);
+    if (overlay != null) {
+      showIonMdToast(
+        overlay,
+        message,
+        color: _ionColorFor(backgroundColor),
+        ios: useIosLook(context),
+      );
+      return;
     }
     ScaffoldMessenger.of(context).showSnackBar(
       SnackBar(
@@ -174,6 +180,7 @@ void showIonMdToast(
   String message, {
   Color? color,
   Duration duration = const Duration(milliseconds: 3000),
+  bool ios = false,
 }) {
   final previous = _mdToastEntry;
   if (previous != null && previous.mounted) {
@@ -187,6 +194,7 @@ void showIonMdToast(
       message: message,
       color: color,
       duration: duration,
+      ios: ios,
       onDismissed: () {
         if (entry.mounted) entry.remove();
         if (identical(_mdToastEntry, entry)) _mdToastEntry = null;
@@ -204,12 +212,17 @@ class IonMdToast extends StatefulWidget {
     required this.message,
     this.color,
     this.duration = const Duration(milliseconds: 3000),
+    this.ios = false,
     this.onDismissed,
   });
 
   final String message;
   final Color? color;
   final Duration duration;
+
+  /// Ionic ios `ion-toast`: 10px inset, radius 14, no shadow, light
+  /// step-50 background (dark #1e1e1e) with step-850 text.
+  final bool ios;
   final VoidCallback? onDismissed;
 
   @override
@@ -252,20 +265,26 @@ class _IonMdToastState extends State<IonMdToast>
     final base = widget.color == null
         ? null
         : AppColors.forBrightness(widget.color!, b);
+    final ios = widget.ios;
     final background = base ??
-        (dark ? const Color(0xFFD0D0D0) : const Color(0xFF333333));
+        (ios
+            ? (dark ? const Color(0xFF1E1E1E) : const Color(0xFFF2F2F2))
+            : (dark ? const Color(0xFFD0D0D0) : const Color(0xFF333333)));
     final textColor = base != null
         ? (base == AppColors.warning || base == AppColors.warningOnDark
             ? Colors.black
             : Colors.white)
-        : (dark ? const Color(0xFF1E1E1E) : const Color(0xFFF2F2F2));
-    final top = MediaQuery.paddingOf(context).top + 8;
+        : (ios
+            ? (dark ? const Color(0xFFDBDBDB) : const Color(0xFF262626))
+            : (dark ? const Color(0xFF1E1E1E) : const Color(0xFFF2F2F2)));
+    final inset = ios ? 10.0 : 8.0;
+    final top = MediaQuery.paddingOf(context).top + inset;
     final curved =
         CurvedAnimation(parent: _controller, curve: Curves.easeOutCubic);
     return Positioned(
       top: top,
-      left: 8,
-      right: 8,
+      left: inset,
+      right: inset,
       child: SafeArea(
         top: false,
         bottom: false,
@@ -280,9 +299,9 @@ class _IonMdToastState extends State<IonMdToast>
                     .animate(curved),
                 child: Material(
                   color: background,
-                  elevation: 6,
+                  elevation: ios ? 0 : 6,
                   shadowColor: Colors.black,
-                  borderRadius: BorderRadius.circular(4),
+                  borderRadius: BorderRadius.circular(ios ? 14 : 4),
                   child: Padding(
                     padding: const EdgeInsets.symmetric(
                         horizontal: 16, vertical: 14),
