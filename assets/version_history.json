@@ -1,6 +1,13 @@
 {
   "versions": [
     {
+      "version": "0.41.28",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Umstieg von der alten App: Offline erfasste Anwesenheiten, die noch nicht hochgeladen waren, werden übernommen und hochgeladen, sobald du online bist"
+      ]
+    },
+    {
       "version": "0.41.27",
       "date": "5.11.2026",
       "changes": [
