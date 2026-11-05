@@ -38,7 +38,12 @@ class PlanAccordion extends ConsumerStatefulWidget {
     this.onSendViaTelegram,
     this.onEditPlan,
     this.initiallyExpanded = false,
+    this.onOpenLocation,
   });
+
+  /// Opens a route location (TOP topic). Defaults to `context.push`; the
+  /// Termin modal closes itself first.
+  final void Function(String location)? onOpenLocation;
 
   final Attendance attendance;
   final VoidCallback onEdit;
@@ -237,7 +242,8 @@ class _PlanAccordionState extends ConsumerState<PlanAccordion> {
               liveMode: liveMode,
               fieldWarning: _missingGroups,
               onFieldTap: hasProtocol && plan.fields.any((f) => f.agendaItemId != null)
-                  ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId)
+                  ? (i) => openPlanFieldTopic(context, ref, plan.fields[i].agendaItemId,
+                      open: widget.onOpenLocation)
                   : null,
             ),
             if (canAddTopics) addTopicsRow,

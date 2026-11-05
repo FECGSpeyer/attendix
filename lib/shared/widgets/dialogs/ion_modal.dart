@@ -18,11 +18,15 @@ double ionModalCardHeight(Size size) => size.height >= 768 ? 600 : 500;
 ///
 /// The built widget is usually a [Scaffold] with its own app bar and close
 /// button; it pops itself via `Navigator.pop(context, result)`.
+///
+/// [barrierDismissible] `false` keeps the card open on a tap outside
+/// (Ionic `backdropDismiss: false`).
 Future<T?> showIonModal<T>(
   BuildContext context, {
   required WidgetBuilder builder,
   double width = 600,
   double? height,
+  bool barrierDismissible = true,
 }) {
   final size = MediaQuery.sizeOf(context);
   final cardHeight = height ?? ionModalCardHeight(size);
@@ -32,6 +36,7 @@ Future<T?> showIonModal<T>(
     return showAppDialog<T>(
       context: context,
       useRootNavigator: true,
+      barrierDismissible: barrierDismissible,
       builder: (ctx) => Dialog(
         insetPadding: const EdgeInsets.all(16),
         clipBehavior: Clip.antiAlias,

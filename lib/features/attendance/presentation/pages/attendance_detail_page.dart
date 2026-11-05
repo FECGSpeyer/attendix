@@ -56,6 +56,7 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../shared/widgets/display/ion_badge_text.dart';
 import '../widgets/attendance_date_change.dart';
 import '../person_attendance_writes.dart'; // REDESIGN: shared write path
@@ -64,11 +65,27 @@ import '../attendance_add_persons.dart';
 import '../attendance_extra_actions.dart';
 export '../widgets/attendance_date_change.dart' show calendarDayDifference, shiftByCalendarDays;
 
+/// Ionic dashboard "Nächster Termin" (`next-event-card`) opens the
+/// AttendancePage with `isModal: true` as `ion-modal`: full screen on phones,
+/// a card on desktop/tablet ([showIonModal]), an X (close-outline) instead of
+/// the back arrow; a tap outside does not close it.
+Future<void> showAttendanceModal(BuildContext context, int attendanceId) {
+  return showIonModal<void>(
+    context,
+    barrierDismissible: false,
+    builder: (_) => AttendanceDetailPage(attendanceId: attendanceId, isModal: true),
+  );
+}
+
 /// Attendance detail/taking page
 class AttendanceDetailPage extends ConsumerStatefulWidget {
-  const AttendanceDetailPage({super.key, required this.attendanceId});
+  const AttendanceDetailPage({super.key, required this.attendanceId, this.isModal = false});
 
   final int attendanceId;
+
+  /// Shown via [showAttendanceModal]: X instead of the back arrow, closes
+  /// with `Navigator.pop`, and routes to other pages after closing itself.
+  final bool isModal;
 
   @override
   ConsumerState<AttendanceDetailPage> createState() => _AttendanceDetailPageState();
@@ -375,7 +392,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     // the previous tenant).
     ref.listen<int?>(currentTenantIdProvider, (previous, next) {
       if (previous != null && next != previous && mounted) {
-        GoRouter.of(context).go('/attendance');
+        // The modal just closes over the page that opened it.
+        if (widget.isModal) {
+          Navigator.of(context).pop();
+        } else {
+          GoRouter.of(context).go('/attendance');
+        }
       }
     });
     // Toast only on a real online/offline transition (not on every
@@ -403,12 +425,12 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
     return attendanceAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
+        appBar: AppBar(leading: _modalCloseButton(context), title: Text(context.l10n.signoutAttendance)),
         body: const Center(child: AppSpinner()),
       ),
       // ATT_DETAIL: Ionic "loadFailedReopen" / "Neu laden"
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
+        appBar: AppBar(leading: _modalCloseButton(context), title: Text(context.l10n.signoutAttendance)),
         body: Center(
           child: Padding(
             padding: const EdgeInsets.all(AppDimensions.paddingL),
@@ -435,7 +457,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       data: (attendance) {
         if (attendance == null) {
           return Scaffold(
-            appBar: AppBar(title: Text(context.l10n.signoutAttendance)),
+            appBar: AppBar(leading: _modalCloseButton(context), title: Text(context.l10n.signoutAttendance)),
             body: Center(child: Text(context.l10n.attendanceFlutterNotFound)),
           );
         }
@@ -462,22 +484,25 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return Scaffold(
           backgroundColor: Theme.of(context).brightness == Brightness.dark ? null : AppColors.light,
           appBar: AppBar(
+            // Ionic isModal: X (close-outline) instead of the back arrow.
             leading: ios && canPop
                 ? Center(
                     child: Semantics(
                       button: true,
-                      label: MaterialLocalizations.of(context).backButtonTooltip,
+                      label: widget.isModal
+                          ? context.l10n.commonClose
+                          : MaterialLocalizations.of(context).backButtonTooltip,
                       child: GestureDetector(
                         onTap: () => Navigator.of(context).maybePop(),
-                        child: const IosCircleIcon(
-                          icon: Icons.arrow_back_ios_new,
+                        child: IosCircleIcon(
+                          icon: widget.isModal ? Icons.close : Icons.arrow_back_ios_new,
                           size: 44,
                           iconSize: 20,
                         ),
                       ),
                     ),
                   )
-                : null,
+                : _modalCloseButton(context),
             leadingWidth: ios && canPop ? 68 : null,
             title: Text(
               titlePersons == null
@@ -630,6 +655,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           attendance: attendance,
                           attendanceType: attendanceType,
                           people: _autoMessagePeople(persons),
+                          onOpenLocation: _openLocation,
                         ),
 
                         GeneralInfoAccordion(
@@ -666,7 +692,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           onChooseFilesFolder: canAccessFiles ? _chooseFilesFolder : null,
                           onRemoveFilesFolder: canAccessFiles ? _removeFilesFolder : null,
                           onOpenFilesFolder: canAccessFiles && attendance.filesFolder?.isNotEmpty == true
-                              ? () => openFilesFolderRoute(context, attendance.filesFolder!)
+                              ? () => widget.isModal
+                                  ? _openLocation(Uri(path: kFilesRoute, queryParameters: {'path': attendance.filesFolder!}).toString())
+                                  : openFilesFolderRoute(context, attendance.filesFolder!)
                               : null,
                           // IOS_DETAIL: Ionic shows the link to every role that
                           // edits the Termin (Helfer included); viewers stay
@@ -710,7 +738,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
                         // PROTOCOL: Protokoll-Karte + "Aufgaben aus diesem Termin"
                         if (ref.watch(protocolTypeByIdProvider(attendance.typeId))?.enableProtocol ?? false)
-                          AttendanceProtocolSection(attendanceId: widget.attendanceId, typeId: attendance.typeId),
+                          AttendanceProtocolSection(
+                            attendanceId: widget.attendanceId,
+                            typeId: attendance.typeId,
+                            onOpenLocation: widget.isModal ? _openLocation : null,
+                          ),
 
                         // ORG_PLANS: observers (viewer role) must not see the plan
                         if (!ref.watch(effectiveRoleProvider).isViewer)
@@ -720,14 +752,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                           // IOS_DETAIL: Ionic never opens an accordion by itself
                           // (no auto-expand after the planning page); the open
                           // state lives with the accordion like Ionic's.
-                          onCreate: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
-                          onEdit: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                          onCreate: () => _openLocation('/planning?attendanceId=${widget.attendanceId}'),
+                          onEdit: () => _openLocation('/planning?attendanceId=${widget.attendanceId}'),
                           // P10_ATTENDANCE: Ionic editPlan(initialPlanIndex: planIndex)
-                          onEditPlan: (i) => context.push<bool>(
+                          onEditPlan: (i) => _openLocation(
                               '/planning?attendanceId=${widget.attendanceId}${i > 0 ? '&plan=$i' : ''}'),
                           onExportPdf: _exportPlanPdf,
                           onSendViaTelegram: _showTelegramFormatOptions,
                           onSharePlanChanged: _toggleSharePlan,
+                          onOpenLocation: widget.isModal ? _openLocation : null,
                         ),
                       ],
                     ),
@@ -801,7 +834,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
                   child: IonFabButton(
                     heroTag: 'att-detail-plan-fab',
                     icon: Icons.format_list_bulleted,
-                    onPressed: () => context.push<bool>('/planning?attendanceId=${widget.attendanceId}'),
+                    onPressed: () => _openLocation('/planning?attendanceId=${widget.attendanceId}'),
                   ),
                 )
               : null,
@@ -1434,11 +1467,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (!_personAttendanceIds.values.contains(oldId)) return;
     _deletedHandled = true;
     ToastHelper.showError(context, context.l10n.attendanceDeletedByOther);
-    if (context.canPop()) {
-      context.pop();
-    } else {
-      context.go('/attendance');
-    }
+    _leavePage();
   }
 
   /// Leaves the page when the Termin is deleted by someone else
@@ -1450,11 +1479,43 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     _deletedHandled = true;
     ToastHelper.showError(context, context.l10n.attendanceDeletedByOther);
     ref.read(attendanceRefetchCounter.notifier).state++;
-    if (context.canPop()) {
+    _leavePage();
+  }
+
+  /// X of the modal header (Ionic `close-outline`); `null` on the regular
+  /// page keeps the implied back arrow.
+  Widget? _modalCloseButton(BuildContext context) => widget.isModal
+      ? IconButton(
+          tooltip: context.l10n.commonClose,
+          icon: const Icon(Icons.close),
+          onPressed: () => Navigator.of(context).maybePop(),
+        )
+      : null;
+
+  /// Leaves the page (Termin deleted by someone else): the modal
+  /// ([showAttendanceModal]) is a plain navigator route, the regular page a
+  /// go_router route (falls back to the list when opened directly).
+  void _leavePage() {
+    if (widget.isModal) {
+      Navigator.of(context).pop();
+    } else if (context.canPop()) {
       context.pop();
     } else {
       context.go('/attendance');
     }
+  }
+
+  /// Opens another page of the app (planning, message, rule history). Those
+  /// are shell routes below the root navigator's modal, so the modal closes
+  /// itself first (Ionic navigates the app underneath the modal).
+  Future<void> _openLocation(String location) async {
+    if (!widget.isModal) {
+      await context.push(location);
+      return;
+    }
+    final router = GoRouter.of(context);
+    Navigator.of(context).pop();
+    await router.push(location);
   }
 
   /// "Neu laden" banner when the persons of the Termin could not be loaded.
@@ -2141,7 +2202,7 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     if (!mounted || action == null) return;
     if (action == 'song') {
       // ASTRA_UX: the in-app song page, not the public share route /songs/:key.
-      GoRouter.of(context).push('/settings/songs/${entry.songId}');
+      _openLocation('/settings/songs/${entry.songId}');
       return;
     }
     await _changeConductor(index);

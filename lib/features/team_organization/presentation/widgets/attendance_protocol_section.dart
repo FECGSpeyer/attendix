@@ -63,9 +63,16 @@ Future<bool> openAgendaPickerForAttendance(
 }
 
 /// Ionic `openPlanField`: a TOP opens its topic (leadership only).
-void openPlanFieldTopic(BuildContext context, WidgetRef ref, String? agendaItemId) {
+/// [open] replaces `context.push` (the Termin modal closes itself first).
+void openPlanFieldTopic(BuildContext context, WidgetRef ref, String? agendaItemId,
+    {void Function(String location)? open}) {
   if (agendaItemId == null || !ref.read(isTeamLeaderProvider)) return;
-  context.push('/settings/agenda-items/$agendaItemId');
+  final location = '/settings/agenda-items/$agendaItemId';
+  if (open != null) {
+    open(location);
+  } else {
+    context.push(location);
+  }
 }
 
 /// "Offen" / "In Arbeit" / "Erledigt".
@@ -79,12 +86,26 @@ String taskStatusLabel(String status) => switch (status) {
 /// "Protokoll & Tagesordnung" (Ionic attendance.page l.670-730). Renders
 /// nothing for other types.
 class AttendanceProtocolSection extends ConsumerWidget {
-  const AttendanceProtocolSection({super.key, required this.attendanceId, required this.typeId});
+  const AttendanceProtocolSection({
+    super.key,
+    required this.attendanceId,
+    required this.typeId,
+    this.onOpenLocation,
+  });
 
   final int attendanceId;
   final String? typeId;
 
+  /// Replaces `context.push`: the Termin modal closes itself first, so
+  /// there is nothing to refresh afterwards.
+  final void Function(String location)? onOpenLocation;
+
   Future<void> _push(BuildContext context, WidgetRef ref, String location) async {
+    final open = onOpenLocation;
+    if (open != null) {
+      open(location);
+      return;
+    }
     await context.push(location);
     // Refresh after coming back from the protocol or a task.
     ref.invalidate(protocolForAttendanceProvider(attendanceId));

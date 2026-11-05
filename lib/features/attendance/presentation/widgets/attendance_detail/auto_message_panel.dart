@@ -211,12 +211,17 @@ class AutoMessagePanel extends ConsumerStatefulWidget {
     required this.people,
     this.look = const _IonicLook(),
     this.leading = const [],
+    this.onOpenLocation,
   });
 
   final Attendance attendance;
   final AttendanceType? attendanceType;
   final List<AutoMessagePanelPerson> people;
   final AutoMessagePanelLook look;
+
+  /// Opens a route location (message, rule history). Defaults to
+  /// `context.push`; the Termin modal closes itself first.
+  final void Function(String location)? onOpenLocation;
 
   /// Rows shown before the banners, with the same guard (admins and
   /// responsibles, once the Termin has started).
@@ -262,10 +267,14 @@ class _AutoMessagePanelState extends ConsumerState<AutoMessagePanel> {
   }
 
   void _openRun(AutoMessageRule rule, AutoMessageRun run) {
-    if (run.messageId != null) {
-      context.push('/messages/${run.messageId}');
+    final location = run.messageId != null
+        ? '/messages/${run.messageId}'
+        : '/settings/auto-messages/${rule.id}?tab=history';
+    final open = widget.onOpenLocation;
+    if (open != null) {
+      open(location);
     } else {
-      context.push('/settings/auto-messages/${rule.id}?tab=history');
+      context.push(location);
     }
   }
 

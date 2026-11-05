@@ -8,6 +8,7 @@ import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/router/route_access.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dashboard_utils.dart';
@@ -15,6 +16,7 @@ import '../../../../data/models/attendance/attendance.dart';
 import '../../../../data/models/dashboard/dashboard_event.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/plan/plan.dart';
+import '../../../attendance/presentation/pages/attendance_detail_page.dart' show showAttendanceModal;
 import '../../../planning/presentation/pages/plan_viewer_page.dart';
 import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
@@ -47,7 +49,13 @@ class NextEventCard extends ConsumerWidget {
 
     Future<void> open(int? id) async {
       if (!canOpen || id == null) return;
-      await context.push('/attendance/$id');
+      // Ionic next-event-card: AttendancePage `isModal: true` as modal;
+      // the new design keeps its regular page.
+      if (RedesignRoutes.active) {
+        await context.push('/attendance/$id');
+      } else {
+        await showAttendanceModal(context, id);
+      }
       ref.invalidate(dashboardNextEventProvider);
     }
 

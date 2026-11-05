@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/providers/dashboard_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
+import '../../../people/presentation/pages/person_detail_page.dart' show showPersonModal;
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dashboard_utils.dart';
 import '../../../../data/models/person/person.dart';
@@ -10,11 +12,17 @@ import 'dashboard_card.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 
-/// Opens the person detail page (Ionic opens PersonPage as modal).
+/// Opens the person detail page as modal like Ionic (`modalController.create`
+/// with PersonPage, `backdropDismiss: false`); the new design keeps its
+/// regular page.
 Future<void> _openPerson(BuildContext context, WidgetRef ref, Person? person) async {
   final id = person?.id;
   if (id == null) return;
-  await context.push('/people/$id');
+  if (RedesignRoutes.active) {
+    await context.push('/people/$id');
+  } else {
+    await showPersonModal(context, id);
+  }
   // The person may have been changed (e.g. Problemfall gelöst).
   ref.invalidate(dashboardPersonsProvider);
 }

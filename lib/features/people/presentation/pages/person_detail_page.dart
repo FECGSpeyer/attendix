@@ -41,6 +41,7 @@ import '../../person_stats.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart';
 import '../../../../core/utils/people_shift_status.dart' show shiftAssignmentChanged;
 import 'package:attendix/shared/widgets/layout/ios_tab_bar.dart';
 
@@ -199,11 +200,44 @@ final personHistoryProvider =
   return allHistory;
 });
 
+/// Ionic dashboard cards (`absences-card`, `birthdays-card`,
+/// `critical-persons-card`, `member-changes-card`) open the PersonPage with
+/// `modalController.create({ backdropDismiss: false })`: full screen on
+/// phones, a card on desktop/tablet ([showIonModal]); a tap outside does not
+/// close it. The page is read-only for roles other than Admin /
+/// Verantwortlicher (handled by the page itself).
+Future<void> showPersonModal(BuildContext context, int personId) {
+  return showIonModal<void>(
+    context,
+    barrierDismissible: false,
+    builder: (_) => PersonDetailPage(personId: personId, isModal: true),
+  );
+}
+
 /// Person detail page - with inline editing
 class PersonDetailPage extends ConsumerWidget {
-  const PersonDetailPage({super.key, required this.personId});
+  const PersonDetailPage({super.key, required this.personId, this.isModal = false});
 
   final int personId;
+
+  /// Shown via [showPersonModal]: closes with `Navigator.pop` instead of
+  /// go_router.
+  final bool isModal;
+
+  /// Simple header for the loading / error states; in the modal the close
+  /// button sits at the end like on the loaded page.
+  PreferredSizeWidget _stateAppBar(BuildContext context) => AppBar(
+        automaticallyImplyLeading: !isModal,
+        title: Text(context.l10n.tasksPerson),
+        actions: [
+          if (isModal)
+            IconButton(
+              tooltip: context.l10n.commonClose,
+              icon: const Icon(Icons.close),
+              onPressed: () => Navigator.of(context).maybePop(),
+            ),
+        ],
+      );
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -211,11 +245,11 @@ class PersonDetailPage extends ConsumerWidget {
 
     return personAsync.when(
       loading: () => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.tasksPerson)),
+        appBar: _stateAppBar(context),
         body: const Center(child: AppSpinner()),
       ),
       error: (error, stack) => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.tasksPerson)),
+        appBar: _stateAppBar(context),
         body: Center(
           child: Column(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -235,21 +269,22 @@ class PersonDetailPage extends ConsumerWidget {
       data: (person) {
         if (person == null) {
           return Scaffold(
-            appBar: AppBar(title: Text(context.l10n.tasksPerson)),
+            appBar: _stateAppBar(context),
             body: Center(child: Text(context.l10n.personFlutterNotFound)),
           );
         }
-        return _PersonDetailContent(person: person, personId: personId);
+        return _PersonDetailContent(person: person, personId: personId, isModal: isModal);
       },
     );
   }
 }
 
 class _PersonDetailContent extends ConsumerStatefulWidget {
-  const _PersonDetailContent({required this.person, required this.personId});
+  const _PersonDetailContent({required this.person, required this.personId, this.isModal = false});
 
   final Person person;
   final int personId;
+  final bool isModal;
 
   @override
   ConsumerState<_PersonDetailContent> createState() =>
@@ -296,6 +331,17 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     _initDraft();
     _loadUserRole();
     _loadSharedFieldValues();
+  }
+
+  /// Leaves the page after archive / approve / decline / transfer /
+  /// reactivate / remove / merge: the modal ([showPersonModal]) is a plain
+  /// navigator route, the regular page a go_router route.
+  void _closePage() {
+    if (widget.isModal) {
+      Navigator.of(context).pop();
+    } else {
+      context.pop();
+    }
   }
 
   /// Ionic getOrganisationPersonKey
@@ -1137,7 +1183,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(content: Text(context.l10n.personArchived), backgroundColor: AppColors.success),
         );
-        context.pop();
+        _closePage();
       }
     } catch (e) {
       if (mounted) {
@@ -1242,7 +1288,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        _closePage();
       }
     } catch (e) {
       if (mounted) {
@@ -1314,7 +1360,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
             backgroundColor: AppColors.success,
           ),
         );
-        context.pop();
+        _closePage();
       }
     } catch (e) {
       if (mounted) {
@@ -1414,7 +1460,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       // The sheet can switch between copy and transfer, so look at the
       // result: a transferred person is archived (`left` set).
       final updated = await ref.read(personProvider(widget.personId).future);
-      if (mounted && (updated == null || updated.left != null)) context.pop();
+      if (mounted && (updated == null || updated.left != null)) _closePage();
     }
   }
 
@@ -1447,7 +1493,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       if (widget.person.id != null) ref.invalidate(personProvider(widget.person.id!));
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.personReactivated);
-      context.pop();
+      _closePage();
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -1482,7 +1528,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
           );
       if (mounted) {
         ToastHelper.showSuccess(context, context.l10n.personRemoved);
-        context.pop();
+        _closePage();
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e)));
@@ -1831,7 +1877,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
                 onMerged: () {
                   ref.invalidate(realtimePlayersProvider);
                   ref.invalidate(pendingPlayersProvider);
-                  if (mounted) context.pop();
+                  if (mounted) _closePage();
                 },
               ),
 
