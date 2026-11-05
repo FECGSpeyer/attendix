@@ -573,15 +573,12 @@ class AllgemeinAccordion extends ConsumerWidget {
             title: context.l10n.personFlutterChooseLabel(context.l10n.personShift),
             items: items,
             selectedValue: currentShiftName,
-            noneLabel: context.l10n.personNoShift,
+            // Ionic: the sub-shift select has no empty option.
             icon: Icons.access_time,
           );
 
-          if (result != null) {
-            onFieldChanged(
-              'shiftName',
-              result.isNone ? null : result.value,
-            );
+          if (result != null && !result.isNone) {
+            onFieldChanged('shiftName', result.value);
           }
         },
       ),

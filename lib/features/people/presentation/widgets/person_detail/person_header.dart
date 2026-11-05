@@ -223,8 +223,11 @@ class PersonHeader extends ConsumerWidget {
       // Ionic: own picture → all instances of the account (appId).
       final publicUrl = await repo.updateImage(personId, bytes, appId: person.appId);
 
-      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned.
-      if (legacyPath != null && legacyPath != storagePath) {
+      // Drop a legacy `<tenantId>/<id>.jpg` object so it does not stay orphaned
+      // (never the file of another person, e.g. an adopted e-mail match).
+      if (legacyPath != null &&
+          legacyPath != storagePath &&
+          isOwnProfileImagePath(legacyPath, personId)) {
         try {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
@@ -291,8 +294,10 @@ class PersonHeader extends ConsumerWidget {
       // Ionic removeImage with the own appId clears every instance's row.
       await repo.syncOwnImage(person.appId, '');
 
+      // Only the person's own file: an adopted picture (e-mail match of
+      // another instance) belongs to that person.
       final storagePath = profileImagePathFromUrl(person.img);
-      if (storagePath != null) {
+      if (storagePath != null && isOwnProfileImagePath(storagePath, personId)) {
         try {
           await supabase.storage
               .from(SupabaseBuckets.profiles)
