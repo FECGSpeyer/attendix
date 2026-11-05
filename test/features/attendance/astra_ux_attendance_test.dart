@@ -27,7 +27,8 @@ void main() {
 
   test('ASTRA_UX: song row opens the in-app song page, not the share route', () {
     final s = _src('lib/features/attendance/presentation/pages/attendance_detail_page.dart');
-    expect(s, contains("push('/settings/songs/\${entry.songId}')"));
+    // Issue #318: _openLocation pushes the route (closes the modal first).
+    expect(s, contains("_openLocation('/settings/songs/\${entry.songId}')"));
     expect(s, isNot(contains("push('/songs/\${entry.songId}')")));
   });
 }

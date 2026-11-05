@@ -29,7 +29,8 @@ void main() {
   test('person more menu has the Ionic header and closes after a transfer', () {
     final src = read('lib/features/people/presentation/pages/person_detail_page.dart');
     expect(src, contains('title: context.l10n.personActions'));
-    expect(src, contains('updated.left != null)) context.pop()'));
+    // Issue #318: _closePage pops the modal or the go_router page.
+    expect(src, contains('updated.left != null)) _closePage()'));
   });
 
   test('late warning card uses the Ionic texts', () {
