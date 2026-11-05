@@ -126,6 +126,9 @@ class _PersonTransferSheetState extends ConsumerState<_PersonTransferSheet> {
         targetTenantName: target.longName,
         sourceTenantName: source.longName,
         stayInInstance: copy,
+        // Ionic person.page handoverPerson: the new account is always a
+        // Spieler (alert-97cf5262); only handover-detail grants Verantwortlich.
+        responsibleForMainGroup: false,
       );
       if (!mounted) return;
       if (result != HandoverResult.success) {

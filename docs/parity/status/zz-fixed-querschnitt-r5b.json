@@ -1,0 +1,85 @@
+{
+ "batch": "zz-fixed-querschnitt-r5b",
+ "ionic": "1923d203",
+ "afterRound": 6,
+ "items": {
+  "x-7da97d6aac": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/toast_helper.dart"
+   ],
+   "n": "Toasts auch im iOS-Look über das Root-Overlay (wie ion-toast über jedem Modal), nicht mehr als SnackBar hinter Sheets"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-b9ee5530": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/toast_helper.dart"
+   ],
+   "n": "sichtbar über dem Hinzufügen-Sheet (x-7da97d6aac)"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-945683f7": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/toast_helper.dart"
+   ],
+   "n": "sichtbar über dem Hinzufügen-Sheet (x-7da97d6aac)"
+  },
+  "settings/general/extra-fields/extra-fields.page#toast-fcd86ce2": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/toast_helper.dart"
+   ],
+   "n": "sichtbar über dem Hinzufügen-Sheet (x-7da97d6aac)"
+  },
+  "services/auth/auth.service#db-5e5596ce": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ],
+   "n": "Teams-Verknüpfung: email_not_confirmed zeigt „Bitte bestätige zuerst deine E-Mail-Adresse.“"
+  },
+  "services/organisation/organisation.service#db-ad59e983": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "Ladefehler der gemeinsamen Felder: Toast wie Ionic, Speichern und Annehmen gesperrt, damit nichts überschrieben wird"
+  },
+  "settings/general/general.page#field-dd151934": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/general_settings_page.dart"
+   ],
+   "n": "Saisonstart: höchstens heute, Untergrenze 1900"
+  },
+  "settings/general/type/type.page#field-8aa4fd37": {
+   "s": "ok",
+   "f": [
+    "lib/features/settings/presentation/pages/attendance_type_edit_page.dart"
+   ],
+   "n": "Dienst-Modus einschalten setzt bei neuem Typ ohne gewählte Erinnerung 2 Tage"
+  },
+  "utilities/db-helpers#db-f424eb31": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "Schichtwechsel schreibt Status mit Dienst-Abgleich und changed_at/changed_by"
+  },
+  "people/person/person.page#alert-97cf5262": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart",
+    "lib/features/people/presentation/widgets/person_transfer_sheet.dart"
+   ],
+   "n": "Person kopieren/übertragen von der Personenseite vergibt immer Spieler wie Ionic; die Übergabe-Seite behält Verantwortlich für die Hauptgruppe"
+  },
+  "services/auth/auth.service#toast-fe3978a5": {
+   "s": "ok",
+   "f": [
+    "lib/features/auth/presentation/pages/login_page.dart"
+   ],
+   "n": "Teams-Verknüpfung: email_not_confirmed zeigt „Bitte bestätige zuerst deine E-Mail-Adresse.“ (gleiche Ursache wie db-5e5596ce)"
+  }
+ }
+}
