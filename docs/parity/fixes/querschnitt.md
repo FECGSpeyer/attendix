@@ -3,7 +3,7 @@
 Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 60
+## Angleichen (hoch/mittel): 61
 
 - [ ] **hoch** `services/attendance-type/attendance-type.service` `db-c4d1a223` [services/attendance-type/attendance-type.service.ts:77](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/attendance-type/attendance-type.service.ts#L77) (2. Prüfung: bestätigt)
   Ionic: deleteAttendanceType löscht den Typ ohne Prüfung (Dialog: 'Alle Anwesenheiten dieses Typs werden ebenfalls gelöscht') / Flutter: deleteType zählt attendance mit type_id und löscht bei >0 NICHT; Repo fängt die Exception, UI zeigt nur 'Fehler beim Löschen des Anwesenheitstyps' – obwohl derselbe Bestätigungstext das Mitlöschen ankündigt.
@@ -49,6 +49,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter: lib/features/registration/presentation/pages/tenant_registration_page.dart:644, lib/core/providers/church_providers.dart:8, lib/features/dashboard/presentation/pages/administration_page.dart:215
 - [ ] **mittel** `services/conductor/conductor.service` `toast-e679cded` [services/conductor/conductor.service.ts:40](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/conductor/conductor.service.ts#L40) (2. Prüfung: bestätigt)
   Ionic: Toast 'Fehler beim Laden der Hauptgruppen-Personen' (danger) / Flutter: conductorsProvider (OfflineListCache → PlayerRepository.getConductors) ohne Hinweis; Aufrufer (Werk-Historie, Register-Plan, Termin) fangen den Fehler still bzw. melden ihn nur an ErrorReporter.
+- [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-119dd1e0` [services/cross-tenant/cross-tenant.service.ts:236](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/cross-tenant/cross-tenant.service.ts#L236) (2. Prüfung: korrigiert)
+  Sol-Review 6656217368: doch Funktion – beim Wiederherstellen des Instanzfilters wird ein Ladefehler verschluckt, es bleibt ungewarnt „Alle anzeigen“ aktiv (people_list_page.dart:234), also andere Personen ohne Fehlermeldung. Befund: Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen.
+  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1122, lib/features/people/presentation/pages/people_list_page.dart:235, lib/data/repositories/cross_tenant_person_repository.dart:240
 - [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-fef13d0b` [services/cross-tenant/cross-tenant.service.ts:312](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/cross-tenant/cross-tenant.service.ts#L312) (2. Prüfung: bestätigt)
   Ionic: Toast 'Fehler beim Laden der Personen' (danger) bei Namensvorschlägen und beim Button 'In anderer Instanz suchen' / Flutter: Vorschläge still ('Silent — suggestions are optional', person_create_page.dart:176); _searchPersonInOtherInstance fängt den Fehler gar nicht ab (kein Toast).
 - [ ] **mittel** `services/cross-tenant/cross-tenant.service` `toast-9e26e97c` [services/cross-tenant/cross-tenant.service.ts:340](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/cross-tenant/cross-tenant.service.ts#L340) (2. Prüfung: bestätigt)
@@ -325,7 +328,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic listRaw lädt je Ordnerebene nur die ersten 1000 Einträge (limit 1000) – Löschen/Verschieben/Umbenennen großer Ordner erfasst nur einen Teil und meldet trotzdem Erfolg, die Liste zeigt max. 1000 / Flutter listAllPages lädt seitenweise alle Einträge.
   Flutter: lib/data/repositories/files_repository.dart:180
 
-## Kleinigkeiten (niedrig): 200
+## Kleinigkeiten (niedrig): 199
 
 - [ ] **niedrig** `services/admin/admin.service` `toast-5b84a64a` [services/admin/admin.service.ts:21](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/admin/admin.service.ts#L21)
   Ionic: Toast 'Fehler beim Laden der Admins' (danger) beim Laden der Einstellungen / Flutter: kein Toast; im Administratoren-Sheet steht 'Fehler: <Fehlertext>', Badge zeigt 0.
@@ -369,9 +372,6 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `services/cross-tenant/cross-tenant.service` `toast-2e9148a8` [services/cross-tenant/cross-tenant.service.ts:202](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/cross-tenant/cross-tenant.service.ts#L202)
   Ionic: Toast 'Fehler beim Laden der Mandanten' beim Laden der Einstellungen / Flutter: kein Toast; die Instanzliste zeigt eine Fehleransicht.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:429
-- [ ] **niedrig** `services/cross-tenant/cross-tenant.service` `toast-119dd1e0` [services/cross-tenant/cross-tenant.service.ts:236](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/cross-tenant/cross-tenant.service.ts#L236) (2. Prüfung: korrigiert)
-  Nur Optik (Leon 05.11.2026): Beim Auswählen gibt es einen Fehler-Toast (nur anderer Text), beim Wiederherstellen ist der Fehlschlag am Filter 'Alle anzeigen' sichtbar. – Befund: Filter 'Mitglied anderer Instanz'. Ionic: Toast 'Fehler beim Laden der Benutzer' (danger) beim Auswählen und beim Wiederherstellen des gespeicherten Filters / Flutter: beim Auswählen Fehler-Toast 'Fehler: <Fehlermeldung>' (anderer Text), beim Wiederherstellen still (Filter bleibt 'Alle anzeigen'). Erstprüfer: 'missing, still ignoriert' – Auswahl-Pfad mit Toast übersehen.
-  Flutter: lib/features/people/presentation/pages/people_list_page.dart:1122, lib/features/people/presentation/pages/people_list_page.dart:235, lib/data/repositories/cross_tenant_person_repository.dart:240
 - [ ] **niedrig** `services/db.service` `loading-9f4b6f7d` [services/db.service.ts:469](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L469)
   Ionic: blockierendes Loading-Overlay beim Instanzwechsel / Flutter: kein Overlay, direkter Wechsel.
   Flutter: lib/features/tenant_selection/presentation/pages/tenant_selection_page.dart:161

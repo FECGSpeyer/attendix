@@ -1,6 +1,6 @@
 # Aussortiert: mittel-Punkte, die nur Optik betreffen
 
-Stand Runde 4 (Flutter-master 8004a44, Ionic 4.19.9). Nach Leons Vorgabe vom 05.11.2026 (Funktion zählt, Aussehen nicht) auf **niedrig** gesetzt und damit aus den Fix-Listen genommen. Wenn ein Punkt doch angeglichen werden soll: im Tracker „Angleichen“ wählen.
+Stand Runde 4 (Flutter-master 8004a44, Ionic 4.19.9). Nach Leons Vorgabe vom 05.11.2026 (Funktion zählt, Aussehen nicht) auf **niedrig** gesetzt und damit aus den Fix-Listen genommen. Vier Punkte (fehlende Fehler- bzw. Validierungsmeldung) hat das Sol-Review danach wieder auf mittel gesetzt. Wenn ein Punkt doch angeglichen werden soll: im Tracker „Angleichen“ wählen.
 
 ## app (4)
 
@@ -53,13 +53,10 @@ Stand Runde 4 (Flutter-master 8004a44, Ionic 4.19.9). Nach Leons Vorgabe vom 05.
 - `people/person/person.page#modal-b80602d8`: Nur Dialog statt Sheet, Inhalt gleich.
 - `people/person/person.page#modal-ecac8535`: Bildbetrachter weiterhin erreichbar, nur über einen Eintrag im Aktionsblatt.
 
-## planung (11)
+## planung (8)
 
-- `org-settings/org-planning-templates/org-planning-templates.page#alert-ce98be7f`: Bei leerem Namen bleibt der Dialog offen und nichts wird angelegt; nur der Hinweistext fehlt, das Ergebnis ist sichtbar.
-- `org-settings/org-planning-templates/org-planning-templates.page#alert-e458236c`: Bei leerem Namen bleibt der Dialog offen und nichts wird umbenannt; nur der Hinweistext fehlt.
 - `org-settings/org-planning-templates/org-planning-templates.page#field-d3412616`: Minuten der Standardfelder sind weiterhin änderbar, nur über den Bearbeiten-Dialog statt inline – andere Platzierung.
 - `org-settings/org-planning-templates/org-planning-templates.page#popover-21e36ab9`: Gleiche Einträge in gleicher Reihenfolge, nur Aktionsblatt statt Popover und ohne Trenner.
-- `org-settings/org-settings.page#alert-14d3ff8c`: Bei leerem Namen bleibt der Dialog offen und nichts wird gespeichert; nur der Hinweistext fehlt.
 - `planning/planning.page#actionsheet-0c53b41c`: Alle Ionic-Optionen vorhanden, Flutter hat nur zusätzlich „Freigabe aufheben“ und Icons.
 - `planning/planning.page#alert-75ab0ccf`: Gleiche Tagesoptionen und gleiches Ergebnis, nur Aktionsblatt statt Radio-Alert mit Speichern.
 - `planning/planning.page#modal-bbd6596e`: Nur Dialogtyp (AlertDialog statt Vollbild-Modal), gleiche Felder und gleiches Ergebnis.
@@ -67,9 +64,8 @@ Stand Runde 4 (Flutter-master 8004a44, Ionic 4.19.9). Nach Leons Vorgabe vom 05.
 - `shared-plan/shared-plan.page#action-a9ede0e6`: Löschen per Wischen statt Papierkorb-Button; „Nur Block auflösen“ liefert das Ionic-Ergebnis, die Rückfrage ist eine Absicherung.
 - `shared-plan/shared-plan.page#action-ec0c1511`: Bearbeitungsmodus bietet alle Ionic-Funktionen plus Extras (Minuten, Einrücken, Block-Optionen); Block-Zeitraum ist nur Mehrinformation.
 
-## querschnitt (3)
+## querschnitt (2)
 
-- `services/cross-tenant/cross-tenant.service#toast-119dd1e0`: Beim Auswählen gibt es einen Fehler-Toast (nur anderer Text), beim Wiederherstellen ist der Fehlschlag am Filter 'Alle anzeigen' sichtbar.
 - `services/db.service#alert-f27cc642`: Vollseite statt Radio-Alert, jede Instanz (auch die gespeicherte, die 'Abbrechen' öffnet) ist direkt wählbar.
 - `shared/files-folder-picker/files-folder-picker.component#action-c2019029`: Gleiche Ordnerwahl, nur Position/Beschriftung anders; der Ordnername steht im Pfad oben, auch während des Ladens wird der dort angezeigte Ordner gewählt.
 
