@@ -11141,10 +11141,37 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignNotifTelegramDisconnect => 'Disconnect';
 
   @override
+  String redesignOwnAnswerDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'You can still answer for $count days.',
+      one: 'You can still answer for 1 day.',
+      zero: 'You can still answer today.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnAskReason => 'The leaders ask for the reason.';
+
+  @override
+  String get redesignOwnComeLater => 'Coming later';
+
+  @override
+  String get redesignOwnComingLater => 'You\'re coming later';
+
+  @override
+  String get redesignOwnIn => 'You\'re in';
+
+  @override
   String get redesignOwnInfos => 'Event info';
 
   @override
   String get redesignOwnMore => 'More';
+
+  @override
+  String get redesignOwnNoAnswer => 'No answer yet';
 
   @override
   String get redesignOwnNoNotes => 'No scores';
@@ -11156,7 +11183,33 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnNotFound => 'This event is no longer in your list.';
 
   @override
+  String get redesignOwnNotRecorded => 'Not recorded';
+
+  @override
+  String get redesignOwnNoteToLeaders => 'Note to the leaders';
+
+  @override
   String get redesignOwnOpenMine => 'Open your scores';
+
+  @override
+  String get redesignOwnPlanAll => 'View all';
+
+  @override
+  String get redesignOwnPlanLive => 'Live view';
+
+  @override
+  String redesignOwnPlanMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'and $count more items',
+      one: 'and 1 more item',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnPlanned => 'You\'re scheduled';
 
   @override
   String get redesignOwnPrintMine => 'My scores as one PDF';
@@ -11173,7 +11226,13 @@ class AppLocalizationsEn extends AppLocalizations {
   String get redesignOwnRoute => 'Directions';
 
   @override
+  String get redesignOwnSignOut => 'Sign out';
+
+  @override
   String get redesignOwnYouConduct => 'You conduct';
+
+  @override
+  String get redesignOwnYourAttendance => 'Your attendance';
 
   @override
   String get redesignParentsAllKids => 'All children';

@@ -44,12 +44,23 @@ import '../today/rd_today_common.dart';
 
 /// Uppercase label with an optional text action on the right ("+ Werk").
 class RdSectionLabel extends StatelessWidget {
-  const RdSectionLabel(this.text, {super.key, this.actionLabel, this.actionSemantics, this.onAction});
+  const RdSectionLabel(
+    this.text, {
+    super.key,
+    this.actionLabel,
+    this.actionSemantics,
+    this.onAction,
+    this.actionIcon = Icons.add,
+  });
 
   final String text;
   final String? actionLabel;
   final String? actionSemantics;
   final VoidCallback? onAction;
+
+  /// "+ Aufgabe"; [Icons.chevron_right] goes after the label ("Ganz
+  /// ansehen ›").
+  final IconData actionIcon;
 
   @override
   Widget build(BuildContext context) {
@@ -75,9 +86,12 @@ class RdSectionLabel extends StatelessWidget {
                     child: Row(
                       mainAxisSize: MainAxisSize.min,
                       children: [
-                        Icon(Icons.add, size: 18, color: p.link),
-                        const SizedBox(width: 2),
+                        if (actionIcon != Icons.chevron_right) ...[
+                          Icon(actionIcon, size: 18, color: p.link),
+                          const SizedBox(width: 2),
+                        ],
                         Text(actionLabel!, style: TextStyle(fontSize: 15, color: p.link)),
+                        if (actionIcon == Icons.chevron_right) Icon(actionIcon, size: 18, color: p.link),
                       ],
                     ),
                   ),

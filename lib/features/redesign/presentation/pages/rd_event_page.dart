@@ -756,7 +756,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       if (rdShowsProgram(ref, type) && attendance.id != null) RdEventProgramSection(attendance: attendance, type: type),
       RdEventPlanSection(
         attendance: attendance,
-        preview: plan == null ? null : RdPlanTimeline(attendance: attendance, plan: plan),
+        preview: plan == null ? null : RdPlanTimeline(day: EventListUtils.parse(attendance.date), plan: plan),
         range: plan == null ? '' : rdPlanRange(plan),
       ),
     ];
@@ -1525,7 +1525,7 @@ class _Overview extends ConsumerWidget {
               ],
               if (phase == RdEventPhase.running && hasPlan) ...[
                 const SizedBox(height: 14),
-                RdPlanNow(attendance: attendance),
+                if (rdPlanOf(attendance) case final plan?) RdPlanNow(day: EventListUtils.parse(attendance.date), plan: plan),
               ],
               // Only Termin-Arten with "offen" (Zusage) have someone to remind.
               if (canMutate && !ended && counts.open > 0 && id != null) ...[

@@ -15,6 +15,7 @@ import '../../../../self_service/presentation/pages/signout_page.dart'
 import '../../../../self_service/presentation/widgets/self_service_event_actions.dart';
 import '../../../data/providers/rd_today_providers.dart'
     show rdDeadlineLabel, rdDeadlineUrgent, rdNotMemberInfo, rdOpenDeadline, rdSignoutDataProvider, rdStartOf, rdTodayFocus;
+import '../event/rd_own_event_cards.dart' show RdStatusBox, rdOwnStatusLook;
 import '../event/rd_signout_sheet.dart';
 import '../rd_widgets.dart';
 import 'rd_today_common.dart';
@@ -102,10 +103,20 @@ class RdOwnAnswerSection extends ConsumerStatefulWidget {
     this.showHeader = true,
     this.attendance,
     this.showEvent = true,
+    this.statusFirst = false,
+    this.onNote,
   });
 
   /// "Deine Zusage" above the card (Helfer).
   final bool showHeader;
+
+  /// Termin page (concept "Termin-Bereich neu", S1): once answered, the
+  /// status first ("Du bist eingeplant") with "Abmelden" and "Komme
+  /// später" below it, instead of the Zusage buttons.
+  final bool statusFirst;
+
+  /// "Notiz an die Leitung" below the buttons.
+  final VoidCallback? onNote;
 
   /// The Termin to answer; null: the next one (Heute).
   final CrossTenantPersonAttendance? attendance;
@@ -228,6 +239,11 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
       question = l10n.redesignTodayQuestion;
     }
 
+    if (widget.statusFirst && qa != null && !_choosingReason && !att.isDutyRequested) {
+      final answered = qa.present || qa.late || qa.excused || att.status == AttendanceStatus.absent;
+      if (answered) return _statusCard(context, att, actions, qa, busy, countdown);
+    }
+
     return RdCard(
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -281,6 +297,7 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
           ],
           const SizedBox(height: 12),
           if (qa != null) ..._answerButtons(context, att, actions, qa, busy),
+          if (widget.onNote != null) _noteLink(context),
           if (widget.showEvent) ...[
             const SizedBox(height: 4),
             Align(
@@ -292,6 +309,84 @@ class _RdOwnAnswerSectionState extends ConsumerState<RdOwnAnswerSection> {
                     : actions.presentActions(context, att, hideQuickActions: qa != null),
               ),
             ),
+          ],
+        ],
+      ),
+    );
+  }
+
+  Widget _noteLink(BuildContext context) => Align(
+        alignment: Alignment.centerLeft,
+        child: RdLinkButton(
+          key: const Key('rd-own-note'),
+          label: context.l10n.redesignOwnNoteToLeaders,
+          onPressed: widget.onNote!,
+        ),
+      );
+
+  /// "✓ Du bist eingeplant" / "Abgemeldet · „Krank“" with the ways to
+  /// change it.
+  Widget _statusCard(
+    BuildContext context,
+    CrossTenantPersonAttendance att,
+    SelfServiceEventActions actions,
+    QuickActions qa,
+    bool busy,
+    String? countdown,
+  ) {
+    final p = context.rd;
+    final l10n = context.l10n;
+    final look = rdOwnStatusLook(l10n, att.status, ended: false, note: att.notes);
+    final canSignOut = qa.allowExcuse && !qa.blocked;
+    final canLate = qa.allowLate && !qa.blocked;
+    final buttons = <Widget>[
+      if (qa.present) ...[
+        if (canSignOut)
+          RdOutlineButton(
+            key: const Key('rd-own-signout'),
+            label: l10n.redesignOwnSignOut,
+            color: p.absent,
+            onPressed: busy ? null : () => setState(() => _choosingReason = true),
+          ),
+        if (canLate)
+          RdOutlineButton(
+            key: const Key('rd-own-late'),
+            label: l10n.redesignOwnComeLater,
+            onPressed: busy
+                ? null
+                : () => _run(() => showRdSignoutSheet(context, att: att, actions: actions, late: true)),
+          ),
+      ] else if (qa.canSignin)
+        RdPrimaryButton(
+          key: const Key('rd-own-signin'),
+          label: l10n.redesignTodayYesAfterAll,
+          icon: Icons.check,
+          onPressed: busy ? null : () => _run(() => actions.handleSigninWithFields(context, att)),
+        ),
+    ];
+    return RdCard(
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          if (countdown != null) ...[
+            RdPill(countdown, tone: RdTone.primary),
+            const SizedBox(height: 10),
+          ],
+          RdStatusBox(key: const Key('rd-own-status'), label: look.label, tone: look.tone, icon: look.icon),
+          if (buttons.isNotEmpty) ...[
+            const SizedBox(height: 12),
+            Row(
+              children: [
+                for (var i = 0; i < buttons.length; i++) ...[
+                  if (i > 0) const SizedBox(width: 10),
+                  Expanded(child: buttons[i]),
+                ],
+              ],
+            ),
+          ],
+          if (widget.onNote != null) ...[
+            const SizedBox(height: 4),
+            _noteLink(context),
           ],
         ],
       ),

@@ -11250,10 +11250,37 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignNotifTelegramDisconnect => 'Trennen';
 
   @override
+  String redesignOwnAnswerDays(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'Du kannst noch $count Tage antworten.',
+      one: 'Du kannst noch 1 Tag antworten.',
+      zero: 'Du kannst heute noch antworten.',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnAskReason => 'Die Leitung fragt nach dem Grund.';
+
+  @override
+  String get redesignOwnComeLater => 'Komme später';
+
+  @override
+  String get redesignOwnComingLater => 'Du kommst später';
+
+  @override
+  String get redesignOwnIn => 'Du bist dabei';
+
+  @override
   String get redesignOwnInfos => 'Infos zum Termin';
 
   @override
   String get redesignOwnMore => 'Mehr';
+
+  @override
+  String get redesignOwnNoAnswer => 'Noch keine Antwort';
 
   @override
   String get redesignOwnNoNotes => 'Keine Noten';
@@ -11267,7 +11294,33 @@ class AppLocalizationsDe extends AppLocalizations {
       'Dieser Termin ist nicht mehr in deiner Liste.';
 
   @override
+  String get redesignOwnNotRecorded => 'Nicht erfasst';
+
+  @override
+  String get redesignOwnNoteToLeaders => 'Notiz an die Leitung';
+
+  @override
   String get redesignOwnOpenMine => 'Deine Noten öffnen';
+
+  @override
+  String get redesignOwnPlanAll => 'Ganz ansehen';
+
+  @override
+  String get redesignOwnPlanLive => 'Live-Ansicht';
+
+  @override
+  String redesignOwnPlanMore(num count) {
+    String _temp0 = intl.Intl.pluralLogic(
+      count,
+      locale: localeName,
+      other: 'und $count weitere Punkte',
+      one: 'und 1 weiterer Punkt',
+    );
+    return '$_temp0';
+  }
+
+  @override
+  String get redesignOwnPlanned => 'Du bist eingeplant';
 
   @override
   String get redesignOwnPrintMine => 'Meine Noten als ein PDF';
@@ -11284,7 +11337,13 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignOwnRoute => 'Route';
 
   @override
+  String get redesignOwnSignOut => 'Abmelden';
+
+  @override
   String get redesignOwnYouConduct => 'Du dirigierst';
+
+  @override
+  String get redesignOwnYourAttendance => 'Deine Anwesenheit';
 
   @override
   String get redesignParentsAllKids => 'Alle Kinder';

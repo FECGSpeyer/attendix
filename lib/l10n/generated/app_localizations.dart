@@ -18263,6 +18263,36 @@ abstract class AppLocalizations {
   /// **'Trennen'**
   String get redesignNotifTelegramDisconnect;
 
+  /// redesign.own.answerDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}'**
+  String redesignOwnAnswerDays(num count);
+
+  /// redesign.own.askReason
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung fragt nach dem Grund.'**
+  String get redesignOwnAskReason;
+
+  /// redesign.own.comeLater
+  ///
+  /// In de, this message translates to:
+  /// **'Komme später'**
+  String get redesignOwnComeLater;
+
+  /// redesign.own.comingLater
+  ///
+  /// In de, this message translates to:
+  /// **'Du kommst später'**
+  String get redesignOwnComingLater;
+
+  /// redesign.own.in
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist dabei'**
+  String get redesignOwnIn;
+
   /// redesign.own.infos
   ///
   /// In de, this message translates to:
@@ -18274,6 +18304,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mehr'**
   String get redesignOwnMore;
+
+  /// redesign.own.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Antwort'**
+  String get redesignOwnNoAnswer;
 
   /// redesign.own.noNotes
   ///
@@ -18293,11 +18329,47 @@ abstract class AppLocalizations {
   /// **'Dieser Termin ist nicht mehr in deiner Liste.'**
   String get redesignOwnNotFound;
 
+  /// redesign.own.notRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht erfasst'**
+  String get redesignOwnNotRecorded;
+
+  /// redesign.own.noteToLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz an die Leitung'**
+  String get redesignOwnNoteToLeaders;
+
   /// redesign.own.openMine
   ///
   /// In de, this message translates to:
   /// **'Deine Noten öffnen'**
   String get redesignOwnOpenMine;
+
+  /// redesign.own.planAll
+  ///
+  /// In de, this message translates to:
+  /// **'Ganz ansehen'**
+  String get redesignOwnPlanAll;
+
+  /// redesign.own.planLive
+  ///
+  /// In de, this message translates to:
+  /// **'Live-Ansicht'**
+  String get redesignOwnPlanLive;
+
+  /// redesign.own.planMore
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}'**
+  String redesignOwnPlanMore(num count);
+
+  /// redesign.own.planned
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist eingeplant'**
+  String get redesignOwnPlanned;
 
   /// redesign.own.printMine
   ///
@@ -18323,11 +18395,23 @@ abstract class AppLocalizations {
   /// **'Route'**
   String get redesignOwnRoute;
 
+  /// redesign.own.signOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignOwnSignOut;
+
   /// redesign.own.youConduct
   ///
   /// In de, this message translates to:
   /// **'Du dirigierst'**
   String get redesignOwnYouConduct;
+
+  /// redesign.own.yourAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get redesignOwnYourAttendance;
 
   /// redesign.parents.allKids
   ///

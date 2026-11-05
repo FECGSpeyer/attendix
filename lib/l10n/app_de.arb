@@ -14004,6 +14004,31 @@
   "@redesignNotifTelegramDisconnect": {
     "description": "redesign.notif.telegramDisconnect"
   },
+  "redesignOwnAnswerDays": "{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}",
+  "@redesignOwnAnswerDays": {
+    "description": "redesign.own.answerDays",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnAskReason": "Die Leitung fragt nach dem Grund.",
+  "@redesignOwnAskReason": {
+    "description": "redesign.own.askReason"
+  },
+  "redesignOwnComeLater": "Komme später",
+  "@redesignOwnComeLater": {
+    "description": "redesign.own.comeLater"
+  },
+  "redesignOwnComingLater": "Du kommst später",
+  "@redesignOwnComingLater": {
+    "description": "redesign.own.comingLater"
+  },
+  "redesignOwnIn": "Du bist dabei",
+  "@redesignOwnIn": {
+    "description": "redesign.own.in"
+  },
   "redesignOwnInfos": "Infos zum Termin",
   "@redesignOwnInfos": {
     "description": "redesign.own.infos"
@@ -14011,6 +14036,10 @@
   "redesignOwnMore": "Mehr",
   "@redesignOwnMore": {
     "description": "redesign.own.more"
+  },
+  "redesignOwnNoAnswer": "Noch keine Antwort",
+  "@redesignOwnNoAnswer": {
+    "description": "redesign.own.noAnswer"
   },
   "redesignOwnNoNotes": "Keine Noten",
   "@redesignOwnNoNotes": {
@@ -14024,9 +14053,38 @@
   "@redesignOwnNotFound": {
     "description": "redesign.own.notFound"
   },
+  "redesignOwnNotRecorded": "Nicht erfasst",
+  "@redesignOwnNotRecorded": {
+    "description": "redesign.own.notRecorded"
+  },
+  "redesignOwnNoteToLeaders": "Notiz an die Leitung",
+  "@redesignOwnNoteToLeaders": {
+    "description": "redesign.own.noteToLeaders"
+  },
   "redesignOwnOpenMine": "Deine Noten öffnen",
   "@redesignOwnOpenMine": {
     "description": "redesign.own.openMine"
+  },
+  "redesignOwnPlanAll": "Ganz ansehen",
+  "@redesignOwnPlanAll": {
+    "description": "redesign.own.planAll"
+  },
+  "redesignOwnPlanLive": "Live-Ansicht",
+  "@redesignOwnPlanLive": {
+    "description": "redesign.own.planLive"
+  },
+  "redesignOwnPlanMore": "{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}",
+  "@redesignOwnPlanMore": {
+    "description": "redesign.own.planMore",
+    "placeholders": {
+      "count": {
+        "type": "num"
+      }
+    }
+  },
+  "redesignOwnPlanned": "Du bist eingeplant",
+  "@redesignOwnPlanned": {
+    "description": "redesign.own.planned"
   },
   "redesignOwnPrintMine": "Meine Noten als ein PDF",
   "@redesignOwnPrintMine": {
@@ -14048,9 +14106,17 @@
   "@redesignOwnRoute": {
     "description": "redesign.own.route"
   },
+  "redesignOwnSignOut": "Abmelden",
+  "@redesignOwnSignOut": {
+    "description": "redesign.own.signOut"
+  },
   "redesignOwnYouConduct": "Du dirigierst",
   "@redesignOwnYouConduct": {
     "description": "redesign.own.youConduct"
+  },
+  "redesignOwnYourAttendance": "Deine Anwesenheit",
+  "@redesignOwnYourAttendance": {
+    "description": "redesign.own.yourAttendance"
   },
   "redesignParentsAllKids": "Alle Kinder",
   "@redesignParentsAllKids": {
