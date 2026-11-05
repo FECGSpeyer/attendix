@@ -9,6 +9,8 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../people/presentation/pages/person_detail_page.dart'
+    show showPersonModal;
 import '../widgets/settings_list.dart';
 import '../widgets/settings_sheet.dart';
 
@@ -24,9 +26,10 @@ Future<void> showPendingPersonsSheet(BuildContext context) =>
 ///
 /// IOS_SETTINGS2: layout of the Ionic sheet — `ion-content color="light"`,
 /// toolbar with the title only and one inset list (h2 name, h3 e-mail).
-/// Tapping a person opens the person page, which (like Ionic's
-/// `openApprovePersonModal` → PersonPage `approveMode`) offers the
-/// duplicate check and the approve / decline actions.
+/// Tapping a person opens the person page as a card modal
+/// ([showPersonModal]), which (like Ionic's `openApprovePersonModal` →
+/// PersonPage `approveMode`) offers the duplicate check and the approve /
+/// decline actions.
 class PendingPlayersPage extends ConsumerWidget {
   const PendingPlayersPage({super.key, this.sheet = false});
 
@@ -121,7 +124,9 @@ class _PendingPersonItem extends StatelessWidget {
               email,
               style: ios ? TextStyle(fontSize: 14, color: IonIos.text(context)) : null,
             ),
-      onTap: player.id == null ? null : () => context.push('/people/${player.id}'),
+      // Ionic openApprovePersonModal: PersonPage (approveMode) as a card
+      // modal above the sheet; the list follows the realtime provider.
+      onTap: player.id == null ? null : () => showPersonModal(context, player.id!),
     );
   }
 }

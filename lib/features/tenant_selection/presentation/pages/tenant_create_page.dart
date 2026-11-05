@@ -16,14 +16,33 @@ import '../../../../core/providers/push_providers.dart';
 import '../../../../data/repositories/base_repository.dart';
 import '../../../auth/presentation/widgets/ion_form_list.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../../shared/widgets/dialogs/ion_modal.dart' show showIonModal;
+
+/// Ionic settings `openCreateInstanceModal`:
+/// `modalController.create({ component: RegisterPage, presentingElement })`.
+/// On iOS a card modal ([showIosCardModal]), in md mode a regular
+/// `ion-modal` ([showIonModal]: full screen on phones, centred card on
+/// desktop). The `/tenants/new` route keeps the full page for other entry
+/// points.
+Future<void> showTenantCreateModal(BuildContext context) {
+  Widget build(BuildContext _) => const TenantCreatePage(isModal: true);
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(context, builder: build);
+  }
+  return showIonModal<void>(context, builder: build);
+}
 
 /// AUTH: Ionic "Neue Instanz anlegen" (register.page) – 3 steps:
 /// 1. Art der Gruppe, 2. Name + Kürzel, 3. Hauptgruppe, then summary.
 class TenantCreatePage extends ConsumerStatefulWidget {
-  const TenantCreatePage({super.key, this.canDismiss = true});
+  const TenantCreatePage(
+      {super.key, this.canDismiss = true, this.isModal = false});
 
   /// False when the user has no instance yet (Ionic full-page register).
   final bool canDismiss;
+
+  /// Shown via [showTenantCreateModal]: closing pops the modal route.
+  final bool isModal;
 
   @override
   ConsumerState<TenantCreatePage> createState() => _TenantCreatePageState();
@@ -149,9 +168,11 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
                 tooltip: l10n.commonClose,
                 onPressed: _isLoading
                     ? null
-                    : () => context.canPop()
-                        ? context.pop()
-                        : context.go('/tenants'),
+                    : () => widget.isModal
+                        ? Navigator.of(context).pop()
+                        : context.canPop()
+                            ? context.pop()
+                            : context.go('/tenants'),
               )
             else
               // Ionic register-account-menu popover: Abmelden / Konto löschen
@@ -589,9 +610,12 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
         await ref.read(currentTenantUserProvider.future);
       } catch (_) {}
 
-      // Ionic: navigateByUrl(Utils.getUrl(Role.ADMIN))
+      // Ionic: navigateByUrl(Utils.getUrl(Role.ADMIN)); the modal is
+      // dismissed first (register.page createInstance).
       if (mounted) {
-        context.go(Role.admin.defaultRoute);
+        final router = GoRouter.of(context);
+        if (widget.isModal) Navigator.of(context).pop();
+        router.go(Role.admin.defaultRoute);
       }
     } catch (e) {
       if (mounted) {
