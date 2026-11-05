@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.41.21",
+      "version": "0.41.23",
       "date": "5.11.2026",
       "changes": [
         "🐛 PDF-Exporte zeigen kyrillische Namen, „Anführungszeichen“, Gedankenstriche und € wieder richtig an",
@@ -32,6 +32,20 @@
         "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an",
         "🐛 Die Suche in der Hilfe findet Artikel und Begriffe wieder wie in der alten App, auch bei Tippfehlern und mehreren Wörtern, in derselben Reihenfolge",
         "🐛 Beim Hochladen von Noten erkennt Attendix weitere Instrument-Namen und Kürzel, z. B. Skripka, Litavry, Ф-но, Blockflöte, Akkordeon, Becken, Triangel und kleine/große Trommel"
+      ]
+    },
+    {
+      "version": "0.41.22",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Meinen Benutzer zuweisen“ legt das Konto wie bisher über die Kontoanlage an und lehnt ein schon verknüpftes Konto ab"
+      ]
+    },
+    {
+      "version": "0.41.21",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
       ]
     },
     {
