@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
 
 import '../../../../../core/constants/app_constants.dart';
@@ -75,7 +76,12 @@ class ChecklistAccordion extends StatelessWidget {
               final index = entry.key;
               final item = entry.value;
               final deadlineStatus = getDeadlineStatus(item);
-              final deadlineText = formatDeadlineRelative(item);
+              // Ionic: „{relativ} · {dd.MM.yyyy HH:mm} Uhr“ (local time).
+              final relative = formatDeadlineRelative(item);
+              final due = item.dueDate == null ? null : DateTime.tryParse(item.dueDate!)?.toLocal();
+              final deadlineText = relative.isEmpty || due == null
+                  ? relative
+                  : '$relative · ${context.l10n.attendanceTimeOClock(DateFormat('dd.MM.yyyy HH:mm').format(due))}';
 
               Color? tileColor;
               if (!item.completed) {

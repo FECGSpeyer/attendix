@@ -48,14 +48,16 @@ class PdfBranding {
     if (_logoCache.containsKey(url)) return _logoCache[url];
     ({Uint8List png, int width, int height})? result;
     try {
-      final response = await http.get(Uri.parse(url));
+      final response = await http.get(Uri.parse(url)).timeout(const Duration(seconds: 5));
       if (response.statusCode == 200) {
         result = await downscaleToPng(response.bodyBytes);
       }
     } catch (_) {
       result = null;
     }
-    _logoCache[url] = result;
+    // Only successes are cached: after a network hiccup the next export
+    // tries again.
+    if (result != null) _logoCache[url] = result;
     return result;
   }
 

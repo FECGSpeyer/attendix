@@ -87,6 +87,8 @@ void main() {
       }
       // upsert always writes the current user as creator
       expect(_extractMethodBody(planRepo, 'upsertMySharedPlan'), contains('creatorUserId: userId'));
+      // „Kein Branding“ must clear an earlier branding (Ionic sends null)
+      expect(_extractMethodBody(planRepo, 'upsertMySharedPlan'), contains("..['branding_id'] = plan.brandingId"));
     });
   });
 

@@ -101,8 +101,18 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Finder minutesField() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
+  /// Ionic shared-plan edit mode: minutes change through the field dialog
+  /// (tap the row → Dauer → Speichern).
+  Future<void> setMinutes(WidgetTester tester, String row, String minutes) async {
+    await tester.tap(find.text(row));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number), minutes);
+    await tester.tap(find.textContaining(RegExp(r'^speichern$', caseSensitive: false)).last);
+    // Let the dialog close (no pumpAndSettle: a held write keeps spinning).
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+  }
 
   Map<String, dynamic> fieldOf(Map<String, dynamic> plan) =>
       (plan['fields'] as List).single as Map<String, dynamic>;
@@ -117,7 +127,7 @@ void main() {
     expect(find.text('Einspielen'), findsOneWidget);
 
     repo.hold = true;
-    await tester.enterText(minutesField(), '45');
+    await setMinutes(tester, 'Einspielen', '45');
     await tester.pump();
     expect(repo.waiting, 1);
 
@@ -132,7 +142,7 @@ void main() {
     expect(find.text('Stück B'), findsOneWidget, reason: 'switched once plan 1 was stored');
     expect(find.text('Einspielen'), findsNothing);
 
-    await tester.enterText(minutesField(), '7');
+    await setMinutes(tester, 'Stück B', '7');
     await tester.pump();
     repo.release();
     await tester.pumpAndSettle();
@@ -150,11 +160,11 @@ void main() {
       (tester) async {
     await pumpPage(tester);
     repo.hold = true;
-    await tester.enterText(minutesField(), '40');
+    await setMinutes(tester, 'Einspielen', '40');
     await tester.pump();
-    await tester.enterText(minutesField(), '41');
+    await setMinutes(tester, 'Einspielen', '41');
     await tester.pump();
-    await tester.enterText(minutesField(), '42');
+    await setMinutes(tester, 'Einspielen', '42');
     await tester.pump();
     expect(repo.waiting, 1, reason: 'the second write waits for the first');
 
@@ -174,7 +184,7 @@ void main() {
   testWidgets('a failed write keeps plan 1 open; the next switch retries', (tester) async {
     await pumpPage(tester);
     repo.hold = true;
-    await tester.enterText(minutesField(), '45');
+    await setMinutes(tester, 'Einspielen', '45');
     await tester.pump();
     await tester.tap(find.text('Plan 2'));
     await tester.pump();
