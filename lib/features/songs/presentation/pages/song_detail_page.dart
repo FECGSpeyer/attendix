@@ -157,17 +157,19 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
       // category change (syncInstrumentIdsFromFiles): the Besetzung shows the
       // instrument_ids the file service wrote, so the next save does not
       // write the old selection back.
+      // After "Alle löschen" a reload of an older save may still carry the
+      // old instrument_ids: the emptied Besetzung stays until a reload
+      // (whatever its files) confirms the empty list.
+      if (_clearedFilesKey != null && (song.instrumentIds?.isEmpty ?? true)) {
+        _clearedFilesKey = null;
+      }
       if (filesKey != _filesKey) {
         _filesKey = filesKey;
-        // After "Alle löschen" a reload of an older save may still carry the
-        // old instrument_ids: keep the emptied Besetzung until the database
-        // confirms it.
         final cleared = _clearedFilesKey != null;
         _instrumentIds = {
           ...(cleared ? _instrumentIds : song.instrumentIds ?? const <int>[]),
           ..._idsFromFiles(data),
         }.toList();
-        if (cleared && (song.instrumentIds?.isEmpty ?? true)) _clearedFilesKey = null;
       }
       return;
     }
