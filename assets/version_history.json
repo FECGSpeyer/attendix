@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.40.2",
+      "version": "0.41.1",
       "date": "5.11.2026",
       "changes": [
         "🐛 PDF-Exporte zeigen kyrillische Namen, „Anführungszeichen“, Gedankenstriche und € wieder richtig an",
@@ -24,6 +24,17 @@
         "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)",
         "🐛 Zusammenführen einer Registrierung mit einer vorhandenen Person vergibt wie bisher immer die Rolle Mitglied",
         "🐛 Lehrerliste wie bisher ohne Löschen per Wischen"
+      ]
+    },
+    {
+      "version": "0.41.0",
+      "date": "4.11.2026",
+      "changes": [
+        "✨ Beta: Im Termin stehen Abmeldungen mit Grund direkt in der Karte oben, die Zuspätkommer in einer Zeile darunter; ab 7 Abmeldungen „Alle anzeigen“",
+        "✨ Beta: „Anwesenheit eintragen“ zeigt pro Stimme nur die Ausnahmen, dazu „x von y da“, die Suche „Wer fehlt?“, Filter nach Status und „+ Person“",
+        "✨ Beta: Personen-Sheet mit Anmeldefeldern, „Zuletzt geändert von“, „Zur Person“ und „Aus Termin entfernen“",
+        "✨ Beta: Menü ••• im Termin mit Status-Übersicht, Gemeinde-Übersicht, Excel-Export, Checkliste und Archivieren; „Termin löschen“ steht unten in „Bearbeiten“",
+        "✨ Beta: Nach dem Termin „Abschluss“ mit „Unentschuldigte anschreiben“ und den automatischen Nachrichten samt Antworten"
       ]
     },
     {
