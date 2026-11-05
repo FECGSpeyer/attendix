@@ -928,6 +928,8 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     // Ionic readOnly: only admins and responsibles can create persons.
     final role = ref.read(currentRoleProvider);
     if (!(role.isAdmin || role.isResponsible) || _isLoading) return;
+    // Bind the tenant repository before the first await (tenant switch).
+    final repo = ref.read(playerRepositoryWithTenantProvider);
     // Commit a typed date (applied on focus loss) before reading the form.
     FocusManager.instance.primaryFocus?.unfocus();
     await Future<void>.delayed(Duration.zero);
@@ -936,7 +938,6 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
     setState(() => _isLoading = true);
 
     try {
-      final repo = ref.read(playerRepositoryWithTenantProvider);
       final firstName = _firstNameController.text.trim();
       final lastName = _lastNameController.text.trim();
 
