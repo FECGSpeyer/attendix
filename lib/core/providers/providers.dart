@@ -51,3 +51,5 @@ export 'live_activity_providers.dart';
 // REDESIGN: new design (Beta)
 export 'redesign_providers.dart';
 export 'account_switch_providers.dart';
+// SHOREBIRD: code push patch number in the version label
+export 'shorebird_providers.dart';

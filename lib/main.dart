@@ -28,6 +28,7 @@ import 'core/services/public_plan_draft_storage.dart'
 import 'core/services/planning_draft_store.dart' show clearPlanningDrafts;
 import 'core/services/live_activity_service.dart';
 import 'core/services/native/ionic_session_takeover.dart';
+import 'core/services/native/shorebird_patch_service.dart';
 import 'core/theme/app_theme.dart';
 import 'core/theme/redesign/rd_theme.dart';
 import 'core/utils/toast_helper.dart';
@@ -88,6 +89,11 @@ void main() async {
     release: AppConstants.appVersion,
     environment: dotenv.isInitialized ? dotenv.maybeGet('SENTRY_ENVIRONMENT') : null,
   );
+  // SHOREBIRD: tag events with the running code push patch (release stays
+  // the app version). Not awaited, so the start never waits for it.
+  unawaited(readShorebirdPatchNumber().then((patch) {
+    if (patch != null) ErrorReporter.setTag('shorebird_patch', '$patch');
+  }));
   final previousOnError = FlutterError.onError;
   FlutterError.onError = (details) {
     ErrorReporter.report(details.exception, details.stack, where: 'FlutterError');
