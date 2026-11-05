@@ -1,5 +1,6 @@
 {
  "batch": "zz-fixed-app",
+ "afterRound": 3,
  "items": {
   "register/tenant-register/tenant-register.page#field-ac71b961": {
    "s": "ok",
@@ -182,10 +183,10 @@
    ],
    "n": "behoben in #296"
   },
-  "login/login.page#x-8af7179780": {
+  "agenda-items/agenda-item-detail/agenda-item-detail.page#action-288e4f1d": {
    "s": "ok",
    "f": [
-    "lib/features/auth/presentation/pages/login_page.dart"
+    "lib/features/team_organization/presentation/pages/agenda_item_detail_page.dart"
    ],
    "n": "behoben in #296"
   }
@@ -260,6 +261,12 @@
   {
    "unit": "team-organization/protocols-tab/protocols-tab.component",
    "title": "Ladefehler der Protokollliste",
+   "drop": true,
+   "why": "behoben in #296"
+  },
+  {
+   "unit": "login/login.page",
+   "title": "Teams-Verknüpfung: Wechsel zur Code-Anmeldung",
    "drop": true,
    "why": "behoben in #296"
   }

@@ -151,7 +151,8 @@ class _AgendaItemDetailPageState extends ConsumerState<AgendaItemDetailPage>
     }
     if (_saving) return;
     setState(() => _saving = true);
-    final duration = int.tryParse(_duration.text.trim()) ?? 0;
+    // Ionic Math.round(Number(value)): "7.5" → 8.
+    final duration = num.tryParse(_duration.text.trim())?.round() ?? 0;
     final desc = _description.text.trim();
     final notifier = ref.read(agendaItemNotifierProvider.notifier);
     try {
