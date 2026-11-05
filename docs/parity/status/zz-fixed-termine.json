@@ -97,6 +97,64 @@
         "lib/features/planning/presentation/widgets/plan_export_actions.dart:96"
       ],
       "n": "behoben in #300"
+    },
+    "planning/planning.page#actionsheet-0c53b41c": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#alert-75ab0ccf": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart",
+        "lib/shared/widgets/adaptive/app_select.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-7d55a70233": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-9b169a1078": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-5e1a396117": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/plan_repository.dart",
+        "lib/core/providers/plan_providers.dart",
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
     }
-  }
+  },
+  "extraOverride": [
+    {
+      "unit": "planning/planning.page",
+      "title": "Standardplan bei Termin ohne Ablaufplan",
+      "drop": true,
+      "why": "behoben in #301"
+    },
+    {
+      "unit": "planning/planning.page",
+      "title": "Start-Termin ohne kommenden Termin",
+      "drop": true,
+      "why": "behoben in #301"
+    },
+    {
+      "unit": "planning/planning.page",
+      "title": "Archivierte Termine in der Terminauswahl für Helfer",
+      "drop": true,
+      "why": "behoben in #301"
+    }
+  ]
 }

@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.41.6",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
+        "🐛 Ablaufplan: Helfer sehen archivierte Termine nicht mehr in der Terminauswahl",
+        "🐛 Ablaufplan: Ohne kommenden Termin ist kein Termin vorausgewählt",
+        "🐛 Ablaufplan: „Tag zuordnen“ als Auswahl mit Abbrechen und Speichern, „Link teilen“ nur mit Nur-Lesen- und Bearbeitungs-Link"
+      ]
+    },
+    {
       "version": "0.41.5",
       "date": "5.11.2026",
       "changes": [
