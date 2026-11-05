@@ -1,16 +1,13 @@
 # Fix-Paket „personen“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333, ed511da (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 9
+## Angleichen (hoch/mittel): 8
 
 - [ ] **hoch** `people/list/list.page` `modal-11a551b4` [people/list/list.page.html:499](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/list/list.page.html#L499) (2. Prüfung: korrigiert)
   Modal selbst gleich (Titel "{Name} Archivieren", Austrittsdatum Default heute, Notiz, FAB; left = lokale Mitternacht als ISO; Historie "Kein Grund angegeben"; Zugang entziehen). ABER Termine entfernen: Ionic löscht die Person aus Terminen mit date > lokaler Tagesbeginn des Austrittsdatums (getAttendancesByDate). Flutter übergibt den UTC-String (toUtc().toIso8601String()) und removeFromUpcomingAttendances schneidet substring(0,10): in Deutschland (UTC+1/+2) ergibt lokale Mitternacht den VORTAG (z.B. 2026-11-09T23:00Z -> "2026-11-09") und filtert gte -> Person wird auch aus Terminen des Vortags (Austrittstag minus 1) gelöscht. Falsche DB-Löschung (person_attendances), vergangene Statistik ändert sich. Fix: Datum lokal bilden (Tag aus lokalem left) und gt Tagesbeginn. Zusätzlich Flutter besser: appId wird auch ohne E-Mail geleert (Ionic nur mit E-Mail).
   Flutter: lib/features/people/presentation/widgets/archive_person_modal.dart:79, lib/data/repositories/player_repository.dart:605, lib/data/repositories/player_repository.dart:939
-- [ ] **hoch** `people/person/person.page` `alert-97cf5262` [people/person/person.page.ts:1354](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/people/person/person.page.ts#L1354) (2. Prüfung: korrigiert)
-  Dialog gleich, aber die übertragene Person wird in Flutter Verantwortlich, wenn die Zielgruppe die Hauptgruppe der Zielinstanz ist (player_repository.dart handoverPlayer); Ionic person.page.ts:1365 vergibt praktisch immer Spieler. Rolle bekommt mehr Rechte als in Ionic → hoch (Sol-Review). Fix: wie Ionic immer PLAYER.
-  Flutter: lib/features/people/presentation/widgets/person_transfer_sheet.dart, lib/data/repositories/player_repository.dart:1714-1724
 - [ ] **mittel** `instruments/instrument-list/instrument-list.page` `action-13fe6ace` [instruments/instrument-list/instrument-list.page.html:9](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/instruments/instrument-list/instrument-list.page.html#L9) (2. Prüfung: korrigiert)
   Rolle (nur Admin/Verantwortlicher, Route-Guard jetzt app_router.dart:168), Icon swap_vert ↔ Häkchen, Ziehen innerhalb der Kategorie und Toasts „Reihenfolge gespeichert“/„Fehler…“ wie Ionic. Erstprüfer übersah beim Handler: Häkchen ohne Verschieben – Ionic saveOrder schreibt nur vorhandene sort_order unverändert (null bleibt null) / Flutter _toggleReorder → computeGlobalSortOrder schreibt immer 1..n an alle Gruppen (gleiche Abweichung wie x-d0c116c654). Andere DB-Werte → mittel (sichtbare Reihenfolge bleibt gleich, Badges erscheinen/ändern sich).
   Flutter: lib/features/instruments/presentation/pages/instruments_list_page.dart:101, lib/features/instruments/presentation/pages/instruments_list_page.dart:38, lib/features/instruments/presentation/pages/instruments_list_page.dart:49, lib/core/router/app_router.dart:168
