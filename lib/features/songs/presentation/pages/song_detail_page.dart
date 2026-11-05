@@ -97,6 +97,15 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
   /// Latest loaded data; a queued save uses it instead of an older copy.
   SongDetailData? _data;
 
+  /// Files state at "Alle löschen": until the reload shows the empty list,
+  /// the deleted files must not add their groups back to the Besetzung.
+  String? _clearedFilesKey;
+
+  /// Instance the form was loaded for and the container to check it in a
+  /// queued save (also after dispose, where `ref` is gone).
+  int? _tenantId;
+  ProviderContainer? _container;
+
   int? get _songId => int.tryParse(widget.songId);
 
   SongDetailParams get _params =>
@@ -108,10 +117,11 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     // Ionic ngOnInit loads the Werk and its Werkhistorie on every open, so
     // changes from other people / devices or the Termin page show up.
     final id = _songId;
+    _container = ProviderScope.containerOf(context, listen: false);
     // Invalidated before the first build, so the form starts with fresh data
     // (`ref` cannot be used in initState).
     if (id != null && widget.songSharingId == null) {
-      ProviderScope.containerOf(context, listen: false)
+      _container!
         ..invalidate(songByIdProvider(id))
         ..invalidate(songHistoryProvider(id));
     }
@@ -156,6 +166,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     _initializedFor = song.id;
     _filesKey = filesKey;
     _notifier = ref.read(songNotifierProvider.notifier);
+    _tenantId = ref.read(currentTenantIdProvider);
     _prefix.text = song.prefix ?? '';
     _number.text = song.number?.toString() ?? '';
     _name.text = song.name;
@@ -180,8 +191,10 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
 
   /// Ionic `instrumentIdsFromFiles`: groups that have files, without
   /// Aufnahme (1), Liedtext (2) and the main group (as the file service).
-  static List<int> _idsFromFiles(SongDetailData data) =>
-      SongFileService.instrumentIdsFromFiles(
+  List<int> _idsFromFiles(SongDetailData data) =>
+      _clearedFilesKey == _filesKeyOf(data.song)
+          ? const []
+          : SongFileService.instrumentIdsFromFiles(
         [
           for (final f in data.song.files ?? const <SongFile>[])
             {'instrumentId': f.instrumentId},
@@ -196,7 +209,16 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     int id,
     Map<String, dynamic> values,
   ) {
-    final run = _saveQueue.then((_) => notifier.updateSong(id, values));
+    final tenantId = _tenantId;
+    final container = _container;
+    final run = _saveQueue.then((_) {
+      // Instance switched meanwhile: the save would run against the new
+      // instance; drop it (counts as failed).
+      if (container != null && container.read(currentTenantIdProvider) != tenantId) {
+        return Future<Song?>.value();
+      }
+      return notifier.updateSong(id, values);
+    });
     _saveQueue = run.then((_) {}, onError: (_) {});
     return run;
   }
@@ -214,6 +236,7 @@ class _SongDetailPageState extends ConsumerState<SongDetailPage> {
     // so closing the page does not save again.
     final pending = _snapshot(values) != before;
     _instrumentIds = [];
+    _clearedFilesKey = _filesKeyOf(data.song);
     values['instrument_ids'] = <int>[];
     final result = await _enqueue(notifier, id, {'instrument_ids': <int>[]});
     if (result != null && !pending && _lastQueued == before) {
@@ -997,6 +1020,7 @@ class _CopyToOtherInstance extends ConsumerWidget {
             useRootNavigator: true, // IOS_SHELL2: above the tab bar
             isScrollControlled: true,
             useSafeArea: true,
+            enableDrag: false, // not closable while copying
             builder: (_) => CopyToTenantSheet(song: song, availableTenants: allowed),
           ),
         ),

@@ -53,18 +53,30 @@ Future<void> printGroupPdfs({
   ];
   // Ionic PrintService.printEntries: loading overlay while merging, then a
   // warning for no pages / skipped files.
-  final navigator = Navigator.of(context, rootNavigator: true);
+  // Close exactly the overlay's route: a redirect may have removed it or
+  // pushed something on top in the meantime.
+  Route<dynamic>? overlayRoute;
   var overlay = true;
+  void removeOverlay() {
+    final route = overlayRoute;
+    if (route != null && route.isActive) route.navigator?.removeRoute(route);
+  }
+
   void closeOverlay() {
     if (!overlay) return;
     overlay = false;
-    navigator.pop();
+    removeOverlay();
   }
 
   showAppDialog<void>(
     context: context,
     barrierDismissible: false,
-    builder: (_) => PrintLoadingOverlay(message: context.l10n.songsCreatingPdf),
+    builder: (ctx) {
+      overlayRoute ??= ModalRoute.of(ctx);
+      // Closed before the first frame of the dialog was built.
+      if (!overlay) WidgetsBinding.instance.addPostFrameCallback((_) => removeOverlay());
+      return PrintLoadingOverlay(message: context.l10n.songsCreatingPdf);
+    },
   );
   SongPrintResult? result;
   try {

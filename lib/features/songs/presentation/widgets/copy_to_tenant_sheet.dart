@@ -272,6 +272,9 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       // Get target groups
       _set(() => _progressMessage = l10n.songsFlutterLoadingTargetGroups);
       final supabase = ref.read(supabaseClientProvider);
+      // Read before the first await: the copy finishes even if the sheet
+      // is gone by then.
+      final songFileService = ref.read(songFileServiceProvider);
       final targetGroupsResponse = await supabase
           .from('instruments')
           .select('*')
@@ -326,7 +329,6 @@ class _CopyToTenantSheetState extends ConsumerState<CopyToTenantSheet> {
       // RT-008: Extract to local variable for null-safety
       final files = widget.song.files;
       if (files != null && files.isNotEmpty) {
-        final songFileService = ref.read(songFileServiceProvider);
         final fileCount = files.length;
         final mappedInstrumentIds = <int?>[];
 
