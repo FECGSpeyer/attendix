@@ -100,6 +100,7 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
         return;
       }
       final ctx = await _buildContext();
+      if (!mounted) return;
       setState(() {
         _fileName = picked.name;
         _rawRows = data.rows;
@@ -121,32 +122,39 @@ class _PersonImportPageState extends ConsumerState<PersonImportPage> {
   }
 
   Future<List<ExtraField>> _extraFields() async {
+    // Read the provider before awaiting: the ref must not be used after the
+    // page was closed during the organisation query.
+    final organisation = ref.read(currentOrganisationProvider.future);
     try {
-      await ref.read(currentOrganisationProvider.future);
+      await organisation;
     } catch (_) {
       // Without the organisation only the instance fields are offered.
     }
+    if (!mounted) return const <ExtraField>[];
     return ref.read(personListExtraFieldsProvider);
   }
 
   Future<void> _downloadTemplate() async {
-    final headers = buildPersonImportTemplateHeaders(await _extraFields());
-    final groups = await ref.read(groupsProvider.future);
-    final example = [
-      'Anna',
-      'Müller',
-      '15.03.1990',
-      groups.isNotEmpty ? groups.first.name : '',
-      'anna@example.com',
-      '0170 1234567',
-      '01.01.2024',
-      '',
-    ];
-    final bytes = buildTemplateXlsx(headers, example);
-    if (bytes == null) return;
     // Ionic Utils.saveWorkbook: native → system file viewer, mobile web →
     // share sheet, desktop → download; no message on failure.
     try {
+      final groupsFuture = ref.read(groupsProvider.future);
+      final fields = await _extraFields();
+      final groups = await groupsFuture;
+      if (!mounted) return;
+      final headers = buildPersonImportTemplateHeaders(fields);
+      final example = [
+        'Anna',
+        'Müller',
+        '15.03.1990',
+        groups.isNotEmpty ? groups.first.name : '',
+        'anna@example.com',
+        '0170 1234567',
+        '01.01.2024',
+        '',
+      ];
+      final bytes = buildTemplateXlsx(headers, example);
+      if (bytes == null) return;
       await NativeFileService.saveBytes(
           Uint8List.fromList(bytes), 'Personen_Import_Vorlage.xlsx');
     } catch (e, st) {
