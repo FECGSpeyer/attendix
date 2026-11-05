@@ -1,6 +1,19 @@
 {
   "versions": [
     {
+      "version": "0.41.2",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: Speichern schließt die Seite mit „Person aktualisiert“, neue E-Mail legt auf Wunsch gleich das Konto an, Historie (Problemfall, Gruppenwechsel, Notizen) wie bisher",
+        "🐛 Person: Problemfall „Gespräch geführt“ als Schalter mit Bemerkung, Aktionen wie Pausieren, Freischalten, Ablehnen und Konto entfernen schließen die Seite wie bisher",
+        "🐛 Person: Zusatzfelder zeigen ihre Standardwerte, Zahlenfelder mit Komma, Datumsfelder auch per Eingabe TT.MM.JJJJ",
+        "🐛 Neue Person: Standarddaten heute, Zusatzfeld-Standardwerte, keine strengere E-Mail-Prüfung, nur Admins und Verantwortliche können anlegen",
+        "🐛 Person: Archivieren als eigenes Fenster mit Austrittsdatum und Notiz, Account-Hilfe als Blatt, Historie in Ortszeit",
+        "🐛 Person: Passbild antippen zeigt das Bild mit Ersetzen/Entfernen, in der App mit Kamera oder Galerie",
+        "🐛 Person kopieren/übertragen: Ziel-Instanz und Ziel-Gruppe wie bisher, mit Rückfrage und Duplikat-Prüfung"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [
