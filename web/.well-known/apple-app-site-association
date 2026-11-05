@@ -36,5 +36,8 @@
         ]
       }
     ]
+  },
+  "webcredentials": {
+    "apps": ["MXM3YWAKPL.io.stephanus.attendix"]
   }
 }
