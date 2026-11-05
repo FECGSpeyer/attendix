@@ -49,6 +49,12 @@ class RedesignRoutes {
   /// "Werk bearbeiten" of the new design (replaces the old song page).
   static String workEdit(int id) => '$works/$id/bearbeiten';
 
+  /// "Neues Werk" of the new design (title and number, then the Noten).
+  static const String newWork = '$works/neu';
+
+  /// "Meine Mappe" / "Mappen": the Noten of one part as one folder.
+  static const String folder = '$works/mappe';
+
   /// Tab "Ich".
   static const String me = '/ich';
 
@@ -155,7 +161,9 @@ class RedesignRoutes {
     }
     if (location == works || location.startsWith('$works/')) {
       if (!canOpenSongsTab(role)) return today;
-      // "Werk bearbeiten" like the old song form: Admins and Verantwortliche.
+      // "Neues Werk" and "Werk bearbeiten" like the old song form: Admins
+      // and Verantwortliche.
+      if (location == newWork && !(role.isAdmin || role.isResponsible)) return works;
       final edit = RegExp('^$works/(\\d+)/bearbeiten\$').firstMatch(location);
       if (edit != null && !(role.isAdmin || role.isResponsible)) return work(int.parse(edit.group(1)!));
       return null;

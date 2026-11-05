@@ -9,7 +9,7 @@ library;
 import 'dart:convert';
 import 'dart:typed_data';
 
-import 'package:excel/excel.dart';
+import 'package:excel_community/excel_community.dart';
 import '../../l10n/l10n.dart';
 
 /// Parsed first sheet of a spreadsheet: header names and one map per row.

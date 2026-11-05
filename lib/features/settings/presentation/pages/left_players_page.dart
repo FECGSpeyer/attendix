@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 import 'package:intl/intl.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/providers/group_providers.dart';
 import '../../../../core/providers/player_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/theme/app_colors.dart';
@@ -12,6 +13,7 @@ import '../../../../data/models/person/person.dart';
 import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
+import '../../../people/people_list_utils.dart' show sortPeopleByGroup;
 import '../widgets/settings_list.dart';
 import '../widgets/settings_sheet.dart';
 
@@ -19,7 +21,15 @@ import '../widgets/settings_sheet.dart';
 final leftPlayersProvider = FutureProvider<List<Person>>((ref) async {
   final repository = ref.watch(playerRepositoryWithTenantProvider);
   if (!repository.hasTenantId) return [];
-  return repository.getArchivedPlayers();
+  final players = await repository.getArchivedPlayers();
+  // Ionic settings.page: leftPlayers = Utils.getModifiedPlayersForList
+  // (group name for "Name (Gruppe)", sorted by group like the people list).
+  final groups = await ref.watch(groupsProvider.future);
+  final names = {for (final g in groups) g.id: g.name};
+  return sortPeopleByGroup([
+    for (final p in players)
+      p.copyWith(groupName: p.instrument == null ? null : names[p.instrument]),
+  ], groups);
 });
 
 /// IOS_SETTINGS2: Ionic settings `trigger="archive-button"` sheet

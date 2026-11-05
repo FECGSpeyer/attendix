@@ -280,9 +280,12 @@ class _InstrumentCategoriesSheetState
           FilledButton(
             onPressed: () {
               final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(context).pop(name);
+              if (name.isEmpty) {
+                // Ionic: red toast, the alert stays open (return false)
+                ToastHelper.showError(context, context.l10n.instrumentsEnterName);
+                return;
               }
+              Navigator.of(context).pop(name);
             },
             child: Text(context.l10n.attendanceAdd),
           ),
@@ -319,9 +322,12 @@ class _InstrumentCategoriesSheetState
           FilledButton(
             onPressed: () {
               final name = controller.text.trim();
-              if (name.isNotEmpty) {
-                Navigator.of(context).pop(name);
+              if (name.isEmpty) {
+                // Ionic: red toast, the alert stays open (return false)
+                ToastHelper.showError(context, context.l10n.instrumentsEnterName);
+                return;
               }
+              Navigator.of(context).pop(name);
             },
             child: Text(context.l10n.commonSave),
           ),
