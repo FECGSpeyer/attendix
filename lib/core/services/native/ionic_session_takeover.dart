@@ -98,6 +98,19 @@ Future<void> takeOverIonicSession({
   }
 }
 
+/// Ends the takeover for good once the user signed in in this app (called on
+/// every `signedIn`). Otherwise a later logout would let the next start take
+/// over the old Ionic session again.
+Future<void> markIonicSessionTakeoverDone() async {
+  if (!isNativeApp) return;
+  try {
+    final prefs = await SharedPreferences.getInstance();
+    await prefs.setBool(_doneKey, true);
+  } catch (e) {
+    debugPrint('Ionic session takeover: could not mark done ($e)');
+  }
+}
+
 /// Reads the refresh token and tenant from the Ionic localStorage keys the
 /// native side returns as JSON. Prefers the key of this Supabase project
 /// (`sb-<project ref>-auth-token`, supabase-js default storage key).

@@ -46,8 +46,10 @@ class IonicSessionPlugin(
             result.notImplemented()
             return
         }
+        // A second read while one is running: an error, not "empty" (Dart
+        // would end the takeover for good on null).
         if (pending != null) {
-            result.success(null)
+            result.error("busy", "read already running", null)
             return
         }
         pending = result

@@ -18,6 +18,8 @@ import '../router/app_router.dart';
 import '../router/redesign_routes.dart';
 import '../services/live_activity_service.dart'
     show endLiveActivitiesBeforeSignOut, liveActivityServiceProvider;
+import '../services/native/ionic_session_takeover.dart'
+    show markIonicSessionTakeoverDone;
 import '../services/push/firebase_push_messaging_client.dart';
 import '../services/push/push_messaging_client.dart';
 import '../services/push/push_navigation.dart';
@@ -68,6 +70,10 @@ final pushBootstrapProvider = Provider<void>((ref) {
     firstEvent = false;
     switch (state.event) {
       case AuthChangeEvent.signedIn:
+        // IONIC_SESSION: signed in in this app -> a later logout must not
+        // bring back the old Ionic session on the next start. Not on
+        // initialSession (that is the takeover itself, which marks it done).
+        unawaited(markIonicSessionTakeoverDone());
         unawaited(service.promptAndEnable());
       case AuthChangeEvent.initialSession:
         // Restored session on app start: refresh the token registration.

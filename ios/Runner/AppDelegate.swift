@@ -166,8 +166,10 @@ public class IonicSessionPlugin: NSObject, FlutterPlugin {
       result(FlutterMethodNotImplemented)
       return
     }
+    // A second read while one is running: an error, not "empty" (Dart would
+    // end the takeover for good on nil).
     guard reader == nil else {
-      result(nil)
+      result(FlutterError(code: "busy", message: "read already running", details: nil))
       return
     }
     let reader = IonicStorageReader()
