@@ -114,8 +114,7 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
   @override
   Color? get barrierColor => null;
 
-  // The strip above the card closes the modal (Ionic backdropDismiss),
-  // see [backdropDismiss].
+  // The strip above the card closes the modal (Ionic backdropDismiss).
   @override
   bool get barrierDismissible => false;
 
@@ -136,10 +135,14 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     if (c == null) return;
     final velocity = details.velocity.pixelsPerSecond.dy;
     if (velocity > 700 || c.value < 0.6) {
-      // Settle open first: a page that blocks the pop (PopScope, e.g.
-      // "Änderungen verwerfen?") stays visible; otherwise the pop reverses.
-      c.forward();
-      navigator?.maybePop();
+      if (popDisposition == RoutePopDisposition.doNotPop) {
+        // A PopScope blocks (e.g. unsaved input, Ionic canDismiss): snap
+        // back and let it decide (discard alert) like the strip's maybePop.
+        c.forward();
+        navigator?.maybePop();
+      } else {
+        navigator?.pop();
+      }
     } else {
       c.forward();
     }

@@ -76,33 +76,66 @@ Future<void> showOrganisationLinkDialog(BuildContext context, WidgetRef ref) asy
   }
 }
 
-/// Ionic org-settings `openCreateOrganisationAlert()`.
+/// Ionic org-settings `openCreateOrganisationAlert()`: an empty name shows
+/// „Bitte gib gültige Werte ein.“ in the alert, which stays open; creating
+/// runs behind a blocking spinner (Ionic getLoadingElement).
 Future<void> showCreateOrganisationDialog(BuildContext context, WidgetRef ref) async {
   final controller = TextEditingController();
+  String? error;
   try {
     final ok = await showAppDialog<bool>(
       context: context,
-      builder: (ctx) => AppAlertDialog(
-        title: Text(context.l10n.orgCreate),
-        content: TextField(
-          controller: controller,
-          autofocus: true,
-          textCapitalization: TextCapitalization.words,
-          decoration: InputDecoration(hintText: context.l10n.orgNamePh),
+      builder: (ctx) => StatefulBuilder(
+        builder: (ctx, setDialogState) => AppAlertDialog(
+          title: Text(context.l10n.orgCreate),
+          content: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (error != null) Padding(padding: const EdgeInsets.only(bottom: 8), child: Text(error!)),
+              TextField(
+                controller: controller,
+                autofocus: true,
+                textCapitalization: TextCapitalization.words,
+                decoration: InputDecoration(hintText: context.l10n.orgNamePh),
+              ),
+            ],
+          ),
+          actions: [
+            TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(context.l10n.commonCancel)),
+            TextButton(
+              onPressed: () {
+                if (controller.text.trim().isEmpty) {
+                  setDialogState(() => error = context.l10n.adminInvalidValues);
+                  return;
+                }
+                Navigator.of(ctx).pop(true);
+              },
+              child: Text(context.l10n.attendanceAdd),
+            ),
+          ],
         ),
-        actions: [
-          TextButton(onPressed: () => Navigator.of(ctx).pop(false), child: Text(context.l10n.commonCancel)),
-          TextButton(onPressed: () => Navigator.of(ctx).pop(true), child: Text(context.l10n.attendanceAdd)),
-        ],
       ),
     );
     final name = controller.text.trim();
     if (ok != true || name.isEmpty || !context.mounted) return;
     final notifier = ref.read(organisationNotifierProvider.notifier);
-    final org = await notifier.create(name);
-    // Ionic db.createOrganisation links the instance right away; a failed
-    // link ends with 'Fehler beim Verknüpfen der Organisation', not success.
-    final linked = org?.id != null && await notifier.linkCurrentTenant(org!.id!);
+    final navigator = Navigator.of(context, rootNavigator: true);
+    showAppDialog<void>(
+      context: context,
+      barrierDismissible: false,
+      builder: (_) => const PopScope(canPop: false, child: Center(child: AppSpinner())),
+    );
+    Organisation? org;
+    var linked = false;
+    try {
+      org = await notifier.create(name);
+      // Ionic db.createOrganisation links the instance right away; a failed
+      // link ends with 'Fehler beim Verknüpfen der Organisation', not success.
+      linked = org?.id != null && await notifier.linkCurrentTenant(org!.id!);
+    } finally {
+      navigator.pop();
+    }
     if (!context.mounted) return;
     if (org == null) {
       ToastHelper.showError(context, context.l10n.svcCreateOrgFailed);

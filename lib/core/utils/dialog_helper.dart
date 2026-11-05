@@ -83,6 +83,7 @@ class DialogHelper {
     String? confirmText,
     String? cancelText,
     TextInputType? keyboardType,
+    String? Function(String value)? validator,
   }) {
     return showAppDialog<String>(
       context: context,
@@ -94,6 +95,7 @@ class DialogHelper {
         confirmText: confirmText ?? context.l10n.commonOk,
         cancelText: cancelText ?? context.l10n.commonCancel,
         keyboardType: keyboardType,
+        validator: validator,
       ),
     );
   }
@@ -108,6 +110,7 @@ class _TextInputDialog extends StatefulWidget {
     required this.confirmText,
     required this.cancelText,
     required this.keyboardType,
+    required this.validator,
   });
 
   final String title;
@@ -118,6 +121,10 @@ class _TextInputDialog extends StatefulWidget {
   final String cancelText;
   final TextInputType? keyboardType;
 
+  /// Returns a message for an invalid value: the dialog stays open and shows
+  /// it above the input (Ionic alert handler `alert.message = …; return false`).
+  final String? Function(String value)? validator;
+
   @override
   State<_TextInputDialog> createState() => _TextInputDialogState();
 }
@@ -125,6 +132,7 @@ class _TextInputDialog extends StatefulWidget {
 class _TextInputDialogState extends State<_TextInputDialog> {
   late final TextEditingController _controller =
       TextEditingController(text: widget.initialValue);
+  String? _message;
 
   @override
   void dispose() {
@@ -136,12 +144,23 @@ class _TextInputDialogState extends State<_TextInputDialog> {
   Widget build(BuildContext context) {
     return AppAlertDialog(
       title: Text(widget.title),
-      content: TextField(
-        controller: _controller,
-        maxLines: widget.maxLines,
-        keyboardType: widget.keyboardType,
-        decoration: InputDecoration(hintText: widget.hint),
-        autofocus: true,
+      content: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.stretch,
+        children: [
+          if (_message != null)
+            Padding(
+              padding: const EdgeInsets.only(bottom: 8),
+              child: Text(_message!),
+            ),
+          TextField(
+            controller: _controller,
+            maxLines: widget.maxLines,
+            keyboardType: widget.keyboardType,
+            decoration: InputDecoration(hintText: widget.hint),
+            autofocus: true,
+          ),
+        ],
       ),
       actions: [
         TextButton(
@@ -149,7 +168,14 @@ class _TextInputDialogState extends State<_TextInputDialog> {
           child: Text(widget.cancelText),
         ),
         ElevatedButton(
-          onPressed: () => Navigator.of(context).pop(_controller.text),
+          onPressed: () {
+            final message = widget.validator?.call(_controller.text);
+            if (message != null) {
+              setState(() => _message = message);
+              return;
+            }
+            Navigator.of(context).pop(_controller.text);
+          },
           child: Text(widget.confirmText),
         ),
       ],

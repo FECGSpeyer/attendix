@@ -5,6 +5,7 @@ import 'package:go_router/go_router.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/auto_message_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/auto_message/auto_message.dart';
@@ -27,10 +28,46 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
   /// Optimistic toggle state while the update runs (rule id → enabled).
   final Map<String, bool> _toggling = {};
 
+  /// Ionic takes over the saved rule after a toggle: the saved state wins
+  /// until the rules are loaded again (rule id → enabled).
+  final Map<String, bool> _saved = {};
+
+  /// Ionic `load()` shows one red toast per (re)load, whether the rules or
+  /// the recent runs failed.
+  bool _loadFailedShown = false;
+
+  /// Tenant whose recent runs the provider delivered last (only this page
+  /// watches it). After a refresh error the earlier data stays visible, but
+  /// never another tenant's (kept as previous value on a tenant switch).
+  int? _lastWeekTenantId;
+
+  @override
+  void initState() {
+    super.initState();
+    // The Mitteilungen page preloads the rules: an error that happened
+    // before this page opened doesn't reach the ref.listen callbacks.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted) return;
+      _onLoadResult(null, ref.read(autoMessageRulesProvider));
+      _onLoadResult(null, ref.read(autoMessageLastWeekProvider));
+    });
+  }
+
+  void _onLoadResult(AsyncValue<Object?>? previous, AsyncValue<Object?> next) {
+    if (!next.hasError || next.isLoading || _loadFailedShown || !mounted) return;
+    _loadFailedShown = true;
+    ToastHelper.showError(context, context.l10n.autoMessagesLoadFailed);
+  }
+
   Future<void> _refresh() async {
+    _loadFailedShown = false;
     ref.invalidate(autoMessageRulesProvider);
     ref.invalidate(autoMessageLastWeekProvider);
-    await ref.read(autoMessageRulesProvider.future);
+    try {
+      await ref.read(autoMessageRulesProvider.future);
+    } catch (_) {
+      // shown as toast by _onLoadResult
+    }
   }
 
   void _open(AutoMessageRule rule) => context.push('/settings/auto-messages/${rule.id}');
@@ -45,29 +82,60 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
     final id = rule.id;
     if (id == null) return;
     setState(() => _toggling[id] = enabled);
+    final AutoMessageRule saved;
     try {
-      await ref.read(autoMessageRepositoryWithTenantProvider).setEnabled(id, enabled);
-      ref.invalidate(autoMessageRulesProvider);
-      await ref.read(autoMessageRulesProvider.future);
-      if (mounted) {
-        ToastHelper.showSuccess(
-          context,
-          enabled ? context.l10n.autoMessagesEnabledToast : context.l10n.autoMessagesDisabledToast,
-        );
-      }
+      saved = await ref.read(autoMessageRepositoryWithTenantProvider).setEnabled(id, enabled);
     } catch (_) {
-      if (mounted) ToastHelper.showError(context, context.l10n.autoMessagesSaveFailed);
-    } finally {
-      if (mounted) setState(() => _toggling.remove(id));
+      if (mounted) {
+        ToastHelper.showError(context, context.l10n.autoMessagesSaveFailed);
+        setState(() => _toggling.remove(id));
+      }
+      return;
     }
+    if (!mounted) return;
+    setState(() {
+      _toggling.remove(id);
+      _saved[id] = saved.enabled;
+    });
+    ToastHelper.showSuccess(
+      context,
+      saved.enabled ? context.l10n.autoMessagesEnabledToast : context.l10n.autoMessagesDisabledToast,
+    );
+    // Background reload for the count on Mitteilungen; the switch keeps the
+    // saved state even if it fails. A new load gets its own error toast.
+    _loadFailedShown = false;
+    ref.invalidate(autoMessageRulesProvider);
   }
 
   @override
   Widget build(BuildContext context) {
     final l10n = context.l10n;
+    // A tenant switch reloads both providers: one new toast per tenant.
+    ref.listen(currentTenantIdProvider, (_, _) => _loadFailedShown = false);
+    ref.listen(autoMessageRulesProvider, (previous, next) {
+      // One toast per load cycle, however the load was triggered (pull to
+      // refresh, toggle, or invalidation from the rule editor after save or
+      // delete): a new load or a successful result releases the lock.
+      if (next.isLoading || !next.hasError) _loadFailedShown = false;
+      if (next is AsyncData && !next.isLoading) _saved.clear();
+      _onLoadResult(previous, next);
+    });
+    ref.listen(autoMessageLastWeekProvider, _onLoadResult);
+    final tenantId = ref.watch(currentTenantIdProvider);
     final rulesAsync = ref.watch(autoMessageRulesProvider);
+    final lastWeekAsync = ref.watch(autoMessageLastWeekProvider);
+    if (lastWeekAsync is AsyncData && !lastWeekAsync.isLoading) _lastWeekTenantId = tenantId;
+    // Ionic: spinner for the first load (and after a tenant switch, which
+    // reloads the providers); a refresh keeps the page. After an error the
+    // page stays usable (toast, see _onLoadResult) with the rules loaded
+    // before for this tenant (each rule carries its tenantId).
+    final firstLoad = rulesAsync is AsyncLoading;
+    final rules = [
+      for (final rule in rulesAsync.valueOrNull ?? const <AutoMessageRule>[])
+        if (rule.tenantId == tenantId) rule,
+    ];
     final types = ref.watch(attendanceTypesProvider).valueOrNull ?? const [];
-    final lastWeek = ref.watch(autoMessageLastWeekProvider).valueOrNull;
+    final lastWeek = _lastWeekTenantId == tenantId ? lastWeekAsync.valueOrNull : null;
 
     return Scaffold(
       appBar: AppBar(title: Text(l10n.autoMessagesTitle)),
@@ -90,57 +158,51 @@ class _AutoMessageListPageState extends ConsumerState<AutoMessageListPage> {
                 style: const TextStyle(fontSize: 14, height: 1.45, color: AppColors.medium),
               ),
             ),
-            ...rulesAsync.when(
-              loading:
-                  () => [
-                    const Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner())),
-                  ],
-              error: (e, _) => [AutoMessageHint(l10n.autoMessagesLoadFailed, center: true)],
-              data:
-                  (rules) => [
-                    if (rules.isNotEmpty)
-                      SettingsListSection(
-                        title: l10n.autoMessagesRules,
-                        icons: false,
-                        children: [
-                          for (final rule in rules)
-                            _RuleRow(
-                              rule: rule,
-                              enabled: _toggling[rule.id] ?? rule.enabled,
-                              summary: l10n.autoMessageRuleSummary(rule, types),
-                              chips: l10n.autoMessageRuleChips(rule),
-                              onTap: () => _open(rule),
-                              onToggle:
-                                  _toggling.containsKey(rule.id) ? null : (v) => _toggle(rule, v),
-                            ),
-                        ],
+            if (firstLoad)
+              const Padding(padding: EdgeInsets.all(32), child: Center(child: AppSpinner()))
+            else ...[
+              if (rules.isNotEmpty)
+                SettingsListSection(
+                  title: l10n.autoMessagesRules,
+                  icons: false,
+                  children: [
+                    for (final rule in rules)
+                      _RuleRow(
+                        rule: rule,
+                        enabled: _toggling[rule.id] ?? _saved[rule.id] ?? rule.enabled,
+                        summary: l10n.autoMessageRuleSummary(rule, types),
+                        chips: l10n.autoMessageRuleChips(rule),
+                        onTap: () => _open(rule),
+                        onToggle:
+                            _toggling.containsKey(rule.id) ? null : (v) => _toggle(rule, v),
                       ),
-                    if (rules.isNotEmpty && (lastWeek?.sent ?? 0) > 0)
-                      AutoMessageHint(l10n.autoMessagesLastWeek(lastWeek!.people)),
-                    Padding(
-                      padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
-                      child: FilledButton.icon(
-                        onPressed: () => _create(),
-                        icon: const Icon(Icons.add),
-                        label: IonButtonLabel(l10n.autoMessagesNewRule),
-                        style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
-                      ),
-                    ),
-                    SettingsListSection(
-                      title: l10n.autoMessagesStartFromTemplate,
-                      icons: false,
-                      children: [
-                        for (final tpl in autoMessageTemplates)
-                          SettingsListTile(
-                            title: l10n.autoMessageTemplateName(tpl),
-                            subtitle: l10n.autoMessageTemplateHint(tpl),
-                            onTap: () => _create(tpl),
-                          ),
-                      ],
-                    ),
-                    AutoMessageHint(l10n.autoMessagesWhoCanUse),
                   ],
-            ),
+                ),
+              if (rules.isNotEmpty && (lastWeek?.sent ?? 0) > 0)
+                AutoMessageHint(l10n.autoMessagesLastWeek(lastWeek!.people)),
+              Padding(
+                padding: const EdgeInsets.only(bottom: AppDimensions.paddingM),
+                child: FilledButton.icon(
+                  onPressed: () => _create(),
+                  icon: const Icon(Icons.add),
+                  label: IonButtonLabel(l10n.autoMessagesNewRule),
+                  style: FilledButton.styleFrom(minimumSize: const Size.fromHeight(48)),
+                ),
+              ),
+              SettingsListSection(
+                title: l10n.autoMessagesStartFromTemplate,
+                icons: false,
+                children: [
+                  for (final tpl in autoMessageTemplates)
+                    SettingsListTile(
+                      title: l10n.autoMessageTemplateName(tpl),
+                      subtitle: l10n.autoMessageTemplateHint(tpl),
+                      onTap: () => _create(tpl),
+                    ),
+                ],
+              ),
+              AutoMessageHint(l10n.autoMessagesWhoCanUse),
+            ],
           ],
         ),
       ),

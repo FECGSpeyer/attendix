@@ -1,5 +1,10 @@
+import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
+
+import '../../../../core/services/native/native_platform.dart';
+import '../../../../l10n/l10n.dart';
+import '../../../../shared/widgets/adaptive/adaptive.dart';
 
 /// ASTRA_PHOTO: picks a Passbild from the gallery (Ionic hidden
 /// `<input type="file" accept="image/*">` behind the profile avatar).
@@ -18,3 +23,34 @@ final personImagePickerProvider = Provider<PersonImagePicker>((ref) {
         imageQuality: 80,
       );
 });
+
+/// Ionic `<input type="file" accept="image/*">`: on iOS/Android the system
+/// offers camera or photo library. The browser file input already does that
+/// on the web, so only the installed app asks for the source first.
+Future<XFile?> pickPersonImage(BuildContext context, WidgetRef ref) async {
+  final pickFromGallery = ref.read(personImagePickerProvider);
+  if (!isNativeApp) return pickFromGallery();
+  final source = await showAppActionSheet<ImageSource>(
+    context,
+    actions: [
+      AppActionSheetAction(
+        value: ImageSource.camera,
+        icon: Icons.photo_camera_outlined,
+        label: context.l10n.attendanceFlutterCamera,
+      ),
+      AppActionSheetAction(
+        value: ImageSource.gallery,
+        icon: Icons.photo_library_outlined,
+        label: context.l10n.attendanceFlutterGallery,
+      ),
+    ],
+  );
+  if (source == null) return null;
+  if (source == ImageSource.gallery) return pickFromGallery();
+  return ImagePicker().pickImage(
+    source: ImageSource.camera,
+    maxWidth: 800,
+    maxHeight: 800,
+    imageQuality: 80,
+  );
+}

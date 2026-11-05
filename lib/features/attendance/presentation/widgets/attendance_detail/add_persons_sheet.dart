@@ -34,6 +34,8 @@ AddPersonCandidates computeAddPersonCandidates({
       .where((p) =>
           p.id != null &&
           !currentPersonIds.contains(p.id) &&
+          // Ionic db.getPlayers(true): only approved persons (pending = false).
+          !p.pending &&
           !p.paused &&
           (p.left == null || p.left!.isEmpty))
       .toList();

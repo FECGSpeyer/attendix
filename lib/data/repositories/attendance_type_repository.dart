@@ -116,6 +116,24 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
+  /// Ionic `createType` from the type page (isNew): inserts the columns as
+  /// edited on the page. The tenant is set here and cannot be overridden.
+  Future<AttendanceType> createTypeFromData(Map<String, dynamic> data) async {
+    ensureNotDemo('createType'); // DEMO_GUARD
+    try {
+      final response = await supabase
+          .from('attendance_types')
+          .insert({...data, 'tenant_id': currentTenantId})
+          .select()
+          .single();
+
+      return AttendanceType.fromJson(response);
+    } catch (e, stack) {
+      handleError(e, stack, 'createTypeFromData');
+      rethrow;
+    }
+  }
+
   /// Update an attendance type
   Future<AttendanceType?> updateType(String id, Map<String, dynamic> updates) async {
     ensureNotDemo('updateType'); // DEMO_GUARD
@@ -168,9 +186,9 @@ class AttendanceTypeRepository extends BaseRepository with TenantAwareRepository
     }
   }
 
-  /// Delete an attendance type (Ionic `deleteAttendanceType`): deletes the
-  /// type without a usage check; the confirmation dialog tells the user that
-  /// all Termine of this type are deleted with it (database foreign key).
+  /// Delete an attendance type.
+  /// Ionic attendance-type.service deleteAttendanceType deletes without a
+  /// pre-check; the dialog tells that the Termine of this type go with it.
   Future<bool> deleteType(String id) async {
     ensureNotDemo('deleteType'); // DEMO_GUARD
     try {

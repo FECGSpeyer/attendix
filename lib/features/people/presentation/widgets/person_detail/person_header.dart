@@ -156,58 +156,33 @@ class PersonHeader extends ConsumerWidget {
     );
   }
 
+  /// Ionic onProfileImageClick: a picture opens the viewer (with
+  /// "Ersetzen" / "Entfernen" when editable); no picture + editable opens
+  /// the file chooser directly.
   Future<void> _onAvatarTap(BuildContext context, WidgetRef ref) async {
-    if (!canEdit && !_hasImage) return;
-
-    // If not editable but has image, just view it
-    if (!canEdit && _hasImage) {
-      showImageViewerSheet(
+    if (_hasImage) {
+      await showImageViewerSheet(
         context,
         url: person.img!,
         fileName: '${person.fullName}.jpg',
+        actions: [
+          if (canEdit) ...[
+            ImageViewerAction(
+              label: context.l10n.personReplace,
+              icon: Icons.photo_camera_outlined,
+              onPressed: () => _replacePhoto(context, ref),
+            ),
+            ImageViewerAction(
+              label: context.l10n.commonRemove,
+              icon: Icons.delete_outline,
+              destructive: true,
+              onPressed: () => _removePhoto(context, ref),
+            ),
+          ],
+        ],
       );
-      return;
-    }
-
-    // Capture outer context before bottom sheet builder shadows it
-    final outerContext = context;
-
-    // Show action sheet (IOS_LOOK: adaptive ion-action-sheet)
-    final action = await showAppActionSheet<String>(
-      context,
-      actions: [
-        AppActionSheetAction(
-          value: 'replace',
-          icon: Icons.photo_camera,
-          label: context.l10n.settingsReplacePhoto,
-        ),
-        if (_hasImage)
-          AppActionSheetAction(
-            value: 'remove',
-            icon: Icons.delete,
-            label: context.l10n.personRemovePhoto,
-            destructive: true,
-          ),
-        if (_hasImage)
-          AppActionSheetAction(
-            value: 'view',
-            icon: Icons.visibility,
-            label: context.l10n.settingsViewPhoto,
-          ),
-      ],
-    );
-    if (!outerContext.mounted) return;
-    switch (action) {
-      case 'replace':
-        _replacePhoto(outerContext, ref);
-      case 'remove':
-        _removePhoto(outerContext, ref);
-      case 'view':
-        showImageViewerSheet(
-          outerContext,
-          url: person.img!,
-          fileName: '${person.fullName}.jpg',
-        );
+    } else if (canEdit) {
+      await _replacePhoto(context, ref);
     }
   }
 
@@ -217,7 +192,7 @@ class PersonHeader extends ConsumerWidget {
     final supabase = ref.read(supabaseClientProvider);
     final tenant = ref.read(currentTenantProvider);
     try {
-      final image = await ref.read(personImagePickerProvider)();
+      final image = await pickPersonImage(context, ref);
 
       if (image == null) return;
 

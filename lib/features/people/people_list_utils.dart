@@ -1,9 +1,10 @@
 import '../../core/constants/enums.dart';
 import '../../core/utils/instrument_sort.dart';
+import '../../core/utils/people_sort.dart' show localeCompareDe;
 import '../../data/models/instrument/instrument.dart';
 import '../../data/models/person/person.dart';
 import '../../data/models/tenant/tenant.dart';
-import '../../core/utils/people_sort.dart';
+import '../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 
 /// Search people by first/last name, group name and the values of text and
 /// number extra fields (Ionic people/list filter()).
@@ -73,8 +74,9 @@ List<Person> sortPeopleByGroup(List<Person> people, List<Group> groups) {
       final c = ga!.sortOrder!.compareTo(gb!.sortOrder!);
       if (c != 0) return c;
     }
-    // Ionic getModifiedPlayersForList: localeCompare (Ä/Ö/Ü with A/O/U).
-    final nameCmp = localeCompareDe(a.groupName ?? ga?.name ?? '', b.groupName ?? gb?.name ?? '');
+    // Ionic: group and last name via localeCompare (umlaut aware)
+    final nameCmp = localeCompareDe(
+        a.groupName ?? ga?.name ?? '', b.groupName ?? gb?.name ?? '');
     if (nameCmp != 0) return nameCmp;
     // Same group (or same name)
     if (a.instrument != b.instrument) {
@@ -102,4 +104,36 @@ bool isNewPerson(Person p, {DateTime? now}) {
   final n = now ?? DateTime.now();
   final oneMonthAgo = DateTime(n.year, n.month - 1, n.day, n.hour, n.minute);
   return joined.isAfter(oneMonthAgo);
+}
+
+/// Ionic Utils.getModifiedPlayersForList: fills missing extra field values
+/// (undefined/null) of every person that has an `additional_fields` object
+/// with Utils.getFieldTypeDefaultValue (defaultValue, else Ja/Nein true,
+/// Auswahl first option, Gemeinde first church, Zahl 0, Datum now, Text '').
+/// List badges, filters and the church overview then see these values.
+List<Person> withExtraFieldDefaults(
+  List<Person> people,
+  List<ExtraField> fields, {
+  List<Object> churchIds = const [],
+}) {
+  if (fields.isEmpty) return people;
+  return [
+    for (final p in people)
+      () {
+        final values = p.additionalFields;
+        if (values == null) return p;
+        final missing = fields.where((f) => values[f.id] == null).toList();
+        if (missing.isEmpty) return p;
+        return p.copyWith(additionalFields: {
+          ...values,
+          for (final f in missing)
+            f.id: extraFieldDefaultValue(
+              f.type,
+              defaultValue: f.defaultValue,
+              options: f.options,
+              churchIds: churchIds,
+            ),
+        });
+      }(),
+  ];
 }

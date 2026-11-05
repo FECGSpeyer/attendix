@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -94,12 +96,17 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       final tenants = await container.read(userTenantsProvider.future);
       // UX_NAV: Ionic db.setTenant opens the stored tenant, otherwise the
       // first one (no selection screen unless "Instanzauswahl" is enabled).
-      // Same order as the background restore: this device's instance
-      // first, then user_metadata (Ionic setTenant).
-      Tenant? storedTenant;
-      for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
-        storedTenant = tenants.where((t) => t.id == id).firstOrNull;
-        if (storedTenant != null) break;
+      // Same order as the background restore (Ionic setTenant): a group the
+      // restore set meanwhile is kept; otherwise IONIC_SESSION's pending
+      // Ionic group, this device's instance, then user_metadata. Setting it
+      // below also ends the pending restore in CurrentTenantNotifier.
+      final restoredId = container.read(currentTenantProvider)?.id;
+      Tenant? storedTenant = tenants.where((t) => t.id == restoredId).firstOrNull;
+      if (storedTenant == null) {
+        for (final id in await preferredTenantIds(userPrefs.currentTenantId)) {
+          storedTenant = tenants.where((t) => t.id == id).firstOrNull;
+          if (storedTenant != null) break;
+        }
       }
       var savedTenant = storedTenant ?? tenants.firstOrNull;
       if (ask && savedTenant != null) {
@@ -246,29 +253,7 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
       showDragHandle: true,
-      builder:
-          (sheetContext) => Consumer(
-            builder: (context, ref, _) {
-              final prefs = ref.watch(userPreferencesProvider);
-              return SafeArea(
-                child: Padding(
-                  padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
-                  child: Card(
-                    margin: EdgeInsets.zero,
-                    child: SwitchListTile.adaptive(
-                      title: Text(context.l10n.settingsEnableTenantSelect),
-                      subtitle: Text(context.l10n.settingsTenantSelectHelper),
-                      value: prefs.wantInstanceSelection,
-                      onChanged:
-                          (value) => ref
-                              .read(userPreferencesNotifierProvider.notifier)
-                              .updatePreferences(wantInstanceSelection: value),
-                    ),
-                  ),
-                ),
-              );
-            },
-          ),
+      builder: (sheetContext) => const _InstanceSelectionToggle(),
     );
   }
 
@@ -417,12 +402,17 @@ class _TenantSelectionPageState extends ConsumerState<TenantSelectionPage> {
     // (settings.page.html): "+" (Neue Instanz) left, title "Instanzen (n)",
     // cog (Instanzauswahl) right; inset list with short/long name, "Aktuell"
     // badge, favorite star and swipe actions Löschen / Favorit.
-    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet first.
-    void createInstance() {
+    // IOS_SETTINGS2: Ionic openCreateInstanceModal dismisses the sheet and
+    // presents RegisterPage as a card modal over the settings page.
+    Future<void> createInstance() async {
       if (widget.sheet) {
-        final router = GoRouter.of(context);
-        Navigator.of(context).pop();
-        router.push('/tenants/new');
+        final navigator = Navigator.of(context);
+        final sheetRoute = ModalRoute.of(context);
+        navigator.pop();
+        // The card modal scales the page behind it: wait until the sheet
+        // is gone so it is not part of that picture.
+        await _untilDismissed(sheetRoute);
+        if (navigator.mounted) await showTenantCreateModal(navigator.context);
       } else {
         context.push('/tenants/new');
       }
@@ -629,4 +619,73 @@ class _TenantTile extends StatelessWidget {
       ),
     );
   }
+}
+
+/// Ionic ngModel: the toggle flips at once and every change is written
+/// (settings.page.ts onTenantSelectionChange). The writes are serialized in
+/// [UserPreferencesNotifier.setWantInstanceSelection]; while writing, the
+/// toggle shows the wanted value; on failure a toast and the stored value.
+class _InstanceSelectionToggle extends ConsumerStatefulWidget {
+  const _InstanceSelectionToggle();
+
+  @override
+  ConsumerState<_InstanceSelectionToggle> createState() => _InstanceSelectionToggleState();
+}
+
+class _InstanceSelectionToggleState extends ConsumerState<_InstanceSelectionToggle> {
+  /// Write loop this toggle already waits for (one toast per failed loop).
+  Future<void>? _awaiting;
+
+  Future<void> _onChanged(bool newValue) async {
+    final write = ref
+        .read(userPreferencesNotifierProvider.notifier)
+        .setWantInstanceSelection(newValue);
+    if (identical(write, _awaiting)) return;
+    _awaiting = write;
+    try {
+      await write;
+    } catch (_) {
+      if (mounted) ToastHelper.showError(context, context.l10n.svcSaveFailed);
+    } finally {
+      if (identical(_awaiting, write)) _awaiting = null;
+    }
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final prefs = ref.watch(userPreferencesProvider);
+    final value = ref.watch(wantedInstanceSelectionProvider) ??
+        prefs.wantInstanceSelection;
+    return SafeArea(
+      child: Padding(
+        padding: const EdgeInsets.fromLTRB(16, 0, 16, 16),
+        child: Card(
+          margin: EdgeInsets.zero,
+          child: SwitchListTile.adaptive(
+            title: Text(context.l10n.settingsEnableTenantSelect),
+            subtitle: Text(context.l10n.settingsTenantSelectHelper),
+            value: value,
+            onChanged: _onChanged,
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+/// Completes once [route]'s exit transition has finished (at the latest
+/// after a short timeout, or right away without a running transition).
+Future<void> _untilDismissed(ModalRoute<dynamic>? route) {
+  final animation = route?.animation;
+  if (animation == null || animation.isDismissed) return Future.value();
+  final done = Completer<void>();
+  void listener(AnimationStatus status) {
+    if (status != AnimationStatus.dismissed) return;
+    animation.removeStatusListener(listener);
+    if (!done.isCompleted) done.complete();
+  }
+
+  animation.addStatusListener(listener);
+  return done.future
+      .timeout(const Duration(milliseconds: 600), onTimeout: () {});
 }
