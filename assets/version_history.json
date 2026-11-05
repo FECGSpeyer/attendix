@@ -1,6 +1,16 @@
 {
   "versions": [
     {
+      "version": "0.42.0",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Beta: Jeder Termin hat oben denselben Kopf mit Art und Phase („Morgen“, „Heute 19:30“, „Läuft · seit 19:30“, „Gestern“, „Archiviert“)",
+        "✨ Beta: Die Karte oben folgt dem Termin: vorher Rückmeldungen, am Tag „Anwesenheit eintragen“ mit Pultmodus und Ablauf, während des Termins „Jetzt im Ablauf“, danach die Anwesenheit in Prozent",
+        "✨ Beta: Neuer Reiter „Programm“ mit den Werken und dem Ablauf als Liste mit Uhrzeiten, die aktuelle Zeile ist markiert",
+        "✨ Beta: Im Überblick sind die Angaben in „Für Mitglieder“ und „Nur Leitung“ geteilt; „Bearbeiten“ ist genauso gegliedert und heißt jetzt „Antwort bis“"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [
