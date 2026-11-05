@@ -767,7 +767,13 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       return;
     }
 
-    if (await _blockedBySharedFieldsLoadError()) return;
+    // Sol review: lock before waiting for the shared-values load, so a
+    // second tap cannot pass the check while the first one waits.
+    setState(() => _isSaving = true);
+    final blocked = await _blockedBySharedFieldsLoadError();
+    if (!mounted) return;
+    setState(() => _isSaving = false);
+    if (blocked) return;
 
     // STATS_PEOPLE_FIXES: Ionic updatePlayer() pre-save dialogs
     final tenantType = ref.read(currentTenantProvider)?.type;
@@ -1415,8 +1421,10 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     final repo = ref.read(playerRepositoryWithTenantProvider);
     final personId = widget.person.id;
     if (personId == null || !repo.hasTenantId) return;
-    if (await _blockedBySharedFieldsLoadError()) return;
+    if (_isSaving) return;
+    setState(() => _isSaving = true);
     try {
+      if (await _blockedBySharedFieldsLoadError()) return;
       final solved = _problemSolved;
       if (_changedFields.isNotEmpty || solved) {
         final localAdditional = await _splitAndSaveSharedFields();
@@ -1448,6 +1456,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       }
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.personUpdateFailed);
+    } finally {
+      if (mounted) setState(() => _isSaving = false);
     }
   }
 
