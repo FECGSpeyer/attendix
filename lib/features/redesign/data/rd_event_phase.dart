@@ -23,6 +23,11 @@ enum RdEventPhase {
   archived,
 }
 
+/// Days of a Termin: its own [durationDays], else the type's default for
+/// all-day types (like `CrossTenantPersonAttendance.effectiveDurationDays`).
+int? rdEffectiveDurationDays(int? durationDays, {bool typeAllDay = false, int? typeDurationDays}) =>
+    durationDays ?? (typeAllDay ? typeDurationDays : null);
+
 /// Start and end of a Termin as local times. [start] carries the start time
 /// when [hasTime]; [end] is the end time on the last day, or the end of the
 /// last day without an end time.

@@ -86,6 +86,14 @@ class RdEventPage extends ConsumerStatefulWidget {
 /// Entries of the ••• menu.
 enum _MenuAction { statusOverview, church, excel, checklist, archive }
 
+/// Days of [attendance], with the type's default for all-day types (a
+/// Freizeit without own `duration_days` still runs on day 2).
+int? _effectiveDays(Attendance attendance, AttendanceType? type) => rdEffectiveDurationDays(
+      attendance.durationDays,
+      typeAllDay: type?.allDay ?? false,
+      typeDurationDays: type?.durationDays,
+    );
+
 /// What "Rückgängig" restores: the previous status per person.
 class _Undo {
   const _Undo(this.text, this.previous);
@@ -521,7 +529,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     final canMutate = canMutateAttendanceDetail(role);
     final canArchive = canArchiveAttendance(
       date: attendance.date,
-      durationDays: attendance.durationDays,
+      durationDays: _effectiveDays(attendance, type),
       archived: attendance.archived,
       role: role,
     );
@@ -587,12 +595,13 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   bool _menuHasActions(Attendance attendance, List<RdMember> members) {
     if (members.isNotEmpty) return true;
     final role = ref.watch(effectiveRoleProvider);
+    final type = ref.watch(attendanceTypeForAttendanceProvider(_id)).valueOrNull;
     return (canMutateAttendanceDetail(role) &&
             ref.watch(canViewAttendanceChecklistProvider) &&
             (attendance.checklist?.isEmpty ?? true)) ||
         canArchiveAttendance(
           date: attendance.date,
-          durationDays: attendance.durationDays,
+          durationDays: _effectiveDays(attendance, type),
           archived: attendance.archived,
           role: role,
         );
@@ -768,7 +777,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
         day: EventListUtils.parse(attendance.date),
         startTime: attendance.startTime ?? type?.startTime,
         endTime: attendance.endTime ?? type?.endTime,
-        durationDays: attendance.durationDays,
+        durationDays: _effectiveDays(attendance, type),
       );
 
   /// Type and phase, title, date · time · place (the same head as on the
@@ -786,7 +795,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
       typeHighlight: type?.highlight ?? false,
       timeRange: info.timeRange,
       place: info.place,
-      durationDays: attendance.durationDays,
+      durationDays: _effectiveDays(attendance, type),
     );
   }
 
@@ -1386,7 +1395,7 @@ class _Overview extends ConsumerWidget {
     final canViewNotes = ref.watch(canViewAttendanceNotesProvider);
     final canMutate = canMutateAttendanceDetail(role);
     final counts = RdStatusCounts.fromStatuses(members.map((m) => m.status));
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
+    final ended = EventListUtils.hasEnded(attendance.date, _effectiveDays(attendance, type));
     final info = rdEventInfo(attendance, type);
     final start = info.start;
     final over = phase == RdEventPhase.after || (phase == RdEventPhase.archived && ended);
@@ -1568,7 +1577,7 @@ class _Overview extends ConsumerWidget {
                           if (!attendance.archived &&
                               canArchiveAttendance(
                                 date: attendance.date,
-                                durationDays: attendance.durationDays,
+                                durationDays: _effectiveDays(attendance, type),
                                 archived: attendance.archived,
                                 role: role,
                               ))
