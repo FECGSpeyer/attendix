@@ -18,6 +18,7 @@ class PlanViewList extends StatefulWidget {
     this.liveMode = false,
     this.fieldWarning,
     this.songAction,
+    this.groupRange = true,
     this.onFieldTap,
     this.trailingBuilder,
     this.showStartEnd = true,
@@ -33,6 +34,10 @@ class PlanViewList extends StatefulWidget {
   /// Ionic 4.17.26 plan viewer from a member view: rows of Werke open the
   /// score options ("♪ Noten öffnen"). Returns null for rows without Werk.
   final VoidCallback? Function(PlanField field)? songAction;
+
+  /// Block heads show "HH:mm – HH:mm"; false: only the start time like the
+  /// other rows (Ionic shared-plan `calculateTime`).
+  final bool groupRange;
 
   /// Edit mode of shared plans: tap on a row.
   final void Function(int index)? onFieldTap;
@@ -127,7 +132,7 @@ class _PlanViewListState extends State<PlanViewList> {
       if (warning != null && warning.isNotEmpty) {
         lines.add(Text(warning, style: const TextStyle(color: AppColors.danger, fontSize: 14)));
       }
-      if (isHead && start != null) {
+      if (isHead && start != null && widget.groupRange) {
         final conductor = (f.conductor ?? '').isNotEmpty ? ' | ${f.conductor}' : '';
         lines.add(Text('${PlanUtils.groupRange(start, fields, i)}$conductor', style: pStyle));
       } else if (!isNote && start != null) {
