@@ -239,8 +239,35 @@ class PlanSettingsNotifier extends Notifier<AsyncValue<void>> {
   Future<bool> updatePlanningTemplates(List<Plan> templates) =>
       _updateOrg((repo, id) => repo.updatePlanningTemplates(id, templates));
 
-  Future<bool> updateDefaultFields(List<PlanField> fields) =>
-      _updateOrg((repo, id) => repo.updateDefaultFields(id, fields));
+  final Map<int, Future<bool>> _defaultFieldsRunning = {};
+  final Map<int, Future<bool>> _defaultFieldsQueued = {};
+  final Map<int, List<PlanField>> _defaultFieldsNext = {};
+
+  /// Writes the Standardfelder of organisation [orgId] serialized: one
+  /// request runs, at most one waits and then sends the newest list, so a
+  /// slow older write can never overwrite a newer one. Callers pass the
+  /// organisation id they captured up front (also usable from `dispose()`).
+  Future<bool> saveDefaultFields(int orgId, List<PlanField> fields) {
+    final running = _defaultFieldsRunning[orgId];
+    if (running == null) return _writeDefaultFields(orgId, fields);
+    _defaultFieldsNext[orgId] = fields;
+    return _defaultFieldsQueued[orgId] ??= running.then((_) {
+      _defaultFieldsQueued.remove(orgId);
+      return _writeDefaultFields(orgId, _defaultFieldsNext.remove(orgId)!);
+    });
+  }
+
+  Future<bool> _writeDefaultFields(int orgId, List<PlanField> fields) {
+    final write = _run(
+      () => ref.read(orgPlanRepositoryProvider).updateDefaultFields(orgId, fields),
+      invalidate: [currentOrganisationProvider],
+    );
+    _defaultFieldsRunning[orgId] = write;
+    write.then((_) {
+      if (identical(_defaultFieldsRunning[orgId], write)) _defaultFieldsRunning.remove(orgId);
+    });
+    return write;
+  }
 
   Future<bool> updateOrgName(String name) => _updateOrg((repo, id) => repo.updateOrgName(id, name));
 

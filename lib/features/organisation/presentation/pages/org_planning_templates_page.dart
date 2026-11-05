@@ -36,11 +36,27 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   List<PlanField> _defaultFields = [];
   int? _selected;
 
-  PlanSettingsNotifier get _notifier => ref.read(planSettingsNotifierProvider.notifier);
+  /// Captured up front (not via `ref` later) so the inline minutes can still
+  /// be saved from `dispose()` while the page is being removed.
+  late final PlanSettingsNotifier _notifier;
 
-  Future<void> _saveDefaultFields() async {
-    final ok = await _notifier.updateDefaultFields(_defaultFields);
+  /// Organisation whose Standardfelder are shown; captured with them.
+  int? _orgId;
+
+  @override
+  void initState() {
+    super.initState();
+    _notifier = ref.read(planSettingsNotifierProvider.notifier);
+  }
+
+  /// Saves the current Standardfelder; `true` once the write is confirmed.
+  /// Uses no `ref`/`context` unless the page is still mounted.
+  Future<bool> _saveDefaultFields() async {
+    final orgId = _orgId;
+    if (orgId == null) return false;
+    final ok = await _notifier.saveDefaultFields(orgId, _defaultFields);
     if (!ok && mounted) ToastHelper.showError(context, context.l10n.plansSaveFailed);
+    return ok;
   }
 
   Future<void> _saveTemplates() async {
@@ -116,13 +132,15 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
   /// reordered/removed meanwhile) and stored without `setState`: it is also
   /// called from the input's `dispose()`, e.g. while this page is popped.
   /// Nothing else on the page shows the minutes, so no rebuild is needed.
-  void _setDefaultMinutes(String id, String minutes) {
+  /// Saves even if the local value is unchanged: the input retries a value
+  /// whose earlier save failed.
+  Future<bool> _setDefaultMinutes(String id, String minutes) {
     final index = _defaultFields.indexWhere((f) => f.id == id);
-    if (index < 0 || _defaultFields[index].time == minutes) return;
+    if (index < 0) return Future.value(true); // removed, nothing to save
     final list = [..._defaultFields];
     list[index] = list[index].copyWith(time: minutes);
     _defaultFields = list;
-    _saveDefaultFields();
+    return _saveDefaultFields();
   }
 
   Future<void> _removeDefaultField(int index) async {
@@ -342,6 +360,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
       final org = orgAsync.value;
       _templates = [...?org?.planningTemplates];
       _defaultFields = [...?org?.defaultFields];
+      _orgId = org?.id;
     }
 
     return IonCondense(builder: (context, collapsed) => Scaffold(
@@ -513,6 +532,7 @@ class _OrgPlanningTemplatesPageState extends ConsumerState<OrgPlanningTemplatesP
 ///
 /// Saves debounced while typing, on blur and on dispose: on iOS/Android going
 /// back directly never blurs the field, so a blur-only save would be lost.
+/// A failed save stays pending and is retried on blur/dispose.
 class _DefaultMinutesInput extends StatefulWidget {
   const _DefaultMinutesInput({
     super.key,
@@ -524,9 +544,10 @@ class _DefaultMinutesInput extends StatefulWidget {
   final String fieldId;
   final String value;
 
-  /// Called with ([fieldId], minutes). Must not call `setState` (also runs
-  /// from `dispose()`).
-  final void Function(String fieldId, String minutes) onSubmitted;
+  /// Called with ([fieldId], minutes); resolves to `true` once saved. Must
+  /// not call `setState` or use `ref`/`context` synchronously (also runs from
+  /// `dispose()`).
+  final Future<bool> Function(String fieldId, String minutes) onSubmitted;
 
   @override
   State<_DefaultMinutesInput> createState() => _DefaultMinutesInputState();
@@ -536,7 +557,14 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
   late final TextEditingController _controller = TextEditingController(text: widget.value);
   final FocusNode _focus = FocusNode();
   Timer? _debounce;
-  late String _saved = widget.value;
+
+  /// Last value handed to `onSubmitted` (saved or still in flight).
+  late String _submitted = widget.value;
+
+  /// The save of [_submitted] failed: it stays pending and blur/dispose
+  /// retry it.
+  bool _failed = false;
+  int _seq = 0;
 
   @override
   void initState() {
@@ -549,18 +577,27 @@ class _DefaultMinutesInputState extends State<_DefaultMinutesInput> {
   @override
   void didUpdateWidget(covariant _DefaultMinutesInput oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (widget.value != oldWidget.value) _saved = widget.value;
+    // An external change (e.g. the edit dialog) replaces the value; the echo
+    // of our own, maybe still unsaved, text must not mark it as saved.
+    if (widget.value != oldWidget.value && widget.value != _controller.text.trim()) {
+      _submitted = widget.value;
+      _failed = false;
+    }
     if (!_focus.hasFocus && widget.value != _controller.text) _controller.text = widget.value;
   }
 
-  /// Saves the current text if it differs from the last saved value.
-  void _commit() {
+  /// Saves the current text unless it is already saved or being saved.
+  /// Only the newest submission counts (the page writes the whole list).
+  Future<void> _commit() async {
     _debounce?.cancel();
     _debounce = null;
     final v = _controller.text.trim();
-    if (v == _saved) return;
-    _saved = v;
-    widget.onSubmitted(widget.fieldId, v);
+    if (v == _submitted && !_failed) return;
+    _submitted = v;
+    _failed = false;
+    final seq = ++_seq;
+    final ok = await widget.onSubmitted(widget.fieldId, v);
+    if (!ok && seq == _seq) _failed = true;
   }
 
   void _onChanged(String _) {
