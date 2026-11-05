@@ -1,6 +1,7 @@
 {
  "batch": "zz-fixed-einstellungen",
  "afterRound": 4,
+ "ionic": "9f9b82af",
  "items": {
   "settings/general/extra-fields/extra-fields.page#alert-89775995": {
    "s": "ok",
@@ -268,7 +269,7 @@
    ],
    "n": "behoben in #304"
   },
-  "settings/general/general.page#x-759bccbc9e": {
+  "x-759bccbc9e": {
    "s": "ok",
    "f": [
     "lib/features/settings/presentation/pages/general_settings_page.dart"
@@ -522,7 +523,7 @@
    ],
    "n": "behoben in #302"
   },
-  "settings/general/type/type.page#x-0ad1beb81e": {
+  "x-0ad1beb81e": {
    "s": "ok",
    "f": [
     "lib/features/settings/presentation/pages/attendance_type_edit_page.dart",
@@ -540,14 +541,14 @@
    ],
    "n": "behoben in #302"
   },
-  "settings/handover-detail/handover-detail.page#x-6fbc5fbd93": {
+  "x-6fbc5fbd93": {
    "s": "ok",
    "f": [
     "lib/data/repositories/player_repository.dart"
    ],
    "n": "behoben in #299"
   },
-  "settings/handover/handover.page#x-bb2ef2fc5d": {
+  "x-bb2ef2fc5d": {
    "s": "ok",
    "f": [
     "lib/features/settings/presentation/pages/handover_page.dart"
@@ -564,7 +565,7 @@
    ],
    "n": "behoben in #299"
   },
-  "settings/help/content/index#x-8d00ffba99": {
+  "x-8d00ffba99": {
    "s": "ok",
    "f": [
     "lib/features/help/data/help_content.dart",
@@ -572,14 +573,14 @@
    ],
    "n": "behoben in #299"
   },
-  "settings/voice-leader/voice-leader.page#x-6eff6305bb": {
+  "x-6eff6305bb": {
    "s": "ok",
    "f": [
     "lib/features/voice_leader/data/providers/voice_leader_providers.dart"
    ],
    "n": "behoben in #299"
   },
-  "settings/voice-leader/voice-leader.page#x-7da9b986f8": {
+  "x-7da9b986f8": {
    "s": "ok",
    "f": [
     "lib/data/repositories/attendance_repository.dart",
