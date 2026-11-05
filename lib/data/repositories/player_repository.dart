@@ -385,8 +385,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
 
     if (existing != null && existing['id'] != null) {
       try {
+        // Ionic reactivates with pickPersonFields (no img): the row keeps
+        // its own picture, an adopted one of a cross-tenant match (shared
+        // file profiles/<other id>) is not written.
         final data = _personInsertData(person)
           ..remove('id')
+          ..remove('img')
           ..['left'] = null;
         final updated = await supabase
             .from('player')
@@ -520,9 +524,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// client-only keys such as `telegramId` → PGRST204). Null values are
   /// dropped: they correspond to Ionic's undefined form fields, which JSON
   /// serialisation omits, so DB defaults / existing values (e.g. `img` of a
-  /// reactivated row) stay intact. `img` is not part of pickPersonFields; a
-  /// non-data URL (adopted picture of a cross-tenant match) is still sent,
-  /// mirroring Ionic sanitizeImg.
+  /// reactivated row) stay intact. `img` is not part of pickPersonFields; for
+  /// a fresh insert a non-data URL (adopted picture of a cross-tenant match)
+  /// is still sent, mirroring Ionic sanitizeImg (the reactivation in
+  /// [addPlayer] drops it again).
   Map<String, dynamic> _personInsertData(Person player) {
     final data = pickPersonFields(player.toJson())
       ..remove('created_at')

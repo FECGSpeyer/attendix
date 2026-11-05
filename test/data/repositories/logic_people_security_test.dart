@@ -140,6 +140,8 @@ void main() {
       expect(b, contains(".eq('appId', appId)"));
       expect(b, contains(".eq('tenantId', currentTenantId)"));
       expect(b, contains("..['left'] = null"));
+      // Ionic pickPersonFields (no img): the reactivated row keeps its picture
+      expect(b, contains("..remove('img')"));
     });
   });
 
