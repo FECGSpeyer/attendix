@@ -10,6 +10,10 @@ import '../../../../core/providers/attendance_type_providers.dart';
 import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/realtime_providers.dart';
 import '../../../../core/providers/role_permission_providers.dart';
+import '../../../../core/providers/plan_providers.dart';
+import '../../../../core/providers/song_providers.dart';
+import '../../../../data/models/plan/plan.dart';
+import '../../../../data/models/song/song.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/archived_attendance.dart';
 import '../../../../core/utils/color_utils.dart';
@@ -115,7 +119,43 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   }
 
   /// Opens the Ablaufplan read-only; a Termin running today starts in live mode.
-  Future<void> _openPlanViewer(Attendance att) => openAttendancePlanViewer(context, att);
+  /// Ionic: with the Termin's further plans (`extra_plans` → day chips), the
+  /// Werke (rows open the score options) and, for Dirigent/Helfer (canEdit),
+  /// a pencil that opens the editor on the shown plan.
+  Future<void> _openPlanViewer(Attendance att) async {
+    final canEdit = ref.read(effectiveRoleProvider).canAddAttendance;
+    // Werke and the further plans load in parallel; a slow or failed load
+    // only drops the score actions / extra plans.
+    final cachedSongs = ref.read(songsProvider).valueOrNull ?? const <Song>[];
+    final songsFuture = ref
+        .read(songsProvider.future)
+        .timeout(const Duration(seconds: 5))
+        .catchError((_) => cachedSongs);
+    // The list rows carry only `plan`; the further plans are read with the
+    // Termin (tenant-scoped). Offline / on failure only the main plan shows.
+    var extra = const <Plan>[];
+    final id = att.id;
+    if (id != null) {
+      try {
+        final repo = ref.read(planRepositoryWithTenantProvider);
+        if (repo.hasTenantId) {
+          final full = await repo.getPlanAttendanceById(id).timeout(const Duration(seconds: 5));
+          extra = full?.extraPlans ?? const [];
+        }
+      } catch (_) {}
+    }
+    final songs = await songsFuture;
+    if (!mounted) return;
+    await openAttendancePlanViewer(
+      context,
+      att,
+      songs: songs,
+      extraPlans: extra,
+      onEdit: canEdit && id != null
+          ? (i) => context.push<bool>('/planning?attendanceId=$id${i > 0 ? '&plan=$i' : ''}')
+          : null,
+    );
+  }
 
   /// Termintyp filter popover (Ionic att-list "options" popover).
   Widget _buildTypeFilterButton(List<AttendanceType> types) {

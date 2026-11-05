@@ -6,6 +6,7 @@ import 'package:share_plus/share_plus.dart';
 
 import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/branding_providers.dart';
+import '../../../../core/services/pdf_branding.dart';
 import '../../../../core/services/plan_export_service.dart';
 import '../../../../core/services/telegram_service.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -49,6 +50,9 @@ Future<void> showPlanExportSheet(
   bool pdf2xSuffix = false,
   List<PlanSheetAction<String>> afterPdfActions = const [],
   List<PlanSheetAction<String>> trailingActions = const [],
+  String? pdfFileName,
+  String? imageFileName,
+  Future<PdfBranding?> Function()? branding,
 }) async {
   // P10_SELF_PLAN: [pdfLabel] / [pdf2xLabel] carry the Ionic wording of the
   // sheet ("PDF exportieren" on the Ablaufplan editor and viewer, "PDF (A4)"
@@ -88,7 +92,13 @@ Future<void> showPlanExportSheet(
   if (beforeExport != null && !beforeExport()) return;
   final parsed = PlanExportAction.values.byName(action);
   await runPlanExport(context, ref, parsed,
-      pages: pages(), fileName: fileName, includeBranding: includeBranding, pdf2xSuffix: pdf2xSuffix);
+      pages: pages(),
+      fileName: fileName,
+      pdfFileName: pdfFileName,
+      imageFileName: imageFileName,
+      includeBranding: includeBranding,
+      pdf2xSuffix: pdf2xSuffix,
+      branding: branding);
 }
 
 /// Runs one export action.
@@ -103,6 +113,9 @@ Future<void> runPlanExport(
   required String fileName,
   bool includeBranding = true,
   bool pdf2xSuffix = false,
+  String? pdfFileName,
+  String? imageFileName,
+  Future<PdfBranding?> Function()? branding,
 }) async {
   if (pages.isEmpty || pages.every((p) => p.fields.isEmpty)) {
     ToastHelper.showWarning(context, context.l10n.planningNoPlan);
@@ -112,16 +125,23 @@ Future<void> runPlanExport(
   final sideBySide = action == PlanExportAction.pdf2x || action == PlanExportAction.telegram2x;
   try {
     // MISC2: tenant/org branding in the letterhead (Ionic buildTenantBranding)
-    final branding = includeBranding ? await resolvePdfBranding(ref) : null;
+    // [branding] overrides it (Ionic public-planning / shared-plan: the
+    // plan's own public branding, never the viewer's instance).
+    final PdfBranding? resolved = !includeBranding
+        ? null
+        : branding != null
+            ? await branding()
+            : await resolvePdfBranding(ref);
     switch (action) {
       case PlanExportAction.pdf:
       case PlanExportAction.pdf2x:
+        final pdfName = pdfFileName ?? fileName;
         await service.sharePdf(pages,
             sideBySide: sideBySide,
-            fileName: sideBySide && pdf2xSuffix ? '${fileName}_2x' : fileName,
-            branding: branding);
+            fileName: sideBySide && (pdf2xSuffix || pdfFileName != null) ? '${pdfName}_2x' : pdfName,
+            branding: resolved);
       case PlanExportAction.image:
-        await service.shareImage(pages, fileName: fileName, branding: branding);
+        await service.shareImage(pages, fileName: imageFileName ?? fileName, branding: resolved);
       case PlanExportAction.telegram:
       case PlanExportAction.telegram2x:
       case PlanExportAction.telegramImage:
@@ -132,8 +152,8 @@ Future<void> runPlanExport(
         }
         final asImage = action == PlanExportAction.telegramImage;
         final bytes = asImage
-            ? await service.buildImage(pages, branding: branding)
-            : await service.buildPdf(pages, sideBySide: sideBySide, branding: branding);
+            ? await service.buildImage(pages, branding: resolved)
+            : await service.buildPdf(pages, sideBySide: sideBySide, branding: resolved);
         await ref.read(telegramServiceProvider).sendPlanPerTelegram(
               fileBytes: bytes,
               name: '${_safeName(fileName)}${sideBySide ? '_2x' : ''}',
