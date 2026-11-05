@@ -1,5 +1,7 @@
 {
   "batch": "zz-fixed-termine",
+  "afterRound": 3,
+  "ionic": "9f9b82af",
   "items": {
     "shared-plan/shared-plan.page#action-ec0c1511": {
       "s": "ok",
