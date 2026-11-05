@@ -29,7 +29,9 @@
         "🐛 Archivierte Termine erscheinen in der Ablaufplanung und in den Prozenten der Personenliste nur noch für Admins und Verantwortliche",
         "🐛 Demo-Konto: Das automatische Beenden abgelaufener Pausen ändert nichts mehr und zeigt den Demo-Hinweis",
         "🐛 iPad: Teilen und Herunterladen von Werk-Dateien, Plan-Links und Datei-Links öffnet wieder das Teilen-Fenster statt eines Fehlers",
-        "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an"
+        "🐛 Vorkurs-Urkunden zeigen kyrillische Namen richtig an",
+        "🐛 Die Suche in der Hilfe findet Artikel und Begriffe wieder wie in der alten App, auch bei Tippfehlern und mehreren Wörtern, in derselben Reihenfolge",
+        "🐛 Beim Hochladen von Noten erkennt Attendix weitere Instrument-Namen und Kürzel, z. B. Skripka, Litavry, Ф-но, Blockflöte, Akkordeon, Becken, Triangel und kleine/große Trommel"
       ]
     },
     {

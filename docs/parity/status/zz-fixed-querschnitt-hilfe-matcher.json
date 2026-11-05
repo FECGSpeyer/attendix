@@ -1,0 +1,22 @@
+{
+ "batch": "zz-fixed-querschnitt-hilfe-matcher",
+ "ionic": "9f9b82af",
+ "afterRound": 3,
+ "items": {
+  "x-8c653dac0c": {
+   "s": "ok",
+   "f": [
+    "lib/features/help/data/fuse_search.dart",
+    "lib/features/help/data/help_content_service.dart"
+   ],
+   "n": "behoben in #295 (aus #327)"
+  },
+  "x-327176cf3d": {
+   "s": "ok",
+   "f": [
+    "lib/core/utils/instrument_matcher.dart"
+   ],
+   "n": "behoben in #295 (aus #327)"
+  }
+ }
+}
