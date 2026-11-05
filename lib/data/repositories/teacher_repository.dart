@@ -118,6 +118,10 @@ class TeacherRepository extends BaseRepository with TenantAwareRepository {
           .from('player')
           .select('teacher')
           .eq('tenantId', currentTenantId)
+          // Ionic teachers.page counts db.getPlayers(): active persons only
+          // (left = null, pending = false).
+          .isFilter('left', null)
+          .eq('pending', false)
           .not('teacher', 'is', null);
 
       final counts = <int, int>{};

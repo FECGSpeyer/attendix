@@ -39,6 +39,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/toast_helper.dart';
 import '../../../../data/models/attendance/attendance.dart';
+import '../../../../data/models/church/church.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../shared/widgets/event_list/event_list_widgets.dart';
 import '../../../../shared/widgets/event_list/excuse_reason_sheet.dart';
@@ -1126,8 +1127,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       if (_canWriteUnexcused(attendance, type))
         item('write_unexcused', Icons.chat_bubble_outline,
             context.l10n.autoMessagesWriteUnexcusedMenu(_unexcusedCount())),
-      // Flutter-only extra (Ionic has the photo upload commented out)
-      if (canMutate) item('photo', Icons.camera_alt_outlined, context.l10n.attendanceFlutterPhoto),
+      // No "Foto" entry: Ionic has the photo upload commented out, and the
+      // switch from Ionic should not add menu entries (_takePhoto stays).
       // Ionic 4.17.24: archive past Termine (admins/responsible).
       if (canArchiveAttendance(
         date: attendance.date,
@@ -2429,6 +2430,9 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   }
 
   Future<void> _exportAttendanceToExcel() async {
+    // Bound before the awaits (tenant switch safety).
+    final profileRepo = ref.read(profileRepositoryWithTenantProvider);
+    final canViewNotes = ref.read(canViewAttendanceNotesProvider);
     try {
       final attendance = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull;
       final persons = ref.read(filteredPersonsForAttendanceProvider(widget.attendanceId)).valueOrNull;
@@ -2441,13 +2445,28 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
 
       ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
 
+      final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
+      final churchFieldId = _churchFieldId();
+      final churches = churchFieldId == null
+          ? const <Church>[]
+          : await ref.read(churchesProvider.future);
+      // The Gemeinde can be an organisation field (shared value).
+      final exported = churchFieldId == null
+          ? _personsInAttendance(persons)
+          : await profileRepo
+              .hydrateSharedPersonFieldValues(_personsInAttendance(persons));
+      if (!mounted) return;
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
         context: context,
         attendance: attendance,
-        persons: _personsInAttendance(persons),
+        typeName: type?.name ?? '',
+        persons: exported,
         statuses: _localStatuses,
-        tenantName: tenant.shortName,
+        // Notes stay hidden for roles that may not see them in the view.
+        notes: canViewNotes ? _personNotes : const {},
+        churches: churches,
+        churchFieldId: churchFieldId,
       );
     } catch (e) {
       if (mounted) {

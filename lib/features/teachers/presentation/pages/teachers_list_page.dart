@@ -107,12 +107,23 @@ class TeachersListPage extends ConsumerWidget {
     );
   }
 
+  /// All groups of the tenant; waits for them if no page loaded them yet.
+  Future<List<Group>> _loadGroups(WidgetRef ref) async {
+    try {
+      return await ref.read(groupsProvider.future);
+    } catch (_) {
+      return ref.read(groupsProvider).valueOrNull ?? const [];
+    }
+  }
+
   /// Ionic "Lehrer hinzufügen" sheet (breakpoint 0.7).
   Future<void> _showAddSheet(BuildContext context, WidgetRef ref) async {
-    // Ionic teachers.page: instruments without the main group
-    final groups = (ref.read(groupsProvider).valueOrNull ?? [])
+    // Ionic teachers.page: instruments without the main group. Ionic has
+    // db.groups() always loaded; here the groups may not be loaded yet.
+    final groups = (await _loadGroups(ref))
         .where((g) => g.maingroup != true)
         .toList();
+    if (!context.mounted) return;
     final result = await showModalBottomSheet<Teacher>(
       context: context,
       useRootNavigator: true, // IOS_SHELL2: above the tab bar
@@ -137,7 +148,8 @@ class TeachersListPage extends ConsumerWidget {
     WidgetRef ref,
     Teacher teacher,
   ) async {
-    final groups = ref.read(groupsProvider).valueOrNull ?? [];
+    final groups = await _loadGroups(ref);
+    if (!context.mounted) return;
     final result = await Navigator.of(context, rootNavigator: true).push<Teacher>(
       MaterialPageRoute(
         fullscreenDialog: true,
