@@ -210,12 +210,12 @@ const makeFlutterCheck = (root = '.') => {
     try {
       git('rev-parse', '--verify', '-q', `${commit}^{commit}`);
       paths = new Map();
-      // -z: NUL-separated "status path [new path]"; renames keep the old path
+      // -z: NUL-separated "status path [new path]"; renames mark old and new path
       const tok = git('diff', '--name-status', '-M', '-z', commit, 'HEAD', '--').split('\0');
       for (let k = 0; k < tok.length - 1;) {
         const s = tok[k][0];
         if (s === 'R' || s === 'C') {
-          if (s === 'R') paths.set(tok[k + 1], 'R');
+          if (s === 'R') { paths.set(tok[k + 1], 'R'); paths.set(tok[k + 2], 'R'); }
           k += 3;
         } else {
           paths.set(tok[k + 1], s);
@@ -615,7 +615,7 @@ if (cmd === 'batches') {
     const fc = rows.filter((r) => r.fchanged);
     const fcOk = fc.filter((r) => r.status === 'ok').length;
     const fcGap = fc.filter((r) => r.status === 'diff' || r.status === 'missing').length + fchangedExtra.size;
-    lines.push(`Flutter seit Urteil geändert: ${fc.length + fchangedExtra.size} Punkte (davon ok ${fcOk}, Abweichungen ${fcGap}), Stand ${fcheck.head() ?? '?'}.`, '');
+    lines.push(`Flutter seit Urteil geändert: ${fc.length + fchangedExtra.size} Punkte (davon ok ${fcOk}, Abweichungen ${fcGap}), verglichen mit HEAD ${fcheck.head() ?? '?'}.`, '');
   }
   lines.push('| Status | Anzahl |', '|---|---|');
   for (const [k, v] of Object.entries(total).sort()) lines.push(`| ${k} | ${v} |`);
