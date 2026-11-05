@@ -1687,6 +1687,7 @@
   "orgDisableSyncMessage": "The pieces of this instance will then be empty until own pieces are created. History entries pointing to pieces of the source instance can no longer be resolved.",
   "orgFieldsAddOption": "Please add at least one option.",
   "orgFieldsApplyChanges": "Apply changes",
+  "orgFieldsFlutterClearDefault": "Remove default value",
   "orgFieldsFlutterFirstOptionDefault": "The first option is the default value",
   "orgFieldsIntro": "These fields and their values are shared for the same person across all instances of the organisation.",
   "orgFieldsInvalid": "Invalid organisation fields.",

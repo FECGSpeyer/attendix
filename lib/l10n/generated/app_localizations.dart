@@ -10241,6 +10241,12 @@ abstract class AppLocalizations {
   /// **'Änderungen übernehmen'**
   String get orgFieldsApplyChanges;
 
+  /// orgFields.flutter.clearDefault
+  ///
+  /// In de, this message translates to:
+  /// **'Standardwert entfernen'**
+  String get orgFieldsFlutterClearDefault;
+
   /// orgFields.flutter.firstOptionDefault
   ///
   /// In de, this message translates to:

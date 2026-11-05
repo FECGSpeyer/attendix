@@ -43,7 +43,8 @@
     },
     "orgFields": {
       "flutter": {
-        "firstOptionDefault": "Erste Option ist der Standardwert"
+        "firstOptionDefault": "Erste Option ist der Standardwert",
+        "clearDefault": "Standardwert entfernen"
       }
     },
     "plans": {
@@ -101,7 +102,8 @@
     },
     "orgFields": {
       "flutter": {
-        "firstOptionDefault": "The first option is the default value"
+        "firstOptionDefault": "The first option is the default value",
+        "clearDefault": "Remove default value"
       }
     },
     "plans": {
