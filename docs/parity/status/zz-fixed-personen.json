@@ -75,6 +75,13 @@
     "lib/data/repositories/user_registration_repository.dart"
    ],
    "n": "behoben in #284"
+  },
+  "people/person/person.page#toast-9e8a666e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #316"
   }
  },
  "extraOverride": [
