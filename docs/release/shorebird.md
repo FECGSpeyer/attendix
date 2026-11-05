@@ -70,6 +70,21 @@ Release.
   (Version + Build-Nummer). Für jeden neuen Store-Build erneut
   `shorebird release` ausführen.
 
+### Wann lieber kein Patch (vor allem iOS)
+
+Auf iOS läuft geänderter Dart-Code interpretiert, unveränderter bleibt
+kompiliert. `shorebird patch ios` zeigt an, wie viel Code noch kompiliert
+(„linked“) läuft; bei kleinen Fixes sind das fast 100 %.
+
+- **Patchen:** Bugfixes, Texte, Logik einzelner Seiten, kleine UI-Anpassungen.
+- **Store-Release:** Flutter-/Paket-Updates, neu generierte Freezed-Modelle,
+  Umbauten an zentralem Code (Theme, Router, Basis-Widgets, Repositories),
+  Änderungen in heißen Pfaden (lange Listen, Animationen, Parser) und größere
+  neue Funktionen (gehören laut Apple durch das Review).
+- Sinkt der „linked“-Anteil deutlich oder wirkt die App danach träger: als
+  Store-Release ausliefern. Shorebird-Warnungen zu nativen Änderungen nie
+  einfach bestätigen.
+
 ## Rollback
 
 In der Shorebird-Konsole den Patch zurückziehen (Rollback) oder per CLI
