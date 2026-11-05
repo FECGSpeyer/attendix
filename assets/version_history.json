@@ -21,7 +21,9 @@
         "🐛 „Datum ändern“ und „Termin anlegen“ fragen das Datum wieder in einem Dialog mit Weiter bzw. Anlegen ab",
         "🐛 Mit aktivierter Instanzauswahl erscheint nach dem Login wieder der Dialog „Instanz auswählen“",
         "🐛 Personen- und Werk-Import liest wieder alte Excel-Dateien (.xls) und übernimmt bei Formeln den berechneten Wert",
-        "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)"
+        "🐛 Personen öffnen aus der Personenliste und der Übersicht wieder als Fenster über der Seite, der nächste Termin aus der Übersicht ebenso (mit X zum Schließen)",
+        "🐛 Zusammenführen einer Registrierung mit einer vorhandenen Person vergibt wie bisher immer die Rolle Mitglied",
+        "🐛 Lehrerliste wie bisher ohne Löschen per Wischen"
       ]
     },
     {

@@ -392,6 +392,20 @@
     "lib/core/utils/spreadsheet_reader.dart"
    ],
    "n": "behoben in #295 (.xls-Leser)"
+  },
+  "services/db.service#x-ca607be234": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/player_repository.dart"
+   ],
+   "n": "behoben in #295"
+  },
+  "services/teacher/teacher.service#x-0df39acfdc": {
+   "s": "ok",
+   "f": [
+    "lib/features/teachers/presentation/pages/teachers_list_page.dart"
+   ],
+   "n": "behoben in #295"
   }
  },
  "extra": [],

@@ -1997,18 +1997,10 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
           .eq('id', targetId)
           .eq('tenantId', currentTenantId);
 
-      // Role like Ionic createAccount: main group → RESPONSIBLE.
-      final mainGroup = await supabase
-          .from('instruments')
-          .select('id')
-          .eq('tenantId', currentTenantId)
-          .eq('maingroup', true)
-          .limit(1)
-          .maybeSingle();
-      final role = UserRegistrationRepository.accountRoleFor(
-        instrumentId: target.instrument,
-        mainGroupId: mainGroup?['id'] as int?,
-      );
+      // Ionic mergePendingPlayerIntoExisting: updateTenantUser({role:
+      // PLAYER}) and the approval mail with PLAYER, whatever the group (like
+      // approvePlayer; a main-group person gets no RESPONSIBLE rights here).
+      const role = Role.player;
 
       if (pending.appId != null) {
         await supabase
