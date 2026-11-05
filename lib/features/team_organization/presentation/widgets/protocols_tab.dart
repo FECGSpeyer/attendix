@@ -89,10 +89,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
     final types = ref.watch(protocolTypesProvider).valueOrNull ?? const <ProtocolType>[];
     final l10n = context.l10n;
 
-    return protocolsAsync.when(
-      loading: () => const Center(child: AppSpinner()),
-      error: (_, __) => Center(child: Text(l10n.protocolLoadFailed)),
-      data: (protocols) {
+    Widget content(List<Protocol> protocols) {
         final rows = _rows(protocols, types);
         final query = _search.trim();
         final filtered = rows
@@ -109,7 +106,7 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
             IonEmptyState(icon: icon, title: title, text: text);
 
         return RefreshIndicator.adaptive(
-          onRefresh: () async => ref.invalidate(protocolsProvider),
+          onRefresh: () => reloadTeamOrgTab(ref, 'protocols'),
           child: ListView(
             physics: const AlwaysScrollableScrollPhysics(),
             padding: EdgeInsets.only(bottom: scrollEndPadding(context, base: 16, fabRoom: 64)),
@@ -167,7 +164,15 @@ class _ProtocolsTabState extends ConsumerState<ProtocolsTab> {
             ],
           ),
         );
-      },
+    }
+
+    // Ionic reload(): getProtocols swallows errors → empty list with the
+    // empty state; pull-to-refresh keeps working.
+    return protocolsAsync.when(
+      skipError: true,
+      loading: () => const Center(child: AppSpinner()),
+      error: (_, __) => content(const []),
+      data: content,
     );
   }
 }

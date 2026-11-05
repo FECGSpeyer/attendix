@@ -144,12 +144,18 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
     await copyPlanLink(context, planPublicUrl('/org-plan?key=$newKey'), message: context.l10n.plansLinkCreated);
   }
 
-  void _showHistory(List<OrgPlanEntry> past) {
+  /// Ionic: the history modal is bound to `pastPlans`, so a deleted plan
+  /// disappears right away – the page watches the plans instead of a copy.
+  void _showHistory() {
     Navigator.of(context).push(MaterialPageRoute(
-      builder: (_) => Scaffold(
-        appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
-        body: ListView(children: [for (final e in past) _entryTile(e)]),
-      ),
+      builder: (_) => Consumer(builder: (context, ref, _) {
+        final entries = ref.watch(orgPlansProvider).valueOrNull;
+        final past = entries == null ? const <OrgPlanEntry>[] : splitOrgPlanEntries(entries).past;
+        return Scaffold(
+          appBar: AppBar(title: Text(context.l10n.plansPastPlans)),
+          body: ListView(children: [for (final e in past) _entryTile(e)]),
+        );
+      }),
     ));
   }
 
@@ -288,7 +294,7 @@ class _OrgPlansPageState extends ConsumerState<OrgPlansPage> {
                             ListTile(
                               leading: const Icon(Icons.history, color: AppColors.medium),
                               title: Text(context.l10n.plansPastPlans, style: const TextStyle(color: AppColors.medium)),
-                              onTap: () => _showHistory(split.past),
+                              onTap: _showHistory,
                             ),
                     ]),
                     if (key != null)

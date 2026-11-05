@@ -9,6 +9,7 @@ import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/song/song.dart';
 import '../../../../l10n/l10n.dart';
+import '../../../../core/utils/dialog_helper.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 
@@ -86,6 +87,52 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
   int? _selectedConductorId;
   String? _otherConductorName;
   bool _useOtherConductor = false;
+
+  /// Whether a name was saved in the „Dirigent eingeben“ alert. Controls the
+  /// visibility of the name field independently of its current text.
+  bool _otherConductorSaved = false;
+  final _otherConductorController = TextEditingController();
+
+  @override
+  void dispose() {
+    _otherConductorController.dispose();
+    super.dispose();
+  }
+
+  /// Ionic onConChange: alert „Dirigent eingeben“ (placeholder „Dirigent“,
+  /// Abbrechen / Speichern). On cancel or an empty name the previous
+  /// conductor selection is restored, so „Anderer Dirigent“ can be chosen
+  /// again.
+  Future<void> _askOtherConductor({
+    required int? previousConductorId,
+    required bool previousUseOther,
+    required String? previousName,
+    required bool previousSaved,
+  }) async {
+    final name = (await DialogHelper.showTextInput(
+      context,
+      title: context.l10n.attListEnterConductor,
+      hint: context.l10n.attListConductor,
+      confirmText: context.l10n.commonSave,
+    ))
+        ?.trim();
+    if (!mounted || !_useOtherConductor) return;
+    if (name == null || name.isEmpty) {
+      setState(() {
+        _useOtherConductor = previousUseOther;
+        _selectedConductorId = previousConductorId;
+        _otherConductorName = previousName;
+        _otherConductorSaved = previousSaved;
+        _otherConductorController.text = previousName ?? '';
+      });
+      return;
+    }
+    setState(() {
+      _otherConductorName = name;
+      _otherConductorSaved = true;
+      _otherConductorController.text = name;
+    });
+  }
 
   @override
   void initState() {
@@ -174,30 +221,45 @@ class _SongsSelectionSheetState extends ConsumerState<SongsSelectionSheet> {
                                   child: Text(context.l10n.attListOtherConductor),
                                 ),
                               ],
-                              onChanged: (v) => setState(() {
+                              onChanged: (v) {
                                 if (v == otherValue) {
-                                  _useOtherConductor = true;
-                                  _selectedConductorId = null;
+                                  final previousConductorId = _selectedConductorId;
+                                  final previousUseOther = _useOtherConductor;
+                                  final previousName = _otherConductorName;
+                                  final previousSaved = _otherConductorSaved;
+                                  setState(() {
+                                    _useOtherConductor = true;
+                                    _selectedConductorId = null;
+                                  });
+                                  _askOtherConductor(
+                                    previousConductorId: previousConductorId,
+                                    previousUseOther: previousUseOther,
+                                    previousName: previousName,
+                                    previousSaved: previousSaved,
+                                  );
                                 } else {
-                                  _useOtherConductor = false;
-                                  _selectedConductorId = v;
-                                  _otherConductorName = null;
+                                  setState(() {
+                                    _useOtherConductor = false;
+                                    _otherConductorSaved = false;
+                                    _selectedConductorId = v;
+                                    _otherConductorName = null;
+                                  });
                                 }
-                              }),
+                              },
                             ),
                           ),
                         ),
-                        if (_useOtherConductor) ...[
+                        // Ionic: the field only shows the name saved in the
+                        // „Dirigent eingeben“ alert; it stays visible while
+                        // editing, even when the text becomes empty.
+                        if (_useOtherConductor && _otherConductorSaved) ...[
                           const Divider(height: 1, indent: 16),
                           Padding(
                             padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
                             child: TextField(
-                              autofocus: true,
+                              controller: _otherConductorController,
                               textCapitalization: TextCapitalization.words,
-                              decoration: InputDecoration(
-                                hintText: context.l10n.attListEnterConductor,
-                                border: InputBorder.none,
-                              ),
+                              decoration: const InputDecoration(border: InputBorder.none),
                               onChanged: (value) => setState(() => _otherConductorName = value),
                             ),
                           ),
