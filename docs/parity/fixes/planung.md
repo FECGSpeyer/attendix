@@ -1,13 +1,10 @@
 # Fix-Paket „planung“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `org-settings/org-person-fields/org-person-fields.page` `field-3207b9c2` [org-settings/org-person-fields/org-person-fields.page.html:197](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-settings/org-person-fields/org-person-fields.page.html#L197) (2. Prüfung: korrigiert)
-  Edit-Sheet „Standardwert“ je Typ gleich. Abweichender DB-Wert: Ein geänderter Zahl-Standardwert wird als Text gespeichert („5“), Ionic speichert die Zahl (ion-input type=number). Personen erhalten den Standard dann als Text; in der Anzeige gleich, aber anderer Wert in extraFields (Sortieren/Vergleichen). Fix: bei Typ number num.tryParse.
-  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:361-367
 
 ## Flutter besser – Leon entscheidet: 19
 

@@ -1,13 +1,10 @@
 # Fix-Paket „werke“
 
-Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011 (normales Design).
+Soll: Ionic 4.19.9 (1923d203). Ist: Flutter 1aba6be, 2157fa0, b218510, 3bacc76, 8004a44, c9dd1aa, , b15b3b0, 40d2b43, da49473, 84c4c44, 6945c13, 3cdaaa1, a0550a4, 4e13f22, 2353b98, 00e183c, 57bb011, 0f74333 (normales Design).
 Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. Item-IDs siehe `ionic-inventory.json`.
 
-## Angleichen (hoch/mittel): 1
+## Angleichen (hoch/mittel): 0
 
-- [ ] **mittel** `songs/song/song.page` `action-399b39c6` [songs/song/song.page.html:200](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/songs/song/song.page.html#L200) (2. Prüfung: korrigiert)
-  Zählung jetzt richtig (tenantId, pending=false, left=null, ohne pausierte; frisch geladen). Aber Fehlermeldung fehlt: Ionic printSongFiles → db.getPlayers zeigt bei Fehler Toast „Fehler beim Laden der Personen“ (danger) und bricht ab / Flutter: await playerCountByInstrumentProvider.future ohne try/catch, _printGroupPdfs nicht in _run → unbehandelter Fehler, Nutzer erfährt nichts. Erstprüfung „ok“ übersah das.
-  Flutter: lib/features/songs/presentation/pages/song_detail_page.dart:1165, lib/features/songs/presentation/pages/song_detail_page.dart:1200, lib/features/songs/presentation/widgets/group_pdf_print.dart:30, lib/data/repositories/player_repository.dart:1365
 
 ## Flutter besser – Leon entscheidet: 21
 
