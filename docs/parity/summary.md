@@ -2,7 +2,7 @@
 
 Ionic 4.19.9 (1923d203), 5684 Punkte in 213 Bausteinen.
 
-Flutter seit Urteil geändert: 4116 Punkte (davon ok 2994, Abweichungen 1118), verglichen mit HEAD c789649.
+Flutter seit Urteil geändert: 1726 Punkte (davon ok 1055, Abweichungen 668), verglichen mit HEAD 57bb011.
 
 | Status | Anzahl |
 |---|---|

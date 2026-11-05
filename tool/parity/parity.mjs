@@ -201,6 +201,13 @@ const positional = () => rest.filter((x, k) => !OPTS_WITH_VALUE.has(x) && !OPTS_
 // ending in "/" (directory) when anything below it changed. Unknown commits
 // (not in the checkout) are reported once and never mark anything.
 const refPath = (r) => String(r).trim().replace(/:\d.*$/, '');
+// Item kinds whose behaviour depends on more than the referenced lines
+// (logic, data access, routing): any change of a referenced file counts.
+// Other kinds (texts, fields, actions, dialogs …) only when the referenced
+// lines ± LINE_MARGIN changed.
+const LINE_MARGIN = 10;
+const FILE_LEVEL_KINDS = new Set(['logic', 'db', 'route', 'native', 'effect']);
+const fileLevelFor = (kind) => !kind || FILE_LEVEL_KINDS.has(kind);
 const makeFlutterCheck = (root = '.') => {
   const byCommit = new Map();
   const warned = new Set();
@@ -237,14 +244,46 @@ const makeFlutterCheck = (root = '.') => {
     byCommit.set(commit, paths);
     return paths;
   };
-  // changed reference paths (deduplicated, without line numbers) or []
-  const changed = (commit, refs) => {
+  // old-side line ranges of the hunks of one modified file (git diff -U0)
+  const byFile = new Map();
+  const hunksOf = (commit, p) => {
+    const k = `${commit}\0${p}`;
+    if (!byFile.has(k)) {
+      const out = git('diff', '-U0', commit, 'HEAD', '--', p);
+      byFile.set(k, [...out.matchAll(/^@@ -(\d+)(?:,(\d+))? \+/gm)].map((m) => {
+        const a = Number(m[1]);
+        const n = m[2] === undefined ? 1 : Number(m[2]);
+        return [a, a + Math.max(n, 1) - 1];
+      }));
+    }
+    return byFile.get(k);
+  };
+  // "lib/x.dart:12-30,41" → [[12,30],[41,41]]; no line numbers → null
+  const rangesOf = (r) => {
+    const m = String(r).trim().match(/:(\d[\d,\s-]*)$/);
+    if (!m) return null;
+    return m[1].split(',').map((x) => x.trim().match(/^(\d+)(?:-(\d+))?/)).filter(Boolean).map((x) => [Number(x[1]), Number(x[2] ?? x[1])]);
+  };
+  // changed reference paths (deduplicated, without line numbers) or [].
+  // fileLevel false: a modified file only counts when a hunk touches the
+  // referenced lines ± LINE_MARGIN (references without line numbers, deleted
+  // or renamed files always count).
+  const changed = (commit, refs, { fileLevel = true } = {}) => {
     if (disabled || !commit || !refs?.length) return [];
     const paths = changedPaths(commit);
     if (!paths?.size) return [];
     const out = new Set();
-    for (const p of refs.map(refPath).filter(Boolean)) {
-      if (paths.has(p) || (p.endsWith('/') && [...paths.keys()].some((x) => x.startsWith(p)))) out.add(p);
+    for (const r of refs) {
+      const p = refPath(r);
+      if (!p) continue;
+      if (p.endsWith('/') ? [...paths.keys()].some((x) => x.startsWith(p)) : !paths.has(p)) {
+        if (p.endsWith('/')) out.add(p);
+        continue;
+      }
+      const ranges = fileLevel || paths.get(p) !== 'M' ? null : rangesOf(r);
+      if (!ranges) { out.add(p); continue; }
+      const hunks = hunksOf(commit, p);
+      if (ranges.some(([a, b]) => hunks.some(([h0, h1]) => h0 <= b + LINE_MARGIN && h1 >= a - LINE_MARGIN))) out.add(p);
     }
     return [...out];
   };
@@ -453,7 +492,7 @@ if (cmd === 'batches') {
   const inv = load(INVENTORY);
   const st = readStatuses();
   const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
-  const flutterChangedOf = (at, refs) => (fcheck ? fcheck.changed(at, refs) : []);
+  const flutterChangedOf = (at, refs, kind) => (fcheck ? fcheck.changed(at, refs, { fileLevel: fileLevelFor(kind) }) : []);
   let fcOther = 0;
   const { batches } = load(join(DIR, 'batches.json'));
   const recheck = new Set();
@@ -543,7 +582,7 @@ if (cmd === 'batches') {
     for (const u of inv.units.filter((x) => b.units.includes(x.id))) {
       for (const i of u.items) {
         const s0 = st.items[i.id];
-        const changed = s0 ? flutterChangedOf(s0.flutterAt, s0.f) : [];
+        const changed = s0 ? flutterChangedOf(s0.flutterAt, s0.f, i.kind) : [];
         let reason = null;
         if (!s0) reason = 'neu';
         else if (recheck.has(i.id)) reason = 'geaendert';
@@ -601,7 +640,7 @@ if (cmd === 'batches') {
   }
   // verdicts whose referenced Flutter files changed since (see makeFlutterCheck)
   const fcheck = rest.includes('--no-flutter-check') ? null : makeFlutterCheck(optValue('--flutter') ?? '.');
-  rows.forEach((r) => { r.fchanged = r.status !== 'offen' && fcheck ? fcheck.changed(r.flutterAt, r.flutter).length > 0 : false; });
+  rows.forEach((r) => { r.fchanged = r.status !== 'offen' && fcheck ? fcheck.changed(r.flutterAt, r.flutter, { fileLevel: fileLevelFor(r.item.kind) }).length > 0 : false; });
   const fchangedExtra = new Set(fcheck ? st.extra.filter((e) => fcheck.changed(e.flutterAt, e.f).length).map((e) => e.id) : []);
   // verdicts for ids the inventory does not know (removed or mistyped)
   const invIds = new Set(inv.units.flatMap((u) => u.items.map((i) => i.id)));

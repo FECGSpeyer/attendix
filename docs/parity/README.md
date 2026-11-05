@@ -103,9 +103,13 @@ eine stabile ID (`x-<sha1(Baustein|Titel)>`); eine Prüfung schreibt ihr
 Urteil unter dieser ID (`s` ok/na nimmt den Befund zurück).
 
 Zuletzt prüft `verify-round` per `git`, ob sich eine im Urteil referenzierte
-Flutter-Datei (`f`, Zeilenangaben abgeschnitten) seit dem Flutter-Commit des
-Urteils (`flutterAt`) bis `HEAD` geändert hat (geändert, umbenannt oder
-gelöscht; ein `git diff --name-status` je Commit). Solche Elemente (jeder
+Flutter-Datei (`f`) seit dem Flutter-Commit des Urteils (`flutterAt`) bis
+`HEAD` geändert hat (geändert, umbenannt oder gelöscht; ein
+`git diff --name-status` je Commit). Bei Elementen der Arten `logic`, `db`,
+`route`, `native`, `effect` und bei Zusatzbefunden zählt jede Änderung der
+Datei; bei allen anderen Arten (Texte, Felder, Aktionen, Dialoge …) nur eine
+Änderung an den genannten Zeilen ± 10 (`git diff -U0`, Zeilen des alten
+Stands); Verweise ohne Zeilenangabe zählen immer. Solche Elemente (jeder
 Status, auch `ok`/`na`) und offene Zusatzbefunde kommen mit dem Grund
 `flutter-geaendert` dazu, sofern kein anderer Grund greift; jeder
 ausgewählte Eintrag nennt die geänderten Dateien in `flutterChanged`.
