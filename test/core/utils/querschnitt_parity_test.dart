@@ -57,4 +57,3 @@ void main() {
     expect(parseNumberFieldDefault('Infinity'), isNull);
   });
 }
-
