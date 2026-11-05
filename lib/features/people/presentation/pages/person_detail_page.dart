@@ -204,9 +204,16 @@ final personHistoryProvider =
 /// `critical-persons-card`, `member-changes-card`) open the PersonPage with
 /// `modalController.create({ backdropDismiss: false })`: full screen on
 /// phones, a card on desktop/tablet ([showIonModal]); a tap outside does not
-/// close it. The page is read-only for roles other than Admin /
-/// Verantwortlicher (handled by the page itself).
+/// close it. With `presentingElement` that is a card modal on iOS
+/// ([showIosCardModal]: the page behind scales down). The page is read-only
+/// for roles other than Admin / Verantwortlicher (handled by the page itself).
 Future<void> showPersonModal(BuildContext context, int personId) {
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      builder: (_) => PersonDetailPage(personId: personId, isModal: true),
+    );
+  }
   return showIonModal<void>(
     context,
     barrierDismissible: false,

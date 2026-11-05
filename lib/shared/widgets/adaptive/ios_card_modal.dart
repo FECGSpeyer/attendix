@@ -129,6 +129,14 @@ class _IosCardModalRoute<T> extends PopupRoute<T> {
     if (c == null) return;
     final velocity = details.velocity.pixelsPerSecond.dy;
     if (velocity > 700 || c.value < 0.6) {
+      // A page that blocks popping (PopScope canPop: false, e.g. unsaved
+      // changes) stays open: the card snaps back and the page is told about
+      // the attempt (like the ✕ / strip via maybePop).
+      if (popDisposition == RoutePopDisposition.doNotPop) {
+        c.forward();
+        onPopInvokedWithResult(false, null);
+        return;
+      }
       navigator?.pop();
     } else {
       c.forward();

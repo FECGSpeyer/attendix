@@ -68,8 +68,16 @@ export '../widgets/attendance_date_change.dart' show calendarDayDifference, shif
 /// Ionic dashboard "Nächster Termin" (`next-event-card`) opens the
 /// AttendancePage with `isModal: true` as `ion-modal`: full screen on phones,
 /// a card on desktop/tablet ([showIonModal]), an X (close-outline) instead of
-/// the back arrow; a tap outside does not close it.
+/// the back arrow; a tap outside does not close it. With `presentingElement`
+/// that is a card modal on iOS ([showIosCardModal]: the page behind scales
+/// down).
 Future<void> showAttendanceModal(BuildContext context, int attendanceId) {
+  if (useIosLook(context)) {
+    return showIosCardModal<void>(
+      context,
+      builder: (_) => AttendanceDetailPage(attendanceId: attendanceId, isModal: true),
+    );
+  }
   return showIonModal<void>(
     context,
     barrierDismissible: false,
