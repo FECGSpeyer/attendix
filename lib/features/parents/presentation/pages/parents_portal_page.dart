@@ -461,15 +461,10 @@ class _ParentsPortalPageState extends ConsumerState<ParentsPortalPage> {
   Future<void> _signIn(ParentAttendanceGroup group, List<String> ids, ChildPersonAttendance? child) async {
     // ASTRA_PARENTS: one call for all children; a failure of any child is
     // reported (Ionic aborts the loop at the first error, no success toast).
-    final entries = [
-      for (final id in ids)
-        (
-          id,
-          SignInType.fromStatus(group.childAttendances
-              .firstWhere((c) => c.id == id, orElse: () => child ?? group.childAttendances.first)
-              .status),
-        ),
-    ];
+    // PARITY_SELF: Ionic parents signin(attendance) reads the status of the
+    // Termin object (none) → always type 'signin', so the conductors get the
+    // normal sign-in notification for every child.
+    final entries = [for (final id in ids) (id, SignInType.normal)];
     final ok = await ref.read(parentSignInOutNotifierProvider.notifier).signInAll(entries);
     if (!mounted) return;
     if (!ok) {

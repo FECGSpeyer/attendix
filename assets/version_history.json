@@ -1,6 +1,21 @@
 {
   "versions": [
     {
+      "version": "0.41.25",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Abwesenheit melden oder löschen ändert nur noch die Termine, die unter „Meine Termine“ stehen (keine fremden oder nicht zugeteilten Dienste)",
+        "✨ Übersicht: Bei „Entschuldigt“ oder „Verspätung gemeldet“ stehen im Aktionsblatt dieselben Einträge wie bisher",
+        "✨ Ablaufplan aus „Meine Termine“ zeigt bei mehrtägigen Terminen die Tage zur Auswahl; der Live-Modus startet nur während des Ablaufs",
+        "✨ Beschreibungen von Terminen werden formatiert angezeigt, Links lassen sich antippen",
+        "✨ Unbestätigte Dienste zeigen „Bitte bestätigen“; Aktualisieren lädt auch die Dienste neu",
+        "✨ Eltern: Kinder in derselben Reihenfolge wie bisher, Anmeldungen benachrichtigen die Dirigenten wieder",
+        "✨ Statistik: Balken waagrecht mit Namen, Diagramme mit Titel und Achsenbeschriftung",
+        "🐛 Verlauf: „+“ öffnet sofort, das erste Werk ist vorausgewählt",
+        "✨ Mitteilungen, Instanzwechsel im Dashboard und Live-Activity-Text wie bisher"
+      ]
+    },
+    {
       "version": "0.41.24",
       "date": "5.11.2026",
       "changes": [

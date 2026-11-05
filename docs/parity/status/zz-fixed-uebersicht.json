@@ -1,0 +1,109 @@
+{
+ "batch": "zz-fixed-uebersicht",
+ "afterRound": 4,
+ "ionic": "9f9b82af",
+ "items": {
+  "history/history.page#modal-0bbf542e": {
+   "s": "ok",
+   "f": [
+    "lib/features/history/presentation/pages/history_page.dart:301"
+   ],
+   "n": "behoben in #298"
+  },
+  "home-dashboard/home-dashboard.page#nav-1c9dc137": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:190"
+   ],
+   "n": "behoben in #298"
+  },
+  "home-dashboard/home-dashboard.page#effect-e221ccc5": {
+   "s": "ok",
+   "f": [
+    "lib/features/dashboard/presentation/pages/home_dashboard_page.dart:190"
+   ],
+   "n": "behoben in #298"
+  },
+  "messages/message-detail/message-detail.page#toast-264998c7": {
+   "s": "ok",
+   "f": [
+    "lib/features/messages/presentation/pages/message_detail_page.dart:54"
+   ],
+   "n": "behoben in #298"
+  },
+  "notifications/notifications.page#field-05b9f833": {
+   "s": "ok",
+   "f": [
+    "lib/features/notifications/presentation/pages/notifications_page.dart:228"
+   ],
+   "n": "behoben in #298"
+  },
+  "stats/stats.page#field-2d5da58e": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:1029"
+   ],
+   "n": "behoben in #298"
+  },
+  "x-6a02894975": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart:48"
+   ],
+   "n": "behoben in #298"
+  },
+  "x-ab8ae02d16": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "behoben in #298"
+  },
+  "x-ad6a974bce": {
+   "s": "ok",
+   "f": [
+    "lib/data/repositories/auto_message_repository.dart:248"
+   ],
+   "n": "behoben in #298"
+  },
+  "stats/stats.page#media-57ebfc11": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:789",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-315d630a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:758",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-42266499": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:945",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-9766bdb9": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:916",
+    "lib/features/statistics/presentation/widgets/horizontal_bar_chart.dart"
+   ],
+   "n": "behoben in #298 (waagrechte Balken mit Namen, Achsentitel)"
+  },
+  "stats/stats.page#media-ac43f03a": {
+   "s": "ok",
+   "f": [
+    "lib/features/statistics/presentation/pages/statistics_page.dart:535"
+   ],
+   "n": "behoben in #298 (Titel „Anwesenheitsverlauf (letzte 20 Termine)“)"
+  }
+ }
+}

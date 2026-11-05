@@ -46,6 +46,7 @@ class _FakeAbsenceNotifier extends PlayerAbsenceNotifier {
     required String fromDate,
     required String untilDate,
     required String reason,
+    Set<String>? onlyIds,
   }) async {
     calls.add('$personId $fromDate $untilDate $reason');
     return 1;
@@ -384,6 +385,8 @@ void main() {
                 _own('21', _iso(DateTime(next.year, next.month, 20)), AttendanceStatus.neutral),
               ],
             )),
+        // Preview and save wait for the duty overview (Dienstplan view).
+        myDutyOverviewProvider.overrideWith((ref) async => const MyDutyOverview()),
         playerAbsenceNotifierProvider.overrideWith(() => _FakeAbsenceNotifier(calls)),
       ],
       child: _themed(Consumer(

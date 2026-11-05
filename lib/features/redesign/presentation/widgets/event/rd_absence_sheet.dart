@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
+import '../../../../../core/providers/duty_providers.dart';
 import '../../../../../core/providers/signout_providers.dart';
 import '../../../../../core/providers/tenant_providers.dart';
 import '../../../../../core/theme/redesign/rd_theme.dart';
@@ -149,10 +150,18 @@ class _AbsenceSheetState extends ConsumerState<_AbsenceSheet> {
         : until == null
             ? '${day(from)} · ${l10n.redesignAbsenceChooseEnd}'
             : '${day(from)} – ${day(until)}';
+    // Same Termine the save changes (selfServiceAbsenceCandidateIds): no
+    // unassigned duties, no own duties in the Dienstplan view.
     final data = ref.watch(signoutDataProvider).valueOrNull;
-    final affected = from == null || until == null || data == null
+    final duty = ref.watch(myDutyOverviewProvider).valueOrNull;
+    final affected = from == null || until == null || data == null || duty == null
         ? null
-        : rdTermineInRange(data.allUpcoming, from, until, tenantId: ref.watch(currentTenantIdProvider));
+        : rdTermineInRange(
+            absenceCandidates(data, useDutyView: duty.useDutyView),
+            from,
+            until,
+            tenantId: ref.watch(currentTenantIdProvider),
+          );
 
     return [
       RdCard(

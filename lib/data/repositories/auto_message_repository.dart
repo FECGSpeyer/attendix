@@ -5,7 +5,6 @@ import '../models/auto_message/auto_message.dart';
 import '../models/message/message.dart';
 import '../../core/utils/paged_query.dart';
 import 'base_repository.dart';
-import '../../core/utils/archived_attendance.dart';
 
 /// Provider for AutoMessageRepository
 final autoMessageRepositoryProvider = Provider<AutoMessageRepository>((ref) {
@@ -246,12 +245,11 @@ class AutoMessageRepository extends BaseRepository with TenantAwareRepository {
           .select('id, date, typeInfo, type_id, archived')
           .inFilter('id', ids)
           .eq('tenantId', currentTenantId);
-      // Ionic 4.17.24: archived Termine stay hidden for every role except
-      // admins/responsible (no Termin card and no answer actions).
-      final showArchived = canSeeArchivedAttendances(currentUserRole);
+      // PARITY_UEBERSICHT: Ionic getAttendanceInfo / loadOwnCopy load the
+      // Termin without an archive filter, so a member's own copy keeps its
+      // Termin card and the answer buttons for an archived Termin too.
       return (response as List)
           .cast<Map<String, dynamic>>()
-          .where((e) => showArchived || !isArchivedRow(e))
           .map(AutoMessageTerminInfo.fromJson)
           .toList();
     } catch (e, stack) {

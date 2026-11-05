@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/dashboard_providers.dart';
 import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/router/redesign_routes.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../data/models/dashboard/dashboard_models.dart';
 import '../../../../data/models/tenant/tenant.dart';
@@ -184,6 +184,8 @@ Future<void> _switchDashboardTenant(BuildContext context, WidgetRef ref, Tenant 
   await notifier.setTenant(t);
   await ref.read(currentTenantUserProvider.future);
   final role = ref.read(currentRoleProvider);
-  final metadata = ref.read(supabaseAuthProvider).currentUser?.userMetadata;
-  router.go(homeRouteFor(role, t.id, metadata));
+  // PARITY_UEBERSICHT: Ionic onTenantChange → Utils.getUrl(role), never the
+  // dashboard (Admin/Verantwortlicher land in "Personen"). The new design
+  // (Beta) keeps its own start page.
+  router.go(RedesignRoutes.active ? RedesignRoutes.today : role.defaultRoute);
 }
