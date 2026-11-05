@@ -50,11 +50,17 @@ final signoutAttendanceSongsProvider =
 
 /// "Aktuelle Werke" of "Meine Termine" (Ionic 4.17.26 `upcomingSongs`): the
 /// Werke of the own Termine from today on, one group per Termin, ascending.
+/// Like Ionic (computed after `applyDutyView`), duty Termine the person is
+/// not assigned to (substitute, or listed via show_all_attendances) are left
+/// out. The tile only shows outside the Dienstplan view.
 final upcomingSongsProvider =
     FutureProvider<List<UpcomingSongGroup>>((ref) async {
   // Account switch rebuilds the list (signoutDataProvider is per account).
   ref.watch(currentAuthUserIdProvider);
-  final data = await ref.watch(signoutDataProvider.future);
+  final data = applySignoutDutyView(
+    await ref.watch(signoutDataProvider.future),
+    useDutyView: false,
+  );
   final byAttendance = await ref.watch(signoutAttendanceSongsProvider.future);
   if (byAttendance.isEmpty) return [];
   final now = DateTime.now();
