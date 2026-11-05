@@ -1,0 +1,15 @@
+{
+ "batch": "zz-fixed-personen-konto",
+ "ionic": "9f9b82af",
+ "afterRound": 4,
+ "flutter": "84c4c44",
+ "items": {
+  "people/person/person.page#toast-9e8a666e": {
+   "s": "ok",
+   "f": [
+    "lib/features/people/presentation/pages/person_detail_page.dart"
+   ],
+   "n": "behoben in #320"
+  }
+ }
+}

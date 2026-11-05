@@ -1194,22 +1194,23 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     }
   }
 
-  /// Ionic assignMyAccount(): link the current user to this person.
+  /// Ionic assignMyAccount(): link the current user to this person via the
+  /// normal account creation (`db.createAccount({...player, email: me.email})`).
+  /// Role (Verantwortlicher/Spieler) and the "already linked" check come from
+  /// [UserRegistrationRepository.createPlayerAccount]; only `appId` is written.
   Future<void> _assignMyAccount() async {
-    final playerRepo = ref.read(playerRepositoryWithTenantProvider);
-    final personId = widget.person.id;
+    final person = widget.person;
     final user = ref.read(supabaseClientProvider).auth.currentUser;
-    if (personId == null || user == null) return;
-    final tenantUser = await ref.read(currentTenantUserProvider.future);
-    final email = tenantUser?.email ?? user.email;
+    if (person.id == null || user == null) return;
     try {
-      await playerRepo
-          .updatePlayerFields(personId, {
-        'appId': user.id,
-        'email': email,
-      });
+      final tenantUser = await ref.read(currentTenantUserProvider.future);
+      final email = tenantUser?.email ?? user.email;
+      await ref
+          .read(accountCreationNotifierProvider.notifier)
+          .createAccount(person.copyWith(email: email));
       ref.invalidate(personProvider(widget.personId));
       ref.invalidate(realtimePlayersProvider);
+      ref.invalidate(currentTenantUserProvider);
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
           SnackBar(
@@ -1221,7 +1222,7 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     } catch (e) {
       if (mounted) {
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(context.l10n.peopleFlutterErrorWith(friendlyErrorMessage(e))), backgroundColor: AppColors.danger),
+          SnackBar(content: Text(friendlyErrorMessage(e)), backgroundColor: AppColors.danger),
         );
       }
     }

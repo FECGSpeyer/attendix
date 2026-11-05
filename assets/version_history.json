@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.41.20",
+      "version": "0.41.23",
       "date": "5.11.2026",
       "changes": [
         "🐛 Werk bearbeiten: Änderungen, die während des Speicherns gemacht werden, gehen nicht mehr verloren",
@@ -12,6 +12,27 @@
         "🐛 Werk in andere Instanz kopieren: Fenster lässt sich während des Kopierens nicht mehr schließen",
         "🐛 Kategorie einer Datei ändern öffnet wieder das gewohnte Fenster von unten",
         "🐛 Werke-Liste: Filter wieder als kleines Menü am Filter-Knopf; Freigabe-Seite mit Zurück-Knopf; gelöschte Kategorie bleibt nicht als Filter hängen"
+      ]
+    },
+    {
+      "version": "0.41.22",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Meinen Benutzer zuweisen“ legt das Konto wie bisher über die Kontoanlage an und lehnt ein schon verknüpftes Konto ab"
+      ]
+    },
+    {
+      "version": "0.41.21",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Person: „Andere Instanzen“ berechnet die Anwesenheit wie bisher ab Saisonstart, ohne archivierte Termine für Mitglieder und mit schichtbedingt entschuldigt"
+      ]
+    },
+    {
+      "version": "0.41.20",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personen-Import: Zusatzfelder der Organisation werden wie bisher angeboten und stehen in der Vorlage, die Vorlage öffnet in der App direkt bzw. wird im Web geteilt oder heruntergeladen"
       ]
     },
     {
