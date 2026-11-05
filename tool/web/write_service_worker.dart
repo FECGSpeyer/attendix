@@ -20,6 +20,8 @@ const _versionPlaceholder = "/*VERSION*/''";
 /// Files that are never requested by the app.
 bool isSkipped(String path) =>
     path == 'flutter_service_worker.js' ||
+    // MIGRATION: safety worker that retires the old Ionic (Angular) worker.
+    path == 'ngsw-worker.js' ||
     path == '_headers' ||
     path == '.last_build_id' ||
     path.endsWith('.symbols') ||

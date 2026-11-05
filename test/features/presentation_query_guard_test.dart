@@ -14,7 +14,6 @@ const _allowed = <String, String>{
   'lib/features/songs/presentation/widgets/copy_to_tenant_sheet.dart': 'cross-tenant copy',
   'lib/features/people/presentation/widgets/person_detail/andere_instanzen_accordion.dart':
       'person in other instances',
-  'lib/features/self_service/data/providers/upcoming_songs_provider.dart': 'all instances of the user',
   // Public registration before a tenant is selected.
   'lib/features/registration/data/providers/registration_providers.dart': 'public registration',
   'lib/features/registration/presentation/pages/tenant_registration_page.dart': 'public registration',
