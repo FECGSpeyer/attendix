@@ -153,8 +153,14 @@ class _CloseOnNavigation extends StatefulWidget {
 class _CloseOnNavigationState extends State<_CloseOnNavigation> {
   String? _location;
 
-  String? _current() =>
-      widget.router?.routerDelegate.currentConfiguration.uri.toString();
+  /// Location plus the top route entry: a `push` (also into a ShellRoute)
+  /// adds an entry with its own page key even where the URI stays the same.
+  String? _current() {
+    final config = widget.router?.routerDelegate.currentConfiguration;
+    if (config == null) return null;
+    final last = config.isEmpty ? null : config.last;
+    return '${config.uri}|${config.matches.length}|${last?.pageKey.value}';
+  }
 
   @override
   void initState() {

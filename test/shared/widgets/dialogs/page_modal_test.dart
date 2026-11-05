@@ -9,18 +9,24 @@ void main() {
       'page modal closes itself before a router navigation (Ionic isModal, $platform)',
       (tester) async {
         late BuildContext homeContext;
+        // Like the app: tabs in a ShellRoute, the target pushed onto it.
         final router = GoRouter(
           routes: [
-            GoRoute(
-              path: '/',
-              builder: (context, _) {
-                homeContext = context;
-                return const Scaffold(body: Text('home'));
-              },
-            ),
-            GoRoute(
-              path: '/target',
-              builder: (_, __) => const Scaffold(body: Text('target')),
+            ShellRoute(
+              builder: (_, __, child) => child,
+              routes: [
+                GoRoute(
+                  path: '/',
+                  builder: (context, _) {
+                    homeContext = context;
+                    return const Scaffold(body: Text('home'));
+                  },
+                ),
+                GoRoute(
+                  path: '/target',
+                  builder: (_, __) => const Scaffold(body: Text('target')),
+                ),
+              ],
             ),
           ],
         );
