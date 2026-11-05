@@ -102,7 +102,7 @@ Future<Map<String, Map<String, dynamic>>> fetchSharedFieldValuesForPeople(
           .select('person_key, field_id, value')
           .eq('tenant_group', organisationId)
           .inFilter('person_key', chunk)
-          .order('id')
+          .order('id', ascending: true)
           .range(from, to);
       return (page as List).cast<Map<String, dynamic>>();
     }));

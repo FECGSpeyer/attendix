@@ -160,7 +160,7 @@ void main() {
           'Future<List<Map<String, dynamic>>> _playersReferencingChurch(');
       expect(load, contains('fetchAllPages'));
       expect(load, contains('.eq(_churchFilterColumn, churchId)'));
-      expect(load, contains(".order('id')"));
+      expect(load, contains(".order('id', ascending: true)"));
       expect(load, contains('.range(from, to)'));
       expect(src, contains("'additional_fields->>\$kChurchFieldKey'"));
       expect(merge, isNot(contains(".not('additional_fields', 'is', null)")));

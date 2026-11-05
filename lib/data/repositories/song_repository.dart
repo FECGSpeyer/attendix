@@ -354,8 +354,8 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
           .select('*')
           .eq('tenantId', songTenantId)
           .ilike('name', '%$sanitizedQuery%')
-          .order('number', nullsFirst: false)
-          .order('name')
+          .order('number', ascending: true, nullsFirst: false)
+          .order('name', ascending: true)
           .limit(50);
 
       return (response as List)
@@ -445,7 +445,7 @@ class SongRepository extends BaseRepository with TenantAwareRepository {
           .from('song_categories')
           .select('*')
           .eq('tenant_id', songTenantId)
-          .order('index');
+          .order('index', ascending: true);
 
       return (response as List)
           .map((e) => SongCategory.fromJson(e as Map<String, dynamic>))
