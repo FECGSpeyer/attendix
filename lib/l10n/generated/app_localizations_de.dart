@@ -10258,6 +10258,25 @@ class AppLocalizationsDe extends AppLocalizations {
   String get redesignEventNoteHint => 'z. B. Grund oder Uhrzeit';
 
   @override
+  String get redesignEventPhaseArchived => 'Archiviert';
+
+  @override
+  String redesignEventPhaseRunning(Object time) {
+    return 'Läuft · seit $time';
+  }
+
+  @override
+  String get redesignEventPhaseRunningShort => 'Läuft';
+
+  @override
+  String redesignEventPhaseToday(Object time) {
+    return 'Heute $time';
+  }
+
+  @override
+  String get redesignEventPhaseYesterday => 'Gestern';
+
+  @override
   String get redesignEventPlan => 'Ablauf ansehen';
 
   @override
@@ -10368,6 +10387,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get redesignEventTabOverview => 'Überblick';
+
+  @override
+  String get redesignEventTabProgram => 'Programm';
 
   @override
   String get redesignEventTabRecord => 'Anwesenheit';

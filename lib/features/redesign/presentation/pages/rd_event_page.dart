@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:intl/intl.dart';
 
 import '../../../../core/constants/enums.dart';
 import '../../../../core/providers/attendance_detail_providers.dart';
@@ -36,6 +35,7 @@ import '../../../attendance/presentation/widgets/attendance_detail/status_chip.d
     show ionicStatusLabel;
 import '../../data/providers/rd_today_providers.dart';
 import '../../data/rd_event_logic.dart';
+import '../../data/rd_event_phase.dart';
 import '../../data/rd_write_queue.dart';
 import '../../../../core/providers/team_org_providers.dart' show protocolTypeByIdProvider;
 import '../../../../core/providers/tenant_providers.dart';
@@ -54,8 +54,8 @@ import '../widgets/today/rd_remind_open_sheet.dart';
 import '../widgets/event/rd_record_widgets.dart';
 import '../widgets/rd_split_view.dart';
 import '../widgets/rd_widgets.dart';
+import '../widgets/event/rd_event_head.dart';
 import '../widgets/today/rd_today_common.dart';
-import '../../data/rd_dates.dart';
 
 /// Tabs of a Termin in the new design.
 enum RdEventTab { overview, record }
@@ -737,6 +737,31 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
   // Build
   // ---------------------------------------------------------------------------
 
+  /// Start and end of the Termin (times of the Termin, else of its type).
+  ({DateTime start, DateTime end, bool hasTime})? _span(Attendance attendance, AttendanceType? type) => rdEventSpan(
+        day: EventListUtils.parse(attendance.date),
+        startTime: attendance.startTime ?? type?.startTime,
+        endTime: attendance.endTime ?? type?.endTime,
+        durationDays: attendance.durationDays,
+      );
+
+  /// Type and phase, title, date · time · place (the same head as on the
+  /// members' Termin page).
+  Widget _head(Attendance attendance, AttendanceType? type) {
+    final info = rdEventInfo(attendance, type);
+    final span = _span(attendance, type);
+    return RdEventHead(
+      title: info.title,
+      phase: rdEventPhase(span, archived: attendance.archived),
+      span: span,
+      typeName: type?.name,
+      typeHighlight: type?.highlight ?? false,
+      timeRange: info.timeRange,
+      place: info.place,
+      durationDays: attendance.durationDays,
+    );
+  }
+
   void _back() {
     if (context.canPop()) {
       context.pop();
@@ -809,7 +834,7 @@ class _RdEventPageState extends ConsumerState<RdEventPage> {
     }
     children.addAll([
       const SizedBox(height: 4),
-      _Header(attendance: attendance, type: type),
+      _head(attendance, type),
       const SizedBox(height: 16),
       RdSegmented<RdEventTab>(
         values: RdEventTab.values,
@@ -1266,57 +1291,6 @@ class _MoreRow extends StatelessWidget {
           ),
         ),
       ),
-    );
-  }
-}
-
-/// Type and day, title, date · time · place.
-class _Header extends StatelessWidget {
-  const _Header({required this.attendance, required this.type});
-
-  final Attendance attendance;
-  final AttendanceType? type;
-
-  @override
-  Widget build(BuildContext context) {
-    final p = context.rd;
-    final l10n = context.l10n;
-    final info = rdEventInfo(attendance, type);
-    final start = info.start;
-    final locale = currentIntlLocale();
-    String day(DateTime d) =>
-        '${DateFormat.E(locale).format(d).replaceAll('.', '')} ${DateFormat.MMMd(locale).format(d)}';
-    final days = attendance.durationDays ?? 1;
-    final date = start == null
-        ? ''
-        : days > 1
-            ? '${day(start)} – ${day(rdAddDays(start, days - 1))}'
-            : day(start);
-    final meta = [date, info.timeRange, info.place].where((s) => s.isNotEmpty).join(' · ');
-    final ended = EventListUtils.hasEnded(attendance.date, attendance.durationDays);
-    final relative = start == null || ended ? null : rdRelativeDay(l10n, start);
-    final showRelative = relative == l10n.redesignTodayDayToday || relative == l10n.redesignTodayDayTomorrow;
-    final typeName = type?.name ?? '';
-
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        if (typeName.isNotEmpty || showRelative)
-          Wrap(
-            spacing: 6,
-            runSpacing: 6,
-            children: [
-              if (typeName.isNotEmpty) RdPill(typeName, tone: RdTone.primary),
-              if (showRelative) RdPill(relative!, tone: RdTone.late),
-            ],
-          ),
-        const SizedBox(height: 8),
-        Semantics(header: true, child: Text(info.title, style: RdType.title(p))),
-        if (meta.isNotEmpty) ...[
-          const SizedBox(height: 4),
-          Text(meta, style: RdType.meta(p, size: 15)),
-        ],
-      ],
     );
   }
 }

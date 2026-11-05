@@ -319,7 +319,13 @@
         "statusOverviewHint": "Alle Antworten nach Stimme und Status",
         "deleteHint": "„Termin löschen“ steht ganz unten in „Bearbeiten“.",
         "byGroup": "Nach Stimme",
-        "closing": "Abschluss"
+        "closing": "Abschluss",
+        "tabProgram": "Programm",
+        "phaseToday": "Heute {time}",
+        "phaseRunning": "Läuft · seit {time}",
+        "phaseRunningShort": "Läuft",
+        "phaseYesterday": "Gestern",
+        "phaseArchived": "Archiviert"
       },
       "own": {
         "notFound": "Dieser Termin ist nicht mehr in deiner Liste.",
@@ -1241,7 +1247,13 @@
         "statusOverviewHint": "All answers by group and status",
         "deleteHint": "“Delete event” is at the bottom of “Edit”.",
         "byGroup": "By group",
-        "closing": "Wrap-up"
+        "closing": "Wrap-up",
+        "tabProgram": "Program",
+        "phaseToday": "Today {time}",
+        "phaseRunning": "Running · since {time}",
+        "phaseRunningShort": "Running",
+        "phaseYesterday": "Yesterday",
+        "phaseArchived": "Archived"
       },
       "own": {
         "notFound": "This event is no longer in your list.",

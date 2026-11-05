@@ -16733,6 +16733,36 @@ abstract class AppLocalizations {
   /// **'z. B. Grund oder Uhrzeit'**
   String get redesignEventNoteHint;
 
+  /// redesign.event.phaseArchived
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get redesignEventPhaseArchived;
+
+  /// redesign.event.phaseRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft · seit {time}'**
+  String redesignEventPhaseRunning(Object time);
+
+  /// redesign.event.phaseRunningShort
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft'**
+  String get redesignEventPhaseRunningShort;
+
+  /// redesign.event.phaseToday
+  ///
+  /// In de, this message translates to:
+  /// **'Heute {time}'**
+  String redesignEventPhaseToday(Object time);
+
+  /// redesign.event.phaseYesterday
+  ///
+  /// In de, this message translates to:
+  /// **'Gestern'**
+  String get redesignEventPhaseYesterday;
+
   /// redesign.event.plan
   ///
   /// In de, this message translates to:
@@ -16912,6 +16942,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Überblick'**
   String get redesignEventTabOverview;
+
+  /// redesign.event.tabProgram
+  ///
+  /// In de, this message translates to:
+  /// **'Programm'**
+  String get redesignEventTabProgram;
 
   /// redesign.event.tabRecord
   ///

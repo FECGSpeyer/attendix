@@ -12756,6 +12756,32 @@
   "@redesignEventNoteHint": {
     "description": "redesign.event.noteHint"
   },
+  "redesignEventPhaseArchived": "Archiviert",
+  "@redesignEventPhaseArchived": {
+    "description": "redesign.event.phaseArchived"
+  },
+  "redesignEventPhaseRunning": "Läuft · seit {time}",
+  "@redesignEventPhaseRunning": {
+    "description": "redesign.event.phaseRunning",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseRunningShort": "Läuft",
+  "@redesignEventPhaseRunningShort": {
+    "description": "redesign.event.phaseRunningShort"
+  },
+  "redesignEventPhaseToday": "Heute {time}",
+  "@redesignEventPhaseToday": {
+    "description": "redesign.event.phaseToday",
+    "placeholders": {
+      "time": {}
+    }
+  },
+  "redesignEventPhaseYesterday": "Gestern",
+  "@redesignEventPhaseYesterday": {
+    "description": "redesign.event.phaseYesterday"
+  },
   "redesignEventPlan": "Ablauf ansehen",
   "@redesignEventPlan": {
     "description": "redesign.event.plan"
@@ -12903,6 +12929,10 @@
   "redesignEventTabOverview": "Überblick",
   "@redesignEventTabOverview": {
     "description": "redesign.event.tabOverview"
+  },
+  "redesignEventTabProgram": "Programm",
+  "@redesignEventTabProgram": {
+    "description": "redesign.event.tabProgram"
   },
   "redesignEventTabRecord": "Anwesenheit",
   "@redesignEventTabRecord": {
