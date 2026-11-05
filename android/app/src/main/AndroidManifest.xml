@@ -1,5 +1,8 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools">
+    <!-- STORE_SWITCH: declared in the main manifest (not only debug/profile),
+         so release builds never depend on a plugin merging it in. -->
+    <uses-permission android:name="android.permission.INTERNET"/>
     <!-- NATIVE_MISC: audio_service lock-screen controls (Ionic capacitor-media-session) -->
     <uses-permission android:name="android.permission.WAKE_LOCK"/>
     <uses-permission android:name="android.permission.FOREGROUND_SERVICE"/>
