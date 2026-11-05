@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:attendix/core/services/holiday_service.dart';
 import 'package:attendix/data/models/shift/shift_plan.dart';
 import 'package:attendix/data/repositories/files_repository.dart';
+import 'package:attendix/features/organisation/presentation/pages/org_person_fields_page.dart';
 import 'package:flutter_test/flutter_test.dart';
 
 void main() {
@@ -46,6 +47,14 @@ void main() {
       }
     }
     expect(offenders, isEmpty);
+  });
+
+  test('org number field default is stored as a finite number (Ionic type=number)', () {
+    expect(parseNumberFieldDefault(' 5 '), 5);
+    expect(parseNumberFieldDefault('2.5'), 2.5);
+    expect(parseNumberFieldDefault(''), isNull);
+    expect(parseNumberFieldDefault('NaN'), isNull);
+    expect(parseNumberFieldDefault('Infinity'), isNull);
   });
 }
 

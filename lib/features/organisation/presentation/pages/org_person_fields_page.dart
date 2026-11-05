@@ -269,6 +269,15 @@ class _OrgPersonFieldsPageState extends ConsumerState<OrgPersonFieldsPage> {
 }
 
 /// Add / edit sheet of one org extra field.
+/// Ionic `ion-input type=number` binds a number; empty or invalid input
+/// (the browser rejects text, NaN and Infinity) binds null. Non-finite values
+/// would also break the JSON of the whole field list.
+@visibleForTesting
+num? parseNumberFieldDefault(String text) {
+  final value = num.tryParse(text.trim());
+  return value != null && value.isFinite ? value : null;
+}
+
 class _FieldEditorSheet extends StatefulWidget {
   const _FieldEditorSheet({this.initial, this.nameExists});
   final OrgExtraField? initial;
@@ -364,8 +373,7 @@ class _FieldEditorSheetState extends State<_FieldEditorSheet> {
       'date' => _defaultValue,
       // Unchanged input keeps the bound value (e.g. the number 0).
       _ when _default.text == _defaultText(_defaultValue) => _defaultValue,
-      // Ionic ion-input type=number binds a number (empty → null).
-      'number' => num.tryParse(_default.text.trim()),
+      'number' => parseNumberFieldDefault(_default.text),
       _ => _default.text,
     };
     Navigator.pop(
