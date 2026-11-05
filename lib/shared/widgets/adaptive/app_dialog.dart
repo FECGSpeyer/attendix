@@ -915,70 +915,6 @@ Future<bool> showAppConfirm(
   return result ?? false;
 }
 
-/// Result of [showAppRadioAlert]: [value] is the checked radio when the
-/// confirm button was tapped (null if none was checked).
-class AppRadioAlertResult<T> {
-  const AppRadioAlertResult(this.value);
-  final T? value;
-}
-
-/// ion-alert with `inputs` of type radio, "Abbrechen" (role cancel) and a
-/// confirm button. The choice only counts with the confirm button. Returns
-/// null when cancelled or dismissed.
-Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
-  BuildContext context, {
-  required String title,
-  String? subtitle,
-  required List<(T value, String label)> options,
-  T? initialValue,
-  String? confirmText,
-  String? cancelText,
-}) {
-  T? selected = initialValue;
-  return showAppDialog<AppRadioAlertResult<T>>(
-    context: context,
-    builder: (ctx) => StatefulBuilder(
-      builder: (ctx, setState) => AppAlertDialog(
-        title: Text(title),
-        content: SingleChildScrollView(
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.stretch,
-            children: [
-              if (subtitle != null)
-                Padding(
-                  padding: const EdgeInsets.only(bottom: 8),
-                  child: Text(subtitle),
-                ),
-              for (final (value, label) in options)
-                RadioListTile<T>(
-                  contentPadding: EdgeInsets.zero,
-                  value: value,
-                  // ignore: deprecated_member_use
-                  groupValue: selected,
-                  title: Text(label),
-                  // ignore: deprecated_member_use
-                  onChanged: (v) => setState(() => selected = v),
-                ),
-            ],
-          ),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(ctx).pop(),
-            child: Text(cancelText ?? ctx.l10n.commonCancel),
-          ),
-          TextButton(
-            onPressed: () =>
-                Navigator.of(ctx).pop(AppRadioAlertResult<T>(selected)),
-            child: Text(confirmText ?? ctx.l10n.commonOk),
-          ),
-        ],
-      ),
-    ),
-  );
-}
-
 /// ion-alert with one text input. Returns the entered text, or null when
 /// cancelled.
 Future<String?> showAppPrompt(
@@ -1299,28 +1235,38 @@ class _DateAlertState extends State<_DateAlert> {
   }
 }
 
-/// Ionic `ion-alert` with `type: 'radio'` inputs: title, message, the
-/// options as a radio list ([initialValue] checked) and [cancelText] /
-/// [confirmText]. Returns the checked value on confirm, null when cancelled
-/// (or confirmed without a checked option). [cancelDestructive] shows the
-/// cancel button red on iOS (Ionic `role: 'destructive'`).
-Future<T?> showAppRadioAlert<T>(
+/// Result of [showAppRadioAlert]: [value] is the checked radio when the
+/// confirm button was tapped (null if none was checked).
+class AppRadioAlertResult<T> {
+  const AppRadioAlertResult(this.value);
+  final T? value;
+}
+
+/// Ionic `ion-alert` with `type: 'radio'` inputs: title, [subtitle] (the
+/// alert message), the options as a radio list ([initialValue] checked),
+/// "Abbrechen" (role cancel) and a confirm button. The choice only counts
+/// with the confirm button: returns an [AppRadioAlertResult] on confirm
+/// (value null when nothing is checked), null when cancelled or dismissed.
+/// [cancelDestructive] shows the cancel button red on iOS (Ionic
+/// `role: 'destructive'`); [barrierDismissible] false = Ionic
+/// `backdropDismiss: false`.
+Future<AppRadioAlertResult<T>?> showAppRadioAlert<T>(
   BuildContext context, {
   required String title,
-  String? message,
+  String? subtitle,
   required List<(T value, String label)> options,
   T? initialValue,
-  required String confirmText,
+  String? confirmText,
   String? cancelText,
   bool cancelDestructive = false,
   bool barrierDismissible = true,
 }) {
-  return showAppDialog<T>(
+  return showAppDialog<AppRadioAlertResult<T>>(
     context: context,
     barrierDismissible: barrierDismissible,
     builder: (_) => _RadioAlert<T>(
       title: title,
-      message: message,
+      message: subtitle,
       options: options,
       initialValue: initialValue,
       confirmText: confirmText,
@@ -1345,7 +1291,7 @@ class _RadioAlert<T> extends StatefulWidget {
   final String? message;
   final List<(T, String)> options;
   final T? initialValue;
-  final String confirmText;
+  final String? confirmText;
   final String? cancelText;
   final bool cancelDestructive;
 
@@ -1359,8 +1305,9 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
   @override
   Widget build(BuildContext context) {
     final cancelText = widget.cancelText ?? context.l10n.commonCancel;
+    final confirmText = widget.confirmText ?? context.l10n.commonOk;
     void cancel() => Navigator.of(context).pop();
-    void confirm() => Navigator.of(context).pop(_value);
+    void confirm() => Navigator.of(context).pop(AppRadioAlertResult<T>(_value));
     final maxHeight = MediaQuery.sizeOf(context).height * 0.5;
     if (useIosLook(context)) {
       // Ionic iOS radio alert: rows with the label (primary when checked)
@@ -1413,7 +1360,7 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
             destructive: widget.cancelDestructive,
             child: Text(cancelText),
           ),
-          IosAlertButton(onPressed: confirm, child: Text(widget.confirmText)),
+          IosAlertButton(onPressed: confirm, child: Text(confirmText)),
         ],
       );
     }
@@ -1448,7 +1395,7 @@ class _RadioAlertState<T> extends State<_RadioAlert<T>> {
       ),
       actions: [
         TextButton(onPressed: cancel, child: Text(cancelText)),
-        TextButton(onPressed: confirm, child: Text(widget.confirmText)),
+        TextButton(onPressed: confirm, child: Text(confirmText)),
       ],
     );
   }

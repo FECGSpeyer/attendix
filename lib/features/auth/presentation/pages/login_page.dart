@@ -447,17 +447,18 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     final fallback = tenants.any((t) => t.id == storedTenantId)
         ? storedTenantId
         : tenants.first.id;
-    final picked = await showAppRadioAlert<int>(
+    final result = await showAppRadioAlert<int>(
       context,
       title: context.l10n.dbChooseInstanceHeader,
-      message: context.l10n.dbChooseInstanceMessage,
+      subtitle: context.l10n.dbChooseInstanceMessage,
       options: [for (final t in tenants) (t.id!, t.longName)],
       initialValue: tenants.any((t) => t.id == storedTenantId) ? storedTenantId : null,
       confirmText: context.l10n.commonOpen,
       cancelDestructive: true,
       barrierDismissible: false,
     );
-    return picked ?? fallback;
+    // Cancelled, or "Öffnen" without a checked tenant → fallback.
+    return result?.value ?? fallback;
   }
 
   Future<bool> _tryAutoNavigateToTenant(int tenantId) async {
