@@ -1,5 +1,7 @@
 {
   "batch": "zz-fixed-termine",
+  "afterRound": 3,
+  "ionic": "9f9b82af",
   "items": {
     "org-plan-public/org-plan-public.page#alert-c3af9876": {
       "s": "ok",
