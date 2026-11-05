@@ -16,6 +16,7 @@ import '../../../../data/models/instrument/instrument.dart';
 import '../../../../data/models/person/person.dart';
 import '../../../../data/models/tenant/tenant.dart';
 import '../../../../data/repositories/shared_person_fields.dart';
+import '../../../../data/repositories/extra_fields_repository.dart' show extraFieldDefaultValue;
 import '../../../../l10n/l10n.dart';
 import '../../../../core/services/error_reporter.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
@@ -120,17 +121,19 @@ class _BulkEditPageState extends ConsumerState<BulkEditPage> {
         _ => '',
       };
     }
-    final def = field.extraField!.defaultValue;
-    return switch (field.fieldType) {
-      FieldType.boolean => def is bool ? def : false,
-      FieldType.select =>
-        def ??
-            ((field.extraField!.options?.isNotEmpty ?? false)
-                ? field.extraField!.options!.first
-                : null),
-      FieldType.number => def,
-      _ => def ?? '',
-    };
+    // Ionic getDefaultBulkValue: Utils.getFieldTypeDefaultValue(type,
+    // undefined, options, churches) – the field's defaultValue is ignored:
+    // Ja/Nein true, Zahl 0, Auswahl first option, Gemeinde first church,
+    // Datum now, Text ''.
+    final f = field.extraField!;
+    return extraFieldDefaultValue(
+      f.type,
+      options: f.options,
+      churchIds: [
+        for (final c in ref.read(churchesProvider).valueOrNull ?? const <Church>[])
+          if (c.id != null) c.id!,
+      ],
+    );
   }
 
   void _onFieldSelected(String? key, List<Group> groups) {
@@ -535,9 +538,18 @@ class _ValueEditor extends StatelessWidget {
           number: true,
         );
       case FieldType.boolean:
-        return Align(
-          alignment: Alignment.centerRight,
-          child: Switch.adaptive(value: value == true, onChanged: onChanged),
+        // Ionic: <ion-toggle>{{ selectedField.label }}</ion-toggle> for the
+        // "Für alle setzen" value; the per-person toggles have no label.
+        final toggle =
+            Switch.adaptive(value: value == true, onChanged: onChanged);
+        if (dense) {
+          return Align(alignment: Alignment.centerRight, child: toggle);
+        }
+        return Row(
+          children: [
+            Expanded(child: Text(field.label)),
+            toggle,
+          ],
         );
       case FieldType.select:
         return _dropdown<String>([

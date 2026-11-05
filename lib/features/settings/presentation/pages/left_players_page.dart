@@ -14,6 +14,8 @@ import '../../../../l10n/l10n.dart';
 import '../../../../core/utils/error_message.dart';
 import '../../../../shared/widgets/adaptive/adaptive.dart';
 import '../../../people/people_list_utils.dart' show sortPeopleByGroup;
+import '../../../people/presentation/pages/person_detail_page.dart'
+    show PersonModalResult, showPersonModal;
 import '../widgets/settings_list.dart';
 import '../widgets/settings_sheet.dart';
 
@@ -120,14 +122,19 @@ class LeftPlayersPage extends ConsumerWidget {
                 return _LeftPlayerItem(
                   player: player,
                   onReactivate: () => _reactivatePlayer(context, ref, player),
-                  // P10_PEOPLE: the person page can reactivate (Ionic
-                  // hasLeft modal) → reload the list afterwards.
+                  // Ionic openPlayerModal: PersonPage as a card modal
+                  // (readOnly, hasLeft) above the sheet; reload the list
+                  // only when the person was reactivated (`activated`).
                   onViewDetails: () async {
-                    // Capture the container: the page may be disposed when
-                    // the push returns (e.g. tab switch replaced the stack).
+                    final id = player.id;
+                    if (id == null) return;
+                    // Capture the container: the sheet may be disposed when
+                    // the modal returns.
                     final container = ProviderScope.containerOf(context);
-                    await context.push('/people/${player.id}');
-                    container.invalidate(leftPlayersProvider);
+                    final result = await showPersonModal(context, id);
+                    if (result == PersonModalResult.activated) {
+                      container.invalidate(leftPlayersProvider);
+                    }
                   },
                 );
               },
