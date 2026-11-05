@@ -306,7 +306,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
     final dirty = _isNew ? _hasNewInput : _hasChanges;
     setUnloadWarning(this, dirty);
     return PopScope(
-      canPop: !dirty,
+      // Während des Anlegens nicht schließen (Wischen/Zurück blockiert).
+      canPop: !dirty && !_isCreating,
       onPopInvokedWithResult: (didPop, _) {
         if (!didPop) _isNew ? _closeNew() : _onBackPressed();
       },
@@ -326,7 +327,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
                     IconButton(
                       icon: const Icon(Icons.close),
                       tooltip: context.l10n.commonClose,
-                      onPressed: _closeNew,
+                      onPressed: _isCreating ? null : _closeNew,
                     ),
                   ]),
                 ],
@@ -1781,6 +1782,8 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
   /// Ionic `dismissModal` (isNew): once a name was entered ask
   /// "Änderungen verwerfen?", otherwise close right away.
   Future<void> _closeNew() async {
+    // Während des Anlegens gesperrt: der Insert läuft schon.
+    if (_isCreating) return;
     if (_hasNewInput) {
       final discard = await DialogHelper.showConfirmation(
         context,
@@ -1790,7 +1793,7 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
         cancelText: context.l10n.commonCancel,
         isDestructive: true,
       );
-      if (!discard || !mounted) return;
+      if (!discard || !mounted || _isCreating) return;
     }
     // pop() ignores the PopScope; the unload warning goes with the modal.
     setUnloadWarning(this, false);
@@ -1810,13 +1813,18 @@ class _AttendanceTypeEditPageState extends ConsumerState<AttendanceTypeEditPage>
       return;
     }
 
+    // Provider-Zugriffe vor dem await holen: danach darf `ref` nicht mehr
+    // angefasst werden (State könnte disposed sein).
+    final notifier = ref.read(attendanceTypeNotifierProvider.notifier);
+    final container = ProviderScope.containerOf(context);
+    final data = _buildTypeData();
+
     setState(() => _isCreating = true);
     try {
-      final created = await ref
-          .read(attendanceTypeNotifierProvider.notifier)
-          .createTypeFromData(_buildTypeData());
-      ref.invalidate(protocolTypesProvider);
-      ref.invalidate(planAttendanceTypesProvider);
+      final created = await notifier.createTypeFromData(data);
+      container.invalidate(protocolTypesProvider);
+      container.invalidate(planAttendanceTypesProvider);
+      if (!mounted) return;
       _createdId = created.id;
       if (!mounted) return;
       ToastHelper.showSuccess(context, context.l10n.typeSettingsCreated);

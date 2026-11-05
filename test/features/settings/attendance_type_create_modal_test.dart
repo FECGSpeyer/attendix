@@ -2,6 +2,8 @@
 /// type page as modal; nothing is written before the "+" FAB creates it.
 library;
 
+import 'dart:async';
+
 import 'package:attendix/core/constants/enums.dart';
 import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
@@ -33,8 +35,74 @@ class _RecordingTypeRepository extends AttendanceTypeRepository {
   Future<List<AttendanceType>> getTypes() async => const [];
 }
 
+class _SlowTypeRepository extends _RecordingTypeRepository {
+  _SlowTypeRepository(super.ref, super.inserts, this.gate);
+
+  final Completer<void> gate;
+
+  @override
+  Future<AttendanceType> createTypeFromData(Map<String, dynamic> data) async {
+    await gate.future;
+    return super.createTypeFromData(data);
+  }
+}
+
 void main() {
   setUp(() => SharedPreferences.setMockInitialValues({}));
+
+  testWidgets('new type: closing is blocked while the insert is running',
+      (tester) async {
+    final inserts = <Map<String, dynamic>>[];
+    final gate = Completer<void>();
+    final container = createTestContainer(
+      tenantId: 1,
+      overrides: [
+        attendanceTypeRepositoryWithTenantProvider.overrideWith(
+            (ref) => _SlowTypeRepository(ref, inserts, gate)),
+        groupsProvider.overrideWith((ref) async => []),
+        currentOrganisationProvider.overrideWith((ref) async => null),
+      ],
+    );
+    addTearDown(container.dispose);
+
+    bool? result;
+    await tester.pumpWidget(UncontrolledProviderScope(
+      container: container,
+      child: MaterialApp(
+        home: Builder(
+          builder: (context) => Scaffold(
+            body: TextButton(
+              onPressed: () async =>
+                  result = await showAttendanceTypeCreateModal(context),
+              child: const Text('open'),
+            ),
+          ),
+        ),
+      ),
+    ));
+    await tester.tap(find.text('open'));
+    await tester.pumpAndSettle();
+
+    await tester.enterText(find.byType(TextFormField).first, 'Probe');
+    await tester.tap(find.byType(FloatingActionButton));
+    await tester.pump();
+
+    // ✕ is disabled, system back is swallowed: the page stays open.
+    final closeButton =
+        tester.widget<IconButton>(find.widgetWithIcon(IconButton, Icons.close));
+    expect(closeButton.onPressed, isNull);
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byType(AttendanceTypeEditPage), findsOneWidget);
+    expect(find.text('Änderungen verwerfen?'), findsNothing);
+
+    gate.complete();
+    await tester.pumpAndSettle();
+    expect(inserts, hasLength(1));
+    expect(result, isTrue);
+    expect(find.byType(AttendanceTypeEditPage), findsNothing);
+    await tester.pump(const Duration(seconds: 5));
+  });
 
   testWidgets('new type: validated, inserted with Ionic defaults, modal closes',
       (tester) async {
