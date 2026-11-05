@@ -32,8 +32,11 @@ scripts/store_build.sh --print     # only show the numbers, e.g. --build-name 5.
 
 It builds with `--build-name` = `AppConstants.displayVersion` (what users see) and
 `--build-number` = pubspec build number + 100, refuses numbers not above Ionic's and
-passes further `flutter build` arguments through. An Xcode archive takes the numbers
-of the last `flutter build`, so run the script before archiving in Xcode.
+passes further `flutter build` arguments through (except `--build-name`/`--build-number`).
+An Xcode archive takes the numbers of the last `flutter build`, and any plain
+`flutter build ios` or `flutter run` writes the internal 0.x numbers back. Right
+before archiving in Xcode run `scripts/store_build.sh ios --config-only` and check
+version and build of the archive in the Organizer (5.0.0 / 241 or higher).
 
 **Android signing:** Play App Signing is active, so Play only needs our *upload* key.
 Put it in `android/key.properties` (gitignored, never commit):

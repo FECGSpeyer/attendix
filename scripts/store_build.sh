@@ -32,7 +32,7 @@ if [[ -z "$name" || -z "$pubspec_build" ]]; then
   exit 1
 fi
 
-number=$((pubspec_build + STORE_BUILD_OFFSET))
+number=$((10#$pubspec_build + STORE_BUILD_OFFSET))  # 10#: leading zeros are not octal
 for ionic in "$IONIC_ANDROID_VERSION_CODE" "$IONIC_IOS_BUILD"; do
   if (( number <= ionic )); then
     echo "store_build: build number $number is not above Ionic's $ionic" >&2
@@ -51,5 +51,13 @@ fi
 
 target=${1:?usage: scripts/store_build.sh <ipa|appbundle|apk|ios|macos> [flutter build args…]}
 shift
+for arg in "$@"; do
+  case "$arg" in
+    --build-name|--build-name=*|--build-number|--build-number=*)
+      echo "store_build: $arg is set by this script, do not pass it" >&2
+      exit 1
+      ;;
+  esac
+done
 echo "store_build: flutter build $target --release --build-name $name --build-number $number $*"
 exec flutter build "$target" --release --build-name "$name" --build-number "$number" "$@"
