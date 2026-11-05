@@ -959,7 +959,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
         'examinee': _draft.examinee,
         'testResult': _draft.testResult?.isEmpty ?? true ? null : _draft.testResult,
         'email': _draft.email?.isEmpty ?? true ? null : _draft.email,
-        if (_changedFields.contains('img')) 'img': _draft.img,
+        // No img: like Ionic (pickPersonFields) an adopted picture of an
+        // e-mail match is only a preview; uploads/removals write it directly.
       };
 
   /// Ionic dismisses the person modal after save / account / pause actions.
@@ -1110,7 +1111,8 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
     if (p.correctBirthday && p.birthday != null) {
       _onFieldChanged('birthday', p.birthday);
     }
-    // Ionic takes the picture and otherExercise/range even when empty.
+    // Ionic takes the picture and otherExercise/range even when empty. The
+    // picture is only shown until closing (never saved, see _draftFields).
     _onFieldChanged('img', p.img);
     _onFieldChanged('otherExercise', p.otherExercise);
     _onFieldChanged('range', p.range);
