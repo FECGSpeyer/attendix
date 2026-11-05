@@ -16046,7 +16046,7 @@ abstract class AppLocalizations {
   /// redesign.create.deadline
   ///
   /// In de, this message translates to:
-  /// **'Abmeldeschluss'**
+  /// **'Antwort bis'**
   String get redesignCreateDeadline;
 
   /// redesign.create.deadline24h
@@ -16064,7 +16064,7 @@ abstract class AppLocalizations {
   /// redesign.create.deadlineHint
   ///
   /// In de, this message translates to:
-  /// **'Danach können sich Mitglieder nicht mehr selbst an- oder abmelden.'**
+  /// **'Danach kann man nicht mehr zusagen, absagen geht weiter.'**
   String get redesignCreateDeadlineHint;
 
   /// redesign.create.deadlineNone
@@ -16445,6 +16445,12 @@ abstract class AppLocalizations {
   /// **'{count, plural, one {1 anwesend} other {Alle {count} anwesend}}'**
   String redesignEventAllPresent(num count);
 
+  /// redesign.event.allSettled
+  ///
+  /// In de, this message translates to:
+  /// **'Alles erledigt'**
+  String get redesignEventAllSettled;
+
   /// redesign.event.answers
   ///
   /// In de, this message translates to:
@@ -16456,6 +16462,18 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Rückmeldungen mit Grund'**
   String get redesignEventAnswersTitle;
+
+  /// redesign.event.archiveHint
+  ///
+  /// In de, this message translates to:
+  /// **'Archivieren unter •••'**
+  String get redesignEventArchiveHint;
+
+  /// redesign.event.attendancePersons
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Person} other {{count} Personen}}'**
+  String redesignEventAttendancePersons(num count);
 
   /// redesign.event.busyLeave
   ///
@@ -16493,17 +16511,41 @@ abstract class AppLocalizations {
   /// **'{count} fehlt'**
   String redesignEventCountAbsent(Object count);
 
+  /// redesign.event.countAbsentStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} abwesend'**
+  String redesignEventCountAbsentStarted(Object count);
+
   /// redesign.event.countExcused
   ///
   /// In de, this message translates to:
   /// **'{count} entsch.'**
   String redesignEventCountExcused(Object count);
 
+  /// redesign.event.countExcusedStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} entschuldigt'**
+  String redesignEventCountExcusedStarted(Object count);
+
+  /// redesign.event.countHere
+  ///
+  /// In de, this message translates to:
+  /// **'{count} anwesend'**
+  String redesignEventCountHere(Object count);
+
   /// redesign.event.countLate
   ///
   /// In de, this message translates to:
   /// **'{count} später'**
   String redesignEventCountLate(Object count);
+
+  /// redesign.event.countLateStarted
+  ///
+  /// In de, this message translates to:
+  /// **'{count} verspätet'**
+  String redesignEventCountLateStarted(Object count);
 
   /// redesign.event.countNoAnswer
   ///
@@ -16571,6 +16613,12 @@ abstract class AppLocalizations {
   /// **'Termin'**
   String get redesignEventEditBack;
 
+  /// redesign.event.editBasics
+  ///
+  /// In de, this message translates to:
+  /// **'Grunddaten'**
+  String get redesignEventEditBasics;
+
   /// redesign.eventEdit.deadlineLocked
   ///
   /// In de, this message translates to:
@@ -16598,7 +16646,7 @@ abstract class AppLocalizations {
   /// redesign.eventEdit.hint
   ///
   /// In de, this message translates to:
-  /// **'Änderungen werden sofort gespeichert. Werke, Ablauf und Vorbereitung änderst du im Überblick.'**
+  /// **'Änderungen werden sofort gespeichert. Werke und Ablauf änderst du im Reiter Programm, die Vorbereitung im Überblick.'**
   String get redesignEventEditHint;
 
   /// redesign.eventEdit.saved
@@ -16619,6 +16667,12 @@ abstract class AppLocalizations {
   /// **'Als Excel exportieren'**
   String get redesignEventExportExcel;
 
+  /// redesign.event.forMembers
+  ///
+  /// In de, this message translates to:
+  /// **'Für Mitglieder'**
+  String get redesignEventForMembers;
+
   /// redesign.event.hide
   ///
   /// In de, this message translates to:
@@ -16636,6 +16690,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Tastatur: A anwesend · V verspätet · F fehlt · ↑↓ nächste Person · ⌘Z oder Strg+Z rückgängig'**
   String get redesignEventKeyboardHint;
+
+  /// redesign.event.leadersOnly
+  ///
+  /// In de, this message translates to:
+  /// **'Nur Leitung'**
+  String get redesignEventLeadersOnly;
 
   /// redesign.event.menu
   ///
@@ -16679,6 +16739,12 @@ abstract class AppLocalizations {
   /// **'{title} · neueste zuerst'**
   String redesignEventNewestFirst(Object title);
 
+  /// redesign.event.nextInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Danach: {items}'**
+  String redesignEventNextInPlan(Object items);
+
   /// redesign.event.noMatch
   ///
   /// In de, this message translates to:
@@ -16690,6 +16756,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Für diesen Termin sind noch keine Personen eingetragen.'**
   String get redesignEventNoPersons;
+
+  /// redesign.event.noPlanYet
+  ///
+  /// In de, this message translates to:
+  /// **'Noch kein Ablauf'**
+  String get redesignEventNoPlanYet;
 
   /// redesign.event.noReason
   ///
@@ -16715,6 +16787,42 @@ abstract class AppLocalizations {
   /// **'z. B. Grund oder Uhrzeit'**
   String get redesignEventNoteHint;
 
+  /// redesign.event.nowInPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Jetzt im Ablauf · bis {time}'**
+  String redesignEventNowInPlan(Object time);
+
+  /// redesign.event.phaseArchived
+  ///
+  /// In de, this message translates to:
+  /// **'Archiviert'**
+  String get redesignEventPhaseArchived;
+
+  /// redesign.event.phaseRunning
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft · seit {time}'**
+  String redesignEventPhaseRunning(Object time);
+
+  /// redesign.event.phaseRunningShort
+  ///
+  /// In de, this message translates to:
+  /// **'Läuft'**
+  String get redesignEventPhaseRunningShort;
+
+  /// redesign.event.phaseToday
+  ///
+  /// In de, this message translates to:
+  /// **'Heute {time}'**
+  String redesignEventPhaseToday(Object time);
+
+  /// redesign.event.phaseYesterday
+  ///
+  /// In de, this message translates to:
+  /// **'Gestern'**
+  String get redesignEventPhaseYesterday;
+
   /// redesign.event.plan
   ///
   /// In de, this message translates to:
@@ -16739,11 +16847,35 @@ abstract class AppLocalizations {
   /// **'Punkte, Zeiten, PDF und Telegram'**
   String get redesignEventPlanEditHint;
 
+  /// redesign.event.planEditShort
+  ///
+  /// In de, this message translates to:
+  /// **'Bearbeiten'**
+  String get redesignEventPlanEditShort;
+
   /// redesign.event.planHint
   ///
   /// In de, this message translates to:
   /// **'Ablaufplan, am Termin-Tag live'**
   String get redesignEventPlanHint;
+
+  /// redesign.event.planLive
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf live'**
+  String get redesignEventPlanLive;
+
+  /// redesign.event.planMinutes
+  ///
+  /// In de, this message translates to:
+  /// **'{count} Min'**
+  String redesignEventPlanMinutes(Object count);
+
+  /// redesign.event.planNowPill
+  ///
+  /// In de, this message translates to:
+  /// **'jetzt'**
+  String get redesignEventPlanNowPill;
 
   /// redesign.event.planSection
   ///
@@ -16763,17 +16895,47 @@ abstract class AppLocalizations {
   /// **'Mitglieder sehen den Ablauf beim Termin'**
   String get redesignEventPlanShareHint;
 
+  /// redesign.event.planShared
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf für alle sichtbar'**
+  String get redesignEventPlanShared;
+
   /// redesign.event.prep
   ///
   /// In de, this message translates to:
   /// **'Vorbereitung · {done} von {total} erledigt'**
   String redesignEventPrep(Object done, Object total);
 
+  /// redesign.event.presentOf
+  ///
+  /// In de, this message translates to:
+  /// **'{present} von {total} · {percent} %'**
+  String redesignEventPresentOf(Object present, Object total, Object percent);
+
   /// redesign.event.program
   ///
   /// In de, this message translates to:
   /// **'Programm'**
   String get redesignEventProgram;
+
+  /// redesign.event.programMore
+  ///
+  /// In de, this message translates to:
+  /// **'{names} und {count} weitere'**
+  String redesignEventProgramMore(Object names, Object count);
+
+  /// redesign.event.programPlan
+  ///
+  /// In de, this message translates to:
+  /// **'Ablauf {range}'**
+  String redesignEventProgramPlan(Object range);
+
+  /// redesign.event.programWorks
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {1 Werk} other {{count} Werke}}'**
+  String redesignEventProgramWorks(num count);
 
   /// redesign.event.record
   ///
@@ -16894,6 +17056,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Überblick'**
   String get redesignEventTabOverview;
+
+  /// redesign.event.tabProgram
+  ///
+  /// In de, this message translates to:
+  /// **'Programm'**
+  String get redesignEventTabProgram;
 
   /// redesign.event.tabRecord
   ///
@@ -18077,6 +18245,36 @@ abstract class AppLocalizations {
   /// **'Trennen'**
   String get redesignNotifTelegramDisconnect;
 
+  /// redesign.own.answerDays
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, =0 {Du kannst heute noch antworten.} one {Du kannst noch 1 Tag antworten.} other {Du kannst noch {count} Tage antworten.}}'**
+  String redesignOwnAnswerDays(num count);
+
+  /// redesign.own.askReason
+  ///
+  /// In de, this message translates to:
+  /// **'Die Leitung fragt nach dem Grund.'**
+  String get redesignOwnAskReason;
+
+  /// redesign.own.comeLater
+  ///
+  /// In de, this message translates to:
+  /// **'Komme später'**
+  String get redesignOwnComeLater;
+
+  /// redesign.own.comingLater
+  ///
+  /// In de, this message translates to:
+  /// **'Du kommst später'**
+  String get redesignOwnComingLater;
+
+  /// redesign.own.in
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist dabei'**
+  String get redesignOwnIn;
+
   /// redesign.own.infos
   ///
   /// In de, this message translates to:
@@ -18088,6 +18286,12 @@ abstract class AppLocalizations {
   /// In de, this message translates to:
   /// **'Mehr'**
   String get redesignOwnMore;
+
+  /// redesign.own.noAnswer
+  ///
+  /// In de, this message translates to:
+  /// **'Noch keine Antwort'**
+  String get redesignOwnNoAnswer;
 
   /// redesign.own.noNotes
   ///
@@ -18107,11 +18311,47 @@ abstract class AppLocalizations {
   /// **'Dieser Termin ist nicht mehr in deiner Liste.'**
   String get redesignOwnNotFound;
 
+  /// redesign.own.notRecorded
+  ///
+  /// In de, this message translates to:
+  /// **'Nicht erfasst'**
+  String get redesignOwnNotRecorded;
+
+  /// redesign.own.noteToLeaders
+  ///
+  /// In de, this message translates to:
+  /// **'Notiz an die Leitung'**
+  String get redesignOwnNoteToLeaders;
+
   /// redesign.own.openMine
   ///
   /// In de, this message translates to:
   /// **'Deine Noten öffnen'**
   String get redesignOwnOpenMine;
+
+  /// redesign.own.planAll
+  ///
+  /// In de, this message translates to:
+  /// **'Ganz ansehen'**
+  String get redesignOwnPlanAll;
+
+  /// redesign.own.planLive
+  ///
+  /// In de, this message translates to:
+  /// **'Live-Ansicht'**
+  String get redesignOwnPlanLive;
+
+  /// redesign.own.planMore
+  ///
+  /// In de, this message translates to:
+  /// **'{count, plural, one {und 1 weiterer Punkt} other {und {count} weitere Punkte}}'**
+  String redesignOwnPlanMore(num count);
+
+  /// redesign.own.planned
+  ///
+  /// In de, this message translates to:
+  /// **'Du bist eingeplant'**
+  String get redesignOwnPlanned;
 
   /// redesign.own.printMine
   ///
@@ -18137,11 +18377,23 @@ abstract class AppLocalizations {
   /// **'Route'**
   String get redesignOwnRoute;
 
+  /// redesign.own.signOut
+  ///
+  /// In de, this message translates to:
+  /// **'Abmelden'**
+  String get redesignOwnSignOut;
+
   /// redesign.own.youConduct
   ///
   /// In de, this message translates to:
   /// **'Du dirigierst'**
   String get redesignOwnYouConduct;
+
+  /// redesign.own.yourAttendance
+  ///
+  /// In de, this message translates to:
+  /// **'Deine Anwesenheit'**
+  String get redesignOwnYourAttendance;
 
   /// redesign.parents.allKids
   ///

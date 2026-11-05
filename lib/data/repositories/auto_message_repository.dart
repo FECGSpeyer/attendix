@@ -361,6 +361,37 @@ class AutoMessageRepository extends BaseRepository with TenantAwareRepository {
     }
   }
 
+  /// The newest Termin message that allows answers and that the current
+  /// member got for their row [personAttendanceId] (the Beta Termin page
+  /// offers "Grund nachtragen" right at the Termin).
+  Future<String?> getOwnRespondableMessageId(String personAttendanceId) async {
+    final userId = _userId;
+    if (userId == null) return null;
+    try {
+      final rows = await supabase
+          .from('message_recipients')
+          .select('message_id')
+          .eq('person_attendance_id', personAttendanceId)
+          .eq('user_id', userId)
+          .eq('tenantId', currentTenantId)
+          .order('created_at', ascending: false)
+          .limit(10);
+      final ids = [for (final r in rows as List) (r as Map<String, dynamic>)['message_id'] as String];
+      if (ids.isEmpty) return null;
+      final messages = await supabase
+          .from('messages')
+          .select('id')
+          .inFilter('id', ids)
+          .eq('tenantId', currentTenantId)
+          .eq('allow_responses', true);
+      final allowed = {for (final m in messages as List) (m as Map<String, dynamic>)['id'] as String};
+      return ids.where(allowed.contains).firstOrNull;
+    } catch (e, stack) {
+      handleError(e, stack, 'getOwnRespondableMessageId');
+      rethrow;
+    }
+  }
+
   /// The current member's own answer to a Termin message, if any.
   Future<AttendanceResponse?> getOwnResponse(String personAttendanceId) async {
     try {
