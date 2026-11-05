@@ -1,5 +1,6 @@
 import 'dart:typed_data';
 
+import 'package:flutter/foundation.dart' show listEquals;
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -109,6 +110,11 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   /// Checklist writes in flight: a reload of the Termin meanwhile may still
   /// carry the previous list and must not replace the local edit.
   int _checklistSaving = 0;
+
+  /// Stored checklist that our last successful save replaced. A reload that
+  /// still returns it (offline copy, a fetch started before the save) must not
+  /// bring it back.
+  List<ChecklistItem>? _staleChecklist;
 
   // Click mode: tap cycles status instead of opening picker
   // UX_ATT: Ionic default AttendanceViewMode.CLICK (tap cycles the status)
@@ -404,7 +410,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
       final att = next.valueOrNull;
       if (att == null || identical(att, prev?.valueOrNull) || !_checklistLoaded) return;
       if (_checklistSaving > 0) return;
-      setState(() => _localChecklist = List.from(att.checklist ?? const []));
+      final list = att.checklist ?? const <ChecklistItem>[];
+      final stale = _staleChecklist;
+      if (stale != null) {
+        // The list our last save replaced (offline copy or an older fetch):
+        // keep the saved one. Any other list is newer and clears the marker.
+        if (listEquals(list, stale)) return;
+        _staleChecklist = null;
+      }
+      setState(() => _localChecklist = List.from(list));
     });
 
     final attendanceAsync = ref.watch(attendanceDetailProvider(widget.attendanceId));
@@ -1703,19 +1717,15 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final repo = ref.read(attendanceRepositoryWithTenantProvider);
     if (!repo.hasTenantId) return;
     final checklistJson = _localChecklist.map((item) => item.toJson()).toList();
-    final tenantId = ref.read(currentTenantProvider)?.id;
-    final cacheKey = tenantId == null
-        ? null
-        : attendanceDetailCacheKey(ref.read(offlineQueueUserIdProvider)(), tenantId, widget.attendanceId);
+    final saved = List<ChecklistItem>.of(_localChecklist);
+    final before = ref.read(attendanceDetailProvider(widget.attendanceId)).valueOrNull?.checklist ?? const <ChecklistItem>[];
     _checklistSaving++;
     try {
       await repo.updateAttendance(
         widget.attendanceId,
         {'checklist': checklistJson},
       );
-      // A reload without network falls back to the offline copy: keep it
-      // current, or it would bring back the list from before this save.
-      await patchCachedAttendanceDetail(cacheKey, {'checklist': checklistJson});
+      _staleChecklist = listEquals(before, saved) ? null : List.of(before);
     } catch (e) {
       if (mounted) {
         ToastHelper.showError(context, context.l10n.attendanceFlutterSaveFailedWith(friendlyErrorMessage(e)));

@@ -33,21 +33,6 @@ OfflineCacheScope? _cacheScope(Ref ref, int tenantId) {
   return userId == null ? null : (userId: userId, tenantId: tenantId);
 }
 
-/// Offline-copy key of an attendance row (null without a signed-in user).
-String? attendanceDetailCacheKey(String? userId, int tenantId, int attendanceId) =>
-    userId == null ? null : AttendanceDetailCache.keyFor(userId, tenantId, attendanceId, 'attendance');
-
-/// Merges [patch] into the offline copy of an attendance row after a
-/// successful write, so a reload that falls back to the copy (no network)
-/// doesn't bring back the data from before the write.
-Future<void> patchCachedAttendanceDetail(String? key, Map<String, dynamic> patch) async {
-  if (key == null) return;
-  const cache = AttendanceDetailCache();
-  final cached = await cache.load(key);
-  if (cached is! Map) return;
-  await cache.save(key, {...Map<String, dynamic>.from(cached), ...patch});
-}
-
 /// Provider for attendance detail with tenant-scoped query
 final attendanceDetailProvider = FutureProvider.autoDispose.family<Attendance?, int>((ref, attendanceId) async {
   ref.watch(currentAuthUserIdProvider); // SOL_FIX15: reload per account (RLS)
