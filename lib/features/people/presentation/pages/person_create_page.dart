@@ -281,6 +281,9 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
   @override
   Widget build(BuildContext context) {
     final instrumentsAsync = ref.watch(groupsProvider);
+    // Ionic person.page: a new person starts in the first group
+    // (db.groups()[0]); the select offers no "none" entry.
+    _selectedInstrument ??= instrumentsAsync.valueOrNull?.firstOrNull?.id;
     final tenant = ref.watch(currentTenantProvider);
     final extraFields = personExtraFields(ref, tenant);
 
@@ -416,16 +419,14 @@ class _PersonCreatePageState extends ConsumerState<PersonCreatePage> {
                   prefixIcon: ionIsIos(context) ? null : const Icon(Icons.music_note),
                 ),
                 items: [
-                  DropdownMenuItem<int>(
-                    value: null,
-                    child: Text(context.l10n.personFlutterNoneLabelMasc(label)),
-                  ),
                   ...instruments.map((i) => DropdownMenuItem<int>(
                     value: i.id,
                     child: Text(i.name),
                   )),
                 ],
-                onChanged: (value) => setState(() => _selectedInstrument = value),
+                onChanged: (value) {
+                  if (value != null) setState(() => _selectedInstrument = value);
+                },
               );
               },
             ),
