@@ -17,6 +17,29 @@
         "lib/shared/widgets/adaptive/app_select.dart"
       ],
       "n": "behoben in #301"
+    },
+    "planning/planning.page#x-7d55a70233": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-9b169a1078": {
+      "s": "ok",
+      "f": [
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
+    },
+    "planning/planning.page#x-5e1a396117": {
+      "s": "ok",
+      "f": [
+        "lib/data/repositories/plan_repository.dart",
+        "lib/core/providers/plan_providers.dart",
+        "lib/features/planning/presentation/pages/planning_page.dart"
+      ],
+      "n": "behoben in #301"
     }
   },
   "extraOverride": [
