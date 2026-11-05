@@ -1,3 +1,4 @@
+import '../../../core/utils/choir_file_utils.dart';
 import '../../../data/models/instrument/instrument.dart';
 import '../../../data/models/song/song.dart';
 import '../../../data/repositories/song_repository.dart' show CurrentSongsGroup;
@@ -35,10 +36,6 @@ List<Song> rdCurrentWorks(List<CurrentSongsGroup> groups, List<Song> songs) {
   return result;
 }
 
-bool rdHasPdf(Song song) => (song.files ?? const <SongFile>[]).any(SongUtils.isPdf);
-
-bool rdHasAudio(Song song) => (song.files ?? const <SongFile>[]).any(SongUtils.isAudio);
-
 /// Files of the group [groupId] (the person's instrument / voice), PDFs
 /// first.
 List<SongFile> rdPartFiles(Song song, int? groupId) {
@@ -50,6 +47,30 @@ List<SongFile> rdPartFiles(Song song, int? groupId) {
   files.sort((a, b) => (SongUtils.isPdf(a) ? 0 : 1).compareTo(SongUtils.isPdf(b) ? 0 : 1));
   return files;
 }
+
+/// The viewer's part of [song]: the files of group [groupId] (PDFs first).
+/// In a choir without own Noten the "Chor (alle)" files meant for every
+/// singer come too, next to an own practice recording ("Meine Mappe",
+/// "Meine Noten öffnen", Werk page).
+List<SongFile> rdMemberPartFiles(Song song, int? groupId, {required bool choir}) {
+  final own = rdPartFiles(song, groupId);
+  if (!choir || groupId == null || groupId <= rdLyricsCategory || own.any(rdIsNotes)) return own;
+  final all = [
+    ...own,
+    for (final f in song.files ?? const <SongFile>[])
+      if (isChoirAllFile(instrumentId: f.instrumentId, note: f.note)) f,
+  ];
+  all.sort((a, b) => (SongUtils.isPdf(a) ? 0 : 1).compareTo(SongUtils.isPdf(b) ? 0 : 1));
+  return all;
+}
+
+/// Whether [file] is Noten: not the recording, the lyrics or an audio
+/// file (practice recordings of a voice).
+bool rdIsNotes(SongFile file) =>
+    file.instrumentId != rdRecordingCategory && file.instrumentId != rdLyricsCategory && !SongUtils.isAudio(file);
+
+/// Whether [song] has any Noten ([rdIsNotes]).
+bool rdHasNotes(Song song) => (song.files ?? const <SongFile>[]).any(rdIsNotes);
 
 /// The recording of the work (category "Aufnahme").
 SongFile? rdRecording(Song song) =>
@@ -101,8 +122,8 @@ enum RdWorkLead {
 /// The top card for a viewer in group [groupId]. The main group (Dirigent)
 /// gets no parts of its own (the file upload skips it), so conductors and
 /// persons without a group see the score or all parts, never "no part".
-RdWorkLead rdWorkLead(Song song, int? groupId, {required bool isMainGroup}) {
-  if (!isMainGroup && rdPartFiles(song, groupId).isNotEmpty) return RdWorkLead.part;
+RdWorkLead rdWorkLead(Song song, int? groupId, {required bool isMainGroup, bool choir = false}) {
+  if (!isMainGroup && rdMemberPartFiles(song, groupId, choir: choir).isNotEmpty) return RdWorkLead.part;
   final hasGroupFiles = (song.files ?? const <SongFile>[]).any((f) => (f.instrumentId ?? 0) > rdLyricsCategory);
   if (groupId == null || isMainGroup) {
     if (rdScore(song) != null) return RdWorkLead.score;
@@ -161,4 +182,114 @@ List<Group> rdMissingGroups(List<SongFile> files, List<Group> groups, Map<int, i
     }
   }
   return (shown: shown, others: others);
+}
+
+/// "Werk bearbeiten": the other Werk that already has [prefix] [number]
+/// (prefix compared without case and spaces), or null when the number is
+/// free or empty.
+Song? rdNumberTakenBy(List<Song> songs, int? songId, String prefix, int? number) {
+  if (number == null) return null;
+  final wanted = prefix.trim().toLowerCase();
+  return songs
+      .where((s) => s.id != songId && s.number == number && (s.prefix ?? '').trim().toLowerCase() == wanted)
+      .firstOrNull;
+}
+
+/// "Neues Werk": the number after the highest one with [prefix] (1 when
+/// there is none).
+int rdNextFreeNumber(List<Song> songs, String prefix) {
+  final wanted = prefix.trim().toLowerCase();
+  var max = 0;
+  for (final s in songs) {
+    final n = s.number ?? 0;
+    if ((s.prefix ?? '').trim().toLowerCase() == wanted && n > max) max = n;
+  }
+  return max + 1;
+}
+
+/// A coming Termin with its Werke ("Als Nächstes" of the Werke tab).
+class RdNextEvent {
+  const RdNextEvent({required this.date, required this.type, required this.attendanceId, required this.songs});
+
+  final DateTime? date;
+
+  /// Info text or type name of the Termin ("Probe"), may be empty.
+  final String type;
+  final int? attendanceId;
+  final List<Song> songs;
+}
+
+/// The coming Termine with planned Werke, soonest first. The loader groups
+/// by "DD.MM.YYYY | Typ", so one group can hold two Termine of a day: they
+/// are split by attendance first. Werke come from [songs] when listed there.
+List<RdNextEvent> rdNextEvents(List<CurrentSongsGroup> groups, List<Song> songs) {
+  final byId = {for (final s in songs) s.id: s};
+  final result = <RdNextEvent>[];
+  for (final g in groups) {
+    final split = g.date.indexOf(' | ');
+    final type = split < 0 ? '' : g.date.substring(split + 3);
+    final byEvent = <int?, List<SongHistory>>{};
+    for (final h in g.history) {
+      (byEvent[h.attendanceId] ??= []).add(h);
+    }
+    for (final entries in byEvent.values) {
+      final seen = <int>{};
+      final works = <Song>[];
+      for (final h in entries) {
+        final id = h.songId ?? h.song?.id;
+        if (id == null || !seen.add(id)) continue;
+        final song = byId[id] ?? h.song;
+        if (song != null) works.add(song);
+      }
+      if (works.isEmpty) continue;
+      final first = entries.first;
+      result.add(
+        RdNextEvent(
+          date: DateTime.tryParse(first.attendanceDate ?? first.date ?? '')?.toLocal(),
+          type: type,
+          attendanceId: first.attendanceId,
+          songs: works,
+        ),
+      );
+    }
+  }
+  final far = DateTime(9999);
+  result.sort((a, b) => (a.date ?? far).compareTo(b.date ?? far));
+  return result;
+}
+
+/// "Nur zeigen" of the Werke filter that the old filter does not know.
+enum RdWorksOnly { missing, myPart, recording }
+
+/// Groups of an orchestra Werk with players but without Noten
+/// ([rdMissingGroups] over the Noten only, so a practice recording does
+/// not count).
+List<Group> rdWorkMissingGroups(Song song, List<Group> groups, Map<int, int>? playerCounts) =>
+    rdMissingGroups([...?song.files?.where(rdIsNotes)], groups, playerCounts);
+
+/// Whether [song] still lacks Noten: none at all (a recording or the lyrics
+/// alone do not count), or (orchestras) a group with players has none.
+bool rdWorkLacksNotes(Song song, List<Group> groups, Map<int, int>? playerCounts, {required bool orchestra}) {
+  if (!rdHasNotes(song)) return true;
+  return orchestra && rdWorkMissingGroups(song, groups, playerCounts).isNotEmpty;
+}
+
+/// Keeps the Werke that match every chosen [only] filter.
+List<Song> rdApplyOnly(
+  List<Song> songs,
+  Set<RdWorksOnly> only, {
+  required int? groupId,
+  required List<Group> groups,
+  required Map<int, int>? playerCounts,
+  required bool orchestra,
+  required bool choir,
+}) {
+  if (only.isEmpty) return songs;
+  return [
+    for (final s in songs)
+      if ((!only.contains(RdWorksOnly.myPart) || rdMemberPartFiles(s, groupId, choir: choir).isNotEmpty) &&
+          (!only.contains(RdWorksOnly.recording) || rdRecording(s) != null) &&
+          (!only.contains(RdWorksOnly.missing) || rdWorkLacksNotes(s, groups, playerCounts, orchestra: orchestra)))
+        s,
+  ];
 }

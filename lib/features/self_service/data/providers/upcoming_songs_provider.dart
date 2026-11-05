@@ -1,7 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:supabase_flutter/supabase_flutter.dart';
 
 import '../../../../core/config/supabase_config.dart';
+import '../../../../core/providers/self_service_providers.dart';
 import '../../../../core/providers/signout_providers.dart';
 import '../../../../core/providers/song_providers.dart';
 import '../../../../core/utils/attendance_songs.dart';
@@ -83,19 +83,14 @@ final upcomingSongsProvider =
   ];
 });
 
-/// Provider to get the current user's instrument ID
+/// Provider to get the current user's instrument ID in the CURRENT tenant
+/// (Ionic signout.page uses this.player.instrument). Reading by appId alone
+/// returned the group of an arbitrary tenant for members of several groups.
 final currentPlayerInstrumentProvider = FutureProvider<int?>((ref) async {
-  final supabase = Supabase.instance.client;
   // SOL_FIX14: per-user data – reload when the account changes.
   final userId = ref.watch(currentAuthUserIdProvider);
   if (userId == null) return null;
 
-  final response = await supabase
-      .from('player')
-      .select('instrument')
-      .eq('appId', userId)
-      .limit(1)
-      .maybeSingle();
-
-  return response?['instrument'] as int?;
+  final player = await ref.watch(currentSelfServicePlayerProvider.future);
+  return player?.instrument;
 });

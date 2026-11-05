@@ -3,7 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../config/supabase_config.dart';
-import '../providers/user_preferences_provider.dart' show userPreferencesProvider;
+import '../providers/user_preferences_provider.dart'
+    show InstanceSelectionGate, userPreferencesProvider;
 import '../constants/enums.dart';
 import '../providers/tenant_providers.dart';
 import '../providers/role_permission_providers.dart';
@@ -109,6 +110,9 @@ import '../providers/redesign_providers.dart';
 import 'redesign_routes.dart';
 import '../../features/redesign/presentation/shell/rd_shell.dart';
 import '../../features/redesign/presentation/pages/rd_today_page.dart';
+import '../../features/redesign/presentation/pages/rd_folder_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_create_page.dart';
+import '../../features/redesign/presentation/pages/rd_work_edit_page.dart';
 import '../../features/redesign/presentation/pages/rd_work_page.dart';
 import '../../features/redesign/presentation/pages/rd_works_page.dart';
 import '../../features/redesign/presentation/pages/rd_event_create_page.dart';
@@ -136,6 +140,8 @@ import '../../features/redesign/presentation/widgets/rd_overview.dart';
 class AuthChangeNotifier extends ChangeNotifier {
   AuthChangeNotifier(this._ref) {
     _ref.listen(authStateProvider, (_, next) {
+      // Ionic: "Instanzauswahl" only after a real sign-in, not on restore.
+      if (next.valueOrNull?.event == AuthChangeEvent.signedIn) InstanceSelectionGate.afterSignIn = true;
       if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(trackingServiceProvider).track(TrackingEvent.login);
       // LINKS_STARTUP: Ionic shows the native app ad after SIGNED_IN
       if (next.valueOrNull?.event == AuthChangeEvent.signedIn) _ref.read(nativeAppAdPendingProvider.notifier).state = true;
@@ -347,7 +353,7 @@ final routerProvider = Provider<GoRouter>((ref) {
         // steps), not to the instance selection.
         if (ref.read(currentTenantIdProvider) != null &&
             !ref.read(isRoleLoadingProvider) &&
-            !ref.read(userPreferencesProvider).wantInstanceSelection) {
+            !InstanceSelectionGate.wanted(ref.read(userPreferencesProvider))) {
           return homeRouteFor(
             ref.read(currentRoleProvider),
             ref.read(currentTenantIdProvider),
@@ -413,6 +419,11 @@ final routerProvider = Provider<GoRouter>((ref) {
             ref.read(currentTenantIdProvider),
             ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
           );
+        }
+        // REDESIGN: the old song page becomes the Werk page of the new design.
+        if (RedesignRoutes.active) {
+          final songTarget = RedesignRoutes.oldSongTarget(location);
+          if (songTarget != null) return songTarget;
         }
         // REDESIGN: who may open the Termine of the new design.
         final redesignTarget = RedesignRoutes.roleRedirect(location, role);
@@ -712,6 +723,26 @@ final routerProvider = Provider<GoRouter>((ref) {
               state: state,
             ),
             routes: [
+              GoRoute(
+                path: 'neu',
+                name: 'redesignWorkCreate',
+                builder: (context, state) => const RdWorkCreatePage(),
+              ),
+              GoRoute(
+                path: 'mappe',
+                name: 'redesignFolder',
+                builder: (context, state) => const RdFolderPage(),
+              ),
+              GoRoute(
+                path: ':id/bearbeiten',
+                name: 'redesignWorkEdit',
+                builder: (context, state) {
+                  final id = int.tryParse(state.pathParameters['id'] ?? '');
+                  return id == null
+                      ? const RdWorksPage()
+                      : RdWorkEditPage(key: ValueKey('rd-work-edit-$id'), songId: id);
+                },
+              ),
               GoRoute(
                 path: ':id',
                 name: 'redesignWork',
