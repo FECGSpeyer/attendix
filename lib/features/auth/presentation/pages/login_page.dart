@@ -204,6 +204,16 @@ class _LoginPageState extends ConsumerState<LoginPage> {
       if (mounted) await _routeAfterAuth(user);
     } on LoginFailure catch (failure) {
       if (!mounted) return;
+      if (_teamsLinkMode) {
+        // Ionic login() in linkMode: ssoLink catches the sign-in error and
+        // only shows a danger toast. No follow-up dialog, in particular no
+        // switch to the code login (it would not link the Microsoft account).
+        _showError(failure.kind == LoginFailureKind.invalidCredentials ||
+                failure.message == null
+            ? context.l10n.authInvalidCredentials
+            : failure.message);
+        return;
+      }
       _showError(failure.message);
       switch (failure.kind) {
         case LoginFailureKind.emailNotConfirmed:
@@ -230,7 +240,8 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   /// TEAMS: verify the Attendix credentials, then bind the Microsoft identity
   /// so future Teams launches sign in silently (Ionic login() in linkMode).
-  /// LoginFailure from the password sign-in propagates to [_login].
+  /// LoginFailure from the password sign-in propagates to [_login], which in
+  /// link mode only shows the error toast.
   Future<void> _linkTeamsAccount() async {
     // The root messenger outlives this page (the auth redirect may already
     // have left /login when linking finishes).

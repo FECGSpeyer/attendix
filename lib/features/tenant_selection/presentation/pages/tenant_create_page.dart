@@ -343,12 +343,14 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
               l10n.registerStep3,
               leading: const _StepBadge('3'),
               style: headerStyle,
-              trailing: IconButton(
-                tooltip: l10n.registerFlutterMainGroupInfo,
-                visualDensity: VisualDensity.compact,
-                color: AppColors.primary,
-                icon: const Icon(Icons.help_outline),
-                onPressed: _showMainGroupInfo,
+              trailing: Builder(
+                builder: (buttonContext) => IconButton(
+                  tooltip: l10n.registerFlutterMainGroupInfo,
+                  visualDensity: VisualDensity.compact,
+                  color: AppColors.primary,
+                  icon: const Icon(Icons.help_outline),
+                  onPressed: () => _showMainGroupInfo(buttonContext),
+                ),
               ),
             ),
             IonInsetGroup(
@@ -538,22 +540,12 @@ class _TenantCreatePageState extends ConsumerState<TenantCreatePage> {
     }
   }
 
-  /// Ionic main-group info popover (register.mainGroupInfoHtml).
-  Future<void> _showMainGroupInfo() {
-    return showAppDialog<void>(
-      context: context,
-      builder: (ctx) => AppAlertDialog(
-        // Ionic register.mainGroupInfoHtml (rendered as HTML popover).
-        content: SingleChildScrollView(
-          child: _HtmlBlocks(html: ctx.l10n.registerMainGroupInfoHtml),
-        ),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.pop(ctx),
-            child: Text(ctx.l10n.commonOk),
-          ),
-        ],
-      ),
+  /// Ionic main-group info `ion-popover` at the help button
+  /// (register.mainGroupInfoHtml); a tap outside closes it.
+  Future<void> _showMainGroupInfo(BuildContext buttonContext) {
+    return showAppContentPopover(
+      context: buttonContext,
+      child: _HtmlBlocks(html: context.l10n.registerMainGroupInfoHtml),
     );
   }
 
