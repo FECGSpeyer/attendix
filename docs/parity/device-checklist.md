@@ -28,8 +28,8 @@ Browser, ausgeführt auf dem Handy oder am Rechner.
 
 Diese Punkte entscheiden, ob Play und App Store den Build überhaupt annehmen.
 
-- ☐ Android: `versionCode` ≥ 231 (`--build-number 231` oder höher) und `versionName` ≥ 5.0.0 (`--build-name 5.0.0`). Ionic 4.19.9 hat schon 230 vergeben, Play lehnt alles ≤ 230 ab; vor dem Upload die aktuelle Ionic-Zahl in `android/app/build.gradle` prüfen. Nach dem Build in „App-Info“ prüfen. (x-4beeb3b857)
-- ☐ iOS: `CFBundleShortVersionString` ≥ 5.0.0 (`--build-name 5.0.0`). Die Build-Nummer muss nur innerhalb dieser Version eindeutig sein (Ionic 4.19.9 steht bei 239). App Store Connect lehnt eine Version unter der freigegebenen ab. (x-cb1c5c9d93)
+- ☐ Android: mit `scripts/store_build.sh appbundle` bauen (setzt `versionName` = 5.0.0 und `versionCode` = pubspec-Build + 100, aktuell 241; bricht ab, wenn ≤ Ionic 230). Nach dem Build in „App-Info“ bzw. in der Play Console prüfen. (x-4beeb3b857)
+- ☐ iOS: mit `scripts/store_build.sh ipa` bauen, bzw. vor einem Xcode-Archiv `scripts/store_build.sh ios --config-only` ausführen; im Organizer Version 5.0.0 und Build ≥ 241 prüfen (Ionic 4.19.9 steht bei 239). (x-cb1c5c9d93)
 - ☐ Die Versionsanzeige in der App (Einstellungen-Badge, Anmeldeseite) zeigt dieselbe Version wie der Store. Sie kommt aus `AppConstants.appVersion`, nicht aus dem Build-Flag. (x-4beeb3b857)
 - ☐ Bundle-ID `io.stephanus.attendix` auf iOS und Android, iOS-Team `MXM3YWAKPL`. Die `apple-app-site-association` darf nicht nach dem veralteten Kommentar in `Runner.entitlements` geändert werden. (x-49efd91be0)
 - ☐ Android: Release-Bundle (nicht Debug) meldet sich an und lädt Daten. `INTERNET` steht im Release-Manifest nur über Plugin-Manifeste. (x-5da3efae62)
