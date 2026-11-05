@@ -225,6 +225,11 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         throw Exception('Kein Tenant ausgewählt');
       }
 
+      final songSharingId =
+          _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null;
+      final registerId =
+          _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null;
+
       await supabase.from('tenants').update({
         'shortName': _shortNameController.text.trim(),
         'longName': _longNameController.text.trim(),
@@ -249,8 +254,8 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
         'late_reasons': normalizeReasons(_lateReasons),
         // DUTY: only sent when the tenant uses the Dienstplan at all
         if (ref.read(hasDutyTypesProvider)) 'duty_view': _dutyView,
-        'song_sharing_id': _songSharingEnabled ? (_songSharingId ?? const Uuid().v4()) : null,
-        'register_id': _registrationEnabled ? (_registerId ?? const Uuid().v4()) : null,
+        'song_sharing_id': songSharingId,
+        'register_id': registerId,
         // Ionic general.page: registration off → no auto approve, no fields
         'auto_approve_registrations':
             _registrationEnabled ? _autoApproveRegistrations : false,
@@ -269,6 +274,12 @@ class _GeneralSettingsPageState extends ConsumerState<GeneralSettingsPage> {
           'operator': r.operator == CriticalRuleOperator.and ? 'AND' : 'OR',
         }).toList(),
       }).eq('id', tenantId);
+
+      // Ionic updateTenantData replaces the tenant with the saved row: a link
+      // switched off is gone (null), so switching it on again in this visit
+      // creates a NEW id instead of reviving the revoked link.
+      _songSharingId = songSharingId;
+      _registerId = registerId;
 
       // SETTINGS2: Ionic re-evaluates the Problemfall rules right away
       try {
