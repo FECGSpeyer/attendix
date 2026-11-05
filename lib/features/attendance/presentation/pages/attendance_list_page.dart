@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_slidable/flutter_slidable.dart';
@@ -53,8 +55,21 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   // UX_ATT: iOS large title (Ionic ion-header collapse="condense")
   final _condense = CondenseHeaderController();
 
+  /// Debounced refresh of the duty providers after a list reload.
+  Timer? _dutyRefreshTimer;
+
+  /// Tenant seen by the previous list-reload callback.
+  int? _dutyRefreshTenantId;
+
+  @override
+  void initState() {
+    super.initState();
+    _dutyRefreshTenantId = ref.read(currentTenantIdProvider);
+  }
+
   @override
   void dispose() {
+    _dutyRefreshTimer?.cancel();
     _condense.dispose();
     super.dispose();
   }
@@ -309,6 +324,32 @@ class _AttendanceListPageState extends ConsumerState<AttendanceListPage> {
   Widget build(BuildContext context) {
     final ref = this.ref;
     final attendanceAsync = ref.watch(realtimeAttendanceListProvider);
+    // Ionic getAttendance recomputes the duty badge/names and „Deine
+    // Dienste“ from the freshly loaded Termine on every reload (realtime,
+    // pull-to-refresh, after creating). The duty data are separate cached
+    // providers here, so refresh them whenever the list reloads.
+    ref.listen<AsyncValue<List<Attendance>>>(realtimeAttendanceListProvider, (prev, next) {
+      // A tenant switch reloads the duty providers on its own; don't
+      // invalidate them with the previous tenant's list.
+      final tenantId = ref.read(currentTenantIdProvider);
+      final tenantChanged = tenantId != _dutyRefreshTenantId;
+      _dutyRefreshTenantId = tenantId;
+      if (tenantChanged) {
+        _dutyRefreshTimer?.cancel();
+        return;
+      }
+      if (prev?.hasValue == true && next.hasValue && !next.isLoading && !identical(prev!.value, next.value)) {
+        // Bundle bursts of reloads (realtime) into one refresh.
+        _dutyRefreshTimer?.cancel();
+        _dutyRefreshTimer = Timer(const Duration(seconds: 1), () {
+          if (!mounted || ref.read(currentTenantIdProvider) != tenantId) return;
+          ref.invalidate(dutyTermineByIdProvider);
+          ref.invalidate(upcomingDutyTermineProvider);
+          // "Deine Dienste" (Ionic recomputes it with every getAttendance).
+          ref.invalidate(myDutyOverviewProvider);
+        });
+      }
+    });
     // Use effectiveRoleProvider to support debug role override
     final role = ref.watch(effectiveRoleProvider);
     // UX_ATT: Ionic shows the large "Termine" title (iOS) only with one tenant;

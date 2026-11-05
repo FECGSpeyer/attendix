@@ -46,6 +46,8 @@ Future<void> showPlanExportSheet(
   String? pdfLabel,
   String? pdf2xLabel,
   bool withTelegram = true,
+  bool alwaysTelegram = false,
+  bool pdf2xSuffix = false,
   List<PlanSheetAction<String>> afterPdfActions = const [],
   List<PlanSheetAction<String>> trailingActions = const [],
   String? pdfFileName,
@@ -71,7 +73,9 @@ Future<void> showPlanExportSheet(
         PlanSheetAction('pdf2x', pdf2xLabel ?? l10n.planningFlutterPdf2xA5, icon: Icons.content_copy_outlined),
         if (withImage) PlanSheetAction('image', l10n.plansImageA4, icon: Icons.image_outlined),
       ],
-      if (showExports && chatId != null) ...[
+      // [alwaysTelegram]: Ionic Termin page lists the Telegram entries even
+      // without a linked chat (the export then reports the missing chat).
+      if (showExports && withTelegram && (chatId != null || alwaysTelegram)) ...[
         PlanSheetAction('telegram', l10n.attendanceTelegramPdf, icon: Icons.send_outlined),
         PlanSheetAction('telegram2x', l10n.planningFlutterTelegramPdf2x, icon: Icons.send_outlined),
         PlanSheetAction('telegramImage', l10n.attendanceTelegramImage, icon: Icons.send_outlined),
@@ -93,10 +97,14 @@ Future<void> showPlanExportSheet(
       pdfFileName: pdfFileName,
       imageFileName: imageFileName,
       includeBranding: includeBranding,
+      pdf2xSuffix: pdf2xSuffix,
       branding: branding);
 }
 
 /// Runs one export action.
+///
+/// [pdf2xSuffix]: the 2x A5 PDF file gets `_2x` like the Telegram upload
+/// (Ionic Termin page).
 Future<void> runPlanExport(
   BuildContext context,
   WidgetRef ref,
@@ -104,6 +112,7 @@ Future<void> runPlanExport(
   required List<PlanExportPage> pages,
   required String fileName,
   bool includeBranding = true,
+  bool pdf2xSuffix = false,
   String? pdfFileName,
   String? imageFileName,
   Future<PdfBranding?> Function()? branding,
@@ -129,7 +138,7 @@ Future<void> runPlanExport(
         final pdfName = pdfFileName ?? fileName;
         await service.sharePdf(pages,
             sideBySide: sideBySide,
-            fileName: pdfFileName != null && sideBySide ? '${pdfName}_2x' : pdfName,
+            fileName: sideBySide && (pdf2xSuffix || pdfFileName != null) ? '${pdfName}_2x' : pdfName,
             branding: resolved);
       case PlanExportAction.image:
         await service.shareImage(pages, fileName: imageFileName ?? fileName, branding: resolved);

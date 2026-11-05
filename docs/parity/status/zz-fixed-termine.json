@@ -135,26 +135,114 @@
         "lib/features/planning/presentation/pages/planning_page.dart"
       ],
       "n": "behoben in #301"
+    },
+    "attendance/att-list/att-list.page#alert-c973a254": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#modal-f5836528": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_create_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#toast-821c46bb": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#actionsheet-19467990": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#alert-aadedcba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/songs_selection_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#alert-9b3e485d": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart",
+        "lib/shared/widgets/event_list/excuse_reason_sheet.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#text-be8be344": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/checklist_accordion.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-8f43ff82": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_detail_page.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#alert-0c061d4b": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#toast-a71d4842": {
+      "s": "ok",
+      "f": [
+        "lib/features/duty/presentation/widgets/my_duty_requests_section.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-839f92ba": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/attendance/attendance.page#effect-7cdd0978": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/widgets/attendance_detail/plan_accordion.dart",
+        "lib/features/planning/presentation/widgets/plan_export_actions.dart"
+      ],
+      "n": "behoben in #306"
+    },
+    "attendance/att-list/att-list.page#x-9616cc8ac2": {
+      "s": "ok",
+      "f": [
+        "lib/features/attendance/presentation/pages/attendance_list_page.dart"
+      ],
+      "n": "behoben in #306"
     }
   },
   "extraOverride": [
     {
-      "unit": "planning/planning.page",
-      "title": "Standardplan bei Termin ohne Ablaufplan",
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Info-Sheet beim ersten Öffnen nur Spinner",
       "drop": true,
-      "why": "behoben in #301"
+      "why": "behoben in #306"
     },
     {
-      "unit": "planning/planning.page",
-      "title": "Start-Termin ohne kommenden Termin",
+      "unit": "attendance/att-list/att-list.page",
+      "title": "Dienst-Besetzung in der Liste veraltet",
       "drop": true,
-      "why": "behoben in #301"
-    },
-    {
-      "unit": "planning/planning.page",
-      "title": "Archivierte Termine in der Terminauswahl für Helfer",
-      "drop": true,
-      "why": "behoben in #301"
+      "why": "behoben in #306"
     }
   ]
 }

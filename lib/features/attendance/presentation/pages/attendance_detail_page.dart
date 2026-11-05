@@ -121,6 +121,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
   bool _showAvatars = false;
   bool _showRegFields = true;
   bool _deletedHandled = false;
+  /// Ionic navigateBack after a failed load: only once.
+  bool _loadFailedHandled = false;
   // LOGIC_ATT: person rows removed on this device (no "deletedByOther")
   final Set<String> _ownDeletedPaIds = {};
   bool _isSendingReminder = false;
@@ -377,6 +379,19 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     ref.listen<int?>(currentTenantIdProvider, (previous, next) {
       if (previous != null && next != previous && mounted) {
         GoRouter.of(context).go('/attendance');
+      }
+    });
+    // Ionic: loading failed (after retries) → danger toast
+    // „Anwesenheit konnte nicht geladen werden — bitte erneut öffnen.“ and
+    // back to the list. The error page below only shows until then.
+    ref.listen<AsyncValue<Attendance?>>(attendanceDetailProvider(widget.attendanceId), (previous, next) {
+      if (!next.hasError || next.hasValue || next.isLoading || !mounted || _loadFailedHandled) return;
+      _loadFailedHandled = true;
+      ToastHelper.showError(context, context.l10n.attendanceLoadFailedReopen);
+      if (context.canPop()) {
+        context.pop();
+      } else {
+        context.go('/attendance');
       }
     });
     // Toast only on a real online/offline transition (not on every
@@ -2268,15 +2283,35 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
     final fields = type.registrationFields ?? const <RegistrationField>[];
     if (personAttendanceId == null || fields.isEmpty) return;
     final existing = _registrationAnswers[personId];
-    final answers = await showRegistrationFieldsSheet(
-      context,
-      fields: fields,
-      existing: existing,
-      editMode: true,
-      requireText: false,
-    );
-    if (answers == null || !mounted) return;
-    final merged = <String, dynamic>{...?existing, ...answers};
+    final Map<String, dynamic> merged;
+    if (fields.length == 1) {
+      // Ionic openRegFieldsEditor: exactly one field → showRegFieldAlert.
+      final field = fields.single;
+      final result = await showRegistrationFieldAlert(
+        context,
+        field: field,
+        // No previous answer: nothing preselected (Ionic showRegFieldAlert).
+        existing: existing?[field.id],
+      );
+      if (result == null || !mounted) return;
+      merged = <String, dynamic>{...?existing};
+      // Nothing chosen: Ionic merges `undefined`, which JSON drops.
+      if (result.value == null) {
+        merged.remove(field.id);
+      } else {
+        merged[field.id] = result.value;
+      }
+    } else {
+      final answers = await showRegistrationFieldsSheet(
+        context,
+        fields: fields,
+        existing: existing,
+        editMode: true,
+        requireText: false,
+      );
+      if (answers == null || !mounted) return;
+      merged = <String, dynamic>{...?existing, ...answers};
+    }
     try {
       // INTEGRATION: queue while offline like every Ionic updatePersonAttendance
       final queued = await offlineQueue.enqueueIfOffline(
@@ -2291,10 +2326,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           actingUserId: writeSession.userId,
         );
       }
-      if (mounted) {
-        setState(() => _registrationAnswers[personId] = merged);
-        ToastHelper.showSuccess(context, context.l10n.attendanceFlutterRegFieldsSaved);
-      }
+      // Ionic saveRegFieldAnswers: no toast.
+      if (mounted) setState(() => _registrationAnswers[personId] = merged);
     } catch (e) {
       if (mounted) ToastHelper.showError(context, context.l10n.attendanceFlutterErrorWith(friendlyErrorMessage(e)));
     }
@@ -2443,6 +2476,21 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
         return;
       }
 
+      // Ionic exportToExcel: the same persons as the list (helper group
+      // only), sorted by main group, group order, then name.
+      final groupScope = resolvedGroupScope(ref.read(attendanceGroupScopeProvider));
+      final inAttendance = _personsInAttendance(persons);
+      final groupPersons = groupScope.isAll
+          ? inAttendance
+          : inAttendance.where((p) => groupScope.allowsGroup(p.instrument)).toList();
+      final groups = ref.read(groupsProvider).valueOrNull ?? const [];
+      final exportPersons = sortPersonsByGroup(
+        groupPersons,
+        groups: groups,
+        mainGroupId: mainGroupIdOf(groups) ?? ref.read(mainGroupProvider).valueOrNull?.id,
+        usePersonSortOrder: false,
+      );
+
       ToastHelper.showInfo(context, context.l10n.attendanceFlutterCreatingExcel);
 
       final type = ref.read(attendanceTypeForAttendanceProvider(widget.attendanceId)).valueOrNull;
@@ -2452,9 +2500,8 @@ class _AttendanceDetailPageState extends ConsumerState<AttendanceDetailPage> {
           : await ref.read(churchesProvider.future);
       // The Gemeinde can be an organisation field (shared value).
       final exported = churchFieldId == null
-          ? _personsInAttendance(persons)
-          : await profileRepo
-              .hydrateSharedPersonFieldValues(_personsInAttendance(persons));
+          ? exportPersons
+          : await profileRepo.hydrateSharedPersonFieldValues(exportPersons);
       if (!mounted) return;
       final exportService = ExportService();
       await exportService.exportAttendanceToExcel(
