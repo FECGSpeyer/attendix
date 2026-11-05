@@ -150,7 +150,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 // capacitor://localhost. A hidden WKWebView on the same (default) data store
 // opens that origin through its own scheme handler and reads the keys
 // `sb-<ref>-auth-token` and `currentTenantId`. Channel de.attendix/ionic_session,
-// method "read" -> JSON string of those keys (or nil). Dart side:
+// method "read" -> JSON string of those keys (or nil). IONIC_QUEUE: plus the
+// Ionic offline queue `offline_writes_v1` (IndexedDB of @ionic/storage) as a
+// JSON string when present; reading it never fails the read. Dart side:
 // lib/core/services/native/ionic_session_takeover.dart.
 public class IonicSessionPlugin: NSObject, FlutterPlugin {
   private var reader: IonicStorageReader?
@@ -195,9 +197,52 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
     })();
     """
 
+  // IONIC_QUEUE: the Ionic offline queue (@ionic/storage = localforage:
+  // IndexedDB `_ionicstorage`/`_ionickv`, else localStorage
+  // `_ionicstorage/_ionickv/<key>`) key `offline_writes_v1` as JSON string,
+  // or null. Never creates the database (the upgrade is aborted).
+  static let queueScript = """
+    var key = 'offline_writes_v1';
+    function fromLocalStorage() {
+      var v = localStorage.getItem('_ionicstorage/_ionickv/' + key);
+      return typeof v === 'string' && v.length ? v : null;
+    }
+    function fromIndexedDb() {
+      return new Promise(function (resolve) {
+        try {
+          var req = indexedDB.open('_ionicstorage');
+          req.onupgradeneeded = function (e) { e.target.transaction.abort(); };
+          req.onerror = function () { resolve(null); };
+          req.onblocked = function () { resolve(null); };
+          req.onsuccess = function () {
+            var db = req.result;
+            try {
+              if (!db.objectStoreNames.contains('_ionickv')) { db.close(); resolve(null); return; }
+              var get = db.transaction('_ionickv', 'readonly').objectStore('_ionickv').get(key);
+              get.onsuccess = function () {
+                var v = get.result;
+                db.close();
+                if (v === undefined || v === null) resolve(null);
+                else resolve(typeof v === 'string' ? v : JSON.stringify(v));
+              };
+              get.onerror = function () { db.close(); resolve(null); };
+            } catch (e) { db.close(); resolve(null); }
+          };
+        } catch (e) { resolve(null); }
+      });
+    }
+    var value = null;
+    try { value = await fromIndexedDb(); } catch (e) {}
+    if (value === null) { try { value = fromLocalStorage(); } catch (e) {} }
+    return value;
+    """
+
   private var webView: WKWebView?
   // String (the keys as JSON) or FlutterError when the origin could not be read.
   private var completion: ((Any?) -> Void)?
+  // IONIC_QUEUE: the session keys, once read. The timeout then returns them
+  // without the queue, so a slow queue read never costs the takeover.
+  private var sessionJson: String?
 
   func read(completion: @escaping (Any?) -> Void) {
     self.completion = completion
@@ -210,8 +255,22 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
     self.webView = webView
     webView.load(URLRequest(url: URL(string: "capacitor://localhost/")!))
     DispatchQueue.main.asyncAfter(deadline: .now() + 5) { [weak self] in
-      self?.finish(Self.unavailable("timeout"))
+      guard let self = self else { return }
+      self.finish(self.sessionJson ?? Self.unavailable("timeout"))
     }
+  }
+
+  // IONIC_QUEUE: the session keys plus `offline_writes_v1` (when present).
+  static func merge(_ sessionJson: String, queue: String?) -> String {
+    guard let queue = queue, !queue.isEmpty,
+      let data = sessionJson.data(using: .utf8),
+      var keys = (try? JSONSerialization.jsonObject(with: data)) as? [String: Any]
+    else { return sessionJson }
+    keys["offline_writes_v1"] = queue
+    guard let merged = try? JSONSerialization.data(withJSONObject: keys),
+      let json = String(data: merged, encoding: .utf8)
+    else { return sessionJson }
+    return json
   }
 
   private static func unavailable(_ reason: String) -> FlutterError {
@@ -228,22 +287,41 @@ final class IonicStorageReader: NSObject, WKNavigationDelegate, WKURLSchemeHandl
   }
 
   func webView(_ webView: WKWebView, didFinish navigation: WKNavigation!) {
+    guard sessionJson == nil else { return }
     webView.evaluateJavaScript(Self.script) { [weak self] value, _ in
-      self?.finish((value as? String) ?? Self.unavailable("script"))
+      guard let self = self else { return }
+      guard let session = value as? String else {
+        self.finish(Self.unavailable("script"))
+        return
+      }
+      // IONIC_QUEUE: then the (asynchronous) IndexedDB queue; any error
+      // returns the session keys alone, exactly as before.
+      self.sessionJson = session
+      guard self.completion != nil, let view = self.webView else { return }
+      view.callAsyncJavaScript(
+        Self.queueScript, arguments: [:], in: nil, in: .page
+      ) { [weak self] result in
+        guard let self = self, let session = self.sessionJson else { return }
+        if case .success(let queue) = result {
+          self.finish(Self.merge(session, queue: queue as? String))
+        } else {
+          self.finish(session)
+        }
+      }
     }
   }
 
   func webView(
     _ webView: WKWebView, didFail navigation: WKNavigation!, withError error: Error
   ) {
-    finish(Self.unavailable(error.localizedDescription))
+    finish(sessionJson ?? Self.unavailable(error.localizedDescription))
   }
 
   func webView(
     _ webView: WKWebView, didFailProvisionalNavigation navigation: WKNavigation!,
     withError error: Error
   ) {
-    finish(Self.unavailable(error.localizedDescription))
+    finish(sessionJson ?? Self.unavailable(error.localizedDescription))
   }
 
   // Empty page for capacitor://localhost/ – only the origin matters.

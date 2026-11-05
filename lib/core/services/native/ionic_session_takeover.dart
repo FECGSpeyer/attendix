@@ -5,7 +5,10 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import 'package:supabase_flutter/supabase_flutter.dart';
+import 'package:uuid/uuid.dart';
 
+import '../../constants/enums.dart';
+import '../offline_queue_service.dart' show OfflineQueueStore, QueuedWrite;
 import 'native_platform.dart';
 
 /// IONIC_SESSION: the Flutter app replaces the Ionic app as a store update
@@ -82,6 +85,13 @@ Future<void> takeOverIonicSession({
     // tokenRefreshed): the push bootstrap registers this device's token on
     // that event, which listeners added after runApp get replayed.
     await client.auth.setInitialSession(jsonEncode(session.toJson()));
+    // Before the done flag: a start that ends in between finds the session
+    // (done, no second import). Never blocks the takeover.
+    await _importIonicOfflineWrites(
+      raw,
+      userId: session.user.id,
+      tenantId: ionic.tenantId,
+    );
     await prefs.setBool(_doneKey, true);
 
     // Restored (and synced) by CurrentTenantNotifier; kept until then.
@@ -109,6 +119,129 @@ Future<void> markIonicSessionTakeoverDone() async {
   } catch (e) {
     debugPrint('Ionic session takeover: could not mark done ($e)');
   }
+}
+
+/// IONIC_QUEUE: attendances the Ionic app recorded offline and had not
+/// uploaded yet (its OfflineQueueService, @ionic/storage key
+/// `offline_writes_v1`). The native side adds them to the `read` result as a
+/// JSON string under this key; they go into the Flutter offline queue, which
+/// uploads them once online. Errors only lose the Ionic queue.
+const ionicOfflineWritesKey = 'offline_writes_v1';
+
+Future<void> _importIonicOfflineWrites(
+  String? raw, {
+  required String userId,
+  required int? tenantId,
+}) async {
+  // Ionic queue entries carry no tenant: without the Ionic group they
+  // cannot be replayed (the replay validates the row's tenant).
+  if (tenantId == null) return;
+  try {
+    final writes = parseIonicOfflineWrites(
+      raw,
+      userId: userId,
+      tenantId: tenantId,
+    );
+    if (writes.isEmpty) return;
+    var added = 0;
+    await OfflineQueueStore().update((current) {
+      var next = current;
+      for (final write in writes) {
+        // A newer Flutter write for the same row wins (never a duplicate).
+        if (OfflineQueueStore.hasPendingFor(
+          current,
+          write.personAttendanceId,
+          userId: userId,
+          tenantId: tenantId,
+        )) {
+          continue;
+        }
+        next = OfflineQueueStore.merge(next, write);
+        added++;
+      }
+      return next;
+    });
+    debugPrint('Ionic session takeover: $added offline writes queued');
+  } catch (e) {
+    debugPrint('Ionic session takeover: offline writes not taken over ($e)');
+  }
+}
+
+/// IONIC_QUEUE: the Ionic queue entries (`{id, personAttendanceId, payload,
+/// userId?, createdAt}`) of [userId] as Flutter [QueuedWrite]s of
+/// [tenantId], in Ionic order. Only the person_attendances columns Ionic
+/// writes are kept (`status` as a valid int, `notes`); `attendance_id` only
+/// names the Termin. Entries of another user or without a usable field are
+/// skipped.
+@visibleForTesting
+List<QueuedWrite> parseIonicOfflineWrites(
+  String? raw, {
+  required String userId,
+  required int tenantId,
+}) {
+  if (raw == null || raw.isEmpty) return const [];
+  final List<Object?> entries;
+  try {
+    final storage = jsonDecode(raw);
+    final value = storage is Map ? storage[ionicOfflineWritesKey] : null;
+    if (value is! String || value.isEmpty) return const [];
+    final decoded = jsonDecode(value);
+    if (decoded is! List) return const [];
+    entries = decoded;
+  } catch (_) {
+    return const [];
+  }
+  final validStatus = {for (final s in AttendanceStatus.values) s.value};
+  final writes = <QueuedWrite>[];
+  for (final entry in entries) {
+    if (entry is! Map) continue;
+    final rowId = entry['personAttendanceId'];
+    final personAttendanceId = rowId is String
+        ? rowId.trim()
+        : rowId is num
+        ? rowId.toString()
+        : '';
+    if (personAttendanceId.isEmpty) continue;
+    final author = entry['userId'];
+    if (author is String && author.isNotEmpty && author != userId) continue;
+    if (author != null && author is! String) continue;
+    final source = entry['payload'];
+    if (source is! Map) continue;
+
+    final payload = <String, dynamic>{};
+    final rawStatus = source['status'];
+    final status = rawStatus is num
+        ? rawStatus.toInt()
+        : rawStatus is String
+        ? int.tryParse(rawStatus.trim())
+        : null;
+    if (status != null && validStatus.contains(status)) {
+      payload['status'] = status;
+    }
+    if (source.containsKey('notes')) {
+      final notes = source['notes'];
+      if (notes == null || notes is String) payload['notes'] = notes;
+    }
+    if (payload.isEmpty) continue;
+
+    final rawAttendance = source['attendance_id'];
+    final id = entry['id'];
+    final createdAt = entry['createdAt'];
+    writes.add(
+      QueuedWrite(
+        id: id is String && id.isNotEmpty ? id : const Uuid().v4(),
+        personAttendanceId: personAttendanceId,
+        payload: payload,
+        tenantId: tenantId,
+        createdAt: createdAt is String && createdAt.isNotEmpty
+            ? createdAt
+            : DateTime.now().toIso8601String(),
+        attendanceId: rawAttendance is num ? rawAttendance.toInt() : null,
+        userId: userId,
+      ),
+    );
+  }
+  return writes;
 }
 
 /// Reads the refresh token and tenant from the Ionic localStorage keys the
