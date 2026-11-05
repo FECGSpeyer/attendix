@@ -13,6 +13,144 @@
       ]
     },
     {
+      "version": "0.41.13",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Die Checkliste zeigt Änderungen anderer sofort (auch nach Rückkehr in die App); Abhaken, Hinzufügen und Löschen überschreiben sie nicht mehr",
+        "🐛 Termin: Gemeinde-Übersicht und Erinnerung „nur Unentschiedene“ berücksichtigen bei Helfern ohne Zugriff auf alle Gruppen nur die eigene Gruppe",
+        "🐛 Termin: „Person hinzufügen“ bietet noch nicht freigegebene Registrierungen nicht mehr an"
+      ]
+    },
+    {
+      "version": "0.41.12",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Organisation: Leere Namen beim Anlegen oder Umbenennen von Organisation und Vorlagen zeigen wieder einen Hinweis im Dialog",
+        "🐛 Organisation: Beim Anlegen einer Organisation erscheint ein Ladehinweis",
+        "🐛 Planungsvorlagen: Minuten der Standardfelder direkt in der Zeile änderbar, „Feld hinzufügen“ öffnet ein Menü am Button mit eigener Rubrik für Standardfelder",
+        "🐛 Personenfelder: Doppelte Namen werden vor dem Schließen gemeldet, Standardwert passt sich dem Feldtyp an (inkl. Datumsauswahl)",
+        "🐛 Org-Pläne: Verlauf aktualisiert sich, öffentlicher Plan bietet wieder „Anleitung öffnen“"
+      ]
+    },
+    {
+      "version": "0.41.11",
+      "date": "5.11.2026",
+      "changes": [
+        "✨ Archivierte/ausstehende Personen und neue Instanz öffnen wie in Ionic als Karte"
+      ]
+    },
+    {
+      "version": "0.41.10",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Zusatzfelder: Schließen des Bearbeiten-Fensters (X, Wischen, Tippen daneben) übernimmt die Änderungen wie bisher, der zusätzliche Button „Übernehmen“ entfällt",
+        "🐛 Zusatzfelder: Beim Hinzufügen bleibt das Fenster bei Fehlern (z. B. Feld existiert schon) mit allen Eingaben offen",
+        "🐛 Zusatzfelder: „Werte zurücksetzen“ setzt beim Gemeinde-Feld wieder die Gemeinde und überspringt einzelne fehlgeschlagene Personen statt abzubrechen",
+        "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
+        "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
+        "🐛 Zusatzfelder: Beim Speichern werden aktive Personen und Werke der eigenen Bibliothek angepasst"
+      ]
+    },
+    {
+      "version": "0.41.9",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personenliste: Zusatzfelder ohne Wert zeigen, filtern und zählen (Gemeinde-Übersicht) mit ihrem Standardwert wie bisher; Zahl 0 erscheint nicht mehr als Badge",
+        "🐛 Personenliste: Ansicht „Lehrer“ zeigt wieder den Namen des Lehrers, Prozent-Badge auch bei 0 %",
+        "🐛 Personenliste: Sortierung nach Gruppe und Nachname mit Umlauten wie bisher, Reihenfolge speichern ändert nur verschobene Gruppen",
+        "🐛 Personenliste: Zusatzfeld-Filter mit Auswahl und „Filtern“/„Abbrechen“",
+        "🐛 Massenbearbeitung und Mitglieder-Filter: Startwerte und Personen ohne Wert wie bisher"
+      ]
+    },
+    {
+      "version": "0.41.8",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Geteilter Plan: Bearbeiten zeigt einfache Zeilen mit rotem Papierkorb und Griff; Tippen öffnet den Feld-Dialog mit Dauer",
+        "🐛 Geteilter Plan: Programmblöcke zeigen in der Ansicht nur die Startzeit",
+        "🐛 Öffentliche Planung: „Feld bearbeiten“ mit „Löschen“, „Abbrechen“ und „Speichern“, ohne Minuten",
+        "🐛 Web: Link teilen kopiert nur noch, wenn der Browser kein Teilen kann"
+      ]
+    },
+    {
+      "version": "0.41.7",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termine: „Anderer Dirigent“ fragt den Namen wieder in einem kleinen Dialog ab",
+        "🐛 Termine: Die Info zu Ferien und Feiertagen zeigt beim ersten Öffnen sofort die Termin-Arten",
+        "🐛 Termine: Neue oder geänderte Dienst-Termine zeigen Besetzung und „Deine Dienste“ gleich richtig an",
+        "🐛 Termin: Kann ein Termin nicht geladen werden, kommt ein Hinweis und es geht zurück zur Liste",
+        "🐛 Termin: „Ablaufplan teilen“ wieder mit Exportieren (PDF), (PDF 2x A5) und Telegram; bei mehreren Plänen Auswahl „dieser Plan / alle Pläne“",
+        "🐛 Termin: Ein einzelnes Anmeldefeld wird wieder in einem kleinen Dialog bearbeitet",
+        "🐛 Termin: Checklisten-Punkte zeigen wieder Datum und Uhrzeit der Fälligkeit",
+        "🐛 Termin: Der Excel-Export enthält nur die Personen der Liste (Helfer: nur ihre Gruppen) und ist nach Gruppen sortiert",
+        "🐛 Termine: „Deine Dienste: bitte bestätigen“ sehen nur Admin, Verantwortliche und Helfer",
+        "🐛 Termin: Ablaufplan-Export mit dem richtigen Titel und Dateinamen (Datum, „_alle“, „_2x“)"
+      ]
+    },
+    {
+      "version": "0.41.6",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Ablaufplan: Ein Termin ohne Plan startet wie bisher mit „Wort“; die Vorlage der Termin-Art kommt nur dazu, wenn Werke eingeplant sind, und ohne Änderung wird nichts gespeichert",
+        "🐛 Ablaufplan: Helfer sehen archivierte Termine nicht mehr in der Terminauswahl",
+        "🐛 Ablaufplan: Ohne kommenden Termin ist kein Termin vorausgewählt",
+        "🐛 Ablaufplan: „Tag zuordnen“ als Auswahl mit Abbrechen und Speichern, „Link teilen“ nur mit Nur-Lesen- und Bearbeitungs-Link"
+      ]
+    },
+    {
+      "version": "0.41.5",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Öffentliche Planung: Das gewählte Branding (FECG Speyer, FECG Schwegenheim oder keins) erscheint wieder in PDF, Bild und Telegram, statt des Brandings der eigenen Gruppe",
+        "🐛 Geteilter Plan: PDF trägt das Branding des Plans, Termin-Pläne bleiben ohne",
+        "🐛 Öffentliche Planung: „Kein Branding“ entfernt ein vorher gewähltes Branding auch in „Meine Pläne“",
+        "🐛 Dateinamen der Plan-Exporte wie bisher (Titel mit Wochentag und Datum)"
+      ]
+    },
+    {
+      "version": "0.41.4",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termine: Der Ablaufplan aus der Terminliste zeigt wieder alle Pläne eines Termins (Tages-Chips)",
+        "🐛 Termine: Im Ablaufplan aus der Terminliste öffnen Werke wieder die Noten",
+        "🐛 Termine: Dirigenten und Helfer können den Ablaufplan aus der Terminliste direkt bearbeiten (Stift)"
+      ]
+    },
+    {
+      "version": "0.41.3",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Termin: Eine selbst gewählte Abmeldefrist wird wieder mit der gewählten Uhrzeit gespeichert, die Anmeldung schließt nicht mehr ein bis zwei Stunden zu früh",
+        "🐛 Termin: Die Fristauswahl bietet wie bisher nur 5-Minuten-Schritte und reicht bis zum Terminbeginn"
+      ]
+    },
+    {
+      "version": "0.41.2",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Registrierung: Vorbelegte Auswahl-Zusatzfelder werden gespeichert, Felder und Gruppen stehen in der Reihenfolge wie bisher",
+        "🐛 Registrierung: Ja/Nein-Feld ohne Wert wird gemeldet; vor dem Ersetzen des Passbilds kommt eine Abfrage, Kamera oder Mediathek wählbar",
+        "🐛 Passwort zurücksetzen: „Neues Passwort“ erscheint wieder als Hinweisfenster über der Startseite",
+        "🐛 Nach der Zustimmung zu den Bedingungen geht es direkt zur Startseite; Ablaufpläne öffnen sich aus der Seitenleiste als Fenster",
+        "🐛 Alte Schichten-Links und /register führen wieder an die richtige Stelle",
+        "🐛 Teamorganisation: Aufgaben, Themen und Protokolle laden beim Öffnen, Tabwechsel und Zurückkehren neu, Ladefehler mit Hinweis und Ziehen zum Neuladen",
+        "🐛 Protokoll: „Aufgabe“ in den allgemeinen Notizen lässt die Notizen offen; vor der Freigabe erscheinen Notizen anderer Leitungen auch in schon geöffneten Abschnitten",
+        "🐛 Teams: Bei falschem Passwort während der Konto-Verknüpfung erscheint nur noch der Hinweis „Ungültige Anmeldedaten“"
+      ]
+    },
+    {
+      "version": "0.41.1",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Beta: Werke-Liste, Statuszeile und Filter nutzen dieselbe eigene Stimme (nie die Hauptgruppe der Leitung)",
+        "🐛 Beta: „Meine Noten öffnen“ ist gesperrt und zeigt eine Ladeanzeige, solange das PDF erstellt wird",
+        "🐛 Beta: Eine gespeicherte absteigende Sortierung erscheint als „Nummer ↓“ bzw. „Titel ↓“; „Nummer“ und „Titel“ sortieren aufsteigend",
+        "🐛 Beta: „Als Nächstes“ und „Meine Mappe“ zeigen keine Termine mehr, die heute schon vorbei sind",
+        "🐛 Beta: Im Chor heißt „Mehr zu …“ auf der Werk-Seite richtig „Chor (alle)“"
+      ]
+    },
+    {
       "version": "0.41.0",
       "date": "4.11.2026",
       "changes": [

@@ -94,19 +94,39 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Finder minutesFields() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
+  /// Ionic shared-plan edit mode: minutes change through the field dialog
+  /// (tap the row → Dauer → Speichern).
+  Future<void> setMinutes(WidgetTester tester, String row, String minutes) async {
+    await tester.tap(find.text(row));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number), minutes);
+    await tester.tap(find.textContaining(RegExp(r'^speichern$', caseSensitive: false)).last);
+    // Let the dialog close (no pumpAndSettle: a held write keeps spinning).
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+  }
 
-  String minutesOnScreen(WidgetTester tester) => tester.widget<TextField>(minutesFields().first).controller!.text;
+  /// Minutes of the first row as shown: start time of row 2 minus row 1.
+  String minutesOnScreen(WidgetTester tester) {
+    final times = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((t) => t.data)
+        .whereType<String>()
+        .where((s) => RegExp(r'^\d\d:\d\d$').hasMatch(s))
+        .toList();
+    int m(String s) => int.parse(s.substring(0, 2)) * 60 + int.parse(s.substring(3));
+    return '${m(times[1]) - m(times[0])}';
+  }
 
   /// Own edits 30 → 40 → 50, both echoes arrive, then another editor sets
   /// the full state back to 40 (the stored row of own write 1): it is
   /// applied, and a follow-up save builds on it.
   Future<void> foreignRevertAfterEchoes(
       WidgetTester tester, String Function(Map<String, dynamic>) storedMinutes) async {
-    await tester.enterText(minutesFields().first, '40');
+    await setMinutes(tester, 'Einspielen', '40');
     await tester.pumpAndSettle();
-    await tester.enterText(minutesFields().first, '50');
+    await setMinutes(tester, 'Einspielen', '50');
     await tester.pumpAndSettle();
     expect(repo.storedRows, hasLength(2));
     final state40 = repo.storedRows[0];
@@ -128,7 +148,7 @@ void main() {
     await tester.pumpAndSettle();
     expect(minutesOnScreen(tester), '40', reason: 'a foreign revert is applied');
 
-    await tester.enterText(minutesFields().last, '9');
+    await setMinutes(tester, 'Stück B', '9');
     await tester.pumpAndSettle();
     expect(storedMinutes(repo.calls.last), '40', reason: 'the follow-up save keeps the foreign change');
   }

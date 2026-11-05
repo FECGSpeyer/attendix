@@ -2,10 +2,12 @@ import 'dart:async';
 import 'dart:io';
 
 import 'package:attendix/core/constants/enums.dart';
+import 'package:attendix/core/providers/attendance_type_providers.dart';
 import 'package:attendix/core/providers/debug_providers.dart';
 import 'package:attendix/core/providers/group_providers.dart';
 import 'package:attendix/core/providers/organisation_providers.dart';
 import 'package:attendix/core/providers/player_providers.dart';
+import 'package:attendix/core/providers/realtime_providers.dart';
 import 'package:attendix/core/providers/redesign_providers.dart';
 import 'package:attendix/core/providers/self_service_providers.dart';
 import 'package:attendix/core/providers/song_providers.dart';
@@ -15,13 +17,18 @@ import 'package:attendix/core/services/audio_player/audio_player_service.dart';
 import 'package:attendix/core/services/song_file_service.dart';
 import 'package:attendix/core/theme/redesign/rd_palette.dart';
 import 'package:attendix/core/theme/redesign/rd_theme.dart';
+import 'package:attendix/data/models/attendance/attendance.dart';
 import 'package:attendix/data/models/song/song.dart';
+import 'package:attendix/data/models/song/song_filter.dart';
+import 'package:attendix/features/redesign/data/rd_dates.dart';
 import 'package:attendix/features/redesign/data/rd_works_logic.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_folder_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_work_page.dart';
 import 'package:attendix/features/redesign/presentation/pages/rd_works_page.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_overview.dart';
 import 'package:attendix/features/redesign/presentation/widgets/rd_widgets.dart';
+import 'package:attendix/features/redesign/presentation/widgets/works/rd_works_filter_sheet.dart';
+import 'package:attendix/features/songs/data/song_print_service.dart';
 import 'package:attendix/l10n/l10n.dart';
 import 'package:attendix/features/songs/presentation/utils/song_utils.dart';
 import 'package:flutter/material.dart';
@@ -30,6 +37,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:go_router/go_router.dart';
 import 'package:intl/date_symbol_data_local.dart';
+import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 
@@ -154,6 +162,19 @@ const _abend = Song(
 );
 
 /// Bounded pumps: loading spinners never settle.
+/// Builds no PDF: counts the calls and waits for [done].
+class _FakePrintService extends SongPrintService {
+  var calls = 0;
+  var done = Completer<SongPrintResult?>();
+
+  @override
+  Future<SongPrintResult?> printEntries(List<SongPrintEntry> entries, String fileName) {
+    calls++;
+    if (done.isCompleted) done = Completer<SongPrintResult?>();
+    return done.future;
+  }
+}
+
 Future<void> _settle(WidgetTester tester) async {
   for (var i = 0; i < 10; i++) {
     await tester.pump(const Duration(milliseconds: 100));
@@ -185,6 +206,17 @@ List<Override> _common(Role role) => [
       currentTenantProvider.overrideWith((ref) => _TenantNotifier(ref)),
     ];
 
+/// The two coming Termine of [_worksApp], relative to today: "Als Nächstes"
+/// leaves out Termine already over, so fixed dates would expire.
+final _soon = rdAddDays(DateTime.now(), 1);
+final _later = rdAddDays(DateTime.now(), 8);
+
+/// "2026-11-05T19:00:00" for [day].
+String _evening(DateTime day) => '${DateFormat('yyyy-MM-dd').format(day)}T19:00:00';
+
+/// "Do., 5. Nov. · Probe" for [day].
+String _eventLabel(DateTime day) => '${DateFormat.MMMEd('de').format(day)} · Probe';
+
 Widget _worksApp(
   Role role, {
   List<Song>? songs,
@@ -193,6 +225,7 @@ Widget _worksApp(
   int? instrument = 11,
   Map<int, int>? counts,
   bool folder = false,
+  List<Override> overrides = const [],
 }) {
   final router = GoRouter(
     initialLocation: folder ? '/werke/mappe' : '/werke',
@@ -232,14 +265,14 @@ Widget _worksApp(
             groupCategories: const [],
             currentSongs: [
               (
-                date: '12.11.2026 | Probe',
-                history: const [SongHistory(songId: 6, attendanceId: 32, attendanceDate: '2026-11-12T19:00:00')],
+                date: '${DateFormat('dd.MM.yyyy').format(_later)} | Probe',
+                history: [SongHistory(songId: 6, attendanceId: 32, attendanceDate: _evening(_later))],
               ),
               (
-                date: '05.11.2026 | Probe',
-                history: const [
-                  SongHistory(songId: 5, attendanceId: 31, attendanceDate: '2026-11-05T19:00:00'),
-                  SongHistory(songId: 6, attendanceId: 31, attendanceDate: '2026-11-05T19:00:00'),
+                date: '${DateFormat('dd.MM.yyyy').format(_soon)} | Probe',
+                history: [
+                  SongHistory(songId: 5, attendanceId: 31, attendanceDate: _evening(_soon)),
+                  SongHistory(songId: 6, attendanceId: 31, attendanceDate: _evening(_soon)),
                 ],
               ),
             ],
@@ -251,6 +284,10 @@ Widget _worksApp(
       missingGroupsPlayerCountsProvider.overrideWithValue(counts),
       currentOrganisationProvider.overrideWith((ref) async => null),
       currentTenantIdProvider.overrideWithValue(7),
+      // No times of the Termine: "Als Nächstes" keeps them until midnight.
+      realtimeAttendanceListProvider.overrideWith((ref) async => const <Attendance>[]),
+      attendanceTypesProvider.overrideWith((ref) async => const <AttendanceType>[]),
+      ...overrides,
     ],
     child: _material(router),
   );
@@ -413,6 +450,60 @@ void main() {
       );
     });
 
+    test('Als Nächstes leaves out Termine over today (end, else start; date only until midnight)', () {
+      final now = DateTime(2026, 11, 4, 20);
+      RdNextEvent event(int id, {int day = 4}) =>
+          RdNextEvent(date: DateTime(2026, 11, day), type: '', attendanceId: id, songs: const [_ave]);
+      final events = [event(1), event(2), event(3), event(4), event(5), event(6, day: 5), event(7)];
+      const types = [
+        AttendanceType(id: 't', name: 'Probe', startTime: '10:00', endTime: '12:00'),
+        AttendanceType(id: 'a', name: 'Freizeit', startTime: '19:00', allDay: true),
+      ];
+      const attendances = [
+        Attendance(id: 1, date: '2026-11-04', startTime: '10:00', endTime: '19:30'), // over
+        Attendance(id: 2, date: '2026-11-04', startTime: '19:00', endTime: '21:00'), // running
+        Attendance(id: 3, date: '2026-11-04', startTime: '18:00'), // start only: over
+        Attendance(id: 4, date: '2026-11-04', typeId: 't'), // type 10–12: over
+        // 5: no Termin loaded, date only: stays until midnight.
+        Attendance(id: 6, date: '2026-11-05', startTime: '09:00', endTime: '10:00'),
+        // Own start, the type's end (12:00) does not make it overnight: over.
+        Attendance(id: 7, date: '2026-11-04', startTime: '19:00', typeId: 't'),
+        // All day: the Ablauf time 19:00 does not end it, it stays until midnight.
+        Attendance(id: 8, date: '2026-11-04', startTime: '19:00', typeId: 'a'),
+        // Two days, ends today at 21:00: running.
+        Attendance(id: 9, date: '2026-11-03', durationDays: 2, startTime: '18:00', endTime: '21:00'),
+        // Yesterday 20:00 to 01:00 today: over.
+        Attendance(id: 10, date: '2026-11-03', startTime: '20:00', endTime: '01:00'),
+      ];
+      List<int?> left(List<RdNextEvent> events, DateTime now) => [
+        for (final e in rdWithoutEndedEvents(events, now: now, types: types, attendances: attendances)) e.attendanceId,
+      ];
+      expect(left([...events, event(8), event(9, day: 3), event(10, day: 3)], now), [2, 5, 6, 8, 9]);
+      // The end limits: midnight after the (last) day, the end time, the overnight end.
+      final ends = [event(5), event(8), event(9, day: 3), event(10, day: 3)];
+      expect(left(ends, DateTime(2026, 11, 4, 0, 59)), [5, 8, 9, 10]);
+      expect(left(ends, DateTime(2026, 11, 4, 21, 1)), [5, 8]);
+      expect(left(ends, DateTime(2026, 11, 5)), isEmpty);
+    });
+
+    test('old descending sort orders are shown as such', () {
+      final l10n = lookupAppLocalizations(const Locale('de'));
+      expect(
+        rdWorksSortLabel(l10n, SongSortOption.numberDesc, orchestra: true),
+        '${l10n.redesignWorksSortNumber} ↓',
+      );
+      expect(rdWorksSortLabel(l10n, SongSortOption.nameDesc, orchestra: true), '${l10n.redesignWorksSortTitle} ↓');
+      expect(rdWorksSortOptions(SongSortOption.numberAsc), rdWorksSorts);
+      expect(rdWorksSortOptions(SongSortOption.numberDesc).take(2), [
+        SongSortOption.numberAsc,
+        SongSortOption.numberDesc,
+      ]);
+      expect(rdWorksSortOptions(SongSortOption.nameDesc).skip(1).take(2), [
+        SongSortOption.nameAsc,
+        SongSortOption.nameDesc,
+      ]);
+    });
+
     test('Werke routes follow the /songs-tab guard', () {
       for (final role in [Role.parent, Role.applicant]) {
         expect(RedesignRoutes.roleRedirect('/werke', role), '/heute', reason: role.name);
@@ -436,11 +527,11 @@ void main() {
       expect(find.text('Titel oder Nummer'), findsOneWidget);
       // The next Termin with its Werke and the own part as one PDF.
       expect(find.text('Als Nächstes'), findsOneWidget);
-      expect(find.text('Do., 5. Nov. · Probe'), findsOneWidget);
+      expect(find.text(_eventLabel(_soon)), findsOneWidget);
       expect(find.byKey(const Key('rd-works-open-mine')), findsOneWidget);
       expect(find.text('Deine Stimme als PDF, auch zum Drucken'), findsOneWidget);
       // The one after it as a single line.
-      expect(find.text('Do., 12. Nov. · Probe'), findsOneWidget);
+      expect(find.text(_eventLabel(_later)), findsOneWidget);
       // Status instead of PDF / Audio badges (in "Als Nächstes" and the list).
       expect(find.text('Deine Stimme · Aufnahme · Konzert'), findsNWidgets(2));
       expect(find.text('noch keine Noten · Kirche'), findsNWidgets(2));
@@ -458,6 +549,30 @@ void main() {
       await tester.tap(find.text('Meine Mappe'));
       await _settle(tester);
       expect(find.text('page folder'), findsOneWidget);
+    });
+
+    testWidgets('Meine Noten öffnen is locked and loading while the PDF is built', (tester) async {
+      _phone(tester);
+      final printer = _FakePrintService();
+      await tester.pumpWidget(_worksApp(Role.player, overrides: [songPrintServiceProvider.overrideWithValue(printer)]));
+      await _settle(tester);
+
+      final button = find.byKey(const Key('rd-works-open-mine'));
+      final spinner = find.descendant(of: button, matching: find.byType(CircularProgressIndicator));
+      await tester.tap(button);
+      await tester.pump();
+      await tester.tap(button, warnIfMissed: false);
+      await tester.pump();
+      expect(printer.calls, 1);
+      expect(spinner, findsOneWidget);
+      expect(tester.widget<FilledButton>(find.descendant(of: button, matching: find.byType(FilledButton))).onPressed, isNull);
+
+      printer.done.complete(const SongPrintResult(pageCount: 1, skipped: 0));
+      await _settle(tester);
+      expect(spinner, findsNothing);
+      await tester.tap(button);
+      await tester.pump();
+      expect(printer.calls, 2);
     });
 
     testWidgets('category chips and search filter the list', (tester) async {

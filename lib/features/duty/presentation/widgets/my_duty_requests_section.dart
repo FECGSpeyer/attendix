@@ -3,6 +3,8 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/constants/app_constants.dart';
+import '../../../../core/constants/enums.dart';
+import '../../../../core/providers/debug_providers.dart';
 import '../../../../core/providers/duty_providers.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/duty_utils.dart';
@@ -18,6 +20,12 @@ class MyDutyRequestsSection extends ConsumerWidget {
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
+    // Ionic att-list shows it only for Admin, Verantwortlich, Helfer and
+    // Helfer-Stimmführer (not e.g. Beobachter with an own person row;
+    // `isConductor` includes the viewer, so check the roles explicitly).
+    final role = ref.watch(effectiveRoleProvider);
+    final showsDutyRequests = role == Role.admin || role == Role.responsible || role.isHelperRole;
+    if (!showsDutyRequests) return const SizedBox.shrink();
     final requests = ref.watch(myDutyOverviewProvider).valueOrNull?.requests ?? const [];
     if (requests.isEmpty) return const SizedBox.shrink();
 

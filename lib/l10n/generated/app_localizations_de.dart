@@ -4020,6 +4020,10 @@ class AppLocalizationsDe extends AppLocalizations {
       'Du hast ungespeicherte Änderungen. Möchtest du die Seite trotzdem verlassen?';
 
   @override
+  String get extraFieldsFlutterUpdatingPersons =>
+      'Personen werden aktualisiert...';
+
+  @override
   String get extraFieldsForPersons => 'Zusätzliche Felder für Personen';
 
   @override
@@ -6241,6 +6245,9 @@ class AppLocalizationsDe extends AppLocalizations {
 
   @override
   String get orgFieldsApplyChanges => 'Änderungen übernehmen';
+
+  @override
+  String get orgFieldsFlutterClearDefault => 'Standardwert entfernen';
 
   @override
   String get orgFieldsFlutterFirstOptionDefault =>
