@@ -14,6 +14,7 @@ import '../../core/utils/people_shift_status.dart';
 import '../../core/utils/person_matcher.dart';
 import '../../core/utils/text_utils.dart';
 import '../../core/utils/db_helpers.dart';
+import '../../core/utils/duty_utils.dart' show dutySyncFieldsForStatus;
 import '../../core/utils/paged_query.dart';
 import '../../core/config/supabase_config.dart'
     show AccountScopeKey, currentAuthUserIdProvider;
@@ -1094,7 +1095,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         final page = await supabase
             .from('person_attendances')
             .select(
-                'id, status, notes, attendance:attendance_id!inner(id, date, type_id, start_time, end_time, tenantId)')
+                'id, status, notes, duty_state, attendance:attendance_id!inner(id, date, type_id, start_time, end_time, tenantId, attType:type_id(duty_mode))')
             .eq('person_id', personId)
             .eq('attendance.tenantId', currentTenantId)
             .gte('attendance.date', since)
@@ -1125,13 +1126,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         }
         final type = types.where((t) => t.id == att['type_id']).firstOrNull;
         if (type == null) continue;
-        await supabase
-            .from('person_attendances')
-            .update({'status': type.defaultStatus, 'notes': ''})
-            .eq('id', r['id'])
-            .eq('person_id', personId);
-        r['status'] = type.defaultStatus;
-        r['notes'] = '';
+        await _updateShiftEntry(r, personId, type.defaultStatus, '');
       }
 
       // Phase 2: apply the new shift.
@@ -1157,17 +1152,48 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
         }
         if (result.status == AttendanceStatus.excused &&
             r['status'] == type.defaultStatus) {
-          await supabase
-              .from('person_attendances')
-              .update({'status': result.status.value, 'notes': result.note})
-              .eq('id', r['id'])
-              .eq('person_id', personId);
+          await _updateShiftEntry(r, personId, result.status.value, result.note);
         }
       }
     } catch (e, stack) {
       handleError(e, stack, 'updateShiftAssignmentsForPerson');
       rethrow;
     }
+  }
+
+  /// db-f424eb31: a status change of [updateShiftAssignmentsForPerson] goes
+  /// through Ionic db.updatePersonAttendance: changed_at/changed_by and the
+  /// duty sync (syncDutyWithStatus) are written with it. [row] is updated in
+  /// place for the following phase.
+  Future<void> _updateShiftEntry(
+    Map<String, dynamic> row,
+    int personId,
+    int status,
+    String notes,
+  ) async {
+    final userId = supabase.auth.currentUser?.id;
+    final att = row['attendance'];
+    final isDuty = att is Map && att['attType'] is Map && (att['attType'] as Map)['duty_mode'] == true;
+    final updates = <String, dynamic>{
+      'status': status,
+      'notes': notes,
+      ...dutySyncFieldsForStatus(
+        isDutyTermin: isDuty,
+        currentDutyState: row['duty_state'] as String?,
+        newStatus: AttendanceStatus.fromValue(status),
+        userId: userId,
+      ),
+      'changed_at': DateTime.now().toUtc().toIso8601String(),
+      'changed_by': userId,
+    };
+    await supabase
+        .from('person_attendances')
+        .update(updates)
+        .eq('id', row['id'])
+        .eq('person_id', personId);
+    row['status'] = status;
+    row['notes'] = notes;
+    if (updates.containsKey('duty_state')) row['duty_state'] = updates['duty_state'];
   }
 
   /// Check for players whose pause period has ended and unpause them
@@ -1680,10 +1706,12 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
   /// [targetTenantName] - Name of target tenant for history entry
   /// [sourceTenantName] - Name of source tenant for history entry
   /// [stayInInstance] - If true, copies player (COPIED_FROM/TO), otherwise transfers (TRANSFERRED_FROM/TO)
+  /// [responsibleForMainGroup] - false for the person page (Ionic: always
+  ///   PLAYER); the handover page keeps RESPONSIBLE for the main group.
   ///
   /// LOGIC_PEOPLE: Ionic db.handoverPerson — the target person is created
-  /// FIRST (account linked/registered in the target instance as PLAYER,
-  /// also for the target main group; an existing row of
+  /// FIRST (account linked/registered in the target instance with
+  /// RESPONSIBLE for the target main group, else PLAYER; an existing row of
   /// the same account is reactivated; attendances since today are
   /// backfilled). Only then is the source updated (history; on transfer
   /// `left`), so a failed insert never archives the source. The source keeps
@@ -1698,6 +1726,7 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
     required String targetTenantName,
     required String sourceTenantName,
     required bool stayInInstance,
+    bool responsibleForMainGroup = true,
   }) async {
     ensureNotDemo('handoverPlayer'); // DEMO_GUARD
     if (player.id == null) {
@@ -1735,12 +1764,18 @@ class PlayerRepository extends BaseRepository with TenantAwareRepository {
       String? appId = player.appId;
       final email = player.email?.trim() ?? '';
       if (email.isNotEmpty) {
-        // Ionic person.page handover: always PLAYER, also for the target
-        // instance's main group (no RESPONSIBLE rights via a transfer).
+        final targetMainGroup = responsibleForMainGroup
+            ? await _mainGroupId(tenantId: targetTenantId)
+            : null;
+        final role = responsibleForMainGroup &&
+                targetGroupId != null &&
+                targetGroupId == targetMainGroup
+            ? Role.responsible
+            : Role.player;
         appId = await _registration().registerUser(
           email: email,
           name: player.firstName,
-          role: Role.player,
+          role: role,
           tenantId: targetTenantId,
         );
       }

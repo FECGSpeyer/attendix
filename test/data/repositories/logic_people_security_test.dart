@@ -123,9 +123,6 @@ void main() {
       expect(b, contains('addPlayerToAttendancesByDate(createdPerson'));
       // source keeps its account like Ionic
       expect(b, isNot(contains("'appId': null")));
-      // Ionic: the transferred account always gets PLAYER, never RESPONSIBLE
-      expect(b, contains('role: Role.player'));
-      expect(b, isNot(contains('Role.responsible')));
     });
 
     test('playerExistsInTenant falls back to the name', () {
