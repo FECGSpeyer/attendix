@@ -1,7 +1,7 @@
 {
   "versions": [
     {
-      "version": "0.41.9",
+      "version": "0.41.10",
       "date": "5.11.2026",
       "changes": [
         "🐛 Zusatzfelder: Schließen des Bearbeiten-Fensters (X, Wischen, Tippen daneben) übernimmt die Änderungen wie bisher, der zusätzliche Button „Übernehmen“ entfällt",
@@ -10,6 +10,17 @@
         "🐛 Zusatzfelder: Leerer Standardwert älterer Felder wird nicht mehr als „false“ angezeigt oder gespeichert",
         "🐛 Zusatzfelder: Löschen einer gespeicherten Option eines Werkfeldes fragt wie bei Personenfeldern nach",
         "🐛 Zusatzfelder: Beim Speichern werden aktive Personen und Werke der eigenen Bibliothek angepasst"
+      ]
+    },
+    {
+      "version": "0.41.9",
+      "date": "5.11.2026",
+      "changes": [
+        "🐛 Personenliste: Zusatzfelder ohne Wert zeigen, filtern und zählen (Gemeinde-Übersicht) mit ihrem Standardwert wie bisher; Zahl 0 erscheint nicht mehr als Badge",
+        "🐛 Personenliste: Ansicht „Lehrer“ zeigt wieder den Namen des Lehrers, Prozent-Badge auch bei 0 %",
+        "🐛 Personenliste: Sortierung nach Gruppe und Nachname mit Umlauten wie bisher, Reihenfolge speichern ändert nur verschobene Gruppen",
+        "🐛 Personenliste: Zusatzfeld-Filter mit Auswahl und „Filtern“/„Abbrechen“",
+        "🐛 Massenbearbeitung und Mitglieder-Filter: Startwerte und Personen ohne Wert wie bisher"
       ]
     },
     {
