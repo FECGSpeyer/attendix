@@ -278,20 +278,28 @@ const makeFlutterCheck = (root = '.') => {
     const k = `${commit}\0${p}`;
     if (!lenAt.has(k)) {
       let n = null;
-      try { n = git('show', `${commit}:${p}`).split('\n').length; } catch { n = null; }
+      try {
+        // a trailing newline ends the last line, it does not start another
+        const t = git('show', `${commit}:${p}`);
+        n = t === '' ? 0 : t.replace(/\n$/, '').split('\n').length;
+      } catch { n = null; }
       lenAt.set(k, n);
     }
     return lenAt.get(k);
   };
   // references the verdict could not have been checked against: the file did
-  // not exist at the verdict's commit or a line lies past its end
+  // not exist at the verdict's commit, a line lies past its end, or the line
+  // part after the path cannot be read ("~160", "12ff")
   const invalid = (commit, r) => {
     const p = refPath(r);
     if (!p || p.endsWith('/')) return false;
     const n = linesAt(commit, p);
     if (n === null) return true;
-    const ranges = rangesOf(r);
-    return !!ranges?.some(([a, b]) => a < 1 || b > n);
+    const bare = String(r).trim().replace(/\s*\(.*\)$/, '');
+    const hasLinePart = bare.length > p.length;
+    const ranges = rangesOf(bare);
+    if (hasLinePart && !ranges?.length) return true;
+    return !!ranges?.some(([a, b]) => a < 1 || b > n || b < a);
   };
   // changed reference paths (deduplicated, without line numbers) or [].
   // fileLevel false: a modified file only counts when a hunk touches the

@@ -6,9 +6,10 @@
   "x-7da97d6aac": {
    "s": "ok",
    "f": [
-    "lib/core/utils/toast_helper.dart"
+    "lib/core/utils/toast_helper.dart",
+    "test/core/utils/toast_over_sheet_test.dart"
    ],
-   "n": "Toasts auch im iOS-Look über das Root-Overlay (wie ion-toast über jedem Modal), nicht mehr als SnackBar hinter Sheets"
+   "n": "Toasts auch im iOS-Look über das Root-Overlay (wie ion-toast über jedem Modal), nicht mehr als SnackBar hinter Sheets. Belegt durch test/core/utils/toast_over_sheet_test.dart für Sheets mit und ohne eigenes Scaffold. Das Runde-6-Urteil war zu pauschal: Sheets mit eigenem Scaffold (z. B. Stammdaten, Registerplan) zeigten die SnackBar schon vorher."
   },
   "settings/general/extra-fields/extra-fields.page#toast-b9ee5530": {
    "s": "ok",

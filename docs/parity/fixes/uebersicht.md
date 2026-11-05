@@ -6,7 +6,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 ## Angleichen (hoch/mittel): 1
 
 - [ ] **mittel** `home-dashboard/components/current-songs-card/current-songs-card.component` `x-7ff54f52b2` **„Aktuelle Werke“: heutige manuelle Einträge fehlen** [src/app/services/db.service.ts:3128](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/services/db.service.ts#L3128) (2. Prüfung: korrigiert)
-  Ionic: getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht) / Flutter: gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone → Postgres wertet 00:00Z. In der Werkhistorie für heute eingetragene Werke (Datum YYYY-MM-DD = 00:00Z) fehlen in Flutter auf der Karte „Aktuelle Werke“. [Koordinator R6: angezeigte Daten fehlen → mittel; gleiche UTC-Ursache wie der Archivieren-Befund, Fix: startOfToday.toUtc().toIso8601String().]
+  Ionic getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht in UTC), Flutter gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone, Postgres wertet das als 00:00Z. Für heute in der Werkhistorie eingetragene Werke (Datum YYYY-MM-DD = 00:00Z) fehlen deshalb in Flutter auf der Karte „Aktuelle Werke“. Angezeigte Daten fehlen → mittel; gleiche UTC-Ursache wie der Archivieren-Befund. Fix in #343.
   Flutter: lib/data/repositories/dashboard_repository.dart:171, lib/features/history/presentation/pages/history_page.dart:560
 
 ## Flutter besser – Leon entscheidet: 12

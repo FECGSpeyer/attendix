@@ -3,56 +3,56 @@
  "afterRound": 6,
  "ionic": "1923d203",
  "flutter": "0f74333",
- "note": "Koordinator-Abgleich zu Runde 6 (= 5c): einheitliche Schwere-Regeln (Flutter besser mit DB-Abweichung, Trimmen, Demo-Sperren → niedrig), gleiche Ursachen gleich bewertet, eine Dublette zurückgezogen. Dazu Leons Entscheidungen Nr. 3 und 5 vom 05.11. (bleiben bewusst abweichend).",
+ "note": "Koordinator-Abgleich zu Runde 6 (= 5c): einheitliche Schwere-Regeln (Flutter behebt einen Ionic-Fehler und schreibt deshalb anders, reines Trimmen, Demo-Konto mit strengerer Sperre → niedrig „Flutter besser“), gleiche Ursachen gleich bewertet, eine Dublette zurückgezogen, zwei Fehlbestätigungen aus dem Sol-Review 6665834233 korrigiert. Dazu Leons Entscheidungen Nr. 3 und 5 vom 05.11. (bleiben bewusst abweichend).",
  "items": {
   "x-db4615b9c2": {
    "sev": "niedrig",
-   "n": "Flutter besser, aber anderer DB-Wert: Ionic db.signout schreibt changed_by = null (kein userId) / Flutter schreibt changed_by = angemeldeter Nutzer (auch bei „Kann nicht“). Sichtbar in der Anwesenheit: Ionic „Status wurde nicht geändert“, Flutter nennt den Namen. Erster Prüfer: niedrig – ein abweichender geschriebener Wert ist nach Vorgabe nie niedrig. [Koordinator R6: Flutter behebt hier einen Ionic-Fehler, der DB-Wert weicht deshalb ab → niedrig „Flutter besser“, Leon entscheidet im Tracker über Angleichen.]",
+   "n": "Flutter besser: Bei der Abmeldung schreibt Flutter changed_by = angemeldeter Nutzer, Ionic db.signout schreibt null (keine userId). Sichtbar in der Anwesenheit: Ionic „Status wurde nicht geändert“, Flutter nennt den Namen. Flutter behebt damit einen Ionic-Fehler; der DB-Wert weicht nur deshalb ab → niedrig, Leon entscheidet im Tracker über Angleichen. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "services/sign-in-out/sign-in-out.service#db-574d5c66": {
    "sev": "niedrig",
-   "n": "Schwere korrigiert (anderer DB-Wert ist nie niedrig). Flutter besser: gleiche Tabelle/Spalten (status, notes, changed_at, Duty-Sync bei Anmelden), aber changed_by bei der Abmeldung: Ionic schreibt null (DbService.signout gibt keine userId weiter), Flutter die User-ID. Folge: „Zuletzt geändert von“ zeigt nach Abmeldung in Flutter den Namen statt \"Status wurde noch nicht geändert\". Duty-Sync bei Abmeldung fehlt, ist für Entschuldigt/Verspätung gemeldet aber wirkungslos (dutyStateAfterStatus unverändert). Leon entscheidet, ob es bleibt. [Koordinator R6: Flutter behebt hier einen Ionic-Fehler, der DB-Wert weicht deshalb ab → niedrig „Flutter besser“, Leon entscheidet im Tracker über Angleichen.]",
+   "n": "Flutter besser: gleiche Tabelle und Spalten (status, notes, changed_at, Dienst-Abgleich beim Anmelden); bei der Abmeldung schreibt Flutter changed_by = User-ID, Ionic null (DbService.signout gibt keine userId weiter). „Zuletzt geändert von“ zeigt in Flutter danach den Namen statt „Status wurde noch nicht geändert“. Der fehlende Dienst-Abgleich bei der Abmeldung ist wirkungslos (dutyStateAfterStatus ändert sich für Entschuldigt/Verspätung nicht). Flutter behebt einen Ionic-Fehler → niedrig, Leon entscheidet im Tracker. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "services/sign-in-out/sign-in-out.service#logic-6ffa52b8": {
    "sev": "niedrig",
-   "n": "signout/signin/updateAttendanceNote gleich: Entschuldigt bzw. Verspätung gemeldet (lateExcused) mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update; danach quick-processor mit signout/lateSignout/noteUpdate bzw. Vorstatus; Pflicht-Status-Sync wie syncDutyWithStatus. Flutter prüft zusätzlich Mandant/Eigentümer der IDs. Einziger Unterschied changed_by bei der Abmeldung (db-574d5c66); Schwere wie dort auf mittel angehoben. [Koordinator R6: Flutter behebt hier einen Ionic-Fehler, der DB-Wert weicht deshalb ab → niedrig „Flutter besser“, Leon entscheidet im Tracker über Angleichen.]",
+   "n": "Flutter besser: signout, signin und updateAttendanceNote wie Ionic (Entschuldigt bzw. Verspätung gemeldet mit Grund als notes, Anmelden → Anwesend mit notes, Notiz-Update, danach quick-processor und Dienst-Abgleich). Einziger Unterschied ist changed_by bei der Abmeldung (siehe db-574d5c66), dazu prüft Flutter Mandant und Eigentümer der IDs. Flutter behebt einen Ionic-Fehler → niedrig, Leon entscheidet im Tracker. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "settings/general/shifts/shifts.page#logic-541274b4": {
    "sev": "niedrig",
-   "n": "Ablauf gleich (Sheet schließen, Name prüfen, Plan anlegen mit definition/shifts [] und tenant_id, zum neuen Plan navigieren, Liste nach Name aufsteigend). Abweichungen in extra (b24): Erfolgs-Toast, Navigation per ID (Flutter besser) und Trim – Flutter speichert name/description getrimmt (Ionic ungetrimmt). Bewertung korrigiert niedrig → mittel: Trim ist ein anderer DB-Wert und damit nach Vorgabe nie niedrig (praktisch nur bei Leerzeichen am Rand sichtbar, z. B. Sortierung); das extra „Name/Beschreibung getrimmt“ entsprechend mittel. [Koordinator R6: nur Leerzeichen-Trimmen → niedrig „Flutter besser“ (einheitliche Regel).]",
+   "n": "Flutter besser: Ablauf gleich (Sheet schließen, Name prüfen, Plan mit definition/shifts [] und tenant_id anlegen, zum neuen Plan navigieren, Liste nach Name aufsteigend). Flutter speichert Name und Beschreibung getrimmt (Ionic ungetrimmt), zeigt einen Erfolgs-Toast und navigiert per ID. Reines Trimmen von Leerzeichen am Rand → niedrig (einheitliche Regel R6), Leon entscheidet im Tracker. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "services/duty/duty.service#db-807d7b5e": {
    "sev": "niedrig",
-   "n": "Spalten wie Ionic (duty_state 'confirmed', duty_assigned_by/at, duty_reminder_sent true, changed_by/at, Status bleibt; IDs über attendance.tenantId geprüft). Aber: Flutter assign() beginnt mit ensureNotDemo('assignDuty') → im Demo-Konto Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“ und kein Einteilen; Ionic DutyService.assign und die Aufrufer (attendance.page assignDuty, duty-distribute-modal) haben keine checkDemoRestriction → Demo-Nutzer kann in Ionic einteilen. Echte Konten unberührt → mittel (Erstprüfung ok). [Koordinator R6: nur das Demo-Konto ist betroffen und Flutter sperrt dort mehr als Ionic → niedrig „Flutter besser“; echte Konten unberührt.]",
+   "n": "Flutter besser: Spalten wie Ionic (duty_state 'confirmed', duty_assigned_by/at, duty_reminder_sent true, changed_by/at, Status bleibt; IDs über attendance.tenantId geprüft). Flutter sperrt das Einteilen zusätzlich im Demo-Konto (ensureNotDemo('assignDuty'), Toast „Diese Funktion ist im Demo-Modus nicht verfügbar.“), Ionic nicht. Nur das Demo-Konto ist betroffen und Flutter sperrt dort mehr → niedrig; echte Konten unberührt. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "services/duty/duty.service#db-807d7b5e-2": {
    "sev": "niedrig",
-   "n": "'requested', Status Neutral, notes '', reminder_sent false, assigned_by/at, changed_by/at, danach duty-notify 'assigned' mit den angefragten IDs – gleich. Aber Demo-Sperre ensureNotDemo('assignDuty') vor dem Update, die Ionic nicht hat (Demo-Konto kann in Ionic Dienste anfragen/verteilen, in Flutter nur Hinweis-Toast). Echte Konten unberührt → mittel (Erstprüfung ok). [Koordinator R6: nur das Demo-Konto ist betroffen und Flutter sperrt dort mehr als Ionic → niedrig „Flutter besser“; echte Konten unberührt.]",
+   "n": "Flutter besser: Anfragen mit 'requested', Status Neutral, notes '', reminder_sent false, assigned_by/at, changed_by/at und danach duty-notify 'assigned' wie Ionic. Flutter sperrt das Anfragen/Verteilen zusätzlich im Demo-Konto (ensureNotDemo('assignDuty')), Ionic nicht. Nur das Demo-Konto ist betroffen und Flutter sperrt dort mehr → niedrig; echte Konten unberührt. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "songs/songs.page#action-ed429618": {
    "sev": "niedrig",
-   "n": "Korrektur niedrig→mittel (Rolle sieht/kann weniger). Gleich: Text „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon, Speichern in user_metadata showSongsTab_<tenantId>, nicht auf der öffentlichen Seite, Allgemein-Instanzen/Bewerber erreichen die Seite in beiden nicht. Ionic: Eltern erreichen am Handy Werke über Einstellungen (settings.page.html:522 ohne Eltern-Ausschluss), sehen den Eintrag und bekommen danach einen funktionierenden Werke-Tab (tabs.page.ts:49 ohne Eltern-Ausschluss; isUrlAccessAllowed sperrt /tabs/songs-tab nur beim Neuladen/Instanzwechsel) / Flutter: songsTabAllowedProvider (canOpenSongsTab) blendet Eintrag und Tab für Eltern aus, Werke bleiben über „Mehr“ erreichbar. Bewusst (SOL_FIX22, an Ionics Routen-Regel angelehnt) – Leon entscheidet. Flutter zusätzlich: Fehler-Toast „Fehler beim Speichern“ mit Rücknahme. [Koordinator R6: Ionic zeigt Eltern den Werke-Tab-Button (tabs.page.ts:49 schließt nur Bewerber aus), die Routenregel Utils.ts:1305 verbietet Eltern aber /tabs/songs-tab, der Tab wirft sie also zurück. Flutter blendet ihn gleich aus → niedrig „Flutter besser“.]",
+   "n": "Flutter besser: Text „Tab ausblenden“/„Als Tab anzeigen“, Bookmark-Icon und Speichern in user_metadata showSongsTab_<tenantId> wie Ionic, nicht auf der öffentlichen Seite. Unterschied nur für Eltern: Ionic zeigt ihnen den Eintrag und den Werke-Tab-Button (settings.page.html:522, tabs.page.ts:49 schließen nur Bewerber aus), die Routenregel Utils.ts:1305 verbietet Eltern aber /tabs/songs-tab, der Tab wirft sie also zurück. Flutter blendet Eintrag und Tab für Eltern gleich aus (bewusst, SOL_FIX22), Werke bleiben über „Mehr“ erreichbar; zusätzlich Fehler-Toast „Fehler beim Speichern“ mit Rücknahme → niedrig, Leon entscheidet im Tracker. (R6-Erstprüfung hatte mittel.)",
    "v": "korrigiert"
   },
   "agenda-items/agenda-item-detail/agenda-item-detail.page#action-6d6140de": {
    "sev": "mittel",
-   "n": "Rollen gleich (nur Admin/Verantwortlich, nur offen, nur bestehend). Ionic: Bedingung/Planung nutzt das ungespeicherte item (Status/Titel live) / Flutter: gespeicherter Stand (item?.status). Randfall, gleiche Funktion. [Koordinator R6: gleiche Ursache wie x-05b82aec95 (Einplanen übernimmt den gespeicherten statt den ungespeicherten Stand, Plan bekommt den alten Titel) → mittel wie dort.]",
+   "n": "Button „Einplanen“: Rollen gleich (nur Admin/Verantwortlich, nur offene und bestehende Themen). Ionic richtet Sichtbarkeit und Einplanen nach dem ungespeicherten Formular (Status/Titel live), Flutter nach dem gespeicherten Stand (item?.status). Gleiche Ursache wie x-05b82aec95 (Plan bekommt den alten Titel) → mittel wie dort. Fix in #347.",
    "v": "korrigiert"
   },
   "services/live-activity/live-activity.service#modal-e1ddab08": {
    "sev": "mittel",
-   "n": "Ionic: shared_plans nur per id gelesen (RLS) / Flutter: zusätzlich org_id der aktuellen Organisation, und ohne aktuelle Organisation passiert nichts. Anzeige (Plan-Viewer live, Datum, Zeit, Felder, Titel) gleich. Nur Randfall (Instanzwechsel in andere Organisation). [Koordinator R6: gleiche Ursache wie db-9e7fa6e4 (Ad-hoc-Org-Plan nach aktueller Organisation gefiltert, Plan aus anderer Org öffnet nicht) → mittel wie dort.]",
+   "n": "Ionic liest shared_plans nur per id (RLS), Flutter filtert zusätzlich auf die org_id der aktuellen Organisation und tut ohne aktuelle Organisation nichts → nach einem Instanzwechsel in eine andere Organisation öffnet der Tipp auf die Live Activity den Plan nicht. Anzeige (Plan-Viewer live, Datum, Zeit, Felder, Titel) gleich. Gleiche Ursache wie db-9e7fa6e4 → mittel wie dort. Fix in #342.",
    "v": "korrigiert"
   },
   "org-settings/org-planning-templates/org-planning-templates.page#field-0fbdb2fd": {
    "sev": "mittel",
-   "n": "Startzeit wählen, speichert. Gespeichertes Format „HH:mm“ statt ISO (Flutter und Ionic lesen beide Formen); siehe Extra „Startzeit-Format“. [Koordinator R6: „Ionic liest beide Formen“ stimmt nicht ganz: Ionic public-planning übernimmt die Startzeit nur bei dayjs(tpl.time).isValid(), „10:00“ ist ungültig. Gleiche Ursache wie x-5dfb4436f3 → diff mittel.]",
+   "n": "Startzeit der Ablauf-Vorlage: Flutter speichert „HH:mm“, Ionic einen ISO-Datum-Zeit-Wert. Ionic public-planning übernimmt die Startzeit nur bei dayjs(tpl.time).isValid(), „10:00“ ist dort ungültig → Vorlagen aus Flutter starten in Ionic ohne Startzeit. Gleiche Ursache wie x-5dfb4436f3 → diff mittel. Fix in #342.",
    "v": "korrigiert",
    "s": "diff",
    "f": [
@@ -62,7 +62,7 @@
   },
   "x-7ff54f52b2": {
    "sev": "mittel",
-   "n": "Ionic: getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht) / Flutter: gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone → Postgres wertet 00:00Z. In der Werkhistorie für heute eingetragene Werke (Datum YYYY-MM-DD = 00:00Z) fehlen in Flutter auf der Karte „Aktuelle Werke“. [Koordinator R6: angezeigte Daten fehlen → mittel; gleiche UTC-Ursache wie der Archivieren-Befund, Fix: startOfToday.toUtc().toIso8601String().]",
+   "n": "Ionic getCurrentSongs filtert date > dayjs().startOf('day').toISOString() (lokale Mitternacht in UTC), Flutter gt('date', DateTime(heute).toIso8601String()) ohne Zeitzone, Postgres wertet das als 00:00Z. Für heute in der Werkhistorie eingetragene Werke (Datum YYYY-MM-DD = 00:00Z) fehlen deshalb in Flutter auf der Karte „Aktuelle Werke“. Angezeigte Daten fehlen → mittel; gleiche UTC-Ursache wie der Archivieren-Befund. Fix in #343.",
    "v": "korrigiert"
   },
   "x-c19db99cb7": {
@@ -83,6 +83,30 @@
    "sev": "niedrig",
    "n": "getMessageById filtert auf aktuelle + eigene Instanzen; Ionic zeigt auch Mitteilungen aus einer verlassenen Instanz. [Entscheidung Leon 05.11.2026 (Entscheidungs-Dokument Nr. 5): so lassen, wer ausgetreten ist, sieht die Instanz nicht mehr → bewusst abweichend, niedrig.]",
    "v": "korrigiert"
+  },
+  "services/db.service#db-1e5584c0": {
+   "s": "diff",
+   "sev": "hoch",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/player_repository.dart:925",
+    "lib/data/repositories/player_repository.dart:652",
+    "lib/data/repositories/player_repository.dart:2141",
+    "lib/data/repositories/player_repository.dart:2158"
+   ],
+   "n": "Eintritt (addPlayerToAttendancesByDate: Termine der Instanz bzw. Zielinstanz mit date > Eintrittstag, paginiert, Typ-/Zusatzfeldfilter, default_status) wie Ionic. Austritt nicht: archivePlayer übergibt left als UTC-String, removeFromUpcomingAttendances schneidet ihn auf den Vortag (lokale Mitternacht = …T23:00Z) und filtert gte → die Person wird auch aus den Terminen des Vortags gelöscht. Gleicher Fehler wie people/list/list.page#modal-11a551b4 → hoch. Fix in #343. (Sol-Review 6665834233; R6-Erstprüfung hatte ok.)"
+  },
+  "services/db.service#db-50229123": {
+   "s": "diff",
+   "sev": "mittel",
+   "v": "korrigiert",
+   "f": [
+    "lib/data/repositories/dashboard_repository.dart:148",
+    "lib/data/repositories/song_repository.dart:738",
+    "lib/data/repositories/song_repository.dart:680",
+    "lib/data/repositories/public_song_repository.dart:156"
+   ],
+   "n": "Werke-Seite und öffentliche Werke-Seite wie Ionic (history nach tenantId, date > heute 0 Uhr lokal, Gruppierung und Sortierung gleich). Die Übersicht-Karte „Aktuelle Werke“ (dashboard_repository) schickt die lokale Mitternacht ohne Umrechnung nach UTC → für heute eingetragene Werke fehlen dort. Gleicher Fehler wie x-7ff54f52b2 → mittel. Fix in #343. (Sol-Review 6665834233; R6-Erstprüfung hatte ok.)"
   }
  }
 }
