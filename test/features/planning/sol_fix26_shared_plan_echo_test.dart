@@ -97,11 +97,30 @@ void main() {
     await tester.pumpAndSettle();
   }
 
-  Finder minutesFields() =>
-      find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number);
-  Finder minutesField() => minutesFields().first;
+  /// Ionic shared-plan edit mode: minutes change through the field dialog
+  /// (tap the row → Dauer → Speichern).
+  Future<void> setMinutes(WidgetTester tester, String row, String minutes) async {
+    await tester.tap(find.text(row));
+    await tester.pumpAndSettle();
+    await tester.enterText(
+        find.byWidgetPredicate((w) => w is TextField && w.keyboardType == TextInputType.number), minutes);
+    await tester.tap(find.textContaining(RegExp(r'^speichern$', caseSensitive: false)).last);
+    // Let the dialog close (no pumpAndSettle: a held write keeps spinning).
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 400));
+  }
 
-  String minutesOnScreen(WidgetTester tester) => tester.widget<TextField>(minutesField()).controller!.text;
+  /// Minutes of the first row as shown: start time of row 2 minus row 1.
+  String minutesOnScreen(WidgetTester tester) {
+    final times = tester
+        .widgetList<Text>(find.byType(Text))
+        .map((t) => t.data)
+        .whereType<String>()
+        .where((s) => RegExp(r'^\d\d:\d\d$').hasMatch(s))
+        .toList();
+    int m(String s) => int.parse(s.substring(0, 2)) * 60 + int.parse(s.substring(3));
+    return '${m(times[1]) - m(times[0])}';
+  }
 
   Future<void> disposePage(WidgetTester tester) async {
     await tester.pumpWidget(const SizedBox());
@@ -111,9 +130,9 @@ void main() {
   /// Two completed writes (30 → 40 → 50), then both echoes in order: the
   /// editor stays at write 2 throughout and a follow-up save keeps it.
   Future<void> twoWritesThenEchoes(WidgetTester tester, String Function(Map<String, dynamic>) storedMinutes) async {
-    await tester.enterText(minutesField(), '40');
+    await setMinutes(tester, 'Einspielen', '40');
     await tester.pumpAndSettle();
-    await tester.enterText(minutesField(), '50');
+    await setMinutes(tester, 'Einspielen', '50');
     await tester.pumpAndSettle();
     expect(repo.calls, hasLength(2));
     expect(repo.storedRows, hasLength(2));
@@ -127,7 +146,7 @@ void main() {
     expect(minutesOnScreen(tester), '50');
 
     // A follow-up edit persists on top of write 2.
-    await tester.enterText(minutesFields().last, '9');
+    await setMinutes(tester, 'Stück B', '9');
     await tester.pumpAndSettle();
     expect(repo.calls, hasLength(3));
     expect(storedMinutes(repo.calls.last), '50');

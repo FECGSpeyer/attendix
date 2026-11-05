@@ -195,10 +195,9 @@ class _MemberTile extends StatelessWidget {
 
   Future<void> _launchUrl(String url) async {
     try {
-      final uri = Uri.parse(url);
-      if (await canLaunchUrl(uri)) {
-        await launchUrl(uri);
-      }
+      // No canLaunchUrl pre-check: without LSApplicationQueriesSchemes /
+      // <queries> it reports false for mailto:/tel: on iOS and Android 11+.
+      await launchUrl(Uri.parse(url));
     } catch (_) {
       // PWA may not support mailto:/tel: links
     }

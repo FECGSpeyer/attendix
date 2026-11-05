@@ -1,4 +1,7 @@
-package de.attendix.attendix
+// The launcher activity keeps the Ionic app's class name
+// (io.stephanus.attendix.MainActivity): launchers store home screen icons by
+// component name, a renamed launcher activity can drop them after the update.
+package io.stephanus.attendix
 
 import android.app.NotificationChannel
 import android.app.NotificationManager
@@ -6,6 +9,7 @@ import android.content.Intent
 import android.os.Build
 import android.os.Bundle
 import com.ryanheise.audioservice.AudioServiceActivity
+import de.attendix.attendix.R
 import de.attendix.attendix.liveplan.LiveActivityPlugin
 import io.flutter.embedding.engine.FlutterEngine
 

@@ -441,8 +441,11 @@ class _PersonDetailContentState extends ConsumerState<_PersonDetailContent> {
       } else if (field == 'joined') {
         _draft = _draft.copyWith(joined: value as String?);
       } else if (field == 'instrument') {
+        // Ionic onInstrumentChange(byUser): a moved person is no longer
+        // voice leader; saving then downgrades the voice leader role.
+        if (value != _selectedGroupId) _isLeader = false;
         _selectedGroupId = value as int?;
-        _draft = _draft.copyWith(instrument: value);
+        _draft = _draft.copyWith(instrument: value, isLeader: _isLeader);
       } else if (field == 'isLeader') {
         _isLeader = value as bool;
         _draft = _draft.copyWith(isLeader: value);
