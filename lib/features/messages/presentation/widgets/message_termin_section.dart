@@ -85,10 +85,9 @@ class _MessageTerminSectionState extends ConsumerState<MessageTerminSection> {
     final termin = _termin;
     if (termin == null || !widget.info.allowResponses) return false;
     if (widget.recipient?.personAttendanceId == null) return false;
-    final date = DateTime.tryParse(termin.date);
-    if (date == null) return false;
-    final open =
-        !DateTime.now().isAfter(date.add(const Duration(days: autoMessageResponseDays + 1)));
+    final until = autoMessageResponseUntil(termin.date);
+    if (until == null) return false;
+    final open = !DateTime.now().isAfter(until);
     return open && (_ownResponse == null || _ownResponse!.isPending);
   }
 
