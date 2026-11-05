@@ -2,14 +2,14 @@
 
 Ionic 4.19.9 (1923d203), 5684 Punkte in 213 Bausteinen.
 
-Flutter seit Urteil geändert: 776 Punkte (davon ok 507, Abweichungen 267), Stand 364aca4.
+Flutter seit Urteil geändert: 776 Punkte (davon ok 507, Abweichungen 267), Stand 925fca4.
 
 | Status | Anzahl |
 |---|---|
-| diff | 1252 |
+| diff | 1253 |
 | missing | 50 |
 | na | 248 |
-| ok | 4018 |
+| ok | 4017 |
 | zusammenfassend | 116 |
 
 `zusammenfassend`: Logik-Einträge mit diff/missing, deren Befunde einzeln als Zusatzbefunde stehen (nicht unter diff/missing gezählt).
@@ -107,7 +107,7 @@ Zusätzliche Befunde: 359
 - **services/db.service** `x-ca607be234` zusätzlicher Befund: Zusammenführen: Rolle des übernommenen Kontos – Befund real. Ionic mergePendingPlayerIntoExisting: updateTenantUser({role: PLAYER}) und Freigabe-Mail mit Rolle Mitglied, unabhängig von der Gruppe (wie approvePlayer). Flutter: accountRoleFor → Verantwortlich, wenn die Zielperson in der Hauptgruppe ist, sonst Spieler; schreibt diese Rolle in tenantUsers und die Mail. Ein zusammengeführtes Konto der Hauptgruppe erhält damit Verantwortlich-Rechte, die es in Ionic nicht hätte. Normales Genehmigen setzt in Flutter weiter Spieler.
 - **songs/song/song.page** `x-6e2b231559` zusätzlicher Befund: Werk und Werkhistorie aus Sitzungs-Cache – Real, aber zu niedrig bewertet. songByIdProvider/songHistoryProvider(id) sind family ohne autoDispose und leben die ganze App-Sitzung; nur Änderungen auf dieser Seite invalidieren sie (Realtime und Pull-to-Refresh der Werkliste nur songsProvider). Ionic lädt bei jedem Öffnen frisch. Folge für alle Rollen: Spieler sehen nach Upload/Ersetzen durch Dirigent beim erneuten Öffnen die alte Dateiliste (ersetzte Dateien → gelöschte Storage-URLs), ohne Hinweis; nur Pull-to-Refresh auf der Werkseite hilft. Falsche/fehlende Daten → hoch.
 - **attendance/attendance/attendance.page** `x-a5bcacc4df` zusätzlicher Befund: Checkliste wird nicht nachgeladen – Fremdänderungen werden überschrieben – Ionic: Realtime-Update (this.attendance = payload.new) und Resume-Refetch zeigen Checklisten-Änderungen anderer sofort; Abhaken/Hinzufügen/Löschen arbeitet auf der aktuellen Liste / Flutter: _localChecklist wird einmal geladen (_checklistLoaded), _onAttendanceUpdated und _onBecameVisible laden nur den Termin neu, die angezeigte Checkliste bleibt alt; das nächste Abhaken/Hinzufügen/Löschen schreibt die ganze alte Liste (_saveChecklist) und macht Häkchen oder Punkte anderer rückgängig; eine von anderen begonnene Checkliste erscheint nicht, „Checkliste starten“ bleibt im Menü.
-- **utilities/Utils** `x-562b23ba0c` zusätzlicher Befund: Teilen auf dem iPad schlägt fehl (share_plus ohne sharePositionOrigin) – Ionic: navigator.share (WKWebView) öffnet auf dem iPad das Teilen-Popover / Flutter (normales Design): Share.share/shareXFiles ohne sharePositionOrigin; share_plus 10.1.4 bricht auf dem iPad (Popover) mit FlutterError ab (FPPSharePlusPlugin.m:381-392), der Nutzer sieht nur „Fehler: …“. Betroffen: Werk-Datei/ZIP herunterladen (zip_service_io.dart → song_detail_page.dart:1139, zip_service.dart:58), Import-Vorlage (eigener Punkt people/import#effect-31a0aedd), Plan-Link teilen (plan_export_actions.dart:146), Datei-Link teilen (files_page.dart:433). Beide Apps unterstützen das iPad (TARGETED_DEVICE_FAMILY 1,2). Beta (rd_actions.dart) übergibt den Ursprung bereits. Außerdem Begleittext immer „Song-Dateien“.
+- **utilities/Utils** `x-562b23ba0c` zusätzlicher Befund: Teilen auf dem iPad schlägt fehl (share_plus ohne sharePositionOrigin) – Ionic: navigator.share bzw. Datei im Systemviewer, auf dem iPad als Popover / Flutter (normales Design): Share.shareXFiles ohne sharePositionOrigin in zip_service_io.dart; share_plus 10.1.4 bricht auf dem iPad (Popover) ab (FPPSharePlusPlugin.m:381-392), der Nutzer sieht nur „Fehler: …“. Betroffen sind Datei-Ausgaben: Werk-Datei bzw. ZIP herunterladen (song_detail_page.dart:1139, zip_service.dart:58) und die Import-Vorlage (eigener Punkt people/import#effect-31a0aedd). Nicht betroffen (Sol-Review): Datei-Links in der Dateiablage werden zuerst kopiert, Share.share ist nur der Fehlerpfad (files_page.dart:429); Plan-Links fallen bei Share-Fehler auf „Link kopiert“ zurück (plan_export_actions.dart:150) – auf dem iPad also Zwischenablage statt Teilen-Menü, Funktion bleibt (niedrig). Beta (rd_actions.dart) übergibt den Ursprung bereits; Begleittext immer „Song-Dateien“.
 
 ### mittel (206)
 
@@ -318,7 +318,7 @@ Zusätzliche Befunde: 359
 - **attendance/attendance/attendance.page** `x-47702cd6f0` zusätzlicher Befund: Erinnerung „nur Unentschiedene“ ohne Gruppenfilter – Ionic: neutralAppIds (und hasNeutralPersons) aus this.players → ein Stimmführer-Helfer ohne attendance_all_groups erinnert mit „nur Unentschiedene“ nur die eigene Gruppe / Flutter: neutralAppIds aus allen Personen des Termins → Push/E-Mail an Unentschiedene aller Gruppen. HELPER kann in beiden nicht senden.
 - **attendance/attendance/attendance.page** `x-e549f975e1` zusätzlicher Befund: „Person hinzufügen“ bietet ausstehende Registrierungen an – Ionic: Kandidaten aus db.getPlayers(true) = player mit pending = false (db.service.ts:1564) / Flutter: allPersonsForAttendanceProvider lädt alle player des Mandanten ohne pending-Filter, computeAddPersonCandidates filtert nur pausiert/ausgetreten → noch nicht freigegebene Anmeldungen stehen in der Liste und können dem Termin hinzugefügt werden.
 
-### niedrig (1367)
+### niedrig (1368)
 
 - **agenda-items/agenda-item-detail/agenda-item-detail.page** `loading-ff407ba2` agenda-items/agenda-item-detail/agenda-item-detail.page.ts:275 – Ionic: blockierendes Lade-Overlay beim Speichern / Flutter: kein Overlay, nur der Speichern-FAB ist während des Speicherns deaktiviert.
 - **agenda-items/agenda-item-detail/agenda-item-detail.page** `field-42aad74c` agenda-items/agenda-item-detail/agenda-item-detail.page.html:52 – Optionen „Niemand“ + aktive, nicht ausstehende Personen gleich. Ionic: Select als Vollbild-Modal mit „Abbrechen“, Sortierung localeCompare('de') / Flutter: Dropdown ohne Abbrechen, Sortierung per toLowerCase().compareTo (Umlaute wie „Ä…“ landen hinter Z).
@@ -565,6 +565,7 @@ Zusätzliche Befunde: 359
 - **org-plans/org-plans.page** `action-c21a87b3` org-plans/org-plans.page.html:125 – Ionic: Schließen-Button (X) rechts / Flutter: kein X, nur automatischer Zurück-Pfeil links
 - **org-plans/org-plans.page** `action-6428e040-2` org-plans/org-plans.page.html:134 – Titel, „dd, TT.MM.JJJJ · N Punkte“ (Punkte nur > 0), Instanzname bzw. „Org-Plan“, Tipp öffnet Plan-Viewer – gleich. Ionic: Instanz-Label GROSSBUCHSTABEN/fett, Chevron auch bei Ad-hoc-Plänen neben dem Papierkorb / Flutter: Label 12px grau normal, Ad-hoc-Zeilen ohne Chevron
 - **org-settings/org-person-fields/org-person-fields.page** `modal-b6eb6b51` org-settings/org-person-fields/org-person-fields.page.html:40 – Auslöser und Rolle gleich (nur Admin über „+“), Bottom-Sheet. Erstprüfer nannte die Abweichung, wertete aber ok: Ionic: newField bleibt nach Wegwischen erhalten, erneutes Öffnen zeigt die letzten Eingaben (Typ, Name, Optionen …) / Flutter: Sheet startet jedes Mal leer, Eingaben gehen beim Wegwischen verloren.
+- **org-settings/org-person-fields/org-person-fields.page** `field-d6141d03` org-settings/org-person-fields/org-person-fields.page.html:73 – Sol-Review: nicht ohne Wirkung. Flutter speichert editableByPlayers = visible && editable; wird ein Feld ausgeblendet und später wieder sichtbar gemacht, steht „Von Mitgliedern bearbeitbar“ auf aus, Ionic behält den gespeicherten Wert. Der Schalter zeigt den Stand korrekt und lässt sich wieder einschalten → nach Leons Regel (Funktion gleich) niedrig.
 - **org-settings/org-person-fields/org-person-fields.page** `field-44f78df0` org-settings/org-person-fields/org-person-fields.page.html:109 – Label „Standardwert (optional)“, Zahlen-Tastatur bei Zahl gleich. Ionic: bei Typ Datum Eingabe type=date (Datumsauswahl) / Flutter: freies Textfeld ohne Datumsauswahl
 - **org-settings/org-person-fields/org-person-fields.page** `action-db01f6fe` org-settings/org-person-fields/org-person-fields.page.html:134 – Ionic: Schließen-Button (X) in der Kopfzeile des Bearbeiten-Modals / Flutter: kein X, Schließen nur durch Wegwischen/Antippen außerhalb
 - **org-settings/org-person-fields/org-person-fields.page** `field-7b3e761d` org-settings/org-person-fields/org-person-fields.page.html:147 – Flutter besser: leerer Name beim Übernehmen → Toast „Bitte gib einen gültigen Namen für das Zusatzfeld ein.“ / Ionic übernimmt den leeren Namen, Fehler erst beim Speichern („Ungültige Organisations-Zusatzfelder.“)

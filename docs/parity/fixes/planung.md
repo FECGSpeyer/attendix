@@ -128,7 +128,7 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
   Flutter besser: Ionic: ohne Bearbeitungsschlüssel kein Realtime – Änderungen erst nach Neuladen, gelöschter/widerrufener Plan bleibt sichtbar; Archivieren während der Bearbeitung wird nicht erkannt / Flutter: Abruf der öffentlichen Spalten alle 15 s (pausiert im Hintergrund), weg → „Plan nicht gefunden…“; Termin archiviert → Bearbeitungsansicht geschlossen
   Flutter: lib/features/planning/presentation/pages/shared_plan_page.dart:310-352, lib/features/planning/presentation/pages/shared_plan_page.dart:392-400
 
-## Kleinigkeiten (niedrig): 154
+## Kleinigkeiten (niedrig): 155
 
 - [ ] **niedrig** `org-plan-public/org-plan-public.page` `db-b7046159` [org-plan-public/org-plan-public.page.ts:182](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-plan-public/org-plan-public.page.ts#L182) (2. Prüfung: bestätigt)
   Ionic: je kommendem Plan Realtime-Kanal (UPDATE attendance bzw. shared_plans, id=eq), Titel/Zeit/Ende/Felder sofort aktualisiert / Flutter: bewusst kein Realtime (SOL_FIX7, Payload enthielte Edit-Keys), stattdessen alle 15 s dieselben öffentlichen Selects; nur bereits angezeigte kommende Einträge werden ersetzt → Änderungen bis zu 15 s verzögert.
@@ -256,6 +256,9 @@ Erzeugt mit `node tool/parity/parity.mjs fixlists` aus `docs/parity/status/`. It
 - [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `modal-b6eb6b51` [org-settings/org-person-fields/org-person-fields.page.html:40](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-settings/org-person-fields/org-person-fields.page.html#L40) (2. Prüfung: korrigiert)
   Auslöser und Rolle gleich (nur Admin über „+“), Bottom-Sheet. Erstprüfer nannte die Abweichung, wertete aber ok: Ionic: newField bleibt nach Wegwischen erhalten, erneutes Öffnen zeigt die letzten Eingaben (Typ, Name, Optionen …) / Flutter: Sheet startet jedes Mal leer, Eingaben gehen beim Wegwischen verloren.
   Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:52, lib/features/organisation/presentation/pages/org_person_fields_page.dart:269
+- [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `field-d6141d03` [org-settings/org-person-fields/org-person-fields.page.html:73](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-settings/org-person-fields/org-person-fields.page.html#L73) (2. Prüfung: korrigiert)
+  Sol-Review: nicht ohne Wirkung. Flutter speichert editableByPlayers = visible && editable; wird ein Feld ausgeblendet und später wieder sichtbar gemacht, steht „Von Mitgliedern bearbeitbar“ auf aus, Ionic behält den gespeicherten Wert. Der Schalter zeigt den Stand korrekt und lässt sich wieder einschalten → nach Leons Regel (Funktion gleich) niedrig.
+  Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:327, lib/features/organisation/presentation/pages/org_person_fields_page.dart:384
 - [ ] **niedrig** `org-settings/org-person-fields/org-person-fields.page` `field-44f78df0` [org-settings/org-person-fields/org-person-fields.page.html:109](https://github.com/FECGSpeyer/attendance/blob/1923d203/src/app/org-settings/org-person-fields/org-person-fields.page.html#L109)
   Label „Standardwert (optional)“, Zahlen-Tastatur bei Zahl gleich. Ionic: bei Typ Datum Eingabe type=date (Datumsauswahl) / Flutter: freies Textfeld ohne Datumsauswahl
   Flutter: lib/features/organisation/presentation/pages/org_person_fields_page.dart:430

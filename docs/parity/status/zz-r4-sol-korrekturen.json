@@ -1,0 +1,27 @@
+{
+ "batch": "zz-r4-sol-korrekturen",
+ "ionic": "1923d203",
+ "flutter": "8004a44",
+ "afterRound": 4,
+ "note": "Korrekturen aus Sol-Review 6654718299 zu Runde 4.",
+ "items": {
+  "org-settings/org-person-fields/org-person-fields.page#field-d6141d03": {
+   "s": "diff",
+   "sev": "niedrig",
+   "f": [
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:327",
+    "lib/features/organisation/presentation/pages/org_person_fields_page.dart:384"
+   ],
+   "n": "Sol-Review: nicht ohne Wirkung. Flutter speichert editableByPlayers = visible && editable; wird ein Feld ausgeblendet und später wieder sichtbar gemacht, steht „Von Mitgliedern bearbeitbar“ auf aus, Ionic behält den gespeicherten Wert. Der Schalter zeigt den Stand korrekt und lässt sich wieder einschalten → nach Leons Regel (Funktion gleich) niedrig.",
+   "v": "korrigiert"
+  },
+  "x-562b23ba0c": {
+   "n": "Ionic: navigator.share bzw. Datei im Systemviewer, auf dem iPad als Popover / Flutter (normales Design): Share.shareXFiles ohne sharePositionOrigin in zip_service_io.dart; share_plus 10.1.4 bricht auf dem iPad (Popover) ab (FPPSharePlusPlugin.m:381-392), der Nutzer sieht nur „Fehler: …“. Betroffen sind Datei-Ausgaben: Werk-Datei bzw. ZIP herunterladen (song_detail_page.dart:1139, zip_service.dart:58) und die Import-Vorlage (eigener Punkt people/import#effect-31a0aedd). Nicht betroffen (Sol-Review): Datei-Links in der Dateiablage werden zuerst kopiert, Share.share ist nur der Fehlerpfad (files_page.dart:429); Plan-Links fallen bei Share-Fehler auf „Link kopiert“ zurück (plan_export_actions.dart:150) – auf dem iPad also Zwischenablage statt Teilen-Menü, Funktion bleibt (niedrig). Beta (rd_actions.dart) übergibt den Ursprung bereits; Begleittext immer „Song-Dateien“.",
+   "f": [
+    "lib/core/services/zip_service_io.dart:14",
+    "lib/core/services/zip_service.dart:58",
+    "lib/features/songs/presentation/pages/song_detail_page.dart:1139"
+   ]
+  }
+ }
+}
