@@ -3,7 +3,10 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/config/supabase_config.dart';
 import '../../../../core/providers/legal_providers.dart';
+import '../../../../core/providers/tenant_providers.dart';
+import '../../../../core/utils/dashboard_logic.dart';
 import '../../../../core/constants/app_constants.dart';
 import '../../../../core/theme/app_colors.dart';
 import '../../../../core/utils/toast_helper.dart';
@@ -37,12 +40,40 @@ class _TermsPageState extends ConsumerState<TermsPage> {
     super.initState();
     _privacyRecognizer = TapGestureRecognizer()
       ..onTap = () => showLegalModal(context);
+    // Opened with the terms already accepted while the role still loads:
+    // the router keeps /terms then, so leave once the role is there.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (!mounted || !ref.read(accountRepositoryProvider).hasAcceptedTerms) {
+        return;
+      }
+      _goHome();
+    });
   }
 
   @override
   void dispose() {
     _privacyRecognizer.dispose();
     super.dispose();
+  }
+
+  /// Ionic: navigateByUrl(Utils.getUrl(tenantUser.role)) – the start page
+  /// of the open instance; without one '/register' (create an instance
+  /// when there is none, otherwise the selection).
+  Future<void> _goHome() async {
+    final tenantId = ref.read(currentTenantIdProvider);
+    if (tenantId == null) {
+      context.go('/register');
+      return;
+    }
+    try {
+      await ref.read(currentTenantUserProvider.future);
+    } catch (_) {}
+    if (!mounted) return;
+    context.go(homeRouteFor(
+      ref.read(currentRoleProvider),
+      tenantId,
+      ref.read(supabaseClientProvider).auth.currentUser?.userMetadata,
+    ));
   }
 
   Future<void> _accept() async {
@@ -52,16 +83,32 @@ class _TermsPageState extends ConsumerState<TermsPage> {
       return;
     }
     setState(() => _saving = true);
+    // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
+    // Taken before the update: the router also leaves /terms on the user
+    // update and must not use it up first.
+    final pending = PendingFileLink.consume();
     try {
       await ref.read(accountNotifierProvider.notifier).acceptTerms();
-      // REVIEW_FIX2: resume a link stashed before login (kept through /terms).
-      if (mounted) context.go(PendingFileLink.consume() ?? '/tenants');
+      if (!mounted) return;
+      if (pending != null) {
+        context.go(pending);
+        return;
+      }
+      // The router may already have left /terms after the user update
+      // (same targets as below).
+      if (GoRouter.of(context).routerDelegate.currentConfiguration.uri.path !=
+          '/terms') {
+        return;
+      }
+      await _goHome();
     } on SessionExpiredException {
+      if (pending != null) PendingFileLink.set(pending);
       if (!mounted) return;
       context.go('/login');
       ToastHelper.showWarning(
           context, context.l10n.termsSessionExpired);
     } catch (_) {
+      if (pending != null) PendingFileLink.set(pending);
       if (mounted) {
         ToastHelper.showError(
             context, context.l10n.termsSaveFailed);
