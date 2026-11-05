@@ -992,6 +992,16 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
     }
   }
 
+  /// The visible start plan of a Termin without stored plan is not written
+  /// on opening (Ionic). An explicit action that needs a stored plan (share
+  /// link, another plan) marks it as pending first, so the following
+  /// [_flushSaves] stores it.
+  void _markStartPlanPending() {
+    final att = _att;
+    if (att == null || _dirty || _fields.isEmpty || PlanUtils.allPlans(att).isNotEmpty) return;
+    _dirty = true;
+  }
+
   /// SOL_FIX24: runs [task] with the page blocked (overlay, no focus, no
   /// close) so the editor cannot change while [task] writes and reloads it.
   Future<T> _whileBusy<T>(Future<T> Function() task) async {
@@ -1266,6 +1276,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningCreateRunSheetFirst);
       return;
     }
+    // The start plan becomes the first plan, the new one the second.
+    _markStartPlanPending();
     if (!await _flushSaves() || !mounted) return;
     final choice = await showAppDialog<String>(
       context: context,
@@ -1886,6 +1898,8 @@ class _PlanningPageState extends ConsumerState<PlanningPage> {
       ToastHelper.showWarning(context, context.l10n.planningChooseEventFirst);
       return;
     }
+    // The shared page needs a stored plan: store the visible start plan.
+    _markStartPlanPending();
     // SOL_FIX24: sharing keeps the editor, so an invalid plan does not block.
     if (!await _flushSaves(blockInvalid: false) || !mounted) return;
     final action = await showPlanActionSheet<String>(
