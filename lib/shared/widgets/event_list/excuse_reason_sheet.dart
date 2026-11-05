@@ -529,12 +529,22 @@ class _RegistrationFieldAlertState extends State<_RegistrationFieldAlert> {
     final icon = checkbox
         ? (checked ? Icons.check_box : Icons.check_box_outline_blank)
         : (checked ? Icons.radio_button_checked : Icons.radio_button_unchecked);
-    return ListTile(
-      dense: true,
-      contentPadding: EdgeInsets.zero,
-      leading: Icon(icon, color: checked ? primary : null),
-      title: Text(label),
+    // Selection state is only shown via the icon: expose it to screen readers.
+    return Semantics(
+      container: true,
+      button: true,
+      checked: checked,
+      inMutuallyExclusiveGroup: !checkbox,
+      label: label,
       onTap: onTap,
+      excludeSemantics: true,
+      child: ListTile(
+        dense: true,
+        contentPadding: EdgeInsets.zero,
+        leading: Icon(icon, color: checked ? primary : null),
+        title: Text(label),
+        onTap: onTap,
+      ),
     );
   }
 
