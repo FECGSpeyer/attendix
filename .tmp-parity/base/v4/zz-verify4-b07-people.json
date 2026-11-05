@@ -1,0 +1,39 @@
+{
+ "batch": "zz-verify4-b07-people",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "people/import/import.page",
+   "ionic": {
+    "ts": "people/import/import.page.ts",
+    "html": "people/import/import.page.html"
+   },
+   "item": {
+    "kind": "effect",
+    "file": "people/import/import.page.ts",
+    "line": 275,
+    "method": "ImportPage.downloadTemplate",
+    "cond": [],
+    "call": "Utils.saveWorkbook",
+    "args": "wb, 'Personen_Import_Vorlage.xlsx'",
+    "src": "a347a6f4",
+    "mbody": "9bf491f9",
+    "id": "people/import/import.page#effect-31a0aedd"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/people/presentation/pages/person_import_page.dart:119",
+     "lib/features/people/presentation/pages/person_import_page.dart:137",
+     "lib/core/utils/import_file_io.dart:25",
+     "lib/core/services/zip_service_io.dart:9",
+     "lib/core/services/zip_service_web.dart:7"
+    ],
+    "n": "Datei 'Personen_Import_Vorlage.xlsx', Blatt 'Import', Kopf- und Beispielzeile wie Ionic (Org-Zusatzfelder fehlen: eigener Befund). Ionic saveWorkbook: nativ Datei in Cache + Systemviewer, mobiler Browser Web-Share-Sheet, Desktop Download / Flutter: nativ Teilen-Dialog (share_plus) mit Begleittext 'Song-Dateien', im Web immer Anker-Download (Blob-Typ application/zip); bei Fehler Toast 'Fehler: …' nur in Flutter.",
+    "sev": "mittel",
+    "v": null
+   }
+  }
+ ]
+}

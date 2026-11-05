@@ -1,0 +1,1017 @@
+{
+ "batch": "zz-verify4-b10-planning-org",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plans/org-plans.page.html",
+    "line": 39,
+    "cond": [
+     "@if (!db.organisation())"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "keys": [
+     "plans.noOrg"
+    ],
+    "de": [
+     "Diese Instanz ist keiner Organisation zugeordnet."
+    ],
+    "literals": [],
+    "text": "{{ 'plans.noOrg' | transloco }}",
+    "id": "org-plans/org-plans.page#text-5c845db6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:252"
+    ],
+    "n": "„Diese Instanz ist keiner Organisation zugeordnet.“ mit Info-Icon",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 80,
+    "cond": [
+     "@else (not !db.organisation() / loading / upcomingPlans.length === 0)",
+     "@for (entry of upcomingPlans; track $index)",
+     "in <ion-item>",
+     "@if (entry.kind === 'adhoc')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear",
+     "color": "medium"
+    },
+    "events": [
+     "(click)=$event.stopPropagation(); deleteAdHocPlan(entry)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-plans/org-plans.page#action-07229903"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:168"
+    ],
+    "n": "Papierkorb (delete_outline, grau) nur bei Ad-hoc-Plänen → Lösch-Sheet",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 92,
+    "cond": [
+     "@if (pastPlans.length > 0 || db.organisation())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "",
+     "lines": "none",
+     "[routerLink]": "\"isTabRoute ? '/tabs/org-plans/planung' : '/tabs/settings/org-plans/planung'\""
+    },
+    "events": [],
+    "link": "\"isTabRoute ? '/tabs/org-plans/planung' : '/tabs/settings/org-plans/planung'\"",
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-circle-outline"
+    ],
+    "keys": [
+     "plans.openPlanning"
+    ],
+    "de": [
+     "Ablaufplanung öffnen"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.openPlanning' | transloco }}",
+    "id": "org-plans/org-plans.page#action-cff3f483"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:279",
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:318"
+    ],
+    "n": "„Ablaufplanung öffnen“ (add_circle_outline, primär) → /org-plans-tab/planung bzw. /settings/org-plans/planung; während Laden/Fehler ausgeblendet (siehe extra)",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-plans/org-plans.page.html",
+    "line": 97,
+    "cond": [
+     "@if (pastPlans.length > 0 || db.organisation())",
+     "@if (pastPlans.length > 0)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false",
+     "lines": "none"
+    },
+    "events": [
+     "(click)=showHistory = true"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "time-outline"
+    ],
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.pastPlans' | transloco }}",
+    "id": "org-plans/org-plans.page#action-3a0eef49"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:287"
+    ],
+    "n": "„Vergangene Pläne“ grau mit Uhr-Icon (history), nur bei vergangenen Plänen",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-plans/org-plans.page",
+   "ionic": {
+    "ts": "org-plans/org-plans.page.ts",
+    "html": "org-plans/org-plans.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-plans/org-plans.page.html",
+    "line": 123,
+    "cond": [
+     "in <ion-modal isOpen=\"showHistory\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "plans.pastPlans"
+    ],
+    "de": [
+     "Vergangene Pläne"
+    ],
+    "literals": [],
+    "text": "{{ 'plans.pastPlans' | transloco }}",
+    "id": "org-plans/org-plans.page#text-bac34896"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_plans_page.dart:150"
+    ],
+    "n": "„Vergangene Pläne“",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 10,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "[disabled]": "\"isSaving || !isSuperAdmin\""
+    },
+    "events": [
+     "(click)=save()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-dbb21843"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:170"
+    ],
+    "n": "Häkchen, deaktiviert während Speichern oder ohne Admin-Rolle",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 36,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "id": "addOrgFieldBtn",
+     "fill": "clear",
+     "size": "small",
+     "[disabled]": "\"!isSuperAdmin\""
+    },
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-0bece271"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:151"
+    ],
+    "n": "„+“ im Header, nur für Admin aktiv, öffnet Hinzufügen-Sheet",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 40,
+    "cond": [],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "addOrgFieldBtn",
+     "#": "addOrgFieldModal"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "org-settings/org-person-fields/org-person-fields.page#modal-b6eb6b51"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:52",
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:269"
+    ],
+    "n": "Bottom-Sheet mit Titel „Neues Feld hinzufügen“ (Ionic Sheet mit Breakpoints [0,1]); Flutter startet jedes Mal leer, Ionic behält nach Wegwischen die letzten Eingaben",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 43,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "extraFields.addNew"
+    ],
+    "de": [
+     "Neues Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.addNew' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-2cad8859"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:344"
+    ],
+    "n": "„Neues Feld hinzufügen“",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 59,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.name\"",
+    "bindings": [
+     "[label]=\"'typeSettings.name' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "typeSettings.name"
+    ],
+    "de": [
+     "Name"
+    ],
+    "literals": [],
+    "text": "[label]=\"'typeSettings.name' | transloco\"",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-a8961219"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:362"
+    ],
+    "n": "„Name“, Großschreibung am Satzanfang",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 62,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-select",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.displayMode\"",
+    "bindings": [
+     "[label]=\"'extraFields.display' | transloco\""
+    ],
+    "icons": [],
+    "options": [
+     {
+      "value": "chip",
+      "keys": [
+       "extraFields.asChip"
+      ],
+      "de": [
+       "Als Chip"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.asChip' | transloco }}\"chip\""
+     },
+     {
+      "value": "underneath",
+      "keys": [
+       "extraFields.underName"
+      ],
+      "de": [
+       "Unter dem Namen"
+      ],
+      "literals": [],
+      "text": "{{ 'extraFields.underName' | transloco }}\"underneath\""
+     }
+    ],
+    "keys": [
+     "extraFields.display",
+     "extraFields.asChip",
+     "extraFields.underName"
+    ],
+    "de": [
+     "Anzeige in Listen",
+     "Als Chip",
+     "Unter dem Namen"
+    ],
+    "literals": [],
+    "text": "[label]=\"'extraFields.display' | transloco\" \"chip\" {{ 'extraFields.asChip' | transloco }} \"underneath\" {{ 'extraFields.underName' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-520a069e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:367"
+    ],
+    "n": "„Anzeige in Listen“: Als Chip / Unter dem Namen, Standard Chip",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 68,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.visibleToPlayers\"",
+    "bindings": [
+     "[helperText]=\"'extraFields.visibleHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.visibleHelper",
+     "extraFields.visible"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder dieses Feld in ihren Stammdaten sehen können.",
+     "Für Mitglieder sichtbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'extraFields.visibleHelper' | transloco\" {{ 'extraFields.visible' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-e81d372e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:377"
+    ],
+    "n": "„Für Mitglieder sichtbar“ mit Hilfetext, Standard aus",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 73,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.visibleToPlayers)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.editableByPlayers\"",
+    "bindings": [
+     "[helperText]=\"'extraFields.editableHelper' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.editableHelper",
+     "extraFields.editable"
+    ],
+    "de": [
+     "Aktivieren, damit Mitglieder den Wert selbst ändern können.",
+     "Von Mitgliedern bearbeitbar"
+    ],
+    "literals": [],
+    "text": "[helperText]=\"'extraFields.editableHelper' | transloco\" {{ 'extraFields.editable' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-d6141d03"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:384"
+    ],
+    "n": "„Von Mitgliedern bearbeitbar“ mit Hilfetext nur bei sichtbar; Flutter speichert editableByPlayers=false, wenn „sichtbar“ aus ist (Ionic behält den Wert) – ohne sichtbare Wirkung",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 81,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "typeSettings.options"
+    ],
+    "de": [
+     "Optionen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.options' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-c96d82b0"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:395"
+    ],
+    "n": "„Optionen“",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 82,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.type === fieldTypes.SELECT)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "size": "small"
+    },
+    "events": [
+     "(click)=addNewOption()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "add-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-a128acc3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:396"
+    ],
+    "n": "„+“ fügt leere Option an",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 88,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.type === fieldTypes.SELECT)",
+     "@if (!newField.options?.length)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.noOptionsSelected"
+    ],
+    "de": [
+     "Keine Optionen ausgewählt"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.noOptionsSelected' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-e85d8c9c"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:402"
+    ],
+    "n": "„Keine Optionen ausgewählt“",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 92,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.type === fieldTypes.SELECT)",
+     "@else (not !newField.options?.length)",
+     "@for (option of newField.options; track $index; let index = $index)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "[value]": "\"option\""
+    },
+    "events": [
+     "(ionInput)=updateNewOption(index, $any($event.target).value ?? '')"
+    ],
+    "link": null,
+    "model": "[value]=\"option\"",
+    "bindings": [
+     "[helperText]=\"index === 0 ? 'Erste Option ist der Standardwert' : undefined\"",
+     "[placeholder]=\"'extraFields.valuePh' | transloco\""
+    ],
+    "icons": [],
+    "keys": [
+     "extraFields.valuePh"
+    ],
+    "de": [
+     "Wert eingeben..."
+    ],
+    "literals": [
+     "index === 0 ? 'Erste Option ist der Standardwert' : undefined"
+    ],
+    "text": "[helperText]=\"index === 0 ? 'Erste Option ist der Standardwert' : undefined\" [placeholder]=\"'extraFields.valuePh' | transloco\"",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-1e4f0881"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:407"
+    ],
+    "n": "Platzhalter „Wert eingeben...“, Hilfetext „Erste Option ist der Standardwert“ bei der ersten Option",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 95,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@if (newField.type === fieldTypes.SELECT)",
+     "@else (not !newField.options?.length)",
+     "@for (option of newField.options; track $index; let index = $index)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=removeNewOption(index)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-8b32ffc1"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:416"
+    ],
+    "n": "Papierkorb (rot) entfernt Option",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 106,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@else (not newField.type === fieldTypes.SELECT)",
+     "@if (newField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "extraFields.defaultValue"
+    ],
+    "de": [
+     "Standardwert"
+    ],
+    "literals": [],
+    "text": "{{ 'extraFields.defaultValue' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#text-8e53f70a"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:425"
+    ],
+    "n": "„Standardwert“",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 107,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>",
+     "@else (not newField.type === fieldTypes.SELECT)",
+     "@if (newField.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"newField.defaultValue\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#field-ca3e38af"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:423"
+    ],
+    "n": "Schalter Standardwert (Ja/Nein), Standard aus",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "via": "ausloeser",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 118,
+    "cond": [
+     "in <ion-modal trigger=addOrgFieldBtn #addOrgFieldModal>"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=addField(addOrgFieldModal)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "typeSettings.addField"
+    ],
+    "de": [
+     "Feld hinzufügen"
+    ],
+    "literals": [],
+    "text": "{{ 'typeSettings.addField' | transloco }}",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-ca7f0f1f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:436"
+    ],
+    "n": "„Feld hinzufügen“ (FilledButton statt primärem Listeneintrag)",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 232,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "primary",
+     "size": "small",
+     "[disabled]": "\"!isSuperAdmin\""
+    },
+    "events": [
+     "(click)=openEditField(index)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "pencil-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-c43ceb90"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:254"
+    ],
+    "n": "Stift (primär), nur Admin",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "org-settings/org-person-fields/org-person-fields.page",
+   "ionic": {
+    "ts": "org-settings/org-person-fields/org-person-fields.page.ts",
+    "html": "org-settings/org-person-fields/org-person-fields.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "org-settings/org-person-fields/org-person-fields.page.html",
+    "line": 235,
+    "cond": [
+     "in <ion-reorder-group>"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "fill": "clear",
+     "color": "danger",
+     "size": "small",
+     "[disabled]": "\"!isSuperAdmin\""
+    },
+    "events": [
+     "(click)=removeField(index)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "org-settings/org-person-fields/org-person-fields.page#action-cdcf5534"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/organisation/presentation/pages/org_person_fields_page.dart:258"
+    ],
+    "n": "Papierkorb (rot), nur Admin → Rückfrage",
+    "v": null
+   }
+  }
+ ]
+}

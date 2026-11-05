@@ -1,0 +1,132 @@
+{
+ "batch": "zz-verify4-b24-settings-general",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 299,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howEvery5' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howEvery5"
+    ],
+    "de": [
+     "Erinnerungen werden <strong>alle 5 Minuten</strong> geprüft und versendet."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howEvery5' | transloco\"",
+    "id": "settings/general/type/type.page#text-d58b9b25"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:91-92",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+     "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+    ],
+    "n": "„Erinnerungen werden alle 5 Minuten geprüft und versendet.“ mit fettem Teil (StrongHtmlText) und Uhr-Icon in Primärfarbe, nur bei notification. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite (nur Admin/Verantwortlich in beiden).",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 305,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howRemaining' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howRemaining"
+    ],
+    "de": [
+     "Die Erinnerung wird versendet, sobald die <strong>verbleibende Zeit</strong> dem konfigurierten Wert entspricht."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howRemaining' | transloco\"",
+    "id": "settings/general/type/type.page#text-c9c25629"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:93-95",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+     "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+    ],
+    "n": "„Die Erinnerung wird versendet, sobald die verbleibende Zeit …“ mit fettem Teil, Rechner-Icon. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/general/type/type.page",
+   "ionic": {
+    "ts": "settings/general/type/type.page.ts",
+    "html": "settings/general/type/type.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/general/type/type.page.html",
+    "line": 311,
+    "cond": [
+     "@if (type)",
+     "@if (type.notification)",
+     "in <ion-modal trigger=reminders-modal-trigger>"
+    ],
+    "tag": "p",
+    "attrs": {},
+    "bindings": [
+     "[innerHTML]=\"'typeSettings.howMax' | transloco\""
+    ],
+    "keys": [
+     "typeSettings.howMax"
+    ],
+    "de": [
+     "Maximal <strong>3 Erinnerungen</strong> pro Termintyp möglich."
+    ],
+    "literals": [],
+    "text": "[innerHTML]=\"'typeSettings.howMax' | transloco\"",
+    "id": "settings/general/type/type.page#text-79b4c15e"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:96-97",
+     "lib/features/settings/presentation/widgets/type_reminders_editor.dart:189-199",
+     "lib/features/settings/presentation/widgets/strong_html_text.dart:5-36"
+    ],
+    "n": "„Maximal 3 Erinnerungen pro Termintyp möglich.“ mit fettem Teil, Glocken-Icon. Sheet→inline ist bei modal-0895b1d0 erfasst. Rolle wie Seite.",
+    "v": null
+   }
+  }
+ ]
+}

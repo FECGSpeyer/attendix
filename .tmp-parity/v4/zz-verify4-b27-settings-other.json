@@ -1,0 +1,203 @@
+{
+ "batch": "zz-verify4-b27-settings-other",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/delete-account/delete-account.page",
+   "ionic": {
+    "ts": "settings/delete-account/delete-account.page.ts",
+    "html": "settings/delete-account/delete-account.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/delete-account/delete-account.page.html",
+    "line": 41,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "color": "danger",
+     "class": "ion-margin-top",
+     "[disabled]": "\"!canDelete()\""
+    },
+    "events": [
+     "(click)=deleteAccount()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "trash-outline"
+    ],
+    "keys": [
+     "deleteAccount.deleteForever"
+    ],
+    "de": [
+     "Konto endgültig löschen"
+    ],
+    "literals": [],
+    "text": "{{ 'deleteAccount.deleteForever' | transloco }}",
+    "id": "settings/delete-account/delete-account.page#action-ffefb702"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/delete_account_page.dart:205-223"
+    ],
+    "n": "Zusätzlich während des Löschens deaktiviert.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/files/files-move-modal/files-move-modal.component",
+   "ionic": {
+    "ts": "settings/files/files-move-modal/files-move-modal.component.ts",
+    "html": "settings/files/files-move-modal/files-move-modal.component.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/files/files-move-modal/files-move-modal.component.html",
+    "line": 62,
+    "cond": [],
+    "tag": "ion-button",
+    "attrs": {
+     "expand": "block",
+     "[disabled]": "\"!canConfirm\""
+    },
+    "events": [
+     "(click)=confirm()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "swap-horizontal-outline"
+    ],
+    "keys": [
+     "filesMove.moveHere"
+    ],
+    "de": [
+     "{count, plural, one {Hierher verschieben} other {# Einträge hierher verschieben}}"
+    ],
+    "literals": [],
+    "text": "{{ 'filesMove.moveHere' | transloco: { count: items.length } }}",
+    "id": "settings/files/files-move-modal/files-move-modal.component#action-c0b95fe6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/widgets/files_move_modal.dart:259-265"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 108,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)",
+     "@if (maxBytes !== null)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "files.storageUsedOf"
+    ],
+    "de": [
+     "Speicher: {used} von {max} belegt"
+    ],
+    "literals": [],
+    "text": "{{ 'files.storageUsedOf' | transloco: { used: formatFileSize(usedBytes), max: formatFileSize(maxBytes) } }}",
+    "id": "settings/files/files.page#text-7c9c40ef"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1189-1201",
+     "lib/core/providers/files_providers.dart:117-125"
+    ],
+    "n": "Nur Admin/Verantwortlich mit geladener Belegung und Limit (tenants.files_max_bytes): „Speicher: {used} von {max} belegt“, gleiche Größenformatierung (B/KB/MB/GB, eine Nachkommastelle), über Breadcrumbs/unter Suche wie Ionic.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/files/files.page.html",
+    "line": 108,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)",
+     "@else (not maxBytes !== null)"
+    ],
+    "tag": "#text",
+    "keys": [
+     "files.storageUsed"
+    ],
+    "de": [
+     "Speicher: {used} belegt"
+    ],
+    "literals": [],
+    "text": "{{ 'files.storageUsed' | transloco: { used: formatFileSize(usedBytes) } }}",
+    "id": "settings/files/files.page#text-9dbd2f61"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1192-1194"
+    ],
+    "n": "Ohne Limit „Speicher: {used} belegt“; gleiche Rollen-/Ladebedingung wie Ionic.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/files/files.page",
+   "ionic": {
+    "ts": "settings/files/files.page.ts",
+    "html": "settings/files/files.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "settings/files/files.page.html",
+    "line": 111,
+    "cond": [
+     "@if (canEditEntries && usedBytes !== null)",
+     "@if (maxBytes !== null)"
+    ],
+    "tag": "ion-progress-bar",
+    "attrs": {
+     "[value]": "\"usedBytes / maxBytes\"",
+     "[color]": "\"usedBytes >= maxBytes * 0.9 ? 'danger' : 'primary'\""
+    },
+    "bindings": [
+     "[value]=\"usedBytes / maxBytes\"",
+     "[color]=\"usedBytes >= maxBytes * 0.9 ? 'danger' : 'primary'\""
+    ],
+    "id": "settings/files/files.page#media-b8018f1d"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/settings/presentation/pages/files_page.dart:1202-1208"
+    ],
+    "n": "Fortschrittsbalken used/max, rot ab 90 %, sonst Primärfarbe, nur mit Limit (Flutter zusätzlich max > 0; Limit 0 praktisch ohne Bedeutung).",
+    "v": null
+   }
+  }
+ ]
+}

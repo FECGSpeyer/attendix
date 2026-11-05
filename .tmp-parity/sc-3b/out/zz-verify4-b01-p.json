@@ -1,0 +1,52 @@
+{
+ "batch": "zz-verify4-b01-p",
+ "ionicCommit": "c1",
+ "items": [
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "p/page",
+   "ionic": {
+    "ts": "p/page.ts",
+    "html": "p/page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "p/page.html",
+    "line": 2,
+    "cond": [],
+    "tag": "p",
+    "de": [
+     "Hallo"
+    ],
+    "id": "p/page#text-2"
+   },
+   "first": {
+    "s": "ok",
+    "n": "PR #1",
+    "v": null,
+    "src": "zz-fixed-p.json"
+   }
+  },
+  {
+   "reason": "behoben-ungeprueft",
+   "unit": "p/page",
+   "ionic": {
+    "ts": "p/page.ts",
+    "html": "p/page.html"
+   },
+   "extra": {
+    "id": "x-31bd3a3bef",
+    "title": "H",
+    "n": "Notiz H",
+    "sev": "hoch",
+    "ionic": null,
+    "f": [],
+    "stale": false
+   },
+   "fix": {
+    "src": "zz-fixed-p.json",
+    "n": "PR #1"
+   }
+  }
+ ]
+}

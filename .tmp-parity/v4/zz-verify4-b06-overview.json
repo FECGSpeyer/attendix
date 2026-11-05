@@ -1,0 +1,594 @@
+{
+ "batch": "zz-verify4-b06-overview",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"backHref\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "messages/message-detail/message-detail.page#action-df113b87"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/pages/message_detail_page.dart:127"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 66,
+    "cond": [
+     "@else (not loading / !message)",
+     "@if (!isManager && termin)",
+     "@if (ownResponse)",
+     "@if (ownResponse.reason_code)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "· {{ 'autoMessages.reason.' + ownResponse.reason_code | transloco }}"
+    ],
+    "text": "· {{ 'autoMessages.reason.' + ownResponse.reason_code | transloco }}",
+    "id": "messages/message-detail/message-detail.page#text-1f52bc34"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:166"
+    ],
+    "n": "Antwort-Hinweis '<Status> · <Grund>' mit Krank / Arbeit / Schule / Familie / Abmelden vergessen / Sonstiges; nur Nicht-Manager mit eigener Antwort – gleich.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 66,
+    "cond": [
+     "@else (not loading / !message)",
+     "@if (!isManager && termin)",
+     "@if (ownResponse)",
+     "@if (ownResponse.kind === 'was_present')"
+    ],
+    "tag": "#text",
+    "keys": [
+     "autoMessages.respWasThere"
+    ],
+    "de": [
+     "Ich war doch da"
+    ],
+    "literals": [],
+    "text": "· {{ 'autoMessages.respWasThere' | transloco }}",
+    "id": "messages/message-detail/message-detail.page#text-2053c566"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:167"
+    ],
+    "n": "'· Ich war doch da' bei kind 'was_present'; nur Nicht-Manager mit eigener Antwort – gleich.",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 104,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "line"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"attendanceTrendData\"",
+     "[options]=\"attendanceTrendOptions\""
+    ],
+    "id": "stats/stats.page#media-ac43f03a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:516",
+     "lib/core/providers/statistics_providers.dart:323"
+    ],
+    "n": "Daten gleich (letzte 20 Termine nach Datum, Prozent, Label dd.MM., Y 0–100, gefüllte Linie). Ionic: Diagrammtitel 'Anwesenheitsverlauf (letzte 20 Termine)', Y-Achsentitel '%', Tooltip 'Anwesenheit %: x' / Flutter: kein Diagrammtitel – Hinweis 'letzte 20 Termine' fehlt; Y-Beschriftung '0%…100%'. Ohne Termine im Zeitraum Ionic leeres Diagramm, Flutter Leerzustand statt Abschnitt.",
+    "sev": "mittel",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 134,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"top20Data\"",
+     "[options]=\"top20Options\""
+    ],
+    "id": "stats/stats.page#media-57ebfc11"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:831",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:877",
+     "lib/core/providers/statistics_providers.dart:391"
+    ],
+    "n": "Daten gleich (aktive Personen 'Vorname N.', Anwesend+Verspätet+verspätet entsch., Top 20). Ionic: waagrechte Balken mit Namen an jedem Balken, X 0–100 '%', Titel 'Top 20 - Anwesenheits-Elite 🏆' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 149,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"instrumentBarData\"",
+     "[options]=\"instrumentBarOptions\""
+    ],
+    "id": "stats/stats.page#media-315d630a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:741",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+     "lib/core/providers/statistics_providers.dart:359"
+    ],
+    "n": "Daten gleich (Quote je Gruppe über aktive Personen, absteigend). Ionic: waagrechte Balken mit Gruppennamen, X 0–100 '%', Titel 'Anwesenheitsquote nach Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 164,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"divaIndexData\"",
+     "[options]=\"divaIndexOptions\""
+    ],
+    "id": "stats/stats.page#media-42266499"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1104",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1153",
+     "lib/core/providers/statistics_providers.dart:443"
+    ],
+    "n": "Daten gleich (Status Abwesend je aktiver Person, Top 15). Ionic: waagrechte Balken mit Namen, Titel 'Unentschuldigte Abwesenheiten' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen. Bei Y-Max = max+2 stehen die Namen an den Werten 0, 1, 2 … und wirken wie Achsenwerte.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 225,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"avgAgePerInstrumentData\"",
+     "[options]=\"avgAgePerInstrumentOptions\""
+    ],
+    "id": "stats/stats.page#media-9766bdb9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1012",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1060",
+     "lib/core/providers/statistics_providers.dart:550"
+    ],
+    "n": "Daten gleich ('Gruppe (Anzahl)', Ø-Alter gerundet, absteigend). Ionic: waagrechte Balken mit Gruppenlabel, X-Achsentitel 'Jahre', Titel 'Durchschnittsalter pro Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 304,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-list-header",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "🏢 {{ db.organisation().name }}"
+    ],
+    "text": "🏢 {{ db.organisation().name }}",
+    "id": "stats/stats.page#text-80978ea5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1321"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "stats/stats.page.html",
+    "line": 317,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=openInstancesAlert()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "stats.tenants",
+     "stats.allCount"
+    ],
+    "de": [
+     "Instanzen",
+     "Alle ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.tenants' | transloco }} {{ 'stats.allCount' | transloco: { count: tenants.length } }} {{ selectedInstances.length }}",
+    "id": "stats/stats.page#action-1729e009"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1349"
+    ],
+    "n": "Badge 'Alle (N)' bzw. Anzahl gewählter Instanzen; Tap zeigt Alert.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 327,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [
+     "stats.personsAllTenants"
+    ],
+    "de": [
+     "Personen über alle Instanzen"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.personsAllTenants' | transloco }}",
+    "id": "stats/stats.page#text-666d20ee"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1361"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 328,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ uniquePersons.length }}"
+    ],
+    "text": "{{ uniquePersons.length }}",
+    "id": "stats/stats.page#text-8ee10fbd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1362",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1378"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "modal",
+    "file": "stats/stats.page.html",
+    "line": 330,
+    "cond": [
+     "@if (db.organisation())"
+    ],
+    "inline": true,
+    "tag": "ion-modal",
+    "attrs": {
+     "trigger": "persons-button"
+    },
+    "events": [],
+    "bindings": [
+     "[breakpoints]=\"[0, 1]\"",
+     "[initialBreakpoint]=\"1\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "id": "stats/stats.page#modal-54866a37"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1365",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1418"
+    ],
+    "n": "Bottom-Sheet in voller Höhe wie Sheet mit Breakpoint 1.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 335,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [
+     "stats.personsCount"
+    ],
+    "de": [
+     "Personen ({count})"
+    ],
+    "literals": [],
+    "text": "{{ 'stats.personsCount' | transloco: { count: uniquePersons.length } }}",
+    "id": "stats/stats.page#text-4d5d9eb5"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1428"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 343,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>",
+     "@for (u of uniquePersons; track trackByPersonId($index, u))"
+    ],
+    "tag": "h2",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ u.firstName }} {{ u.lastName }}"
+    ],
+    "text": "{{ u.firstName }} {{ u.lastName }}",
+    "id": "stats/stats.page#text-8808d9e3"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1449"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "stats/stats.page.html",
+    "line": 348,
+    "cond": [
+     "@if (db.organisation())",
+     "in <ion-modal trigger=persons-button>",
+     "@for (u of uniquePersons; track trackByPersonId($index, u))"
+    ],
+    "tag": "ion-badge",
+    "attrs": {
+     "slot": "end"
+    },
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ u.tenants.length }}"
+    ],
+    "text": "{{ u.tenants.length }}",
+    "id": "stats/stats.page#text-70364d9b"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1451"
+    ],
+    "v": null
+   }
+  }
+ ]
+}

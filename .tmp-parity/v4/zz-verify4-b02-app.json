@@ -1,0 +1,44 @@
+{
+ "batch": "zz-verify4-b02-app",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "tabs/side-nav/side-nav.component",
+   "ionic": {
+    "ts": "tabs/side-nav/side-nav.component.ts",
+    "html": "tabs/side-nav/side-nav.component.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "tabs/side-nav/side-nav.component.html",
+    "line": 24,
+    "cond": [],
+    "tag": "button",
+    "attrs": {
+     "class": "sn-tenant"
+    },
+    "bindings": [
+     "[disabled]=\"!hasMultipleTenants()\"",
+     "[title]=\"db.tenant()?.longName\"",
+     "[attr.aria-label]=\"hasMultipleTenants() ? ('settings.switchTenant' | transloco) + ': ' + db.tenant()?.longName : db.tenant()?.longName\""
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [
+     "db.tenant()?.longName"
+    ],
+    "text": "[title]=\"db.tenant()?.longName\"",
+    "id": "tabs/side-nav/side-nav.component#text-179b9e05"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:661",
+     "lib/shared/widgets/layout/side_nav/side_nav.dart:668"
+    ],
+    "v": null
+   }
+  }
+ ]
+}

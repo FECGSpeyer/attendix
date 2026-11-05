@@ -1,0 +1,42 @@
+{
+ "batch": "zz-verify4-b15-selfService",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "selfService/signout/signout.page",
+   "ionic": {
+    "ts": "selfService/signout/signout.page.ts",
+    "html": "selfService/signout/signout.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "selfService/signout/signout.page.html",
+    "line": 416,
+    "cond": [
+     "@else (not isApplicant)",
+     "@if (player)",
+     "@if (useDutyView)",
+     "@for (t of openDutiesPreview; track t.attendance.id)",
+     "@if (isUrgentDuty(t))"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [
+     "·"
+    ],
+    "text": "\" · \"",
+    "id": "selfService/signout/signout.page#text-40830254"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/duty/presentation/widgets/self_service_duty_section.dart:190"
+    ],
+    "n": "Trenner „ · “ nach „Dringend“ vor Zeit/Belegung vorhanden (Flutter-Zeile „Datum · Dringend · 18:00 · 1/2 besetzt“; Datum/Hervorhebung gehören zu anderen Items). Nur in der Dienstplan-Ansicht (duty_view && im Dienstkreis), nicht für Bewerber – gleich.",
+    "v": null
+   }
+  }
+ ]
+}

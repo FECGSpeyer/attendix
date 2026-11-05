@@ -1,0 +1,132 @@
+{
+ "batch": "zz-verify4-b01-app",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 84,
+    "cond": [
+     "@switch (tenant.type) case 'general'"
+    ],
+    "tag": "#text",
+    "keys": [
+     "register.helpGeneral"
+    ],
+    "de": [
+     "Ideal für Vereine, Teams oder sonstige Gruppen."
+    ],
+    "literals": [],
+    "text": "{{ 'register.helpGeneral' | transloco }}",
+    "id": "register/register.page#text-68203b72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:57",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"
+    ],
+    "n": "\"Ideal für Vereine, Teams oder sonstige Gruppen.\" mit grünem Häkchen unter Schritt 1, Typ general.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 88,
+    "cond": [
+     "@switch (tenant.type) case 'choir'"
+    ],
+    "tag": "#text",
+    "keys": [
+     "register.helpChoir"
+    ],
+    "de": [
+     "Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass)."
+    ],
+    "literals": [],
+    "text": "{{ 'register.helpChoir' | transloco }}",
+    "id": "register/register.page#text-db3fe0a6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:66",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"
+    ],
+    "n": "\"Optimiert für Chöre mit Stimmgruppen (Sopran, Alt, Tenor, Bass).\" bei Typ choir.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "register/register.page",
+   "ionic": {
+    "ts": "register/register.page.ts",
+    "html": "register/register.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "register/register.page.html",
+    "line": 92,
+    "cond": [
+     "@switch (tenant.type) case 'orchestra'"
+    ],
+    "tag": "#text",
+    "keys": [
+     "register.helpOrchestra"
+    ],
+    "de": [
+     "Optimiert für Orchester/Musikgruppen mit Instrumentengruppen."
+    ],
+    "literals": [],
+    "text": "{{ 'register.helpOrchestra' | transloco }}",
+    "id": "register/register.page#text-76739b9f"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:75",
+     "lib/features/tenant_selection/presentation/pages/tenant_create_page.dart:281-300"
+    ],
+    "n": "\"Optimiert für Orchester/Musikgruppen mit Instrumentengruppen.\" bei Typ orchestra.",
+    "v": null
+   }
+  },
+  {
+   "reason": "zusatzbefund",
+   "unit": "login/login.page",
+   "ionic": {
+    "ts": "login/login.page.ts",
+    "html": "login/login.page.html"
+   },
+   "extra": {
+    "id": "x-8af7179780",
+    "title": "Teams-Verknüpfung: Wechsel zur Code-Anmeldung",
+    "n": "Ionic: im Teams-Verknüpfungsmodus fängt ssoLink Login-Fehler ab → bei falschem Passwort nur Toast \"Ungültige Anmeldedaten\", kein Angebot zur Code-Anmeldung (Segment ausgeblendet) / Flutter: LoginFailure kommt bis _login → Dialog \"Anmeldung fehlgeschlagen\" mit \"Code per E-Mail\" → Code-Modus trotz Verknüpfungsmodus; Anmeldung per Code verknüpft das Microsoft-Konto nicht, Rückweg zum Passwort-Modus fehlt (Segment bleibt ausgeblendet).",
+    "sev": "mittel",
+    "ionic": "src/app/login/login.page.ts:90-117",
+    "f": [
+     "lib/features/auth/presentation/pages/login_page.dart:196-214",
+     "lib/features/auth/presentation/pages/login_page.dart:412-420",
+     "lib/core/services/teams/teams_service.dart:181-183"
+    ],
+    "stale": false
+   }
+  }
+ ]
+}

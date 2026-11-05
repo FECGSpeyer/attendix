@@ -1,0 +1,263 @@
+{
+ "batch": "zz-verify4-b06-overview",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 66,
+    "cond": [
+     "@else (not loading / !message)",
+     "@if (!isManager && termin)",
+     "@if (ownResponse)",
+     "@if (ownResponse.reason_code)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "· {{ 'autoMessages.reason.' + ownResponse.reason_code | transloco }}"
+    ],
+    "text": "· {{ 'autoMessages.reason.' + ownResponse.reason_code | transloco }}",
+    "id": "messages/message-detail/message-detail.page#text-1f52bc34"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:166"
+    ],
+    "n": "Antwort-Hinweis '<Status> · <Grund>' mit Krank / Arbeit / Schule / Familie / Abmelden vergessen / Sonstiges; nur Nicht-Manager mit eigener Antwort – gleich.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "messages/message-detail/message-detail.page",
+   "ionic": {
+    "ts": "messages/message-detail/message-detail.page.ts",
+    "html": "messages/message-detail/message-detail.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "messages/message-detail/message-detail.page.html",
+    "line": 66,
+    "cond": [
+     "@else (not loading / !message)",
+     "@if (!isManager && termin)",
+     "@if (ownResponse)",
+     "@if (ownResponse.kind === 'was_present')"
+    ],
+    "tag": "#text",
+    "keys": [
+     "autoMessages.respWasThere"
+    ],
+    "de": [
+     "Ich war doch da"
+    ],
+    "literals": [],
+    "text": "· {{ 'autoMessages.respWasThere' | transloco }}",
+    "id": "messages/message-detail/message-detail.page#text-2053c566"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/messages/presentation/widgets/message_termin_section.dart:167"
+    ],
+    "n": "'· Ich war doch da' bei kind 'was_present'; nur Nicht-Manager mit eigener Antwort – gleich.",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 104,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "line"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"attendanceTrendData\"",
+     "[options]=\"attendanceTrendOptions\""
+    ],
+    "id": "stats/stats.page#media-ac43f03a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:516",
+     "lib/core/providers/statistics_providers.dart:323"
+    ],
+    "n": "Daten gleich (letzte 20 Termine nach Datum, Prozent, Label dd.MM., Y 0–100, gefüllte Linie). Ionic: Diagrammtitel 'Anwesenheitsverlauf (letzte 20 Termine)', Y-Achsentitel '%', Tooltip 'Anwesenheit %: x' / Flutter: kein Diagrammtitel – Hinweis 'letzte 20 Termine' fehlt; Y-Beschriftung '0%…100%'. Ohne Termine im Zeitraum Ionic leeres Diagramm, Flutter Leerzustand statt Abschnitt.",
+    "sev": "mittel",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 134,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"top20Data\"",
+     "[options]=\"top20Options\""
+    ],
+    "id": "stats/stats.page#media-57ebfc11"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:831",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:877",
+     "lib/core/providers/statistics_providers.dart:391"
+    ],
+    "n": "Daten gleich (aktive Personen 'Vorname N.', Anwesend+Verspätet+verspätet entsch., Top 20). Ionic: waagrechte Balken mit Namen an jedem Balken, X 0–100 '%', Titel 'Top 20 - Anwesenheits-Elite 🏆' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 149,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"instrumentBarData\"",
+     "[options]=\"instrumentBarOptions\""
+    ],
+    "id": "stats/stats.page#media-315d630a"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:741",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:787",
+     "lib/core/providers/statistics_providers.dart:359"
+    ],
+    "n": "Daten gleich (Quote je Gruppe über aktive Personen, absteigend). Ionic: waagrechte Balken mit Gruppennamen, X 0–100 '%', Titel 'Anwesenheitsquote nach Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 164,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"divaIndexData\"",
+     "[options]=\"divaIndexOptions\""
+    ],
+    "id": "stats/stats.page#media-42266499"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1104",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1153",
+     "lib/core/providers/statistics_providers.dart:443"
+    ],
+    "n": "Daten gleich (Status Abwesend je aktiver Person, Top 15). Ionic: waagrechte Balken mit Namen, Titel 'Unentschuldigte Abwesenheiten' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen. Bei Y-Max = max+2 stehen die Namen an den Werten 0, 1, 2 … und wirken wie Achsenwerte.",
+    "sev": "hoch",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "stats/stats.page",
+   "ionic": {
+    "ts": "stats/stats.page.ts",
+    "html": "stats/stats.page.html"
+   },
+   "item": {
+    "kind": "media",
+    "file": "stats/stats.page.html",
+    "line": 225,
+    "cond": [
+     "@if (chartsReady)"
+    ],
+    "tag": "canvas",
+    "attrs": {
+     "type": "bar"
+    },
+    "chart": true,
+    "bindings": [
+     "[data]=\"avgAgePerInstrumentData\"",
+     "[options]=\"avgAgePerInstrumentOptions\""
+    ],
+    "id": "stats/stats.page#media-9766bdb9"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1012",
+     "lib/features/statistics/presentation/pages/statistics_page.dart:1060",
+     "lib/core/providers/statistics_providers.dart:550"
+    ],
+    "n": "Daten gleich ('Gruppe (Anzahl)', Ø-Alter gerundet, absteigend). Ionic: waagrechte Balken mit Gruppenlabel, X-Achsentitel 'Jahre', Titel 'Durchschnittsalter pro Instrument' / Flutter: fl_chart 0.69.2 (pub-cache) kann BarChart nicht drehen: senkrechte Balken, untere Achse ohne Beschriftung, die Namen werden als leftTitles an den Y-Teilstrichen gezeichnet (data[Wert], z. B. data[0] bei 0) und stehen damit nicht an ihren Balken; Zuordnung nur per Tooltip beim Antippen.",
+    "sev": "hoch",
+    "v": null
+   }
+  }
+ ]
+}

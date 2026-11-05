@@ -1,0 +1,49 @@
+{
+ "batch": "zz-verify4-b30-songs",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "songs/import/import.page",
+   "ionic": {
+    "ts": "songs/import/import.page.ts",
+    "html": "songs/import/import.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "songs/import/import.page.html",
+    "line": 95,
+    "cond": [
+     "@if (step === 'mapping')"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "[disabled]": "\"!canProceedFromMapping\""
+    },
+    "events": [
+     "(click)=proceedToPreview()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.next"
+    ],
+    "de": [
+     "Weiter"
+    ],
+    "literals": [],
+    "text": "{{ 'common.next' | transloco }}",
+    "id": "songs/import/import.page#action-1ebac815"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/songs/presentation/pages/song_import_page.dart:255"
+    ],
+    "v": null
+   }
+  }
+ ]
+}

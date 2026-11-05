@@ -1,0 +1,631 @@
+{
+ "batch": "zz-verify4-b25-settings-main",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 202,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-f17f7f72"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:369",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:371"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 203,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@if (field.type === fieldTypes.BOOLEAN)"
+    ],
+    "tag": "ion-toggle",
+    "attrs": {
+     "slot": "end"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "",
+    "id": "settings/settings/settings.page#field-09a32184"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:372",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:374"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 211,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "tag": "ion-label",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-f17f7f72-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:398",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:400"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 212,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)"
+    ],
+    "tag": "ion-button",
+    "attrs": {
+     "slot": "end",
+     "fill": "clear"
+    },
+    "events": [
+     "(click)=openChurchModal()"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ getChurchLabel() }}",
+    "id": "settings/settings/settings.page#action-2226c143"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:401",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:403",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:493"
+    ],
+    "n": "Label 'Bitte auswählen' / 'Nicht gelistet' / Gemeindename wie getChurchLabel.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 219,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-title",
+    "attrs": {},
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "{{ field.name }}"
+    ],
+    "text": "{{ field.name }}",
+    "id": "settings/settings/settings.page#text-2eb08111"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:83"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 221,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-button",
+    "attrs": {},
+    "events": [
+     "(click)=isChurchModalOpen = false"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [],
+    "keys": [
+     "common.close"
+    ],
+    "de": [
+     "Schließen"
+    ],
+    "literals": [],
+    "text": "{{ 'common.close' | transloco }}",
+    "id": "settings/settings/settings.page#action-d57207ac"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:86",
+     "lib/features/profile/presentation/widgets/church_picker.dart:88"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 225,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-searchbar",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"churchSearch\"",
+    "bindings": [
+     "[placeholder]=\"'settings.searchChurch' | transloco\"",
+     "[debounce]=\"0\""
+    ],
+    "icons": [],
+    "keys": [
+     "settings.searchChurch"
+    ],
+    "de": [
+     "Gemeinde suchen"
+    ],
+    "literals": [],
+    "text": "[placeholder]=\"'settings.searchChurch' | transloco\"",
+    "id": "settings/settings/settings.page#field-b4eb2bfd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:98",
+     "lib/features/profile/presentation/widgets/church_picker.dart:102",
+     "lib/features/profile/presentation/widgets/church_picker.dart:121"
+    ],
+    "n": "Suchfeld 'Gemeinde suchen', filtert sofort nach Namensteil (ohne Groß/Klein).",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 230,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=selectChurch(field.id, '')"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [
+     "settings.notListed"
+    ],
+    "de": [
+     "Nicht gelistet"
+    ],
+    "literals": [],
+    "text": "{{ 'settings.notListed' | transloco }}",
+    "id": "settings/settings/settings.page#action-ed6b5ba6"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:132",
+     "lib/features/profile/presentation/widgets/church_picker.dart:134",
+     "lib/features/profile/presentation/widgets/church_picker.dart:135"
+    ],
+    "n": "'Nicht gelistet' zuerst, Haken bei Auswahl '' , setzt '' und schließt.",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "settings/settings/settings.page.html",
+    "line": 237,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">",
+     "@for (church of filteredChurches; track church.id)"
+    ],
+    "tag": "ion-item",
+    "attrs": {
+     "button": "",
+     "detail": "false"
+    },
+    "events": [
+     "(click)=selectChurch(field.id, church.id)"
+    ],
+    "link": null,
+    "model": null,
+    "bindings": [],
+    "icons": [
+     "checkmark-outline"
+    ],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "{{ church.name }}",
+    "id": "settings/settings/settings.page#action-c49c7c68"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:137",
+     "lib/features/profile/presentation/widgets/church_picker.dart:140",
+     "lib/features/profile/presentation/widgets/church_picker.dart:141"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 246,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.BFECG_CHURCH)",
+     "in <ion-modal isOpen=\"isChurchModalOpen\">",
+     "@if (filteredChurches.length === 0)"
+    ],
+    "tag": "ion-label",
+    "attrs": {
+     "class": "ion-text-wrap",
+     "color": "medium"
+    },
+    "keys": [
+     "settings.noChurch"
+    ],
+    "de": [
+     "Keine Gemeinde gefunden."
+    ],
+    "literals": [],
+    "text": "{{ 'settings.noChurch' | transloco }}",
+    "id": "settings/settings/settings.page#text-65e400f8"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/church_picker.dart:143",
+     "lib/features/profile/presentation/widgets/church_picker.dart:145",
+     "lib/features/profile/presentation/widgets/church_picker.dart:146"
+    ],
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 254,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else if (field.type === fieldTypes.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {
+     "type": "number"
+    },
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "settings/settings/settings.page#field-509e17fd"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:409",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:413",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:235"
+    ],
+    "n": "Zahl-Tastatur, gespeichert als Zahl (leer → null).",
+    "v": null
+   }
+  },
+  {
+   "reason": "rolle-mandant",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "field",
+    "file": "settings/settings/settings.page.html",
+    "line": 256,
+    "cond": [
+     "@if (userData)",
+     "in <ion-modal trigger=master-data-button>",
+     "@if (getVisibleExtraFields().length)",
+     "@for (field of getVisibleExtraFields(); track field.id)",
+     "@if (field.editableByPlayers)",
+     "@else (not field.type === fieldTypes.BOOLEAN / field.type === fieldTypes.SELECT / field.type === fieldTypes.BFECG_CHURCH / field.type === fieldTypes.NUMBER)"
+    ],
+    "tag": "ion-input",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": "[(ngModel)]=\"userData.additional_fields[field.id]\"",
+    "bindings": [
+     "[label]=\"field.name\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "[label]=\"field.name\"",
+    "id": "settings/settings/settings.page#field-509e17fd-2"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:406",
+     "lib/features/profile/presentation/widgets/master_data_sheet.dart:409"
+    ],
+    "n": "Textfeld mit Label oben für übrige Typen (Text, Textarea, Datum).",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 912,
+    "cond": [
+     "in <ion-modal trigger=whatsnew-button>",
+     "@for (v of versionHistory; track v.version)",
+     "@if (v.date)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "Version {{ v.version }} ({{ v.date }})"
+    ],
+    "text": "Version {{ v.version }} ({{ v.date }})",
+    "id": "settings/settings/settings.page#text-7dea9c51"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/version_history_sheet.dart:165",
+     "lib/shared/widgets/sheets/version_history_sheet.dart:166",
+     "assets/version_history.json:1"
+    ],
+    "n": "Format gleich: Listenkopf 'Version x (Datum)'. Daten: Ionic version-history.json (Ionic-Versionen bis 4.19.7) / Flutter assets/version_history.json mit eigener Flutter-Historie (0.39.1 …, andere Einträge) – gleicher Befund wie text-8938a6a0.",
+    "sev": "mittel",
+    "v": null
+   }
+  },
+  {
+   "reason": "abweichung-ungeprueft",
+   "unit": "settings/settings/settings.page",
+   "ionic": {
+    "ts": "settings/settings/settings.page.ts",
+    "html": "settings/settings/settings.page.html"
+   },
+   "item": {
+    "kind": "text",
+    "file": "settings/settings/settings.page.html",
+    "line": 914,
+    "cond": [
+     "in <ion-modal trigger=whatsnew-button>",
+     "@for (v of versionHistory; track v.version)",
+     "@else (not v.date)"
+    ],
+    "tag": "#text",
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "bound": [
+     "Version {{ v.version }}"
+    ],
+    "text": "Version {{ v.version }}",
+    "id": "settings/settings/settings.page#text-b8c80f4b"
+   },
+   "first": {
+    "s": "diff",
+    "f": [
+     "lib/shared/widgets/sheets/version_history_sheet.dart:167",
+     "assets/version_history.json:1"
+    ],
+    "n": "Fallback 'Version x' ohne Datum vorhanden. Ionic zeigt ihn für alte Einträge ohne Datum (≤ 3.5.0) / in der Flutter-Historie hat jeder Eintrag ein Datum → erscheint nie. Ursache wie text-7dea9c51 (eigene Flutter-Historie).",
+    "sev": "mittel",
+    "v": null
+   }
+  }
+ ]
+}

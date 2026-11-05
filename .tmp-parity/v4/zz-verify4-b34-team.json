@@ -1,0 +1,42 @@
+{
+ "batch": "zz-verify4-b34-team",
+ "ionicCommit": "9f9b82af",
+ "items": [
+  {
+   "reason": "rolle-mandant",
+   "unit": "protocols/protocol/protocol.page",
+   "ionic": {
+    "ts": "protocols/protocol/protocol.page.ts",
+    "html": "protocols/protocol/protocol.page.html"
+   },
+   "item": {
+    "kind": "action",
+    "file": "protocols/protocol/protocol.page.html",
+    "line": 4,
+    "cond": [],
+    "tag": "ion-back-button",
+    "attrs": {},
+    "events": [],
+    "link": null,
+    "model": null,
+    "bindings": [
+     "[defaultHref]=\"backHref\""
+    ],
+    "icons": [],
+    "keys": [],
+    "de": [],
+    "literals": [],
+    "text": "\"\"",
+    "id": "protocols/protocol/protocol.page#action-48d91b74"
+   },
+   "first": {
+    "s": "ok",
+    "f": [
+     "lib/features/team_organization/presentation/pages/protocol_page.dart:1056"
+    ],
+    "n": "AppBar-Zurück (Pop) mit Speichern beim Verlassen (PopScope); Ionic-defaultHref nur bei Direktaufruf (Routing-Batch).",
+    "v": null
+   }
+  }
+ ]
+}
